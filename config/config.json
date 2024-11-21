@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "recruitment-app-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/recruitmentApp/RecruitmentAppWebPart.js",
+          "manifest": "./src/webparts/recruitmentApp/RecruitmentAppWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "RecruitmentAppWebPartStrings": "lib/webparts/recruitmentApp/loc/{locale}.js"
+  }
+}

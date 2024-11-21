@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "recruitment-app-client-side-solution",
+    "id": "f03c3e84-f20f-4b99-a054-0cd30355f53f",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.20.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "RecruitmentApp description"
+      },
+      "longDescription": {
+        "default": "RecruitmentApp description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "recruitment-app Feature",
+        "description": "The feature that activates elements of the recruitment-app solution.",
+        "id": "e83746dc-93fa-4c72-9a84-09a113c4dbed",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/recruitment-app.sppkg"
+  }
+}
