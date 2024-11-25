@@ -1,0 +1,72 @@
+#workbenchPageContent {
+    max-width: 1400px;
+}
+
+.headerRow-106 {
+    display: none;
+}
+
+#visibleContent {
+    display: none;
+}
+
+.sp-appBar {
+    display: none;
+}
+
+.as_i_ada2ac09 {
+    display: none;
+}
+
+.simpleFooterContainer {
+    display: none;
+}
+
+/* .ms-FocusZone {
+    display: none;
+  } */
+.sp-appBar-linkContainer {
+    display: none;
+}
+
+/* Tooltip hidden by default */
+.tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    white-space: nowrap;
+    transition: visibility 0s, opacity 0.3s ease;
+    z-index: 1;
+    width: 200px;
+    text-align: left;
+}
+
+/* Add hover effect for the "show more" text */
+p:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+
+@media only screen and (max-width: 600px) {
+
+    .ms-Grid-row {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+
+    .ms-Grid-row {
+        flex-direction: column;
+        align-items: center;
+    }
+}
