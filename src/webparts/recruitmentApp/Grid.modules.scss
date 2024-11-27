@@ -1,0 +1,275 @@
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+
+:global {
+
+    #workbenchPageContent,
+    .CanvasComponent.LCS .CanvasZone {
+        max-width: 100% !important;
+        margin: 0px;
+        padding: 0px;
+    }
+}
+
+.singlePageApp {
+    .container {
+        //  max-width: 700px;
+        margin: 0px auto;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .row {
+        @include ms-Grid-row;
+        @include ms-fontColor-white;
+        background-color: $ms-color-themeDark;
+        padding: 20px;
+    }
+
+    .column {
+        @include ms-Grid-col;
+        @include ms-lg10;
+        @include ms-xl8;
+        @include ms-xlPush2;
+        @include ms-lgPush1;
+    }
+
+    .title {
+        @include ms-font-xl;
+        @include ms-fontColor-white;
+    }
+
+    .subTitle {
+        @include ms-font-l;
+        @include ms-fontColor-white;
+    }
+
+    .description {
+        @include ms-font-l;
+        @include ms-fontColor-white;
+    }
+
+    .button {
+        // Our button
+        text-decoration: none;
+        height: 32px;
+
+        // Primary Button
+        min-width: 80px;
+        background-color: $ms-color-themePrimary;
+        border-color: $ms-color-themePrimary;
+        color: $ms-color-white;
+
+        // Basic Button
+        outline: transparent;
+        position: relative;
+        font-family: "Segoe UI WestEuropean", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        font-size: $ms-font-size-m;
+        font-weight: $ms-font-weight-regular;
+        border-width: 0;
+        text-align: center;
+        cursor: pointer;
+        display: inline-block;
+        padding: 0 16px;
+
+        .label {
+            font-weight: $ms-font-weight-semibold;
+            font-size: $ms-font-size-m;
+            height: 32px;
+            line-height: 32px;
+            margin: 0 4px;
+            vertical-align: top;
+            display: inline-block;
+        }
+    }
+
+
+
+
+
+
+
+    .horizontalMenu {
+        display: flex;
+        justify-content: space-between;
+        background-color: #0078d7;
+        /* Background color for the menu */
+    }
+
+    .ms-Nav {
+        background-color: #0078d7 !important;
+        /* Background color for the menu */
+        color: black !important;
+    }
+
+    .ms-Nav::after {
+        color: black !important;
+    }
+
+    .ms-Nav-compositeLink {
+        background-color: #0078d7;
+        /* Background color for the menu items */
+        color: white;
+        /* Text color for the menu items */
+        padding: 10px 20px;
+        /* Adjust padding as needed */
+        text-decoration: none;
+        transition: background-color 0.3s;
+        /* Add a hover effect for the menu items */
+    }
+
+    .ms-Nav-compositeLink:hover {
+        background-color: #005a9e;
+        /* Background color on hover */
+    }
+
+    .pageContainer {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header {
+        background-color: #0078d7;
+        /* Background color for the horizontal menu */
+        color: white;
+        /* Text color for the menu items */
+        padding: 10px;
+        /* Adjust padding as needed */
+    }
+
+    .content {
+        flex-grow: 1;
+        /* Allows the content area to expand and fill the remaining space */
+        background-color: #f0f0f0;
+        /* Background color for the content area */
+        padding: 20px;
+        /* Adjust padding as needed */
+    }
+
+    .menu {
+        background-color: #005a9e;
+    }
+
+    .ActionIcon {
+
+        border-color: #EF3340;
+        color: #EF3340;
+    }
+
+
+
+}
+
+.roleHeader {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ef3340;
+    color: white;
+    padding: 10px 15px;
+
+    .logo {
+        height: 65px;
+        width: 75px;
+        background-color: white;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    h2 {
+        font-size: 29px;
+        font-weight: 600;
+    }
+
+    .user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .role {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .role span:nth-child(1) {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .role span:nth-child(2) {
+            font-weight: 500;
+        }
+
+        img {
+            height: 60px;
+            width: 60px;
+            border-radius: 50%;
+        }
+    }
+}
+
+.RoleContainer {
+    width: 100%;
+    height: calc(100vh - 148px);
+    display: flex;
+
+    .selRoleContainer {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .startBtn {
+            margin-top: 20px;
+            width: 100%;
+            border-radius: 5px;
+            background-color: black;
+            color: white;
+            padding: 15px 0;
+            border: none;
+            font-weight: 500;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    }
+
+    .imgContainer {
+        background: linear-gradient(10deg, gray, #ef3340);
+        width: 50%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        clip-path: ellipse(100% 145% at 100% 9%);
+
+        .imgBorder {
+            width: 50%;
+            height: 250px;
+            border: 10px solid #fed0d09e;
+
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}
+
+.footer {
+    width: 100%;
+    display: flex;
+    background-color: #ef3340;
+    padding: 10px;
+    justify-content: center;
+
+    span {
+        color: white;
+        font-weight: 500;
+    }
+}

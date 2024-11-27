@@ -8,24 +8,28 @@ import {
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import * as strings from 'RecruitmentAppWebPartStrings';
 import App from './App';
+// import { MSGraphClientV3 } from "@microsoft/sp-http";
+import { sp } from '@pnp/sp';
+import GraphService from './Services/GraphService/GraphService';
 
 export interface IRecruitmentAppWebPartProps {
   description: string;
 }
 
 export default class RecruitmentAppWebPart extends BaseClientSideWebPart<IRecruitmentAppWebPartProps> {
+  // private graph: MSGraphClientV3;
+  public async onInit(): Promise<void> {
+    await super.onInit();
+    sp.setup({ spfxContext: this.context as unknown as undefined });
+    const graphClient = await this.context.msGraphClientFactory.getClient("3");
+    GraphService.setGraphClient(graphClient);
+  }
+
   public render(): void {
     const element: React.ReactElement<any> = React.createElement(App);
 
     ReactDom.render(element, this.domElement);
   }
-
-  // protected onInit(): Promise<void> {
-  //   return this._getEnvironmentMessage().then(message => {
-  //     this._environmentMessage = message;
-  //   });
-  // }
-
 
   protected onDispose(): void {
     ReactDom.unmountComponentAtNode(this.domElement);
