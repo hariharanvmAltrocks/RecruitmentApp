@@ -9,6 +9,13 @@ export const ListNames = {
     HRMSMenuTable: "HRMS_Menu_Table"
 };
 
+export const HRMSAlertOptions = {
+    Success: "success",
+    Confirmation: "Confirmation",
+    Error: "error",
+    Warning: "warning"
+};
+
 
 export const UserRole = {
     HOD: "1",

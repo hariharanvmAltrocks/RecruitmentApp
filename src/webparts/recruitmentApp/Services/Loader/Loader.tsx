@@ -1,4 +1,5 @@
 import * as React from "react";
+import styles from "./Loader.module.scss";
 
 
 const Loader = () => {
@@ -12,7 +13,7 @@ const Loader = () => {
                 height: "80vh",
             }}
         >
-            <div></div>
+            <div className={styles.customLoader}></div>
         </div>
     );
 };

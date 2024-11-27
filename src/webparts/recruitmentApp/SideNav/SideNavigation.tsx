@@ -14,10 +14,12 @@ export interface ISideNav {
 }
 
 const SideNavComponent = (props: any) => {
+    console.log(props, "props");
 
     const [sideNavArr, setSideNavArr] = React.useState<MenuResponse[]>([]);
     const [expandedMenuId, setExpandedMenuId] = React.useState<number | null>(null);
     const [hover, sethover] = React.useState<boolean>(false);
+    const [IsActives, setIsActive] = React.useState<boolean>(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -54,6 +56,7 @@ const SideNavComponent = (props: any) => {
     }
 
     const handleNavigation = (path: string) => {
+        setIsActive(true)
         navigate(path);
     };
 
@@ -89,7 +92,10 @@ const SideNavComponent = (props: any) => {
                         backgroundColor: "white"
                     }}
                 >
-                    <img src={require("../assets/komoa-logo-name.png")} />
+                    {props.IsExpanded ? (<>
+                        <img src={require("../assets/komoa-logo-name.png")} /></>) : (<>
+                            <img src={require("../assets/komoa-logo.png")} />
+                        </>)}
                 </div>
                 <div className={styles.linksContainer}>
                     {sideNavArr?.map((item: MenuResponse) => {
@@ -97,68 +103,107 @@ const SideNavComponent = (props: any) => {
                         const isExpanded = expandedMenuId === item.Id;
 
                         return (
-                            <div key={item.Id}>
-                                <div
-                                    className={`${styles.navLine} ${isActive ? styles.active : ""}`}
-                                // style={{ margin: "5px 10px" }}
-                                >
-                                    <div
-                                        className={styles.navImg}
-                                        onClick={() => {
-                                            if (item.Children?.length) {
-                                                toggleExpand(item.Id, item.Children[0]?.Path);
-                                            } else {
-                                                toggleExpand(item.Id, item.Path);
-                                            }
-                                        }}
-                                        style={{ cursor: "pointer", marginLeft: "20%" }}
-                                    >
-                                        <p>
-                                            <img
-                                                src={isActive ? item.ActiveIcon : item.Icon}
-                                                alt={item.DisplayName}
-                                            />
-                                        </p>
-                                        <div
-                                            className={`${styles.navLabel} ${isActive ? "active" : ""}`}
-                                        >
-                                            <p
-                                                style={{
-                                                    fontWeight: isActive ? "bold" : "normal",
-                                                    color: hover ? "black" : "white",
-                                                    marginBottom: "20px",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    cursor: "pointer"
-                                                }}
+                            <>
+                                {props.IsExpanded ? (
+                                    <>
+                                        <div key={item.Id}>
+                                            <div
+                                                className={`${styles.navLine} ${isActive ? styles.active : ""}`}
+                                            // style={{ margin: "5px 10px" }}
                                             >
-                                                {item.DisplayName}
-                                                <span
-                                                    style={{
-                                                        marginLeft: "12px",
-                                                        fontSize: "12px",
-                                                        color: "gray",
-                                                        marginTop: "6%"
+                                                <div
+                                                    className={styles.navImg}
+                                                    onClick={() => {
+                                                        if (item.Children?.length) {
+                                                            toggleExpand(item.Id, item.Children[0]?.Path);
+                                                        } else {
+                                                            toggleExpand(item.Id, item.Path);
+                                                        }
                                                     }}
+                                                    style={{ cursor: "pointer", marginLeft: "20%" }}
                                                 >
-                                                    {isExpanded ? <img src={require("../assets/down-arrow.png")} /> : <img src={require("../assets/up-arrow.png")} />}
-                                                </span>
+                                                    <p>
+                                                        <img
+                                                            src={isActive ? item.ActiveIcon : item.Icon}
+                                                            alt={item.DisplayName}
+                                                        />
+                                                    </p>
+                                                    <div
+                                                        className={`${styles.navLabel} ${isActive ? "active" : ""}`}
+                                                    >
+                                                        <p
+                                                            style={{
+                                                                fontWeight: isActive ? "bold" : "normal",
+                                                                color: hover || isActive ? "black" : "none",
+                                                                marginBottom: "20px",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                cursor: "pointer"
+                                                            }}
+                                                        >
+                                                            {item.DisplayName}
+                                                            <span
+                                                                style={{
+                                                                    marginLeft: "12px",
+                                                                    fontSize: "12px",
+                                                                    color: "gray",
+                                                                    marginTop: "6%"
+                                                                }}
+                                                            >
+                                                                {isExpanded ? <img src={require("../assets/down-arrow.png")} /> : <img src={require("../assets/up-arrow.png")} />}
+                                                            </span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {isExpanded &&
+                                                item.Children?.map((child) => (
+                                                    <div
+                                                        key={child.Id}
+                                                        className={`${styles.navLabelChild} ${IsActives ? "active" : ""}`}
+                                                        onClick={() => handleNavigation(child.Path)}
+                                                    >
+                                                        <p style={{
+                                                            textAlign: "center",
+                                                            fontWeight: isActive ? "bold" : "normal",
+                                                            color: isActive ? "black" : "none",
+                                                            // backgroundColor: isActive ? "white" : "none",
+                                                            marginBottom: "20px",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            cursor: "pointer"
+                                                        }}>{child.DisplayName}</p>
+                                                    </div>
+                                                ))}
+                                        </div>
+
+
+
+                                    </>
+                                ) : (
+                                    <>
+                                        <div
+                                            className={styles.expandnavImg}
+                                            onClick={() => {
+                                                if (item.Children?.length) {
+                                                    toggleExpand(item.Id, item.Children[0]?.Path);
+                                                } else {
+                                                    toggleExpand(item.Id, item.Path);
+                                                }
+                                            }}
+                                            style={{ cursor: "pointer", marginLeft: "20%" }}
+                                        >
+                                            <p>
+                                                <img
+                                                    src={isActive ? item.ActiveIcon : item.Icon}
+                                                    alt={item.DisplayName}
+                                                />
                                             </p>
                                         </div>
-                                    </div>
-                                </div>
-
-                                {isExpanded &&
-                                    item.Children?.map((child) => (
-                                        <div
-                                            key={child.Id}
-                                            className={styles.navLabelChild}
-                                            onClick={() => handleNavigation(child.Path)}
-                                        >
-                                            <p style={{ textAlign: "center" }}>{child.DisplayName}</p>
-                                        </div>
-                                    ))}
-                            </div>
+                                    </>
+                                )}
+                            </>
                         );
                     })}
                 </div>

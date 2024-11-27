@@ -1,6 +1,6 @@
 import * as React from "react";
 import MainPage from "./MainPage/mainpage";
-import { HashRouter } from "react-router-dom";
+import { HashRouter, useLocation, useNavigate } from "react-router-dom";
 import { RoleProvider } from "./utilities/RoleContext";
 import "./App.css";
 
@@ -9,12 +9,28 @@ function App() {
         <RoleProvider>
             <HashRouter>
                 <div className="app">
-                    <MainPage />
+                    <SubMain />
                 </div>
             </HashRouter>
         </RoleProvider>
 
     );
 }
+
+const SubMain = (props: any) => {
+    const location = useLocation();
+    const state = location.state;
+    const navigate = useNavigate();
+    return (
+      <>
+        <MainPage
+          {...props}
+          location={location}
+          navigation={navigate}
+          stateValue={state}
+        />
+      </>
+    );
+  };
 
 export default App;
