@@ -6,7 +6,10 @@ export const ListNames = {
     MENUACCESS: "T&A_Menu_Access_Role",
     HRMSUserRole: "HRMS_User_Role",
     HRMSMenuAccess: "HRMSRecruitmentMenuAccessRole",
-    HRMSMenuTable: "HRMS_Menu_Table"
+    HRMSMenuTable: "HRMS_Menu_Table",
+    HRMSVacancyReplacementRequest:"HRMSVacancyReplacementRequest",
+    HRMSVRRPositionDetails:"HRMSVRRPositionDetails",
+
 };
 
 export const HRMSAlertOptions = {
