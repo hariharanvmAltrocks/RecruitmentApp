@@ -1,4 +1,4 @@
-import { ListNames,count } from "../../utilities/Config";
+import { ListNames, WorkflowAction, count } from "../../utilities/Config";
 import SPServices from "../SPService/SPServices";
 import { IRecruitmentService } from "./IRecruitmentProcessService";
 export default class RecruitmentService implements IRecruitmentService {
@@ -20,7 +20,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
             for (const item of listItems) {
                 let VRR: any = {
-                    VRRID:item.Id,
+                    VRRID: item.Id,
                     Nationality: item.Nationality || "",
                     EmploymentCategory: item.EmploymentCategory || "",
                     DepartmentId: item.DepartmentId || 0,
@@ -95,7 +95,7 @@ export default class RecruitmentService implements IRecruitmentService {
             console.log("GetVacancyPositionDetails ", listItems);
 
             const formattedItems = listItems.map(async (item) => {
-                
+
                 return {
                     LookupId: item.ID,
                     JobTitleInEnglishId: item.JobTitleEnglishId || 0,
@@ -125,4 +125,59 @@ export default class RecruitmentService implements IRecruitmentService {
         }
     }
 
+    async InsertRecruitmentDpt(Table1: any, Table2: any): Promise<ApiResponse<any | null>> {
+        try {
+            let Table1Insert = {
+                VRRIDId: Table1.VRRID,
+                ActionId: WorkflowAction.Submitted
+            }
+            await SPServices.SPAddItem({
+                Listname: ListNames.HRMSRecruitmentDptDetails,
+                RequestJSON: Table1Insert,
+            }).then(async (data: any) => {
+
+            });
+            return {
+                data: [],
+                status: 200,
+                message: "GetVacancyDetails fetched successfully",
+            };
+
+        } catch (error) {
+            console.error("Error fetching data GetVacancyDetails:", error);
+            return {
+                data: [],
+                status: 500,
+                message: "Error fetching data from GetVacancyDetails",
+            };
+        }
+    }
+
+    // async InsertRecruitmentDpt(Table1: any, Table2: any): Promise<ApiResponse<any | null>> {
+    //     try {
+    //         let Table1Insert = {
+    //             VRRIDId: Table1.VRRID,
+    //             ActionId: WorkflowAction.Submitted
+    //         }
+    //         await SPServices.SPAddItem({
+    //             Listname: ListNames.HRMSRecruitmentDptDetails,
+    //             RequestJSON: Table1Insert,
+    //         }).then(async (data: any) => {
+                
+    //         });
+    //         return {
+    //             data: [],
+    //             status: 200,
+    //             message: "GetVacancyDetails fetched successfully",
+    //         };
+
+    //     } catch (error) {
+    //         console.error("Error fetching data GetVacancyDetails:", error);
+    //         return {
+    //             data: [],
+    //             status: 500,
+    //             message: "Error fetching data from GetVacancyDetails",
+    //         };
+    //     }
+    // }
 }

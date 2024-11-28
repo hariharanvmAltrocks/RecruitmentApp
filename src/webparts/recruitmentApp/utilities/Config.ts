@@ -9,6 +9,8 @@ export const ListNames = {
     HRMSMenuTable: "HRMS_Menu_Table",
     HRMSVacancyReplacementRequest:"HRMSVacancyReplacementRequest",
     HRMSVRRPositionDetails:"HRMSVRRPositionDetails",
+    HRMSRecruitmentDptDetails:"HRMSRecruitmentDptDetails",
+    HRMSRecruitmentPositionDetails:"HRMSRecruitmentPositionDetails",
 
 };
 
@@ -38,3 +40,13 @@ export const count = {
     Topcount: 1000,
     CamelQuery: 5000
 };
+
+export const WorkflowAction = {
+    Approved: 1,
+    Reject: 2,
+    Revert: 3,
+    Transfer: 4,
+    Submitted: 5,
+    Closed: 6,
+    ReSubmitted: 7,
+  };
