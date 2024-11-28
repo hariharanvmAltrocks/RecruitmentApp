@@ -18,7 +18,6 @@ export default class MasterService implements IMasterService {
                 // }],
             };
             const items = await SPServices.SPReadItems(getjsonUserRole)
-            debugger;
             console.log("UserRoleData", items);
 
             return {

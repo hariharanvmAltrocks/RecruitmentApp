@@ -143,6 +143,21 @@
     padding: 0%;
     margin-top: 4%;
 
+    &.active {
+        color: black;
+        background-color: #fff;
+        border-radius: 18px 0px 0px 18px;
+        padding: 0%;
+        box-shadow: "0px 5px 10px 0px #0F4B8426";
+        margin-top: 4%;
+        text-decoration: none;
+        transition: background-color 0.3s;
+        width: 76%;
+        margin-left: 56px;
+        display: flex;
+        flex-direction: column;
+    }
+
     &:hover {
         cursor: pointer;
         text-decoration: none;
@@ -159,20 +174,7 @@
         margin-top: 4%;
     }
 
-    &.active {
-        color: black;
-        background-color: #fff;
-        border-radius: 18px 0px 0px 18px;
-        padding: 0%;
-        box-shadow: "0px 5px 10px 0px #0F4B8426";
-        margin-top: 4%;
-        text-decoration: none;
-        transition: background-color 0.3s;
-        width: 76%;
-        margin-left: 56px;
-        display: flex;
-        flex-direction: column;
-    }
+
 }
 
 .expandnavImg {

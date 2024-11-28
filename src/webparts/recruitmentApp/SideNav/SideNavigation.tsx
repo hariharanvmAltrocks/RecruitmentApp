@@ -19,7 +19,7 @@ const SideNavComponent = (props: any) => {
     const [sideNavArr, setSideNavArr] = React.useState<MenuResponse[]>([]);
     const [expandedMenuId, setExpandedMenuId] = React.useState<number | null>(null);
     const [hover, sethover] = React.useState<boolean>(false);
-    const [IsActives, setIsActive] = React.useState<boolean>(false);
+    // const [IsActives, setIsActive] = React.useState<boolean>(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -41,7 +41,6 @@ const SideNavComponent = (props: any) => {
             // await getMenuItems(roleAccessData.data);
             const defaultMenu = dynamicMenu.data[0];
             if (defaultMenu.Children?.length && defaultMenu.Children?.length > 0) {
-                debugger;
                 const child = defaultMenu.Children[0];
                 navigate(child.Path);
             } else {
@@ -56,7 +55,7 @@ const SideNavComponent = (props: any) => {
     }
 
     const handleNavigation = (path: string) => {
-        setIsActive(true)
+        // setIsActive(true)
         navigate(path);
     };
 
@@ -161,18 +160,18 @@ const SideNavComponent = (props: any) => {
                                                 item.Children?.map((child) => (
                                                     <div
                                                         key={child.Id}
-                                                        className={`${styles.navLabelChild} ${IsActives ? "active" : ""}`}
+                                                        className={`${styles.navLabelChild} ${isActive ? "active" : ""}`}
                                                         onClick={() => handleNavigation(child.Path)}
                                                     >
                                                         <p style={{
                                                             textAlign: "center",
                                                             fontWeight: isActive ? "bold" : "normal",
                                                             color: isActive ? "black" : "none",
-                                                            // backgroundColor: isActive ? "white" : "none",
                                                             marginBottom: "20px",
                                                             display: "flex",
                                                             alignItems: "center",
-                                                            cursor: "pointer"
+                                                            cursor: "pointer",
+                                                            marginLeft: "10%",
                                                         }}>{child.DisplayName}</p>
                                                     </div>
                                                 ))}
