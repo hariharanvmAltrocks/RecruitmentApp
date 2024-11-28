@@ -42,7 +42,7 @@ const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav
                         fill="#EF3340"
                     />
                 </svg>
-                <h1 style={{ color: "#ef3340", fontFamily: "Roboto, sans-serif", fontSize: "22px", fontWeight: "600", marginRight: "43%" }}>Recuritment Process</h1>
+                <h1 className="title" style={{ color: "#ef3340", fontFamily: "Roboto, sans-serif", fontSize: "22px", fontWeight: "600", marginRight: "20%", width: "57%" }}>Recuritment Process</h1>
                 <div
                     style={{
                         display: "flex",
@@ -57,15 +57,15 @@ const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav
                     }}>
                     <div
                     >
-                        <h3 style={{ color: "#ef3340", fontFamily: "Roboto, sans-serif", fontSize: "18px", fontWeight: "600" }}>
+                        <h3 className="title" style={{ color: "#ef3340", fontFamily: "Roboto, sans-serif", fontSize: "18px", fontWeight: "600" }}>
                             Welcome - {userName}
                         </h3>
-                        <p
+                        <p className="title Role"
                             style={{
                                 //display: "flex",
                                 //alignItems: "center",
                                 // margin: "5px",
-                                color: "black",  //#e65f2b
+                                // color: "black",  //#e65f2b
                                 fontWeight: "400",
                                 fontSize: "13px",
                                 marginTop: " -18px",

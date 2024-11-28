@@ -2,16 +2,28 @@ export const APIURL =
     "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
 
 export const ListNames = {
-    MENUITEMS: "T&A_Menu_Items",
-    MENUACCESS: "T&A_Menu_Access_Role",
     HRMSUserRole: "HRMS_User_Role",
     HRMSMenuAccess: "HRMSRecruitmentMenuAccessRole",
     HRMSMenuTable: "HRMS_Menu_Table",
-    HRMSVacancyReplacementRequest:"HRMSVacancyReplacementRequest",
-    HRMSVRRPositionDetails:"HRMSVRRPositionDetails",
+    HRMSVacancyReplacementRequest: "HRMSVacancyReplacementRequest",
+    HRMSVRRPositionDetails: "HRMSVRRPositionDetails",
     HRMSRecruitmentDptDetails:"HRMSRecruitmentDptDetails",
     HRMSRecruitmentPositionDetails:"HRMSRecruitmentPositionDetails",
 
+};
+
+export const StatusId = {
+    InitiatedforRecruitmentProcess: 68,
+}
+
+export const GridStatusBackgroundcolor = {
+    Pending: "#FDF414",
+    CompletedOrApproved: "#D7FDD7",
+    Rejected: "#ff8a8a",
+    Draft: "#5CD7FB",
+    Reverted: "#afb4b6",
+    ReSubmitted: "#87caff",
+    Initiated: "#e6eef2"
 };
 
 export const HRMSAlertOptions = {

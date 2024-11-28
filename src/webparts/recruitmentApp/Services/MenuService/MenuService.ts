@@ -71,7 +71,6 @@ export default class MenuService implements IMenuService {
             };
             const items = await SPServices.SPReadItems(getjsonUserRole)
                 .then((res) => {
-                    debugger;
                     console.log("MenuItems", res);
                     const tempArray: ISharePointMenuItemAccess[] = res.map((item) => ({
                         MenuIdId: item.MenuId?.MenuId,
