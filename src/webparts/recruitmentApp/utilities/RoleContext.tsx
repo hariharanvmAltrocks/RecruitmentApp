@@ -77,7 +77,6 @@ export const RoleProvider = ({ children }: any) => {
                 console.log("Azure response", response);
 
                 const members = response.value || [];
-                debugger;
                 if (
                     members.some(
                         (member: any) => member.userPrincipalName?.toLowerCase() === userEmail.toLowerCase()

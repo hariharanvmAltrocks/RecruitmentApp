@@ -5,6 +5,8 @@ import "../App.css";
 import "../Grid.modules.scss"
 import { TextField } from "office-ui-fabric-react";
 import { Icon } from "@fluentui/react";
+import ReuseButton from "./ReuseButton";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 interface ColumnConfig {
     field: string;
@@ -28,6 +30,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
 }) => {
     const [searchTerm, setSearchTerm] = React.useState<string>('');
     const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
+    const [first, setFirst] = React.useState<number>(0);
 
     React.useEffect(() => {
         if (searchTerm === '') {
@@ -47,11 +50,17 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
         setSearchTerm(event.target.value);
     };
 
+    const handleRefresh = () => {
+        setSearchTerm('');
+        setFilteredItems(data);
+        setFirst(0);
+    };
+
     return (
         <div>
             {/* Search Field */}
             <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg9 search_div" style={{ paddingLeft: '2%', position: 'relative', display: 'inline-block', width: "96%" }}>
+                <div className="ms-Grid-col ms-lg10 search_div" style={{ paddingLeft: '2%', position: 'relative', display: 'inline-block' }}>
                     <TextField
                         type="text"
                         placeholder="Search..."
@@ -71,10 +80,28 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                             fontSize: '20px',
                             position: 'absolute',
                             top: '5%',
-                            right: '5px',
+                            right: '11px',
                             // padding: '3px',
                             color: 'black',
                         }}
+                    />
+                </div>
+                <div className="ms-Grid-col ms-lg1">
+                    <ReuseButton
+                        icon={
+                            <RefreshIcon
+                                style={{
+                                    fontSize: "2rem",
+                                    marginTop: "4%",
+                                    marginLeft: "18%"
+                                }}
+                            />
+                        }
+                        onClick={handleRefresh}
+                        spacing={4}
+                        height="33px"
+                        width="32%"
+                        Style={{ marginRight: "11px" }}
                     />
                 </div>
             </div>
@@ -82,7 +109,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                 <div className="ms-Grid-col ms-lg12">
                     <DataTable
                         value={filteredItems}
-                        first={0}
+                        first={first}
                         rows={rows}
                         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                         currentPageReportTemplate="{first} to {last} of {totalRecords}"
@@ -90,7 +117,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                         scrollHeight="300px"
                         rowsPerPageOptions={[5, 10, 20]}
                         paginator
-                        onPage={onPageChange}
+                        // onPage={onPageChange}
                         stripedRows
                     >
                         {/* Render Dynamic Columns */}
