@@ -53,9 +53,9 @@ export default class RecruitmentService implements IRecruitmentService {
 
                 const filter = [{ FilterKey: "VRRIDId", Operator: "eq", FilterValue: item.Id }];
                 let positionresult: any = await this.GetVacancyPositionDetails(filter, "");
-
+                let positionId: any = await this.GetPositionDetails(filter, "");
                 console.log("formattedItems positionresult", positionresult);
-
+                console.log("formattedItems positionId", positionId);
                 if (positionresult?.data?.length > 0) {
                     positionrequestresult.push(positionresult.data[0]);
                 }
@@ -153,6 +153,43 @@ export default class RecruitmentService implements IRecruitmentService {
         }
     }
 
+    async GetPositionDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>> {
+        try {
+            const listItems: any[] = await SPServices.SPReadItems({
+                Listname: ListNames.HRMSVRRToPositionIDMapping,
+                Select: "*,PositionID/PositionID",
+                Filter: filterParam,
+                FilterCondition: filterConditions,
+                Expand: "PositionID",
+                Topcount: count.Topcount
+            });
+
+            console.log("GetPositionDetails", listItems);
+
+            const formattedItems = listItems.map(async (item) => {
+                return {
+                    VRRID: item.VRRIDId ? item.VRRIDId : 0,
+                    PositionName: item.PositionID?.PositionID ? item.PositionID?.PositionID : "",
+                    PositionID: item.PositionIDId ? item.PositionIDId : 0
+
+                };
+            });
+
+            return {
+                data: await Promise.all(formattedItems),
+                status: 200,
+                message: "GetPositionDetails fetched successfully",
+            };
+        } catch (error) {
+            console.error("Error fetching data GetPositionDetails:", error);
+            return {
+                data: [],
+                status: 500,
+                message: "Error fetching data from GetPositionDetails",
+            };
+        }
+    }
+
     // async InsertRecruitmentDpt(Table1: any, Table2: any): Promise<ApiResponse<any | null>> {
     //     try {
     //         let Table1Insert = {
@@ -163,7 +200,7 @@ export default class RecruitmentService implements IRecruitmentService {
     //             Listname: ListNames.HRMSRecruitmentDptDetails,
     //             RequestJSON: Table1Insert,
     //         }).then(async (data: any) => {
-                
+
     //         });
     //         return {
     //             data: [],

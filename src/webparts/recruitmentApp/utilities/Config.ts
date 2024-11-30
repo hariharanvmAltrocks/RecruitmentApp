@@ -9,7 +9,7 @@ export const ListNames = {
     HRMSVRRPositionDetails: "HRMSVRRPositionDetails",
     HRMSRecruitmentDptDetails:"HRMSRecruitmentDptDetails",
     HRMSRecruitmentPositionDetails:"HRMSRecruitmentPositionDetails",
-
+    HRMSVRRToPositionIDMapping: "HRMSVRRToPositionIDMapping",
 };
 
 export const StatusId = {
@@ -61,4 +61,8 @@ export const WorkflowAction = {
     Submitted: 5,
     Closed: 6,
     ReSubmitted: 7,
+  };
+
+  export const viewLabelcolor = {
+    Labelcolor: "#9A5E5E",
   };
