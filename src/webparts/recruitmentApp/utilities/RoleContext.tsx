@@ -4,14 +4,23 @@ import { createContext, useContext, useState, useEffect } from "react";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import GraphService from "../Services/GraphService/GraphService";
 import { masterService } from "../Services/ServiceExport";
-import { UserRoleData } from "../Models/Master";
+import { MasterData, UserRoleData } from "../Models/Master";
 import { ResponeStatus } from "./Config";
 
-type RoleContextType = {
+export type RoleContextType = {
     roleID: number | null;
     userName: string | null;
     userRole: string | null;
+    masterData: MasterData | null;
+    ADGroupData: ADGroupData | null;
 };
+
+type ADGroupData = {
+    roleID: number | null;
+    userName: string | null;
+    userRole: string | null;
+    ADGroupIDs: any
+}
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
@@ -20,6 +29,8 @@ export const RoleProvider = ({ children }: any) => {
     const [userName, setUserName] = useState<string | null>(null);
     const [userRole, setUserRole] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [masterData, setMasterData] = useState<MasterData | null>(null);
+    const [ADGroupData, setADGroupData] = useState<ADGroupData | null>(null);
 
     useEffect(() => {
         void getUserRole();
@@ -47,6 +58,13 @@ export const RoleProvider = ({ children }: any) => {
                 if (roleId && userRole) {
                     setRoleID(roleId);
                     setUserRole(userRole);
+                    const MasterDataDetails = await masterService.MasterData(userEmail, roleId);
+                    console.log(MasterDataDetails, "MasterDataDetails");
+                    if (MasterDataDetails.status === ResponeStatus.SUCCESS && MasterDataDetails.data) {
+                        setMasterData(MasterDataDetails.data)
+                    }
+
+
                 } else {
                     console.warn("User is not a member of the specified groups.");
                 }
@@ -68,7 +86,7 @@ export const RoleProvider = ({ children }: any) => {
 
             for (const groupId of azureGroupIds) {
                 if (!groupId || groupId === "0") {
-                    continue; // Skip this iteration and move to the next groupId
+                    continue;
                 }
                 const response = await graphClient
                     .api(`/groups/${groupId}/members`)
@@ -87,10 +105,18 @@ export const RoleProvider = ({ children }: any) => {
                         (item) => item.ADGroupID === groupId
                     );
 
+                    const ADGroupData: ADGroupData = {
+                        roleID: currentLogin?.ID ?? null,
+                        userName: currentLogin?.RoleTitle ?? null,
+                        ADGroupIDs: currentLogin?.ADGroupID ?? null,
+                        userRole: userName
+                    }
+                    setADGroupData(ADGroupData)
                     return {
                         roleId: currentLogin?.ID ?? null,
                         userRole: currentLogin?.RoleTitle ?? null,
                     };
+
                 }
             }
             return { roleId: null, userRole: null };
@@ -101,8 +127,8 @@ export const RoleProvider = ({ children }: any) => {
     }
 
     return (
-        <RoleContext.Provider value={{ roleID, userName, userRole }}>
-            {roleID && userName && userRole ? (
+        <RoleContext.Provider value={{ roleID, userName, userRole, masterData, ADGroupData }}>
+            {roleID && userName && userRole && masterData && ADGroupData ? (
                 children
             ) : (
                 <CustomLoader isLoading={isLoading} />

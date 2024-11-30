@@ -2,7 +2,6 @@ import * as React from "react";
 import styles from "./SideNavigation.module.scss";
 import { MenuResponse } from "../Models/Menu";
 import { useLocation, useNavigate } from "react-router-dom";
-import { userInfo } from "../utilities/RoleContext";
 import { IMenuService } from "../Services/MenuService/IMenu";
 import MenuService from "../Services/MenuService/MenuService";
 
@@ -13,7 +12,12 @@ export interface ISideNav {
     Tab: string[];
 }
 
-const SideNavComponent = (props: any) => {
+type sideNavProps = {
+    roleID: number | null;
+    IsExpanded: boolean
+};
+
+const SideNavComponent = (props: sideNavProps) => {
     console.log(props, "props");
 
     const [sideNavArr, setSideNavArr] = React.useState<MenuResponse[]>([]);
@@ -25,13 +29,12 @@ const SideNavComponent = (props: any) => {
     const location = useLocation();
 
     const MenuItemsService: IMenuService = new MenuService();
-    const { roleID } = userInfo();
 
     React.useEffect(() => {
-        if (roleID) {
-            void fetchRoleAccessData(roleID);
+        if (props.roleID) {
+            void fetchRoleAccessData(props.roleID);
         }
-    }, [roleID]);
+    }, [props.roleID]);
 
     async function fetchRoleAccessData(RoleID: number) {
         const dynamicMenu = await MenuItemsService.getMenuDetails(RoleID);
