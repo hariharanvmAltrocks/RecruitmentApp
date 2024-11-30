@@ -1,17 +1,16 @@
 import * as React from "react";
-import { userInfo } from "../utilities/RoleContext";
 import "../App.css";
 
 
 interface MainPageHeaderProps {
     children?: React.ReactNode;
     toggleSideNav: () => void;
-    isExpanded: boolean;
+    userName: string | null;
+    userRole: string | null;
 }
 
-const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav }) => {
+const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav, userName, userRole }) => {
 
-    const { userName, userRole } = userInfo();
     return (
         <div
             style={{

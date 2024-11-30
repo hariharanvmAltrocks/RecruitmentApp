@@ -12,11 +12,12 @@ interface ColumnConfig {
     field: string;
     header: string;
     sortable: boolean;
-    body?: (item?: any) => any;
+    body?: (item?: {}) => {};
 }
 
 
 const RecruitmentProcess = (props: any) => {
+    console.log(props, "ApprovedVRR");
 
     const [data, setData] = React.useState<any[]>([]);
     const [columns, setColumns] = React.useState<ColumnConfig[]>([]);
@@ -111,8 +112,6 @@ const RecruitmentProcess = (props: any) => {
 
     function handleRedirectView(rowData: any) {
         console.log(`rowDatarowData`, rowData);
-        console.log("propsqqqqqqq", props);
-
         props.navigation("/RecurimentProcess/ApprovedVRRView");
     }
 
@@ -139,10 +138,12 @@ const RecruitmentProcess = (props: any) => {
         setIsLoading(false);
 
     };
+
     React.useEffect(() => {
         void fetchData();
         setColumns(columnConfig);
     }, []);
+
 
     const onPageChange = (event: any) => {
         setFirst(event.first);
@@ -162,6 +163,7 @@ const RecruitmentProcess = (props: any) => {
                         onPageChange={onPageChange}
                     />
                 </div>
+
             ),
         },
     ];
@@ -172,14 +174,8 @@ const RecruitmentProcess = (props: any) => {
             <Card variant="outlined" sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3" }}>
                 <React.Fragment>
                     <TabsComponent tabs={tabs} initialTab="tab1" />
-                    {console.log(first)}
-                    {/* <div style={{ marginRight: "10px" }}>
-                    <ReuseButton
-                        label="Cancel"
-                        // onClick={handleCancel}
-                        spacing={4}
-                    />
-                </div> */}
+                    {console.log(props.masterData, "masterDataDetails")}
+                    {console.log(first, "first")}
                 </React.Fragment>
             </Card>
         </CustomLoader>
