@@ -2,6 +2,14 @@
     max-width: 1400px;
 }
 
+.webPartContainer {
+    display: none;
+}
+
+.ae_e_ada2ac09 {
+    display: none;
+}
+
 .headerRow-106 {
     display: none;
 }
@@ -10,9 +18,29 @@
     display: none;
 }
 
-.sp-appBar {
+#sp-appBar {
     display: none;
 }
+
+#spCommandBar {
+    display: none;
+}
+
+#SuiteNavPlaceholder {
+    display: none;
+}
+
+#spSiteHeader {
+    display: none;
+}
+
+#CommentsWrapper {
+    display: none;
+}
+
+/* #workbenchCommandBar{
+    display: none;
+} */
 
 .as_i_ada2ac09 {
     display: none;
@@ -451,6 +479,19 @@ p:hover .tooltip {
     /* Add a subtle shadow */
     margin: 10px;
     /* Adjust the margin as needed */
+    /* height: calc(100vh - 309px); */
+}
+
+.main-menu-card {
+    background-color: white;
+    /* Set the background color */
+    padding: 0px;
+    /* Add some padding for spacing */
+    border-radius: 5px;
+    /* Add rounded corners for a card-like appearance */
+    box-shadow: 0px 2px 4px 3px lightgray;
+    /* Add a subtle shadow */
+    margin: 10px;
 }
 
 .fifty-percent-width {
