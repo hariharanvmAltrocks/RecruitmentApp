@@ -4,6 +4,7 @@ export interface IFilter {
     Operator: string;
 }
 
+ 
 export interface IListItems {
     Listname: string | any;
     Select?: string | any;
