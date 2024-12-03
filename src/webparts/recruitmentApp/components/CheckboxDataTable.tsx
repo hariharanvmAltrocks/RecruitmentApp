@@ -6,6 +6,7 @@ import { Icon } from "@fluentui/react";
 import ReuseButton from "./ReuseButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CustomLoader from "../Services/Loader/CustomLoader";
+import CustomCheckBox from "./CustomCheckbox";
 
 interface ColumnConfig {
     field: string;
@@ -19,7 +20,6 @@ interface SearchableDataTableProps {
     columns: ColumnConfig[];
     rows: number;
     onPageChange: (event: any) => void;
-    onSelectionChange: (event: any) => void;
     selection: any[]
 }
 
@@ -28,13 +28,14 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     columns,
     rows,
     onPageChange,
-    onSelectionChange,
     selection
 }) => {
     const [searchTerm, setSearchTerm] = React.useState<string>('');
-    const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
+    const [filteredItems, setFilteredItems] = React.useState<any[]>([]);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [selectAll, setSelectAll] = React.useState<boolean>(false);
+
 
     React.useEffect(() => {
         if (searchTerm === '') {
@@ -62,6 +63,40 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
         setTimeout(() => {
             setIsLoading(false);
         }, 100);
+    };
+
+    const onSelectAllChange = (value: boolean) => {
+        const updatedRowData: any[] = data.map((item: any) => {
+            if (data) {
+                return {
+                    ...item,
+                    Checked: value,
+                };
+            }
+            return item;
+        });
+        setFilteredItems(updatedRowData)
+        setSelectAll(value)
+    };
+
+    const onSelectionChange = (event: any) => {
+        const value = event.value;
+        // setFilteredItems(value);
+        setSelectAll(value.length === data.length);
+    };
+
+    const handleCheckbox = (value: boolean, rowData: any) => {
+        const updatedRowData: any[] = data.map((item: any) => {
+            if (item.VRRID === rowData.VRRID) {
+                return {
+                    ...item,
+                    Checked: value,
+                };
+            }
+            return item;
+        });
+        console.log(updatedRowData, "updatedRowData");
+        setFilteredItems(updatedRowData);
     };
 
 
@@ -126,25 +161,50 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                             onSelectionChange={onSelectionChange}
                             selectionMode="checkbox"
                             dataKey="id"
-                            // onPage={onPageChange}
                             paginatorTemplate=" RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                             currentPageReportTemplate="{first} to {last} of {totalRecords}"
                             stripedRows
                             scrollable
                             scrollHeight="300px"
                         >
+                            {columns.map((col) => {
+                                // Render Checkbox column separately
+                                if (col.field === "Checkbox") {
+                                    return (
+                                        <Column
+                                            key={col.field}
+                                            header={() => (
+                                                <CustomCheckBox label="" value={selectAll} onChange={(e, value: boolean) => onSelectAllChange(value)} />
+                                            )}
+                                            sortable={false}
+                                            body={(rowData: any) => {
+                                                return (
+                                                    <div>
+                                                        <CustomCheckBox
+                                                            label=""
+                                                            value={rowData?.Checked === true}
+                                                            onChange={(e, value: boolean) => handleCheckbox(value, rowData)}
+                                                        />
+                                                    </div>
+                                                );
+                                            }}
+                                        />
+                                    );
+                                }
 
-
-                            {columns.map((col) => (
-                                <Column
-                                    key={col.field}
-                                    field={col.field}
-                                    header={col.header}
-                                    sortable={col.sortable}
-                                    body={col.body}
-                                />
-                            ))}
+                                // Render other columns normally
+                                return (
+                                    <Column
+                                        key={col.field}
+                                        field={col.field}
+                                        header={col.header}
+                                        sortable={col.sortable}
+                                        body={col.body}
+                                    />
+                                );
+                            })}
                         </DataTable>
+
                     </div>
                 </div>
             </div>

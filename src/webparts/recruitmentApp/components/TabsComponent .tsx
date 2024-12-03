@@ -50,7 +50,6 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
     const handleNextClick = () => {
         const currentIndex = tabs.findIndex((tab) => tab.value === value);
         let isValid: any;
-        debugger;
         const currentTab = tabs[currentIndex].value;
         // if(validateTab){
         // isValid = !validateTab(currentTab);
@@ -133,7 +132,6 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
 
 
                             {additionalButtons.map((button, index) => {
-                                debugger;
                                 if (button.label === "Submit") {
                                     return (
                                         value === tabs[tabs.length - 1].value ? (

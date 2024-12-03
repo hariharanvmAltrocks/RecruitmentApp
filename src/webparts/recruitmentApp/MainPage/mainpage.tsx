@@ -6,6 +6,8 @@ import RecruitmentProcess from "../Screens/RecuritmentProcess/ApprovedVRRList";
 import ApprovedVRRView from "../Screens/RecuritmentProcess/ApprovedVRRView";
 import ApprovedVRREdit from "../Screens/RecuritmentProcess/ApprovedVRREdit";
 import { userInfo } from "../utilities/RoleContext";
+import CommanFieldTemplate from "../components/CommanFieldTemplate";
+import CommanTemplate from "../components/CommanTemplate";
 
 export default function MainPage(props: any) {
     console.log(props, "props");
@@ -37,6 +39,9 @@ export default function MainPage(props: any) {
                                     <Route path="/RecurimentProcess" element={<RecruitmentProcess {...props} {...masterData} />} />
                                     <Route path="/RecurimentProcess/ApprovedVRRView" element={<ApprovedVRRView {...props} {...masterData} />} />
                                     <Route path="/RecurimentProcess/ApprovedVRREdit" element={<ApprovedVRREdit {...props} {...masterData} />} />
+                                    <Route path="/CommanFieldTemplate" element={<CommanFieldTemplate {...props} {...masterData} />} />
+                                    <Route path="/CommanTemplate/CommanTemplate" element={<CommanTemplate {...props} {...masterData} />} />
+
                                 </Routes>
                             </>
                         ) : (
