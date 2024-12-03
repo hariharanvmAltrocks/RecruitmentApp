@@ -4,7 +4,7 @@ import "../Common/ModalStyle.css";
 import { HRMSAlertOptions } from "../../utilities/Config";
 import ReuseButton from "../ReuseButton";
 
-interface CustomAlert {
+export type CustomAlert = {
     ButtonAction: Function;
     Message: string;
     Type: string;
@@ -50,15 +50,6 @@ export default function CustomAlert(
         >
             {props.Type === HRMSAlertOptions.Success ? (
                 <div className="ms-Grid-col ms-lg4">
-                    {/* <img
-                        src={Success}
-                        className="flip-animation"
-                        alt="Success"
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                        }} 
-                    /> */}
                     <div className="sa">
                         <div className="sa-success">
                             <div className="sa-success-tip"></div>
@@ -80,32 +71,12 @@ export default function CustomAlert(
                             <div className="sa-error-fix"></div>
                         </div>
                     </div>
-                    {/* <img
-                        src={Error}
-                        className="flip-animation"
-                        alt="Error"
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                        }}
-                    /> */}
                 </div>
             ) : props.Type === HRMSAlertOptions.Confirmation ? (
                 <div className="ms-Grid-col ms-lg4">
-                    {/* <img
-                        src={Confirmation}
-                        className="flip-animation"
-                        alt="Confirmation"
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                        }}
-                    /> */}
                     <div className="sa">
                         <div className="sa-question">
-                            {/* <div className="sa-question-body"></div> */}
                             <div className="sa-question-mark"></div>
-                            {/* <div className="sa-question-dot"></div> */}
                         </div>
                     </div>
 
@@ -118,15 +89,6 @@ export default function CustomAlert(
                             <div className="sa-warning-dot"></div>
                         </div>
                     </div>
-                    {/* <img
-                        src={Warning}
-                        className="flip-animation"
-                        alt="Warning"
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                        }}
-                    /> */}
                 </div>
             ) : null}
         </div>
