@@ -6,6 +6,7 @@ export default class RecruitmentService implements IRecruitmentService {
     async GetVacancyDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>> {
         try {
             let positionrequestresult: any = [];
+            let positionIDResult:any[]=[];
             const listItems: any[] = await SPServices.SPReadItems({
                 Listname: ListNames.HRMSVacancyReplacementRequest,
                 Select: "*, Department/DepartmentName, SubDepartment/SubDepTitle, Section/SectionName, DepartmentCode/DptCode, Status/StatusDescription, Action/Action, BusinessUnitCode/BusineesUnitCode, JobCode/JobCode",
@@ -51,9 +52,14 @@ export default class RecruitmentService implements IRecruitmentService {
                     IsPayrollEmailed: item.IsPayrollEmailed || "",
                 };
 
-                const filter = [{ FilterKey: "VRRIDId", Operator: "eq", FilterValue: item.Id }];
+                const filter = [{ FilterKey: "VRRID", Operator: "eq", FilterValue: item.Id }];
                 let positionresult: any = await this.GetVacancyPositionDetails(filter, "");
-                let positionId: any = await this.GetPositionDetails(filter, "");
+                let positionId: any = await this.GetPositionDetails(filter, "").then((returnitem: any) => {
+                    if (returnitem?.data && returnitem?.data?.length > 0) {
+                        positionIDResult.push(returnitem.data[0]);
+                    }
+                });
+                
                 console.log("formattedItems positionresult", positionresult);
                 console.log("formattedItems positionId", positionId);
                 if (positionresult?.data?.length > 0) {
@@ -67,12 +73,12 @@ export default class RecruitmentService implements IRecruitmentService {
 
             console.log("formattedItems formattedItems GetVacancyDetails", await Promise.all(formattedItems));
             return {
-                data: formattedItems,
+                data: [formattedItems,positionIDResult],
                 status: 200,
                 message: "GetVacancyDetails fetched successfully",
             };
         } catch (error) {
-            console.error("Error fetching data GetVacancyDetails:", error);
+            console.error("Error fetching data GetVacancyDetailsdd:", error);
             return {
                 data: [],
                 status: 500,
@@ -116,7 +122,7 @@ export default class RecruitmentService implements IRecruitmentService {
                 message: "GetVacancyDetails fetched successfully",
             };
         } catch (error) {
-            console.error("Error fetching data GetVacancyDetails:", error);
+            console.error("Error fetching data GetVacancyDetailsww:", error);
             return {
                 data: [],
                 status: 500,
@@ -144,7 +150,7 @@ export default class RecruitmentService implements IRecruitmentService {
             };
 
         } catch (error) {
-            console.error("Error fetching data GetVacancyDetails:", error);
+            console.error("Error fetching data GetVacancyDetailddfs:", error);
             return {
                 data: [],
                 status: 500,
@@ -164,11 +170,49 @@ export default class RecruitmentService implements IRecruitmentService {
                 Topcount: count.Topcount
             });
 
-            console.log("GetPositionDetails", listItems);
+            console.log("GetPositionDetails HRMSVRRToPositionIDMapping", listItems);
 
             const formattedItems = listItems.map(async (item) => {
                 return {
-                    VRRID: item.VRRIDId ? item.VRRIDId : 0,
+                   // VRRID: item?.VRRIDId ? item?.VRRIDId : 0,
+                    PositionName: item.PositionID?.PositionID ? item.PositionID?.PositionID : "",
+                    PositionID: item.PositionIDId ? item.PositionIDId : 0
+
+                };
+            });
+
+            return {
+                data: await Promise.all(formattedItems),
+                status: 200,
+                message: "GetPositionDetails fetched successfully",
+            };
+        } catch (error) {
+            console.error("Error fetching data GetPositionDetails:", error);
+            return {
+                data: [],
+                status: 500,
+                message: "Error fetching data from GetPositionDetails",
+            };
+        }
+    }
+
+
+    async GetRecruitmentDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>> {
+        try {
+            const listItems: any[] = await SPServices.SPReadItems({
+                Listname: ListNames.HRMSRecruitmentDptDetails,
+                Select: "*,VRRID/ID",
+                Filter: filterParam,
+                FilterCondition: filterConditions,
+                Expand: "VRRID",
+                Topcount: count.Topcount
+            });
+
+            console.log("GetRecruitmentDetails", listItems);
+
+            const formattedItems = listItems.map(async (item) => {
+                return {
+                    VRRID: item?.VRRIDId ? item?.VRRIDId : 0,
                     PositionName: item.PositionID?.PositionID ? item.PositionID?.PositionID : "",
                     PositionID: item.PositionIDId ? item.PositionIDId : 0
 

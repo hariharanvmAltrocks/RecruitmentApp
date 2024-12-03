@@ -7,7 +7,6 @@ import { getVRRDetails } from "../../Services/ServiceExport";
 import { GridStatusBackgroundcolor, StatusId } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Button } from "primereact/button";
-
 interface ColumnConfig {
     field: string;
     header: string;
@@ -27,13 +26,8 @@ const RecruitmentProcess = (props: any) => {
 
     const columnConfig = [
         {
-            field: 'JobCode',
-            header: 'Job Id',
-            sortable: true
-        },
-        {
-            field: 'JobTitleInEnglish',
-            header: 'Job Title',
+            field: 'BusinessUnitCode',
+            header: 'BusinessUnit Code',
             sortable: true
         },
         {
@@ -42,10 +36,20 @@ const RecruitmentProcess = (props: any) => {
             sortable: true
         },
         {
-            field: 'ReasonForVacancy',
-            header: 'ReasonForVacancy',
+            field: 'JobCode',
+            header: 'Job Code',
             sortable: true
         },
+        // {
+        //     field: 'JobTitleInEnglish',
+        //     header: 'Job Title',
+        //     sortable: true
+        // },       
+        // {
+        //     field: 'ReasonForVacancy',
+        //     header: 'ReasonForVacancy',
+        //     sortable: true
+        // },
         {
             field: "Status",
             header: "Status",
@@ -112,12 +116,13 @@ const RecruitmentProcess = (props: any) => {
 
     function handleRedirectView(rowData: any) {
         console.log(`rowDatarowData`, rowData);
-        props.navigation("/RecurimentProcess/ApprovedVRRView");
+        props.navigation("/RecurimentProcess/ApprovedVRREdit");
     }
 
 
 
     const fetchData = async () => {
+     //   await getVRRDetails.GetRecruitmentDetails([],"");
         setIsLoading(true);
         try {
             let filterConditions = [];
@@ -130,7 +135,7 @@ const RecruitmentProcess = (props: any) => {
             const data = await getVRRDetails.GetVacancyDetails(filterConditions, Conditions);
             if (data.status === 200 && data.data !== null) {
                 console.log(data, "GetVacancyDetails");
-                setData(data.data);
+                setData(data.data[0]);
             }
         } catch (error) {
             console.log("GetVacancyDetails doesn't fetch the data", error);

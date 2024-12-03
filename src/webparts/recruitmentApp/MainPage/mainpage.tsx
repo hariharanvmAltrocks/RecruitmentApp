@@ -4,6 +4,7 @@ import MainPageHeader from "./mainPageHeader";
 import { Route, Routes } from "react-router-dom";
 import RecruitmentProcess from "../Screens/RecuritmentProcess/ApprovedVRRList";
 import ApprovedVRRView from "../Screens/RecuritmentProcess/ApprovedVRRView";
+import ApprovedVRREdit from "../Screens/RecuritmentProcess/ApprovedVRREdit";
 import { userInfo } from "../utilities/RoleContext";
 
 export default function MainPage(props: any) {
@@ -35,6 +36,7 @@ export default function MainPage(props: any) {
                                 <Routes>
                                     <Route path="/RecurimentProcess" element={<RecruitmentProcess {...props} {...masterData} />} />
                                     <Route path="/RecurimentProcess/ApprovedVRRView" element={<ApprovedVRRView {...props} {...masterData} />} />
+                                    <Route path="/RecurimentProcess/ApprovedVRREdit" element={<ApprovedVRREdit {...props} {...masterData} />} />
                                 </Routes>
                             </>
                         ) : (

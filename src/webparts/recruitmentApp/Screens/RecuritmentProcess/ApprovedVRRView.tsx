@@ -51,7 +51,7 @@ const ApprovedVRRView: React.FC = () => {
       const Conditions = "";
       const response = await getVRRDetails.GetVacancyDetails(filterConditions, Conditions);
       if (response.status === 200 && response.data !== null) {
-        console.log("Fetched Data:", response.data);
+        console.log("Fetched GetVacancyDetails:", response.data);
         //setPositionName("test"); // Example assignment, adjust as needed
         setBusinessUnitCode("test");
         setBusinessUnitName("test");
