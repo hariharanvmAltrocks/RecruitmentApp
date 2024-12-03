@@ -1,8 +1,8 @@
+import { ILabelStyles, Label } from "@fluentui/react";
+import { TextField } from "office-ui-fabric-react";
 import * as React from "react";
-import { TextField } from "office-ui-fabric-react/lib/TextField";
-import { Label, ILabelStyles } from "@fluentui/react";
 
-interface FieldItems {
+interface fieldItems {
   label?: string;
   value: string | any;
   onChange?: (value: string) => void;
@@ -12,12 +12,11 @@ interface FieldItems {
   mandatory?: boolean;
   readOnly?: boolean;
 }
-
 const labelStyles: ILabelStyles = {
   root: { marginTop: 10, overflowWrap: "inherit" },
 };
 
-const CustomInput: React.FC<FieldItems> = ({
+function CustomInput({
   label,
   value,
   onChange,
@@ -26,7 +25,7 @@ const CustomInput: React.FC<FieldItems> = ({
   maxLength,
   readOnly = false,
   mandatory = false,
-}) => {
+}: fieldItems) {
   return (
     <>
       <Label styles={labelStyles}>
@@ -47,7 +46,9 @@ const CustomInput: React.FC<FieldItems> = ({
         readOnly={readOnly}
         required={false}
         disabled={disabled}
-        onChange={onChange ? (event, newValue) => onChange(newValue || "") : undefined}
+        onChange={
+          onChange ? (event, value) => onChange(value || "") : undefined
+        }
         maxLength={maxLength}
       />
       {error && (
@@ -59,6 +60,6 @@ const CustomInput: React.FC<FieldItems> = ({
       )}
     </>
   );
-};
+}
 
 export default CustomInput;

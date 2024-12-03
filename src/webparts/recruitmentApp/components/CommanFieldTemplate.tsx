@@ -1,30 +1,30 @@
 import * as React from "react";
 import { Card } from "@mui/material";
-import TabsComponent from "../../components/TabsComponent ";
-import SearchableDataTable from "../../components/CustomDataTable";
-import "../../App.css";
-import { getVRRDetails } from "../../Services/ServiceExport";
-import { GridStatusBackgroundcolor, StatusId } from "../../utilities/Config";
-import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Button } from "primereact/button";
-interface ColumnConfig {
-    field: string;
-    header: string;
-    sortable: boolean;
-    body?: (item?: {}) => {};
-}
+import ReuseButton from "./ReuseButton";
+import CheckboxDataTable from "./CheckboxDataTable";
+import { StatusId } from "../utilities/Config";
+import { getVRRDetails } from "../Services/ServiceExport";
+import CustomLoader from "../Services/Loader/CustomLoader";
+import TabsComponent from "./TabsComponent ";
 
 
-const RecruitmentProcess = (props: any) => {
+
+const CommanFieldTemplate = (props: any) => {
     console.log(props, "ApprovedVRR");
 
     const [data, setData] = React.useState<any[]>([]);
-    const [columns, setColumns] = React.useState<ColumnConfig[]>([]);
     const [rows, setRows] = React.useState<number>(5);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
     const columnConfig = [
+        {
+            field: 'Checkbox',
+            header: "",
+            sortable: false,
+
+        },
         {
             field: 'BusinessUnitCode',
             header: 'BusinessUnit Code',
@@ -40,16 +40,6 @@ const RecruitmentProcess = (props: any) => {
             header: 'Job Code',
             sortable: true
         },
-        // {
-        //     field: 'JobTitleInEnglish',
-        //     header: 'Job Title',
-        //     sortable: true
-        // },       
-        // {
-        //     field: 'ReasonForVacancy',
-        //     header: 'ReasonForVacancy',
-        //     sortable: true
-        // },
         {
             field: "Status",
             header: "Status",
@@ -58,25 +48,23 @@ const RecruitmentProcess = (props: any) => {
             body: (rowData: any) => {
                 return (
                     <span
-                        style={{
-                            backgroundColor:
-                                rowData.Status.includes("Pending") === true // "Pending"
-                                    ? GridStatusBackgroundcolor.Pending
-                                    : rowData.Status.includes("Completed") ===
-                                        true
-                                        ? GridStatusBackgroundcolor
-                                            .CompletedOrApproved
-                                        : rowData.Status.includes("Rejected") === true
-                                            ? GridStatusBackgroundcolor.Rejected
-                                            : rowData.Status.includes("Reverted") === true
-                                                ? GridStatusBackgroundcolor.Reverted
-                                                : rowData.Status.includes("Resubmitted") === true
-                                                    ? GridStatusBackgroundcolor.ReSubmitted
-                                                    : rowData.Status.includes("Draft") === true
-                                                        ? GridStatusBackgroundcolor.Draft
-                                                        : "",
-                            borderRadius: "5px",
-                        }}
+                    // style={{
+                    //     backgroundColor:
+                    //         rowData.Status.includes("Pending") === true // "Pending"
+                    //             ? GridStatusBackgroundcolor.Pending
+                    //             : rowData.Status.includes("Completed") === true
+                    //                 ? GridStatusBackgroundcolor.CompletedOrApproved
+                    //                 : rowData.Status.includes("Rejected") === true
+                    //                     ? GridStatusBackgroundcolor.Rejected
+                    //                     : rowData.Status.includes("Reverted") === true
+                    //                         ? GridStatusBackgroundcolor.Reverted
+                    //                         : rowData.Status.includes("Resubmitted") === true
+                    //                             ? GridStatusBackgroundcolor.ReSubmitted
+                    //                             : rowData.Status.includes("Draft") === true
+                    //                                 ? GridStatusBackgroundcolor.Draft
+                    //                                 : "",
+                    //     borderRadius: "5px",
+                    // }}
                     >
                         {rowData.Status}
                     </span>
@@ -84,12 +72,12 @@ const RecruitmentProcess = (props: any) => {
             },
         },
         {
-            field: "Action",
+            field: "",
             header: "Action",
             sortable: false,
             body: (rowData: any) => {
                 return (
-                    <div
+                    <span
                         style={{
                             display: "flex",
                             flexDirection: "row",
@@ -108,7 +96,11 @@ const RecruitmentProcess = (props: any) => {
                                 padding: "3px",
                             }}
                         />
-                    </div>
+                        <ReuseButton
+                            label="Assign"
+                        // onClick={AssignPopups}
+                        />
+                    </span>
                 );
             },
         },
@@ -116,13 +108,12 @@ const RecruitmentProcess = (props: any) => {
 
     function handleRedirectView(rowData: any) {
         console.log(`rowDatarowData`, rowData);
-        props.navigation("/RecurimentProcess/ApprovedVRREdit");
+        props.navigation("/CommanTemplate/CommanTemplate");
     }
 
 
 
     const fetchData = async () => {
-        //   await getVRRDetails.GetRecruitmentDetails([],"");
         setIsLoading(true);
         try {
             let filterConditions = [];
@@ -146,7 +137,6 @@ const RecruitmentProcess = (props: any) => {
 
     React.useEffect(() => {
         void fetchData();
-        setColumns(columnConfig);
     }, []);
 
 
@@ -154,18 +144,18 @@ const RecruitmentProcess = (props: any) => {
         setFirst(event.first);
         setRows(event.rows);
     };
-
     const tabs = [
         {
             label: "My Submission",
             value: "tab1",
             content: (
                 <div className="menu-card">
-                    <SearchableDataTable
+                    <CheckboxDataTable
                         data={data}
-                        columns={columns}
+                        columns={columnConfig}
                         rows={rows}
                         onPageChange={onPageChange}
+                        selection={[]}
                     />
                 </div>
 
@@ -175,16 +165,20 @@ const RecruitmentProcess = (props: any) => {
 
 
     return (
-        <CustomLoader isLoading={isLoading}>
-            <Card variant="outlined" sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3" }}>
-                <React.Fragment>
-                    <TabsComponent tabs={tabs} initialTab="tab1" />
-                    {console.log(props.masterData, "masterDataDetails")}
-                    {console.log(first, "first")}
-                </React.Fragment>
-            </Card>
-        </CustomLoader>
+        <>
+            <CustomLoader isLoading={isLoading}>
+                <Card variant="outlined" sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3" }}>
+                    <React.Fragment>
+                        <TabsComponent tabs={tabs} initialTab="tab1" tabClassName={"Tab"} />
+                        {console.log(props.masterData, "masterDataDetails")}
+                        {console.log(first, "first")}
+                    </React.Fragment>
+                </Card>
+            </CustomLoader>
+
+        </>
+
 
     )
 }
-export default RecruitmentProcess;
+export default CommanFieldTemplate;

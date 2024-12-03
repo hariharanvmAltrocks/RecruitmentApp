@@ -479,7 +479,7 @@ p:hover .tooltip {
     /* Add a subtle shadow */
     margin: 10px;
     /* Adjust the margin as needed */
-    /* height: calc(100vh - 309px); */
+    height: calc(100vh - 309px);
 }
 
 .main-menu-card {
@@ -861,18 +861,6 @@ html {
     gap: 4rem;
 }
 
-.menu-card {
-    background-color: white;
-    /* Set the background color */
-    padding: 20px;
-    /* Add some padding for spacing */
-    border-radius: 5px;
-    /* Add rounded corners for a card-like appearance */
-    box-shadow: 0px 2px 4px 3px lightgray;
-    /* Add a subtle shadow */
-    margin: 10px;
-    /* Adjust the margin as needed */
-}
 
 .fifty-percent-width {
     width: 40%;
@@ -1257,3 +1245,115 @@ html {
     font-size: 16px !important;
     margin-top: 1%;
 }
+
+.TabStatus.MuiTabs-root {
+    background-color: #EF3340 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 4px 3px rgba(235, 3, 3, 0.2) !important;
+    display: flex !important;
+    height: 80px !important;
+    justify-content: space-evenly !important;
+    margin-left: 34px;
+    text-align: center !important;
+    width: 81% !important;
+    font-family: "Roboto", sans-serif !important;
+    text-transform: capitalize;
+    align-items: center;
+    margin-top: 2%;
+}
+
+.Tab.MuiTabs-root {
+    background-color: #EF3340 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 4px 3px rgba(235, 3, 3, 0.2) !important;
+    display: flex !important;
+    height: 80px !important;
+    justify-content: space-evenly !important;
+    margin-left: 34px;
+    text-align: center !important;
+    width: 92% !important;
+    font-family: "Roboto", sans-serif !important;
+    text-transform: capitalize;
+    align-items: center;
+    margin-top: 2%;
+}
+
+.overlay-component {
+    position: absolute;
+    top: 0;
+    /* left: 0; */
+    right: 0;
+    /* bottom: 0; */
+    max-height: max-content;
+    /* z-index: 1; */
+    /* Adjust the z-index to control the stacking order */
+}
+
+@media (max-width: 600px) {
+    .StatusBar-container {
+        max-width: 87px;
+        margin-left: 90%;
+        cursor: pointer;
+        margin-top: 20px;
+        height: 80px;
+        background-color: rgb(239, 51, 64);
+        padding: 14px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px 3px #eeb9b9;
+    }
+}
+
+@media (max-width: 600px) {
+    .circularpercentage-container {
+        max-width: 60px;
+        margin-left: 7%;
+    }
+}
+
+@media (min-width: 601px) {
+    .circularpercentage-container {
+        max-width: 60px;
+        margin-left: 7%;
+    }
+}
+
+@media (max-width: 600px) {
+    .circularpercentage-container {
+        max-width: 60px;
+        margin-left: 7%;
+    }
+}
+
+@media (min-width: 601px) {
+    .circularpercentage-container {
+        max-width: 60px;
+        margin-left: 7%;
+    }
+}
+
+.circularpercentage {
+    /* border: 1px solid !important; */
+    border-radius: 25px !important;
+    background-color: lightcyan;
+}
+
+
+/* .p-dialog-mask{
+    z-index: auto !important;
+} */
+
+.p-dialog-header {
+    padding-left: 1%;
+    /* padding-top: 1%; */
+}
+
+/* .p-dialog-footer {
+    /* padding-bottom: 1%; 
+} */
+
+.p-dialog-content {
+    scroll-behavior: auto;
+    scrollbar-width: none;
+}
+
+/* App.css or any other style file */
