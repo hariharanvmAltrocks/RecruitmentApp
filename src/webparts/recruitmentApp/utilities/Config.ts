@@ -19,6 +19,10 @@ export const ListNames = {
     HRMSVRRPositionDetails: "HRMSVRRPositionDetails",
     HRMSCompanyCodeDetails: "HRMSCompanyCodeDetails",
     JDEDataMapping: "JDEDataMapping",
+    HRMSRecruitmentDptDetails:"HRMSRecruitmentDptDetails",
+    HRMSRecruitmentPositionDetails:"HRMSRecruitmentPositionDetails",
+    HRMSVRRToPositionIDMapping: "HRMSVRRToPositionIDMapping",
+
 };
 
 export const StatusId = {
@@ -92,3 +96,17 @@ export const count = {
     Topcount: 1000,
     CamelQuery: 5000
 };
+
+export const WorkflowAction = {
+    Approved: 1,
+    Reject: 2,
+    Revert: 3,
+    Transfer: 4,
+    Submitted: 5,
+    Closed: 6,
+    ReSubmitted: 7,
+  };
+
+  export const viewLabelcolor = {
+    Labelcolor: "#9A5E5E",
+  };
