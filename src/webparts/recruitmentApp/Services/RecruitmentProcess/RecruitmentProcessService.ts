@@ -55,9 +55,11 @@ export default class RecruitmentService implements IRecruitmentService {
                 const filter = [{ FilterKey: "VRRID", Operator: "eq", FilterValue: item.Id }];
                 let positionresult: any = await this.GetVacancyPositionDetails(filter, "");
                 let positionId: any = await this.GetPositionDetails(filter, "").then((returnitem: any) => {
+                    console.log("formattedItems returnitem positionresult", returnitem);
                     if (returnitem?.data && returnitem?.data?.length > 0) {
-                        positionIDResult.push(returnitem.data[0]);
+                        positionIDResult =positionIDResult.concat(returnitem.data);
                     }
+                    return positionIDResult;
                 });
                 
                 console.log("formattedItems positionresult", positionresult);
@@ -131,33 +133,33 @@ export default class RecruitmentService implements IRecruitmentService {
         }
     }
 
-    async InsertRecruitmentDpt(Table1: any, Table2: any): Promise<ApiResponse<any | null>> {
-        try {
-            let Table1Insert = {
-                VRRIDId: Table1.VRRID,
-                ActionId: WorkflowAction.Submitted
-            }
-            await SPServices.SPAddItem({
-                Listname: ListNames.HRMSRecruitmentDptDetails,
-                RequestJSON: Table1Insert,
-            }).then(async (data: any) => {
+    // async InsertRecruitmentDpt(Table1: any, Table2: any): Promise<ApiResponse<any | null>> {
+    //     try {
+    //         let Table1Insert = {
+    //             VRRIDId: Table1.VRRID,
+    //             ActionId: WorkflowAction.Submitted
+    //         }
+    //         await SPServices.SPAddItem({
+    //             Listname: ListNames.HRMSRecruitmentDptDetails,
+    //             RequestJSON: Table1Insert,
+    //         }).then(async (data: any) => {
 
-            });
-            return {
-                data: [],
-                status: 200,
-                message: "GetVacancyDetails fetched successfully",
-            };
+    //         });
+    //         return {
+    //             data: [],
+    //             status: 200,
+    //             message: "GetVacancyDetails fetched successfully",
+    //         };
 
-        } catch (error) {
-            console.error("Error fetching data GetVacancyDetailddfs:", error);
-            return {
-                data: [],
-                status: 500,
-                message: "Error fetching data from GetVacancyDetails",
-            };
-        }
-    }
+    //     } catch (error) {
+    //         console.error("Error fetching data GetVacancyDetailddfs:", error);
+    //         return {
+    //             data: [],
+    //             status: 500,
+    //             message: "Error fetching data from GetVacancyDetails",
+    //         };
+    //     }
+    // }
 
     async GetPositionDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>> {
         try {
@@ -174,7 +176,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
             const formattedItems = listItems.map(async (item) => {
                 return {
-                   // VRRID: item?.VRRIDId ? item?.VRRIDId : 0,
+                    VRRID: item?.VRRIDId ? item?.VRRIDId : 0,
                     PositionName: item.PositionID?.PositionID ? item.PositionID?.PositionID : "",
                     PositionID: item.PositionIDId ? item.PositionIDId : 0
 
@@ -234,31 +236,54 @@ export default class RecruitmentService implements IRecruitmentService {
         }
     }
 
-    // async InsertRecruitmentDpt(Table1: any, Table2: any): Promise<ApiResponse<any | null>> {
-    //     try {
-    //         let Table1Insert = {
-    //             VRRIDId: Table1.VRRID,
-    //             ActionId: WorkflowAction.Submitted
-    //         }
-    //         await SPServices.SPAddItem({
-    //             Listname: ListNames.HRMSRecruitmentDptDetails,
-    //             RequestJSON: Table1Insert,
-    //         }).then(async (data: any) => {
-
-    //         });
-    //         return {
-    //             data: [],
-    //             status: 200,
-    //             message: "GetVacancyDetails fetched successfully",
-    //         };
-
-    //     } catch (error) {
-    //         console.error("Error fetching data GetVacancyDetails:", error);
-    //         return {
-    //             data: [],
-    //             status: 500,
-    //             message: "Error fetching data from GetVacancyDetails",
-    //         };
-    //     }
-    // }
+    async InsertRecruitmentDpt(Table1: any, Table2: any): Promise<ApiResponse<any | null>> {
+        try {
+            let Table1Insert = {
+                VRRIDId: Table1.VRRID,
+                ActionId: WorkflowAction.Submitted,
+                Nationality: Table1.Nationality,
+                EmploymentCategory: Table1.EmploymentCategory,
+                DepartmentId: Table1.Department,
+                SubDepartmentId: Table1.SubDepartment,
+                SectionId: Table1.Section,
+                DepartmentCodeId: Table1.DepartmentCode,
+                StatusId: Table1.Status,
+                NumberOfPersonNeeded: Table1.NumberOfPersonNeeded,
+                EnterNumberOfMonths: Table1.EnterNumberOfMonths,
+                TypeOfContract: Table1.TypeOfContract,
+                DateRequried: Table1.DateRequried,
+                IsRevert: Table1.IsRevert,
+                ReasonForVacancy: Table1.ReasonForVacancy,
+                AreaofWork: Table1.AreaofWork,
+                JobCodeId: Table1.JobCode,
+                VacancyConfirmed: Table1.VacancyConfirmed,
+                RecruitmentAuthorised: Table1.RecruitmentAuthorised,
+                IsPayrollEmailed: Table1.IsPayrollEmailed,
+                AssignedHRId: Table1.AssignedHR, // Person or Group field requires an ID
+                AssignLineManagerId: Table1.AssignLineManager, // Person or Group field requires an ID
+                BusinessUnitCodeId: Table1.BusinessUnitCode,
+            };
+    
+            await SPServices.SPAddItem({
+                Listname: ListNames.HRMSRecruitmentDptDetails,
+                RequestJSON: Table1Insert,
+            }).then(async (data: any) => {
+                console.log("Insert successful:", data);
+            });
+    
+            return {
+                data: [],
+                status: 200,
+                message: "GetVacancyDetails fetched successfully",
+            };
+        } catch (error) {
+            console.error("Error inserting data into HRMSRecruitmentDptDetails:", error);
+            return {
+                data: [],
+                status: 500,
+                message: "Error inserting data into HRMSRecruitmentDptDetails",
+            };
+        }
+    }
+    
 }

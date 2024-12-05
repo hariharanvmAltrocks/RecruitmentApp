@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect,useRef  } from "react";
+import { useState, useEffect, useRef } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import TabsComponent from "../../components/TabsComponent ";
@@ -8,8 +8,9 @@ import { getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
+import ReuseButton from "../../components/ReuseButton";
 
-const ApprovedVRREdit: React.FC = () => {
+const ApprovedVRREdit: React.FC = (props: any) => {
     const [tabVisibility, setTabVisibility] = useState({
         tab1: true,
         tab2: false,
@@ -36,7 +37,18 @@ const ApprovedVRREdit: React.FC = () => {
     //const [data, setData] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [formState, setFormState] = useState({
-        BusinessUnitCode: "dsd",
+        VRRID:0,
+        BusinessUnitCodeID:0,
+        DepartmentID:0,
+        SubDepartmentID:0,
+        SectionID:0,
+        DepartmentCodeID:0,
+        JobNameInEnglishID:0,
+        JobNameInFrenchID:0,
+        PatersonGradeID:0,
+        DRCGradeID:0,
+        JobCodeID:0,
+        BusinessUnitCode: "",
         BusinessUnitName: "",
         BusinessUnitDescription: "",
         Department: "",
@@ -46,6 +58,7 @@ const ApprovedVRREdit: React.FC = () => {
         Nationality: "",
         JobNameInEnglish: "",
         JobNameInFrench: "",
+        NoofPositionAssigned: "",
         PatersonGrade: "",
         DRCGrade: "",
         EmployementCategory: "",
@@ -53,7 +66,7 @@ const ApprovedVRREdit: React.FC = () => {
         JobCode: "",
         AreaOfWork: "",
     });
-    
+
     const fetchData = async () => {
         if (isLoading) return; // Prevent re-execution if already loading
         setIsLoading(true);
@@ -70,25 +83,47 @@ const ApprovedVRREdit: React.FC = () => {
             console.log("Fetched GetVacancyDetails: response", response);
             if (response.status === 200 && response.data !== null) {
                 const op = response.data[0][0];
+                const NoofPositionAssigned = response.data[1];
+                console.log("NoofPositionAssigned", NoofPositionAssigned);
+                const BUName: any = props?.BusinessUnitCodeAllColumn.filter(
+                    (item: any) => (item.key === op.BusinessUnitCodeId)
+                );
+                const JobtitleFrench: any = props?.JobInFrenchList.filter(
+                    (item: any) => (item.key === op.JobTitleInFrenchId)
+                );
+                console.log("BUName:", BUName);
                 console.log("Fetched GetVacancyDetails:", op);
-                setFormState({
+                setFormState((prevState) => ({
+                    ...prevState,
+                    VRRID:op.VRRID,
+                    BusinessUnitCodeID:op.BusinessUnitCodeId,
+                    DepartmentID:op.DepartmentId,
+                    SubDepartmentID:op.SubDepartmentId,
+                    SectionID:op.SectionId,
+                    DepartmentCodeID:op.DepartmentCodeId,
+                    JobNameInEnglishID:op.JobTitleInEnglishId,
+                    JobNameInFrenchID:op.JobTitleInFrenchId,
+                    PatersonGradeID:op.PayrollGradeId,
+                    DRCGradeID:op.DRCGradeId,
+                    JobCodeID:op.JobCodeId,
                     BusinessUnitCode: op.BusinessUnitCode || "",
-                    BusinessUnitName: op.BusinessUnitName || "",
-                    BusinessUnitDescription: op.BusinessUnitDescription || "",
+                    BusinessUnitName: BUName[0]?.Name || "",
+                    BusinessUnitDescription: BUName[0]?.Description || "",
                     Department: op.Department || "",
                     SubDepartment: op.SubDepartment || "",
                     Section: op.Section || "",
                     DepartmentCode: op.DepartmentCode || "",
                     Nationality: op.Nationality || "",
                     JobNameInEnglish: op.JobTitleInEnglish || "",
-                    JobNameInFrench: op.JobTitleInFrench || "",
+                    JobNameInFrench: JobtitleFrench[0]?.text || "",
                     PatersonGrade: op.PayrollGrade || "",
                     DRCGrade: op.DRCGrade || "",
                     EmployementCategory: op.EmploymentCategory || "",
                     ContractType: op.TypeOfContract || "",
                     JobCode: op.JobCode || "",
                     AreaOfWork: op.AreaofWork || "",
-                });
+                    NoofPositionAssigned: NoofPositionAssigned?.length || 0,
+                }));
             }
         } catch (error) {
             console.error("Failed to fetch Vacancy Details:", error);
@@ -96,28 +131,59 @@ const ApprovedVRREdit: React.FC = () => {
             setIsLoading(false);
         }
     };
-    
+    const SaveRecruitment = async () => {
+        try {
+            let Table1: any = {
+                //   VRRID: formState.VRRID,
+
+                BusinessUnitCode: formState.BusinessUnitCode,
+                Nationality: formState.Nationality,
+                EmploymentCategory: formState.EmployementCategory,
+                Department: formState.Department,
+                SubDepartment: formState.SubDepartment,
+                Section: formState.Section,
+                DepartmentCode: formState.DepartmentCode,
+                NumberOfPersonNeeded: formState.NoofPositionAssigned,
+                EnterNumberOfMonths: formState.NoofPositionAssigned,
+                TypeOfContract: formState.ContractType,
+                DateRequried: formState.Department,
+                IsRevert: formState.AreaOfWork,
+                ReasonForVacancy: formState.AreaOfWork,
+                AreaofWork: formState.AreaOfWork,
+                JobCode: formState.JobCode,
+                VacancyConfirmed: formState.AreaOfWork,
+
+            };
+            const response = await getVRRDetails.InsertRecruitmentDpt(Table1, []);
+            console.log(response);
+        } catch (error) {
+            console.error("Failed to fetch Vacancy Details:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     const isInitialized = useRef(false);
 
-useEffect(() => {
-    const initialize = async () => {
-        if (isInitialized.current) return; // Skip if already initialized
-        isInitialized.current = true;
+    useEffect(() => {
+        const initialize = async () => {
+            if (isInitialized.current) return; // Skip if already initialized
+            isInitialized.current = true;
 
-        setTabVisibility({
-            tab1: true,
-            tab2: false,
-            tab3: false,
-        });
-        await fetchData();
-    };
+            setTabVisibility({
+                tab1: true,
+                tab2: false,
+                tab3: false,
+            });
+            await fetchData();
+        };
 
-    void initialize();
-}, []);
+        void initialize();
+    }, []);
 
-    
-    
-  
+
+
+
 
     const tabs = [
         {
@@ -141,7 +207,7 @@ useEffect(() => {
                                             {" "}
                                         </LabelHeaderComponents>
                                     </div>
-                                </div>                               
+                                </div>
                                 <div className="ms-Grid-row">
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
@@ -165,7 +231,7 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, BusinessUnitName: value }))
-                                            }                                           
+                                            }
                                         />
                                     </div>
                                     <div className="ms-Grid-col ms-lg3">
@@ -177,7 +243,7 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, BusinessUnitDescription: value }))
-                                            }                                            
+                                            }
                                         />
                                     </div>
                                     <div className="ms-Grid-col ms-lg3">
@@ -188,7 +254,7 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, Department: value }))
-                                            } 
+                                            }
                                         />
                                     </div>
                                 </div>
@@ -201,7 +267,7 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, SubDepartment: value }))
-                                            }                                             
+                                            }
                                         />
 
                                     </div>
@@ -213,7 +279,7 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, Section: value }))
-                                            }                                              
+                                            }
                                         />
 
 
@@ -240,14 +306,9 @@ useEffect(() => {
                                                 setFormState((prevState) => ({ ...prevState, Nationality: value }))
                                             }
                                         />
-
                                     </div>
-
                                 </div>
-
                                 <div className="ms-Grid-row">
-
-
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="Position Name (English)"
@@ -258,9 +319,7 @@ useEffect(() => {
                                                 setFormState((prevState) => ({ ...prevState, JobNameInEnglish: value }))
                                             }
                                         />
-
                                     </div>
-
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="Position Name (French)"
@@ -269,9 +328,8 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, JobNameInFrench: value }))
-                                            }                                           
+                                            }
                                         />
-
                                     </div>
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
@@ -281,9 +339,8 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, PatersonGrade: value }))
-                                            }                                             
+                                            }
                                         />
-
                                     </div>
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
@@ -293,9 +350,8 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, DRCGrade: value }))
-                                            }                                              
+                                            }
                                         />
-
                                     </div>
                                 </div>
                                 <div className="ms-Grid-row">
@@ -308,7 +364,7 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, EmployementCategory: value }))
-                                            }  
+                                            }
                                         />
                                     </div>
                                     <div className="ms-Grid-col ms-lg3">
@@ -320,7 +376,7 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, ContractType: value }))
-                                            } 
+                                            }
                                         />
                                     </div>
                                     <div className="ms-Grid-col ms-lg3">
@@ -332,7 +388,7 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, AreaOfWork: value }))
-                                            } 
+                                            }
                                         />
                                     </div>
                                     <div className="ms-Grid-col ms-lg3">
@@ -343,10 +399,35 @@ useEffect(() => {
                                             mandatory={false}
                                             onChange={(value) =>
                                                 setFormState((prevState) => ({ ...prevState, JobCode: value }))
-                                            } 
+                                            }
                                         />
 
                                     </div>
+                                </div>
+                                <div className="ms-Grid-row">
+                                    <div className="ms-Grid-col ms-lg3">
+                                        <CustomInput
+                                            label="No.Of Position Assigned"
+                                            value={formState.NoofPositionAssigned}
+                                            disabled={true}
+                                            error={false}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setFormState((prevState) => ({ ...prevState, NoofPositionAssigned: value }))
+                                            }
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="ms-Grid-row">
+                                    <ReuseButton
+                                        spacing={4}
+                                        onClick={async () => {
+                                            await SaveRecruitment(); // Ensure the promise is awaited
+                                        }}
+                                        width="100%"
+                                        label="Submit"
+                                    />
                                 </div>
                             </div>
                         )}
