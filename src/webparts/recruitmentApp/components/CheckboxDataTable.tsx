@@ -35,11 +35,12 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [selectAll, setSelectAll] = React.useState<boolean>(false);
+    const [checkedValue, setCheckedValue] = React.useState<any[]>([]);
 
 
     React.useEffect(() => {
         if (searchTerm === '') {
-            setFilteredItems(data);
+            setFilteredItems(filteredItems);
         } else {
             setFilteredItems(
                 data.filter((item) =>
@@ -86,8 +87,16 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     };
 
     const handleCheckbox = (value: boolean, rowData: any) => {
-        const updatedRowData: any[] = data.map((item: any) => {
-            if (item.VRRID === rowData.VRRID) {
+        debugger;
+
+        let DataValue = checkedValue.length > 0 ? filteredItems : data;
+
+        const updatedRowData = DataValue.map((item: any) => {
+            if (item.ID === rowData.ID) {
+                if (item.Checked === true && value === true) {
+                    return item;
+                }
+
                 return {
                     ...item,
                     Checked: value,
@@ -95,9 +104,33 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
             }
             return item;
         });
+        let CheckedValue = updatedRowData.filter((item) => item.Checked === true)
+        console.log(CheckedValue, "CheckedValue");
+        const updatedCheckedValues = CheckedValue
+            ? [...checkedValue, CheckedValue]
+            : []
+
+        setCheckedValue(updatedCheckedValues)
         console.log(updatedRowData, "updatedRowData");
         setFilteredItems(updatedRowData);
     };
+
+    const Shortlistbtnfn = (rowData: any, ActionStatus: string) => {
+        let DataValue = checkedValue.length > 0 ? filteredItems : data;
+
+        const updatedRowData = DataValue.map((item: any) => {
+            if (item.ID === rowData.ID) {
+
+                return {
+                    ...item,
+                    ShortlistValue: ActionStatus,
+                };
+            }
+            return item;
+        });
+        console.log(updatedRowData, "updatedRowData");
+        setFilteredItems(updatedRowData);
+    }
 
 
 
@@ -192,6 +225,37 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                                     );
                                 }
 
+                                if (col.header === "Action" && col.field === "Shrotlistbtn") {
+                                    return (
+                                        <Column
+                                            key={col.field}
+                                            header={"Action"}
+                                            sortable={false}
+                                            style={{ width: "1%" }}
+                                            body={(rowData: any) => {
+                                                return (
+                                                    <span style={{ display: "flex" }}>
+                                                        <ReuseButton
+                                                            label="Shortlist"
+                                                            onClick={() => Shortlistbtnfn(rowData, "Shortlist")}
+                                                            backgroundColor={rowData.ShortlistValue === "Shortlist" ? "rgb(205, 45, 45)" : "white"}
+                                                            Style={{ color: rowData.ShortlistValue === "Shortlist" ? "white" : "rgb(205, 45, 45)" }}
+
+                                                        />
+                                                        <ReuseButton
+                                                            label="Rejected"
+                                                            onClick={() => Shortlistbtnfn(rowData, "Rejected")}
+                                                            backgroundColor={rowData.ShortlistValue === "Rejected" ? "rgb(205, 45, 45)" : "white"}
+                                                            Style={{ color: rowData.ShortlistValue === "Rejected" ? "white" : "rgb(205, 45, 45)" }}
+                                                        />
+
+                                                    </span>
+
+                                                );
+                                            }}
+                                        />
+                                    );
+                                }
                                 // Render other columns normally
                                 return (
                                     <Column
@@ -202,6 +266,8 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                                         body={col.body}
                                     />
                                 );
+
+
                             })}
                         </DataTable>
 

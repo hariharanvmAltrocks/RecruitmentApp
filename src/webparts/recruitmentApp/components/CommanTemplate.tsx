@@ -98,7 +98,7 @@ const CommanTemplate = (props: any) => {
             let filterConditions = [];
             let Conditions = "";
             filterConditions.push({
-                FilterKey: "VRRIDId",
+                FilterKey: "VRRID",
                 Operator: "eq",
                 FilterValue: props.stateValue?.VRRID
             });

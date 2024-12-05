@@ -4,7 +4,7 @@ import "../App.css";
 
 interface DynamicFormDialogProps {
     onClose: () => void;
-    children?: React.ReactNode;
+    children?: JSX.Element;
     visible: boolean;
     header: string | null;
     width?: string;

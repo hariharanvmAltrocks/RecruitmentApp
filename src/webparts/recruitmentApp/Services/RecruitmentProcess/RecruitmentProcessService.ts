@@ -1,4 +1,6 @@
-import { ListNames, WorkflowAction, count } from "../../utilities/Config";
+import { InterviewPanelCandidateDetails } from "../../Models/RecuritmentVRR";
+import { DocumentLibraray, ListNames, WorkflowAction, count } from "../../utilities/Config";
+import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
 import { IRecruitmentService } from "./IRecruitmentProcessService";
 export default class RecruitmentService implements IRecruitmentService {
@@ -6,7 +8,7 @@ export default class RecruitmentService implements IRecruitmentService {
     async GetVacancyDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>> {
         try {
             let positionrequestresult: any = [];
-            let positionIDResult:any[]=[];
+            let positionIDResult: any[] = [];
             const listItems: any[] = await SPServices.SPReadItems({
                 Listname: ListNames.HRMSVacancyReplacementRequest,
                 Select: "*, Department/DepartmentName, SubDepartment/SubDepTitle, Section/SectionName, DepartmentCode/DptCode, Status/StatusDescription, Action/Action, BusinessUnitCode/BusineesUnitCode, JobCode/JobCode",
@@ -59,7 +61,7 @@ export default class RecruitmentService implements IRecruitmentService {
                         positionIDResult.push(returnitem.data[0]);
                     }
                 });
-                
+
                 console.log("formattedItems positionresult", positionresult);
                 console.log("formattedItems positionId", positionId);
                 if (positionresult?.data?.length > 0) {
@@ -73,7 +75,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
             console.log("formattedItems formattedItems GetVacancyDetails", await Promise.all(formattedItems));
             return {
-                data: [formattedItems,positionIDResult],
+                data: [formattedItems, positionIDResult],
                 status: 200,
                 message: "GetVacancyDetails fetched successfully",
             };
@@ -174,7 +176,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
             const formattedItems = listItems.map(async (item) => {
                 return {
-                   // VRRID: item?.VRRIDId ? item?.VRRIDId : 0,
+                    // VRRID: item?.VRRIDId ? item?.VRRIDId : 0,
                     PositionName: item.PositionID?.PositionID ? item.PositionID?.PositionID : "",
                     PositionID: item.PositionIDId ? item.PositionIDId : 0
 
@@ -261,4 +263,56 @@ export default class RecruitmentService implements IRecruitmentService {
     //         };
     //     }
     // }
+
+    async GetCandidateDetails(filterParam: any, filterConditions: any) {
+        try {
+            const CandidateDetails: InterviewPanelCandidateDetails[] = [];
+
+            const listItems: any[] = await SPServices.SPReadItems({
+                Listname: ListNames.InterviewPanelCandidateDetails,
+                Select: "*,JobCode/JobCode",
+                // Filter: filterParam,
+                Expand: "JobCode",
+                Topcount: count.Topcount,
+            });
+
+            const formattedItems = listItems.map(async (item) => {
+                console.log("InterviewPanelCandidateDetails ", item);
+                const candidateCV = (await SPServices.getDocLibFiles({
+                    FilePath: `${DocumentLibraray.InterviewPanelCandidateCV}/${item.JobCode?.JobCode}/${item?.PassportID}`, //${"ASD9870J"}
+                })) as IDocFiles[];
+                console.log(candidateCV, "candidateCV");
+
+                return {
+                    ID: item.ID,
+                    JobCode: item.JobCode?.JobCode,
+                    PassportID: item?.PassportID,
+                    FristName: item?.FristName,
+                    MiddleName: item?.MiddleName,
+                    LastName: item?.LastName,
+                    CandidateCVDoc: candidateCV,
+                };
+            });
+
+            const resolvedItems = await Promise.all(formattedItems);
+
+            CandidateDetails.push(...resolvedItems);
+            console.log(CandidateDetails, "CandidateDetails");
+
+
+            return {
+                data: CandidateDetails,
+                status: 200,
+                message: "InterviewPanelCandidateDetails fetched successfully",
+            };
+        } catch (error) {
+            console.error("Error fetching data InterviewPanelCandidateDetails:", error);
+            return {
+                data: [],
+                status: 500,
+                message: "Error fetching data from InterviewPanelCandidateDetails",
+            };
+        }
+    }
+
 }

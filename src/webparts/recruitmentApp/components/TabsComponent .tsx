@@ -155,7 +155,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                     </div>
                 </div>
 
-                {tabClassName == "TabStatus" && (
+                {tabClassName === "TabStatus" && (
                     <div className="overlay-component">
                         <StatusBar statusList={Statuslist} />
                     </div>
