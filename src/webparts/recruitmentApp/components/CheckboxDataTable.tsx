@@ -40,10 +40,10 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
 
     React.useEffect(() => {
         if (searchTerm === '') {
-            setFilteredItems(filteredItems);
+            setFilteredItems(data);
         } else {
             setFilteredItems(
-                data.filter((item) =>
+                filteredItems.filter((item) =>
                     columns.some((col) =>
                         item[col.field]?.toString().toLowerCase().includes(searchTerm.toLowerCase())
                     )
@@ -59,7 +59,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     const handleRefresh = () => {
         setIsLoading(true);
         setSearchTerm('');
-        setFilteredItems(data);
+        setFilteredItems(filteredItems);
         setFirst(0);
         setTimeout(() => {
             setIsLoading(false);
@@ -116,9 +116,9 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     };
 
     const Shortlistbtnfn = (rowData: any, ActionStatus: string) => {
-        let DataValue = checkedValue.length > 0 ? filteredItems : data;
+        // let DataValue = checkedValue.length > 0 ? filteredItems : data;
 
-        const updatedRowData = DataValue.map((item: any) => {
+        const updatedRowData = filteredItems.map((item: any) => {
             if (item.ID === rowData.ID) {
 
                 return {
