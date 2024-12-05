@@ -8,6 +8,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import CustomCheckBox from "./CustomCheckbox";
 
+
 interface ColumnConfig {
     field: string;
     header: string | ((item?: any) => React.ReactNode);
