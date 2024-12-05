@@ -19,11 +19,16 @@ export const ListNames = {
     HRMSVRRPositionDetails: "HRMSVRRPositionDetails",
     HRMSCompanyCodeDetails: "HRMSCompanyCodeDetails",
     JDEDataMapping: "JDEDataMapping",
-    HRMSRecruitmentDptDetails:"HRMSRecruitmentDptDetails",
-    HRMSRecruitmentPositionDetails:"HRMSRecruitmentPositionDetails",
+    HRMSRecruitmentDptDetails: "HRMSRecruitmentDptDetails",
+    HRMSRecruitmentPositionDetails: "HRMSRecruitmentPositionDetails",
     HRMSVRRToPositionIDMapping: "HRMSVRRToPositionIDMapping",
+    InterviewPanelCandidateDetails: "InterviewPanelCandidateDetails"
 
 };
+
+export const DocumentLibraray = {
+    InterviewPanelCandidateCV: "InterviewPanelCandidateCV"
+}
 
 export const StatusId = {
     InitiatedforRecruitmentProcess: 68,
@@ -105,8 +110,8 @@ export const WorkflowAction = {
     Submitted: 5,
     Closed: 6,
     ReSubmitted: 7,
-  };
+};
 
-  export const viewLabelcolor = {
+export const viewLabelcolor = {
     Labelcolor: "#9A5E5E",
-  };
+};

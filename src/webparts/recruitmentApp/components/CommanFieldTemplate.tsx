@@ -1,12 +1,13 @@
 import * as React from "react";
-import { Card } from "@mui/material";
-import { Button } from "primereact/button";
-import ReuseButton from "./ReuseButton";
+import { Card, Link } from "@mui/material";
 import CheckboxDataTable from "./CheckboxDataTable";
 import { StatusId } from "../utilities/Config";
 import { getVRRDetails } from "../Services/ServiceExport";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import TabsComponent from "./TabsComponent ";
+import CustomPopup from "./CustomPopup";
+import AssignRecuritmentHR from "./AssignRecuritmentHR";
+
 
 
 
@@ -17,6 +18,31 @@ const CommanFieldTemplate = (props: any) => {
     const [rows, setRows] = React.useState<number>(5);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isAssign, setIsAssign] = React.useState<boolean>(false);
+
+    const HRFileHandle = (serverUrl: string, fileName: string) => {
+        console.log(serverUrl, "ServerUrl");
+        try {
+            if (serverUrl) {
+
+                if (
+                    fileName
+                        .split(".")[fileName.split(".").length - 1]
+                        .toLocaleLowerCase() == "pdf"
+                ) {
+                    window.open(serverUrl);
+                } else {
+                    window.open(serverUrl + "?web=1");
+                }
+            }
+        } catch (error) {
+            console.error("Error setting up SharePoint:", error);
+        }
+    };
+
+    const isAssignfn = () => {
+        setIsAssign(!isAssign)
+    }
 
     const columnConfig = [
         {
@@ -26,91 +52,58 @@ const CommanFieldTemplate = (props: any) => {
 
         },
         {
-            field: 'BusinessUnitCode',
-            header: 'BusinessUnit Code',
-            sortable: true
-        },
-        {
-            field: 'Department',
-            header: 'Department',
-            sortable: true
-        },
-        {
             field: 'JobCode',
-            header: 'Job Code',
+            header: 'JobCode',
             sortable: true
         },
         {
-            field: "Status",
-            header: "Status",
-            fieldName: "Status",
-            sortable: false,
-            body: (rowData: any) => {
-                return (
-                    <span
-                    // style={{
-                    //     backgroundColor:
-                    //         rowData.Status.includes("Pending") === true // "Pending"
-                    //             ? GridStatusBackgroundcolor.Pending
-                    //             : rowData.Status.includes("Completed") === true
-                    //                 ? GridStatusBackgroundcolor.CompletedOrApproved
-                    //                 : rowData.Status.includes("Rejected") === true
-                    //                     ? GridStatusBackgroundcolor.Rejected
-                    //                     : rowData.Status.includes("Reverted") === true
-                    //                         ? GridStatusBackgroundcolor.Reverted
-                    //                         : rowData.Status.includes("Resubmitted") === true
-                    //                             ? GridStatusBackgroundcolor.ReSubmitted
-                    //                             : rowData.Status.includes("Draft") === true
-                    //                                 ? GridStatusBackgroundcolor.Draft
-                    //                                 : "",
-                    //     borderRadius: "5px",
-                    // }}
-                    >
-                        {rowData.Status}
-                    </span>
-                );
-            },
+            field: 'PassportID',
+            header: 'PassportID',
+            sortable: true
+        },
+        {
+            field: 'FristName',
+            header: 'FristName',
+            sortable: true
         },
         {
             field: "",
+            header: "CV",
+            sortable: false,
+            body: (rowData: any) => {
+                console.log(rowData, "rowDataCandidateCVDoc");
+                if (rowData?.CandidateCVDoc[0] && rowData?.CandidateCVDoc[0]?.name) {
+                    return (
+                        <div>
+                            <Link
+                                onClick={() =>
+                                    HRFileHandle(
+                                        rowData?.CandidateCVDoc[0]?.content || "",
+                                        rowData?.CandidateCVDoc[0]?.name || ""
+                                    )
+                                }
+                            >
+                                {rowData?.CandidateCVDoc[0]?.name}
+                            </Link>
+                        </div>
+                    );
+                } else {
+                    return <span>No CV available</span>;  // Fallback text in case there is no CV
+                }
+            },
+        },
+        {
+            field: "Shrotlistbtn",
             header: "Action",
             sortable: false,
             body: (rowData: any) => {
                 return (
-                    <span
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "5px",
-                        }}
-                    >
-                        <Button
-                            onClick={() => handleRedirectView(rowData)}
-                            className="table_btn"
-                            icon="pi pi-eye"
-                            style={{
-                                width: "30px",
-                                marginRight: "7px",
-                                padding: "3px",
-                            }}
-                        />
-                        <ReuseButton
-                            label="Assign"
-                        // onClick={AssignPopups}
-                        />
+                    <span>
                     </span>
                 );
             },
         },
     ];
-
-    function handleRedirectView(rowData: any) {
-        console.log(`rowDatarowData`, rowData);
-        props.navigation("/CommanTemplate/CommanTemplate");
-    }
-
 
 
     const fetchData = async () => {
@@ -123,10 +116,11 @@ const CommanFieldTemplate = (props: any) => {
                 Operator: "eq",
                 FilterValue: StatusId.InitiatedforRecruitmentProcess
             });
-            const data = await getVRRDetails.GetVacancyDetails(filterConditions, Conditions);
+            const data = await getVRRDetails.GetCandidateDetails(filterConditions, Conditions);
             if (data.status === 200 && data.data !== null) {
-                console.log(data, "GetVacancyDetails");
-                setData(data.data[0]);
+                console.log(data.data, "GetVacancyDetails");
+                setData(data.data);
+
             }
         } catch (error) {
             console.log("GetVacancyDetails doesn't fetch the data", error);
@@ -175,6 +169,21 @@ const CommanFieldTemplate = (props: any) => {
                     </React.Fragment>
                 </Card>
             </CustomLoader>
+
+            {isAssign && (
+                <>
+                    <CustomPopup
+                        visible={isAssign}
+                        onClose={isAssignfn} // Pass handleCloseDialog as a prop to CustomPopup
+                        header=''
+                        width="500px"
+                        children={
+                            <AssignRecuritmentHR />
+                        }
+                    />
+
+                </>
+            )}
 
         </>
 
