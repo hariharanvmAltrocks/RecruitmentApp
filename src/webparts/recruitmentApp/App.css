@@ -1338,18 +1338,23 @@ html {
 }
 
 
-/* .p-dialog-mask{
+.p-dialog-mask {
     z-index: auto !important;
-} */
+}
 
 .p-dialog-header {
     padding-left: 1%;
     /* padding-top: 1%; */
 }
 
-/* .p-dialog-footer {
-    /* padding-bottom: 1%; 
-} */
+.p-dialog-footer {
+    padding-bottom: 1%;
+}
+
+.p-dialog {
+    border-radius: 20px !important;
+    /* Custom border-radius */
+}
 
 .p-dialog-content {
     scroll-behavior: auto;
