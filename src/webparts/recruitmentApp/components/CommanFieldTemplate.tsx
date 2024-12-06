@@ -5,8 +5,7 @@ import { StatusId } from "../utilities/Config";
 import { getVRRDetails } from "../Services/ServiceExport";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import TabsComponent from "./TabsComponent ";
-import CustomPopup from "./CustomPopup";
-import AssignRecuritmentHR from "./AssignRecuritmentHR";
+import { Button } from "primereact/button";
 
 
 
@@ -18,7 +17,6 @@ const CommanFieldTemplate = (props: any) => {
     const [rows, setRows] = React.useState<number>(5);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [isAssign, setIsAssign] = React.useState<boolean>(false);
 
     const HRFileHandle = (serverUrl: string, fileName: string) => {
         console.log(serverUrl, "ServerUrl");
@@ -40,9 +38,6 @@ const CommanFieldTemplate = (props: any) => {
         }
     };
 
-    const isAssignfn = () => {
-        setIsAssign(!isAssign)
-    }
 
     const columnConfig = [
         {
@@ -93,12 +88,29 @@ const CommanFieldTemplate = (props: any) => {
             },
         },
         {
-            field: "Shrotlistbtn",
+            field: '',
             header: "Action",
             sortable: false,
             body: (rowData: any) => {
+                const handleRedirect = (rowData: any) => {
+                    console.log(rowData, "rowData");
+
+                }
+
                 return (
                     <span>
+                        <Button
+                            onClick={() =>
+                                handleRedirect(rowData)
+                            }
+                            className="table_btn"
+                            icon="pi pi-eye"
+                            style={{
+                                width: "30px",
+                                marginRight: "7px",
+                                padding: "3px",
+                            }}
+                        ></Button>
                     </span>
                 );
             },
@@ -151,6 +163,12 @@ const CommanFieldTemplate = (props: any) => {
                         onPageChange={onPageChange}
                         selection={[]}
                     />
+                    {/* <ReviewProfileDatatable
+                        data={data}
+                        columns={columnConfig}
+                        rows={rows}
+                        onPageChange={onPageChange}
+                    /> */}
                 </div>
 
             ),
@@ -169,21 +187,6 @@ const CommanFieldTemplate = (props: any) => {
                     </React.Fragment>
                 </Card>
             </CustomLoader>
-
-            {isAssign && (
-                <>
-                    <CustomPopup
-                        visible={isAssign}
-                        onClose={isAssignfn} // Pass handleCloseDialog as a prop to CustomPopup
-                        header=''
-                        width="500px"
-                        children={
-                            <AssignRecuritmentHR />
-                        }
-                    />
-
-                </>
-            )}
 
         </>
 
