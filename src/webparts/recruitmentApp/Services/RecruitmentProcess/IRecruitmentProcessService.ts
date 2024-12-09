@@ -4,4 +4,5 @@ export type IRecruitmentService = {
     GetPositionDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>>;
     GetRecruitmentDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>>;
     GetCandidateDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>>;
+    AssignCandidateRecuritmentHR(ID: number, param: any): Promise<ApiResponse<any | null>>;
 }

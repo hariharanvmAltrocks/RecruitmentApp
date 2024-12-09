@@ -15,7 +15,6 @@ export type HeaderValue = {
 
 interface AssignRecuritmentHRProps {
     handleAutoComplete: (item: AutoCompleteItem | null) => void;
-    JobCode: string;
     AssignRecuritmentHRValue: AutoCompleteItem | null;
     onClose: () => void;
     HeaderValueData: HeaderValue | null;
@@ -24,7 +23,6 @@ interface AssignRecuritmentHRProps {
 
 function AssignRecuritmentHR({
     handleAutoComplete,
-    JobCode,
     AssignRecuritmentHRValue,
     onClose,
     HeaderValueData,
@@ -44,6 +42,8 @@ function AssignRecuritmentHR({
         }).then((res: any) => {
             if (res.length > 0) {
                 res.map((item: any) => {
+                    console.log(item, "JDEDataMappingItem");
+
                     let obj: AutoCompleteItem = {
                         key: item.BudgetHolderId,
                         text: item?.BudgetHolder?.Title ? item?.BudgetHolder?.Title : "",
