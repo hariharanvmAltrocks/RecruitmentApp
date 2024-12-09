@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AutoCompleteItem } from "../Models/Screens";
+import { alertPropsData, AutoCompleteItem } from "../Models/Screens";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import TabsComponent from "./TabsComponent ";
 import Card from "@mui/material/Card";
@@ -10,6 +10,8 @@ import CustomTextArea from "./CustomTextArea";
 import CustomRadioGroup from "./CustomRadioGroup";
 import CustomInput from "./CustomInput";
 import { getVRRDetails } from "../Services/ServiceExport";
+import CustomAlert from "./CustomAlert/CustomAlert";
+import { HRMSAlertOptions, RecuritmentHRMsg } from "../utilities/Config";
 
 
 type TabData = {
@@ -91,6 +93,13 @@ const CommanTemplate = (props: any) => {
     })
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [fetchDatas, setFetchData] = React.useState<any[]>([]);
+    const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
+    const [alertProps, setalertProps] = React.useState<alertPropsData>({
+        Message: "",
+        Type: "",
+        ButtonAction: null,
+        visible: false,
+    });
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -273,7 +282,6 @@ const CommanTemplate = (props: any) => {
                         </div>
                     </div>
                     <div className="ms-Grid-row">
-                        =
                         <div className="ms-Grid-col ms-lg4">
                             <CustomAutoComplete
                                 label="Department"
@@ -376,8 +384,25 @@ const CommanTemplate = (props: any) => {
     ];
 
     const handleCancel = () => {
+        setIsLoading(true);
+        let CancelAlert = {
+            Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
+            Type: HRMSAlertOptions.Confirmation,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+                if (userClickedOK) {
+                    props.navigation("/CommanFieldTemplate");
+                    setAlertPopupOpen(false);
+                } else {
+                    setAlertPopupOpen(false);
+                }
+            }
+        }
 
-        props.navigation("/RecurimentProcess");
+        setAlertPopupOpen(true);
+        setalertProps(CancelAlert);
+        setIsLoading(false);
+
     };
 
     const validateTab1 = (tab: string): boolean => {
@@ -454,6 +479,15 @@ const CommanTemplate = (props: any) => {
                 </Card>
             </CustomLoader>
 
+
+            {AlertPopupOpen ? (
+                <>
+                    <CustomAlert
+                        {...alertProps}
+                        onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
+                    />
+                </>
+            ) : <></>}
 
         </>
     );

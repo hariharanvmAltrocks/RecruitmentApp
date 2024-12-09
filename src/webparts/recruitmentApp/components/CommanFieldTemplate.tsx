@@ -59,7 +59,10 @@ const CommanFieldTemplate = (props: any) => {
         {
             field: 'FristName',
             header: 'FristName',
-            sortable: true
+            sortable: true,
+            body: (rowData: any) => {
+                return <span>{rowData.FristName ?? "" + " " + rowData.MiddleName ?? "" + " " + rowData.LastName ?? ""}</span>
+            }
         },
         {
             field: "",
@@ -67,7 +70,7 @@ const CommanFieldTemplate = (props: any) => {
             sortable: false,
             body: (rowData: any) => {
                 console.log(rowData, "rowDataCandidateCVDoc");
-                if (rowData?.CandidateCVDoc[0] && rowData?.CandidateCVDoc[0]?.name) {
+                if (rowData?.CandidateCVDoc?.[0] && rowData?.CandidateCVDoc?.[0]?.name) {
                     return (
                         <div>
                             <Link
@@ -78,12 +81,12 @@ const CommanFieldTemplate = (props: any) => {
                                     )
                                 }
                             >
-                                {rowData?.CandidateCVDoc[0]?.name}
+                                {rowData?.CandidateCVDoc?.[0]?.name}
                             </Link>
                         </div>
                     );
                 } else {
-                    return <span>No CV available</span>;  // Fallback text in case there is no CV
+                    return <span>No CV available</span>;
                 }
             },
         },
@@ -93,8 +96,7 @@ const CommanFieldTemplate = (props: any) => {
             sortable: false,
             body: (rowData: any) => {
                 const handleRedirect = (rowData: any) => {
-                    console.log(rowData, "rowData");
-
+                    props.navigation("/CommanTemplate/CommanTemplate");
                 }
 
                 return (
@@ -110,7 +112,7 @@ const CommanFieldTemplate = (props: any) => {
                                 marginRight: "7px",
                                 padding: "3px",
                             }}
-                        ></Button>
+                        />
                     </span>
                 );
             },
@@ -150,6 +152,7 @@ const CommanFieldTemplate = (props: any) => {
         setFirst(event.first);
         setRows(event.rows);
     };
+
     const tabs = [
         {
             label: "My Submission",

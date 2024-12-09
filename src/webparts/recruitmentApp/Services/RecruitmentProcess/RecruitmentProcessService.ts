@@ -338,4 +338,30 @@ export default class RecruitmentService implements IRecruitmentService {
             };
         }
     }
+
+    async AssignCandidateRecuritmentHR(ID: number, param: any) {
+        try {
+            let message = "InterviewPanelCandidateDetails Not Updated";
+            let StatusCode = 400;
+            await SPServices.SPUpdateItem({
+                Listname: ListNames.InterviewPanelCandidateDetails,
+                RequestJSON: param,
+                ID: ID,
+            }).then(async (items) => {
+                StatusCode = 200;
+                message = "InterviewPanelCandidateDetails Updated";
+            });
+
+            return {
+                data: ID,
+                status: StatusCode,
+                message: message,
+            };
+        }
+        catch (error) {
+            console.error("Error UpdateHeadCount_WL:", error);
+            throw error;
+
+        }
+    }
 }

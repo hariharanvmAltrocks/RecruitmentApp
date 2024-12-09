@@ -11,6 +11,7 @@ import { FilterMatchMode } from "primereact/api";
 import CustomPopup from "./CustomPopup/CustomPopup";
 import AssignRecuritmentHR, { HeaderValue } from "./AssignRecuritmentHR";
 import { AutoCompleteItem } from "../Models/Screens";
+import { getVRRDetails } from "../Services/ServiceExport";
 
 
 interface ColumnConfig {
@@ -41,6 +42,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     const [selectAll, setSelectAll] = React.useState<boolean>(false);
     const [checkedValue, setCheckedValue] = React.useState<any[]>([]);
     const [AssignPopup, setAssignPopup] = React.useState<boolean>(false);
+    const [AssignBtnValidation, setAssignBtnValidation] = React.useState<boolean>(false);
     const [HeaderValueData, setHeaderValueData] = React.useState<HeaderValue | null>(null);
     const [AssignRecuritmentHRValue, setAssignRecuritmentHRValue] = React.useState<AutoCompleteItem | null>(null);
     const [dashboardSearch, setDashboardSearch] = React.useState<any>({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
@@ -50,6 +52,15 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     // const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     //     setSearchTerm(event.target.value);
     // };
+    React.useEffect(() => {
+        const HeaderValue = {
+            JobCode: "POS001",
+            JobTitle: "Position English",
+            Headcount: "01"
+        }
+        setHeaderValueData(HeaderValue)
+    }, []);
+
 
     const handleRefresh = () => {
         setIsLoading(true);
@@ -119,12 +130,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
         const updatedCheckedValues = CheckedValue
             ? [...checkedValue, CheckedValue]
             : []
-        const HeaderValue = {
-            JobCode: "POS001",
-            JobTitle: "Position English",
-            Headcount: "01"
-        }
-        setHeaderValueData(HeaderValue)
+
         setCheckedValue(updatedCheckedValues)
         console.log(updatedRowData, "updatedRowData");
         setFilteredItems(updatedRowData);
@@ -133,7 +139,13 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
 
 
     function handleAssignBtn() {
-        setAssignPopup(!AssignPopup)
+        let CheckedDataValue = filteredItems.some((item) => item.Checked)
+        if (CheckedDataValue) {
+            setAssignPopup(!AssignPopup)
+            setAssignBtnValidation(AssignBtnValidation)
+        } else {
+            setAssignBtnValidation(!AssignBtnValidation)
+        }
     }
 
     const handleAutoComplete = async (
@@ -144,9 +156,32 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
         }
     };
 
-    const assignbtnfn = () => {
-        const updatedRowData = filteredItems.map((item: any) => {
+    const UpdateAssignCandidateRecuritmentHR = async (UpdateID: number, addJson: any) => {
+        setIsLoading(true);
+        try {
+            debugger;
+            const data = await getVRRDetails.AssignCandidateRecuritmentHR(UpdateID, addJson);
+            if (data.status === 200 && data.data !== null) {
+                debugger;
+                console.log(data.data, "GetVacancyDetails");
+                setAssignPopup(!AssignPopup)
+            }
+        } catch (error) {
+            console.log("GetVacancyDetails doesn't fetch the data", error);
+        }
+        setIsLoading(false);
+
+    };
+
+    const assignbtnfn = async () => {
+        setIsLoading(true);
+        const updatedRowData = await Promise.all(filteredItems.map(async (item: any) => {
             if (item.Assigned === true) {
+                let addJson = {
+                    AssignedById: AssignRecuritmentHRValue?.key,
+                };
+
+                await UpdateAssignCandidateRecuritmentHR(item.ID, addJson);
 
                 return {
                     ...item,
@@ -154,10 +189,13 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 };
             }
             return item;
-        });
-        setFilteredItems(updatedRowData)
-    }
+        }));
 
+        setFilteredItems(updatedRowData);
+        setAssignPopup(false);
+
+        setIsLoading(false);
+    };
 
     return (
         <>
@@ -167,17 +205,18 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                     <CustomPopup
                         visible={AssignPopup}
                         onClose={handleAssignBtn}
-                        width="42%"
-                    >
-                        <AssignRecuritmentHR
-                            handleAutoComplete={handleAutoComplete}
-                            JobCode="POS001"
-                            AssignRecuritmentHRValue={AssignRecuritmentHRValue}
-                            onClose={handleAssignBtn}
-                            HeaderValueData={HeaderValueData}
-                            assignbtnfn={assignbtnfn}
-                        />
-                    </CustomPopup>
+                        width="41%"
+                        height="35%"
+                        MessageContent={
+                            <AssignRecuritmentHR
+                                handleAutoComplete={handleAutoComplete}
+                                AssignRecuritmentHRValue={AssignRecuritmentHRValue}
+                                onClose={handleAssignBtn}
+                                HeaderValueData={HeaderValueData}
+                                assignbtnfn={assignbtnfn}
+                            />
+                        }
+                    />
                 </>
             ) : (
                 <></>
@@ -237,7 +276,9 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                             <ReuseButton
                                 label="Assign"
                                 onClick={handleAssignBtn}
-                                spacing={4} />
+                                spacing={4}
+                                error={AssignBtnValidation}
+                            />
                         </div>
                     </div>
                     <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
@@ -259,7 +300,6 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                                 filters={dashboardSearch}
                             >
                                 {columns.map((col) => {
-                                    // Render Checkbox column separately
                                     if (col.field === "Checkbox") {
                                         return (
                                             <Column
@@ -273,7 +313,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                                                         <div>
                                                             <CustomCheckBox
                                                                 label=""
-                                                                value={rowData?.Checked === true}
+                                                                value={rowData?.Checked === true || rowData?.AssignedById}
                                                                 onChange={(e, value: boolean) => handleCheckbox(value, rowData)}
                                                             />
                                                         </div>
@@ -308,4 +348,3 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
 };
 
 export default CheckboxDataTable;
-{ }

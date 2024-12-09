@@ -80,6 +80,8 @@ const SideNavComponent = (props: sideNavProps) => {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
+                borderRadius: "0px 30px 30px 0px ",
+                transition: "width 1s"
             }}
         >
             <div>

@@ -115,3 +115,7 @@ export const WorkflowAction = {
 export const viewLabelcolor = {
     Labelcolor: "#9A5E5E",
 };
+
+export const RecuritmentHRMsg = {
+    RecuritmentHRMsgCancel: "Are you sure you want to cancel? Any unsaved changes will be lost.",
+}
