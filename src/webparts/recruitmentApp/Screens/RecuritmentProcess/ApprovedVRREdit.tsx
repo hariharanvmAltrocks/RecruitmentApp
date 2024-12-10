@@ -9,6 +9,28 @@ import CustomLoader from "../../Services/Loader/CustomLoader";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import ReuseButton from "../../components/ReuseButton";
+import { Icon, Label } from "office-ui-fabric-react";
+import AttachmentButton from "../../components/AttachmentButton";
+import { sp } from "@pnp/sp";
+import { DocumentLibraray } from "../../utilities/Config";
+import Labelheader from "../../components/LabelHeader";
+import LabelValue from "../../components/LabelValue";
+
+interface IAttachmentExampleState {
+    file: File | any;
+    fileName: string;
+    fileContent: string | ArrayBuffer | null;
+    serverRelativeUrl: string;
+    ID: string;
+}
+
+interface Item {
+    name: string;
+    fileContent: ArrayBuffer;
+    file?: File | any;
+    serverRelativeUrl?: string;
+    ID?: string;
+}
 
 const ApprovedVRREdit: React.FC = (props: any) => {
     const [tabVisibility, setTabVisibility] = useState({
@@ -36,18 +58,57 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     // const [PositionName, setPositionName] = useState<string>("");
     //const [data, setData] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [formState, setFormState] = useState({
-        VRRID:0,
-        BusinessUnitCodeID:0,
-        DepartmentID:0,
-        SubDepartmentID:0,
-        SectionID:0,
-        DepartmentCodeID:0,
-        JobNameInEnglishID:0,
-        JobNameInFrenchID:0,
-        PatersonGradeID:0,
-        DRCGradeID:0,
-        JobCodeID:0,
+    const [formState, setFormState] = useState<{
+        VRRID: number;
+        BusinessUnitCodeID: number;
+        DepartmentID: number;
+        SubDepartmentID: number;
+        SectionID: number;
+        DepartmentCodeID: number;
+        JobNameInEnglishID: number;
+        JobNameInFrenchID: number;
+        PatersonGradeID: number;
+        DRCGradeID: number;
+        JobCodeID: number;
+        BusinessUnitCode: string;
+        BusinessUnitName: string;
+        BusinessUnitDescription: string;
+        Department: string;
+        SubDepartment: string;
+        Section: string;
+        DepartmentCode: string;
+        Nationality: string;
+        JobNameInEnglish: string;
+        JobNameInFrench: string;
+        NoofPositionAssigned: string;
+        PatersonGrade: string;
+        DRCGrade: string;
+        EmployementCategory: string;
+        ContractType: string;
+        JobCode: string;
+        AreaOfWork: string;
+        ReasonForVacancy: string;
+        RecruitmentAuthorised: string;
+        EnterNumberOfMonths: number;
+        DateRequried: string;
+        IsRevert: string;
+        VacancyConfirmed: string;
+        Attachement: IAttachmentExampleState[];
+        PositionDetails: any[];
+        RoleProfileDocument:any[];
+        AdvertisementDocument:any[];
+    }>({
+        VRRID: 0,
+        BusinessUnitCodeID: 0,
+        DepartmentID: 0,
+        SubDepartmentID: 0,
+        SectionID: 0,
+        DepartmentCodeID: 0,
+        JobNameInEnglishID: 0,
+        JobNameInFrenchID: 0,
+        PatersonGradeID: 0,
+        DRCGradeID: 0,
+        JobCodeID: 0,
         BusinessUnitCode: "",
         BusinessUnitName: "",
         BusinessUnitDescription: "",
@@ -65,13 +126,41 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         ContractType: "",
         JobCode: "",
         AreaOfWork: "",
+        ReasonForVacancy: "",
+        RecruitmentAuthorised: "",
+        EnterNumberOfMonths: 0,
+        DateRequried: "",
+        IsRevert: "",
+        VacancyConfirmed: "",
+        Attachement: [],
+        PositionDetails: [],
+        RoleProfileDocument:[],
+        AdvertisementDocument:[],
     });
+
+    const getRoleProfile = async (id: any,DocLibraray:string) => {
+        try {
+          const data = await getVRRDetails.GetAttachedRoleProfile(id, DocLibraray);
+          //const data = await this.getCommentsdocument(Config.DocumentLibraray.NewPositionRoleProfile, id);
+          console.log('getRoleProfile', data);
+          const getRoleProfileDocument = data?.map((item: any) => ({
+            id: id,
+            name: item.fileName,
+            checked: false,
+            documentUrl: item.ServerRelativeUrl
+          }));
+          return getRoleProfileDocument;
+        } catch (error) {
+          console.error('Error in getRoleProfileDocument:', error);
+          throw error; // Re-throwing error for the caller to handle
+        }
+      }
 
     const fetchData = async () => {
         if (isLoading) return; // Prevent re-execution if already loading
         setIsLoading(true);
         try {
-            const filterConditions = [
+            const filterConditionsVRR = [
                 {
                     FilterKey: "ID",
                     Operator: "eq",
@@ -79,8 +168,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 },
             ];
             const Conditions = "";
-            const response = await getVRRDetails.GetVacancyDetails(filterConditions, Conditions);
+            const response = await getVRRDetails.GetVacancyDetails(filterConditionsVRR, Conditions);
             console.log("Fetched GetVacancyDetails: response", response);
+            const documentsPromises = getRoleProfile("POS001",DocumentLibraray.HRMSRoleProfile);
+            const documents: any = await documentsPromises;
+           
             if (response.status === 200 && response.data !== null) {
                 const op = response.data[0][0];
                 const NoofPositionAssigned = response.data[1];
@@ -93,19 +185,21 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 );
                 console.log("BUName:", BUName);
                 console.log("Fetched GetVacancyDetails:", op);
+                const AdvertismentDocPromises = getRoleProfile("167",DocumentLibraray.HRMSRoleProfile);
+                const AdvertismentDoc: any = await AdvertismentDocPromises;
                 setFormState((prevState) => ({
                     ...prevState,
-                    VRRID:op.VRRID,
-                    BusinessUnitCodeID:op.BusinessUnitCodeId,
-                    DepartmentID:op.DepartmentId,
-                    SubDepartmentID:op.SubDepartmentId,
-                    SectionID:op.SectionId,
-                    DepartmentCodeID:op.DepartmentCodeId,
-                    JobNameInEnglishID:op.JobTitleInEnglishId,
-                    JobNameInFrenchID:op.JobTitleInFrenchId,
-                    PatersonGradeID:op.PayrollGradeId,
-                    DRCGradeID:op.DRCGradeId,
-                    JobCodeID:op.JobCodeId,
+                    VRRID: op.VRRID,
+                    BusinessUnitCodeID: op.BusinessUnitCodeId,
+                    DepartmentID: op.DepartmentId,
+                    SubDepartmentID: op.SubDepartmentId,
+                    SectionID: op.SectionId,
+                    DepartmentCodeID: op.DepartmentCodeId,
+                    JobNameInEnglishID: op.JobTitleInEnglishId,
+                    JobNameInFrenchID: op.JobTitleInFrenchId,
+                    PatersonGradeID: op.PayrollGradeId,
+                    DRCGradeID: op.DRCGradeId,
+                    JobCodeID: op.JobCodeId,
                     BusinessUnitCode: op.BusinessUnitCode || "",
                     BusinessUnitName: BUName[0]?.Name || "",
                     BusinessUnitDescription: BUName[0]?.Description || "",
@@ -123,38 +217,122 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     JobCode: op.JobCode || "",
                     AreaOfWork: op.AreaofWork || "",
                     NoofPositionAssigned: NoofPositionAssigned?.length || 0,
+                    ReasonForVacancy: op.ReasonForVacancy || "",
+                    RecruitmentAuthorised: op.RecruitmentAuthorised || "",
+                    EnterNumberOfMonths: op.EnterNumberOfMonths || 0,
+                    DateRequried: op.DateRequried || null,
+                    IsRevert: op.IsRevert || "",
+                    VacancyConfirmed: op.VacancyConfirmed || "",
+                    RoleProfileDocument:documents,
+                    AdvertisementDocument:AdvertismentDoc,
                 }));
+                if (response.data[1]?.length > 0 && response.data[1] !== null) {
+                    const updatedPositions = response.data[1].map((position: any) => ({
+                        ...position,
+                        PatersonGradeID: op.PayrollGradeId,
+                        DRCGradeID: op.DRCGradeId,
+                    }));
+                    console.log("updatedPositions", updatedPositions);
+                    setFormState((prevState) => ({
+                        ...prevState,
+                        PositionDetails: updatedPositions,
+                    }));
+                }
             }
+
         } catch (error) {
             console.error("Failed to fetch Vacancy Details:", error);
         } finally {
             setIsLoading(false);
         }
     };
+
+    const uploadAttachmentToLibrary = async (
+        ItemID: number,
+        attach: File,
+        name: string
+    ) => {
+        try {
+            const fileReader = new FileReader();
+            fileReader.onload = async (event: any) => {
+                const fileContent = event.target.result;
+                const folderName = ItemID.toString();
+                const attachmentsLibrary = sp.web.lists.getByTitle(name);
+                const folderResult = await attachmentsLibrary.rootFolder.folders.add(
+                    folderName
+                );
+                // Get the folder's server-relative URL
+                const folderUrl = folderResult.data.ServerRelativeUrl;
+                // Upload the attachment to the folder
+                await attachmentsLibrary.rootFolder.files.add(
+                    `${folderUrl}/${attach.name}`,
+                    fileContent
+                );
+            };
+
+            fileReader.readAsArrayBuffer(attach);
+        } catch (error) {
+            console.log("Error uploading attachment:", error);
+        } finally {
+            console.log("Attachments upload process completed");
+        }
+    };
+
+    const handleAttachement = async (ID: any, ParentFolder: string) => {
+        try {
+            console.log("IDID", ID);
+            // console.log("Attachments in state:", formState.Attachement);
+            if (ID && formState.Attachement.length > 0) {
+                for (const attachment of formState.Attachement) {
+                    await uploadAttachmentToLibrary(
+                        ID,
+                        attachment.file, // TypeScript now recognizes this property
+                        ParentFolder
+                    );
+                }
+            }
+        } catch (error) {
+            console.error("Error handling form submission:", error);
+        } finally {
+            console.log("Attachments upload process completed");
+        }
+    };
+
+
+
     const SaveRecruitment = async () => {
         try {
             let Table1: any = {
-                //   VRRID: formState.VRRID,
-
-                BusinessUnitCode: formState.BusinessUnitCode,
+                VRRID: formState.VRRID,
+                BusinessUnitCode: formState.BusinessUnitCodeID,
                 Nationality: formState.Nationality,
                 EmploymentCategory: formState.EmployementCategory,
-                Department: formState.Department,
-                SubDepartment: formState.SubDepartment,
-                Section: formState.Section,
-                DepartmentCode: formState.DepartmentCode,
+                Department: formState.DepartmentID,
+                SubDepartment: formState.SubDepartmentID,
+                Section: formState.SectionID,
+                DepartmentCode: formState.DepartmentCodeID,
                 NumberOfPersonNeeded: formState.NoofPositionAssigned,
-                EnterNumberOfMonths: formState.NoofPositionAssigned,
+                EnterNumberOfMonths: formState.EnterNumberOfMonths,
                 TypeOfContract: formState.ContractType,
-                DateRequried: formState.Department,
-                IsRevert: formState.AreaOfWork,
-                ReasonForVacancy: formState.AreaOfWork,
+                DateRequried: formState.DateRequried,
+                IsRevert: formState.IsRevert,
+                ReasonForVacancy: formState.ReasonForVacancy,
                 AreaofWork: formState.AreaOfWork,
-                JobCode: formState.JobCode,
-                VacancyConfirmed: formState.AreaOfWork,
+                JobCode: formState.JobCodeID,
+                VacancyConfirmed: formState.VacancyConfirmed,
 
             };
-            const response = await getVRRDetails.InsertRecruitmentDpt(Table1, []);
+            // let Table2: any = {
+            //     JobTitleEnglish: formState.JobNameInEnglishID,
+            //     PatersonGrade: formState.PatersonGradeID,
+            //     DRCGrade: formState.DRCGradeID,
+            // }
+            const response = await getVRRDetails.InsertRecruitmentDpt(Table1, formState.PositionDetails).then(async (ret: any) => {
+                await handleAttachement(
+                    ret.data.data.ID,
+                    DocumentLibraray.HRMSRecruitment
+                )
+            });
             console.log(response);
         } catch (error) {
             console.error("Failed to fetch Vacancy Details:", error);
@@ -182,12 +360,73 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }, []);
 
 
+    const handleDelete = (index: number) => {
+        console.log("Deleting attachment at index:", index);
+
+        setFormState((prevState) => {
+            const updatedAttachments = [...prevState.Attachement];
+            updatedAttachments.splice(index, 1); // Remove the attachment at the specified index
+
+            return {
+                ...prevState,
+                Attachement: updatedAttachments, // Update the state with the new attachments array
+            };
+        });
+    };
+
+
+    const handleChange = async (event: any) => {
+        console.log("FileUpload----------------");
+        const fileInput = event.target;
+
+        if (fileInput.files && fileInput.files.length > 0) {
+            const files = fileInput.files;
+            const newAttachments: IAttachmentExampleState[] = [...formState.Attachement];
+
+            let filesProcessed = 0;
+
+            const processFile = (file: File, fileContent: ArrayBuffer) => {
+                newAttachments.push({
+                    ID: "",
+                    file: file,
+                    fileName: file.name,
+                    fileContent: fileContent,
+                    serverRelativeUrl: "",
+                });
+                filesProcessed++;
+
+                if (filesProcessed === files.length) {
+                    // Update the state after all files are processed
+                    setFormState((prevState: any) => ({
+                        ...prevState,
+                        Attachement: newAttachments,
+                    }));
+                    console.log("Updated Attachments:", newAttachments);
+                }
+            };
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileReader = new FileReader();
+                fileReader.onload = (event: any) => {
+                    const fileContent = event.target.result;
+                    console.log("fileContent:", fileContent);
+                    processFile(file, fileContent);
+                };
+                fileReader.readAsArrayBuffer(file);
+            }
+        } else {
+            console.warn("No files selected.");
+        }
+    };
+
+
 
 
 
     const tabs = [
         {
-            label: "My Submission",
+            label: "Approved VRR",
             value: "tab1",
             content: (
                 <Card
@@ -417,17 +656,113 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             }
                                         />
                                     </div>
+                                    <div className="ms-Grid-col ms-lg3">
+                                        <CustomInput
+                                            label="VRR ID"
+                                            value={formState.VRRID}
+                                            disabled={true}
+
+                                            mandatory={false}
+                                            onChange={(value: any) =>
+                                                setFormState((prevState) => ({ ...prevState, VRRID: value }))
+                                            }
+                                        />
+                                    </div>
                                 </div>
+                                <div className="ms-Grid-row">
+                                          <div className="ms-Grid-col ms-lg6">
+                                            <Labelheader value={"Role Profile Documents"}> </Labelheader>
+                                            {console.log(formState.RoleProfileDocument, "NewPositionAttachment")}
+                                            {formState.RoleProfileDocument?.map((attachment: any) => (
+                                              <div key={attachment.documentUrl}>
+                                                <p>
+                                                  <a href={attachment.documentUrl} target="_blank" rel="noopener noreferrer">
+                                                    <LabelValue value={attachment.name} > </LabelValue>
+                                                  </a>
+                                                </p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+
+                                        <div className="ms-Grid-row">
+                                          <div className="ms-Grid-col ms-lg6">
+                                            <Labelheader value={"Advertisement Documents"}> </Labelheader>
+                                            {console.log(formState.AdvertisementDocument, "AdvertisementDocument")}
+                                            {formState.AdvertisementDocument?.map((attachment: any) => (
+                                              <div key={attachment.documentUrl}>
+                                                <p>
+                                                  <a href={attachment.documentUrl} target="_blank" rel="noopener noreferrer">
+                                                    <LabelValue value={attachment.name} > </LabelValue>
+                                                  </a>
+                                                </p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+
 
                                 <div className="ms-Grid-row">
-                                    <ReuseButton
-                                        spacing={4}
-                                        onClick={async () => {
-                                            await SaveRecruitment(); // Ensure the promise is awaited
-                                        }}
-                                        width="100%"
-                                        label="Submit"
-                                    />
+                                    <div className="ms-Grid-col ms-lg4" style={{ marginTop: "2rem" }}>
+                                        <AttachmentButton
+                                            label="Attach Documents"
+                                            onChange={(event: any) => handleChange(event)}
+                                            iconName="CloudUpload"
+                                            iconNameHover="CloudUpload"
+                                            AttachState={(newAttachments: Item[]) => {
+                                                // Directly update state here
+                                                setFormState((prevState: any) => ({
+                                                    ...prevState,
+                                                    Attachement: [...prevState.Attachement, ...newAttachments],
+                                                }));
+                                            }}
+                                            mandatory={true}
+                                            error={false}
+                                        />
+
+
+                                    </div>
+                                    <div className="ms-Grid-col ms-lg6" style={{ marginTop: "2rem" }}>
+                                        {console.log("checking", formState.Attachement)}
+                                        {formState.Attachement?.map((file: any, index: number) => {
+                                            const fileName = file.fileName || file.name; // Ensure proper name display
+                                            console.log("Rendering file:", fileName);
+
+                                            return (
+                                                <div key={index} className="ms-Grid-row">
+                                                    <div className="ms-Grid-col ms-lg12">
+                                                        <Label>
+                                                            {fileName}
+                                                            <span>
+                                                                <Icon
+                                                                    iconName="Delete"
+                                                                    style={{
+                                                                        marginLeft: "8px",
+                                                                        fontSize: "16px",
+                                                                        cursor: "pointer",
+                                                                    }}
+                                                                    onClick={() => handleDelete(index)} // Call the delete function
+                                                                />
+                                                            </span>
+                                                        </Label>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+
+                                    </div>
+                                </div>
+                                <div className="ms-Grid-row" style={{ marginTop: "3%" }}>
+                                    <div className="ms-Grid-col ms-lg2">
+                                        <ReuseButton
+                                            spacing={4}
+                                            onClick={async () => {
+                                                await SaveRecruitment(); // Ensure the promise is awaited
+                                            }}
+                                            width="100%"
+                                            label="Submit"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         )}

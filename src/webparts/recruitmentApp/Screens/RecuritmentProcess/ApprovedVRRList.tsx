@@ -19,6 +19,7 @@ const RecruitmentProcess = (props: any) => {
     console.log(props, "ApprovedVRR");
 
     const [data, setData] = React.useState<any[]>([]);
+    const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
     const [columns, setColumns] = React.useState<ColumnConfig[]>([]);
     const [rows, setRows] = React.useState<number>(5);
     const [first, setFirst] = React.useState<number>(0);
@@ -122,7 +123,7 @@ const RecruitmentProcess = (props: any) => {
 
 
     const fetchData = async () => {
-        //   await getVRRDetails.GetRecruitmentDetails([],"");
+        
         setIsLoading(true);
         try {
             let filterConditions = [];
@@ -133,9 +134,15 @@ const RecruitmentProcess = (props: any) => {
                 FilterValue: StatusId.InitiatedforRecruitmentProcess
             });
             const data = await getVRRDetails.GetVacancyDetails(filterConditions, Conditions);
+            const RecruitmentDetails =  await getVRRDetails.GetRecruitmentDetails([],"");
+            console.log("RecruitmentDetails",RecruitmentDetails);
             if (data.status === 200 && data.data !== null) {
                 console.log(data, "GetVacancyDetails");
                 setData(data.data[0]);
+            }
+            if (RecruitmentDetails.status === 200 && RecruitmentDetails.data !== null) {
+                console.log(RecruitmentDetails, "GetVacancyDetails");
+                setRecruitmentDetails(RecruitmentDetails.data);
             }
         } catch (error) {
             console.log("GetVacancyDetails doesn't fetch the data", error);
@@ -150,14 +157,14 @@ const RecruitmentProcess = (props: any) => {
     }, []);
 
 
-    const onPageChange = (event: any) => {
+    const onPageChange = (event: any,Type:string) => {
         setFirst(event.first);
         setRows(event.rows);
     };
 
     const tabs = [
         {
-            label: "My Submission",
+            label: "Approved VRR",
             value: "tab1",
             content: (
                 <div className="menu-card">
@@ -165,7 +172,37 @@ const RecruitmentProcess = (props: any) => {
                         data={data}
                         columns={columns}
                         rows={rows}
-                        onPageChange={onPageChange}
+                        onPageChange={(event) => onPageChange(event, "Recruitment")}
+                    />
+                </div>
+
+            ),
+        },
+        {
+            label: "My Submission",
+            value: "tab2",
+            content: (
+                <div className="menu-card">
+                    <SearchableDataTable
+                        data={RecruitmentDetails}
+                        columns={columns}
+                        rows={rows}
+                        onPageChange={(event) => onPageChange(event, "VRR")}
+                    />
+                </div>
+
+            ),
+        },
+        {
+            label: "Review Job Profile",
+            value: "tab3",
+            content: (
+                <div className="menu-card">
+                    <SearchableDataTable
+                        data={RecruitmentDetails}
+                        columns={columns}
+                        rows={rows}
+                        onPageChange={(event) => onPageChange(event, "VRR")}
                     />
                 </div>
 
