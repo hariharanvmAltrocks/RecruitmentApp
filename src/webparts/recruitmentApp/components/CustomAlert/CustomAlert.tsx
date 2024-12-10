@@ -1,14 +1,14 @@
 import * as React from "react";
-import { Dialog } from "primereact/dialog";
-import "../Common/ModalStyle.css";
+import "./CustomAlert.modules.css";
 import { HRMSAlertOptions } from "../../utilities/Config";
 import ReuseButton from "../ReuseButton";
+import CustomPopup from "../CustomPopup/CustomPopup";
 
 export type CustomAlert = {
-    ButtonAction: Function;
+    ButtonAction: (confirmed: boolean) => void;
     Message: string;
     Type: string;
-    onClose: Function;
+    onClose: () => void;
     visible: boolean;
 }
 export default function CustomAlert(
@@ -46,7 +46,7 @@ export default function CustomAlert(
 
     const headerContent = (
         <div className="ms-Grid-row"
-            style={{ display: "flex", justifyContent: "center", marginTop: "4%" }}
+            style={{ display: "flex", justifyContent: "center" }}
         >
             {props.Type === HRMSAlertOptions.Success ? (
                 <div className="ms-Grid-col ms-lg4">
@@ -107,29 +107,20 @@ export default function CustomAlert(
         </div>
     );
 
-    const DialogStyles: React.CSSProperties = {
-        width: "90vw",
-        maxWidth: "500px",
-        // padding: "20px",
-        overflow: "hidden",
-        zIndex: 9999,
-        borderRadius: "20px",
-    };
 
 
     return (
-        < div className="card flex justify-content-center HRMSModal" >
-            <Dialog
-                header={headerContent}
+        <div className="ms-Grid-row" style={{ display: "flex", justifyContent: "center" }}>
+            <CustomPopup
                 visible={props.visible}
-                style={DialogStyles}
-                onHide={() => props.onClose()}
-                footer={footerContent}
-                closable={false} // Set closable to false to hide the close button
-            >
-                {MessageContent}
-            </Dialog>
-        </div >
+                onClose={props.onClose}
+                width="41%"
+                height="44%"
+                MessageContent={MessageContent}
+                headerContent={headerContent}
+                footerContent={footerContent}
+            />
+        </div>
 
     );
 }

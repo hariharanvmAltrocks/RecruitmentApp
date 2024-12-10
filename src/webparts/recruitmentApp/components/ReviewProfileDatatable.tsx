@@ -1,7 +1,6 @@
 import * as React from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import "../App.css";
 import { TextField } from "office-ui-fabric-react";
 import { Icon } from "@fluentui/react";
 import ReuseButton from "./ReuseButton";
@@ -9,11 +8,12 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import { FilterMatchMode } from "primereact/api";
 
+
 interface ColumnConfig {
     field: string;
-    header: string;
+    header: string | ((item?: any) => React.ReactNode);
     sortable: boolean;
-    body?: (item?: any, index?: number, column?: ColumnConfig) => any;
+    body?: (item?: any, index?: number, column?: ColumnConfig) => React.ReactNode;
 }
 
 interface SearchableDataTableProps {
@@ -23,7 +23,7 @@ interface SearchableDataTableProps {
     onPageChange: (event: any) => void;
 }
 
-const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
+const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
     data,
     columns,
     rows,
@@ -33,13 +33,12 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [dashboardSearch, setDashboardSearch] = React.useState<any>({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
-
-
+    // const [checkedValue, setCheckedValue] = React.useState<any[]>([]);
 
 
     const handleRefresh = () => {
-        setIsLoading(true)
-        setFilteredItems(data);
+        setIsLoading(true);
+        setFilteredItems(filteredItems);
         setFirst(0);
         setDashboardSearch({
             global: {
@@ -60,6 +59,27 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
             },
         })
     };
+
+
+    const Shortlistbtnfn = (rowData: any, ActionStatus: string) => {
+        // let DataValue = checkedValue.length > 0 ? filteredItems : data;
+
+        const updatedRowData = filteredItems.map((item: any) => {
+            if (item.ID === rowData.ID) {
+
+                return {
+                    ...item,
+                    ShortlistValue: ActionStatus,
+                };
+            }
+            return item;
+        });
+        console.log(updatedRowData, "updatedRowData");
+        setFilteredItems(updatedRowData);
+    }
+
+
+
 
     return (
         <CustomLoader isLoading={isLoading}>
@@ -86,7 +106,6 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                                 position: 'absolute',
                                 top: '5%',
                                 right: '11px',
-                                // padding: '3px',
                                 color: 'black',
                             }}
                         />
@@ -98,7 +117,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                                     style={{
                                         fontSize: "2rem",
                                         marginTop: "4%",
-                                        marginLeft: "18%"
+                                        marginLeft: "18%",
                                     }}
                                 />
                             }
@@ -116,34 +135,67 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                             value={filteredItems}
                             first={first}
                             rows={rows}
-                            paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                            paginator
+                            paginatorTemplate=" RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                             currentPageReportTemplate="{first} to {last} of {totalRecords}"
+                            stripedRows
                             scrollable
                             scrollHeight="300px"
-                            rowsPerPageOptions={[5, 10, 20]}
-                            paginator
-                            // onPage={onPageChange}
-                            stripedRows
                             filters={dashboardSearch}
                         >
-                            {/* Render Dynamic Columns */}
-                            {columns.map((col) => (
-                                <Column
-                                    key={col.field}
-                                    field={col.field}
-                                    header={col.header}
-                                    sortable={col.sortable}
-                                    body={col.body}
-                                />
-                            ))}
+                            {columns.map((col) => {
+                                // Render Checkbox column separately
+                                if (col.header === "Action" && col.field === "Shrotlistbtn") {
+                                    return (
+                                        <Column
+                                            key={col.field}
+                                            header={"Action"}
+                                            sortable={false}
+                                            style={{ width: "1%" }}
+                                            body={(rowData: any) => {
+                                                return (
+                                                    <span style={{ display: "flex" }}>
+                                                        <ReuseButton
+                                                            label="Shortlist"
+                                                            onClick={() => Shortlistbtnfn(rowData, "Shortlist")}
+                                                            backgroundColor={rowData.ShortlistValue === "Shortlist" ? "rgb(205, 45, 45)" : "white"}
+                                                            Style={{ color: rowData.ShortlistValue === "Shortlist" ? "white" : "rgb(205, 45, 45)" }}
+
+                                                        />
+                                                        <ReuseButton
+                                                            label="Rejected"
+                                                            onClick={() => Shortlistbtnfn(rowData, "Rejected")}
+                                                            backgroundColor={rowData.ShortlistValue === "Rejected" ? "rgb(205, 45, 45)" : "white"}
+                                                            Style={{ color: rowData.ShortlistValue === "Rejected" ? "white" : "rgb(205, 45, 45)" }}
+                                                        />
+
+                                                    </span>
+
+                                                );
+                                            }}
+                                        />
+                                    );
+                                }
+                                // Render other columns normally
+                                return (
+                                    <Column
+                                        key={col.field}
+                                        field={col.field}
+                                        header={col.header}
+                                        sortable={col.sortable}
+                                        body={col.body}
+                                    />
+                                );
+
+
+                            })}
                         </DataTable>
+
                     </div>
                 </div>
-
             </div>
         </CustomLoader>
-
     );
 };
 
-export default SearchableDataTable;
+export default ReviewProfileDatatable;

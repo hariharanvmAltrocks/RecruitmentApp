@@ -1,0 +1,129 @@
+/* CommonPopup.css */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 28px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  width: 40%;
+  position: relative;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.popup-title {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+}
+
+.popup-header h3 {
+  font-size: 24px;
+  color: #7b4e23;
+}
+
+.popup-close {
+  position: absolute;
+  top: -7px;
+  right: -6px;
+  background-color: #FF748D;
+  /* Light pink or any color you prefer */
+  color: white;
+  border: none;
+  width: 20px;
+  height: 20px;
+  /* Adjust for rectangle */
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  /* Shadow for the 3D effect */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.popup-close:hover {
+  background-color: #FF748D;
+  /* Darker pink on hover */
+}
+
+
+
+
+.popup-body {
+  margin-top: 20px;
+}
+
+.popup-details {
+  display: flex;
+  justify-content: space-between;
+}
+
+.popup-item label {
+  font-weight: bold;
+  color: #333;
+}
+
+.popup-item p {
+  margin-top: 5px;
+}
+
+.location-select {
+  display: flex;
+  gap: 10px;
+}
+
+.location-tag {
+  background-color: #e1e7f4;
+  color: #333;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.remove-tag {
+  color: #ff5e5e;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.popup-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #f1f1f1;
+  color: #555;
+}
+
+.submit-btn {
+  background-color: #b87f4a;
+  color: white;
+}

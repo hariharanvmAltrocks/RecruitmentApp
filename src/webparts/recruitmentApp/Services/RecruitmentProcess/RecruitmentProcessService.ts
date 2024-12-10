@@ -16,7 +16,7 @@ export default class RecruitmentService implements IRecruitmentService {
     async GetVacancyDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>> {
         try {
             let positionrequestresult: any = [];
-            let positionIDResult:any[]=[];
+            let positionIDResult: any[] = [];
             const listItems: any[] = await SPServices.SPReadItems({
                 Listname: ListNames.HRMSVacancyReplacementRequest,
                 Select: "*, Department/DepartmentName, SubDepartment/SubDepTitle, Section/SectionName, DepartmentCode/DptCode, Status/StatusDescription, Action/Action, BusinessUnitCode/BusineesUnitCode, JobCode/JobCode",
@@ -67,11 +67,11 @@ export default class RecruitmentService implements IRecruitmentService {
                 let positionId: any = await this.GetPositionDetails(filter, "").then((returnitem: any) => {
                     console.log("formattedItems returnitem positionresult", returnitem);
                     if (returnitem?.data && returnitem?.data?.length > 0) {
-                        positionIDResult =positionIDResult.concat(returnitem.data);
+                        positionIDResult = positionIDResult.concat(returnitem.data);
                     }
                     return positionIDResult;
                 });
-                
+
                 console.log("formattedItems positionresult", positionresult);
                 console.log("formattedItems positionId", positionId);
                 if (positionresult?.data?.length > 0) {
@@ -85,7 +85,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
             console.log("formattedItems formattedItems GetVacancyDetails", await Promise.all(formattedItems));
             return {
-                data: [formattedItems,positionIDResult],
+                data: [formattedItems, positionIDResult],
                 status: 200,
                 message: "GetVacancyDetails fetched successfully",
             };

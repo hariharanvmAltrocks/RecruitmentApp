@@ -40,7 +40,7 @@ function CustomInput({
             height: 42,
             borderRadius: "4px",
             boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-            borderColor: "rgb(205, 45, 45)",
+            borderColor: "rgb(15, 15, 15)",
           },
         }}
         readOnly={readOnly}

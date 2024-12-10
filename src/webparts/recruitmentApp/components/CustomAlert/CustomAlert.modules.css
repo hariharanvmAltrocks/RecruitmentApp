@@ -2,7 +2,7 @@
 /* start */
 .sa {
     width: 140px;
-    height: 140px;
+    height: 95px;
     padding: 26px;
     background-color: #fff;
 }
@@ -165,7 +165,7 @@ start */
 
 .sa {
     width: 140px;
-    height: 140px;
+    height: 95px;
     padding: 26px;
     background-color: #fff;
 }
@@ -340,7 +340,7 @@ start */
 
 .sa {
     width: 140px;
-    height: 140px;
+    height: 95px;
     padding: 26px;
     background-color: #fff;
 }
@@ -456,7 +456,7 @@ Start */
 
 .sa {
     width: 140px;
-    height: 140px;
+    height: 95px;
     padding: 26px;
     background-color: #fff;
 }
@@ -648,3 +648,34 @@ Start */
 
 
 /* finish */
+
+
+.alertextstyle {
+    text-transform: none;
+    /* padding: .8em 1em 0; */
+    text-align: center;
+    font-size: 1.875em;
+    position: relative;
+    max-width: 100%;
+    margin: 0;
+    color: inherit;
+    font-weight: 600;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+@media only screen and (max-width: 600px) {
+    .alertextstyle {
+        font-size: 0.9em;
+    }
+
+    .HRMSModal img {
+        width: 80%;
+        height: auto;
+    }
+
+    .ms-Grid-row {
+        flex-direction: column;
+        align-items: center;
+    }
+}

@@ -111,11 +111,11 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                             className="ms-Grid-col ms-lg6"
                             style={{ display: "flex", justifyContent: "end", marginLeft: "48%" }}
                         >
-                            {handleCancel && (
-                                <div style={{ marginRight: "10px" }}>
-                                    <ReuseButton label="Cancel" onClick={handleCancel} spacing={4} />
-                                </div>
-                            )}
+                            {/* {handleCancel && ( */}
+                            <div style={{ marginRight: "10px" }}>
+                                <ReuseButton label="Cancel" onClick={handleCancel} spacing={4} />
+                            </div>
+                            {/* )} */}
 
                             {tabs.length > 1 && value !== tabs[0].value && (
                                 <div style={{ marginRight: "10px" }}>
@@ -155,7 +155,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                     </div>
                 </div>
 
-                {tabClassName == "TabStatus" && (
+                {tabClassName === "TabStatus" && (
                     <div className="overlay-component">
                         <StatusBar statusList={Statuslist} />
                     </div>
