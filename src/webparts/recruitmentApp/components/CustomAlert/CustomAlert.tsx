@@ -115,7 +115,7 @@ export default function CustomAlert(
                 visible={props.visible}
                 onClose={props.onClose}
                 width="41%"
-                height="44%"
+                height="35%"
                 MessageContent={MessageContent}
                 headerContent={headerContent}
                 footerContent={footerContent}

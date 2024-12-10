@@ -8,7 +8,6 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import CustomCheckBox from "./CustomCheckbox";
 import { FilterMatchMode } from "primereact/api";
-import CustomPopup from "./CustomPopup/CustomPopup";
 import AssignRecuritmentHR, { HeaderValue } from "./AssignRecuritmentHR";
 import { AutoCompleteItem } from "../Models/Screens";
 import { getVRRDetails } from "../Services/ServiceExport";
@@ -202,20 +201,13 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
 
             {AssignPopup ? (
                 <>
-                    <CustomPopup
-                        visible={AssignPopup}
+                    <AssignRecuritmentHR
+                        handleAutoComplete={handleAutoComplete}
+                        AssignRecuritmentHRValue={AssignRecuritmentHRValue}
                         onClose={handleAssignBtn}
-                        width="41%"
-                        height="35%"
-                        MessageContent={
-                            <AssignRecuritmentHR
-                                handleAutoComplete={handleAutoComplete}
-                                AssignRecuritmentHRValue={AssignRecuritmentHRValue}
-                                onClose={handleAssignBtn}
-                                HeaderValueData={HeaderValueData}
-                                assignbtnfn={assignbtnfn}
-                            />
-                        }
+                        HeaderValueData={HeaderValueData}
+                        assignbtnfn={assignbtnfn}
+                        visible={AssignPopup}
                     />
                 </>
             ) : (
