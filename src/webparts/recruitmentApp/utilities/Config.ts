@@ -27,7 +27,9 @@ export const ListNames = {
 };
 
 export const DocumentLibraray = {
-    InterviewPanelCandidateCV: "InterviewPanelCandidateCV"
+    InterviewPanelCandidateCV: "InterviewPanelCandidateCV",
+    HRMSRecruitment:"HRMSRecruitment",
+    HRMSRoleProfile:"HRMS_Role_Profile",
 }
 
 export const StatusId = {
