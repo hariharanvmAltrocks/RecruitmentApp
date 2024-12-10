@@ -1,7 +1,7 @@
 import * as React from "react";
 import "../CustomPopup/PopupStyle.css";
 import ReuseButton from "../ReuseButton";
-import { Dialog } from "@mui/material";
+import { Dialog, useMediaQuery, useTheme } from "@mui/material";
 
 interface DynamicFormDialogProps {
     onClose: () => void;
@@ -17,6 +17,8 @@ interface DynamicFormDialogProps {
 }
 
 function CustomPopup(props: DynamicFormDialogProps) {
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     return (
 
@@ -24,10 +26,12 @@ function CustomPopup(props: DynamicFormDialogProps) {
         <div className="ms-Grid-row" style={{ display: "flex", justifyContent: "center" }}>
 
             <Dialog
+                fullScreen={fullScreen}
                 open={props.visible}
                 onClose={() => props.onClose()}
-                PaperProps={{ style: { borderRadius: 20, overflow: "hidden", width: props.width, height: props.height } }}
+                PaperProps={{ style: { borderRadius: 20, overflow: "hidden", } }}
                 disableEscapeKeyDown
+                aria-labelledby="responsive-dialog-title"
             // hideBackdrop={true}
             >
                 <div

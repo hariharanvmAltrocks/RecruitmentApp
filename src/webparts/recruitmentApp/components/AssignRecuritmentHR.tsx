@@ -6,6 +6,7 @@ import { AutoCompleteItem } from "../Models/Screens";
 import { Label } from "@fluentui/react";
 import { ListNames } from "../utilities/Config";
 import SPServices from "../Services/SPService/SPServices";
+import CustomPopup from "./CustomPopup/CustomPopup";
 
 export type HeaderValue = {
     JobCode: string;
@@ -19,6 +20,7 @@ interface AssignRecuritmentHRProps {
     onClose: () => void;
     HeaderValueData: HeaderValue | null;
     assignbtnfn: () => void;
+    visible: boolean;
 }
 
 function AssignRecuritmentHR({
@@ -26,7 +28,8 @@ function AssignRecuritmentHR({
     AssignRecuritmentHRValue,
     onClose,
     HeaderValueData,
-    assignbtnfn
+    assignbtnfn,
+    visible
 }: AssignRecuritmentHRProps): JSX.Element {
     console.log(HeaderValueData, "optionProps");
 
@@ -61,7 +64,75 @@ function AssignRecuritmentHR({
 
     return (
         <>
-            <div
+            <div className="ms-Grid-row" style={{ display: "flex", justifyContent: "center" }}>
+                <CustomPopup
+                    visible={visible}
+                    onClose={onClose}
+                    width="41%"
+                    height="35%"
+                    MessageContent={
+                        <>
+                            <div className="ms-Grid-row" style={{ marginLeft: "5%" }}>
+                                <div className="ms-Grid-col ms-lg6">
+                                    <LabelHeaderComponents value={`Job Tilte - ${HeaderValueData?.JobTitle}`} />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg6">
+                                    <LabelHeaderComponents value={`Head Count - ${HeaderValueData?.Headcount}`} />
+                                </div>
+
+
+                            </div>
+                            <div className="ms-Grid-row">
+                                <div
+                                    className="ms-Grid-col ms-lg4"
+                                    style={{
+                                        marginLeft: "6%"
+                                    }}
+                                >
+                                    <CustomAutoComplete
+                                        label="Assign Recuritment HR"
+                                        options={RecuritmentOption ? [RecuritmentOption] : []}
+                                        value={AssignRecuritmentHRValue}
+                                        disabled={false}
+                                        mandatory={true}
+                                        onChange={(item) => handleAutoComplete(item)}
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    }
+                    headerContent={
+                        <>
+                            <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+                                <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+                                    <Label className="title" style={{ fontSize: 18, color: "black" }}>
+                                        {`Job Code - ${HeaderValueData?.JobCode}`}
+                                    </Label>
+                                </div>
+                            </div>
+                        </>
+                    }
+                    footerContent={
+                        <>
+                            <div
+                                className="ms-Grid-row"
+                                style={{ display: "flex", justifyContent: "center", marginTop: "3%" }}
+                            >
+                                <div className="ms-Grid-col ms-lg3">
+                                    <ReuseButton
+                                        spacing={4}
+                                        onClick={assignbtnfn}
+                                        width="100%"
+                                        label="Assign"
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    }
+                />
+            </div>
+            {/* <div
                 className="ms-Grid"
                 style={{
                     // height: "40vh",
@@ -70,56 +141,11 @@ function AssignRecuritmentHR({
                     marginTop: "15px",
                 }}
             >
-                <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                    <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                        <Label className="title" style={{ fontSize: 18, color: "black" }}>
-                            {`Job Code - ${HeaderValueData?.JobCode}`}
-                        </Label>
-                    </div>
-                </div>
+               
 
-                <div className="ms-Grid-row" style={{ marginLeft: "5%" }}>
-                    <div className="ms-Grid-col ms-lg6">
-                        <LabelHeaderComponents value={`Job Tilte - ${HeaderValueData?.JobTitle}`} />
-                    </div>
-
-                    <div className="ms-Grid-col ms-lg6">
-                        <LabelHeaderComponents value={`Head Count - ${HeaderValueData?.Headcount}`} />
-                    </div>
-
-
-                </div>
-                <div className="ms-Grid-row">
-                    <div
-                        className="ms-Grid-col ms-lg4"
-                        style={{
-                            marginLeft: "6%"
-                        }}
-                    >
-                        <CustomAutoComplete
-                            label="Assign Recuritment HR"
-                            options={RecuritmentOption ? [RecuritmentOption] : []}
-                            value={AssignRecuritmentHRValue}
-                            disabled={false}
-                            mandatory={true}
-                            onChange={(item) => handleAutoComplete(item)}
-                        />
-                    </div>
-                </div>
-                <div
-                    className="ms-Grid-row"
-                    style={{ display: "flex", justifyContent: "center", marginTop: "3%" }}
-                >
-                    <div className="ms-Grid-col ms-lg3">
-                        <ReuseButton
-                            spacing={4}
-                            onClick={assignbtnfn}
-                            width="100%"
-                            label="Assign"
-                        />
-                    </div>
-                </div>
-            </div>
+                
+                
+            </div> */}
         </>
     );
 }
