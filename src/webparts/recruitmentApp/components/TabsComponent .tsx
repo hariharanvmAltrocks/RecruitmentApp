@@ -91,6 +91,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                                     textAlign: "center",
                                     justifyContent: "space-evenly",
                                     alignItems: "center",
+                                    marginTop: "2%"
                                 }}
                             >
                                 {tabs.map((tab) => (

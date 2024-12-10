@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Card } from "@mui/material";
 import TabsComponent from "../../components/TabsComponent ";
 import SearchableDataTable from "../../components/CustomDataTable";
 import "../../App.css";
@@ -123,7 +122,7 @@ const RecruitmentProcess = (props: any) => {
 
 
     const fetchData = async () => {
-        
+
         setIsLoading(true);
         try {
             let filterConditions = [];
@@ -134,8 +133,8 @@ const RecruitmentProcess = (props: any) => {
                 FilterValue: StatusId.InitiatedforRecruitmentProcess
             });
             const data = await getVRRDetails.GetVacancyDetails(filterConditions, Conditions);
-            const RecruitmentDetails =  await getVRRDetails.GetRecruitmentDetails([],"");
-            console.log("RecruitmentDetails",RecruitmentDetails);
+            const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails([], "");
+            console.log("RecruitmentDetails", RecruitmentDetails);
             if (data.status === 200 && data.data !== null) {
                 console.log(data, "GetVacancyDetails");
                 setData(data.data[0]);
@@ -157,7 +156,7 @@ const RecruitmentProcess = (props: any) => {
     }, []);
 
 
-    const onPageChange = (event: any,Type:string) => {
+    const onPageChange = (event: any, Type: string) => {
         setFirst(event.first);
         setRows(event.rows);
     };
@@ -213,13 +212,12 @@ const RecruitmentProcess = (props: any) => {
 
     return (
         <CustomLoader isLoading={isLoading}>
-            <Card variant="outlined" sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3" }}>
-                <React.Fragment>
+            <React.Fragment>
+                <div className="menu-card">
                     <TabsComponent tabs={tabs} initialTab="tab1" />
-                    {console.log(props.masterData, "masterDataDetails")}
                     {console.log(first, "first")}
-                </React.Fragment>
-            </Card>
+                </div>
+            </React.Fragment>
         </CustomLoader>
 
     )
