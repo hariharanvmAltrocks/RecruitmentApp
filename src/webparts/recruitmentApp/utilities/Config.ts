@@ -110,3 +110,8 @@ export const WorkflowAction = {
   export const viewLabelcolor = {
     Labelcolor: "#9A5E5E",
   };
+
+  export const DocumentLibraray = {
+    HRMSRecruitment:"HRMSRecruitment",
+    HRMSRoleProfile:"HRMS_Role_Profile",
+  };
