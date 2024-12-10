@@ -745,7 +745,7 @@ html {
     font-size: 22px;
     font-style: normal;
     font-weight: 600;
-    /* margin-top: 1%; */
+    margin-top: 1%;
 }
 
 .Role {
@@ -1184,7 +1184,7 @@ html {
 
 .Role {
     font-size: 16px !important;
-    margin-top: 1%;
+    margin-top: -7%;
 }
 
 .TabStatus.MuiTabs-root {
@@ -1459,7 +1459,7 @@ footer {
     max-width: 100% !important;
     margin: 0px;
     padding: 0px;
-    width: 100%;
+    width: 98%;
 }
 
 @media only screen and (min-width: 1024px) {
@@ -1471,4 +1471,25 @@ footer {
 
 .n_c_8474018e {
     padding: 0px;
+}
+
+.contentGrid {
+    max-width: 100%;
+    overflow-x: hidden;
+    flex: 1;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ContentHeader {
+    align-items: center;
+    display: flex;
+    margin-left: 15px;
+    margin-top: 20px;
+}
+
+.MainContent {
+    flex: 1;
+    margin-left: 30px;
 }

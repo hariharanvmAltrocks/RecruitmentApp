@@ -27,7 +27,7 @@ export default function MainPage(props: any) {
             // dir="ltr"
             >
 
-                <div style={{ width: isExpanded ? "18%" : "10%" }}>
+                <div style={{ width: isExpanded ? "15%" : "6%", height: "auto" }}>
                     <SideNavComponent roleID={roleID} IsExpanded={isExpanded} />
                 </div>
 

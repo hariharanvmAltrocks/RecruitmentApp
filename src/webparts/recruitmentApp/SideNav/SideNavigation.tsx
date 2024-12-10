@@ -91,8 +91,8 @@ const SideNavComponent = (props: sideNavProps) => {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        height: "94px",
-                        padding: "3px",
+                        height: props.IsExpanded ? "94px" : "68px",
+                        padding: props.IsExpanded ? "3px" : "0px",
                         backgroundColor: "white"
                     }}
                 >
