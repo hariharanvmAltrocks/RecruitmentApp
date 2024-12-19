@@ -159,5 +159,9 @@ export type MasterData = {
     DepartmentCodeList: SectiontoDCodeResponse[];
     BuCodeToDepartmentMappingList: BuCodeToDepartmentResponse[];
     CompanyCodeDetailsList: CompanyCodeDetailsResponse[];
+    CurrentUserEmailId: string;
+    CurrentRoleID: number;
+    CurrentUserName: string,
+    CurrentUserRole: string
 };
 

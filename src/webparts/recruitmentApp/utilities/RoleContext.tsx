@@ -8,29 +8,29 @@ import { MasterData, UserRoleData } from "../Models/Master";
 import { ResponeStatus } from "./Config";
 
 export type RoleContextType = {
-    roleID: number | null;
-    userName: string | null;
-    userRole: string | null;
-    masterData: MasterData | null;
-    ADGroupData: ADGroupData | null;
+    roleID: number | undefined;
+    userName: string | undefined;
+    userRole: string | undefined;
+    masterData: MasterData | undefined;
+    ADGroupData: ADGroupData | undefined;
 };
 
 type ADGroupData = {
-    roleID: number | null;
-    userName: string | null;
-    userRole: string | null;
+    roleID: number | undefined;
+    userName: string | undefined;
+    userRole: string | undefined;
     ADGroupIDs: any
 }
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 export const RoleProvider = ({ children }: any) => {
-    const [roleID, setRoleID] = useState<number | null>(null);
-    const [userName, setUserName] = useState<string | null>(null);
-    const [userRole, setUserRole] = useState<string | null>(null);
+    const [roleID, setRoleID] = useState<number | undefined>(undefined);
+    const [userName, setUserName] = useState<string | undefined>(undefined);
+    const [userRole, setUserRole] = useState<string | undefined>(undefined);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [masterData, setMasterData] = useState<MasterData | null>(null);
-    const [ADGroupData, setADGroupData] = useState<ADGroupData | null>(null);
+    const [masterData, setMasterData] = useState<MasterData | undefined>(undefined);
+    const [ADGroupData, setADGroupData] = useState<ADGroupData | undefined>(undefined);
 
     useEffect(() => {
         void getUserRole();
@@ -58,8 +58,7 @@ export const RoleProvider = ({ children }: any) => {
                 if (roleId && userRole) {
                     setRoleID(roleId);
                     setUserRole(userRole);
-                    const MasterDataDetails = await masterService.MasterData(userEmail, roleId);
-                    console.log(MasterDataDetails, "MasterDataDetails");
+                    const MasterDataDetails = await masterService.MasterData(userEmail, roleId, currentUser.Title, userRole);
                     if (MasterDataDetails.status === ResponeStatus.SUCCESS && MasterDataDetails.data) {
                         setMasterData(MasterDataDetails.data)
                     }
@@ -91,25 +90,21 @@ export const RoleProvider = ({ children }: any) => {
                 const response = await graphClient
                     .api(`/groups/${groupId}/members`)
                     .get();
-
-                console.log("Azure response", response);
-
                 const members = response.value || [];
                 if (
                     members.some(
                         (member: any) => member.userPrincipalName?.toLowerCase() === userEmail.toLowerCase()
                     )
                 ) {
-                    console.log(`User found in group: ${groupId}`);
                     const currentLogin = userDetails.find(
                         (item) => item.ADGroupID === groupId
                     );
 
                     const ADGroupData: ADGroupData = {
-                        roleID: currentLogin?.ID ?? null,
-                        userName: currentLogin?.RoleTitle ?? null,
-                        ADGroupIDs: currentLogin?.ADGroupID ?? null,
-                        userRole: userName
+                        roleID: currentLogin?.ID ?? undefined,
+                        userName: currentLogin?.RoleTitle ?? undefined,
+                        ADGroupIDs: currentLogin?.ADGroupID ?? undefined,
+                        userRole: userName ?? undefined
                     }
                     setADGroupData(ADGroupData)
                     return {

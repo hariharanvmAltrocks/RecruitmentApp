@@ -1,11 +1,11 @@
 import { IDocFiles } from "../Services/SPService/ISPServicesProps"
 
 export type InterviewPanelCandidateDetails = {
-    ID: any;
-    JobCode: any;
-    PassportID: any;
-    FristName: any;
-    MiddleName: any;
-    LastName: any;
+    ID: number;
+    JobCode: string;
+    PassportID: string;
+    FristName: string;
+    MiddleName: string;
+    LastName: string;
     CandidateCVDoc: IDocFiles[];
 }

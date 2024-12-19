@@ -1,3 +1,5 @@
+import { IADGroupID } from "../Models/MainPage";
+
 export const APIURL =
     "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
 
@@ -22,14 +24,17 @@ export const ListNames = {
     HRMSRecruitmentDptDetails: "HRMSRecruitmentDptDetails",
     HRMSRecruitmentPositionDetails: "HRMSRecruitmentPositionDetails",
     HRMSVRRToPositionIDMapping: "HRMSVRRToPositionIDMapping",
-    InterviewPanelCandidateDetails: "InterviewPanelCandidateDetails"
+    InterviewPanelCandidateDetails: "InterviewPanelCandidateDetails",
+    HRMSRecruitmentCandidateDetails: "HRMSRecruitmentCandidateDetails",
 
 };
 
 export const DocumentLibraray = {
     InterviewPanelCandidateCV: "InterviewPanelCandidateCV",
-    HRMSRecruitment:"HRMSRecruitment",
-    HRMSRoleProfile:"HRMS_Role_Profile",
+    HRMSRecruitment: "HRMSRecruitment",
+    HRMSRoleProfile: "HRMS_Role_Profile",
+    RecruitmentAdvertisementDocument: "RecruitmentAdvertisementDocument",
+    ONAMSignedStampDocuments: "ONAMSignedStampDocuments"
 }
 
 export const StatusId = {
@@ -64,6 +69,10 @@ export const RoleID = {
     EXCOExecutive: 26,
     HeadOfDivision: 27,
     RecruitmentHRLead: 28,
+    RecruitmentHR: 32,
+    RecruitmentLineManager: 33,
+    RecruitmentAppExternalAgency: 34,
+    InterviewPanel: 35,
     EXCOMD: 31,
 }
 
@@ -119,5 +128,27 @@ export const viewLabelcolor = {
 };
 
 export const RecuritmentHRMsg = {
+    AdvertisementSubmitMsg: "Advertisement Submitted Successfully",
+    RecuritmentSubmitMsg: "Request Submitted Successfully",
+    ApprovedMsg: "Request Approved Successfully",
     RecuritmentHRMsgCancel: "Are you sure you want to cancel? Any unsaved changes will be lost.",
+    ValidationErrorMsg: "One or more required actions are missing",
+}
+
+
+export const ADGroupID: IADGroupID = {
+    HRMSHOD: "86374c2a-511d-4c6d-9eb8-f6b64a44eb97",
+    HRMSRecruitmentLineManager: "e46c5079-6a7d-40bf-a8cb-c7fbfa10f220",
+    HRMSRecruitmentHR: "fe43382e-002e-4879-8710-a4ac546d48e7",
+    HRMSRecruitmentHRLead: "df686473-5454-4afe-ad60-1ba93037c772",
+    HRMSInterviewPanel: "60c676c0-692d-4c48-b101-a6398fc99493"
+};
+
+export const tabType = {
+    Dashboard: "Dashboard",
+};
+
+export const ActionStatus = {
+    Shortlists: "Shortlists",
+    Rejected: "Rejected"
 }

@@ -2,5 +2,5 @@ import { MasterDataResponseDetails, UserRoleResponseDetails } from "../../Models
 
 export type IMasterService = {
     userRole(): Promise<UserRoleResponseDetails>;
-    MasterData(EmailId: any, UserRole: number): Promise<MasterDataResponseDetails>;
+    MasterData(EmailId: string, RoleID: number, UserName: string, UserRole: string): Promise<MasterDataResponseDetails>;
 };

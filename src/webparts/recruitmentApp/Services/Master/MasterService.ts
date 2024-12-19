@@ -15,8 +15,6 @@ export default class MasterService implements IMasterService {
                 Select: "*",
             };
             const items = await SPServices.SPReadItems(getjsonUserRole)
-            console.log("UserRoleData", items);
-
             return {
                 data: items,
                 status: ResponeStatus.SUCCESS,
@@ -32,7 +30,7 @@ export default class MasterService implements IMasterService {
         }
     }
 
-    async MasterData(EmailId: any, UserRole: number): Promise<MasterDataResponseDetails> {
+    async MasterData(EmailId: string, RoleID: number, UserName: string, UserRole: string): Promise<MasterDataResponseDetails> {
         try {
             const masterData: MasterData = {
                 EmployeeList: [],
@@ -51,6 +49,11 @@ export default class MasterService implements IMasterService {
                 DepartmentCodeList: [],
                 BuCodeToDepartmentMappingList: [],
                 CompanyCodeDetailsList: [],
+                CurrentUserEmailId: EmailId,
+                CurrentRoleID: RoleID,
+                CurrentUserName: UserName,
+                CurrentUserRole: UserRole
+
             };
             await SPServices.SPReadItems({
                 Listname: ListNames.HRMSSageList,
@@ -62,11 +65,8 @@ export default class MasterService implements IMasterService {
                 Orderby: "ID",
                 Orderbydecorasc: true,
             })
-                .then(async (items: any) => {
-                    console.log(items);
-                    items.forEach((item: any) => {
-                        console.log(item);
-
+                .then(async (items) => {
+                    items.forEach((item) => {
                         masterData.EmployeeList.push({
                             key: item?.ID,
                             text: item?.IdentityNo,
@@ -106,8 +106,8 @@ export default class MasterService implements IMasterService {
                     PageCount: count.Topcount
                 }
             )
-                .then(async (objGradedata: any) => {
-                    await objGradedata.forEach((item: any) => {
+                .then(async (objGradedata) => {
+                    await objGradedata.forEach((item) => {
                         masterData.PatersonGradeList.push({
                             key: item?.ID,
                             text: item?.PatersonGrade,
@@ -132,8 +132,8 @@ export default class MasterService implements IMasterService {
                     PageCount: count.Topcount
                 }
             )
-                .then(async (items: any) => {
-                    await items.forEach((item: any) => {
+                .then(async (items) => {
+                    await items.forEach((item) => {
                         masterData.StatusList.push({
                             key: item?.ID,
                             text: item?.StatusDescription,
@@ -160,7 +160,7 @@ export default class MasterService implements IMasterService {
                     },
                 ],
             })
-                .then(async (res: any) => {
+                .then(async (res) => {
                     if (res.length > 0) {
                         const response = res[0];
                         const UserDetails = {
@@ -209,8 +209,8 @@ export default class MasterService implements IMasterService {
                     PageCount: count.Topcount
                 }
             )
-                .then(async (items: any) => {
-                    await items.forEach((item: any) => {
+                .then(async (items) => {
+                    await items.forEach((item) => {
                         masterData.JobInEnglishList.push({
                             key: item?.ID,
                             text: item?.JobTitleInEnglish,
@@ -240,8 +240,8 @@ export default class MasterService implements IMasterService {
                     PageCount: count.Topcount
                 }
             )
-                .then(async (items: any) => {
-                    await items.forEach((item: any) => {
+                .then(async (items) => {
+                    await items.forEach((item) => {
                         masterData.BusinessUnitCode.push({
                             key: item?.ID,
                             text: item?.BusineesUnitCode,
@@ -275,10 +275,10 @@ export default class MasterService implements IMasterService {
                     },
                 ],
             })
-                .then(async (res: any) => {
+                .then(async (res) => {
 
                     if (res.length > 0) {
-                        res.map((item: any) => {
+                        res.map((item) => {
                             masterData.Department.push({
                                 key: item.Id ? item.Id : "",
                                 text: item?.DepartmentName ? item?.DepartmentName : "",
@@ -299,9 +299,9 @@ export default class MasterService implements IMasterService {
                 Expand:
                     "Department",
             })
-                .then(async (res: any) => {
+                .then(async (res) => {
                     if (res.length > 0) {
-                        res.map((item: any) => {
+                        res.map((item) => {
                             masterData.AllSubDepartmentList.push({
                                 key: item?.Id,
                                 DepartmentId: item?.DepartmentId,
@@ -336,8 +336,8 @@ export default class MasterService implements IMasterService {
                     ],
                 }
             )
-                .then(async (Sectionitem: any) => {
-                    await Sectionitem.forEach((item: any) => {
+                .then(async (Sectionitem) => {
+                    await Sectionitem.forEach((item) => {
                         masterData.SectionList.push({
                             key: item?.ID,
                             text: item?.SectionName,
@@ -364,9 +364,9 @@ export default class MasterService implements IMasterService {
                     PageCount: count.Topcount,
                 }
             )
-                .then(async (SectionToDptCodeItem: any) => {
+                .then(async (SectionToDptCodeItem) => {
 
-                    await SectionToDptCodeItem.forEach((item: any) => {
+                    await SectionToDptCodeItem.forEach((item) => {
                         masterData.DepartmentCodeList.push({
                             key: item?.ID,
                             text: item?.DptCode,
@@ -394,8 +394,8 @@ export default class MasterService implements IMasterService {
                     PageCount: count.Topcount
                 }
             )
-                .then(async (items: any) => {
-                    await items.forEach(async (item: any) => {
+                .then(async (items) => {
+                    await items.forEach(async (item) => {
                         masterData.BuCodeToDepartmentMappingList.push({
                             ID: item?.ID,
                             key: item?.BUCId,
@@ -423,9 +423,9 @@ export default class MasterService implements IMasterService {
                     PageCount: count.Topcount
                 }
             )
-                .then(async (array: any) => {
+                .then(async (array) => {
 
-                    await array.forEach(async (item: any) => {
+                    await array.forEach(async (item) => {
                         masterData.CompanyCodeDetailsList.push({
                             key: item?.ID,
                             CompanyCode: item?.CompanyCode,

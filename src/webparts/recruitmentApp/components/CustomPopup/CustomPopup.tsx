@@ -29,7 +29,7 @@ function CustomPopup(props: DynamicFormDialogProps) {
                 fullScreen={fullScreen}
                 open={props.visible}
                 onClose={() => props.onClose()}
-                PaperProps={{ style: { borderRadius: 20, overflow: "hidden", } }}
+                PaperProps={{ style: { borderRadius: 20, overflow: "hidden", width: props.width } }}
                 disableEscapeKeyDown
                 aria-labelledby="responsive-dialog-title"
             // hideBackdrop={true}
@@ -65,9 +65,11 @@ function CustomPopup(props: DynamicFormDialogProps) {
                         </style>
                     </ReuseButton>
                 </div>
-                {props.headerContent}
-                {props.MessageContent}
-                {props.footerContent}
+                <div style={{ width: "100%", marginBottom: "4%" }}>
+                    {props.headerContent}
+                    {props.MessageContent}
+                    {props.footerContent}
+                </div>
             </Dialog>
 
         </div>

@@ -8,9 +8,11 @@ import ApprovedVRREdit from "../Screens/RecuritmentProcess/ApprovedVRREdit";
 import { userInfo } from "../utilities/RoleContext";
 import CommanFieldTemplate from "../components/CommanFieldTemplate";
 import CommanTemplate from "../components/CommanTemplate";
+import ReviewProfile from "../Screens/RecuritmentProcess/ReviewProfile";
+import AssignInterviewPanel from "../Screens/RecuritmentProcess/AssignInterviewPanel";
+import InterviewPanelList from "../Screens/InterviewPanel/InterviewPanelList";
 
 export default function MainPage(props: any) {
-    console.log(props, "props");
     const { roleID, userName, userRole, masterData, ADGroupData } = userInfo();
 
     const [isExpanded, setIsExpanded] = React.useState(true);
@@ -41,6 +43,9 @@ export default function MainPage(props: any) {
                                     <Route path="/RecurimentProcess/ApprovedVRREdit" element={<ApprovedVRREdit {...props} {...masterData} />} />
                                     <Route path="/CommanFieldTemplate" element={<CommanFieldTemplate {...props} {...masterData} />} />
                                     <Route path="/CommanTemplate/CommanTemplate" element={<CommanTemplate {...props} {...masterData} />} />
+                                    <Route path="/RecurimentProcess/ReviewProfile" element={<ReviewProfile {...props} {...masterData} />} />
+                                    <Route path="/RecurimentProcess/AssignInterviewPanel" element={<AssignInterviewPanel {...props} {...masterData} />} />
+                                    <Route path="/InterviewPanelList" element={<InterviewPanelList {...props} {...masterData} />} />
 
                                 </Routes>
                             </>

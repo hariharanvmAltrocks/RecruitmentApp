@@ -114,8 +114,7 @@ export default function CustomAlert(
             <CustomPopup
                 visible={props.visible}
                 onClose={props.onClose}
-                width="41%"
-                height="35%"
+                width="31%"
                 MessageContent={MessageContent}
                 headerContent={headerContent}
                 footerContent={footerContent}

@@ -1,4 +1,4 @@
-import  { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import * as React from "react";
 import { Button } from "primereact/button";
 import { Icon } from "@fluentui/react/lib/Icon";
@@ -73,7 +73,6 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
             if (AttachState) {
               AttachState(newAttachments);
             }
-            console.log("AttachState", newAttachments);
           }
         };
 

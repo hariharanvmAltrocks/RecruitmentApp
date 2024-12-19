@@ -4,9 +4,9 @@ import ReuseButton from "./ReuseButton";
 import CustomAutoComplete from "./CustomAutoComplete";
 import { AutoCompleteItem } from "../Models/Screens";
 import { Label } from "@fluentui/react";
-import { ListNames } from "../utilities/Config";
-import SPServices from "../Services/SPService/SPServices";
+import { ADGroupID } from "../utilities/Config";
 import CustomPopup from "./CustomPopup/CustomPopup";
+import { CommonServices } from "../Services/ServiceExport";
 
 export type HeaderValue = {
     JobCode: string;
@@ -31,35 +31,27 @@ function AssignRecuritmentHR({
     assignbtnfn,
     visible
 }: AssignRecuritmentHRProps): JSX.Element {
-    console.log(HeaderValueData, "optionProps");
+    const [RecuritmentOption, setRecuritmentOption] = React.useState<AutoCompleteItem[]>([]);
 
-    const [RecuritmentOption, setRecuritmentOption] = React.useState<AutoCompleteItem | null>(null);
-
-
-    const fetchRecuritmentHR = async () => {
-
-        await SPServices.SPReadItems({
-            Listname: ListNames.JDEDataMapping,
-            Select: "*,LineManager/Title,BudgetHolder/Title,HOD/Title",
-            Expand: "LineManager,BudgetHolder,HOD",
-        }).then((res: any) => {
-            if (res.length > 0) {
-                res.map((item: any) => {
-                    console.log(item, "JDEDataMappingItem");
-
-                    let obj: AutoCompleteItem = {
-                        key: item.BudgetHolderId,
-                        text: item?.BudgetHolder?.Title ? item?.BudgetHolder?.Title : "",
-                    };
-                    setRecuritmentOption(obj)
-                })
-            }
-        })
-
-    }
 
     React.useEffect(() => {
-        void fetchRecuritmentHR();
+        const getADGroupsOption = async () => {
+            try {
+                const InterViewPanelOption = await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSInterviewPanel);
+
+                if (
+                    (InterViewPanelOption.status === 200 && InterViewPanelOption.data)
+                ) {
+                    setRecuritmentOption(InterViewPanelOption.data)
+                } else {
+                    console.error("Error retrieving attachments:", InterViewPanelOption.data.message);
+                }
+            } catch (error) {
+                console.error("Error in fetching data:", error);
+            }
+        };
+
+        void getADGroupsOption();
     }, []);
 
     return (
@@ -92,7 +84,7 @@ function AssignRecuritmentHR({
                                 >
                                     <CustomAutoComplete
                                         label="Assign Recuritment HR"
-                                        options={RecuritmentOption ? [RecuritmentOption] : []}
+                                        options={RecuritmentOption}
                                         value={AssignRecuritmentHRValue}
                                         disabled={false}
                                         mandatory={true}
