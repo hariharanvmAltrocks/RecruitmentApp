@@ -22,6 +22,7 @@ const RecruitmentProcess = (props: any) => {
     const [rows, setRows] = React.useState<number>(5);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [activeTab, setActiveTab] = React.useState("tab1");
 
 
     const columnConfig = (tab: string) => [
@@ -189,8 +190,9 @@ const RecruitmentProcess = (props: any) => {
         setRows(event.rows);
     };
 
-    const handleRefresh = () => {
+    const handleRefresh = (tab: string) => {
         void fetchData();
+        setActiveTab(tab);
     };
 
     const tabs = [
@@ -205,7 +207,7 @@ const RecruitmentProcess = (props: any) => {
                             columns={columnConfig("tab1")}
                             rows={rows}
                             onPageChange={(event) => onPageChange(event, "Recruitment")}
-                            handleRefresh={handleRefresh}
+                            handleRefresh={() => handleRefresh("tab1")}
                         />
                     </div>
                 ),
@@ -220,7 +222,7 @@ const RecruitmentProcess = (props: any) => {
                             columns={columnConfig("tab2")}
                             rows={rows}
                             onPageChange={(event) => onPageChange(event, "VRR")}
-                            handleRefresh={handleRefresh}
+                            handleRefresh={() => handleRefresh("tab2")}
 
                         />
                     </div>
@@ -238,7 +240,7 @@ const RecruitmentProcess = (props: any) => {
                                 columns={columnConfig("tab1")}
                                 rows={rows}
                                 onPageChange={(event) => onPageChange(event, "VRR")}
-                                handleRefresh={handleRefresh}
+                                handleRefresh={() => handleRefresh("tab1")}
                             />
                         </div>
                     ),
@@ -254,7 +256,7 @@ const RecruitmentProcess = (props: any) => {
                                 columns={columnConfig("tab1")}
                                 rows={rows}
                                 onPageChange={(event) => onPageChange(event, "VRR")}
-                                handleRefresh={handleRefresh}
+                                handleRefresh={() => handleRefresh("tab1")}
                             />
                         </div>
                     ),
@@ -270,7 +272,7 @@ const RecruitmentProcess = (props: any) => {
                                     columns={columnConfig("tab2")}
                                     rows={rows}
                                     onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={handleRefresh}
+                                    handleRefresh={() => handleRefresh("tab2")}
                                 />
                             </div>
                         ),
@@ -285,7 +287,7 @@ const RecruitmentProcess = (props: any) => {
                                     columns={columnConfig("tab3")}
                                     rows={rows}
                                     onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={handleRefresh}
+                                    handleRefresh={() => handleRefresh("tab3")}
                                 />
                             </div>
                         ),
@@ -302,7 +304,7 @@ const RecruitmentProcess = (props: any) => {
         <CustomLoader isLoading={isLoading}>
             <React.Fragment>
                 <div className="menu-card">
-                    <TabsComponent tabs={tabs} initialTab="tab1" tabtype={tabType.Dashboard} />
+                    <TabsComponent tabs={tabs} initialTab={activeTab} tabtype={tabType.Dashboard} />
                     {console.log(first, "first")}
                 </div>
             </React.Fragment>

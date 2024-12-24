@@ -105,8 +105,9 @@ const InterviewPanelList = (props: any) => {
 
 
     function handleRedirectView(rowData: any, tab: string) {
-        const ID = rowData?.ID
-        props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID, tab } });
+        debugger;
+        const ID = rowData?.JobCodeId
+        props.navigation("/InterviewPanelList/InterviewPanelEdit", { state: { ID, tab } });
 
     }
 

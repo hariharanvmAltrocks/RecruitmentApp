@@ -8,9 +8,10 @@ interface MainPageHeaderProps {
     toggleSideNav: () => void;
     userName: string | undefined;
     userRole: string | undefined;
+    Department: string | undefined;
 }
 
-const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav, userName, userRole }) => {
+const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav, userName, userRole, Department }) => {
 
     return (
         <div className="contentGrid">
@@ -46,7 +47,7 @@ const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav
                     </h3>
                     <h6 className="title Role">
                         (
-                        {userRole} - {""})
+                        {userRole} - {Department?.split("-")[1] ?? ''})
                     </h6>
                 </div>
             </div>

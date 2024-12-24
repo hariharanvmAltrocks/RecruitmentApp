@@ -7,7 +7,6 @@ import ReuseButton from "./ReuseButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import { FilterMatchMode } from "primereact/api";
-import { ActionStatus } from "../utilities/Config";
 
 
 interface ColumnConfig {
@@ -22,7 +21,6 @@ interface SearchableDataTableProps {
     columns: ColumnConfig[];
     rows: number;
     onPageChange: (event: any) => void;
-    ActionBtnFn: (rowData: any, ActionStatus: string) => void;
 }
 
 const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
@@ -30,12 +28,11 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
     columns,
     rows,
     onPageChange,
-    ActionBtnFn
 }) => {
     const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [isHovered, setIsHovered] = React.useState(false);
+    // const [isHovered, setIsHovered] = React.useState(false);
     const [dashboardSearch, setDashboardSearch] = React.useState<any>({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
     // const [checkedValue, setCheckedValue] = React.useState<any[]>([]);
 
@@ -132,41 +129,41 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
                             filters={dashboardSearch}
                         >
                             {columns.map((col) => {
-                                // Render Checkbox column separately
-                                if (col.header === "Action" && col.field === "Shrotlistbtn") {
-                                    return (
-                                        <Column
-                                            key={col.field}
-                                            header={"Action"}
-                                            sortable={false}
-                                            style={{ width: "1%" }}
-                                            body={(rowData: any) => {
-                                                return (
-                                                    <span style={{ display: "flex" }}
-                                                        onMouseEnter={() => setIsHovered(true)}
-                                                        onMouseLeave={() => setIsHovered(false)}    >
-                                                        <ReuseButton
-                                                            label="Shortlist"
-                                                            onClick={() => ActionBtnFn(rowData, ActionStatus.Shortlists)}
-                                                            backgroundColor={rowData.ShortlistValue === ActionStatus.Shortlists ? "rgb(205, 45, 45)" : "white"}
-                                                            Style={{ color: rowData.ShortlistValue === ActionStatus.Shortlists ? "white" : isHovered ? "rgb(205, 45, 45)" : "rgb(205, 45, 45)", }}
 
-                                                        />
-                                                        <ReuseButton
-                                                            label="Rejected"
-                                                            onClick={() => ActionBtnFn(rowData, ActionStatus.Rejected)}
-                                                            backgroundColor={rowData.ShortlistValue === ActionStatus.Rejected ? "rgb(205, 45, 45)" : "white"}
-                                                            Style={{ color: rowData.ShortlistValue === ActionStatus.Rejected ? "white" : isHovered ? "rgb(205, 45, 45)" : "rgb(205, 45, 45)", marginLeft: "13%" }}
-                                                        />
+                                // if (col.header === "Action" && col.field === "Shrotlistbtn") {
+                                //     return (
+                                //         <Column
+                                //             key={col.field}
+                                //             header={"Action"}
+                                //             sortable={false}
+                                //             style={{ width: "1%" }}
+                                //             body={(rowData: any) => {
+                                //                 return (
+                                //                     <span style={{ display: "flex" }}
+                                //                         onMouseEnter={() => setIsHovered(true)}
+                                //                         onMouseLeave={() => setIsHovered(false)}    >
+                                //                         <ReuseButton
+                                //                             label="Shortlist"
+                                //                             onClick={() => ActionBtnFn(rowData, ActionStatus.Shortlists)}
+                                //                             backgroundColor={rowData.ShortlistValue === ActionStatus.Shortlists ? "rgb(205, 45, 45)" : "white"}
+                                //                             Style={{ color: rowData.ShortlistValue === ActionStatus.Shortlists ? "white" : isHovered ? "rgb(205, 45, 45)" : "rgb(205, 45, 45)", }}
 
-                                                    </span>
+                                //                         />
+                                //                         <ReuseButton
+                                //                             label="Rejected"
+                                //                             onClick={() => ActionBtnFn(rowData, ActionStatus.Rejected)}
+                                //                             backgroundColor={rowData.ShortlistValue === ActionStatus.Rejected ? "rgb(205, 45, 45)" : "white"}
+                                //                             Style={{ color: rowData.ShortlistValue === ActionStatus.Rejected ? "white" : isHovered ? "rgb(205, 45, 45)" : "rgb(205, 45, 45)", marginLeft: "13%" }}
+                                //                         />
 
-                                                );
-                                            }}
-                                        />
-                                    );
-                                }
-                                // Render other columns normally
+                                //                     </span>
+
+                                //                 );
+                                //             }}
+                                //         />
+                                //     );
+                                // }
+
                                 return (
                                     <Column
                                         key={col.field}

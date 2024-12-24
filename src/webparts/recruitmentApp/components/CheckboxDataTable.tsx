@@ -42,7 +42,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
+    // const [assignbtnVisible, setAssignbtnVisible] = React.useState<boolean>(false);
     const [dashboardSearch, setDashboardSearch] = React.useState<any>({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
 
 
@@ -53,6 +53,8 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
 
     React.useEffect(() => {
         setFilteredItems(data);
+        // let AssignbtnVisible = columns.every((item) => item.field === "Interviewed")
+        // setAssignbtnVisible(AssignbtnVisible)
     }, [data]);
 
     const handleRefresh = () => {
@@ -140,6 +142,8 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                             />
                         </div>
                     </div>
+                    {/* {assignbtnVisible ? (
+                        <> */}
                     <div className="ms-Grid-row" style={{ display: "flex", justifyContent: "end", marginTop: "2%" }}>
                         <div className="ms-Grid-col ms-lg2">
                             <ReuseButton
@@ -150,6 +154,9 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                             />
                         </div>
                     </div>
+                    {/* </>
+                    ) : (<></>)} */}
+
                     <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
                         <div className="ms-Grid-col ms-lg12">
                             <DataTable
@@ -174,6 +181,26 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                                                 header={() => (
                                                     <CustomCheckBox label="" value={selectAll} onChange={(e, value: boolean) => onSelectAllChange(value)} />
                                                 )}
+                                                sortable={false}
+                                                body={(rowData: any) => {
+                                                    return (
+                                                        <div>
+                                                            <CustomCheckBox
+                                                                label=""
+                                                                value={rowData?.Checked === true || rowData?.AssignedById}
+                                                                onChange={(e, value: boolean) => handleCheckbox(value, rowData)}
+                                                            />
+                                                        </div>
+                                                    );
+                                                }}
+                                            />
+                                        );
+                                    }
+                                    if (col.field === "Interviewed") {
+                                        return (
+                                            <Column
+                                                key={col.field}
+                                                header={col.header}
                                                 sortable={false}
                                                 body={(rowData: any) => {
                                                     return (

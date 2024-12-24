@@ -26,6 +26,7 @@ export const ListNames = {
     HRMSVRRToPositionIDMapping: "HRMSVRRToPositionIDMapping",
     InterviewPanelCandidateDetails: "InterviewPanelCandidateDetails",
     HRMSRecruitmentCandidateDetails: "HRMSRecruitmentCandidateDetails",
+    HRMSRecruitmentCandidatePersonalDetails: "HRMSRecruitmentCandidatePersonalDetails"
 
 };
 
@@ -34,7 +35,8 @@ export const DocumentLibraray = {
     HRMSRecruitment: "HRMSRecruitment",
     HRMSRoleProfile: "HRMS_Role_Profile",
     RecruitmentAdvertisementDocument: "RecruitmentAdvertisementDocument",
-    ONAMSignedStampDocuments: "ONAMSignedStampDocuments"
+    ONAMSignedStampDocuments: "ONAMSignedStampDocuments",
+    RoleProfileMaster: "RoleProfileMaster"
 }
 
 export const StatusId = {
@@ -151,4 +153,9 @@ export const tabType = {
 export const ActionStatus = {
     Shortlists: "Shortlists",
     Rejected: "Rejected"
+}
+
+export const RoleProfileMaster = {
+    Grading: "Grading",
+    RoleProfile: "RoleProfile"
 }

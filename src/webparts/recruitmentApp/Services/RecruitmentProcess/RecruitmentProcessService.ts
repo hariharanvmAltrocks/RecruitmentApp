@@ -1,7 +1,7 @@
 import { DocumentLibraray, ListNames, WorkflowAction, count } from "../../utilities/Config";
 import SPServices from "../SPService/SPServices";
 import { IRecruitmentService } from "./IRecruitmentProcessService";
-import { InterviewPanelCandidateDetails } from "../../Models/RecuritmentVRR";
+import { CandidateData } from "../../Models/RecuritmentVRR";
 import { sp } from "@pnp/sp/presets/all";
 import { CommonServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
@@ -215,7 +215,6 @@ export default class RecruitmentService implements IRecruitmentService {
                 Listname: ListNames.HRMSRecruitmentDptDetails,
                 Select: `
                     *, 
-                    VRRID/ID, 
                     Department/DepartmentName, 
                     SubDepartment/SubDepTitle, 
                     Section/SectionName, 
@@ -229,7 +228,6 @@ export default class RecruitmentService implements IRecruitmentService {
                 Filter: filterParam,
                 FilterCondition: filterConditions,
                 Expand: `
-                    VRRID, 
                     Department, 
                     SubDepartment, 
                     Section, 
@@ -246,7 +244,6 @@ export default class RecruitmentService implements IRecruitmentService {
             console.log("GetRecruitmentDetails:", listItems);
 
             const formattedItems = listItems.map((item) => ({
-                VRRID: item?.VRRIDId || 0,
                 ID: item?.ID,
                 Nationality: item?.Nationality || "",
                 EmploymentCategory: item?.EmploymentCategory || "",
@@ -493,7 +490,7 @@ export default class RecruitmentService implements IRecruitmentService {
     async InsertRecruitmentCandidateDetails(param: any): Promise<ApiResponse<any | null>> {
         try {
             let response: any = await SPServices.SPAddItem({
-                Listname: ListNames.HRMSRecruitmentCandidateDetails,
+                Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
                 RequestJSON: param,
             });
             console.log(response);
@@ -514,7 +511,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
     async GetCandidateDetails(filterParam: any, filterConditions: any) {
         try {
-            const CandidateDetails: InterviewPanelCandidateDetails[] = [];
+            const CandidateDetails: CandidateData[] = [];
 
             const listItems: any[] = await SPServices.SPReadItems({
                 Listname: ListNames.InterviewPanelCandidateDetails,
@@ -543,11 +540,24 @@ export default class RecruitmentService implements IRecruitmentService {
 
                 return {
                     ID: item.ID,
-                    JobCode: item.JobCode?.JobCode,
+                    JobCode: item?.JobCode?.JobCode,
+                    JobCodeId: item?.JobCodeId,
                     PassportID: item?.PassportID,
-                    FristName: item?.FristName,
-                    MiddleName: item?.MiddleName,
-                    LastName: item?.LastName,
+                    FristName: item.FristName,
+                    MiddleName: item.MiddleName,
+                    LastName: item.LastName,
+                    FullName: item.FristName ?? "" + " " + item.MiddleName ?? "" + " " + item.LastName ?? "",
+                    ResidentialAddress: item?.ResidentialAddress,
+                    DOB: item?.DOB,
+                    ContactNumber: item?.ContactNumber,
+                    Email: item?.Email,
+                    Nationality: item?.Nationality,
+                    Gender: item?.Gender,
+                    TotalYearOfExperiance: item?.TotalYearOfExperiance,
+                    Skills: item?.Skills,
+                    LanguageKnown: item?.LanguageKnown,
+                    ReleventExperience: item?.ReleventExperience,
+                    Qualification: item?.Qualification,
                     CandidateCVDoc: candidateCV,
                 };
             });
@@ -575,10 +585,10 @@ export default class RecruitmentService implements IRecruitmentService {
 
     async GetInterviewPanelCandidateDetails(filterParam: any, filterConditions: any) {
         try {
-            const CandidateDetails: InterviewPanelCandidateDetails[] = [];
+            const CandidateDetails: CandidateData[] = [];
 
             const listItems: any[] = await SPServices.SPReadItems({
-                Listname: ListNames.HRMSRecruitmentCandidateDetails,
+                Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
                 Select: "*,JobCode/JobCode",
                 Expand: "JobCode",
                 Filter: filterParam,
@@ -587,11 +597,12 @@ export default class RecruitmentService implements IRecruitmentService {
             });
 
             const formattedItems = listItems.map(async (item) => {
+                debugger;
                 console.log("HRMSRecruitmentCandidateDetails ", item);
                 const response = await CommonServices.GetAttachmentToLibrary(
                     DocumentLibraray.InterviewPanelCandidateCV,
                     item.JobCode?.JobCode,
-                    item?.PassportNumber
+                    item?.PassportID,
                 );
                 let candidateCV: IDocFiles[] = [];
                 if (response.status === 200 && response.data) {
@@ -603,11 +614,25 @@ export default class RecruitmentService implements IRecruitmentService {
 
                 return {
                     ID: item.ID,
-                    JobCode: item.JobCode?.JobCode,
-                    PassportID: item?.PassportNumber,
-                    FristName: item?.FirstName,
-                    MiddleName: item?.MiddleName,
-                    LastName: item?.LastName,
+                    JobCode: item?.JobCode?.JobCode,
+                    JobCodeId: item?.JobCodeId,
+                    PassportID: item?.PassportID,
+                    FristName: item.FristName,
+                    MiddleName: item.MiddleName,
+                    LastName: item.LastName,
+                    FullName: item.FristName ?? "" + " " + item.MiddleName ?? "" + " " + item.LastName ?? "",
+                    ResidentialAddress: item?.ResidentialAddress,
+                    DOB: item?.DOB,
+                    ContactNumber: item?.ContactNumber,
+                    Email: item?.Email,
+                    Nationality: item?.Nationality,
+                    Gender: item?.Gender,
+                    TotalYearOfExperiance: item?.TotalYearOfExperiance,
+                    Skills: item?.Skills,
+                    LanguageKnown: item?.LanguageKnown,
+                    ReleventExperience: item?.ReleventExperience,
+                    Qualification: item?.Qualification,
+                    RecuritmentHR: item?.RecuritmentHR,
                     CandidateCVDoc: candidateCV,
                 };
             });

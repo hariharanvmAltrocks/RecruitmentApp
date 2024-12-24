@@ -6,7 +6,13 @@ import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import { alertPropsData } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
-import { ActionStatus, HRMSAlertOptions, RecuritmentHRMsg } from "../../utilities/Config";
+import { ActionStatus, HRMSAlertOptions, ListNames, RecuritmentHRMsg, RoleID } from "../../utilities/Config";
+import { Button } from "primereact/button";
+import ReiewProfilePopup from "../../components/ReiewProfilePopup";
+import ReuseButton from "../../components/ReuseButton";
+import SPServices from "../../Services/SPService/SPServices";
+// import CheckIcon from '../../assets/CheckIcon.svg';
+// import RejectedIcon from '../../assets/RejectedIcon.svg';
 
 
 
@@ -20,6 +26,8 @@ const ReviewProfile = (props: any) => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
     const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
+    const [ReviewProfile, setReviewProfile] = React.useState<boolean>(false);
+    const [CandidateID, setCandidateID] = React.useState<number>(0);
     const [alertProps, setalertProps] = React.useState<alertPropsData>({
         Message: "",
         Type: "",
@@ -35,7 +43,7 @@ const ReviewProfile = (props: any) => {
                 if (
                     fileName
                         .split(".")[fileName.split(".").length - 1]
-                        .toLocaleLowerCase() == "pdf"
+                        .toLocaleLowerCase() === "pdf"
                 ) {
                     window.open(serverUrl);
                 } else {
@@ -55,17 +63,19 @@ const ReviewProfile = (props: any) => {
             sortable: true
         },
         {
+            field: 'Nationality',
+            header: 'Nationality',
+            sortable: true
+        },
+        {
             field: 'PassportID',
             header: 'PassportID',
             sortable: true
         },
         {
-            field: 'FristName',
-            header: 'FristName',
+            field: 'FullName',
+            header: 'Name',
             sortable: true,
-            body: (rowData: any) => {
-                return <span>{rowData.FristName ?? "" + " " + rowData.MiddleName ?? "" + " " + rowData.LastName ?? ""}</span>
-            }
         },
         {
             field: "",
@@ -93,9 +103,64 @@ const ReviewProfile = (props: any) => {
             },
         },
         {
-            field: 'Shrotlistbtn',
+            field: '',
+            header: 'Shortlist/Rejected',
+            sortable: true,
+            body: (rowData: any) => {
+                return (
+                    <span style={{ display: "flex", justifyContent: "center" }}>
+                        {rowData.ProfileStatus === ActionStatus.Shortlists ? (
+                            <ReuseButton
+                                label="Shortlisted"
+                                // onClick={() => ActionBtnFn(rowData, ActionStatus.Shortlists)}
+                                backgroundColor="rgb(205, 45, 45)"
+                                Style={{ color: "white" }}
+                                width="80%"
+
+                            />
+                        ) : rowData.ProfileStatus === ActionStatus.Rejected ? (
+
+                            <ReuseButton
+                                label="Rejected"
+                                // onClick={() => ActionBtnFn(rowData, ActionStatus.Rejected)}
+                                backgroundColor="rgb(205, 45, 45)"
+                                Style={{ color: "white" }}
+                                width="80%"
+                            />
+                        ) : (
+                            <></>
+                        )}
+
+                    </span>
+                );
+            }
+        },
+        {
+            field: '',
             header: "Action",
             sortable: false,
+            body: (rowData: any) => {
+                function handleRedirectView(rowData: any): void {
+                    console.log(rowData)
+                    setReviewProfile(true)
+                    setCandidateID(rowData.ID)
+                }
+
+                return (
+                    <div>
+                        <Button
+                            onClick={() => handleRedirectView(rowData)}
+                            className="table_btn"
+                            icon="pi pi-eye"
+                            style={{
+                                width: "30px",
+                                marginRight: "7px",
+                                padding: "3px",
+                            }}
+                        />
+                    </div>
+                );
+            },
         },
     ];
 
@@ -104,19 +169,41 @@ const ReviewProfile = (props: any) => {
         try {
             console.log(RecruitmentDetails, "RecruitmentDetails");
 
-            let filterConditions = [];
+            const filterConditions = [];
             let Conditions = "";
-            filterConditions.push({
-                FilterKey: "JobCodeId",
-                Operator: "eq",
-                FilterValue: RecruitmentDetails[0]?.JobCodeId
-            });
-            const data = await getVRRDetails.GetCandidateDetails(filterConditions, Conditions);
-            if (data.status === 200 && data.data !== null) {
-                console.log(data.data, "GetVacancyDetails");
-                setCandidateData(data.data);
 
+            if (props.CurrentRoleID === RoleID.LineManager) {
+                filterConditions.push({
+                    FilterKey: "JobCodeId",
+                    Operator: "eq",
+                    FilterValue: RecruitmentDetails[0]?.JobCodeId
+                });
+                filterConditions.push({
+                    FilterKey: "RecruitmentID",
+                    Operator: "eq",
+                    FilterValue: RecruitmentDetails[0]?.ID,
+                });
+                Conditions = "and"
+                const data = await getVRRDetails.GetInterviewPanelCandidateDetails(filterConditions, Conditions);
+                if (data.status === 200 && data.data !== null) {
+                    console.log(data.data, "GetVacancyDetails");
+                    setCandidateData(data.data);
+
+                }
+
+            } else {
+                filterConditions.push({
+                    FilterKey: "JobCodeId",
+                    Operator: "eq",
+                    FilterValue: RecruitmentDetails[0]?.JobCodeId
+                });
+                const data = await getVRRDetails.GetCandidateDetails(filterConditions, Conditions);
+                if (data.status === 200 && data.data !== null) {
+                    console.log(data.data, "GetVacancyDetails");
+                    setCandidateData(data.data);
+                }
             }
+
         } catch (error) {
             console.log("GetVacancyDetails doesn't fetch the data", error);
         }
@@ -125,8 +212,8 @@ const ReviewProfile = (props: any) => {
     };
 
     const fetchRecuritmentData = async () => {
-        let filterConditions = [];
-        let Conditions = "";
+        const filterConditions = [];
+        const Conditions = "";
         filterConditions.push({
             FilterKey: "ID",
             Operator: "eq",
@@ -155,74 +242,103 @@ const ReviewProfile = (props: any) => {
         setRows(event.rows);
     };
 
-    const ActionStatusBtnFn = (rowData: any, ActionStatus: string) => {
-        const updatedRowData = CandidateData.map((item: any) => {
-            if (item.ID === rowData.ID) {
-
-                return {
-                    ...item,
-                    ShortlistValue: ActionStatus,
-                };
-            }
-            return item;
-        });
-        setCandidateData(updatedRowData);
-    }
 
     const Submit_fn = async () => {
-        const allShortlistValuePresent = CandidateData.every((item) => item.ShortlistValue);
+        const allShortlistValuePresent = CandidateData.every((item) => item.ProfileStatus);
         console.log(allShortlistValuePresent, "allShortlistValuePresent");
         if (allShortlistValuePresent) {
             for (const Candidate of CandidateData) {
-                if (Candidate?.ShortlistValue === ActionStatus.Shortlists) {
+                if (props.CurrentRoleID === RoleID.LineManager) {
                     const obj = {
-                        BusinessUnitCodeId: RecruitmentDetails[0]?.BusinessUnitCodeId,
-                        DepartmentId: RecruitmentDetails[0]?.DepartmentId,
-                        SubDepartmentId: RecruitmentDetails[0]?.SubDepartmentId,
-                        SectionId: RecruitmentDetails[0]?.SectionId,
-                        DepartmentCodeId: RecruitmentDetails[0]?.DepartmentCodeId,
-                        EmploymentCategory: RecruitmentDetails[0]?.EmploymentCategory,
-                        TypeOfContract: RecruitmentDetails[0]?.TypeOfContract,
-                        Nationality: RecruitmentDetails[0]?.Nationality,
-                        // DateRequried: RecruitmentDetails[0]?.DateRequried,
-                        EnterNumberOfMonths: RecruitmentDetails[0]?.EnterNumberOfMonths,
-                        AreaofWork: RecruitmentDetails[0]?.AreaofWork,
-                        // JobCodeId: RecruitmentDetails[0].JobCodeId,
-
-                        // ID: RecruitmentDetails[0]?.ID,
-                        // JobCode: Candidate?.JobCode,
-                        PassportNumber: Candidate?.PassportID,
-                        FirstName: Candidate?.FristName,
-                        MiddleName: Candidate?.MiddleName,
-                        LastName: Candidate?.LastName,
-                        RecuritmentHR: Candidate?.ShortlistValue,
-                        // LineManagerAction: Candidate?.ShortlistValue,
-                    };
-                    console.log(obj, "obj");
-
-                    const response = await getVRRDetails.InsertRecruitmentCandidateDetails(obj);
-                    console.log(response);
-                    setIsLoading(true);
-                    let CancelAlert = {
-                        Message: RecuritmentHRMsg.RecuritmentSubmitMsg,
-                        Type: HRMSAlertOptions.Success,
-                        visible: true,
-                        ButtonAction: async (userClickedOK: boolean) => {
-                            if (userClickedOK) {
-                                props.navigation("/RecurimentProcess");
-                                setAlertPopupOpen(false);
+                        RecruitmentIDId: RecruitmentDetails[0]?.ID,
+                        LineManagerAction: Candidate?.ProfileStatus
+                    }
+                    const response = await SPServices.SPUpdateItem({
+                        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                        RequestJSON: obj,
+                        ID: Candidate?.ID,
+                    }).then(async (res: any) => {
+                        console.log(response);
+                        const CancelAlert = {
+                            Message: RecuritmentHRMsg.RecuritmentSubmitMsg,
+                            Type: HRMSAlertOptions.Success,
+                            visible: true,
+                            ButtonAction: async (userClickedOK: boolean) => {
+                                if (userClickedOK) {
+                                    props.navigation("/RecurimentProcess");
+                                    setAlertPopupOpen(false);
+                                }
                             }
+                        };
+                        setAlertPopupOpen(true);
+                        setalertProps(CancelAlert);
+                    })
+                        .catch(error => {
+                            console.error("Error inserting data into RecruitmentCandidateDetails:", error);
+                            setIsLoading(false);
+
+                        });
+                    console.log(response);
+                } else {
+                    if (Candidate?.ProfileStatus === ActionStatus.Shortlists) {
+                        const obj = {
+
+                            JobCodeId: RecruitmentDetails[0]?.JobCodeId,
+                            PassportID: Candidate?.PassportID,
+                            FristName: Candidate?.FristName,
+                            MiddleName: Candidate?.MiddleName,
+                            LastName: Candidate?.LastName,
+                            // FullName: Candidate?.FullName,
+                            ResidentialAddress: Candidate?.ResidentialAddress,
+                            DOB: Candidate?.DOB,
+                            ContactNumber: Candidate?.ContactNumber,
+                            Email: Candidate?.Email,
+                            Nationality: Candidate?.Nationality,
+                            Gender: Candidate?.Gender,
+                            TotalYearOfExperiance: Candidate?.TotalYearOfExperiance,
+                            Skills: Candidate?.Skills,
+                            LanguageKnown: Candidate?.LanguageKnown,
+                            ReleventExperience: Candidate?.ReleventExperience,
+                            Qualification: Candidate?.Qualification,
+                            RecuritmentHR: Candidate?.ProfileStatus,
+                            LineManagerAction: ""
+                        };
+                        console.log(obj, "obj");
+                        try {
+                            setIsLoading(true);
+                            const response = await getVRRDetails.InsertRecruitmentCandidateDetails(obj).then(response => {
+                                console.log(response);
+                                const CancelAlert = {
+                                    Message: RecuritmentHRMsg.RecuritmentSubmitMsg,
+                                    Type: HRMSAlertOptions.Success,
+                                    visible: true,
+                                    ButtonAction: async (userClickedOK: boolean) => {
+                                        if (userClickedOK) {
+                                            props.navigation("/RecurimentProcess");
+                                            setAlertPopupOpen(false);
+                                        }
+                                    }
+                                };
+                                setAlertPopupOpen(true);
+                                setalertProps(CancelAlert);
+                            })
+                                .catch(error => {
+                                    console.error("Error inserting data into RecruitmentCandidateDetails:", error);
+                                    setIsLoading(false);
+
+                                });
+                            console.log(response);
+
+                        } catch (error) {
+                            console.error("Error inserting data into RecruitmentCandidateDetails:", error);
+                        } finally {
+                            setIsLoading(false);
                         }
                     }
-
-                    setAlertPopupOpen(true);
-                    setalertProps(CancelAlert);
-                    setIsLoading(false);
-
                 }
             }
         } else {
-            let CancelAlert = {
+            const CancelAlert = {
                 Message: RecuritmentHRMsg.ValidationErrorMsg,
                 Type: HRMSAlertOptions.Warning,
                 visible: true,
@@ -251,7 +367,6 @@ const ReviewProfile = (props: any) => {
                         columns={columnConfig}
                         rows={rows}
                         onPageChange={onPageChange}
-                        ActionBtnFn={ActionStatusBtnFn}
                     />
                 </div>
 
@@ -261,13 +376,13 @@ const ReviewProfile = (props: any) => {
 
     const handleCancel = () => {
         setIsLoading(true);
-        let CancelAlert = {
+        const CancelAlert = {
             Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
             Type: HRMSAlertOptions.Confirmation,
             visible: true,
             ButtonAction: async (userClickedOK: boolean) => {
                 if (userClickedOK) {
-                    props.navigation("/CommanFieldTemplate");
+                    props.navigation("/RecurimentProcess");
                     setAlertPopupOpen(false);
                 } else {
                     setAlertPopupOpen(false);
@@ -281,31 +396,77 @@ const ReviewProfile = (props: any) => {
 
     };
 
+    function Shortlists_fn() {
+        const updatedRowData = CandidateData.map((item: any) => {
+            if (item.ID === CandidateID) {
+
+                return {
+                    ...item,
+                    ProfileStatus: ActionStatus.Shortlists,
+                };
+            }
+            return item;
+        });
+        setCandidateData(updatedRowData);
+        setReviewProfile(false);
+
+    }
+
+    function Rejected_fn() {
+        const updatedRowData = CandidateData.map((item: any) => {
+            if (item.ID === CandidateID) {
+
+                return {
+                    ...item,
+                    ProfileStatus: ActionStatus.Rejected,
+                };
+            }
+            return item;
+        });
+        setCandidateData(updatedRowData);
+        setReviewProfile(false);
+
+    }
+
     console.log(RecruitmentDetails, "RecruitmentDetails");
     return (
         <>
-            <CustomLoader isLoading={isLoading}>
-                <div className="menu-card">
-                    <React.Fragment>
-                        <TabsComponent
-                            tabs={tabs}
-                            initialTab="tab1"
-                            tabClassName={"Tab"}
-                            handleCancel={handleCancel}
-                            additionalButtons={[
-                                {
-                                    label: "Submit",
-                                    onClick: async () => {
-                                        await Submit_fn();
-                                    }
-                                },
-                            ]}
-                        />
-                        {console.log(props.masterData, "masterDataDetails")}
-                        {console.log(first, "first")}
-                    </React.Fragment>
-                </div>
-            </CustomLoader>
+            {ReviewProfile ? (
+                <>
+                    <ReiewProfilePopup
+                        ID={CandidateID}
+                        Shortlists_fn={Shortlists_fn}
+                        Rejected_fn={Rejected_fn}
+                        back_fn={() => setReviewProfile(false)}
+                    />
+                </>
+            ) : (
+                <>
+                    <CustomLoader isLoading={isLoading}>
+                        <div className="menu-card">
+                            <React.Fragment>
+                                <TabsComponent
+                                    tabs={tabs}
+                                    initialTab="tab1"
+                                    tabClassName={"Tab"}
+                                    handleCancel={handleCancel}
+                                    additionalButtons={[
+                                        {
+                                            label: "Submit",
+                                            onClick: async () => {
+                                                await Submit_fn();
+                                            }
+                                        },
+                                    ]}
+                                />
+                                {console.log(props.masterData, "masterDataDetails")}
+                                {console.log(first, "first")}
+                            </React.Fragment>
+                        </div>
+                    </CustomLoader>
+                </>
+            )}
+
 
             {AlertPopupOpen ? (
                 <>

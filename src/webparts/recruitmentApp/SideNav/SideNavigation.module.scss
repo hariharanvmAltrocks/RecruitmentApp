@@ -5,6 +5,7 @@
     height: 90vh;
     border-radius: "0px 30px 30px 0px";
     transition: "width 1s ease 0s";
+    overflow: hidden;
 
     .imgBox {
         padding: 15px;
@@ -89,8 +90,8 @@
             margin-top: 4%;
             text-decoration: none;
             transition: background-color 0.3s;
-            width: 82%;
-            margin-left: 42px;
+            width: 93%;
+            margin-left: 22px;
             display: flex;
             flex-direction: column;
             height: 52px;

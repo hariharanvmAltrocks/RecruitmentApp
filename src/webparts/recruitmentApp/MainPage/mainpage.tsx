@@ -11,6 +11,7 @@ import CommanTemplate from "../components/CommanTemplate";
 import ReviewProfile from "../Screens/RecuritmentProcess/ReviewProfile";
 import AssignInterviewPanel from "../Screens/RecuritmentProcess/AssignInterviewPanel";
 import InterviewPanelList from "../Screens/InterviewPanel/InterviewPanelList";
+import InterviewPanelEdit from "../Screens/InterviewPanel/InterviewPanelEdit";
 
 export default function MainPage(props: any) {
     const { roleID, userName, userRole, masterData, ADGroupData } = userInfo();
@@ -34,7 +35,7 @@ export default function MainPage(props: any) {
                 </div>
 
                 <div style={{ width: isExpanded ? "80%" : "95%", display: "flex", flexDirection: "column" }}>
-                    <MainPageHeader toggleSideNav={toggleSideNav} userName={userName} userRole={userRole}>
+                    <MainPageHeader toggleSideNav={toggleSideNav} userName={userName} userRole={userRole} Department={masterData?.userDetails[0]?.DepartmentName}>
                         {ADGroupData?.ADGroupIDs ? (
                             <>
                                 <Routes>
@@ -46,6 +47,7 @@ export default function MainPage(props: any) {
                                     <Route path="/RecurimentProcess/ReviewProfile" element={<ReviewProfile {...props} {...masterData} />} />
                                     <Route path="/RecurimentProcess/AssignInterviewPanel" element={<AssignInterviewPanel {...props} {...masterData} />} />
                                     <Route path="/InterviewPanelList" element={<InterviewPanelList {...props} {...masterData} />} />
+                                    <Route path="/InterviewPanelList/InterviewPanelEdit" element={<InterviewPanelEdit {...props} {...masterData} />} />
 
                                 </Routes>
                             </>

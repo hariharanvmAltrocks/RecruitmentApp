@@ -10,7 +10,7 @@ import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import { Icon, Label } from "office-ui-fabric-react";
 import AttachmentButton from "../../components/AttachmentButton";
-import { ADGroupID, DocumentLibraray, HRMSAlertOptions, RecuritmentHRMsg, RoleID } from "../../utilities/Config";
+import { ADGroupID, DocumentLibraray, HRMSAlertOptions, RecuritmentHRMsg, RoleID, RoleProfileMaster } from "../../utilities/Config";
 import Labelheader from "../../components/LabelHeader";
 import LabelValue from "../../components/LabelValue";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
@@ -18,14 +18,10 @@ import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
 import CustomLabel from "../../components/CustomLabel";
+import CustomTextArea from "../../components/CustomTextArea";
+import { IAttachmentExampleState, RecuritmentData } from "../../Models/RecuritmentVRR";
 
-interface IAttachmentExampleState {
-    file: File | any;
-    fileName: string;
-    fileContent: string | ArrayBuffer | null;
-    serverRelativeUrl: string;
-    ID: string;
-}
+
 
 interface Item {
     name: string;
@@ -37,7 +33,8 @@ interface Item {
 
 type formValidation = {
     AssignRecruitmentHR: boolean,
-    AssignAgencies: boolean
+    AssignAgencies: boolean,
+    Comments: boolean
 }
 
 const ApprovedVRREdit: React.FC = (props: any) => {
@@ -53,74 +50,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         ButtonAction: null,
         visible: false,
     });
-
-    // const [BusinessUnitCode, setBusinessUnitCode] = useState<string>("");
-    // const [BusinessUnitName, setBusinessUnitName] = useState<string>("");
-    // const [BusinessUnitDescription, setBusinessUnitDescription] = useState<string>("");
-    // const [Department, setDepartment] = useState<string>("");
-    // const [SubDepartment, setSubDepartment] = useState<string>("");
-    // const [Section, setSection] = useState<string>("");
-    // const [DepartmentCode, setDepartmentCode] = useState<string>("");
-    // const [Nationality, setNationality] = useState<string>("");
-    // const [JobNameInEnglish, setJobNameInEnglish] = useState<string>("");
-    // const [JobNameInFrench, setJobNameInFrench] = useState<string>("");
-    // const [PatersonGrade, setPatersonGrade] = useState<string>("");
-    // const [DRCGrade, setDRCGrade] = useState<string>("");
-    // const [EmployementCategory, setEmployementCategory] = useState<string>("");
-    // const [ContractType, setContractType] = useState<string>("");
-    // const [JobCode, setJobCode] = useState<string>("");
-    // const [AreaOfWork, setAreaOfWork] = useState<string>("");
-    // const [PositionName, setPositionName] = useState<string>("");
-    //const [data, setData] = useState<any[]>([]);
     const [ButtonLabel, setButtonLabel] = useState<string>("Submit");
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [formState, setFormState] = useState<{
-        VRRID: number;
-        BusinessUnitCodeID: number;
-        DepartmentID: number;
-        SubDepartmentID: number;
-        SectionID: number;
-        DepartmentCodeID: number;
-        JobNameInEnglishID: number;
-        JobNameInFrenchID: number;
-        PatersonGradeID: number;
-        DRCGradeID: number;
-        JobCodeID: number;
-        BusinessUnitCode: string;
-        BusinessUnitName: string;
-        BusinessUnitDescription: string;
-        Department: string;
-        SubDepartment: string;
-        Section: string;
-        DepartmentCode: string;
-        Nationality: string;
-        JobNameInEnglish: string;
-        JobNameInFrench: string;
-        NoofPositionAssigned: string;
-        PatersonGrade: string;
-        DRCGrade: string;
-        EmployementCategory: string;
-        ContractType: string;
-        JobCode: string;
-        AreaOfWork: string;
-        ReasonForVacancy: string;
-        RecruitmentAuthorised: string;
-        EnterNumberOfMonths: number;
-        DateRequried: string;
-        IsRevert: string;
-        VacancyConfirmed: string;
-        Attachement: IAttachmentExampleState[];
-        PositionDetails: any[];
-        RoleProfileDocument: any[];
-        AdvertisementDocument: any[];
-        AssignRecruitmentHR: AutoCompleteItem;
-        AssignRecruitmentHROption: AutoCompleteItem[];
-        OnamSignedStampsAttchment: IAttachmentExampleState[]
-        OnamSignedStampsDocument: any[];
-        AssignAgencies: AutoCompleteItem;
-        AssignAgenciesOption: AutoCompleteItem[];
-        CandidateCVAttachment: IAttachmentExampleState[];
-    }>({
+    const [formState, setFormState] = useState<RecuritmentData>({
         VRRID: 0,
         BusinessUnitCodeID: 0,
         DepartmentID: 0,
@@ -158,6 +90,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         Attachement: [],
         PositionDetails: [],
         RoleProfileDocument: [],
+        GradingDocument: [],
         AdvertisementDocument: [],
         AssignRecruitmentHR: { key: 0, text: "" },
         AssignRecruitmentHROption: [],
@@ -166,29 +99,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         AssignAgencies: { key: 0, text: "" },
         AssignAgenciesOption: [],
         CandidateCVAttachment: [],
+        Comments: ""
     });
     const [validationErrors, setValidationError] = React.useState<formValidation>({
         AssignRecruitmentHR: false,
-        AssignAgencies: false
+        AssignAgencies: false,
+        Comments: false
     })
-
-    // const getRoleProfile = async (id: any, DocLibraray: string) => {
-    //     try {
-    //         const data = await getVRRDetails.GetAttachedRoleProfile(id, DocLibraray);
-    //         //const data = await this.getCommentsdocument(Config.DocumentLibraray.NewPositionRoleProfile, id);
-    //         console.log('getRoleProfile', data);
-    //         const getRoleProfileDocument = data?.map((item: any) => ({
-    //             id: id,
-    //             name: item.fileName,
-    //             checked: false,
-    //             documentUrl: item.ServerRelativeUrl
-    //         }));
-    //         return getRoleProfileDocument;
-    //     } catch (error) {
-    //         console.error('Error in getRoleProfileDocument:', error);
-    //         throw error;
-    //     }
-    // }
 
     const fetchData = async () => {
         if (isLoading) return; // Prevent re-execution if already loading
@@ -217,8 +134,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     (item: any) => (item.key === op.JobTitleInFrenchId)
                 );
                 const RoleProfileDocment = await CommonServices.GetAttachmentToLibrary(
-                    DocumentLibraray.HRMSRoleProfile,
+                    DocumentLibraray.RoleProfileMaster,
                     op.JobCode,
+                    RoleProfileMaster.RoleProfile
+                );
+                const GradingDocument = await CommonServices.GetAttachmentToLibrary(
+                    DocumentLibraray.RoleProfileMaster,
+                    op.JobCode,
+                    RoleProfileMaster.Grading
                 );
                 const AdvertismentDocment = await CommonServices.GetAttachmentToLibrary(
                     DocumentLibraray.RecruitmentAdvertisementDocument,
@@ -231,10 +154,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 let RoleProfileDoc: IDocFiles[] = [];
                 let AdvertismentDocPromises: IDocFiles[] = [];
                 let ONAMSignedStampDoc: IDocFiles[] = [];
+                let GradingDoc: IDocFiles[] = [];
                 if (RoleProfileDocment.status === 200 && RoleProfileDocment.data || AdvertismentDocment.status === 200 && AdvertismentDocment.data) {
                     RoleProfileDoc = RoleProfileDocment.data;
                     AdvertismentDocPromises = AdvertismentDocment.data;
                     ONAMSignedStampDoc = OnamSignedStampsDocment.data;
+                    GradingDoc = GradingDocument.data;
                     console.log(RoleProfileDoc, "candidateCV");
                 } else {
                     console.error("Error retrieving attachments:", response.message);
@@ -277,6 +202,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     IsRevert: op.IsRevert || "",
                     VacancyConfirmed: op.VacancyConfirmed || "",
                     RoleProfileDocument: RoleProfileDoc,
+                    GradingDocument: GradingDoc,
                     AdvertisementDocument: AdvertismentDocPromises,
                     OnamSignedStampsDocument: ONAMSignedStampDoc
                 }));
@@ -522,8 +448,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         });
     };
 
-
-
     const handleAutoComplete = async (
         item: AutoCompleteItem | null,
         StateValue: string
@@ -538,6 +462,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 [StateValue]: false
             }))
         }
+    };
+
+    const handleInputChangeTextArea = (
+        value: string | any,
+        StateValue: string
+    ) => {
+        setFormState((prevState) => ({
+            ...prevState,
+            [StateValue]: value
+        }))
+        setValidationError((prevState) => ({
+            ...prevState,
+            [StateValue]: false
+        }))
     };
 
 
@@ -777,6 +715,33 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             }
                                         />
                                     </div>
+
+                                    <div className="ms-Grid-col ms-lg3">
+                                        {formState.RoleProfileDocument?.map((attachment: any) => (
+                                            <div key={attachment.content}>
+                                                <CustomLabel value={"Role Profile Documents"} mandatory={true} />
+                                                <p style={{ marginTop: "1%" }}>
+                                                    <a href={attachment.content} target="_blank" rel="noopener noreferrer">
+                                                        {attachment.name}
+                                                    </a>
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="ms-Grid-col ms-lg3">
+                                        {formState.GradingDocument?.map((attachment: any) => (
+                                            <div key={attachment.content}>
+                                                <CustomLabel value={"Grading Documents"} mandatory={true} />
+                                                <p style={{ marginTop: "1%" }}>
+                                                    <a href={attachment.content} target="_blank" rel="noopener noreferrer">
+                                                        {attachment.name}
+                                                    </a>
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+
                                     {props.CurrentRoleID === RoleID.RecruitmentHRLead ? (
                                         <>
                                             <div className="ms-Grid-col ms-lg3">
@@ -808,35 +773,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         </>
                                     ) : (<></>)}
 
-                                    {/* <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="VRR ID"
-                                            value={formState.VRRID}
-                                            disabled={true}
-
-                                            mandatory={false}
-                                            onChange={(value: any) =>
-                                                setFormState((prevState) => ({ ...prevState, VRRID: value }))
-                                            }
-                                        />
-                                    </div> */}
-
-                                </div>
-
-                                <div className="ms-Grid-row">
-                                    <div className="ms-Grid-col ms-lg4">
-                                        <Labelheader value={"Role Profile Documents"}> </Labelheader>
-                                        {console.log(formState.RoleProfileDocument, "NewPositionAttachment")}
-                                        {formState.RoleProfileDocument?.map((attachment: any) => (
-                                            <div key={attachment.documentUrl}>
-                                                <p>
-                                                    <a href={attachment.documentUrl} target="_blank" rel="noopener noreferrer">
-                                                        <LabelValue value={attachment.name} > </LabelValue>
-                                                    </a>
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
                                 </div>
 
                                 {props.stateValue?.tab === "tab1" && props.CurrentRoleID === RoleID.RecruitmentHRLead ? (
@@ -905,9 +841,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                         <Labelheader value={"Advertisement Documents"}> </Labelheader>
                                                         {console.log(formState.AdvertisementDocument, "AdvertisementDocument")}
                                                         {formState.AdvertisementDocument?.map((attachment: any) => (
-                                                            <div key={attachment.documentUrl}>
+                                                            <div key={attachment.content}>
                                                                 <p>
-                                                                    <a href={attachment.documentUrl} target="_blank" rel="noopener noreferrer">
+                                                                    <a href={attachment.content} target="_blank" rel="noopener noreferrer">
                                                                         <LabelValue value={attachment.name} > </LabelValue>
                                                                     </a>
                                                                 </p>
@@ -986,9 +922,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                         <Labelheader value={"Advertisement Documents"}> </Labelheader>
                                                         {console.log(formState.AdvertisementDocument, "AdvertisementDocument")}
                                                         {formState.AdvertisementDocument?.map((attachment: any) => (
-                                                            <div key={attachment.documentUrl}>
+                                                            <div key={attachment.content}>
                                                                 <p>
-                                                                    <a href={attachment.documentUrl} target="_blank" rel="noopener noreferrer">
+                                                                    <a href={attachment.content} target="_blank" rel="noopener noreferrer">
                                                                         <LabelValue value={attachment.name} > </LabelValue>
                                                                     </a>
                                                                 </p>
@@ -1002,9 +938,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                         <Labelheader value={"ONAM Signed&Stamps Documents"}> </Labelheader>
                                                         {console.log(formState.OnamSignedStampsDocument, "AdvertisementDocument")}
                                                         {formState.OnamSignedStampsDocument?.map((attachment: any) => (
-                                                            <div key={attachment.documentUrl}>
+                                                            <div key={attachment.content}>
                                                                 <p>
-                                                                    <a href={attachment.documentUrl} target="_blank" rel="noopener noreferrer">
+                                                                    <a href={attachment.content} target="_blank" rel="noopener noreferrer">
                                                                         <LabelValue value={attachment.name} > </LabelValue>
                                                                     </a>
                                                                 </p>
@@ -1019,6 +955,23 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                                     </>
                                 )}
+
+                                <div className="ms-Grid-row">
+                                    <div className="ms-Grid-col ms-lg9">
+                                        <CustomTextArea
+                                            label="Justification"
+                                            value={formState.Comments}
+                                            error={validationErrors.Comments}
+                                            onChange={(value) =>
+                                                handleInputChangeTextArea(
+                                                    value,
+                                                    "Comments"
+                                                )
+                                            }
+                                            mandatory={true}
+                                        />
+                                    </div>
+                                </div>
 
                             </div>
                         )}

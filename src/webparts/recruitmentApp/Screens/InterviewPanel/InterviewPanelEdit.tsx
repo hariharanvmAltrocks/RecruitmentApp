@@ -3,14 +3,15 @@ import { Link } from "@mui/material";
 import { getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
-import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
+import { alertPropsData, AutoCompleteItem, Item } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { HRMSAlertOptions, ListNames, RecuritmentHRMsg } from "../../utilities/Config";
 import CheckboxDataTable from "../../components/CheckboxDataTable";
 import AssignRecuritmentHR, { HeaderValue } from "../../components/AssignRecuritmentHR";
-import { Button } from "primereact/button";
+import AttachmentButton from "../../components/AttachmentButton";
+import { Icon, Label } from "office-ui-fabric-react";
 
-const AssignInterviewPanel = (props: any) => {
+const InterviewPanelEdit = (props: any) => {
     console.log(props, "ReviewProfile");
 
     const [CandidateData, setCandidateData] = React.useState<any[]>([]);
@@ -52,14 +53,41 @@ const AssignInterviewPanel = (props: any) => {
         }
     };
 
+    const handleAttachmentState = (newAttachments: Item[], rowData: any) => {
+        const updatedRowAttachment = CandidateData.map((item: any) => {
+            if (item.ID === rowData.ID) {
+                if (item.Checked === true) {
+                    return item;
+                }
+                return {
+                    ...item,
+                    ScoreCardAttch: [...(item.ScoreCardAttch || []), ...newAttachments],
+                };
+            }
+            return item;
+        });
+        setCandidateData(updatedRowAttachment);
+    };
+
+    const handleDelete = (index: number, rowData: any) => {
+        console.log("Deleting attachment at index:", index);
+        const updatedCandidateData = CandidateData.map((item: any) => {
+            if (item.ID === rowData.ID) {
+                const updatedAttachments = item.ScoreCardAttch.filter((_: any, i: number) => i !== index);
+                return {
+                    ...item,
+                    ScoreCardAttch: updatedAttachments,
+                };
+            }
+            return item;
+        });
+
+        setCandidateData(updatedCandidateData);
+    };
+
 
     const columnConfig = [
-        {
-            field: 'Checkbox',
-            header: "",
-            sortable: false,
 
-        },
         {
             field: 'JobCode',
             header: 'JobCode',
@@ -104,22 +132,61 @@ const AssignInterviewPanel = (props: any) => {
             },
         },
         {
+            field: 'Interviewed',
+            header: "Interviewed",
+            sortable: false,
+
+        },
+        {
             field: '',
             header: 'Action',
             sortable: true,
             body: (rowData: any) => {
-                return <span>
-                    <Button
-                        // onClick={() => handleRedirectView(rowData, tab)}
-                        className="table_btn"
-                        icon="pi pi-eye"
-                        style={{
-                            width: "30px",
-                            marginRight: "7px",
-                            padding: "3px",
-                        }}
-                    />
-                </span>
+
+
+                return (
+                    <span>
+                        <AttachmentButton
+                            label="Attach"
+                            iconName="CloudUpload"
+                            iconNameHover="CloudUpload"
+                            AttachState={(newAttachments) => handleAttachmentState(newAttachments, rowData)}
+                            mandatory={true}
+                            error={false}
+                        />
+
+                        <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg12">
+                                {rowData?.ScoreCardAttch?.map((file: any, index: number) => {
+                                    const fileName = file?.fileName || file?.name;
+                                    console.log("Rendering file:", fileName);
+
+                                    return (
+                                        <div key={index} className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg12">
+                                                <Label>
+                                                    {fileName}
+                                                    <span>
+                                                        <Icon
+                                                            iconName="Delete"
+                                                            style={{
+                                                                marginLeft: "8px",
+                                                                fontSize: "16px",
+                                                                cursor: "pointer",
+                                                            }}
+                                                            onClick={() => handleDelete(index, rowData)}
+                                                        />
+                                                    </span>
+                                                </Label>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </span>
+                );
+
             }
         },
     ];
@@ -151,12 +218,13 @@ const AssignInterviewPanel = (props: any) => {
 
     const fetchRecuritmentData = async () => {
         let filterConditions = [];
-        let Conditions = "";
+        let Conditions = "and";
         filterConditions.push({
-            FilterKey: "ID",
+            FilterKey: "JobCode",
             Operator: "eq",
             FilterValue: props.stateValue.ID
         });
+
         const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails(filterConditions, Conditions);
         console.log("RecruitmentDetails", RecruitmentDetails);
         if (RecruitmentDetails.status === 200 && RecruitmentDetails.data !== null) {
@@ -340,7 +408,7 @@ const AssignInterviewPanel = (props: any) => {
             visible: true,
             ButtonAction: async (userClickedOK: boolean) => {
                 if (userClickedOK) {
-                    props.navigation("/RecurimentProcess");
+                    props.navigation("/InterviewPanelList");
                     setAlertPopupOpen(false);
                 } else {
                     setAlertPopupOpen(false);
@@ -419,4 +487,4 @@ const AssignInterviewPanel = (props: any) => {
 
     )
 }
-export default AssignInterviewPanel;
+export default InterviewPanelEdit;
