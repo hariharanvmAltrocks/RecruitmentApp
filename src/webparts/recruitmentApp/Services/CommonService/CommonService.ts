@@ -7,6 +7,7 @@ import GraphService from "../GraphService/GraphService";
 export default class CommonService implements ICommonService {
 
     uploadAttachmentToLibrary = async (
+        ID: number,
         PositionID: number,
         AttachFile: File,
         Listname: string
@@ -18,14 +19,23 @@ export default class CommonService implements ICommonService {
                 fileReader.onload = async (event: any) => {
                     try {
                         const fileContent = event.target.result;
-                        const folderName = PositionID.toString();
                         const attachmentsLibrary = sp.web.lists.getByTitle(Listname);
+                        const positionFolderName = PositionID.toString();
+                        const idFolderName = ID.toString();
 
-                        const folderResult = await attachmentsLibrary.rootFolder.folders.add(folderName);
-                        const folderUrl = folderResult.data.ServerRelativeUrl;
+                        // Step 1: Ensure PositionID folder exists, and create it if not
+                        const positionFolderResult = await attachmentsLibrary.rootFolder.folders.add(positionFolderName);
+                        const positionFolderUrl = positionFolderResult.data.ServerRelativeUrl;
 
+                        // Step 2: Ensure ID folder exists inside the PositionID folder
+                        const idFolderResult = await attachmentsLibrary.rootFolder.folders.add(
+                            `${positionFolderUrl}/${idFolderName}`
+                        );
+                        const idFolderUrl = idFolderResult.data.ServerRelativeUrl;
+
+                        // Step 3: Upload the file to the ID folder
                         await attachmentsLibrary.rootFolder.files.add(
-                            `${folderUrl}/${AttachFile.name}`,
+                            `${idFolderUrl}/${AttachFile.name}`,
                             fileContent
                         );
 
@@ -68,9 +78,10 @@ export default class CommonService implements ICommonService {
 
     GetAttachmentToLibrary = async (
         listName: string,
+        ID?: string,
         JobCode?: string,
         PassportID?: string
-    ): Promise<ApiResponse<IDocFiles[]>> => {  // Explicitly type ApiResponse with IDocFiles[]
+    ): Promise<ApiResponse<IDocFiles[]>> => {
         try {
             let response;
             if (PassportID) {
@@ -79,7 +90,7 @@ export default class CommonService implements ICommonService {
                 })) as IDocFiles[];
             } else if (JobCode) {
                 response = (await SPServices.getDocLibFiles({
-                    FilePath: `${listName}/${JobCode}`,
+                    FilePath: `${listName}/${ID}/${JobCode}`,
                 })) as IDocFiles[];
             } else {
                 response = (await SPServices.getDocLibFiles({

@@ -54,7 +54,7 @@ export type RecuritmentData = {
     DateRequried: string;
     IsRevert: string;
     VacancyConfirmed: string;
-    Attachement: IAttachmentExampleState[];
+    AdvertisementAttachement: IAttachmentExampleState[];
     PositionDetails: any[];
     RoleProfileDocument: any[];
     GradingDocument: any[];

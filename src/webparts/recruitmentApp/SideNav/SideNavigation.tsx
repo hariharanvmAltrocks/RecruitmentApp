@@ -91,6 +91,15 @@ const SideNavComponent = (props: sideNavProps) => {
                                             }}
                                             style={{ cursor: "pointer", marginLeft: "20%", }}
                                         >
+                                            {isMainMenu && (
+                                                <p>
+                                                    <img
+                                                        src={isActive ? item.ActiveIcon : item.Icon}
+                                                        alt={item.DisplayName}
+                                                    />
+                                                </p>
+                                            )}
+
                                             <div className={`${styles.navLabel} ${isActive ? "active" : ""}`}>
                                                 <p
                                                     style={{
@@ -100,6 +109,7 @@ const SideNavComponent = (props: sideNavProps) => {
                                                         display: "flex",
                                                         alignItems: "center",
                                                         cursor: "pointer",
+                                                        marginLeft: "1%"
                                                     }}
                                                 >
                                                     {item.DisplayName}

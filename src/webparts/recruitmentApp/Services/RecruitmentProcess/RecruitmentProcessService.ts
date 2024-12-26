@@ -26,6 +26,8 @@ export default class RecruitmentService implements IRecruitmentService {
                 Filter: filterParam,
                 FilterCondition: filterConditions,
                 Expand: "Department, SubDepartment, Section, DepartmentCode, Status, Action, BusinessUnitCode, JobCode",
+                Orderby: "ID",
+                Orderbydecorasc: false
             });
 
             const formattedItems: any[] = [];
@@ -239,6 +241,8 @@ export default class RecruitmentService implements IRecruitmentService {
                     AssignedHR
                 `,
                 Topcount: count.Topcount,
+                Orderby: "ID",
+                Orderbydecorasc: false
             });
 
             console.log("GetRecruitmentDetails:", listItems);
