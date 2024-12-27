@@ -32,7 +32,7 @@ type Tab2details = {
     ReasonForVancancy: string,
     BusinessUnitCode: AutoCompleteItem,
     DepartmentCode: AutoCompleteItem,
-    DateRequried: Date | null,
+    DateRequried: Date | undefined,
 };
 
 type TabValidation = {
@@ -71,7 +71,7 @@ const CommanTemplate = (props: any) => {
             ReasonForVancancy: "",
             BusinessUnitCode: { key: 0, text: "" },
             DepartmentCode: { key: 0, text: "" },
-            DateRequried: null,
+            DateRequried: undefined,
         }
     });
     const [validationErrors, setValidationError] = React.useState<TabValidation>({

@@ -1,136 +1,195 @@
 import * as React from "react";
-import TabsComponent from "../../components/TabsComponent ";
-import SearchableDataTable from "../../components/CustomDataTable";
-import "../../App.css";
-import { getVRRDetails } from "../../Services/ServiceExport";
-import { GridStatusBackgroundcolor, StatusId, tabType } from "../../utilities/Config";
+import { Link } from "@mui/material";
+import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import { Button } from "primereact/button";
-// interface ColumnConfig {
-//     field: string;
-//     header: string;
-//     sortable: boolean;
-//     body?: (item?: {}) => {};
-// }
-
+import TabsComponent from "../../components/TabsComponent ";
+import { AutoCompleteItem } from "../../Models/Screens";
+import { ADGroupID } from "../../utilities/Config";
+import CheckboxDataTable from "../../components/CheckboxDataTable";
+import AssignRecuritmentHR, { HeaderValue } from "../../components/AssignRecuritmentHR";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import ReuseButton from "../../components/ReuseButton";
 
 const InterviewPanelList = (props: any) => {
-    console.log(props, "ApprovedVRR");
+    console.log(props, "ReviewProfile");
 
-    const [data, setData] = React.useState<any[]>([]);
+    const [CandidateData, setCandidateData] = React.useState<any[]>([]);
     const [rows, setRows] = React.useState<number>(5);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [checkedValue, setCheckedValue] = React.useState<any[]>([]);
+    const [AssignPopup, setAssignPopup] = React.useState<boolean>(false);
+    const [AssignBtnValidation, setAssignBtnValidation] = React.useState<boolean>(false);
+    const [HeaderValueData, setHeaderValueData] = React.useState<HeaderValue | null>(null);
+    const [selectAll, setSelectAll] = React.useState<boolean>(false);
+    const [AssignRecuritmentHRValue, setAssignRecuritmentHRValue] = React.useState<AutoCompleteItem | null>(null);
+    // const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
+    // const [alertProps, setalertProps] = React.useState<alertPropsData>({
+    //     Message: "",
+    //     Type: "",
+    //     ButtonAction: null,
+    //     visible: false,
+    // });
+
+    const HRFileHandle = (serverUrl: string, fileName: string) => {
+        console.log(serverUrl, "ServerUrl");
+        try {
+            if (serverUrl) {
+
+                if (
+                    fileName
+                        .split(".")[fileName.split(".").length - 1]
+                        .toLocaleLowerCase() == "pdf"
+                ) {
+                    window.open(serverUrl);
+                } else {
+                    window.open(serverUrl + "?web=1");
+                }
+            }
+        } catch (error) {
+            console.error("Error setting up SharePoint:", error);
+        }
+    };
+
+    // const handleAttachmentState = (newAttachments: Item[], rowData: any) => {
+    //     const updatedRowAttachment = CandidateData.map((item: any) => {
+    //         if (item.ID === rowData.ID) {
+    //             if (item.Checked === true) {
+    //                 return item;
+    //             }
+    //             return {
+    //                 ...item,
+    //                 ScoreCardAttch: [...(item.ScoreCardAttch || []), ...newAttachments],
+    //             };
+    //         }
+    //         return item;
+    //     });
+    //     setCandidateData(updatedRowAttachment);
+    // };
+
+    // const handleDelete = (index: number, rowData: any) => {
+    //     console.log("Deleting attachment at index:", index);
+    //     const updatedCandidateData = CandidateData.map((item: any) => {
+    //         if (item.ID === rowData.ID) {
+    //             const updatedAttachments = item.ScoreCardAttch.filter((_: any, i: number) => i !== index);
+    //             return {
+    //                 ...item,
+    //                 ScoreCardAttch: updatedAttachments,
+    //             };
+    //         }
+    //         return item;
+    //     });
+
+    //     setCandidateData(updatedCandidateData);
+    // };
 
 
-    const columnConfig = (tab: string) => [
-        {
-            field: 'BusinessUnitCode',
-            header: 'BusinessUnit Code',
-            sortable: true
-        },
-        {
-            field: 'Department',
-            header: 'Department',
-            sortable: true
-        },
+    const columnConfig = [
+
         {
             field: 'JobCode',
-            header: 'Job Code',
+            header: 'JobCode',
             sortable: true
         },
         {
-            field: "Status",
-            header: "Status",
-            fieldName: "Status",
+            field: 'Nationality',
+            header: 'Nationality',
+            sortable: true
+        },
+        {
+            field: 'PassportID',
+            header: 'PassportID',
+            sortable: true
+        },
+        {
+            field: 'FullName',
+            header: 'Name',
+            sortable: true,
+        },
+        {
+            field: "",
+            header: "CV",
             sortable: false,
             body: (rowData: any) => {
-                return (
-                    <span
-                        style={{
-                            backgroundColor:
-                                rowData.Status.includes("Pending") === true // "Pending"
-                                    ? GridStatusBackgroundcolor.Pending
-                                    : rowData.Status.includes("Completed") ===
-                                        true
-                                        ? GridStatusBackgroundcolor
-                                            .CompletedOrApproved
-                                        : rowData.Status.includes("Rejected") === true
-                                            ? GridStatusBackgroundcolor.Rejected
-                                            : rowData.Status.includes("Reverted") === true
-                                                ? GridStatusBackgroundcolor.Reverted
-                                                : rowData.Status.includes("Resubmitted") === true
-                                                    ? GridStatusBackgroundcolor.ReSubmitted
-                                                    : rowData.Status.includes("Draft") === true
-                                                        ? GridStatusBackgroundcolor.Draft
-                                                        : "",
-                            borderRadius: "5px",
-                        }}
-                    >
-                        {rowData.Status}
-                    </span>
-                );
+                if (rowData?.CandidateCVDoc?.[0] && rowData?.CandidateCVDoc?.[0]?.name) {
+                    return (
+                        <div>
+                            <Link
+                                onClick={() =>
+                                    HRFileHandle(
+                                        rowData?.CandidateCVDoc[0]?.content || "",
+                                        rowData?.CandidateCVDoc[0]?.name || ""
+                                    )
+                                }
+                            >
+                                {rowData?.CandidateCVDoc?.[0]?.name}
+                            </Link>
+                        </div>
+                    );
+                } else {
+                    return <span>No CV available</span>;
+                }
             },
         },
         {
-            field: "Action",
-            header: "Action",
+            field: 'Interviewed',
+            header: "Interviewed",
             sortable: false,
+
+        },
+        {
+            field: '',
+            header: 'Action',
+            sortable: true,
             body: (rowData: any) => {
+                function handleRedirectView(rowData: any): void {
+                    const ID = rowData?.ID
+                    props.navigation("/InterviewPanelList/InterviewPanelEdit", { state: { ID } });
+                }
+
                 return (
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "5px",
-                        }}
-                    >
-                        <Button
-                            onClick={() => handleRedirectView(rowData, tab)}
-                            className="table_btn"
-                            icon="pi pi-eye"
-                            style={{
-                                width: "30px",
-                                marginRight: "7px",
-                                padding: "3px",
-                            }}
+                    <div>
+                        <ReuseButton
+                            icon={
+                                <VisibilityIcon
+                                    style={{
+                                        fontSize: "2rem",
+                                        marginTop: "4%",
+                                        marginLeft: "18%",
+                                    }}
+                                />
+                            }
+                            onClick={() => handleRedirectView(rowData)}
+                            spacing={4}
+                            width="10%"
+                            disabled={!rowData?.Checked}
                         />
+
                     </div>
                 );
-            },
+
+            }
         },
     ];
 
-
-    function handleRedirectView(rowData: any, tab: string) {
-        debugger;
-        const ID = rowData?.JobCodeId
-        props.navigation("/InterviewPanelList/InterviewPanelEdit", { state: { ID, tab } });
-
-    }
-
-
-
-    const fetchData = async () => {
+    const fetchCandidateData = async (CurrentUserID: any) => {
         setIsLoading(true);
         try {
+            console.log(CurrentUserID, "CurrentUserID");
+
             let filterConditions = [];
             let Conditions = "";
             filterConditions.push({
-                FilterKey: "StatusId",
+                FilterKey: "AssignByInterviewPanel",
                 Operator: "eq",
-                FilterValue: StatusId.InitiatedforRecruitmentProcess
+                FilterValue: CurrentUserID
             });
-            const data = await getVRRDetails.GetVacancyDetails(filterConditions, Conditions);
-            const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails([], "");
-            console.log("RecruitmentDetails", RecruitmentDetails);
+            const data = await getVRRDetails.GetInterviewPanelCandidateDetails(filterConditions, Conditions);
             if (data.status === 200 && data.data !== null) {
-                console.log(data, "GetVacancyDetails");
-                setData(data.data[0]);
-            }
+                console.log(data.data, "GetVacancyDetails");
+                setCandidateData(data.data);
 
+            }
         } catch (error) {
             console.log("GetVacancyDetails doesn't fetch the data", error);
         }
@@ -138,50 +197,254 @@ const InterviewPanelList = (props: any) => {
 
     };
 
+
     React.useEffect(() => {
+        const fetchData = async () => {
+            const getCurrentUserID = await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSInterviewPanel);
+            if (getCurrentUserID.status === 200 && getCurrentUserID.data) {
+                console.log(getCurrentUserID, "getCurrentUserID");
+
+                await fetchCandidateData(getCurrentUserID.data[0].key);
+            }
+
+            const HeaderValue = {
+                JobCode: "POS001",
+                JobTitle: "Position English",
+                Headcount: "01"
+            }
+            setHeaderValueData(HeaderValue)
+        };
+
         void fetchData();
     }, []);
 
 
-    const onPageChange = (event: any, Type: string) => {
+    const onPageChange = (event: any) => {
         setFirst(event.first);
         setRows(event.rows);
     };
 
-    const handleRefresh = () => {
-        void fetchData();
+    // const Submit_fn = async () => {
+    //     const allAssignByPresent = CandidateData.every((item) => item.AssignBy);
+    //     console.log(allAssignByPresent, "allShortlistValuePresent");
+    //     if (allAssignByPresent) {
+    //         for (const Candidate of CandidateData) {
+    //             if (Candidate?.AssignBy) {
+    //                 const obj = {
+    //                     ID: Candidate.ID,
+    //                     AssignById: Candidate?.AssignBy
+    //                 };
+    //                 console.log(obj, "obj");
+
+    //                 try {
+    //                     const data = await getVRRDetails.AssignCandidateRecuritmentHR(obj.ID, obj, ListNames.HRMSRecruitmentCandidateDetails);
+    //                     if (data.status === 200 && data.data !== null) {
+    //                         setIsLoading(true);
+    //                         let CancelAlert = {
+    //                             Message: RecuritmentHRMsg.RecuritmentSubmitMsg,
+    //                             Type: HRMSAlertOptions.Success,
+    //                             visible: true,
+    //                             ButtonAction: async (userClickedOK: boolean) => {
+    //                                 if (userClickedOK) {
+    //                                     props.navigation("/RecurimentProcess");
+    //                                     setAlertPopupOpen(false);
+    //                                 }
+    //                             }
+    //                         }
+
+    //                         setAlertPopupOpen(true);
+    //                         setalertProps(CancelAlert);
+    //                         setIsLoading(false);
+    //                     }
+    //                 } catch (error) {
+    //                     console.log("GetVacancyDetails doesn't fetch the data", error);
+    //                 }
+
+
+    //             }
+    //         }
+    //     } else {
+    //         let CancelAlert = {
+    //             Message: RecuritmentHRMsg.ValidationErrorMsg,
+    //             Type: HRMSAlertOptions.Warning,
+    //             visible: true,
+    //             ButtonAction: async (userClickedOK: boolean) => {
+    //                 if (userClickedOK) {
+    //                     setAlertPopupOpen(false);
+    //                 }
+    //             }
+    //         }
+
+    //         setAlertPopupOpen(true);
+    //         setalertProps(CancelAlert);
+    //         setIsLoading(false);
+    //     }
+
+    // }
+
+    const handleCheckbox = (value: boolean, rowData: any) => {
+        const updatedRowData = CandidateData.map((item: any) => {
+            if (item.ID === rowData.ID) {
+                if (item.Checked === true && value === true) {
+                    return item;
+                }
+
+                return {
+                    ...item,
+                    Checked: value,
+                    Assigned: value,
+                };
+            }
+            return item;
+        });
+        let CheckedValue = updatedRowData.filter((item) => item.Checked === true)
+        const updatedCheckedValues = CheckedValue
+            ? [...checkedValue, CheckedValue]
+            : []
+
+        setCheckedValue(updatedCheckedValues)
+        setCandidateData(updatedRowData);
+    };
+
+    function handleAssignBtn() {
+        let CheckedDataValue = CandidateData.some((item) => item.Checked)
+        if (CheckedDataValue) {
+            setAssignPopup(!AssignPopup)
+            setAssignBtnValidation(AssignBtnValidation)
+        } else {
+            setAssignBtnValidation(!AssignBtnValidation)
+        }
+    }
+
+    const onSelectAllChange = (value: boolean) => {
+        const updatedRowData: any[] = CandidateData.map((item: any) => {
+            return {
+                ...item,
+                Checked: value,
+                AssignBy: value ? AssignRecuritmentHRValue?.key : null,
+            };
+        });
+
+        setCandidateData(updatedRowData);
+        setSelectAll(value);
+    };
+
+
+    const assignbtnfn = async () => {
+        setIsLoading(true);
+        const updatedRowData = await Promise.all(CandidateData.map(async (item: any) => {
+            if (item.Assigned === true) {
+                return {
+                    ...item,
+                    AssignBy: AssignRecuritmentHRValue?.key,
+                };
+            }
+            return item;
+        }));
+
+        setCandidateData(updatedRowData);
+        setAssignPopup(false);
+
+        setIsLoading(false);
     };
 
     const tabs = [
         {
-            label: "My Submission",
+            label: "Assign Interview Panel",
             value: "tab1",
             content: (
                 <div className="menu-card">
-                    <SearchableDataTable
-                        data={data}
-                        columns={columnConfig("tab1")}
+                    <CheckboxDataTable
+                        data={CandidateData}
+                        columns={columnConfig}
                         rows={rows}
-                        onPageChange={(event) => onPageChange(event, "VRR")}
-                        handleRefresh={handleRefresh}
-                    />
+                        onPageChange={onPageChange}
+                        handleAssignBtn={handleAssignBtn}
+                        AssignBtnValidation={AssignBtnValidation}
+                        handleCheckbox={handleCheckbox}
+                        selectAll={selectAll}
+                        onSelectAllChange={onSelectAllChange} />
                 </div>
+
             ),
         },
     ];
 
+    // const handleCancel = () => {
+    //     setIsLoading(true);
+    //     let CancelAlert = {
+    //         Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
+    //         Type: HRMSAlertOptions.Confirmation,
+    //         visible: true,
+    //         ButtonAction: async (userClickedOK: boolean) => {
+    //             if (userClickedOK) {
+    //                 props.navigation("/InterviewPanelList");
+    //                 setAlertPopupOpen(false);
+    //             } else {
+    //                 setAlertPopupOpen(false);
+    //             }
+    //         }
+    //     }
 
+    //     setAlertPopupOpen(true);
+    //     setalertProps(CancelAlert);
+    //     setIsLoading(false);
 
+    // };
+
+    const handleAutoComplete = async (
+        item: AutoCompleteItem
+    ) => {
+        if (item) {
+            setAssignRecuritmentHRValue(item);
+        }
+    };
 
     return (
-        <CustomLoader isLoading={isLoading}>
-            <React.Fragment>
+        <>
+            <CustomLoader isLoading={isLoading}>
                 <div className="menu-card">
-                    <TabsComponent tabs={tabs} initialTab="tab1" tabtype={tabType.Dashboard} />
-                    {console.log(first, "first")}
+                    <React.Fragment>
+                        <TabsComponent
+                            tabs={tabs}
+                            initialTab="tab1"
+                            tabClassName={"Tab"}
+
+                        />
+                        {console.log(props.masterData, "masterDataDetails")}
+                        {console.log(first, "first")}
+                    </React.Fragment>
                 </div>
-            </React.Fragment>
-        </CustomLoader>
+            </CustomLoader>
+
+            {/* {AlertPopupOpen ? (
+                <>
+                    <CustomAlert
+                        {...alertProps}
+                        onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
+                    />
+                </>
+            ) : <></>} */}
+
+            {AssignPopup ? (
+                <>
+                    <AssignRecuritmentHR
+                        handleAutoComplete={handleAutoComplete}
+                        AssignRecuritmentHRValue={AssignRecuritmentHRValue}
+                        onClose={handleAssignBtn}
+                        HeaderValueData={HeaderValueData}
+                        assignbtnfn={assignbtnfn}
+                        visible={AssignPopup}
+                    />
+                </>
+            ) : (
+                <></>
+            )}
+
+
+
+        </>
+
 
     )
 }

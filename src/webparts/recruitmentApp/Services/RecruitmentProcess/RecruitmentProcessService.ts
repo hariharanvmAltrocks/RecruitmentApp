@@ -372,7 +372,7 @@ export default class RecruitmentService implements IRecruitmentService {
             let response: any = await SPServices.SPAddItem({
                 Listname: ListNames.HRMSRecruitmentDptDetails,
                 RequestJSON: {
-                    VRRIDId: Table1.VRRID,
+                    // VRRIDId: Table1.VRRID,
                     ActionId: WorkflowAction.Submitted,
                     Nationality: Table1.Nationality,
                     EmploymentCategory: Table1.EmploymentCategory,
@@ -593,8 +593,8 @@ export default class RecruitmentService implements IRecruitmentService {
 
             const listItems: any[] = await SPServices.SPReadItems({
                 Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-                Select: "*,JobCode/JobCode",
-                Expand: "JobCode",
+                Select: "*,JobCode/JobCode,AssignByInterviewPanel/EMail",
+                Expand: "JobCode,AssignByInterviewPanel",
                 Filter: filterParam,
                 FilterCondition: filterConditions,
                 Topcount: count.Topcount,
@@ -621,10 +621,10 @@ export default class RecruitmentService implements IRecruitmentService {
                     JobCode: item?.JobCode?.JobCode,
                     JobCodeId: item?.JobCodeId,
                     PassportID: item?.PassportID,
-                    FristName: item.FristName,
-                    MiddleName: item.MiddleName,
-                    LastName: item.LastName,
-                    FullName: item.FristName ?? "" + " " + item.MiddleName ?? "" + " " + item.LastName ?? "",
+                    FristName: item?.FristName,
+                    MiddleName: item?.MiddleName,
+                    LastName: item?.LastName,
+                    FullName: (item?.FristName ?? "") + " " + (item?.MiddleName ?? "") + " " + (item?.LastName ?? ""),
                     ResidentialAddress: item?.ResidentialAddress,
                     DOB: item?.DOB,
                     ContactNumber: item?.ContactNumber,
@@ -637,6 +637,7 @@ export default class RecruitmentService implements IRecruitmentService {
                     ReleventExperience: item?.ReleventExperience,
                     Qualification: item?.Qualification,
                     RecuritmentHR: item?.RecuritmentHR,
+                    AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
                     CandidateCVDoc: candidateCV,
                 };
             });

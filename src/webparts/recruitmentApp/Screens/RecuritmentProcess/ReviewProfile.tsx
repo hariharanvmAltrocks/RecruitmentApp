@@ -7,12 +7,11 @@ import TabsComponent from "../../components/TabsComponent ";
 import { alertPropsData } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { ActionStatus, HRMSAlertOptions, ListNames, RecuritmentHRMsg, RoleID } from "../../utilities/Config";
-import { Button } from "primereact/button";
 import ReiewProfilePopup from "../../components/ReiewProfilePopup";
-import ReuseButton from "../../components/ReuseButton";
 import SPServices from "../../Services/SPService/SPServices";
-// import CheckIcon from '../../assets/CheckIcon.svg';
-// import RejectedIcon from '../../assets/RejectedIcon.svg';
+import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 
 
@@ -102,39 +101,16 @@ const ReviewProfile = (props: any) => {
                 }
             },
         },
-        {
-            field: '',
-            header: 'Shortlist/Rejected',
-            sortable: true,
-            body: (rowData: any) => {
-                return (
-                    <span style={{ display: "flex", justifyContent: "center" }}>
-                        {rowData.ProfileStatus === ActionStatus.Shortlists ? (
-                            <ReuseButton
-                                label="Shortlisted"
-                                // onClick={() => ActionBtnFn(rowData, ActionStatus.Shortlists)}
-                                backgroundColor="rgb(205, 45, 45)"
-                                Style={{ color: "white" }}
-                                width="80%"
+        // {
+        //     field: '',
+        //     header: 'Shortlist/Rejected',
+        //     sortable: true,
+        //     body: (rowData: any) => {
+        //         return (
 
-                            />
-                        ) : rowData.ProfileStatus === ActionStatus.Rejected ? (
-
-                            <ReuseButton
-                                label="Rejected"
-                                // onClick={() => ActionBtnFn(rowData, ActionStatus.Rejected)}
-                                backgroundColor="rgb(205, 45, 45)"
-                                Style={{ color: "white" }}
-                                width="80%"
-                            />
-                        ) : (
-                            <></>
-                        )}
-
-                    </span>
-                );
-            }
-        },
+        //         );
+        //     }
+        // },
         {
             field: '',
             header: "Action",
@@ -148,16 +124,45 @@ const ReviewProfile = (props: any) => {
 
                 return (
                     <div>
-                        <Button
-                            onClick={() => handleRedirectView(rowData)}
-                            className="table_btn"
-                            icon="pi pi-eye"
-                            style={{
-                                width: "30px",
-                                marginRight: "7px",
-                                padding: "3px",
-                            }}
-                        />
+                        <span >
+                            {rowData.ProfileStatus === ActionStatus.Shortlists ? (
+                                <CheckCircleIcon
+                                    style={{
+                                        fontSize: "2rem",
+                                        marginTop: "4%",
+                                        marginLeft: "18%",
+                                        color: "rgb(205, 45, 45)"
+                                    }}
+                                    onClick={() => handleRedirectView(rowData)}
+                                />
+
+                            ) : rowData.ProfileStatus === ActionStatus.Rejected ? (
+                                <CancelRoundedIcon
+                                    style={{
+                                        fontSize: "2rem",
+                                        marginTop: "4%",
+                                        marginLeft: "18%",
+                                        color: "rgb(205, 45, 45)"
+                                    }}
+                                    onClick={() => handleRedirectView(rowData)}
+                                />
+
+
+                            ) : (
+                                <>
+                                    <VisibilityIcon
+                                        style={{
+                                            fontSize: "2rem",
+                                            marginTop: "4%",
+                                            marginLeft: "18%",
+                                            color: "rgb(205, 45, 45)"
+                                        }}
+                                        onClick={() => handleRedirectView(rowData)}
+                                    />
+                                </>
+                            )}
+
+                        </span>
                     </div>
                 );
             },

@@ -1484,3 +1484,12 @@ footer {
     flex: 1;
     margin-left: 30px;
 }
+
+/* Custom CSS for increasing the size of stars */
+.custom-rating .p-rating-icon {
+    font-size: 30px !important;
+}
+
+/* .custom-rating .p-rating-icon {
+    color: #e65f2b !important;
+} */

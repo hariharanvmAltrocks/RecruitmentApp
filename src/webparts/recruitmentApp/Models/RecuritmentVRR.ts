@@ -90,3 +90,34 @@ export type CandidateData = {
     Qualification: string;
     CandidateCVDoc: any[]
 }
+
+
+export type ScoreCardData = {
+    JobCode: string;
+    JobCodeId: number;
+    PassportID: string;
+    FristName: string;
+    MiddleName: string;
+    LastName: string;
+    FullName: string;
+    ResidentialAddress: string;
+    DOB: string;
+    ContactNumber: string;
+    Email: string;
+    Nationality: string;
+    Gender: string;
+    TotalYearOfExperiance: string;
+    Skills: string;
+    LanguageKnown: string;
+    ReleventExperience: string;
+    Qualification: string;
+    CandidateCVDoc: any[];
+    Qualifications: number;
+    Experience: number;
+    Knowledge: number;
+    Energylevel: number;
+    Requirements: number;
+    contributeculture: number;
+    ExpatExperienceCongolese: number;
+    CriteriaRecognised: number;
+}

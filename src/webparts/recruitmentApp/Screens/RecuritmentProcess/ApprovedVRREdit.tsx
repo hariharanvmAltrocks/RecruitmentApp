@@ -284,13 +284,16 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             }
 
             case RoleID.RecruitmentHR: {
-                if (props.stateValue?.tab === "tab1") {
-                    errors.AdvertisementDocument = !IsValid(AdvertisementAttachement);
-                    errors.Comments = !IsValid(Comments);
-                } else if (props.stateValue?.tab === "tab2") {
+                if (formState.AdvertisementDocument.length > 0) {
                     errors.AssignAgencies = !IsValid(AssignAgencies.text);
                     errors.Comments = !IsValid(Comments);
+                } else {
+                    if (props.stateValue?.tab === "tab1") {
+                        errors.AdvertisementDocument = !IsValid(AdvertisementAttachement);
+                        errors.Comments = !IsValid(Comments);
+                    }
                 }
+
                 break;
             }
 
@@ -317,7 +320,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
             if (isValid) {
                 let Table1: any = {
-                    VRRID: formState.VRRID,
+                    // VRRID: formState.VRRID,
                     BusinessUnitCode: formState.BusinessUnitCodeID,
                     Nationality: formState.Nationality,
                     EmploymentCategory: formState.EmployementCategory,
@@ -337,11 +340,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     AssignedHRId: formState.AssignRecruitmentHR.key
 
                 };
-                // let Table2: any = {
-                //     JobTitleEnglish: formState.JobNameInEnglishID,
-                //     PatersonGrade: formState.PatersonGradeID,
-                //     DRCGrade: formState.DRCGradeID,
-                // }
+
                 console.log(Table1, "Table1")
                 switch (props.CurrentRoleID) {
                     case RoleID.RecruitmentHRLead: {
@@ -353,11 +352,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 formState.OnamSignedStampsAttchment
                             )
                         } else {
-                            const response = await getVRRDetails.InsertRecruitmentDpt(Table1, formState.PositionDetails);
-                            console.log(response);
-
+                            const response = await getVRRDetails.InsertRecruitmentDpt(Table1, formState.PositionDetails)
+                            console.log(response.message);
                         }
-
                         setIsLoading(true);
                         let CancelAlert = {
                             Message: RecuritmentHRMsg.RecuritmentSubmitMsg,

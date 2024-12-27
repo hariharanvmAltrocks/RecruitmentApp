@@ -144,7 +144,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                     </div>
                     {/* {assignbtnVisible ? (
                         <> */}
-                    <div className="ms-Grid-row" style={{ display: "flex", justifyContent: "end", marginTop: "2%" }}>
+                    {/* <div className="ms-Grid-row" style={{ display: "flex", justifyContent: "end", marginTop: "2%" }}>
                         <div className="ms-Grid-col ms-lg2">
                             <ReuseButton
                                 label="Assign"
@@ -153,7 +153,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                                 error={AssignBtnValidation}
                             />
                         </div>
-                    </div>
+                    </div> */}
                     {/* </>
                     ) : (<></>)} */}
 
@@ -187,7 +187,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                                                         <div>
                                                             <CustomCheckBox
                                                                 label=""
-                                                                value={rowData?.Checked === true || rowData?.AssignedById}
+                                                                value={rowData?.Checked === true}
                                                                 onChange={(e, value: boolean) => handleCheckbox(value, rowData)}
                                                             />
                                                         </div>
@@ -207,7 +207,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                                                         <div>
                                                             <CustomCheckBox
                                                                 label=""
-                                                                value={rowData?.Checked === true || rowData?.AssignedById}
+                                                                value={rowData?.Checked === true}
                                                                 onChange={(e, value: boolean) => handleCheckbox(value, rowData)}
                                                             />
                                                         </div>

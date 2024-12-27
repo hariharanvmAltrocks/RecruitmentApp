@@ -1,12 +1,5 @@
 import * as React from "react";
-import LabelHeaderComponents from "./TitleHeader";
-import ReuseButton from "./ReuseButton";
-import CustomAutoComplete from "./CustomAutoComplete";
 import { AutoCompleteItem } from "../Models/Screens";
-import { Label } from "@fluentui/react";
-import { ADGroupID } from "../utilities/Config";
-import CustomPopup from "./CustomPopup/CustomPopup";
-import { CommonServices } from "../Services/ServiceExport";
 
 export type HeaderValue = {
     JobCode: string;
@@ -31,33 +24,33 @@ function AssignRecuritmentHR({
     assignbtnfn,
     visible
 }: AssignRecuritmentHRProps): JSX.Element {
-    const [RecuritmentOption, setRecuritmentOption] = React.useState<AutoCompleteItem[]>([]);
+    // const [RecuritmentOption, setRecuritmentOption] = React.useState<AutoCompleteItem[]>([]);
 
 
-    React.useEffect(() => {
-        const getADGroupsOption = async () => {
-            try {
-                const InterViewPanelOption = await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSInterviewPanel);
+    // React.useEffect(() => {
+    //     const getADGroupsOption = async () => {
+    //         try {
+    //             const InterViewPanelOption = await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSInterviewPanel);
 
-                if (
-                    (InterViewPanelOption.status === 200 && InterViewPanelOption.data)
-                ) {
-                    setRecuritmentOption(InterViewPanelOption.data)
-                } else {
-                    console.error("Error retrieving attachments:", InterViewPanelOption.data.message);
-                }
-            } catch (error) {
-                console.error("Error in fetching data:", error);
-            }
-        };
+    //             if (
+    //                 (InterViewPanelOption.status === 200 && InterViewPanelOption.data)
+    //             ) {
+    //                 setRecuritmentOption(InterViewPanelOption.data)
+    //             } else {
+    //                 console.error("Error retrieving attachments:", InterViewPanelOption.data.message);
+    //             }
+    //         } catch (error) {
+    //             console.error("Error in fetching data:", error);
+    //         }
+    //     };
 
-        void getADGroupsOption();
-    }, []);
+    //     void getADGroupsOption();
+    // }, []);
 
     return (
         <>
             <div className="ms-Grid-row" style={{ display: "flex", justifyContent: "center" }}>
-                <CustomPopup
+                {/* <CustomPopup
                     visible={visible}
                     onClose={onClose}
                     width="41%"
@@ -122,7 +115,7 @@ function AssignRecuritmentHR({
                             </div>
                         </>
                     }
-                />
+                /> */}
             </div>
             {/* <div
                 className="ms-Grid"

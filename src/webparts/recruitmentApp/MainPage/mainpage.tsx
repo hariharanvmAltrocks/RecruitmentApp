@@ -46,7 +46,7 @@ export default function MainPage(props: any) {
                                     <Route path="/CommanTemplate/CommanTemplate" element={<CommanTemplate {...props} {...masterData} />} />
                                     <Route path="/RecurimentProcess/ReviewProfile" element={<ReviewProfile {...props} {...masterData} />} />
                                     <Route path="/RecurimentProcess/AssignInterviewPanel" element={<AssignInterviewPanel {...props} {...masterData} />} />
-                                    <Route path="/InterviewPanelList" element={<InterviewPanelList {...props} {...masterData} />} />
+                                    <Route path="/InterviewPanelList" element={<InterviewPanelList {...props} {...masterData}  {...ADGroupData?.ADGroupIDs} />} />
                                     <Route path="/InterviewPanelList/InterviewPanelEdit" element={<InterviewPanelEdit {...props} {...masterData} />} />
 
                                 </Routes>

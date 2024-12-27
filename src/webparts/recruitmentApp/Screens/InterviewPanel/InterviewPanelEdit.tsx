@@ -1,212 +1,113 @@
 import * as React from "react";
-import { Link } from "@mui/material";
 import { getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
-import { alertPropsData, AutoCompleteItem, Item } from "../../Models/Screens";
+import { alertPropsData } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
-import { HRMSAlertOptions, ListNames, RecuritmentHRMsg } from "../../utilities/Config";
-import CheckboxDataTable from "../../components/CheckboxDataTable";
-import AssignRecuritmentHR, { HeaderValue } from "../../components/AssignRecuritmentHR";
-import AttachmentButton from "../../components/AttachmentButton";
-import { Icon, Label } from "office-ui-fabric-react";
+import { HRMSAlertOptions, RecuritmentHRMsg } from "../../utilities/Config";
+import { ScoreCardData } from "../../Models/RecuritmentVRR";
+import IsValid from "../../components/Validation";
+import CustomInput from "../../components/CustomInput";
+import CustomLabel from "../../components/CustomLabel";
+import CustomRatingStar from "../../components/CustomRatingStar";
+
+type ValidationError = {
+    Qualifications: boolean;
+    Experience: boolean;
+    Knowledge: boolean;
+    Energylevel: boolean;
+    Requirements: boolean;
+    contributeculture: boolean;
+    ExpatExperienceCongolese: boolean;
+    CriteriaRecognised: boolean;
+}
 
 const InterviewPanelEdit = (props: any) => {
     console.log(props, "ReviewProfile");
 
-    const [CandidateData, setCandidateData] = React.useState<any[]>([]);
-    const [rows, setRows] = React.useState<number>(5);
-    const [first, setFirst] = React.useState<number>(0);
+    const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
+        JobCode: "",
+        JobCodeId: 0,
+        PassportID: "",
+        FristName: "",
+        MiddleName: "",
+        LastName: "",
+        FullName: "",
+        ResidentialAddress: "",
+        DOB: "",
+        ContactNumber: "",
+        Email: "",
+        Nationality: "",
+        Gender: "",
+        TotalYearOfExperiance: "",
+        Skills: "",
+        LanguageKnown: "",
+        ReleventExperience: "",
+        Qualification: "",
+        Qualifications: 0,
+        Experience: 0,
+        Knowledge: 0,
+        Energylevel: 0,
+        Requirements: 0,
+        contributeculture: 0,
+        ExpatExperienceCongolese: 0,
+        CriteriaRecognised: 0,
+        CandidateCVDoc: []
+    });
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
     const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
-    const [checkedValue, setCheckedValue] = React.useState<any[]>([]);
-    const [AssignPopup, setAssignPopup] = React.useState<boolean>(false);
-    const [AssignBtnValidation, setAssignBtnValidation] = React.useState<boolean>(false);
-    const [HeaderValueData, setHeaderValueData] = React.useState<HeaderValue | null>(null);
-    const [selectAll, setSelectAll] = React.useState<boolean>(false);
-    const [AssignRecuritmentHRValue, setAssignRecuritmentHRValue] = React.useState<AutoCompleteItem | null>(null);
     const [alertProps, setalertProps] = React.useState<alertPropsData>({
         Message: "",
         Type: "",
         ButtonAction: null,
         visible: false,
     });
-
-    const HRFileHandle = (serverUrl: string, fileName: string) => {
-        console.log(serverUrl, "ServerUrl");
-        try {
-            if (serverUrl) {
-
-                if (
-                    fileName
-                        .split(".")[fileName.split(".").length - 1]
-                        .toLocaleLowerCase() == "pdf"
-                ) {
-                    window.open(serverUrl);
-                } else {
-                    window.open(serverUrl + "?web=1");
-                }
-            }
-        } catch (error) {
-            console.error("Error setting up SharePoint:", error);
-        }
-    };
-
-    const handleAttachmentState = (newAttachments: Item[], rowData: any) => {
-        const updatedRowAttachment = CandidateData.map((item: any) => {
-            if (item.ID === rowData.ID) {
-                if (item.Checked === true) {
-                    return item;
-                }
-                return {
-                    ...item,
-                    ScoreCardAttch: [...(item.ScoreCardAttch || []), ...newAttachments],
-                };
-            }
-            return item;
-        });
-        setCandidateData(updatedRowAttachment);
-    };
-
-    const handleDelete = (index: number, rowData: any) => {
-        console.log("Deleting attachment at index:", index);
-        const updatedCandidateData = CandidateData.map((item: any) => {
-            if (item.ID === rowData.ID) {
-                const updatedAttachments = item.ScoreCardAttch.filter((_: any, i: number) => i !== index);
-                return {
-                    ...item,
-                    ScoreCardAttch: updatedAttachments,
-                };
-            }
-            return item;
-        });
-
-        setCandidateData(updatedCandidateData);
-    };
+    const [ValidationError, setValidationError] = React.useState<ValidationError>({
+        Qualifications: false,
+        Experience: false,
+        Knowledge: false,
+        Energylevel: false,
+        Requirements: false,
+        contributeculture: false,
+        ExpatExperienceCongolese: false,
+        CriteriaRecognised: false,
+    })
 
 
-    const columnConfig = [
-
-        {
-            field: 'JobCode',
-            header: 'JobCode',
-            sortable: true
-        },
-        {
-            field: 'PassportID',
-            header: 'PassportID',
-            sortable: true
-        },
-        {
-            field: 'FristName',
-            header: 'FristName',
-            sortable: true,
-            body: (rowData: any) => {
-                return <span>{rowData.FristName ?? "" + " " + rowData.MiddleName ?? "" + " " + rowData.LastName ?? ""}</span>
-            }
-        },
-        {
-            field: "",
-            header: "CV",
-            sortable: false,
-            body: (rowData: any) => {
-                if (rowData?.CandidateCVDoc?.[0] && rowData?.CandidateCVDoc?.[0]?.name) {
-                    return (
-                        <div>
-                            <Link
-                                onClick={() =>
-                                    HRFileHandle(
-                                        rowData?.CandidateCVDoc[0]?.content || "",
-                                        rowData?.CandidateCVDoc[0]?.name || ""
-                                    )
-                                }
-                            >
-                                {rowData?.CandidateCVDoc?.[0]?.name}
-                            </Link>
-                        </div>
-                    );
-                } else {
-                    return <span>No CV available</span>;
-                }
-            },
-        },
-        {
-            field: 'Interviewed',
-            header: "Interviewed",
-            sortable: false,
-
-        },
-        {
-            field: '',
-            header: 'Action',
-            sortable: true,
-            body: (rowData: any) => {
-
-
-                return (
-                    <span>
-                        <AttachmentButton
-                            label="Attach"
-                            iconName="CloudUpload"
-                            iconNameHover="CloudUpload"
-                            AttachState={(newAttachments) => handleAttachmentState(newAttachments, rowData)}
-                            mandatory={true}
-                            error={false}
-                        />
-
-                        <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg12">
-                                {rowData?.ScoreCardAttch?.map((file: any, index: number) => {
-                                    const fileName = file?.fileName || file?.name;
-                                    console.log("Rendering file:", fileName);
-
-                                    return (
-                                        <div key={index} className="ms-Grid-row">
-                                            <div className="ms-Grid-col ms-lg12">
-                                                <Label>
-                                                    {fileName}
-                                                    <span>
-                                                        <Icon
-                                                            iconName="Delete"
-                                                            style={{
-                                                                marginLeft: "8px",
-                                                                fontSize: "16px",
-                                                                cursor: "pointer",
-                                                            }}
-                                                            onClick={() => handleDelete(index, rowData)}
-                                                        />
-                                                    </span>
-                                                </Label>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </span>
-                );
-
-            }
-        },
-    ];
-
-    const fetchCandidateData = async (RecruitmentDetails: any) => {
+    const fetchCandidateData = async (ID: number) => {
         setIsLoading(true);
         try {
-            console.log(RecruitmentDetails, "RecruitmentDetails");
 
             let filterConditions = [];
             let Conditions = "";
             filterConditions.push({
-                FilterKey: "JobCodeId",
+                FilterKey: "ID",
                 Operator: "eq",
-                FilterValue: RecruitmentDetails[0]?.JobCodeId
+                FilterValue: ID
             });
             const data = await getVRRDetails.GetInterviewPanelCandidateDetails(filterConditions, Conditions);
             if (data.status === 200 && data.data !== null) {
                 console.log(data.data, "GetVacancyDetails");
-                setCandidateData(data.data);
+                const op = data.data[0]
+                setCandidateData((prevState) => ({
+                    ...prevState,
+                    JobCode: op?.JobCode,
+                    JobCodeId: op?.JobCodeId,
+                    PassportID: op?.PassportID,
+                    FullName: op?.FullName,
+                    ResidentialAddress: op?.ResidentialAddress,
+                    DOB: op?.DOB,
+                    ContactNumber: op?.ContactNumber,
+                    Email: op?.Email,
+                    Nationality: op?.Nationality,
+                    Gender: op?.Gender,
+                    TotalYearOfExperiance: op?.TotalYearOfExperiance,
+                    Skills: op?.Skills,
+                    LanguageKnown: op?.LanguageKnown,
+                    ReleventExperience: op?.ReleventExperience,
+                    Qualification: op?.Qualification,
+                    CandidateCVDoc: op?.CandidateCVDoc
+                }));
 
             }
         } catch (error) {
@@ -216,167 +117,94 @@ const InterviewPanelEdit = (props: any) => {
 
     };
 
-    const fetchRecuritmentData = async () => {
-        let filterConditions = [];
-        let Conditions = "and";
-        filterConditions.push({
-            FilterKey: "JobCode",
-            Operator: "eq",
-            FilterValue: props.stateValue.ID
-        });
-
-        const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails(filterConditions, Conditions);
-        console.log("RecruitmentDetails", RecruitmentDetails);
-        if (RecruitmentDetails.status === 200 && RecruitmentDetails.data !== null) {
-            console.log(RecruitmentDetails, "GetVacancyDetails");
-            setRecruitmentDetails(RecruitmentDetails.data);
-            await fetchCandidateData(RecruitmentDetails.data);
-        }
-    }
 
     React.useEffect(() => {
         const fetchData = async () => {
-            await fetchRecuritmentData();
-            const HeaderValue = {
-                JobCode: "POS001",
-                JobTitle: "Position English",
-                Headcount: "01"
-            }
-            setHeaderValueData(HeaderValue)
+            await fetchCandidateData(props.stateValue?.ID)
         };
 
         void fetchData();
     }, []);
 
 
-    const onPageChange = (event: any) => {
-        setFirst(event.first);
-        setRows(event.rows);
+    const handleRadioChange = async (
+        key: keyof ScoreCardData,
+        value: any
+    ) => {
+        if (value) {
+            setCandidateData((prevState) => ({
+                ...prevState,
+                [key]: value,
+            }));
+            setValidationError((prevState) => ({
+                ...prevState,
+                [key]: false,
+            }))
+        }
+    };
+
+    const Validation = (): boolean => {
+        const {
+            Qualifications,
+            Experience,
+            Knowledge,
+            Energylevel,
+            Requirements,
+            contributeculture,
+            ExpatExperienceCongolese,
+            CriteriaRecognised,
+        } = CandidateData;
+
+        ValidationError.Qualifications = !IsValid(Qualifications);
+        ValidationError.Experience = !IsValid(Experience);
+        ValidationError.Knowledge = !IsValid(Knowledge);
+        ValidationError.Energylevel = !IsValid(Energylevel);
+        ValidationError.Requirements = !IsValid(Requirements);
+        ValidationError.contributeculture = !IsValid(contributeculture);
+        ValidationError.ExpatExperienceCongolese = !IsValid(ExpatExperienceCongolese);
+        ValidationError.CriteriaRecognised = !IsValid(CriteriaRecognised);
+
+
+
+        setValidationError((prevState) => ({
+            ...prevState,
+            ...ValidationError,
+        }));
+
+        return Object.values(ValidationError).some((error) => error);
     };
 
     const Submit_fn = async () => {
-        const allAssignByPresent = CandidateData.every((item) => item.AssignBy);
-        console.log(allAssignByPresent, "allShortlistValuePresent");
-        if (allAssignByPresent) {
-            for (const Candidate of CandidateData) {
-                if (Candidate?.AssignBy) {
-                    const obj = {
-                        ID: Candidate.ID,
-                        AssignById: Candidate?.AssignBy
-                    };
-                    console.log(obj, "obj");
-
-                    try {
-                        const data = await getVRRDetails.AssignCandidateRecuritmentHR(obj.ID, obj, ListNames.HRMSRecruitmentCandidateDetails);
-                        if (data.status === 200 && data.data !== null) {
-                            setIsLoading(true);
-                            let CancelAlert = {
-                                Message: RecuritmentHRMsg.RecuritmentSubmitMsg,
-                                Type: HRMSAlertOptions.Success,
-                                visible: true,
-                                ButtonAction: async (userClickedOK: boolean) => {
-                                    if (userClickedOK) {
-                                        props.navigation("/RecurimentProcess");
-                                        setAlertPopupOpen(false);
-                                    }
-                                }
-                            }
-
-                            setAlertPopupOpen(true);
-                            setalertProps(CancelAlert);
-                            setIsLoading(false);
-                        }
-                    } catch (error) {
-                        console.log("GetVacancyDetails doesn't fetch the data", error);
-                    }
-
-
-                }
-            }
-        } else {
-            let CancelAlert = {
-                Message: RecuritmentHRMsg.ValidationErrorMsg,
-                Type: HRMSAlertOptions.Warning,
-                visible: true,
-                ButtonAction: async (userClickedOK: boolean) => {
-                    if (userClickedOK) {
-                        setAlertPopupOpen(false);
-                    }
-                }
-            }
-
-            setAlertPopupOpen(true);
-            setalertProps(CancelAlert);
-            setIsLoading(false);
+        let Valid = !Validation();
+        console.log(Valid, "Valid");
+        const obj = {
+            JobCode: CandidateData?.JobCode,
+            JobCodeId: CandidateData?.JobCodeId,
+            PassportID: CandidateData?.PassportID,
+            FullName: CandidateData?.FullName,
+            ResidentialAddress: CandidateData?.ResidentialAddress,
+            DOB: CandidateData?.DOB,
+            ContactNumber: CandidateData?.ContactNumber,
+            Email: CandidateData?.Email,
+            Nationality: CandidateData?.Nationality,
+            Gender: CandidateData?.Gender,
+            TotalYearOfExperiance: CandidateData?.TotalYearOfExperiance,
+            Skills: CandidateData?.Skills,
+            LanguageKnown: CandidateData?.LanguageKnown,
+            ReleventExperience: CandidateData?.ReleventExperience,
+            Qualification: CandidateData?.Qualification,
+            Qualifications: CandidateData?.Qualifications,
+            Experience: CandidateData?.Experience,
+            Knowledge: CandidateData?.Knowledge,
+            Energylevel: CandidateData?.Energylevel,
+            Requirements: CandidateData?.Requirements,
+            contributeculture: CandidateData?.contributeculture,
+            ExpatExperienceCongolese: CandidateData?.ExpatExperienceCongolese,
+            CriteriaRecognised: CandidateData?.CriteriaRecognised,
         }
+        console.log("obj", obj);
 
     }
-
-    const handleCheckbox = (value: boolean, rowData: any) => {
-        const updatedRowData = CandidateData.map((item: any) => {
-            if (item.ID === rowData.ID) {
-                if (item.Checked === true && value === true) {
-                    return item;
-                }
-
-                return {
-                    ...item,
-                    Checked: value,
-                    Assigned: value,
-                };
-            }
-            return item;
-        });
-        let CheckedValue = updatedRowData.filter((item) => item.Checked === true)
-        const updatedCheckedValues = CheckedValue
-            ? [...checkedValue, CheckedValue]
-            : []
-
-        setCheckedValue(updatedCheckedValues)
-        setCandidateData(updatedRowData);
-    };
-
-    function handleAssignBtn() {
-        let CheckedDataValue = CandidateData.some((item) => item.Checked)
-        if (CheckedDataValue) {
-            setAssignPopup(!AssignPopup)
-            setAssignBtnValidation(AssignBtnValidation)
-        } else {
-            setAssignBtnValidation(!AssignBtnValidation)
-        }
-    }
-
-    const onSelectAllChange = (value: boolean) => {
-        const updatedRowData: any[] = CandidateData.map((item: any) => {
-            return {
-                ...item,
-                Checked: value,
-                AssignBy: value ? AssignRecuritmentHRValue?.key : null,
-            };
-        });
-
-        setCandidateData(updatedRowData);
-        setSelectAll(value);
-    };
-
-
-    const assignbtnfn = async () => {
-        setIsLoading(true);
-        const updatedRowData = await Promise.all(CandidateData.map(async (item: any) => {
-            if (item.Assigned === true) {
-                return {
-                    ...item,
-                    AssignBy: AssignRecuritmentHRValue?.key,
-                };
-            }
-            return item;
-        }));
-
-        setCandidateData(updatedRowData);
-        setAssignPopup(false);
-
-        setIsLoading(false);
-    };
 
     const tabs = [
         {
@@ -384,16 +212,347 @@ const InterviewPanelEdit = (props: any) => {
             value: "tab1",
             content: (
                 <div className="menu-card">
-                    <CheckboxDataTable
-                        data={CandidateData}
-                        columns={columnConfig}
-                        rows={rows}
-                        onPageChange={onPageChange}
-                        handleAssignBtn={handleAssignBtn}
-                        AssignBtnValidation={AssignBtnValidation}
-                        handleCheckbox={handleCheckbox}
-                        selectAll={selectAll}
-                        onSelectAllChange={onSelectAllChange} />
+                    <div>
+                        <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="Applicant name"
+                                    value={CandidateData.FullName}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, FullName: value }))
+                                    }
+                                />
+
+                            </div>
+
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="Applicant surname"
+                                    value={CandidateData.LastName}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, LastName: value }))
+                                    }
+                                />
+
+                            </div>
+
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="Nationality"
+                                    value={CandidateData.Nationality}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, Nationality: value }))
+                                    }
+                                />
+
+                            </div>
+
+
+
+                        </div>
+
+                        <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="Gender and age"
+                                    value={CandidateData.Gender}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, PassportID: value }))
+                                    }
+                                />
+                            </div>
+
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="Highest relevant qualification"
+                                    value={CandidateData.Qualification}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, Qualification: value }))
+                                    }
+                                />
+                            </div>
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="experiences in mining industry (years)"
+                                    value={CandidateData.TotalYearOfExperiance}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
+                                    }
+                                />
+                            </div>
+
+                        </div>
+
+                        <div className="ms-Grid-row">
+
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="experiences in related field (years)"
+                                    value={CandidateData.TotalYearOfExperiance}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
+                                    }
+                                />
+
+                            </div>
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="Date interviewed"
+                                    value={CandidateData.ContactNumber}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
+                                    }
+                                />
+
+                            </div>
+
+                        </div>
+
+                        {/* <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="Qualification"
+                                    value={CandidateData.Qualification}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, Qualification: value }))
+                                    }
+                                />
+
+                            </div>
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="ReleventExperience"
+                                    value={CandidateData.Qualification}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, Qualification: value }))
+                                    }
+                                />
+                            </div>
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="Skills"
+                                    value={CandidateData.Skills}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, Skills: value }))
+                                    }
+                                />
+                            </div>
+                        </div>
+
+                        <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="TotalYearOfExperiance"
+                                    value={CandidateData.TotalYearOfExperiance}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
+                                    }
+                                />
+
+                            </div>
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomTextArea
+                                    label="Residential Address"
+                                    value={CandidateData.ResidentialAddress}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) => setCandidateData((prevState) => ({ ...prevState, ResidentialAddress: value }))}
+                                    error={false} />
+
+                            </div>
+                            <div className="ms-Grid-col ms-lg4">
+                                <CustomInput
+                                    label="TotalYearOfExperiance"
+                                    value={CandidateData.ResidentialAddress}
+                                    disabled={true}
+                                    mandatory={false}
+                                    onChange={(value) =>
+                                        setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
+                                    }
+                                />
+
+                            </div>
+
+                        </div> */}
+                        {/* <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg3">
+                                {CandidateData.CandidateCVDoc?.map((attachment: any) => (
+                                    <div key={attachment.content}>
+                                        <CustomLabel value={"Resume "} mandatory={true} />
+                                        <p style={{ marginTop: "1%" }}>
+                                            <a href={attachment.content} target="_blank" rel="noopener noreferrer">
+                                                {attachment.name}
+                                            </a>
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div> */}
+                        <div style={{ marginTop: "3%" }}>
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomLabel value={"Qualifications (relevant)"} mandatory={true} />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg4">
+
+                                    <CustomRatingStar
+                                        value={CandidateData.Qualifications}
+                                        onChange={(value) => handleRadioChange(
+                                            "Qualifications",
+                                            value
+                                        )}
+                                        error={ValidationError.Qualifications}
+                                    />
+                                </div>
+                                <div className="ms-Grid-row">
+
+                                </div>
+                            </div>
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomLabel value={"Experience (relevant)"} mandatory={true} />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomRatingStar
+                                        value={CandidateData.Experience}
+                                        onChange={(value) => handleRadioChange(
+                                            "Experience",
+                                            value
+                                        )}
+                                        error={ValidationError.Experience}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomLabel value={"Knowledge"} mandatory={true} />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomRatingStar
+                                        value={CandidateData.Knowledge}
+                                        onChange={(value) => handleRadioChange(
+                                            "Knowledge",
+                                            value
+                                        )}
+                                        error={ValidationError.Knowledge}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomLabel value={"Energy level"} mandatory={true} />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomRatingStar
+                                        value={CandidateData.Energylevel}
+                                        onChange={(value) => handleRadioChange(
+                                            "Energylevel",
+                                            value
+                                        )}
+                                        error={ValidationError.Energylevel}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomLabel value={"Meets all job requirements"} mandatory={true} />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomRatingStar
+                                        value={CandidateData.Requirements}
+                                        onChange={(value) => handleRadioChange(
+                                            "Requirements",
+                                            value
+                                        )}
+                                        error={ValidationError.Requirements}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomLabel value={"Will contribute to the culture required"} mandatory={true} />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomRatingStar
+                                        value={CandidateData.contributeculture}
+                                        onChange={(value) => handleRadioChange(
+                                            "contributeculture",
+                                            value
+                                        )}
+                                        error={ValidationError.contributeculture}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomLabel value={"Expat Experience / Congolese"} mandatory={true} />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomRatingStar
+                                        value={CandidateData.ExpatExperienceCongolese}
+                                        onChange={(value) => handleRadioChange(
+                                            "ExpatExperienceCongolese",
+                                            value
+                                        )}
+                                        error={ValidationError.ExpatExperienceCongolese}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomLabel value={"Others Criteria Recognised by Panel"} mandatory={true} />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg4">
+                                    <CustomRatingStar
+                                        value={CandidateData.CriteriaRecognised}
+                                        onChange={(value) => handleRadioChange(
+                                            "CriteriaRecognised",
+                                            value
+                                        )}
+                                        error={ValidationError.CriteriaRecognised}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             ),
@@ -405,6 +564,7 @@ const InterviewPanelEdit = (props: any) => {
         let CancelAlert = {
             Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
             Type: HRMSAlertOptions.Confirmation,
+            Notes: "Once status changes, You cannot revert back",
             visible: true,
             ButtonAction: async (userClickedOK: boolean) => {
                 if (userClickedOK) {
@@ -422,15 +582,8 @@ const InterviewPanelEdit = (props: any) => {
 
     };
 
-    const handleAutoComplete = async (
-        item: AutoCompleteItem
-    ) => {
-        if (item) {
-            setAssignRecuritmentHRValue(item);
-        }
-    };
 
-    console.log(RecruitmentDetails, "RecruitmentDetails");
+
     return (
         <>
             <CustomLoader isLoading={isLoading}>
@@ -451,7 +604,6 @@ const InterviewPanelEdit = (props: any) => {
                             ]}
                         />
                         {console.log(props.masterData, "masterDataDetails")}
-                        {console.log(first, "first")}
                     </React.Fragment>
                 </div>
             </CustomLoader>
@@ -464,24 +616,6 @@ const InterviewPanelEdit = (props: any) => {
                     />
                 </>
             ) : <></>}
-
-            {AssignPopup ? (
-                <>
-                    <AssignRecuritmentHR
-                        handleAutoComplete={handleAutoComplete}
-                        AssignRecuritmentHRValue={AssignRecuritmentHRValue}
-                        onClose={handleAssignBtn}
-                        HeaderValueData={HeaderValueData}
-                        assignbtnfn={assignbtnfn}
-                        visible={AssignPopup}
-                    />
-                </>
-            ) : (
-                <></>
-            )}
-
-
-
         </>
 
 

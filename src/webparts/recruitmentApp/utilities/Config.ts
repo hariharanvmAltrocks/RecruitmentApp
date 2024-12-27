@@ -89,10 +89,10 @@ export const GridStatusBackgroundcolor = {
 };
 
 export const HRMSAlertOptions = {
-    Success: "success",
+    Success: "Success",
     Confirmation: "Confirmation",
-    Error: "error",
-    Warning: "warning"
+    Error: "Error",
+    Warning: "Warning"
 };
 
 
@@ -159,3 +159,11 @@ export const RoleProfileMaster = {
     Grading: "Grading",
     RoleProfile: "RoleProfile"
 }
+
+export const ScoreRanking = [
+    { key: 0, text: "1" },
+    { key: 0, text: "2" },
+    { key: 0, text: "3" },
+    { key: 0, text: "4" },
+    { key: 0, text: "5" }
+]
