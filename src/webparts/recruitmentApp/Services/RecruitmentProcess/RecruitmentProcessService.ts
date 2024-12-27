@@ -189,7 +189,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
             const formattedItems = listItems.map(async (item) => {
                 return {
-                    VRRID: item?.VRRIDId ? item?.VRRIDId : 0,
+                    // VRRID: item?.VRRIDId ? item?.VRRIDId : 0,
                     PositionName: item.PositionID?.PositionID ? item.PositionID?.PositionID : "",
                     PositionID: item.PositionIDId ? item.PositionIDId : 0
 
