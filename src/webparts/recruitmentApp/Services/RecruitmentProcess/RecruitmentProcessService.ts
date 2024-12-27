@@ -1,8 +1,9 @@
-import { sp } from "@pnp/sp";
 import { DocumentLibraray, ListNames, WorkflowAction, count } from "../../utilities/Config";
 import SPServices from "../SPService/SPServices";
 import { IRecruitmentService } from "./IRecruitmentProcessService";
-import { InterviewPanelCandidateDetails } from "../../Models/RecuritmentVRR";
+import { CandidateData } from "../../Models/RecuritmentVRR";
+import { sp } from "@pnp/sp/presets/all";
+import { CommonServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 
 interface IAttachmentExampleState {
@@ -25,9 +26,9 @@ export default class RecruitmentService implements IRecruitmentService {
                 Filter: filterParam,
                 FilterCondition: filterConditions,
                 Expand: "Department, SubDepartment, Section, DepartmentCode, Status, Action, BusinessUnitCode, JobCode",
+                Orderby: "ID",
+                Orderbydecorasc: false
             });
-
-            console.log("GetVacancyDetails", listItems);
 
             const formattedItems: any[] = [];
 
@@ -188,7 +189,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
             const formattedItems = listItems.map(async (item) => {
                 return {
-                    VRRID: item?.VRRIDId ? item?.VRRIDId : 0,
+                    // VRRID: item?.VRRIDId ? item?.VRRIDId : 0,
                     PositionName: item.PositionID?.PositionID ? item.PositionID?.PositionID : "",
                     PositionID: item.PositionIDId ? item.PositionIDId : 0
 
@@ -216,7 +217,6 @@ export default class RecruitmentService implements IRecruitmentService {
                 Listname: ListNames.HRMSRecruitmentDptDetails,
                 Select: `
                     *, 
-                    VRRID/ID, 
                     Department/DepartmentName, 
                     SubDepartment/SubDepTitle, 
                     Section/SectionName, 
@@ -224,12 +224,12 @@ export default class RecruitmentService implements IRecruitmentService {
                     Status/StatusDescription, 
                     Action/Action, 
                     JobCode/JobCode, 
-                    BusinessUnitCode/BusineesUnitCode
+                    BusinessUnitCode/BusineesUnitCode,
+                    AssignedHR/Title
                 `,
                 Filter: filterParam,
                 FilterCondition: filterConditions,
                 Expand: `
-                    VRRID, 
                     Department, 
                     SubDepartment, 
                     Section, 
@@ -237,15 +237,18 @@ export default class RecruitmentService implements IRecruitmentService {
                     Status, 
                     Action, 
                     JobCode, 
-                    BusinessUnitCode
+                    BusinessUnitCode,
+                    AssignedHR
                 `,
                 Topcount: count.Topcount,
+                Orderby: "ID",
+                Orderbydecorasc: false
             });
 
             console.log("GetRecruitmentDetails:", listItems);
 
             const formattedItems = listItems.map((item) => ({
-                VRRID: item?.VRRIDId || 0,
+                ID: item?.ID,
                 Nationality: item?.Nationality || "",
                 EmploymentCategory: item?.EmploymentCategory || "",
 
@@ -369,7 +372,7 @@ export default class RecruitmentService implements IRecruitmentService {
             let response: any = await SPServices.SPAddItem({
                 Listname: ListNames.HRMSRecruitmentDptDetails,
                 RequestJSON: {
-                    VRRIDId: Table1.VRRID,
+                    // VRRIDId: Table1.VRRID,
                     ActionId: WorkflowAction.Submitted,
                     Nationality: Table1.Nationality,
                     EmploymentCategory: Table1.EmploymentCategory,
@@ -386,6 +389,7 @@ export default class RecruitmentService implements IRecruitmentService {
                     JobCodeId: Table1.JobCode,
                     VacancyConfirmed: Table1.VacancyConfirmed,
                     BusinessUnitCodeId: Table1.BusinessUnitCode,
+                    AssignedHRId: Table1.AssignedHRId,
                 },
             });
 
@@ -487,32 +491,77 @@ export default class RecruitmentService implements IRecruitmentService {
         }
     };
 
+    async InsertRecruitmentCandidateDetails(param: any): Promise<ApiResponse<any | null>> {
+        try {
+            let response: any = await SPServices.SPAddItem({
+                Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                RequestJSON: param,
+            });
+            console.log(response);
+            return {
+                data: [],
+                status: 200,
+                message: "insert RecruitmentCandidateDetails",
+            };
+        } catch (error) {
+            console.error("Error inserting data into RecruitmentCandidateDetails:", error);
+            return {
+                data: [],
+                status: 500,
+                message: "Error inserting data into RecruitmentCandidateDetails",
+            };
+        }
+    }
+
     async GetCandidateDetails(filterParam: any, filterConditions: any) {
         try {
-            const CandidateDetails: InterviewPanelCandidateDetails[] = [];
+            const CandidateDetails: CandidateData[] = [];
 
             const listItems: any[] = await SPServices.SPReadItems({
                 Listname: ListNames.InterviewPanelCandidateDetails,
                 Select: "*,JobCode/JobCode",
-                // Filter: filterParam,
                 Expand: "JobCode",
+                Filter: filterParam,
+                FilterCondition: filterConditions,
                 Topcount: count.Topcount,
             });
 
             const formattedItems = listItems.map(async (item) => {
                 console.log("InterviewPanelCandidateDetails ", item);
-                const candidateCV = (await SPServices.getDocLibFiles({
-                    FilePath: `${DocumentLibraray.InterviewPanelCandidateCV}/${item.JobCode?.JobCode}/${item?.PassportID}`, //${"ASD9870J"}
-                })) as IDocFiles[];
-                console.log(candidateCV, "candidateCV");
+
+                const response = await CommonServices.GetAttachmentToLibrary(
+                    DocumentLibraray.InterviewPanelCandidateCV,
+                    item.JobCode?.JobCode,
+                    item?.PassportID
+                );
+                let candidateCV: IDocFiles[] = [];
+                if (response.status === 200 && response.data) {
+                    candidateCV = response.data;
+                    console.log(candidateCV, "candidateCV");
+                } else {
+                    console.error("Error retrieving attachments:", response.message);
+                }
 
                 return {
                     ID: item.ID,
-                    JobCode: item.JobCode?.JobCode,
+                    JobCode: item?.JobCode?.JobCode,
+                    JobCodeId: item?.JobCodeId,
                     PassportID: item?.PassportID,
-                    FristName: item?.FristName,
-                    MiddleName: item?.MiddleName,
-                    LastName: item?.LastName,
+                    FristName: item.FristName,
+                    MiddleName: item.MiddleName,
+                    LastName: item.LastName,
+                    FullName: item.FristName ?? "" + " " + item.MiddleName ?? "" + " " + item.LastName ?? "",
+                    ResidentialAddress: item?.ResidentialAddress,
+                    DOB: item?.DOB,
+                    ContactNumber: item?.ContactNumber,
+                    Email: item?.Email,
+                    Nationality: item?.Nationality,
+                    Gender: item?.Gender,
+                    TotalYearOfExperiance: item?.TotalYearOfExperiance,
+                    Skills: item?.Skills,
+                    LanguageKnown: item?.LanguageKnown,
+                    ReleventExperience: item?.ReleventExperience,
+                    Qualification: item?.Qualification,
                     CandidateCVDoc: candidateCV,
                 };
             });
@@ -538,12 +587,89 @@ export default class RecruitmentService implements IRecruitmentService {
         }
     }
 
-    async AssignCandidateRecuritmentHR(ID: number, param: any) {
+    async GetInterviewPanelCandidateDetails(filterParam: any, filterConditions: any) {
+        try {
+            const CandidateDetails: CandidateData[] = [];
+
+            const listItems: any[] = await SPServices.SPReadItems({
+                Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                Select: "*,JobCode/JobCode,AssignByInterviewPanel/EMail",
+                Expand: "JobCode,AssignByInterviewPanel",
+                Filter: filterParam,
+                FilterCondition: filterConditions,
+                Topcount: count.Topcount,
+            });
+
+            const formattedItems = listItems.map(async (item) => {
+                debugger;
+                console.log("HRMSRecruitmentCandidateDetails ", item);
+                const response = await CommonServices.GetAttachmentToLibrary(
+                    DocumentLibraray.InterviewPanelCandidateCV,
+                    item.JobCode?.JobCode,
+                    item?.PassportID,
+                );
+                let candidateCV: IDocFiles[] = [];
+                if (response.status === 200 && response.data) {
+                    candidateCV = response.data;
+                    console.log(candidateCV, "candidateCV");
+                } else {
+                    console.error("Error retrieving attachments:", response.message);
+                }
+
+                return {
+                    ID: item.ID,
+                    JobCode: item?.JobCode?.JobCode,
+                    JobCodeId: item?.JobCodeId,
+                    PassportID: item?.PassportID,
+                    FristName: item?.FristName,
+                    MiddleName: item?.MiddleName,
+                    LastName: item?.LastName,
+                    FullName: (item?.FristName ?? "") + " " + (item?.MiddleName ?? "") + " " + (item?.LastName ?? ""),
+                    ResidentialAddress: item?.ResidentialAddress,
+                    DOB: item?.DOB,
+                    ContactNumber: item?.ContactNumber,
+                    Email: item?.Email,
+                    Nationality: item?.Nationality,
+                    Gender: item?.Gender,
+                    TotalYearOfExperiance: item?.TotalYearOfExperiance,
+                    Skills: item?.Skills,
+                    LanguageKnown: item?.LanguageKnown,
+                    ReleventExperience: item?.ReleventExperience,
+                    Qualification: item?.Qualification,
+                    RecuritmentHR: item?.RecuritmentHR,
+                    AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
+                    CandidateCVDoc: candidateCV,
+                };
+            });
+
+            const resolvedItems = await Promise.all(formattedItems);
+
+            CandidateDetails.push(...resolvedItems);
+            console.log(CandidateDetails, "CandidateDetails");
+
+
+            return {
+                data: CandidateDetails,
+                status: 200,
+                message: "HRMSRecruitmentCandidateDetails fetched successfully",
+            };
+        } catch (error) {
+            console.error("Error fetching data HRMSRecruitmentCandidateDetails:", error);
+            return {
+                data: [],
+                status: 500,
+                message: "Error fetching data from HRMSRecruitmentCandidateDetails",
+            };
+        }
+    }
+
+    async AssignCandidateRecuritmentHR(ID: number, param: any, listName: string) {
         try {
             let message = "InterviewPanelCandidateDetails Not Updated";
             let StatusCode = 400;
+
             await SPServices.SPUpdateItem({
-                Listname: ListNames.InterviewPanelCandidateDetails,
+                Listname: listName,
                 RequestJSON: param,
                 ID: ID,
             }).then(async (items) => {
@@ -556,13 +682,14 @@ export default class RecruitmentService implements IRecruitmentService {
                 status: StatusCode,
                 message: message,
             };
-        }
-        catch (error) {
+        } catch (error) {
             console.error("Error UpdateHeadCount_WL:", error);
             throw error;
-
         }
     }
 
 
+
 }
+
+

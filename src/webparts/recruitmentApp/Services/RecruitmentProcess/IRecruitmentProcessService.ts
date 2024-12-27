@@ -13,6 +13,8 @@ export type IRecruitmentService = {
     GetPositionDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>>;
     GetRecruitmentDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>>;
     GetCandidateDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>>;
-    AssignCandidateRecuritmentHR(ID: number, param: any): Promise<ApiResponse<any | null>>;
+    AssignCandidateRecuritmentHR(ID: number, param: any, listName: string): Promise<ApiResponse<any | null>>;
     GetAttachedRoleProfile(indexID: any, DocLibrarayName: string): Promise<IAttachmentExampleState[]>;
+    InsertRecruitmentCandidateDetails(param: any): Promise<any | null>;
+    GetInterviewPanelCandidateDetails(filterParam: any, filterConditions: any): Promise<any | null>;
 }

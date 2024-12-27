@@ -654,14 +654,38 @@ Start */
     text-transform: none;
     /* padding: .8em 1em 0; */
     text-align: center;
-    font-size: 1.875em;
+    font-size: 1.5em;
     position: relative;
     max-width: 100%;
     margin: 0;
     color: inherit;
-    font-weight: 600;
     text-align: center;
     word-wrap: break-word;
+    font-weight: 600;
+}
+
+.headerStyle {
+    text-transform: none;
+    font-size: 1.75em;
+    position: relative;
+    max-width: 100%;
+    margin: 0;
+    color: rgb(239, 51, 64);
+    text-align: center;
+    word-wrap: break-word;
+    font-weight: bold;
+}
+
+.NoteStyle {
+    position: relative;
+    max-width: 100%;
+    margin: 0;
+    font-size: 1.5em;
+    color: rgb(239, 51, 64);
+    font-weight: bold;
+    word-wrap: break-word;
+    padding: 3%;
+    margin-left: 5%;
 }
 
 @media only screen and (max-width: 600px) {

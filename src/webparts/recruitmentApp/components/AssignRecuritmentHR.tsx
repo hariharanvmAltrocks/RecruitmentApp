@@ -1,12 +1,5 @@
 import * as React from "react";
-import LabelHeaderComponents from "./TitleHeader";
-import ReuseButton from "./ReuseButton";
-import CustomAutoComplete from "./CustomAutoComplete";
 import { AutoCompleteItem } from "../Models/Screens";
-import { Label } from "@fluentui/react";
-import { ListNames } from "../utilities/Config";
-import SPServices from "../Services/SPService/SPServices";
-import CustomPopup from "./CustomPopup/CustomPopup";
 
 export type HeaderValue = {
     JobCode: string;
@@ -31,41 +24,33 @@ function AssignRecuritmentHR({
     assignbtnfn,
     visible
 }: AssignRecuritmentHRProps): JSX.Element {
-    console.log(HeaderValueData, "optionProps");
-
-    const [RecuritmentOption, setRecuritmentOption] = React.useState<AutoCompleteItem | null>(null);
+    // const [RecuritmentOption, setRecuritmentOption] = React.useState<AutoCompleteItem[]>([]);
 
 
-    const fetchRecuritmentHR = async () => {
+    // React.useEffect(() => {
+    //     const getADGroupsOption = async () => {
+    //         try {
+    //             const InterViewPanelOption = await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSInterviewPanel);
 
-        await SPServices.SPReadItems({
-            Listname: ListNames.JDEDataMapping,
-            Select: "*,LineManager/Title,BudgetHolder/Title,HOD/Title",
-            Expand: "LineManager,BudgetHolder,HOD",
-        }).then((res: any) => {
-            if (res.length > 0) {
-                res.map((item: any) => {
-                    console.log(item, "JDEDataMappingItem");
+    //             if (
+    //                 (InterViewPanelOption.status === 200 && InterViewPanelOption.data)
+    //             ) {
+    //                 setRecuritmentOption(InterViewPanelOption.data)
+    //             } else {
+    //                 console.error("Error retrieving attachments:", InterViewPanelOption.data.message);
+    //             }
+    //         } catch (error) {
+    //             console.error("Error in fetching data:", error);
+    //         }
+    //     };
 
-                    let obj: AutoCompleteItem = {
-                        key: item.BudgetHolderId,
-                        text: item?.BudgetHolder?.Title ? item?.BudgetHolder?.Title : "",
-                    };
-                    setRecuritmentOption(obj)
-                })
-            }
-        })
-
-    }
-
-    React.useEffect(() => {
-        void fetchRecuritmentHR();
-    }, []);
+    //     void getADGroupsOption();
+    // }, []);
 
     return (
         <>
             <div className="ms-Grid-row" style={{ display: "flex", justifyContent: "center" }}>
-                <CustomPopup
+                {/* <CustomPopup
                     visible={visible}
                     onClose={onClose}
                     width="41%"
@@ -92,7 +77,7 @@ function AssignRecuritmentHR({
                                 >
                                     <CustomAutoComplete
                                         label="Assign Recuritment HR"
-                                        options={RecuritmentOption ? [RecuritmentOption] : []}
+                                        options={RecuritmentOption}
                                         value={AssignRecuritmentHRValue}
                                         disabled={false}
                                         mandatory={true}
@@ -130,7 +115,7 @@ function AssignRecuritmentHR({
                             </div>
                         </>
                     }
-                />
+                /> */}
             </div>
             {/* <div
                 className="ms-Grid"

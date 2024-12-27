@@ -6,11 +6,12 @@ import { Stack } from "office-ui-fabric-react";
 interface MainPageHeaderProps {
     children?: React.ReactNode;
     toggleSideNav: () => void;
-    userName: string | null;
-    userRole: string | null;
+    userName: string | undefined;
+    userRole: string | undefined;
+    Department: string | undefined;
 }
 
-const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav, userName, userRole }) => {
+const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav, userName, userRole, Department }) => {
 
     return (
         <div className="contentGrid">
@@ -41,29 +42,16 @@ const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav
                     className="ms-Grid-col ms-lg6"
                     style={{ textAlign: "right" }}
                 >
-                    <p className="title"
-                        style={{
-                            display: "flex",
-                            justifyContent: "end"
-                        }}
-                    >
-                        Welcome,
-                        <p style={{ fontWeight: "bold", marginBottom: "-1", marginTop: "0%" }}> {userName}</p>
-                    </p>
-
-                    <p
-                        className="title Role"
-                        style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            marginLeft: "47%"
-                        }}
-                    >
-                        {userRole} - { }
-                    </p>
+                    <h3 className="title">
+                        Welcome {userName}
+                    </h3>
+                    <h6 className="title Role">
+                        (
+                        {userRole} - {Department?.split("-")[1] ?? ''})
+                    </h6>
                 </div>
             </div>
-            <div className="MainContent ">{children}</div>
+            <div className="MainContent " style={{ marginTop: "-3%" }}>{children}</div>
         </div>
     );
 };

@@ -41,7 +41,6 @@ export default class MenuService implements IMenuService {
             }));
             const returnData1 = await this.GetNav(returnData, 0);
             const MenuSortData = await this.sortMenuItems(returnData1);
-            console.log("Dashboard Item------------", MenuSortData);
             return {
                 data: MenuSortData,
                 status: 200,
@@ -71,7 +70,6 @@ export default class MenuService implements IMenuService {
             };
             const items = await SPServices.SPReadItems(getjsonUserRole)
                 .then((res) => {
-                    console.log("MenuItems", res);
                     const tempArray: ISharePointMenuItemAccess[] = res.map((item) => ({
                         MenuIdId: item.MenuId?.MenuId,
                         RoleIdId: item.RoleId?.ID,
@@ -79,9 +77,6 @@ export default class MenuService implements IMenuService {
                     }));
                     return tempArray;
                 });
-            console.log(items, "items");
-            console.log("userRoleId", userRoleId);
-
             return {
                 data: items,
                 status: 200,
@@ -101,12 +96,10 @@ export default class MenuService implements IMenuService {
         let TempArray: MenuResponse[] = [];
         const filterItem = ITEMS.filter((item) => item?.ParentId == ParentId);
         filterItem.forEach((element) => {
-            console.log("element-------------");
             element.Children = this.GetNav(ITEMS, element?.Id);
             TempArray.push(element);
         });
 
-        console.log("TempArry----------------------", TempArray);
         return TempArray;
     }
 

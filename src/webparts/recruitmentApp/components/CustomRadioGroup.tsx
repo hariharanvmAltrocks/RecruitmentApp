@@ -30,7 +30,7 @@ function CustomRadioGroup({
 }: FormFields) {
     return (
         <>
-            <Label styles={label != "" ? labelStyles : undefined}>
+            <Label styles={label !== "" ? labelStyles : undefined}>
                 {label}
                 {mandatory && <span style={{ color: "red" }}> *</span>}
             </Label>

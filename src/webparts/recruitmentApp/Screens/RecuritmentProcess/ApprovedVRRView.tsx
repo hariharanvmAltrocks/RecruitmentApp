@@ -202,9 +202,9 @@ const ApprovedVRRView: React.FC = () => {
 
     return (
         <CustomLoader isLoading={isLoading}>
-            <Card variant="outlined" sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3" }}>
+            <div className="menu-card">
                 <TabsComponent tabs={tabs} initialTab="tab1" />
-            </Card>
+            </div>
         </CustomLoader>
     );
 };

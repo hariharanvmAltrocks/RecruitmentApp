@@ -3,15 +3,15 @@ import TabsComponent from "../../components/TabsComponent ";
 import SearchableDataTable from "../../components/CustomDataTable";
 import "../../App.css";
 import { getVRRDetails } from "../../Services/ServiceExport";
-import { GridStatusBackgroundcolor, StatusId } from "../../utilities/Config";
+import { GridStatusBackgroundcolor, RoleID, StatusId, tabType } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Button } from "primereact/button";
-interface ColumnConfig {
-    field: string;
-    header: string;
-    sortable: boolean;
-    body?: (item?: {}) => {};
-}
+// interface ColumnConfig {
+//     field: string;
+//     header: string;
+//     sortable: boolean;
+//     body?: (item?: {}) => {};
+// }
 
 
 const RecruitmentProcess = (props: any) => {
@@ -19,12 +19,13 @@ const RecruitmentProcess = (props: any) => {
 
     const [data, setData] = React.useState<any[]>([]);
     const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
-    const [columns, setColumns] = React.useState<ColumnConfig[]>([]);
     const [rows, setRows] = React.useState<number>(5);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [activeTab, setActiveTab] = React.useState("tab1");
 
-    const columnConfig = [
+
+    const columnConfig = (tab: string) => [
         {
             field: 'BusinessUnitCode',
             header: 'BusinessUnit Code',
@@ -99,7 +100,7 @@ const RecruitmentProcess = (props: any) => {
                         }}
                     >
                         <Button
-                            onClick={() => handleRedirectView(rowData)}
+                            onClick={() => handleRedirectView(rowData, tab)}
                             className="table_btn"
                             icon="pi pi-eye"
                             style={{
@@ -108,21 +109,50 @@ const RecruitmentProcess = (props: any) => {
                                 padding: "3px",
                             }}
                         />
+                        {/* <Button
+                            onClick={() => handleDeletedView(rowData, tab)}
+                            className="table_btn"
+                            icon="pi pi-eye"
+                            style={{
+                                width: "30px",
+                                marginRight: "7px",
+                                padding: "3px",
+                            }}
+                        /> */}
+
                     </div>
                 );
             },
         },
     ];
 
-    function handleRedirectView(rowData: any) {
-        console.log(`rowDatarowData`, rowData);
-        props.navigation("/RecurimentProcess/ApprovedVRREdit");
+
+    function handleRedirectView(rowData: any, tab: string) {
+        const ID = rowData?.ID
+        if ((props.CurrentRoleID === RoleID.RecruitmentHR && tab === 'tab2') || (props.CurrentRoleID === RoleID.LineManager && tab === 'tab1')) {
+            props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID, tab } });
+        } else if (props.CurrentRoleID === RoleID.RecruitmentHR && tab === 'tab3') {
+            props.navigation("/RecurimentProcess/AssignInterviewPanel", { state: { ID, tab } });
+        } else {
+            props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { rowData, tab } });
+        }
+
     }
+    // async function handleDeletedView(rowData: any, tab: string) {
+    //     const ID = rowData?.ID
+    //     const deleteResult = await SPServices.SPDeleteItem({
+    //         Listname: ListNames.HRMSRecruitmentDptDetails,
+    //         ID: ID
+    //     });
+    //     console.log(deleteResult, "deleteResult");
+
+    // }
+
+
 
 
 
     const fetchData = async () => {
-
         setIsLoading(true);
         try {
             let filterConditions = [];
@@ -152,7 +182,6 @@ const RecruitmentProcess = (props: any) => {
 
     React.useEffect(() => {
         void fetchData();
-        setColumns(columnConfig);
     }, []);
 
 
@@ -161,60 +190,121 @@ const RecruitmentProcess = (props: any) => {
         setRows(event.rows);
     };
 
+    const handleRefresh = (tab: string) => {
+        void fetchData();
+        setActiveTab(tab);
+    };
+
     const tabs = [
-        {
-            label: "Approved VRR",
-            value: "tab1",
-            content: (
-                <div className="menu-card">
-                    <SearchableDataTable
-                        data={data}
-                        columns={columns}
-                        rows={rows}
-                        onPageChange={(event) => onPageChange(event, "Recruitment")}
-                    />
-                </div>
+        ...(props.CurrentRoleID === RoleID.RecruitmentHRLead ? [
+            {
+                label: "Approved VRR",
+                value: "tab1",
+                content: (
+                    <div className="menu-card">
+                        <SearchableDataTable
+                            data={data}
+                            columns={columnConfig("tab1")}
+                            rows={rows}
+                            onPageChange={(event) => onPageChange(event, "Recruitment")}
+                            handleRefresh={() => handleRefresh("tab1")}
+                        />
+                    </div>
+                ),
+            },
+            {
+                label: "My Submission",
+                value: "tab2",
+                content: (
+                    <div className="menu-card">
+                        <SearchableDataTable
+                            data={RecruitmentDetails}
+                            columns={columnConfig("tab2")}
+                            rows={rows}
+                            onPageChange={(event) => onPageChange(event, "VRR")}
+                            handleRefresh={() => handleRefresh("tab2")}
 
-            ),
-        },
-        {
-            label: "My Submission",
-            value: "tab2",
-            content: (
-                <div className="menu-card">
-                    <SearchableDataTable
-                        data={RecruitmentDetails}
-                        columns={columns}
-                        rows={rows}
-                        onPageChange={(event) => onPageChange(event, "VRR")}
-                    />
-                </div>
-
-            ),
-        },
-        {
-            label: "Review Job Profile",
-            value: "tab3",
-            content: (
-                <div className="menu-card">
-                    <SearchableDataTable
-                        data={RecruitmentDetails}
-                        columns={columns}
-                        rows={rows}
-                        onPageChange={(event) => onPageChange(event, "VRR")}
-                    />
-                </div>
-
-            ),
-        },
+                        />
+                    </div>
+                ),
+            },
+        ] : [
+            ...(props.CurrentRoleID === RoleID.LineManager ? [
+                {
+                    label: "Review Profiles",
+                    value: "tab1",
+                    content: (
+                        <div className="menu-card">
+                            <SearchableDataTable
+                                data={RecruitmentDetails}
+                                columns={columnConfig("tab1")}
+                                rows={rows}
+                                onPageChange={(event) => onPageChange(event, "VRR")}
+                                handleRefresh={() => handleRefresh("tab1")}
+                            />
+                        </div>
+                    ),
+                },
+            ] : [
+                {
+                    label: "My Submission",
+                    value: "tab1",
+                    content: (
+                        <div className="menu-card">
+                            <SearchableDataTable
+                                data={RecruitmentDetails}
+                                columns={columnConfig("tab1")}
+                                rows={rows}
+                                onPageChange={(event) => onPageChange(event, "VRR")}
+                                handleRefresh={() => handleRefresh("tab1")}
+                            />
+                        </div>
+                    ),
+                },
+                ...(props.CurrentRoleID === RoleID.RecruitmentHR ? [
+                    {
+                        label: "Review Profiles",
+                        value: "tab2",
+                        content: (
+                            <div className="menu-card">
+                                <SearchableDataTable
+                                    data={RecruitmentDetails}
+                                    columns={columnConfig("tab2")}
+                                    rows={rows}
+                                    onPageChange={(event) => onPageChange(event, "VRR")}
+                                    handleRefresh={() => handleRefresh("tab2")}
+                                />
+                            </div>
+                        ),
+                    },
+                    {
+                        label: "Assign interviewPanel",
+                        value: "tab3",
+                        content: (
+                            <div className="menu-card">
+                                <SearchableDataTable
+                                    data={RecruitmentDetails}
+                                    columns={columnConfig("tab3")}
+                                    rows={rows}
+                                    onPageChange={(event) => onPageChange(event, "VRR")}
+                                    handleRefresh={() => handleRefresh("tab3")}
+                                />
+                            </div>
+                        ),
+                    },
+                ] : []),
+            ])
+        ])
     ];
+
+
 
 
     return (
         <CustomLoader isLoading={isLoading}>
             <React.Fragment>
                 <div className="menu-card">
-                    <TabsComponent tabs={tabs} initialTab="tab1" />
+                    <TabsComponent tabs={tabs} initialTab={activeTab} tabtype={tabType.Dashboard} />
                     {console.log(first, "first")}
                 </div>
             </React.Fragment>
