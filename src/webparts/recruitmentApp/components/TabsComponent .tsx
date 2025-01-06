@@ -150,7 +150,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                                     } else {
                                         return (
                                             <div key={index} style={{ marginRight: "10px" }}>
-                                                <ReuseButton label={button.label} onClick={button.onClick} spacing={4} />
+                                                <ReuseButton label={button.label} onClick={button.onClick} spacing={4} width={"100%"} />
                                             </div>
                                         );
                                     }

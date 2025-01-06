@@ -23,12 +23,12 @@ export default function CustomAlert(
             style={{ marginLeft: "34%" }}
         >
             {props.Type === HRMSAlertOptions.Success ? (
-                <div className="ms-Grid-col ms-lg12">
+                <div className="ms-Grid-col ms-lg12" style={{ marginLeft: "26%" }}>
                     <p className="headerStyle" >{props.Type}</p>
 
                 </div>
             ) : props.Type === HRMSAlertOptions.Error ? (
-                <div className="ms-Grid-col ms-lg12">
+                <div className="ms-Grid-col ms-lg12" style={{ marginLeft: "26%" }}>
                     <p className="headerStyle" >{props.Type}</p>
 
                 </div>
@@ -39,7 +39,7 @@ export default function CustomAlert(
 
                 </div>
             ) : props.Type === HRMSAlertOptions.Warning ? (
-                <div className="ms-Grid-col ms-lg12">
+                <div className="ms-Grid-col ms-lg12" style={{ marginLeft: "26%" }}>
                     <p className="headerStyle" >{props.Type}</p>
 
                 </div>
@@ -80,28 +80,41 @@ export default function CustomAlert(
             <div className="ms-Grid-row"
                 style={{ display: "flex", justifyContent: "center", marginTop: "3%", marginBottom: "3%", marginLeft: "4%" }}
             >
-                <div className="ms-Grid-col ms-lg3">
-                    <ReuseButton
-                        label="Yes"
-                        onClick={() => props.ButtonAction && props.ButtonAction(true)}
-                        spacing={4}
-                        backgroundColor="rgb(13 171 13)"
-                        Style={{ color: "white", fontSize: "1.5em", fontWeight: "600" }}
-                    />
-                </div>
 
 
-                {props.Type === HRMSAlertOptions.Confirmation && (
+
+                {props.Type === HRMSAlertOptions.Confirmation ? (
+                    <>
+                        <div className="ms-Grid-col ms-lg3">
+                            <ReuseButton
+                                label="Yes"
+                                onClick={() => props.ButtonAction && props.ButtonAction(true)}
+                                spacing={4}
+                                backgroundColor="rgb(13 171 13)"
+                                Style={{ color: "white", fontSize: "1.5em", fontWeight: "600" }}
+                            />
+                        </div>
+                        <div className="ms-Grid-col ms-lg3">
+                            <ReuseButton
+                                label="No"
+                                onClick={() => props.ButtonAction && props.ButtonAction(false)}
+                                spacing={4}
+                                backgroundColor="rgb(205, 45, 45)"
+                                Style={{ color: "white", fontSize: "1.5em", fontWeight: "600" }}
+                            />
+                        </div>
+                    </>
+
+                ) : (
                     <div className="ms-Grid-col ms-lg3">
                         <ReuseButton
-                            label="No"
-                            onClick={() => props.ButtonAction && props.ButtonAction(false)}
+                            label="OK"
+                            onClick={() => props.ButtonAction && props.ButtonAction(true)}
                             spacing={4}
-                            backgroundColor="rgb(205, 45, 45)"
+                            backgroundColor="rgb(13 171 13)"
                             Style={{ color: "white", fontSize: "1.5em", fontWeight: "600" }}
                         />
                     </div>
-
                 )}
             </div>
         </>

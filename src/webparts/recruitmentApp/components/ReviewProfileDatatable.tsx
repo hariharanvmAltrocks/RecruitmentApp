@@ -127,6 +127,7 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
                             scrollable
                             scrollHeight="300px"
                             filters={dashboardSearch}
+                            style={{ overflow: "hidden" }}
                         >
                             {columns.map((col) => {
 

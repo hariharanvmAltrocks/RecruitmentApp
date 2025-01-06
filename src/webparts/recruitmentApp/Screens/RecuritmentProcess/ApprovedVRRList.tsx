@@ -129,14 +129,41 @@ const RecruitmentProcess = (props: any) => {
 
     function handleRedirectView(rowData: any, tab: string) {
         const ID = rowData?.ID
-        if ((props.CurrentRoleID === RoleID.RecruitmentHR && tab === 'tab2') || (props.CurrentRoleID === RoleID.LineManager && tab === 'tab1')) {
-            props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID, tab } });
-        } else if (props.CurrentRoleID === RoleID.RecruitmentHR && tab === 'tab3') {
-            props.navigation("/RecurimentProcess/AssignInterviewPanel", { state: { ID, tab } });
-        } else {
-            props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { rowData, tab } });
-        }
+        switch (props.CurrentRoleID) {
+            case RoleID.RecruitmentHRLead: {
+                if (tab === 'tab1' || tab === 'tab2') {
+                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { rowData, tab } });
+                } else {
+                    props.navigation("/RecurimentProcess/ApprovedVRRView", { state: { rowData, tab } });
+                }
+            }
+                break;
 
+            case RoleID.RecruitmentHR: {
+                if (tab === 'tab1' || tab === 'tab2') {
+                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { rowData, tab } });
+                } else if (tab === 'tab4') {
+                    props.navigation("/RecurimentProcess/ApprovedVRRView", { state: { rowData, tab } });
+                } else if (tab === 'tab3') {
+                    props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID, tab } });
+                }
+            }
+                break;
+
+            case RoleID.HOD: {
+                if (tab === 'tab1') {
+                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { rowData, tab } });
+                }
+            }
+                break;
+            case RoleID.LineManager: {
+                if (tab === 'tab1') {
+                    props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID, tab } });
+                }
+            }
+                break;
+
+        }
     }
     // async function handleDeletedView(rowData: any, tab: string) {
     //     const ID = rowData?.ID
@@ -198,7 +225,7 @@ const RecruitmentProcess = (props: any) => {
     const tabs = [
         ...(props.CurrentRoleID === RoleID.RecruitmentHRLead ? [
             {
-                label: "Approved VRR",
+                label: "Assign Recuritment HR",
                 value: "tab1",
                 content: (
                     <div className="menu-card">
@@ -213,7 +240,7 @@ const RecruitmentProcess = (props: any) => {
                 ),
             },
             {
-                label: "My Submission",
+                label: "upload Signed Doc",
                 value: "tab2",
                 content: (
                     <div className="menu-card">
@@ -228,10 +255,26 @@ const RecruitmentProcess = (props: any) => {
                     </div>
                 ),
             },
+            {
+                label: "My Submission",
+                value: "tab3",
+                content: (
+                    <div className="menu-card">
+                        <SearchableDataTable
+                            data={RecruitmentDetails}
+                            columns={columnConfig("tab3")}
+                            rows={rows}
+                            onPageChange={(event) => onPageChange(event, "VRR")}
+                            handleRefresh={() => handleRefresh("tab3")}
+
+                        />
+                    </div>
+                ),
+            },
         ] : [
-            ...(props.CurrentRoleID === RoleID.LineManager ? [
+            ...(props.CurrentRoleID === RoleID.RecruitmentHR ? [
                 {
-                    label: "Review Profiles",
+                    label: "Upload Advertisement",
                     value: "tab1",
                     content: (
                         <div className="menu-card">
@@ -241,59 +284,94 @@ const RecruitmentProcess = (props: any) => {
                                 rows={rows}
                                 onPageChange={(event) => onPageChange(event, "VRR")}
                                 handleRefresh={() => handleRefresh("tab1")}
+                            />
+                        </div>
+                    ),
+                },
+                {
+                    label: "Assigne Agencies",
+                    value: "tab2",
+                    content: (
+                        <div className="menu-card">
+                            <SearchableDataTable
+                                data={RecruitmentDetails}
+                                columns={columnConfig("tab2")}
+                                rows={rows}
+                                onPageChange={(event) => onPageChange(event, "VRR")}
+                                handleRefresh={() => handleRefresh("tab2")}
+                            />
+                        </div>
+                    ),
+                },
+                {
+                    label: "Review Profiles",
+                    value: "tab3",
+                    content: (
+                        <div className="menu-card">
+                            <SearchableDataTable
+                                data={RecruitmentDetails}
+                                columns={columnConfig("tab3")}
+                                rows={rows}
+                                onPageChange={(event) => onPageChange(event, "VRR")}
+                                handleRefresh={() => handleRefresh("tab3")}
+                            />
+                        </div>
+                    ),
+                },
+                {
+                    label: "My submission",
+                    value: "tab4",
+                    content: (
+                        <div className="menu-card">
+                            <SearchableDataTable
+                                data={RecruitmentDetails}
+                                columns={columnConfig("tab4")}
+                                rows={rows}
+                                onPageChange={(event) => onPageChange(event, "VRR")}
+                                handleRefresh={() => handleRefresh("tab4")}
                             />
                         </div>
                     ),
                 },
             ] : [
-                {
-                    label: "My Submission",
-                    value: "tab1",
-                    content: (
-                        <div className="menu-card">
-                            <SearchableDataTable
-                                data={RecruitmentDetails}
-                                columns={columnConfig("tab1")}
-                                rows={rows}
-                                onPageChange={(event) => onPageChange(event, "VRR")}
-                                handleRefresh={() => handleRefresh("tab1")}
-                            />
-                        </div>
-                    ),
-                },
-                ...(props.CurrentRoleID === RoleID.RecruitmentHR ? [
+                ...(props.CurrentRoleID === RoleID.HOD ? [
                     {
-                        label: "Review Profiles",
-                        value: "tab2",
+                        label: "Pending Approval",
+                        value: "tab1",
                         content: (
                             <div className="menu-card">
                                 <SearchableDataTable
                                     data={RecruitmentDetails}
-                                    columns={columnConfig("tab2")}
+                                    columns={columnConfig("tab1")}
                                     rows={rows}
                                     onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={() => handleRefresh("tab2")}
+                                    handleRefresh={() => handleRefresh("tab1")}
                                 />
                             </div>
                         ),
                     },
-                    {
-                        label: "Assign interviewPanel",
-                        value: "tab3",
-                        content: (
-                            <div className="menu-card">
-                                <SearchableDataTable
-                                    data={RecruitmentDetails}
-                                    columns={columnConfig("tab3")}
-                                    rows={rows}
-                                    onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={() => handleRefresh("tab3")}
-                                />
-                            </div>
-                        ),
-                    },
-                ] : []),
-            ])
+
+                ] : [
+                    ...(props.CurrentRoleID === RoleID.LineManager ? [
+                        {
+                            label: "Review Profiles",
+                            value: "tab1",
+                            content: (
+                                <div className="menu-card">
+                                    <SearchableDataTable
+                                        data={RecruitmentDetails}
+                                        columns={columnConfig("tab1")}
+                                        rows={rows}
+                                        onPageChange={(event) => onPageChange(event, "VRR")}
+                                        handleRefresh={() => handleRefresh("tab1")}
+                                    />
+                                </div>
+                            ),
+                        },
+                    ] : [])
+                ])
+            ]),
+
         ])
     ];
 

@@ -20,6 +20,8 @@ import CustomLabel from "../../components/CustomLabel";
 import CustomTextArea from "../../components/CustomTextArea";
 import { IAttachmentExampleState, RecuritmentData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
+import ReuseButton from "../../components/ReuseButton";
+import CommanComments from "../../components/CommanComments";
 
 
 
@@ -110,6 +112,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         AdvertisementDocument: false,
         OnamSignedStampsDocument: false,
     })
+    const [MainComponent, setMainComponent] = useState<boolean>(true);
 
     const fetchData = async () => {
         if (isLoading) return; // Prevent re-execution if already loading
@@ -545,6 +548,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }))
     };
 
+    const OpenComments = () => {
+        setMainComponent(false);
+    }
+
 
     const tabs = [
         {
@@ -786,7 +793,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     <div className="ms-Grid-col ms-lg3">
                                         {formState.RoleProfileDocument?.map((attachment: any) => (
                                             <div key={attachment.content}>
-                                                <CustomLabel value={"Role Profile Documents"} mandatory={true} />
+                                                <CustomLabel value={"Role Profile Documents"} />
                                                 <p style={{ marginTop: "1%" }}>
                                                     <a href={attachment.content} target="_blank" rel="noopener noreferrer">
                                                         {attachment.name}
@@ -799,7 +806,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     <div className="ms-Grid-col ms-lg3">
                                         {formState.GradingDocument?.map((attachment: any) => (
                                             <div key={attachment.content}>
-                                                <CustomLabel value={"Grading Documents"} mandatory={true} />
+                                                <CustomLabel value={"Grading Documents"} />
                                                 <p style={{ marginTop: "1%" }}>
                                                     <a href={attachment.content} target="_blank" rel="noopener noreferrer">
                                                         {attachment.name}
@@ -817,7 +824,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                     options={formState.AssignRecruitmentHROption}
                                                     value={formState.AssignRecruitmentHR}
                                                     disabled={props.stateValue?.rowData?.AssignedHRId > 0}
-                                                    mandatory={true}
+                                                    mandatory={formState.AssignRecruitmentHR ? false : true}
                                                     onChange={(item) => handleAutoComplete(item, "AssignRecruitmentHR")}
                                                     error={validationErrors.AssignRecruitmentHR}
                                                 />
@@ -909,7 +916,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                     <div className="ms-Grid-col ms-lg6">
                                                         {formState.AdvertisementDocument?.map((attachment: any) => (
                                                             <div key={attachment.content}>
-                                                                <CustomLabel value={"Advertisement Documents"} mandatory={true} />
+                                                                <CustomLabel value={"Advertisement Documents"} />
                                                                 <p style={{ marginTop: "1%" }}>
                                                                     <a href={attachment.content} target="_blank" rel="noopener noreferrer">
                                                                         {attachment.name}
@@ -930,7 +937,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             <>
                                                 <div className="ms-Grid-row">
                                                     <div className="ms-Grid-col ms-lg6">
-                                                        <Labelheader value={"Attach ONAM Signed & Stamps Documents"}> </Labelheader>
+                                                        <Labelheader value={"Attach ONEM Signed & Stamps Documents"}> </Labelheader>
                                                         <AttachmentButton
                                                             label="Attach Documents"
                                                             iconName="CloudUpload"
@@ -989,7 +996,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                     <div className="ms-Grid-col ms-lg6">
                                                         {formState.AdvertisementDocument?.map((attachment: any) => (
                                                             <div key={attachment.content}>
-                                                                <CustomLabel value={"Advertisement Documents"} mandatory={true} />
+                                                                <CustomLabel value={"Advertisement Documents"} />
                                                                 <p style={{ marginTop: "1%" }}>
                                                                     <a href={attachment.content} target="_blank" rel="noopener noreferrer">
                                                                         {attachment.name}
@@ -1004,7 +1011,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                     <div className="ms-Grid-col ms-lg6">
                                                         {formState.OnamSignedStampsDocument?.map((attachment: any) => (
                                                             <div key={attachment.content}>
-                                                                <CustomLabel value={"ONAM Signed&Stamps Documents"} mandatory={true} />
+                                                                <CustomLabel value={"ONAM Signed&Stamps Documents"} />
                                                                 <p style={{ marginTop: "1%" }}>
                                                                     <a href={attachment.content} target="_blank" rel="noopener noreferrer">
                                                                         {attachment.name}
@@ -1019,6 +1026,37 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
 
 
+                                    </>
+                                )}
+                                {props.stateValue?.tab === "tab1" && props.CurrentRoleID === RoleID.RecruitmentHRLead ? (
+                                    <></>
+                                ) : (
+                                    <>
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg12">
+                                                <div className="ms-Grid-col ms-lg4">
+                                                    <CustomLabel value={" View Justifications"} />
+                                                    <ReuseButton
+                                                        Style={{
+                                                            minWidth: "117px",
+                                                            fontSize: "13px",
+                                                            paddingBottom: "24px",
+                                                            display: "flex",
+                                                            flexDirection: "column",
+                                                            height: "41px",
+                                                            paddingTop: "22px",
+                                                        }}
+                                                        label="VIEW"
+                                                        onClick={OpenComments}
+                                                        spacing={4}
+                                                        imgSrc={require("../../assets/Viewicon.svg")}
+                                                        imgAlt="ssss"
+                                                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                                                        imgAltHover="Image"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </>
                                 )}
 
@@ -1071,23 +1109,31 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     return (
         <>
-            <CustomLoader isLoading={isLoading}>
-                <div className="menu-card">
-                    <TabsComponent
-                        tabs={tabs}
-                        initialTab="tab1"
-                        handleCancel={handleCancel}
-                        additionalButtons={[
-                            {
-                                label: ButtonLabel,
-                                onClick: async () => {
-                                    await SaveRecruitment();
-                                }
-                            }
-                        ]}
-                    />
-                </div>
-            </CustomLoader>
+            {MainComponent ? (
+                <>
+                    <CustomLoader isLoading={isLoading}>
+                        <div className="menu-card">
+                            <TabsComponent
+                                tabs={tabs}
+                                initialTab="tab1"
+                                handleCancel={handleCancel}
+                                additionalButtons={[
+                                    {
+                                        label: ButtonLabel,
+                                        onClick: async () => {
+                                            await SaveRecruitment();
+                                        }
+                                    }
+                                ]}
+                            />
+                        </div>
+                    </CustomLoader>
+                </>
+            ) : (<>
+                <CommanComments
+                    onClose={() => setMainComponent(true)}
+                    Comments={[]} />
+            </>)}
 
 
             {AlertPopupOpen ? (

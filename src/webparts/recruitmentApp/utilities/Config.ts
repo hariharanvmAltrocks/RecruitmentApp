@@ -1,4 +1,5 @@
 import { IADGroupID } from "../Models/MainPage";
+import { AutoCompleteItem } from "../Models/Screens";
 
 export const APIURL =
     "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
@@ -160,10 +161,15 @@ export const RoleProfileMaster = {
     RoleProfile: "RoleProfile"
 }
 
-export const ScoreRanking = [
-    { key: 0, text: "1" },
-    { key: 0, text: "2" },
-    { key: 0, text: "3" },
-    { key: 0, text: "4" },
-    { key: 0, text: "5" }
+export const ScoreRanking: AutoCompleteItem[] = [
+    { key: 0, text: "Poor" },
+    { key: 0, text: "Below Average" },
+    { key: 0, text: "Average" },
+    { key: 0, text: "Good" },
+    { key: 0, text: "Excellent" },
+]
+
+export const EmploymentOption = [
+    "Yes",
+    "No"
 ]

@@ -550,7 +550,7 @@ export default class RecruitmentService implements IRecruitmentService {
                     FristName: item.FristName,
                     MiddleName: item.MiddleName,
                     LastName: item.LastName,
-                    FullName: item.FristName ?? "" + " " + item.MiddleName ?? "" + " " + item.LastName ?? "",
+                    FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""}`,
                     ResidentialAddress: item?.ResidentialAddress,
                     DOB: item?.DOB,
                     ContactNumber: item?.ContactNumber,
@@ -590,7 +590,7 @@ export default class RecruitmentService implements IRecruitmentService {
     async GetInterviewPanelCandidateDetails(filterParam: any, filterConditions: any) {
         try {
             const CandidateDetails: CandidateData[] = [];
-
+            debugger;
             const listItems: any[] = await SPServices.SPReadItems({
                 Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
                 Select: "*,JobCode/JobCode,AssignByInterviewPanel/EMail",

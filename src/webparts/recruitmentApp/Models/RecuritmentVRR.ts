@@ -88,7 +88,7 @@ export type CandidateData = {
     LanguageKnown: string;
     ReleventExperience: string;
     Qualification: string;
-    CandidateCVDoc: any[]
+    CandidateCVDoc: any[];
 }
 
 
@@ -112,12 +112,14 @@ export type ScoreCardData = {
     ReleventExperience: string;
     Qualification: string;
     CandidateCVDoc: any[];
-    Qualifications: number;
-    Experience: number;
-    Knowledge: number;
-    Energylevel: number;
-    Requirements: number;
-    contributeculture: number;
-    ExpatExperienceCongolese: number;
-    CriteriaRecognised: number;
+    Qualifications: AutoCompleteItem;
+    Experience: AutoCompleteItem;
+    Knowledge: AutoCompleteItem;
+    Energylevel: AutoCompleteItem;
+    Requirements: AutoCompleteItem;
+    contributeculture: AutoCompleteItem;
+    ExpatExperienceCongolese: AutoCompleteItem;
+    CriteriaRecognised: AutoCompleteItem;
+    Employment: string;
+    EvaluationFeedback: string;
 }
