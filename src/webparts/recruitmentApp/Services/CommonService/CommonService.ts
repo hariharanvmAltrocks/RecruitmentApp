@@ -97,7 +97,19 @@ export default class CommonService implements ICommonService {
                     FilePath: `${listName}`,
                 })) as IDocFiles[];
             }
+            // for (const file of response) {
+            //     const fileContent = await fetch(file.content)  // You might need to adjust based on how file URL is provided
+            //         .then(res => res.text())  // Fetch the binary content
+            //         .catch(err => {
+            //             console.error("Error fetching file content:", err);
+            //             return null;
+            //         });
 
+            //     if (fileContent) {
+            //         // Process the file content here (e.g., display, save, etc.)
+            //         console.log(fileContent, "RoleProfileContent");
+            //     }
+            // }
             return {
                 data: response,  // Return data as an array of IDocFiles[]
                 status: 200,

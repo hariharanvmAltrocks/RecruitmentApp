@@ -6,6 +6,24 @@ export interface IAttachmentExampleState {
     ID: string;
 }
 
+export type CommentsData = {
+    Id: number | null;
+    Name: string;
+    JobTitleInEnglish: string;
+    JobTitleInFrench: string;
+    comments: string;
+    Department: string;
+    Date: Date | null;
+    JobTitle: string;
+    RoleName: string;
+};
+
+export type InsertComments = {
+    RoleId: number | null;
+    RecruitmentIDId: string;
+    Comments: string;
+};
+
 
 export type IRecruitmentService = {
     GetVacancyDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<any | null>>;
@@ -17,4 +35,6 @@ export type IRecruitmentService = {
     GetAttachedRoleProfile(indexID: any, DocLibrarayName: string): Promise<IAttachmentExampleState[]>;
     InsertRecruitmentCandidateDetails(param: any): Promise<any | null>;
     GetInterviewPanelCandidateDetails(filterParam: any, filterConditions: any): Promise<any | null>;
+    GetCommentsData(EmployeeList: any[], Conditions: string, filterConditions: any): Promise<ApiResponse<CommentsData[]>>
+    InsertCommentsList(obj: InsertComments,): Promise<ApiResponse<InsertComments | null>>;
 }

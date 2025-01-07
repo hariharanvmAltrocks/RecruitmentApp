@@ -70,7 +70,7 @@ const SideNavComponent = (props: sideNavProps) => {
                 {items?.map((item: MenuResponse) => {
                     const isActive = isActiveMenu(item);
                     // const isActive = item.Children?.[0]?.Path && isActiveMenu(item.Children[0].Path);
-                    const isExpanded = expandedMenuId === item.Id || item.Children?.[0]?.Path;
+                    const isExpanded = expandedMenuId === item.Id
                     const isMainMenu = menuType === 'menu';
                     console.log(item, "MenuResponse");
 

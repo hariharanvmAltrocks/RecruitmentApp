@@ -7,10 +7,11 @@ import LabelValue from "./LabelValue";
 import * as moment from "moment";
 import LabelHeaderComponents from "./TitleHeader";
 import TabsComponent from "./TabsComponent ";
+import { CommentsData } from "../Services/RecruitmentProcess/IRecruitmentProcessService";
 
 interface props {
     onClose: () => void;
-    Comments: [];
+    Comments: CommentsData[] | undefined;
 }
 
 

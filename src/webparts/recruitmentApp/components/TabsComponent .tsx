@@ -24,6 +24,7 @@ interface TabsComponentProps {
         label: string;
         onClick?: () => void;
     }[];
+    onTabChange?: (newTab: string) => void; // Add this prop
 }
 
 
@@ -35,18 +36,25 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
     tabClassName,
     Statuslist,
     validateTab,
-    tabtype
+    tabtype,
+    onTabChange
 }) => {
     const [value, setValue] = React.useState(initialTab);
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
+        if (onTabChange) {
+            onTabChange(newValue); // Notify the parent component about the tab change
+        }
     };
 
     const handlePreviousClick = () => {
         const currentIndex = tabs.findIndex((tab) => tab.value === value);
         if (currentIndex > 0) {
             setValue(tabs[currentIndex - 1].value);
+            if (onTabChange) {
+                onTabChange(tabs[currentIndex - 1].value); // Notify parent of the tab change
+            }
         }
     };
 
@@ -65,6 +73,9 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
         } else {
             if (currentIndex < tabs.length - 1) {
                 setValue(tabs[currentIndex + 1].value);
+                if (onTabChange) {
+                    onTabChange(tabs[currentIndex + 1].value); // Notify parent of the tab change
+                }
             }
         }
     };

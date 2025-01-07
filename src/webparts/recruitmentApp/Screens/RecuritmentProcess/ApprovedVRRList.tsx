@@ -22,7 +22,7 @@ const RecruitmentProcess = (props: any) => {
     const [rows, setRows] = React.useState<number>(5);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [activeTab, setActiveTab] = React.useState("tab1");
+    const [activeTab, setActiveTab] = React.useState("");
 
 
     const columnConfig = (tab: string) => [
@@ -128,37 +128,39 @@ const RecruitmentProcess = (props: any) => {
 
 
     function handleRedirectView(rowData: any, tab: string) {
-        const ID = rowData?.ID
+        console.log(rowData, "rowData");
         switch (props.CurrentRoleID) {
             case RoleID.RecruitmentHRLead: {
-                if (tab === 'tab1' || tab === 'tab2') {
-                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { rowData, tab } });
+                if (tab === 'tab1') {
+                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { type: "VRR", ID: rowData?.VRRID, tab, StatusId: rowData?.StatusId } });
+                } else if (tab === 'tab2') {
+                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { ID: rowData?.ID, AssignedHRId: rowData?.AssignedHRId, tab, StatusId: rowData?.StatusId } });
                 } else {
-                    props.navigation("/RecurimentProcess/ApprovedVRRView", { state: { rowData, tab } });
+                    props.navigation("/RecurimentProcess/ApprovedVRRView", { state: { ID: rowData?.ID, AssignedHR: rowData?.AssignedHR, tab, StatusId: rowData?.StatusId } });
                 }
             }
                 break;
 
             case RoleID.RecruitmentHR: {
                 if (tab === 'tab1' || tab === 'tab2') {
-                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { rowData, tab } });
+                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId } });
                 } else if (tab === 'tab4') {
-                    props.navigation("/RecurimentProcess/ApprovedVRRView", { state: { rowData, tab } });
+                    props.navigation("/RecurimentProcess/ApprovedVRRView", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId } });
                 } else if (tab === 'tab3') {
-                    props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID, tab } });
+                    props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId } });
                 }
             }
                 break;
 
             case RoleID.HOD: {
                 if (tab === 'tab1') {
-                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { rowData, tab } });
+                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { ID: rowData?.ID, tab } });
                 }
             }
                 break;
             case RoleID.LineManager: {
                 if (tab === 'tab1') {
-                    props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID, tab } });
+                    props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID: rowData?.ID, tab } });
                 }
             }
                 break;
@@ -182,15 +184,53 @@ const RecruitmentProcess = (props: any) => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
+            console.log(activeTab, "activeTabactiveTab");
+
             let filterConditions = [];
             let Conditions = "";
             filterConditions.push({
                 FilterKey: "StatusId",
                 Operator: "eq",
-                FilterValue: StatusId.InitiatedforRecruitmentProcess
+                FilterValue: StatusId.PendingwithHRLeadtoAssignRecruitmentHR
             });
             const data = await getVRRDetails.GetVacancyDetails(filterConditions, Conditions);
-            const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails([], "");
+            let filterConditionsRecuritment = [];
+            let RecuritmentConditions = "";
+            switch (props.CurrentRoleID) {
+                case RoleID.RecruitmentHRLead: {
+                    filterConditionsRecuritment.push({
+                        FilterKey: "StatusId",
+                        Operator: "eq",
+                        FilterValue: StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+                    });
+                }
+                    break;
+                case RoleID.RecruitmentHR: {
+                    filterConditionsRecuritment.push({
+                        FilterKey: "StatusId",
+                        Operator: "eq",
+                        FilterValue: StatusId.PendingwithRecruitmentHRtouploadAdv
+                    });
+                    // filterConditionsRecuritment.push({
+                    //     FilterKey: "StatusId",
+                    //     Operator: "eq",
+                    //     FilterValue: StatusId.PendingwithRecruitmentHRtoAssignExternalAgency
+                    // });
+                    // RecuritmentConditions = "Or"
+
+                }
+                    break;
+                case RoleID.HOD: {
+                    filterConditionsRecuritment.push({
+                        FilterKey: "StatusId",
+                        Operator: "eq",
+                        FilterValue: StatusId.PendingwithHODtoreviewAdv
+                    });
+                }
+                    break;
+
+            }
+            const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails(filterConditionsRecuritment, RecuritmentConditions);
             console.log("RecruitmentDetails", RecruitmentDetails);
             if (data.status === 200 && data.data !== null) {
                 console.log(data, "GetVacancyDetails");
@@ -209,6 +249,7 @@ const RecruitmentProcess = (props: any) => {
 
     React.useEffect(() => {
         void fetchData();
+
     }, []);
 
 
@@ -219,7 +260,7 @@ const RecruitmentProcess = (props: any) => {
 
     const handleRefresh = (tab: string) => {
         void fetchData();
-        setActiveTab(tab);
+        // setActiveTab(tab);
     };
 
     const tabs = [
@@ -375,14 +416,18 @@ const RecruitmentProcess = (props: any) => {
         ])
     ];
 
-
+    const handleTabChange = (newTab: string) => {
+        debugger;
+        setActiveTab(newTab);
+        console.log("Active Tab:", newTab);
+    };
 
 
     return (
         <CustomLoader isLoading={isLoading}>
             <React.Fragment>
                 <div className="menu-card">
-                    <TabsComponent tabs={tabs} initialTab={activeTab} tabtype={tabType.Dashboard} />
+                    <TabsComponent tabs={tabs} initialTab={"tab1"} tabtype={tabType.Dashboard} onTabChange={handleTabChange} />
                     {console.log(first, "first")}
                 </div>
             </React.Fragment>

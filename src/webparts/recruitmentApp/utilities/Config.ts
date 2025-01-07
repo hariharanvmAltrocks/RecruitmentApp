@@ -27,8 +27,8 @@ export const ListNames = {
     HRMSVRRToPositionIDMapping: "HRMSVRRToPositionIDMapping",
     InterviewPanelCandidateDetails: "InterviewPanelCandidateDetails",
     HRMSRecruitmentCandidateDetails: "HRMSRecruitmentCandidateDetails",
-    HRMSRecruitmentCandidatePersonalDetails: "HRMSRecruitmentCandidatePersonalDetails"
-
+    HRMSRecruitmentCandidatePersonalDetails: "HRMSRecruitmentCandidatePersonalDetails",
+    HRMSRecruitmentComments: "HRMSRecruitmentComments"
 };
 
 export const DocumentLibraray = {
@@ -41,7 +41,11 @@ export const DocumentLibraray = {
 }
 
 export const StatusId = {
-    InitiatedforRecruitmentProcess: 68,
+    PendingwithHRLeadtoAssignRecruitmentHR: 68,
+    PendingwithRecruitmentHRtouploadAdv: 2,
+    PendingwithHODtoreviewAdv: 26,
+    PendingwithHRLeadtouploadONEMsigneddoc: 118,
+    PendingwithRecruitmentHRtoAssignExternalAgency: 119
 }
 
 export const RoleID = {

@@ -1,6 +1,6 @@
-import { DocumentLibraray, ListNames, WorkflowAction, count } from "../../utilities/Config";
+import { DocumentLibraray, ListNames, count } from "../../utilities/Config";
 import SPServices from "../SPService/SPServices";
-import { IRecruitmentService } from "./IRecruitmentProcessService";
+import { CommentsData, InsertComments, IRecruitmentService } from "./IRecruitmentProcessService";
 import { CandidateData } from "../../Models/RecuritmentVRR";
 import { sp } from "@pnp/sp/presets/all";
 import { CommonServices } from "../ServiceExport";
@@ -371,26 +371,7 @@ export default class RecruitmentService implements IRecruitmentService {
         try {
             let response: any = await SPServices.SPAddItem({
                 Listname: ListNames.HRMSRecruitmentDptDetails,
-                RequestJSON: {
-                    // VRRIDId: Table1.VRRID,
-                    ActionId: WorkflowAction.Submitted,
-                    Nationality: Table1.Nationality,
-                    EmploymentCategory: Table1.EmploymentCategory,
-                    DepartmentId: Table1.Department,
-                    SubDepartmentId: Table1.SubDepartment,
-                    SectionId: Table1.Section,
-                    DepartmentCodeId: Table1.DepartmentCode,
-                    StatusId: WorkflowAction.Submitted,
-                    NumberOfPersonNeeded: Table1.NumberOfPersonNeeded,
-                    EnterNumberOfMonths: Table1.EnterNumberOfMonths,
-                    TypeOfContract: Table1.TypeOfContract,
-                    ReasonForVacancy: Table1.ReasonForVacancy,
-                    AreaofWork: Table1.AreaofWork,
-                    JobCodeId: Table1.JobCode,
-                    VacancyConfirmed: Table1.VacancyConfirmed,
-                    BusinessUnitCodeId: Table1.BusinessUnitCode,
-                    AssignedHRId: Table1.AssignedHRId,
-                },
+                RequestJSON: Table1,
             });
 
             console.log("RecruitmentDptDetails Inserted:", response);
@@ -406,7 +387,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
             return {
                 data: [],
-                status: 400,
+                status: 200,
                 message: "Failed to insert RecruitmentDptDetails",
             };
         } catch (error) {
@@ -689,6 +670,81 @@ export default class RecruitmentService implements IRecruitmentService {
     }
 
 
+    async GetCommentsData(
+        EmployeeList: any[],
+        Conditions: string,
+        filterConditions: any,
+    ): Promise<ApiResponse<CommentsData[]>> {
+        let CommentsData: CommentsData[] = [];
+        try {
+            let listItems: any
+            listItems = await SPServices.SPReadItems({
+                Listname: ListNames.HRMSRecruitmentComments,
+                Select: "*, Author/EMail,Author/Title,Department/DepartmentName,Role/RoleTitle,ApprovedID/ID,ModifiedUserName/EMail",
+                Expand: "Author,Department,Role,ApprovedID,ModifiedUserName",
+                Filter: filterConditions,
+            });
+            listItems.forEach((objresult: any) => {
+                const Email = objresult.ModifiedUserName?.EMail ? objresult.ModifiedUserName?.EMail.toLowerCase() : objresult.Author?.EMail.toLowerCase();
+                const Employee = EmployeeList.find((options: any) => {
+                    return options.Email?.toLowerCase() === Email;
+                });
+
+                let d: CommentsData = {
+                    Id: objresult.ApprovedID ? objresult.ApprovedID.ID : "",
+                    JobTitleInEnglish: Employee ? Employee.JobTitle : "",
+                    JobTitleInFrench: Employee ? Employee.JobTitleInFrench : "",
+                    comments: objresult.Comments || "",
+                    Department: objresult.Department ? objresult.Department.DepartmentName : "",
+                    Date: objresult.Created ? new Date(objresult.Created) : null,
+                    JobTitle: objresult.JobTitle || "",
+                    RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
+                    Name: Employee ? Employee.FirstName : "",
+                    // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
+                };
+                CommentsData.push(d);
+            });
+
+            return {
+                data: CommentsData,
+                status: 200,
+                message: "Data fetched successfully",
+            };
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            return {
+                data: [],
+                status: 400,
+                message: "Error fetching data",
+            };
+        }
+    }
+
+    async InsertCommentsList(
+        obj: InsertComments,
+    ): Promise<ApiResponse<InsertComments | null>> {
+        try {
+
+            let response: any = await SPServices.SPAddItem({
+                Listname: ListNames.HRMSRecruitmentComments,
+                RequestJSON: obj,
+            });
+            console.log("CommentsResponse", response);
+
+            return {
+                data: null,
+                status: 200,
+                message: "Data Submitted successfully",
+            };
+        } catch (error) {
+            console.error("Error posting user data:", error);
+            return {
+                data: null,
+                status: 400,
+                message: "Error On Posting Data",
+            };
+        }
+    }
 
 }
 
