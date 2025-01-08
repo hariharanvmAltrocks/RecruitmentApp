@@ -7,6 +7,7 @@ import { GridStatusBackgroundcolor, RoleID, StatusId, tabType } from "../../util
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Button } from "primereact/button";
 import { Card, CardContent } from "@mui/material";
+import 'primeicons/primeicons.css';
 // interface ColumnConfig {
 //     field: string;
 //     header: string;

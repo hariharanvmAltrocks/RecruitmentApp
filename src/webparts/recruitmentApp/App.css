@@ -1481,3 +1481,9 @@ footer {
 /* .custom-rating .p-rating-icon {
     color: #e65f2b !important;
 } */
+
+.table_btn {
+    color: #EF3340 !important;
+    border-color: #EF3340 !important;
+    background-color: white !important;
+}
