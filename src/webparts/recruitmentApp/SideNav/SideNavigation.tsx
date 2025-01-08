@@ -143,13 +143,14 @@ const SideNavComponent = (props: sideNavProps) => {
                                             {renderMenu(item.Children, 'submenu')}
                                         </div>
                                     )}
+
                                 </>
                             ) : (
                                 <>
                                     <div
                                         className={styles.expandnavImg}
                                         onClick={() => toggleExpand(item.Id, item.Path)}
-                                        style={{ cursor: "pointer", marginLeft: "20%" }}
+                                        style={{ cursor: "pointer", marginLeft: "26%", backgroundColor: "white", borderRadius: "19%" }}
                                     >
                                         <p>
                                             <img
@@ -158,6 +159,7 @@ const SideNavComponent = (props: sideNavProps) => {
                                             />
                                         </p>
                                     </div>
+
                                 </>
                             )}
                         </div>
@@ -171,7 +173,7 @@ const SideNavComponent = (props: sideNavProps) => {
         <div
             className={styles.sideNav}
             style={{
-                overflowY: "auto",
+                overflow: "hidden",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
@@ -186,7 +188,7 @@ const SideNavComponent = (props: sideNavProps) => {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        height: props.IsExpanded ? "94px" : "68px",
+                        height: props.IsExpanded ? "68px" : "68px",
                         padding: props.IsExpanded ? "3px" : "0px",
                         backgroundColor: "white",
                     }}
@@ -199,17 +201,36 @@ const SideNavComponent = (props: sideNavProps) => {
                 </div>
                 <div className={styles.linksContainer}>{renderMenu(sideNavArr, 'menu')}</div>
             </div>
-            <div
-                style={{
-                    color: "white",
-                    fontSize: "15px",
+            {props.IsExpanded ? (
+                <>
+                    <div
+                        style={{
+                            color: "white",
+                            fontSize: "15px",
 
-                    alignSelf: "center",
-                    marginBottom: "10px",
-                }}
-            >
-                Version-1.6
-            </div>
+                            alignSelf: "center",
+                            marginBottom: "10px",
+                        }}
+                    >
+                        Version-1.0
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div
+                        style={{
+                            color: "white",
+                            fontSize: "15px",
+
+                            alignSelf: "center",
+                            marginBottom: "10px",
+                        }}
+                    >
+                        V-1.0
+                    </div>
+                </>
+            )}
+
         </div>
     );
 };

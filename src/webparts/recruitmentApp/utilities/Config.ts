@@ -135,10 +135,12 @@ export const viewLabelcolor = {
 };
 
 export const RecuritmentHRMsg = {
-    AdvertisementSubmitMsg: "Advertisement Submitted Successfully",
-    RecuritmentSubmitMsg: "Request Submitted Successfully",
-    ApprovedMsg: "Request Approved Successfully",
+    AdvertisementSubmitMsg: "Advertisement Uploaded Successfully",
+    ONEMDocumentMsg: "ONEM Document Uploaded Successfully",
+    RecuritmentSubmitMsg: "Submitted Successfully",
+    ApprovedMsg: "Approved Successfully",
     RecuritmentHRMsgCancel: "Are you sure you want to cancel? Any unsaved changes will be lost.",
+    BackMsg: "Are you sure you want go to Home Page ?",
     ValidationErrorMsg: "One or more required actions are missing",
 }
 

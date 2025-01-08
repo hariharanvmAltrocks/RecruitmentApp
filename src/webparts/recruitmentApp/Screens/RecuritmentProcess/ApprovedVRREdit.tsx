@@ -341,7 +341,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 if (formState.Comments) {
                     const commentsData: InsertComments = {
                         RoleId: props.CurrentRoleID,
-                        RecruitmentIDId: props.stateValue?.type === "VRR" ? 0 : props.stateValue?.ID,
+                        RecruitmentIDId: props.stateValue?.ID,
                         Comments: formState.Comments,
                     }
                     console.log(commentsData, "commentsData");
@@ -359,8 +359,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 DocumentLibraray.ONAMSignedStampDocuments,
                                 formState.OnamSignedStampsAttchment
                             )
+                            const UpdateVRRDetails = await SPServices.SPUpdateItem({
+                                Listname: ListNames.HRMSRecruitmentDptDetails,
+                                RequestJSON: obj,
+                                ID: props.stateValue?.ID,
+                            })
+                            console.log(UpdateVRRDetails);
+
                             let CancelAlert = {
-                                Message: RecuritmentHRMsg.RecuritmentSubmitMsg,
+                                Message: RecuritmentHRMsg.ONEMDocumentMsg,
                                 Type: HRMSAlertOptions.Success,
                                 visible: true,
                                 ButtonAction: async (userClickedOK: boolean) => {
@@ -377,6 +384,16 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         } else {
                             try {
                                 const response = await getVRRDetails.InsertRecruitmentDpt(Table1, formState.PositionDetails);
+                                debugger;
+                                const commentsData: InsertComments = {
+                                    RoleId: props.CurrentRoleID,
+                                    RecruitmentIDId: response.data?.[0]?.data?.RecruitmentIDId,
+                                    Comments: formState.Comments,
+                                }
+                                console.log(commentsData, "commentsData");
+
+                                const InsertCommentsData = await getVRRDetails.InsertCommentsList(commentsData);
+                                console.log(InsertCommentsData, "InsertCommentsData");
 
                                 const UpdateVRRDetails = await SPServices.SPUpdateItem({
                                     Listname: ListNames.HRMSVacancyReplacementRequest,
@@ -607,6 +624,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             Operator: "eq",
             FilterValue: props.stateValue.ID,
         })
+        debugger;
         const CommentsList =
             await getVRRDetails.GetCommentsData(props.EmployeeList, Conditions, filterConditions)
         if (CommentsList.status === 200) {
@@ -803,7 +821,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     </div>
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
-                                            label="Employee Category"
+                                            label="Employment Category"
                                             value={formState.EmployementCategory}
                                             disabled={true}
                                             error={false}
@@ -842,7 +860,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 <div className="ms-Grid-row">
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
-                                            label="No.Of Position Assigned"
+                                            label="No of Position Assigned"
                                             value={formState.NoofPositionAssigned}
                                             disabled={true}
                                             error={false}
@@ -883,7 +901,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         <>
                                             <div className="ms-Grid-col ms-lg3">
                                                 <CustomAutoComplete
-                                                    label="Assign RecuritmentHR"
+                                                    label="Assign RecruitmentHR"
                                                     options={formState.AssignRecruitmentHROption}
                                                     value={formState.AssignRecruitmentHR}
                                                     disabled={props.stateValue?.AssignedHRId > 0}

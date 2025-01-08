@@ -6,6 +6,7 @@ import { getVRRDetails } from "../../Services/ServiceExport";
 import { GridStatusBackgroundcolor, RoleID, StatusId, tabType } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Button } from "primereact/button";
+import { Card, CardContent } from "@mui/material";
 // interface ColumnConfig {
 //     field: string;
 //     header: string;
@@ -22,7 +23,7 @@ const RecruitmentProcess = (props: any) => {
     const [rows, setRows] = React.useState<number>(5);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [activeTab, setActiveTab] = React.useState("");
+    const [activeTab, setActiveTab] = React.useState<string>("tab1");
 
 
     const columnConfig = (tab: string) => [
@@ -154,13 +155,13 @@ const RecruitmentProcess = (props: any) => {
 
             case RoleID.HOD: {
                 if (tab === 'tab1') {
-                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { ID: rowData?.ID, tab } });
+                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId } });
                 }
             }
                 break;
             case RoleID.LineManager: {
                 if (tab === 'tab1') {
-                    props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID: rowData?.ID, tab } });
+                    props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId } });
                 }
             }
                 break;
@@ -193,65 +194,77 @@ const RecruitmentProcess = (props: any) => {
                 Operator: "eq",
                 FilterValue: StatusId.PendingwithHRLeadtoAssignRecruitmentHR
             });
-            const data = await getVRRDetails.GetVacancyDetails(filterConditions, Conditions);
+
+            const dataPromise = getVRRDetails.GetVacancyDetails(filterConditions, Conditions);
+
             let filterConditionsRecuritment = [];
             let RecuritmentConditions = "";
-            switch (props.CurrentRoleID) {
-                case RoleID.RecruitmentHRLead: {
-                    filterConditionsRecuritment.push({
-                        FilterKey: "StatusId",
-                        Operator: "eq",
-                        FilterValue: StatusId.PendingwithHRLeadtouploadONEMsigneddoc
-                    });
+            if (activeTab === "tab3") {
+                filterConditionsRecuritment = [];
+                RecuritmentConditions = "";
+            } else {
+                switch (props.CurrentRoleID) {
+                    case RoleID.RecruitmentHRLead: {
+                        filterConditionsRecuritment.push({
+                            FilterKey: "StatusId",
+                            Operator: "eq",
+                            FilterValue: StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+                        });
+                        break;
+                    }
+                    case RoleID.RecruitmentHR: {
+                        if (activeTab === "tab1") {
+                            filterConditionsRecuritment.push({
+                                FilterKey: "StatusId",
+                                Operator: "eq",
+                                FilterValue: StatusId.PendingwithRecruitmentHRtouploadAdv
+                            });
+                        } else if (activeTab === "tab2") {
+                            filterConditionsRecuritment.push({
+                                FilterKey: "StatusId",
+                                Operator: "eq",
+                                FilterValue: StatusId.PendingwithRecruitmentHRtoAssignExternalAgency
+                            });
+                        }
+                        break;
+                    }
+                    case RoleID.HOD: {
+                        filterConditionsRecuritment.push({
+                            FilterKey: "StatusId",
+                            Operator: "eq",
+                            FilterValue: StatusId.PendingwithHODtoreviewAdv
+                        });
+                        break;
+                    }
                 }
-                    break;
-                case RoleID.RecruitmentHR: {
-                    filterConditionsRecuritment.push({
-                        FilterKey: "StatusId",
-                        Operator: "eq",
-                        FilterValue: StatusId.PendingwithRecruitmentHRtouploadAdv
-                    });
-                    // filterConditionsRecuritment.push({
-                    //     FilterKey: "StatusId",
-                    //     Operator: "eq",
-                    //     FilterValue: StatusId.PendingwithRecruitmentHRtoAssignExternalAgency
-                    // });
-                    // RecuritmentConditions = "Or"
-
-                }
-                    break;
-                case RoleID.HOD: {
-                    filterConditionsRecuritment.push({
-                        FilterKey: "StatusId",
-                        Operator: "eq",
-                        FilterValue: StatusId.PendingwithHODtoreviewAdv
-                    });
-                }
-                    break;
-
             }
-            const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails(filterConditionsRecuritment, RecuritmentConditions);
-            console.log("RecruitmentDetails", RecruitmentDetails);
+
+
+            const recruitmentDetailsPromise = getVRRDetails.GetRecruitmentDetails(filterConditionsRecuritment, RecuritmentConditions);
+
+            const [data, RecruitmentDetails] = await Promise.all([dataPromise, recruitmentDetailsPromise]);
+
             if (data.status === 200 && data.data !== null) {
                 console.log(data, "GetVacancyDetails");
                 setData(data.data[0]);
             }
+
             if (RecruitmentDetails.status === 200 && RecruitmentDetails.data !== null) {
                 console.log(RecruitmentDetails, "GetVacancyDetails");
                 setRecruitmentDetails(RecruitmentDetails.data);
             }
+
         } catch (error) {
             console.log("GetVacancyDetails doesn't fetch the data", error);
         }
         setIsLoading(false);
-
     };
+
 
     React.useEffect(() => {
         void fetchData();
 
-    }, []);
-
+    }, [activeTab]);
 
     const onPageChange = (event: any, Type: string) => {
         setFirst(event.first);
@@ -269,47 +282,66 @@ const RecruitmentProcess = (props: any) => {
                 label: "Assign Recuritment HR",
                 value: "tab1",
                 content: (
-                    <div className="menu-card">
-                        <SearchableDataTable
-                            data={data}
-                            columns={columnConfig("tab1")}
-                            rows={rows}
-                            onPageChange={(event) => onPageChange(event, "Recruitment")}
-                            handleRefresh={() => handleRefresh("tab1")}
-                        />
-                    </div>
+                    <Card
+                        variant="outlined"
+                        sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                    >
+                        <CardContent>
+                            <SearchableDataTable
+                                data={data}
+                                columns={columnConfig("tab1")}
+                                rows={rows}
+                                onPageChange={(event) => onPageChange(event, "Recruitment")}
+                                handleRefresh={() => handleRefresh("tab1")}
+                            />
+                        </CardContent>
+
+                    </Card>
+
                 ),
             },
             {
                 label: "upload Signed Doc",
                 value: "tab2",
                 content: (
-                    <div className="menu-card">
-                        <SearchableDataTable
-                            data={RecruitmentDetails}
-                            columns={columnConfig("tab2")}
-                            rows={rows}
-                            onPageChange={(event) => onPageChange(event, "VRR")}
-                            handleRefresh={() => handleRefresh("tab2")}
+                    <Card
+                        variant="outlined"
+                        sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                    >
+                        <CardContent>
+                            <SearchableDataTable
+                                data={RecruitmentDetails}
+                                columns={columnConfig("tab2")}
+                                rows={rows}
+                                onPageChange={(event) => onPageChange(event, "VRR")}
+                                handleRefresh={() => handleRefresh("tab2")}
 
-                        />
-                    </div>
+                            />
+                        </CardContent>
+
+                    </Card>
                 ),
             },
             {
                 label: "My Submission",
                 value: "tab3",
                 content: (
-                    <div className="menu-card">
-                        <SearchableDataTable
-                            data={RecruitmentDetails}
-                            columns={columnConfig("tab3")}
-                            rows={rows}
-                            onPageChange={(event) => onPageChange(event, "VRR")}
-                            handleRefresh={() => handleRefresh("tab3")}
+                    <Card
+                        variant="outlined"
+                        sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                    >
+                        <CardContent>
+                            <SearchableDataTable
+                                data={RecruitmentDetails}
+                                columns={columnConfig("tab3")}
+                                rows={rows}
+                                onPageChange={(event) => onPageChange(event, "VRR")}
+                                handleRefresh={() => handleRefresh("tab3")}
 
-                        />
-                    </div>
+                            />
+                        </CardContent>
+
+                    </Card>
                 ),
             },
         ] : [
@@ -318,60 +350,88 @@ const RecruitmentProcess = (props: any) => {
                     label: "Upload Advertisement",
                     value: "tab1",
                     content: (
-                        <div className="menu-card">
-                            <SearchableDataTable
-                                data={RecruitmentDetails}
-                                columns={columnConfig("tab1")}
-                                rows={rows}
-                                onPageChange={(event) => onPageChange(event, "VRR")}
-                                handleRefresh={() => handleRefresh("tab1")}
-                            />
-                        </div>
+                        <Card
+                            variant="outlined"
+                            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                        >
+                            <CardContent>
+                                <SearchableDataTable
+                                    data={RecruitmentDetails}
+                                    columns={columnConfig("tab1")}
+                                    rows={rows}
+                                    onPageChange={(event) => onPageChange(event, "VRR")}
+                                    handleRefresh={() => handleRefresh("tab1")}
+                                />
+                            </CardContent>
+
+                        </Card>
+
                     ),
                 },
                 {
                     label: "Assigne Agencies",
                     value: "tab2",
                     content: (
-                        <div className="menu-card">
-                            <SearchableDataTable
-                                data={RecruitmentDetails}
-                                columns={columnConfig("tab2")}
-                                rows={rows}
-                                onPageChange={(event) => onPageChange(event, "VRR")}
-                                handleRefresh={() => handleRefresh("tab2")}
-                            />
-                        </div>
+                        <Card
+                            variant="outlined"
+                            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                        >
+                            <CardContent>
+                                <SearchableDataTable
+                                    data={RecruitmentDetails}
+                                    columns={columnConfig("tab2")}
+                                    rows={rows}
+                                    onPageChange={(event) => onPageChange(event, "VRR")}
+                                    handleRefresh={() => handleRefresh("tab2")}
+                                />
+                            </CardContent>
+
+                        </Card>
+
                     ),
                 },
                 {
                     label: "Review Profiles",
                     value: "tab3",
                     content: (
-                        <div className="menu-card">
-                            <SearchableDataTable
-                                data={RecruitmentDetails}
-                                columns={columnConfig("tab3")}
-                                rows={rows}
-                                onPageChange={(event) => onPageChange(event, "VRR")}
-                                handleRefresh={() => handleRefresh("tab3")}
-                            />
-                        </div>
+                        <Card
+                            variant="outlined"
+                            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                        >
+                            <CardContent>
+                                <SearchableDataTable
+                                    data={RecruitmentDetails}
+                                    columns={columnConfig("tab3")}
+                                    rows={rows}
+                                    onPageChange={(event) => onPageChange(event, "VRR")}
+                                    handleRefresh={() => handleRefresh("tab3")}
+                                />
+                            </CardContent>
+
+                        </Card>
+
                     ),
                 },
                 {
                     label: "My submission",
                     value: "tab4",
                     content: (
-                        <div className="menu-card">
-                            <SearchableDataTable
-                                data={RecruitmentDetails}
-                                columns={columnConfig("tab4")}
-                                rows={rows}
-                                onPageChange={(event) => onPageChange(event, "VRR")}
-                                handleRefresh={() => handleRefresh("tab4")}
-                            />
-                        </div>
+                        <Card
+                            variant="outlined"
+                            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                        >
+                            <CardContent>
+                                <SearchableDataTable
+                                    data={RecruitmentDetails}
+                                    columns={columnConfig("tab4")}
+                                    rows={rows}
+                                    onPageChange={(event) => onPageChange(event, "VRR")}
+                                    handleRefresh={() => handleRefresh("tab4")}
+                                />
+                            </CardContent>
+
+                        </Card>
+
                     ),
                 },
             ] : [
@@ -380,15 +440,21 @@ const RecruitmentProcess = (props: any) => {
                         label: "Pending Approval",
                         value: "tab1",
                         content: (
-                            <div className="menu-card">
-                                <SearchableDataTable
-                                    data={RecruitmentDetails}
-                                    columns={columnConfig("tab1")}
-                                    rows={rows}
-                                    onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={() => handleRefresh("tab1")}
-                                />
-                            </div>
+                            <Card
+                                variant="outlined"
+                                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                            >
+                                <CardContent>
+                                    <SearchableDataTable
+                                        data={RecruitmentDetails}
+                                        columns={columnConfig("tab1")}
+                                        rows={rows}
+                                        onPageChange={(event) => onPageChange(event, "VRR")}
+                                        handleRefresh={() => handleRefresh("tab1")}
+                                    />
+                                </CardContent>
+
+                            </Card>
                         ),
                     },
 
@@ -398,15 +464,22 @@ const RecruitmentProcess = (props: any) => {
                             label: "Review Profiles",
                             value: "tab1",
                             content: (
-                                <div className="menu-card">
-                                    <SearchableDataTable
-                                        data={RecruitmentDetails}
-                                        columns={columnConfig("tab1")}
-                                        rows={rows}
-                                        onPageChange={(event) => onPageChange(event, "VRR")}
-                                        handleRefresh={() => handleRefresh("tab1")}
-                                    />
-                                </div>
+                                <Card
+                                    variant="outlined"
+                                    sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                                >
+                                    <CardContent>
+                                        <SearchableDataTable
+                                            data={RecruitmentDetails}
+                                            columns={columnConfig("tab1")}
+                                            rows={rows}
+                                            onPageChange={(event) => onPageChange(event, "VRR")}
+                                            handleRefresh={() => handleRefresh("tab1")}
+                                        />
+                                    </CardContent>
+
+                                </Card>
+
                             ),
                         },
                     ] : [])
@@ -427,7 +500,7 @@ const RecruitmentProcess = (props: any) => {
         <CustomLoader isLoading={isLoading}>
             <React.Fragment>
                 <div className="menu-card">
-                    <TabsComponent tabs={tabs} initialTab={"tab1"} tabtype={tabType.Dashboard} onTabChange={handleTabChange} />
+                    <TabsComponent tabs={tabs} initialTab={activeTab} tabtype={tabType.Dashboard} onTabChange={handleTabChange} />
                     {console.log(first, "first")}
                 </div>
             </React.Fragment>

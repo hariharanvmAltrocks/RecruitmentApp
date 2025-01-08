@@ -680,12 +680,13 @@ export default class RecruitmentService implements IRecruitmentService {
             let listItems: any
             listItems = await SPServices.SPReadItems({
                 Listname: ListNames.HRMSRecruitmentComments,
-                Select: "*, Author/EMail,Author/Title,Department/DepartmentName,Role/RoleTitle,ApprovedID/ID,ModifiedUserName/EMail",
-                Expand: "Author,Department,Role,ApprovedID,ModifiedUserName",
+                Select: "*, Author/EMail,Author/Title,Role/RoleTitle,RecruitmentID/ID",
+                Expand: "Author,Role,RecruitmentID",
                 Filter: filterConditions,
             });
             listItems.forEach((objresult: any) => {
-                const Email = objresult.ModifiedUserName?.EMail ? objresult.ModifiedUserName?.EMail.toLowerCase() : objresult.Author?.EMail.toLowerCase();
+                debugger;
+                const Email = objresult.Author?.EMail.toLowerCase()
                 const Employee = EmployeeList.find((options: any) => {
                     return options.Email?.toLowerCase() === Email;
                 });

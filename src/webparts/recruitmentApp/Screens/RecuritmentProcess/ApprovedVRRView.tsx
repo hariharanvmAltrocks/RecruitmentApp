@@ -13,6 +13,9 @@ import LabelValue from "../../components/LabelValue";
 import { RecuritmentData } from "../../Models/RecuritmentVRR";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
 import CustomLabel from "../../components/CustomLabel";
+import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
+import CommanComments from "../../components/CommanComments";
+import ReuseButton from "../../components/ReuseButton";
 
 const ApprovedVRRView: React.FC = (props: any) => {
     const [tabVisibility, setTabVisibility] = useState({
@@ -71,6 +74,8 @@ const ApprovedVRRView: React.FC = (props: any) => {
         Comments: ""
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [MainComponent, setMainComponent] = useState<boolean>(true);
+    const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
 
     const fetchData = async () => {
         if (isLoading) return; // Prevent re-execution if already loading
@@ -118,6 +123,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     props.stateValue?.ID,
                     op.JobCode,
                 );
+                debugger;
                 let RoleProfileDoc: IDocFiles[] = [];
                 let AdvertismentDocPromises: IDocFiles[] = [];
                 let ONAMSignedStampDoc: IDocFiles[] = [];
@@ -212,7 +218,24 @@ const ApprovedVRRView: React.FC = (props: any) => {
         void initialize(); // Mark the call as intentionally unawaited
     }, []);
 
+    const OpenComments = async () => {
+        setMainComponent(false);
+        let filterConditions = []
+        let Conditions = "";
 
+        filterConditions.push({
+            FilterKey: "RecruitmentID",
+            Operator: "eq",
+            FilterValue: props.stateValue.ID,
+        })
+        debugger;
+        const CommentsList =
+            await getVRRDetails.GetCommentsData(props.EmployeeList, Conditions, filterConditions)
+        if (CommentsList.status === 200) {
+            console.log(CommentsList.data);
+            setCommentsData(CommentsList.data)
+        }
+    }
 
     const tabs = [
         {
@@ -275,7 +298,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                                         <Labelheader value="Nationality" />
                                         <LabelValue value={data.Nationality} />
                                     </div>
-                                    <div className="ms-Grid-col ms-lg3">
+                                    {/* <div className="ms-Grid-col ms-lg3">
                                         <Labelheader value="Position Name (English)" />
                                         <LabelValue value={data.JobNameInEnglish} />
                                     </div>
@@ -286,15 +309,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                                     <div className="ms-Grid-col ms-lg3">
                                         <Labelheader value="Proposed Paterson Grade" />
                                         <LabelValue value={data.PatersonGrade} />
-                                    </div>
-
-                                </div>
-
-                                <div className="ms-Grid-row">
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Proposed DRC Grade" />
-                                        <LabelValue value={data.DRCGrade} />
-                                    </div>
+                                    </div> */}
                                     <div className="ms-Grid-col ms-lg3">
                                         <Labelheader value="Employment Category" />
                                         <LabelValue value={data.EmployementCategory} />
@@ -308,6 +323,14 @@ const ApprovedVRRView: React.FC = (props: any) => {
                                         <LabelValue value={data.AreaOfWork} />
                                     </div>
                                 </div>
+
+                                {/* <div className="ms-Grid-row"> */}
+                                {/* <div className="ms-Grid-col ms-lg3">
+                                        <Labelheader value="Proposed DRC Grade" />
+                                        <LabelValue value={data.DRCGrade} />
+                                    </div> */}
+
+                                {/* </div> */}
 
                                 <div className="ms-Grid-row">
                                     <div className="ms-Grid-col ms-lg3">
@@ -341,7 +364,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                                         ))}
                                     </div>
                                     <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Assign RecuritmentHR" />
+                                        <Labelheader value="Assign RecruitmentHR" />
                                         <LabelValue value={props.stateValue?.AssignedHR} />
                                     </div>
                                 </div>
@@ -380,6 +403,31 @@ const ApprovedVRRView: React.FC = (props: any) => {
                                     </div>
                                 )}
 
+                                <div className="ms-Grid-row">
+                                    <div className="ms-Grid-col ms-lg12">
+                                        <div className="ms-Grid-col ms-lg4">
+                                            <CustomLabel value={" View Justifications"} />
+                                            <ReuseButton
+                                                Style={{
+                                                    minWidth: "117px",
+                                                    fontSize: "13px",
+                                                    paddingBottom: "24px",
+                                                    display: "flex",
+                                                    flexDirection: "column",
+                                                    height: "41px",
+                                                    paddingTop: "22px",
+                                                }}
+                                                label="VIEW"
+                                                onClick={OpenComments}
+                                                spacing={4}
+                                                imgSrc={require("../../assets/Viewicon.svg")}
+                                                imgAlt="ssss"
+                                                imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                                                imgAltHover="Image"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
                         )}
@@ -393,22 +441,36 @@ const ApprovedVRRView: React.FC = (props: any) => {
     }
 
     return (
-        <CustomLoader isLoading={isLoading}>
-            <div className="menu-card">
-                <TabsComponent tabs={tabs}
-                    initialTab="tab1"
-                    additionalButtons={[
-                        {
-                            label: "Back",
-                            onClick: () => {
-                                back_fn();
-                            }
-                        }
-                    ]}
-                />
-            </div>
-        </CustomLoader>
+        <>
+            {MainComponent ? (
+                <>
+
+                    <CustomLoader isLoading={isLoading}>
+                        <div className="menu-card">
+                            <TabsComponent tabs={tabs}
+                                initialTab="tab1"
+                                additionalButtons={[
+                                    {
+                                        label: "Back",
+                                        onClick: () => {
+                                            back_fn();
+                                        }
+                                    }
+                                ]}
+                            />
+                        </div>
+                    </CustomLoader>
+                </>
+            ) : (<>
+                <CommanComments
+                    onClose={() => setMainComponent(true)}
+                    Comments={CommentData} />
+            </>)}
+        </>
+
+
     );
 };
 
 export default ApprovedVRRView;
+

@@ -24,7 +24,7 @@ interface TabsComponentProps {
         label: string;
         onClick?: () => void;
     }[];
-    onTabChange?: (newTab: string) => void; // Add this prop
+    onTabChange?: (newTab: string) => void;
 }
 
 
@@ -44,7 +44,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
         if (onTabChange) {
-            onTabChange(newValue); // Notify the parent component about the tab change
+            onTabChange(newValue);
         }
     };
 
@@ -53,7 +53,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
         if (currentIndex > 0) {
             setValue(tabs[currentIndex - 1].value);
             if (onTabChange) {
-                onTabChange(tabs[currentIndex - 1].value); // Notify parent of the tab change
+                onTabChange(tabs[currentIndex - 1].value);
             }
         }
     };
@@ -74,7 +74,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
             if (currentIndex < tabs.length - 1) {
                 setValue(tabs[currentIndex + 1].value);
                 if (onTabChange) {
-                    onTabChange(tabs[currentIndex + 1].value); // Notify parent of the tab change
+                    onTabChange(tabs[currentIndex + 1].value);
                 }
             }
         }
