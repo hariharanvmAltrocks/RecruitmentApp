@@ -190,7 +190,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         ContractType: op.TypeOfContract || "",
                         JobCode: op.JobCode || "",
                         AreaOfWork: op.AreaofWork || "",
-                        NoofPositionAssigned: NoofPositionAssigned?.length || 0,
+                        NoofPositionAssigned: op.NumberOfPersonNeeded || 0,
                         ReasonForVacancy: op.ReasonForVacancy || "",
                         RecruitmentAuthorised: op.RecruitmentAuthorised || "",
                         EnterNumberOfMonths: op.EnterNumberOfMonths || 0,
@@ -384,7 +384,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         } else {
                             try {
                                 const response = await getVRRDetails.InsertRecruitmentDpt(Table1, formState.PositionDetails);
-                                debugger;
                                 const commentsData: InsertComments = {
                                     RoleId: props.CurrentRoleID,
                                     RecruitmentIDId: response.data?.[0]?.data?.RecruitmentIDId,
@@ -624,7 +623,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             Operator: "eq",
             FilterValue: props.stateValue.ID,
         })
-        debugger;
         const CommentsList =
             await getVRRDetails.GetCommentsData(props.EmployeeList, Conditions, filterConditions)
         if (CommentsList.status === 200) {

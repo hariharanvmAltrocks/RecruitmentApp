@@ -197,7 +197,6 @@ const ReviewProfile = (props: any) => {
     ];
 
     function OpenCommentsPopup(): void {
-        debugger;
         setCommentsPopup(true);
     }
 

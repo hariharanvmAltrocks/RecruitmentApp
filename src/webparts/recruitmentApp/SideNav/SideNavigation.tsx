@@ -150,7 +150,7 @@ const SideNavComponent = (props: sideNavProps) => {
                                     <div
                                         className={styles.expandnavImg}
                                         onClick={() => toggleExpand(item.Id, item.Path)}
-                                        style={{ cursor: "pointer", marginLeft: "26%", backgroundColor: "white", borderRadius: "19%" }}
+                                        style={{ cursor: "pointer", marginLeft: "26%" }}
                                     >
                                         <p>
                                             <img

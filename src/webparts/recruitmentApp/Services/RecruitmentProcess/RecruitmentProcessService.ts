@@ -571,7 +571,6 @@ export default class RecruitmentService implements IRecruitmentService {
     async GetInterviewPanelCandidateDetails(filterParam: any, filterConditions: any) {
         try {
             const CandidateDetails: CandidateData[] = [];
-            debugger;
             const listItems: any[] = await SPServices.SPReadItems({
                 Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
                 Select: "*,JobCode/JobCode,AssignByInterviewPanel/EMail",
@@ -582,7 +581,6 @@ export default class RecruitmentService implements IRecruitmentService {
             });
 
             const formattedItems = listItems.map(async (item) => {
-                debugger;
                 console.log("HRMSRecruitmentCandidateDetails ", item);
                 const response = await CommonServices.GetAttachmentToLibrary(
                     DocumentLibraray.InterviewPanelCandidateCV,
@@ -685,7 +683,6 @@ export default class RecruitmentService implements IRecruitmentService {
                 Filter: filterConditions,
             });
             listItems.forEach((objresult: any) => {
-                debugger;
                 const Email = objresult.Author?.EMail.toLowerCase()
                 const Employee = EmployeeList.find((options: any) => {
                     return options.Email?.toLowerCase() === Email;

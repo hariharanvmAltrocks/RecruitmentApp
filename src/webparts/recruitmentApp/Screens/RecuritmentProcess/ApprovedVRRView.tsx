@@ -123,7 +123,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     props.stateValue?.ID,
                     op.JobCode,
                 );
-                debugger;
                 let RoleProfileDoc: IDocFiles[] = [];
                 let AdvertismentDocPromises: IDocFiles[] = [];
                 let ONAMSignedStampDoc: IDocFiles[] = [];
@@ -228,7 +227,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
             Operator: "eq",
             FilterValue: props.stateValue.ID,
         })
-        debugger;
         const CommentsList =
             await getVRRDetails.GetCommentsData(props.EmployeeList, Conditions, filterConditions)
         if (CommentsList.status === 200) {
