@@ -23,6 +23,7 @@ import ReuseButton from "../../components/ReuseButton";
 import CommanComments from "../../components/CommanComments";
 import SPServices from "../../Services/SPService/SPServices";
 import { CommentsData, InsertComments } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
+import CustomViewDocument from "../../components/CustomViewDocument";
 
 
 
@@ -305,7 +306,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
         return Object.values(errors).some((error) => error);
     };
-
+    const resetForm = () => {
+        setFormState((prevState) => ({
+            ...prevState,
+            Comments: "",
+        }));
+    };
 
     const SaveRecruitment = async () => {
         try {
@@ -365,7 +371,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 ID: props.stateValue?.ID,
                             })
                             console.log(UpdateVRRDetails);
-
+                            resetForm();
                             let CancelAlert = {
                                 Message: RecuritmentHRMsg.ONEMDocumentMsg,
                                 Type: HRMSAlertOptions.Success,
@@ -402,6 +408,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 console.log(UpdateVRRDetails, "UpdateVRRDetails");
 
                                 if (response.status == 200) {
+                                    resetForm();
+
                                     let CancelAlert = {
                                         Message: RecuritmentHRMsg.RecuritmentSubmitMsg,
                                         Type: HRMSAlertOptions.Success,
@@ -437,6 +445,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             ID: props.stateValue?.ID,
                         })
                         console.log(UpdateVRRDetails, "UpdateVRRDetails");
+                        resetForm();
 
                         let UpdateAlert = {
                             Message: RecuritmentHRMsg.AdvertisementSubmitMsg,
@@ -464,6 +473,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             ID: props.stateValue?.ID,
                         })
                         console.log(UpdateVRRDetails, "UpdateVRRDetails");
+                        resetForm();
+
                         let approveAlert = {
                             Message: RecuritmentHRMsg.ApprovedMsg,
                             Type: HRMSAlertOptions.Success,
@@ -889,29 +900,17 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     </div>
 
                                     <div className="ms-Grid-col ms-lg3">
-                                        {formState.RoleProfileDocument?.map((attachment: any) => (
-                                            <div key={attachment.content}>
-                                                <CustomLabel value={"Role Profile Documents"} />
-                                                <p style={{ marginTop: "1%" }}>
-                                                    <a href={attachment.content} target="_blank" rel="noopener noreferrer">
-                                                        {attachment.name}
-                                                    </a>
-                                                </p>
-                                            </div>
-                                        ))}
+                                        <CustomViewDocument
+                                            Attachment={formState.RoleProfileDocument}
+                                            Label={"Role Profile Documents"}
+                                        />
                                     </div>
 
                                     <div className="ms-Grid-col ms-lg3">
-                                        {formState.GradingDocument?.map((attachment: any) => (
-                                            <div key={attachment.content}>
-                                                <CustomLabel value={"Grading Documents"} />
-                                                <p style={{ marginTop: "1%" }}>
-                                                    <a href={attachment.content} target="_blank" rel="noopener noreferrer">
-                                                        {attachment.name}
-                                                    </a>
-                                                </p>
-                                            </div>
-                                        ))}
+                                        <CustomViewDocument
+                                            Attachment={formState.GradingDocument}
+                                            Label={"Grading Documents"}
+                                        />
                                     </div>
 
                                     {props.CurrentRoleID === RoleID.RecruitmentHRLead ? (
@@ -1009,24 +1008,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                                 {props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv && (
                                     <>
-                                        {formState.AdvertisementDocument?.map((attachment: any) => {
-                                            console.log('Attachment content URL:', attachment.content); // Debugging line
-                                            return (
-                                                <div key={attachment.content}>
-                                                    <CustomLabel value={"Advertisement Documents"} />
-                                                    <p style={{ marginTop: "1%" }}>
-                                                        <a
-                                                            href={attachment.content}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                        >
-                                                            {attachment.name}
-                                                        </a>
-                                                    </p>
-                                                </div>
-                                            );
-                                        })}
-
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg6">
+                                                <CustomViewDocument
+                                                    Attachment={formState.AdvertisementDocument}
+                                                    Label={"Advertisement Documents"}
+                                                />
+                                            </div>
+                                        </div>
                                     </>
                                 )}
 
@@ -1034,16 +1023,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     <>
                                         <div className="ms-Grid-row">
                                             <div className="ms-Grid-col ms-lg6">
-                                                {formState.AdvertisementDocument?.map((attachment: any) => (
-                                                    <div key={attachment.content}>
-                                                        <CustomLabel value={"Advertisement Documents"} />
-                                                        <p style={{ marginTop: "1%" }}>
-                                                            <a href={attachment.content} target="_blank" rel="noopener noreferrer">
-                                                                {attachment.name}
-                                                            </a>
-                                                        </p>
-                                                    </div>
-                                                ))}
+                                                <CustomViewDocument
+                                                    Attachment={formState.AdvertisementDocument}
+                                                    Label={"Advertisement Documents"}
+                                                />
                                             </div>
                                         </div>
 
@@ -1109,31 +1092,19 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     <>
                                         <div className="ms-Grid-row">
                                             <div className="ms-Grid-col ms-lg6">
-                                                {formState.AdvertisementDocument?.map((attachment: any) => (
-                                                    <div key={attachment.content}>
-                                                        <CustomLabel value={"Advertisement Documents"} />
-                                                        <p style={{ marginTop: "1%" }}>
-                                                            <a href={attachment.content} target="_blank" rel="noopener noreferrer">
-                                                                {attachment.name}
-                                                            </a>
-                                                        </p>
-                                                    </div>
-                                                ))}
+                                                <CustomViewDocument
+                                                    Attachment={formState.AdvertisementDocument}
+                                                    Label={"Advertisement Documents"}
+                                                />
                                             </div>
                                         </div>
 
                                         <div className="ms-Grid-row">
                                             <div className="ms-Grid-col ms-lg6">
-                                                {formState.OnamSignedStampsDocument?.map((attachment: any) => (
-                                                    <div key={attachment.content}>
-                                                        <CustomLabel value={"ONEM Signed&Stamps Documents"} />
-                                                        <p style={{ marginTop: "1%" }}>
-                                                            <a href={attachment.content} target="_blank" rel="noopener noreferrer">
-                                                                {attachment.name}
-                                                            </a>
-                                                        </p>
-                                                    </div>
-                                                ))}
+                                                <CustomViewDocument
+                                                    Attachment={formState.OnamSignedStampsDocument}
+                                                    Label={"ONEM Signed&Stamps Documents"}
+                                                />
                                             </div>
                                         </div>
                                     </>
