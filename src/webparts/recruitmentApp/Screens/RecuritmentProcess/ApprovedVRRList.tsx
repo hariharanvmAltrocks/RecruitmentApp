@@ -7,7 +7,7 @@ import { GridStatusBackgroundcolor, RoleID, StatusId, tabType } from "../../util
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Button } from "primereact/button";
 import { Card, CardContent } from "@mui/material";
-import 'primeicons/primeicons.css';
+// import 'primeicons/primeicons.css';
 // interface ColumnConfig {
 //     field: string;
 //     header: string;
@@ -27,7 +27,7 @@ const RecruitmentProcess = (props: any) => {
     const [activeTab, setActiveTab] = React.useState<string>("tab1");
 
 
-    const columnConfig = (tab: string) => [
+    const columnConfig = (tab: string, ButtonAction: string) => [
         {
             field: 'BusinessUnitCode',
             header: 'BusinessUnit Code',
@@ -101,27 +101,51 @@ const RecruitmentProcess = (props: any) => {
                             gap: "5px",
                         }}
                     >
-                        <Button
-                            onClick={() => handleRedirectView(rowData, tab)}
-                            className="table_btn"
-                            icon="pi pi-eye"
-                            style={{
-                                width: "30px",
-                                marginRight: "7px",
-                                padding: "3px",
-                            }}
-                        />
-                        {/* <Button
-                            onClick={() => handleDeletedView(rowData, tab)}
-                            className="table_btn"
-                            icon="pi pi-eye"
-                            style={{
-                                width: "30px",
-                                marginRight: "7px",
-                                padding: "3px",
-                            }}
-                        /> */}
-
+                        {(ButtonAction === "view") ? (
+                            <>
+                                <Button
+                                    onClick={() => handleRedirectView(rowData, tab)}
+                                    className="table_btn"
+                                    icon="pi pi-eye"
+                                    style={{
+                                        width: "30px",
+                                        marginRight: "7px",
+                                        padding: "3px",
+                                    }}
+                                >
+                                    {/* <img
+                                                src={require("../../assets/edit_icon.png")}
+                                                alt="Stamp Icon"
+                                                style={{
+                                                  width: "100%",
+                                                  height: "100%",
+                                                }}
+                                              /> */}
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    onClick={() => handleRedirectView(rowData, tab)}
+                                    className="table_btn"
+                                    // icon="pi pi-eye"
+                                    style={{
+                                        width: "30px",
+                                        marginRight: "7px",
+                                        padding: "3px",
+                                    }}
+                                >
+                                    <img
+                                        src={require("../../assets/edit_icon.png")}
+                                        alt="Stamp Icon"
+                                        style={{
+                                            width: "100%",
+                                            height: "100%",
+                                        }}
+                                    />
+                                </Button>
+                            </>
+                        )}
                     </div>
                 );
             },
@@ -290,7 +314,7 @@ const RecruitmentProcess = (props: any) => {
                         <CardContent>
                             <SearchableDataTable
                                 data={data}
-                                columns={columnConfig("tab1")}
+                                columns={columnConfig("tab1", "edit")}
                                 rows={rows}
                                 onPageChange={(event) => onPageChange(event, "Recruitment")}
                                 handleRefresh={() => handleRefresh("tab1")}
@@ -312,7 +336,7 @@ const RecruitmentProcess = (props: any) => {
                         <CardContent>
                             <SearchableDataTable
                                 data={RecruitmentDetails}
-                                columns={columnConfig("tab2")}
+                                columns={columnConfig("tab2", "edit")}
                                 rows={rows}
                                 onPageChange={(event) => onPageChange(event, "VRR")}
                                 handleRefresh={() => handleRefresh("tab2")}
@@ -334,7 +358,7 @@ const RecruitmentProcess = (props: any) => {
                         <CardContent>
                             <SearchableDataTable
                                 data={RecruitmentDetails}
-                                columns={columnConfig("tab3")}
+                                columns={columnConfig("tab3", "view")}
                                 rows={rows}
                                 onPageChange={(event) => onPageChange(event, "VRR")}
                                 handleRefresh={() => handleRefresh("tab3")}
@@ -358,7 +382,7 @@ const RecruitmentProcess = (props: any) => {
                             <CardContent>
                                 <SearchableDataTable
                                     data={RecruitmentDetails}
-                                    columns={columnConfig("tab1")}
+                                    columns={columnConfig("tab1", "edit")}
                                     rows={rows}
                                     onPageChange={(event) => onPageChange(event, "VRR")}
                                     handleRefresh={() => handleRefresh("tab1")}
@@ -380,7 +404,7 @@ const RecruitmentProcess = (props: any) => {
                             <CardContent>
                                 <SearchableDataTable
                                     data={RecruitmentDetails}
-                                    columns={columnConfig("tab2")}
+                                    columns={columnConfig("tab2", "edit")}
                                     rows={rows}
                                     onPageChange={(event) => onPageChange(event, "VRR")}
                                     handleRefresh={() => handleRefresh("tab2")}
@@ -402,7 +426,7 @@ const RecruitmentProcess = (props: any) => {
                             <CardContent>
                                 <SearchableDataTable
                                     data={RecruitmentDetails}
-                                    columns={columnConfig("tab3")}
+                                    columns={columnConfig("tab3", "edit")}
                                     rows={rows}
                                     onPageChange={(event) => onPageChange(event, "VRR")}
                                     handleRefresh={() => handleRefresh("tab3")}
@@ -424,7 +448,7 @@ const RecruitmentProcess = (props: any) => {
                             <CardContent>
                                 <SearchableDataTable
                                     data={RecruitmentDetails}
-                                    columns={columnConfig("tab4")}
+                                    columns={columnConfig("tab4", "view")}
                                     rows={rows}
                                     onPageChange={(event) => onPageChange(event, "VRR")}
                                     handleRefresh={() => handleRefresh("tab4")}
@@ -448,7 +472,7 @@ const RecruitmentProcess = (props: any) => {
                                 <CardContent>
                                     <SearchableDataTable
                                         data={RecruitmentDetails}
-                                        columns={columnConfig("tab1")}
+                                        columns={columnConfig("tab1", "edit")}
                                         rows={rows}
                                         onPageChange={(event) => onPageChange(event, "VRR")}
                                         handleRefresh={() => handleRefresh("tab1")}
@@ -472,7 +496,7 @@ const RecruitmentProcess = (props: any) => {
                                     <CardContent>
                                         <SearchableDataTable
                                             data={RecruitmentDetails}
-                                            columns={columnConfig("tab1")}
+                                            columns={columnConfig("tab1", "edit")}
                                             rows={rows}
                                             onPageChange={(event) => onPageChange(event, "VRR")}
                                             handleRefresh={() => handleRefresh("tab1")}

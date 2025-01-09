@@ -687,7 +687,6 @@ export default class RecruitmentService implements IRecruitmentService {
                 const Employee = EmployeeList.find((options: any) => {
                     return options.Email?.toLowerCase() === Email;
                 });
-
                 let d: CommentsData = {
                     Id: objresult.ApprovedID ? objresult.ApprovedID.ID : "",
                     JobTitleInEnglish: Employee ? Employee.JobTitle : "",
@@ -697,7 +696,7 @@ export default class RecruitmentService implements IRecruitmentService {
                     Date: objresult.Created ? new Date(objresult.Created) : null,
                     JobTitle: objresult.JobTitle || "",
                     RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
-                    Name: Employee ? Employee.FirstName : "",
+                    Name: Employee ? (Employee.FirstName ?? "") + " " + (Employee.MiddleName ?? "") + " " + (Employee.LastName ?? "") : ""
                     // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
                 };
                 CommentsData.push(d);

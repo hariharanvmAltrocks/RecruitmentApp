@@ -568,6 +568,25 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         void getADGroupsOption();
     }, []);
 
+    useEffect(() => {
+        const validationAttachment = async () => {
+            if (formState.OnamSignedStampsAttchment.length > 0) {
+                setValidationError((prevState: any) => ({
+                    ...prevState,
+                    OnamSignedStampsDocument: false
+                }))
+            }
+            if (formState.AdvertisementAttachement.length > 0) {
+                setValidationError((prevState: any) => ({
+                    ...prevState,
+                    AdvertisementDocument: false
+                }))
+            }
+
+        };
+
+        void validationAttachment();
+    }, [formState.OnamSignedStampsAttchment, formState.AdvertisementAttachement]);
 
     const handleDelete = (index: number, attachmentType: 'AdvertisementAttachement' | 'OnamSignedStampsAttchment' | 'CandidateCVAttachment') => {
         console.log("Deleting attachment at index:", index, "from", attachmentType);
@@ -942,6 +961,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             ...prevState,
                                                             AdvertisementAttachement: [...prevState.AdvertisementAttachement, ...newAttachments],
                                                         }));
+                                                        setValidationError((prevState: any) => ({
+                                                            ...prevState,
+                                                            AdvertisementDocument: false
+                                                        }))
                                                     }}
                                                     mandatory={true}
                                                     error={validationErrors.AdvertisementDocument}
@@ -986,20 +1009,24 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                                 {props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv && (
                                     <>
-                                        <div className="ms-Grid-row">
-                                            <div className="ms-Grid-col ms-lg6">
-                                                {formState.AdvertisementDocument?.map((attachment: any) => (
-                                                    <div key={attachment.content}>
-                                                        <CustomLabel value={"Advertisement Documents"} />
-                                                        <p style={{ marginTop: "1%" }}>
-                                                            <a href={attachment.content} target="_blank" rel="noopener noreferrer">
-                                                                {attachment.name}
-                                                            </a>
-                                                        </p>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
+                                        {formState.AdvertisementDocument?.map((attachment: any) => {
+                                            console.log('Attachment content URL:', attachment.content); // Debugging line
+                                            return (
+                                                <div key={attachment.content}>
+                                                    <CustomLabel value={"Advertisement Documents"} />
+                                                    <p style={{ marginTop: "1%" }}>
+                                                        <a
+                                                            href={attachment.content}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            {attachment.name}
+                                                        </a>
+                                                    </p>
+                                                </div>
+                                            );
+                                        })}
+
                                     </>
                                 )}
 

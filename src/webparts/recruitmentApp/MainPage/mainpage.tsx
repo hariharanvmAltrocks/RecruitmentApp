@@ -15,7 +15,7 @@ import InterviewPanelEdit from "../Screens/InterviewPanel/InterviewPanelEdit";
 import Emptypage from "../Screens/EmptyPage/EmptyPage";
 
 export default function MainPage(props: any) {
-    const { roleID, userName, userRole, masterData, ADGroupData } = userInfo();
+    const { roleID, userRole, masterData, ADGroupData } = userInfo();
 
     const [isExpanded, setIsExpanded] = React.useState(false);
 
@@ -35,9 +35,8 @@ export default function MainPage(props: any) {
             >
                 <SideNavComponent roleID={roleID} IsExpanded={isExpanded} />
             </div>
-
             <div style={{ width: isExpanded ? "85%" : "95%", display: "flex", flexDirection: "column" }}>
-                <MainPageHeader toggleSideNav={toggleSideNav} userName={userName} userRole={userRole} Department={masterData?.userDetails[0]?.DepartmentName}>
+                <MainPageHeader toggleSideNav={toggleSideNav} userName={(masterData?.userDetails[0]?.FirstName ?? "") + " " + (masterData?.userDetails[0]?.MiddleName ?? "") + " " + (masterData?.userDetails[0]?.LastName ?? "")} userRole={userRole} Department={masterData?.userDetails[0]?.DepartmentName}>
                     {ADGroupData?.ADGroupIDs ? (
                         <>
                             <Routes>

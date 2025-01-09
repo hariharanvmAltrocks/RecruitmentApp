@@ -16,6 +16,7 @@ import CustomLabel from "../../components/CustomLabel";
 import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 import CommanComments from "../../components/CommanComments";
 import ReuseButton from "../../components/ReuseButton";
+import CustomViewDocument from "../../components/CustomViewDocument";
 
 const ApprovedVRRView: React.FC = (props: any) => {
     const [tabVisibility, setTabVisibility] = useState({
@@ -337,29 +338,17 @@ const ApprovedVRRView: React.FC = (props: any) => {
                                     </div>
 
                                     <div className="ms-Grid-col ms-lg3">
-                                        {data.RoleProfileDocument?.map((attachment: any) => (
-                                            <div key={attachment.content}>
-                                                <CustomLabel value={"Role Profile Documents"} />
-                                                <p style={{ marginTop: "1%" }}>
-                                                    <a href={attachment.content} target="_blank" rel="noopener noreferrer">
-                                                        {attachment.name}
-                                                    </a>
-                                                </p>
-                                            </div>
-                                        ))}
+                                        <CustomViewDocument
+                                            Attachment={data.RoleProfileDocument}
+                                            Label={"Role Profile Documents"}
+                                        />
                                     </div>
 
                                     <div className="ms-Grid-col ms-lg3">
-                                        {data.GradingDocument?.map((attachment: any) => (
-                                            <div key={attachment.content}>
-                                                <CustomLabel value={"Grading Documents"} />
-                                                <p style={{ marginTop: "1%" }}>
-                                                    <a href={attachment.content} target="_blank" rel="noopener noreferrer">
-                                                        {attachment.name}
-                                                    </a>
-                                                </p>
-                                            </div>
-                                        ))}
+                                        <CustomViewDocument
+                                            Attachment={data.GradingDocument}
+                                            Label={"Grading Documents"}
+                                        />
                                     </div>
                                     <div className="ms-Grid-col ms-lg3">
                                         <Labelheader value="Assign RecruitmentHR" />
@@ -369,16 +358,10 @@ const ApprovedVRRView: React.FC = (props: any) => {
                                 {data.AdvertisementDocument && (
                                     <div className="ms-Grid-row">
                                         <div className="ms-Grid-col ms-lg6">
-                                            {data.AdvertisementDocument?.map((attachment: any) => (
-                                                <div key={attachment.content}>
-                                                    <CustomLabel value={"Advertisement Documents"} />
-                                                    <p style={{ marginTop: "1%" }}>
-                                                        <a href={attachment.content} target="_blank" rel="noopener noreferrer">
-                                                            {attachment.name}
-                                                        </a>
-                                                    </p>
-                                                </div>
-                                            ))}
+                                            <CustomViewDocument
+                                                Attachment={data.AdvertisementDocument}
+                                                Label={"Advertisement Documents"}
+                                            />
                                         </div>
                                     </div>
                                 )}
@@ -387,16 +370,10 @@ const ApprovedVRRView: React.FC = (props: any) => {
                                 {data.OnamSignedStampsDocument && (
                                     <div className="ms-Grid-row">
                                         <div className="ms-Grid-col ms-lg6">
-                                            {data.OnamSignedStampsDocument?.map((attachment: any) => (
-                                                <div key={attachment.content}>
-                                                    <CustomLabel value={"ONEM Signed&Stamps Documents"} />
-                                                    <p style={{ marginTop: "1%" }}>
-                                                        <a href={attachment.content} target="_blank" rel="noopener noreferrer">
-                                                            {attachment.name}
-                                                        </a>
-                                                    </p>
-                                                </div>
-                                            ))}
+                                            <CustomViewDocument
+                                                Attachment={data.OnamSignedStampsDocument}
+                                                Label={"ONEM Signed&Stamps Documents"}
+                                            />
                                         </div>
                                     </div>
                                 )}
