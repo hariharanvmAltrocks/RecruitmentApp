@@ -3,6 +3,7 @@ import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
 import { ICommonService } from "./ICommonService";
 import GraphService from "../GraphService/GraphService";
+import { AutoCompleteItem } from "../../Models/Screens";
 
 export default class CommonService implements ICommonService {
 
@@ -97,7 +98,19 @@ export default class CommonService implements ICommonService {
                     FilePath: `${listName}`,
                 })) as IDocFiles[];
             }
+            // for (const file of response) {
+            //     const fileContent = await fetch(file.content)  // You might need to adjust based on how file URL is provided
+            //         .then(res => res.text())  // Fetch the binary content
+            //         .catch(err => {
+            //             console.error("Error fetching file content:", err);
+            //             return null;
+            //         });
 
+            //     if (fileContent) {
+            //         // Process the file content here (e.g., display, save, etc.)
+            //         console.log(fileContent, "RoleProfileContent");
+            //     }
+            // }
             return {
                 data: response,  // Return data as an array of IDocFiles[]
                 status: 200,
@@ -143,6 +156,35 @@ export default class CommonService implements ICommonService {
             };
         }
     };
+
+    getUserGuidByEmail = async (
+        email: string,
+    ): Promise<ApiResponse<AutoCompleteItem | null>> => {
+        try {
+            const user = await sp.web.siteUsers.getByEmail(email)();
+            console.log(user, "user");
+            const UserID = {
+                key: user.Id,
+                text: user.Title
+            }
+            return {
+                data: UserID,
+                status: 200,
+                message: "ADGroups retrieved successfully"
+            };
+        } catch (error) {
+            console.error("Error fetching user ID by email: ", error);
+            // Return null in case of an error
+            return {
+                data: null,
+                status: 500,
+                message: "Error getting ADGroups"
+            };
+        }
+    };
+
+
+
 
 }
 async function getUserGuidByEmail(email: string) {

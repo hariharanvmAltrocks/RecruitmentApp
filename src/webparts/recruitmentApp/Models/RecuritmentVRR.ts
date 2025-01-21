@@ -50,6 +50,7 @@ export type RecuritmentData = {
     AreaOfWork: string;
     ReasonForVacancy: string;
     RecruitmentAuthorised: string;
+    IsPayrollEmailed: string;
     EnterNumberOfMonths: number;
     DateRequried: string;
     IsRevert: string;
@@ -67,6 +68,17 @@ export type RecuritmentData = {
     AssignAgenciesOption: AutoCompleteItem[];
     CandidateCVAttachment: IAttachmentExampleState[];
     Comments: string
+}
+
+export type AdvDetails = {
+    MinQualification: string;
+    PrefeQualification: string;
+    RoleSpeKnowledge: AutoCompleteItem;
+    RequiredLevel: AutoCompleteItem;
+    TechnicalSkills: AutoCompleteItem;
+    LevelProficiency: AutoCompleteItem;
+    RolePurpose: string;
+    JobDescription: string;
 }
 
 export type CandidateData = {
@@ -88,11 +100,13 @@ export type CandidateData = {
     LanguageKnown: string;
     ReleventExperience: string;
     Qualification: string;
-    CandidateCVDoc: any[]
+    CandidateCVDoc: any[];
 }
 
 
 export type ScoreCardData = {
+    CandidateID: number;
+    RecruitmentID: number;
     JobCode: string;
     JobCodeId: number;
     PassportID: string;
@@ -112,12 +126,14 @@ export type ScoreCardData = {
     ReleventExperience: string;
     Qualification: string;
     CandidateCVDoc: any[];
-    Qualifications: number;
-    Experience: number;
-    Knowledge: number;
-    Energylevel: number;
-    Requirements: number;
-    contributeculture: number;
-    ExpatExperienceCongolese: number;
-    CriteriaRecognised: number;
+    Qualifications: AutoCompleteItem;
+    Experience: AutoCompleteItem;
+    Knowledge: AutoCompleteItem;
+    Energylevel: AutoCompleteItem;
+    Requirements: AutoCompleteItem;
+    contributeculture: AutoCompleteItem;
+    ExpatExperienceCongolese: AutoCompleteItem;
+    CriteriaRecognised: AutoCompleteItem;
+    Employment: string;
+    EvaluationFeedback: string;
 }

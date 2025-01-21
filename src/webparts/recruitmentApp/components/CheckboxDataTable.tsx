@@ -142,9 +142,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                             />
                         </div>
                     </div>
-                    {/* {assignbtnVisible ? (
-                        <> */}
-                    {/* <div className="ms-Grid-row" style={{ display: "flex", justifyContent: "end", marginTop: "2%" }}>
+                    <div className="ms-Grid-row" style={{ display: "flex", justifyContent: "end", marginTop: "2%" }}>
                         <div className="ms-Grid-col ms-lg2">
                             <ReuseButton
                                 label="Assign"
@@ -153,9 +151,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                                 error={AssignBtnValidation}
                             />
                         </div>
-                    </div> */}
-                    {/* </>
-                    ) : (<></>)} */}
+                    </div>
 
                     <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
                         <div className="ms-Grid-col ms-lg12">
@@ -172,6 +168,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                                 scrollable
                                 scrollHeight="300px"
                                 filters={dashboardSearch}
+                                style={{ overflow: "hidden" }}
                             >
                                 {columns.map((col) => {
                                     if (col.field === "Checkbox") {

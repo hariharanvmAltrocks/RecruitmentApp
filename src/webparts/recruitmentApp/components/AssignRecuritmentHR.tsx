@@ -1,5 +1,12 @@
 import * as React from "react";
 import { AutoCompleteItem } from "../Models/Screens";
+import CustomPopup from "./CustomPopup/CustomPopup";
+import LabelHeaderComponents from "./TitleHeader";
+import CustomMultiSelect from "./CustomMultiSelect";
+import ReuseButton from "./ReuseButton";
+import { CommonServices } from "../Services/ServiceExport";
+import { ADGroupID } from "../utilities/Config";
+import { Label } from "@fluentui/react";
 
 export type HeaderValue = {
     JobCode: string;
@@ -8,8 +15,8 @@ export type HeaderValue = {
 }
 
 interface AssignRecuritmentHRProps {
-    handleAutoComplete: (item: AutoCompleteItem | null) => void;
-    AssignRecuritmentHRValue: AutoCompleteItem | null;
+    // handleAutoComplete: (item: AutoCompleteItem | null) => void;
+    AssignRecuritmentHRValue: AutoCompleteItem[];
     onClose: () => void;
     HeaderValueData: HeaderValue | null;
     assignbtnfn: () => void;
@@ -17,45 +24,45 @@ interface AssignRecuritmentHRProps {
 }
 
 function AssignRecuritmentHR({
-    handleAutoComplete,
+    // handleAutoComplete,
     AssignRecuritmentHRValue,
     onClose,
     HeaderValueData,
     assignbtnfn,
     visible
 }: AssignRecuritmentHRProps): JSX.Element {
-    // const [RecuritmentOption, setRecuritmentOption] = React.useState<AutoCompleteItem[]>([]);
+    const [RecuritmentOption, setRecuritmentOption] = React.useState<AutoCompleteItem[]>([]);
 
 
-    // React.useEffect(() => {
-    //     const getADGroupsOption = async () => {
-    //         try {
-    //             const InterViewPanelOption = await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSInterviewPanel);
+    React.useEffect(() => {
+        const getADGroupsOption = async () => {
+            try {
+                const InterViewPanelOption = await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSInterviewPanel);
 
-    //             if (
-    //                 (InterViewPanelOption.status === 200 && InterViewPanelOption.data)
-    //             ) {
-    //                 setRecuritmentOption(InterViewPanelOption.data)
-    //             } else {
-    //                 console.error("Error retrieving attachments:", InterViewPanelOption.data.message);
-    //             }
-    //         } catch (error) {
-    //             console.error("Error in fetching data:", error);
-    //         }
-    //     };
+                if (
+                    (InterViewPanelOption.status === 200 && InterViewPanelOption.data)
+                ) {
+                    setRecuritmentOption(InterViewPanelOption.data)
+                } else {
+                    console.error("Error retrieving attachments:", InterViewPanelOption.data.message);
+                }
+            } catch (error) {
+                console.error("Error in fetching data:", error);
+            }
+        };
 
-    //     void getADGroupsOption();
-    // }, []);
+        void getADGroupsOption();
+    }, []);
 
     return (
         <>
             <div className="ms-Grid-row" style={{ display: "flex", justifyContent: "center" }}>
-                {/* <CustomPopup
+                <CustomPopup
                     visible={visible}
                     onClose={onClose}
-                    width="41%"
-                    height="35%"
-                    MessageContent={
+                    // width="41%"
+                    // height="35%"
+                    children={
                         <>
                             <div className="ms-Grid-row" style={{ marginLeft: "5%" }}>
                                 <div className="ms-Grid-col ms-lg6">
@@ -75,31 +82,16 @@ function AssignRecuritmentHR({
                                         marginLeft: "6%"
                                     }}
                                 >
-                                    <CustomAutoComplete
+                                    <CustomMultiSelect
                                         label="Assign Recuritment HR"
                                         options={RecuritmentOption}
                                         value={AssignRecuritmentHRValue}
                                         disabled={false}
                                         mandatory={true}
-                                        onChange={(item) => handleAutoComplete(item)}
+                                    // onChange={(item) => handleAutoComplete(item)}
                                     />
                                 </div>
                             </div>
-                        </>
-                    }
-                    headerContent={
-                        <>
-                            <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                                <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                                    <Label className="title" style={{ fontSize: 18, color: "black" }}>
-                                        {`Job Code - ${HeaderValueData?.JobCode}`}
-                                    </Label>
-                                </div>
-                            </div>
-                        </>
-                    }
-                    footerContent={
-                        <>
                             <div
                                 className="ms-Grid-row"
                                 style={{ display: "flex", justifyContent: "center", marginTop: "3%" }}
@@ -115,22 +107,20 @@ function AssignRecuritmentHR({
                             </div>
                         </>
                     }
-                /> */}
-            </div>
-            {/* <div
-                className="ms-Grid"
-                style={{
-                    // height: "40vh",
-                    marginRight: "20px",
-                    marginLeft: "20px",
-                    marginTop: "15px",
-                }}
-            >
-               
+                    header={
+                        <>
+                            <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+                                <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+                                    <Label className="title" style={{ fontSize: 18, color: "black" }}>
+                                        {`Job Code - ${HeaderValueData?.JobCode}`}
+                                    </Label>
+                                </div>
+                            </div>
+                        </>
+                    }
 
-                
-                
-            </div> */}
+                />
+            </div>
         </>
     );
 }

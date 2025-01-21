@@ -124,7 +124,7 @@ const CommanFieldTemplate = (props: any) => {
             filterConditions.push({
                 FilterKey: "StatusId",
                 Operator: "eq",
-                FilterValue: StatusId.InitiatedforRecruitmentProcess
+                FilterValue: StatusId.PendingwithHRLeadtoAssignRecruitmentHR
             });
             const data = await getVRRDetails.GetCandidateDetails(filterConditions, Conditions);
             if (data.status === 200 && data.data !== null) {

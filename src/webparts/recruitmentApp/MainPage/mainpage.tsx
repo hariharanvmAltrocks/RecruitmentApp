@@ -12,9 +12,10 @@ import ReviewProfile from "../Screens/RecuritmentProcess/ReviewProfile";
 import AssignInterviewPanel from "../Screens/RecuritmentProcess/AssignInterviewPanel";
 import InterviewPanelList from "../Screens/InterviewPanel/InterviewPanelList";
 import InterviewPanelEdit from "../Screens/InterviewPanel/InterviewPanelEdit";
+import Emptypage from "../Screens/EmptyPage/EmptyPage";
 
 export default function MainPage(props: any) {
-    const { roleID, userName, userRole, masterData, ADGroupData } = userInfo();
+    const { roleID, userRole, masterData, ADGroupData } = userInfo();
 
     const [isExpanded, setIsExpanded] = React.useState(true);
 
@@ -23,47 +24,48 @@ export default function MainPage(props: any) {
     };
 
     return (
-        <div className="main-menu-card">
-            <div
-                style={{ display: "flex", flexDirection: "row", }}
-                className=" ms-Grid"
-            // dir="ltr"
+        <div
+            style={{ display: "flex", flexDirection: "row" }}
+            className=" ms-Grid"
+        >
+
+            <div style={{ width: isExpanded ? "15%" : "6%", }}
+                onMouseEnter={() => { setIsExpanded(true) }}
+                onMouseLeave={() => { setIsExpanded(false) }}
             >
-
-                <div style={{ width: isExpanded ? "15%" : "6%", height: "auto" }}>
-                    <SideNavComponent roleID={roleID} IsExpanded={isExpanded} />
-                </div>
-
-                <div style={{ width: isExpanded ? "80%" : "95%", display: "flex", flexDirection: "column" }}>
-                    <MainPageHeader toggleSideNav={toggleSideNav} userName={userName} userRole={userRole} Department={masterData?.userDetails[0]?.DepartmentName}>
-                        {ADGroupData?.ADGroupIDs ? (
-                            <>
-                                <Routes>
-                                    <Route path="/RecurimentProcess" element={<RecruitmentProcess {...props} {...masterData} />} />
-                                    <Route path="/RecurimentProcess/ApprovedVRRView" element={<ApprovedVRRView {...props} {...masterData} />} />
-                                    <Route path="/RecurimentProcess/ApprovedVRREdit" element={<ApprovedVRREdit {...props} {...masterData} />} />
-                                    <Route path="/CommanFieldTemplate" element={<CommanFieldTemplate {...props} {...masterData} />} />
-                                    <Route path="/CommanTemplate/CommanTemplate" element={<CommanTemplate {...props} {...masterData} />} />
-                                    <Route path="/RecurimentProcess/ReviewProfile" element={<ReviewProfile {...props} {...masterData} />} />
-                                    <Route path="/RecurimentProcess/AssignInterviewPanel" element={<AssignInterviewPanel {...props} {...masterData} />} />
-                                    <Route path="/InterviewPanelList" element={<InterviewPanelList {...props} {...masterData}  {...ADGroupData?.ADGroupIDs} />} />
-                                    <Route path="/InterviewPanelList/InterviewPanelEdit" element={<InterviewPanelEdit {...props} {...masterData} />} />
-
-                                </Routes>
-                            </>
-                        ) : (
-                            <>
-                                <div style={{ minHeight: "100%", alignItems: "center", justifyContent: "center", display: "flex" }}>
-                                    <h3 className="title" >
-                                        {"You are not assigned to any AD Group for HRMS"}
-                                    </h3>
-                                </div>
-                            </>
-                        )}
-
-                    </MainPageHeader>
-                </div>
+                <SideNavComponent roleID={roleID} IsExpanded={isExpanded} />
             </div>
+            <div style={{ width: isExpanded ? "85%" : "95%", display: "flex", flexDirection: "column" }}>
+                <MainPageHeader toggleSideNav={toggleSideNav} userName={(masterData?.userDetails[0]?.FirstName ?? "") + " " + (masterData?.userDetails[0]?.MiddleName ?? "") + " " + (masterData?.userDetails[0]?.LastName ?? "")} userRole={userRole} Department={masterData?.userDetails[0]?.DepartmentName}>
+                    {ADGroupData?.ADGroupIDs ? (
+                        <>
+                            <Routes>
+                                <Route path="/" element={<Emptypage {...props} {...masterData} />} />
+                                <Route path="/RecurimentProcess" element={<RecruitmentProcess {...props} {...masterData} />} />
+                                <Route path="/RecurimentProcess/ApprovedVRRView" element={<ApprovedVRRView {...props} {...masterData} />} />
+                                <Route path="/RecurimentProcess/ApprovedVRREdit" element={<ApprovedVRREdit {...props} {...masterData} />} />
+                                <Route path="/CommanFieldTemplate" element={<CommanFieldTemplate {...props} {...masterData} />} />
+                                <Route path="/CommanTemplate/CommanTemplate" element={<CommanTemplate {...props} {...masterData} />} />
+                                <Route path="/RecurimentProcess/ReviewProfile" element={<ReviewProfile {...props} {...masterData} />} />
+                                <Route path="/RecurimentProcess/AssignInterviewPanel" element={<AssignInterviewPanel {...props} {...masterData} />} />
+                                <Route path="/InterviewPanelList" element={<InterviewPanelList {...props} {...masterData}  {...ADGroupData} />} />
+                                <Route path="/InterviewPanelList/InterviewPanelEdit" element={<InterviewPanelEdit {...props} {...masterData} />} />
+
+                            </Routes>
+                        </>
+                    ) : (
+                        <>
+                            <div style={{ minHeight: "100%", alignItems: "center", justifyContent: "center", display: "flex" }}>
+                                <h3 className="title" >
+                                    {"You are not assigned to any AD Group for HRMS"}
+                                </h3>
+                            </div>
+                        </>
+                    )}
+
+                </MainPageHeader>
+            </div>
+
         </div>
 
     );

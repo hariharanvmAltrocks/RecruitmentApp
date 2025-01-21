@@ -35,23 +35,20 @@ const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav
                                 fill="#EF3340"
                             />
                         </svg>
-                        <h6 className="title">Recuritment Process</h6>
+                        <h6 className="title">Recruitment Process</h6>
                     </Stack>
                 </div>
                 <div
                     className="ms-Grid-col ms-lg6"
                     style={{ textAlign: "right" }}
                 >
-                    <h3 className="title">
-                        Welcome {userName}
-                    </h3>
-                    <h6 className="title Role">
-                        (
-                        {userRole} - {Department?.split("-")[1] ?? ''})
-                    </h6>
+                    <span>
+                        <p className="title">Welcome {userName}</p>
+                        <p className="title Role">({userRole} - {Department?.split("-")[1] ?? ''})</p>
+                    </span>
                 </div>
             </div>
-            <div className="MainContent " style={{ marginTop: "-3%" }}>{children}</div>
+            <div className="MainContent " style={{ marginTop: "-1%" }}>{children}</div>
         </div>
     );
 };

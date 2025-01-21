@@ -1,4 +1,5 @@
 import { IADGroupID } from "../Models/MainPage";
+import { AutoCompleteItem } from "../Models/Screens";
 
 export const APIURL =
     "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
@@ -26,8 +27,9 @@ export const ListNames = {
     HRMSVRRToPositionIDMapping: "HRMSVRRToPositionIDMapping",
     InterviewPanelCandidateDetails: "InterviewPanelCandidateDetails",
     HRMSRecruitmentCandidateDetails: "HRMSRecruitmentCandidateDetails",
-    HRMSRecruitmentCandidatePersonalDetails: "HRMSRecruitmentCandidatePersonalDetails"
-
+    HRMSRecruitmentCandidatePersonalDetails: "HRMSRecruitmentCandidatePersonalDetails",
+    HRMSRecruitmentComments: "HRMSRecruitmentComments",
+    HRMSCandidateScoreCard: "HRMSCandidateScoreCard",
 };
 
 export const DocumentLibraray = {
@@ -40,7 +42,11 @@ export const DocumentLibraray = {
 }
 
 export const StatusId = {
-    InitiatedforRecruitmentProcess: 68,
+    PendingwithHRLeadtoAssignRecruitmentHR: 68,
+    PendingwithRecruitmentHRtouploadAdv: 2,
+    PendingwithHODtoreviewAdv: 26,
+    PendingwithHRLeadtouploadONEMsigneddoc: 118,
+    PendingwithRecruitmentHRtoAssignExternalAgency: 119
 }
 
 export const RoleID = {
@@ -130,10 +136,13 @@ export const viewLabelcolor = {
 };
 
 export const RecuritmentHRMsg = {
-    AdvertisementSubmitMsg: "Advertisement Submitted Successfully",
-    RecuritmentSubmitMsg: "Request Submitted Successfully",
-    ApprovedMsg: "Request Approved Successfully",
+    AdvertisementSubmitMsg: "Advertisement Uploaded Successfully",
+    ScoreCardSubmitMsg: "ScoreCard Uploaded Successfully",
+    ONEMDocumentMsg: "ONEM Document Uploaded Successfully",
+    RecuritmentSubmitMsg: "Submitted Successfully",
+    ApprovedMsg: "Approved Successfully",
     RecuritmentHRMsgCancel: "Are you sure you want to cancel? Any unsaved changes will be lost.",
+    BackMsg: "Are you sure you want go to Home Page ?",
     ValidationErrorMsg: "One or more required actions are missing",
 }
 
@@ -160,10 +169,15 @@ export const RoleProfileMaster = {
     RoleProfile: "RoleProfile"
 }
 
-export const ScoreRanking = [
-    { key: 0, text: "1" },
-    { key: 0, text: "2" },
-    { key: 0, text: "3" },
-    { key: 0, text: "4" },
-    { key: 0, text: "5" }
+export const ScoreRanking: AutoCompleteItem[] = [
+    { key: 1, text: "Poor" },
+    { key: 2, text: "Below Average" },
+    { key: 3, text: "Average" },
+    { key: 4, text: "Good" },
+    { key: 5, text: "Excellent" },
+]
+
+export const EmploymentOption = [
+    "Yes",
+    "No"
 ]

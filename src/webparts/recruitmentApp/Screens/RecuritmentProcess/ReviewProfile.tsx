@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "@mui/material";
+import { Card, CardContent, Link } from "@mui/material";
 import { getVRRDetails } from "../../Services/ServiceExport";
 import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
 import CustomLoader from "../../Services/Loader/CustomLoader";
@@ -9,9 +9,13 @@ import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { ActionStatus, HRMSAlertOptions, ListNames, RecuritmentHRMsg, RoleID } from "../../utilities/Config";
 import ReiewProfilePopup from "../../components/ReiewProfilePopup";
 import SPServices from "../../Services/SPService/SPServices";
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+// import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import VisibilityIcon from '@mui/icons-material/Visibility';
+import CustomLabel from "../../components/CustomLabel";
+import { Button } from "primereact/button";
+import ReuseButton from "../../components/ReuseButton";
+import CommentsPopup from "../../components/CommentsPopup";
 
 
 
@@ -26,6 +30,7 @@ const ReviewProfile = (props: any) => {
     const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
     const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
     const [ReviewProfile, setReviewProfile] = React.useState<boolean>(false);
+    const [CommentsPopups, setCommentsPopup] = React.useState<boolean>(false);
     const [CandidateID, setCandidateID] = React.useState<number>(0);
     const [alertProps, setalertProps] = React.useState<alertPropsData>({
         Message: "",
@@ -33,6 +38,7 @@ const ReviewProfile = (props: any) => {
         ButtonAction: null,
         visible: false,
     });
+
 
     const HRFileHandle = (serverUrl: string, fileName: string) => {
         console.log(serverUrl, "ServerUrl");
@@ -101,16 +107,27 @@ const ReviewProfile = (props: any) => {
                 }
             },
         },
-        // {
-        //     field: '',
-        //     header: 'Shortlist/Rejected',
-        //     sortable: true,
-        //     body: (rowData: any) => {
-        //         return (
+        {
+            field: '',
+            header: 'Status',
+            sortable: true,
+            body: (rowData: any) => {
+                return (
+                    <>
+                        {rowData.ProfileStatus === ActionStatus.Shortlists ? (
+                            <CustomLabel value={"Shortlisted"} />
+                        ) : (rowData.ProfileStatus === ActionStatus.Rejected ? (
+                            <CustomLabel value={"Rejected"} />
+                        ) : (
+                            <></>
+                        )
 
-        //         );
-        //     }
-        // },
+                        )}
+                    </>
+                );
+
+            }
+        },
         {
             field: '',
             header: "Action",
@@ -125,7 +142,7 @@ const ReviewProfile = (props: any) => {
                 return (
                     <div>
                         <span >
-                            {rowData.ProfileStatus === ActionStatus.Shortlists ? (
+                            {/* {rowData.ProfileStatus === ActionStatus.Shortlists ? (
                                 <CheckCircleIcon
                                     style={{
                                         fontSize: "2rem",
@@ -160,7 +177,17 @@ const ReviewProfile = (props: any) => {
                                         onClick={() => handleRedirectView(rowData)}
                                     />
                                 </>
-                            )}
+                            )} */}
+                            <Button
+                                onClick={() => handleRedirectView(rowData)}
+                                className="table_btn"
+                                icon="pi pi-eye"
+                                style={{
+                                    width: "30px",
+                                    marginRight: "7px",
+                                    padding: "3px",
+                                }}
+                            />
 
                         </span>
                     </div>
@@ -168,6 +195,51 @@ const ReviewProfile = (props: any) => {
             },
         },
     ];
+
+    function OpenCommentsPopup(): void {
+        setCommentsPopup(true);
+    }
+
+    if (props.CurrentRoleID === RoleID.LineManager) {
+        columnConfig.push({
+            field: 'Comments',
+            header: 'Comments',
+            sortable: false,
+            body: (rowData: any) => {
+
+                return (
+                    <>
+                        <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg12">
+                                <div className="ms-Grid-col ms-lg4">
+                                    {/* <CustomLabel value={" View Justifications"} /> */}
+                                    <ReuseButton
+                                        Style={{
+                                            minWidth: "117px",
+                                            fontSize: "13px",
+                                            paddingBottom: "24px",
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            height: "41px",
+                                            paddingTop: "22px",
+                                        }}
+                                        label="VIEW"
+                                        onClick={() => OpenCommentsPopup()}
+                                        spacing={4}
+                                        imgSrc={require("../../assets/Viewicon.svg")}
+                                        imgAlt="ssss"
+                                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                                        imgAltHover="Image"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                );
+
+            }
+        });
+    }
 
     const fetchCandidateData = async (RecruitmentDetails: any) => {
         setIsLoading(true);
@@ -306,7 +378,7 @@ const ReviewProfile = (props: any) => {
                             ReleventExperience: Candidate?.ReleventExperience,
                             Qualification: Candidate?.Qualification,
                             RecuritmentHR: Candidate?.ProfileStatus,
-                            LineManagerAction: ""
+                            RecruitmentIDId: RecruitmentDetails[0]?.ID,
                         };
                         console.log(obj, "obj");
                         try {
@@ -366,15 +438,19 @@ const ReviewProfile = (props: any) => {
             label: "Review Profile",
             value: "tab1",
             content: (
-                <div className="menu-card">
-                    <ReviewProfileDatatable
-                        data={CandidateData}
-                        columns={columnConfig}
-                        rows={rows}
-                        onPageChange={onPageChange}
-                    />
-                </div>
-
+                <Card
+                    variant="outlined"
+                    sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                >
+                    <CardContent>
+                        <ReviewProfileDatatable
+                            data={CandidateData}
+                            columns={columnConfig}
+                            rows={rows}
+                            onPageChange={onPageChange}
+                        />
+                    </CardContent>
+                </Card>
             ),
         },
     ];
@@ -482,6 +558,12 @@ const ReviewProfile = (props: any) => {
                 </>
             ) : <></>}
 
+            {CommentsPopups ? (
+                <>
+                    <CommentsPopup
+                        onClose={() => setCommentsPopup(false)} visible={CommentsPopups} />
+                </>
+            ) : (<></>)}
 
         </>
 

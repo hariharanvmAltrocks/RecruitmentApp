@@ -24,6 +24,7 @@ interface TabsComponentProps {
         label: string;
         onClick?: () => void;
     }[];
+    onTabChange?: (newTab: string) => void;
 }
 
 
@@ -35,18 +36,25 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
     tabClassName,
     Statuslist,
     validateTab,
-    tabtype
+    tabtype,
+    onTabChange
 }) => {
     const [value, setValue] = React.useState(initialTab);
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
+        if (onTabChange) {
+            onTabChange(newValue);
+        }
     };
 
     const handlePreviousClick = () => {
         const currentIndex = tabs.findIndex((tab) => tab.value === value);
         if (currentIndex > 0) {
             setValue(tabs[currentIndex - 1].value);
+            if (onTabChange) {
+                onTabChange(tabs[currentIndex - 1].value);
+            }
         }
     };
 
@@ -65,6 +73,9 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
         } else {
             if (currentIndex < tabs.length - 1) {
                 setValue(tabs[currentIndex + 1].value);
+                if (onTabChange) {
+                    onTabChange(tabs[currentIndex + 1].value);
+                }
             }
         }
     };
@@ -150,7 +161,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                                     } else {
                                         return (
                                             <div key={index} style={{ marginRight: "10px" }}>
-                                                <ReuseButton label={button.label} onClick={button.onClick} spacing={4} />
+                                                <ReuseButton label={button.label} onClick={button.onClick} spacing={4} width={"100%"} />
                                             </div>
                                         );
                                     }

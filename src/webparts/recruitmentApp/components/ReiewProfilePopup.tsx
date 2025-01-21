@@ -10,6 +10,7 @@ import LabelValue from "./LabelValue";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import TabsComponent from "./TabsComponent ";
 import CustomLabel from "./CustomLabel";
+import CustomTextArea from "./CustomTextArea";
 
 type Props = {
     ID: number;
@@ -47,13 +48,13 @@ const ReiewProfilePopup: React.FC<Props> = ({ ID, Shortlists_fn, Rejected_fn, ba
         LanguageKnown: "",
         ReleventExperience: "",
         Qualification: "",
-        CandidateCVDoc: []
+        CandidateCVDoc: [],
     });
-    // const [validationErrors, setValidationError] = React.useState<formValidation>({
-    //     AssignRecruitmentHR: false,
-    //     AssignAgencies: false,
-    //     Comments: false
-    // })
+    const [Comments, setComment] = useState<string>("");
+    const [validationErrors, setValidationErrors] = React.useState<{ Comments: boolean }>({
+        Comments: false,
+    });
+
 
     const fetchData = async () => {
         if (isLoading) return;
@@ -104,6 +105,16 @@ const ReiewProfilePopup: React.FC<Props> = ({ ID, Shortlists_fn, Rejected_fn, ba
         void fetchData();
     }, []);
 
+    const handleInputChangeTextArea = (
+        value: string | any,
+        StateValue: string
+    ) => {
+        setComment(value)
+        setValidationErrors((prevState) => ({
+            ...prevState,
+            [StateValue]: false
+        }))
+    };
 
     const tabs = [
         {
@@ -135,7 +146,7 @@ const ReiewProfilePopup: React.FC<Props> = ({ ID, Shortlists_fn, Rejected_fn, ba
                                     <LabelValue value={formState.FullName} />
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
-                                    <Labelheader value="PassportID" />
+                                    <Labelheader value="Passport ID" />
                                     <LabelValue value={formState.PassportID} />
                                 </div>
 
@@ -155,14 +166,14 @@ const ReiewProfilePopup: React.FC<Props> = ({ ID, Shortlists_fn, Rejected_fn, ba
                                     <LabelValue value={formState.Gender} />
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
-                                    <Labelheader value="ContactNumber" />
+                                    <Labelheader value="Contact Number" />
                                     <LabelValue value={formState.ContactNumber} />
                                 </div>
                             </div>
 
                             <div className="ms-Grid-row">
                                 <div className="ms-Grid-col ms-lg3">
-                                    <Labelheader value="LanguageKnown" />
+                                    <Labelheader value="Languages Known" />
                                     <LabelValue value={formState?.LanguageKnown} />
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
@@ -170,7 +181,7 @@ const ReiewProfilePopup: React.FC<Props> = ({ ID, Shortlists_fn, Rejected_fn, ba
                                     <LabelValue value={formState?.Qualification} />
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
-                                    <Labelheader value="ReleventExperience" />
+                                    <Labelheader value="Relevant Experience" />
                                     <LabelValue value={formState?.ReleventExperience} />
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
@@ -181,16 +192,12 @@ const ReiewProfilePopup: React.FC<Props> = ({ ID, Shortlists_fn, Rejected_fn, ba
 
                             <div className="ms-Grid-row">
                                 <div className="ms-Grid-col ms-lg3">
-                                    <Labelheader value="TotalYearOfExperiance" />
+                                    <Labelheader value="Total Years of Experience" />
                                     <LabelValue value={formState.TotalYearOfExperiance} />
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
-                                    <Labelheader value="Type of Contract" />
+                                    <Labelheader value="Residential Address" />
                                     <LabelValue value={formState.ResidentialAddress} />
-                                </div>
-                                <div className="ms-Grid-col ms-lg3">
-                                    <Labelheader value="TotalYearOfExperiance" />
-                                    <LabelValue value={formState.TotalYearOfExperiance} />
                                 </div>
 
                             </div>
@@ -208,6 +215,24 @@ const ReiewProfilePopup: React.FC<Props> = ({ ID, Shortlists_fn, Rejected_fn, ba
                                     ))}
                                 </div>
                             </div>
+
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg9">
+                                    <CustomTextArea
+                                        label="Justification"
+                                        value={Comments}
+                                        error={validationErrors.Comments}
+                                        onChange={(value) =>
+                                            handleInputChangeTextArea(
+                                                value,
+                                                "Comments"
+                                            )
+                                        }
+                                        mandatory={true}
+                                    />
+                                </div>
+                            </div>
+
                         </div>
                     </CardContent>
                 </Card>
@@ -224,19 +249,19 @@ const ReiewProfilePopup: React.FC<Props> = ({ ID, Shortlists_fn, Rejected_fn, ba
                         initialTab="tab1"
                         additionalButtons={[
                             {
-                                label: "BACK",
+                                label: "Back",
                                 onClick: async () => {
                                     back_fn();
                                 }
                             },
                             {
-                                label: "Shrotlist",
+                                label: "Shortlisted ",
                                 onClick: async () => {
                                     Shortlists_fn();
                                 }
                             },
                             {
-                                label: "Reject",
+                                label: "Rejected",
                                 onClick: async () => {
                                     Rejected_fn();
                                 }
