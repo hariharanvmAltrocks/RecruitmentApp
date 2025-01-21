@@ -26,7 +26,6 @@ import { CommentsData, InsertComments } from "../../Services/RecruitmentProcess/
 import CustomViewDocument from "../../components/CustomViewDocument";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import RichTextEditor from "../../components/CustomRichTextEditor";
-import { Dialog } from "primereact/dialog";
 import PreviewScreen from "./PreviewScreen";
 
 interface Item {
@@ -148,6 +147,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     const [MainComponent, setMainComponent] = useState<boolean>(true);
     const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
     const [PreviewBtn, setPreviewBtn] = useState<boolean>(false);
+    const [SubmitBtn, setSubmitBtn] = useState<boolean>(true);
+    const [activeTab, setactiveTab] = useState<string>("tab1");
+
 
     const fetchData = async () => {
         if (isLoading) return;
@@ -1436,7 +1438,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         <div className="menu-card">
                             <TabsComponent
                                 tabs={tabs}
-                                initialTab="tab1"
+                                initialTab={activeTab}
                                 handleCancel={handleCancel}
                                 additionalButtons={
                                     advDetails.RolePurpose
@@ -1445,6 +1447,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 label: "Preview",
                                                 onClick: async () => {
                                                     setPreviewBtn(true);
+                                                    setMainComponent(false);
                                                 },
                                             },
                                             {
@@ -1452,6 +1455,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 onClick: async () => {
                                                     await SaveRecruitment();
                                                 },
+                                                disable: SubmitBtn
                                             },
                                         ]
                                         : [
@@ -1460,6 +1464,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 onClick: async () => {
                                                     await SaveRecruitment();
                                                 },
+                                                disable: SubmitBtn
                                             },
                                         ]
                                 }
@@ -1467,11 +1472,21 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         </div>
                     </CustomLoader>
                 </>
-            ) : (<>
-                <CommanComments
-                    onClose={() => setMainComponent(true)}
-                    Comments={CommentData} />
-            </>)}
+            ) : PreviewBtn ? (
+                <>
+                    <PreviewScreen
+                        data={advDetails}
+                        onclose={() => { setPreviewBtn(false); setMainComponent(true); setactiveTab("tab2") }}
+                        Ok_btnfn={() => { setSubmitBtn(false); setPreviewBtn(false); setMainComponent(true); setactiveTab("tab2") }}
+                    />
+                </>
+            ) : (
+                <>
+                    <CommanComments
+                        onClose={() => setMainComponent(true)}
+                        Comments={CommentData} />
+                </>
+            )}
 
 
             {AlertPopupOpen ? (
@@ -1485,17 +1500,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
             {PreviewBtn && (
                 <>
-                    <Dialog
+                    {/* <PreviewScreen
+                        data={advDetails}
+                        onclose={() => setPreviewBtn(false)}
+                    /> */}
+                    {/* <Dialog
                         header={
                             <>
-                                <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                                    <div className="ms-Grid-col ms-lg12">
-                                        <LabelHeaderComponents value="Advertisement" />
-                                    </div>
-                                </div>
-                                <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                                    <CustomLabel value={`JobTitle - ${formState.JobCode}`} style={{ fontSize: "17px", fontWeight: "bold" }} />
-                                </div>
+                              
                             </>
                         }
                         visible={PreviewBtn}
@@ -1507,11 +1519,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         }}
                         onHide={() => setPreviewBtn(false)}
                     >
-                        <PreviewScreen
-                            data={advDetails}
-                            onclose={() => setPreviewBtn(false)}
-                        />
-                    </Dialog>
+                      
+                    </Dialog> */}
                 </>
             )}
 

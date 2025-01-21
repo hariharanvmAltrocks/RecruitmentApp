@@ -56,6 +56,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
         AreaOfWork: "",
         ReasonForVacancy: "",
         RecruitmentAuthorised: "",
+        IsPayrollEmailed: "",
         EnterNumberOfMonths: 0,
         DateRequried: "",
         IsRevert: "",
