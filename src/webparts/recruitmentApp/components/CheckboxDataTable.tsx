@@ -6,11 +6,12 @@ import { Icon } from "@fluentui/react";
 import ReuseButton from "./ReuseButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CustomLoader from "../Services/Loader/CustomLoader";
-import CustomCheckBox from "./CustomCheckbox";
+
 import { FilterMatchMode } from "primereact/api";
 import AssignRecuritmentHR, { HeaderValue } from "./AssignRecuritmentHR";
 import { AutoCompleteItem } from "../Models/Screens";
 import { getVRRDetails } from "../Services/ServiceExport";
+import CustomCheckBox from "./CustomCheckBox";
 
 
 interface ColumnConfig {
