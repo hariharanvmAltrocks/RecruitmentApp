@@ -7,7 +7,7 @@ import { GridStatusBackgroundcolor, RoleID, StatusId, tabType } from "../../util
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Button } from "primereact/button";
 import { Card, CardContent } from "@mui/material";
-import 'primeicons/primeicons.css';
+// import 'primeicons/primeicons.css';
 // interface ColumnConfig {
 //     field: string;
 //     header: string;
@@ -174,6 +174,8 @@ const RecruitmentProcess = (props: any) => {
                     props.navigation("/RecurimentProcess/ApprovedVRRView", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId } });
                 } else if (tab === 'tab3') {
                     props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId } });
+                } else if (tab === 'tab5') {
+                    props.navigation("/RecurimentProcess/AssignInterviewPanel", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId } });
                 }
             }
                 break;
@@ -452,6 +454,28 @@ const RecruitmentProcess = (props: any) => {
                                     rows={rows}
                                     onPageChange={(event) => onPageChange(event, "VRR")}
                                     handleRefresh={() => handleRefresh("tab4")}
+                                />
+                            </CardContent>
+
+                        </Card>
+
+                    ),
+                },
+                {
+                    label: "Assigne InterviewPanel",
+                    value: "tab5",
+                    content: (
+                        <Card
+                            variant="outlined"
+                            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                        >
+                            <CardContent>
+                                <SearchableDataTable
+                                    data={RecruitmentDetails}
+                                    columns={columnConfig("tab5", "edit")}
+                                    rows={rows}
+                                    onPageChange={(event) => onPageChange(event, "VRR")}
+                                    handleRefresh={() => handleRefresh("tab5")}
                                 />
                             </CardContent>
 

@@ -33,6 +33,8 @@ export default class RecruitmentService implements IRecruitmentService {
             const formattedItems: any[] = [];
 
             for (const item of listItems) {
+                console.log(item, "GetVacancyDetails Item");
+
                 let VRR: any = {
                     VRRID: item.Id,
                     Nationality: item.Nationality || "",
@@ -573,8 +575,8 @@ export default class RecruitmentService implements IRecruitmentService {
             const CandidateDetails: CandidateData[] = [];
             const listItems: any[] = await SPServices.SPReadItems({
                 Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-                Select: "*,JobCode/JobCode,AssignByInterviewPanel/EMail",
-                Expand: "JobCode,AssignByInterviewPanel",
+                Select: "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID",
+                Expand: "JobCode,AssignByInterviewPanel,RecruitmentID",
                 Filter: filterParam,
                 FilterCondition: filterConditions,
                 Topcount: count.Topcount,
@@ -597,6 +599,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
                 return {
                     ID: item.ID,
+                    RecruitmentID: item?.RecruitmentID?.ID,
                     JobCode: item?.JobCode?.JobCode,
                     JobCodeId: item?.JobCodeId,
                     PassportID: item?.PassportID,
@@ -742,6 +745,34 @@ export default class RecruitmentService implements IRecruitmentService {
             };
         }
     }
+
+    async InsertList(
+        obj: InsertComments,
+        ListName: string,
+    ): Promise<ApiResponse<null>> {
+        try {
+
+            let response: any = await SPServices.SPAddItem({
+                Listname: ListName,
+                RequestJSON: obj,
+            });
+            console.log("CommentsResponse", response);
+
+            return {
+                data: null,
+                status: 200,
+                message: "Data Submitted successfully",
+            };
+        } catch (error) {
+            console.error("Error posting user data:", error);
+            return {
+                data: null,
+                status: 400,
+                message: "Error On Posting Data",
+            };
+        }
+    }
+
 
 }
 

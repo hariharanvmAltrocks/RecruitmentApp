@@ -17,7 +17,7 @@ import Emptypage from "../Screens/EmptyPage/EmptyPage";
 export default function MainPage(props: any) {
     const { roleID, userRole, masterData, ADGroupData } = userInfo();
 
-    const [isExpanded, setIsExpanded] = React.useState(false);
+    const [isExpanded, setIsExpanded] = React.useState(true);
 
     const toggleSideNav = () => {
         setIsExpanded((prevState: any) => !prevState);
@@ -48,7 +48,7 @@ export default function MainPage(props: any) {
                                 <Route path="/CommanTemplate/CommanTemplate" element={<CommanTemplate {...props} {...masterData} />} />
                                 <Route path="/RecurimentProcess/ReviewProfile" element={<ReviewProfile {...props} {...masterData} />} />
                                 <Route path="/RecurimentProcess/AssignInterviewPanel" element={<AssignInterviewPanel {...props} {...masterData} />} />
-                                <Route path="/InterviewPanelList" element={<InterviewPanelList {...props} {...masterData}  {...ADGroupData?.ADGroupIDs} />} />
+                                <Route path="/InterviewPanelList" element={<InterviewPanelList {...props} {...masterData}  {...ADGroupData} />} />
                                 <Route path="/InterviewPanelList/InterviewPanelEdit" element={<InterviewPanelEdit {...props} {...masterData} />} />
 
                             </Routes>

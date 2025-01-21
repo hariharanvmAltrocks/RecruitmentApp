@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "@mui/material";
+import { Card, CardContent, Link } from "@mui/material";
 import { getVRRDetails } from "../../Services/ServiceExport";
 import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
 import CustomLoader from "../../Services/Loader/CustomLoader";
@@ -438,15 +438,19 @@ const ReviewProfile = (props: any) => {
             label: "Review Profile",
             value: "tab1",
             content: (
-                <div className="menu-card">
-                    <ReviewProfileDatatable
-                        data={CandidateData}
-                        columns={columnConfig}
-                        rows={rows}
-                        onPageChange={onPageChange}
-                    />
-                </div>
-
+                <Card
+                    variant="outlined"
+                    sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                >
+                    <CardContent>
+                        <ReviewProfileDatatable
+                            data={CandidateData}
+                            columns={columnConfig}
+                            rows={rows}
+                            onPageChange={onPageChange}
+                        />
+                    </CardContent>
+                </Card>
             ),
         },
     ];

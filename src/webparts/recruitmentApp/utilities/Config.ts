@@ -28,7 +28,8 @@ export const ListNames = {
     InterviewPanelCandidateDetails: "InterviewPanelCandidateDetails",
     HRMSRecruitmentCandidateDetails: "HRMSRecruitmentCandidateDetails",
     HRMSRecruitmentCandidatePersonalDetails: "HRMSRecruitmentCandidatePersonalDetails",
-    HRMSRecruitmentComments: "HRMSRecruitmentComments"
+    HRMSRecruitmentComments: "HRMSRecruitmentComments",
+    HRMSCandidateScoreCard: "HRMSCandidateScoreCard",
 };
 
 export const DocumentLibraray = {
@@ -136,6 +137,7 @@ export const viewLabelcolor = {
 
 export const RecuritmentHRMsg = {
     AdvertisementSubmitMsg: "Advertisement Uploaded Successfully",
+    ScoreCardSubmitMsg: "ScoreCard Uploaded Successfully",
     ONEMDocumentMsg: "ONEM Document Uploaded Successfully",
     RecuritmentSubmitMsg: "Submitted Successfully",
     ApprovedMsg: "Approved Successfully",
@@ -168,11 +170,11 @@ export const RoleProfileMaster = {
 }
 
 export const ScoreRanking: AutoCompleteItem[] = [
-    { key: 0, text: "Poor" },
-    { key: 0, text: "Below Average" },
-    { key: 0, text: "Average" },
-    { key: 0, text: "Good" },
-    { key: 0, text: "Excellent" },
+    { key: 1, text: "Poor" },
+    { key: 2, text: "Below Average" },
+    { key: 3, text: "Average" },
+    { key: 4, text: "Good" },
+    { key: 5, text: "Excellent" },
 ]
 
 export const EmploymentOption = [

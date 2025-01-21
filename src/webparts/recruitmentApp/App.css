@@ -1253,22 +1253,23 @@ html {
 
 
 .p-dialog-mask {
-    z-index: auto !important;
+    background-color: #31303052;
+    transition-property: background-color;
 }
 
 .p-dialog-header {
     padding-left: 1%;
-    /* padding-top: 1%; */
+    padding-top: 1%;
 }
 
 .p-dialog-footer {
-    padding-bottom: 1%;
+    padding-bottom: 3%;
+
 }
 
-.p-dialog {
+/* .p-dialog {
     border-radius: 20px !important;
     /* Custom border-radius */
-}
 
 .p-dialog-content {
     scroll-behavior: auto;

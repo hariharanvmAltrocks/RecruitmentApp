@@ -50,6 +50,7 @@ export type RecuritmentData = {
     AreaOfWork: string;
     ReasonForVacancy: string;
     RecruitmentAuthorised: string;
+    IsPayrollEmailed: string;
     EnterNumberOfMonths: number;
     DateRequried: string;
     IsRevert: string;
@@ -67,6 +68,17 @@ export type RecuritmentData = {
     AssignAgenciesOption: AutoCompleteItem[];
     CandidateCVAttachment: IAttachmentExampleState[];
     Comments: string
+}
+
+export type AdvDetails = {
+    MinQualification: string;
+    PrefeQualification: string;
+    RoleSpeKnowledge: AutoCompleteItem;
+    RequiredLevel: AutoCompleteItem;
+    TechnicalSkills: AutoCompleteItem;
+    LevelProficiency: AutoCompleteItem;
+    RolePurpose: string;
+    JobDescription: string;
 }
 
 export type CandidateData = {
@@ -93,6 +105,8 @@ export type CandidateData = {
 
 
 export type ScoreCardData = {
+    CandidateID: number;
+    RecruitmentID: number;
     JobCode: string;
     JobCodeId: number;
     PassportID: string;

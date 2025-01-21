@@ -1,10 +1,10 @@
 import * as React from "react";
-import { getVRRDetails } from "../../Services/ServiceExport";
+import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
-import { EmploymentOption, HRMSAlertOptions, RecuritmentHRMsg, ScoreRanking } from "../../utilities/Config";
+import { EmploymentOption, HRMSAlertOptions, ListNames, RecuritmentHRMsg, ScoreRanking } from "../../utilities/Config";
 import { ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
 import CustomInput from "../../components/CustomInput";
@@ -12,6 +12,7 @@ import LabelHeaderComponents from "../../components/TitleHeader";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomRadioGroup from "../../components/CustomRadioGroup";
 import CustomTextArea from "../../components/CustomTextArea";
+import { Card, CardContent } from "@mui/material";
 
 type ValidationError = {
     Qualifications: boolean;
@@ -30,6 +31,8 @@ const InterviewPanelEdit = (props: any) => {
     console.log(props, "ReviewProfile");
 
     const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
+        CandidateID: 0,
+        RecruitmentID: 0,
         JobCode: "",
         JobCodeId: 0,
         PassportID: "",
@@ -99,6 +102,8 @@ const InterviewPanelEdit = (props: any) => {
                 const op = data.data[0]
                 setCandidateData((prevState) => ({
                     ...prevState,
+                    CandidateID: op?.ID,
+                    RecruitmentID: op?.RecruitmentID,
                     JobCode: op?.JobCode,
                     JobCodeId: op?.JobCodeId,
                     PassportID: op?.PassportID,
@@ -220,347 +225,373 @@ const InterviewPanelEdit = (props: any) => {
     };
 
     const Submit_fn = async () => {
-        let Valid = !Validation();
-        console.log(Valid, "Valid");
-        const obj = {
-            JobCode: CandidateData?.JobCode,
-            JobCodeId: CandidateData?.JobCodeId,
-            PassportID: CandidateData?.PassportID,
-            FullName: CandidateData?.FullName,
-            ResidentialAddress: CandidateData?.ResidentialAddress,
-            DOB: CandidateData?.DOB,
-            ContactNumber: CandidateData?.ContactNumber,
-            Email: CandidateData?.Email,
-            Nationality: CandidateData?.Nationality,
-            Gender: CandidateData?.Gender,
-            TotalYearOfExperiance: CandidateData?.TotalYearOfExperiance,
-            Skills: CandidateData?.Skills,
-            LanguageKnown: CandidateData?.LanguageKnown,
-            ReleventExperience: CandidateData?.ReleventExperience,
-            Qualification: CandidateData?.Qualification,
-            Qualifications: CandidateData?.Qualifications,
-            Experience: CandidateData?.Experience,
-            Knowledge: CandidateData?.Knowledge,
-            Energylevel: CandidateData?.Energylevel,
-            Requirements: CandidateData?.Requirements,
-            contributeculture: CandidateData?.contributeculture,
-            ExpatExperienceCongolese: CandidateData?.ExpatExperienceCongolese,
-            CriteriaRecognised: CandidateData?.CriteriaRecognised,
-        }
-        console.log("obj", obj);
+        try {
+            let Valid = !Validation();
+            console.log(Valid, "Valid");
 
-    }
+            const CurrentUserEmailID = await CommonServices.getUserGuidByEmail(props.CurrentUserEmailId);
+            console.log(CurrentUserEmailID.data, "CurrentUserEmailID");
+
+            const obj = {
+                RelevantQualification: String(CandidateData?.Qualifications.key),
+                ReleventExperience: String(CandidateData?.Experience.key),
+                Knowledge: String(CandidateData?.Knowledge.key),
+                EnergyLevel: String(CandidateData?.Energylevel.key),
+                MeetJobRequirement: String(CandidateData?.Requirements.key),
+                ContributeTowardsCultureRequried: String(CandidateData?.contributeculture.key),
+                Experience: String(CandidateData?.ExpatExperienceCongolese.key),
+                OtherCriteriaScore: String(CandidateData?.CriteriaRecognised.key),
+                ConsiderForEmployment: CandidateData?.Employment,
+                Feedback: CandidateData?.EvaluationFeedback,
+                CandidateDetailsIDId: CandidateData?.CandidateID,
+                RecruitmentIDId: CandidateData?.RecruitmentID,
+                RoleId: props.CurrentRoleID,
+                InterviewPersonNameId: CurrentUserEmailID.data?.key
+            };
+
+            console.log("obj", obj);
+
+            const ScorecardData = await getVRRDetails.InsertList(obj, ListNames.HRMSCandidateScoreCard);
+            console.log(ScorecardData, "ScorecardData");
+
+            if (ScorecardData.status === 200) {
+                let CancelAlert = {
+                    Message: RecuritmentHRMsg.ScoreCardSubmitMsg,
+                    Type: HRMSAlertOptions.Success,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                        if (userClickedOK) {
+                            props.navigation("/InterviewPanelList");
+                            setAlertPopupOpen(false);
+                        }
+                    }
+                }
+                setAlertPopupOpen(true);
+                setalertProps(CancelAlert);
+                setIsLoading(false);
+            }
+
+        } catch (error) {
+            console.error("An error occurred during the submission process:", error);
+            throw new Error("Failed to submit data. Please try again later.");
+        }
+    };
+
 
     const tabs = [
         {
             label: "Assign Interview Panel",
             value: "tab1",
             content: (
-                <div className="menu-card">
-                    <div>
-                        <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
-                            <LabelHeaderComponents value={"Position Details"} />
-                        </div>
-                        <div className="menu-card">
-                            <div className="ms-Grid-row">
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomInput
-                                        label="Position Title"
-                                        value={CandidateData.TotalYearOfExperiance}
-                                        disabled={true}
-                                        mandatory={false}
-                                        onChange={(value) =>
-                                            setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
-                                        }
-                                    />
+                <Card
+                    variant="outlined"
+                    sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                >
+                    <CardContent>
+                        <div>
+                            <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
+                                <LabelHeaderComponents value={"Position Details"} />
+                            </div>
+                            <div className="sub-menu-card">
+                                <div className="ms-Grid-row">
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomInput
+                                            label="Position Title"
+                                            value={CandidateData.JobCode}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
+                                            }
+                                        />
+
+                                    </div>
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomInput
+                                            label="Job Grade"
+                                            value={CandidateData.JobCode}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
+                                            }
+                                        />
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
+                                <LabelHeaderComponents value={"Candidate Details"} />
+                            </div>
+                            <div className="sub-menu-card">
+                                <div className="ms-Grid-row">
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomInput
+                                            label="Candidate ID"
+                                            value={CandidateData.CandidateID}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
+                                            }
+                                        />
+
+                                    </div>
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomInput
+                                            label="Applicant Name"
+                                            value={CandidateData.FullName}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
+                                            }
+                                        />
+
+                                    </div>
+
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomInput
+                                            label="Applicant Surname"
+                                            value={CandidateData.LastName}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                                <div className="ms-Grid-row">
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomInput
+                                            label="Nationality"
+                                            value={CandidateData.Nationality}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
+                                            }
+                                        />
+
+                                    </div>
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomInput
+                                            label="Gender and Age"
+                                            value={CandidateData.Gender}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
+                                            }
+                                        />
+
+                                    </div>
+
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomInput
+                                            label="Highest Relevant Qualification"
+                                            value={CandidateData.Qualification}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                                <div className="ms-Grid-row">
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomInput
+                                            label="Experiance in Mining Industry (Years)"
+                                            value={CandidateData.TotalYearOfExperiance}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
+                                            }
+                                        />
+
+                                    </div>
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomInput
+                                            label="Experiance in Related Field (Years)"
+                                            value={CandidateData.ReleventExperience}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
+                                            }
+                                        />
+
+                                    </div>
+
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomInput
+                                            label="Date of Interview"
+                                            value={CandidateData.DOB}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
+                                <LabelHeaderComponents value={"Candidate Evaluation"} />
+                            </div>
+                            <div className="sub-menu-card">
+                                <div className="ms-Grid-row">
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomAutoComplete
+                                            label="Qualifications (Relevant)"
+                                            value={CandidateData.Qualifications}
+                                            options={ScoreRanking}
+                                            onChange={(value) => handleAutoComplete(
+                                                "Qualifications",
+                                                value
+                                            )}
+                                            mandatory={true}
+                                            error={ValidationError.Qualifications}
+                                            disabled={false} />
+                                    </div>
+
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomAutoComplete
+                                            label="Experience (Relevant)"
+                                            value={CandidateData.Experience}
+                                            options={ScoreRanking}
+                                            onChange={(value) => handleAutoComplete(
+                                                "Experience",
+                                                value
+                                            )}
+                                            error={ValidationError.Experience}
+                                            mandatory={true} disabled={false} />
+                                    </div>
+
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomAutoComplete
+                                            label="Knowledge"
+                                            value={CandidateData.Knowledge}
+                                            options={ScoreRanking}
+                                            mandatory={true}
+                                            onChange={(value) => handleAutoComplete(
+                                                "Knowledge",
+                                                value
+                                            )}
+                                            error={ValidationError.Knowledge} disabled={false} />
+                                    </div>
 
                                 </div>
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomInput
-                                        label="Job Grade"
-                                        value={CandidateData.ContactNumber}
-                                        disabled={true}
-                                        mandatory={false}
-                                        onChange={(value) =>
-                                            setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
-                                        }
-                                    />
+                                <div className="ms-Grid-row">
 
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomAutoComplete
+                                            label="Energy Level"
+                                            value={CandidateData.Energylevel}
+                                            options={ScoreRanking}
+                                            mandatory={true}
+                                            onChange={(value) => handleAutoComplete(
+                                                "Energylevel",
+                                                value
+                                            )}
+                                            error={ValidationError.Energylevel} disabled={false} />
+                                    </div>
+
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomAutoComplete
+                                            label="Meets All Job Requirements"
+                                            value={CandidateData.Requirements}
+                                            options={ScoreRanking}
+                                            mandatory={true}
+                                            onChange={(value) => handleAutoComplete(
+                                                "Requirements",
+                                                value
+                                            )}
+                                            error={ValidationError.Requirements} disabled={false} />
+                                    </div>
+
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomAutoComplete
+                                            label="Will Contribute to the Culture Required"
+                                            value={CandidateData.contributeculture}
+                                            options={ScoreRanking}
+                                            mandatory={true}
+                                            onChange={(value) => handleAutoComplete(
+                                                "contributeculture",
+                                                value
+                                            )}
+                                            error={ValidationError.contributeculture} disabled={false} />
+                                    </div>
+
+                                </div>
+
+                                <div className="ms-Grid-row">
+
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomAutoComplete
+                                            label="Expat Experience/Congolese"
+                                            value={CandidateData.ExpatExperienceCongolese}
+                                            options={ScoreRanking}
+                                            mandatory={true}
+                                            onChange={(value) => handleAutoComplete(
+                                                "ExpatExperienceCongolese",
+                                                value
+                                            )}
+                                            error={ValidationError.ExpatExperienceCongolese} disabled={false} />
+                                    </div>
+
+                                    <div className="ms-Grid-col ms-lg4">
+                                        <CustomAutoComplete
+                                            label="Other Criteria Recognized by the Panel"
+                                            value={CandidateData.CriteriaRecognised}
+                                            options={ScoreRanking}
+                                            mandatory={true}
+                                            onChange={(value) => handleAutoComplete(
+                                                "CriteriaRecognised",
+                                                value
+                                            )}
+                                            error={ValidationError.CriteriaRecognised} disabled={false} />
+                                    </div>
+                                </div>
+
+                                <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
+                                    <div className="ms-grid-col ms-lg6">
+                                        <CustomRadioGroup
+                                            label="To Consider for Employment"
+                                            value={CandidateData?.Employment}
+                                            options={EmploymentOption}
+                                            mandatory={true}
+                                            error={ValidationError.Employment}
+                                            onChange={(value) => handleRadioChange(
+                                                "Employment",
+                                                value
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
+                                    <div className="ms-grid-col ms-lg10">
+                                        <CustomTextArea
+                                            label="Evaluation Feedback"
+                                            value={CandidateData?.EvaluationFeedback}
+                                            error={ValidationError.EvaluationFeedback}
+                                            mandatory={true}
+                                            onChange={(value) => handletextArea(
+                                                "EvaluationFeedback",
+                                                value
+                                            )}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
-                            <LabelHeaderComponents value={"Candidate Details"} />
-                        </div>
-                        <div className="menu-card">
-                            <div className="ms-Grid-row">
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomInput
-                                        label="Candidate ID"
-                                        value={CandidateData.TotalYearOfExperiance}
-                                        disabled={true}
-                                        mandatory={false}
-                                        onChange={(value) =>
-                                            setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
-                                        }
-                                    />
-
-                                </div>
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomInput
-                                        label="Applicant Name"
-                                        value={CandidateData.ContactNumber}
-                                        disabled={true}
-                                        mandatory={false}
-                                        onChange={(value) =>
-                                            setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
-                                        }
-                                    />
-
-                                </div>
-
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomInput
-                                        label="Applicant Surname"
-                                        value={CandidateData.ContactNumber}
-                                        disabled={true}
-                                        mandatory={false}
-                                        onChange={(value) =>
-                                            setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
-                                        }
-                                    />
-                                </div>
-                            </div>
-                            <div className="ms-Grid-row">
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomInput
-                                        label="Nationality"
-                                        value={CandidateData.TotalYearOfExperiance}
-                                        disabled={true}
-                                        mandatory={false}
-                                        onChange={(value) =>
-                                            setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
-                                        }
-                                    />
-
-                                </div>
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomInput
-                                        label="Gender and Age"
-                                        value={CandidateData.ContactNumber}
-                                        disabled={true}
-                                        mandatory={false}
-                                        onChange={(value) =>
-                                            setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
-                                        }
-                                    />
-
-                                </div>
-
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomInput
-                                        label="Highest Relevant Qualification"
-                                        value={CandidateData.ContactNumber}
-                                        disabled={true}
-                                        mandatory={false}
-                                        onChange={(value) =>
-                                            setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
-                                        }
-                                    />
-                                </div>
-                            </div>
-                            <div className="ms-Grid-row">
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomInput
-                                        label="Experiance in Mining Industry (Years)"
-                                        value={CandidateData.TotalYearOfExperiance}
-                                        disabled={true}
-                                        mandatory={false}
-                                        onChange={(value) =>
-                                            setCandidateData((prevState) => ({ ...prevState, TotalYearOfExperiance: value }))
-                                        }
-                                    />
-
-                                </div>
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomInput
-                                        label="Experiance in related field (Years)"
-                                        value={CandidateData.ContactNumber}
-                                        disabled={true}
-                                        mandatory={false}
-                                        onChange={(value) =>
-                                            setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
-                                        }
-                                    />
-
-                                </div>
-
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomInput
-                                        label="Date of interview"
-                                        value={CandidateData.ContactNumber}
-                                        disabled={true}
-                                        mandatory={false}
-                                        onChange={(value) =>
-                                            setCandidateData((prevState) => ({ ...prevState, ContactNumber: value }))
-                                        }
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
-                            <LabelHeaderComponents value={"Candidate Evaluation"} />
-                        </div>
-                        <div className="menu-card">
-                            <div className="ms-Grid-row">
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomAutoComplete
-                                        label="Qualifications (Relevant)"
-                                        value={CandidateData.Qualifications}
-                                        options={ScoreRanking}
-                                        onChange={(value) => handleAutoComplete(
-                                            "Qualifications",
-                                            value
-                                        )}
-                                        mandatory={true}
-                                        error={ValidationError.Qualifications}
-                                        disabled={false} />
-                                </div>
-
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomAutoComplete
-                                        label="Experience (Relevant)"
-                                        value={CandidateData.Experience}
-                                        options={ScoreRanking}
-                                        onChange={(value) => handleAutoComplete(
-                                            "Experience",
-                                            value
-                                        )}
-                                        error={ValidationError.Experience}
-                                        mandatory={true} disabled={false} />
-                                </div>
-
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomAutoComplete
-                                        label="Knowledge"
-                                        value={CandidateData.Knowledge}
-                                        options={ScoreRanking}
-                                        mandatory={true}
-                                        onChange={(value) => handleAutoComplete(
-                                            "Knowledge",
-                                            value
-                                        )}
-                                        error={ValidationError.Knowledge} disabled={false} />
-                                </div>
-
-                            </div>
-                            <div className="ms-Grid-row">
-
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomAutoComplete
-                                        label="Energy Level"
-                                        value={CandidateData.Energylevel}
-                                        options={ScoreRanking}
-                                        mandatory={true}
-                                        onChange={(value) => handleAutoComplete(
-                                            "Energylevel",
-                                            value
-                                        )}
-                                        error={ValidationError.Energylevel} disabled={false} />
-                                </div>
-
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomAutoComplete
-                                        label="Meets All Job Requirements"
-                                        value={CandidateData.Requirements}
-                                        options={ScoreRanking}
-                                        mandatory={true}
-                                        onChange={(value) => handleAutoComplete(
-                                            "Requirements",
-                                            value
-                                        )}
-                                        error={ValidationError.Requirements} disabled={false} />
-                                </div>
-
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomAutoComplete
-                                        label="Will Contribute to the Culture Required"
-                                        value={CandidateData.contributeculture}
-                                        options={ScoreRanking}
-                                        mandatory={true}
-                                        onChange={(value) => handleAutoComplete(
-                                            "contributeculture",
-                                            value
-                                        )}
-                                        error={ValidationError.contributeculture} disabled={false} />
-                                </div>
-
-                            </div>
-
-                            <div className="ms-Grid-row">
-
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomAutoComplete
-                                        label="Expat Experience/Congolese"
-                                        value={CandidateData.ExpatExperienceCongolese}
-                                        options={ScoreRanking}
-                                        mandatory={true}
-                                        onChange={(value) => handleAutoComplete(
-                                            "ExpatExperienceCongolese",
-                                            value
-                                        )}
-                                        error={ValidationError.ExpatExperienceCongolese} disabled={false} />
-                                </div>
-
-                                <div className="ms-Grid-col ms-lg4">
-                                    <CustomAutoComplete
-                                        label="Other Criteria Recognized by the Panel"
-                                        value={CandidateData.CriteriaRecognised}
-                                        options={ScoreRanking}
-                                        mandatory={true}
-                                        onChange={(value) => handleAutoComplete(
-                                            "CriteriaRecognised",
-                                            value
-                                        )}
-                                        error={ValidationError.CriteriaRecognised} disabled={false} />
-                                </div>
-                            </div>
-
-                            <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
-                                <div className="ms-grid-col ms-lg6">
-                                    <CustomRadioGroup
-                                        label="To Consider for Employment"
-                                        value={CandidateData?.Employment}
-                                        options={EmploymentOption}
-                                        mandatory={true}
-                                        error={ValidationError.Employment}
-                                        onChange={(value) => handleRadioChange(
-                                            "Employment",
-                                            value
-                                        )}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
-                                <div className="ms-grid-col ms-lg10">
-                                    <CustomTextArea
-                                        label="Evaluation Feedback"
-                                        value={CandidateData?.EvaluationFeedback}
-                                        error={ValidationError.EvaluationFeedback}
-                                        mandatory={true}
-                                        onChange={(value) => handletextArea(
-                                            "EvaluationFeedback",
-                                            value
-                                        )}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                    </CardContent>
+                </Card>
             ),
         },
     ];
@@ -570,7 +601,6 @@ const InterviewPanelEdit = (props: any) => {
         let CancelAlert = {
             Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
             Type: HRMSAlertOptions.Confirmation,
-            Notes: "Once status changes, You cannot revert back",
             visible: true,
             ButtonAction: async (userClickedOK: boolean) => {
                 if (userClickedOK) {
@@ -587,8 +617,6 @@ const InterviewPanelEdit = (props: any) => {
         setIsLoading(false);
 
     };
-
-
 
     return (
         <>

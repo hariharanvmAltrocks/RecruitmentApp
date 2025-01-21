@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "@mui/material";
+import { Card, CardContent, Link } from "@mui/material";
 import { getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
@@ -24,7 +24,7 @@ const AssignInterviewPanel = (props: any) => {
     const [AssignBtnValidation, setAssignBtnValidation] = React.useState<boolean>(false);
     const [HeaderValueData, setHeaderValueData] = React.useState<HeaderValue | null>(null);
     const [selectAll, setSelectAll] = React.useState<boolean>(false);
-    const [AssignRecuritmentHRValue, setAssignRecuritmentHRValue] = React.useState<AutoCompleteItem | null>(null);
+    const [AssignRecuritmentHRValue, setAssignRecuritmentHRValue] = React.useState<AutoCompleteItem[]>([]);
     const [alertProps, setalertProps] = React.useState<alertPropsData>({
         Message: "",
         Type: "",
@@ -175,6 +175,7 @@ const AssignInterviewPanel = (props: any) => {
                 Headcount: "01"
             }
             setHeaderValueData(HeaderValue)
+            setAssignRecuritmentHRValue([])
         };
 
         void fetchData();
@@ -269,6 +270,7 @@ const AssignInterviewPanel = (props: any) => {
     };
 
     function handleAssignBtn() {
+        debugger;
         let CheckedDataValue = CandidateData.some((item) => item.Checked)
         if (CheckedDataValue) {
             setAssignPopup(!AssignPopup)
@@ -283,7 +285,7 @@ const AssignInterviewPanel = (props: any) => {
             return {
                 ...item,
                 Checked: value,
-                AssignBy: value ? AssignRecuritmentHRValue?.key : null,
+                // AssignBy: value ? AssignRecuritmentHRValue?.key : null,
             };
         });
 
@@ -298,7 +300,7 @@ const AssignInterviewPanel = (props: any) => {
             if (item.Assigned === true) {
                 return {
                     ...item,
-                    AssignBy: AssignRecuritmentHRValue?.key,
+                    // AssignBy: AssignRecuritmentHRValue?.key,
                 };
             }
             return item;
@@ -315,19 +317,23 @@ const AssignInterviewPanel = (props: any) => {
             label: "Assign Interview Panel",
             value: "tab1",
             content: (
-                <div className="menu-card">
-                    <CheckboxDataTable
-                        data={CandidateData}
-                        columns={columnConfig}
-                        rows={rows}
-                        onPageChange={onPageChange}
-                        handleAssignBtn={handleAssignBtn}
-                        AssignBtnValidation={AssignBtnValidation}
-                        handleCheckbox={handleCheckbox}
-                        selectAll={selectAll}
-                        onSelectAllChange={onSelectAllChange} />
-                </div>
-
+                <Card
+                    variant="outlined"
+                    sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                >
+                    <CardContent>
+                        <CheckboxDataTable
+                            data={CandidateData}
+                            columns={columnConfig}
+                            rows={rows}
+                            onPageChange={onPageChange}
+                            handleAssignBtn={handleAssignBtn}
+                            AssignBtnValidation={AssignBtnValidation}
+                            handleCheckbox={handleCheckbox}
+                            selectAll={selectAll}
+                            onSelectAllChange={onSelectAllChange} />
+                    </CardContent>
+                </Card>
             ),
         },
     ];
@@ -354,13 +360,6 @@ const AssignInterviewPanel = (props: any) => {
 
     };
 
-    const handleAutoComplete = async (
-        item: AutoCompleteItem
-    ) => {
-        if (item) {
-            setAssignRecuritmentHRValue(item);
-        }
-    };
 
     console.log(RecruitmentDetails, "RecruitmentDetails");
     return (
@@ -400,7 +399,7 @@ const AssignInterviewPanel = (props: any) => {
             {AssignPopup ? (
                 <>
                     <AssignRecuritmentHR
-                        handleAutoComplete={handleAutoComplete}
+                        // handleAutoComplete={handleAutoComplete}
                         AssignRecuritmentHRValue={AssignRecuritmentHRValue}
                         onClose={handleAssignBtn}
                         HeaderValueData={HeaderValueData}
