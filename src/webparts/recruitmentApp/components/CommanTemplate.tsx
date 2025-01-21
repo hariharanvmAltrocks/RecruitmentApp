@@ -32,7 +32,7 @@ type Tab2details = {
     ReasonForVancancy: string,
     BusinessUnitCode: AutoCompleteItem,
     DepartmentCode: AutoCompleteItem,
-    DateRequried: Date | null,
+    DateRequried: Date | undefined,
 };
 
 type TabValidation = {
@@ -58,7 +58,6 @@ type Tab2Validation = {
 
 
 const CommanTemplate = (props: any) => {
-    console.log(props, "ApprovedVRRView");
     const [data, setData] = React.useState<TabData>({
         tab1: {
             Jobcode: { key: 0, text: "" },
@@ -72,7 +71,7 @@ const CommanTemplate = (props: any) => {
             ReasonForVancancy: "",
             BusinessUnitCode: { key: 0, text: "" },
             DepartmentCode: { key: 0, text: "" },
-            DateRequried: null,
+            DateRequried: undefined,
         }
     });
     const [validationErrors, setValidationError] = React.useState<TabValidation>({
@@ -113,17 +112,13 @@ const CommanTemplate = (props: any) => {
             });
             const data = await getVRRDetails.GetVacancyDetails(filterConditions, Conditions);
             if (data.status === 200 && data.data !== null) {
-                console.log(data, "GetVacancyDetails");
                 setFetchData(data.data);
-                console.log(fetchDatas);
-
+                console.log(fetchDatas, "fetchDatas");
             }
         } catch (error) {
             console.log("GetVacancyDetails doesn't fetch the data", error);
         }
         setIsLoading(false);
-        console.log(data, "data");
-
     };
 
 
@@ -260,7 +255,6 @@ const CommanTemplate = (props: any) => {
                                 onChange={(item) => handleAutoComplete("tab1", "Jobcode", item)}
                                 error={validationErrors.tab1.Jobcode}
                             />
-                            {console.log(data.tab1.Jobcode, "JobcodeVale")}
                         </div>
                         <div className="ms-Grid-col ms-lg4">
                             <CustomInput

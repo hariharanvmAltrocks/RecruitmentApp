@@ -15,33 +15,44 @@ export default function CustomAlert(
     props: CustomAlert
 ) {
     React.useEffect(() => { }, [props]);
+    const SuccessPadding: React.CSSProperties = {
+        padding: props.Type === HRMSAlertOptions.Success ? '' : '.1em 1em 0',
+    };
     const footerContent = (
-
-        <div className="ms-Grid-row"
-            style={{ display: "flex", justifyContent: "center", marginTop: "3%", marginBottom: "3%", marginLeft: "4%" }}
-        >
-            <div className="ms-Grid-col ms-lg3">
-                <ReuseButton
-                    label="OK"
-                    onClick={() => props.ButtonAction && props.ButtonAction(true)}
-                    spacing={4}
-                    Style={{ border: "0", borderRadius: ".25em", background: " #7066e0", color: "white", fontSize: "1em", display: "inline-block" }}
-                />
+        <>
+            <div
+                style={{ display: "flex", justifyContent: "center", }}
+            >
+                <p className="alertextstyle" style={SuccessPadding}>{props.Message}</p>
             </div>
 
 
-            {props.Type === HRMSAlertOptions.Confirmation && (
+            <div className="ms-Grid-row"
+                style={{ display: "flex", justifyContent: "center", marginTop: "3%", marginBottom: "3%", marginLeft: "4%" }}
+            >
                 <div className="ms-Grid-col ms-lg3">
                     <ReuseButton
-                        label="Cancel"
-                        onClick={() => props.ButtonAction && props.ButtonAction(false)}
+                        label="OK"
+                        onClick={() => props.ButtonAction && props.ButtonAction(true)}
                         spacing={4}
-                        Style={{ border: "0", borderRadius: ".25em", background: "#dc3741", color: "#fff", fontSize: "1em", display: "inline-block" }}
+                        Style={{ border: "0", borderRadius: ".25em", background: " #7066e0", color: "white", fontSize: "1em", display: "inline-block" }}
                     />
                 </div>
 
-            )}
-        </div>
+
+                {props.Type === HRMSAlertOptions.Confirmation && (
+                    <div className="ms-Grid-col ms-lg3">
+                        <ReuseButton
+                            label="Cancel"
+                            onClick={() => props.ButtonAction && props.ButtonAction(false)}
+                            spacing={4}
+                            Style={{ border: "0", borderRadius: ".25em", background: "#dc3741", color: "#fff", fontSize: "1em", display: "inline-block" }}
+                        />
+                    </div>
+
+                )}
+            </div>
+        </>
     );
 
     const headerContent = (
@@ -95,18 +106,6 @@ export default function CustomAlert(
     );
 
 
-    const SuccessPadding: React.CSSProperties = {
-        padding: props.Type === HRMSAlertOptions.Success ? '' : '.1em 1em 0',
-    };
-
-    const MessageContent = (
-        <div
-            style={{ display: "flex", justifyContent: "center", }}
-        >
-            <p className="alertextstyle" style={SuccessPadding}>{props.Message}</p>
-        </div>
-    );
-
 
 
     return (
@@ -114,13 +113,12 @@ export default function CustomAlert(
             <CustomPopup
                 visible={props.visible}
                 onClose={props.onClose}
-                width="41%"
-                height="35%"
-                MessageContent={MessageContent}
-                headerContent={headerContent}
-                footerContent={footerContent}
+                width="31%"
+                header={headerContent}
+                children={footerContent}
             />
         </div>
 
     );
 }
+

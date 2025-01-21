@@ -14,8 +14,9 @@ interface viewProps {
 const checkBoxStyles: ICheckboxStyles = {
     root: {
         ".ms-Checkbox-checkbox": {
-            height: "20px !important",
-            width: "20px !important",
+            height: "25px !important",
+            width: "25px !important",
+            borderRadius: "18%",
             border: "2px solid ",
             // background: "#ef3340",
         },

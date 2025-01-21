@@ -4,6 +4,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import "../App.css";
 import ReuseButton from "./ReuseButton";
 import StatusBar from "./StatusBar";
+import { tabType } from "../utilities/Config";
 
 interface TabData {
     label: string;
@@ -16,12 +17,14 @@ interface TabsComponentProps {
     initialTab?: string;
     handleCancel?: () => void;
     tabClassName?: string;
+    tabtype?: string;
     Statuslist?: { [key: string]: string };
     validateTab?: ((tab: string) => boolean);
     additionalButtons?: {
         label: string;
         onClick?: () => void;
     }[];
+    onTabChange?: (newTab: string) => void;
 }
 
 
@@ -32,18 +35,26 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
     handleCancel,
     tabClassName,
     Statuslist,
-    validateTab
+    validateTab,
+    tabtype,
+    onTabChange
 }) => {
     const [value, setValue] = React.useState(initialTab);
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
+        if (onTabChange) {
+            onTabChange(newValue);
+        }
     };
 
     const handlePreviousClick = () => {
         const currentIndex = tabs.findIndex((tab) => tab.value === value);
         if (currentIndex > 0) {
             setValue(tabs[currentIndex - 1].value);
+            if (onTabChange) {
+                onTabChange(tabs[currentIndex - 1].value);
+            }
         }
     };
 
@@ -55,13 +66,16 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
         // isValid = !validateTab(currentTab);
         // }
         if (validateTab) {
-            isValid = validateTab(currentTab); // Call validateTab, but don't expect a return value
+            isValid = validateTab(currentTab);
         }
 
         if (isValid) {
         } else {
             if (currentIndex < tabs.length - 1) {
                 setValue(tabs[currentIndex + 1].value);
+                if (onTabChange) {
+                    onTabChange(tabs[currentIndex + 1].value);
+                }
             }
         }
     };
@@ -106,54 +120,59 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                             ))}
                         </TabContext>
                     </Box>
-                    <div className="ms-Grid-row" style={{ marginBottom: "2%" }}>
-                        <div className="ms-Grid-col ms-lg6"></div>
-                        <div
-                            className="ms-Grid-col ms-lg6"
-                            style={{ display: "flex", justifyContent: "end", marginLeft: "48%" }}
-                        >
-                            {handleCancel && (
-                                <div style={{ marginRight: "10px" }}>
-                                    <ReuseButton label="Cancel" onClick={handleCancel} spacing={4} />
-                                </div>
-                            )}
+                    {tabtype === tabType.Dashboard ? (
+                        <></>
+                    ) : (
+                        <div className="ms-Grid-row" style={{ marginBottom: "2%" }}>
+                            <div className="ms-Grid-col ms-lg6"></div>
+                            <div
+                                className="ms-Grid-col ms-lg6"
+                                style={{ display: "flex", justifyContent: "end", marginLeft: "48%" }}
+                            >
+                                {handleCancel && (
+                                    <div style={{ marginRight: "10px" }}>
+                                        <ReuseButton label="Cancel" onClick={handleCancel} spacing={4} />
+                                    </div>
+                                )}
 
-                            {tabs.length > 1 && value !== tabs[0].value && (
-                                <div style={{ marginRight: "10px" }}>
-                                    <ReuseButton label="Back" onClick={handlePreviousClick} spacing={4} />
-                                </div>
-                            )}
-
-
-                            {tabs.length > 1 && value !== tabs[tabs.length - 1].value && (
-                                <div style={{ marginRight: "10px" }}>
-                                    <ReuseButton label="Next" onClick={handleNextClick} spacing={4} />
-                                </div>
-                            )}
+                                {tabs.length > 1 && value !== tabs[0].value && (
+                                    <div style={{ marginRight: "10px" }}>
+                                        <ReuseButton label="Back" onClick={handlePreviousClick} spacing={4} />
+                                    </div>
+                                )}
 
 
-                            {additionalButtons.map((button, index) => {
-                                if (button.label === "Submit") {
-                                    return (
-                                        value === tabs[tabs.length - 1].value ? (
-                                            <div style={{ marginRight: "10px" }} key={index}>
-                                                <ReuseButton label={button.label} onClick={button.onClick} spacing={4} />
+                                {tabs.length > 1 && value !== tabs[tabs.length - 1].value && (
+                                    <div style={{ marginRight: "10px" }}>
+                                        <ReuseButton label="Next" onClick={handleNextClick} spacing={4} />
+                                    </div>
+                                )}
+
+
+                                {additionalButtons.map((button, index) => {
+                                    if (button.label === "Submit") {
+                                        return (
+                                            value === tabs[tabs.length - 1].value ? (
+                                                <div style={{ marginRight: "10px" }} key={index}>
+                                                    <ReuseButton label={button.label} onClick={button.onClick} spacing={4} />
+                                                </div>
+                                            ) : null
+                                        );
+                                    } else {
+                                        return (
+                                            <div key={index} style={{ marginRight: "10px" }}>
+                                                <ReuseButton label={button.label} onClick={button.onClick} spacing={4} width={"100%"} />
                                             </div>
-                                        ) : null
-                                    );
-                                } else {
-                                    return (
-                                        <div key={index} style={{ marginRight: "10px" }}>
-                                            <ReuseButton label={button.label} onClick={button.onClick} spacing={4} />
-                                        </div>
-                                    );
-                                }
-                            })}
+                                        );
+                                    }
+                                })}
 
 
 
+                            </div>
                         </div>
-                    </div>
+                    )}
+
                 </div>
 
                 {tabClassName === "TabStatus" && (

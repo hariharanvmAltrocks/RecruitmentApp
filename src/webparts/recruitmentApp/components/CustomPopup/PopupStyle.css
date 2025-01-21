@@ -1,4 +1,4 @@
-/* CommonPopup.css */
+/* General Popup Styles */
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -14,18 +14,20 @@
 
 .popup-container {
   background-color: white;
-  padding: 20px;
   border-radius: 28px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-  width: 40%;
+  width: 35%;
+  /* Default width for desktop */
+  max-width: 600px;
+  /* Max width to prevent it from being too wide on large screens */
   position: relative;
+  /* padding: 20px; */
+  box-sizing: border-box;
 }
 
 .popup-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
+  display: block;
+  text-align: center;
 }
 
 .popup-title {
@@ -44,64 +46,25 @@
   top: -7px;
   right: -6px;
   background-color: #FF748D;
-  /* Light pink or any color you prefer */
   color: white;
   border: none;
   width: 20px;
   height: 20px;
-  /* Adjust for rectangle */
   font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  /* Shadow for the 3D effect */
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .popup-close:hover {
   background-color: #FF748D;
-  /* Darker pink on hover */
 }
-
-
-
 
 .popup-body {
   margin-top: 20px;
-}
-
-.popup-details {
-  display: flex;
-  justify-content: space-between;
-}
-
-.popup-item label {
-  font-weight: bold;
-  color: #333;
-}
-
-.popup-item p {
-  margin-top: 5px;
-}
-
-.location-select {
-  display: flex;
-  gap: 10px;
-}
-
-.location-tag {
-  background-color: #e1e7f4;
-  color: #333;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
-.remove-tag {
-  color: #ff5e5e;
-  margin-left: 5px;
-  cursor: pointer;
 }
 
 .popup-footer {
@@ -126,4 +89,71 @@
 .submit-btn {
   background-color: #b87f4a;
   color: white;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .popup-container {
+    width: 80%;
+    /* Take up more space on smaller screens */
+    max-width: 90%;
+    /* Ensure the popup doesn't exceed the screen size */
+    padding: 15px;
+  }
+
+  .popup-header h3 {
+    font-size: 20px;
+    /* Slightly smaller font size on smaller screens */
+  }
+
+  .popup-close {
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+    /* Larger close button on mobile */
+    top: -10px;
+    right: -10px;
+  }
+
+  .popup-footer {
+    flex-direction: column;
+    gap: 10px;
+    /* Stack buttons vertically on small screens */
+  }
+
+  .cancel-btn,
+  .submit-btn {
+    width: 100%;
+    /* Make buttons take full width on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-container {
+    width: 90%;
+    /* Take up more space on very small screens */
+  }
+
+  .popup-header h3 {
+    font-size: 18px;
+    /* Even smaller font for very small devices */
+  }
+
+  .popup-close {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    /* Adjust the close button size */
+    top: -12px;
+    right: -12px;
+  }
+
+  .popup-body {
+    margin-top: 15px;
+  }
+
+  .popup-footer {
+    flex-direction: column;
+    gap: 15px;
+  }
 }

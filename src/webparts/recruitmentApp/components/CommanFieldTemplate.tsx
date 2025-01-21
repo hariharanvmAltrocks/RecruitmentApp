@@ -11,15 +11,12 @@ import { Button } from "primereact/button";
 
 
 const CommanFieldTemplate = (props: any) => {
-    console.log(props, "ApprovedVRR");
-
     const [data, setData] = React.useState<any[]>([]);
     const [rows, setRows] = React.useState<number>(5);
-    const [first, setFirst] = React.useState<number>(0);
+    // const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
     const HRFileHandle = (serverUrl: string, fileName: string) => {
-        console.log(serverUrl, "ServerUrl");
         try {
             if (serverUrl) {
 
@@ -69,7 +66,6 @@ const CommanFieldTemplate = (props: any) => {
             header: "CV",
             sortable: false,
             body: (rowData: any) => {
-                console.log(rowData, "rowDataCandidateCVDoc");
                 if (rowData?.CandidateCVDoc?.[0] && rowData?.CandidateCVDoc?.[0]?.name) {
                     return (
                         <div>
@@ -128,11 +124,10 @@ const CommanFieldTemplate = (props: any) => {
             filterConditions.push({
                 FilterKey: "StatusId",
                 Operator: "eq",
-                FilterValue: StatusId.InitiatedforRecruitmentProcess
+                FilterValue: StatusId.PendingwithHRLeadtoAssignRecruitmentHR
             });
             const data = await getVRRDetails.GetCandidateDetails(filterConditions, Conditions);
             if (data.status === 200 && data.data !== null) {
-                console.log(data.data, "GetVacancyDetails");
                 setData(data.data);
 
             }
@@ -149,7 +144,7 @@ const CommanFieldTemplate = (props: any) => {
 
 
     const onPageChange = (event: any) => {
-        setFirst(event.first);
+        // setFirst(event.first);
         setRows(event.rows);
     };
 
@@ -163,9 +158,13 @@ const CommanFieldTemplate = (props: any) => {
                         data={data}
                         columns={columnConfig}
                         rows={rows}
-                        onPageChange={onPageChange}
-                        selection={[]}
-                    />
+                        onPageChange={onPageChange} handleAssignBtn={function (): void {
+                            throw new Error("Function not implemented.");
+                        }} AssignBtnValidation={false} handleCheckbox={function (value: any, rowData: any): void {
+                            throw new Error("Function not implemented.");
+                        }} onSelectAllChange={function (value: any): void {
+                            throw new Error("Function not implemented.");
+                        }} selectAll={false} />
                     {/* <ReviewProfileDatatable
                         data={data}
                         columns={columnConfig}
@@ -185,8 +184,6 @@ const CommanFieldTemplate = (props: any) => {
                 <Card variant="outlined" sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3" }}>
                     <React.Fragment>
                         <TabsComponent tabs={tabs} initialTab="tab1" tabClassName={"Tab"} />
-                        {console.log(props.masterData, "masterDataDetails")}
-                        {console.log(first, "first")}
                     </React.Fragment>
                 </Card>
             </CustomLoader>

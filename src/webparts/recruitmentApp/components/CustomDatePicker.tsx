@@ -8,7 +8,7 @@ const labelStyles: ILabelStyles = {
 };
 
 interface FormFields {
-    selectedDate: Date | null;
+    selectedDate: Date | undefined;
     label: string;
     error: boolean;
     onChange?: (date: Date | null) => void;

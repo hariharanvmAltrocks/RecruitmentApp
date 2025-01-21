@@ -6,11 +6,12 @@ import { Stack } from "office-ui-fabric-react";
 interface MainPageHeaderProps {
     children?: React.ReactNode;
     toggleSideNav: () => void;
-    userName: string | null;
-    userRole: string | null;
+    userName: string | undefined;
+    userRole: string | undefined;
+    Department: string | undefined;
 }
 
-const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav, userName, userRole }) => {
+const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav, userName, userRole, Department }) => {
 
     return (
         <div className="contentGrid">
@@ -34,36 +35,20 @@ const MainPageHeader: React.FC<MainPageHeaderProps> = ({ children, toggleSideNav
                                 fill="#EF3340"
                             />
                         </svg>
-                        <h6 className="title">Recuritment Process</h6>
+                        <h6 className="title">Recruitment Process</h6>
                     </Stack>
                 </div>
                 <div
                     className="ms-Grid-col ms-lg6"
                     style={{ textAlign: "right" }}
                 >
-                    <p className="title"
-                        style={{
-                            display: "flex",
-                            justifyContent: "end"
-                        }}
-                    >
-                        Welcome,
-                        <p style={{ fontWeight: "bold", marginBottom: "-1", marginTop: "0%" }}> {userName}</p>
-                    </p>
-
-                    <p
-                        className="title Role"
-                        style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            marginLeft: "47%"
-                        }}
-                    >
-                        {userRole} - { }
-                    </p>
+                    <span>
+                        <p className="title">Welcome {userName}</p>
+                        <p className="title Role">({userRole} - {Department?.split("-")[1] ?? ''})</p>
+                    </span>
                 </div>
             </div>
-            <div className="MainContent ">{children}</div>
+            <div className="MainContent " style={{ marginTop: "-1%" }}>{children}</div>
         </div>
     );
 };

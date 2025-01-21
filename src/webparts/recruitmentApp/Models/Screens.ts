@@ -9,3 +9,11 @@ export type alertPropsData = {
     ButtonAction: any,
     visible: boolean,
 }
+
+export type Item = {
+    name: string;
+    fileContent: ArrayBuffer;
+    file?: File | any;
+    serverRelativeUrl?: string;
+    ID?: string;
+}
