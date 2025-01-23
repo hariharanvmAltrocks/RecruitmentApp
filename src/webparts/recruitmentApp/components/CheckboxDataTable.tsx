@@ -6,7 +6,7 @@ import { Icon } from "@fluentui/react";
 import ReuseButton from "./ReuseButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CustomLoader from "../Services/Loader/CustomLoader";
-import CustomCheckBox from "./CustomCheckbox";
+import CustomCheckBox from "./CustomCheckBox";
 import { FilterMatchMode } from "primereact/api";
 
 interface ColumnConfig {
