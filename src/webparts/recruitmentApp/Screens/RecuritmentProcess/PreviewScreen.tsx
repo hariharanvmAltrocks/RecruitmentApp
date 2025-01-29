@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AdvDetails } from "../../Models/RecuritmentVRR";
+import { AdvDetails, QualificationValue, RoleSpecKnowledge, TechnicalSkills } from "../../Models/RecuritmentVRR";
 import ReuseButton from "../../components/ReuseButton";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import CustomLabel from "../../components/CustomLabel";
@@ -8,6 +8,9 @@ import Card from "@mui/material/Card";
 
 interface FormFields {
     data: AdvDetails;
+    RoleSpec: RoleSpecKnowledge[];
+    Qualification: QualificationValue[];
+    TechinicalSkills: TechnicalSkills[];
     onclose: () => void
     Ok_btnfn: () => void
 }
@@ -16,7 +19,10 @@ interface FormFields {
 function PreviewScreen({
     data,
     onclose,
-    Ok_btnfn
+    Ok_btnfn,
+    RoleSpec,
+    Qualification,
+    TechinicalSkills
 }: FormFields) {
 
     return (
@@ -61,44 +67,80 @@ function PreviewScreen({
                             )}
 
                             <div className="ms-Grid-row">
-                                {data.MinQualification && (
-                                    <div className="ms-Grid-col ms-lg6">
-                                        <p>
-                                            <b style={{ fontSize: "17px" }}> Minimum Qualification :</b>{" "}
-                                            <span>
-                                                {data.MinQualification}
-                                            </span>
-                                        </p>
-                                    </div>
-                                )}
+                                <div className="ms-Grid-col ms-lg6">
+                                    <p>
+                                        <b style={{ fontSize: "17px" }}>Total Experience :</b>{" "}
+                                        <span>
+                                            {data.TotalExperience}
+                                        </span>
+                                    </p>
+                                </div>
 
-                                {data.PrefeQualification && (
-                                    <div className="ms-Grid-col ms-lg6">
-                                        <p>
-                                            <b style={{ fontSize: "17px" }}>Preferred Qualification :</b>{" "}
-                                            <span>
-                                                {data.PrefeQualification}
-                                            </span>
-                                        </p>
-                                    </div>
-                                )}
+                                <div className="ms-Grid-col ms-lg6">
+                                    <p>
+                                        <b style={{ fontSize: "17px" }}>Experience in Mining Industry (Years) :</b>{" "}
+                                        <span>
+                                            {data.ExperienceinMiningIndustry}
+                                        </span>
+                                    </p>
+                                </div>
+
                             </div>
 
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg6">
+                                    <div>
+                                        <p> <b style={{ fontSize: "17px" }}>Minimum Qualification :</b>{" "}</p>
+                                    </div>
+                                    {console.log(RoleSpec, "RoleSpec")}
 
+                                    {Qualification.map((item: any, index: number) => {
+                                        console.log(item, "Qualifi");
+                                        return (
+                                            <div
+                                                key={index}
+                                                style={{ marginTop: "20px" }}
+                                            >
+                                                <p style={{ fontSize: "17px" }}>
+                                                    {item.MinQualification.text}
+                                                    <span>
+                                                        - {item.PrefeQualification.text}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        )
+                                    })}
+
+                                </div>
+                            </div>
 
                             <div className="ms-Grid-row">
-                                {data.RoleSpeKnowledge.text && (
-                                    <div className="ms-Grid-col ms-lg6">
-                                        <p>
-                                            <b style={{ fontSize: "17px" }}>Role Specific Knowledge :</b>{" "}
-                                            <span>
-                                                {data.RoleSpeKnowledge.text}
-                                            </span>
-                                        </p>
+                                <div className="ms-Grid-col ms-lg6">
+                                    <div>
+                                        <p> <b style={{ fontSize: "17px" }}>Role Specific Knowledge :</b>{" "}</p>
                                     </div>
-                                )}
+                                    {console.log(RoleSpec, "RoleSpec")}
 
-                                {data.RequiredLevel.text && (
+                                    {RoleSpec.map((item: any, index: number) => {
+                                        console.log(item, "RoleSpec");
+                                        return (
+                                            <div
+                                                key={index}
+                                                style={{ marginTop: "20px" }}
+                                            >
+                                                <p style={{ fontSize: "17px" }}>
+                                                    {item.RoleSpeKnowledge.text}
+                                                    <span>
+                                                        - {item.RequiredLevel.text}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        )
+                                    })}
+
+                                </div>
+
+                                {/* {data.RequiredLevel.text && (
                                     <div className="ms-Grid-col ms-lg6">
                                         <p>
                                             <b style={{ fontSize: "17px" }}>Required Level :</b>{" "}
@@ -107,11 +149,39 @@ function PreviewScreen({
                                             </span>
                                         </p>
                                     </div>
-                                )}
+                                )} */}
 
                             </div>
 
                             <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg6">
+                                    <div>
+                                        <p> <b style={{ fontSize: "17px" }}>Technical Skills - Ability to apply Knowledge :</b>{" "}</p>
+                                    </div>
+                                    {console.log(RoleSpec, "RoleSpec")}
+
+                                    {TechinicalSkills.map((item: any, index: number) => {
+                                        console.log(item, "RoleSpec");
+                                        return (
+                                            <div
+                                                key={index}
+                                                style={{ marginTop: "20px" }}
+                                            >
+                                                <p style={{ fontSize: "17px" }}>
+                                                    {item.TechnicalSkills.text}
+                                                    <span>
+                                                        - {item.LevelProficiency.text}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        )
+                                    })}
+
+                                </div>
+                            </div>
+
+
+                            {/* <div className="ms-Grid-row">
                                 {data.TechnicalSkills.text && (
                                     <div className="ms-Grid-col ms-lg6">
                                         <p>
@@ -134,7 +204,7 @@ function PreviewScreen({
                                     </div>
                                 )}
 
-                            </div>
+                            </div> */}
                         </div>
                     </CardContent>
                 </Card>
