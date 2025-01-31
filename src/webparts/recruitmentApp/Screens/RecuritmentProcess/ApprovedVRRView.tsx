@@ -74,7 +74,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
         AssignAgenciesOption: [],
         CandidateCVAttachment: [],
         Comments: "",
-        IsPayrollEmailed:"",
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [MainComponent, setMainComponent] = useState<boolean>(true);
