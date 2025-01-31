@@ -2,23 +2,19 @@ import * as React from "react";
 import TabsComponent from "../../components/TabsComponent ";
 import SearchableDataTable from "../../components/CustomDataTable";
 import "../../App.css";
-<<<<<<< HEAD
 import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import {
-  ADGroupID,
   GridStatusBackgroundcolor,
-  HRMSAlertOptions,
-  ListNames,
-  RecuritmentHRMsg,
   RoleID,
   StatusId,
+  TabName,
   tabType,
   WorkflowAction,
+  RecuritmentHRMsg,
+  ListNames,
+  HRMSAlertOptions,
+  ADGroupID,
 } from "../../utilities/Config";
-=======
-import { getVRRDetails } from "../../Services/ServiceExport";
-import { GridStatusBackgroundcolor, RoleID, StatusId, TabName, tabType } from "../../utilities/Config";
->>>>>>> f1b02c88e32c5b625a4c2335cc34b5677f92ada1
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Button } from "primereact/button";
 import { Card, CardContent } from "@mui/material";
@@ -38,7 +34,6 @@ import CheckboxDataTable from "../../components/CheckboxDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { alertPropsData } from "../../Models/Screens";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
-
 // import 'primeicons/primeicons.css';
 // interface ColumnConfig {
 //     field: string;
@@ -94,14 +89,12 @@ const RecruitmentProcess = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
-
   type formValidation = {
     Comments: boolean;
     AssignRecruitmentHR: boolean;
     AssignRecruitmentAgencies: boolean;
   };
 
-<<<<<<< HEAD
   const [validationErrors, setValidationErrors] =
     React.useState<formValidation>({
       Comments: false,
@@ -120,7 +113,7 @@ const RecruitmentProcess = (props: any) => {
     }
   );
 
-  const columnConfig = (tab: string, ButtonAction: string) => [
+  const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
     {
       field: "Checkbox",
       header: "",
@@ -146,7 +139,11 @@ const RecruitmentProcess = (props: any) => {
     //     header: 'Job Title',
     //     sortable: true
     // },
-
+    // {
+    //     field: 'ReasonForVacancy',
+    //     header: 'ReasonForVacancy',
+    //     sortable: true
+    // },
     {
       field: "Status",
       header: "Status",
@@ -196,7 +193,9 @@ const RecruitmentProcess = (props: any) => {
             {ButtonAction === "view" ? (
               <>
                 <Button
-                  onClick={() => handleRedirectView(rowData, tab)}
+                  onClick={() =>
+                    handleRedirectView(rowData, tab, TabName, ButtonAction)
+                  }
                   className="table_btn"
                   icon="pi pi-eye"
                   style={{
@@ -206,95 +205,6 @@ const RecruitmentProcess = (props: any) => {
                   }}
                 >
                   {/* <img
-=======
-    const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
-        {
-            field: 'BusinessUnitCode',
-            header: 'BusinessUnit Code',
-            sortable: true
-        },
-        {
-            field: 'Department',
-            header: 'Department',
-            sortable: true
-        },
-        {
-            field: 'JobCode',
-            header: 'Job Code',
-            sortable: true
-        },
-        // {
-        //     field: 'JobTitleInEnglish',
-        //     header: 'Job Title',
-        //     sortable: true
-        // },       
-        // {
-        //     field: 'ReasonForVacancy',
-        //     header: 'ReasonForVacancy',
-        //     sortable: true
-        // },
-        {
-            field: "Status",
-            header: "Status",
-            fieldName: "Status",
-            sortable: false,
-            body: (rowData: any) => {
-                return (
-                    <span
-                        style={{
-                            backgroundColor:
-                                rowData.Status.includes("Pending") === true // "Pending"
-                                    ? GridStatusBackgroundcolor.Pending
-                                    : rowData.Status.includes("Completed") ===
-                                        true
-                                        ? GridStatusBackgroundcolor
-                                            .CompletedOrApproved
-                                        : rowData.Status.includes("Rejected") === true
-                                            ? GridStatusBackgroundcolor.Rejected
-                                            : rowData.Status.includes("Reverted") === true
-                                                ? GridStatusBackgroundcolor.Reverted
-                                                : rowData.Status.includes("Resubmitted") === true
-                                                    ? GridStatusBackgroundcolor.ReSubmitted
-                                                    : rowData.Status.includes("Draft") === true
-                                                        ? GridStatusBackgroundcolor.Draft
-                                                        : "",
-                            borderRadius: "5px",
-                        }}
-                    >
-                        {rowData.Status}
-                    </span>
-                );
-            },
-        },
-        {
-            field: "Action",
-            header: "Action",
-            sortable: false,
-            body: (rowData: any) => {
-                return (
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "5px",
-                        }}
-                    >
-                        {(ButtonAction === "view") ? (
-                            <>
-                                <Button
-                                    onClick={() => handleRedirectView(rowData, tab, TabName, ButtonAction)}
-                                    className="table_btn"
-                                    icon="pi pi-eye"
-                                    style={{
-                                        width: "30px",
-                                        marginRight: "7px",
-                                        padding: "3px",
-                                    }}
-                                >
-                                    {/* <img
->>>>>>> f1b02c88e32c5b625a4c2335cc34b5677f92ada1
                                                 src={require("../../assets/edit_icon.png")}
                                                 alt="Stamp Icon"
                                                 style={{
@@ -302,13 +212,14 @@ const RecruitmentProcess = (props: any) => {
                                                   height: "100%",
                                                 }}
                                               /> */}
-<<<<<<< HEAD
                 </Button>
               </>
             ) : (
               <>
                 <Button
-                  onClick={() => handleRedirectView(rowData, tab)}
+                  onClick={() =>
+                    handleRedirectView(rowData, tab, TabName, ButtonAction)
+                  }
                   className="table_btn"
                   // icon="pi pi-eye"
                   style={{
@@ -334,118 +245,13 @@ const RecruitmentProcess = (props: any) => {
     },
   ];
 
-  React.useEffect(() => {
-    const getADGroupsOption = async () => {
-      try {
-        const AssignRecurtimentHROption =
-          await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSRecruitmentHR);
-        const AssignAgenciesOption = await CommonServices.GetADgruopsEmailIDs(
-          ADGroupID.HRMSHOD
-        );
-
-        if (
-          (AssignRecurtimentHROption.status === 200 &&
-            AssignRecurtimentHROption.data) ||
-          (AssignAgenciesOption.status === 200 && AssignAgenciesOption.data)
-        ) {
-          const AssignRecrutiment = AssignRecurtimentHROption.data.filter(
-            (item: { key: any }) => item.key === props.stateValue?.AssignedHRId
-          );
-
-          const AssignRecrutimentObject = AssignRecrutiment.reduce(
-            (acc: { [key: string]: any }, item: { key: any }) => {
-              return item;
-            },
-            {}
-          );
-          setAssignRecruitmentHR(AssignRecrutimentObject);
-          setAssignRecruitmentHROption(AssignRecurtimentHROption.data);
-        } else {
-          console.error(AssignRecurtimentHROption.data.message);
-=======
-                                </Button>
-                            </>
-                        ) : (
-                            <>
-                                <Button
-                                    onClick={() => handleRedirectView(rowData, tab, TabName, ButtonAction)}
-                                    className="table_btn"
-                                    // icon="pi pi-eye"
-                                    style={{
-                                        width: "30px",
-                                        marginRight: "7px",
-                                        padding: "3px",
-                                    }}
-                                >
-                                    <img
-                                        src={require("../../assets/edit_icon.png")}
-                                        alt="Stamp Icon"
-                                        style={{
-                                            width: "100%",
-                                            height: "100%",
-                                        }}
-                                    />
-                                </Button>
-                            </>
-                        )}
-                    </div>
-                );
-            },
-        },
-    ];
-
-
-    function handleRedirectView(rowData: any, tab: string, TabName: string, ButtonAction: string) {
-        console.log(rowData, "rowData");
-        switch (props.CurrentRoleID) {
-            case RoleID.RecruitmentHRLead: {
-                if (tab === 'tab1') {
-                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { type: "VRR", ID: rowData?.VRRID, tab, StatusId: rowData?.StatusId, Status: rowData?.Status, TabName: TabName, ButtonAction } });
-                } else if (tab === 'tab2') {
-                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { ID: rowData?.ID, AssignedHRId: rowData?.AssignedHRId, tab, StatusId: rowData?.StatusId, Status: rowData?.Status, TabName: TabName, ButtonAction } });
-                } else {
-                    props.navigation("/RecurimentProcess/ApprovedVRRView", { state: { ID: rowData?.ID, AssignedHR: rowData?.AssignedHR, tab, StatusId: rowData?.StatusId, Status: rowData?.Status, TabName: TabName, ButtonAction } });
-                }
-            }
-                break;
-
-            case RoleID.RecruitmentHR: {
-                if (tab === 'tab1' || tab === 'tab2') {
-                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId, Status: rowData?.Status, TabName: TabName, ButtonAction } });
-                } else if (tab === 'tab4') {
-                    props.navigation("/RecurimentProcess/ApprovedVRRView", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId, Status: rowData?.Status, TabName: TabName, ButtonAction } });
-                } else if (tab === 'tab3') {
-                    props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId, Status: rowData?.Status, TabName: TabName, ButtonAction } });
-                } else if (tab === 'tab5') {
-                    props.navigation("/RecurimentProcess/AssignInterviewPanel", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId, Status: rowData?.Status, TabName: TabName, ButtonAction } });
-                }
-            }
-                break;
-
-            case RoleID.HOD: {
-                if (tab === 'tab1') {
-                    props.navigation("/RecurimentProcess/ApprovedVRREdit", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId, Status: rowData?.Status, TabName: TabName, ButtonAction } });
-                }
-            }
-                break;
-            case RoleID.LineManager: {
-                if (tab === 'tab1') {
-                    props.navigation("/RecurimentProcess/ReviewProfile", { state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId, Status: rowData?.Status, TabName: TabName, ButtonAction } });
-                }
-            }
-                break;
-
->>>>>>> f1b02c88e32c5b625a4c2335cc34b5677f92ada1
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    void getADGroupsOption();
-  }, []);
-
-  function handleRedirectView(rowData: any, tab: string) {
+  function handleRedirectView(
+    rowData: any,
+    tab: string,
+    TabName: string,
+    ButtonAction: string
+  ) {
+    console.log(rowData, "rowData");
     switch (props.CurrentRoleID) {
       case RoleID.RecruitmentHRLead:
         {
@@ -456,6 +262,9 @@ const RecruitmentProcess = (props: any) => {
                 ID: rowData?.VRRID,
                 tab,
                 StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                TabName: TabName,
+                ButtonAction,
               },
             });
           } else if (tab === "tab2") {
@@ -465,6 +274,9 @@ const RecruitmentProcess = (props: any) => {
                 AssignedHRId: rowData?.AssignedHRId,
                 tab,
                 StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                TabName: TabName,
+                ButtonAction,
               },
             });
           } else {
@@ -474,6 +286,9 @@ const RecruitmentProcess = (props: any) => {
                 AssignedHR: rowData?.AssignedHR,
                 tab,
                 StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                TabName: TabName,
+                ButtonAction,
               },
             });
           }
@@ -484,19 +299,47 @@ const RecruitmentProcess = (props: any) => {
         {
           if (tab === "tab1" || tab === "tab2") {
             props.navigation("/RecurimentProcess/ApprovedVRREdit", {
-              state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId },
+              state: {
+                ID: rowData?.ID,
+                tab,
+                StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                TabName: TabName,
+                ButtonAction,
+              },
             });
           } else if (tab === "tab4") {
             props.navigation("/RecurimentProcess/ApprovedVRRView", {
-              state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId },
+              state: {
+                ID: rowData?.ID,
+                tab,
+                StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                TabName: TabName,
+                ButtonAction,
+              },
             });
           } else if (tab === "tab3") {
             props.navigation("/RecurimentProcess/ReviewProfile", {
-              state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId },
+              state: {
+                ID: rowData?.ID,
+                tab,
+                StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                TabName: TabName,
+                ButtonAction,
+              },
             });
           } else if (tab === "tab5") {
             props.navigation("/RecurimentProcess/AssignInterviewPanel", {
-              state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId },
+              state: {
+                ID: rowData?.ID,
+                tab,
+                StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                TabName: TabName,
+                ButtonAction,
+              },
             });
           }
         }
@@ -506,7 +349,14 @@ const RecruitmentProcess = (props: any) => {
         {
           if (tab === "tab1") {
             props.navigation("/RecurimentProcess/ApprovedVRREdit", {
-              state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId },
+              state: {
+                ID: rowData?.ID,
+                tab,
+                StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                TabName: TabName,
+                ButtonAction,
+              },
             });
           }
         }
@@ -515,7 +365,14 @@ const RecruitmentProcess = (props: any) => {
         {
           if (tab === "tab1") {
             props.navigation("/RecurimentProcess/ReviewProfile", {
-              state: { ID: rowData?.ID, tab, StatusId: rowData?.StatusId },
+              state: {
+                ID: rowData?.ID,
+                tab,
+                StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                TabName: TabName,
+                ButtonAction,
+              },
             });
           }
         }
@@ -544,7 +401,6 @@ const RecruitmentProcess = (props: any) => {
         Operator: "eq",
         FilterValue: StatusId.PendingwithHRLeadtoAssignRecruitmentHR,
       });
-
       try {
         const HRMSExternalAgents = await CommonServices.GetMasterData(
           ListNames.HRMSExternalAgents
@@ -624,12 +480,10 @@ const RecruitmentProcess = (props: any) => {
         dataPromise,
         recruitmentDetailsPromise,
       ]);
-
       const RecruitmentID = RecruitmentDetails.data.map(
         (item: JobCodeTilte) => item.ID
       );
       console.log(RecruitmentID);
-
       if (data.status === 200 && data.data !== null) {
         setData(data.data[0]);
 
@@ -640,7 +494,6 @@ const RecruitmentProcess = (props: any) => {
           })
         );
 
-<<<<<<< HEAD
         const allJobData: JobCodeTilte[] = [];
 
         for (const { JobCode: jobCode, VRRId } of JobCode) {
@@ -673,15 +526,54 @@ const RecruitmentProcess = (props: any) => {
         RecruitmentDetails.status === 200 &&
         RecruitmentDetails.data !== null
       ) {
+        console.log(RecruitmentDetails, "GetVacancyDetails");
         setRecruitmentDetails(RecruitmentDetails.data);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log("GetVacancyDetails doesn't fetch the data", error);
+    }
     setIsLoading(false);
   };
 
   React.useEffect(() => {
-    void fetchData();
-  }, [activeTab]);
+    const fetchDataAndGetADGroups = async () => {
+      try {
+        // Fetch data
+        await fetchData();
+
+        // Get AD groups
+        const AssignRecurtimentHROption =
+          await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSRecruitmentHR);
+        const AssignAgenciesOption = await CommonServices.GetADgruopsEmailIDs(
+          ADGroupID.HRMSHOD
+        );
+
+        if (
+          (AssignRecurtimentHROption.status === 200 &&
+            AssignRecurtimentHROption.data) ||
+          (AssignAgenciesOption.status === 200 && AssignAgenciesOption.data)
+        ) {
+          const AssignRecrutiment = AssignRecurtimentHROption.data.filter(
+            (item: { key: any }) => item.key === props.stateValue?.AssignedHRId
+          );
+
+          const AssignRecrutimentObject = AssignRecrutiment.reduce(
+            (acc: { [key: string]: any }, item: { key: any }) => item,
+            {}
+          );
+
+          setAssignRecruitmentHR(AssignRecrutimentObject);
+          setAssignRecruitmentHROption(AssignRecurtimentHROption.data);
+        } else {
+          console.error(AssignRecurtimentHROption.data.message);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    void fetchDataAndGetADGroups();
+  }, [activeTab]); // Runs when activeTab changes
 
   const onPageChange = (event: any, Type: string) => {
     setFirst(event.first);
@@ -693,8 +585,7 @@ const RecruitmentProcess = (props: any) => {
     // setActiveTab(tab);
   };
 
-  // Popupfunction
-
+  //Popup
   const handleAutoComplete = async (value: AutoCompleteItem | null) => {
     if (value) {
       if (props.CurrentRoleID === RoleID.RecruitmentHR) {
@@ -1217,7 +1108,7 @@ const RecruitmentProcess = (props: any) => {
     ...(props.CurrentRoleID === RoleID.RecruitmentHRLead
       ? [
           {
-            label: "Assign Recuritment HR",
+            label: TabName.AssignRecuritmentHR, //"Assign Recuritment HR",
             value: "tab1",
             content: (
               <Card
@@ -1225,18 +1116,25 @@ const RecruitmentProcess = (props: any) => {
                 sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
               >
                 <CardContent>
+                  {console.log(props, "propsDept")}
                   {/* <SearchableDataTable
                     data={data}
-                    columns={columnConfig("tab1", "edit")}
+                    columns={columnConfig(
+                      "tab1",
+                      "view",
+                      TabName.AssignRecuritmentHR
+                    )}
                     rows={rows}
                     onPageChange={(event) => onPageChange(event, "Recruitment")}
                     handleRefresh={() => handleRefresh("tab1")}
-                    handleAssignBtn={AssignBtn_fn}
                   /> */}
-
                   <CheckboxDataTable //AssignHR
                     data={data}
-                    columns={columnConfig("tab1", "edit")}
+                    columns={columnConfig(
+                      "tab1",
+                      "view",
+                      TabName.AssignRecuritmentHR
+                    )}
                     rows={rows}
                     onPageChange={(event) => onPageChange(event, "Recruitment")}
                     handleRefresh={() => handleRefresh("tab1")}
@@ -1257,7 +1155,7 @@ const RecruitmentProcess = (props: any) => {
             ),
           },
           {
-            label: "upload Signed Doc",
+            label: TabName.UploadONEMDoc, //"upload Signed Doc",
             value: "tab2",
             content: (
               <Card
@@ -1267,7 +1165,11 @@ const RecruitmentProcess = (props: any) => {
                 <CardContent>
                   <SearchableDataTable
                     data={RecruitmentDetails}
-                    columns={columnConfig("tab2", "edit")}
+                    columns={columnConfig(
+                      "tab2",
+                      "upload",
+                      TabName.UploadONEMDoc
+                    )}
                     rows={rows}
                     onPageChange={(event) => onPageChange(event, "VRR")}
                     handleRefresh={() => handleRefresh("tab2")}
@@ -1277,7 +1179,7 @@ const RecruitmentProcess = (props: any) => {
             ),
           },
           {
-            label: "My Submission",
+            label: TabName.MySubmission, //"My Submission",
             value: "tab3",
             content: (
               <Card
@@ -1287,7 +1189,7 @@ const RecruitmentProcess = (props: any) => {
                 <CardContent>
                   <SearchableDataTable
                     data={RecruitmentDetails}
-                    columns={columnConfig("tab3", "view")}
+                    columns={columnConfig("tab3", "view", TabName.MySubmission)}
                     rows={rows}
                     onPageChange={(event) => onPageChange(event, "VRR")}
                     handleRefresh={() => handleRefresh("tab3")}
@@ -1301,17 +1203,9 @@ const RecruitmentProcess = (props: any) => {
           ...(props.CurrentRoleID === RoleID.RecruitmentHR
             ? [
                 {
-                  label: "Upload Advertisement",
+                  label: TabName.UploadAdvertisement, //"Upload Advertisement",
                   value: "tab1",
                   content: (
-=======
-    const tabs = [
-        ...(props.CurrentRoleID === RoleID.RecruitmentHRLead ? [
-            {
-                label: TabName.AssignRecuritmentHR, //"Assign Recuritment HR",
-                value: "tab1",
-                content: (
->>>>>>> f1b02c88e32c5b625a4c2335cc34b5677f92ada1
                     <Card
                       variant="outlined"
                       sx={{
@@ -1319,11 +1213,14 @@ const RecruitmentProcess = (props: any) => {
                         marginTop: "2%",
                       }}
                     >
-<<<<<<< HEAD
                       <CardContent>
                         <SearchableDataTable
                           data={RecruitmentDetails}
-                          columns={columnConfig("tab1", "edit")}
+                          columns={columnConfig(
+                            "tab1",
+                            "upload",
+                            TabName.UploadAdvertisement
+                          )}
                           rows={rows}
                           onPageChange={(event) => onPageChange(event, "VRR")}
                           handleRefresh={() => handleRefresh("tab1")}
@@ -1333,29 +1230,9 @@ const RecruitmentProcess = (props: any) => {
                   ),
                 },
                 {
-                  label: "Assigne Agencies",
+                  label: TabName.AssignAgencies, //"Assigne Agencies",
                   value: "tab2",
                   content: (
-=======
-                        <CardContent>
-                            <SearchableDataTable
-                                data={data}
-                                columns={columnConfig("tab1", "view", TabName.AssignRecuritmentHR,)}
-                                rows={rows}
-                                onPageChange={(event) => onPageChange(event, "Recruitment")}
-                                handleRefresh={() => handleRefresh("tab1")}
-                            />
-                        </CardContent>
-
-                    </Card>
-
-                ),
-            },
-            {
-                label: TabName.UploadONEMDoc, //"upload Signed Doc",
-                value: "tab2",
-                content: (
->>>>>>> f1b02c88e32c5b625a4c2335cc34b5677f92ada1
                     <Card
                       variant="outlined"
                       sx={{
@@ -1363,11 +1240,14 @@ const RecruitmentProcess = (props: any) => {
                         marginTop: "2%",
                       }}
                     >
-<<<<<<< HEAD
                       <CardContent>
                         <CheckboxDataTable //AssignAgency
                           data={RecruitmentDetails}
-                          columns={columnConfig("tab2", "edit")}
+                          columns={columnConfig(
+                            "tab2",
+                            "view",
+                            TabName.AssignAgencies
+                          )}
                           rows={rows}
                           onPageChange={(event) => onPageChange(event, "VRR")}
                           handleRefresh={() => handleRefresh("tab2")}
@@ -1385,7 +1265,11 @@ const RecruitmentProcess = (props: any) => {
                         />
                         {/* <SearchableDataTable
                           data={RecruitmentDetails}
-                          columns={columnConfig("tab2", "edit")}
+                          columns={columnConfig(
+                            "tab2",
+                            "view", 
+                            TabName.AssignAgencies
+                          )}
                           rows={rows}
                           onPageChange={(event) => onPageChange(event, "VRR")}
                           handleRefresh={() => handleRefresh("tab2")}
@@ -1395,29 +1279,9 @@ const RecruitmentProcess = (props: any) => {
                   ),
                 },
                 {
-                  label: "Review Profiles",
+                  label: TabName.ReviewProfile, //"Review Profiles",
                   value: "tab3",
                   content: (
-=======
-                        <CardContent>
-                            <SearchableDataTable
-                                data={RecruitmentDetails}
-                                columns={columnConfig("tab2", "upload", TabName.UploadONEMDoc)}
-                                rows={rows}
-                                onPageChange={(event) => onPageChange(event, "VRR")}
-                                handleRefresh={() => handleRefresh("tab2")}
-
-                            />
-                        </CardContent>
-
-                    </Card>
-                ),
-            },
-            {
-                label: TabName.MySubmission,//"My Submission",
-                value: "tab3",
-                content: (
->>>>>>> f1b02c88e32c5b625a4c2335cc34b5677f92ada1
                     <Card
                       variant="outlined"
                       sx={{
@@ -1425,11 +1289,14 @@ const RecruitmentProcess = (props: any) => {
                         marginTop: "2%",
                       }}
                     >
-<<<<<<< HEAD
                       <CardContent>
                         <SearchableDataTable
                           data={RecruitmentDetails}
-                          columns={columnConfig("tab3", "edit")}
+                          columns={columnConfig(
+                            "tab3",
+                            "edit",
+                            TabName.ReviewProfile
+                          )}
                           rows={rows}
                           onPageChange={(event) => onPageChange(event, "VRR")}
                           handleRefresh={() => handleRefresh("tab3")}
@@ -1439,7 +1306,7 @@ const RecruitmentProcess = (props: any) => {
                   ),
                 },
                 {
-                  label: "My submission",
+                  label: TabName.MySubmission, //"My submission",
                   value: "tab4",
                   content: (
                     <Card
@@ -1452,7 +1319,11 @@ const RecruitmentProcess = (props: any) => {
                       <CardContent>
                         <SearchableDataTable
                           data={RecruitmentDetails}
-                          columns={columnConfig("tab4", "view")}
+                          columns={columnConfig(
+                            "tab4",
+                            "view",
+                            TabName.MySubmission
+                          )}
                           rows={rows}
                           onPageChange={(event) => onPageChange(event, "VRR")}
                           handleRefresh={() => handleRefresh("tab4")}
@@ -1462,7 +1333,7 @@ const RecruitmentProcess = (props: any) => {
                   ),
                 },
                 {
-                  label: "Assigne InterviewPanel",
+                  label: TabName.AssignInterviewPanel, //"Assigne InterviewPanel",
                   value: "tab5",
                   content: (
                     <Card
@@ -1475,7 +1346,11 @@ const RecruitmentProcess = (props: any) => {
                       <CardContent>
                         <SearchableDataTable
                           data={RecruitmentDetails}
-                          columns={columnConfig("tab5", "edit")}
+                          columns={columnConfig(
+                            "tab5",
+                            "edit",
+                            TabName.AssignInterviewPanel
+                          )}
                           rows={rows}
                           onPageChange={(event) => onPageChange(event, "VRR")}
                           handleRefresh={() => handleRefresh("tab5")}
@@ -1489,7 +1364,7 @@ const RecruitmentProcess = (props: any) => {
                 ...(props.CurrentRoleID === RoleID.HOD
                   ? [
                       {
-                        label: "Pending Approval",
+                        label: TabName.ReviewONEMAdvertisement, // "Pending Approval",
                         value: "tab1",
                         content: (
                           <Card
@@ -1502,7 +1377,11 @@ const RecruitmentProcess = (props: any) => {
                             <CardContent>
                               <SearchableDataTable
                                 data={RecruitmentDetails}
-                                columns={columnConfig("tab1", "edit")}
+                                columns={columnConfig(
+                                  "tab1",
+                                  "edit",
+                                  TabName.ReviewONEMAdvertisement
+                                )}
                                 rows={rows}
                                 onPageChange={(event) =>
                                   onPageChange(event, "VRR")
@@ -1518,167 +1397,9 @@ const RecruitmentProcess = (props: any) => {
                       ...(props.CurrentRoleID === RoleID.LineManager
                         ? [
                             {
-                              label: "Review Profiles",
+                              label: TabName.ReviewProfile, //"Review Profiles",
                               value: "tab1",
                               content: (
-=======
-                        <CardContent>
-                            <SearchableDataTable
-                                data={RecruitmentDetails}
-                                columns={columnConfig("tab3", "view", TabName.MySubmission)}
-                                rows={rows}
-                                onPageChange={(event) => onPageChange(event, "VRR")}
-                                handleRefresh={() => handleRefresh("tab3")}
-
-                            />
-                        </CardContent>
-
-                    </Card>
-                ),
-            },
-        ] : [
-            ...(props.CurrentRoleID === RoleID.RecruitmentHR ? [
-                {
-                    label: TabName.UploadAdvertisement, //"Upload Advertisement",
-                    value: "tab1",
-                    content: (
-                        <Card
-                            variant="outlined"
-                            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-                        >
-                            <CardContent>
-                                <SearchableDataTable
-                                    data={RecruitmentDetails}
-                                    columns={columnConfig("tab1", "upload", TabName.UploadAdvertisement)}
-                                    rows={rows}
-                                    onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={() => handleRefresh("tab1")}
-                                />
-                            </CardContent>
-
-                        </Card>
-
-                    ),
-                },
-                {
-                    label: TabName.AssignAgencies,//"Assigne Agencies",
-                    value: "tab2",
-                    content: (
-                        <Card
-                            variant="outlined"
-                            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-                        >
-                            <CardContent>
-                                <SearchableDataTable
-                                    data={RecruitmentDetails}
-                                    columns={columnConfig("tab2", "view", TabName.AssignAgencies)}
-                                    rows={rows}
-                                    onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={() => handleRefresh("tab2")}
-                                />
-                            </CardContent>
-
-                        </Card>
-
-                    ),
-                },
-                {
-                    label: TabName.ReviewProfile, //"Review Profiles",
-                    value: "tab3",
-                    content: (
-                        <Card
-                            variant="outlined"
-                            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-                        >
-                            <CardContent>
-                                <SearchableDataTable
-                                    data={RecruitmentDetails}
-                                    columns={columnConfig("tab3", "edit", TabName.ReviewProfile)}
-                                    rows={rows}
-                                    onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={() => handleRefresh("tab3")}
-                                />
-                            </CardContent>
-
-                        </Card>
-
-                    ),
-                },
-                {
-                    label: TabName.MySubmission, //"My submission",
-                    value: "tab4",
-                    content: (
-                        <Card
-                            variant="outlined"
-                            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-                        >
-                            <CardContent>
-                                <SearchableDataTable
-                                    data={RecruitmentDetails}
-                                    columns={columnConfig("tab4", "view", TabName.MySubmission)}
-                                    rows={rows}
-                                    onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={() => handleRefresh("tab4")}
-                                />
-                            </CardContent>
-
-                        </Card>
-
-                    ),
-                },
-                {
-                    label: TabName.AssignInterviewPanel, //"Assigne InterviewPanel",
-                    value: "tab5",
-                    content: (
-                        <Card
-                            variant="outlined"
-                            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-                        >
-                            <CardContent>
-                                <SearchableDataTable
-                                    data={RecruitmentDetails}
-                                    columns={columnConfig("tab5", "edit", TabName.AssignInterviewPanel)}
-                                    rows={rows}
-                                    onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={() => handleRefresh("tab5")}
-                                />
-                            </CardContent>
-
-                        </Card>
-
-                    ),
-                },
-            ] : [
-                ...(props.CurrentRoleID === RoleID.HOD ? [
-                    {
-                        label: TabName.ReviewONEMAdvertisement, // "Pending Approval",
-                        value: "tab1",
-                        content: (
-                            <Card
-                                variant="outlined"
-                                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-                            >
-                                <CardContent>
-                                    <SearchableDataTable
-                                        data={RecruitmentDetails}
-                                        columns={columnConfig("tab1", "edit", TabName.ReviewONEMAdvertisement)}
-                                        rows={rows}
-                                        onPageChange={(event) => onPageChange(event, "VRR")}
-                                        handleRefresh={() => handleRefresh("tab1")}
-                                    />
-                                </CardContent>
-
-                            </Card>
-                        ),
-                    },
-
-                ] : [
-                    ...(props.CurrentRoleID === RoleID.LineManager ? [
-                        {
-                            label: TabName.ReviewProfile, //"Review Profiles",
-                            value: "tab1",
-                            content: (
->>>>>>> f1b02c88e32c5b625a4c2335cc34b5677f92ada1
                                 <Card
                                   variant="outlined"
                                   sx={{
@@ -1686,11 +1407,14 @@ const RecruitmentProcess = (props: any) => {
                                     marginTop: "2%",
                                   }}
                                 >
-<<<<<<< HEAD
                                   <CardContent>
                                     <SearchableDataTable
                                       data={RecruitmentDetails}
-                                      columns={columnConfig("tab1", "edit")}
+                                      columns={columnConfig(
+                                        "tab1",
+                                        "edit",
+                                        TabName.ReviewProfile
+                                      )}
                                       rows={rows}
                                       onPageChange={(event) =>
                                         onPageChange(event, "VRR")
@@ -1700,18 +1424,6 @@ const RecruitmentProcess = (props: any) => {
                                       }
                                     />
                                   </CardContent>
-=======
-                                    <CardContent>
-                                        <SearchableDataTable
-                                            data={RecruitmentDetails}
-                                            columns={columnConfig("tab1", "edit", TabName.ReviewProfile)}
-                                            rows={rows}
-                                            onPageChange={(event) => onPageChange(event, "VRR")}
-                                            handleRefresh={() => handleRefresh("tab1")}
-                                        />
-                                    </CardContent>
-
->>>>>>> f1b02c88e32c5b625a4c2335cc34b5677f92ada1
                                 </Card>
                               ),
                             },
