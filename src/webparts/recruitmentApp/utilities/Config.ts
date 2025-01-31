@@ -30,6 +30,14 @@ export const ListNames = {
     "HRMSRecruitmentCandidatePersonalDetails",
   HRMSRecruitmentComments: "HRMSRecruitmentComments",
   HRMSCandidateScoreCard: "HRMSCandidateScoreCard",
+
+  HRMSRecruitmentRoleProfileDetails: "HRMSRecruitmentRoleProfileDetails",
+
+  //Master List
+  HRMSQualification: "HRMSQualification",
+  HRMSRoleSpecificKnowlegeMaster: "HRMSRoleSpecificKnowlegeMaster",
+  HRMSTechnicalSkills: "HRMSTechnicalSkills",
+  HRMSLevelOfProficiency: "HRMSLevelOfProficiency",
   HRMSExternalAgents: "HRMSExternalAgents",
   HRMSExternalAgentsDetailsForRecruitment:
     "HRMSExternalAgentsDetailsForRecruitment",
@@ -174,6 +182,18 @@ export const RoleProfileMaster = {
   RoleProfile: "RoleProfile",
 };
 
+export const RoleDescription = {
+  RoleSpeKnowledgeValue: "RoleSpeKnowledgeValue",
+  QualificationValue: "QualificationValue",
+  TechnicalSkillValue: "TechnicalSkillValue",
+};
+
+export const RoleDescriptionData = {
+  RoleSpeKnowledge: "Role Specific Knowledge",
+  Qualification: "Qualification",
+  TechnicalSkill: "Technical Skills",
+};
+
 export const ScoreRanking: AutoCompleteItem[] = [
   { key: 1, text: "Poor" },
   { key: 2, text: "Below Average" },
@@ -183,3 +203,21 @@ export const ScoreRanking: AutoCompleteItem[] = [
 ];
 
 export const EmploymentOption = ["Yes", "No"];
+
+export const TabName = {
+  AssignRecuritmentHR: "Assign Recuritment HR",
+  UploadONEMDoc: "Upload ONEM Doc",
+  MySubmission: "My Submission",
+  UploadAdvertisement: "Upload Advertisement",
+  AssignAgencies: "Assign Agencies",
+  ReviewProfile: "Review Profile",
+  AssignInterviewPanel: "Assign Interview Panel",
+  ReviewAdvertisement: "Review Advertisement",
+  ReviewScorecard: "Review Scorecard",
+  Evaluation: "Evaluation",
+  CandidateDetails: "Candidate Details",
+  PositionDetails: "Position Details",
+  AdvertisementDetails: "Advertisement Details",
+  ScorecardDetails: "Scorecard Details",
+  ReviewONEMAdvertisement: "Review ONEM Advertisement",
+};

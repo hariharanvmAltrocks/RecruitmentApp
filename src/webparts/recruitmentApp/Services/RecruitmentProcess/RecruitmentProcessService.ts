@@ -277,62 +277,86 @@ export default class RecruitmentService implements IRecruitmentService {
       });
 
       console.log("GetRecruitmentDetails:", listItems);
+      const formattedItems: any[] = [];
+      let positionrequestresult: any = [];
+      for (const item of listItems) {
+        console.log(item, "GetVacancyDetails Item");
 
-      const formattedItems = listItems.map((item) => ({
-        ID: item?.ID,
-        Nationality: item?.Nationality || "",
-        EmploymentCategory: item?.EmploymentCategory || "",
+        let Recruitment: any = {
+          ID: item?.ID,
+          Nationality: item?.Nationality || "",
+          EmploymentCategory: item?.EmploymentCategory || "",
 
-        // Department Details
-        Department: item?.Department?.DepartmentName || "",
-        DepartmentId: item?.DepartmentId || 0,
+          // Department Details
+          Department: item?.Department?.DepartmentName || "",
+          DepartmentId: item?.DepartmentId || 0,
 
-        // Sub-Department Details
-        SubDepartment: item?.SubDepartment?.SubDepTitle || "",
-        SubDepartmentId: item?.SubDepartmentId || 0,
+          // Sub-Department Details
+          SubDepartment: item?.SubDepartment?.SubDepTitle || "",
+          SubDepartmentId: item?.SubDepartmentId || 0,
 
-        // Section Details
-        Section: item?.Section?.SectionName || "",
-        SectionId: item?.SectionId || 0,
+          // Section Details
+          Section: item?.Section?.SectionName || "",
+          SectionId: item?.SectionId || 0,
 
-        // Department Code
-        DepartmentCode: item?.DepartmentCode?.DptCode || "",
-        DepartmentCodeId: item?.DepartmentCodeId || 0,
+          // Department Code
+          DepartmentCode: item?.DepartmentCode?.DptCode || "",
+          DepartmentCodeId: item?.DepartmentCodeId || 0,
 
-        // Status Details
-        Status: item?.Status?.StatusDescription || "",
-        StatusId: item?.StatusId || 0,
+          // Status Details
+          Status: item?.Status?.StatusDescription || "",
+          StatusId: item?.StatusId || 0,
 
-        // Action Details
-        Action: item?.Action?.Action || "",
-        ActionId: item?.ActionId || 0,
+          // Action Details
+          Action: item?.Action?.Action || "",
+          ActionId: item?.ActionId || 0,
 
-        // Recruitment Details
-        NumberOfPersonNeeded: item?.NumberOfPersonNeeded || 0,
-        EnterNumberOfMonths: item?.EnterNumberOfMonths || "",
-        TypeOfContract: item?.TypeOfContract || "",
-        DateRequried: item?.DateRequried || "",
-        IsRevert: item?.IsRevert || "",
-        ReasonForVacancy: item?.ReasonForVacancy || "",
-        AreaofWork: item?.AreaofWork || "",
-        JobCode: item?.JobCode?.JobCode || "",
-        JobCodeId: item?.JobCodeId || 0,
+          // Recruitment Details
+          NumberOfPersonNeeded: item?.NumberOfPersonNeeded || 0,
+          EnterNumberOfMonths: item?.EnterNumberOfMonths || "",
+          TypeOfContract: item?.TypeOfContract || "",
+          DateRequried: item?.DateRequried || "",
+          IsRevert: item?.IsRevert || "",
+          ReasonForVacancy: item?.ReasonForVacancy || "",
+          AreaofWork: item?.AreaofWork || "",
+          JobCode: item?.JobCode?.JobCode || "",
+          JobCodeId: item?.JobCodeId || 0,
 
-        // Confirmation & Authorisation
-        VacancyConfirmed: item?.VacancyConfirmed || "",
-        RecruitmentAuthorised: item?.RecruitmentAuthorised || "",
-        IsPayrollEmailed: item?.IsPayrollEmailed || "",
+          // Confirmation & Authorisation
+          VacancyConfirmed: item?.VacancyConfirmed || "",
+          RecruitmentAuthorised: item?.RecruitmentAuthorised || "",
+          IsPayrollEmailed: item?.IsPayrollEmailed || "",
 
-        // Assigned Personnel
-        AssignedHR: item?.AssignedHR?.Title || "",
-        AssignedHRId: item?.AssignedHRId || 0,
-        AssignLineManager: item?.AssignLineManager?.Title || "",
-        AssignLineManagerId: item?.AssignLineManagerId || 0,
+          // Assigned Personnel
+          AssignedHR: item?.AssignedHR?.Title || "",
+          AssignedHRId: item?.AssignedHRId || 0,
+          AssignLineManager: item?.AssignLineManager?.Title || "",
+          AssignLineManagerId: item?.AssignLineManagerId || 0,
 
-        // Business Unit Details
-        BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode || "",
-        BusinessUnitCodeId: item?.BusinessUnitCodeId || 0,
-      }));
+          // Business Unit Details
+          BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode || "",
+          BusinessUnitCodeId: item?.BusinessUnitCodeId || 0,
+        };
+
+        const filter = [
+          { FilterKey: "RecruitmentID", Operator: "eq", FilterValue: item.ID },
+        ];
+        let positionresult: any = await this.GetRecrutimentPositionDetails(
+          filter,
+          ""
+        );
+
+        console.log("formattedItems positionresult", positionresult);
+        if (positionresult?.data?.length > 0) {
+          positionrequestresult.push(positionresult.data);
+        }
+
+        formattedItems.push({
+          ...Recruitment,
+          ...(positionresult?.data || {}),
+        });
+      }
+      console.log(formattedItems, "formattedItems");
 
       return {
         data: formattedItems,
@@ -345,6 +369,54 @@ export default class RecruitmentService implements IRecruitmentService {
         data: [],
         status: 500,
         message: "Error fetching data from GetRecruitmentDetails",
+      };
+    }
+  }
+
+  async GetRecrutimentPositionDetails(filterParam: any, filterConditions: any) {
+    try {
+      const listItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentPositionDetails,
+        Select:
+          "*,JobTitleEnglish/JobTitleInEnglish,DRCGrade/DRCGrade,PatersonGrade/PatersonGrade,JobTitleFrench/JobTitleInFrench",
+        Filter: filterParam,
+        Expand: "JobTitleEnglish,DRCGrade,PatersonGrade,JobTitleFrench",
+        Topcount: count.Topcount,
+      });
+
+      console.log("GetRecrutimentPositionDetails ", listItems);
+
+      const formattedItems = {
+        LookupId: listItems[0].ID,
+        JobTitleInEnglishId: listItems[0].JobTitleEnglishId || 0,
+        JobTitleInEnglish:
+          listItems[0].JobTitleEnglish?.JobTitleInEnglish || "",
+        JobTitleInFrench: listItems[0].JobTitleFrench?.JobTitleInFrench || 0,
+        DRCGradeId: listItems[0].DRCGradeId,
+        DRCGrade: listItems[0].DRCGrade?.DRCGrade || "",
+        PayrollGradeId: listItems[0].PatersonGradeId,
+        PayrollGrade: listItems[0].PatersonGrade?.PatersonGrade || "",
+        //   PositionList :(await this.GetPositionID(item.JobTitleEnglishId, item.DepartmentId)).data
+      };
+
+      console.log(
+        "formattedItems GetRecrutimentPositionDetails",
+        formattedItems
+      );
+      return {
+        data: formattedItems,
+        status: 200,
+        message: "GetRecrutimentPositionDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data GetRecrutimentPositionDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data from GetRecrutimentPositionDetails",
       };
     }
   }

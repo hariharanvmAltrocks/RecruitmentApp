@@ -68,17 +68,21 @@ export type RecuritmentData = {
   AssignAgenciesOption: AutoCompleteItem[];
   CandidateCVAttachment: IAttachmentExampleState[];
   Comments: string;
+  SignDate?: Date | any;
 };
 
 export type AdvDetails = {
-  MinQualification: string;
-  PrefeQualification: string;
-  RoleSpeKnowledge: AutoCompleteItem;
-  RequiredLevel: AutoCompleteItem;
-  TechnicalSkills: AutoCompleteItem;
-  LevelProficiency: AutoCompleteItem;
+  MinQualificationOption: AutoCompleteItem[];
+  PrefeQualificationOption: AutoCompleteItem[];
+  RoleSpeKnowledgeoption: AutoCompleteItem[];
+  RequiredLeveloption: AutoCompleteItem[];
+  TechnicalSkillsOption: AutoCompleteItem[];
+  LevelProficiencyOption: AutoCompleteItem[];
   RolePurpose: string;
   JobDescription: string;
+  addMasterQualification: string;
+  TotalExperience: string;
+  ExperienceinMiningIndustry: string;
 };
 
 export type CandidateData = {
@@ -137,6 +141,21 @@ export type ScoreCardData = {
   CriteriaRecognised: AutoCompleteItem;
   Employment: string;
   EvaluationFeedback: string;
+};
+
+export type QualificationValue = {
+  MinQualification: AutoCompleteItem;
+  PrefeQualification: AutoCompleteItem;
+};
+
+export type RoleSpecKnowledge = {
+  RoleSpeKnowledge: AutoCompleteItem;
+  RequiredLevel: AutoCompleteItem;
+};
+
+export type TechnicalSkills = {
+  TechnicalSkills: AutoCompleteItem;
+  LevelProficiency: AutoCompleteItem;
 };
 
 export type JobCodeTilte = {

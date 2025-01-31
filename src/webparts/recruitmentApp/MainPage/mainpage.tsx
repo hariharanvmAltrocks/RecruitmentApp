@@ -28,12 +28,8 @@ export default function MainPage(props: any) {
     <div style={{ display: "flex", flexDirection: "row" }} className=" ms-Grid">
       <div
         style={{ width: isExpanded ? "15%" : "6%" }}
-        onMouseEnter={() => {
-          setIsExpanded(true);
-        }}
-        onMouseLeave={() => {
-          setIsExpanded(false);
-        }}
+        // onMouseEnter={() => { setIsExpanded(true) }}
+        // onMouseLeave={() => { setIsExpanded(false) }}
       >
         <SideNavComponent roleID={roleID} IsExpanded={isExpanded} />
       </div>

@@ -183,9 +183,28 @@ export default class CommonService implements ICommonService {
         }
     };
 
-
-
-
+    GetMasterData = async (
+        ListName: string,
+    ): Promise<ApiResponse<any[]>> => {  // Here, specify the type that ApiResponse should work with, in this case, an array of any type
+        try {
+            const listItems: any[] = await SPServices.SPReadItems({
+                Listname: ListName,
+                Select: "*",
+            });
+            return {
+                data: listItems,
+                status: 200,
+                message: "HRMSRecruitmentCandidateDetails fetched successfully",
+            };
+        } catch (error) {
+            console.error("Error fetching data HRMSRecruitmentCandidateDetails:", error);
+            return {
+                data: [],
+                status: 500,
+                message: "Error fetching data from HRMSRecruitmentCandidateDetails",
+            };
+        }
+    };
 }
 async function getUserGuidByEmail(email: string) {
     try {
