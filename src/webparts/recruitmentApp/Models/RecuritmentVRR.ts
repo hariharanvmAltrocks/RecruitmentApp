@@ -101,6 +101,8 @@ export type CandidateData = {
   ReleventExperience: string;
   Qualification: string;
   CandidateCVDoc: any[];
+  //RoleProfileDocument: any[];
+  //AdvertisementDocument: any[];
 };
 
 export type ScoreCardData = {
@@ -139,15 +141,33 @@ export type ScoreCardData = {
 
 export type JobCodeTilte = {
   id: string;
-  name: string;
+  // name: string;
   VRRId: number;
+  JobTitle: string;
+  JobCode: string;
+  ID?: number;
+  RecruitmentID?: number;
 };
 
+// export type RecruitementPositionDetails = {
+//   JobNameInEnglishID: string;
+//   JobNameInFrenchID: string;
+//   PatersonGradeID: number;
+//   DRCGradeID: number;
+//   PositionDetails?: [];
+//   Comments: string;
+// };
+
 export type RecruitementPositionDetails = {
-  JobNameInEnglishID: string;
-  JobNameInFrenchID: string;
+  PositionDetails: Array<{
+    PatersonGradeID: number;
+    DRCGradeID: number;
+    JobNameInEnglishID: number;
+    JobNameInFrenchID: number;
+  }>;
+  JobNameInEnglishID: number;
+  JobNameInFrenchID: number;
   PatersonGradeID: number;
   DRCGradeID: number;
-  PositionDetails?: [];
   Comments: string;
 };
