@@ -42,6 +42,13 @@ function CustomInput({
             boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
             borderColor: "rgb(15, 15, 15)",
           },
+          field: {
+            backgroundColor: "rgb(244, 242, 240)",
+            color: "rgb(85, 82, 79)",
+            "::placeholder": {
+              color: "rgba(85, 82, 79, 0.7)",
+            },
+          },
         }}
         readOnly={readOnly}
         required={false}

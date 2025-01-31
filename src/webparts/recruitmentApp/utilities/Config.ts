@@ -32,6 +32,7 @@ export const ListNames = {
     HRMSCandidateScoreCard: "HRMSCandidateScoreCard",
 
     HRMSRecruitmentRoleProfileDetails: "HRMSRecruitmentRoleProfileDetails",
+
     //Master List
     HRMSQualification: "HRMSQualification",
     HRMSRoleSpecificKnowlegeMaster: "HRMSRoleSpecificKnowlegeMaster",
@@ -217,6 +218,5 @@ export const TabName = {
     PositionDetails: "Position Details",
     AdvertisementDetails: "Advertisement Details",
     ScorecardDetails: "Scorecard Details",
-
-
+    ReviewONEMAdvertisement: "Review ONEM Advertisement",
 }

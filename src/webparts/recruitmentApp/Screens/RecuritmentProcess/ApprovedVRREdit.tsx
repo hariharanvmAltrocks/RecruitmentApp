@@ -2,7 +2,6 @@ import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import TabsComponent from "../../components/TabsComponent ";
 import "../../App.css";
 import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
@@ -10,7 +9,7 @@ import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import { Icon, Label, PrimaryButton } from "office-ui-fabric-react";
 import AttachmentButton from "../../components/AttachmentButton";
-import { ADGroupID, DocumentLibraray, HRMSAlertOptions, ListNames, RecuritmentHRMsg, RoleDescription, RoleDescriptionData, RoleID, RoleProfileMaster, StatusId, WorkflowAction } from "../../utilities/Config";
+import { ADGroupID, DocumentLibraray, HRMSAlertOptions, ListNames, RecuritmentHRMsg, RoleDescription, RoleDescriptionData, RoleID, RoleProfileMaster, StatusId, TabName, WorkflowAction } from "../../utilities/Config";
 import Labelheader from "../../components/LabelHeader";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
@@ -23,12 +22,13 @@ import ReuseButton from "../../components/ReuseButton";
 import CommanComments from "../../components/CommanComments";
 import { CommentsData, InsertComments } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 import CustomViewDocument from "../../components/CustomViewDocument";
-import CustomMultiSelect from "../../components/CustomMultiSelect";
 import RichTextEditor from "../../components/CustomRichTextEditor";
 import PreviewScreen from "./PreviewScreen";
 import { Dialog } from "primereact/dialog";
 import SPServices from "../../Services/SPService/SPServices";
-import SimpleBreadcrumbs from "../../components/CustomBreadcrumps";
+import BreadcrumbsComponent, { TabNameData } from "../../components/CustomBreadcrumps";
+import CustomSignature from "../../components/CustomSignature";
+import SignatureCheckbox from "../../components/SignatureCheckbox";
 
 interface Item {
     name: string;
@@ -54,13 +54,15 @@ type formValidation = {
     JobDescription: boolean,
     TotalExperience: boolean,
     ExperienceinMiningIndustry: boolean,
-    addMasterQualification: boolean
+    addMasterQualification: boolean,
+    Checkboxalidation: boolean
 }
 
 
 const ApprovedVRREdit: React.FC = (props: any) => {
     console.log(props, "propsApprovedVRREdit");
 
+    const todaydate = new Date();
     const [tabVisibility, setTabVisibility] = useState({
         tab1: true,
         tab2: false,
@@ -73,7 +75,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         ButtonAction: null,
         visible: false,
     });
-    const [ButtonLabel, setButtonLabel] = useState<string>("Submit");
+    // const [ButtonLabel, setButtonLabel] = useState<string>("Submit");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [advDetails, setAdvDetails] = useState<AdvDetails>({
         MinQualificationOption: [],
@@ -137,7 +139,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         AssignAgencies: { key: 0, text: "" },
         AssignAgenciesOption: [],
         CandidateCVAttachment: [],
-        Comments: ""
+        Comments: "",
+        SignDate: new Date(
+            todaydate.getFullYear(),
+            todaydate.getMonth(),
+            todaydate.getDate(),
+            todaydate.getHours(),
+            todaydate.getMinutes(),
+            todaydate.getSeconds()
+        )
     });
     const [validationErrors, setValidationError] = React.useState<formValidation>({
         AssignRecruitmentHR: false,
@@ -155,7 +165,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         JobDescription: false,
         TotalExperience: false,
         ExperienceinMiningIndustry: false,
-        addMasterQualification: false
+        addMasterQualification: false,
+        Checkboxalidation: false
     })
     const [MainComponent, setMainComponent] = useState<boolean>(true);
     const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
@@ -183,6 +194,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     ]);
     const [HeaderValue, setHeaderValue] = useState<string>("");
     const [LabelValue, setLabelValue] = useState<string>("");
+    const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
+    const [Checkbox, setCheckbox] = useState<boolean>(false);
+    const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
 
 
     const handleAddRow = (stateValue: string) => {
@@ -372,6 +386,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             PatersonGradeID: op.PayrollGradeId,
                             DRCGradeID: op.DRCGradeId,
                         }));
+                        console.log(updatedPositions, "updatedPositions");
+
                         setFormState((prevState) => ({
                             ...prevState,
                             PositionDetails: updatedPositions,
@@ -780,17 +796,18 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 tab2: false,
                 tab3: false,
             });
-            if (props.CurrentRoleID === RoleID.HOD) {
-                setButtonLabel("Approve")
-            } else if ((props.CurrentRoleID === RoleID.RecruitmentHR)) {
-                setButtonLabel("Submit")
-            }
+            // if (props.CurrentRoleID === RoleID.HOD) {
+            //     setButtonLabel("Approve")
+            // } else if ((props.CurrentRoleID === RoleID.RecruitmentHR)) {
+            //     setButtonLabel("Submit")
+            // }
+
             await fetchData();
+
         };
 
         void initialize();
     }, []);
-
 
 
     useEffect(() => {
@@ -930,34 +947,34 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         });
     };
 
-    const handleAutoComplete = async (
-        item: AutoCompleteItem | null,
-        StateValue: string,
-        tab: string
-    ) => {
-        if (item) {
-            if (tab === 'tab2') {
-                setAdvDetails((prevState) => ({
-                    ...prevState,
-                    [StateValue]: item
-                }))
-                setValidationError((prevState) => ({
-                    ...prevState,
-                    [StateValue]: false
-                }))
-            } else {
-                setFormState((prevState) => ({
-                    ...prevState,
-                    [StateValue]: item
-                }))
-                setValidationError((prevState) => ({
-                    ...prevState,
-                    [StateValue]: false
-                }))
-            }
+    // const handleAutoComplete = async (
+    //     item: AutoCompleteItem | null,
+    //     StateValue: string,
+    //     tab: string
+    // ) => {
+    //     if (item) {
+    //         if (tab === 'tab2') {
+    //             setAdvDetails((prevState) => ({
+    //                 ...prevState,
+    //                 [StateValue]: item
+    //             }))
+    //             setValidationError((prevState) => ({
+    //                 ...prevState,
+    //                 [StateValue]: false
+    //             }))
+    //         } else {
+    //             setFormState((prevState) => ({
+    //                 ...prevState,
+    //                 [StateValue]: item
+    //             }))
+    //             setValidationError((prevState) => ({
+    //                 ...prevState,
+    //                 [StateValue]: false
+    //             }))
+    //         }
 
-        }
-    };
+    //     }
+    // };
 
     const handleInputChangeTextArea = (
         value: string | any,
@@ -1000,12 +1017,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     const tabs = [
         {
-            label: "Position Details",
+            label: TabName.PositionDetails, //"Position Details",
             value: "tab1",
             content: (
                 <Card
                     variant="outlined"
-                    sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                    sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", border: "0px solid rgba(0, 0, 0, 0.12)", borderRadius: "30px", marginTop: "2%" }}
                 >
                     <CardContent>
                         {tabVisibility.tab1 && (
@@ -1013,27 +1030,21 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 <div className="ms-Grid-row">
                                     <div className="ms-Grid-col ms-lg6">
                                         <LabelHeaderComponents
-                                            value={
-                                                "Position Details"
-                                            }
+                                            value={`Job Title - ${formState.JobNameInEnglish}`}
+                                        >
+                                            {" "}
+                                        </LabelHeaderComponents>
+                                    </div>
+                                    <div className="ms-Grid-col ms-lg6">
+                                        <LabelHeaderComponents
+                                            value={`Status - ${props.stateValue?.Status}`}
                                         >
                                             {" "}
                                         </LabelHeaderComponents>
                                     </div>
                                 </div>
                                 <div className="ms-Grid-row">
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Job Code"
-                                            value={formState.JobCode}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, JobCode: value }))
-                                            }
-                                        />
 
-                                    </div>
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="Business Unit Code"
@@ -1071,9 +1082,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             }
                                         />
                                     </div>
-
-                                </div>
-                                <div className="ms-Grid-row">
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="Department"
@@ -1085,6 +1093,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             }
                                         />
                                     </div>
+
+                                </div>
+                                <div className="ms-Grid-row">
+
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="Sub-Department"
@@ -1122,9 +1134,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         />
 
                                     </div>
-
-                                </div>
-                                <div className="ms-Grid-row">
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="Nationality"
@@ -1136,6 +1145,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             }
                                         />
                                     </div>
+
+                                </div>
+                                <div className="ms-Grid-row">
+                                    {/*                                    
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="Position Name (English)"
@@ -1157,7 +1170,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 setFormState((prevState) => ({ ...prevState, JobNameInFrench: value }))
                                             }
                                         />
-                                    </div>
+                                    </div> */}
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="Paterson Grade"
@@ -1170,8 +1183,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         />
                                     </div>
 
-                                </div>
-                                <div className="ms-Grid-row">
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="DRC Grade"
@@ -1207,6 +1218,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             }
                                         />
                                     </div>
+
+                                </div>
+                                <div className="ms-Grid-row">
+
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="Area of Work"
@@ -1220,8 +1235,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         />
                                     </div>
 
-                                </div>
-                                <div className="ms-Grid-row">
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="No of Position Assigned"
@@ -1249,45 +1262,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         />
                                     </div>
 
-                                    {props.CurrentRoleID === RoleID.RecruitmentHRLead ? (
-                                        <>
-                                            <div className="ms-Grid-col ms-lg3">
-                                                <CustomAutoComplete
-                                                    label="Assign RecruitmentHR"
-                                                    options={formState.AssignRecruitmentHROption}
-                                                    value={formState.AssignRecruitmentHR}
-                                                    disabled={props.stateValue?.AssignedHRId > 0}
-                                                    mandatory={formState.AssignRecruitmentHR ? false : true}
-                                                    onChange={(item) => handleAutoComplete(item, "AssignRecruitmentHR", "tab1")}
-                                                    error={validationErrors.AssignRecruitmentHR}
-                                                />
-                                            </div>
-                                        </>
-                                    ) : (<></>)}
-                                    {props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoAssignExternalAgency ? (
-                                        <>
-                                            <div className="ms-Grid-col ms-lg3">
-                                                {/* <CustomAutoComplete
-                                                    label="Assign Agencies"
-                                                    options={formState.AssignAgenciesOption}
-                                                    value={formState.AssignAgencies}
-                                                    disabled={false}
-                                                    mandatory={true}
-                                                    onChange={(item) => handleAutoComplete(item, "AssignAgencies")}
-                                                /> */}
-                                                <CustomMultiSelect
-                                                    label="Assign Agencies"
-                                                    disabled={false}
-                                                    mandatory={true}
-                                                    value={formState.AssignAgenciesOption}
-                                                    options={formState.AssignAgenciesOption}
-                                                    error={validationErrors.AssignAgencies}
-                                                />
-                                            </div>
-                                        </>
-                                    ) : (<></>)}
-
                                 </div>
+
+
+
+
+
                                 {props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv ? (
                                     <></>
                                 ) : (
@@ -1319,12 +1299,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 </div>
 
                                                 <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg6">
-                                                        <Labelheader value={"Attach ONEM Signed & Stamps Documents"}> </Labelheader>
+                                                    <div className="ms-Grid-col ms-lg3">
+                                                        <CustomLabel value={"ONEM Signed Doc"} />
                                                         <AttachmentButton
-                                                            label="Attach Documents"
-                                                            iconName="CloudUpload"
-                                                            iconNameHover="CloudUpload"
+                                                            label="Upload"
+                                                            // iconName="CloudUpload"
+                                                            // iconNameHover="CloudUpload"
                                                             AttachState={(newAttachments: Item[]) => {
                                                                 // Directly update state here
                                                                 setFormState((prevState: any) => ({
@@ -1334,42 +1314,40 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             }}
                                                             mandatory={true}
                                                             error={validationErrors.OnamSignedStampsDocument}
+                                                            Style={{ padding: "2%" }}
                                                         />
+                                                    </div>
+                                                    <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
+                                                        {console.log("OnamSignedStampsAttchment", formState.OnamSignedStampsAttchment)}
+                                                        {formState.OnamSignedStampsAttchment?.map((file: any, index: number) => {
+                                                            const fileName = file.fileName || file.name; // Ensure proper name display
+                                                            console.log("Rendering file:", fileName);
 
-                                                        <div className="ms-Grid-row">
-                                                            <div className="ms-Grid-col ms-lg10">
-                                                                {console.log("OnamSignedStampsAttchment", formState.OnamSignedStampsAttchment)}
-                                                                {formState.OnamSignedStampsAttchment?.map((file: any, index: number) => {
-                                                                    const fileName = file.fileName || file.name; // Ensure proper name display
-                                                                    console.log("Rendering file:", fileName);
-
-                                                                    return (
-                                                                        <div key={index} className="ms-Grid-row">
-                                                                            <div className="ms-Grid-col ms-lg12">
-                                                                                <Label>
-                                                                                    {fileName}
-                                                                                    <span>
-                                                                                        <Icon
-                                                                                            iconName="Delete"
-                                                                                            style={{
-                                                                                                marginLeft: "8px",
-                                                                                                fontSize: "16px",
-                                                                                                cursor: "pointer",
-                                                                                            }}
-                                                                                            onClick={() => handleDelete(index, 'OnamSignedStampsAttchment')} // Call the delete function
-                                                                                        />
-                                                                                    </span>
-                                                                                </Label>
-                                                                            </div>
-                                                                        </div>
-                                                                    );
-                                                                })}
-
-                                                            </div>
-                                                        </div>
+                                                            return (
+                                                                <div key={index} className="ms-Grid-row">
+                                                                    <div className="ms-Grid-col ms-lg12">
+                                                                        <Label style={{ color: "blue" }}>
+                                                                            {fileName}
+                                                                            <span>
+                                                                                <Icon
+                                                                                    iconName="Delete"
+                                                                                    style={{
+                                                                                        marginLeft: "8px",
+                                                                                        fontSize: "16px",
+                                                                                        cursor: "pointer",
+                                                                                    }}
+                                                                                    onClick={() => handleDelete(index, 'OnamSignedStampsAttchment')} // Call the delete function
+                                                                                />
+                                                                            </span>
+                                                                        </Label>
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        })}
 
                                                     </div>
                                                 </div>
+
 
                                             </>
                                         )}
@@ -1398,55 +1376,93 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             </>
                                         )}
 
-
                                         {props.stateValue?.type === "VRR" ? (
                                             <></>
                                         ) : (
                                             <>
                                                 <div className="ms-Grid-row">
                                                     <div className="ms-Grid-col ms-lg12">
-                                                        <div className="ms-Grid-col ms-lg4">
+                                                        <div className="ms-Grid-col ms-lg4" style={{ marginLeft: "-5px" }}>
                                                             <CustomLabel value={" View Justifications"} />
-                                                            <ReuseButton
-                                                                Style={{
-                                                                    minWidth: "117px",
-                                                                    fontSize: "13px",
-                                                                    paddingBottom: "24px",
-                                                                    display: "flex",
-                                                                    flexDirection: "column",
-                                                                    height: "41px",
-                                                                    paddingTop: "22px",
+                                                            <PrimaryButton
+                                                                style={{
+                                                                    borderColor: "rgb(205, 45, 45)",
+                                                                    backgroundColor: "#EF3340",
+                                                                    color: "white",
+                                                                    borderRadius: "10px",
                                                                 }}
+                                                                onClick={OpenComments}
+
+                                                            > View
+                                                            </PrimaryButton>
+                                                            {/* <ReuseButton
                                                                 label="VIEW"
                                                                 onClick={OpenComments}
                                                                 spacing={4}
-                                                                imgSrc={require("../../assets/Viewicon.svg")}
-                                                                imgAlt="ViewIcon"
-                                                                imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                                                                imgAltHover="Image"
-                                                            />
+                                                            // imgSrc={require("../../assets/Viewicon.svg")}
+                                                            // imgAlt="ViewIcon"
+                                                            // imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                                                            // imgAltHover="Image"
+                                                            /> */}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </>
                                         )}
 
-                                        <div className="ms-Grid-row">
-                                            <div className="ms-Grid-col ms-lg9">
-                                                <CustomTextArea
-                                                    label="Justification"
-                                                    value={formState.Comments}
-                                                    error={validationErrors.Comments}
-                                                    onChange={(value) =>
-                                                        handleInputChangeTextArea(
-                                                            value,
-                                                            "Comments"
-                                                        )
-                                                    }
-                                                    mandatory={true}
-                                                />
-                                            </div>
-                                        </div>
+                                        {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                                            <>
+                                                <div className="ms-Grid-row">
+                                                    <div className="ms-Grid-col ms-lg12">
+                                                        <CustomTextArea
+                                                            label="Justification"
+                                                            value={formState.Comments}
+                                                            error={validationErrors.Comments}
+                                                            onChange={(value) =>
+                                                                handleInputChangeTextArea(
+                                                                    value,
+                                                                    "Comments"
+                                                                )
+                                                            }
+                                                            mandatory={true}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="ms-Grid-row"
+                                                    style={{
+                                                        padding: "3px",
+                                                        marginTop: "20px",
+                                                        marginBottom: "-33px",
+                                                    }}
+                                                >
+                                                    <div className="ms-Grid-col ms-lg12">
+                                                        <SignatureCheckbox
+                                                            label={"I hereby agree for submitted this request"}
+                                                            checked={Checkbox}
+                                                            error={validationErrors.Checkboxalidation}
+                                                            onChange={(value: boolean) => setCheckbox(value)}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="ms-Grid-row">
+                                                    <div className="ms-Grid-col ms-lg12">
+                                                        <CustomSignature
+                                                            Name={(props.userDetails[0].FirstName ?? "") + " " + (props.userDetails[0]?.MiddleName ?? "") + " " + (props.userDetails[0]?.LastName ?? "")}
+                                                            JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
+                                                            JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                                                            Department={props.userDetails[0].DepartmentName}
+                                                            Date={formState.SignDate.toString()}
+                                                            TermsAndCondition={Checkbox}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                            </>
+
+
+                                        )}
+
                                     </>
                                 )}
 
@@ -1458,20 +1474,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         },
         ...(props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv
             ? [{
-                label: "Advertisement Details",
+                label: TabName.AdvertisementDetails, //"Advertisement Details",
                 value: "tab2",
                 content: (
-                    <Card variant="outlined" sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}>
+                    <Card variant="outlined" sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", border: "0px solid rgba(0, 0, 0, 0.12)", marginTop: "2%" }}>
                         <CardContent>
                             <div>
                                 <>
                                     <div className="ms-Grid-row">
                                         <div className="ms-Grid-col ms-lg3">
-                                            <Labelheader value={"Attach Advertisement Documents"}> </Labelheader>
+                                            <Labelheader value={"Advertisement"}> </Labelheader>
                                             <AttachmentButton
-                                                label="Attach Documents"
-                                                iconName="CloudUpload"
-                                                iconNameHover="CloudUpload"
+                                                label="Upload"
+                                                // iconName="CloudUpload"
+                                                // iconNameHover="CloudUpload"
                                                 AttachState={(newAttachments: Item[]) => {
                                                     setFormState((prevState: any) => ({
                                                         ...prevState,
@@ -1911,31 +1927,18 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         </div>
                                     </div>
 
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <div className="ms-Grid-col ms-lg4">
-                                                <CustomLabel value={" View Justifications"} />
-                                                <ReuseButton
-                                                    Style={{
-                                                        minWidth: "117px",
-                                                        fontSize: "13px",
-                                                        paddingBottom: "24px",
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        height: "41px",
-                                                        paddingTop: "22px",
-                                                    }}
-                                                    label="VIEW"
-                                                    onClick={OpenComments}
-                                                    spacing={4}
-                                                    imgSrc={require("../../assets/Viewicon.svg")}
-                                                    imgAlt="ssss"
-                                                    imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                                                    imgAltHover="Image"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <CustomLabel value={" View Justifications"} />
+                                    <PrimaryButton
+                                        style={{
+                                            borderColor: "rgb(205, 45, 45)",
+                                            backgroundColor: "#EF3340",
+                                            color: "white",
+                                            borderRadius: "10px",
+                                        }}
+                                        onClick={OpenComments}
+
+                                    > View
+                                    </PrimaryButton>
 
                                     <div className="ms-Grid-row">
                                         <div className="ms-Grid-col ms-lg12">
@@ -1954,6 +1957,36 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         </div>
                                     </div>
 
+                                    <div className="ms-Grid-row"
+                                        style={{
+                                            padding: "3px",
+                                            marginTop: "20px",
+                                            marginBottom: "-33px",
+                                        }}
+                                    >
+                                        <div className="ms-Grid-col ms-lg12">
+                                            <SignatureCheckbox
+                                                label={"I hereby agree for submitted this request"}
+                                                checked={Checkbox}
+                                                error={validationErrors.Checkboxalidation}
+                                                onChange={(value: boolean) => setCheckbox(value)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="ms-Grid-row">
+                                        <div className="ms-Grid-col ms-lg12">
+                                            <CustomSignature
+                                                Name={(props.userDetails[0].FirstName ?? "") + " " + (props.userDetails[0]?.MiddleName ?? "") + " " + (props.userDetails[0]?.LastName ?? "")}
+                                                JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
+                                                JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                                                Department={props.userDetails[0].DepartmentName}
+                                                Date={formState.SignDate.toString()}
+                                                TermsAndCondition={Checkbox}
+                                            />
+                                        </div>
+                                    </div>
+
+
                                 </>
                             </div>
                         </CardContent>
@@ -1962,6 +1995,46 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             }]
             : []),
     ];
+
+
+    useEffect(() => {
+        const activeTabObj = tabs.find((item) => item.value === activeTab);
+        const prevTabObj = tabs.find((item) => item.value === prevActiveTab);
+        if (activeTab === "tab1") {
+            setTabNameData((prevTabNames) => {
+                const newTabNames = [
+                    { tabName: props.stateValue?.TabName },
+                    { tabName: props.stateValue?.ButtonAction },
+                    { tabName: activeTabObj?.label },
+                ];
+                return newTabNames;
+            });
+        } else {
+            setTabNameData((prevTabNames) => {
+                const newTabNames = [
+                    { tabName: props.stateValue?.TabName },
+                    { tabName: props.stateValue?.ButtonAction },
+                    { tabName: prevTabObj?.label },
+                    { tabName: activeTabObj?.label },
+                ];
+
+                const uniqueTabNames = newTabNames.filter(
+                    (item, index, self) =>
+                        item.tabName &&
+                        self.findIndex(t => t.tabName === item.tabName) === index
+                );
+
+                return uniqueTabNames;
+            });
+        }
+
+
+        if (activeTab !== prevActiveTab) {
+            setPrevActiveTab(activeTab);
+        }
+    }, [activeTab]);
+
+
 
     const handleCancel = () => {
         setIsLoading(true);
@@ -2022,14 +2095,117 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }
     }
 
+    const handleBreadcrumbChange = (newItem: string) => {
+        setactiveTab(newItem)
+        console.log("Breadcrumb changed to:", newItem);
+    };
+
+
     return (
         <>
             {MainComponent ? (
                 <>
                     <CustomLoader isLoading={isLoading}>
                         <div className="menu-card">
-                            <SimpleBreadcrumbs items={["Upl"]} />
-                            <TabsComponent
+                            <BreadcrumbsComponent
+                                items={tabs}
+                                initialItem={activeTab}
+                                TabName={TabNameData}
+                                onBreadcrumbChange={handleBreadcrumbChange}
+                                additionalButtons={
+                                    props.CurrentRoleID === RoleID.RecruitmentHRLead && props.stateValue?.StatusId === StatusId.PendingwithHRLeadtoAssignRecruitmentHR
+                                        ? [
+                                            {
+                                                label: "Close",
+                                                onClick: async () => {
+                                                    handleCancel();
+                                                },
+                                            },
+                                            // {
+                                            //     label: "Cancel",
+                                            //     onClick: async () => {
+                                            //         handleCancel();
+                                            //     },
+                                            // },
+                                            // {
+                                            //     label: "Preview",
+                                            //     onClick: async () => {
+                                            //         setPreviewBtn(true);
+                                            //         setMainComponent(false);
+                                            //     },
+                                            // },
+                                            // {
+                                            //     label: ButtonLabel,
+                                            //     onClick: async () => {
+                                            //         await SaveRecruitment();
+                                            //     },
+                                            //     disable: SubmitBtn
+                                            // },
+                                        ]
+                                        :
+                                        props.CurrentRoleID === RoleID.RecruitmentHRLead && props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+                                            ?
+                                            [
+                                                {
+                                                    label: "Cancel",
+                                                    onClick: async () => {
+                                                        handleCancel();
+                                                    },
+                                                    // disable: SubmitBtn
+                                                },
+                                                {
+                                                    label: "Upload",
+                                                    onClick: async () => {
+                                                        await SaveRecruitment();
+                                                    },
+                                                    // disable: SubmitBtn
+                                                },
+                                            ] :
+                                            props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv
+                                                ?
+                                                [
+                                                    {
+                                                        label: "Cancel",
+                                                        onClick: async () => {
+                                                            handleCancel();
+                                                        },
+                                                        // disable: SubmitBtn
+                                                    },
+                                                    {
+                                                        label: "Preview",
+                                                        onClick: async () => {
+                                                            setPreviewBtn(true);
+                                                            setMainComponent(false);
+                                                        },
+                                                        // disable: SubmitBtn
+                                                    },
+                                                    {
+                                                        label: "Submit",
+                                                        onClick: async () => {
+                                                            await SaveRecruitment();
+                                                        },
+                                                        disable: SubmitBtn
+                                                    },
+                                                ] :
+                                                props.CurrentRoleID === RoleID.HOD && props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv
+                                                    ? [
+                                                        {
+                                                            label: "Cancel",
+                                                            onClick: async () => {
+                                                                handleCancel();
+                                                            },
+                                                            // disable: SubmitBtn
+                                                        },
+                                                        {
+                                                            label: "Approved",
+                                                            onClick: async () => {
+                                                                await SaveRecruitment();
+                                                            },
+                                                        },
+                                                    ] : []
+                                }
+                            />
+                            {/* <TabsComponent
                                 tabs={tabs}
                                 initialTab={activeTab}
                                 handleCancel={handleCancel}
@@ -2061,7 +2237,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             },
                                         ]
                                 }
-                            />
+                            /> */}
                         </div>
                     </CustomLoader>
                 </>
@@ -2085,7 +2261,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             ) : (
                 <>
                     <CommanComments
-                        onClose={() => { setMainComponent(true); setactiveTab("tab2") }}
+                        onClose={() => { setMainComponent(true); setactiveTab(activeTab) }}
                         Comments={CommentData} />
                 </>
             )}
@@ -2133,7 +2309,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     }
                                 />
                             </div>
-
                         </div>
 
                         <div className="ms-Grid-row"

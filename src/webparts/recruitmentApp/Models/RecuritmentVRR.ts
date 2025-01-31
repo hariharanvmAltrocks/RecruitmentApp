@@ -67,7 +67,8 @@ export type RecuritmentData = {
     AssignAgencies: AutoCompleteItem;
     AssignAgenciesOption: AutoCompleteItem[];
     CandidateCVAttachment: IAttachmentExampleState[];
-    Comments: string
+    Comments: string;
+    SignDate?: Date | any;
 }
 
 export type AdvDetails = {
