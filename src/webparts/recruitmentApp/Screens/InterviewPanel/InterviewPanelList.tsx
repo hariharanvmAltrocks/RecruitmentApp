@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Card, CardContent, Link } from "@mui/material";
+import { Card, CardContent } from "@mui/material";
+//import {  Link } from "@mui/material";
 import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
@@ -36,24 +37,24 @@ const InterviewPanelList = (props: any) => {
   //     visible: false,
   // });
 
-  const HRFileHandle = (serverUrl: string, fileName: string) => {
-    console.log(serverUrl, "ServerUrl");
-    try {
-      if (serverUrl) {
-        if (
-          fileName
-            .split(".")
-            [fileName.split(".").length - 1].toLocaleLowerCase() == "pdf"
-        ) {
-          window.open(serverUrl);
-        } else {
-          window.open(serverUrl + "?web=1");
-        }
-      }
-    } catch (error) {
-      console.error("Error setting up SharePoint:", error);
-    }
-  };
+  // const HRFileHandle = (serverUrl: string, fileName: string) => {
+  //   console.log(serverUrl, "ServerUrl");
+  //   try {
+  //     if (serverUrl) {
+  //       if (
+  //         fileName
+  //           .split(".")
+  //           [fileName.split(".").length - 1].toLocaleLowerCase() == "pdf"
+  //       ) {
+  //         window.open(serverUrl);
+  //       } else {
+  //         window.open(serverUrl + "?web=1");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Error setting up SharePoint:", error);
+  //   }
+  // };
 
   // const handleAttachmentState = (newAttachments: Item[], rowData: any) => {
   //     const updatedRowAttachment = CandidateData.map((item: any) => {
@@ -89,58 +90,83 @@ const InterviewPanelList = (props: any) => {
 
   const columnConfig = [
     {
-      field: "JobCode",
-      header: "JobCode",
+      field: "",
+      header: "Candidate ID",
       sortable: true,
     },
     {
-      field: "Nationality",
-      header: "Nationality",
+      field: "",
+      header: "ApplicantName",
       sortable: true,
     },
     {
-      field: "PassportID",
-      header: "PassportID",
+      field: "",
+      header: "Position Title",
       sortable: true,
     },
+    {
+      field: "",
+      header: "JobGrade",
+      sortable: true,
+    },
+    // {
+    //   field: "JobCode",
+    //   header: "JobCode",
+    //   sortable: true,
+    // },
+    {
+      field: "",
+      header: "Status",
+      sortable: true,
+    },
+    // {
+    //   field: "Nationality",
+    //   header: "Nationality",
+    //   sortable: true,
+    // },
+    // {
+    //   field: "PassportID",
+    //   header: "PassportID",
+    //   sortable: true,
+    // },
     {
       field: "FullName",
       header: "Name",
       sortable: true,
     },
-    {
-      field: "",
-      header: "CV",
-      sortable: false,
-      body: (rowData: any) => {
-        if (
-          rowData?.CandidateCVDoc?.[0] &&
-          rowData?.CandidateCVDoc?.[0]?.name
-        ) {
-          return (
-            <div>
-              <Link
-                onClick={() =>
-                  HRFileHandle(
-                    rowData?.CandidateCVDoc[0]?.content || "",
-                    rowData?.CandidateCVDoc[0]?.name || ""
-                  )
-                }
-              >
-                {rowData?.CandidateCVDoc?.[0]?.name}
-              </Link>
-            </div>
-          );
-        } else {
-          return <span>No CV available</span>;
-        }
-      },
-    },
-    {
-      field: "Interviewed",
-      header: "Interviewed",
-      sortable: false,
-    },
+    // {
+    //   field: "",
+    //   header: "CV",
+    //   sortable: false,
+    //   body: (rowData: any) => {
+    //     if (
+    //       rowData?.CandidateCVDoc?.[0] &&
+    //       rowData?.CandidateCVDoc?.[0]?.name
+    //     ) {
+    //       return (
+    //         <div>
+    //           <Link
+    //             onClick={() =>
+    //               HRFileHandle(
+    //                 rowData?.CandidateCVDoc[0]?.content || "",
+    //                 rowData?.CandidateCVDoc[0]?.name || ""
+    //               )
+    //             }
+    //           >
+    //             {rowData?.CandidateCVDoc?.[0]?.name}
+    //           </Link>
+    //         </div>
+    //       );
+    //     } else {
+    //       return <span>No CV available</span>;
+    //     }
+    //   },
+    // },
+    // {
+    //   field: "Interviewed",
+    //   header: "Interviewed",
+    //   sortable: false,
+    // },
     {
       field: "",
       header: "Action",
@@ -168,7 +194,7 @@ const InterviewPanelList = (props: any) => {
               onClick={() => handleRedirectView(rowData)}
               spacing={4}
               width="10%"
-              disabled={!rowData?.Checked}
+              // disabled={!rowData?.Checked}
             />
           </div>
         );

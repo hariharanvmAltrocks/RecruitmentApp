@@ -9,11 +9,11 @@ import {
   StatusId,
   TabName,
   tabType,
-  WorkflowAction,
-  RecuritmentHRMsg,
-  ListNames,
-  HRMSAlertOptions,
   ADGroupID,
+  HRMSAlertOptions,
+  ListNames,
+  RecuritmentHRMsg,
+  WorkflowAction,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Button } from "primereact/button";
@@ -89,6 +89,7 @@ const RecruitmentProcess = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
+
   type formValidation = {
     Comments: boolean;
     AssignRecruitmentHR: boolean;
@@ -401,11 +402,11 @@ const RecruitmentProcess = (props: any) => {
         Operator: "eq",
         FilterValue: StatusId.PendingwithHRLeadtoAssignRecruitmentHR,
       });
+
       try {
         const HRMSExternalAgents = await CommonServices.GetMasterData(
           ListNames.HRMSExternalAgents
         );
-
         if (HRMSExternalAgents.data && HRMSExternalAgents.data.length > 0) {
           const HRMSExternalAgentsOption: AutoCompleteItem[] =
             HRMSExternalAgents.data.map((item: any) => ({
@@ -480,13 +481,10 @@ const RecruitmentProcess = (props: any) => {
         dataPromise,
         recruitmentDetailsPromise,
       ]);
-      const RecruitmentID = RecruitmentDetails.data.map(
-        (item: JobCodeTilte) => item.ID
-      );
-      console.log(RecruitmentID);
-      if (data.status === 200 && data.data !== null) {
-        setData(data.data[0]);
 
+      if (data.status === 200 && data.data !== null) {
+        console.log(data, "GetVacancyDetails");
+        setData(data.data[0]);
         const JobCode = data.data[0].map(
           (item: { JobCode: any; VRRID: number }) => ({
             JobCode: item.JobCode,
@@ -536,12 +534,10 @@ const RecruitmentProcess = (props: any) => {
   };
 
   React.useEffect(() => {
-    const fetchDataAndGetADGroups = async () => {
+    const fetchDataAndGetADGroupsOption = async () => {
       try {
-        // Fetch data
         await fetchData();
 
-        // Get AD groups
         const AssignRecurtimentHROption =
           await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSRecruitmentHR);
         const AssignAgenciesOption = await CommonServices.GetADgruopsEmailIDs(
@@ -558,7 +554,9 @@ const RecruitmentProcess = (props: any) => {
           );
 
           const AssignRecrutimentObject = AssignRecrutiment.reduce(
-            (acc: { [key: string]: any }, item: { key: any }) => item,
+            (acc: { [key: string]: any }, item: { key: any }) => {
+              return item;
+            },
             {}
           );
 
@@ -572,8 +570,8 @@ const RecruitmentProcess = (props: any) => {
       }
     };
 
-    void fetchDataAndGetADGroups();
-  }, [activeTab]); // Runs when activeTab changes
+    void fetchDataAndGetADGroupsOption();
+  }, [activeTab]);
 
   const onPageChange = (event: any, Type: string) => {
     setFirst(event.first);
@@ -584,8 +582,8 @@ const RecruitmentProcess = (props: any) => {
     void fetchData();
     // setActiveTab(tab);
   };
+  // Popupfunction
 
-  //Popup
   const handleAutoComplete = async (value: AutoCompleteItem | null) => {
     if (value) {
       if (props.CurrentRoleID === RoleID.RecruitmentHR) {
@@ -1118,16 +1116,12 @@ const RecruitmentProcess = (props: any) => {
                 <CardContent>
                   {console.log(props, "propsDept")}
                   {/* <SearchableDataTable
-                    data={data}
-                    columns={columnConfig(
-                      "tab1",
-                      "view",
-                      TabName.AssignRecuritmentHR
-                    )}
-                    rows={rows}
-                    onPageChange={(event) => onPageChange(event, "Recruitment")}
-                    handleRefresh={() => handleRefresh("tab1")}
-                  /> */}
+                                data={data}
+                                columns={columnConfig("tab1", "view", TabName.AssignRecuritmentHR,)}
+                                rows={rows}
+                                onPageChange={(event) => onPageChange(event, "Recruitment")}
+                                handleRefresh={() => handleRefresh("tab1")}
+                            /> */}
                   <CheckboxDataTable //AssignHR
                     data={data}
                     columns={columnConfig(
@@ -1241,6 +1235,13 @@ const RecruitmentProcess = (props: any) => {
                       }}
                     >
                       <CardContent>
+                        {/* <SearchableDataTable
+                                    data={RecruitmentDetails}
+                                    columns={columnConfig("tab2", "view", TabName.AssignAgencies)}
+                                    rows={rows}
+                                    onPageChange={(event) => onPageChange(event, "VRR")}
+                                    handleRefresh={() => handleRefresh("tab2")}
+                                /> */}
                         <CheckboxDataTable //AssignAgency
                           data={RecruitmentDetails}
                           columns={columnConfig(
@@ -1263,17 +1264,6 @@ const RecruitmentProcess = (props: any) => {
                           }
                           //checkedValue={}
                         />
-                        {/* <SearchableDataTable
-                          data={RecruitmentDetails}
-                          columns={columnConfig(
-                            "tab2",
-                            "view", 
-                            TabName.AssignAgencies
-                          )}
-                          rows={rows}
-                          onPageChange={(event) => onPageChange(event, "VRR")}
-                          handleRefresh={() => handleRefresh("tab2")}
-                        /> */}
                       </CardContent>
                     </Card>
                   ),
@@ -1468,7 +1458,7 @@ const RecruitmentProcess = (props: any) => {
             backgroundColor: "white",
             borderRadius: "26px",
             padding: "20px",
-            maxHeight: "80vh",
+            maxHeight: "85vh",
             overflow: "hidden",
           }}
           onHide={() => setAssignHR(false)}
@@ -1492,6 +1482,10 @@ const RecruitmentProcess = (props: any) => {
                   : "Assign Recruitment HR"
               }
             />
+            <span style={{ color: "red", marginTop: "8px", display: "block" }}>
+              Note:- To remove a selected Job Title ,click 'Cancel' and return
+              to the Dashboard.
+            </span>
 
             <div className="ms-Grid-row" style={{ textAlign: "left" }}>
               <div className="ms-Grid-col ms-lg4">
@@ -1506,19 +1500,32 @@ const RecruitmentProcess = (props: any) => {
                     error={validationErrors.AssignRecruitmentHR}
                   />
                 ) : (
-                  <CustomMultiSelect
-                    label="Assign Agencies"
-                    disabled={false}
-                    mandatory={true}
-                    value={
-                      AssignRecruitmentAgencies?.filter(
-                        (item) => item.key !== 0
-                      ) ?? []
-                    }
-                    options={AssignRecruitmentAgenciesOption ?? []}
-                    onChange={handleAgencyChange}
-                    error={validationErrors.AssignRecruitmentAgencies}
-                  />
+                  <>
+                    <CustomMultiSelect
+                      label="Assign Agencies"
+                      disabled={false}
+                      mandatory={true}
+                      value={
+                        AssignRecruitmentAgencies?.filter(
+                          (item) => item.key !== 0
+                        ) ?? []
+                      }
+                      options={AssignRecruitmentAgenciesOption ?? []}
+                      onChange={handleAgencyChange}
+                      error={validationErrors.AssignRecruitmentAgencies}
+                    />
+                    {props.CurrentRoleID === RoleID.RecruitmentHR && (
+                      <span
+                        style={{
+                          color: "red",
+                          marginTop: "8px",
+                          display: "block",
+                        }}
+                      >
+                        Note:- You can assign multiple Agencies.
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -1528,8 +1535,8 @@ const RecruitmentProcess = (props: any) => {
                 <CustomTextArea
                   label={
                     props.CurrentRoleID === RoleID.RecruitmentHR
-                      ? "Reason to RecruitmentHR"
-                      : "Reason"
+                      ? "Notes for Agencies"
+                      : "Notes for RecruitmentHR"
                   }
                   value={Comments}
                   error={validationErrors.Comments}
@@ -1537,6 +1544,11 @@ const RecruitmentProcess = (props: any) => {
                     handleInputChangeTextArea(value, "Comments")
                   }
                   mandatory={true}
+                  placeholder={
+                    props.CurrentRoleID === RoleID.RecruitmentHRLead
+                      ? "You may provide Hiring Lining Manager and Hiring HOD name and number here to RecruitmentHR...."
+                      : ""
+                  }
                 />
               </div>
             </div>

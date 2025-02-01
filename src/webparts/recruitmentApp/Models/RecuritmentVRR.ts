@@ -141,6 +141,8 @@ export type ScoreCardData = {
   CriteriaRecognised: AutoCompleteItem;
   Employment: string;
   EvaluationFeedback: string;
+  OverAllEvaluationFeedback: string;
+  SignDate?: Date | any;
 };
 
 export type QualificationValue = {

@@ -41,6 +41,7 @@ export const ListNames = {
   HRMSExternalAgents: "HRMSExternalAgents",
   HRMSExternalAgentsDetailsForRecruitment:
     "HRMSExternalAgentsDetailsForRecruitment",
+  HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
 };
 
 export const DocumentLibraray = {
@@ -195,11 +196,16 @@ export const RoleDescriptionData = {
 };
 
 export const ScoreRanking: AutoCompleteItem[] = [
-  { key: 1, text: "Poor" },
-  { key: 2, text: "Below Average" },
-  { key: 3, text: "Average" },
-  { key: 4, text: "Good" },
-  { key: 5, text: "Excellent" },
+  // { key: 1, text: "Poor" },
+  // { key: 2, text: "Below Average" },
+  // { key: 3, text: "Average" },
+  // { key: 4, text: "Good" },
+  // { key: 5, text: "Excellent" },
+  { key: 1, text: "1" },
+  { key: 2, text: "2" },
+  { key: 3, text: "3" },
+  { key: 4, text: "4" },
+  { key: 5, text: "5" },
 ];
 
 export const EmploymentOption = ["Yes", "No"];
