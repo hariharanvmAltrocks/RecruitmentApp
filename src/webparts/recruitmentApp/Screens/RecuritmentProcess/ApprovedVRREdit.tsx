@@ -720,7 +720,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             RoleSpecificKnowledgeJson: JSON.stringify(RoleSpecificKnowledgeJson),
                             TechnicalSkillsKnowledgeJson: JSON.stringify(RoleSpecificKnowledgeJson),
                             RecruitmentIDId: props.stateValue?.ID,
-                            YearofExperience: advDetails.TotalExperience
+                            YearofExperience: Number(advDetails.TotalExperience),
+                            PreferredExperience: Number(advDetails.ExperienceinMiningIndustry)
                         };
                         console.log(AdvData, "AdvData");
                         const InsertAdveData = await getVRRDetails.InsertList(AdvData, ListNames.HRMSRecruitmentRoleProfileDetails);
@@ -1014,6 +1015,37 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         setLabelValue(LabelValue);
 
     }
+
+    const handleRichTextEditor = (
+        value: string | any,
+        StateValue: string
+    ) => {
+        setAdvDetails((prevState) => ({
+            ...prevState,
+            [StateValue]: value
+        }))
+        setValidationError((prevState) => ({
+            ...prevState,
+            [StateValue]: false
+        }))
+    };
+
+    const handleInputChange = (
+        value: string | any,
+        StateValue: string
+    ) => {
+        debugger;
+        setAdvDetails((prevState) => ({
+            ...prevState,
+            [StateValue]: value
+        }))
+        setValidationError((prevState) => ({
+            ...prevState,
+            [StateValue]: false
+        }))
+    };
+
+
 
     const tabs = [
         {
@@ -1542,9 +1574,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 label="Role Purpose"
                                                 value={advDetails.RolePurpose}
                                                 mandatory={true}
-                                                onChange={(value) =>
-                                                    setAdvDetails((prevState) => ({ ...prevState, RolePurpose: value }))
-                                                }
+                                                onChange={(value) => handleRichTextEditor(value, "RolePurpose")}
                                                 error={validationErrors.RolePurpose}
                                             />
                                         </div>
@@ -1556,9 +1586,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 label="Job Description"
                                                 value={advDetails.JobDescription}
                                                 mandatory={true}
-                                                onChange={(value) =>
-                                                    setAdvDetails((prevState) => ({ ...prevState, JobDescription: value }))
-                                                }
+                                                onChange={(value) => handleRichTextEditor(value, "JobDescription")}
                                                 error={validationErrors.JobDescription}
                                             />
                                         </div>
@@ -1571,10 +1599,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                     value={advDetails.TotalExperience}
                                                     disabled={false}
                                                     error={false}
-                                                    mandatory={false}
-                                                    onChange={(value) =>
-                                                        setAdvDetails((prevState) => ({ ...prevState, TotalExperience: value }))
-                                                    }
+                                                    mandatory={true}
+                                                    onChange={(value) => handleInputChange(value, "TotalExperience")}
+
                                                 />
                                             </div>
                                             <div className="ms-Grid-col ms-lg5">
@@ -1583,10 +1610,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                     value={advDetails.ExperienceinMiningIndustry}
                                                     disabled={false}
                                                     error={false}
-                                                    mandatory={false}
-                                                    onChange={(value) =>
-                                                        setAdvDetails((prevState) => ({ ...prevState, ExperienceinMiningIndustry: value }))
-                                                    }
+                                                    mandatory={true}
+                                                    onChange={(value) => handleInputChange(value, "ExperienceinMiningIndustry")}
+
                                                 />
                                             </div>
                                             <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
@@ -1595,14 +1621,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         </div>
                                     </div>
 
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg4">
 
-                                        </div>
-                                        <div className="ms-Grid-col ms-lg4">
-
-                                        </div>
-                                    </div>
 
                                     <div className="ms-Grid-row">
                                         <div className="ms-Grid-col ms-lg10">
@@ -2100,6 +2119,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         console.log("Breadcrumb changed to:", newItem);
     };
 
+    console.log(SubmitBtn);
 
     return (
         <>

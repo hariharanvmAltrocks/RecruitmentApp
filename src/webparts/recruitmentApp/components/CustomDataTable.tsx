@@ -7,6 +7,8 @@ import { Icon } from "@fluentui/react";
 import ReuseButton from "./ReuseButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { FilterMatchMode } from "primereact/api";
+import { AutoCompleteItem } from "../Models/Screens";
+import CustomAutoComplete from "./CustomAutoComplete";
 
 interface ColumnConfig {
     field: string;
@@ -21,6 +23,12 @@ interface SearchableDataTableProps {
     rows: number;
     onPageChange: (event: any) => void;
     handleRefresh: () => void;
+    MasterData?: any
+}
+export type FilterData = {
+    Department: AutoCompleteItem;
+    BusinessUnitCode: AutoCompleteItem;
+    BusinessUnitName: AutoCompleteItem;
 }
 
 const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
@@ -29,15 +37,23 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
     rows,
     onPageChange,
     handleRefresh,
+    MasterData
 }) => {
+    console.log(MasterData, "MasterData");
+
     const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
     // const [first, setFirst] = React.useState<number>(0);
     // const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [dashboardSearch, setDashboardSearch] = React.useState<any>({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
-
+    const [FilterData, setFilterData] = React.useState<FilterData>({
+        Department: { key: 0, text: "" },
+        BusinessUnitCode: { key: 0, text: "" },
+        BusinessUnitName: { key: 0, text: "" },
+    });
 
     React.useEffect(() => {
         setFilteredItems(data);
+
     }, [data]);
 
     const handleSearch = (event: any) => {
@@ -48,6 +64,31 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
             },
         })
     };
+
+    const handleAutoComplete = async (key: keyof FilterData, item: AutoCompleteItem | null) => {
+        if (item) {
+            setFilteredItems((prevState) => ({
+                ...prevState,
+                [key]: item,
+            }));
+        }
+        console.log(setFilterData, "ss");
+
+        setFilterData((prevState) => {
+            const updatedFilters = { ...prevState, [key]: item };
+            FilterData_fn(updatedFilters);
+            return updatedFilters;
+        });
+    };
+
+    function FilterData_fn(updatedFilters: FilterData) {
+        const filtered = data.filter((item) =>
+            (!updatedFilters.Department.text || item.Department === updatedFilters.Department.text) &&
+            (!updatedFilters.BusinessUnitCode.text || item.BusinessUnitCode === updatedFilters.BusinessUnitCode.text) &&
+            (!updatedFilters.BusinessUnitName.text || item.BusinessUnitName === updatedFilters.BusinessUnitName.text)
+        );
+        setFilteredItems(filtered);
+    }
 
     return (
         // <CustomLoader isLoading={isLoading}>
@@ -105,6 +146,46 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                         Style={{ marginRight: "11px" }}
                     />
                 </div>
+            </div>
+            <div className="ms_Grid-row" style={{ marginRight: "-19%", marginLeft: "5px" }}>
+                <div className="ms-Grid-col ms-lg3">
+                    <CustomAutoComplete
+                        label="Department"
+                        options={MasterData?.Department}
+                        value={FilterData.Department}
+                        disabled={false}
+                        mandatory={true}
+                        onChange={(item) => handleAutoComplete("Department", item)
+                        }
+                    />
+                </div>
+                <div className="ms-Grid-col ms-lg3">
+                    <CustomAutoComplete
+                        label="Business Unit Code"
+                        options={MasterData?.BusinessUnitCodeAllColumn
+                            .map((data: any) => ({
+                                key: data.key,
+                                text: data.text,
+                            }))}
+                        value={FilterData.BusinessUnitCode}
+                        disabled={false}
+                        mandatory={true}
+                        onChange={(item) => handleAutoComplete("BusinessUnitCode", item)
+                        }
+                    />
+                </div>
+                <div className="ms-Grid-col ms-lg3">
+                    <CustomAutoComplete
+                        label="Business Unit Name"
+                        options={[]}
+                        value={FilterData.BusinessUnitName}
+                        disabled={false}
+                        mandatory={true}
+                        onChange={(item) => handleAutoComplete("BusinessUnitName", item)
+                        }
+                    />
+                </div>
+
             </div>
             <div className="ms-Grid-row" style={{ marginTop: "2%" }}>
                 <div className="ms-Grid-col ms-lg12">

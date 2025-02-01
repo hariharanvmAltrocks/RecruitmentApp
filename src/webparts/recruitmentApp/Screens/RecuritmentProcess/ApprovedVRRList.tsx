@@ -7,6 +7,8 @@ import { GridStatusBackgroundcolor, RoleID, StatusId, TabName, tabType } from ".
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Button } from "primereact/button";
 import { Card, CardContent } from "@mui/material";
+import axios from "axios";
+import { ApiUrl } from "../../Services/AxiosService/axiosConfig";
 // import 'primeicons/primeicons.css';
 // interface ColumnConfig {
 //     field: string;
@@ -289,7 +291,19 @@ const RecruitmentProcess = (props: any) => {
 
 
     React.useEffect(() => {
-        void fetchData();
+        const fetchDataAndApply = async () => {
+            void fetchData();
+            await axios.post(ApiUrl +
+                `/InternalSignIn`, {}, { headers: { "Authorization": "Basic SHJtcyBBcHAgVXNlcjpBbHRyb2Nrc0AxMjM=", "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials": true }, withCredentials: true, })
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        };
+
+        void fetchDataAndApply();
 
     }, [activeTab]);
 
@@ -320,6 +334,7 @@ const RecruitmentProcess = (props: any) => {
                                 rows={rows}
                                 onPageChange={(event) => onPageChange(event, "Recruitment")}
                                 handleRefresh={() => handleRefresh("tab1")}
+                                MasterData={props}
                             />
                         </CardContent>
 

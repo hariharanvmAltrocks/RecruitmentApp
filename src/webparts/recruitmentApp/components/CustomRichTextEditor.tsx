@@ -1,6 +1,6 @@
 import { ILabelStyles, Label } from "@fluentui/react";
 import * as React from "react";
-import "react-quill/dist/quill.snow.css";  // Import the Quill CSS
+// import "react-quill/dist/quill.snow.css";  // Import the Quill CSS
 import "../App.css";
 import { Editor, EditorTextChangeEvent } from "primereact/editor"; // Import the event type
 
