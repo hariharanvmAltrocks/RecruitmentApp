@@ -106,7 +106,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                     />
                 </div>
             </div>
-            <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
+            <div className="ms-Grid-row" style={{ marginTop: "2%" }}>
                 <div className="ms-Grid-col ms-lg12">
                     <DataTable
                         value={filteredItems}
@@ -121,7 +121,6 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                         // onPage={onPageChange}
                         stripedRows
                         filters={dashboardSearch}
-                        style={{ overflow: "hidden" }}
                     >
                         {/* Render Dynamic Columns */}
                         {columns.map((col) => (

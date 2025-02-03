@@ -1403,7 +1403,7 @@ footer {
   }
 
   .menu-card {
-    min-height: calc(100vh - 73px) !important;
+    min-height: calc(80vh - 73px) !important;
     max-height: 100%;
   }
 }

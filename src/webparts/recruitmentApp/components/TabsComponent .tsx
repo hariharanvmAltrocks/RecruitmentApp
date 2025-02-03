@@ -23,6 +23,7 @@ interface TabsComponentProps {
     additionalButtons?: {
         label: string;
         onClick?: () => void;
+        disable?: boolean;
     }[];
     onTabChange?: (newTab: string) => void;
 }
@@ -154,14 +155,22 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                                         return (
                                             value === tabs[tabs.length - 1].value ? (
                                                 <div style={{ marginRight: "10px" }} key={index}>
-                                                    <ReuseButton label={button.label} onClick={button.onClick} spacing={4} />
+                                                    <ReuseButton label={button.label} onClick={button.onClick} spacing={4} disabled={button.disable} />
+                                                </div>
+                                            ) : null
+                                        );
+                                    } else if (button.label === "Preview") {
+                                        return (
+                                            value === tabs[tabs.length - 1].value ? (
+                                                <div key={index} style={{ marginRight: "10px" }}>
+                                                    <ReuseButton label={button.label} onClick={button.onClick} spacing={4} width={"100%"} disabled={button.disable} />
                                                 </div>
                                             ) : null
                                         );
                                     } else {
                                         return (
                                             <div key={index} style={{ marginRight: "10px" }}>
-                                                <ReuseButton label={button.label} onClick={button.onClick} spacing={4} width={"100%"} />
+                                                <ReuseButton label={button.label} onClick={button.onClick} spacing={4} width={"100%"} disabled={button.disable} />
                                             </div>
                                         );
                                     }
