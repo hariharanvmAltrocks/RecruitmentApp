@@ -904,69 +904,11 @@ export default class RecruitmentService implements IRecruitmentService {
       };
     }
   }
-
-  // sneka
-  // async GetHRMSRecruitmentRoleProfileDetails(
-  //   filterParam: any[],
-  //   filterConditions: any[]
-  // ): Promise<ApiResponse<any | null>> {
-  //   try {
-  //     const listItems: any[] = await SPServices.SPReadItems({
-  //       Listname: ListNames.HRMSRecruitmentRoleProfileDetails,
-  //       Select:
-  //         "RecruitmentID/ID,JobDescription,RoleProfile,RoleSpecificKnowledgeJson,TechnicalSkillsKnowledgeJson,YearofExperience,Qualification,PreferredQualification,PreferredExperience",
-  //       Filter: filterParam,
-  //       FilterCondition: filterConditions,
-  //       Expand: "RecruitmentID",
-  //       Orderby: "ID",
-  //       Orderbydecorasc: false,
-  //     });
-  //     console.log("listItems", listItems);
-  //     console.log("filterCo", filterConditions);
-  //     const formattedItems = listItems.map((item) => {
-  //       return {
-  //         RecruitmentID: item?.RecruitmentID?.ID,
-  //         JobDescription: item.JobDescription ? item.JobDescription : "",
-  //         RoleProfile: item.RoleProfile ? item.RoleProfile : "",
-  //         RoleSpecificKnowledgeJson: item.RoleSpecificKnowledgeJson || "",
-  //         TechnicalSkillsKnowledgeJson: item.TechnicalSkillsKnowledgeJson || "",
-  //         YearofExperience: item.YearofExperience ? item.YearofExperience : 0,
-  //         Qualification: item.Qualification ? item.Qualification : "",
-  //         PreferredQualification: item.PreferredQualification
-  //           ? item.PreferredQualification
-  //           : "",
-  //         PreferredExperience: item.PreferredExperience
-  //           ? item.PreferredExperience
-  //           : 0,
-  //       };
-  //     });
-
-  //     console.log("Formatted", formattedItems);
-
-  //     return {
-  //       data: formattedItems,
-  //       status: 200,
-  //       message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
-  //     };
-  //   } catch (error) {
-  //     console.error(
-  //       "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
-  //       error
-  //     );
-  //     return {
-  //       data: [],
-  //       status: 500,
-  //       message:
-  //         "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
-  //     };
-  //   }
-  // }
   async GetHRMSRecruitmentRoleProfileDetails(
     filterParam: any[],
     filterConditions: any
   ): Promise<ApiResponse<any | null>> {
     try {
-      debugger;
       const listItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentRoleProfileDetails,
         Select:
@@ -977,10 +919,6 @@ export default class RecruitmentService implements IRecruitmentService {
         Orderby: "ID",
         Orderbydecorasc: false,
       });
-
-      console.log("listItems", listItems);
-      console.log("filterConditions", filterConditions);
-
       const formattedItems = listItems.map((item) => ({
         RecruitmentID: item?.RecruitmentID?.ID || "",
         JobDescription: item.JobDescription || "",
@@ -992,16 +930,12 @@ export default class RecruitmentService implements IRecruitmentService {
         PreferredQualification: item.PreferredQualification || "",
         PreferredExperience: item.PreferredExperience || 0,
       }));
-
-      console.log("Formatted", formattedItems);
-
       return {
         data: formattedItems,
         status: 200,
         message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
       };
     } catch (error) {
-      debugger;
       console.error(
         "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
         error
