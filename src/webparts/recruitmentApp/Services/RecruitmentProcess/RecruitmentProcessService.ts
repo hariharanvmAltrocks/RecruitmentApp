@@ -5,6 +5,11 @@ import {
   InsertComments,
   IRecruitmentService,
 } from "./IRecruitmentProcessService";
+import {
+  CommentsData,
+  InsertComments,
+  IRecruitmentService,
+} from "./IRecruitmentProcessService";
 import { CandidateData } from "../../Models/RecuritmentVRR";
 import { sp } from "@pnp/sp/presets/all";
 import { CommonServices } from "../ServiceExport";
@@ -19,6 +24,8 @@ interface IAttachmentExampleState {
 }
 
 export default class RecruitmentService implements IRecruitmentService {
+  //APIExternalAgents
+
   async GetVacancyDetails(
     filterParam: any,
     filterConditions: any
@@ -129,7 +136,7 @@ export default class RecruitmentService implements IRecruitmentService {
         Select:
           "*,JobTitleEnglish/JobTitleInEnglish,DRCGrade/DRCGrade,PatersonGrade/PatersonGrade,JobTitleFrench/JobTitleInFrench",
         Filter: filterParam,
-        Expand: "JobTitleEnglish,DRCGrade,PatersonGrade,JobTitleFrench",
+        Expand: "JobTitleEnglish,DRCGrade,JobTitleFrench,PatersonGrade",
         Topcount: count.Topcount,
       });
 
@@ -140,7 +147,8 @@ export default class RecruitmentService implements IRecruitmentService {
           LookupId: item.ID,
           JobTitleInEnglishId: item.JobTitleEnglishId || 0,
           JobTitleInEnglish: item.JobTitleEnglish?.JobTitleInEnglish || "",
-          JobTitleInFrench: item.JobTitleFrench?.JobTitleInFrench || 0,
+          JobTitleInFrenchId: item.JobTitleFrenchId || 0,
+          JobTitleInFrench: item.JobTitleFrench?.JobTitleInFrench || "",
           DRCGradeId: item.DRCGradeId,
           DRCGrade: item.DRCGrade?.DRCGrade || "",
           PayrollGradeId: item.PatersonGradeId,
@@ -517,11 +525,14 @@ export default class RecruitmentService implements IRecruitmentService {
       // Insert each row from Table2
       for (const row of Table2) {
         const JobDetailsInsert = {
-          JobTitleEnglishId: row.JobTitleEnglish,
+          //JobTitleEnglishId: row.JobTitleEnglish,
+          JobTitleEnglishId: row.JobNameInEnglishID,
+          JobTitleFrenchId: row.JobNameInFrenchID,
           PatersonGradeId: row.PatersonGradeID,
           DRCGradeId: row.DRCGradeID,
           RecruitmentIDId: RecruitmentId,
           PositionIDId: row.PositionID,
+
           //AssignLineManagerId: row.AssignLineManager,
         };
 
@@ -636,6 +647,16 @@ export default class RecruitmentService implements IRecruitmentService {
         } else {
           console.error("Error retrieving attachments:", response.message);
         }
+        let roleprofileDoc: IDocFiles[] = [];
+        if (response.status === 200 && response.data) {
+          roleprofileDoc = response.data;
+          console.log(roleprofileDoc, "roleprofileDoc");
+        } else {
+          console.error(
+            "Error retrieving  roleprofileDoc attachments:",
+            response.message
+          );
+        }
 
         return {
           ID: item.ID,
@@ -660,6 +681,7 @@ export default class RecruitmentService implements IRecruitmentService {
           ReleventExperience: item?.ReleventExperience,
           Qualification: item?.Qualification,
           CandidateCVDoc: candidateCV,
+          RoleProfileDocument: roleprofileDoc,
         };
       });
 
@@ -945,6 +967,45 @@ export default class RecruitmentService implements IRecruitmentService {
         status: 500,
         message:
           "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+      };
+    }
+  }
+
+  async InsertExternalAgencyDetails(
+    selectedAgencies: { key: number; text: string }[],
+    RecruitmentId: number
+  ): Promise<ApiResponse<any | null>> {
+    try {
+      let insertedRecords: any[] = [];
+
+      for (const agency of selectedAgencies) {
+        const AgencyInsert = {
+          RecruitmentIDId: RecruitmentId,
+          ExternalAgentDetailsId: agency.key,
+        };
+
+        console.log("AgencyInsert", AgencyInsert);
+
+        const response = await SPServices.SPAddItem({
+          Listname: ListNames.HRMSExternalAgentsDetailsForRecruitment,
+          RequestJSON: AgencyInsert,
+        });
+
+        console.log("Insert successful:", response);
+        insertedRecords.push(response);
+      }
+
+      return {
+        data: insertedRecords,
+        status: 200,
+        message: "Agency details inserted successfully",
+      };
+    } catch (error) {
+      console.error("Error inserting external agency details:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting external agency details",
       };
     }
   }

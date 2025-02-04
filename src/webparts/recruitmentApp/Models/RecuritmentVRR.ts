@@ -107,6 +107,8 @@ export type CandidateData = {
   ReleventExperience: string;
   Qualification: string;
   CandidateCVDoc: any[];
+  //RoleProfileDocument: any[];
+  //AdvertisementDocument: any[];
 };
 
 export type ScoreCardData = {
@@ -141,6 +143,8 @@ export type ScoreCardData = {
   CriteriaRecognised: AutoCompleteItem;
   Employment: string;
   EvaluationFeedback: string;
+  OverAllEvaluationFeedback: string;
+  SignDate?: Date | any;
 };
 
 export type QualificationValue = {
@@ -156,4 +160,37 @@ export type RoleSpecKnowledge = {
 export type TechnicalSkills = {
   TechnicalSkills: AutoCompleteItem;
   LevelProficiency: AutoCompleteItem;
+};
+
+export type JobCodeTilte = {
+  id: string;
+  // name: string;
+  VRRId: number;
+  JobTitle: string;
+  JobCode: string;
+  ID?: number;
+  RecruitmentID?: number;
+};
+
+// export type RecruitementPositionDetails = {
+//   JobNameInEnglishID: string;
+//   JobNameInFrenchID: string;
+//   PatersonGradeID: number;
+//   DRCGradeID: number;
+//   PositionDetails?: [];
+//   Comments: string;
+// };
+
+export type RecruitementPositionDetails = {
+  PositionDetails: Array<{
+    PatersonGradeID: number;
+    DRCGradeID: number;
+    JobNameInEnglishID: number;
+    JobNameInFrenchID: number;
+  }>;
+  JobNameInEnglishID: number;
+  JobNameInFrenchID: number;
+  PatersonGradeID: number;
+  DRCGradeID: number;
+  Comments: string;
 };

@@ -72,4 +72,8 @@ export type IRecruitmentService = {
     filterParam: any,
     filterConditions: any
   ): Promise<ApiResponse<any | null>>;
+  InsertExternalAgencyDetails(
+    selectedAgencies: { key: number; text: string }[],
+    RecruitmentId: number
+  ): Promise<ApiResponse<any>>;
 };

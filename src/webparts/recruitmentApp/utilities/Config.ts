@@ -2,6 +2,7 @@ import { IADGroupID } from "../Models/MainPage";
 import { AutoCompleteItem } from "../Models/Screens";
 
 export const APIURL = "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
+export const APIURL = "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
 
 export const ListNames = {
   HRMSSageList: "HRMS_Sage_List",
@@ -39,6 +40,9 @@ export const ListNames = {
   HRMSTechnicalSkills: "HRMSTechnicalSkills",
   HRMSLevelOfProficiency: "HRMSLevelOfProficiency",
   HRMSExternalAgents: "HRMSExternalAgents",
+  HRMSExternalAgentsDetailsForRecruitment:
+    "HRMSExternalAgentsDetailsForRecruitment",
+  HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
 };
 
 export const DocumentLibraray = {
@@ -153,6 +157,9 @@ export const RecuritmentHRMsg = {
     "Are you sure you want to cancel? Any unsaved changes will be lost.",
   BackMsg: "Are you sure you want go to Home Page ?",
   ValidationErrorMsg: "One or more required actions are missing",
+  RecruitmentErrorMsg: "Please select the Job Code",
+  AgencySucess: "Agencies Assigned Successfully",
+  HRSuccess: "HR Assigned Successfully",
 };
 
 export const ADGroupID: IADGroupID = {
@@ -190,11 +197,16 @@ export const RoleDescriptionData = {
 };
 
 export const ScoreRanking: AutoCompleteItem[] = [
-  { key: 1, text: "Poor" },
-  { key: 2, text: "Below Average" },
-  { key: 3, text: "Average" },
-  { key: 4, text: "Good" },
-  { key: 5, text: "Excellent" },
+  // { key: 1, text: "Poor" },
+  // { key: 2, text: "Below Average" },
+  // { key: 3, text: "Average" },
+  // { key: 4, text: "Good" },
+  // { key: 5, text: "Excellent" },
+  { key: 1, text: "1" },
+  { key: 2, text: "2" },
+  { key: 3, text: "3" },
+  { key: 4, text: "4" },
+  { key: 5, text: "5" },
 ];
 
 export const EmploymentOption = ["Yes", "No"];
