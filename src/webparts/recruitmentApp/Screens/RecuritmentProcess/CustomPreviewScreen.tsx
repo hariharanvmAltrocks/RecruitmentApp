@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-  AdvDetails,
-  QualificationValue,
-  RoleSpecKnowledge,
-  TechnicalSkills,
-} from "../../Models/RecuritmentVRR";
+import { AdvDetails } from "../../Models/RecuritmentVRR";
 import ReuseButton from "../../components/ReuseButton";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import CardContent from "@mui/material/CardContent";
@@ -12,9 +7,6 @@ import Card from "@mui/material/Card";
 
 interface FormFields {
   data: AdvDetails;
-  RoleSpec?: RoleSpecKnowledge[];
-  Qualification?: QualificationValue[];
-  TechinicalSkills?: TechnicalSkills[];
   onclose: () => void;
   Ok_btnfn: () => void;
 }

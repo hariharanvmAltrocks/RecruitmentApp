@@ -2,8 +2,6 @@ import { IADGroupID } from "../Models/MainPage";
 import { AutoCompleteItem } from "../Models/Screens";
 
 export const APIURL = "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
-export const APIURL = "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
-
 export const ListNames = {
   HRMSSageList: "HRMS_Sage_List",
   HRMSGradeMaster: "HRMS_Grade_Master",

@@ -5,11 +5,6 @@ import {
   InsertComments,
   IRecruitmentService,
 } from "./IRecruitmentProcessService";
-import {
-  CommentsData,
-  InsertComments,
-  IRecruitmentService,
-} from "./IRecruitmentProcessService";
 import { CandidateData } from "../../Models/RecuritmentVRR";
 import { sp } from "@pnp/sp/presets/all";
 import { CommonServices } from "../ServiceExport";

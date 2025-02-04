@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import Card from "@mui/material/Card";
@@ -10,26 +9,52 @@ import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import { Icon, Label, PrimaryButton } from "office-ui-fabric-react";
 import AttachmentButton from "../../components/AttachmentButton";
-import { ADGroupID, DocumentLibraray, HRMSAlertOptions, ListNames, RecuritmentHRMsg, RoleDescription, RoleDescriptionData, RoleID, RoleProfileMaster, StatusId, TabName, WorkflowAction } from "../../utilities/Config";
+import {
+  ADGroupID,
+  DocumentLibraray,
+  HRMSAlertOptions,
+  ListNames,
+  RecuritmentHRMsg,
+  RoleDescription,
+  RoleDescriptionData,
+  RoleID,
+  RoleProfileMaster,
+  StatusId,
+  TabName,
+  WorkflowAction,
+} from "../../utilities/Config";
 import Labelheader from "../../components/LabelHeader";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomLabel from "../../components/CustomLabel";
 import CustomTextArea from "../../components/CustomTextArea";
-import { AdvDetails, IAttachmentExampleState, QualificationValue, RecuritmentData, RoleSpecKnowledge, TechnicalSkills } from "../../Models/RecuritmentVRR";
+import {
+  AdvDetails,
+  IAttachmentExampleState,
+  QualificationValue,
+  RecuritmentData,
+  RoleSpecKnowledge,
+  TechnicalSkills,
+} from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
 import ReuseButton from "../../components/ReuseButton";
 import CommanComments from "../../components/CommanComments";
-import { CommentsData, InsertComments } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
+import {
+  CommentsData,
+  InsertComments,
+} from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 import CustomViewDocument from "../../components/CustomViewDocument";
 import RichTextEditor from "../../components/CustomRichTextEditor";
 import PreviewScreen from "./PreviewScreen";
 import { Dialog } from "primereact/dialog";
 import SPServices from "../../Services/SPService/SPServices";
-import BreadcrumbsComponent, { TabNameData } from "../../components/CustomBreadcrumps";
+import BreadcrumbsComponent, {
+  TabNameData,
+} from "../../components/CustomBreadcrumps";
 import CustomSignature from "../../components/CustomSignature";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
+import CustomPreviewScreen from "./CustomPreviewScreen";
 
 interface Item {
   name: string;
@@ -40,260 +65,274 @@ interface Item {
 }
 
 type formValidation = {
-    AssignRecruitmentHR: boolean,
-    AssignAgencies: boolean,
-    Comments: boolean,
-    AdvertisementDocument: boolean,
-    OnamSignedStampsDocument: boolean,
-    MinQualification: boolean,
-    PrefeQualification: boolean,
-    RoleSpeKnowledge: boolean,
-    RequiredLevel: boolean,
-    TechnicalSkills: boolean,
-    LevelProficiency: boolean,
-    RolePurpose: boolean,
-    JobDescription: boolean,
-    TotalExperience: boolean,
-    ExperienceinMiningIndustry: boolean,
-    addMasterQualification: boolean,
-    Checkboxalidation: boolean
-}
-
+  AssignRecruitmentHR: boolean;
+  AssignAgencies: boolean;
+  Comments: boolean;
+  AdvertisementDocument: boolean;
+  OnamSignedStampsDocument: boolean;
+  MinQualification: boolean;
+  PrefeQualification: boolean;
+  RoleSpeKnowledge: boolean;
+  RequiredLevel: boolean;
+  TechnicalSkills: boolean;
+  LevelProficiency: boolean;
+  RolePurpose: boolean;
+  JobDescription: boolean;
+  TotalExperience: boolean;
+  ExperienceinMiningIndustry: boolean;
+  addMasterQualification: boolean;
+  Checkboxalidation: boolean;
+};
 
 const ApprovedVRREdit: React.FC = (props: any) => {
   console.log(props, "propsApprovedVRREdit");
 
-    const todaydate = new Date();
-    const [tabVisibility, setTabVisibility] = useState({
-        tab1: true,
-        tab2: false,
-        tab3: false,
-    });
-    const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
-    const [alertProps, setalertProps] = React.useState<alertPropsData>({
-        Message: "",
-        Type: "",
-        ButtonAction: null,
-        visible: false,
-    });
-    // const [ButtonLabel, setButtonLabel] = useState<string>("Submit");
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [advDetails, setAdvDetails] = useState<AdvDetails>({
-        MinQualificationOption: [],
-        PrefeQualificationOption: [],
-        RoleSpeKnowledgeoption: [],
-        RequiredLeveloption: [],
-        TechnicalSkillsOption: [],
-        LevelProficiencyOption: [],
-        RolePurpose: "",
-        JobDescription: "",
-        addMasterQualification: "",
-        TotalExperience: "",
-        ExperienceinMiningIndustry: ""
-    });
+  const todaydate = new Date();
+  const [tabVisibility, setTabVisibility] = useState({
+    tab1: true,
+    tab2: false,
+    tab3: false,
+  });
+  const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
+  const [alertProps, setalertProps] = React.useState<alertPropsData>({
+    Message: "",
+    Type: "",
+    ButtonAction: null,
+    visible: false,
+  });
+  // const [ButtonLabel, setButtonLabel] = useState<string>("Submit");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [advDetails, setAdvDetails] = useState<AdvDetails>({
+    MinQualificationOption: [],
+    PrefeQualificationOption: [],
+    RoleSpeKnowledgeoption: [],
+    RequiredLeveloption: [],
+    TechnicalSkillsOption: [],
+    LevelProficiencyOption: [],
+    RolePurpose: "",
+    JobDescription: "",
+    addMasterQualification: "",
+    TotalExperience: "",
+    ExperienceinMiningIndustry: "",
+    YearofExperience: " ",
+    PreferredExperience: "",
+  });
 
-    const [formState, setFormState] = useState<RecuritmentData>({
-        VRRID: 0,
-        BusinessUnitCodeID: 0,
-        DepartmentID: 0,
-        SubDepartmentID: 0,
-        SectionID: 0,
-        DepartmentCodeID: 0,
-        JobNameInEnglishID: 0,
-        JobNameInFrenchID: 0,
-        PatersonGradeID: 0,
-        DRCGradeID: 0,
-        JobCodeID: 0,
-        BusinessUnitCode: "",
-        BusinessUnitName: "",
-        BusinessUnitDescription: "",
-        Department: "",
-        SubDepartment: "",
-        Section: "",
-        DepartmentCode: "",
-        Nationality: "",
-        JobNameInEnglish: "",
-        JobNameInFrench: "",
-        NoofPositionAssigned: "",
-        PatersonGrade: "",
-        DRCGrade: "",
-        EmployementCategory: "",
-        ContractType: "",
-        JobCode: "",
-        AreaOfWork: "",
-        ReasonForVacancy: "",
-        RecruitmentAuthorised: "",
-        IsPayrollEmailed: "",
-        EnterNumberOfMonths: 0,
-        DateRequried: "",
-        IsRevert: "",
-        VacancyConfirmed: "",
-        AdvertisementAttachement: [],
-        PositionDetails: [],
-        RoleProfileDocument: [],
-        GradingDocument: [],
-        AdvertisementDocument: [],
-        AssignRecruitmentHR: { key: 0, text: "" },
-        AssignRecruitmentHROption: [],
-        OnamSignedStampsAttchment: [],
-        OnamSignedStampsDocument: [],
-        AssignAgencies: { key: 0, text: "" },
-        AssignAgenciesOption: [],
-        CandidateCVAttachment: [],
-        Comments: "",
-        SignDate: new Date(
-            todaydate.getFullYear(),
-            todaydate.getMonth(),
-            todaydate.getDate(),
-            todaydate.getHours(),
-            todaydate.getMinutes(),
-            todaydate.getSeconds()
-        )
-    });
-    const [validationErrors, setValidationError] = React.useState<formValidation>({
-        AssignRecruitmentHR: false,
-        AssignAgencies: false,
-        Comments: false,
-        AdvertisementDocument: false,
-        OnamSignedStampsDocument: false,
-        MinQualification: false,
-        PrefeQualification: false,
-        RoleSpeKnowledge: false,
-        RequiredLevel: false,
-        TechnicalSkills: false,
-        LevelProficiency: false,
-        RolePurpose: false,
-        JobDescription: false,
-        TotalExperience: false,
-        ExperienceinMiningIndustry: false,
-        addMasterQualification: false,
-        Checkboxalidation: false
-    })
-    const [MainComponent, setMainComponent] = useState<boolean>(true);
-    const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
-    const [PreviewBtn, setPreviewBtn] = useState<boolean>(false);
-    const [SubmitBtn, setSubmitBtn] = useState<boolean>(true);
-    const [AddQualifbtn, setAddQualifbtn] = useState<boolean>(false);
-    const [activeTab, setactiveTab] = useState<string>("tab1");
-    const [RoleSpeKnowledgeValue, setRoleSpeKnowledgeValue] = useState<RoleSpecKnowledge[]>([
+  const [formState, setFormState] = useState<RecuritmentData>({
+    VRRID: 0,
+    BusinessUnitCodeID: 0,
+    DepartmentID: 0,
+    SubDepartmentID: 0,
+    SectionID: 0,
+    DepartmentCodeID: 0,
+    JobNameInEnglishID: 0,
+    JobNameInFrenchID: 0,
+    PatersonGradeID: 0,
+    DRCGradeID: 0,
+    JobCodeID: 0,
+    BusinessUnitCode: "",
+    BusinessUnitName: "",
+    BusinessUnitDescription: "",
+    Department: "",
+    SubDepartment: "",
+    Section: "",
+    DepartmentCode: "",
+    Nationality: "",
+    JobNameInEnglish: "",
+    JobNameInFrench: "",
+    NoofPositionAssigned: "",
+    PatersonGrade: "",
+    DRCGrade: "",
+    EmployementCategory: "",
+    ContractType: "",
+    JobCode: "",
+    AreaOfWork: "",
+    ReasonForVacancy: "",
+    RecruitmentAuthorised: "",
+    IsPayrollEmailed: "",
+    EnterNumberOfMonths: 0,
+    DateRequried: "",
+    IsRevert: "",
+    VacancyConfirmed: "",
+    AdvertisementAttachement: [],
+    PositionDetails: [],
+    RoleProfileDocument: [],
+    GradingDocument: [],
+    AdvertisementDocument: [],
+    AssignRecruitmentHR: { key: 0, text: "" },
+    AssignRecruitmentHROption: [],
+    OnamSignedStampsAttchment: [],
+    OnamSignedStampsDocument: [],
+    AssignAgencies: { key: 0, text: "" },
+    AssignAgenciesOption: [],
+    CandidateCVAttachment: [],
+    Comments: "",
+    SignDate: new Date(
+      todaydate.getFullYear(),
+      todaydate.getMonth(),
+      todaydate.getDate(),
+      todaydate.getHours(),
+      todaydate.getMinutes(),
+      todaydate.getSeconds()
+    ),
+  });
+  const [validationErrors, setValidationError] = React.useState<formValidation>(
+    {
+      AssignRecruitmentHR: false,
+      AssignAgencies: false,
+      Comments: false,
+      AdvertisementDocument: false,
+      OnamSignedStampsDocument: false,
+      MinQualification: false,
+      PrefeQualification: false,
+      RoleSpeKnowledge: false,
+      RequiredLevel: false,
+      TechnicalSkills: false,
+      LevelProficiency: false,
+      RolePurpose: false,
+      JobDescription: false,
+      TotalExperience: false,
+      ExperienceinMiningIndustry: false,
+      addMasterQualification: false,
+      Checkboxalidation: false,
+    }
+  );
+  const [MainComponent, setMainComponent] = useState<boolean>(true);
+  const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
+  const [PreviewBtn, setPreviewBtn] = useState<boolean>(false);
+  const [Preview, setPreview] = useState<boolean>(false);
+  const [SubmitBtn, setSubmitBtn] = useState<boolean>(true);
+  const [AddQualifbtn, setAddQualifbtn] = useState<boolean>(false);
+  const [activeTab, setactiveTab] = useState<string>("tab1");
+  const [RoleSpeKnowledgeValue, setRoleSpeKnowledgeValue] = useState<
+    RoleSpecKnowledge[]
+  >([
+    {
+      RoleSpeKnowledge: { key: 0, text: "" },
+      RequiredLevel: { key: 0, text: "" },
+    },
+  ]);
+  const [QualificationValue, setQualificationValue] = useState<
+    QualificationValue[]
+  >([
+    {
+      MinQualification: { key: 0, text: "" },
+      PrefeQualification: { key: 0, text: "" },
+    },
+  ]);
+  const [TechnicalSkillValue, setTechnicalSkillValue] = useState<
+    TechnicalSkills[]
+  >([
+    {
+      TechnicalSkills: { key: 0, text: "" },
+      LevelProficiency: { key: 0, text: "" },
+    },
+  ]);
+  const [HeaderValue, setHeaderValue] = useState<string>("");
+  const [LabelValue, setLabelValue] = useState<string>("");
+  const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
+  const [Checkbox, setCheckbox] = useState<boolean>(false);
+  const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
+
+  const handleAddRow = (stateValue: string) => {
+    switch (stateValue) {
+      case RoleDescription.RoleSpeKnowledgeValue:
         {
-            RoleSpeKnowledge: { key: 0, text: "" },
-            RequiredLevel: { key: 0, text: "" },
-        },
-    ]);
-    const [QualificationValue, setQualificationValue] = useState<QualificationValue[]>([
+          setRoleSpeKnowledgeValue((prevState) => [
+            ...prevState,
+            {
+              RoleSpeKnowledge: { key: 0, text: "" },
+              RequiredLevel: { key: 0, text: "" },
+            },
+          ]);
+        }
+        break;
+      case RoleDescription.QualificationValue:
         {
-            MinQualification: { key: 0, text: "" },
-            PrefeQualification: { key: 0, text: "" },
-        },
-    ]);
-    const [TechnicalSkillValue, setTechnicalSkillValue] = useState<TechnicalSkills[]>([
-        {
+          setQualificationValue((prevState) => [
+            ...prevState,
+            {
+              MinQualification: { key: 0, text: "" },
+              PrefeQualification: { key: 0, text: "" },
+            },
+          ]);
+        }
+        break;
+      case RoleDescription.TechnicalSkillValue: {
+        setTechnicalSkillValue((prevState) => [
+          ...prevState,
+          {
             TechnicalSkills: { key: 0, text: "" },
             LevelProficiency: { key: 0, text: "" },
-        },
-    ]);
-    const [HeaderValue, setHeaderValue] = useState<string>("");
-    const [LabelValue, setLabelValue] = useState<string>("");
-    const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
-    const [Checkbox, setCheckbox] = useState<boolean>(false);
-    const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
+          },
+        ]);
+      }
+    }
+  };
 
-
-    const handleAddRow = (stateValue: string) => {
-        switch (stateValue) {
-            case RoleDescription.RoleSpeKnowledgeValue: {
-                setRoleSpeKnowledgeValue((prevState) => [
-                    ...prevState,
-                    {
-                        RoleSpeKnowledge: { key: 0, text: "" },
-                        RequiredLevel: { key: 0, text: "" },
-                    },
-                ]);
-            }
-                break;
-            case RoleDescription.QualificationValue: {
-                setQualificationValue((prevState) => [
-                    ...prevState,
-                    {
-                        MinQualification: { key: 0, text: "" },
-                        PrefeQualification: { key: 0, text: "" },
-                    },
-                ]);
-            }
-                break;
-            case RoleDescription.TechnicalSkillValue: {
-                setTechnicalSkillValue((prevState) => [
-                    ...prevState,
-                    {
-                        TechnicalSkills: { key: 0, text: "" },
-                        LevelProficiency: { key: 0, text: "" },
-                    },
-                ]);
-            }
+  const handleDeleteRow = (index: number, stateValue: string) => {
+    switch (stateValue) {
+      case RoleDescription.RoleSpeKnowledgeValue:
+        {
+          setRoleSpeKnowledgeValue((prevState) =>
+            prevState.filter((_, i) => i !== index)
+          );
         }
-    };
-
-
-    const handleDeleteRow = (index: number, stateValue: string) => {
-        switch (stateValue) {
-            case RoleDescription.RoleSpeKnowledgeValue: {
-                setRoleSpeKnowledgeValue((prevState) =>
-                    prevState.filter((_, i) => i !== index)
-                );
-            }
-                break;
-            case RoleDescription.QualificationValue: {
-                setQualificationValue((prevState) =>
-                    prevState.filter((_, i) => i !== index)
-                );
-            }
-                break;
-            case RoleDescription.TechnicalSkillValue: {
-                setTechnicalSkillValue((prevState) =>
-                    prevState.filter((_, i) => i !== index)
-                );
-            }
+        break;
+      case RoleDescription.QualificationValue:
+        {
+          setQualificationValue((prevState) =>
+            prevState.filter((_, i) => i !== index)
+          );
         }
-    };
+        break;
+      case RoleDescription.TechnicalSkillValue: {
+        setTechnicalSkillValue((prevState) =>
+          prevState.filter((_, i) => i !== index)
+        );
+      }
+    }
+  };
 
-    const handleAutoCompleterow = (
-        item: AutoCompleteItem | null,
-        key: string, // Generalized key
-        index: number,
-        stateKey: "RoleSpeKnowledgeValue" | "QualificationValue" | "TechnicalSkillValue"
-    ) => {
-        if (stateKey === "RoleSpeKnowledgeValue") {
-            setRoleSpeKnowledgeValue((prevState) => {
-                const updatedRows = [...prevState];
-                if (key === "RoleSpeKnowledge" || key === "RequiredLevel") {
-                    updatedRows[index][key] = item || { key: 0, text: "" };
-                }
-                return updatedRows;
-            });
+  const handleAutoCompleterow = (
+    item: AutoCompleteItem | null,
+    key: string, // Generalized key
+    index: number,
+    stateKey:
+      | "RoleSpeKnowledgeValue"
+      | "QualificationValue"
+      | "TechnicalSkillValue"
+  ) => {
+    if (stateKey === "RoleSpeKnowledgeValue") {
+      setRoleSpeKnowledgeValue((prevState) => {
+        const updatedRows = [...prevState];
+        if (key === "RoleSpeKnowledge" || key === "RequiredLevel") {
+          updatedRows[index][key] = item || { key: 0, text: "" };
         }
+        return updatedRows;
+      });
+    }
 
-        if (stateKey === "QualificationValue") {
-            setQualificationValue((prevState) => {
-                const updatedRows = [...prevState];
-                if (key === "MinQualification" || key === "PrefeQualification") {
-                    updatedRows[index][key] = item || { key: 0, text: "" };
-                }
-                return updatedRows;
-            });
+    if (stateKey === "QualificationValue") {
+      setQualificationValue((prevState) => {
+        const updatedRows = [...prevState];
+        if (key === "MinQualification" || key === "PrefeQualification") {
+          updatedRows[index][key] = item || { key: 0, text: "" };
         }
+        return updatedRows;
+      });
+    }
 
-        if (stateKey === "TechnicalSkillValue") {
-            setTechnicalSkillValue((prevState) => {
-                const updatedRows = [...prevState];
-                if (key === "TechnicalSkills" || key === "LevelProficiency") {
-                    updatedRows[index][key] = item || { key: 0, text: "" };
-                }
-                return updatedRows;
-            });
+    if (stateKey === "TechnicalSkillValue") {
+      setTechnicalSkillValue((prevState) => {
+        const updatedRows = [...prevState];
+        if (key === "TechnicalSkills" || key === "LevelProficiency") {
+          updatedRows[index][key] = item || { key: 0, text: "" };
         }
-    };
-
+        return updatedRows;
+      });
+    }
+  };
 
   const fetchData = async () => {
     if (isLoading) return;
@@ -418,30 +457,31 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             OnamSignedStampsDocument: ONAMSignedStampDoc,
           }));
 
-                    if (NoofPositionAssigned?.length > 0) {
-                        const updatedPositions = NoofPositionAssigned.map((position: any) => ({
-                            ...position,
-                            PatersonGradeID: op.PayrollGradeId,
-                            DRCGradeID: op.DRCGradeId,
-                        }));
-                        console.log(updatedPositions, "updatedPositions");
+          if (NoofPositionAssigned?.length > 0) {
+            const updatedPositions = NoofPositionAssigned.map(
+              (position: any) => ({
+                ...position,
+                PatersonGradeID: op.PayrollGradeId,
+                DRCGradeID: op.DRCGradeId,
+              })
+            );
+            console.log(updatedPositions, "updatedPositions");
 
-                        setFormState((prevState) => ({
-                            ...prevState,
-                            PositionDetails: updatedPositions,
-                        }));
-                    }
-                } else {
-                    console.error("Error retrieving attachments:", response);
-                }
-            }
-
-        } catch (error) {
-            console.error("Failed to fetch Vacancy Details:", error);
-        } finally {
-            setIsLoading(false);
+            setFormState((prevState) => ({
+              ...prevState,
+              PositionDetails: updatedPositions,
+            }));
+          }
+        } else {
+          console.error("Error retrieving attachments:", response);
         }
-    };
+      }
+    } catch (error) {
+      console.error("Failed to fetch Vacancy Details:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleAttachement = async (
     ID: any,
@@ -477,24 +517,23 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       OnamSignedStampsAttchment,
     } = formState;
 
-
-        let errors = {
-            AssignRecruitmentHR: false,
-            AssignAgencies: false,
-            Comments: false,
-            AdvertisementDocument: false,
-            OnamSignedStampsDocument: false,
-            MinQualification: false,
-            PrefeQualification: false,
-            RoleSpeKnowledge: false,
-            RequiredLevel: false,
-            TechnicalSkills: false,
-            LevelProficiency: false,
-            RolePurpose: false,
-            JobDescription: false,
-            ExperienceinMiningIndustry: false,
-            TotalExperience: false
-        };
+    let errors = {
+      AssignRecruitmentHR: false,
+      AssignAgencies: false,
+      Comments: false,
+      AdvertisementDocument: false,
+      OnamSignedStampsDocument: false,
+      MinQualification: false,
+      PrefeQualification: false,
+      RoleSpeKnowledge: false,
+      RequiredLevel: false,
+      TechnicalSkills: false,
+      LevelProficiency: false,
+      RolePurpose: false,
+      JobDescription: false,
+      ExperienceinMiningIndustry: false,
+      TotalExperience: false,
+    };
 
     switch (props.CurrentRoleID) {
       case RoleID.RecruitmentHRLead: {
@@ -508,26 +547,40 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         break;
       }
 
-            case RoleID.RecruitmentHR: {
-                if (formState.AdvertisementDocument.length > 0) {
-                    errors.AssignAgencies = !IsValid(AssignAgencies.text);
-                    errors.Comments = !IsValid(Comments);
-                } else {
-                    if (props.stateValue?.tab === "tab1") {
-                        errors.AdvertisementDocument = !IsValid(AdvertisementAttachement);
-                        errors.Comments = !IsValid(Comments);
-                        errors.MinQualification = !IsValid(QualificationValue[0].MinQualification);
-                        errors.PrefeQualification = !IsValid(QualificationValue[0].PrefeQualification);
-                        errors.RoleSpeKnowledge = !IsValid(RoleSpeKnowledgeValue[0].RoleSpeKnowledge);
-                        errors.RequiredLevel = !IsValid(RoleSpeKnowledgeValue[0].RequiredLevel.text);
-                        errors.TechnicalSkills = !IsValid(TechnicalSkillValue[0].TechnicalSkills.text);
-                        errors.LevelProficiency = !IsValid(TechnicalSkillValue[0].LevelProficiency.text);
-                        errors.RolePurpose = !IsValid(advDetails.RolePurpose);
-                        errors.JobDescription = !IsValid(advDetails.JobDescription);
-                        errors.ExperienceinMiningIndustry = !IsValid(advDetails.ExperienceinMiningIndustry);
-                        errors.TotalExperience = !IsValid(advDetails.TotalExperience);
-                    }
-                }
+      case RoleID.RecruitmentHR: {
+        if (formState.AdvertisementDocument.length > 0) {
+          errors.AssignAgencies = !IsValid(AssignAgencies.text);
+          errors.Comments = !IsValid(Comments);
+        } else {
+          if (props.stateValue?.tab === "tab1") {
+            errors.AdvertisementDocument = !IsValid(AdvertisementAttachement);
+            errors.Comments = !IsValid(Comments);
+            errors.MinQualification = !IsValid(
+              QualificationValue[0].MinQualification
+            );
+            errors.PrefeQualification = !IsValid(
+              QualificationValue[0].PrefeQualification
+            );
+            errors.RoleSpeKnowledge = !IsValid(
+              RoleSpeKnowledgeValue[0].RoleSpeKnowledge
+            );
+            errors.RequiredLevel = !IsValid(
+              RoleSpeKnowledgeValue[0].RequiredLevel.text
+            );
+            errors.TechnicalSkills = !IsValid(
+              TechnicalSkillValue[0].TechnicalSkills.text
+            );
+            errors.LevelProficiency = !IsValid(
+              TechnicalSkillValue[0].LevelProficiency.text
+            );
+            errors.RolePurpose = !IsValid(advDetails.RolePurpose);
+            errors.JobDescription = !IsValid(advDetails.JobDescription);
+            errors.ExperienceinMiningIndustry = !IsValid(
+              advDetails.ExperienceinMiningIndustry
+            );
+            errors.TotalExperience = !IsValid(advDetails.TotalExperience);
+          }
+        }
 
         break;
       }
@@ -545,86 +598,81 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       ...errors,
     }));
 
-        return Object.values(errors).some((error) => error);
+    return Object.values(errors).some((error) => error);
+  };
+
+  const MasterDataValidation = (): boolean => {
+    const { addMasterQualification } = advDetails;
+
+    let errors = {
+      addMasterQualification: false,
     };
 
-    const MasterDataValidation = (): boolean => {
-        const {
-            addMasterQualification
-        } = advDetails;
+    errors.addMasterQualification = !IsValid(addMasterQualification);
 
-        let errors = {
-            addMasterQualification: false
-        }
+    setValidationError((prevState) => ({
+      ...prevState,
+      ...errors,
+    }));
 
-        errors.addMasterQualification = !IsValid(addMasterQualification)
+    return Object.values(errors).some((error) => error);
+  };
 
+  const resetForm = () => {
+    setFormState((prevState) => ({
+      ...prevState,
+      Comments: "",
+    }));
+  };
 
-        setValidationError((prevState) => ({
-            ...prevState,
-            ...errors,
-        }));
+  const SaveRecruitment = async () => {
+    try {
+      let QualificatioDetails: {
+        MinQualification: string;
+      }[] = [];
+      let PrefeQualification: {
+        PrefeQualification: string;
+      }[] = [];
+      let RoleSpecificKnowledgeJson: {
+        RoleSpeKnowledge: string;
+        RequiredLevel: string;
+      }[] = [];
 
-        return Object.values(errors).some((error) => error);
-    };
+      let TechnicalSkillsKnowledgeJson: {
+        TechnicalSkills: string;
+        LevelProficiency: string;
+      }[] = [];
 
-    const resetForm = () => {
-        setFormState((prevState) => ({
-            ...prevState,
-            Comments: "",
-        }));
-    };
+      TechnicalSkillValue.forEach((item) => {
+        let TechnicalSkillsData = {
+          TechnicalSkills: item.TechnicalSkills.text,
+          LevelProficiency: item.LevelProficiency.text,
+        };
+        TechnicalSkillsKnowledgeJson.push(TechnicalSkillsData);
+      });
 
-    const SaveRecruitment = async () => {
-        try {
-            let QualificatioDetails: {
-                MinQualification: string
-            }[] = [];
-            let PrefeQualification: {
-                PrefeQualification: string
-            }[] = [];
-            let RoleSpecificKnowledgeJson: {
-                RoleSpeKnowledge: string;
-                RequiredLevel: string
-            }[] = [];
+      RoleSpeKnowledgeValue.forEach((item) => {
+        let details = {
+          RoleSpeKnowledge: item.RoleSpeKnowledge.text,
+          RequiredLevel: item.RequiredLevel.text,
+        };
+        RoleSpecificKnowledgeJson.push(details);
+      });
 
-            let TechnicalSkillsKnowledgeJson: {
-                TechnicalSkills: string;
-                LevelProficiency: string
-            }[] = [];
+      QualificationValue.forEach((item) => {
+        let details = {
+          MinQualification: item.MinQualification.text,
+        };
+        QualificatioDetails.push(details);
+      });
+      QualificationValue.forEach((item) => {
+        let details = {
+          PrefeQualification: item.PrefeQualification.text,
+        };
+        PrefeQualification.push(details);
+      });
 
-            TechnicalSkillValue.forEach((item) => {
-                let TechnicalSkillsData = {
-                    TechnicalSkills: item.TechnicalSkills.text,
-                    LevelProficiency: item.LevelProficiency.text
-                };
-                TechnicalSkillsKnowledgeJson.push(TechnicalSkillsData);
-            })
-
-            RoleSpeKnowledgeValue.forEach((item) => {
-                let details = {
-                    RoleSpeKnowledge: item.RoleSpeKnowledge.text,
-                    RequiredLevel: item.RequiredLevel.text
-                };
-                RoleSpecificKnowledgeJson.push(details);
-            })
-
-
-            QualificationValue.forEach((item) => {
-                let details = {
-                    MinQualification: item.MinQualification.text
-                };
-                QualificatioDetails.push(details);
-            });
-            QualificationValue.forEach((item) => {
-                let details = {
-                    PrefeQualification: item.PrefeQualification.text
-                };
-                PrefeQualification.push(details);
-            });
-
-
-            const isValid = !Validation();
+      const isValid = !Validation();
 
       if (isValid) {
         let Table1: any = {
@@ -751,31 +799,46 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             }
             setIsLoading(true);
 
-                        break;
-                    }
-                    case RoleID.RecruitmentHR: {
-                        const AttachDocument = await handleAttachement(formState.JobCode, props.stateValue?.ID, DocumentLibraray.RecruitmentAdvertisementDocument, formState.AdvertisementAttachement);
-                        const UpdateVRRDetails = await SPServices.SPUpdateItem({
-                            Listname: ListNames.HRMSRecruitmentDptDetails,
-                            RequestJSON: obj,
-                            ID: props.stateValue?.ID,
-                        })
-                        let AdvData: any = {
-                            Qualification: JSON.stringify(QualificatioDetails),
-                            PreferredQualification: JSON.stringify(PrefeQualification),
-                            JobDescription: advDetails.JobDescription,
-                            RoleProfile: advDetails.RolePurpose,
-                            RoleSpecificKnowledgeJson: JSON.stringify(RoleSpecificKnowledgeJson),
-                            TechnicalSkillsKnowledgeJson: JSON.stringify(RoleSpecificKnowledgeJson),
-                            RecruitmentIDId: props.stateValue?.ID,
-                            YearofExperience: advDetails.TotalExperience
-                        };
-                        console.log(AdvData, "AdvData");
-                        const InsertAdveData = await getVRRDetails.InsertList(AdvData, ListNames.HRMSRecruitmentRoleProfileDetails);
-                        console.log(InsertAdveData, "InsertAdveData");
+            break;
+          }
+          case RoleID.RecruitmentHR: {
+            const AttachDocument = await handleAttachement(
+              formState.JobCode,
+              props.stateValue?.ID,
+              DocumentLibraray.RecruitmentAdvertisementDocument,
+              formState.AdvertisementAttachement
+            );
+            const UpdateVRRDetails = await SPServices.SPUpdateItem({
+              Listname: ListNames.HRMSRecruitmentDptDetails,
+              RequestJSON: obj,
+              ID: props.stateValue?.ID,
+            });
+            let AdvData: any = {
+              Qualification: JSON.stringify(QualificatioDetails),
+              PreferredQualification: JSON.stringify(PrefeQualification),
+              JobDescription: advDetails.JobDescription,
+              RoleProfile: advDetails.RolePurpose,
+              RoleSpecificKnowledgeJson: JSON.stringify(
+                RoleSpecificKnowledgeJson
+              ),
+              TechnicalSkillsKnowledgeJson: JSON.stringify(
+                RoleSpecificKnowledgeJson
+              ),
+              RecruitmentIDId: props.stateValue?.ID,
+              YearofExperience: Number(advDetails.TotalExperience),
+              PreferredExperience: Number(
+                advDetails.ExperienceinMiningIndustry
+              ),
+            };
+            console.log(AdvData, "AdvData");
+            const InsertAdveData = await getVRRDetails.InsertList(
+              AdvData,
+              ListNames.HRMSRecruitmentRoleProfileDetails
+            );
+            console.log(InsertAdveData, "InsertAdveData");
 
-                        console.log(UpdateVRRDetails, "UpdateVRRDetails");
-                        resetForm();
+            console.log(UpdateVRRDetails, "UpdateVRRDetails");
+            resetForm();
 
             let UpdateAlert = {
               Message: RecuritmentHRMsg.AdvertisementSubmitMsg,
@@ -838,26 +901,22 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       if (isInitialized.current) return; // Skip if already initialized
       isInitialized.current = true;
 
-            setTabVisibility({
-                tab1: true,
-                tab2: false,
-                tab3: false,
-            });
-            // if (props.CurrentRoleID === RoleID.HOD) {
-            //     setButtonLabel("Approve")
-            // } else if ((props.CurrentRoleID === RoleID.RecruitmentHR)) {
-            //     setButtonLabel("Submit")
-            // }
+      setTabVisibility({
+        tab1: true,
+        tab2: false,
+        tab3: false,
+      });
+      // if (props.CurrentRoleID === RoleID.HOD) {
+      //     setButtonLabel("Approve")
+      // } else if ((props.CurrentRoleID === RoleID.RecruitmentHR)) {
+      //     setButtonLabel("Submit")
+      // }
 
-            await fetchData();
-
-        };
+      await fetchData();
+    };
 
     void initialize();
   }, []);
-        void initialize();
-    }, []);
-
 
   useEffect(() => {
     const getADGroupsOption = async () => {
@@ -936,59 +995,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     void validationAttachment();
   }, [formState.OnamSignedStampsAttchment, formState.AdvertisementAttachement]);
-        void validationAttachment();
-    }, [formState.OnamSignedStampsAttchment, formState.AdvertisementAttachement]);
-
-    useEffect(() => {
-        const MasterDataOption = async () => {
-            // Fetch Qualification data
-            const Qualification = await CommonServices.GetMasterData(ListNames.HRMSQualification);
-            console.log(Qualification, "Qualification");
-            const QualificationOption: AutoCompleteItem[] = Qualification.data.map((item: any) => ({
-                key: item.Id,
-                text: item.Qualification,
-            }));
-
-            // Fetch RoleSpecificKnowledge data
-            const RoleSpecificKnowlege = await CommonServices.GetMasterData(ListNames.HRMSRoleSpecificKnowlegeMaster);
-            console.log(RoleSpecificKnowlege, "RoleSpecificKnowlege");
-            const RoleSpecificKnowlegeOption: AutoCompleteItem[] = RoleSpecificKnowlege.data.map((item: any) => ({
-                key: item.Id,
-                text: item.RoleSpecificKnowledge,
-            }));
-
-            // Fetch TechnicalSkills data
-            const TechnicalSkills = await CommonServices.GetMasterData(ListNames.HRMSTechnicalSkills);
-            console.log(TechnicalSkills, "TechnicalSkills");
-            const TechnicalSkillsOption: AutoCompleteItem[] = TechnicalSkills.data.map((item: any) => ({
-                key: item.Id,
-                text: item.TechnicalSkills,
-            }));
-
-            // Fetch LevelOfProficiency data
-            const LevelOfProficiency = await CommonServices.GetMasterData(ListNames.HRMSLevelOfProficiency);
-            console.log(LevelOfProficiency, "HRMSLevelOfProficiency");
-            const LevelOfProficiencyOption: AutoCompleteItem[] = LevelOfProficiency.data.map((item: any) => ({
-                key: item.Id,
-                text: item.Levels,
-            }));
-
-            setAdvDetails((prevState) => ({
-                ...prevState,
-                MinQualificationOption: QualificationOption,
-                PrefeQualificationOption: QualificationOption,
-                RoleSpeKnowledgeoption: RoleSpecificKnowlegeOption,
-                TechnicalSkillsOption: TechnicalSkillsOption,
-                LevelProficiencyOption: LevelOfProficiencyOption,
-                RequiredLeveloption: LevelOfProficiencyOption,
-            }));
-
-            console.log(QualificationOption, "QualificationOption");
-        };
-
-
-        void MasterDataOption();
-    }, [AddQualifbtn]);
 
   useEffect(() => {
     if (
@@ -997,74 +1003,157 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         StatusId.PendingwithRecruitmentHRtouploadAdv
     ) {
       const MasterDataOption = async () => {
-        try {
-          const Qualification = await CommonServices.GetMasterData(
-            ListNames.HRMSQualification
-          );
-          console.log(Qualification, "Qualification");
+        // Fetch Qualification data
+        const Qualification = await CommonServices.GetMasterData(
+          ListNames.HRMSQualification
+        );
+        console.log(Qualification, "Qualification");
+        const QualificationOption: AutoCompleteItem[] = Qualification.data.map(
+          (item: any) => ({
+            key: item.Id,
+            text: item.Qualification,
+          })
+        );
 
-          const QualificationOption: AutoCompleteItem[] =
-            Qualification.data.map((item: any) => ({
-              key: item.Id,
-              text: item.Qualification,
-            }));
-
-          // Fetch RoleSpecificKnowledge data
-          const RoleSpecificKnowlege = await CommonServices.GetMasterData(
-            ListNames.HRMSRoleSpecificKnowlegeMaster
-          );
-          console.log(RoleSpecificKnowlege, "RoleSpecificKnowlege");
-
-          const RoleSpecificKnowlegeOption: AutoCompleteItem[] =
-            RoleSpecificKnowlege.data.map((item: any) => ({
-              key: item.Id,
-              text: item.RoleSpecificKnowledge,
-            }));
-
-          // Fetch TechnicalSkills data
-          const TechnicalSkills = await CommonServices.GetMasterData(
-            ListNames.HRMSTechnicalSkills
-          );
-          console.log(TechnicalSkills, "TechnicalSkills");
-
-          const TechnicalSkillsOption: AutoCompleteItem[] =
-            TechnicalSkills.data.map((item: any) => ({
-              key: item.Id,
-              text: item.TechnicalSkills,
-            }));
-
-          // Fetch LevelOfProficiency data
-          const LevelOfProficiency = await CommonServices.GetMasterData(
-            ListNames.HRMSLevelOfProficiency
-          );
-          console.log(LevelOfProficiency, "HRMSLevelOfProficiency");
-
-          const LevelOfProficiencyOption: AutoCompleteItem[] =
-            LevelOfProficiency.data.map((item: any) => ({
-              key: item.Id,
-              text: item.Levels,
-            }));
-
-          setAdvDetails((prevState) => ({
-            ...prevState,
-            MinQualificationOption: QualificationOption,
-            PrefeQualificationOption: QualificationOption,
-            RoleSpeKnowledgeoption: RoleSpecificKnowlegeOption,
-            TechnicalSkillsOption: TechnicalSkillsOption,
-            LevelProficiencyOption: LevelOfProficiencyOption,
-            RequiredLeveloption: LevelOfProficiencyOption,
+        // Fetch RoleSpecificKnowledge data
+        const RoleSpecificKnowlege = await CommonServices.GetMasterData(
+          ListNames.HRMSRoleSpecificKnowlegeMaster
+        );
+        console.log(RoleSpecificKnowlege, "RoleSpecificKnowlege");
+        const RoleSpecificKnowlegeOption: AutoCompleteItem[] =
+          RoleSpecificKnowlege.data.map((item: any) => ({
+            key: item.Id,
+            text: item.RoleSpecificKnowledge,
           }));
 
-          console.log(QualificationOption, "QualificationOption");
-        } catch (error) {
-          console.error("Error fetching master data:", error);
-        }
+        // Fetch TechnicalSkills data
+        const TechnicalSkills = await CommonServices.GetMasterData(
+          ListNames.HRMSTechnicalSkills
+        );
+        console.log(TechnicalSkills, "TechnicalSkills");
+        const TechnicalSkillsOption: AutoCompleteItem[] =
+          TechnicalSkills.data.map((item: any) => ({
+            key: item.Id,
+            text: item.TechnicalSkills,
+          }));
+
+        // Fetch LevelOfProficiency data
+        const LevelOfProficiency = await CommonServices.GetMasterData(
+          ListNames.HRMSLevelOfProficiency
+        );
+        console.log(LevelOfProficiency, "HRMSLevelOfProficiency");
+        const LevelOfProficiencyOption: AutoCompleteItem[] =
+          LevelOfProficiency.data.map((item: any) => ({
+            key: item.Id,
+            text: item.Levels,
+          }));
+
+        setAdvDetails((prevState) => ({
+          ...prevState,
+          MinQualificationOption: QualificationOption,
+          PrefeQualificationOption: QualificationOption,
+          RoleSpeKnowledgeoption: RoleSpecificKnowlegeOption,
+          TechnicalSkillsOption: TechnicalSkillsOption,
+          LevelProficiencyOption: LevelOfProficiencyOption,
+          RequiredLeveloption: LevelOfProficiencyOption,
+        }));
+
+        console.log(QualificationOption, "QualificationOption");
       };
 
       void MasterDataOption();
     }
-  }, [AddQualifbtn, props.CurrentRoleID, props.stateValue?.StatusId]);
+  }, [AddQualifbtn]);
+  useEffect(() => {
+    if (
+      props.CurrentRoleID === RoleID.HOD &&
+      props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv
+    ) {
+      const fetchData = async () => {
+        try {
+          let filterConditions = [
+            {
+              FilterKey: "RecruitmentIDId",
+              Operator: "eq",
+              FilterValue: props.stateValue.ID,
+            },
+          ];
+          const response =
+            await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+              filterConditions,
+              ""
+            );
 
+          if (response.status === 200) {
+            const data = response.data;
+            if (data && data.length > 0) {
+              const rawData = data[0];
+              const roleSpecificKnowledge = rawData.RoleSpecificKnowledgeJson
+                ? JSON.parse(rawData.RoleSpecificKnowledgeJson)
+                : [];
+
+              console.log("roleSpecificKnowledge", roleSpecificKnowledge);
+              const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+                (item: any) => item.RoleSpeKnowledge
+              );
+              console.log("RoleSpeKnowledgeValues1", RoleSpeKnowledgeValues);
+              const RequiredLevelValues = roleSpecificKnowledge.map(
+                (item: any) => item.RequiredLevel
+              );
+              console.log("RequiredLevelValues2", RequiredLevelValues);
+              const mappedData: AdvDetails = {
+                RolePurpose: rawData.RoleProfile || "",
+                JobDescription: rawData.JobDescription || "",
+                RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+                RequiredLeveloption: RequiredLevelValues,
+                MinQualificationOption: rawData.Qualification
+                  ? JSON.parse(rawData.Qualification).map((item: any) => ({
+                      text: item.MinQualification,
+                    }))
+                  : [],
+                PrefeQualificationOption: rawData.PreferredQualification
+                  ? JSON.parse(rawData.PreferredQualification).map(
+                      (item: any) => ({
+                        text: item.PrefeQualification,
+                      })
+                    )
+                  : [],
+                TotalExperience: rawData.YearofExperience || "",
+                ExperienceinMiningIndustry: rawData.PreferredExperience || "",
+                TechnicalSkillsOption: rawData.TechnicalSkillsKnowledgeJson
+                  ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
+                      (item: any) => ({
+                        text: item.RoleSpeKnowledge,
+                      })
+                    )
+                  : [],
+                LevelProficiencyOption: rawData.TechnicalSkillsKnowledgeJson
+                  ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
+                      (item: any) => ({
+                        text: item.RequiredLevel,
+                      })
+                    )
+                  : [],
+                addMasterQualification: "",
+                YearofExperience: rawData.YearofExperience || "",
+                PreferredExperience: rawData.PreferredExperience || "",
+              };
+
+              setAdvDetails(mappedData);
+              console.log("Updated AdvDetails State:", mappedData);
+            } else {
+              console.warn("No data found for the given filter");
+            }
+          } else {
+            console.error("Error fetching data: ", response.message);
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+      void fetchData();
+    }
+  }, [props.CurrentRoleID, props.stateValue?.StatusId]);
   const handleDelete = (
     index: number,
     attachmentType:
@@ -1085,34 +1174,34 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     });
   };
 
-    // const handleAutoComplete = async (
-    //     item: AutoCompleteItem | null,
-    //     StateValue: string,
-    //     tab: string
-    // ) => {
-    //     if (item) {
-    //         if (tab === 'tab2') {
-    //             setAdvDetails((prevState) => ({
-    //                 ...prevState,
-    //                 [StateValue]: item
-    //             }))
-    //             setValidationError((prevState) => ({
-    //                 ...prevState,
-    //                 [StateValue]: false
-    //             }))
-    //         } else {
-    //             setFormState((prevState) => ({
-    //                 ...prevState,
-    //                 [StateValue]: item
-    //             }))
-    //             setValidationError((prevState) => ({
-    //                 ...prevState,
-    //                 [StateValue]: false
-    //             }))
-    //         }
+  // const handleAutoComplete = async (
+  //     item: AutoCompleteItem | null,
+  //     StateValue: string,
+  //     tab: string
+  // ) => {
+  //     if (item) {
+  //         if (tab === 'tab2') {
+  //             setAdvDetails((prevState) => ({
+  //                 ...prevState,
+  //                 [StateValue]: item
+  //             }))
+  //             setValidationError((prevState) => ({
+  //                 ...prevState,
+  //                 [StateValue]: false
+  //             }))
+  //         } else {
+  //             setFormState((prevState) => ({
+  //                 ...prevState,
+  //                 [StateValue]: item
+  //             }))
+  //             setValidationError((prevState) => ({
+  //                 ...prevState,
+  //                 [StateValue]: false
+  //             }))
+  //         }
 
-    //     }
-    // };
+  //     }
+  // };
 
   const handleInputChangeTextArea = (
     value: string | any,
@@ -1133,160 +1222,205 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     let filterConditions = [];
     let Conditions = "";
 
-        filterConditions.push({
-            FilterKey: "RecruitmentID",
-            Operator: "eq",
-            FilterValue: props.stateValue.ID,
-        })
-        const CommentsList =
-            await getVRRDetails.GetCommentsData(props.EmployeeList, Conditions, filterConditions)
-        if (CommentsList.status === 200) {
-            console.log(CommentsList.data);
-            setCommentsData(CommentsList.data)
-        }
+    filterConditions.push({
+      FilterKey: "RecruitmentID",
+      Operator: "eq",
+      FilterValue: props.stateValue.ID,
+    });
+    const CommentsList = await getVRRDetails.GetCommentsData(
+      props.EmployeeList,
+      Conditions,
+      filterConditions
+    );
+    if (CommentsList.status === 200) {
+      console.log(CommentsList.data);
+      setCommentsData(CommentsList.data);
     }
+  };
 
-    const AddMasterData_fn = (Header: string, LabelValue: string) => {
-        setAddQualifbtn(true);
-        setHeaderValue(Header);
-        setLabelValue(LabelValue);
+  const AddMasterData_fn = (Header: string, LabelValue: string) => {
+    setAddQualifbtn(true);
+    setHeaderValue(Header);
+    setLabelValue(LabelValue);
+  };
 
-    }
+  const handleRichTextEditor = (value: string | any, StateValue: string) => {
+    setAdvDetails((prevState) => ({
+      ...prevState,
+      [StateValue]: value,
+    }));
+    setValidationError((prevState) => ({
+      ...prevState,
+      [StateValue]: false,
+    }));
+  };
 
-    const tabs = [
-        {
-            label: TabName.PositionDetails, //"Position Details",
-            value: "tab1",
-            content: (
-                <Card
-                    variant="outlined"
-                    sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", border: "0px solid rgba(0, 0, 0, 0.12)", borderRadius: "30px", marginTop: "2%" }}
-                >
-                    <CardContent>
-                        {tabVisibility.tab1 && (
-                            <div>
-                                <div className="ms-Grid-row">
-                                    <div className="ms-Grid-col ms-lg6">
-                                        <LabelHeaderComponents
-                                            value={`Job Title - ${formState.JobNameInEnglish}`}
-                                        >
-                                            {" "}
-                                        </LabelHeaderComponents>
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg6">
-                                        <LabelHeaderComponents
-                                            value={`Status - ${props.stateValue?.Status}`}
-                                        >
-                                            {" "}
-                                        </LabelHeaderComponents>
-                                    </div>
-                                </div>
-                                <div className="ms-Grid-row">
+  const handleInputChange = (value: string | any, StateValue: string) => {
+    debugger;
+    setAdvDetails((prevState) => ({
+      ...prevState,
+      [StateValue]: value,
+    }));
+    setValidationError((prevState) => ({
+      ...prevState,
+      [StateValue]: false,
+    }));
+  };
 
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Business Unit Code"
-                                            value={formState.BusinessUnitCode}
-                                            error={false}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, BusinessUnitCode: value }))
-                                            }
-                                        />
-
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Business Unit Name"
-                                            value={formState.BusinessUnitName}
-                                            disabled={true}
-                                            error={false}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, BusinessUnitName: value }))
-                                            }
-                                        />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Business Unit Description"
-                                            value={formState.BusinessUnitDescription}
-                                            error={false}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, BusinessUnitDescription: value }))
-                                            }
-                                        />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Department"
-                                            value={formState.Department}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, Department: value }))
-                                            }
-                                        />
-                                    </div>
-
-                                </div>
-                                <div className="ms-Grid-row">
-
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Sub-Department"
-                                            value={formState.SubDepartment}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, SubDepartment: value }))
-                                            }
-                                        />
-
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Section"
-                                            value={formState.Section}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, Section: value }))
-                                            }
-                                        />
-
-
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Department Code"
-                                            value={formState.DepartmentCode}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, DepartmentCode: value }))
-                                            }
-                                        />
-
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Nationality"
-                                            value={formState.Nationality}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, Nationality: value }))
-                                            }
-                                        />
-                                    </div>
-
-                                </div>
-                                <div className="ms-Grid-row">
-                                    {/*                                    
+  const tabs = [
+    {
+      label: TabName.PositionDetails, //"Position Details",
+      value: "tab1",
+      content: (
+        <Card
+          variant="outlined"
+          sx={{
+            boxShadow: "0px 7px 4px 3px #d3d3d3",
+            border: "0px solid rgba(0, 0, 0, 0.12)",
+            borderRadius: "30px",
+            marginTop: "2%",
+          }}
+        >
+          <CardContent>
+            {tabVisibility.tab1 && (
+              <div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg6">
+                    <LabelHeaderComponents
+                      value={`Job Title - ${formState.JobNameInEnglish}" " +" "(${formState.JobCode})`}
+                    >
+                      {" "}
+                    </LabelHeaderComponents>
+                  </div>
+                  <div className="ms-Grid-col ms-lg6">
+                    <LabelHeaderComponents
+                      value={`Status - ${props.stateValue?.Status}`}
+                    >
+                      {" "}
+                    </LabelHeaderComponents>
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Business Unit Code"
+                      value={formState.BusinessUnitCode}
+                      error={false}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          BusinessUnitCode: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Business Unit Name"
+                      value={formState.BusinessUnitName}
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          BusinessUnitName: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Business Unit Description"
+                      value={formState.BusinessUnitDescription}
+                      error={false}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          BusinessUnitDescription: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Department"
+                      value={formState.Department}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          Department: value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Sub-Department"
+                      value={formState.SubDepartment}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          SubDepartment: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Section"
+                      value={formState.Section}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          Section: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Department Code"
+                      value={formState.DepartmentCode}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          DepartmentCode: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Nationality"
+                      value={formState.Nationality}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          Nationality: value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  {/*                                    
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="Position Name (English)"
@@ -1309,82 +1443,98 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             }
                                         />
                                     </div> */}
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Paterson Grade"
-                                            value={formState.PatersonGrade}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, PatersonGrade: value }))
-                                            }
-                                        />
-                                    </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Paterson Grade"
+                      value={formState.PatersonGrade}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          PatersonGrade: value,
+                        }))
+                      }
+                    />
+                  </div>
 
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="DRC Grade"
-                                            value={formState.DRCGrade}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, DRCGrade: value }))
-                                            }
-                                        />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Employment Category"
-                                            value={formState.EmployementCategory}
-                                            disabled={true}
-                                            error={false}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, EmployementCategory: value }))
-                                            }
-                                        />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Type of Contract"
-                                            value={formState.ContractType}
-                                            disabled={true}
-                                            error={false}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, ContractType: value }))
-                                            }
-                                        />
-                                    </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="DRC Grade"
+                      value={formState.DRCGrade}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          DRCGrade: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Employment Category"
+                      value={formState.EmployementCategory}
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          EmployementCategory: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Type of Contract"
+                      value={formState.ContractType}
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          ContractType: value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Area of Work"
+                      value={formState.AreaOfWork}
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          AreaOfWork: value,
+                        }))
+                      }
+                    />
+                  </div>
 
-                                </div>
-                                <div className="ms-Grid-row">
-
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Area of Work"
-                                            value={formState.AreaOfWork}
-                                            disabled={true}
-                                            error={false}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, AreaOfWork: value }))
-                                            }
-                                        />
-                                    </div>
-
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="No of Position Assigned"
-                                            value={formState.NoofPositionAssigned}
-                                            disabled={true}
-                                            error={false}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, NoofPositionAssigned: value }))
-                                            }
-                                        />
-                                    </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="No of Position Assigned"
+                      value={formState.NoofPositionAssigned}
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setFormState((prevState) => ({
+                          ...prevState,
+                          NoofPositionAssigned: value,
+                        }))
+                      }
+                    />
+                  </div>
 
                   <div className="ms-Grid-col ms-lg3">
                     <CustomViewDocument
@@ -1393,37 +1543,33 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     />
                   </div>
 
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomViewDocument
-                                            Attachment={formState.GradingDocument}
-                                            Label={"Grading Documents"}
-                                        />
-                                    </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomViewDocument
+                      Attachment={formState.GradingDocument}
+                      Label={"Grading Documents"}
+                    />
+                  </div>
+                </div>
 
-                                </div>
-
-
-
-
-
-                                {props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv ? (
-                                    <></>
-                                ) : (
-                                    <>
-
-
-                                        {props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv && (
-                                            <>
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg6">
-                                                        <CustomViewDocument
-                                                            Attachment={formState.AdvertisementDocument}
-                                                            Label={"Advertisement Documents"}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </>
-                                        )}
+                {props.CurrentRoleID === RoleID.RecruitmentHR &&
+                props.stateValue?.StatusId ===
+                  StatusId.PendingwithRecruitmentHRtouploadAdv ? (
+                  <></>
+                ) : (
+                  <>
+                    {/* {props.stateValue?.StatusId ===
+                      StatusId.PendingwithHODtoreviewAdv && (
+                      <>
+                        <div className="ms-Grid-row">
+                          <div className="ms-Grid-col ms-lg6">
+                            <CustomViewDocument
+                              Attachment={formState.AdvertisementDocument}
+                              Label={"Advertisement Documents"}
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )} */}
 
                     {props.stateValue?.StatusId ===
                       StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
@@ -1437,59 +1583,72 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           </div>
                         </div>
 
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg3">
-                                                        <CustomLabel value={"ONEM Signed Doc"} />
-                                                        <AttachmentButton
-                                                            label="Upload"
-                                                            // iconName="CloudUpload"
-                                                            // iconNameHover="CloudUpload"
-                                                            AttachState={(newAttachments: Item[]) => {
-                                                                // Directly update state here
-                                                                setFormState((prevState: any) => ({
-                                                                    ...prevState,
-                                                                    OnamSignedStampsAttchment: [...prevState.OnamSignedStampsAttchment, ...newAttachments],
-                                                                }));
-                                                            }}
-                                                            mandatory={true}
-                                                            error={validationErrors.OnamSignedStampsDocument}
-                                                            Style={{ padding: "2%" }}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
-                                                        {console.log("OnamSignedStampsAttchment", formState.OnamSignedStampsAttchment)}
-                                                        {formState.OnamSignedStampsAttchment?.map((file: any, index: number) => {
-                                                            const fileName = file.fileName || file.name; // Ensure proper name display
-                                                            console.log("Rendering file:", fileName);
+                        <div className="ms-Grid-row">
+                          <div className="ms-Grid-col ms-lg3">
+                            <CustomLabel value={"ONEM Signed Doc"} />
+                            <AttachmentButton
+                              label="Upload"
+                              // iconName="CloudUpload"
+                              // iconNameHover="CloudUpload"
+                              AttachState={(newAttachments: Item[]) => {
+                                // Directly update state here
+                                setFormState((prevState: any) => ({
+                                  ...prevState,
+                                  OnamSignedStampsAttchment: [
+                                    ...prevState.OnamSignedStampsAttchment,
+                                    ...newAttachments,
+                                  ],
+                                }));
+                              }}
+                              mandatory={true}
+                              error={validationErrors.OnamSignedStampsDocument}
+                              Style={{ padding: "2%" }}
+                            />
+                          </div>
+                          <div
+                            className="ms-Grid-col ms-lg6"
+                            style={{ marginTop: "4%" }}
+                          >
+                            {console.log(
+                              "OnamSignedStampsAttchment",
+                              formState.OnamSignedStampsAttchment
+                            )}
+                            {formState.OnamSignedStampsAttchment?.map(
+                              (file: any, index: number) => {
+                                const fileName = file.fileName || file.name; // Ensure proper name display
+                                console.log("Rendering file:", fileName);
 
-                                                            return (
-                                                                <div key={index} className="ms-Grid-row">
-                                                                    <div className="ms-Grid-col ms-lg12">
-                                                                        <Label style={{ color: "blue" }}>
-                                                                            {fileName}
-                                                                            <span>
-                                                                                <Icon
-                                                                                    iconName="Delete"
-                                                                                    style={{
-                                                                                        marginLeft: "8px",
-                                                                                        fontSize: "16px",
-                                                                                        cursor: "pointer",
-                                                                                    }}
-                                                                                    onClick={() => handleDelete(index, 'OnamSignedStampsAttchment')} // Call the delete function
-                                                                                />
-                                                                            </span>
-                                                                        </Label>
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        })}
-
-                                                    </div>
-                                                </div>
-
-
-                                            </>
-                                        )}
+                                return (
+                                  <div key={index} className="ms-Grid-row">
+                                    <div className="ms-Grid-col ms-lg12">
+                                      <Label style={{ color: "blue" }}>
+                                        {fileName}
+                                        <span>
+                                          <Icon
+                                            iconName="Delete"
+                                            style={{
+                                              marginLeft: "8px",
+                                              fontSize: "16px",
+                                              cursor: "pointer",
+                                            }}
+                                            onClick={() =>
+                                              handleDelete(
+                                                index,
+                                                "OnamSignedStampsAttchment"
+                                              )
+                                            } // Call the delete function
+                                          />
+                                        </span>
+                                      </Label>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
 
                     {props.stateValue?.StatusId ===
                       StatusId.PendingwithRecruitmentHRtoAssignExternalAgency && (
@@ -1513,37 +1672,31 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         </div>
                       </>
                     )}
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg6">
-                                                        <CustomViewDocument
-                                                            Attachment={formState.OnamSignedStampsDocument}
-                                                            Label={"ONEM Signed&Stamps Documents"}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </>
-                                        )}
 
-                                        {props.stateValue?.type === "VRR" ? (
-                                            <></>
-                                        ) : (
-                                            <>
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg12">
-                                                        <div className="ms-Grid-col ms-lg4" style={{ marginLeft: "-5px" }}>
-                                                            <CustomLabel value={" View Justifications"} />
-                                                            <PrimaryButton
-                                                                style={{
-                                                                    borderColor: "rgb(205, 45, 45)",
-                                                                    backgroundColor: "#EF3340",
-                                                                    color: "white",
-                                                                    borderRadius: "10px",
-                                                                }}
-                                                                onClick={OpenComments}
-
-                                                            > View
-                                                            </PrimaryButton>
-                                                            {/* <ReuseButton
+                    {props.stateValue?.type === "VRR" ? (
+                      <></>
+                    ) : (
+                      <>
+                        <div className="ms-Grid-row">
+                          <div className="ms-Grid-col ms-lg12">
+                            <div
+                              className="ms-Grid-col ms-lg4"
+                              style={{ marginLeft: "-5px" }}
+                            >
+                              <CustomLabel value={" View Justifications"} />
+                              <PrimaryButton
+                                style={{
+                                  borderColor: "rgb(205, 45, 45)",
+                                  backgroundColor: "#EF3340",
+                                  color: "white",
+                                  borderRadius: "10px",
+                                }}
+                                onClick={OpenComments}
+                              >
+                                {" "}
+                                View
+                              </PrimaryButton>
+                              {/* <ReuseButton
                                                                 label="VIEW"
                                                                 onClick={OpenComments}
                                                                 spacing={4}
@@ -1552,642 +1705,869 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             // imgSrcHover={require("../../assets/viewSubmision-white.svg")}
                                                             // imgAltHover="Image"
                                                             /> */}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </>
-                                        )}
-
-                                        {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
-                                            <>
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg12">
-                                                        <CustomTextArea
-                                                            label="Justification"
-                                                            value={formState.Comments}
-                                                            error={validationErrors.Comments}
-                                                            onChange={(value) =>
-                                                                handleInputChangeTextArea(
-                                                                    value,
-                                                                    "Comments"
-                                                                )
-                                                            }
-                                                            mandatory={true}
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                <div className="ms-Grid-row"
-                                                    style={{
-                                                        padding: "3px",
-                                                        marginTop: "20px",
-                                                        marginBottom: "-33px",
-                                                    }}
-                                                >
-                                                    <div className="ms-Grid-col ms-lg12">
-                                                        <SignatureCheckbox
-                                                            label={"I hereby agree for submitted this request"}
-                                                            checked={Checkbox}
-                                                            error={validationErrors.Checkboxalidation}
-                                                            onChange={(value: boolean) => setCheckbox(value)}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg12">
-                                                        <CustomSignature
-                                                            Name={(props.userDetails[0].FirstName ?? "") + " " + (props.userDetails[0]?.MiddleName ?? "") + " " + (props.userDetails[0]?.LastName ?? "")}
-                                                            JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
-                                                            JobTitleInFrench={props.userDetails[0].JopTitleFrench}
-                                                            Department={props.userDetails[0].DepartmentName}
-                                                            Date={formState.SignDate.toString()}
-                                                            TermsAndCondition={Checkbox}
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                            </>
-
-
-                                        )}
-
-                                    </>
-                                )}
-
                             </div>
-                        )}
-                    </CardContent>
-                </Card>
-            ),
-        },
-        ...(props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv
-            ? [{
-                label: TabName.AdvertisementDetails, //"Advertisement Details",
-                value: "tab2",
-                content: (
-                    <Card variant="outlined" sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", border: "0px solid rgba(0, 0, 0, 0.12)", marginTop: "2%" }}>
-                        <CardContent>
-                            <div>
-                                <>
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg3">
-                                            <Labelheader value={"Advertisement"}> </Labelheader>
-                                            <AttachmentButton
-                                                label="Upload"
-                                                // iconName="CloudUpload"
-                                                // iconNameHover="CloudUpload"
-                                                AttachState={(newAttachments: Item[]) => {
-                                                    setFormState((prevState: any) => ({
-                                                        ...prevState,
-                                                        AdvertisementAttachement: [...prevState.AdvertisementAttachement, ...newAttachments],
-                                                    }));
-                                                    setValidationError((prevState: any) => ({
-                                                        ...prevState,
-                                                        AdvertisementDocument: false
-                                                    }))
-                                                }}
-                                                mandatory={true}
-                                                error={validationErrors.AdvertisementDocument}
-                                            />
-
-
-                                        </div>
-                                        <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
-                                            {console.log("checking", formState.AdvertisementAttachement)}
-                                            {formState.AdvertisementAttachement?.map((file: any, index: number) => {
-                                                const fileName = file.fileName || file.name; // Ensure proper name display
-                                                console.log("Rendering file:", fileName);
-
-                              return (
-                                <div key={index} className="ms-Grid-row">
-                                  <div className="ms-Grid-col ms-lg12">
-                                    <Label style={{ color: "blue" }}>
-                                      {fileName}
-                                      <span>
-                                        <Icon
-                                          iconName="Delete"
-                                          style={{
-                                            marginLeft: "8px",
-                                            fontSize: "16px",
-                                            cursor: "pointer",
-                                          }}
-                                          onClick={() =>
-                                            handleDelete(
-                                              index,
-                                              "AdvertisementAttachement"
-                                            )
-                                          }
-                                        />
-                                      </span>
-                                    </Label>
-                                  </div>
-                                </div>
-                              );
-                            }
-                          )}
+                          </div>
                         </div>
+                      </>
+                    )}
+
+                    {props.stateValue?.StatusId ===
+                      StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                      <>
+                        <div className="ms-Grid-row">
+                          <div className="ms-Grid-col ms-lg12">
+                            <CustomTextArea
+                              label="Justification"
+                              value={formState.Comments}
+                              error={validationErrors.Comments}
+                              onChange={(value) =>
+                                handleInputChangeTextArea(value, "Comments")
+                              }
+                              mandatory={true}
+                            />
+                          </div>
+                        </div>
+
+                        <div
+                          className="ms-Grid-row"
+                          style={{
+                            padding: "3px",
+                            marginTop: "20px",
+                            marginBottom: "-33px",
+                          }}
+                        >
+                          <div className="ms-Grid-col ms-lg12">
+                            <SignatureCheckbox
+                              label={
+                                "I hereby agree for submitted this request"
+                              }
+                              checked={Checkbox}
+                              error={validationErrors.Checkboxalidation}
+                              onChange={(value: boolean) => setCheckbox(value)}
+                            />
+                          </div>
+                        </div>
+                        <div className="ms-Grid-row">
+                          <div className="ms-Grid-col ms-lg12">
+                            <CustomSignature
+                              Name={
+                                (props.userDetails[0].FirstName ?? "") +
+                                " " +
+                                (props.userDetails[0]?.MiddleName ?? "") +
+                                " " +
+                                (props.userDetails[0]?.LastName ?? "")
+                              }
+                              JobTitleInEnglish={
+                                props.userDetails[0].JopTitleEnglish
+                              }
+                              JobTitleInFrench={
+                                props.userDetails[0].JopTitleFrench
+                              }
+                              Department={props.userDetails[0].DepartmentName}
+                              Date={formState.SignDate.toString()}
+                              TermsAndCondition={Checkbox}
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ),
+    },
+    ...((props.CurrentRoleID === RoleID.RecruitmentHR &&
+      props.stateValue?.StatusId ===
+        StatusId.PendingwithRecruitmentHRtouploadAdv) ||
+    (props.CurrentRoleID === RoleID.HOD &&
+      props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv)
+      ? [
+          {
+            label:
+              props.CurrentRoleID === RoleID.HOD
+                ? TabName.AdvertisementViewDetails
+                : TabName.AdvertisementDetails,
+            value: "tab2",
+            content: (
+              <Card
+                variant="outlined"
+                sx={{
+                  boxShadow: "0px 7px 4px 3px #d3d3d3",
+                  border: "0px solid rgba(0, 0, 0, 0.12)",
+                  marginTop: "2%",
+                }}
+              >
+                <CardContent>
+                  <div>
+                    <>
+                      {props.CurrentRoleID === RoleID.RecruitmentHR &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithRecruitmentHRtouploadAdv && (
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg3">
+                              <Labelheader value={"Advertisement"}>
+                                {" "}
+                              </Labelheader>
+                              <AttachmentButton
+                                label="Upload"
+                                // iconName="CloudUpload"
+                                // iconNameHover="CloudUpload"
+                                AttachState={(newAttachments: Item[]) => {
+                                  setFormState((prevState: any) => ({
+                                    ...prevState,
+                                    AdvertisementAttachement: [
+                                      ...prevState.AdvertisementAttachement,
+                                      ...newAttachments,
+                                    ],
+                                  }));
+                                  setValidationError((prevState: any) => ({
+                                    ...prevState,
+                                    AdvertisementDocument: false,
+                                  }));
+                                }}
+                                mandatory={true}
+                                error={validationErrors.AdvertisementDocument}
+                              />
+                            </div>
+                            <div
+                              className="ms-Grid-col ms-lg6"
+                              style={{ marginTop: "4%" }}
+                            >
+                              {console.log(
+                                "checking",
+                                formState.AdvertisementAttachement
+                              )}
+                              {formState.AdvertisementAttachement?.map(
+                                (file: any, index: number) => {
+                                  const fileName = file.fileName || file.name; // Ensure proper name display
+                                  console.log("Rendering file:", fileName);
+
+                                  return (
+                                    <div key={index} className="ms-Grid-row">
+                                      <div className="ms-Grid-col ms-lg12">
+                                        <Label style={{ color: "blue" }}>
+                                          {fileName}
+                                          <span>
+                                            <Icon
+                                              iconName="Delete"
+                                              style={{
+                                                marginLeft: "8px",
+                                                fontSize: "16px",
+                                                cursor: "pointer",
+                                              }}
+                                              onClick={() =>
+                                                handleDelete(
+                                                  index,
+                                                  "AdvertisementAttachement"
+                                                )
+                                              } // Call the delete function
+                                            />
+                                          </span>
+                                        </Label>
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      <div>
+                        {props.CurrentRoleID === RoleID.HOD &&
+                          props.stateValue?.StatusId ===
+                            StatusId.PendingwithHODtoreviewAdv && (
+                            <>
+                              <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg6">
+                                  <CustomViewDocument
+                                    Attachment={formState.AdvertisementDocument}
+                                    Label={"Advertisement Documents"}
+                                  />
+                                </div>
+                              </div>
+                            </>
+                          )}
                       </div>
+                      {props.CurrentRoleID === RoleID.HOD &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithHODtoreviewAdv && (
+                          <div className="ms-Grid-row">
+                            <div
+                              className="ms-Grid-col ms-lg2"
+                              style={{ position: "relative", right: "1px" }}
+                            >
+                              <div>
+                                <Label>View Advertisement</Label>
+                                <ReuseButton
+                                  Style={{
+                                    minWidth: "117px",
+                                    fontSize: "13px",
+                                    paddingBottom: "24px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    height: "41px",
+                                    paddingTop: "22px",
+                                  }}
+                                  label="VIEW"
+                                  imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                                  onClick={async () => {
+                                    setPreview(true);
+                                    setMainComponent(false);
+                                    console.log("Preview", Preview);
+                                  }}
+                                  imgAltHover="Image"
+                                  spacing={4}
+                                  imgSrc={require("../../assets/Viewicon.svg")}
+                                  imgAlt="ssss"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      {props.CurrentRoleID === RoleID.RecruitmentHR &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithRecruitmentHRtouploadAdv && (
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg12">
+                              <RichTextEditor
+                                label="Role Purpose"
+                                value={advDetails.RolePurpose}
+                                mandatory={true}
+                                onChange={(value) =>
+                                  handleRichTextEditor(value, "RolePurpose")
+                                }
+                                error={validationErrors.RolePurpose}
+                              />
+                            </div>
+                          </div>
+                        )}
 
+                      {props.CurrentRoleID === RoleID.RecruitmentHR &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithRecruitmentHRtouploadAdv && (
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg12">
+                              <RichTextEditor
+                                label="Job Description"
+                                value={advDetails.JobDescription}
+                                mandatory={true}
+                                onChange={(value) =>
+                                  handleRichTextEditor(value, "JobDescription")
+                                }
+                                error={validationErrors.JobDescription}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      {props.CurrentRoleID === RoleID.RecruitmentHR &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithRecruitmentHRtouploadAdv && (
+                          <div className="ms-Grid-col ms-lg10">
+                            <div className="ms-Grid-row">
+                              <div className="ms-Grid-col ms-lg5">
+                                <CustomInput
+                                  label="Total Experience"
+                                  value={advDetails.TotalExperience}
+                                  disabled={false}
+                                  error={false}
+                                  mandatory={true}
+                                  onChange={(value) =>
+                                    handleInputChange(value, "TotalExperience")
+                                  }
+                                />
+                              </div>
+                              <div className="ms-Grid-col ms-lg5">
+                                <CustomInput
+                                  label="Experience in Mining Industry (Years)"
+                                  value={advDetails.ExperienceinMiningIndustry}
+                                  disabled={false}
+                                  error={false}
+                                  mandatory={true}
+                                  onChange={(value) =>
+                                    handleInputChange(
+                                      value,
+                                      "ExperienceinMiningIndustry"
+                                    )
+                                  }
+                                />
+                              </div>
+                              <div
+                                className="ms-Grid-col ms-lg2"
+                                style={{
+                                  textAlign: "right",
+                                  marginTop: "45px",
+                                }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
 
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <RichTextEditor
-                                                label="Role Purpose"
-                                                value={advDetails.RolePurpose}
-                                                mandatory={true}
-                                                onChange={(value) =>
-                                                    setAdvDetails((prevState) => ({ ...prevState, RolePurpose: value }))
-                                                }
-                                                error={validationErrors.RolePurpose}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <RichTextEditor
-                                                label="Job Description"
-                                                value={advDetails.JobDescription}
-                                                mandatory={true}
-                                                onChange={(value) =>
-                                                    setAdvDetails((prevState) => ({ ...prevState, JobDescription: value }))
-                                                }
-                                                error={validationErrors.JobDescription}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg10">
-                                        <div className="ms-Grid-row">
-                                            <div className="ms-Grid-col ms-lg5">
-                                                <CustomInput
-                                                    label="Total Experience"
-                                                    value={advDetails.TotalExperience}
-                                                    disabled={false}
-                                                    error={false}
-                                                    mandatory={false}
-                                                    onChange={(value) =>
-                                                        setAdvDetails((prevState) => ({ ...prevState, TotalExperience: value }))
-                                                    }
-                                                />
-                                            </div>
-                                            <div className="ms-Grid-col ms-lg5">
-                                                <CustomInput
-                                                    label="Experience in Mining Industry (Years)"
-                                                    value={advDetails.ExperienceinMiningIndustry}
-                                                    disabled={false}
-                                                    error={false}
-                                                    mandatory={false}
-                                                    onChange={(value) =>
-                                                        setAdvDetails((prevState) => ({ ...prevState, ExperienceinMiningIndustry: value }))
-                                                    }
-                                                />
-                                            </div>
-                                            <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg4">
-
-                                        </div>
-                                        <div className="ms-Grid-col ms-lg4">
-
-                                        </div>
-                                    </div>
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg10">
-                                            {QualificationValue.map((row, index) => (
-                                                <div className="ms-Grid-row" key={index}>
-                                                    <div className="ms-Grid-col ms-lg5">
-                                                        <CustomAutoComplete
-                                                            label="Minimum Qualification"
-                                                            options={advDetails.MinQualificationOption}
-                                                            value={row.MinQualification}
-                                                            disabled={false}
-                                                            mandatory={true}
-                                                            onChange={(item) =>
-                                                                handleAutoCompleterow(item, "MinQualification", index, "QualificationValue")
-                                                            }
-                                                            error={false}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg5">
-                                                        <CustomAutoComplete
-                                                            label="Preferred Qualification"
-                                                            options={advDetails.PrefeQualificationOption}
-                                                            value={row.PrefeQualification}
-                                                            disabled={false}
-                                                            mandatory={true}
-                                                            onChange={(item) =>
-                                                                handleAutoCompleterow(item, "PrefeQualification", index, "QualificationValue")
-                                                            }
-                                                            error={false}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
-                                                        {index > 0 ? (
-                                                            <>
-                                                                <PrimaryButton
-                                                                    style={{
-                                                                        borderColor: "rgb(205, 45, 45)",
-                                                                        backgroundColor: "#EF3340",
-                                                                        color: "white",
-                                                                        borderRadius: "10px",
-                                                                        marginRight: "4%",
-                                                                        minWidth: "60px"
-                                                                    }}
-                                                                    onClick={() => handleDeleteRow(index, RoleDescription.QualificationValue)}
-                                                                    iconProps={{
-                                                                        iconName: "Delete",
-                                                                        style: { color: "white" },
-                                                                    }}
-                                                                >
-                                                                </PrimaryButton>
-                                                                <PrimaryButton
-                                                                    style={{
-                                                                        borderColor: "rgb(205, 45, 45)",
-                                                                        backgroundColor: "#EF3340",
-                                                                        color: "white",
-                                                                        borderRadius: "10px",
-                                                                        minWidth: "60px"
-                                                                    }}
-                                                                    onClick={() => handleAddRow(RoleDescription.QualificationValue)}
-                                                                    iconProps={{
-                                                                        iconName: "Add",
-                                                                        style: { color: "white" },
-                                                                    }}
-                                                                >
-                                                                </PrimaryButton>
-                                                            </>
-                                                        ) : (
-                                                            <PrimaryButton
-                                                                style={{
-                                                                    borderColor: "rgb(205, 45, 45)",
-                                                                    backgroundColor: "#EF3340",
-                                                                    color: "white",
-                                                                    borderRadius: "10px",
-                                                                    minWidth: "60px"
-                                                                }}
-                                                                onClick={() => handleAddRow(RoleDescription.QualificationValue)}
-                                                                iconProps={{
-                                                                    iconName: "Add",
-                                                                    style: { color: "white" },
-                                                                }}
-                                                            >
-                                                            </PrimaryButton>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <div className="ms-Grid-col ms-lg2"
-                                            style={{
-                                                marginTop: "45px"
-                                            }}>
-                                            <PrimaryButton
-                                                style={{
-                                                    borderColor: "rgb(205, 45, 45)",
-                                                    backgroundColor: "#EF3340",
-                                                    color: "white",
-                                                    borderRadius: "10px",
-                                                }}
-                                                onClick={() => AddMasterData_fn(RoleDescriptionData.Qualification, "Add Qualification")}
-                                                iconProps={{
-                                                    iconName: "Add",
-                                                    style: { color: "white" },
-                                                }}
-                                            > Add New Item
-                                            </PrimaryButton>
-                                        </div>
-                                    </div>
-
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg10">
-                                            {RoleSpeKnowledgeValue.map((row, index) => (
-                                                <div className="ms-Grid-row" key={index}>
-                                                    <div className="ms-Grid-col ms-lg5">
-                                                        <CustomAutoComplete
-                                                            label="Role Specific Knowledge"
-                                                            options={advDetails.RoleSpeKnowledgeoption}
-                                                            value={row.RoleSpeKnowledge}
-                                                            disabled={false}
-                                                            mandatory={true}
-                                                            onChange={(item) =>
-                                                                handleAutoCompleterow(item, "RoleSpeKnowledge", index, "RoleSpeKnowledgeValue")
-                                                            }
-                                                            error={false}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg5">
-                                                        <CustomAutoComplete
-                                                            label="Required Level"
-                                                            options={advDetails.RequiredLeveloption}
-                                                            value={row.RequiredLevel}
-                                                            disabled={false}
-                                                            mandatory={true}
-                                                            onChange={(item) =>
-                                                                handleAutoCompleterow(item, "RequiredLevel", index, "RoleSpeKnowledgeValue")
-                                                            }
-                                                            error={false}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
-                                                        {index > 0 ? (
-                                                            <>
-                                                                <PrimaryButton
-                                                                    style={{
-                                                                        borderColor: "rgb(205, 45, 45)",
-                                                                        backgroundColor: "#EF3340",
-                                                                        color: "white",
-                                                                        borderRadius: "10px",
-                                                                        marginRight: "4%",
-                                                                        minWidth: "60px"
-                                                                    }}
-                                                                    onClick={() => handleDeleteRow(index, RoleDescription.RoleSpeKnowledgeValue)}
-                                                                    iconProps={{
-                                                                        iconName: "Delete",
-                                                                        style: { color: "white" },
-                                                                    }}
-                                                                >
-                                                                </PrimaryButton>
-                                                                <PrimaryButton
-                                                                    style={{
-                                                                        borderColor: "rgb(205, 45, 45)",
-                                                                        backgroundColor: "#EF3340",
-                                                                        color: "white",
-                                                                        borderRadius: "10px",
-                                                                        minWidth: "60px"
-                                                                    }}
-                                                                    onClick={() => handleAddRow(RoleDescription.RoleSpeKnowledgeValue)}
-                                                                    iconProps={{
-                                                                        iconName: "Add",
-                                                                        style: { color: "white" },
-                                                                    }}
-                                                                >
-                                                                </PrimaryButton>
-                                                            </>
-                                                        ) : (
-                                                            <PrimaryButton
-                                                                style={{
-                                                                    borderColor: "rgb(205, 45, 45)",
-                                                                    backgroundColor: "#EF3340",
-                                                                    color: "white",
-                                                                    borderRadius: "10px",
-                                                                    minWidth: "60px"
-                                                                }}
-                                                                onClick={() => handleAddRow(RoleDescription.RoleSpeKnowledgeValue)}
-                                                                iconProps={{
-                                                                    iconName: "Add",
-                                                                    style: { color: "white" },
-                                                                }}
-                                                            >
-                                                            </PrimaryButton>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <div className="ms-Grid-col ms-lg2"
-                                            style={{
-                                                marginTop: "45px"
-                                            }}>
-                                            <PrimaryButton
-                                                style={{
-                                                    borderColor: "rgb(205, 45, 45)",
-                                                    backgroundColor: "#EF3340",
-                                                    color: "white",
-                                                    borderRadius: "10px",
-                                                }}
-                                                onClick={() => AddMasterData_fn(RoleDescriptionData.RoleSpeKnowledge, "Add Role Specific Knowledge")}
-                                                iconProps={{
-                                                    iconName: "Add",
-                                                    style: { color: "white" },
-                                                }}
-                                            > Add New Item
-                                            </PrimaryButton>
-                                        </div>
-                                    </div>
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg10">
-                                            {TechnicalSkillValue.map((row, index) => (
-                                                <div className="ms-Grid-row" key={index}>
-                                                    <div className="ms-Grid-col ms-lg5">
-                                                        <CustomAutoComplete
-                                                            label="Technical Skills - Ability to apply Knowledge"
-                                                            options={advDetails.TechnicalSkillsOption}
-                                                            value={row.TechnicalSkills}
-                                                            disabled={false}
-                                                            mandatory={true}
-                                                            onChange={(item) =>
-                                                                handleAutoCompleterow(item, "TechnicalSkills", index, "TechnicalSkillValue")
-                                                            }
-                                                            error={validationErrors.AssignRecruitmentHR}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg5">
-                                                        <CustomAutoComplete
-                                                            label="Level of Proficiency"
-                                                            options={advDetails.LevelProficiencyOption}
-                                                            value={row.LevelProficiency}
-                                                            disabled={false}
-                                                            mandatory={true}
-                                                            onChange={(item) =>
-                                                                handleAutoCompleterow(item, "LevelProficiency", index, "TechnicalSkillValue")
-                                                            }
-                                                            error={validationErrors.AssignRecruitmentHR}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
-                                                        {index > 0 ? (
-                                                            <>
-                                                                <PrimaryButton
-                                                                    style={{
-                                                                        borderColor: "rgb(205, 45, 45)",
-                                                                        backgroundColor: "#EF3340",
-                                                                        color: "white",
-                                                                        borderRadius: "10px",
-                                                                        marginRight: "4%",
-                                                                        minWidth: "60px"
-                                                                    }}
-                                                                    onClick={() => handleDeleteRow(index, RoleDescription.TechnicalSkillValue)}
-                                                                    iconProps={{
-                                                                        iconName: "Delete",
-                                                                        style: { color: "white" },
-                                                                    }}
-                                                                >
-                                                                </PrimaryButton>
-                                                                <PrimaryButton
-                                                                    style={{
-                                                                        borderColor: "rgb(205, 45, 45)",
-                                                                        backgroundColor: "#EF3340",
-                                                                        color: "white",
-                                                                        borderRadius: "10px",
-                                                                        minWidth: "60px"
-                                                                    }}
-                                                                    onClick={() => handleAddRow(RoleDescription.TechnicalSkillValue)}
-                                                                    iconProps={{
-                                                                        iconName: "Add",
-                                                                        style: { color: "white" },
-                                                                    }}
-                                                                >
-                                                                </PrimaryButton>
-                                                            </>
-                                                        ) : (
-                                                            <PrimaryButton
-                                                                style={{
-                                                                    borderColor: "rgb(205, 45, 45)",
-                                                                    backgroundColor: "#EF3340",
-                                                                    color: "white",
-                                                                    borderRadius: "10px",
-                                                                    minWidth: "60px"
-                                                                }}
-                                                                onClick={() => handleAddRow(RoleDescription.TechnicalSkillValue)}
-                                                                iconProps={{
-                                                                    iconName: "Add",
-                                                                    style: { color: "white" },
-                                                                }}
-                                                            >
-                                                            </PrimaryButton>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <div className="ms-Grid-col ms-lg2"
-                                            style={{
-                                                marginTop: "45px"
-                                            }}>
-                                            <PrimaryButton
-                                                style={{
-                                                    borderColor: "rgb(205, 45, 45)",
-                                                    backgroundColor: "#EF3340",
-                                                    color: "white",
-                                                    borderRadius: "10px",
-                                                }}
-                                                onClick={() => AddMasterData_fn(RoleDescriptionData.TechnicalSkill, "Add Technical Skills")}
-                                                iconProps={{
-                                                    iconName: "Add",
-                                                    style: { color: "white" },
-                                                }}
-                                            > Add New Item
-                                            </PrimaryButton>
-                                        </div>
-                                    </div>
-
-                                    <CustomLabel value={" View Justifications"} />
-                                    <PrimaryButton
-                                        style={{
+                      {props.CurrentRoleID === RoleID.RecruitmentHR &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithRecruitmentHRtouploadAdv && (
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg10">
+                              {QualificationValue.map((row, index) => (
+                                <div className="ms-Grid-row" key={index}>
+                                  <div className="ms-Grid-col ms-lg5">
+                                    <CustomAutoComplete
+                                      label="Minimum Qualification"
+                                      options={
+                                        advDetails.MinQualificationOption
+                                      }
+                                      value={row.MinQualification}
+                                      disabled={false}
+                                      mandatory={true}
+                                      onChange={(item) =>
+                                        handleAutoCompleterow(
+                                          item,
+                                          "MinQualification",
+                                          index,
+                                          "QualificationValue"
+                                        )
+                                      }
+                                      error={false}
+                                    />
+                                  </div>
+                                  <div className="ms-Grid-col ms-lg5">
+                                    <CustomAutoComplete
+                                      label="Preferred Qualification"
+                                      options={
+                                        advDetails.PrefeQualificationOption
+                                      }
+                                      value={row.PrefeQualification}
+                                      disabled={false}
+                                      mandatory={true}
+                                      onChange={(item) =>
+                                        handleAutoCompleterow(
+                                          item,
+                                          "PrefeQualification",
+                                          index,
+                                          "QualificationValue"
+                                        )
+                                      }
+                                      error={false}
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-Grid-col ms-lg2"
+                                    style={{
+                                      textAlign: "right",
+                                      marginTop: "45px",
+                                    }}
+                                  >
+                                    {index > 0 ? (
+                                      <>
+                                        <PrimaryButton
+                                          style={{
                                             borderColor: "rgb(205, 45, 45)",
                                             backgroundColor: "#EF3340",
                                             color: "white",
                                             borderRadius: "10px",
-                                        }}
-                                        onClick={OpenComments}
-
-                                    > View
-                                    </PrimaryButton>
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <CustomTextArea
-                                                label="Justification"
-                                                value={formState.Comments}
-                                                error={validationErrors.Comments}
-                                                onChange={(value) =>
-                                                    handleInputChangeTextArea(
-                                                        value,
-                                                        "Comments"
-                                                    )
-                                                }
-                                                mandatory={true}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="ms-Grid-row"
+                                            marginRight: "4%",
+                                            minWidth: "60px",
+                                          }}
+                                          onClick={() =>
+                                            handleDeleteRow(
+                                              index,
+                                              RoleDescription.QualificationValue
+                                            )
+                                          }
+                                          iconProps={{
+                                            iconName: "Delete",
+                                            style: { color: "white" },
+                                          }}
+                                        ></PrimaryButton>
+                                        <PrimaryButton
+                                          style={{
+                                            borderColor: "rgb(205, 45, 45)",
+                                            backgroundColor: "#EF3340",
+                                            color: "white",
+                                            borderRadius: "10px",
+                                            minWidth: "60px",
+                                          }}
+                                          onClick={() =>
+                                            handleAddRow(
+                                              RoleDescription.QualificationValue
+                                            )
+                                          }
+                                          iconProps={{
+                                            iconName: "Add",
+                                            style: { color: "white" },
+                                          }}
+                                        ></PrimaryButton>
+                                      </>
+                                    ) : (
+                                      <PrimaryButton
                                         style={{
-                                            padding: "3px",
-                                            marginTop: "20px",
-                                            marginBottom: "-33px",
+                                          borderColor: "rgb(205, 45, 45)",
+                                          backgroundColor: "#EF3340",
+                                          color: "white",
+                                          borderRadius: "10px",
+                                          minWidth: "60px",
                                         }}
-                                    >
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <SignatureCheckbox
-                                                label={"I hereby agree for submitted this request"}
-                                                checked={Checkbox}
-                                                error={validationErrors.Checkboxalidation}
-                                                onChange={(value: boolean) => setCheckbox(value)}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <CustomSignature
-                                                Name={(props.userDetails[0].FirstName ?? "") + " " + (props.userDetails[0]?.MiddleName ?? "") + " " + (props.userDetails[0]?.LastName ?? "")}
-                                                JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
-                                                JobTitleInFrench={props.userDetails[0].JopTitleFrench}
-                                                Department={props.userDetails[0].DepartmentName}
-                                                Date={formState.SignDate.toString()}
-                                                TermsAndCondition={Checkbox}
-                                            />
-                                        </div>
-                                    </div>
-
-
-                                </>
+                                        onClick={() =>
+                                          handleAddRow(
+                                            RoleDescription.QualificationValue
+                                          )
+                                        }
+                                        iconProps={{
+                                          iconName: "Add",
+                                          style: { color: "white" },
+                                        }}
+                                      ></PrimaryButton>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
                             </div>
-                        </CardContent>
-                    </Card>
-                ),
-            }]
-            : []),
-    ];
+                            <div
+                              className="ms-Grid-col ms-lg2"
+                              style={{
+                                marginTop: "45px",
+                              }}
+                            >
+                              <PrimaryButton
+                                style={{
+                                  borderColor: "rgb(205, 45, 45)",
+                                  backgroundColor: "#EF3340",
+                                  color: "white",
+                                  borderRadius: "10px",
+                                }}
+                                onClick={() =>
+                                  AddMasterData_fn(
+                                    RoleDescriptionData.Qualification,
+                                    "Add Qualification"
+                                  )
+                                }
+                                iconProps={{
+                                  iconName: "Add",
+                                  style: { color: "white" },
+                                }}
+                              >
+                                {" "}
+                                Add New Item
+                              </PrimaryButton>
+                            </div>
+                          </div>
+                        )}
 
+                      {props.CurrentRoleID === RoleID.RecruitmentHR &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithRecruitmentHRtouploadAdv && (
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg10">
+                              {RoleSpeKnowledgeValue.map((row, index) => (
+                                <div className="ms-Grid-row" key={index}>
+                                  <div className="ms-Grid-col ms-lg5">
+                                    <CustomAutoComplete
+                                      label="Role Specific Knowledge"
+                                      options={
+                                        advDetails.RoleSpeKnowledgeoption
+                                      }
+                                      value={row.RoleSpeKnowledge}
+                                      disabled={false}
+                                      mandatory={true}
+                                      onChange={(item) =>
+                                        handleAutoCompleterow(
+                                          item,
+                                          "RoleSpeKnowledge",
+                                          index,
+                                          "RoleSpeKnowledgeValue"
+                                        )
+                                      }
+                                      error={false}
+                                    />
+                                  </div>
+                                  <div className="ms-Grid-col ms-lg5">
+                                    <CustomAutoComplete
+                                      label="Required Level"
+                                      options={advDetails.RequiredLeveloption}
+                                      value={row.RequiredLevel}
+                                      disabled={false}
+                                      mandatory={true}
+                                      onChange={(item) =>
+                                        handleAutoCompleterow(
+                                          item,
+                                          "RequiredLevel",
+                                          index,
+                                          "RoleSpeKnowledgeValue"
+                                        )
+                                      }
+                                      error={false}
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-Grid-col ms-lg2"
+                                    style={{
+                                      textAlign: "right",
+                                      marginTop: "45px",
+                                    }}
+                                  >
+                                    {index > 0 ? (
+                                      <>
+                                        <PrimaryButton
+                                          style={{
+                                            borderColor: "rgb(205, 45, 45)",
+                                            backgroundColor: "#EF3340",
+                                            color: "white",
+                                            borderRadius: "10px",
+                                            marginRight: "4%",
+                                            minWidth: "60px",
+                                          }}
+                                          onClick={() =>
+                                            handleDeleteRow(
+                                              index,
+                                              RoleDescription.RoleSpeKnowledgeValue
+                                            )
+                                          }
+                                          iconProps={{
+                                            iconName: "Delete",
+                                            style: { color: "white" },
+                                          }}
+                                        ></PrimaryButton>
+                                        <PrimaryButton
+                                          style={{
+                                            borderColor: "rgb(205, 45, 45)",
+                                            backgroundColor: "#EF3340",
+                                            color: "white",
+                                            borderRadius: "10px",
+                                            minWidth: "60px",
+                                          }}
+                                          onClick={() =>
+                                            handleAddRow(
+                                              RoleDescription.RoleSpeKnowledgeValue
+                                            )
+                                          }
+                                          iconProps={{
+                                            iconName: "Add",
+                                            style: { color: "white" },
+                                          }}
+                                        ></PrimaryButton>
+                                      </>
+                                    ) : (
+                                      <PrimaryButton
+                                        style={{
+                                          borderColor: "rgb(205, 45, 45)",
+                                          backgroundColor: "#EF3340",
+                                          color: "white",
+                                          borderRadius: "10px",
+                                          minWidth: "60px",
+                                        }}
+                                        onClick={() =>
+                                          handleAddRow(
+                                            RoleDescription.RoleSpeKnowledgeValue
+                                          )
+                                        }
+                                        iconProps={{
+                                          iconName: "Add",
+                                          style: { color: "white" },
+                                        }}
+                                      ></PrimaryButton>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                            <div
+                              className="ms-Grid-col ms-lg2"
+                              style={{
+                                marginTop: "45px",
+                              }}
+                            >
+                              <PrimaryButton
+                                style={{
+                                  borderColor: "rgb(205, 45, 45)",
+                                  backgroundColor: "#EF3340",
+                                  color: "white",
+                                  borderRadius: "10px",
+                                }}
+                                onClick={() =>
+                                  AddMasterData_fn(
+                                    RoleDescriptionData.RoleSpeKnowledge,
+                                    "Add Role Specific Knowledge"
+                                  )
+                                }
+                                iconProps={{
+                                  iconName: "Add",
+                                  style: { color: "white" },
+                                }}
+                              >
+                                {" "}
+                                Add New Item
+                              </PrimaryButton>
+                            </div>
+                          </div>
+                        )}
 
-    useEffect(() => {
-        const activeTabObj = tabs.find((item) => item.value === activeTab);
-        const prevTabObj = tabs.find((item) => item.value === prevActiveTab);
-        if (activeTab === "tab1") {
-            setTabNameData((prevTabNames) => {
-                const newTabNames = [
-                    { tabName: props.stateValue?.TabName },
-                    { tabName: props.stateValue?.ButtonAction },
-                    { tabName: activeTabObj?.label },
-                ];
-                return newTabNames;
-            });
-        } else {
-            setTabNameData((prevTabNames) => {
-                const newTabNames = [
-                    { tabName: props.stateValue?.TabName },
-                    { tabName: props.stateValue?.ButtonAction },
-                    { tabName: prevTabObj?.label },
-                    { tabName: activeTabObj?.label },
-                ];
+                      {props.CurrentRoleID === RoleID.RecruitmentHR &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithRecruitmentHRtouploadAdv && (
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg10">
+                              {TechnicalSkillValue.map((row, index) => (
+                                <div className="ms-Grid-row" key={index}>
+                                  <div className="ms-Grid-col ms-lg5">
+                                    <CustomAutoComplete
+                                      label="Technical Skills - Ability to apply Knowledge"
+                                      options={advDetails.TechnicalSkillsOption}
+                                      value={row.TechnicalSkills}
+                                      disabled={false}
+                                      mandatory={true}
+                                      onChange={(item) =>
+                                        handleAutoCompleterow(
+                                          item,
+                                          "TechnicalSkills",
+                                          index,
+                                          "TechnicalSkillValue"
+                                        )
+                                      }
+                                      error={
+                                        validationErrors.AssignRecruitmentHR
+                                      }
+                                    />
+                                  </div>
+                                  <div className="ms-Grid-col ms-lg5">
+                                    <CustomAutoComplete
+                                      label="Level of Proficiency"
+                                      options={
+                                        advDetails.LevelProficiencyOption
+                                      }
+                                      value={row.LevelProficiency}
+                                      disabled={false}
+                                      mandatory={true}
+                                      onChange={(item) =>
+                                        handleAutoCompleterow(
+                                          item,
+                                          "LevelProficiency",
+                                          index,
+                                          "TechnicalSkillValue"
+                                        )
+                                      }
+                                      error={
+                                        validationErrors.AssignRecruitmentHR
+                                      }
+                                    />
+                                  </div>
+                                  <div
+                                    className="ms-Grid-col ms-lg2"
+                                    style={{
+                                      textAlign: "right",
+                                      marginTop: "45px",
+                                    }}
+                                  >
+                                    {index > 0 ? (
+                                      <>
+                                        <PrimaryButton
+                                          style={{
+                                            borderColor: "rgb(205, 45, 45)",
+                                            backgroundColor: "#EF3340",
+                                            color: "white",
+                                            borderRadius: "10px",
+                                            marginRight: "4%",
+                                            minWidth: "60px",
+                                          }}
+                                          onClick={() =>
+                                            handleDeleteRow(
+                                              index,
+                                              RoleDescription.TechnicalSkillValue
+                                            )
+                                          }
+                                          iconProps={{
+                                            iconName: "Delete",
+                                            style: { color: "white" },
+                                          }}
+                                        ></PrimaryButton>
+                                        <PrimaryButton
+                                          style={{
+                                            borderColor: "rgb(205, 45, 45)",
+                                            backgroundColor: "#EF3340",
+                                            color: "white",
+                                            borderRadius: "10px",
+                                            minWidth: "60px",
+                                          }}
+                                          onClick={() =>
+                                            handleAddRow(
+                                              RoleDescription.TechnicalSkillValue
+                                            )
+                                          }
+                                          iconProps={{
+                                            iconName: "Add",
+                                            style: { color: "white" },
+                                          }}
+                                        ></PrimaryButton>
+                                      </>
+                                    ) : (
+                                      <PrimaryButton
+                                        style={{
+                                          borderColor: "rgb(205, 45, 45)",
+                                          backgroundColor: "#EF3340",
+                                          color: "white",
+                                          borderRadius: "10px",
+                                          minWidth: "60px",
+                                        }}
+                                        onClick={() =>
+                                          handleAddRow(
+                                            RoleDescription.TechnicalSkillValue
+                                          )
+                                        }
+                                        iconProps={{
+                                          iconName: "Add",
+                                          style: { color: "white" },
+                                        }}
+                                      ></PrimaryButton>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
 
-                const uniqueTabNames = newTabNames.filter(
-                    (item, index, self) =>
-                        item.tabName &&
-                        self.findIndex(t => t.tabName === item.tabName) === index
-                );
+                            <div
+                              className="ms-Grid-col ms-lg2"
+                              style={{
+                                marginTop: "45px",
+                              }}
+                            >
+                              <PrimaryButton
+                                style={{
+                                  borderColor: "rgb(205, 45, 45)",
+                                  backgroundColor: "#EF3340",
+                                  color: "white",
+                                  borderRadius: "10px",
+                                }}
+                                onClick={() =>
+                                  AddMasterData_fn(
+                                    RoleDescriptionData.TechnicalSkill,
+                                    "Add Technical Skills"
+                                  )
+                                }
+                                iconProps={{
+                                  iconName: "Add",
+                                  style: { color: "white" },
+                                }}
+                              >
+                                {" "}
+                                Add New Item
+                              </PrimaryButton>
+                            </div>
+                          </div>
+                        )}
 
-                return uniqueTabNames;
-            });
-        }
+                      <CustomLabel value={" View Justifications"} />
+                      <PrimaryButton
+                        style={{
+                          borderColor: "rgb(205, 45, 45)",
+                          backgroundColor: "#EF3340",
+                          color: "white",
+                          borderRadius: "10px",
+                        }}
+                        onClick={OpenComments}
+                      >
+                        {" "}
+                        View
+                      </PrimaryButton>
 
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg12">
+                          <CustomTextArea
+                            label="Justification"
+                            value={formState.Comments}
+                            error={validationErrors.Comments}
+                            onChange={(value) =>
+                              handleInputChangeTextArea(value, "Comments")
+                            }
+                            mandatory={true}
+                          />
+                        </div>
+                      </div>
 
-        if (activeTab !== prevActiveTab) {
-            setPrevActiveTab(activeTab);
-        }
-    }, [activeTab]);
+                      <div
+                        className="ms-Grid-row"
+                        style={{
+                          padding: "3px",
+                          marginTop: "20px",
+                          marginBottom: "-33px",
+                        }}
+                      >
+                        <div className="ms-Grid-col ms-lg12">
+                          <SignatureCheckbox
+                            label={"I hereby agree for submitted this request"}
+                            checked={Checkbox}
+                            error={validationErrors.Checkboxalidation}
+                            onChange={(value: boolean) => setCheckbox(value)}
+                          />
+                        </div>
+                      </div>
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg12">
+                          <CustomSignature
+                            Name={
+                              (props.userDetails[0].FirstName ?? "") +
+                              " " +
+                              (props.userDetails[0]?.MiddleName ?? "") +
+                              " " +
+                              (props.userDetails[0]?.LastName ?? "")
+                            }
+                            JobTitleInEnglish={
+                              props.userDetails[0].JopTitleEnglish
+                            }
+                            JobTitleInFrench={
+                              props.userDetails[0].JopTitleFrench
+                            }
+                            Department={props.userDetails[0].DepartmentName}
+                            Date={formState.SignDate.toString()}
+                            TermsAndCondition={Checkbox}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  </div>
+                </CardContent>
+              </Card>
+            ),
+          },
+        ]
+      : []),
+  ];
 
+  useEffect(() => {
+    const activeTabObj = tabs.find((item) => item.value === activeTab);
+    const prevTabObj = tabs.find((item) => item.value === prevActiveTab);
+    if (activeTab === "tab1") {
+      setTabNameData((prevTabNames) => {
+        const newTabNames = [
+          { tabName: props.stateValue?.TabName },
+          { tabName: props.stateValue?.ButtonAction },
+          { tabName: activeTabObj?.label },
+        ];
+        return newTabNames;
+      });
+    } else {
+      setTabNameData((prevTabNames) => {
+        const newTabNames = [
+          { tabName: props.stateValue?.TabName },
+          { tabName: props.stateValue?.ButtonAction },
+          { tabName: prevTabObj?.label },
+          { tabName: activeTabObj?.label },
+        ];
 
+        const uniqueTabNames = newTabNames.filter(
+          (item, index, self) =>
+            item.tabName &&
+            self.findIndex((t) => t.tabName === item.tabName) === index
+        );
+
+        return uniqueTabNames;
+      });
+    }
+
+    if (activeTab !== prevActiveTab) {
+      setPrevActiveTab(activeTab);
+    }
+  }, [activeTab]);
 
   const handleCancel = () => {
     setIsLoading(true);
@@ -2205,160 +2585,177 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       },
     };
 
-        setAlertPopupOpen(true);
-        setalertProps(CancelAlert);
-        setIsLoading(false);
+    setAlertPopupOpen(true);
+    setalertProps(CancelAlert);
+    setIsLoading(false);
+  };
 
-    };
-
-    async function InsertMasterData(Value: string) {
-        debugger;
-        const isValid = !MasterDataValidation();
-        if (isValid) {
-            let MasterData
-            switch (Value) {
-                case RoleDescriptionData.Qualification: {
-                    MasterData = {
-                        Qualification: advDetails.addMasterQualification
-                    }
-                    const InsertMasterData = await getVRRDetails.InsertList(MasterData, ListNames.HRMSQualification);
-                    console.log(InsertMasterData, "InsertMasterData");
-                }
-                    break;
-                case RoleDescriptionData.RoleSpeKnowledge: {
-                    MasterData = {
-                        RoleSpecificKnowledge: advDetails.addMasterQualification
-                    }
-                    const InsertMasterData = await getVRRDetails.InsertList(MasterData, ListNames.HRMSRoleSpecificKnowlegeMaster);
-                    console.log(InsertMasterData, "InsertMasterData");
-
-                }
-                    break;
-                case RoleDescriptionData.TechnicalSkill: {
-                    MasterData = {
-                        TechnicalSkills: advDetails.addMasterQualification
-                    }
-                    const InsertMasterData = await getVRRDetails.InsertList(MasterData, ListNames.HRMSTechnicalSkills);
-                    console.log(InsertMasterData, "InsertMasterData");
-                }
-                    break;
-            }
-            console.log(MasterData, "MasterData");
-            setAddQualifbtn(false)
-        }
+  async function InsertMasterData(Value: string) {
+    debugger;
+    const isValid = !MasterDataValidation();
+    if (isValid) {
+      let MasterData;
+      switch (Value) {
+        case RoleDescriptionData.Qualification:
+          {
+            MasterData = {
+              Qualification: advDetails.addMasterQualification,
+            };
+            const InsertMasterData = await getVRRDetails.InsertList(
+              MasterData,
+              ListNames.HRMSQualification
+            );
+            console.log(InsertMasterData, "InsertMasterData");
+          }
+          break;
+        case RoleDescriptionData.RoleSpeKnowledge:
+          {
+            MasterData = {
+              RoleSpecificKnowledge: advDetails.addMasterQualification,
+            };
+            const InsertMasterData = await getVRRDetails.InsertList(
+              MasterData,
+              ListNames.HRMSRoleSpecificKnowlegeMaster
+            );
+            console.log(InsertMasterData, "InsertMasterData");
+          }
+          break;
+        case RoleDescriptionData.TechnicalSkill:
+          {
+            MasterData = {
+              TechnicalSkills: advDetails.addMasterQualification,
+            };
+            const InsertMasterData = await getVRRDetails.InsertList(
+              MasterData,
+              ListNames.HRMSTechnicalSkills
+            );
+            console.log(InsertMasterData, "InsertMasterData");
+          }
+          break;
+      }
+      console.log(MasterData, "MasterData");
+      setAddQualifbtn(false);
     }
+  }
 
-    const handleBreadcrumbChange = (newItem: string) => {
-        setactiveTab(newItem)
-        console.log("Breadcrumb changed to:", newItem);
-    };
+  const handleBreadcrumbChange = (newItem: string) => {
+    setactiveTab(newItem);
+    console.log("Breadcrumb changed to:", newItem);
+  };
 
+  console.log(SubmitBtn);
 
-    return (
+  return (
+    <>
+      {MainComponent ? (
         <>
-            {MainComponent ? (
-                <>
-                    <CustomLoader isLoading={isLoading}>
-                        <div className="menu-card">
-                            <BreadcrumbsComponent
-                                items={tabs}
-                                initialItem={activeTab}
-                                TabName={TabNameData}
-                                onBreadcrumbChange={handleBreadcrumbChange}
-                                additionalButtons={
-                                    props.CurrentRoleID === RoleID.RecruitmentHRLead && props.stateValue?.StatusId === StatusId.PendingwithHRLeadtoAssignRecruitmentHR
-                                        ? [
-                                            {
-                                                label: "Close",
-                                                onClick: async () => {
-                                                    handleCancel();
-                                                },
-                                            },
-                                            // {
-                                            //     label: "Cancel",
-                                            //     onClick: async () => {
-                                            //         handleCancel();
-                                            //     },
-                                            // },
-                                            // {
-                                            //     label: "Preview",
-                                            //     onClick: async () => {
-                                            //         setPreviewBtn(true);
-                                            //         setMainComponent(false);
-                                            //     },
-                                            // },
-                                            // {
-                                            //     label: ButtonLabel,
-                                            //     onClick: async () => {
-                                            //         await SaveRecruitment();
-                                            //     },
-                                            //     disable: SubmitBtn
-                                            // },
-                                        ]
-                                        :
-                                        props.CurrentRoleID === RoleID.RecruitmentHRLead && props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc
-                                            ?
-                                            [
-                                                {
-                                                    label: "Cancel",
-                                                    onClick: async () => {
-                                                        handleCancel();
-                                                    },
-                                                    // disable: SubmitBtn
-                                                },
-                                                {
-                                                    label: "Upload",
-                                                    onClick: async () => {
-                                                        await SaveRecruitment();
-                                                    },
-                                                    // disable: SubmitBtn
-                                                },
-                                            ] :
-                                            props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv
-                                                ?
-                                                [
-                                                    {
-                                                        label: "Cancel",
-                                                        onClick: async () => {
-                                                            handleCancel();
-                                                        },
-                                                        // disable: SubmitBtn
-                                                    },
-                                                    {
-                                                        label: "Preview",
-                                                        onClick: async () => {
-                                                            setPreviewBtn(true);
-                                                            setMainComponent(false);
-                                                        },
-                                                        // disable: SubmitBtn
-                                                    },
-                                                    {
-                                                        label: "Submit",
-                                                        onClick: async () => {
-                                                            await SaveRecruitment();
-                                                        },
-                                                        disable: SubmitBtn
-                                                    },
-                                                ] :
-                                                props.CurrentRoleID === RoleID.HOD && props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv
-                                                    ? [
-                                                        {
-                                                            label: "Cancel",
-                                                            onClick: async () => {
-                                                                handleCancel();
-                                                            },
-                                                            // disable: SubmitBtn
-                                                        },
-                                                        {
-                                                            label: "Approved",
-                                                            onClick: async () => {
-                                                                await SaveRecruitment();
-                                                            },
-                                                        },
-                                                    ] : []
-                                }
-                            />
-                            {/* <TabsComponent
+          <CustomLoader isLoading={isLoading}>
+            <div className="menu-card">
+              <BreadcrumbsComponent
+                items={tabs}
+                initialItem={activeTab}
+                TabName={TabNameData}
+                onBreadcrumbChange={handleBreadcrumbChange}
+                additionalButtons={
+                  props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithHRLeadtoAssignRecruitmentHR
+                    ? [
+                        {
+                          label: "Close",
+                          onClick: async () => {
+                            handleCancel();
+                          },
+                        },
+                        // {
+                        //     label: "Cancel",
+                        //     onClick: async () => {
+                        //         handleCancel();
+                        //     },
+                        // },
+                        // {
+                        //     label: "Preview",
+                        //     onClick: async () => {
+                        //         setPreviewBtn(true);
+                        //         setMainComponent(false);
+                        //     },
+                        // },
+                        // {
+                        //     label: ButtonLabel,
+                        //     onClick: async () => {
+                        //         await SaveRecruitment();
+                        //     },
+                        //     disable: SubmitBtn
+                        // },
+                      ]
+                    : props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                      props.stateValue?.StatusId ===
+                        StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+                    ? [
+                        {
+                          label: "Cancel",
+                          onClick: async () => {
+                            handleCancel();
+                          },
+                          // disable: SubmitBtn
+                        },
+                        {
+                          label: "Upload",
+                          onClick: async () => {
+                            await SaveRecruitment();
+                          },
+                          // disable: SubmitBtn
+                        },
+                      ]
+                    : props.CurrentRoleID === RoleID.RecruitmentHR &&
+                      props.stateValue?.StatusId ===
+                        StatusId.PendingwithRecruitmentHRtouploadAdv
+                    ? [
+                        {
+                          label: "Cancel",
+                          onClick: async () => {
+                            handleCancel();
+                          },
+                          // disable: SubmitBtn
+                        },
+                        {
+                          label: "Preview",
+                          onClick: async () => {
+                            setPreviewBtn(true);
+                            setMainComponent(false);
+                          },
+                          // disable: SubmitBtn
+                        },
+                        {
+                          label: "Submit",
+                          onClick: async () => {
+                            await SaveRecruitment();
+                          },
+                          disable: SubmitBtn,
+                        },
+                      ]
+                    : props.CurrentRoleID === RoleID.HOD &&
+                      props.stateValue?.StatusId ===
+                        StatusId.PendingwithHODtoreviewAdv
+                    ? [
+                        {
+                          label: "Cancel",
+                          onClick: async () => {
+                            handleCancel();
+                          },
+                          // disable: SubmitBtn
+                        },
+                        {
+                          label: "Approved",
+                          onClick: async () => {
+                            await SaveRecruitment();
+                          },
+                        },
+                      ]
+                    : []
+                }
+              />
+              {/* <TabsComponent
                                 tabs={tabs}
                                 initialTab={activeTab}
                                 handleCancel={handleCancel}
@@ -2391,34 +2788,55 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         ]
                                 }
                             /> */}
-                        </div>
-                    </CustomLoader>
-                </>
-            ) : PreviewBtn ? (
-                <>
-                    <PreviewScreen
-                        data={advDetails}
-                        onclose={() => { setPreviewBtn(false); setMainComponent(true); setactiveTab("tab2"); }}
-                        Ok_btnfn={() => {
-                            setSubmitBtn(false);
-                            setPreviewBtn(false);
-                            setMainComponent(true);
-                            setactiveTab("tab2");
-                        }}
-                        RoleSpec={RoleSpeKnowledgeValue}
-                        Qualification={QualificationValue}
-                        TechinicalSkills={TechnicalSkillValue}
-
-                    />
-                </>
-            ) : (
-                <>
-                    <CommanComments
-                        onClose={() => { setMainComponent(true); setactiveTab(activeTab) }}
-                        Comments={CommentData} />
-                </>
-            )}
-
+            </div>
+          </CustomLoader>
+        </>
+      ) : PreviewBtn ? (
+        <>
+          <PreviewScreen
+            data={advDetails}
+            onclose={() => {
+              setPreviewBtn(false);
+              setMainComponent(true);
+              setactiveTab("tab2");
+            }}
+            Ok_btnfn={() => {
+              setSubmitBtn(false);
+              setPreviewBtn(false);
+              setMainComponent(true);
+              setactiveTab("tab2");
+            }}
+            RoleSpec={RoleSpeKnowledgeValue}
+            Qualification={QualificationValue}
+            TechinicalSkills={TechnicalSkillValue}
+          />
+        </>
+      ) : Preview ? (
+        <CustomPreviewScreen
+          data={advDetails}
+          onclose={() => {
+            setPreview(false);
+            setMainComponent(true);
+            setactiveTab("tab2");
+          }}
+          Ok_btnfn={() => {
+            setPreview(false);
+            setSubmitBtn(false);
+            setMainComponent(true);
+            setactiveTab("tab2");
+          }}
+        />
+      ) : (
+        <>
+          <CommanComments
+            onClose={() => {
+              setMainComponent(true);
+              setactiveTab(activeTab);
+            }}
+            Comments={CommentData}
+          />
+        </>
+      )}
 
       {AlertPopupOpen ? (
         <>
@@ -2431,61 +2849,63 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         <></>
       )}
 
-            {AddQualifbtn && (
-                <>
-                    <Dialog
-                        header={
-                            <>
-                                <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                                    <div className="ms-Grid-col ms-lg12">
-                                        <LabelHeaderComponents value={HeaderValue} />
-                                    </div>
-                                </div>
-                            </>
-                        }
-                        visible={AddQualifbtn}
-                        style={{
-                            width: "26vw",
-                            backgroundColor: "white",
-                            borderRadius: "26px",
-                            padding: "20px"
-                        }}
-                        onHide={() => setAddQualifbtn(false)}
-                    >
-                        <div className="ms-Grid-row" style={{ marginLeft: "6%" }}>
-                            <div className="ms-Grid-col ms-lg8">
-                                <CustomInput
-                                    label={LabelValue}
-                                    value={advDetails.addMasterQualification}
-                                    disabled={false}
-                                    mandatory={true}
-                                    onChange={(value) =>
-                                        setAdvDetails((prevState) => ({ ...prevState, addMasterQualification: value }))
-                                    }
-                                />
-                            </div>
-                        </div>
+      {AddQualifbtn && (
+        <>
+          <Dialog
+            header={
+              <>
+                <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+                  <div className="ms-Grid-col ms-lg12">
+                    <LabelHeaderComponents value={HeaderValue} />
+                  </div>
+                </div>
+              </>
+            }
+            visible={AddQualifbtn}
+            style={{
+              width: "26vw",
+              backgroundColor: "white",
+              borderRadius: "26px",
+              padding: "20px",
+            }}
+            onHide={() => setAddQualifbtn(false)}
+          >
+            <div className="ms-Grid-row" style={{ marginLeft: "6%" }}>
+              <div className="ms-Grid-col ms-lg8">
+                <CustomInput
+                  label={LabelValue}
+                  value={advDetails.addMasterQualification}
+                  disabled={false}
+                  mandatory={true}
+                  onChange={(value) =>
+                    setAdvDetails((prevState) => ({
+                      ...prevState,
+                      addMasterQualification: value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
 
-                        <div className="ms-Grid-row"
-                            style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                marginTop: "5%",
-                            }}>
-                            <ReuseButton
-                                label="Add"
-                                onClick={() => InsertMasterData(HeaderValue)}
-                                spacing={4} />
-                        </div>
-
-                    </Dialog>
-                </>
-            )}
-
-
+            <div
+              className="ms-Grid-row"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "5%",
+              }}
+            >
+              <ReuseButton
+                label="Add"
+                onClick={() => InsertMasterData(HeaderValue)}
+                spacing={4}
+              />
+            </div>
+          </Dialog>
         </>
-
-    );
+      )}
+    </>
+  );
 };
 
 export default ApprovedVRREdit;
