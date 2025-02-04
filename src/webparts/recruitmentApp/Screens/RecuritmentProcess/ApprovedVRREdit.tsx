@@ -48,6 +48,7 @@ import {
 import CustomViewDocument from "../../components/CustomViewDocument";
 import RichTextEditor from "../../components/CustomRichTextEditor";
 import PreviewScreen from "./PreviewScreen";
+import CustomPreviewScreen from "./CustomPreviewScreen";
 import { Dialog } from "primereact/dialog";
 import SPServices from "../../Services/SPService/SPServices";
 import BreadcrumbsComponent, {
@@ -201,6 +202,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   const [MainComponent, setMainComponent] = useState<boolean>(true);
   const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
   const [PreviewBtn, setPreviewBtn] = useState<boolean>(false);
+  const [Preview, setPreview] = useState<boolean>(false);
   const [SubmitBtn, setSubmitBtn] = useState<boolean>(true);
   const [AddQualifbtn, setAddQualifbtn] = useState<boolean>(false);
   const [activeTab, setactiveTab] = useState<string>("tab1");
@@ -1151,6 +1153,94 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }
     console.log("advDetails", advDetails);
   };
+  // useEffect(() => {
+  //   if (
+  //     props.CurrentRoleID === RoleID.HOD &&
+  //     props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv
+  //   ) {
+  //     const fetchData = async () => {
+  //       try {
+  //         let filterConditions = [
+  //           {
+  //             FilterKey: "RecruitmentIDId",
+  //             Operator: "eq",
+  //             FilterValue: props.stateValue.ID,
+  //           },
+  //         ];
+  //         const response =
+  //           await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+  //             filterConditions,
+  //             ""
+  //           );
+
+  //         if (response.status === 200) {
+  //           const data = response.data;
+  //           if (data && data.length > 0) {
+  //             const rawData = data[0];
+  //             const mappedData: AdvDetails = {
+  //               RolePurpose: rawData.RoleProfile || "",
+  //               JobDescription: rawData.JobDescription || "",
+  //               RoleSpeKnowledgeoption: rawData.RoleSpecificKnowledgeJson
+  //                 ? JSON.parse(rawData.RoleSpecificKnowledgeJson).map(
+  //                     (item: any) => ({
+  //                       text: item.RoleSpeKnowledge,
+  //                     })
+  //                   )
+  //                 : [],
+  //               RequiredLeveloption: rawData.RoleSpecificKnowledgeJson
+  //                 ? JSON.parse(rawData.RoleSpecificKnowledgeJson).map(
+  //                     (item: any) => ({
+  //                       text: item.RequiredLevel,
+  //                     })
+  //                   )
+  //                 : [],
+  //               MinQualificationOption: rawData.Qualification
+  //                 ? JSON.parse(rawData.Qualification).map((item: any) => ({
+  //                     text: item.MinQualification,
+  //                   }))
+  //                 : [],
+  //               PrefeQualificationOption: rawData.PreferredQualification
+  //                 ? JSON.parse(rawData.PreferredQualification).map(
+  //                     (item: any) => ({
+  //                       text: item.PrefeQualification,
+  //                     })
+  //                   )
+  //                 : [],
+  //               YearofExperience: rawData.YearofExperience || "",
+  //               PreferredExperience: rawData.PreferredExperience || "",
+  //               TechnicalSkillsOption: rawData.TechnicalSkillsKnowledgeJson
+  //                 ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
+  //                     (item: any) => ({
+  //                       text: item.RoleSpeKnowledge,
+  //                     })
+  //                   )
+  //                 : [],
+  //               LevelProficiencyOption: rawData.TechnicalSkillsKnowledgeJson
+  //                 ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
+  //                     (item: any) => ({
+  //                       text: item.RequiredLevel,
+  //                     })
+  //                   )
+  //                 : [],
+  //               addMasterQualification: "",
+  //               TotalExperience: rawData.YearofExperience || "",
+  //               ExperienceinMiningIndustry: rawData.PreferredExperience || "",
+  //             };
+  //             setAdvDetails(mappedData);
+  //             console.log("Updated AdvDetails State:", mappedData);
+  //           } else {
+  //             console.warn("No data found for the given filter");
+  //           }
+  //         } else {
+  //           console.error("Error fetching data: ", response.message);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching data:", error);
+  //       }
+  //     };
+  //     void fetchData();
+  //   }
+  // }, [props.CurrentRoleID, props.stateValue?.StatusId]);
   useEffect(() => {
     if (
       props.CurrentRoleID === RoleID.HOD &&
@@ -1175,23 +1265,24 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             const data = response.data;
             if (data && data.length > 0) {
               const rawData = data[0];
+              const roleSpecificKnowledge = rawData.RoleSpecificKnowledgeJson
+                ? JSON.parse(rawData.RoleSpecificKnowledgeJson)
+                : [];
+
+              console.log("roleSpecificKnowledge", roleSpecificKnowledge);
+              const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+                (item: any) => item.RoleSpeKnowledge
+              );
+              console.log("RoleSpeKnowledgeValues1", RoleSpeKnowledgeValues);
+              const RequiredLevelValues = roleSpecificKnowledge.map(
+                (item: any) => item.RequiredLevel
+              );
+              console.log("RequiredLevelValues2", RequiredLevelValues);
               const mappedData: AdvDetails = {
                 RolePurpose: rawData.RoleProfile || "",
                 JobDescription: rawData.JobDescription || "",
-                RoleSpeKnowledgeoption: rawData.RoleSpecificKnowledgeJson
-                  ? JSON.parse(rawData.RoleSpecificKnowledgeJson).map(
-                      (item: any) => ({
-                        text: item.RoleSpeKnowledge,
-                      })
-                    )
-                  : [],
-                RequiredLeveloption: rawData.RoleSpecificKnowledgeJson
-                  ? JSON.parse(rawData.RoleSpecificKnowledgeJson).map(
-                      (item: any) => ({
-                        text: item.RequiredLevel,
-                      })
-                    )
-                  : [],
+                RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+                RequiredLeveloption: RequiredLevelValues,
                 MinQualificationOption: rawData.Qualification
                   ? JSON.parse(rawData.Qualification).map((item: any) => ({
                       text: item.MinQualification,
@@ -1204,8 +1295,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       })
                     )
                   : [],
-                YearofExperience: rawData.YearofExperience || "",
-                PreferredExperience: rawData.PreferredExperience || "",
+                TotalExperience: rawData.YearofExperience || "",
+                ExperienceinMiningIndustry: rawData.PreferredExperience || "",
                 TechnicalSkillsOption: rawData.TechnicalSkillsKnowledgeJson
                   ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
                       (item: any) => ({
@@ -1221,9 +1312,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     )
                   : [],
                 addMasterQualification: "",
-                TotalExperience: rawData.YearofExperience || "",
-                ExperienceinMiningIndustry: rawData.PreferredExperience || "",
+                YearofExperience: rawData.YearofExperience || "",
+                PreferredExperience: rawData.PreferredExperience || "",
               };
+
               setAdvDetails(mappedData);
               console.log("Updated AdvDetails State:", mappedData);
             } else {
@@ -1243,40 +1335,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   const isHODOrPendingWithHODReview =
     props.CurrentRoleID === RoleID.HOD &&
     props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv;
-
-  const JobDescription = advDetails.JobDescription;
-
-  const RolePurpose = advDetails.RolePurpose;
-
-  const joinedQualifications = advDetails.PrefeQualificationOption.map(
-    (item) => item.text
-  ).join(", ");
-  const joinedMinQualifications = advDetails.MinQualificationOption.map(
-    (item) => item.text
-  ).join(", ");
-
-  const joinedRoleSpeKnowledgeoption = advDetails.RoleSpeKnowledgeoption.map(
-    (item) => item.text
-  ).join(", ");
-
-  const joinedRequiredLeveloption = advDetails.RequiredLeveloption.map(
-    (item) => item.text
-  ).join(", ");
-
-  const joinedTechnicalSkillsOption = advDetails.TechnicalSkillsOption.map(
-    (item) => item.text
-  ).join(", ");
-
-  const joinedLevelProficiencyOption = advDetails.LevelProficiencyOption.map(
-    (item) => item.text
-  ).join(", ");
-
   const AddMasterData_fn = (Header: string, LabelValue: string) => {
     setAddQualifbtn(true);
     setHeaderValue(Header);
     setLabelValue(LabelValue);
   };
-
+  // const data1 =
+  //   props.CurrentRoleID === RoleID.RecruitmentHR ||
+  //   props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv;
   const tabs = [
     {
       label: TabName.PositionDetails,
@@ -1850,6 +1916,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           )}
                         </div>
                       </div>
+
                       <div>
                         {props.CurrentRoleID === RoleID.HOD &&
                           props.stateValue?.StatusId ===
@@ -1865,6 +1932,49 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               </div>
                             </>
                           )}
+                      </div>
+                      {/* <div>View Submisstion</div>
+                      {props.CurrentRoleID === RoleID.HOD &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithHODtoreviewAdv && (
+                          <ReuseButton
+                            label="Preview"
+                            onClick={async () => {
+                              setPreview(true);
+                              setMainComponent(false);
+                              console.log("Preview", Preview);
+                            }}
+                          />
+                        )} */}
+                      <div
+                        className="ms-Grid-col ms-lg2"
+                        style={{ position: "relative", right: "10px" }}
+                      >
+                        <div>
+                          <Label>View Advertisement</Label>
+                          <ReuseButton
+                            Style={{
+                              minWidth: "117px",
+                              fontSize: "13px",
+                              paddingBottom: "24px",
+                              display: "flex",
+                              flexDirection: "column",
+                              height: "41px",
+                              paddingTop: "22px",
+                            }}
+                            label="VIEW"
+                            imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                            onClick={async () => {
+                              setPreview(true);
+                              setMainComponent(false);
+                              console.log("Preview", Preview);
+                            }}
+                            imgAltHover="Image"
+                            spacing={4}
+                            imgSrc={require("../../assets/Viewicon.svg")}
+                            imgAlt="ssss"
+                          />
+                        </div>
                       </div>
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg12">
@@ -1882,17 +1992,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 }))
                               }
                               error={validationErrors.RolePurpose}
-                            />
-                          ) : props.CurrentRoleID === RoleID.HOD &&
-                            props.stateValue?.StatusId ===
-                              StatusId.PendingwithHODtoreviewAdv ? (
-                            <RichTextEditor
-                              label="Role Purpose"
-                              value={RolePurpose}
-                              mandatory={false}
-                              onChange={() => {}}
-                              error={false}
-                              disabled={isHODOrPendingWithHODReview}
                             />
                           ) : null}
                         </div>
@@ -1916,93 +2015,51 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               disabled={isHODOrPendingWithHODReview}
                             />
                           </div>
-                        ) : props.CurrentRoleID === RoleID.HOD &&
-                          props.stateValue?.StatusId ===
-                            StatusId.PendingwithHODtoreviewAdv ? (
-                          <RichTextEditor
-                            label="Job Description"
-                            value={JobDescription}
-                            mandatory={false}
-                            onChange={() => {}}
-                            error={false}
-                            disabled={isHODOrPendingWithHODReview}
-                          />
                         ) : null}
                       </div>
-                      {props.CurrentRoleID === RoleID.HOD ? (
+                      <div className="ms-Grid-col ms-lg10">
                         <div className="ms-Grid-row">
-                          <div className="ms-Grid-col ms-lg6">
-                            {props.stateValue?.StatusId ===
-                              StatusId.PendingwithHODtoreviewAdv && (
+                          <div className="ms-Grid-col ms-lg5">
+                            {props.CurrentRoleID === RoleID.RecruitmentHR ||
+                            props.stateValue?.StatusId ===
+                              StatusId.PendingwithRecruitmentHRtouploadAdv ? (
                               <CustomInput
                                 label="Total Experience"
                                 value={advDetails.TotalExperience}
-                                disabled={isHODOrPendingWithHODReview}
+                                disabled={false}
                                 error={false}
                                 mandatory={false}
-                                onChange={() => {}}
+                                onChange={(value) =>
+                                  setAdvDetails((prevState) => ({
+                                    ...prevState,
+                                    TotalExperience: value,
+                                  }))
+                                }
                               />
-                            )}
+                            ) : null}
                           </div>
-                          <div className="ms-Grid-col ms-lg6">
-                            {props.stateValue?.StatusId ===
-                              StatusId.PendingwithHODtoreviewAdv && (
+
+                          <div className="ms-Grid-col ms-lg5">
+                            {props.CurrentRoleID === RoleID.RecruitmentHR ||
+                            props.stateValue?.StatusId ===
+                              StatusId.PendingwithRecruitmentHRtouploadAdv ? (
                               <CustomInput
                                 label="Experience in Mining Industry (Years)"
                                 value={advDetails.ExperienceinMiningIndustry}
-                                disabled={isHODOrPendingWithHODReview}
+                                disabled={false}
                                 error={false}
                                 mandatory={false}
-                                onChange={() => {}}
+                                onChange={(value) =>
+                                  setAdvDetails((prevState) => ({
+                                    ...prevState,
+                                    ExperienceinMiningIndustry: value,
+                                  }))
+                                }
                               />
-                            )}
+                            ) : null}
                           </div>
                         </div>
-                      ) : (
-                        <div className="ms-Grid-col ms-lg10">
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg5">
-                              {props.CurrentRoleID === RoleID.RecruitmentHR ||
-                              props.stateValue?.StatusId ===
-                                StatusId.PendingwithRecruitmentHRtouploadAdv ? (
-                                <CustomInput
-                                  label="Total Experience"
-                                  value={advDetails.TotalExperience}
-                                  disabled={false}
-                                  error={false}
-                                  mandatory={false}
-                                  onChange={(value) =>
-                                    setAdvDetails((prevState) => ({
-                                      ...prevState,
-                                      TotalExperience: value,
-                                    }))
-                                  }
-                                />
-                              ) : null}
-                            </div>
-
-                            <div className="ms-Grid-col ms-lg5">
-                              {props.CurrentRoleID === RoleID.RecruitmentHR ||
-                              props.stateValue?.StatusId ===
-                                StatusId.PendingwithRecruitmentHRtouploadAdv ? (
-                                <CustomInput
-                                  label="Experience in Mining Industry (Years)"
-                                  value={advDetails.ExperienceinMiningIndustry}
-                                  disabled={false}
-                                  error={false}
-                                  mandatory={false}
-                                  onChange={(value) =>
-                                    setAdvDetails((prevState) => ({
-                                      ...prevState,
-                                      ExperienceinMiningIndustry: value,
-                                    }))
-                                  }
-                                />
-                              ) : null}
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                      </div>
 
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4"></div>
@@ -2043,17 +2100,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     }
                                     error={false}
                                   />
-                                ) : props.CurrentRoleID === RoleID.HOD &&
-                                  props.stateValue?.StatusId ===
-                                    StatusId.PendingwithHODtoreviewAdv ? (
-                                  <CustomInput
-                                    label="Minimum Qualification"
-                                    value={joinedMinQualifications}
-                                    disabled={true}
-                                    error={false}
-                                    mandatory={false}
-                                    onChange={() => {}}
-                                  />
                                 ) : null}
                               </div>
                               <div
@@ -2083,17 +2129,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                       )
                                     }
                                     error={false}
-                                  />
-                                ) : props.CurrentRoleID === RoleID.HOD &&
-                                  props.stateValue?.StatusId ===
-                                    StatusId.PendingwithHODtoreviewAdv ? (
-                                  <CustomInput
-                                    label="Preferred Qualification"
-                                    value={joinedQualifications}
-                                    disabled={true}
-                                    error={false}
-                                    mandatory={false}
-                                    onChange={() => {}}
                                   />
                                 ) : null}
                               </div>
@@ -2248,17 +2283,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     }
                                     error={false}
                                   />
-                                ) : props.CurrentRoleID === RoleID.HOD &&
-                                  props.stateValue?.StatusId ===
-                                    StatusId.PendingwithHODtoreviewAdv ? (
-                                  <CustomInput
-                                    label="Role Specific Knowledge"
-                                    value={joinedRoleSpeKnowledgeoption}
-                                    disabled={true}
-                                    error={false}
-                                    mandatory={false}
-                                    onChange={() => {}}
-                                  />
                                 ) : null}
                               </div>
                               <div
@@ -2286,17 +2310,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                       )
                                     }
                                     error={false}
-                                  />
-                                ) : props.CurrentRoleID === RoleID.HOD &&
-                                  props.stateValue?.StatusId ===
-                                    StatusId.PendingwithHODtoreviewAdv ? (
-                                  <CustomInput
-                                    label="Required Level"
-                                    value={joinedRequiredLeveloption}
-                                    disabled={true}
-                                    error={false}
-                                    mandatory={false}
-                                    onChange={() => {}}
                                   />
                                 ) : null}
                               </div>
@@ -2452,17 +2465,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     }
                                     error={validationErrors.AssignRecruitmentHR}
                                   />
-                                ) : props.CurrentRoleID === RoleID.HOD &&
-                                  props.stateValue?.StatusId ===
-                                    StatusId.PendingwithHODtoreviewAdv ? (
-                                  <CustomInput
-                                    label="Technical Skills - Ability to apply Knowledge"
-                                    value={joinedTechnicalSkillsOption}
-                                    disabled={true}
-                                    error={false}
-                                    mandatory={false}
-                                    onChange={() => {}}
-                                  />
                                 ) : null}
                               </div>
                               <div
@@ -2490,17 +2492,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                       )
                                     }
                                     error={validationErrors.AssignRecruitmentHR}
-                                  />
-                                ) : props.CurrentRoleID === RoleID.HOD &&
-                                  props.stateValue?.StatusId ===
-                                    StatusId.PendingwithHODtoreviewAdv ? (
-                                  <CustomInput
-                                    label="Level of Proficiency"
-                                    value={joinedLevelProficiencyOption}
-                                    disabled={true}
-                                    error={false}
-                                    mandatory={false}
-                                    onChange={() => {}}
                                   />
                                 ) : null}
                               </div>
@@ -2914,6 +2905,21 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             TechinicalSkills={TechnicalSkillValue}
           />
         </>
+      ) : Preview ? (
+        <CustomPreviewScreen
+          data={advDetails}
+          onclose={() => {
+            setPreview(false);
+            setMainComponent(true);
+            setactiveTab("tab2");
+          }}
+          Ok_btnfn={() => {
+            setPreview(false);
+            setSubmitBtn(false);
+            setMainComponent(true);
+            setactiveTab("tab2");
+          }}
+        />
       ) : (
         <>
           <CommanComments
