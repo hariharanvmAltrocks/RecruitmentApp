@@ -14,7 +14,8 @@ import AssignInterviewPanel from "../Screens/RecuritmentProcess/AssignInterviewP
 import InterviewPanelList from "../Screens/InterviewPanel/InterviewPanelList";
 import InterviewPanelEdit from "../Screens/InterviewPanel/InterviewPanelEdit";
 import Emptypage from "../Screens/EmptyPage/EmptyPage";
-
+import HodScoreCard from "../Screens/RecuritmentProcess/HodScoreCard";
+// import HodScoreCard from "../Screens/RecuritmentProcess/HodScoreCard";
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
 
@@ -28,8 +29,12 @@ export default function MainPage(props: any) {
     <div style={{ display: "flex", flexDirection: "row" }} className=" ms-Grid">
       <div
         style={{ width: isExpanded ? "15%" : "6%" }}
-        // onMouseEnter={() => { setIsExpanded(true) }}
-        // onMouseLeave={() => { setIsExpanded(false) }}
+        onMouseEnter={() => {
+          setIsExpanded(true);
+        }}
+        onMouseLeave={() => {
+          setIsExpanded(false);
+        }}
       >
         <SideNavComponent roleID={roleID} IsExpanded={isExpanded} />
       </div>
@@ -100,6 +105,10 @@ export default function MainPage(props: any) {
                 <Route
                   path="/InterviewPanelList/InterviewPanelEdit"
                   element={<InterviewPanelEdit {...props} {...masterData} />}
+                />
+                <Route
+                  path="/RecurimentProcess/HodScoreCard"
+                  element={<HodScoreCard {...props} {...masterData} />}
                 />
               </Routes>
             </>

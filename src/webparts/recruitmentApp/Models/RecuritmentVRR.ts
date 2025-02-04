@@ -83,6 +83,8 @@ export type AdvDetails = {
   addMasterQualification: string;
   TotalExperience: string;
   ExperienceinMiningIndustry: string;
+  YearofExperience: any;
+  PreferredExperience: any;
 };
 
 export type CandidateData = {

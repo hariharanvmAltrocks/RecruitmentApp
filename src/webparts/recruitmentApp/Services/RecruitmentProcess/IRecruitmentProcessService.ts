@@ -68,6 +68,10 @@ export type IRecruitmentService = {
     obj: InsertComments
   ): Promise<ApiResponse<InsertComments | null>>;
   InsertList(obj: {}, ListName: string): Promise<ApiResponse<null>>;
+  GetHRMSRecruitmentRoleProfileDetails(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<any | null>>;
   InsertExternalAgencyDetails(
     selectedAgencies: { key: number; text: string }[],
     RecruitmentId: number
