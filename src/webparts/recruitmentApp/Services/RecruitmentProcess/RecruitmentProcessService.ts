@@ -763,6 +763,7 @@ export default class RecruitmentService implements IRecruitmentService {
           RecuritmentHR: item?.RecuritmentHR,
           AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
           CandidateCVDoc: candidateCV,
+          PositionTitle: item?.PositionTitle,
         };
       });
 
