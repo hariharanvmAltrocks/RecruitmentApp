@@ -194,7 +194,7 @@ const InterviewPanelList = (props: any) => {
               onClick={() => handleRedirectView(rowData)}
               spacing={4}
               width="10%"
-              // disabled={!rowData?.Checked}
+            // disabled={!rowData?.Checked}
             />
           </div>
         );
@@ -400,6 +400,7 @@ const InterviewPanelList = (props: any) => {
               handleCheckbox={handleCheckbox}
               selectAll={selectAll}
               onSelectAllChange={onSelectAllChange}
+              MasterData={props || {}}
             />
           </CardContent>
         </Card>

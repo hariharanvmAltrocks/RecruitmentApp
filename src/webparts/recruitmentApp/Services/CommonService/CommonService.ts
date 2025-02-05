@@ -4,12 +4,13 @@ import SPServices from "../SPService/SPServices";
 import { ICommonService } from "./ICommonService";
 import GraphService from "../GraphService/GraphService";
 import { AutoCompleteItem } from "../../Models/Screens";
+import { ListNames } from "../../utilities/Config";
+
 
 export default class CommonService implements ICommonService {
 
     uploadAttachmentToLibrary = async (
-        ID: number,
-        PositionID: number,
+        PositionCode: string,
         AttachFile: File,
         Listname: string
     ): Promise<ApiResponse<any>> => {
@@ -21,23 +22,27 @@ export default class CommonService implements ICommonService {
                     try {
                         const fileContent = event.target.result;
                         const attachmentsLibrary = sp.web.lists.getByTitle(Listname);
-                        const positionFolderName = PositionID.toString();
-                        const idFolderName = ID.toString();
+                        const positionFolderName = PositionCode.toString();
+                        let positionFolderUrl = `${attachmentsLibrary.rootFolder.serverRelativeUrl}/${positionFolderName}`;
 
-                        // Step 1: Ensure PositionID folder exists, and create it if not
-                        const positionFolderResult = await attachmentsLibrary.rootFolder.folders.add(positionFolderName);
-                        const positionFolderUrl = positionFolderResult.data.ServerRelativeUrl;
+                        try {
+                            await sp.web.getFolderByServerRelativeUrl(positionFolderUrl).get();
+                        } catch {
+                            const positionFolderResult = await attachmentsLibrary.rootFolder.folders.add(positionFolderName);
+                            positionFolderUrl = positionFolderResult.data.ServerRelativeUrl;
+                        }
+                        const fileUrl = `${positionFolderUrl}/${AttachFile.name}`;
+                        try {
+                            await sp.web.getFileByServerRelativeUrl(fileUrl).delete();
+                            console.log(`Existing file ${AttachFile.name} deleted.`);
+                        } catch (deleteError) {
+                            console.warn(`File ${AttachFile.name} not found. Uploading new file.`);
+                        }
 
-                        // Step 2: Ensure ID folder exists inside the PositionID folder
-                        const idFolderResult = await attachmentsLibrary.rootFolder.folders.add(
-                            `${positionFolderUrl}/${idFolderName}`
-                        );
-                        const idFolderUrl = idFolderResult.data.ServerRelativeUrl;
-
-                        // Step 3: Upload the file to the ID folder
-                        await attachmentsLibrary.rootFolder.files.add(
-                            `${idFolderUrl}/${AttachFile.name}`,
-                            fileContent
+                        await sp.web.getFolderByServerRelativeUrl(positionFolderUrl).files.add(
+                            AttachFile.name,
+                            fileContent,
+                            true // Overwrite if exists
                         );
 
                         resolve({
@@ -46,7 +51,7 @@ export default class CommonService implements ICommonService {
                             message: "Attachment uploaded successfully"
                         });
                     } catch (innerError) {
-                        console.log("Error uploading attachment:", innerError);
+                        console.error("Error uploading attachment:", innerError);
                         reject({
                             data: null,
                             status: 500,
@@ -56,7 +61,7 @@ export default class CommonService implements ICommonService {
                 };
 
                 fileReader.onerror = (error) => {
-                    console.log("Error reading file:", error);
+                    console.error("Error reading file:", error);
                     reject({
                         data: null,
                         status: 500,
@@ -66,7 +71,7 @@ export default class CommonService implements ICommonService {
 
                 fileReader.readAsArrayBuffer(AttachFile);
             } catch (error) {
-                console.log("Error during file upload process:", error);
+                console.error("Error during file upload process:", error);
                 reject({
                     data: null,
                     status: 500,
@@ -79,7 +84,6 @@ export default class CommonService implements ICommonService {
 
     GetAttachmentToLibrary = async (
         listName: string,
-        ID?: string,
         JobCode?: string,
         PassportID?: string
     ): Promise<ApiResponse<IDocFiles[]>> => {
@@ -91,28 +95,15 @@ export default class CommonService implements ICommonService {
                 })) as IDocFiles[];
             } else if (JobCode) {
                 response = (await SPServices.getDocLibFiles({
-                    FilePath: `${listName}/${ID}/${JobCode}`,
+                    FilePath: `${listName}/${JobCode}`,
                 })) as IDocFiles[];
             } else {
                 response = (await SPServices.getDocLibFiles({
                     FilePath: `${listName}`,
                 })) as IDocFiles[];
             }
-            // for (const file of response) {
-            //     const fileContent = await fetch(file.content)  // You might need to adjust based on how file URL is provided
-            //         .then(res => res.text())  // Fetch the binary content
-            //         .catch(err => {
-            //             console.error("Error fetching file content:", err);
-            //             return null;
-            //         });
-
-            //     if (fileContent) {
-            //         // Process the file content here (e.g., display, save, etc.)
-            //         console.log(fileContent, "RoleProfileContent");
-            //     }
-            // }
             return {
-                data: response,  // Return data as an array of IDocFiles[]
+                data: response,
                 status: 200,
                 message: "Attachments retrieved successfully"
             };
@@ -137,7 +128,7 @@ export default class CommonService implements ICommonService {
 
             const members = response.value || [];
             const userDetailsPromises = members.map((item: { mail: string }) => {
-                return getUserGuidByEmail(item.mail);
+                return this.getUserGuidByEmail(item.mail);
             });
             const userDetails = await Promise.all(userDetailsPromises);
             const validUserDetails = userDetails.filter(user => user !== null);
@@ -205,19 +196,44 @@ export default class CommonService implements ICommonService {
             };
         }
     };
-}
-async function getUserGuidByEmail(email: string) {
-    try {
-        const user = await sp.web.siteUsers.getByEmail(email)();
-        console.log(user, "user");
-        return {
-            key: user.Id,
-            text: user.Title
-        };
-    } catch (error) {
-        console.error("Error fetching user ID by email: ", error);
-        return null;
+
+    async GetGradeLevel(PatersonGrade: string): Promise<ApiResponse<any | null>> {
+        try {
+            let op: AutoCompleteItem[] = [];
+            if (PatersonGrade) {
+                await SPServices.SPReadItems({
+                    Listname: ListNames.HRMSGradeMaster,
+                    Select: "*",
+                    //Expand: "RoleId,Department,Status,Action",
+                    Filter: [
+                        {
+                            FilterKey: "PatersonGrade",
+                            Operator: "eq",
+                            FilterValue: PatersonGrade,
+                        },
+                    ],
+                }).then((data: any) => {
+                    op = data.map((item: any) => ({
+                        Level: item.Levels,
+
+                    }));
+                    console.log('data HRMSGradeMaster', op);
+                })
+            }
+            return {
+                data: op,
+                status: 200,
+                message: "HRMSGradeMaster Fetched successfully",
+            };
+        }
+        catch (error) {
+            console.error("Error HRMSGradeMaster:", error);
+            throw error;
+        }
     }
 }
+
+
+
 
 

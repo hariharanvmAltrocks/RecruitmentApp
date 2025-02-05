@@ -8,6 +8,7 @@ import ReuseButton from "./ReuseButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { FilterMatchMode } from "primereact/api";
 import { AutoCompleteItem } from "../Models/Screens";
+import CustomAutoComplete from "./CustomAutoComplete";
 
 interface ColumnConfig {
     field: string;
@@ -22,7 +23,7 @@ interface SearchableDataTableProps {
     rows: number;
     onPageChange: (event: any) => void;
     handleRefresh: () => void;
-    MasterData?: any
+    MasterData: any
     handleAssignBtn?: () => void;
 }
 export type FilterData = {
@@ -46,11 +47,11 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
     // const [first, setFirst] = React.useState<number>(0);
     // const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [dashboardSearch, setDashboardSearch] = React.useState<any>({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
-    // const [FilterData, setFilterData] = React.useState<FilterData>({
-    //     Department: { key: 0, text: "" },
-    //     BusinessUnitCode: { key: 0, text: "" },
-    //     BusinessUnitName: { key: 0, text: "" },
-    // });
+    const [FilterData, setFilterData] = React.useState<FilterData>({
+        Department: { key: 0, text: "" },
+        BusinessUnitCode: { key: 0, text: "" },
+        BusinessUnitName: { key: 0, text: "" },
+    });
 
     React.useEffect(() => {
         setFilteredItems(data);
@@ -64,6 +65,31 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
             },
         });
     };
+
+    const search_fn = (field: string, item: AutoCompleteItem) => {
+        debugger;
+        let filtered = data.filter(i => {
+            if (field === "Department") return i.Department === item.text;
+            if (field === "BusinessUnitCode") return i.BusinessUnitCode === item.text;
+            if (field === "BusinessUnitName") return i.BusinessUnitCode === item.key;
+            return false;
+        });
+
+        setFilteredItems(filtered);
+    };
+
+    const handleAutoComplete = (field: keyof FilterData, item: AutoCompleteItem | null) => {
+        setFilterData(prev => ({
+            ...prev,
+            [field]: item,
+        }));
+
+        if (item) {
+            search_fn(field, item);
+        }
+    };
+
+
 
     return (
         // <CustomLoader isLoading={isLoading}>
@@ -135,7 +161,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                     </div>
                 )}
             </div>
-            {/* <div className="ms_Grid-row" style={{ marginRight: "-19%", marginLeft: "5px" }}>
+            <div className="ms_Grid-row" style={{ marginRight: "-19%", marginLeft: "5px" }}>
                 <div className="ms-Grid-col ms-lg3">
                     <CustomAutoComplete
                         label="Department"
@@ -165,7 +191,13 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                 <div className="ms-Grid-col ms-lg3">
                     <CustomAutoComplete
                         label="Business Unit Name"
-                        options={[]}
+                        options={Array.from(
+                            new Map(
+                                MasterData?.BusinessUnitCodeAllColumn.map(
+                                    (data: any) => [data.Name, { key: data.text, text: data.Name }]
+                                )
+                            ).values()
+                        ) as AutoCompleteItem[]}
                         value={FilterData.BusinessUnitName}
                         disabled={false}
                         mandatory={true}
@@ -174,7 +206,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                     />
                 </div>
 
-            </div> */}
+            </div>
             <div className="ms-Grid-row" style={{ marginTop: "2%" }}>
                 <div className="ms-Grid-col ms-lg12">
                     <DataTable
@@ -184,7 +216,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                         currentPageReportTemplate="{first} to {last} of {totalRecords}"
                         scrollable
-                        scrollHeight="300px"
+                        // scrollHeight="300px"
                         rowsPerPageOptions={[5, 10, 20]}
                         paginator
                         // onPage={onPageChange}

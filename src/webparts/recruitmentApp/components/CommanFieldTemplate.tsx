@@ -164,7 +164,7 @@ const CommanFieldTemplate = (props: any) => {
                             throw new Error("Function not implemented.");
                         }} onSelectAllChange={function (value: any): void {
                             throw new Error("Function not implemented.");
-                        }} selectAll={false} />
+                        }} selectAll={false} MasterData={undefined} />
                     {/* <ReviewProfileDatatable
                         data={data}
                         columns={columnConfig}

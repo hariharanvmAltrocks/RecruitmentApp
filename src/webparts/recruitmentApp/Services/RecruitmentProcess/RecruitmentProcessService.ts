@@ -139,15 +139,15 @@ export default class RecruitmentService implements IRecruitmentService {
 
       const formattedItems = listItems.map(async (item) => {
         return {
-          LookupId: item.ID,
-          JobTitleInEnglishId: item.JobTitleEnglishId || 0,
-          JobTitleInEnglish: item.JobTitleEnglish?.JobTitleInEnglish || "",
-          JobTitleInFrenchId: item.JobTitleFrenchId || 0,
-          JobTitleInFrench: item.JobTitleFrench?.JobTitleInFrench || "",
-          DRCGradeId: item.DRCGradeId,
-          DRCGrade: item.DRCGrade?.DRCGrade || "",
-          PayrollGradeId: item.PatersonGradeId,
-          PayrollGrade: item.PatersonGrade?.PatersonGrade || "",
+          LookupId: item?.ID,
+          JobTitleInEnglishId: item?.JobTitleEnglishId || 0,
+          JobTitleInEnglish: item?.JobTitleEnglish?.JobTitleInEnglish || "",
+          JobTitleInFrenchId: item?.JobTitleFrenchId || 0,
+          JobTitleInFrench: item?.JobTitleFrench?.JobTitleInFrench || "",
+          DRCGradeId: item?.DRCGradeId,
+          DRCGrade: item?.DRCGrade?.DRCGrade || "",
+          PayrollGradeId: item?.PatersonGradeId,
+          PayrollGrade: item?.PatersonGrade?.PatersonGrade || "",
           //   PositionList :(await this.GetPositionID(item.JobTitleEnglishId, item.DepartmentId)).data
         };
       });
@@ -387,15 +387,15 @@ export default class RecruitmentService implements IRecruitmentService {
       console.log("GetRecrutimentPositionDetails ", listItems);
 
       const formattedItems = {
-        LookupId: listItems[0].ID,
-        JobTitleInEnglishId: listItems[0].JobTitleEnglishId || 0,
+        LookupId: listItems[0]?.ID,
+        JobTitleInEnglishId: listItems[0]?.JobTitleEnglishId || 0,
         JobTitleInEnglish:
-          listItems[0].JobTitleEnglish?.JobTitleInEnglish || "",
-        JobTitleInFrench: listItems[0].JobTitleFrench?.JobTitleInFrench || 0,
-        DRCGradeId: listItems[0].DRCGradeId,
-        DRCGrade: listItems[0].DRCGrade?.DRCGrade || "",
-        PayrollGradeId: listItems[0].PatersonGradeId,
-        PayrollGrade: listItems[0].PatersonGrade?.PatersonGrade || "",
+          listItems[0]?.JobTitleEnglish?.JobTitleInEnglish || "",
+        JobTitleInFrench: listItems[0]?.JobTitleFrench?.JobTitleInFrench || 0,
+        DRCGradeId: listItems[0]?.DRCGradeId,
+        DRCGrade: listItems[0]?.DRCGrade?.DRCGrade || "",
+        PayrollGradeId: listItems[0]?.PatersonGradeId,
+        PayrollGrade: listItems[0]?.PatersonGrade?.PatersonGrade || "",
         //   PositionList :(await this.GetPositionID(item.JobTitleEnglishId, item.DepartmentId)).data
       };
 
@@ -661,9 +661,8 @@ export default class RecruitmentService implements IRecruitmentService {
           FristName: item.FristName,
           MiddleName: item.MiddleName,
           LastName: item.LastName,
-          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${
-            item.LastName || ""
-          }`,
+          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""
+            }`,
           ResidentialAddress: item?.ResidentialAddress,
           DOB: item?.DOB,
           ContactNumber: item?.ContactNumber,
@@ -677,6 +676,8 @@ export default class RecruitmentService implements IRecruitmentService {
           Qualification: item?.Qualification,
           CandidateCVDoc: candidateCV,
           RoleProfileDocument: roleprofileDoc,
+          AdvertisementDocument: [],
+          ShortlistedValue: ""
         };
       });
 
@@ -763,6 +764,9 @@ export default class RecruitmentService implements IRecruitmentService {
           RecuritmentHR: item?.RecuritmentHR,
           AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
           CandidateCVDoc: candidateCV,
+          RoleProfileDocument: [],
+          AdvertisementDocument: [],
+          ShortlistedValue: ""
         };
       });
 
@@ -846,10 +850,10 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
             ? (Employee.FirstName ?? "") +
-              " " +
-              (Employee.MiddleName ?? "") +
-              " " +
-              (Employee.LastName ?? "")
+            " " +
+            (Employee.MiddleName ?? "") +
+            " " +
+            (Employee.LastName ?? "")
             : "",
           // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
         };

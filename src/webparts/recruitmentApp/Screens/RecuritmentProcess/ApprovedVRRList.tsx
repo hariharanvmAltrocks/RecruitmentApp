@@ -34,6 +34,8 @@ import CheckboxDataTable from "../../components/CheckboxDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { alertPropsData } from "../../Models/Screens";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
+import axios from "axios";
+import { ApiUrl } from "../../Services/AxiosService/axiosConfig";
 // import 'primeicons/primeicons.css';
 // interface ColumnConfig {
 //     field: string;
@@ -121,30 +123,20 @@ const RecruitmentProcess = (props: any) => {
             sortable: false,
         },
         {
-            field: "BusinessUnitCode",
-            header: "BusinessUnit Code",
-            sortable: true,
-        },
-        {
-            field: "Department",
-            header: "Department",
-            sortable: true,
-        },
-        {
             field: "JobCode",
             header: "Job Code",
             sortable: true,
         },
-        // {
-        //     field: 'JobTitleInEnglish',
-        //     header: 'Job Title',
-        //     sortable: true
-        // },
-        // {
-        //     field: 'ReasonForVacancy',
-        //     header: 'ReasonForVacancy',
-        //     sortable: true
-        // },
+        {
+            field: 'JobTitleInEnglish',
+            header: 'Job Title',
+            sortable: true
+        },
+        {
+            field: "BusinessUnitCode",
+            header: "BusinessUnit Code",
+            sortable: true,
+        },
         {
             field: "Status",
             header: "Status",
@@ -205,14 +197,6 @@ const RecruitmentProcess = (props: any) => {
                                         padding: "3px",
                                     }}
                                 >
-                                    {/* <img
-                                                src={require("../../assets/edit_icon.png")}
-                                                alt="Stamp Icon"
-                                                style={{
-                                                  width: "100%",
-                                                  height: "100%",
-                                                }}
-                                              /> */}
                                 </Button>
                             </>
                         ) : (
@@ -572,6 +556,21 @@ const RecruitmentProcess = (props: any) => {
 
         void fetchDataAndGetADGroupsOption();
     }, [activeTab]);
+
+    React.useEffect(() => {
+        const fetchDataAndApply = async () => {
+            void fetchData();
+            await axios.post(ApiUrl +
+                `/InternalSignIn`, {}, { headers: { "Authorization": "Basic SHJtcyBBcHAgVXNlcjpBbHRyb2Nrc0AxMjM=", "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials": true }, withCredentials: true, })
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        };
+        void fetchDataAndApply();
+    }, [activeTab])
 
     const onPageChange = (event: any, Type: string) => {
         setFirst(event.first);
@@ -1142,6 +1141,7 @@ const RecruitmentProcess = (props: any) => {
                                             ? "Assign Agencies"
                                             : "Assign HR"
                                     }
+                                    MasterData={props || {}}
                                 //checkedValue={}
                                 />
                             </CardContent>
@@ -1167,6 +1167,7 @@ const RecruitmentProcess = (props: any) => {
                                     rows={rows}
                                     onPageChange={(event) => onPageChange(event, "VRR")}
                                     handleRefresh={() => handleRefresh("tab2")}
+                                    MasterData={props}
                                 />
                             </CardContent>
                         </Card>
@@ -1187,6 +1188,7 @@ const RecruitmentProcess = (props: any) => {
                                     rows={rows}
                                     onPageChange={(event) => onPageChange(event, "VRR")}
                                     handleRefresh={() => handleRefresh("tab3")}
+                                    MasterData={props}
                                 />
                             </CardContent>
                         </Card>
@@ -1218,6 +1220,7 @@ const RecruitmentProcess = (props: any) => {
                                             rows={rows}
                                             onPageChange={(event) => onPageChange(event, "VRR")}
                                             handleRefresh={() => handleRefresh("tab1")}
+                                            MasterData={props}
                                         />
                                     </CardContent>
                                 </Card>
@@ -1262,34 +1265,8 @@ const RecruitmentProcess = (props: any) => {
                                                     ? "Assign Agencies"
                                                     : "Assign HR"
                                             }
+                                            MasterData={props || {}}
                                         //checkedValue={}
-                                        />
-                                    </CardContent>
-                                </Card>
-                            ),
-                        },
-                        {
-                            label: TabName.ReviewProfile, //"Review Profiles",
-                            value: "tab3",
-                            content: (
-                                <Card
-                                    variant="outlined"
-                                    sx={{
-                                        boxShadow: "0px 2px 4px 3px #d3d3d3",
-                                        marginTop: "2%",
-                                    }}
-                                >
-                                    <CardContent>
-                                        <SearchableDataTable
-                                            data={RecruitmentDetails}
-                                            columns={columnConfig(
-                                                "tab3",
-                                                "edit",
-                                                TabName.ReviewProfile
-                                            )}
-                                            rows={rows}
-                                            onPageChange={(event) => onPageChange(event, "VRR")}
-                                            handleRefresh={() => handleRefresh("tab3")}
                                         />
                                     </CardContent>
                                 </Card>
@@ -1317,38 +1294,13 @@ const RecruitmentProcess = (props: any) => {
                                             rows={rows}
                                             onPageChange={(event) => onPageChange(event, "VRR")}
                                             handleRefresh={() => handleRefresh("tab4")}
+                                            MasterData={props}
                                         />
                                     </CardContent>
                                 </Card>
                             ),
                         },
-                        {
-                            label: TabName.AssignInterviewPanel, //"Assigne InterviewPanel",
-                            value: "tab5",
-                            content: (
-                                <Card
-                                    variant="outlined"
-                                    sx={{
-                                        boxShadow: "0px 2px 4px 3px #d3d3d3",
-                                        marginTop: "2%",
-                                    }}
-                                >
-                                    <CardContent>
-                                        <SearchableDataTable
-                                            data={RecruitmentDetails}
-                                            columns={columnConfig(
-                                                "tab5",
-                                                "edit",
-                                                TabName.AssignInterviewPanel
-                                            )}
-                                            rows={rows}
-                                            onPageChange={(event) => onPageChange(event, "VRR")}
-                                            handleRefresh={() => handleRefresh("tab5")}
-                                        />
-                                    </CardContent>
-                                </Card>
-                            ),
-                        },
+
                     ]
                     : [
                         ...(props.CurrentRoleID === RoleID.HOD
@@ -1377,6 +1329,7 @@ const RecruitmentProcess = (props: any) => {
                                                         onPageChange(event, "VRR")
                                                     }
                                                     handleRefresh={() => handleRefresh("tab1")}
+                                                    MasterData={props}
                                                 />
                                             </CardContent>
                                         </Card>
@@ -1412,6 +1365,7 @@ const RecruitmentProcess = (props: any) => {
                                                             handleRefresh={() =>
                                                                 handleRefresh("tab1")
                                                             }
+                                                            MasterData={props}
                                                         />
                                                     </CardContent>
                                                 </Card>

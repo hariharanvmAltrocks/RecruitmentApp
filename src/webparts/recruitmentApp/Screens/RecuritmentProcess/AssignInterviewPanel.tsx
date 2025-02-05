@@ -331,7 +331,8 @@ const AssignInterviewPanel = (props: any) => {
                             AssignBtnValidation={AssignBtnValidation}
                             handleCheckbox={handleCheckbox}
                             selectAll={selectAll}
-                            onSelectAllChange={onSelectAllChange} />
+                            onSelectAllChange={onSelectAllChange}
+                            MasterData={props || {}} />
                     </CardContent>
                 </Card>
             ),

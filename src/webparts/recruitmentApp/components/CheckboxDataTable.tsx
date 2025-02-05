@@ -8,6 +8,9 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import { FilterMatchMode } from "primereact/api";
 import CustomCheckBox from "./CustomCheckBox";
+import CustomAutoComplete from "./CustomAutoComplete";
+import { FilterData } from "./CustomDataTable";
+import { AutoCompleteItem } from "../Models/Screens";
 
 interface ColumnConfig {
   field: string;
@@ -28,6 +31,7 @@ interface SearchableDataTableProps {
   selectAll: boolean;
   handleRefresh?: () => void;
   assignLabel?: string;
+  MasterData: any
 }
 
 const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
@@ -41,6 +45,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   onSelectAllChange,
   selectAll,
   assignLabel,
+  MasterData
 }) => {
   const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
   const [first, setFirst] = React.useState<number>(0);
@@ -49,15 +54,14 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   const [dashboardSearch, setDashboardSearch] = React.useState<any>({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
-
-  // const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     setSearchTerm(event.target.value);
-  // };
+  const [FilterData, setFilterData] = React.useState<FilterData>({
+    Department: { key: 0, text: "" },
+    BusinessUnitCode: { key: 0, text: "" },
+    BusinessUnitName: { key: 0, text: "" },
+  });
 
   React.useEffect(() => {
     setFilteredItems(data);
-    // let AssignbtnVisible = columns.every((item) => item.field === "Interviewed")
-    // setAssignbtnVisible(AssignbtnVisible)
   }, [data]);
 
   const handleRefresh = () => {
@@ -87,9 +91,29 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   const onSelectionChange = (event: any) => {
     const value = event.value;
     console.log(value);
+  };
 
-    // setFilteredItems(value);
-    // setSelectAll(value.length === data.length);
+  const search_fn = (field: string, item: AutoCompleteItem) => {
+    debugger;
+    let filtered = data.filter(i => {
+      if (field === "Department") return i.Department === item.text;
+      if (field === "BusinessUnitCode") return i.BusinessUnitCode === item.text;
+      if (field === "BusinessUnitName") return i.BusinessUnitCode === item.key;
+      return false;
+    });
+
+    setFilteredItems(filtered);
+  };
+
+  const handleAutoComplete = (field: keyof FilterData, item: AutoCompleteItem | null) => {
+    setFilterData(prev => ({
+      ...prev,
+      [field]: item,
+    }));
+
+    if (item) {
+      search_fn(field, item);
+    }
   };
 
   return (
@@ -148,17 +172,60 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               />
             </div>
           </div>
-          <div
-            className="ms-Grid-row"
-            style={{ display: "flex", justifyContent: "end", marginTop: "2%" }}
-          >
-            <div className="ms-Grid-col ms-lg4">
+
+
+          <div className="ms_Grid-row" style={{ marginLeft: "5px" }}>
+            <div className="ms-Grid-col ms-lg3">
+              <CustomAutoComplete
+                label="Department"
+                options={MasterData?.Department}
+                value={FilterData.Department}
+                disabled={false}
+                mandatory={true}
+                onChange={(item) => handleAutoComplete("Department", item)
+                }
+              />
+            </div>
+            <div className="ms-Grid-col ms-lg3">
+              <CustomAutoComplete
+                label="Business Unit Code"
+                options={MasterData?.BusinessUnitCodeAllColumn
+                  .map((data: any) => ({
+                    key: data.key,
+                    text: data.text,
+                  }))}
+                value={FilterData.BusinessUnitCode}
+                disabled={false}
+                mandatory={true}
+                onChange={(item) => handleAutoComplete("BusinessUnitCode", item)
+                }
+              />
+            </div>
+            <div className="ms-Grid-col ms-lg3">
+              <CustomAutoComplete
+                label="Business Unit Name"
+                options={Array.from(
+                  new Map(
+                    MasterData?.BusinessUnitCodeAllColumn.map(
+                      (data: any) => [data.Name, { key: data.text, text: data.Name }]
+                    )
+                  ).values()
+                ) as AutoCompleteItem[]}
+                value={FilterData.BusinessUnitName}
+                disabled={false}
+                mandatory={true}
+                onChange={(item) => handleAutoComplete("BusinessUnitName", item)
+                }
+              />
+            </div>
+
+            <div className="ms-Grid-col ms-lg3" style={{ marginTop: "4%" }}>
               <ReuseButton
                 label={assignLabel}
                 onClick={handleAssignBtn}
                 spacing={4}
                 error={AssignBtnValidation}
-                Style={{ width: "60%" }}
+                Style={{ width: "78%" }}
               />
             </div>
           </div>
@@ -176,9 +243,8 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 currentPageReportTemplate="{first} to {last} of {totalRecords}"
                 stripedRows
                 scrollable
-                scrollHeight="300px"
+                // scrollHeight="300px"
                 filters={dashboardSearch}
-                style={{ overflow: "hidden" }}
               >
                 {columns.map((col) => {
                   if (col.field === "Checkbox") {

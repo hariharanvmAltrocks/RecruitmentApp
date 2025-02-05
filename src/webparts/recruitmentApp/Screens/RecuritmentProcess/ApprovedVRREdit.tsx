@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import "../../App.css";
@@ -9,7 +9,7 @@ import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import { Icon, Label, PrimaryButton } from "office-ui-fabric-react";
 import AttachmentButton from "../../components/AttachmentButton";
-import { ADGroupID, DocumentLibraray, HRMSAlertOptions, ListNames, RecuritmentHRMsg, RoleDescription, RoleDescriptionData, RoleID, RoleProfileMaster, StatusId, TabName, WorkflowAction } from "../../utilities/Config";
+import { DocumentLibraray, HRMSAlertOptions, ListNames, RecuritmentHRMsg, RoleDescription, RoleDescriptionData, RoleID, RoleProfileMaster, StatusId, TabName, WorkflowAction } from "../../utilities/Config";
 import Labelheader from "../../components/LabelHeader";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
@@ -63,11 +63,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     console.log(props, "propsApprovedVRREdit");
 
     const todaydate = new Date();
-    const [tabVisibility, setTabVisibility] = useState({
-        tab1: true,
-        tab2: false,
-        tab3: false,
-    });
     const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
     const [alertProps, setalertProps] = React.useState<alertPropsData>({
         Message: "",
@@ -405,16 +400,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }
     };
 
-    const handleAttachement = async (ID: any, PositionID: number, ParentFolder: string, Attachment: IAttachmentExampleState[]) => {
+    const handleAttachement = async (PositionCode: string, ListName: string, Attachment: IAttachmentExampleState[]) => {
         try {
-            console.log("IDID", ID);
-            if (ID && PositionID && Attachment && Attachment.length > 0) {
+            if (PositionCode && Attachment && Attachment.length > 0) {
                 for (const attachment of Attachment) {
                     await CommonServices.uploadAttachmentToLibrary(
-                        ID,
-                        PositionID,
+                        PositionCode,
                         attachment.file,
-                        ParentFolder
+                        ListName
                     );
                 }
             }
@@ -534,52 +527,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     const SaveRecruitment = async () => {
         try {
-            let QualificatioDetails: {
-                MinQualification: string
-            }[] = [];
-            let PrefeQualification: {
-                PrefeQualification: string
-            }[] = [];
-            let RoleSpecificKnowledgeJson: {
-                RoleSpeKnowledge: string;
-                RequiredLevel: string
-            }[] = [];
-
-            let TechnicalSkillsKnowledgeJson: {
-                TechnicalSkills: string;
-                LevelProficiency: string
-            }[] = [];
-
-            TechnicalSkillValue.forEach((item) => {
-                let TechnicalSkillsData = {
-                    TechnicalSkills: item.TechnicalSkills.text,
-                    LevelProficiency: item.LevelProficiency.text
-                };
-                TechnicalSkillsKnowledgeJson.push(TechnicalSkillsData);
-            })
-
-            RoleSpeKnowledgeValue.forEach((item) => {
-                let details = {
-                    RoleSpeKnowledge: item.RoleSpeKnowledge.text,
-                    RequiredLevel: item.RequiredLevel.text
-                };
-                RoleSpecificKnowledgeJson.push(details);
-            })
-
-
-            QualificationValue.forEach((item) => {
-                let details = {
-                    MinQualification: item.MinQualification.text
-                };
-                QualificatioDetails.push(details);
-            });
-            QualificationValue.forEach((item) => {
-                let details = {
-                    PrefeQualification: item.PrefeQualification.text
-                };
-                PrefeQualification.push(details);
-            });
-
 
             const isValid = !Validation();
 
@@ -610,7 +557,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 console.log(Table1, "Table1")
                 const obj: any = {
-                    ActionId: WorkflowAction.Approved,
+                    // ActionId: WorkflowAction.Approved,
                 }
                 if (formState.Comments) {
                     const commentsData: InsertComments = {
@@ -626,10 +573,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 switch (props.CurrentRoleID) {
                     case RoleID.RecruitmentHRLead: {
-                        if (formState.OnamSignedStampsAttchment.length > 0) {
+                        if (props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc) {
                             await handleAttachement(
                                 formState.JobCode,
-                                props.stateValue?.ID,
                                 DocumentLibraray.ONAMSignedStampDocuments,
                                 formState.OnamSignedStampsAttchment
                             )
@@ -655,63 +601,62 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             setAlertPopupOpen(true);
                             setalertProps(CancelAlert);
                             setIsLoading(false);
-                        } else {
-                            try {
-                                const response = await getVRRDetails.InsertRecruitmentDpt(Table1, formState.PositionDetails);
-                                const commentsData: InsertComments = {
-                                    RoleId: props.CurrentRoleID,
-                                    RecruitmentIDId: response.data?.[0]?.data?.RecruitmentIDId,
-                                    Comments: formState.Comments,
-                                }
-                                console.log(commentsData, "commentsData");
-
-                                const InsertCommentsData = await getVRRDetails.InsertCommentsList(commentsData);
-                                console.log(InsertCommentsData, "InsertCommentsData");
-
-                                const UpdateVRRDetails = await SPServices.SPUpdateItem({
-                                    Listname: ListNames.HRMSVacancyReplacementRequest,
-                                    RequestJSON: obj,
-                                    ID: formState?.VRRID,
-                                })
-                                console.log(UpdateVRRDetails, "UpdateVRRDetails");
-
-                                if (response.status == 200) {
-                                    resetForm();
-
-                                    let CancelAlert = {
-                                        Message: RecuritmentHRMsg.RecuritmentSubmitMsg,
-                                        Type: HRMSAlertOptions.Success,
-                                        visible: true,
-                                        ButtonAction: async (userClickedOK: boolean) => {
-                                            if (userClickedOK) {
-                                                props.navigation("/RecurimentProcess");
-                                                setAlertPopupOpen(false);
-                                            }
-                                        }
-                                    }
-
-                                    setAlertPopupOpen(true);
-                                    setalertProps(CancelAlert);
-                                    setIsLoading(false);
-                                }
-
-                                console.log(response);
-                            } catch (error) {
-                                console.error('An error occurred:', error.message || error);
-                            }
                         }
-                        setIsLoading(true);
-
-
                         break;
                     }
                     case RoleID.RecruitmentHR: {
-                        const AttachDocument = await handleAttachement(formState.JobCode, props.stateValue?.ID, DocumentLibraray.RecruitmentAdvertisementDocument, formState.AdvertisementAttachement);
+                        const AttachDocument = await handleAttachement(formState.JobCode, DocumentLibraray.RecruitmentAdvertisementDocument, formState.AdvertisementAttachement);
                         const UpdateVRRDetails = await SPServices.SPUpdateItem({
                             Listname: ListNames.HRMSRecruitmentDptDetails,
                             RequestJSON: obj,
                             ID: props.stateValue?.ID,
                         })
+                        let QualificatioDetails: {
+                            MinQualification: string
+                        }[] = [];
+                        let PrefeQualification: {
+                            PrefeQualification: string
+                        }[] = [];
+                        let RoleSpecificKnowledgeJson: {
+                            RoleSpeKnowledge: string;
+                            RequiredLevel: string
+                        }[] = [];
+
+                        let TechnicalSkillsKnowledgeJson: {
+                            TechnicalSkills: string;
+                            LevelProficiency: string
+                        }[] = [];
+
+                        TechnicalSkillValue.forEach((item) => {
+                            let TechnicalSkillsData = {
+                                TechnicalSkills: item.TechnicalSkills.text,
+                                LevelProficiency: item.LevelProficiency.text
+                            };
+                            TechnicalSkillsKnowledgeJson.push(TechnicalSkillsData);
+                        })
+
+                        RoleSpeKnowledgeValue.forEach((item) => {
+                            let details = {
+                                RoleSpeKnowledge: item.RoleSpeKnowledge.text,
+                                RequiredLevel: item.RequiredLevel.text
+                            };
+                            RoleSpecificKnowledgeJson.push(details);
+                        })
+
+
+                        QualificationValue.forEach((item) => {
+                            let details = {
+                                MinQualification: item.MinQualification.text
+                            };
+                            QualificatioDetails.push(details);
+                        });
+                        QualificationValue.forEach((item) => {
+                            let details = {
+                                PrefeQualification: item.PrefeQualification.text
+                            };
+                            PrefeQualification.push(details);
+                        });
+
                         let AdvData: any = {
                             Qualification: JSON.stringify(QualificatioDetails),
                             PreferredQualification: JSON.stringify(PrefeQualification),
@@ -785,83 +730,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }
     }
 
-    const isInitialized = useRef(false);
-
     useEffect(() => {
         const initialize = async () => {
-            if (isInitialized.current) return; // Skip if already initialized
-            isInitialized.current = true;
-
-            setTabVisibility({
-                tab1: true,
-                tab2: false,
-                tab3: false,
-            });
-            // if (props.CurrentRoleID === RoleID.HOD) {
-            //     setButtonLabel("Approve")
-            // } else if ((props.CurrentRoleID === RoleID.RecruitmentHR)) {
-            //     setButtonLabel("Submit")
-            // }
-
             await fetchData();
-
         };
 
         void initialize();
     }, []);
 
-
-    useEffect(() => {
-        const getADGroupsOption = async () => {
-            try {
-                const AssignRecurtimentHROption = await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSRecruitmentHR);
-                const AssignAgenciesOption = await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSHOD);
-
-                if (
-                    (AssignRecurtimentHROption.status === 200 && AssignRecurtimentHROption.data) ||
-                    (AssignAgenciesOption.status === 200 && AssignAgenciesOption.data)
-                ) {
-                    const AssignRecrutiment = AssignRecurtimentHROption.data.filter(
-                        (item: { key: any }) => item.key === props.stateValue?.AssignedHRId
-                    );
-                    console.log(AssignRecrutiment, "AssignRecrutiment");
-
-                    const AssignRecrutimentObject = AssignRecrutiment.reduce(
-                        (acc: { [key: string]: any }, item: { key: any }) => {
-                            return item;
-                        },
-                        {}
-                    );
-                    // const AssignAgencies = AssignAgenciesOption.data.filter(
-                    //     (item: { key: any }) => item.key === props.stateValue?.rowData?.AssignedHRId
-                    // );
-                    // console.log(AssignAgencies, "AssignAgencies");
-
-                    // const AssignAgenciesObject = AssignAgencies.reduce(
-                    //     (acc: { [key: string]: any }, item: { key: any }) => {
-                    //         return item;
-                    //     },
-                    //     {}
-                    // );
-
-                    console.log(AssignRecrutimentObject, "AssignRecrutimentObject");
-                    setFormState((prevState: any) => ({
-                        ...prevState,
-                        AssignRecruitmentHROption: AssignRecurtimentHROption.data,
-                        AssignRecruitmentHR: AssignRecrutimentObject,
-                        AssignAgenciesOption: AssignAgenciesOption.data,
-                        // AssignAgencies: AssignAgenciesObject
-                    }));
-                } else {
-                    console.error("Error retrieving attachments:", AssignRecurtimentHROption.data.message);
-                }
-            } catch (error) {
-                console.error("Error in fetching data:", error);
-            }
-        };
-
-        void getADGroupsOption();
-    }, []);
 
     useEffect(() => {
         const validationAttachment = async () => {
@@ -948,35 +824,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         });
     };
 
-    // const handleAutoComplete = async (
-    //     item: AutoCompleteItem | null,
-    //     StateValue: string,
-    //     tab: string
-    // ) => {
-    //     if (item) {
-    //         if (tab === 'tab2') {
-    //             setAdvDetails((prevState) => ({
-    //                 ...prevState,
-    //                 [StateValue]: item
-    //             }))
-    //             setValidationError((prevState) => ({
-    //                 ...prevState,
-    //                 [StateValue]: false
-    //             }))
-    //         } else {
-    //             setFormState((prevState) => ({
-    //                 ...prevState,
-    //                 [StateValue]: item
-    //             }))
-    //             setValidationError((prevState) => ({
-    //                 ...prevState,
-    //                 [StateValue]: false
-    //             }))
-    //         }
-
-    //     }
-    // };
-
     const handleInputChangeTextArea = (
         value: string | any,
         StateValue: string
@@ -1013,7 +860,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         setAddQualifbtn(true);
         setHeaderValue(Header);
         setLabelValue(LabelValue);
-
     }
 
     const handleRichTextEditor = (
@@ -1045,8 +891,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }))
     };
 
-
-
     const tabs = [
         {
             label: TabName.PositionDetails, //"Position Details",
@@ -1057,130 +901,129 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", border: "0px solid rgba(0, 0, 0, 0.12)", borderRadius: "30px", marginTop: "2%" }}
                 >
                     <CardContent>
-                        {tabVisibility.tab1 && (
-                            <div>
-                                <div className="ms-Grid-row">
-                                    <div className="ms-Grid-col ms-lg6">
-                                        <LabelHeaderComponents
-                                            value={`Job Title - ${formState.JobNameInEnglish}`}
-                                        >
-                                            {" "}
-                                        </LabelHeaderComponents>
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg6">
-                                        <LabelHeaderComponents
-                                            value={`Status - ${props.stateValue?.Status}`}
-                                        >
-                                            {" "}
-                                        </LabelHeaderComponents>
-                                    </div>
+                        <div>
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg6">
+                                    <LabelHeaderComponents
+                                        value={`Job Title - ${formState.JobNameInEnglish} (${formState.JobCode})`}
+                                    >
+                                        {" "}
+                                    </LabelHeaderComponents>
                                 </div>
-                                <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg6">
+                                    <LabelHeaderComponents
+                                        value={`Status - ${props.stateValue?.Status}`}
+                                    >
+                                        {" "}
+                                    </LabelHeaderComponents>
+                                </div>
+                            </div>
+                            <div className="ms-Grid-row">
 
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Business Unit Code"
-                                            value={formState.BusinessUnitCode}
-                                            error={false}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, BusinessUnitCode: value }))
-                                            }
-                                        />
-
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Business Unit Name"
-                                            value={formState.BusinessUnitName}
-                                            disabled={true}
-                                            error={false}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, BusinessUnitName: value }))
-                                            }
-                                        />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Business Unit Description"
-                                            value={formState.BusinessUnitDescription}
-                                            error={false}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, BusinessUnitDescription: value }))
-                                            }
-                                        />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Department"
-                                            value={formState.Department}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, Department: value }))
-                                            }
-                                        />
-                                    </div>
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Business Unit Code"
+                                        value={formState.BusinessUnitCode}
+                                        error={false}
+                                        disabled={true}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, BusinessUnitCode: value }))
+                                        }
+                                    />
 
                                 </div>
-                                <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Business Unit Name"
+                                        value={formState.BusinessUnitName}
+                                        disabled={true}
+                                        error={false}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, BusinessUnitName: value }))
+                                        }
+                                    />
+                                </div>
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Business Unit Description"
+                                        value={formState.BusinessUnitDescription}
+                                        error={false}
+                                        disabled={true}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, BusinessUnitDescription: value }))
+                                        }
+                                    />
+                                </div>
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Department"
+                                        value={formState.Department}
+                                        disabled={true}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, Department: value }))
+                                        }
+                                    />
+                                </div>
 
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Sub-Department"
-                                            value={formState.SubDepartment}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, SubDepartment: value }))
-                                            }
-                                        />
+                            </div>
+                            <div className="ms-Grid-row">
 
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Section"
-                                            value={formState.Section}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, Section: value }))
-                                            }
-                                        />
-
-
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Department Code"
-                                            value={formState.DepartmentCode}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, DepartmentCode: value }))
-                                            }
-                                        />
-
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Nationality"
-                                            value={formState.Nationality}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, Nationality: value }))
-                                            }
-                                        />
-                                    </div>
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Sub-Department"
+                                        value={formState.SubDepartment}
+                                        disabled={true}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, SubDepartment: value }))
+                                        }
+                                    />
 
                                 </div>
-                                <div className="ms-Grid-row">
-                                    {/*                                    
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Section"
+                                        value={formState.Section}
+                                        disabled={true}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, Section: value }))
+                                        }
+                                    />
+
+
+                                </div>
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Department Code"
+                                        value={formState.DepartmentCode}
+                                        disabled={true}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, DepartmentCode: value }))
+                                        }
+                                    />
+
+                                </div>
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Nationality"
+                                        value={formState.Nationality}
+                                        disabled={true}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, Nationality: value }))
+                                        }
+                                    />
+                                </div>
+
+                            </div>
+                            <div className="ms-Grid-row">
+                                {/*                                    
                                     <div className="ms-Grid-col ms-lg3">
                                         <CustomInput
                                             label="Position Name (English)"
@@ -1203,231 +1046,231 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             }
                                         />
                                     </div> */}
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Paterson Grade"
-                                            value={formState.PatersonGrade}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, PatersonGrade: value }))
-                                            }
-                                        />
-                                    </div>
-
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="DRC Grade"
-                                            value={formState.DRCGrade}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, DRCGrade: value }))
-                                            }
-                                        />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Employment Category"
-                                            value={formState.EmployementCategory}
-                                            disabled={true}
-                                            error={false}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, EmployementCategory: value }))
-                                            }
-                                        />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Type of Contract"
-                                            value={formState.ContractType}
-                                            disabled={true}
-                                            error={false}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, ContractType: value }))
-                                            }
-                                        />
-                                    </div>
-
-                                </div>
-                                <div className="ms-Grid-row">
-
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Area of Work"
-                                            value={formState.AreaOfWork}
-                                            disabled={true}
-                                            error={false}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, AreaOfWork: value }))
-                                            }
-                                        />
-                                    </div>
-
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="No of Position Assigned"
-                                            value={formState.NoofPositionAssigned}
-                                            disabled={true}
-                                            error={false}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, NoofPositionAssigned: value }))
-                                            }
-                                        />
-                                    </div>
-
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomViewDocument
-                                            Attachment={formState.RoleProfileDocument}
-                                            Label={"Role Profile Documents"}
-                                        />
-                                    </div>
-
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomViewDocument
-                                            Attachment={formState.GradingDocument}
-                                            Label={"Grading Documents"}
-                                        />
-                                    </div>
-
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Paterson Grade"
+                                        value={formState.PatersonGrade}
+                                        disabled={true}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, PatersonGrade: value }))
+                                        }
+                                    />
                                 </div>
 
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="DRC Grade"
+                                        value={formState.DRCGrade}
+                                        disabled={true}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, DRCGrade: value }))
+                                        }
+                                    />
+                                </div>
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Employment Category"
+                                        value={formState.EmployementCategory}
+                                        disabled={true}
+                                        error={false}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, EmployementCategory: value }))
+                                        }
+                                    />
+                                </div>
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Type of Contract"
+                                        value={formState.ContractType}
+                                        disabled={true}
+                                        error={false}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, ContractType: value }))
+                                        }
+                                    />
+                                </div>
+
+                            </div>
+                            <div className="ms-Grid-row">
+
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="Area of Work"
+                                        value={formState.AreaOfWork}
+                                        disabled={true}
+                                        error={false}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, AreaOfWork: value }))
+                                        }
+                                    />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomInput
+                                        label="No of Position Assigned"
+                                        value={formState.NoofPositionAssigned}
+                                        disabled={true}
+                                        error={false}
+                                        mandatory={false}
+                                        onChange={(value) =>
+                                            setFormState((prevState) => ({ ...prevState, NoofPositionAssigned: value }))
+                                        }
+                                    />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomViewDocument
+                                        Attachment={formState.RoleProfileDocument}
+                                        Label={"Role Profile Documents"}
+                                    />
+                                </div>
+
+                                <div className="ms-Grid-col ms-lg3">
+                                    <CustomViewDocument
+                                        Attachment={formState.GradingDocument}
+                                        Label={"Grading Documents"}
+                                    />
+                                </div>
+
+                            </div>
 
 
 
 
-                                {props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv ? (
-                                    <></>
-                                ) : (
-                                    <>
+
+                            {props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv ? (
+                                <></>
+                            ) : (
+                                <>
 
 
-                                        {props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv && (
-                                            <>
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg6">
-                                                        <CustomViewDocument
-                                                            Attachment={formState.AdvertisementDocument}
-                                                            Label={"Advertisement Documents"}
-                                                        />
-                                                    </div>
+                                    {props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv && (
+                                        <>
+                                            <div className="ms-Grid-row">
+                                                <div className="ms-Grid-col ms-lg6">
+                                                    <CustomViewDocument
+                                                        Attachment={formState.AdvertisementDocument}
+                                                        Label={"Advertisement Documents"}
+                                                    />
                                                 </div>
-                                            </>
-                                        )}
+                                            </div>
+                                        </>
+                                    )}
 
-                                        {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
-                                            <>
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg6">
-                                                        <CustomViewDocument
-                                                            Attachment={formState.AdvertisementDocument}
-                                                            Label={"Advertisement Documents"}
-                                                        />
-                                                    </div>
+                                    {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                                        <>
+                                            <div className="ms-Grid-row">
+                                                <div className="ms-Grid-col ms-lg6">
+                                                    <CustomViewDocument
+                                                        Attachment={formState.AdvertisementDocument}
+                                                        Label={"Advertisement Documents"}
+                                                    />
                                                 </div>
+                                            </div>
 
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg3">
-                                                        <CustomLabel value={"ONEM Signed Doc"} />
-                                                        <AttachmentButton
-                                                            label="Upload"
-                                                            // iconName="CloudUpload"
-                                                            // iconNameHover="CloudUpload"
-                                                            AttachState={(newAttachments: Item[]) => {
-                                                                // Directly update state here
-                                                                setFormState((prevState: any) => ({
-                                                                    ...prevState,
-                                                                    OnamSignedStampsAttchment: [...prevState.OnamSignedStampsAttchment, ...newAttachments],
-                                                                }));
-                                                            }}
-                                                            mandatory={true}
-                                                            error={validationErrors.OnamSignedStampsDocument}
-                                                            Style={{ padding: "2%" }}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
-                                                        {console.log("OnamSignedStampsAttchment", formState.OnamSignedStampsAttchment)}
-                                                        {formState.OnamSignedStampsAttchment?.map((file: any, index: number) => {
-                                                            const fileName = file.fileName || file.name; // Ensure proper name display
-                                                            console.log("Rendering file:", fileName);
+                                            <div className="ms-Grid-row">
+                                                <div className="ms-Grid-col ms-lg3">
+                                                    <CustomLabel value={"ONEM Signed Doc"} />
+                                                    <AttachmentButton
+                                                        label="Upload"
+                                                        // iconName="CloudUpload"
+                                                        // iconNameHover="CloudUpload"
+                                                        AttachState={(newAttachments: Item[]) => {
+                                                            // Directly update state here
+                                                            setFormState((prevState: any) => ({
+                                                                ...prevState,
+                                                                OnamSignedStampsAttchment: [...prevState.OnamSignedStampsAttchment, ...newAttachments],
+                                                            }));
+                                                        }}
+                                                        mandatory={true}
+                                                        error={validationErrors.OnamSignedStampsDocument}
+                                                        Style={{ padding: "2%", backgroundColor: "rgb(217 80 80)", width: "33%", borderRadius: "11px", color: "white" }}
+                                                    />
+                                                </div>
+                                                <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
+                                                    {console.log("OnamSignedStampsAttchment", formState.OnamSignedStampsAttchment)}
+                                                    {formState.OnamSignedStampsAttchment?.map((file: any, index: number) => {
+                                                        const fileName = file.fileName || file.name;
+                                                        console.log("Rendering file:", fileName);
 
-                                                            return (
-                                                                <div key={index} className="ms-Grid-row">
-                                                                    <div className="ms-Grid-col ms-lg12">
-                                                                        <Label style={{ color: "blue" }}>
-                                                                            {fileName}
-                                                                            <span>
-                                                                                <Icon
-                                                                                    iconName="Delete"
-                                                                                    style={{
-                                                                                        marginLeft: "8px",
-                                                                                        fontSize: "16px",
-                                                                                        cursor: "pointer",
-                                                                                    }}
-                                                                                    onClick={() => handleDelete(index, 'OnamSignedStampsAttchment')} // Call the delete function
-                                                                                />
-                                                                            </span>
-                                                                        </Label>
-                                                                    </div>
+                                                        return (
+                                                            <div key={index} className="ms-Grid-row">
+                                                                <div className="ms-Grid-col ms-lg12">
+                                                                    <Label style={{ color: "blue" }}>
+                                                                        {fileName}
+                                                                        <span>
+                                                                            <Icon
+                                                                                iconName="Delete"
+                                                                                style={{
+                                                                                    marginLeft: "8px",
+                                                                                    fontSize: "16px",
+                                                                                    cursor: "pointer",
+                                                                                }}
+                                                                                onClick={() => handleDelete(index, 'OnamSignedStampsAttchment')} // Call the delete function
+                                                                            />
+                                                                        </span>
+                                                                    </Label>
                                                                 </div>
-                                                            );
-                                                        })}
+                                                            </div>
+                                                        );
+                                                    })}
 
-                                                    </div>
                                                 </div>
+                                            </div>
 
 
-                                            </>
-                                        )}
+                                        </>
+                                    )}
 
 
 
-                                        {props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoAssignExternalAgency && (
-                                            <>
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg6">
-                                                        <CustomViewDocument
-                                                            Attachment={formState.AdvertisementDocument}
-                                                            Label={"Advertisement Documents"}
-                                                        />
-                                                    </div>
+                                    {props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoAssignExternalAgency && (
+                                        <>
+                                            <div className="ms-Grid-row">
+                                                <div className="ms-Grid-col ms-lg6">
+                                                    <CustomViewDocument
+                                                        Attachment={formState.AdvertisementDocument}
+                                                        Label={"Advertisement Documents"}
+                                                    />
                                                 </div>
+                                            </div>
 
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg6">
-                                                        <CustomViewDocument
-                                                            Attachment={formState.OnamSignedStampsDocument}
-                                                            Label={"ONEM Signed&Stamps Documents"}
-                                                        />
-                                                    </div>
+                                            <div className="ms-Grid-row">
+                                                <div className="ms-Grid-col ms-lg6">
+                                                    <CustomViewDocument
+                                                        Attachment={formState.OnamSignedStampsDocument}
+                                                        Label={"ONEM Signed&Stamps Documents"}
+                                                    />
                                                 </div>
-                                            </>
-                                        )}
+                                            </div>
+                                        </>
+                                    )}
 
-                                        {props.stateValue?.type === "VRR" ? (
-                                            <></>
-                                        ) : (
-                                            <>
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg12">
-                                                        <div className="ms-Grid-col ms-lg4" style={{ marginLeft: "-5px" }}>
-                                                            <CustomLabel value={" View Justifications"} />
-                                                            <PrimaryButton
-                                                                style={{
-                                                                    borderColor: "rgb(205, 45, 45)",
-                                                                    backgroundColor: "#EF3340",
-                                                                    color: "white",
-                                                                    borderRadius: "10px",
-                                                                }}
-                                                                onClick={OpenComments}
+                                    {props.stateValue?.type === "VRR" ? (
+                                        <></>
+                                    ) : (
+                                        <>
+                                            <div className="ms-Grid-row">
+                                                <div className="ms-Grid-col ms-lg12">
+                                                    <div className="ms-Grid-col ms-lg4" style={{ marginLeft: "-5px" }}>
+                                                        <CustomLabel value={" View Justifications"} />
+                                                        <PrimaryButton
+                                                            style={{
+                                                                borderColor: "rgb(205, 45, 45)",
+                                                                backgroundColor: "#EF3340",
+                                                                color: "white",
+                                                                borderRadius: "10px",
+                                                            }}
+                                                            onClick={OpenComments}
 
-                                                            > View
-                                                            </PrimaryButton>
-                                                            {/* <ReuseButton
+                                                        > View
+                                                        </PrimaryButton>
+                                                        {/* <ReuseButton
                                                                 label="VIEW"
                                                                 onClick={OpenComments}
                                                                 spacing={4}
@@ -1436,70 +1279,69 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             // imgSrcHover={require("../../assets/viewSubmision-white.svg")}
                                                             // imgAltHover="Image"
                                                             /> */}
-                                                        </div>
                                                     </div>
                                                 </div>
-                                            </>
-                                        )}
+                                            </div>
+                                        </>
+                                    )}
 
-                                        {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
-                                            <>
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg12">
-                                                        <CustomTextArea
-                                                            label="Justification"
-                                                            value={formState.Comments}
-                                                            error={validationErrors.Comments}
-                                                            onChange={(value) =>
-                                                                handleInputChangeTextArea(
-                                                                    value,
-                                                                    "Comments"
-                                                                )
-                                                            }
-                                                            mandatory={true}
-                                                        />
-                                                    </div>
+                                    {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                                        <>
+                                            <div className="ms-Grid-row">
+                                                <div className="ms-Grid-col ms-lg12">
+                                                    <CustomTextArea
+                                                        label="Justification"
+                                                        value={formState.Comments}
+                                                        error={validationErrors.Comments}
+                                                        onChange={(value) =>
+                                                            handleInputChangeTextArea(
+                                                                value,
+                                                                "Comments"
+                                                            )
+                                                        }
+                                                        mandatory={true}
+                                                    />
                                                 </div>
+                                            </div>
 
-                                                <div className="ms-Grid-row"
-                                                    style={{
-                                                        padding: "3px",
-                                                        marginTop: "20px",
-                                                        marginBottom: "-33px",
-                                                    }}
-                                                >
-                                                    <div className="ms-Grid-col ms-lg12">
-                                                        <SignatureCheckbox
-                                                            label={"I hereby agree for submitted this request"}
-                                                            checked={Checkbox}
-                                                            error={validationErrors.Checkboxalidation}
-                                                            onChange={(value: boolean) => setCheckbox(value)}
-                                                        />
-                                                    </div>
+                                            <div className="ms-Grid-row"
+                                                style={{
+                                                    padding: "3px",
+                                                    marginTop: "20px",
+                                                    marginBottom: "-33px",
+                                                }}
+                                            >
+                                                <div className="ms-Grid-col ms-lg12">
+                                                    <SignatureCheckbox
+                                                        label={"I hereby agree for submitted this request"}
+                                                        checked={Checkbox}
+                                                        error={validationErrors.Checkboxalidation}
+                                                        onChange={(value: boolean) => setCheckbox(value)}
+                                                    />
                                                 </div>
-                                                <div className="ms-Grid-row">
-                                                    <div className="ms-Grid-col ms-lg12">
-                                                        <CustomSignature
-                                                            Name={(props.userDetails[0].FirstName ?? "") + " " + (props.userDetails[0]?.MiddleName ?? "") + " " + (props.userDetails[0]?.LastName ?? "")}
-                                                            JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
-                                                            JobTitleInFrench={props.userDetails[0].JopTitleFrench}
-                                                            Department={props.userDetails[0].DepartmentName}
-                                                            Date={formState.SignDate.toString()}
-                                                            TermsAndCondition={Checkbox}
-                                                        />
-                                                    </div>
+                                            </div>
+                                            <div className="ms-Grid-row">
+                                                <div className="ms-Grid-col ms-lg12">
+                                                    <CustomSignature
+                                                        Name={(props.userDetails[0].FirstName ?? "") + " " + (props.userDetails[0]?.MiddleName ?? "") + " " + (props.userDetails[0]?.LastName ?? "")}
+                                                        JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
+                                                        JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                                                        Department={props.userDetails[0].DepartmentName}
+                                                        Date={formState.SignDate.toString()}
+                                                        TermsAndCondition={Checkbox}
+                                                    />
                                                 </div>
+                                            </div>
 
-                                            </>
+                                        </>
 
 
-                                        )}
+                                    )}
 
-                                    </>
-                                )}
+                                </>
+                            )}
 
-                            </div>
-                        )}
+                        </div>
                     </CardContent>
                 </Card>
             ),
@@ -1591,8 +1433,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             />
                                         </div>
                                     </div>
-                                    <div className="ms-Grid-col ms-lg10">
-                                        <div className="ms-Grid-row">
+                                    <div className="ms-Grid-row">
+                                        <div className="ms-Grid-col ms-lg10">
                                             <div className="ms-Grid-col ms-lg5">
                                                 <CustomInput
                                                     label="Total Experience"
@@ -2053,8 +1895,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }
     }, [activeTab]);
 
-
-
     const handleCancel = () => {
         setIsLoading(true);
         let CancelAlert = {
@@ -2119,8 +1959,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         console.log("Breadcrumb changed to:", newItem);
     };
 
-    console.log(SubmitBtn);
-
     return (
         <>
             {MainComponent ? (
@@ -2138,29 +1976,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             {
                                                 label: "Close",
                                                 onClick: async () => {
-                                                    handleCancel();
+                                                    props.navigation("/RecurimentProcess");
                                                 },
                                             },
-                                            // {
-                                            //     label: "Cancel",
-                                            //     onClick: async () => {
-                                            //         handleCancel();
-                                            //     },
-                                            // },
-                                            // {
-                                            //     label: "Preview",
-                                            //     onClick: async () => {
-                                            //         setPreviewBtn(true);
-                                            //         setMainComponent(false);
-                                            //     },
-                                            // },
-                                            // {
-                                            //     label: ButtonLabel,
-                                            //     onClick: async () => {
-                                            //         await SaveRecruitment();
-                                            //     },
-                                            //     disable: SubmitBtn
-                                            // },
                                         ]
                                         :
                                         props.CurrentRoleID === RoleID.RecruitmentHRLead && props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc
@@ -2171,14 +1989,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                     onClick: async () => {
                                                         handleCancel();
                                                     },
-                                                    // disable: SubmitBtn
                                                 },
                                                 {
                                                     label: "Upload",
                                                     onClick: async () => {
                                                         await SaveRecruitment();
                                                     },
-                                                    // disable: SubmitBtn
                                                 },
                                             ] :
                                             props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv
@@ -2189,7 +2005,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                         onClick: async () => {
                                                             handleCancel();
                                                         },
-                                                        // disable: SubmitBtn
                                                     },
                                                     {
                                                         label: "Preview",
@@ -2197,7 +2012,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             setPreviewBtn(true);
                                                             setMainComponent(false);
                                                         },
-                                                        // disable: SubmitBtn
                                                     },
                                                     {
                                                         label: "Submit",
@@ -2214,7 +2028,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             onClick: async () => {
                                                                 handleCancel();
                                                             },
-                                                            // disable: SubmitBtn
                                                         },
                                                         {
                                                             label: "Approved",
