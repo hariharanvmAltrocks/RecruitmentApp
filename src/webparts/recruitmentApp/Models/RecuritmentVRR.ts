@@ -145,6 +145,9 @@ export type ScoreCardData = {
   EvaluationFeedback: string;
   OverAllEvaluationFeedback: string;
   SignDate?: Date | any;
+  AdvertisementDocument: any[];
+  RoleProfileDocument: any[];
+  PositionTitle?: string;
 };
 
 export type QualificationValue = {
