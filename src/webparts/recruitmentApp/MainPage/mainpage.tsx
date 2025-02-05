@@ -15,6 +15,7 @@ import InterviewPanelList from "../Screens/InterviewPanel/InterviewPanelList";
 import InterviewPanelEdit from "../Screens/InterviewPanel/InterviewPanelEdit";
 import Emptypage from "../Screens/EmptyPage/EmptyPage";
 import HodScoreCard from "../Screens/RecuritmentProcess/HodScoreCard";
+import CandidateList from "../Screens/RecuritmentProcess/CandidateList";
 // import HodScoreCard from "../Screens/RecuritmentProcess/HodScoreCard";
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
@@ -109,6 +110,16 @@ export default function MainPage(props: any) {
                 <Route
                   path="/RecurimentProcess/HodScoreCard"
                   element={<HodScoreCard {...props} {...masterData} />}
+                />
+                <Route
+                  path="/RecurimentProcess/HodScoreCard/CandidateList"
+                  element={
+                    <CandidateList
+                      {...props}
+                      {...masterData}
+                      {...ADGroupData}
+                    />
+                  }
                 />
               </Routes>
             </>
