@@ -64,7 +64,8 @@ const scoreData = [
   },
 ];
 
-const HodScoreCard = () => {
+const HodScoreCard = (props: any) => {
+  console.log("Props", props);
   const [tabValue, setTabValue] = React.useState("1");
   const [isAgreed, setIsAgreed] = React.useState(false);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
