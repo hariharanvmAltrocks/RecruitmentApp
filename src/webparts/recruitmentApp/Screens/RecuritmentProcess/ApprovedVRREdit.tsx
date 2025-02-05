@@ -85,7 +85,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         TotalExperience: "",
         ExperienceinMiningIndustry: ""
     });
-
     const [formState, setFormState] = useState<RecuritmentData>({
         VRRID: 0,
         BusinessUnitCodeID: 0,
@@ -265,6 +264,18 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 }
                 return updatedRows;
             });
+            if (key === "RoleSpeKnowledge") {
+                setValidationError((prevState) => ({
+                    ...prevState,
+                    RoleSpeKnowledge: false,
+                }));
+            } else if (key === "RequiredLevel") {
+                setValidationError((prevState) => ({
+                    ...prevState,
+                    RequiredLevel: false,
+                }));
+            }
+
         }
 
         if (stateKey === "QualificationValue") {
@@ -275,6 +286,17 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 }
                 return updatedRows;
             });
+            if (key === "MinQualification") {
+                setValidationError((prevState) => ({
+                    ...prevState,
+                    MinQualification: false,
+                }));
+            } else if (key === "PrefeQualification") {
+                setValidationError((prevState) => ({
+                    ...prevState,
+                    PrefeQualification: false,
+                }));
+            }
         }
 
         if (stateKey === "TechnicalSkillValue") {
@@ -285,6 +307,17 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 }
                 return updatedRows;
             });
+            if (key === "TechnicalSkills") {
+                setValidationError((prevState) => ({
+                    ...prevState,
+                    TechnicalSkills: false,
+                }));
+            } else if (key === "LevelProficiency") {
+                setValidationError((prevState) => ({
+                    ...prevState,
+                    LevelProficiency: false,
+                }));
+            }
         }
     };
 
@@ -305,7 +338,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 ? await getVRRDetails.GetVacancyDetails(filterConditionsVRR, Conditions)
                 : await getVRRDetails.GetRecruitmentDetails(filterConditionsVRR, Conditions);
 
-            console.log(response, "responseresponse");
 
             if (response.data) {
                 const op = props.stateValue?.type === "VRR" ? response.data[0][0] : response.data[0]
@@ -381,7 +413,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             PatersonGradeID: op.PayrollGradeId,
                             DRCGradeID: op.DRCGradeId,
                         }));
-                        console.log(updatedPositions, "updatedPositions");
 
                         setFormState((prevState) => ({
                             ...prevState,
@@ -421,7 +452,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     const Validation = (): boolean => {
         const {
             AssignRecruitmentHR,
-            AssignAgencies,
             Comments,
             AdvertisementAttachement,
             OnamSignedStampsAttchment,
@@ -430,7 +460,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
         let errors = {
             AssignRecruitmentHR: false,
-            AssignAgencies: false,
             Comments: false,
             AdvertisementDocument: false,
             OnamSignedStampsDocument: false,
@@ -459,24 +488,21 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             }
 
             case RoleID.RecruitmentHR: {
-                if (formState.AdvertisementDocument.length > 0) {
-                    errors.AssignAgencies = !IsValid(AssignAgencies.text);
+                if (props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv) {
                     errors.Comments = !IsValid(Comments);
-                } else {
-                    if (props.stateValue?.tab === "tab1") {
-                        errors.AdvertisementDocument = !IsValid(AdvertisementAttachement);
-                        errors.Comments = !IsValid(Comments);
-                        errors.MinQualification = !IsValid(QualificationValue[0].MinQualification);
-                        errors.PrefeQualification = !IsValid(QualificationValue[0].PrefeQualification);
-                        errors.RoleSpeKnowledge = !IsValid(RoleSpeKnowledgeValue[0].RoleSpeKnowledge);
-                        errors.RequiredLevel = !IsValid(RoleSpeKnowledgeValue[0].RequiredLevel.text);
-                        errors.TechnicalSkills = !IsValid(TechnicalSkillValue[0].TechnicalSkills.text);
-                        errors.LevelProficiency = !IsValid(TechnicalSkillValue[0].LevelProficiency.text);
-                        errors.RolePurpose = !IsValid(advDetails.RolePurpose);
-                        errors.JobDescription = !IsValid(advDetails.JobDescription);
-                        errors.ExperienceinMiningIndustry = !IsValid(advDetails.ExperienceinMiningIndustry);
-                        errors.TotalExperience = !IsValid(advDetails.TotalExperience);
-                    }
+                    errors.AdvertisementDocument = !IsValid(AdvertisementAttachement);
+                    errors.Comments = !IsValid(Comments);
+                    errors.MinQualification = !IsValid(QualificationValue[0].MinQualification.text);
+                    errors.PrefeQualification = !IsValid(QualificationValue[0].PrefeQualification.text);
+                    errors.RoleSpeKnowledge = !IsValid(RoleSpeKnowledgeValue[0].RoleSpeKnowledge.text);
+                    errors.RequiredLevel = !IsValid(RoleSpeKnowledgeValue[0].RequiredLevel.text);
+                    errors.TechnicalSkills = !IsValid(TechnicalSkillValue[0].TechnicalSkills.text);
+                    errors.LevelProficiency = !IsValid(TechnicalSkillValue[0].LevelProficiency.text);
+                    errors.RolePurpose = !IsValid(advDetails.RolePurpose);
+                    errors.JobDescription = !IsValid(advDetails.JobDescription);
+                    errors.ExperienceinMiningIndustry = !IsValid(advDetails.ExperienceinMiningIndustry);
+                    errors.TotalExperience = !IsValid(advDetails.TotalExperience);
+
                 }
 
                 break;
@@ -554,8 +580,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     AssignedHRId: formState.AssignRecruitmentHR.key,
                     ActionId: WorkflowAction.Approved,
                 };
+                console.log(Table1, "Table1");
 
-                console.log(Table1, "Table1")
                 const obj: any = {
                     // ActionId: WorkflowAction.Approved,
                 }
@@ -565,10 +591,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         RecruitmentIDId: props.stateValue?.ID,
                         Comments: formState.Comments,
                     }
-                    console.log(commentsData, "commentsData");
-
-                    const InsertCommentsData = await getVRRDetails.InsertCommentsList(commentsData);
-                    console.log(InsertCommentsData, "InsertCommentsData");
+                    await getVRRDetails.InsertCommentsList(commentsData);
                 }
 
                 switch (props.CurrentRoleID) {
@@ -579,12 +602,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 DocumentLibraray.ONAMSignedStampDocuments,
                                 formState.OnamSignedStampsAttchment
                             )
-                            const UpdateVRRDetails = await SPServices.SPUpdateItem({
+                            await SPServices.SPUpdateItem({
                                 Listname: ListNames.HRMSRecruitmentDptDetails,
                                 RequestJSON: obj,
                                 ID: props.stateValue?.ID,
                             })
-                            console.log(UpdateVRRDetails);
                             resetForm();
                             let CancelAlert = {
                                 Message: RecuritmentHRMsg.ONEMDocumentMsg,
@@ -605,8 +627,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         break;
                     }
                     case RoleID.RecruitmentHR: {
-                        const AttachDocument = await handleAttachement(formState.JobCode, DocumentLibraray.RecruitmentAdvertisementDocument, formState.AdvertisementAttachement);
-                        const UpdateVRRDetails = await SPServices.SPUpdateItem({
+                        await handleAttachement(formState.JobCode, DocumentLibraray.RecruitmentAdvertisementDocument, formState.AdvertisementAttachement);
+                        await SPServices.SPUpdateItem({
                             Listname: ListNames.HRMSRecruitmentDptDetails,
                             RequestJSON: obj,
                             ID: props.stateValue?.ID,
@@ -668,11 +690,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             YearofExperience: Number(advDetails.TotalExperience),
                             PreferredExperience: Number(advDetails.ExperienceinMiningIndustry)
                         };
-                        console.log(AdvData, "AdvData");
-                        const InsertAdveData = await getVRRDetails.InsertList(AdvData, ListNames.HRMSRecruitmentRoleProfileDetails);
-                        console.log(InsertAdveData, "InsertAdveData");
-
-                        console.log(UpdateVRRDetails, "UpdateVRRDetails");
+                        await getVRRDetails.InsertList(AdvData, ListNames.HRMSRecruitmentRoleProfileDetails);
                         resetForm();
 
                         let UpdateAlert = {
@@ -690,17 +708,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         setAlertPopupOpen(true);
                         setalertProps(UpdateAlert);
                         setIsLoading(false);
-                        console.log(AttachDocument, "AttachDocument");
 
                         break;
                     }
                     case RoleID.HOD: {
-                        const UpdateVRRDetails = await SPServices.SPUpdateItem({
+                        await SPServices.SPUpdateItem({
                             Listname: ListNames.HRMSRecruitmentDptDetails,
                             RequestJSON: obj,
                             ID: props.stateValue?.ID,
                         })
-                        console.log(UpdateVRRDetails, "UpdateVRRDetails");
                         resetForm();
 
                         let approveAlert = {
@@ -763,7 +779,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         const MasterDataOption = async () => {
             // Fetch Qualification data
             const Qualification = await CommonServices.GetMasterData(ListNames.HRMSQualification);
-            console.log(Qualification, "Qualification");
             const QualificationOption: AutoCompleteItem[] = Qualification.data.map((item: any) => ({
                 key: item.Id,
                 text: item.Qualification,
@@ -771,7 +786,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
             // Fetch RoleSpecificKnowledge data
             const RoleSpecificKnowlege = await CommonServices.GetMasterData(ListNames.HRMSRoleSpecificKnowlegeMaster);
-            console.log(RoleSpecificKnowlege, "RoleSpecificKnowlege");
             const RoleSpecificKnowlegeOption: AutoCompleteItem[] = RoleSpecificKnowlege.data.map((item: any) => ({
                 key: item.Id,
                 text: item.RoleSpecificKnowledge,
@@ -779,7 +793,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
             // Fetch TechnicalSkills data
             const TechnicalSkills = await CommonServices.GetMasterData(ListNames.HRMSTechnicalSkills);
-            console.log(TechnicalSkills, "TechnicalSkills");
             const TechnicalSkillsOption: AutoCompleteItem[] = TechnicalSkills.data.map((item: any) => ({
                 key: item.Id,
                 text: item.TechnicalSkills,
@@ -787,7 +800,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
             // Fetch LevelOfProficiency data
             const LevelOfProficiency = await CommonServices.GetMasterData(ListNames.HRMSLevelOfProficiency);
-            console.log(LevelOfProficiency, "HRMSLevelOfProficiency");
             const LevelOfProficiencyOption: AutoCompleteItem[] = LevelOfProficiency.data.map((item: any) => ({
                 key: item.Id,
                 text: item.Levels,
@@ -803,7 +815,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 RequiredLeveloption: LevelOfProficiencyOption,
             }));
 
-            console.log(QualificationOption, "QualificationOption");
         };
 
 
@@ -811,8 +822,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }, [AddQualifbtn]);
 
     const handleDelete = (index: number, attachmentType: 'AdvertisementAttachement' | 'OnamSignedStampsAttchment' | 'CandidateCVAttachment') => {
-        console.log("Deleting attachment at index:", index, "from", attachmentType);
-
         setFormState((prevState) => {
             const updatedAttachments = [...prevState[attachmentType]];
             updatedAttachments.splice(index, 1);
@@ -851,7 +860,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         const CommentsList =
             await getVRRDetails.GetCommentsData(props.EmployeeList, Conditions, filterConditions)
         if (CommentsList.status === 200) {
-            console.log(CommentsList.data);
             setCommentsData(CommentsList.data)
         }
     }
@@ -880,7 +888,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         value: string | any,
         StateValue: string
     ) => {
-        debugger;
         setAdvDetails((prevState) => ({
             ...prevState,
             [StateValue]: value
@@ -1193,10 +1200,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                     />
                                                 </div>
                                                 <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
-                                                    {console.log("OnamSignedStampsAttchment", formState.OnamSignedStampsAttchment)}
                                                     {formState.OnamSignedStampsAttchment?.map((file: any, index: number) => {
                                                         const fileName = file.fileName || file.name;
-                                                        console.log("Rendering file:", fileName);
 
                                                         return (
                                                             <div key={index} className="ms-Grid-row">
@@ -1379,11 +1384,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                                         </div>
                                         <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
-                                            {console.log("checking", formState.AdvertisementAttachement)}
                                             {formState.AdvertisementAttachement?.map((file: any, index: number) => {
                                                 const fileName = file.fileName || file.name; // Ensure proper name display
-                                                console.log("Rendering file:", fileName);
-
                                                 return (
                                                     <div key={index} className="ms-Grid-row">
                                                         <div className="ms-Grid-col ms-lg12">
@@ -1435,32 +1437,33 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     </div>
                                     <div className="ms-Grid-row">
                                         <div className="ms-Grid-col ms-lg10">
-                                            <div className="ms-Grid-col ms-lg5">
-                                                <CustomInput
-                                                    label="Total Experience"
-                                                    value={advDetails.TotalExperience}
-                                                    disabled={false}
-                                                    error={false}
-                                                    mandatory={true}
-                                                    onChange={(value) => handleInputChange(value, "TotalExperience")}
+                                            <div className="ms-Grid-row">
+                                                <div className="ms-Grid-col ms-lg5">
+                                                    <CustomInput
+                                                        label="Total Experience"
+                                                        value={advDetails.TotalExperience}
+                                                        disabled={false}
+                                                        error={validationErrors.TotalExperience}
+                                                        mandatory={true}
+                                                        onChange={(value) => handleInputChange(value, "TotalExperience")}
+                                                    />
+                                                </div>
+                                                <div className="ms-Grid-col ms-lg5">
+                                                    <CustomInput
+                                                        label="Experience in Mining Industry (Years)"
+                                                        value={advDetails.ExperienceinMiningIndustry}
+                                                        disabled={false}
+                                                        error={validationErrors.ExperienceinMiningIndustry}
+                                                        mandatory={true}
+                                                        onChange={(value) => handleInputChange(value, "ExperienceinMiningIndustry")}
 
-                                                />
-                                            </div>
-                                            <div className="ms-Grid-col ms-lg5">
-                                                <CustomInput
-                                                    label="Experience in Mining Industry (Years)"
-                                                    value={advDetails.ExperienceinMiningIndustry}
-                                                    disabled={false}
-                                                    error={false}
-                                                    mandatory={true}
-                                                    onChange={(value) => handleInputChange(value, "ExperienceinMiningIndustry")}
-
-                                                />
-                                            </div>
-                                            <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
-
+                                                    />
+                                                </div>
+                                                <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div className="ms-Grid-col ms-lg2"></div>
                                     </div>
 
 
@@ -1479,7 +1482,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             onChange={(item) =>
                                                                 handleAutoCompleterow(item, "MinQualification", index, "QualificationValue")
                                                             }
-                                                            error={false}
+                                                            error={validationErrors.MinQualification}
                                                         />
                                                     </div>
                                                     <div className="ms-Grid-col ms-lg5">
@@ -1492,7 +1495,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             onChange={(item) =>
                                                                 handleAutoCompleterow(item, "PrefeQualification", index, "QualificationValue")
                                                             }
-                                                            error={false}
+                                                            error={validationErrors.PrefeQualification}
                                                         />
                                                     </div>
                                                     <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
@@ -1587,7 +1590,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             onChange={(item) =>
                                                                 handleAutoCompleterow(item, "RoleSpeKnowledge", index, "RoleSpeKnowledgeValue")
                                                             }
-                                                            error={false}
+                                                            error={validationErrors.RoleSpeKnowledge}
                                                         />
                                                     </div>
                                                     <div className="ms-Grid-col ms-lg5">
@@ -1600,7 +1603,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             onChange={(item) =>
                                                                 handleAutoCompleterow(item, "RequiredLevel", index, "RoleSpeKnowledgeValue")
                                                             }
-                                                            error={false}
+                                                            error={validationErrors.RequiredLevel}
                                                         />
                                                     </div>
                                                     <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
@@ -1694,7 +1697,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             onChange={(item) =>
                                                                 handleAutoCompleterow(item, "TechnicalSkills", index, "TechnicalSkillValue")
                                                             }
-                                                            error={validationErrors.AssignRecruitmentHR}
+                                                            error={validationErrors.TechnicalSkills}
                                                         />
                                                     </div>
                                                     <div className="ms-Grid-col ms-lg5">
@@ -1707,7 +1710,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             onChange={(item) =>
                                                                 handleAutoCompleterow(item, "LevelProficiency", index, "TechnicalSkillValue")
                                                             }
-                                                            error={validationErrors.AssignRecruitmentHR}
+                                                            error={validationErrors.LevelProficiency}
                                                         />
                                                     </div>
                                                     <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
@@ -1918,7 +1921,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     };
 
     async function InsertMasterData(Value: string) {
-        debugger;
         const isValid = !MasterDataValidation();
         if (isValid) {
             let MasterData
@@ -1927,16 +1929,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     MasterData = {
                         Qualification: advDetails.addMasterQualification
                     }
-                    const InsertMasterData = await getVRRDetails.InsertList(MasterData, ListNames.HRMSQualification);
-                    console.log(InsertMasterData, "InsertMasterData");
+                    await getVRRDetails.InsertList(MasterData, ListNames.HRMSQualification);
                 }
                     break;
                 case RoleDescriptionData.RoleSpeKnowledge: {
                     MasterData = {
                         RoleSpecificKnowledge: advDetails.addMasterQualification
                     }
-                    const InsertMasterData = await getVRRDetails.InsertList(MasterData, ListNames.HRMSRoleSpecificKnowlegeMaster);
-                    console.log(InsertMasterData, "InsertMasterData");
+                    await getVRRDetails.InsertList(MasterData, ListNames.HRMSRoleSpecificKnowlegeMaster);
 
                 }
                     break;
@@ -1944,19 +1944,16 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     MasterData = {
                         TechnicalSkills: advDetails.addMasterQualification
                     }
-                    const InsertMasterData = await getVRRDetails.InsertList(MasterData, ListNames.HRMSTechnicalSkills);
-                    console.log(InsertMasterData, "InsertMasterData");
+                    await getVRRDetails.InsertList(MasterData, ListNames.HRMSTechnicalSkills);
                 }
                     break;
             }
-            console.log(MasterData, "MasterData");
             setAddQualifbtn(false)
         }
     }
 
     const handleBreadcrumbChange = (newItem: string) => {
         setactiveTab(newItem)
-        console.log("Breadcrumb changed to:", newItem);
     };
 
     return (

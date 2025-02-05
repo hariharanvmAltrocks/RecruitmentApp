@@ -1,6 +1,5 @@
 import { ILabelStyles, Label } from "@fluentui/react";
 import * as React from "react";
-// import "react-quill/dist/quill.snow.css";  // Import the Quill CSS
 import "../App.css";
 import { Editor, EditorTextChangeEvent } from "primereact/editor"; // Import the event type
 
@@ -29,11 +28,16 @@ function RichTextEditor({
   style = {},
   placeholder = "Enter text here..."
 }: FormFields) {
+  const [editorContent, setEditorContent] = React.useState(value);
 
-  // Handler for the text change event
+  React.useEffect(() => {
+    setEditorContent(value);
+  }, [value]);
+
   const handleTextChange = (e: EditorTextChangeEvent) => {
+    setEditorContent(e.htmlValue || "")
     if (onChange) {
-      onChange(e.htmlValue || "");  // Pass the htmlValue to onChange
+      onChange(e.htmlValue || "");
     }
   };
 
@@ -88,7 +92,7 @@ function RichTextEditor({
       </Label>
       <div>
         <Editor
-          value={value}
+          defaultValue={editorContent}
           onTextChange={handleTextChange}  // Use the handleTextChange
           style={{ height: "200px" }}
           placeholder={placeholder}

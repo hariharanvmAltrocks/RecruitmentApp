@@ -1,4 +1,4 @@
-export const ApiUrl = "http://20.219.107.162:9121/hrms/api/hrms";
+export const ApiUrl = "https://hrmscp.dev.altrocks.net/hrms";
 export const AuthorizationHeader = {
     Authorization: "Basic SHJtcyBBcHAgVXNlcjpBbHRyb2Nrc0AxMjM=", // Ensure "Basic " prefix
 };

@@ -43,11 +43,12 @@ function CustomInput({
             borderColor: "rgb(15, 15, 15)",
           },
           field: {
-            backgroundColor: "rgb(244, 242, 240)",
-            color: "rgb(85, 82, 79)",
-            "::placeholder": {
-              color: "rgba(85, 82, 79, 0.7)",
-            },
+            ...(disabled && {
+              color: "rgb(85, 82, 79)",
+              "::placeholder": {
+                color: "rgba(85, 82, 79, 0.7)",
+              },
+            }),
           },
         }}
         readOnly={readOnly}

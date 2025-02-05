@@ -68,10 +68,29 @@ function PreviewScreen({
 
                             <div className="ms-Grid-row">
                                 <div className="ms-Grid-col ms-lg6">
+                                    <div>
+                                        <p> <b style={{ fontSize: "17px" }}>Total Experience :</b>{" "}</p>
+                                    </div>
+
+                                    <div
+                                        style={{ marginTop: "20px" }}
+                                    >
+                                        <p style={{ fontSize: "17px" }}>
+                                            Total Experience:{" "} - {data.TotalExperience}
+                                            <span>
+                                                Experience in Mining Industry (Years) :{" "}   -  {data.ExperienceinMiningIndustry}
+                                            </span>
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+                            {/* <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg6">
                                     <p>
                                         <b style={{ fontSize: "17px" }}>Total Experience :</b>{" "}
                                         <span>
-                                            {data.TotalExperience}
+                                            
                                         </span>
                                     </p>
                                 </div>
@@ -85,17 +104,15 @@ function PreviewScreen({
                                     </p>
                                 </div>
 
-                            </div>
+                            </div> */}
 
                             <div className="ms-Grid-row">
                                 <div className="ms-Grid-col ms-lg6">
                                     <div>
                                         <p> <b style={{ fontSize: "17px" }}>Minimum Qualification :</b>{" "}</p>
                                     </div>
-                                    {console.log(RoleSpec, "RoleSpec")}
 
                                     {Qualification.map((item: any, index: number) => {
-                                        console.log(item, "Qualifi");
                                         return (
                                             <div
                                                 key={index}
@@ -119,10 +136,8 @@ function PreviewScreen({
                                     <div>
                                         <p> <b style={{ fontSize: "17px" }}>Role Specific Knowledge :</b>{" "}</p>
                                     </div>
-                                    {console.log(RoleSpec, "RoleSpec")}
 
                                     {RoleSpec.map((item: any, index: number) => {
-                                        console.log(item, "RoleSpec");
                                         return (
                                             <div
                                                 key={index}
@@ -158,10 +173,8 @@ function PreviewScreen({
                                     <div>
                                         <p> <b style={{ fontSize: "17px" }}>Technical Skills - Ability to apply Knowledge :</b>{" "}</p>
                                     </div>
-                                    {console.log(RoleSpec, "RoleSpec")}
 
                                     {TechinicalSkills.map((item: any, index: number) => {
-                                        console.log(item, "RoleSpec");
                                         return (
                                             <div
                                                 key={index}
