@@ -1,0 +1,1450 @@
+/* Tooltip hidden by default */
+.tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+  transition: visibility 0s, opacity 0.3s ease;
+  z-index: 1;
+  width: 200px;
+  text-align: left;
+}
+
+/* Add hover effect for the "show more" text */
+p:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+@media only screen and (max-width: 600px) {
+  .ms-Grid-row {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .ms-Grid-row {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.TabStatus.MuiTabs-root {
+  background-color: #ef3340 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 4px 3px rgba(235, 3, 3, 0.2) !important;
+  display: flex !important;
+  height: 80px !important;
+  justify-content: space-evenly !important;
+  margin-left: 28px;
+  text-align: center !important;
+  width: 94% !important;
+  font-family: "Roboto", sans-serif !important;
+  text-transform: capitalize;
+  align-items: center;
+  margin-top: 2%;
+}
+
+.MuiTabs-indicator {
+  background-color: unset !important;
+  color: white;
+}
+
+.MuiTabs-indicator {
+  color: white !important;
+}
+
+.MuiButtonBase-root.Mui-selected {
+  color: black !important;
+  background-color: white !important;
+  border-radius: 4px 4px 4px 4px !important;
+}
+
+.MuiTabs-flexContainer button {
+  text-transform: capitalize;
+}
+
+/* --------------------------------------------------DataTable--------------------------------------------- */
+
+.p-datatable-table {
+  width: 100%;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+/* verify */
+
+.p-datatable .p-datatable-thead > tr > th {
+  text-align: left;
+  padding: 1rem 1rem;
+  border: 1px solid #dee2e6;
+  border-width: 0 0 1px 0;
+  background: #b2b4b782;
+  transition: box-shadow 0.2s;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.p-datatable .p-datatable-thead {
+  z-index: 1 !important;
+}
+
+/* .p-datatable-tbody {
+    align-items: center;
+    font-size: 12px;
+  } */
+
+/* verify */
+
+.p-datatable .p-datatable-tbody > tr {
+  background: #ffffff;
+
+  transition: box-shadow 0.2s;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  text-align: left;
+  border: 1px solid #dee2e6;
+  border-width: 0 0 1px 0;
+  padding: 1rem 1rem;
+  font-size: 15px;
+  background: #ff8d8d40;
+  /* font-weight: 300; */
+  font-family: "Roboto", sans-serif;
+  /* color: #495057; */
+  /* color: black; */
+}
+
+.LabourPlanMainGrid .p-datatable-thead > tr > th {
+  text-align: center;
+  padding: 1rem 13px;
+  border: 1px solid #dee2e6;
+  border-width: 0 0 1px 0;
+  background: #f8f9fa;
+  transition: box-shadow 0.2s;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.LabourPlanMainGrid .p-datatable-tbody > tr > td {
+  text-align: left;
+  border: 1px solid #edf1f4;
+  border-width: 0 0 1px 0;
+  padding: 1rem 9px;
+  font-size: 13px;
+  font-weight: 300;
+  font-family: "Roboto", sans-serif;
+}
+
+.p-datatable .p-paginator-bottom {
+  border-width: 0 0 2px 0;
+  border-radius: 0;
+  /* background-color: red; */
+}
+
+/* paginator   */
+
+.p-datatable .p-paginator-bottom {
+  border-width: 0 0 1px 0;
+  border-radius: 0;
+}
+
+.p-paginator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  background: #ffffff;
+  color: #6b7280;
+  border: solid #f3f4f6;
+  border-width: 0;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+}
+
+/* dropdown */
+
+.p-paginator .p-dropdown {
+  background: #ffffff;
+  /* border: 1px solid #d1d5db; */
+  border: 1px solid #ef3340;
+  /* transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s; */
+  border-radius: 6px;
+  align-items: center;
+  padding: 7px 3px;
+
+  /* margin-left: 1rem; */
+}
+
+.p-paginator .p-dropdown .p-dropdown-label {
+  padding-right: 0;
+  background: transparent;
+  border: 0 none;
+}
+
+.p-dropdown-label .p-inputtext {
+  /* font-family: var(--font-family); */
+  /* font-feature-settings: var(--font-feature-settings, normal); */
+  font-size: 1rem;
+  color: #4b5563;
+  background: #ffffff;
+  padding: 0.75rem 0.75rem;
+  border: 1px solid #d1d5db;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s,
+    box-shadow 0.2s;
+  appearance: none;
+  border-radius: 6px;
+  /* margin-left: 5rem; */
+}
+
+.p-dropdown .p-dropdown-trigger {
+  background: transparent;
+  color: #6b7280;
+  width: 3rem;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.p-datatable-scrollable-table > .p-datatable-thead {
+  z-index: 1 !important;
+}
+
+.ui-datatable .LabourPlanMainGrid .p-datatable-tbody > tr > td {
+  padding: 1rem 4px !important;
+}
+
+/* .LabourPlanMainGrid .p-datatable-scrollable-table > .p-datatable-thead {
+    z-index: 1 !important;
+    /* position: relative; } */
+
+/* .LabourPlanMainGrid {
+    width: 100%; 
+    max-width: 1037px; 
+    height: 500px; 
+    /* max-width: 772px; */
+/* overflow-x: auto; } */
+
+@media (max-width: 668px) {
+  .LabourPlanMainGrid {
+    max-width: 100%;
+    overflow-x: scroll;
+  }
+
+  .ui-datatable .LabourPlanMainGrid .p-datatable-tbody > tr > td {
+    padding: 0.5rem 2px !important;
+  }
+}
+
+/* .actionwrapper .p-datatable-scrollable-table > .p-datatable-thead{
+    z-index: 1000;
+    position: absolute;
+  } */
+
+/* dropdown slide  */
+/* button {
+    font-family: var(--font-family);
+    font-feature-settings: var(--font-feature-settings);
+  } */
+
+.p-paginator .p-paginator-first {
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+
+  background-color: transparent;
+  border: 0 none;
+  color: #6b7280;
+  min-width: 3rem;
+  height: 3rem;
+  margin: 0.143rem;
+  transition: box-shadow 0.2s;
+  border-radius: 50%;
+}
+
+.p-paginator .p-paginator-prev {
+  background-color: transparent;
+  border: 0 none;
+  color: #6b7280;
+  min-width: 3rem;
+  height: 3rem;
+  margin: 0.143rem;
+  transition: box-shadow 0.2s;
+  border-radius: 50%;
+}
+
+.p-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.p-paginator .p-paginator-next {
+  background-color: transparent;
+  border: 0 none;
+  color: #6b7280;
+  min-width: 3rem;
+  height: 3rem;
+  margin: 0.143rem;
+  transition: box-shadow 0.2s;
+  border-radius: 50%;
+}
+
+.p-paginator .p-paginator-last {
+  background-color: transparent;
+  border: 0 none;
+  color: #6b7280;
+  min-width: 3rem;
+  height: 3rem;
+  margin: 0.143rem;
+  transition: box-shadow 0.2s;
+  border-radius: 50%;
+}
+
+.p-paginator .p-paginator-first:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-prev:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-next:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-last:not(.p-disabled):not(.p-highlight):hover {
+  /* background: #f3f4f6; */
+  background: #ff8d8d40;
+  border-color: transparent;
+  color: #374151;
+}
+
+.p-dropdown-panel {
+  background: #ffffff;
+  color: #4b5563;
+  border: 0 none;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* dropdown and panel gap */
+.p-dropdown-panel .p-dropdown-items {
+  padding: 0.75rem 0;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  /* color: #0e7490; */
+  background: #ff8d8d40;
+  color: #ecfeff;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item :hover {
+  background: #0e7490;
+  /* background: #FF8D8D40;
+    color: #ecfeff; */
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  margin: 0;
+  padding: 0.75rem 1.25rem;
+  border: 0 none;
+  color: #4b5563;
+  /* color:black; */
+  background: transparent;
+  transition: box-shadow 0.2s;
+  border-radius: 0;
+}
+
+/* pages */
+
+.p-paginator .p-paginator-current {
+  /* background-color: transparent; */
+  border: 0 none;
+  color: #6b7280;
+  min-width: 3rem;
+  height: 3rem;
+  margin: 0.143rem;
+  padding: 0 0.5rem;
+  /* background-color: red; */
+}
+
+.p-paginator .p-paginator-first:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-prev:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-next:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-last:not(.p-disabled):not(.p-highlight):hover {
+  /* background: #f3f4f6; */
+  background: #ff8d8d40;
+  border-color: transparent;
+  color: #374151;
+}
+
+.p-disabled,
+.p-component:disabled {
+  opacity: 0.6;
+}
+
+/* rows */
+/* .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd {
+  background: #ff8d8d40;
+} */
+
+/* --------------------------------------------------DataTable--------------------------------------------- */
+
+/* --------------------------------------------------Menu Css--------------------------------------------- */
+
+.menu-card {
+  background-color: white;
+  /* Set the background color */
+  padding: 20px;
+  /* Add some padding for spacing */
+  border-radius: 5px;
+  /* Add rounded corners for a card-like appearance */
+  box-shadow: 0px 2px 4px 3px lightgray;
+  /* Add a subtle shadow */
+  margin: 10px;
+  /* Adjust the margin as needed */
+  /* height: calc(100vh - 309px); */
+}
+
+.sub-menu-card {
+  background-color: white;
+  /* Set the background color */
+  padding: 20px;
+  /* Add some padding for spacing */
+  border-radius: 5px;
+  /* Add rounded corners for a card-like appearance */
+  box-shadow: 0px 2px 4px 3px lightgray;
+  /* Add a subtle shadow */
+  margin: 10px;
+}
+
+.fifty-percent-width {
+  width: 40%;
+}
+
+html {
+  z-index: auto;
+}
+
+/* .label-color .ms-Label  .fieldGroup-176 {
+    color:rgb(205, 45, 45) !important;
+    border-color: rgb(205, 45, 45) !important;
+  } */
+
+.fieldGroup-176 {
+  color: black;
+  border: 1px solid lightgray !important;
+}
+
+/* .ms-Label {
+    color:rgb(205, 45, 45) !important;
+    
+  } 
+  .ms-Pivot-text .root-16{
+    color:rgb(205, 45, 45) !important;
+     color: black;
+    
+  } */
+.link-156 .linkIsSelected-153 {
+  border-color: #ef3340 !important;
+  border-radius: 6px !important;
+  color: #ef3340 !important;
+}
+
+.ms-TextField-field {
+  border-radius: 6px !important;
+}
+
+.ms-Pivot {
+  text-align: center !important;
+  box-shadow: 0 2px 4px 3px rgba(235, 3, 3, 0.2) !important;
+  border-radius: 6px !important;
+  width: 97% !important;
+  margin-left: 10px !important;
+  height: 80px !important;
+  display: flex !important;
+  justify-content: space-evenly !important;
+}
+
+.circularpercentage {
+  /* border: 1px solid !important; */
+  border-radius: 25px !important;
+  background-color: lightcyan;
+}
+
+.pivot-header-red {
+  /* Set the desired background color */
+  font-family: "Times New Roman", Times, serif;
+  /* Set the desired text color */
+}
+
+.pivot-header-shadow {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  /* Customize the shadow as needed */
+}
+
+.clsIcon {
+  border: 1px solid !important;
+  border-radius: 0px 3px 3px 0px !important;
+  height: 31px !important;
+  width: 30px !important;
+  margin-top: 29px !important;
+  border-color: #ef3340 !important;
+}
+
+.fui-Radio {
+  margin-left: 30px !important;
+}
+
+.HRMSNav .ms-Button {
+  margin-top: 12px !important;
+}
+
+/* .ms-Button:hover{
+   color: rgb(205, 45, 45);
+   background-color:  #ffffff;
+    } */
+.table_btn {
+  color: #ef3340 !important;
+  /* border-color: #EF3340 !important; */
+  background-color: white !important;
+}
+
+.table_btn_hover {
+  color: #ef3340 !important;
+  border-color: #ef3340 !important;
+  background-color: white !important;
+}
+
+.search_btn {
+  /* border-color: #EF3340 !important; */
+  background-color: #ef3340 !important;
+  color: white !important;
+  width: 30% !important;
+  height: 32px;
+}
+
+.search_txtbox {
+  margin-left: 10px;
+}
+
+/* .search_div{
+  margin-left: 9px !important;
+  width: 73% !important;
+  } */
+
+.round-icon-container {
+  display: inline-block;
+  border: 2px solid #0078d4;
+  /* Set your desired border color */
+  border-radius: 50%;
+  padding: 5px;
+  /* Adjust padding as needed */
+}
+
+.plus-icon {
+  color: #0078d4;
+  /* Set your desired icon color */
+}
+
+.radiobtn {
+  color: black;
+  margin-left: -30px;
+}
+
+.frm_sec_btn {
+  margin-left: 10px;
+  border: 1px solid rgb(205, 45, 45);
+  background-color: #ffff;
+  color: rgb(205, 45, 45);
+}
+
+.frm_sec_btn:hover {
+  color: #ffff;
+  background-color: rgb(205, 45, 45);
+}
+
+/* i.ms-Icon{
+  color:black;
+  } */
+
+.rounded-icon-button {
+  /* background-color: white;
+  border-radius: 50%;
+  padding: 8px; */
+  color: white;
+}
+
+.rounded-icon-button:hover {
+  background-color: #f4f4f4;
+  /* Change the color on hover if desired */
+}
+
+.navigation-container {
+  background-color: "#EF3340";
+  width: "14%";
+  border-radius: "0px 30px 30px 0px";
+}
+
+.ms-Nav-link {
+  color: #ffffff !important;
+  font-family: "Roboto", sans-serif !important;
+  font-weight: 500;
+}
+
+.HRMSNav .ms-Nav-linkText {
+  text-align: left;
+  font-family: "Roboto", sans-serif !important;
+  font-weight: 500;
+  font-size: 14px;
+  /* font-size: 81% !important;
+  
+    line-height: normal;
+    text-wrap: pretty;
+    overflow-wrap: break-word; */
+}
+
+.ms-Nav-compositeLink.is-selected .ms-Button {
+  background-color: #ffffff !important;
+  border-radius: 0px 18px 18px 0px !important;
+  width: 90% !important;
+  color: black;
+  /* padding: 10px 20px;  */
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.ms-Nav-compositeLink.is-expanded .ms-Button {
+  background-color: #ffffff !important;
+  border-radius: 0px 18px 18px 0px !important;
+  width: 90% !important;
+  color: black;
+  /* padding: 10px 20px;  */
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.HRMSNav li ul .ms-Nav-compositeLink.is-selected .ms-Button {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  border-radius: 18px 0px 0px 18px !important;
+  width: 100% !important;
+  color: black;
+  /* padding: 10px 20px;  */
+  text-decoration: none;
+  transition: background-color 0.3s;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.HRMSNav li ul .ms-Nav-compositeLink {
+  width: 90% !important;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* .ms-Nav-compositeLink:hover{
+    background-color: rgba(255, 255, 255, 0.5)!important;
+  
+  } */
+
+.ms-Icon {
+  color: white;
+  height: auto;
+}
+
+.ms-Icon img {
+  width: 80%;
+}
+
+.ms-Nav-compositeLink.is-selected .ms-Icon {
+  color: black;
+}
+
+.ms-Nav-compositeLink.is-selected .ms-Nav-linkText {
+  color: black;
+  font-family: "Roboto", sans-serif !important;
+  font-weight: 500;
+  text-align: left;
+}
+
+.ms-Nav-compositeLink.is-expanded .ms-Icon {
+  color: black;
+}
+
+.ms-Nav-compositeLink.is-expanded .ms-Nav-linkText {
+  color: black;
+  font-family: "Roboto", sans-serif !important;
+  text-align: left;
+  font-weight: 500;
+}
+
+.ms-Nav-chevronButton {
+  margin-right: 9%;
+}
+
+.ms-Nav-link::after {
+  display: none;
+}
+
+.HRMSNav .ms-Button:hover {
+  background-color: white;
+}
+
+.HRMSNav .ms-Button:hover .ms-Nav-linkText {
+  color: black;
+  font-family: "Roboto", sans-serif !important;
+  font-weight: 500;
+}
+
+.HRMSNav .ms-Button:hover .ms-Icon {
+  color: black;
+}
+
+.HRMSContent {
+  align-items: center;
+  display: flex;
+  margin-left: 15px;
+  margin-top: 20px;
+}
+
+.menucardoverall {
+  max-width: 100%;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.HRMSMainContent {
+  flex: 1;
+  margin-left: 30px;
+}
+
+.CanvasZone {
+  margin: 0px;
+  padding: 0px;
+}
+
+.l_e_8474018e {
+  margin: 0px;
+  padding: 0px;
+}
+
+/* .css-1rwt2y5-MuiButtonBase-root-MuiButton-root{
+  
+    background-color:#EF3340 !important
+  } */
+
+.MuiButtonBase-root {
+  background-color: red;
+}
+
+.HRMSNav li ul .ms-Nav-link {
+  width: 100% !important;
+}
+
+.MuiButtonBase-root:hover {
+  background-color: "#EF3340";
+}
+
+.swal-overlay {
+  /* Adjust opacity to control the transparency of the overlay */
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  /* Adjust opacity as needed */
+  /* Or you can remove the overlay completely */
+  /* background: none !important; */
+}
+
+.RefreshButton {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+}
+
+.fifty-percent-width {
+  width: 40%;
+}
+
+html {
+  z-index: auto;
+}
+
+/* .label-color .ms-Label  .fieldGroup-176 {
+    color:rgb(205, 45, 45) !important;
+    border-color: rgb(205, 45, 45) !important;
+  } */
+
+.fieldGroup-176 {
+  color: black;
+  border: 1px solid lightgray !important;
+}
+
+/* .ms-Label {
+    color:rgb(205, 45, 45) !important;
+    
+  } 
+  .ms-Pivot-text .root-16{
+    color:rgb(205, 45, 45) !important;
+     color: black;
+    
+  } */
+.link-156 .linkIsSelected-153 {
+  border-color: #ef3340 !important;
+  border-radius: 6px !important;
+  color: #ef3340 !important;
+}
+
+.ms-TextField-field {
+  border-radius: 6px !important;
+}
+
+.ms-Pivot {
+  text-align: center !important;
+  box-shadow: 0 2px 4px 3px rgba(235, 3, 3, 0.2) !important;
+  border-radius: 6px !important;
+  width: 97% !important;
+  margin-left: 10px !important;
+  height: 80px !important;
+  display: flex !important;
+  justify-content: space-evenly !important;
+}
+
+.circularpercentage {
+  /* border: 1px solid !important; */
+  border-radius: 25px !important;
+  background-color: lightcyan;
+}
+
+.pivot-header-red {
+  /* Set the desired background color */
+  font-family: "Times New Roman", Times, serif;
+  /* Set the desired text color */
+}
+
+.pivot-header-shadow {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  /* Customize the shadow as needed */
+}
+
+.clsIcon {
+  border: 1px solid !important;
+  border-radius: 0px 3px 3px 0px !important;
+  height: 31px !important;
+  width: 30px !important;
+  margin-top: 29px !important;
+  border-color: #ef3340 !important;
+}
+
+.fui-Radio {
+  margin-left: 30px !important;
+}
+
+.HRMSNav .ms-Button {
+  margin-top: 12px !important;
+}
+
+/* .ms-Button:hover{
+   color: rgb(205, 45, 45);
+   background-color:  #ffffff;
+    } */
+.table_btn {
+  color: #ef3340 !important;
+  /* border-color: #EF3340 !important; */
+  background-color: white !important;
+}
+
+.table_btn_hover {
+  color: #ef3340 !important;
+  border-color: #ef3340 !important;
+  background-color: white !important;
+}
+
+.search_btn {
+  /* border-color: #EF3340 !important; */
+  background-color: #ef3340 !important;
+  color: white !important;
+  width: 30% !important;
+  height: 32px;
+}
+
+.search_txtbox {
+  margin-left: 10px;
+}
+
+/* .search_div{
+  margin-left: 9px !important;
+  width: 73% !important;
+  } */
+
+.round-icon-container {
+  display: inline-block;
+  border: 2px solid #0078d4;
+  /* Set your desired border color */
+  border-radius: 50%;
+  padding: 5px;
+  /* Adjust padding as needed */
+}
+
+.plus-icon {
+  color: #0078d4;
+  /* Set your desired icon color */
+}
+
+.radiobtn {
+  color: black;
+  margin-left: -30px;
+}
+
+.frm_sec_btn {
+  margin-left: 10px;
+  border: 1px solid rgb(205, 45, 45);
+  background-color: #ffff;
+  color: rgb(205, 45, 45);
+}
+
+.frm_sec_btn:hover {
+  color: #ffff;
+  background-color: rgb(205, 45, 45);
+}
+
+/* i.ms-Icon{
+  color:black;
+  } */
+
+.rounded-icon-button {
+  /* background-color: white;
+  border-radius: 50%;
+  padding: 8px; */
+  color: white;
+}
+
+.rounded-icon-button:hover {
+  background-color: #f4f4f4;
+  /* Change the color on hover if desired */
+}
+
+.navigation-container {
+  background-color: "#EF3340";
+  width: "14%";
+  border-radius: "0px 30px 30px 0px";
+}
+
+.ms-Nav-link {
+  color: #ffffff !important;
+  font-family: "Roboto", sans-serif !important;
+  font-weight: 500;
+}
+
+.HRMSNav .ms-Nav-linkText {
+  text-align: left;
+  font-family: "Roboto", sans-serif !important;
+  font-weight: 500;
+  font-size: 14px;
+  /* font-size: 81% !important;
+  
+    line-height: normal;
+    text-wrap: pretty;
+    overflow-wrap: break-word; */
+}
+
+.ms-Nav-compositeLink.is-selected .ms-Button {
+  background-color: #ffffff !important;
+  border-radius: 0px 18px 18px 0px !important;
+  width: 90% !important;
+  color: black;
+  /* padding: 10px 20px;  */
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.ms-Nav-compositeLink.is-expanded .ms-Button {
+  background-color: #ffffff !important;
+  border-radius: 0px 18px 18px 0px !important;
+  width: 90% !important;
+  color: black;
+  /* padding: 10px 20px;  */
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.HRMSNav li ul .ms-Nav-compositeLink.is-selected .ms-Button {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  border-radius: 18px 0px 0px 18px !important;
+  width: 100% !important;
+  color: black;
+  /* padding: 10px 20px;  */
+  text-decoration: none;
+  transition: background-color 0.3s;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.HRMSNav li ul .ms-Nav-compositeLink {
+  width: 90% !important;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* .ms-Nav-compositeLink:hover{
+    background-color: rgba(255, 255, 255, 0.5)!important;
+  
+  } */
+
+.ms-Icon {
+  color: white;
+  height: auto;
+}
+
+.ms-Icon img {
+  width: 80%;
+}
+
+.ms-Nav-compositeLink.is-selected .ms-Icon {
+  color: black;
+}
+
+.ms-Nav-compositeLink.is-selected .ms-Nav-linkText {
+  color: black;
+  font-family: "Roboto", sans-serif !important;
+  font-weight: 500;
+  text-align: left;
+}
+
+.ms-Nav-compositeLink.is-expanded .ms-Icon {
+  color: black;
+}
+
+.ms-Nav-compositeLink.is-expanded .ms-Nav-linkText {
+  color: black;
+  font-family: "Roboto", sans-serif !important;
+  text-align: left;
+  font-weight: 500;
+}
+
+.ms-Nav-chevronButton {
+  margin-right: 9%;
+}
+
+.ms-Nav-link::after {
+  display: none;
+}
+
+.HRMSNav .ms-Button:hover {
+  background-color: white;
+}
+
+.HRMSNav .ms-Button:hover .ms-Nav-linkText {
+  color: black;
+  font-family: "Roboto", sans-serif !important;
+  font-weight: 500;
+}
+
+.HRMSNav .ms-Button:hover .ms-Icon {
+  color: black;
+}
+
+.HRMSContent {
+  align-items: center;
+  display: flex;
+  margin-left: 15px;
+  margin-top: 20px;
+}
+
+.menucardoverall {
+  max-width: 100%;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.HRMSMainContent {
+  flex: 1;
+  margin-left: 30px;
+}
+
+.CanvasZone {
+  margin: 0px;
+  padding: 0px;
+}
+
+.l_e_8474018e {
+  margin: 0px;
+  padding: 0px;
+}
+
+/* .css-1rwt2y5-MuiButtonBase-root-MuiButton-root{
+  
+    background-color:#EF3340 !important
+  } */
+
+.MuiButtonBase-root {
+  background-color: red;
+}
+
+.HRMSNav li ul .ms-Nav-link {
+  width: 100% !important;
+}
+
+.MuiButtonBase-root:hover {
+  background-color: "#EF3340";
+}
+
+.swal-overlay {
+  /* Adjust opacity to control the transparency of the overlay */
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  /* Adjust opacity as needed */
+  /* Or you can remove the overlay completely */
+  /* background: none !important; */
+}
+
+.RefreshButton {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+}
+
+/* --------------------------------------------------Menu Css--------------------------------------------- */
+
+.title {
+  color: #ef3340;
+  font-family: "Roboto", sans-serif !important;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  margin-top: 1%;
+}
+
+.Role {
+  font-size: 16px !important;
+  margin-top: 1%;
+}
+
+.TabStatus.MuiTabs-root {
+  background-color: #ef3340 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 4px 3px rgba(235, 3, 3, 0.2) !important;
+  display: flex !important;
+  height: 80px !important;
+  justify-content: space-evenly !important;
+  margin-left: 34px;
+  text-align: center !important;
+  width: 81% !important;
+  font-family: "Roboto", sans-serif !important;
+  text-transform: capitalize;
+  align-items: center;
+  margin-top: 2%;
+}
+
+.Tab.MuiTabs-root {
+  background-color: #ef3340 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 4px 3px rgba(235, 3, 3, 0.2) !important;
+  display: flex !important;
+  height: 80px !important;
+  justify-content: space-evenly !important;
+  margin-left: 34px;
+  text-align: center !important;
+  width: 92% !important;
+  font-family: "Roboto", sans-serif !important;
+  text-transform: capitalize;
+  align-items: center;
+  margin-top: 2%;
+}
+
+.overlay-component {
+  position: absolute;
+  top: 0;
+  /* left: 0; */
+  right: 0;
+  /* bottom: 0; */
+  max-height: max-content;
+  /* z-index: 1; */
+  /* Adjust the z-index to control the stacking order */
+}
+
+@media (max-width: 600px) {
+  .StatusBar-container {
+    max-width: 87px;
+    margin-left: 90%;
+    cursor: pointer;
+    margin-top: 20px;
+    height: 80px;
+    background-color: rgb(239, 51, 64);
+    padding: 14px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px 3px #eeb9b9;
+  }
+}
+
+@media (max-width: 600px) {
+  .circularpercentage-container {
+    max-width: 60px;
+    margin-left: 7%;
+  }
+}
+
+@media (min-width: 601px) {
+  .circularpercentage-container {
+    max-width: 60px;
+    margin-left: 7%;
+  }
+}
+
+@media (max-width: 600px) {
+  .circularpercentage-container {
+    max-width: 60px;
+    margin-left: 7%;
+  }
+}
+
+@media (min-width: 601px) {
+  .circularpercentage-container {
+    max-width: 60px;
+    margin-left: 7%;
+  }
+}
+
+.circularpercentage {
+  /* border: 1px solid !important; */
+  border-radius: 25px !important;
+  background-color: lightcyan;
+}
+
+.p-dialog-mask {
+  background-color: #31303052;
+  transition-property: background-color;
+}
+
+.p-dialog-header {
+  padding-left: 1%;
+  padding-top: 1%;
+}
+
+.p-dialog-footer {
+  padding-bottom: 3%;
+}
+
+/* .p-dialog {
+    border-radius: 20px !important;
+    /* Custom border-radius */
+
+.p-dialog-content {
+  scroll-behavior: auto;
+  scrollbar-width: none;
+}
+
+/* App.css or any other style file */
+
+/* hide front page*/
+
+.webPartContainer {
+  display: none;
+}
+
+.ae_e_ada2ac09 {
+  display: none;
+}
+
+.headerRow-106 {
+  display: none;
+}
+
+#visibleContent {
+  display: none;
+}
+
+#sp-appBar {
+  display: none;
+}
+
+#spCommandBar {
+  display: none;
+}
+
+#SuiteNavPlaceholder {
+  display: none;
+}
+
+#spSiteHeader {
+  display: none;
+}
+
+#CommentsWrapper {
+  display: none;
+}
+
+#workbenchCommandBar {
+  display: none;
+}
+
+.as_i_ada2ac09 {
+  display: none;
+}
+
+.simpleFooterContainer {
+  display: none;
+}
+
+/* .ms-FocusZone {
+    display: none;
+  } */
+.sp-appBar-linkContainer {
+  display: none;
+}
+
+.CanvasZone {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+footer {
+  display: none;
+}
+
+.ControlZone {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.webPartContainer {
+  display: none;
+}
+
+.ae_e_ada2ac09 {
+  display: none;
+}
+
+#CommentsWrapper {
+  display: none;
+}
+
+.q_e_50a7110f {
+  max-width: 100% !important;
+}
+
+.p_e_50a7110f {
+  max-width: 100% !important;
+}
+
+#spSiteHeader {
+  display: none;
+}
+
+#sp-appBar {
+  display: none;
+}
+
+#spCommandBar {
+  display: none;
+}
+
+#SuiteNavPlaceholder {
+  display: none;
+}
+
+.o_c_8474018e {
+  scrollbar-width: none;
+}
+
+.c_a_beed2cf1 {
+  scrollbar-width: none;
+}
+
+.b_a_beed2cf1 {
+  scrollbar-width: none;
+}
+
+.f_a_beed2cf1 {
+  scrollbar-width: none;
+}
+
+.g_a_beed2cf1 {
+  scrollbar-width: none;
+}
+
+/* *::-webkit-scrollbar {
+    scrollbar-width: none !important;
+  } */
+
+/* hide  */
+
+@media screen and (min-width: 1024px) {
+  .a_a_50a7110f:not(.e_a_50a7110f) .h_a_50a7110f {
+    display: flex;
+    max-width: none;
+  }
+}
+
+/* .app {
+    min-height: calc(100vh - 73px) !important;
+} */
+
+#workbenchPageContent,
+.CanvasComponent.LCS .CanvasZone {
+  max-width: 100% !important;
+  margin: 0px;
+  padding: 0px;
+  width: 98%;
+}
+
+@media only screen and (min-width: 1024px) {
+  .sideNav_EhC1WyN6 {
+    min-height: calc(100vh - 73px) !important;
+    max-height: 100vh;
+  }
+
+  .menu-card {
+    min-height: calc(80vh - 73px) !important;
+    max-height: 100%;
+  }
+}
+
+.n_c_8474018e {
+  padding: 0px;
+  overflow: hidden;
+}
+
+.contentGrid {
+  max-width: 100%;
+  overflow: hidden;
+  flex: 1;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ContentHeader {
+  align-items: center;
+  display: flex;
+  margin-left: 15px;
+  margin-top: 20px;
+}
+
+.MainContent {
+  flex: 1;
+  margin-left: 30px;
+}
+
+/* Custom CSS for increasing the size of stars */
+.custom-rating .p-rating-icon {
+  font-size: 30px !important;
+}
+
+/* .custom-rating .p-rating-icon {
+    color: #e65f2b !important;
+} */
+
+.table_btn {
+  color: #ef3340 !important;
+  border-color: #ef3340 !important;
+  background-color: white !important;
+}

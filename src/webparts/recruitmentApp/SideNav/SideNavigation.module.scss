@@ -1,0 +1,206 @@
+.sideNav {
+    width: 100%;
+    background-color: #EF3340;
+    padding: 0px 0;
+    height: 90vh;
+    border-radius: "0px 30px 30px 0px";
+    transition: "width 1s ease 0s";
+    overflow: hidden;
+
+    .imgBox {
+        padding: 15px;
+        border-top-right-radius: 14px;
+        border-bottom-right-radius: 14px;
+        width: 90%;
+        height: 69px;
+        margin: 20px 0;
+        transition: all 1s;
+
+        img {
+            height: 76px;
+            width: 84%;
+            object-fit: contain;
+        }
+    }
+
+    .linksContainer {
+        margin: 34px 6px;
+        margin-left: -13%;
+    }
+
+    .navImg {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        width: fit-content;
+        font-size: 14px;
+
+        img {
+            margin-right: 10px;
+        }
+
+        .navLabel {
+            opacity: 1;
+            height: auto;
+            overflow: hidden;
+            transition: opacity 1.5s, height 2s;
+            color: white;
+            font-weight: 400;
+
+            &:hover {
+                cursor: pointer;
+                color: black;
+            }
+
+            &.active {
+                color: black;
+                font-weight: 700;
+            }
+        }
+
+
+
+        &:hover {
+            cursor: pointer;
+            color: black;
+        }
+    }
+
+    .navLine {
+        // padding: 8px 4px 8px 20px;
+        color: #fff;
+        // background-color: #e65f2b;
+        height: 20px;
+        border-radius: 20px;
+        padding: 8%;
+
+        &.active {
+            color: #e65f2b;
+            background-color: #fff;
+            height: 20px;
+            border-radius: 20px;
+            padding: 8%;
+        }
+
+        &.activeSub {
+            color: black;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 18px 0px 0px 18px;
+            padding: 0%;
+            box-shadow: "0px 5px 10px 0px #0F4B8426";
+            margin-top: 4%;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            width: 93%;
+            margin-left: 22px;
+            display: flex;
+            flex-direction: column;
+            height: 52px;
+
+        }
+
+        &:hover {
+            cursor: pointer;
+            background: white;
+            // padding: 8px 4px 8px 20px;
+            border-radius: 20px;
+            height: 20px;
+            color: black;
+            padding: 8%;
+        }
+    }
+
+    .navLineSelect {
+        background-color: #fff;
+        margin: 20px 20px 20px 0;
+        padding: 8px 4px 8px 20px;
+        color: black;
+
+        .navImg {
+            .navLabel {
+                opacity: 1;
+                color: black;
+                font-weight: 700;
+            }
+        }
+    }
+
+    .navLineSelect:hover {
+        cursor: pointer;
+    }
+}
+
+
+@media only screen and (min-width: 1024px) {
+    .sideNav {
+        height: 100%;
+
+        .navLineSelect,
+        .navLine {
+            padding: 8px 4px 8px 5px;
+        }
+    }
+
+    .navImg {
+        img {
+            height: 29px;
+            width: 29px;
+        }
+    }
+}
+
+.navLabelChild {
+    text-decoration: none;
+    transition: background-color 0.3s;
+    width: 76%;
+    margin-left: 56px;
+    display: flex;
+    flex-direction: column;
+    color: black;
+    // background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 18px 0px 0px 18px;
+    padding: 0%;
+    margin-top: 4%;
+
+    &.active {
+        color: black;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 18px 0px 0px 18px;
+        padding: 0%;
+        box-shadow: "0px 5px 10px 0px #0F4B8426";
+        margin-top: 4%;
+        text-decoration: none;
+        transition: background-color 0.3s;
+        width: 76%;
+        margin-left: 56px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &:hover {
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s;
+        width: 76%;
+        margin-left: 56px;
+        display: flex;
+        flex-direction: column;
+        color: black;
+        background-color: white;
+        border-radius: 18px 0px 0px 18px;
+        padding: 0%;
+        box-shadow: "0px 5px 10px 0px #0F4B8426";
+        margin-top: 4%;
+    }
+
+
+}
+
+.expandnavImg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 69px;
+    padding: 1px;
+    width: 87%;
+}

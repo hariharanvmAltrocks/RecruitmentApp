@@ -1,0 +1,159 @@
+/* General Popup Styles */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup-container {
+  background-color: white;
+  border-radius: 28px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  width: 35%;
+  /* Default width for desktop */
+  max-width: 600px;
+  /* Max width to prevent it from being too wide on large screens */
+  position: relative;
+  /* padding: 20px; */
+  box-sizing: border-box;
+}
+
+.popup-header {
+  display: block;
+  text-align: center;
+}
+
+.popup-title {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+}
+
+.popup-header h3 {
+  font-size: 24px;
+  color: #7b4e23;
+}
+
+.popup-close {
+  position: absolute;
+  top: -7px;
+  right: -6px;
+  background-color: #FF748D;
+  color: white;
+  border: none;
+  width: 20px;
+  height: 20px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.popup-close:hover {
+  background-color: #FF748D;
+}
+
+.popup-body {
+  margin-top: 20px;
+}
+
+.popup-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #f1f1f1;
+  color: #555;
+}
+
+.submit-btn {
+  background-color: #b87f4a;
+  color: white;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .popup-container {
+    width: 80%;
+    /* Take up more space on smaller screens */
+    max-width: 90%;
+    /* Ensure the popup doesn't exceed the screen size */
+    padding: 15px;
+  }
+
+  .popup-header h3 {
+    font-size: 20px;
+    /* Slightly smaller font size on smaller screens */
+  }
+
+  .popup-close {
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+    /* Larger close button on mobile */
+    top: -10px;
+    right: -10px;
+  }
+
+  .popup-footer {
+    flex-direction: column;
+    gap: 10px;
+    /* Stack buttons vertically on small screens */
+  }
+
+  .cancel-btn,
+  .submit-btn {
+    width: 100%;
+    /* Make buttons take full width on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-container {
+    width: 90%;
+    /* Take up more space on very small screens */
+  }
+
+  .popup-header h3 {
+    font-size: 18px;
+    /* Even smaller font for very small devices */
+  }
+
+  .popup-close {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    /* Adjust the close button size */
+    top: -12px;
+    right: -12px;
+  }
+
+  .popup-body {
+    margin-top: 15px;
+  }
+
+  .popup-footer {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
