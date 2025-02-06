@@ -130,11 +130,13 @@ const InterviewPanelEdit = (props: any) => {
     InterviewPanaldata[]
   >([
     {
+      ID: 0,
       CandidateID: 0,
       RecruitmentID: 0,
       InterviewLevel: "",
       InterviewPanel: 0,
       InterviewPanalNames: [],
+      //InterviewPanelTitle: "",
     },
   ]);
 
@@ -367,7 +369,7 @@ const InterviewPanelEdit = (props: any) => {
 
       const groupedByLevel: Record<string, any[]> = {};
       userPanels.forEach((panel) => {
-        const level = panel.InterviewLevel || "Level 1";
+        const level = panel.InterviewLevel;
         if (!groupedByLevel[level]) {
           groupedByLevel[level] = [];
         }
@@ -724,7 +726,7 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
-                {/* <div className="ms-Grid-col ms-lg4">
+                <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Interviewed by"
                     value={CandidateData.DOB}
@@ -737,7 +739,7 @@ const InterviewPanelEdit = (props: any) => {
                       }))
                     }
                   />
-                </div> */}
+                </div>
               </div>
               {/* </div> */}
               <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
@@ -965,6 +967,8 @@ const InterviewPanelEdit = (props: any) => {
       ),
     },
   ];
+
+  //6/2/2025 --10.52
   React.useEffect(() => {
     const activeTabObj = tabs.find((item) => item.value === activeTab);
     //const prevTabObj = tabs.find((item) => item.value === prevActiveTab);
@@ -1015,6 +1019,75 @@ const InterviewPanelEdit = (props: any) => {
 
     void fetchData();
   }, [props.stateValue?.ID]);
+
+  //12.17
+  //   React.useEffect(() => {
+  //     const activeTabObj = tabs.find((item) => item.value === activeTab);
+  //     if (activeTab === "tab1") {
+  //       setTabNameData((prevTabNames) => {
+  //         const newTabNames = [
+  //           { tabName: props.stateValue?.TabName },
+  //           { tabName: props.stateValue?.ButtonAction },
+  //           { tabName: activeTabObj?.label },
+  //         ];
+  //         return newTabNames;
+  //       });
+  //     }
+
+  //     const fetchData = async () => {
+  //       try {
+  //         await fetchCandidateData(props.stateValue?.ID);
+
+  //         // Fetch interview panel details
+  //         const InterviewPanelDetails = await CommonServices.GetMasterData(
+  //           ListNames.HRMSInterviewPanelDetails
+  //         );
+
+  //         // ✅ Fetch the correct list containing panel members (IDs and Names)
+  //         const panelMembersResponse = await CommonServices.GetMasterData(
+  //           ListNames.HRMSInterviewPanelDetails // Make sure this is the correct list name
+  //         );
+
+  //         if (
+  //           InterviewPanelDetails.data &&
+  //           InterviewPanelDetails.data.length > 0 &&
+  //           panelMembersResponse.data
+  //         ) {
+  //           // ✅ Create a mapping of ID -> Name from panel members
+  //           const panelNamesMap: Record<number, string> = {};
+  //           panelMembersResponse.data.forEach((member: any) => {
+  //             panelNamesMap[member.ID] = member.Title; // Assuming 'Title' contains the name
+  //           });
+
+  //           // ✅ Map interview panel details and replace IDs with Names
+  //           const formattedData: InterviewPanaldata[] =
+  //             InterviewPanelDetails.data.map((item: any) => {
+  //               return {
+  //                 ID: item.ID,
+  //                 CandidateID: item.CandidateIDId,
+  //                 RecruitmentID: item.RecruitmentIDId,
+  //                 InterviewLevel: item.InterviewLevel,
+  //                 InterviewPanel: item.InterviewPanelId, // Keeps the ID array
+  //                 InterviewPanalNames: (Array.isArray(item.InterviewPanelId)
+  //                   ? item.InterviewPanelId
+  //                   : []
+  //                 ).map((id: number) => panelNamesMap[id] || `Unknown (${id})`), // Replace ID with Name
+  //               };
+  //             });
+  //           console.log(InterviewPanelData, "InterviewPanelData");
+  //           console.log(formattedData, "Formatted Interview Panel Details");
+
+  //           setInterviewPanelData(formattedData);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching data:", error);
+  //       }
+  //     };
+
+  //     void fetchData();
+  //   }, [props.stateValue?.ID]); // Runs when stateValue.ID changes
+
+  //6/2/2025 --10.52
 
   const handleCancel = () => {
     setIsLoading(true);

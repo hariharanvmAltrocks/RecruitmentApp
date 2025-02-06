@@ -19,9 +19,11 @@ export type Item = {
 };
 
 export type InterviewPanaldata = {
+  ID: number;
   CandidateID: number;
   RecruitmentID: number;
   InterviewLevel: string;
   InterviewPanel: number;
   InterviewPanalNames: string[];
+  //InterviewPanelTitle: string;
 };
