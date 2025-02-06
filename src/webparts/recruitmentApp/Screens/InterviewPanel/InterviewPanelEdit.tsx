@@ -49,7 +49,6 @@ type ValidationError = {
 };
 
 const InterviewPanelEdit = (props: any) => {
-  console.log(props, "ReviewProfile");
   const todaydate = new Date();
 
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
@@ -157,7 +156,6 @@ const InterviewPanelEdit = (props: any) => {
       );
 
       if (data.status === 200 && data.data !== null) {
-        console.log(data.data, "GetVacancyDetails");
         const op = data.data[0];
 
         const response = await CommonServices.GetAttachmentToLibrary(
@@ -346,10 +344,7 @@ const InterviewPanelEdit = (props: any) => {
       });
 
       if (matchingPanels.length === 0) {
-        console.log(
-          "No matching Interview Panels found for Candidate ID:",
-          props.stateValue?.ID
-        );
+
         return;
       }
 
@@ -1007,7 +1002,6 @@ const InterviewPanelEdit = (props: any) => {
               };
             });
 
-          console.log(formattedData, "Formatted Interview Panel Details");
           console.log(InterviewPanelData, "InterviewPanelData");
 
           setInterviewPanelData(formattedData);

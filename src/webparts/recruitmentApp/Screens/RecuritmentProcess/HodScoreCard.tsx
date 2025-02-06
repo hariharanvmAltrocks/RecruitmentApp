@@ -65,7 +65,6 @@ const scoreData = [
 ];
 
 const HodScoreCard = (props: any) => {
-  console.log("Props", props);
   const [tabValue, setTabValue] = React.useState("1");
   const [isAgreed, setIsAgreed] = React.useState(false);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
@@ -73,7 +72,6 @@ const HodScoreCard = (props: any) => {
   const [isError] = React.useState(false);
 
   const handleCancel = () => {
-    console.log("Cancel clicked");
     // Add your cancel logic here
   };
 
