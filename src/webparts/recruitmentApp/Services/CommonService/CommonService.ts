@@ -88,6 +88,7 @@ export default class CommonService implements ICommonService {
         PassportID?: string
     ): Promise<ApiResponse<IDocFiles[]>> => {
         try {
+            debugger;
             let response;
             if (PassportID) {
                 response = (await SPServices.getDocLibFiles({
@@ -128,7 +129,7 @@ export default class CommonService implements ICommonService {
 
             const members = response.value || [];
             const userDetailsPromises = members.map((item: { mail: string }) => {
-                return this.getUserGuidByEmail(item.mail);
+                return getUserGuidByEmail(item.mail);
             });
             const userDetails = await Promise.all(userDetailsPromises);
             const validUserDetails = userDetails.filter(user => user !== null);
@@ -230,6 +231,20 @@ export default class CommonService implements ICommonService {
             console.error("Error HRMSGradeMaster:", error);
             throw error;
         }
+    }
+}
+
+async function getUserGuidByEmail(email: string) {
+    try {
+        const user = await sp.web.siteUsers.getByEmail(email)();
+        console.log(user, "user");
+        return {
+            key: user.Id,
+            text: user.Title
+        };
+    } catch (error) {
+        console.error("Error fetching user ID by email: ", error);
+        return null;
     }
 }
 

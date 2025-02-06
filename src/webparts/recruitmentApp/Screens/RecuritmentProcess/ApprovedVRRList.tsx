@@ -35,7 +35,7 @@ import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { alertPropsData } from "../../Models/Screens";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import axios from "axios";
-import { ApiUrl } from "../../Services/AxiosService/axiosConfig";
+// import { ApiUrl } from "../../Services/AxiosService/axiosConfig";
 // import 'primeicons/primeicons.css';
 // interface ColumnConfig {
 //     field: string;
@@ -49,6 +49,7 @@ const RecruitmentProcess = (props: any) => {
 
     const [data, setData] = React.useState<any[]>([]);
     const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
+    // const [RecruitmentDetail, setRecruitmentDetail] = React.useState<any[]>([]);
     const [rows, setRows] = React.useState<number>(5);
     const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -116,6 +117,122 @@ const RecruitmentProcess = (props: any) => {
         }
     );
 
+    const columnConfigs = (
+        tab: string,
+        ButtonAction: string,
+        TabName: string
+    ) => [
+            {
+                field: "Checkbox",
+                header: "",
+                sortable: false,
+            },
+            {
+                field: "JobCode",
+                header: "Job Code",
+                sortable: true,
+            },
+            {
+                field: "JobTitleEnglish",
+                header: "JobTitle English",
+                sortable: true,
+            },
+            {
+                field: "BusinessUnitCode",
+                header: "BusinessUnit Code",
+                sortable: true,
+            },
+            {
+                field: "Status",
+                header: "Status",
+                fieldName: "Status",
+                sortable: false,
+                body: (rowData: any) => {
+                    return (
+                        <span
+                            style={{
+                                backgroundColor:
+                                    rowData.Status.includes("Pending") === true
+                                        ? GridStatusBackgroundcolor.Pending
+                                        : rowData.Status.includes("Completed") === true
+                                            ? GridStatusBackgroundcolor.CompletedOrApproved
+                                            : rowData.Status.includes("Rejected") === true
+                                                ? GridStatusBackgroundcolor.Rejected
+                                                : rowData.Status.includes("Reverted") === true
+                                                    ? GridStatusBackgroundcolor.Reverted
+                                                    : rowData.Status.includes("Resubmitted") === true
+                                                        ? GridStatusBackgroundcolor.ReSubmitted
+                                                        : rowData.Status.includes("Draft") === true
+                                                            ? GridStatusBackgroundcolor.Draft
+                                                            : "",
+                                borderRadius: "5px",
+                            }}
+                        >
+                            {rowData.Status}
+                        </span>
+                    );
+                },
+            },
+            {
+                field: "Action",
+                header: "Action",
+                sortable: false,
+                body: (rowData: any) => {
+                    return (
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "5px",
+                            }}
+                        >
+                            {ButtonAction === "view" ? (
+                                <>
+                                    <Button
+                                        onClick={() =>
+                                            handleRedirectView(rowData, tab, TabName, ButtonAction)
+                                        }
+                                        className="table_btn"
+                                        icon="pi pi-eye"
+                                        style={{
+                                            width: "30px",
+                                            marginRight: "7px",
+                                            padding: "3px",
+                                        }}
+                                    ></Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Button
+                                        onClick={() =>
+                                            handleRedirectView(rowData, tab, TabName, ButtonAction)
+                                        }
+                                        className="table_btn"
+                                        // icon="pi pi-eye"
+                                        style={{
+                                            width: "30px",
+                                            marginRight: "7px",
+                                            padding: "3px",
+                                        }}
+                                    >
+                                        <img
+                                            src={require("../../assets/edit_icon.png")}
+                                            alt="Stamp Icon"
+                                            style={{
+                                                width: "100%",
+                                                height: "100%",
+                                            }}
+                                        />
+                                    </Button>
+                                </>
+                            )}
+                        </div>
+                    );
+                },
+            },
+        ];
     const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
         {
             field: "Checkbox",
@@ -230,7 +347,7 @@ const RecruitmentProcess = (props: any) => {
         },
     ];
 
-    function handleRedirectView(
+    async function handleRedirectView(
         rowData: any,
         tab: string,
         TabName: string,
@@ -343,6 +460,18 @@ const RecruitmentProcess = (props: any) => {
                                 ButtonAction,
                             },
                         });
+                    } else if (tab === "tab2") {
+                        props.navigation("/RecurimentProcess/HodScoreCard/CandidateList", {
+                            state: {
+                                ID: rowData?.ID,
+                                tab,
+                                StatusId: rowData?.StatusId,
+                                Status: rowData?.Status,
+                                TabName: TabName,
+                                ButtonAction,
+                                JobCode: rowData?.JobCode,
+                            },
+                        });
                     }
                 }
                 break;
@@ -446,16 +575,27 @@ const RecruitmentProcess = (props: any) => {
                         break;
                     }
                     case RoleID.HOD: {
-                        filterConditionsRecuritment.push({
-                            FilterKey: "StatusId",
-                            Operator: "eq",
-                            FilterValue: StatusId.PendingwithHODtoreviewAdv,
-                        });
+                        if (activeTab === "tab1") {
+                            filterConditionsRecuritment.push({
+                                FilterKey: "StatusId",
+                                Operator: "eq",
+                                FilterValue: StatusId.PendingwithHODtoreviewAdv,
+                            });
+                        } else if (activeTab === "tab2") {
+                            filterConditionsRecuritment.push({
+                                FilterKey: "StatusId",
+                                Operator: "eq",
+                                FilterValue: StatusId.PendingwithRecruitmentHRtouploadAdv,
+                            });
+                        }
                         break;
                     }
                 }
             }
-
+            // const recruitmentDetails = getVRRDetails.GetRecruitmentDetails(
+            //   filterConditionsRecuritment,
+            //   RecuritmentConditions
+            // );
             const recruitmentDetailsPromise = getVRRDetails.GetRecruitmentDetails(
                 filterConditionsRecuritment,
                 RecuritmentConditions
@@ -555,22 +695,25 @@ const RecruitmentProcess = (props: any) => {
         };
 
         void fetchDataAndGetADGroupsOption();
-    }, [activeTab]);
+    }, [AssignHR]);
 
     React.useEffect(() => {
         const fetchDataAndApply = async () => {
             void fetchData();
-            await axios.post(ApiUrl +
-                `/InternalSignIn`, {}, { headers: { "Authorization": "Basic SHJtcyBBcHAgVXNlcjpBbHRyb2Nrc0AxMjM=", "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Credentials": true }, withCredentials: true, })
-                .then((response) => {
-                    console.log(response);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
+            axios.post('https://hrmscp.dev.altrocks.net/hrms/InternalSignIn', {}, {
+                headers: {
+                    "Authorization": "Basic SHJtcyBBcHAgVXNlcjpBbHRyb2Nrc0AxMjM=",
+                    "Content-Type": "application/json"
+                },
+                // httpsAgent: agent,
+                withCredentials: true
+            })
+                .then(response => console.log(response))
+                .catch(error => console.error('Error:', error));
         };
         void fetchDataAndApply();
     }, [activeTab])
+
 
     const onPageChange = (event: any, Type: string) => {
         setFirst(event.first);
@@ -761,7 +904,7 @@ const RecruitmentProcess = (props: any) => {
                             TypeOfContract: correspondingJob.TypeOfContract,
                             DateRequried: correspondingJob.DateRequired,
                             StatusId: correspondingJob.StatusId,
-                            ActionId: correspondingJob.ActionId,
+                            ActionId: WorkflowAction.Approved,
                             JobCodeId: correspondingJob.JobCodeId,
                             ReasonForVacancy: correspondingJob.ReasonForVacancy,
                             AreaofWork: correspondingJob.AreaOfWork,
@@ -1265,48 +1408,19 @@ const RecruitmentProcess = (props: any) => {
                                                     ? "Assign Agencies"
                                                     : "Assign HR"
                                             }
-                                            MasterData={props || {}}
+                                            MasterData={props}
                                         //checkedValue={}
                                         />
                                     </CardContent>
                                 </Card>
                             ),
                         },
-                        {
-                            label: TabName.MySubmission, //"My submission",
-                            value: "tab4",
-                            content: (
-                                <Card
-                                    variant="outlined"
-                                    sx={{
-                                        boxShadow: "0px 2px 4px 3px #d3d3d3",
-                                        marginTop: "2%",
-                                    }}
-                                >
-                                    <CardContent>
-                                        <SearchableDataTable
-                                            data={RecruitmentDetails}
-                                            columns={columnConfig(
-                                                "tab4",
-                                                "view",
-                                                TabName.MySubmission
-                                            )}
-                                            rows={rows}
-                                            onPageChange={(event) => onPageChange(event, "VRR")}
-                                            handleRefresh={() => handleRefresh("tab4")}
-                                            MasterData={props}
-                                        />
-                                    </CardContent>
-                                </Card>
-                            ),
-                        },
-
                     ]
                     : [
                         ...(props.CurrentRoleID === RoleID.HOD
                             ? [
                                 {
-                                    label: TabName.ReviewONEMAdvertisement, // "Pending Approval",
+                                    label: TabName.ReviewONEMAdvertisement,
                                     value: "tab1",
                                     content: (
                                         <Card
@@ -1335,12 +1449,42 @@ const RecruitmentProcess = (props: any) => {
                                         </Card>
                                     ),
                                 },
+                                {
+                                    label: TabName.ScorecardDetails,
+                                    value: "tab2",
+                                    content: (
+                                        <Card
+                                            variant="outlined"
+                                            sx={{
+                                                boxShadow: "0px 2px 4px 3px #d3d3d3",
+                                                marginTop: "2%",
+                                            }}
+                                        >
+                                            <CardContent>
+                                                <SearchableDataTable
+                                                    data={RecruitmentDetails}
+                                                    columns={columnConfigs(
+                                                        "tab2",
+                                                        "view",
+                                                        TabName.ScorecardDetails
+                                                    )}
+                                                    rows={rows}
+                                                    onPageChange={(event) =>
+                                                        onPageChange(event, "VRR")
+                                                    }
+                                                    handleRefresh={() => handleRefresh("tab2")}
+                                                    MasterData={props}
+                                                />
+                                            </CardContent>
+                                        </Card>
+                                    ),
+                                },
                             ]
                             : [
                                 ...(props.CurrentRoleID === RoleID.LineManager
                                     ? [
                                         {
-                                            label: TabName.ReviewProfile, //"Review Profiles",
+                                            label: TabName.ReviewProfile,
                                             value: "tab1",
                                             content: (
                                                 <Card

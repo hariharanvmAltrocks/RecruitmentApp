@@ -764,6 +764,8 @@ export default class RecruitmentService implements IRecruitmentService {
           RecuritmentHR: item?.RecuritmentHR,
           AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
           CandidateCVDoc: candidateCV,
+          PositionTitle: item.PositionTitle,
+          JobGrade: item.JobGrade,
           RoleProfileDocument: [],
           AdvertisementDocument: [],
           ShortlistedValue: ""
@@ -925,7 +927,51 @@ export default class RecruitmentService implements IRecruitmentService {
       };
     }
   }
-  //fathima
+  async GetHRMSRecruitmentRoleProfileDetails(
+    filterParam: any[],
+    filterConditions: any
+  ): Promise<ApiResponse<any | null>> {
+    try {
+      const listItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentRoleProfileDetails,
+        Select:
+          "RecruitmentID/ID,JobDescription,RoleProfile,RoleSpecificKnowledgeJson,TechnicalSkillsKnowledgeJson,YearofExperience,Qualification,PreferredQualification,PreferredExperience",
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Expand: "RecruitmentID",
+        Orderby: "ID",
+        Orderbydecorasc: false,
+      });
+      const formattedItems = listItems.map((item) => ({
+        RecruitmentID: item?.RecruitmentID?.ID || "",
+        JobDescription: item.JobDescription || "",
+        RoleProfile: item.RoleProfile || "",
+        RoleSpecificKnowledgeJson: item.RoleSpecificKnowledgeJson || "",
+        TechnicalSkillsKnowledgeJson: item.TechnicalSkillsKnowledgeJson || "",
+        YearofExperience: item.YearofExperience || 0,
+        Qualification: item.Qualification || "",
+        PreferredQualification: item.PreferredQualification || "",
+        PreferredExperience: item.PreferredExperience || 0,
+      }));
+      return {
+        data: formattedItems,
+        status: 200,
+        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message:
+          "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+      };
+    }
+  }
+
   async InsertExternalAgencyDetails(
     selectedAgencies: { key: number; text: string }[],
     RecruitmentId: number

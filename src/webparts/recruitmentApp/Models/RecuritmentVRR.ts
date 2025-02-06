@@ -83,6 +83,8 @@ export type AdvDetails = {
   addMasterQualification: string;
   TotalExperience: string;
   ExperienceinMiningIndustry: string;
+  YearofExperience: any;
+  PreferredExperience: any;
 };
 
 export type CandidateData = {
@@ -145,6 +147,9 @@ export type ScoreCardData = {
   EvaluationFeedback: string;
   OverAllEvaluationFeedback: string;
   SignDate?: Date | any;
+  AdvertisementDocument: any[];
+  RoleProfileDocument: any[];
+  PositionTitle?: string;
 };
 
 export type QualificationValue = {

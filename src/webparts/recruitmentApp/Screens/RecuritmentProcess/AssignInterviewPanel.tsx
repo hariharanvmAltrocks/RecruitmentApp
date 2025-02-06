@@ -332,7 +332,10 @@ const AssignInterviewPanel = (props: any) => {
                             handleCheckbox={handleCheckbox}
                             selectAll={selectAll}
                             onSelectAllChange={onSelectAllChange}
-                            MasterData={props || {}} />
+                            MasterData={props || {}}
+                            handleRefresh={function (): void {
+                                throw new Error("Function not implemented.");
+                            }} />
                     </CardContent>
                 </Card>
             ),

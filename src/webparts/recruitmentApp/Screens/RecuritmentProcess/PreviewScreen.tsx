@@ -13,6 +13,7 @@ interface FormFields {
     TechinicalSkills: TechnicalSkills[];
     onclose: () => void
     Ok_btnfn: () => void
+    JobTitle: string
 }
 
 
@@ -22,7 +23,8 @@ function PreviewScreen({
     Ok_btnfn,
     RoleSpec,
     Qualification,
-    TechinicalSkills
+    TechinicalSkills,
+    JobTitle
 }: FormFields) {
 
     return (
@@ -38,7 +40,7 @@ function PreviewScreen({
                                 </div>
                             </div>
                             <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                                <CustomLabel value={`JobTitle - ${""}`} style={{ fontSize: "17px", fontWeight: "bold" }} />
+                                <CustomLabel value={`JobTitle - ${JobTitle}`} style={{ fontSize: "17px", fontWeight: "bold" }} />
                             </div>
                             {data.RolePurpose && (
                                 <div className="ms-Grid-row">
@@ -76,9 +78,10 @@ function PreviewScreen({
                                         style={{ marginTop: "20px" }}
                                     >
                                         <p style={{ fontSize: "17px" }}>
-                                            Total Experience:{" "} - {data.TotalExperience}
+                                            Total Experience:{" "}  {data.TotalExperience}
                                             <span>
-                                                Experience in Mining Industry (Years) :{" "}   -  {data.ExperienceinMiningIndustry}
+                                                {" "}
+                                                Experience in Mining Industry (Years) :{" "}    {data.ExperienceinMiningIndustry}
                                             </span>
                                         </p>
                                     </div>

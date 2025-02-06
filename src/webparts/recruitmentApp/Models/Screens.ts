@@ -23,4 +23,5 @@ export type InterviewPanaldata = {
   RecruitmentID: number;
   InterviewLevel: string;
   InterviewPanel: number;
+  InterviewPanalNames: string[];
 };
