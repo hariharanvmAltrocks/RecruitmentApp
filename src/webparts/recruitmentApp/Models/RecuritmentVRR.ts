@@ -107,8 +107,10 @@ export type CandidateData = {
   ReleventExperience: string;
   Qualification: string;
   CandidateCVDoc: any[];
-  //RoleProfileDocument: any[];
-  //AdvertisementDocument: any[];
+  RoleProfileDocument: any[];
+  AdvertisementDocument: any[];
+  ShortlistedValue: string;
+  // LevelofInterviewed: string;
 };
 
 export type ScoreCardData = {

@@ -134,7 +134,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     AdvertismentDocPromises = AdvertismentDocment.data;
                     ONAMSignedStampDoc = OnamSignedStampsDocment.data;
                     GradingDoc = GradingDocument.data;
-                    console.log(RoleProfileDoc, "candidateCV");
                 } else {
                     console.error("Error retrieving attachments:", response.message);
                 }
@@ -186,7 +185,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
                         PatersonGradeID: op.PayrollGradeId,
                         DRCGradeID: op.DRCGradeId,
                     }));
-                    console.log("updatedPositions", updatedPositions);
                     setData((prevState) => ({
                         ...prevState,
                         PositionDetails: updatedPositions,
@@ -232,7 +230,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
         const CommentsList =
             await getVRRDetails.GetCommentsData(props.EmployeeList, Conditions, filterConditions)
         if (CommentsList.status === 200) {
-            console.log(CommentsList.data);
             setCommentsData(CommentsList.data)
         }
     }

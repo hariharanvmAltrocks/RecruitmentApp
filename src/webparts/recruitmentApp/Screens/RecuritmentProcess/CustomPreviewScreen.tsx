@@ -12,7 +12,6 @@ interface FormFields {
 }
 
 function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
-  console.log("Received data in PreviewScreen:", data);
 
   return (
     <>
