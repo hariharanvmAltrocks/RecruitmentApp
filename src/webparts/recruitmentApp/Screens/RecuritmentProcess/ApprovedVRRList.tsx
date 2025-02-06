@@ -45,13 +45,13 @@ import axios from "axios";
 // }
 
 const RecruitmentProcess = (props: any) => {
-    console.log(props, "ApprovedVRR");
+    // console.log(props, "ApprovedVRR");
 
     const [data, setData] = React.useState<any[]>([]);
     const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
     // const [RecruitmentDetail, setRecruitmentDetail] = React.useState<any[]>([]);
     const [rows, setRows] = React.useState<number>(5);
-    const [first, setFirst] = React.useState<number>(0);
+    // const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [activeTab, setActiveTab] = React.useState<string>("tab1");
     const [AssignHR, setAssignHR] = React.useState<boolean>(false);
@@ -353,7 +353,6 @@ const RecruitmentProcess = (props: any) => {
         TabName: string,
         ButtonAction: string
     ) {
-        console.log(rowData, "rowData");
         switch (props.CurrentRoleID) {
             case RoleID.RecruitmentHRLead:
                 {
@@ -506,8 +505,6 @@ const RecruitmentProcess = (props: any) => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            console.log(activeTab, "activeTabactiveTab");
-
             let filterConditions = [];
             let Conditions = "";
             filterConditions.push({
@@ -607,7 +604,6 @@ const RecruitmentProcess = (props: any) => {
             ]);
 
             if (data.status === 200 && data.data !== null) {
-                console.log(data, "GetVacancyDetails");
                 setData(data.data[0]);
                 const JobCode = data.data[0].map(
                     (item: { JobCode: any; VRRID: number }) => ({
@@ -648,7 +644,6 @@ const RecruitmentProcess = (props: any) => {
                 RecruitmentDetails.status === 200 &&
                 RecruitmentDetails.data !== null
             ) {
-                console.log(RecruitmentDetails, "GetVacancyDetails");
                 setRecruitmentDetails(RecruitmentDetails.data);
             }
         } catch (error) {
@@ -716,7 +711,7 @@ const RecruitmentProcess = (props: any) => {
 
 
     const onPageChange = (event: any, Type: string) => {
-        setFirst(event.first);
+        // setFirst(event.first);
         setRows(event.rows);
     };
 
@@ -970,17 +965,14 @@ const RecruitmentProcess = (props: any) => {
                                     Comments: Comments,
                                 };
 
-                                const InsertCommentsData =
-                                    await getVRRDetails.InsertCommentsList(commentsData);
-                                console.log(InsertCommentsData);
+                                await getVRRDetails.InsertCommentsList(commentsData);
 
-                                const UpdateVRRDetails = await SPServices.SPUpdateItem({
+                                await SPServices.SPUpdateItem({
                                     Listname: ListNames.HRMSVacancyReplacementRequest,
                                     RequestJSON: { ActionId: WorkflowAction.Approved },
                                     ID: selectedJob.VRRId,
                                 });
 
-                                console.log(UpdateVRRDetails);
                             } else {
                             }
                         }
@@ -1067,13 +1059,12 @@ const RecruitmentProcess = (props: any) => {
                         }
 
                         try {
-                            const UpdateVRRDetails = await SPServices.SPUpdateItem({
+                            await SPServices.SPUpdateItem({
                                 Listname: ListNames.HRMSRecruitmentDptDetails,
                                 RequestJSON: { ActionId: WorkflowAction.Approved },
                                 ID: recruitmentID,
                             });
 
-                            console.log(UpdateVRRDetails);
                         } catch (updateError) {
                             console.error(updateError);
                         }
@@ -1086,9 +1077,7 @@ const RecruitmentProcess = (props: any) => {
                                     Comments: comment,
                                 };
 
-                                const InsertCommentsData =
-                                    await getVRRDetails.InsertCommentsList(commentsData);
-                                console.log(InsertCommentsData);
+                                await getVRRDetails.InsertCommentsList(commentsData);
                             }
                         } else {
                             const commentsData: InsertComments = {
@@ -1097,10 +1086,9 @@ const RecruitmentProcess = (props: any) => {
                                 Comments: Comments,
                             };
 
-                            const InsertCommentsData = await getVRRDetails.InsertCommentsList(
+                            await getVRRDetails.InsertCommentsList(
                                 commentsData
                             );
-                            console.log(InsertCommentsData);
                         }
                     } else {
                         console.log(
@@ -1222,13 +1210,12 @@ const RecruitmentProcess = (props: any) => {
                 };
 
                 try {
-                    const updateResponse = await SPServices.SPUpdateItem({
+                    await SPServices.SPUpdateItem({
                         Listname: ListNames.HRMSVacancyReplacementRequest,
                         RequestJSON: obj,
                         ID: job.VRRId,
                     });
 
-                    console.log(updateResponse);
                 } catch (error) {
                     console.error(error);
                 }
@@ -1256,7 +1243,6 @@ const RecruitmentProcess = (props: any) => {
                             sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
                         >
                             <CardContent>
-                                {console.log(props, "propsDept")}
                                 {/* <SearchableDataTable
                                 data={data}
                                 columns={columnConfig("tab1", "view", TabName.AssignRecuritmentHR,)}
@@ -1524,7 +1510,6 @@ const RecruitmentProcess = (props: any) => {
 
     const handleTabChange = (newTab: string) => {
         setActiveTab(newTab);
-        console.log("Active Tab:", newTab);
     };
 
     return (
@@ -1538,7 +1523,6 @@ const RecruitmentProcess = (props: any) => {
                             tabtype={tabType.Dashboard}
                             onTabChange={handleTabChange}
                         />
-                        {console.log(first, "first")}
                     </div>
                 </React.Fragment>
             </CustomLoader>

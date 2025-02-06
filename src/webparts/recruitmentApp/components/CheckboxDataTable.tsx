@@ -80,7 +80,6 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   };
 
   const search_fn = (field: string, item: AutoCompleteItem) => {
-    debugger;
     let filtered = data.filter(i => {
       if (field === "Department") return i.Department === item.text;
       if (field === "BusinessUnitCode") return i.BusinessUnitCode === item.text;

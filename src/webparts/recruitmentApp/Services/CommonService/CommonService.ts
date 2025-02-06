@@ -34,7 +34,6 @@ export default class CommonService implements ICommonService {
                         const fileUrl = `${positionFolderUrl}/${AttachFile.name}`;
                         try {
                             await sp.web.getFileByServerRelativeUrl(fileUrl).delete();
-                            console.log(`Existing file ${AttachFile.name} deleted.`);
                         } catch (deleteError) {
                             console.warn(`File ${AttachFile.name} not found. Uploading new file.`);
                         }
@@ -88,7 +87,6 @@ export default class CommonService implements ICommonService {
         PassportID?: string
     ): Promise<ApiResponse<IDocFiles[]>> => {
         try {
-            debugger;
             let response;
             if (PassportID) {
                 response = (await SPServices.getDocLibFiles({
@@ -133,7 +131,6 @@ export default class CommonService implements ICommonService {
             });
             const userDetails = await Promise.all(userDetailsPromises);
             const validUserDetails = userDetails.filter(user => user !== null);
-            console.log("validUserDetails", validUserDetails);
             return {
                 data: validUserDetails,
                 status: 200,
@@ -154,7 +151,6 @@ export default class CommonService implements ICommonService {
     ): Promise<ApiResponse<AutoCompleteItem | null>> => {
         try {
             const user = await sp.web.siteUsers.getByEmail(email)();
-            console.log(user, "user");
             const UserID = {
                 key: user.Id,
                 text: user.Title
@@ -237,7 +233,6 @@ export default class CommonService implements ICommonService {
 async function getUserGuidByEmail(email: string) {
     try {
         const user = await sp.web.siteUsers.getByEmail(email)();
-        console.log(user, "user");
         return {
             key: user.Id,
             text: user.Title

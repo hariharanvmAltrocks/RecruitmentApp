@@ -9,11 +9,10 @@ import { TabName } from "../../utilities/Config";
 import SearchableDataTable from "../../components/CustomDataTable";
 
 const InterviewPanelList = (props: any) => {
-  console.log(props, "ReviewProfile");
 
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
-  const [first, setFirst] = React.useState<number>(0);
+  // const [first, setFirst] = React.useState<number>(0);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   // const HRFileHandle = (serverUrl: string, fileName: string) => {
@@ -535,7 +534,7 @@ const InterviewPanelList = (props: any) => {
   }, []);
 
   const onPageChange = (event: any) => {
-    setFirst(event.first);
+    // setFirst(event.first);
     setRows(event.rows);
   };
 
@@ -574,8 +573,6 @@ const InterviewPanelList = (props: any) => {
         <div className="menu-card">
           <React.Fragment>
             <TabsComponent tabs={tabs} initialTab="tab1" tabClassName={"Tab"} />
-            {console.log(props.masterData, "masterDataDetails")}
-            {console.log(first, "first")}
           </React.Fragment>
         </div>
       </CustomLoader>

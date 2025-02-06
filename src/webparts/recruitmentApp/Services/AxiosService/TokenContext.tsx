@@ -10,7 +10,6 @@ const TokenContext = createContext<TokenContextType | undefined>(undefined);
 
 export const TokenProvider = ({ children }: { children: React.ReactNode }) => {
     const [token, setToken] = useState<string | null>(null);
-    console.log(token, "token");
 
     return (
         <TokenContext.Provider value={{ token, setToken }}>

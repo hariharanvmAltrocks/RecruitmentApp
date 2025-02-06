@@ -23,11 +23,10 @@ export type BreadcrumbTabData = {
     currectAction: string,
 }
 const ReviewCandidateList = (props: any) => {
-    console.log(props, "ReviewProfile");
 
     const [CandidateData, setCandidateData] = React.useState<any[]>([]);
     const [rows, setRows] = React.useState<number>(5);
-    const [first, setFirst] = React.useState<number>(0);
+    // const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
     // const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
@@ -110,7 +109,6 @@ const ReviewCandidateList = (props: any) => {
                     TabNamed: string,
                     ButtonAction: string
                 ): void {
-                    console.log(rowData);
                     setReviewProfile(true);
                     setCandidateID(rowData.ID);
                     let Breadcrumbs: BreadcrumbTabData = {
@@ -160,7 +158,6 @@ const ReviewCandidateList = (props: any) => {
     const fetchCandidateData = async (RecruitmentDetails: any) => {
         setIsLoading(true);
         try {
-            console.log(RecruitmentDetails, "RecruitmentDetails");
 
             const filterConditions = [];
             let Conditions = "";
@@ -182,7 +179,6 @@ const ReviewCandidateList = (props: any) => {
                     Conditions
                 );
                 if (data.status === 200 && data.data !== null) {
-                    console.log(data.data, "GetVacancyDetails");
                     setCandidateData(data.data);
                 }
             } else {
@@ -196,7 +192,6 @@ const ReviewCandidateList = (props: any) => {
                     Conditions
                 );
                 if (data.status === 200 && data.data !== null) {
-                    console.log(data.data, "GetVacancyDetails");
                     setCandidateData(data.data);
                 }
             }
@@ -218,9 +213,7 @@ const ReviewCandidateList = (props: any) => {
             filterConditions,
             Conditions
         );
-        console.log("RecruitmentDetails", RecruitmentDetails);
         if (RecruitmentDetails.status === 200 && RecruitmentDetails.data !== null) {
-            console.log(RecruitmentDetails, "GetVacancyDetails");
             setRecruitmentDetails(RecruitmentDetails.data);
             await fetchCandidateData(RecruitmentDetails.data);
         }
@@ -235,7 +228,7 @@ const ReviewCandidateList = (props: any) => {
     }, []);
 
     const onPageChange = (event: any) => {
-        setFirst(event.first);
+        // setFirst(event.first);
         setRows(event.rows);
     };
 
@@ -305,7 +298,6 @@ const ReviewCandidateList = (props: any) => {
 
     const handleBreadcrumbChange = (newItem: string) => {
         setactiveTab(newItem)
-        console.log("Breadcrumb changed to:", newItem);
     };
 
     React.useEffect(() => {
@@ -369,8 +361,6 @@ const ReviewCandidateList = (props: any) => {
                                     TabName={TabNameData}
                                     onBreadcrumbChange={handleBreadcrumbChange}
                                 />
-                                {console.log(props.masterData, "masterDataDetails")}
-                                {console.log(first, "first")}
                             </React.Fragment>
                         </div>
                     </CustomLoader>

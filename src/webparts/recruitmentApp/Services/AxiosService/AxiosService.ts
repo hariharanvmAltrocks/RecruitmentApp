@@ -10,9 +10,6 @@ const AxiosInstance = axios.create({
 AxiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
-    console.log("error", error);
-    debugger;
-
     if (error.response) {
       const { status } = error.response;
       // const { setToken } = useToken();
@@ -26,11 +23,8 @@ AxiosInstance.interceptors.response.use(
             `/InternalSignIn`,
             { headers: { ...AuthorizationHeader } }
           ).then((response) => {
-            console.log(response);
-            console.log(response.data.token, "Token");
             localStorage.setItem('access_token', response.data.token)
             // setToken(response.data.token);
-            console.log("New token:", response.data.token);
           })
             .catch((error) => {
               console.error('Error:', error);
@@ -53,7 +47,6 @@ AxiosInstance.interceptors.response.use(
 
 AxiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    debugger;
     // const { token, setToken } = useToken();
     const token = localStorage.getItem('access_token')
     if (token) {

@@ -112,7 +112,6 @@ const ViewCandidateDetails: React.FC<Props> = ({
 
       if (response.status === 200 && response.data !== null) {
         const op = response.data[0];
-        console.log(op, "opopopopop");
 
         const [
           RoleProfileDocment,
@@ -189,11 +188,9 @@ const ViewCandidateDetails: React.FC<Props> = ({
         filterConditions,
         Conditions
       );
-      console.log(response,);
       const Gradelevel = await CommonServices.GetGradeLevel(
         response.data[0]?.PayrollGrade
       );
-      console.log(Gradelevel, "Gradelevel");
       const interviewpanelOption = await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSInterviewPanel);
 
       setInterviewedLevel((prevState) => ({
@@ -202,8 +199,6 @@ const ViewCandidateDetails: React.FC<Props> = ({
         AssignInterviewedLevel1Option: interviewpanelOption.data,
         AssignInterviewedLevel2: interviewpanelOption.data
       }));
-      console.log();
-
 
     }
     // if( TabNames.TabName === TabName.AssignInterviewPanel){
@@ -467,7 +462,6 @@ const ViewCandidateDetails: React.FC<Props> = ({
   ];
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem)
-    console.log("Breadcrumb changed to:", newItem);
   };
 
   return (

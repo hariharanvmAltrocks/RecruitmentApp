@@ -41,8 +41,6 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
     MasterData,
     handleAssignBtn,
 }) => {
-    console.log(MasterData, "MasterData");
-
     const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
     // const [first, setFirst] = React.useState<number>(0);
     // const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -67,7 +65,6 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
     };
 
     const search_fn = (field: string, item: AutoCompleteItem) => {
-        debugger;
         let filtered = data.filter(i => {
             if (field === "Department") return i.Department === item.text;
             if (field === "BusinessUnitCode") return i.BusinessUnitCode === item.text;

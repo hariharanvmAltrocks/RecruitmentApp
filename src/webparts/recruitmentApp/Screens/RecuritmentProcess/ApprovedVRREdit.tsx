@@ -84,7 +84,7 @@ type formValidation = {
 };
 
 const ApprovedVRREdit: React.FC = (props: any) => {
-    console.log(props, "propsApprovedVRREdit");
+    // console.log(props, "propsApprovedVRREdit");
 
     const todaydate = new Date();
     const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
@@ -470,7 +470,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 DRCGradeID: op.DRCGradeId,
                             })
                         );
-                        console.log(updatedPositions, "updatedPositions");
 
                         setFormState((prevState) => ({
                             ...prevState,
@@ -636,7 +635,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 };
                 console.log(Table1, "Table1");
 
-                console.log(Table1, "Table1")
                 const obj: any = {
                     ActionId: WorkflowAction.Approved,
                 }
@@ -646,10 +644,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         RecruitmentIDId: props.stateValue?.ID,
                         Comments: formState.Comments,
                     }
-                    console.log(commentsData, "commentsData");
 
-                    const InsertCommentsData = await getVRRDetails.InsertCommentsList(commentsData);
-                    console.log(InsertCommentsData, "InsertCommentsData");
+                    await getVRRDetails.InsertCommentsList(commentsData);
                 }
 
                 switch (props.CurrentRoleID) {
@@ -910,15 +906,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 ? JSON.parse(rawData.RoleSpecificKnowledgeJson)
                                 : [];
 
-                            console.log("roleSpecificKnowledge", roleSpecificKnowledge);
                             const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
                                 (item: any) => item.RoleSpeKnowledge
                             );
-                            console.log("RoleSpeKnowledgeValues1", RoleSpeKnowledgeValues);
                             const RequiredLevelValues = roleSpecificKnowledge.map(
                                 (item: any) => item.RequiredLevel
                             );
-                            console.log("RequiredLevelValues2", RequiredLevelValues);
                             const mappedData: AdvDetails = {
                                 RolePurpose: rawData.RoleProfile || "",
                                 JobDescription: rawData.JobDescription || "",
@@ -958,7 +951,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             };
 
                             setAdvDetails(mappedData);
-                            console.log("Updated AdvDetails State:", mappedData);
                         } else {
                             console.warn("No data found for the given filter");
                         }
@@ -1015,7 +1007,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             filterConditions
         );
         if (CommentsList.status === 200) {
-            console.log(CommentsList.data);
             setCommentsData(CommentsList.data);
         }
     };
@@ -2038,7 +2029,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                     onClick={async () => {
                                                         setPreview(true);
                                                         setMainComponent(false);
-                                                        console.log("Preview", Preview);
                                                     }}
                                                     imgAltHover="Image"
                                                     spacing={4}
@@ -2178,7 +2168,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     };
 
     async function InsertMasterData(Value: string) {
-        debugger;
         const isValid = !MasterDataValidation();
         if (isValid) {
             let MasterData
@@ -2187,16 +2176,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     MasterData = {
                         Qualification: advDetails.addMasterQualification
                     }
-                    const InsertMasterData = await getVRRDetails.InsertList(MasterData, ListNames.HRMSQualification);
-                    console.log(InsertMasterData, "InsertMasterData");
+                    await getVRRDetails.InsertList(MasterData, ListNames.HRMSQualification);
                 }
                     break;
                 case RoleDescriptionData.RoleSpeKnowledge: {
                     MasterData = {
                         RoleSpecificKnowledge: advDetails.addMasterQualification
                     }
-                    const InsertMasterData = await getVRRDetails.InsertList(MasterData, ListNames.HRMSRoleSpecificKnowlegeMaster);
-                    console.log(InsertMasterData, "InsertMasterData");
+                    await getVRRDetails.InsertList(MasterData, ListNames.HRMSRoleSpecificKnowlegeMaster);
 
                 }
                     break;
@@ -2204,12 +2191,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     MasterData = {
                         TechnicalSkills: advDetails.addMasterQualification
                     }
-                    const InsertMasterData = await getVRRDetails.InsertList(MasterData, ListNames.HRMSTechnicalSkills);
-                    console.log(InsertMasterData, "InsertMasterData");
+                    await getVRRDetails.InsertList(MasterData, ListNames.HRMSTechnicalSkills);
                 }
                     break;
             }
-            console.log(MasterData, "MasterData");
             setAddQualifbtn(false)
         }
     }

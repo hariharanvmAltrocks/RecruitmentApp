@@ -11,11 +11,11 @@ import AssignRecuritmentHR, { HeaderValue } from "../../components/AssignRecurit
 import { Button } from "primereact/button";
 
 const AssignInterviewPanel = (props: any) => {
-    console.log(props, "ReviewProfile");
+    // console.log(props, "ReviewProfile");
 
     const [CandidateData, setCandidateData] = React.useState<any[]>([]);
     const [rows, setRows] = React.useState<number>(5);
-    const [first, setFirst] = React.useState<number>(0);
+    // const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
     const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
@@ -33,7 +33,6 @@ const AssignInterviewPanel = (props: any) => {
     });
 
     const HRFileHandle = (serverUrl: string, fileName: string) => {
-        console.log(serverUrl, "ServerUrl");
         try {
             if (serverUrl) {
 
@@ -127,7 +126,6 @@ const AssignInterviewPanel = (props: any) => {
     const fetchCandidateData = async (RecruitmentDetails: any) => {
         setIsLoading(true);
         try {
-            console.log(RecruitmentDetails, "RecruitmentDetails");
 
             let filterConditions = [];
             let Conditions = "";
@@ -138,7 +136,6 @@ const AssignInterviewPanel = (props: any) => {
             });
             const data = await getVRRDetails.GetInterviewPanelCandidateDetails(filterConditions, Conditions);
             if (data.status === 200 && data.data !== null) {
-                console.log(data.data, "GetVacancyDetails");
                 setCandidateData(data.data);
 
             }
@@ -158,9 +155,7 @@ const AssignInterviewPanel = (props: any) => {
             FilterValue: props.stateValue.ID
         });
         const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails(filterConditions, Conditions);
-        console.log("RecruitmentDetails", RecruitmentDetails);
         if (RecruitmentDetails.status === 200 && RecruitmentDetails.data !== null) {
-            console.log(RecruitmentDetails, "GetVacancyDetails");
             setRecruitmentDetails(RecruitmentDetails.data);
             await fetchCandidateData(RecruitmentDetails.data);
         }
@@ -183,13 +178,12 @@ const AssignInterviewPanel = (props: any) => {
 
 
     const onPageChange = (event: any) => {
-        setFirst(event.first);
+        // setFirst(event.first);
         setRows(event.rows);
     };
 
     const Submit_fn = async () => {
         const allAssignByPresent = CandidateData.every((item) => item.AssignBy);
-        console.log(allAssignByPresent, "allShortlistValuePresent");
         if (allAssignByPresent) {
             for (const Candidate of CandidateData) {
                 if (Candidate?.AssignBy) {
@@ -197,7 +191,6 @@ const AssignInterviewPanel = (props: any) => {
                         ID: Candidate.ID,
                         AssignById: Candidate?.AssignBy
                     };
-                    console.log(obj, "obj");
 
                     try {
                         const data = await getVRRDetails.AssignCandidateRecuritmentHR(obj.ID, obj, ListNames.HRMSRecruitmentCandidateDetails);
@@ -270,7 +263,6 @@ const AssignInterviewPanel = (props: any) => {
     };
 
     function handleAssignBtn() {
-        debugger;
         let CheckedDataValue = CandidateData.some((item) => item.Checked)
         if (CheckedDataValue) {
             setAssignPopup(!AssignPopup)
@@ -385,8 +377,6 @@ const AssignInterviewPanel = (props: any) => {
                                 },
                             ]}
                         />
-                        {console.log(props.masterData, "masterDataDetails")}
-                        {console.log(first, "first")}
                     </React.Fragment>
                 </div>
             </CustomLoader>

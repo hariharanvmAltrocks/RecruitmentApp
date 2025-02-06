@@ -13,11 +13,10 @@ import { Button } from "primereact/button";
 import SearchableDataTable from "../../components/CustomDataTable";
 
 const ReviewProfileList = (props: any) => {
-  console.log(props, "ReviewProfile");
 
   const [RecuritmentData, setRecuritmentData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
-  const [first, setFirst] = React.useState<number>(0);
+  // const [first, setFirst] = React.useState<number>(0);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
@@ -78,7 +77,6 @@ const ReviewProfileList = (props: any) => {
           TabName: string,
           ButtonAction: string
         ): void {
-          console.log(rowData);
           props.navigation("/ReviewProfileList/ReviewCandidateList", {
             state: {
               ID: rowData?.ID,
@@ -129,7 +127,6 @@ const ReviewProfileList = (props: any) => {
         RecuritmentConditions
       );
       if (data.status === 200 && data.data !== null) {
-        console.log(data.data, "GetVacancyDetails");
         setRecuritmentData(data.data);
       }
 
@@ -149,7 +146,7 @@ const ReviewProfileList = (props: any) => {
   }, []);
 
   const onPageChange = (event: any) => {
-    setFirst(event.first);
+    // setFirst(event.first);
     setRows(event.rows);
   };
 
@@ -221,8 +218,6 @@ const ReviewProfileList = (props: any) => {
               initialTab="tab1"
               tabClassName={"Tab"}
             />
-            {console.log(props.masterData, "masterDataDetails")}
-            {console.log(first, "first")}
           </React.Fragment>
         </div>
       </CustomLoader>

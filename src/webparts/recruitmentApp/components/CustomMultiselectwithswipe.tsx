@@ -19,8 +19,6 @@ const JobCodeSelector: React.FC<JobCodeSelectorProps> = ({
   label,
 }) => {
   React.useEffect(() => {
-    console.log("Received selectedJobCodes:", selectedJobCodes);
-    console.log("Received jobCodes:", jobCodes);
   }, [selectedJobCodes, jobCodes]);
 
   return (
