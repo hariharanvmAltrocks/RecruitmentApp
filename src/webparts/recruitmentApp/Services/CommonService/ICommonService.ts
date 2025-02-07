@@ -1,9 +1,6 @@
-import { AutoCompleteItem, InterviewPanaldata } from "../../Models/Screens";
+import { AutoCompleteItem } from "../../Models/Screens";
 
 export type ICommonService = {
-  GetInterviewPanelDetails(
-    filterConditions: any[]
-  ): Promise<ApiResponse<InterviewPanaldata[]>>;
   uploadAttachmentToLibrary(
     PositionCode: string,
     attach: File,

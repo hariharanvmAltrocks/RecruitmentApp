@@ -1,5 +1,9 @@
 import * as React from "react";
-import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
+import {
+  CommonServices,
+  getVRRDetails,
+  InterviewServices,
+} from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
   alertPropsData,
@@ -221,7 +225,7 @@ const InterviewPanelEdit = (props: any) => {
         }));
       }
     } catch (error) {
-      console.log("GetVacancyDetails doesn't fetch the data", error);
+      console.log(error);
     }
     setIsLoading(false);
   };
@@ -267,33 +271,63 @@ const InterviewPanelEdit = (props: any) => {
     }));
   };
 
-  const Validation = (): boolean => {
-    const {
-      //   Qualifications,
-      //   Experience,
-      //   Knowledge,
-      //   Energylevel,
-      //   Requirements,
-      //   contributeculture,
-      //   ExpatExperienceCongolese,
-      //   CriteriaRecognised,
-      //   Employment,
-      EvaluationFeedback,
-      OverAllEvaluationFeedback,
-    } = CandidateData;
+  //   const Validation = (): boolean => {
+  //     const {
+  //       //   Qualifications,
+  //       //   Experience,
+  //       //   Knowledge,
+  //       //   Energylevel,
+  //       //   Requirements,
+  //       //   contributeculture,
+  //       //   ExpatExperienceCongolese,
+  //       //   CriteriaRecognised,
+  //       //   Employment,
+  //       EvaluationFeedback,
+  //       OverAllEvaluationFeedback,
+  //     } = CandidateData;
 
-    // ValidationError.Qualifications = !IsValid(Qualifications.text);
-    // ValidationError.Experience = !IsValid(Experience.text);
-    // ValidationError.Knowledge = !IsValid(Knowledge.text);
-    // ValidationError.Energylevel = !IsValid(Energylevel.text);
-    // ValidationError.Requirements = !IsValid(Requirements.text);
-    // ValidationError.contributeculture = !IsValid(contributeculture.text);
-    // ValidationError.ExpatExperienceCongolese = !IsValid(
-    //   ExpatExperienceCongolese.text
-    // );
-    // ValidationError.CriteriaRecognised = !IsValid(CriteriaRecognised.text);
-    // ValidationError.Employment = !IsValid(Employment);
-    ValidationError.EvaluationFeedback = !IsValid(EvaluationFeedback);
+  //     // ValidationError.Qualifications = !IsValid(Qualifications.text);
+  //     // ValidationError.Experience = !IsValid(Experience.text);
+  //     // ValidationError.Knowledge = !IsValid(Knowledge.text);
+  //     // ValidationError.Energylevel = !IsValid(Energylevel.text);
+  //     // ValidationError.Requirements = !IsValid(Requirements.text);
+  //     // ValidationError.contributeculture = !IsValid(contributeculture.text);
+  //     // ValidationError.ExpatExperienceCongolese = !IsValid(
+  //     //   ExpatExperienceCongolese.text
+  //     // );
+  //     // ValidationError.CriteriaRecognised = !IsValid(CriteriaRecognised.text);
+  //     // ValidationError.Employment = !IsValid(Employment);
+  //     ValidationError.EvaluationFeedback = !IsValid(EvaluationFeedback);
+  //     ValidationError.OverAllEvaluationFeedback = !IsValid(
+  //       OverAllEvaluationFeedback
+  //     );
+
+  //     setValidationError((prevState) => ({
+  //       ...prevState,
+  //       ...ValidationError,
+  //     }));
+
+  //     return Object.values(ValidationError).some((error) => error);
+  //   };
+
+  const shouldShowTextArea = [
+    CandidateData.Qualifications,
+    CandidateData.Experience,
+    CandidateData.Knowledge,
+    CandidateData.Energylevel,
+    CandidateData.Requirements,
+    CandidateData.contributeculture,
+    CandidateData.ExpatExperienceCongolese,
+    CandidateData.CriteriaRecognised,
+  ].some((item) => item?.key !== 0 && Number(item.key) <= 2);
+
+  const Validation = (): boolean => {
+    const { EvaluationFeedback, OverAllEvaluationFeedback } = CandidateData;
+
+    ValidationError.EvaluationFeedback = shouldShowTextArea
+      ? !IsValid(EvaluationFeedback)
+      : false;
+
     ValidationError.OverAllEvaluationFeedback = !IsValid(
       OverAllEvaluationFeedback
     );
@@ -330,9 +364,7 @@ const InterviewPanelEdit = (props: any) => {
         ]);
 
       if (!CandidatePersonalDetails.data || !InterviewPanelResponse.data) {
-        console.error(
-          "Error: No data found for Candidate Personal or Interview Panel."
-        );
+        console.error();
         return;
       }
 
@@ -427,7 +459,7 @@ const InterviewPanelEdit = (props: any) => {
                 ListNames.HRMSCandidateScoreCard
               );
 
-              console.log("New Record Creation Response:", newRecordResponse);
+              console.log("", newRecordResponse);
 
               if (newRecordResponse.status === 201) {
                 console.log("New Scorecard Created Successfully.");
@@ -472,7 +504,7 @@ const InterviewPanelEdit = (props: any) => {
           <CardContent>
             <div>
               <div className="ms-Grid-row">
-                {/* <div className="ms-Grid-row">
+                <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg6">
                     <LabelHeaderComponents
                       value={`Job Title - ${CandidateData.PositionTitle}`}
@@ -488,7 +520,7 @@ const InterviewPanelEdit = (props: any) => {
                       {" "}
                     </LabelHeaderComponents>
                   </div>
-                </div> */}
+                </div>
                 {/* <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Position Title"
@@ -883,19 +915,21 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div>
-              <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
-                <div className="ms-grid-col ms-lg10">
-                  <CustomTextArea
-                    label="Feedback(Required for Ratings Below 2)"
-                    value={CandidateData?.EvaluationFeedback}
-                    error={ValidationError.EvaluationFeedback}
-                    mandatory={true}
-                    onChange={(value) =>
-                      handletextArea("EvaluationFeedback", value)
-                    }
-                  />
+              {shouldShowTextArea && (
+                <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
+                  <div className="ms-grid-col ms-lg10">
+                    <CustomTextArea
+                      label="Feedback(Required for Ratings Below 2)"
+                      value={CandidateData?.EvaluationFeedback}
+                      error={ValidationError.EvaluationFeedback}
+                      mandatory={true}
+                      onChange={(value) =>
+                        handletextArea("EvaluationFeedback", value)
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
                 <div className="ms-grid-col ms-lg10">
@@ -979,11 +1013,9 @@ const InterviewPanelEdit = (props: any) => {
             },
           ];
 
-          return CommonServices.GetInterviewPanelDetails(filterConditions);
+          return InterviewServices.GetInterviewPanelDetails(filterConditions);
         })
         .then((response) => {
-          debugger;
-
           if (
             response?.data &&
             Array.isArray(response.data) &&
@@ -998,11 +1030,8 @@ const InterviewPanelEdit = (props: any) => {
                 (panel) => panel.InterviewPanelTitle
               );
 
-              console.log(
-                "Filtered Interview Panel Titles:",
-                interviewPanelTitles
-              );
-              console.log("InterviewPanelData", InterviewPanelData);
+              console.log("", interviewPanelTitles);
+              console.log("", InterviewPanelData);
               setInterviewPanelData((prevState) => ({
                 ...prevState,
                 interviewPanelTitles: interviewPanelTitles || [],
@@ -1045,7 +1074,7 @@ const InterviewPanelEdit = (props: any) => {
   };
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
-    console.log("Breadcrumb changed to:", newItem);
+    console.log("", newItem);
   };
 
   return (
