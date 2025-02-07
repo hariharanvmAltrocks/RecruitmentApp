@@ -1006,4 +1006,90 @@ export default class RecruitmentService implements IRecruitmentService {
       };
     }
   }
+  // sneka
+  async HRMSCandidateScoreCard(
+    filterParam: any,
+    filterConditions: any,
+    candidateID: number
+  ): Promise<ApiResponse<any | null>> {
+    try {
+      const interviewPanelItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSInterviewPanelDetails,
+        Select:
+          "ID,RecruitmentID/ID,InterviewLevel,InterviewPanel/Title,InterviewPanel/ID,CandidateID/ID",
+        Expand: "RecruitmentID,InterviewPanel,CandidateID",
+        Orderby: "ID",
+        Orderbydecorasc: false,
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+      });
+      const candidateScoreCardItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSCandidateScoreCard,
+        Select:
+          "InterviewPanelID/ID,RelevantQualification,ReleventExperience,Knowledge,EnergyLevel,MeetJobRequirement,ContributeTowardsCultureRequried,Experience,OtherCriteriaScore,ConsiderForEmployment,Feedback,RecruitmentID/ID,Role/Title,InterviewPersonName/Title,OverAllEvaluationFeedback",
+        Expand: "InterviewPanelID,RecruitmentID,Role,InterviewPersonName",
+        Orderby: "ID",
+        Orderbydecorasc: false,
+        FilterCondition: [
+          {
+            FilterKey: "InterviewPanelID/CandidateID/ID",
+            Operator: "eq",
+            FilterValue: candidateID,
+          },
+        ],
+      });
+      console.log("candidateScoreCardItems", candidateScoreCardItems);
+      console.log("interviewPanelItems", interviewPanelItems);
+      const formattedItems = interviewPanelItems.map((interview) => {
+        const relatedScores = candidateScoreCardItems.filter(
+          (score) => score?.InterviewPanelID?.ID === interview?.ID
+        );
+
+        return {
+          ID: interview.ID,
+          RecruitmentID: interview?.RecruitmentID?.ID || "",
+          InterviewLevel: interview.InterviewLevel || "",
+          // InterviewPanel: interview?.InterviewPanel?.Title || "",
+          InterviewPanelTitle:
+            interview.InterviewPanel && interview.InterviewPanel.length > 0
+              ? interview.InterviewPanel.map((panel: any) => panel.Title)
+              : "N/A",
+          CandidateID: interview.CandidateID?.ID || "",
+          CandidateScoreCard: relatedScores.map((score) => ({
+            InterviewPanelID: score.InterviewPanelID?.ID || "",
+            RelevantQualification: score.RelevantQualification || "",
+            ReleventExperience: score.ReleventExperience || "",
+            Knowledge: score.Knowledge || "",
+            EnergyLevel: score.EnergyLevel || "",
+            MeetJobRequirement: score.MeetJobRequirement || "",
+            ContributeTowardsCultureRequried:
+              score.ContributeTowardsCultureRequried || "",
+            Experience: score.Experience || "",
+            OtherCriteriaScore: score.OtherCriteriaScore || "",
+            ConsiderForEmployment: score.ConsiderForEmployment || "",
+            Feedback: score.Feedback || "",
+            RecruitmentID: score.RecruitmentID?.ID || "",
+            Role: score.Role?.Title || "",
+            InterviewPersonName: score.InterviewPersonName?.Title || "",
+            OverAllEvaluationFeedback: score.OverAllEvaluationFeedback || "",
+          })),
+        };
+      });
+      console.log("formattedItems", formattedItems);
+      return {
+        data: formattedItems,
+        status: 200,
+        message:
+          "HRMSInterviewPanelDetails and HRMSCandidateScoreCard fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return {
+        data: [],
+        status: 500,
+        message:
+          "Error fetching data from HRMSInterviewPanelDetails and HRMSCandidateScoreCard",
+      };
+    }
+  }
 }

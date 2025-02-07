@@ -224,6 +224,8 @@ export const TabName = {
   PositionDetails: "Position Details",
   AdvertisementDetails: "Advertisement Details",
   AdvertisementViewDetails: "View Advertisement ",
-  ScorecardDetails: "Scorecard Details",
+  ScorecardDetails: " Review Scorecard ",
+  ViewCandiadteDetails: "View Candidate Details",
+  Scorecard: "Scorecard",
   ReviewONEMAdvertisement: "Review ONEM Advertisement",
 };

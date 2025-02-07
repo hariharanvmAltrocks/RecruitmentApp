@@ -194,3 +194,7 @@ export type RecruitementPositionDetails = {
   DRCGradeID: number;
   Comments: string;
 };
+
+export type ScoreData = {
+  SignDate?: Date | any;
+};
