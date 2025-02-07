@@ -9,10 +9,9 @@ import { TabName } from "../../utilities/Config";
 import SearchableDataTable from "../../components/CustomDataTable";
 
 const InterviewPanelList = (props: any) => {
-
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
-  // const [first, setFirst] = React.useState<number>(0);
+
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   // const HRFileHandle = (serverUrl: string, fileName: string) => {
@@ -258,186 +257,7 @@ const InterviewPanelList = (props: any) => {
   //   }
   //   setIsLoading(false);
   // };
-  //11.19 --4.02.2025
-  // const fetchCandidateData = async (CurrentUserID: any) => {
-  //   setIsLoading(true);
 
-  //   try {
-  //     console.log("Fetching data for User:", CurrentUserID);
-
-  //     const interviewPanelResponse = await CommonServices.GetMasterData(
-  //       ListNames.HRMSInterviewPanelDetails
-  //     );
-  //     console.log("interviewPanelResponse", interviewPanelResponse);
-
-  //     if (
-  //       !interviewPanelResponse.data ||
-  //       interviewPanelResponse.data.length === 0
-  //     ) {
-  //       console.error("No interview panel data available");
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     console.log("Interview Panel Data:", interviewPanelResponse.data);
-
-  //     const filteredPanels = interviewPanelResponse.data.filter(
-  //       (panel: any) =>
-  //         panel.InterviewPanelId &&
-  //         Array.isArray(panel.InterviewPanelId) &&
-  //         panel.InterviewPanelId.includes(CurrentUserID)
-  //     );
-
-  //     if (filteredPanels.length === 0) {
-  //       console.log("No panels found for the current user");
-  //       setCandidateData([]);
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     console.log("Filtered Panels for User:", filteredPanels);
-
-  //     const candidateIDs = filteredPanels.map(
-  //       (panel: any) => panel.CandidateIDId
-  //     );
-
-  //     if (candidateIDs.length === 0) {
-  //       console.log("No candidate IDs found for this user");
-  //       setCandidateData([]);
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     const candidateDetailsResponse = await CommonServices.GetMasterData(
-  //       ListNames.HRMSRecruitmentCandidatePersonalDetails
-  //     );
-
-  //     if (
-  //       !candidateDetailsResponse.data ||
-  //       candidateDetailsResponse.data.length === 0
-  //     ) {
-  //       console.error("No candidate details data available");
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     console.log("Candidate Details Data:", candidateDetailsResponse.data);
-
-  //     const matchedCandidates = candidateDetailsResponse.data.filter(
-  //       (candidate: any) => candidateIDs.includes(candidate.ID)
-  //     );
-
-  //     if (matchedCandidates.length === 0) {
-  //       console.log("No candidates matched for the user");
-  //       setCandidateData([]);
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     console.log("Matched Candidates for User:", matchedCandidates);
-
-  //     const candidateNames = matchedCandidates.map((candidate: any) => ({
-  //       ID: candidate.ID,
-  //       FristName: candidate.FristName || "",
-  //     }));
-
-  //     setCandidateData(candidateNames);
-  //   } catch (error) {
-  //     console.error("Error fetching candidate data:", error);
-  //   }
-
-  //   setIsLoading(false);
-
-  // const fetchCandidateData = async (CurrentUserID: any) => {
-  //   setIsLoading(true);
-
-  //   try {
-  //     console.log("Fetching data for User:", CurrentUserID);
-
-  //     // 1. Retrieve all interview panel details.
-  //     const interviewPanelResponse = await CommonServices.GetMasterData(
-  //       ListNames.HRMSInterviewPanelDetails
-  //     );
-  //     console.log("interviewPanelResponse", interviewPanelResponse);
-
-  //     if (
-  //       !interviewPanelResponse.data ||
-  //       interviewPanelResponse.data.length === 0
-  //     ) {
-  //       console.error("No interview panel data available");
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     console.log("Interview Panel Data:", interviewPanelResponse.data);
-
-  //     // 2. Filter interview panels where InterviewPanelId includes the current user ID.
-  //     const filteredPanels = interviewPanelResponse.data.filter(
-  //       (panel: any) =>
-  //         panel.InterviewPanelId &&
-  //         Array.isArray(panel.InterviewPanelId) &&
-  //         panel.InterviewPanelId.includes(CurrentUserID)
-  //     );
-
-  //     if (filteredPanels.length === 0) {
-  //       console.log("No panels found for the current user");
-  //       setCandidateData([]);
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     console.log("Filtered Panels for User:", filteredPanels);
-
-  //     // 3. Retrieve candidate personal details.
-  //     const candidateDetailsResponse = await CommonServices.GetMasterData(
-  //       ListNames.HRMSRecruitmentCandidatePersonalDetails
-  //     );
-
-  //     if (
-  //       !candidateDetailsResponse.data ||
-  //       candidateDetailsResponse.data.length === 0
-  //     ) {
-  //       console.error("No candidate details data available");
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     console.log("Candidate Details Data:", candidateDetailsResponse.data);
-
-  //     // 4. Create a separate dashboard item for each panel record.
-  //     const candidateDataWithPanels = filteredPanels
-  //       .map((panel: any) => {
-  //         // Find candidate details for this panel's candidate.
-  //         const candidate = candidateDetailsResponse.data.find(
-  //           (c: any) => c.ID === panel.CandidateIDId
-  //         );
-
-  //         if (!candidate) {
-  //           return null; // Skip this panel if no candidate found.
-  //         }
-
-  //         return {
-  //           CandidateID: candidate.ID,
-  //           FristName: candidate.FristName || "",
-  //           InterviewLevel: panel.InterviewLevel,
-  //           InterviewPanelID: panel.Id,
-  //         };
-  //       })
-  //       .filter((item) => item !== null); // Remove null items.
-
-  //     console.log(
-  //       "Candidate Data with Separate Dashboard Items:",
-  //       candidateDataWithPanels
-  //     );
-
-  //     // 5. Save the resulting data to state.
-  //     setCandidateData(candidateDataWithPanels);
-  //   } catch (error) {
-  //     console.error("Error fetching candidate data:", error);
-  //   }
-
-  //   setIsLoading(false);
-  // };
   const fetchCandidateData = async (CurrentUserID: any) => {
     setIsLoading(true);
 
@@ -507,40 +327,35 @@ const InterviewPanelList = (props: any) => {
       }));
 
       setCandidateData(candidateNames);
-    } catch (error) { }
+    } catch (error) {}
 
     setIsLoading(false);
   };
+  const fetchData = async () => {
+    try {
+      const getCurrentUserEmailID = await CommonServices.getUserGuidByEmail(
+        props.CurrentUserEmailId
+      );
+
+      if (getCurrentUserEmailID.status === 200 && getCurrentUserEmailID.data) {
+        const userGUID = getCurrentUserEmailID.data.key;
+
+        await fetchCandidateData(userGUID);
+      }
+    } catch (error) {}
+  };
+  const handleRefresh = (tab: string) => {
+    void fetchData();
+    // setActiveTab(tab);
+  };
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const getCurrentUserEmailID = await CommonServices.getUserGuidByEmail(
-          props.CurrentUserEmailId
-        );
-
-        if (
-          getCurrentUserEmailID.status === 200 &&
-          getCurrentUserEmailID.data
-        ) {
-          const userGUID = getCurrentUserEmailID.data.key;
-
-          await fetchCandidateData(userGUID);
-        }
-      } catch (error) { }
-    };
-
     void fetchData();
   }, []);
 
   const onPageChange = (event: any) => {
     // setFirst(event.first);
     setRows(event.rows);
-  };
-
-  const handleRefresh = (tab: string) => {
-    // void fetchData();
-    // setActiveTab(tab);
   };
 
   const tabs = [

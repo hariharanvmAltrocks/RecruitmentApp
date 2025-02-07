@@ -25,5 +25,5 @@ export type InterviewPanaldata = {
   InterviewLevel: string;
   InterviewPanel: number;
   InterviewPanalNames: string[];
-  //InterviewPanelTitle: string;
+  InterviewPanelTitle: string;
 };

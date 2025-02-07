@@ -95,6 +95,7 @@ const InterviewPanelEdit = (props: any) => {
     AdvertisementDocument: [],
     RoleProfileDocument: [],
     PositionTitle: "",
+    interviewPanelTitles: [] as string[],
   });
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -135,7 +136,7 @@ const InterviewPanelEdit = (props: any) => {
       InterviewLevel: "",
       InterviewPanel: 0,
       InterviewPanalNames: [],
-      //InterviewPanelTitle: "",
+      InterviewPanelTitle: "",
     },
   ]);
 
@@ -320,7 +321,6 @@ const InterviewPanelEdit = (props: any) => {
 
       const currentUserKey = CurrentUserResponse.data?.key?.toString();
 
-      // 3. Retrieve candidate and interview panel details
       const [CandidatePersonalDetails, InterviewPanelResponse] =
         await Promise.all([
           CommonServices.GetMasterData(
@@ -344,7 +344,6 @@ const InterviewPanelEdit = (props: any) => {
       });
 
       if (matchingPanels.length === 0) {
-
         return;
       }
 
@@ -356,9 +355,6 @@ const InterviewPanelEdit = (props: any) => {
       });
 
       if (userPanels.length === 0) {
-        console.log(
-          "No panels found where the current user is an interviewer."
-        );
         return;
       }
 
@@ -476,7 +472,7 @@ const InterviewPanelEdit = (props: any) => {
           <CardContent>
             <div>
               <div className="ms-Grid-row">
-                <div className="ms-Grid-row">
+                {/* <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg6">
                     <LabelHeaderComponents
                       value={`Job Title - ${CandidateData.PositionTitle}`}
@@ -492,7 +488,7 @@ const InterviewPanelEdit = (props: any) => {
                       {" "}
                     </LabelHeaderComponents>
                   </div>
-                </div>
+                </div> */}
                 {/* <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Position Title"
@@ -551,12 +547,7 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div>
-              {/* </div> */}
 
-              {/* <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
-                <LabelHeaderComponents value={"Candidate Details"} />
-              </div> */}
-              {/* <div className="sub-menu-card"> */}
               <div className="ms-Grid-row">
                 {/* <div className="ms-Grid-col ms-lg4">
                     <CustomInput
@@ -724,19 +715,18 @@ const InterviewPanelEdit = (props: any) => {
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Interviewed by"
-                    value={CandidateData.DOB}
+                    value={CandidateData.interviewPanelTitles?.join(", ") || ""}
                     disabled={true}
                     mandatory={false}
                     onChange={(value) =>
                       setCandidateData((prevState) => ({
                         ...prevState,
-                        ContactNumber: value,
                       }))
                     }
                   />
                 </div>
               </div>
-              {/* </div> */}
+
               <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
                 <LabelHeaderComponents value={"Attachments"} />
               </div>
@@ -962,11 +952,9 @@ const InterviewPanelEdit = (props: any) => {
       ),
     },
   ];
-
-  //6/2/2025 --10.52
   React.useEffect(() => {
     const activeTabObj = tabs.find((item) => item.value === activeTab);
-    //const prevTabObj = tabs.find((item) => item.value === prevActiveTab);
+
     if (activeTab === "tab1") {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
@@ -978,110 +966,62 @@ const InterviewPanelEdit = (props: any) => {
       });
     }
 
-    const fetchData = async () => {
-      try {
-        await fetchCandidateData(props.stateValue?.ID);
+    const fetchData = () => {
+      setIsLoading(true);
 
-        const InterviewPanelDetails = await CommonServices.GetMasterData(
-          ListNames.HRMSInterviewPanelDetails
-        );
+      fetchCandidateData(props.stateValue?.ID)
+        .then(() => {
+          const filterConditions = [
+            {
+              FilterKey: "CandidateIDId",
+              Operator: "eq",
+              FilterValue: props.stateValue?.ID,
+            },
+          ];
 
-        if (
-          InterviewPanelDetails.data &&
-          InterviewPanelDetails.data.length > 0
-        ) {
-          const formattedData: InterviewPanaldata[] =
-            InterviewPanelDetails.data.map((item: any) => {
-              return {
-                ID: item.ID,
-                CandidateID: item.CandidateIDId,
-                RecruitmentID: item.RecruitmentIDId,
-                InterviewLevel: item.InterviewLevel,
-                InterviewPanel: item.InterviewPanelId,
-                InterviewPanalNames: item.InterviewPanelStringId || [],
-              };
-            });
+          return CommonServices.GetInterviewPanelDetails(filterConditions);
+        })
+        .then((response) => {
+          debugger;
 
-          console.log(InterviewPanelData, "InterviewPanelData");
+          if (
+            response?.data &&
+            Array.isArray(response.data) &&
+            response.data.length > 0
+          ) {
+            const filteredPanels = response.data.filter(
+              (item) => item.CandidateID === props.stateValue?.ID
+            );
 
-          setInterviewPanelData(formattedData);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+            if (filteredPanels.length > 0) {
+              const interviewPanelTitles = filteredPanels.map(
+                (panel) => panel.InterviewPanelTitle
+              );
+
+              console.log(
+                "Filtered Interview Panel Titles:",
+                interviewPanelTitles
+              );
+              console.log("InterviewPanelData", InterviewPanelData);
+              setInterviewPanelData((prevState) => ({
+                ...prevState,
+                interviewPanelTitles: interviewPanelTitles || [],
+              }));
+
+              setCandidateData((prevState) => ({
+                ...prevState,
+                interviewPanelTitles: interviewPanelTitles || [],
+              }));
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
     };
 
-    void fetchData();
-  }, [props.stateValue?.ID]);
-
-  //12.17
-  //   React.useEffect(() => {
-  //     const activeTabObj = tabs.find((item) => item.value === activeTab);
-  //     if (activeTab === "tab1") {
-  //       setTabNameData((prevTabNames) => {
-  //         const newTabNames = [
-  //           { tabName: props.stateValue?.TabName },
-  //           { tabName: props.stateValue?.ButtonAction },
-  //           { tabName: activeTabObj?.label },
-  //         ];
-  //         return newTabNames;
-  //       });
-  //     }
-
-  //     const fetchData = async () => {
-  //       try {
-  //         await fetchCandidateData(props.stateValue?.ID);
-
-  //         // Fetch interview panel details
-  //         const InterviewPanelDetails = await CommonServices.GetMasterData(
-  //           ListNames.HRMSInterviewPanelDetails
-  //         );
-
-  //         // ✅ Fetch the correct list containing panel members (IDs and Names)
-  //         const panelMembersResponse = await CommonServices.GetMasterData(
-  //           ListNames.HRMSInterviewPanelDetails // Make sure this is the correct list name
-  //         );
-
-  //         if (
-  //           InterviewPanelDetails.data &&
-  //           InterviewPanelDetails.data.length > 0 &&
-  //           panelMembersResponse.data
-  //         ) {
-  //           // ✅ Create a mapping of ID -> Name from panel members
-  //           const panelNamesMap: Record<number, string> = {};
-  //           panelMembersResponse.data.forEach((member: any) => {
-  //             panelNamesMap[member.ID] = member.Title; // Assuming 'Title' contains the name
-  //           });
-
-  //           // ✅ Map interview panel details and replace IDs with Names
-  //           const formattedData: InterviewPanaldata[] =
-  //             InterviewPanelDetails.data.map((item: any) => {
-  //               return {
-  //                 ID: item.ID,
-  //                 CandidateID: item.CandidateIDId,
-  //                 RecruitmentID: item.RecruitmentIDId,
-  //                 InterviewLevel: item.InterviewLevel,
-  //                 InterviewPanel: item.InterviewPanelId, // Keeps the ID array
-  //                 InterviewPanalNames: (Array.isArray(item.InterviewPanelId)
-  //                   ? item.InterviewPanelId
-  //                   : []
-  //                 ).map((id: number) => panelNamesMap[id] || `Unknown (${id})`), // Replace ID with Name
-  //               };
-  //             });
-  //           console.log(InterviewPanelData, "InterviewPanelData");
-  //           console.log(formattedData, "Formatted Interview Panel Details");
-
-  //           setInterviewPanelData(formattedData);
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching data:", error);
-  //       }
-  //     };
-
-  //     void fetchData();
-  //   }, [props.stateValue?.ID]); // Runs when stateValue.ID changes
-
-  //6/2/2025 --10.52
+    fetchData();
+  }, [props.stateValue?.ID, activeTab]);
 
   const handleCancel = () => {
     setIsLoading(true);
@@ -1113,36 +1053,6 @@ const InterviewPanelEdit = (props: any) => {
       <CustomLoader isLoading={isLoading}>
         <div className="menu-card">
           <React.Fragment>
-            {/* <TabsComponent
-              tabs={tabs}
-              initialTab="tab1"
-              tabClassName={"Tab"}
-              handleCancel={handleCancel}
-              additionalButtons={[
-                {
-                  label: "Submit",
-                  onClick: async () => {
-                    await Submit_fn();
-                  },
-                 
-                },
-              ]}
-            /> */}
-            {/* <TabsComponent
-              tabs={tabs}
-              initialTab="tab1"
-              tabClassName={"Tab"}
-              handleCancel={handleCancel}
-              additionalButtons={[
-                {
-                  label: "Submit",
-                  onClick: async () => {
-                    await Submit_fn();
-                  },
-                  disable: !Checkbox, // Use 'disable' instead of 'disabled'
-                },
-              ]}
-            /> */}
             <BreadcrumbsComponent
               items={tabs}
               initialItem={activeTab}
@@ -1155,7 +1065,7 @@ const InterviewPanelEdit = (props: any) => {
                   onClick: async () => {
                     await Submit_fn();
                   },
-                  disable: !Checkbox, // Use 'disable' instead of 'disabled'
+                  disable: !Checkbox,
                 },
               ]}
             />
