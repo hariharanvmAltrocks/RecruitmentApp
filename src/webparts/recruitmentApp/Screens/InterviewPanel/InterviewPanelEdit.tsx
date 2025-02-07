@@ -1,5 +1,9 @@
 import * as React from "react";
-import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
+import {
+  CommonServices,
+  getVRRDetails,
+  InterviewServices,
+} from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
   alertPropsData,
@@ -95,6 +99,7 @@ const InterviewPanelEdit = (props: any) => {
     AdvertisementDocument: [],
     RoleProfileDocument: [],
     PositionTitle: "",
+    interviewPanelTitles: [] as string[],
   });
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -129,11 +134,13 @@ const InterviewPanelEdit = (props: any) => {
     InterviewPanaldata[]
   >([
     {
+      ID: 0,
       CandidateID: 0,
       RecruitmentID: 0,
       InterviewLevel: "",
       InterviewPanel: 0,
       InterviewPanalNames: [],
+      InterviewPanelTitle: "",
     },
   ]);
 
@@ -218,7 +225,7 @@ const InterviewPanelEdit = (props: any) => {
         }));
       }
     } catch (error) {
-      console.log("GetVacancyDetails doesn't fetch the data", error);
+      console.log(error);
     }
     setIsLoading(false);
   };
@@ -264,33 +271,63 @@ const InterviewPanelEdit = (props: any) => {
     }));
   };
 
-  const Validation = (): boolean => {
-    const {
-      //   Qualifications,
-      //   Experience,
-      //   Knowledge,
-      //   Energylevel,
-      //   Requirements,
-      //   contributeculture,
-      //   ExpatExperienceCongolese,
-      //   CriteriaRecognised,
-      //   Employment,
-      EvaluationFeedback,
-      OverAllEvaluationFeedback,
-    } = CandidateData;
+  //   const Validation = (): boolean => {
+  //     const {
+  //       //   Qualifications,
+  //       //   Experience,
+  //       //   Knowledge,
+  //       //   Energylevel,
+  //       //   Requirements,
+  //       //   contributeculture,
+  //       //   ExpatExperienceCongolese,
+  //       //   CriteriaRecognised,
+  //       //   Employment,
+  //       EvaluationFeedback,
+  //       OverAllEvaluationFeedback,
+  //     } = CandidateData;
 
-    // ValidationError.Qualifications = !IsValid(Qualifications.text);
-    // ValidationError.Experience = !IsValid(Experience.text);
-    // ValidationError.Knowledge = !IsValid(Knowledge.text);
-    // ValidationError.Energylevel = !IsValid(Energylevel.text);
-    // ValidationError.Requirements = !IsValid(Requirements.text);
-    // ValidationError.contributeculture = !IsValid(contributeculture.text);
-    // ValidationError.ExpatExperienceCongolese = !IsValid(
-    //   ExpatExperienceCongolese.text
-    // );
-    // ValidationError.CriteriaRecognised = !IsValid(CriteriaRecognised.text);
-    // ValidationError.Employment = !IsValid(Employment);
-    ValidationError.EvaluationFeedback = !IsValid(EvaluationFeedback);
+  //     // ValidationError.Qualifications = !IsValid(Qualifications.text);
+  //     // ValidationError.Experience = !IsValid(Experience.text);
+  //     // ValidationError.Knowledge = !IsValid(Knowledge.text);
+  //     // ValidationError.Energylevel = !IsValid(Energylevel.text);
+  //     // ValidationError.Requirements = !IsValid(Requirements.text);
+  //     // ValidationError.contributeculture = !IsValid(contributeculture.text);
+  //     // ValidationError.ExpatExperienceCongolese = !IsValid(
+  //     //   ExpatExperienceCongolese.text
+  //     // );
+  //     // ValidationError.CriteriaRecognised = !IsValid(CriteriaRecognised.text);
+  //     // ValidationError.Employment = !IsValid(Employment);
+  //     ValidationError.EvaluationFeedback = !IsValid(EvaluationFeedback);
+  //     ValidationError.OverAllEvaluationFeedback = !IsValid(
+  //       OverAllEvaluationFeedback
+  //     );
+
+  //     setValidationError((prevState) => ({
+  //       ...prevState,
+  //       ...ValidationError,
+  //     }));
+
+  //     return Object.values(ValidationError).some((error) => error);
+  //   };
+
+  const shouldShowTextArea = [
+    CandidateData.Qualifications,
+    CandidateData.Experience,
+    CandidateData.Knowledge,
+    CandidateData.Energylevel,
+    CandidateData.Requirements,
+    CandidateData.contributeculture,
+    CandidateData.ExpatExperienceCongolese,
+    CandidateData.CriteriaRecognised,
+  ].some((item) => item?.key !== 0 && Number(item.key) <= 2);
+
+  const Validation = (): boolean => {
+    const { EvaluationFeedback, OverAllEvaluationFeedback } = CandidateData;
+
+    ValidationError.EvaluationFeedback = shouldShowTextArea
+      ? !IsValid(EvaluationFeedback)
+      : false;
+
     ValidationError.OverAllEvaluationFeedback = !IsValid(
       OverAllEvaluationFeedback
     );
@@ -318,7 +355,6 @@ const InterviewPanelEdit = (props: any) => {
 
       const currentUserKey = CurrentUserResponse.data?.key?.toString();
 
-      // 3. Retrieve candidate and interview panel details
       const [CandidatePersonalDetails, InterviewPanelResponse] =
         await Promise.all([
           CommonServices.GetMasterData(
@@ -328,9 +364,7 @@ const InterviewPanelEdit = (props: any) => {
         ]);
 
       if (!CandidatePersonalDetails.data || !InterviewPanelResponse.data) {
-        console.error(
-          "Error: No data found for Candidate Personal or Interview Panel."
-        );
+        console.error();
         return;
       }
 
@@ -342,7 +376,6 @@ const InterviewPanelEdit = (props: any) => {
       });
 
       if (matchingPanels.length === 0) {
-
         return;
       }
 
@@ -354,15 +387,12 @@ const InterviewPanelEdit = (props: any) => {
       });
 
       if (userPanels.length === 0) {
-        console.log(
-          "No panels found where the current user is an interviewer."
-        );
         return;
       }
 
       const groupedByLevel: Record<string, any[]> = {};
       userPanels.forEach((panel) => {
-        const level = panel.InterviewLevel || "Level 1";
+        const level = panel.InterviewLevel;
         if (!groupedByLevel[level]) {
           groupedByLevel[level] = [];
         }
@@ -415,26 +445,26 @@ const InterviewPanelEdit = (props: any) => {
                 );
 
               if (ScorecardUpdateResponse.status === 200) {
-                console.log("Scorecard Updated Successfully.");
+                //console.log("Scorecard Updated Successfully.");
               } else {
-                console.error("Failed to update Scorecard.");
+                //console.error("Failed to update Scorecard.");
               }
             } else {
-              console.log(
-                "No existing Scorecard found. Creating a new record..."
-              );
+              //   console.log(
+              //     "No existing Scorecard found. Creating a new record..."
+              //   );
 
               const newRecordResponse = await getVRRDetails.InsertList(
                 scorecardObj,
                 ListNames.HRMSCandidateScoreCard
               );
 
-              console.log("New Record Creation Response:", newRecordResponse);
+              // console.log("", newRecordResponse);
 
               if (newRecordResponse.status === 201) {
-                console.log("New Scorecard Created Successfully.");
+                //console.log("New Scorecard Created Successfully.");
               } else {
-                console.error("Failed to create Scorecard.");
+                //console.error("Failed to create Scorecard.");
               }
             }
           }
@@ -457,7 +487,7 @@ const InterviewPanelEdit = (props: any) => {
       setalertProps(CancelAlert);
       setIsLoading(false);
     } catch (error) {
-      console.error("An error occurred during the submission process:", error);
+      //console.error("An error occurred during the submission process:", error);
       throw new Error("Failed to submit data. Please try again later.");
     }
   };
@@ -549,12 +579,7 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div>
-              {/* </div> */}
 
-              {/* <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
-                <LabelHeaderComponents value={"Candidate Details"} />
-              </div> */}
-              {/* <div className="sub-menu-card"> */}
               <div className="ms-Grid-row">
                 {/* <div className="ms-Grid-col ms-lg4">
                     <CustomInput
@@ -719,22 +744,21 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
-                {/* <div className="ms-Grid-col ms-lg4">
+                <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Interviewed by"
-                    value={CandidateData.DOB}
+                    value={CandidateData.interviewPanelTitles?.join(", ") || ""}
                     disabled={true}
                     mandatory={false}
                     onChange={(value) =>
                       setCandidateData((prevState) => ({
                         ...prevState,
-                        ContactNumber: value,
                       }))
                     }
                   />
-                </div> */}
+                </div>
               </div>
-              {/* </div> */}
+
               <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
                 <LabelHeaderComponents value={"Attachments"} />
               </div>
@@ -891,19 +915,21 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div>
-              <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
-                <div className="ms-grid-col ms-lg10">
-                  <CustomTextArea
-                    label="Feedback(Required for Ratings Below 2)"
-                    value={CandidateData?.EvaluationFeedback}
-                    error={ValidationError.EvaluationFeedback}
-                    mandatory={true}
-                    onChange={(value) =>
-                      handletextArea("EvaluationFeedback", value)
-                    }
-                  />
+              {shouldShowTextArea && (
+                <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
+                  <div className="ms-grid-col ms-lg10">
+                    <CustomTextArea
+                      label="Feedback(Required for Ratings Below 2)"
+                      value={CandidateData?.EvaluationFeedback}
+                      error={ValidationError.EvaluationFeedback}
+                      mandatory={true}
+                      onChange={(value) =>
+                        handletextArea("EvaluationFeedback", value)
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
                 <div className="ms-grid-col ms-lg10">
@@ -962,7 +988,7 @@ const InterviewPanelEdit = (props: any) => {
   ];
   React.useEffect(() => {
     const activeTabObj = tabs.find((item) => item.value === activeTab);
-    //const prevTabObj = tabs.find((item) => item.value === prevActiveTab);
+
     if (activeTab === "tab1") {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
@@ -974,41 +1000,57 @@ const InterviewPanelEdit = (props: any) => {
       });
     }
 
-    const fetchData = async () => {
-      try {
-        await fetchCandidateData(props.stateValue?.ID);
+    const fetchData = () => {
+      setIsLoading(true);
 
-        const InterviewPanelDetails = await CommonServices.GetMasterData(
-          ListNames.HRMSInterviewPanelDetails
-        );
+      fetchCandidateData(props.stateValue?.ID)
+        .then(() => {
+          const filterConditions = [
+            {
+              FilterKey: "CandidateIDId",
+              Operator: "eq",
+              FilterValue: props.stateValue?.ID,
+            },
+          ];
 
-        if (
-          InterviewPanelDetails.data &&
-          InterviewPanelDetails.data.length > 0
-        ) {
-          const formattedData: InterviewPanaldata[] =
-            InterviewPanelDetails.data.map((item: any) => {
-              return {
-                ID: item.ID,
-                CandidateID: item.CandidateIDId,
-                RecruitmentID: item.RecruitmentIDId,
-                InterviewLevel: item.InterviewLevel,
-                InterviewPanel: item.InterviewPanelId,
-                InterviewPanalNames: item.InterviewPanelStringId || [],
-              };
-            });
+          return InterviewServices.GetInterviewPanelDetails(filterConditions);
+        })
+        .then((response) => {
+          if (
+            response?.data &&
+            Array.isArray(response.data) &&
+            response.data.length > 0
+          ) {
+            const filteredPanels = response.data.filter(
+              (item) => item.CandidateID === props.stateValue?.ID
+            );
 
-          console.log(InterviewPanelData, "InterviewPanelData");
+            if (filteredPanels.length > 0) {
+              const interviewPanelTitles = filteredPanels.map(
+                (panel) => panel.InterviewPanelTitle
+              );
 
-          setInterviewPanelData(formattedData);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+              //console.log("", interviewPanelTitles);
+              console.log("", InterviewPanelData);
+              setInterviewPanelData((prevState) => ({
+                ...prevState,
+                interviewPanelTitles: interviewPanelTitles || [],
+              }));
+
+              setCandidateData((prevState) => ({
+                ...prevState,
+                interviewPanelTitles: interviewPanelTitles || [],
+              }));
+            }
+          }
+        })
+        .catch((error) => {
+          //console.error("Error fetching data:", error);
+        });
     };
 
-    void fetchData();
-  }, [props.stateValue?.ID]);
+    fetchData();
+  }, [props.stateValue?.ID, activeTab]);
 
   const handleCancel = () => {
     setIsLoading(true);
@@ -1032,7 +1074,7 @@ const InterviewPanelEdit = (props: any) => {
   };
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
-    console.log("Breadcrumb changed to:", newItem);
+    console.log("", newItem);
   };
 
   return (
@@ -1040,36 +1082,6 @@ const InterviewPanelEdit = (props: any) => {
       <CustomLoader isLoading={isLoading}>
         <div className="menu-card">
           <React.Fragment>
-            {/* <TabsComponent
-              tabs={tabs}
-              initialTab="tab1"
-              tabClassName={"Tab"}
-              handleCancel={handleCancel}
-              additionalButtons={[
-                {
-                  label: "Submit",
-                  onClick: async () => {
-                    await Submit_fn();
-                  },
-                 
-                },
-              ]}
-            /> */}
-            {/* <TabsComponent
-              tabs={tabs}
-              initialTab="tab1"
-              tabClassName={"Tab"}
-              handleCancel={handleCancel}
-              additionalButtons={[
-                {
-                  label: "Submit",
-                  onClick: async () => {
-                    await Submit_fn();
-                  },
-                  disable: !Checkbox, // Use 'disable' instead of 'disabled'
-                },
-              ]}
-            /> */}
             <BreadcrumbsComponent
               items={tabs}
               initialItem={activeTab}
@@ -1082,7 +1094,7 @@ const InterviewPanelEdit = (props: any) => {
                   onClick: async () => {
                     await Submit_fn();
                   },
-                  disable: !Checkbox, // Use 'disable' instead of 'disabled'
+                  disable: !Checkbox,
                 },
               ]}
             />

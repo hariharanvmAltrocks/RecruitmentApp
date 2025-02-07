@@ -150,6 +150,9 @@ export type ScoreCardData = {
   AdvertisementDocument: any[];
   RoleProfileDocument: any[];
   PositionTitle?: string;
+  //InterviewPanalNames?: string[];
+  // InterviewPanelNames: string[]; // Array of names (e.g. ["Fathima John N"])
+  interviewPanelTitles: string[];
 };
 
 export type QualificationValue = {
