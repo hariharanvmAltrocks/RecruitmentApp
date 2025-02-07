@@ -20,8 +20,6 @@ export default class InterviewProcessService
         Filter: filterConditions,
       });
 
-      console.log("Raw Interview Panel Data:", listItems);
-
       InterviewPanelDetails = listItems.map((objresult: any) => ({
         ID: objresult.ID,
         CandidateID: objresult.CandidateIDId,
@@ -42,8 +40,6 @@ export default class InterviewProcessService
             ? objresult.InterviewPanel.map((panel: any) => panel.Title)
             : [],
       }));
-
-      console.log("Formatted Interview Panel Data:", InterviewPanelDetails);
 
       return {
         data: InterviewPanelDetails,

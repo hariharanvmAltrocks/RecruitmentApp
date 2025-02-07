@@ -445,26 +445,26 @@ const InterviewPanelEdit = (props: any) => {
                 );
 
               if (ScorecardUpdateResponse.status === 200) {
-                console.log("Scorecard Updated Successfully.");
+                //console.log("Scorecard Updated Successfully.");
               } else {
-                console.error("Failed to update Scorecard.");
+                //console.error("Failed to update Scorecard.");
               }
             } else {
-              console.log(
-                "No existing Scorecard found. Creating a new record..."
-              );
+              //   console.log(
+              //     "No existing Scorecard found. Creating a new record..."
+              //   );
 
               const newRecordResponse = await getVRRDetails.InsertList(
                 scorecardObj,
                 ListNames.HRMSCandidateScoreCard
               );
 
-              console.log("", newRecordResponse);
+              // console.log("", newRecordResponse);
 
               if (newRecordResponse.status === 201) {
-                console.log("New Scorecard Created Successfully.");
+                //console.log("New Scorecard Created Successfully.");
               } else {
-                console.error("Failed to create Scorecard.");
+                //console.error("Failed to create Scorecard.");
               }
             }
           }
@@ -487,7 +487,7 @@ const InterviewPanelEdit = (props: any) => {
       setalertProps(CancelAlert);
       setIsLoading(false);
     } catch (error) {
-      console.error("An error occurred during the submission process:", error);
+      //console.error("An error occurred during the submission process:", error);
       throw new Error("Failed to submit data. Please try again later.");
     }
   };
@@ -1030,7 +1030,7 @@ const InterviewPanelEdit = (props: any) => {
                 (panel) => panel.InterviewPanelTitle
               );
 
-              console.log("", interviewPanelTitles);
+              //console.log("", interviewPanelTitles);
               console.log("", InterviewPanelData);
               setInterviewPanelData((prevState) => ({
                 ...prevState,
@@ -1045,7 +1045,7 @@ const InterviewPanelEdit = (props: any) => {
           }
         })
         .catch((error) => {
-          console.error("Error fetching data:", error);
+          //console.error("Error fetching data:", error);
         });
     };
 
