@@ -72,8 +72,6 @@ const SideNavComponent = (props: sideNavProps) => {
                     // const isActive = item.Children?.[0]?.Path && isActiveMenu(item.Children[0].Path);
                     const isExpanded = expandedMenuId === item.Id
                     const isMainMenu = menuType === 'menu';
-                    console.log(item, "MenuResponse");
-
                     return (
                         <div key={item.Id}>
                             {props.IsExpanded ? (

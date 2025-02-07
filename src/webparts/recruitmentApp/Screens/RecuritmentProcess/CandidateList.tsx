@@ -11,7 +11,7 @@ import BreadcrumbsComponent, {
 } from "../../components/CustomBreadcrumps";
 
 const CandidateList = (props: any) => {
-  console.log("Received Props:", props);
+  // console.log("Received Props:", props);
 
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
@@ -19,10 +19,8 @@ const CandidateList = (props: any) => {
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
   const jobCode = props?.stateValue?.JobCode?.toString().trim();
-  console.log("Received JobCode:", jobCode);
 
   const Status = props?.stateValue?.Status;
-  console.log("Status", Status);
 
   function handleRedirectView(
     rowData: any,
@@ -30,7 +28,6 @@ const CandidateList = (props: any) => {
     TabName: string,
     ButtonAction: string
   ) {
-    console.log("Redirecting with rowData:", rowData);
     if (tab === "tab1") {
       props.navigation("/RecurimentProcess/HodScoreCard", {
         state: {
@@ -182,6 +179,7 @@ const CandidateList = (props: any) => {
               rows={rows}
               onPageChange={onPageChange}
               handleRefresh={fetchCandidateData}
+              MasterData={props || {}}
             />
           </CardContent>
         </Card>

@@ -47,8 +47,8 @@ export const DocumentLibraray = {
   InterviewPanelCandidateCV: "InterviewPanelCandidateCV",
   HRMSRecruitment: "HRMSRecruitment",
   HRMSRoleProfile: "HRMS_Role_Profile",
-  RecruitmentAdvertisementDocument: "RecruitmentAdvertisementDocument",
-  ONAMSignedStampDocuments: "ONAMSignedStampDocuments",
+  RecruitmentAdvertisementDocument: "HRMSRecruitmentAdvertDocument",
+  ONAMSignedStampDocuments: "HRMSRecruitmentOnamStampedDocuments",
   RoleProfileMaster: "RoleProfileMaster",
 };
 
@@ -228,4 +228,11 @@ export const TabName = {
   ViewCandiadteDetails: "View Candidate Details",
   Scorecard: "Scorecard",
   ReviewONEMAdvertisement: "Review ONEM Advertisement",
+  ViewPositionDetails: "View Position Details",
+  ViewCandidateDetails: "View Candidate Details"
 };
+
+export const ProfileStatus = {
+  HR: "Pending with HR - Review Profile",
+  LM: "Pending with LM - Review Profile"
+}

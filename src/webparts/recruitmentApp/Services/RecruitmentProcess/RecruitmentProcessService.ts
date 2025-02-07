@@ -43,7 +43,6 @@ export default class RecruitmentService implements IRecruitmentService {
       const formattedItems: any[] = [];
 
       for (const item of listItems) {
-        console.log(item, "GetVacancyDetails Item");
 
         let VRR: any = {
           VRRID: item.Id,
@@ -84,9 +83,8 @@ export default class RecruitmentService implements IRecruitmentService {
           filter,
           ""
         );
-        let positionId: any = await this.GetPositionDetails(filter, "").then(
+        await this.GetPositionDetails(filter, "").then(
           (returnitem: any) => {
-            console.log("formattedItems returnitem positionresult", returnitem);
             if (returnitem?.data && returnitem?.data?.length > 0) {
               positionIDResult = positionIDResult.concat(returnitem.data);
             }
@@ -94,8 +92,6 @@ export default class RecruitmentService implements IRecruitmentService {
           }
         );
 
-        console.log("formattedItems positionresult", positionresult);
-        console.log("formattedItems positionId", positionId);
         if (positionresult?.data?.length > 0) {
           positionrequestresult.push(positionresult.data[0]);
         }
@@ -103,12 +99,6 @@ export default class RecruitmentService implements IRecruitmentService {
         formattedItems.push({ ...VRR, ...(positionresult?.data[0] || {}) });
       }
 
-      console.log("Formatted Items", formattedItems);
-
-      console.log(
-        "formattedItems formattedItems GetVacancyDetails",
-        await Promise.all(formattedItems)
-      );
       return {
         data: [formattedItems, positionIDResult],
         status: 200,
@@ -135,26 +125,22 @@ export default class RecruitmentService implements IRecruitmentService {
         Topcount: count.Topcount,
       });
 
-      console.log("GetVacancyPositionDetails ", listItems);
 
       const formattedItems = listItems.map(async (item) => {
         return {
-          LookupId: item.ID,
-          JobTitleInEnglishId: item.JobTitleEnglishId || 0,
-          JobTitleInEnglish: item.JobTitleEnglish?.JobTitleInEnglish || "",
-          JobTitleInFrenchId: item.JobTitleFrenchId || 0,
-          JobTitleInFrench: item.JobTitleFrench?.JobTitleInFrench || "",
-          DRCGradeId: item.DRCGradeId,
-          DRCGrade: item.DRCGrade?.DRCGrade || "",
-          PayrollGradeId: item.PatersonGradeId,
-          PayrollGrade: item.PatersonGrade?.PatersonGrade || "",
+          LookupId: item?.ID,
+          JobTitleInEnglishId: item?.JobTitleEnglishId || 0,
+          JobTitleInEnglish: item?.JobTitleEnglish?.JobTitleInEnglish || "",
+          JobTitleInFrenchId: item?.JobTitleFrenchId || 0,
+          JobTitleInFrench: item?.JobTitleFrench?.JobTitleInFrench || "",
+          DRCGradeId: item?.DRCGradeId,
+          DRCGrade: item?.DRCGrade?.DRCGrade || "",
+          PayrollGradeId: item?.PatersonGradeId,
+          PayrollGrade: item?.PatersonGrade?.PatersonGrade || "",
           //   PositionList :(await this.GetPositionID(item.JobTitleEnglishId, item.DepartmentId)).data
         };
       });
-      console.log(
-        "formattedItems GetVacancyPositionDetails",
-        await Promise.all(formattedItems)
-      );
+
       return {
         data: await Promise.all(formattedItems),
         status: 200,
@@ -211,8 +197,6 @@ export default class RecruitmentService implements IRecruitmentService {
         Expand: "PositionID",
         Topcount: count.Topcount,
       });
-
-      console.log("GetPositionDetails HRMSVRRToPositionIDMapping", listItems);
 
       const formattedItems = listItems.map(async (item) => {
         return {
@@ -276,11 +260,9 @@ export default class RecruitmentService implements IRecruitmentService {
         Orderbydecorasc: false,
       });
 
-      console.log("GetRecruitmentDetails:", listItems);
       const formattedItems: any[] = [];
       let positionrequestresult: any = [];
       for (const item of listItems) {
-        console.log(item, "GetVacancyDetails Item");
 
         let Recruitment: any = {
           ID: item?.ID,
@@ -346,7 +328,6 @@ export default class RecruitmentService implements IRecruitmentService {
           ""
         );
 
-        console.log("formattedItems positionresult", positionresult);
         if (positionresult?.data?.length > 0) {
           positionrequestresult.push(positionresult.data);
         }
@@ -356,7 +337,6 @@ export default class RecruitmentService implements IRecruitmentService {
           ...(positionresult?.data || {}),
         });
       }
-      console.log(formattedItems, "formattedItems");
 
       return {
         data: formattedItems,
@@ -384,25 +364,21 @@ export default class RecruitmentService implements IRecruitmentService {
         Topcount: count.Topcount,
       });
 
-      console.log("GetRecrutimentPositionDetails ", listItems);
 
       const formattedItems = {
-        LookupId: listItems[0].ID,
-        JobTitleInEnglishId: listItems[0].JobTitleEnglishId || 0,
+        LookupId: listItems[0]?.ID,
+        JobTitleInEnglishId: listItems[0]?.JobTitleEnglishId || 0,
         JobTitleInEnglish:
-          listItems[0].JobTitleEnglish?.JobTitleInEnglish || "",
-        JobTitleInFrench: listItems[0].JobTitleFrench?.JobTitleInFrench || 0,
-        DRCGradeId: listItems[0].DRCGradeId,
-        DRCGrade: listItems[0].DRCGrade?.DRCGrade || "",
-        PayrollGradeId: listItems[0].PatersonGradeId,
-        PayrollGrade: listItems[0].PatersonGrade?.PatersonGrade || "",
+          listItems[0]?.JobTitleEnglish?.JobTitleInEnglish || "",
+        JobTitleInFrench: listItems[0]?.JobTitleFrench?.JobTitleInFrench || 0,
+        DRCGradeId: listItems[0]?.DRCGradeId,
+        DRCGrade: listItems[0]?.DRCGrade?.DRCGrade || "",
+        PayrollGradeId: listItems[0]?.PatersonGradeId,
+        PayrollGrade: listItems[0]?.PatersonGrade?.PatersonGrade || "",
         //   PositionList :(await this.GetPositionID(item.JobTitleEnglishId, item.DepartmentId)).data
       };
 
-      console.log(
-        "formattedItems GetRecrutimentPositionDetails",
-        formattedItems
-      );
+
       return {
         data: formattedItems,
         status: 200,
@@ -478,8 +454,6 @@ export default class RecruitmentService implements IRecruitmentService {
         RequestJSON: Table1,
       });
 
-      console.log("RecruitmentDptDetails Inserted:", response);
-      console.log("RecruitmentDptDetails InsertedID:", response?.data?.ID);
       if (response?.data?.ID) {
         const jobDetailsResponse = await this.InsertJobDetails(
           Table2,
@@ -531,14 +505,12 @@ export default class RecruitmentService implements IRecruitmentService {
           //AssignLineManagerId: row.AssignLineManager,
         };
 
-        console.log("JobDetailsInsert", JobDetailsInsert);
 
         const response = await SPServices.SPAddItem({
           Listname: ListNames.HRMSRecruitmentPositionDetails,
           RequestJSON: JobDetailsInsert,
         });
 
-        console.log("Insert successful:", response);
         insertedRecords.push(response);
       }
 
@@ -628,7 +600,6 @@ export default class RecruitmentService implements IRecruitmentService {
       });
 
       const formattedItems = listItems.map(async (item) => {
-        console.log("InterviewPanelCandidateDetails ", item);
 
         const response = await CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.InterviewPanelCandidateCV,
@@ -638,14 +609,12 @@ export default class RecruitmentService implements IRecruitmentService {
         let candidateCV: IDocFiles[] = [];
         if (response.status === 200 && response.data) {
           candidateCV = response.data;
-          console.log(candidateCV, "candidateCV");
         } else {
           console.error("Error retrieving attachments:", response.message);
         }
         let roleprofileDoc: IDocFiles[] = [];
         if (response.status === 200 && response.data) {
           roleprofileDoc = response.data;
-          console.log(roleprofileDoc, "roleprofileDoc");
         } else {
           console.error(
             "Error retrieving  roleprofileDoc attachments:",
@@ -661,9 +630,8 @@ export default class RecruitmentService implements IRecruitmentService {
           FristName: item.FristName,
           MiddleName: item.MiddleName,
           LastName: item.LastName,
-          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${
-            item.LastName || ""
-          }`,
+          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""
+            }`,
           ResidentialAddress: item?.ResidentialAddress,
           DOB: item?.DOB,
           ContactNumber: item?.ContactNumber,
@@ -677,13 +645,14 @@ export default class RecruitmentService implements IRecruitmentService {
           Qualification: item?.Qualification,
           CandidateCVDoc: candidateCV,
           RoleProfileDocument: roleprofileDoc,
+          AdvertisementDocument: [],
+          ShortlistedValue: ""
         };
       });
 
       const resolvedItems = await Promise.all(formattedItems);
 
       CandidateDetails.push(...resolvedItems);
-      console.log(CandidateDetails, "CandidateDetails");
 
       return {
         data: CandidateDetails,
@@ -720,7 +689,6 @@ export default class RecruitmentService implements IRecruitmentService {
       });
 
       const formattedItems = listItems.map(async (item) => {
-        console.log("HRMSRecruitmentCandidateDetails ", item);
         const response = await CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.InterviewPanelCandidateCV,
           item.JobCode?.JobCode,
@@ -729,7 +697,6 @@ export default class RecruitmentService implements IRecruitmentService {
         let candidateCV: IDocFiles[] = [];
         if (response.status === 200 && response.data) {
           candidateCV = response.data;
-          console.log(candidateCV, "candidateCV");
         } else {
           console.error("Error retrieving attachments:", response.message);
         }
@@ -765,13 +732,15 @@ export default class RecruitmentService implements IRecruitmentService {
           CandidateCVDoc: candidateCV,
           PositionTitle: item.PositionTitle,
           JobGrade: item.JobGrade,
+          RoleProfileDocument: [],
+          AdvertisementDocument: [],
+          ShortlistedValue: ""
         };
       });
 
       const resolvedItems = await Promise.all(formattedItems);
 
       CandidateDetails.push(...resolvedItems);
-      console.log(CandidateDetails, "CandidateDetails");
 
       return {
         data: CandidateDetails,
@@ -848,10 +817,10 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
             ? (Employee.FirstName ?? "") +
-              " " +
-              (Employee.MiddleName ?? "") +
-              " " +
-              (Employee.LastName ?? "")
+            " " +
+            (Employee.MiddleName ?? "") +
+            " " +
+            (Employee.LastName ?? "")
             : "",
           // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
         };
@@ -877,11 +846,10 @@ export default class RecruitmentService implements IRecruitmentService {
     obj: InsertComments
   ): Promise<ApiResponse<InsertComments | null>> {
     try {
-      let response: any = await SPServices.SPAddItem({
+      await SPServices.SPAddItem({
         Listname: ListNames.HRMSRecruitmentComments,
         RequestJSON: obj,
       });
-      console.log("CommentsResponse", response);
 
       return {
         data: null,
@@ -903,11 +871,10 @@ export default class RecruitmentService implements IRecruitmentService {
     ListName: string
   ): Promise<ApiResponse<null>> {
     try {
-      let response: any = await SPServices.SPAddItem({
+      await SPServices.SPAddItem({
         Listname: ListName,
         RequestJSON: obj,
       });
-      console.log("CommentsResponse", response);
 
       return {
         data: null,
@@ -980,15 +947,11 @@ export default class RecruitmentService implements IRecruitmentService {
           RecruitmentIDId: RecruitmentId,
           ExternalAgentDetailsId: agency.key,
         };
-
-        console.log("AgencyInsert", AgencyInsert);
-
         const response = await SPServices.SPAddItem({
           Listname: ListNames.HRMSExternalAgentsDetailsForRecruitment,
           RequestJSON: AgencyInsert,
         });
 
-        console.log("Insert successful:", response);
         insertedRecords.push(response);
       }
 

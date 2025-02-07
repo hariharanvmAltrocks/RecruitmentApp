@@ -107,8 +107,10 @@ export type CandidateData = {
   ReleventExperience: string;
   Qualification: string;
   CandidateCVDoc: any[];
-  //RoleProfileDocument: any[];
-  //AdvertisementDocument: any[];
+  RoleProfileDocument: any[];
+  AdvertisementDocument: any[];
+  ShortlistedValue: string;
+  // LevelofInterviewed: string;
 };
 
 export type ScoreCardData = {
@@ -145,6 +147,12 @@ export type ScoreCardData = {
   EvaluationFeedback: string;
   OverAllEvaluationFeedback: string;
   SignDate?: Date | any;
+  AdvertisementDocument: any[];
+  RoleProfileDocument: any[];
+  PositionTitle?: string;
+  //InterviewPanalNames?: string[];
+  // InterviewPanelNames: string[]; // Array of names (e.g. ["Fathima John N"])
+  interviewPanelTitles: string[];
 };
 
 export type QualificationValue = {
