@@ -9,6 +9,7 @@ import LabelHeaderComponents from "./TitleHeader";
 import TabsComponent from "./TabsComponent ";
 import { CommentsData } from "../Services/RecruitmentProcess/IRecruitmentProcessService";
 import { Label } from "@fluentui/react";
+import { TabName } from "../utilities/Config";
 
 interface props {
   onClose: () => void;
@@ -27,7 +28,7 @@ const labelStyles: React.CSSProperties = {
 function CommanComments({ onClose, Comments }: props) {
   const tabs = [
     {
-      label: "My Submission",
+      label: TabName.ViewJustification,
       value: "tab1",
       content: (
         <Card
