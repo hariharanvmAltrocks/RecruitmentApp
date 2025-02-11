@@ -21,7 +21,7 @@ import {
   ScoreRanking,
   TabName,
 } from "../../utilities/Config";
-import { ScoreCardData } from "../../Models/RecuritmentVRR";
+import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
@@ -35,6 +35,7 @@ import CustomViewDocument from "../../components/CustomViewDocument";
 import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
+import CustomLabel from "../../components/CustomLabel";
 
 type ValidationError = {
   Qualifications: boolean;
@@ -143,6 +144,34 @@ const InterviewPanelEdit = (props: any) => {
       InterviewPanelTitle: "",
     },
   ]);
+  const [questionnaire, setQuestionnaire] = React.useState<QuestionItem[]>([
+    {
+      id: 1,
+      question: "What are some key regulations that govern mining operations?",
+      answer:
+        "Expected Answer:- By using sustainable mining practices, proper waste management, land reclamation, reducing water and air pollution, and implementing renewable energy sources.",
+      rating: null,
+    },
+    {
+      id: 2,
+      question:
+        "What strategies can be used to attract skilled professionals to remote mining locations?",
+      answer:
+        "Expected Answer:- Providing relocation assistance, offering rotational work schedules, housing facilities, competitive benefits, and care.",
+      rating: null,
+    },
+  ]);
+
+  const handleRatingChange = (id: number, rating: number) => {
+    setQuestionnaire((prev) =>
+      prev.map((q) => (q.id === id ? { ...q, rating } : q))
+    );
+  };
+  const ScoreRating = [
+    { key: 3, text: "3 - Excellent" },
+    { key: 2, text: "2 - Acceptable" },
+    { key: 1, text: "1 - Not Acceptable" },
+  ];
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
@@ -782,12 +811,12 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div>
-              <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
+              {/* <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
                 <LabelHeaderComponents
                   value={"Scorecard Details(1-Lower Score, 5 -Highest Score)"}
                 />
               </div>
-              {/* <div className="sub-menu-card"> */}
+
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomAutoComplete
@@ -978,8 +1007,296 @@ const InterviewPanelEdit = (props: any) => {
                     TermsAndCondition={Checkbox}
                   />
                 </div>
-              </div>
+              </div> */}
               {/* </div> */}
+            </div>
+          </CardContent>
+        </Card>
+      ),
+    },
+    {
+      label: TabName.CandidateDetails,
+      value: "tab2",
+      content: (
+        <Card
+          variant="outlined"
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+        >
+          <CardContent>
+            <div>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    <LabelHeaderComponents value={"Questionnaires"} />
+                    <CustomLabel
+                      value={
+                        "(Rating Guide: 3 - Excellent, 2 - Acceptable, 1 - Not Acceptable)"
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+              <div style={{ marginTop: "20px" }}>
+                {questionnaire.map((q) => (
+                  <div key={q.id} style={{ marginBottom: "15px" }}>
+                    <p style={{ fontWeight: "bold" }}>{q.question}</p>
+                    <p>
+                      <strong>Expected Answer:</strong> {q.answer}
+                    </p>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                      }}
+                    >
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomAutoComplete
+                          label="Rating "
+                          value={
+                            ScoreRating.find(
+                              (option) => option.key === q.rating
+                            ) || null
+                          }
+                          options={ScoreRating}
+                          onChange={(value) =>
+                            handleRatingChange(q.id, value ? value.key : 0)
+                          }
+                          error={false}
+                          mandatory={true}
+                          disabled={false}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ),
+    },
+    {
+      label: TabName.CandidateDetails,
+      value: "tab3",
+      content: (
+        <Card
+          variant="outlined"
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+        >
+          <CardContent>
+            <div>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
+                  <LabelHeaderComponents
+                    value={"Scorecard Details(1-Lower Score, 5 -Highest Score)"}
+                  />
+                </div>
+                {/* <div className="sub-menu-card"> */}
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Qualifications (Relevant)"
+                      value={CandidateData.Qualifications}
+                      options={ScoreRanking}
+                      onChange={(value) =>
+                        handleAutoComplete("Qualifications", value)
+                      }
+                      mandatory={false}
+                      error={ValidationError.Qualifications}
+                      disabled={false}
+                    />
+                  </div>
+
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Experience (Relevant)"
+                      value={CandidateData.Experience}
+                      options={ScoreRanking}
+                      onChange={(value) =>
+                        handleAutoComplete("Experience", value)
+                      }
+                      error={ValidationError.Experience}
+                      mandatory={false}
+                      disabled={false}
+                    />
+                  </div>
+
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Knowledge"
+                      value={CandidateData.Knowledge}
+                      options={ScoreRanking}
+                      mandatory={false}
+                      onChange={(value) =>
+                        handleAutoComplete("Knowledge", value)
+                      }
+                      error={ValidationError.Knowledge}
+                      disabled={false}
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Energy Level"
+                      value={CandidateData.Energylevel}
+                      options={ScoreRanking}
+                      mandatory={false}
+                      onChange={(value) =>
+                        handleAutoComplete("Energylevel", value)
+                      }
+                      error={ValidationError.Energylevel}
+                      disabled={false}
+                    />
+                  </div>
+
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Meets All Job Requirements"
+                      value={CandidateData.Requirements}
+                      options={ScoreRanking}
+                      mandatory={false}
+                      onChange={(value) =>
+                        handleAutoComplete("Requirements", value)
+                      }
+                      error={ValidationError.Requirements}
+                      disabled={false}
+                    />
+                  </div>
+
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Will Contribute to the Culture Required"
+                      value={CandidateData.contributeculture}
+                      options={ScoreRanking}
+                      mandatory={false}
+                      onChange={(value) =>
+                        handleAutoComplete("contributeculture", value)
+                      }
+                      error={ValidationError.contributeculture}
+                      disabled={false}
+                    />
+                  </div>
+                </div>
+
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Expat Experience/Congolese"
+                      value={CandidateData.ExpatExperienceCongolese}
+                      options={ScoreRanking}
+                      mandatory={false}
+                      onChange={(value) =>
+                        handleAutoComplete("ExpatExperienceCongolese", value)
+                      }
+                      error={ValidationError.ExpatExperienceCongolese}
+                      disabled={false}
+                    />
+                  </div>
+
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Other Criteria Recognized by the Panel"
+                      value={CandidateData.CriteriaRecognised}
+                      options={ScoreRanking}
+                      mandatory={false}
+                      onChange={(value) =>
+                        handleAutoComplete("CriteriaRecognised", value)
+                      }
+                      error={ValidationError.CriteriaRecognised}
+                      disabled={false}
+                    />
+                  </div>
+                </div>
+
+                <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
+                  <div className="ms-grid-col ms-lg6">
+                    <CustomRadioGroup
+                      label="To Consider for Employment"
+                      value={CandidateData?.Employment}
+                      options={EmploymentOption}
+                      mandatory={false}
+                      error={ValidationError.Employment}
+                      onChange={(value) =>
+                        handleRadioChange("Employment", value)
+                      }
+                    />
+                  </div>
+                </div>
+                {shouldShowTextArea && (
+                  <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
+                    <div className="ms-grid-col ms-lg10">
+                      <CustomTextArea
+                        label="Feedback(Required for Ratings Below 2)"
+                        value={CandidateData?.EvaluationFeedback}
+                        error={ValidationError.EvaluationFeedback}
+                        mandatory={true}
+                        onChange={(value) =>
+                          handletextArea("EvaluationFeedback", value)
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
+                  <div className="ms-grid-col ms-lg10">
+                    <CustomTextArea
+                      label="Overall Evaluation Feedback"
+                      value={CandidateData?.OverAllEvaluationFeedback}
+                      error={ValidationError.OverAllEvaluationFeedback}
+                      mandatory={true}
+                      onChange={(value) =>
+                        handletextArea("OverAllEvaluationFeedback", value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div
+                  className="ms-Grid-row"
+                  style={{
+                    padding: "3px",
+                    marginTop: "20px",
+                    marginBottom: "-33px",
+                  }}
+                >
+                  <div className="ms-Grid-col ms-lg12">
+                    <SignatureCheckbox
+                      label={"I hereby agree for submitted this request"}
+                      checked={Checkbox}
+                      error={ValidationError.CheckboxValidation}
+                      onChange={(value: boolean) => setCheckbox(value)}
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg12">
+                    <CustomSignature
+                      Name={
+                        (props.userDetails[0]?.FirstName ?? "") +
+                        " " +
+                        (props.userDetails[0]?.MiddleName ?? "") +
+                        " " +
+                        (props.userDetails[0]?.LastName ?? "")
+                      }
+                      JobTitleInEnglish={props.userDetails[0]?.JopTitleEnglish}
+                      JobTitleInFrench={props.userDetails[0]?.JopTitleFrench}
+                      Department={props.userDetails[0]?.DepartmentName}
+                      Date={CandidateData.SignDate.toString()}
+                      TermsAndCondition={Checkbox}
+                    />
+                  </div>
+                </div>
+                {/* </div> */}
+              </div>
             </div>
           </CardContent>
         </Card>

@@ -202,3 +202,11 @@ export type RecruitementPositionDetails = {
   DRCGradeID: number;
   Comments: string;
 };
+
+//QuestionnairesforInterviewerLogin
+export type QuestionItem = {
+  id: number;
+  question: string;
+  answer: string;
+  rating: number | null;
+};
