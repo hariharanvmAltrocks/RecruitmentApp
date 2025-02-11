@@ -227,10 +227,11 @@ export const TabName = {
   ScorecardDetails: "Scorecard Details",
   ReviewONEMAdvertisement: "Review ONEM Advertisement",
   ViewPositionDetails: "View Position Details",
-  ViewCandidateDetails: "View Candidate Details"
+  ViewCandidateDetails: "View Candidate Details",
+  ViewJustification: "View Justification",
 };
 
 export const ProfileStatus = {
   HR: "Pending with HR - Review Profile",
-  LM: "Pending with LM - Review Profile"
-}
+  LM: "Pending with LM - Review Profile",
+};
