@@ -15,37 +15,46 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 interface AssignPositionDialogProps {
-  open: boolean;
-  onClose: () => void;
-  jobTitle: string;
-  candidateName: string;
+  visible: boolean;
+  onHide: () => void;
+  candidateData: {
+    FullName: string;
+    PositionTitle: string;
+    JobCode: string;
+  } | null;
+  onAssign: (data: { positionId: string; reasons: string }) => void;
 }
 
 export const AssignPositionDialog = ({
-  open,
-  onClose,
-  jobTitle,
-  candidateName,
+  visible,
+  onHide,
+  candidateData,
+  onAssign,
 }: AssignPositionDialogProps) => {
+  const [selectedPositionId, setSelectedPositionId] = React.useState("");
+  const [reasons, setReasons] = React.useState("");
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    onClose();
+    onAssign({
+      positionId: selectedPositionId,
+      reasons,
+    });
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={visible} onClose={onHide} maxWidth="sm" fullWidth>
       <DialogTitle
         sx={{
           borderBottom: "1px solid #e0e0e0",
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-between",
           alignItems: "center",
-          color: "red",
           padding: "16px 24px",
         }}
       >
         Assign Position ID
-        <IconButton onClick={onClose} size="small">
+        <IconButton onClick={onHide} size="small">
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -53,23 +62,35 @@ export const AssignPositionDialog = ({
         <DialogContent sx={{ pt: 3 }}>
           <div style={{ marginBottom: "20px" }}>
             <div style={{ display: "flex", marginBottom: "16px" }}>
-              <span style={{ width: "150px", color: "#666" }}>Job Title</span>
-              <span style={{ marginLeft: "8px" }}>- {jobTitle}</span>
+              <span style={{ width: "150px", color: "black" }}>Job Title</span>
+              <span style={{ marginLeft: "8px" }}>
+                - {candidateData?.PositionTitle || "N/A"}
+              </span>
             </div>
             <div style={{ display: "flex" }}>
-              <span style={{ width: "150px", color: "#666" }}>
+              <span style={{ width: "150px", color: "black" }}>
                 Candidate Name
               </span>
-              <span style={{ marginLeft: "8px" }}>- {candidateName}</span>
+              <span style={{ marginLeft: "8px" }}>
+                - {candidateData?.FullName || "N/A"}
+              </span>
             </div>
           </div>
 
           <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel required>Assign Position ID</InputLabel>
-            <Select label="Assign Position ID" required defaultValue="">
-              <MenuItem value="POS001">POS001</MenuItem>
-              <MenuItem value="POS002">POS002</MenuItem>
-              <MenuItem value="POS003">POS003</MenuItem>
+            <InputLabel required>Job Code</InputLabel>
+            <Select
+              value={selectedPositionId}
+              onChange={(e) => setSelectedPositionId(e.target.value)}
+              required
+            >
+              {candidateData?.JobCode ? (
+                <MenuItem value={candidateData.JobCode}>
+                  {candidateData.JobCode}
+                </MenuItem>
+              ) : (
+                <MenuItem disabled>No Job Code Available</MenuItem>
+              )}
             </Select>
           </FormControl>
 
@@ -80,11 +101,13 @@ export const AssignPositionDialog = ({
             fullWidth
             required
             placeholder="Enter reasons"
+            value={reasons}
+            onChange={(e) => setReasons(e.target.value)}
           />
         </DialogContent>
         <DialogActions sx={{ p: 3, pt: 0 }}>
           <Button
-            onClick={onClose}
+            onClick={onHide}
             variant="outlined"
             sx={{
               borderColor: "#EF3340",
@@ -106,6 +129,7 @@ export const AssignPositionDialog = ({
                 bgcolor: "#d91a2a",
               },
             }}
+            disabled={!selectedPositionId || !reasons}
           >
             Assign
           </Button>
