@@ -99,7 +99,10 @@ const ReviewCandidateList = (props: any) => {
                     props.navigation("/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails", {
                         state: {
                             ID: rowData?.CandidateID,
-                            RecruitmentID: RecruitmentDetails[0].ID
+                            RecruitmentID: RecruitmentDetails[0].ID,
+                            tab: tab,
+                            ButtonAction: ButtonAction,
+                            TabNamed: TabNamed
                         },
                     });
                 }

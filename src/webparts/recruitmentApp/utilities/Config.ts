@@ -224,13 +224,16 @@ export const TabName = {
   PositionDetails: "Position Details",
   AdvertisementDetails: "Advertisement Details",
   AdvertisementViewDetails: "View Advertisement ",
-  ScorecardDetails: "Scorecard Details",
+  ScorecardDetails: " Review Scorecard ",
+  ViewCandiadteDetails: "View Candidate Details",
+  Scorecard: "Scorecard",
   ReviewONEMAdvertisement: "Review ONEM Advertisement",
   ViewPositionDetails: "View Position Details",
-  ViewCandidateDetails: "View Candidate Details"
+  ViewCandidateDetails: "View Candidate Details",
+  ViewJustification: "View Justification",
 };
 
 export const ProfileStatus = {
   HR: "Pending with HR - Review Profile",
-  LM: "Pending with LM - Review Profile"
-}
+  LM: "Pending with LM - Review Profile",
+};

@@ -12,13 +12,11 @@ import AssignInterviewPanel from "../Screens/RecuritmentProcess/AssignInterviewP
 import InterviewPanelList from "../Screens/InterviewPanel/InterviewPanelList";
 import InterviewPanelEdit from "../Screens/InterviewPanel/InterviewPanelEdit";
 import Emptypage from "../Screens/EmptyPage/EmptyPage";
-import HodScoreCard from "../Screens/RecuritmentProcess/HodScoreCard";
 import CandidateList from "../Screens/RecuritmentProcess/CandidateList";
-// import HodScoreCard from "../Screens/RecuritmentProcess/HodScoreCard";
 import ReviewProfileList from "../Screens/ReviewProfile/ReviewProfileList";
 import ReviewCandidateList from "../Screens/ReviewProfile/ReviewCandidateList";
 import ViewCandidateDetails from "../Screens/ReviewProfile/ViewCandidateDetails";
-
+import HodViewScorecard from "../Screens/RecuritmentProcess/HodViewScorecard";
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
 
@@ -32,8 +30,8 @@ export default function MainPage(props: any) {
     <div style={{ display: "flex", flexDirection: "row" }} className=" ms-Grid">
       <div
         style={{ width: isExpanded ? "15%" : "6%" }}
-      // onMouseEnter={() => { setIsExpanded(true) }}
-      // onMouseLeave={() => { setIsExpanded(false) }}
+        // onMouseEnter={() => { setIsExpanded(true) }}
+        // onMouseLeave={() => { setIsExpanded(false) }}
       >
         <SideNavComponent roleID={roleID} IsExpanded={isExpanded} />
       </div>
@@ -113,10 +111,7 @@ export default function MainPage(props: any) {
                   path="/InterviewPanelList/InterviewPanelEdit"
                   element={<InterviewPanelEdit {...props} {...masterData} />}
                 />
-                <Route
-                  path="/RecurimentProcess/HodScoreCard"
-                  element={<HodScoreCard {...props} {...masterData} />}
-                />
+
                 <Route
                   path="/RecurimentProcess/HodScoreCard/CandidateList"
                   element={
@@ -126,6 +121,10 @@ export default function MainPage(props: any) {
                       {...ADGroupData}
                     />
                   }
+                />
+                <Route
+                  path="/RecurimentProcess/HodViewScorecard"
+                  element={<HodViewScorecard {...props} {...masterData} />}
                 />
               </Routes>
             </>

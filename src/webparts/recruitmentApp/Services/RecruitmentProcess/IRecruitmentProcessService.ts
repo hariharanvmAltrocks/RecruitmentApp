@@ -76,4 +76,9 @@ export type IRecruitmentService = {
     selectedAgencies: { key: number; text: string }[],
     RecruitmentId: number
   ): Promise<ApiResponse<any>>;
+  HRMSCandidateScoreCard(
+    filterParam: any,
+    filterConditions: any,
+    candidateID: number
+  ): Promise<ApiResponse<any | null>>;
 };

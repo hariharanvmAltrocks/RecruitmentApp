@@ -2339,7 +2339,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             },
                                                         },
                                                         {
-                                                            label: "Approved",
+                                                            label: "Approve",
                                                             onClick: async () => {
                                                                 await SaveRecruitment();
                                                             },
