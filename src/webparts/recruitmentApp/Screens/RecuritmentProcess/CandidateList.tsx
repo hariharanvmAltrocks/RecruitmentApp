@@ -2,24 +2,24 @@ import * as React from "react";
 import { Card, CardContent } from "@mui/material";
 import { getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import { TabName } from "../../utilities/Config";
+import { RoleID, TabName } from "../../utilities/Config";
 import SearchableDataTable from "../../components/CustomDataTable";
 
 import { Button } from "primereact/button";
 import BreadcrumbsComponent, {
-  TabNameData,
+  type TabNameData,
 } from "../../components/CustomBreadcrumps";
+// import { AssignPositionDialog } from "./AssignPositionDialog";
 
 const CandidateList = (props: any) => {
-  // console.log("Received Props:", props);
-
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
+  // const [showAssignModal, setShowAssignModal] = React.useState(false);
+  // const [selectedCandidate, setSelectedCandidate] = React.useState(null);
   const jobCode = props?.stateValue?.JobCode?.toString().trim();
-
   const Status = props?.stateValue?.Status;
 
   function handleRedirectView(
@@ -28,22 +28,31 @@ const CandidateList = (props: any) => {
     TabName: string,
     ButtonAction: string
   ) {
-    if (tab === "tab1") {
-      props.navigation("/RecurimentProcess/HodScoreCard", {
-        state: {
-          ID: rowData?.ID,
-          tab,
-          StatusId: rowData?.StatusId,
-          Status: rowData?.Status,
-          TabName,
-          ButtonAction,
-          JobPosition: rowData?.PositionTitle,
-        },
-      });
+    switch (props.CurrentRoleID) {
+      case RoleID.HOD:
+        {
+          if (tab === "tab1") {
+            props.navigation("/RecurimentProcess/HodViewScorecard", {
+              state: {
+                ID: rowData?.ID,
+                tab,
+                StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                TabName: TabName,
+                ButtonAction,
+              },
+            });
+          }
+        }
+        break;
     }
   }
-
   const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
+    {
+      field: "Checkbox",
+      header: "",
+      sortable: false,
+    },
     { field: "ID", header: "Candidate ID", sortable: true },
     { field: "FullName", header: "Applicant Name", sortable: true },
     { field: "JobCode", header: "Job Code", sortable: true },
@@ -80,26 +89,46 @@ const CandidateList = (props: any) => {
                 }}
               />
             ) : (
-              <Button
-                onClick={() =>
-                  handleRedirectView(rowData, tab, TabName, ButtonAction)
-                }
-                className="table_btn"
-                style={{
-                  width: "30px",
-                  marginRight: "7px",
-                  padding: "3px",
-                }}
-              >
-                <img
-                  src={require("../../assets/edit_icon.png")}
-                  alt="Edit Icon"
+              <>
+                <Button
+                  onClick={() =>
+                    handleRedirectView(rowData, tab, TabName, ButtonAction)
+                  }
+                  className="table_btn"
+                  icon="pi pi-eye"
                   style={{
-                    width: "100%",
-                    height: "100%",
+                    width: "30px",
+                    marginRight: "7px",
+                    padding: "3px",
                   }}
-                />
-              </Button>
+                >
+                  <img
+                    src={
+                      require("../../assets/edit_icon.png") ||
+                      "/placeholder.svg"
+                    }
+                    alt="Edit Icon"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
+                </Button>
+                {/* <Button
+                  onClick={() => {
+                    setSelectedCandidate(rowData);
+                    setShowAssignModal(true);
+                  }}
+                  className="table_btn"
+                  style={{
+                    width: "30px",
+                    marginRight: "7px",
+                    padding: "3px",
+                  }}
+                >
+                  <i className="pi pi-check" style={{ fontSize: "1rem" }} />
+                </Button> */}
+              </>
             )}
           </div>
         );
@@ -122,7 +151,6 @@ const CandidateList = (props: any) => {
         " ",
         filterConditions
       );
-      console.log("API Response:", response);
 
       if (response?.status === 200 && response?.data?.length) {
         const filteredCandidates = response.data
@@ -153,7 +181,7 @@ const CandidateList = (props: any) => {
         console.error("Error in fetching candidate data:", error)
       );
     }
-  }, [jobCode]);
+  }, [jobCode, Status]);
 
   const onPageChange = (event: any) => {
     setRows(event.rows);
@@ -208,6 +236,13 @@ const CandidateList = (props: any) => {
     }
   }, [activeTab, tabs, props.stateValue, TabNameData]);
 
+  // const handleAssignPosition = (data: {
+  //   positionId: string;
+  //   reasons: string;
+  // }) => {
+  //   setShowAssignModal(false);
+  // };
+
   return (
     <CustomLoader isLoading={isLoading}>
       <div className="menu-card">
@@ -218,6 +253,12 @@ const CandidateList = (props: any) => {
           onBreadcrumbChange={handleBreadcrumbChange}
         />
       </div>
+      {/* <AssignPositionDialog
+        visible={showAssignModal}
+        onHide={() => setShowAssignModal(false)}
+        candidateData={selectedCandidate}
+        onAssign={handleAssignPosition}
+      /> */}
     </CustomLoader>
   );
 };
