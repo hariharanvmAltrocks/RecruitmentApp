@@ -307,7 +307,7 @@ const ViewCandidateDetails = (props: any) => {
                 <div className="ms-Grid-col ms-lg4">
                   <CustomViewDocument
                     Attachment={formState.CandidateCVDoc}
-                    Label={"Candidate Resume"}
+                  // Label={"Candidate Resume"}
                   />
                 </div>
               </div>
@@ -352,7 +352,7 @@ const ViewCandidateDetails = (props: any) => {
                     <div className="ms-Grid-col ms-lg6">
                       <CustomViewDocument
                         Attachment={formState.RoleProfileDocument}
-                        Label={"Role Profile Document"}
+                      // Label={"Role Profile Document"}
                       />
                     </div>
                   </div>
@@ -362,7 +362,7 @@ const ViewCandidateDetails = (props: any) => {
                     <div className="ms-Grid-col ms-lg6">
                       <CustomViewDocument
                         Attachment={formState.AdvertisementDocument}
-                        Label={"Advertisement Documents"}
+                      // Label={"Advertisement Documents"}
                       />
                     </div>
                   </div>

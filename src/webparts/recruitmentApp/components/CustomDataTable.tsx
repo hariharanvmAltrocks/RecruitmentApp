@@ -158,7 +158,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                     </div>
                 )}
             </div>
-            <div className="ms_Grid-row" style={{ marginRight: "-19%", marginLeft: "5px" }}>
+            <div className="ms_Grid-row" style={{ marginRight: "-12%", marginLeft: "5px" }}>
                 <div className="ms-Grid-col ms-lg3">
                     <CustomAutoComplete
                         label="Department"
@@ -188,20 +188,31 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                 <div className="ms-Grid-col ms-lg3">
                     <CustomAutoComplete
                         label="Business Unit Name"
-                        options={Array.from(
-                            new Map(
-                                MasterData?.BusinessUnitCodeAllColumn.map(
-                                    (data: any) => [data.Name, { key: data.text, text: data.Name }]
-                                )
-                            ).values()
-                        ) as AutoCompleteItem[]}
+                        options={
+                            FilterData.BusinessUnitCode
+                                ? Array.from(
+                                    new Map(
+                                        MasterData?.BusinessUnitCodeAllColumn
+                                            .filter((data: any) => data.text === FilterData.BusinessUnitCode.text)
+                                            .map((data: any) => [data.Name, { key: data.text, text: data.Name }])
+                                    ).values()
+                                ) as AutoCompleteItem[]
+                                : Array.from(
+                                    new Map(
+                                        MasterData?.BusinessUnitCodeAllColumn.map(
+                                            (data: any) => [data.Name, { key: data.text, text: data.Name }]
+                                        )
+                                    ).values()
+                                ) as AutoCompleteItem[]
+                        }
                         value={FilterData.BusinessUnitName}
                         disabled={false}
                         mandatory={true}
-                        onChange={(item) => handleAutoComplete("BusinessUnitName", item)
-                        }
+                        onChange={(item) => handleAutoComplete("BusinessUnitName", item)}
                     />
                 </div>
+
+
 
             </div>
             <div className="ms-Grid-row" style={{ marginTop: "2%" }}>

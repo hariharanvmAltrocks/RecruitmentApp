@@ -1086,7 +1086,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             content: (
                 <Card
                     variant="outlined"
-                    sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", border: "0px solid rgba(0, 0, 0, 0.12)", borderRadius: "30px", marginTop: "2%" }}
+                    sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", borderRadius: "10px", marginTop: "2%" }}
                 >
                     <CardContent>
                         <div>
@@ -1309,25 +1309,31 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         }
                                     />
                                 </div>
-
-                                <div className="ms-Grid-col ms-lg3">
-                                    <CustomViewDocument
-                                        Attachment={formState.RoleProfileDocument}
-                                        Label={"Role Profile Documents"}
-                                    />
-                                </div>
-
-                                <div className="ms-Grid-col ms-lg3">
-                                    <CustomViewDocument
-                                        Attachment={formState.GradingDocument}
-                                        Label={"Grading Documents"}
-                                    />
-                                </div>
-
                             </div>
 
-
-
+                            <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
+                                <LabelHeaderComponents value={"Attachments"} />
+                            </div>
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg2">
+                                    <CustomLabel value={"RoleProfile Documents"} />
+                                </div>
+                                <div className="ms-Grid-col ms-lg6" style={{ marginTop: "1%" }}>
+                                    <CustomViewDocument
+                                        Attachment={formState.RoleProfileDocument}
+                                    />
+                                </div>
+                            </div>
+                            <div className="ms-Grid-row">
+                                <div className="ms-Grid-col ms-lg2">
+                                    <CustomLabel value={"Grading Documents"} />
+                                </div>
+                                <div className="ms-Grid-col ms-lg6" style={{ marginTop: "1%" }}>
+                                    <CustomViewDocument
+                                        Attachment={formState.GradingDocument}
+                                    />
+                                </div>
+                            </div>
 
 
                             {props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv ? (
@@ -1338,10 +1344,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
                                         <>
                                             <div className="ms-Grid-row">
+                                                <CustomLabel value={"Advertisement Documents"} mandatory={true} />
+                                            </div>
+                                            <div className="ms-Grid-row">
                                                 <div className="ms-Grid-col ms-lg6">
                                                     <CustomViewDocument
                                                         Attachment={formState.AdvertisementDocument}
-                                                        Label={"Advertisement Documents"}
                                                     />
                                                 </div>
                                             </div>
@@ -1366,7 +1374,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                         }}
                                                         mandatory={true}
                                                         error={validationErrors.OnamSignedStampsAttchment}
-                                                        Style={{ backgroundColor: "rgb(217 80 80)", color: "white" }}
+                                                    // Style={{ backgroundColor: "rgb(217 80 80)", color: "white", marginLeft: "4%", padding: "0px" }}
                                                     />
 
                                                 </div>
@@ -1551,7 +1559,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 }}
                                                 mandatory={true}
                                                 error={validationErrors.AdvertisementAttachement}
+                                            // Style={{ backgroundColor: "rgb(217 80 80)", color: "white" }}
                                             />
+
                                         </div>
                                         <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
                                             {formState.AdvertisementAttachement?.map((file: any, index: number) => {
@@ -1597,10 +1607,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 selectedDate={advDetails.ValidTo}
                                                 label="Valid To"
                                                 error={validationErrors.ValidTo}
-                                                minDate={advDetails.ValidFrom || todaydate}
-                                                maxDate={advDetails.ValidFrom
-                                                    ? new Date(advDetails.ValidFrom.getTime() + 14 * 24 * 60 * 60 * 1000)
+                                                minDate={advDetails.ValidFrom
+                                                    ? new Date(advDetails.ValidFrom.getTime() + 13 * 24 * 60 * 60 * 1000)
                                                     : undefined}
+                                                // maxDate={}
                                                 mandatory={true}
                                                 onChange={(date) => handleDateChange(date, "ValidTo")}
                                             />
@@ -2065,10 +2075,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             <div>
                                 <>
                                     <div className="ms-Grid-row">
+                                        <CustomLabel value={"Advertisement Documents"} mandatory={true} />
+                                    </div>
+                                    <div className="ms-Grid-row">
                                         <div className="ms-Grid-col ms-lg6">
                                             <CustomViewDocument
                                                 Attachment={formState.AdvertisementDocument}
-                                                Label={"Advertisement Documents"}
                                             />
                                         </div>
                                     </div>
@@ -2260,7 +2272,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 }
                     break;
             }
-            setAddQualifbtn(false)
+            setAddQualifbtn(false);
+            setAdvDetails((prevState) => ({
+                ...prevState,
+                addMasterQualification: ""
+            }))
         }
     }
 

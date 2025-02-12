@@ -1340,7 +1340,7 @@ const RecruitmentProcess = (props: any) => {
                   data={data}
                   columns={columnConfig(
                     "tab1",
-                    "view",
+                    "View",
                     TabName.AssignRecuritmentHR
                   )}
                   rows={rows}
@@ -1376,7 +1376,7 @@ const RecruitmentProcess = (props: any) => {
                   data={RecruitmentDetails}
                   columns={columnConfig(
                     "tab2",
-                    "upload",
+                    "Upload",
                     TabName.UploadONEMDoc
                   )}
                   rows={rows}
@@ -1399,7 +1399,7 @@ const RecruitmentProcess = (props: any) => {
               <CardContent>
                 <SearchableDataTable
                   data={RecruitmentDetails}
-                  columns={columnConfig("tab3", "view", TabName.MySubmission)}
+                  columns={columnConfig("tab3", "View", TabName.MySubmission)}
                   rows={rows}
                   onPageChange={(event) => onPageChange(event, "VRR")}
                   handleRefresh={() => handleRefresh("tab3")}
@@ -1429,7 +1429,7 @@ const RecruitmentProcess = (props: any) => {
                       data={RecruitmentDetails}
                       columns={columnConfig(
                         "tab1",
-                        "upload",
+                        "Upload",
                         TabName.UploadAdvertisement
                       )}
                       rows={rows}
@@ -1464,7 +1464,7 @@ const RecruitmentProcess = (props: any) => {
                       data={RecruitmentDetails}
                       columns={columnConfig(
                         "tab2",
-                        "view",
+                        "View",
                         TabName.AssignAgencies
                       )}
                       rows={rows}
@@ -1507,7 +1507,7 @@ const RecruitmentProcess = (props: any) => {
                           data={RecruitmentDetails}
                           columns={columnConfig(
                             "tab1",
-                            "edit",
+                            "Edit",
                             TabName.ReviewONEMAdvertisement
                           )}
                           rows={rows}
@@ -1571,7 +1571,7 @@ const RecruitmentProcess = (props: any) => {
                               data={RecruitmentDetails}
                               columns={columnConfig(
                                 "tab1",
-                                "edit",
+                                "Edit",
                                 TabName.ReviewProfile
                               )}
                               rows={rows}
