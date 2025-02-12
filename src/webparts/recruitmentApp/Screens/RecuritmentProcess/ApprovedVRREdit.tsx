@@ -30,7 +30,6 @@ import CustomLabel from "../../components/CustomLabel";
 import CustomTextArea from "../../components/CustomTextArea";
 import {
     AdvDetails,
-    IAttachmentExampleState,
     QualificationValue,
     RecuritmentData,
     RoleSpecKnowledge,
@@ -54,21 +53,16 @@ import BreadcrumbsComponent, {
 import CustomSignature from "../../components/CustomSignature";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomPreviewScreen from "./CustomPreviewScreen";
+import CustomDatePicker from "../../components/CustomDatePicker";
+import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
 
-interface Item {
-    name: string;
-    fileContent: ArrayBuffer;
-    file?: File | any;
-    serverRelativeUrl?: string;
-    ID?: string;
-}
 
 type formValidation = {
     AssignRecruitmentHR: boolean;
     AssignAgencies: boolean;
     Comments: boolean;
-    AdvertisementDocument: boolean;
-    OnamSignedStampsDocument: boolean;
+    AdvertisementAttachement: boolean,
+    OnamSignedStampsAttchment: boolean,
     MinQualification: boolean;
     PrefeQualification: boolean;
     RoleSpeKnowledge: boolean;
@@ -81,10 +75,12 @@ type formValidation = {
     ExperienceinMiningIndustry: boolean;
     addMasterQualification: boolean;
     Checkboxalidation: boolean;
+    ValidFrom: boolean;
+    ValidTo: boolean;
 };
 
 const ApprovedVRREdit: React.FC = (props: any) => {
-    // console.log(props, "propsApprovedVRREdit");
+    console.log(props, "propsApprovedVRREdit");
 
     const todaydate = new Date();
     const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
@@ -110,6 +106,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         ExperienceinMiningIndustry: "",
         YearofExperience: " ",
         PreferredExperience: "",
+        ValidFrom: undefined,
+        ValidTo: undefined,
     });
     const [formState, setFormState] = useState<RecuritmentData>({
         VRRID: 0,
@@ -173,8 +171,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         AssignRecruitmentHR: false,
         AssignAgencies: false,
         Comments: false,
-        AdvertisementDocument: false,
-        OnamSignedStampsDocument: false,
+        AdvertisementAttachement: false,
+        OnamSignedStampsAttchment: false,
         MinQualification: false,
         PrefeQualification: false,
         RoleSpeKnowledge: false,
@@ -186,7 +184,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         TotalExperience: false,
         ExperienceinMiningIndustry: false,
         addMasterQualification: false,
-        Checkboxalidation: false
+        Checkboxalidation: false,
+        ValidFrom: false,
+        ValidTo: false
     })
     const [MainComponent, setMainComponent] = useState<boolean>(true);
     const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
@@ -317,6 +317,17 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 }
                 return updatedRows;
             });
+            if (key === "MinQualification") {
+                setValidationError((prevState) => ({
+                    ...prevState,
+                    MinQualification: false,
+                }));
+            } else if (key === "PrefeQualification") {
+                setValidationError((prevState) => ({
+                    ...prevState,
+                    PrefeQualification: false,
+                }));
+            }
         }
 
         if (stateKey === "TechnicalSkillValue") {
@@ -415,7 +426,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     AdvertismentDocment.status === 200
                 ) {
                     const RoleProfileDoc = RoleProfileDocment.data || [];
-                    const AdvertismentDocPromises = AdvertismentDocment.data[0] || [];
+                    const AdvertismentDocPromises = AdvertismentDocment.data || [];
                     const ONAMSignedStampDoc = OnamSignedStampsDocment.data || [];
                     const GradingDoc = GradingDocument.data || [];
 
@@ -487,24 +498,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }
     };
 
-    const handleAttachement = async (PositionCode: string, ListName: string, Attachment: IAttachmentExampleState[]) => {
-        try {
-            if (PositionCode && Attachment && Attachment.length > 0) {
-                for (const attachment of Attachment) {
-                    await CommonServices.uploadAttachmentToLibrary(
-                        PositionCode,
-                        attachment.file,
-                        ListName
-                    );
-                }
-            }
-        } catch (error) {
-            console.error("Error handling form submission:", error);
-        } finally {
-            console.log("Attachments upload process completed");
-        }
-    };
-
     const Validation = (): boolean => {
         const {
             AssignRecruitmentHR,
@@ -517,8 +510,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         let errors = {
             AssignRecruitmentHR: false,
             Comments: false,
-            AdvertisementDocument: false,
-            OnamSignedStampsDocument: false,
+            AdvertisementAttachement: false,
+            OnamSignedStampsAttchment: false,
             MinQualification: false,
             PrefeQualification: false,
             RoleSpeKnowledge: false,
@@ -528,7 +521,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             RolePurpose: false,
             JobDescription: false,
             ExperienceinMiningIndustry: false,
-            TotalExperience: false
+            TotalExperience: false,
+            Checkboxalidation: false,
+            ValidFrom: false,
+            ValidTo: false,
         };
 
         switch (props.CurrentRoleID) {
@@ -536,9 +532,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 if (props.stateValue?.tab === "tab1") {
                     errors.AssignRecruitmentHR = !IsValid(AssignRecruitmentHR.text);
                     errors.Comments = !IsValid(Comments);
+                    errors.Checkboxalidation = !IsValid(Checkbox)
                 } else if (props.stateValue?.tab === "tab2") {
-                    errors.OnamSignedStampsDocument = !IsValid(OnamSignedStampsAttchment);
+                    errors.OnamSignedStampsAttchment = !IsValid(OnamSignedStampsAttchment);
                     errors.Comments = !IsValid(Comments);
+                    errors.Checkboxalidation = !IsValid(Checkbox)
                 }
                 break;
             }
@@ -546,7 +544,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             case RoleID.RecruitmentHR: {
                 if (props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv) {
                     errors.Comments = !IsValid(Comments);
-                    errors.AdvertisementDocument = !IsValid(AdvertisementAttachement);
+                    errors.AdvertisementAttachement = !IsValid(AdvertisementAttachement);
                     errors.Comments = !IsValid(Comments);
                     errors.MinQualification = !IsValid(QualificationValue[0].MinQualification.text);
                     errors.PrefeQualification = !IsValid(QualificationValue[0].PrefeQualification.text);
@@ -558,7 +556,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     errors.JobDescription = !IsValid(advDetails.JobDescription);
                     errors.ExperienceinMiningIndustry = !IsValid(advDetails.ExperienceinMiningIndustry);
                     errors.TotalExperience = !IsValid(advDetails.TotalExperience);
-
+                    errors.Checkboxalidation = !IsValid(Checkbox);
+                    errors.ValidFrom = !IsValid(advDetails.ValidFrom);
+                    errors.ValidTo = !IsValid(advDetails.ValidTo)
                 }
 
                 break;
@@ -567,6 +567,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             case RoleID.HOD: {
                 if (props.stateValue?.tab === "tab1") {
                     errors.Comments = !IsValid(Comments);
+                    errors.Checkboxalidation = !IsValid(Checkbox)
                 }
                 break;
             }
@@ -651,11 +652,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 switch (props.CurrentRoleID) {
                     case RoleID.RecruitmentHRLead: {
                         if (props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc) {
-                            await handleAttachement(
+                            await CommonServices.uploadAttachmentToLibrary(
                                 formState.JobCode,
+                                formState.OnamSignedStampsAttchment ?? [],
                                 DocumentLibraray.ONAMSignedStampDocuments,
-                                formState.OnamSignedStampsAttchment
-                            )
+                            );
                             await SPServices.SPUpdateItem({
                                 Listname: ListNames.HRMSRecruitmentDptDetails,
                                 RequestJSON: obj,
@@ -681,7 +682,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         break;
                     }
                     case RoleID.RecruitmentHR: {
-                        await handleAttachement(formState.JobCode, DocumentLibraray.RecruitmentAdvertisementDocument, formState.AdvertisementAttachement);
+                        await CommonServices.uploadAttachmentToLibrary(
+                            formState.JobCode,
+                            formState?.AdvertisementAttachement ?? [],
+                            DocumentLibraray.RecruitmentAdvertisementDocument,
+                        );
                         await SPServices.SPUpdateItem({
                             Listname: ListNames.HRMSRecruitmentDptDetails,
                             RequestJSON: obj,
@@ -739,14 +744,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             JobDescription: advDetails.JobDescription,
                             RoleProfile: advDetails.RolePurpose,
                             RoleSpecificKnowledgeJson: JSON.stringify(RoleSpecificKnowledgeJson),
-                            TechnicalSkillsKnowledgeJson: JSON.stringify(RoleSpecificKnowledgeJson),
+                            TechnicalSkillsKnowledgeJson: JSON.stringify(TechnicalSkillsKnowledgeJson),
                             RecruitmentIDId: props.stateValue?.ID,
                             YearofExperience: Number(advDetails.TotalExperience),
                             PreferredExperience: Number(advDetails.ExperienceinMiningIndustry)
                         };
                         await getVRRDetails.InsertList(AdvData, ListNames.HRMSRecruitmentRoleProfileDetails);
                         resetForm();
-
                         let UpdateAlert = {
                             Message: RecuritmentHRMsg.AdvertisementSubmitMsg,
                             Type: HRMSAlertOptions.Success,
@@ -808,25 +812,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         void initialize();
     }, []);
 
-
-    useEffect(() => {
-        const validationAttachment = async () => {
-            if (formState.OnamSignedStampsAttchment.length > 0) {
-                setValidationError((prevState: any) => ({
-                    ...prevState,
-                    OnamSignedStampsDocument: false,
-                }));
-            }
-            if (formState.AdvertisementAttachement.length > 0) {
-                setValidationError((prevState: any) => ({
-                    ...prevState,
-                    AdvertisementDocument: false,
-                }));
-            }
-        };
-
-        void validationAttachment();
-    }, [formState.OnamSignedStampsAttchment, formState.AdvertisementAttachement]);
 
     useEffect(() => {
         const MasterDataOption = async () => {
@@ -948,6 +933,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 addMasterQualification: "",
                                 YearofExperience: rawData.YearofExperience || "",
                                 PreferredExperience: rawData.PreferredExperience || "",
+                                ValidFrom: undefined,
+                                ValidTo: undefined
                             };
 
                             setAdvDetails(mappedData);
@@ -967,7 +954,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     const handleDelete = (index: number, attachmentType: 'AdvertisementAttachement' | 'OnamSignedStampsAttchment' | 'CandidateCVAttachment') => {
         setFormState((prevState) => {
-            const updatedAttachments = [...prevState[attachmentType]];
+            const updatedAttachments = [...prevState[attachmentType] ?? []];
             updatedAttachments.splice(index, 1);
 
             return {
@@ -1043,6 +1030,53 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             ...prevState,
             [StateValue]: false
         }))
+    };
+
+    const handleDateChange = (value: Date | null, StateValue: string) => {
+        setAdvDetails((prevState) => {
+            const updatedState = { ...prevState, [StateValue]: value };
+
+            if (StateValue === "ValidFrom" && value) {
+                const maxValidToDate = new Date(value);
+                maxValidToDate.setDate(maxValidToDate.getDate() + 14);
+
+                if (updatedState.ValidTo && updatedState.ValidTo > maxValidToDate) {
+                    updatedState.ValidTo = maxValidToDate;
+                }
+            }
+
+            return updatedState;
+        });
+
+        setValidationError((prevState) => ({
+            ...prevState,
+            [StateValue]: false
+        }));
+    };
+
+
+    const handleCheckbox = (
+        value: boolean,
+    ) => {
+        setCheckbox(value)
+        setValidationError((prevState) => ({
+            ...prevState,
+            Checkboxalidation: false
+        }))
+    };
+
+    const handleFileAttachment = (
+        StateValue: string,
+        value: IDocFiles[]
+    ) => {
+        setFormState((prevState) => ({
+            ...prevState,
+            [StateValue]: value
+        }))
+        setValidationError((prevState: any) => ({
+            ...prevState,
+            [StateValue]: false,
+        }));
     };
 
     const tabs = [
@@ -1148,7 +1182,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             setFormState((prevState) => ({ ...prevState, Section: value }))
                                         }
                                     />
-
 
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
@@ -1318,19 +1351,24 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                     <CustomLabel value={"ONEM Signed Doc"} />
                                                     <AttachmentButton
                                                         label="Upload"
-                                                        // iconName="CloudUpload"
-                                                        // iconNameHover="CloudUpload"
-                                                        AttachState={(newAttachments: Item[]) => {
-                                                            // Directly update state here
-                                                            setFormState((prevState: any) => ({
-                                                                ...prevState,
-                                                                OnamSignedStampsAttchment: [...prevState.OnamSignedStampsAttchment, ...newAttachments],
-                                                            }));
+                                                        AttachState={(newAttachment: any) => {
+                                                            let attachment: IDocFiles[] = newAttachment.map((item: any) => {
+                                                                return {
+                                                                    name: item.name,
+                                                                    content: item.file,
+                                                                    type: "New",
+                                                                }
+                                                            });
+                                                            const attachments = [...formState.OnamSignedStampsAttchment || [], ...attachment];
+                                                            handleFileAttachment(
+                                                                "OnamSignedStampsAttchment",
+                                                                attachments)
                                                         }}
                                                         mandatory={true}
-                                                        error={validationErrors.OnamSignedStampsDocument}
+                                                        error={validationErrors.OnamSignedStampsAttchment}
                                                         Style={{ backgroundColor: "rgb(217 80 80)", color: "white" }}
                                                     />
+
                                                 </div>
                                                 <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
                                                     {formState.OnamSignedStampsAttchment?.map((file: any, index: number) => {
@@ -1498,21 +1536,22 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 label="Upload"
                                                 // iconName="CloudUpload"
                                                 // iconNameHover="CloudUpload"
-                                                AttachState={(newAttachments: Item[]) => {
-                                                    setFormState((prevState: any) => ({
-                                                        ...prevState,
-                                                        AdvertisementAttachement: [...prevState.AdvertisementAttachement, ...newAttachments],
-                                                    }));
-                                                    setValidationError((prevState: any) => ({
-                                                        ...prevState,
-                                                        AdvertisementDocument: false
-                                                    }))
+                                                AttachState={(newAttachment: any) => {
+                                                    let attachment: IDocFiles[] = newAttachment.map((item: any) => {
+                                                        return {
+                                                            name: item.name,
+                                                            content: item.file,
+                                                            type: "New",
+                                                        }
+                                                    });
+                                                    const attachments = [...formState.AdvertisementAttachement || [], ...attachment];
+                                                    handleFileAttachment(
+                                                        "AdvertisementAttachement",
+                                                        attachments)
                                                 }}
                                                 mandatory={true}
-                                                error={validationErrors.AdvertisementDocument}
+                                                error={validationErrors.AdvertisementAttachement}
                                             />
-
-
                                         </div>
                                         <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
                                             {formState.AdvertisementAttachement?.map((file: any, index: number) => {
@@ -1539,6 +1578,32 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 );
                                             })}
 
+                                        </div>
+                                    </div>
+
+                                    <div className="ms-Grid-row">
+                                        <div className="ms-Grid-col ms-lg4">
+                                            <CustomDatePicker
+                                                selectedDate={advDetails.ValidFrom}
+                                                label="Valid From"
+                                                error={validationErrors.ValidFrom}
+                                                minDate={todaydate}
+                                                mandatory={true}
+                                                onChange={(date) => handleDateChange(date, "ValidFrom")}
+                                            />
+                                        </div>
+                                        <div className="ms-Grid-col ms-lg4">
+                                            <CustomDatePicker
+                                                selectedDate={advDetails.ValidTo}
+                                                label="Valid To"
+                                                error={validationErrors.ValidTo}
+                                                minDate={advDetails.ValidFrom || todaydate}
+                                                maxDate={advDetails.ValidFrom
+                                                    ? new Date(advDetails.ValidFrom.getTime() + 14 * 24 * 60 * 60 * 1000)
+                                                    : undefined}
+                                                mandatory={true}
+                                                onChange={(date) => handleDateChange(date, "ValidTo")}
+                                            />
                                         </div>
                                     </div>
 
@@ -1964,7 +2029,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 label={"I hereby agree for submitted this request"}
                                                 checked={Checkbox}
                                                 error={validationErrors.Checkboxalidation}
-                                                onChange={(value: boolean) => setCheckbox(value)}
+                                                onChange={(value: boolean) => handleCheckbox(value)}
                                             />
                                         </div>
                                     </div>
@@ -2215,7 +2280,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 TabName={TabNameData}
                                 onBreadcrumbChange={handleBreadcrumbChange}
                                 additionalButtons={
-                                    props.CurrentRoleID === RoleID.RecruitmentHRLead && props.stateValue?.StatusId === StatusId.PendingwithHRLeadtoAssignRecruitmentHR
+                                    props.CurrentRoleID === RoleID.RecruitmentHRLead && props.stateValue?.StatusId === StatusId.PendingwithHRLeadtoAssignRecruitmentHR || props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoAssignExternalAgency
                                         ? [
                                             {
                                                 label: "Close",

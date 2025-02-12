@@ -79,11 +79,13 @@ function PreviewScreen({
                                     >
                                         <p style={{ fontSize: "17px" }}>
                                             Total Experience:{" "}  {data.TotalExperience}
-                                            <span>
-                                                {" "}
-                                                Experience in Mining Industry (Years) :{" "}    {data.ExperienceinMiningIndustry}
-                                            </span>
                                         </p>
+                                    </div>
+                                    <div>
+                                        <span style={{ fontSize: "17px" }}>
+                                            {" "}
+                                            Experience in Mining Industry (Years) :{" "}    {data.ExperienceinMiningIndustry}
+                                        </span>
                                     </div>
 
                                 </div>

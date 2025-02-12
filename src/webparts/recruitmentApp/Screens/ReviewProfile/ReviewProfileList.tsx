@@ -80,6 +80,7 @@ const ReviewProfileList = (props: any) => {
           props.navigation("/ReviewProfileList/ReviewCandidateList", {
             state: {
               ID: rowData?.ID,
+              data: rowData,
               tab,
               StatusId: rowData?.StatusId,
               Status: rowData?.Status,

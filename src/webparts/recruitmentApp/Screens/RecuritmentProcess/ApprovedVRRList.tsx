@@ -34,7 +34,6 @@ import CheckboxDataTable from "../../components/CheckboxDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { alertPropsData } from "../../Models/Screens";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
-import axios from "axios";
 // import { ApiUrl } from "../../Services/AxiosService/axiosConfig";
 // import 'primeicons/primeicons.css';
 // interface ColumnConfig {
@@ -691,23 +690,6 @@ const RecruitmentProcess = (props: any) => {
 
         void fetchDataAndGetADGroupsOption();
     }, [AssignHR]);
-
-    React.useEffect(() => {
-        const fetchDataAndApply = async () => {
-            void fetchData();
-            axios.post('https://hrmscp.dev.altrocks.net/hrms/InternalSignIn', {}, {
-                headers: {
-                    "Authorization": "Basic SHJtcyBBcHAgVXNlcjpBbHRyb2Nrc0AxMjM=",
-                    "Content-Type": "application/json"
-                },
-                // httpsAgent: agent,
-                withCredentials: true
-            })
-                .then(response => console.log(response))
-                .catch(error => console.error('Error:', error));
-        };
-        void fetchDataAndApply();
-    }, [activeTab])
 
 
     const onPageChange = (event: any, Type: string) => {

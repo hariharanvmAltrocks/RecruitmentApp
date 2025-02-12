@@ -11,73 +11,46 @@ export default class CommonService implements ICommonService {
 
     uploadAttachmentToLibrary = async (
         PositionCode: string,
-        AttachFile: File,
+        AttachFile: IDocFiles[],
         Listname: string
     ): Promise<ApiResponse<any>> => {
-        return new Promise<ApiResponse<any>>((resolve, reject) => {
-            try {
-                const fileReader = new FileReader();
+        try {
+            if (AttachFile) {
+                const attachmentsLibrary = sp.web.lists.getByTitle(Listname);
+                const rootFolder = await attachmentsLibrary.rootFolder.get();
+                const folderUrl = `${rootFolder.ServerRelativeUrl}/${PositionCode}`
 
-                fileReader.onload = async (event: any) => {
-                    try {
-                        const fileContent = event.target.result;
-                        const attachmentsLibrary = sp.web.lists.getByTitle(Listname);
-                        const positionFolderName = PositionCode.toString();
-                        let positionFolderUrl = `${attachmentsLibrary.rootFolder.serverRelativeUrl}/${positionFolderName}`;
+                await sp.web.getFolderByServerRelativeUrl(folderUrl).delete();
 
-                        try {
-                            await sp.web.getFolderByServerRelativeUrl(positionFolderUrl).get();
-                        } catch {
-                            const positionFolderResult = await attachmentsLibrary.rootFolder.folders.add(positionFolderName);
-                            positionFolderUrl = positionFolderResult.data.ServerRelativeUrl;
-                        }
-                        const fileUrl = `${positionFolderUrl}/${AttachFile.name}`;
-                        try {
-                            await sp.web.getFileByServerRelativeUrl(fileUrl).delete();
-                        } catch (deleteError) {
-                            console.warn(`File ${AttachFile.name} not found. Uploading new file.`);
-                        }
 
-                        await sp.web.getFolderByServerRelativeUrl(positionFolderUrl).files.add(
-                            AttachFile.name,
-                            fileContent,
-                            true // Overwrite if exists
-                        );
-
-                        resolve({
-                            data: "Successfully Added Document",
-                            status: 200,
-                            message: "Attachment uploaded successfully"
-                        });
-                    } catch (innerError) {
-                        console.error("Error uploading attachment:", innerError);
-                        reject({
-                            data: null,
-                            status: 500,
-                            message: "Error uploading attachment"
-                        });
-                    }
-                };
-
-                fileReader.onerror = (error) => {
-                    console.error("Error reading file:", error);
-                    reject({
-                        data: null,
-                        status: 500,
-                        message: "Error reading file"
-                    });
-                };
-
-                fileReader.readAsArrayBuffer(AttachFile);
-            } catch (error) {
-                console.error("Error during file upload process:", error);
-                reject({
-                    data: null,
-                    status: 500,
-                    message: "Error during file upload process"
+                await SPServices.addDocLibFiles({
+                    FilePath: Listname,
+                    FolderNames: [`${PositionCode.toString()}`],
+                    Datas: AttachFile,
                 });
+
+                console.log("✅ Files deleted and new files added successfully");
+
+                return {
+                    data: "Successfully Replaced Document",
+                    status: 200,
+                    message: "Attachment replaced successfully"
+                };
             }
-        });
+
+            return {
+                data: null,
+                status: 400,
+                message: "No attachments provided"
+            };
+        } catch (error) {
+            console.error("❌ Error during file replacement process:", error);
+            return {
+                data: null,
+                status: 500,
+                message: `Error during file replacement: ${error.message}`
+            };
+        }
     };
 
 

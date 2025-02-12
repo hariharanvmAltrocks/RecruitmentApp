@@ -1,7 +1,13 @@
-export const ApiUrl = "https://hrmscp.dev.altrocks.net/hrms";
+// export const ApiUrl = "https://hrmscp.tmicloud.net:9141/hrms/api/hrms";
+export const ApiUrl = "https://localhost:7019/api/hrms";
+
 export const AuthorizationHeader = {
-    Authorization: "Basic SHJtcyBBcHAgVXNlcjpBbHRyb2Nrc0AxMjM=", // Ensure "Basic " prefix
-};
+    headers: {
+        "Authorization": "Basic SHJtcyBBcHAgVXNlcjpBbHRyb2Nrc0AxMjM=",
+        "Content-Type": "application/json",
+    },
+    withCredentials: true,
+}
 
 export const AlertMsg = {
     SessionExpird: 'Your session has expired. Please log in again.',
