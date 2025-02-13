@@ -72,9 +72,6 @@ const SideNavComponent = (props: sideNavProps) => {
                     // const isActive = item.Children?.[0]?.Path && isActiveMenu(item.Children[0].Path);
                     const isExpanded = expandedMenuId === item.Id
                     const isChildIshere = item.Children?.[0]?.Path;
-                    console.log(isChildIshere, "isChildIshere");
-
-                    debugger;
                     const isMainMenu = menuType === 'menu';
                     return (
                         <div key={item.Id}>
