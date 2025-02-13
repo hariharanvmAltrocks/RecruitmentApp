@@ -91,7 +91,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
                 )}
 
                 {additionalButtons.map((button, index) => {
-                    if (button.label === "Submit" || button.label === "Preview" || button.label === "Approved") {
+                    if (button.label === "Submit" || button.label === "Preview" || button.label === "Approve") {
                         return (
                             currentValue === items[items.length - 1].value ? (
                                 <div key={index} style={{ marginRight: "10px" }}>

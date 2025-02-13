@@ -55,18 +55,18 @@ export type RecuritmentData = {
   DateRequried: string;
   IsRevert: string;
   VacancyConfirmed: string;
-  AdvertisementAttachement: IAttachmentExampleState[];
+  AdvertisementAttachement: IDocFiles[] | null;
   PositionDetails: any[];
   RoleProfileDocument: any[];
   GradingDocument: any[];
   AdvertisementDocument: any[];
   AssignRecruitmentHR: AutoCompleteItem;
   AssignRecruitmentHROption: AutoCompleteItem[];
-  OnamSignedStampsAttchment: IAttachmentExampleState[];
+  OnamSignedStampsAttchment: IDocFiles[] | null;
   OnamSignedStampsDocument: any[];
   AssignAgencies: AutoCompleteItem;
   AssignAgenciesOption: AutoCompleteItem[];
-  CandidateCVAttachment: IAttachmentExampleState[];
+  CandidateCVAttachment: IDocFiles[] | null;
   Comments: string;
   SignDate?: Date | any;
 };
@@ -85,6 +85,8 @@ export type AdvDetails = {
   ExperienceinMiningIndustry: string;
   YearofExperience: any;
   PreferredExperience: any;
+  ValidFrom: Date | undefined;
+  ValidTo: Date | undefined;
 };
 
 export type CandidateData = {

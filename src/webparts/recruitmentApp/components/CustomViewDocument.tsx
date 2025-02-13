@@ -1,11 +1,10 @@
 import * as React from "react";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
-import CustomLabel from "./CustomLabel";
 import { Link } from "@mui/material";
 
 interface fieldItems {
     Attachment: IDocFiles[];
-    Label: string;
+    Label?: string;
 }
 
 function CustomViewDocument({
@@ -30,7 +29,6 @@ function CustomViewDocument({
                     const fileName = file.name;
                     return (
                         <div key={index}>
-                            <CustomLabel value={Label} />
                             <div className="ms-Grid-row">
                                 <div
                                     className="ms-Grid-col ms-lg12"

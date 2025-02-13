@@ -13,6 +13,7 @@ interface FormFields {
     error: boolean;
     onChange?: (date: Date | null) => void;
     minDate?: Date;
+    maxDate?: Date;
     disabled?: boolean;
     mandatory?: boolean;
 }
@@ -43,6 +44,7 @@ function CustomDatePicker({
     error,
     onChange,
     minDate,
+    maxDate,
     disabled,
     mandatory = false,
 }: FormFields) {
@@ -63,12 +65,13 @@ function CustomDatePicker({
                     formatDate={(date) => moment(date).format("DD/MM/YYYY")}
                     minDate={minDate}
                     disabled={disabled}
+                    maxDate={maxDate}
                 />
                 {error && (
                     <p
                         style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}
                     >
-                        Field Is Required
+                        Field is Required
                     </p>
                 )}
             </div>
