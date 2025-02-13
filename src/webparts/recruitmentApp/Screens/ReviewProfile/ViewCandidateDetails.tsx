@@ -2,7 +2,6 @@ import * as React from "react";
 import { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import { CandidateData } from "../../Models/RecuritmentVRR";
 import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import CustomLabel from "../../components/CustomLabel";
@@ -15,20 +14,10 @@ import { ADGroupID, DocumentLibraray, RoleProfileMaster, TabName } from "../../u
 import LabelHeaderComponents from "../../components/TitleHeader";
 import CustomViewDocument from "../../components/CustomViewDocument";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
-import CustomSignature from "../../components/CustomSignature";
-import { BreadcrumbTabData } from "./ReviewCandidateList";
 import { AutoCompleteItem } from "../../Models/Screens";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
+import { getProfileData } from "../../Services/ReviewProfileService/ReviewCandidateService";
 
-type Props = {
-  ID: number;
-  Submit_fn: () => void;
-  back_fn: () => void;
-  Status: string;
-  RecuritmentID: string;
-  MasterData: any;
-  TabNames: BreadcrumbTabData
-};
 
 type InterviewedLevelValue = {
   Levels: string;
@@ -37,19 +26,11 @@ type InterviewedLevelValue = {
   AssignInterviewedLevel2: AutoCompleteItem[];
 }
 
-const ViewCandidateDetails: React.FC<Props> = ({
-  ID,
-  Submit_fn,
-  back_fn,
-  Status,
-  RecuritmentID,
-  MasterData,
-  TabNames
-
-}) => {
+const ViewCandidateDetails = (props: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [formState, setFormState] = useState<CandidateData>({
+  const [formState, setFormState] = useState<any>({
     JobCode: "",
+    JobTitle: "",
     JobCodeId: 0,
     PassportID: "",
     FristName: "",
@@ -64,6 +45,8 @@ const ViewCandidateDetails: React.FC<Props> = ({
     Gender: "",
     TotalYearOfExperiance: "",
     Skills: "",
+    Status: "",
+    Agencies: " ",
     LanguageKnown: "",
     ReleventExperience: "",
     Qualification: "",
@@ -96,58 +79,55 @@ const ViewCandidateDetails: React.FC<Props> = ({
     if (isLoading) return;
     setIsLoading(true);
     try {
-      const filterConditions = [
-        {
-          FilterKey: "ID",
-          Operator: "eq",
-          FilterValue: ID,
-        },
-      ];
-      const Conditions = "";
-      const response = await getVRRDetails.GetCandidateDetails(
-        filterConditions,
-        Conditions
-      );
+      console.log(SignDate);
 
+      await getProfileData.getCandidateProfile(props.stateValue?.ID).then(async (res) => {
+        if (res.status === 200 && res.data !== null) {
+          console.log(res, "getCandidateProfile Response");
 
-      if (response.status === 200 && response.data !== null) {
-        const op = response.data[0];
+          const op = res.data.data;
+          const [
+            RoleProfileDocment,
+            AdvertismentDocment,
+            CandidateCVDoc
+          ] = await Promise.all([
+            CommonServices.GetAttachmentToLibrary(DocumentLibraray.RoleProfileMaster, op.JobCode, RoleProfileMaster.RoleProfile),
+            CommonServices.GetAttachmentToLibrary(DocumentLibraray.RecruitmentAdvertisementDocument, op.JobCode),
+            CommonServices.GetAttachmentToLibrary(DocumentLibraray.InterviewPanelCandidateCV, op.JobCode, op?.PassportID)
+          ]);
+          const RoleProfileDoc = RoleProfileDocment.data || [];
+          const AdvertismentDocPromises = AdvertismentDocment.data || [];
+          const CandidateCVDocPromises = CandidateCVDoc.data || [];
+          setFormState((prevState: any) => ({
+            ...prevState,
+            JobCode: op?.jobCode,
+            JobTitle: op?.jobDetail?.descriptions_en?.jobTitle,
+            // PassportID: op?.PassportID,
+            FullName: `${op?.profile?.firstName || ""} ${op?.profile?.middleName || ""} ${op?.profile?.lastName || ""}`,
+            LastName: op?.profile?.middleName,
+            // ResidentialAddress: op?.ResidentialAddress,
+            // DOB: op?.DOB,
+            // ContactNumber: op?.ContactNumber,
+            // Email: op?.Email,
+            Nationality: op?.profile?.nationality,
+            Gender: op?.profile?.gender,
+            TotalYearOfExperiance: op?.profile?.totalYearOfExperiance,
+            // Skills: op?.Skills,
+            // LanguageKnown: op?.LanguageKnown,
+            ReleventExperience: op?.profile?.releventExperience,
+            Qualification: op?.profile?.education?.displayText,
+            CandidateCVDoc: CandidateCVDocPromises,
+            RoleProfileDocment: RoleProfileDoc,
+            AdvertismentDocment: AdvertismentDocPromises,
+            Status: op?.workflowStatus?.displayText,
+            Agencies: op?.profileXAgent?.agent?.name,
+          }));
+        }
+      }).catch((error) => {
+        console.log(error, "getCandidateProfile Error");
 
-        const [
-          RoleProfileDocment,
-          AdvertismentDocment,
-          CandidateCVDoc
-        ] = await Promise.all([
-          CommonServices.GetAttachmentToLibrary(DocumentLibraray.RoleProfileMaster, op.JobCode, RoleProfileMaster.RoleProfile),
-          CommonServices.GetAttachmentToLibrary(DocumentLibraray.RecruitmentAdvertisementDocument, RecuritmentID, op.JobCode),
-          CommonServices.GetAttachmentToLibrary(DocumentLibraray.InterviewPanelCandidateCV, op.JobCode, op?.PassportID)
-        ]);
-        const RoleProfileDoc = RoleProfileDocment.data || [];
-        const AdvertismentDocPromises = AdvertismentDocment.data || [];
-        const CandidateCVDocPromises = CandidateCVDoc.data || [];
-        setFormState((prevState) => ({
-          ...prevState,
-          JobCode: op?.JobCode,
-          JobCodeId: op?.JobCodeId,
-          PassportID: op?.PassportID,
-          FullName: op?.FullName,
-          LastName: op?.LastName,
-          ResidentialAddress: op?.ResidentialAddress,
-          DOB: op?.DOB,
-          ContactNumber: op?.ContactNumber,
-          Email: op?.Email,
-          Nationality: op?.Nationality,
-          Gender: op?.Gender,
-          TotalYearOfExperiance: op?.TotalYearOfExperiance,
-          Skills: op?.Skills,
-          LanguageKnown: op?.LanguageKnown,
-          ReleventExperience: op?.ReleventExperience,
-          Qualification: op?.Qualification,
-          CandidateCVDoc: CandidateCVDocPromises,
-          RoleProfileDocment: RoleProfileDoc,
-          AdvertismentDocment: AdvertismentDocPromises,
-        }));
-      }
+      })
+
     } catch (error) {
       console.error("Failed to fetch Vacancy Details:", error);
     } finally {
@@ -166,7 +146,7 @@ const ViewCandidateDetails: React.FC<Props> = ({
       todaydate.getSeconds()
     ))
     const newTabNames = [
-      { tabName: TabNames.TabName },
+      // { tabName: TabNames.TabName },
       { tabName: TabName.PositionDetails },
       { tabName: "Edit" },
       { tabName: TabName.CandidateDetails },
@@ -180,7 +160,7 @@ const ViewCandidateDetails: React.FC<Props> = ({
         {
           FilterKey: "ID",
           Operator: "eq",
-          FilterValue: RecuritmentID,
+          FilterValue: 0,
         },
       ];
       const Conditions = "";
@@ -208,7 +188,7 @@ const ViewCandidateDetails: React.FC<Props> = ({
 
 
   const handleRadioChange = async (item: string) => {
-    setFormState((prevState) => ({
+    setFormState((prevState: any) => ({
       ...prevState,
       ShortlistedValue: item,
     }));
@@ -239,14 +219,14 @@ const ViewCandidateDetails: React.FC<Props> = ({
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg6">
                   <LabelHeaderComponents
-                    value={`Job Title - ${formState.Nationality} (${formState.JobCode})`}
+                    value={`Job Title - ${formState.JobTitle} (${formState.JobCode})`}
                   >
                     {" "}
                   </LabelHeaderComponents>
                 </div>
                 <div className="ms-Grid-col ms-lg6">
                   <LabelHeaderComponents
-                    value={`Status - ${Status}`}
+                    value={`Status - ${formState.Status}`}
                   >
                     {" "}
                   </LabelHeaderComponents>
@@ -327,11 +307,11 @@ const ViewCandidateDetails: React.FC<Props> = ({
                 <div className="ms-Grid-col ms-lg4">
                   <CustomViewDocument
                     Attachment={formState.CandidateCVDoc}
-                    Label={"Candidate Resume"}
+                  // Label={"Candidate Resume"}
                   />
                 </div>
               </div>
-              {TabNames.TabName === TabName.AssignInterviewPanel ? (
+              {TabName.AssignInterviewPanel ? (
                 <>
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
@@ -372,7 +352,7 @@ const ViewCandidateDetails: React.FC<Props> = ({
                     <div className="ms-Grid-col ms-lg6">
                       <CustomViewDocument
                         Attachment={formState.RoleProfileDocument}
-                        Label={"Role Profile Document"}
+                      // Label={"Role Profile Document"}
                       />
                     </div>
                   </div>
@@ -382,7 +362,7 @@ const ViewCandidateDetails: React.FC<Props> = ({
                     <div className="ms-Grid-col ms-lg6">
                       <CustomViewDocument
                         Attachment={formState.AdvertisementDocument}
-                        Label={"Advertisement Documents"}
+                      // Label={"Advertisement Documents"}
                       />
                     </div>
                   </div>
@@ -444,14 +424,14 @@ const ViewCandidateDetails: React.FC<Props> = ({
               </div>
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg12">
-                  <CustomSignature
+                  {/* <CustomSignature
                     Name={(MasterData.userDetails[0].FirstName ?? "") + " " + (MasterData.userDetails[0]?.MiddleName ?? "") + " " + (MasterData.userDetails[0]?.LastName ?? "")}
                     JobTitleInEnglish={MasterData.userDetails[0].JopTitleEnglish}
                     JobTitleInFrench={MasterData.userDetails[0].JopTitleFrench}
                     Department={MasterData.userDetails[0].DepartmentName}
                     Date={SignDate ? SignDate.toString() : ""}
                     TermsAndCondition={Checkbox}
-                  />
+                  /> */}
                 </div>
               </div>
             </div>
@@ -463,6 +443,14 @@ const ViewCandidateDetails: React.FC<Props> = ({
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem)
   };
+
+  function back_fn() {
+    throw new Error("Function not implemented.");
+  }
+
+  function Submit_fn() {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <>

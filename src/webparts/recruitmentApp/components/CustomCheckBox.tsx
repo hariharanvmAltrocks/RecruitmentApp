@@ -14,14 +14,14 @@ interface viewProps {
 const checkBoxStyles: ICheckboxStyles = {
     root: {
         ".ms-Checkbox-checkbox": {
-            height: "25px !important",
-            width: "25px !important",
-            borderRadius: "18%",
-            border: "2px solid ",
-            // background: "#ef3340",
+            // height: "25px !important",
+            // width: "25px !important",
+            // borderRadius: "18%",
+            border: "1px  ",
         },
         ":hover .ms-Checkbox-checkbox": {
             border: "2px solid  !important",
+            background: "rgb(117 104 218)",
         },
         ":hover .ms-Checkbox-checkmark": {
             // color: "#ef3340",

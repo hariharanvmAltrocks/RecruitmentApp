@@ -1,7 +1,7 @@
 import { ILabelStyles, Label } from "@fluentui/react";
 import * as React from "react";
 import "../App.css";
-import { Editor, EditorTextChangeEvent } from "primereact/editor"; // Import the event type
+import { Editor } from "primereact/editor";
 
 interface FormFields {
   label?: string;
@@ -28,62 +28,42 @@ function RichTextEditor({
   style = {},
   placeholder = "Enter text here..."
 }: FormFields) {
-  const [editorContent, setEditorContent] = React.useState(value);
 
-  React.useEffect(() => {
-    setEditorContent(value);
-  }, [value]);
+  const customToolbar = (
+    <span className="ql-toolbar">
+      <div id="toolbar">
+        {/* Text size */}
+        <select className="ql-size">
+          <option value="small"></option>
+          <option selected></option>
+          <option value="large"></option>
+          <option value="huge"></option>
+        </select>
 
-  const handleTextChange = (e: EditorTextChangeEvent) => {
-    setEditorContent(e.htmlValue || "")
-    if (onChange) {
-      onChange(e.htmlValue || "");
-    }
-  };
+        {/* Text formatting */}
+        <button className="ql-bold"></button>
+        <button className="ql-italic"></button>
+        <button className="ql-underline"></button>
 
-  const renderHeader = () => {
-    return (
-      <span className="ql-toolbar">
-        <div id="toolbar">
-          {/* Text size */}
-          <select className="ql-size">
-            <option value="small"></option>
-            <option selected></option>
-            <option value="large"></option>
-            <option value="huge"></option>
-          </select>
+        {/* List options */}
+        <button className="ql-list" value="ordered"></button>
+        <button className="ql-list" value="bullet"></button>
 
-          {/* Text formatting */}
-          <button className="ql-bold"></button>
-          <button className="ql-italic"></button>
-          <button className="ql-underline"></button>
+        {/* Font color */}
+        <select className="ql-color"></select>
+        <select className="ql-background"></select>
 
-          {/* Script options */}
-          {/* <button className="ql-script" value="sub"></button>
-          <button className="ql-script" value="super"></button> */}
+        {/* Text alignment */}
+        <select className="ql-align">
+          <option selected></option> {/* Default alignment (left) */}
+          <option value="center"></option>
+          <option value="right"></option>
+          <option value="justify"></option>
+        </select>
+      </div>
+    </span>
+  );
 
-          {/* List options */}
-          <button className="ql-list" value="ordered"></button>
-          <button className="ql-list" value="bullet"></button>
-
-          {/* Font color */}
-          <select className="ql-color"></select>
-          <select className="ql-background"></select>
-
-          {/* Text alignment */}
-          <select className="ql-align">
-            <option selected></option> {/* Default alignment (left) */}
-            <option value="center"></option>
-            <option value="right"></option>
-            <option value="justify"></option>
-          </select>
-
-        </div>
-      </span>
-    );
-  };
-
-  const header = renderHeader();
   return (
     <>
       <Label styles={label ? labelStyles : undefined}>
@@ -92,17 +72,17 @@ function RichTextEditor({
       </Label>
       <div>
         <Editor
-          defaultValue={editorContent}
-          onTextChange={handleTextChange}  // Use the handleTextChange
+          value={value}
+          onTextChange={(e) => onChange ? onChange(e.htmlValue || "") : undefined}
           style={{ height: "200px" }}
           placeholder={placeholder}
           readOnly={disabled}
-          headerTemplate={header}
+          headerTemplate={customToolbar}
         />
       </div>
       {error && (
         <p style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}>
-          Field Is Required
+          Field is Required
         </p>
       )}
     </>

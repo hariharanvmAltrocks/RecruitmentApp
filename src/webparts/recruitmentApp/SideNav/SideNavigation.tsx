@@ -71,6 +71,7 @@ const SideNavComponent = (props: sideNavProps) => {
                     const isActive = isActiveMenu(item);
                     // const isActive = item.Children?.[0]?.Path && isActiveMenu(item.Children[0].Path);
                     const isExpanded = expandedMenuId === item.Id
+                    const isChildIshere = item.Children?.[0]?.Path;
                     const isMainMenu = menuType === 'menu';
                     return (
                         <div key={item.Id}>
@@ -113,7 +114,7 @@ const SideNavComponent = (props: sideNavProps) => {
                                                     }}
                                                 >
                                                     {item.DisplayName}
-                                                    {isMainMenu && (
+                                                    {isChildIshere && isMainMenu && (
                                                         <span
                                                             style={{
                                                                 marginLeft: "12px",
@@ -122,12 +123,7 @@ const SideNavComponent = (props: sideNavProps) => {
                                                                 marginTop: "6%",
                                                             }}
                                                         >
-                                                            {isExpanded ? (
-                                                                <KeyboardArrowDownIcon />
-
-                                                            ) : (
-                                                                <ExpandLessIcon />
-                                                            )}
+                                                            {isExpanded ? <KeyboardArrowDownIcon /> : <ExpandLessIcon />}
                                                         </span>
                                                     )}
 
@@ -210,7 +206,7 @@ const SideNavComponent = (props: sideNavProps) => {
                             marginBottom: "10px",
                         }}
                     >
-                        Version-1.0
+                        Version-0.1
                     </div>
                 </>
             ) : (
