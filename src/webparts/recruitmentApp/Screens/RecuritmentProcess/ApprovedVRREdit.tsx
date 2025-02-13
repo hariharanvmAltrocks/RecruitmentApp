@@ -1315,26 +1315,41 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 <LabelHeaderComponents value={"Attachments"} />
                             </div>
                             <div className="ms-Grid-row">
-                                <div className="ms-Grid-col ms-lg2">
+                                <div className="ms-Grid-col ms-lg3">
                                     <CustomLabel value={"RoleProfile Documents"} />
-                                </div>
-                                <div className="ms-Grid-col ms-lg6" style={{ marginTop: "1%" }}>
                                     <CustomViewDocument
                                         Attachment={formState.RoleProfileDocument}
                                     />
                                 </div>
-                            </div>
-                            <div className="ms-Grid-row">
-                                <div className="ms-Grid-col ms-lg2">
+                                <div className="ms-Grid-col ms-lg3">
                                     <CustomLabel value={"Grading Documents"} />
-                                </div>
-                                <div className="ms-Grid-col ms-lg6" style={{ marginTop: "1%" }}>
                                     <CustomViewDocument
                                         Attachment={formState.GradingDocument}
                                     />
                                 </div>
-                            </div>
 
+                                {(props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                                    props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc) ||
+                                    (props.CurrentRoleID === RoleID.HOD &&
+                                        props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv) && (
+                                        <>
+                                            <div className="ms-Grid-col ms-lg3">
+                                                <CustomLabel value={"Advertisement Documents"} />
+                                                <CustomViewDocument Attachment={formState.AdvertisementDocument} />
+                                            </div>
+                                        </>
+                                    )}
+
+                                {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                                    <>
+                                        <div className="ms-Grid-col ms-lg3">
+                                            <CustomLabel value={"Advertisement Documents"} />
+                                            <CustomViewDocument Attachment={formState.AdvertisementDocument} />
+                                        </div>
+                                    </>
+                                )}
+
+                            </div>
 
                             {props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv ? (
                                 <></>
@@ -1343,16 +1358,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                                     {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
                                         <>
-                                            <div className="ms-Grid-row">
-                                                <CustomLabel value={"Advertisement Documents"} mandatory={true} />
-                                            </div>
-                                            <div className="ms-Grid-row">
-                                                <div className="ms-Grid-col ms-lg6">
-                                                    <CustomViewDocument
-                                                        Attachment={formState.AdvertisementDocument}
-                                                    />
-                                                </div>
-                                            </div>
 
                                             <div className="ms-Grid-row">
                                                 <div className="ms-Grid-col ms-lg1.8">
@@ -2074,7 +2079,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         <CardContent>
                             <div>
                                 <>
-                                    <div className="ms-Grid-row">
+                                    {/* <div className="ms-Grid-row">
                                         <CustomLabel value={"Advertisement Documents"} mandatory={true} />
                                     </div>
                                     <div className="ms-Grid-row">
@@ -2083,7 +2088,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 Attachment={formState.AdvertisementDocument}
                                             />
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <div className="ms-Grid-row">
                                         <div
                                             className="ms-Grid-col ms-lg2"
@@ -2294,6 +2299,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 items={tabs}
                                 initialItem={activeTab}
                                 TabName={TabNameData}
+                                handleCancel={handleCancel}
                                 onBreadcrumbChange={handleBreadcrumbChange}
                                 additionalButtons={
                                     props.CurrentRoleID === RoleID.RecruitmentHRLead && props.stateValue?.StatusId === StatusId.PendingwithHRLeadtoAssignRecruitmentHR || props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoAssignExternalAgency
@@ -2310,12 +2316,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             ?
                                             [
                                                 {
-                                                    label: "Cancel",
-                                                    onClick: async () => {
-                                                        handleCancel();
-                                                    },
-                                                },
-                                                {
                                                     label: "Upload",
                                                     onClick: async () => {
                                                         await SaveRecruitment();
@@ -2325,12 +2325,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv
                                                 ?
                                                 [
-                                                    {
-                                                        label: "Cancel",
-                                                        onClick: async () => {
-                                                            handleCancel();
-                                                        },
-                                                    },
                                                     {
                                                         label: "Preview",
                                                         onClick: async () => {
@@ -2348,12 +2342,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 ] :
                                                 props.CurrentRoleID === RoleID.HOD && props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv
                                                     ? [
-                                                        {
-                                                            label: "Cancel",
-                                                            onClick: async () => {
-                                                                handleCancel();
-                                                            },
-                                                        },
                                                         {
                                                             label: "Approve",
                                                             onClick: async () => {

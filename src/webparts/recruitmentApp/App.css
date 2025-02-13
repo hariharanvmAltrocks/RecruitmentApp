@@ -1380,7 +1380,7 @@ footer {
 @media screen and (min-width: 1024px) {
   .a_a_50a7110f:not(.e_a_50a7110f) .h_a_50a7110f {
     display: flex;
-    max-width: none;
+    /* max-width: none; */
   }
 }
 
