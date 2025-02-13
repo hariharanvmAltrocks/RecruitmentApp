@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
-import { getVRRDetails } from "../../Services/ServiceExport";
+import { InterviewServices } from "../../Services/ServiceExport";
+// import { getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { RoleID, TabName } from "../../utilities/Config";
 import SearchableDataTable from "../../components/CustomDataTable";
@@ -9,7 +10,7 @@ import { Button } from "primereact/button";
 import BreadcrumbsComponent, {
   type TabNameData,
 } from "../../components/CustomBreadcrumps";
-// import { AssignPositionDialog } from "./AssignPositionDialog";
+import { AssignPositionDialog } from "./AssignPositionDialog";
 
 const CandidateList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
@@ -17,8 +18,8 @@ const CandidateList = (props: any) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
-  // const [showAssignModal, setShowAssignModal] = React.useState(false);
-  // const [selectedCandidate, setSelectedCandidate] = React.useState(null);
+  const [showAssignModal, setShowAssignModal] = React.useState(false);
+  const [selectedCandidate, setSelectedCandidate] = React.useState(null);
   const jobCode = props?.stateValue?.JobCode?.toString().trim();
   const Status = props?.stateValue?.Status;
 
@@ -55,7 +56,7 @@ const CandidateList = (props: any) => {
     },
     { field: "ID", header: "Candidate ID", sortable: true },
     { field: "FullName", header: "Applicant Name", sortable: true },
-    { field: "JobCode", header: "Job Code", sortable: true },
+    // { field: "JobCode", header: "Job Code", sortable: true },
     { field: "PositionTitle", header: "Position Title", sortable: true },
     { field: "JobGrade", header: "Job Grade", sortable: true },
     { field: "GPA", header: "GPA", sortable: true },
@@ -91,9 +92,11 @@ const CandidateList = (props: any) => {
             ) : (
               <>
                 <Button
-                  onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction)
-                  }
+                  onClick={() => {
+                    console.log(rowData.RequirementID);
+                    console.log("rowData", rowData);
+                    handleRedirectView(rowData, tab, TabName, ButtonAction);
+                  }}
                   className="table_btn"
                   icon="pi pi-eye"
                   style={{
@@ -114,8 +117,10 @@ const CandidateList = (props: any) => {
                     }}
                   />
                 </Button>
-                {/* <Button
+                <Button
                   onClick={() => {
+                    console.log(rowData.RequirementID);
+                    console.log("rowData", rowData);
                     setSelectedCandidate(rowData);
                     setShowAssignModal(true);
                   }}
@@ -126,8 +131,18 @@ const CandidateList = (props: any) => {
                     padding: "3px",
                   }}
                 >
-                  <i className="pi pi-check" style={{ fontSize: "1rem" }} />
-                </Button> */}
+                  <img
+                    src={
+                      require("../../assets/edit_icon.png") ||
+                      "/placeholder.svg"
+                    }
+                    alt="Edit Icon"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
+                </Button>
               </>
             )}
           </div>
@@ -147,11 +162,16 @@ const CandidateList = (props: any) => {
       const filterConditions = [
         { FilterKey: "JobCode", Operator: "eq", FilterValue: jobCode },
       ];
-      const response = await getVRRDetails.GetInterviewPanelCandidateDetails(
-        " ",
-        filterConditions
-      );
-
+      // const response = await getVRRDetails.GetInterviewPanelCandidateDetails(
+      //   " ",
+      //   filterConditions
+      // );
+      const response =
+        await InterviewServices.GetCombinedCandidatePositionDetails(
+          " ",
+          filterConditions
+        );
+      console.log("response", response);
       if (response?.status === 200 && response?.data?.length) {
         const filteredCandidates = response.data
           .filter(
@@ -236,12 +256,12 @@ const CandidateList = (props: any) => {
     }
   }, [activeTab, tabs, props.stateValue, TabNameData]);
 
-  // const handleAssignPosition = (data: {
-  //   positionId: string;
-  //   reasons: string;
-  // }) => {
-  //   setShowAssignModal(false);
-  // };
+  const handleAssignPosition = (data: {
+    positionId: string;
+    justification: string;
+  }) => {
+    setShowAssignModal(false);
+  };
 
   return (
     <CustomLoader isLoading={isLoading}>
@@ -253,12 +273,12 @@ const CandidateList = (props: any) => {
           onBreadcrumbChange={handleBreadcrumbChange}
         />
       </div>
-      {/* <AssignPositionDialog
+      <AssignPositionDialog
         visible={showAssignModal}
         onHide={() => setShowAssignModal(false)}
         candidateData={selectedCandidate}
         onAssign={handleAssignPosition}
-      /> */}
+      />
     </CustomLoader>
   );
 };

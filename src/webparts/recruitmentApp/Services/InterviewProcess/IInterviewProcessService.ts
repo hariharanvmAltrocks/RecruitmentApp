@@ -46,4 +46,17 @@ export type IInterviewProcessService = {
     filterParam: any,
     candidateID: number
   ): Promise<ApiResponse<any>>;
+  GetInterviewPanelCandidateDetails(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<any | null>;
+  GetPositionDetails(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<any | null>;
+
+  GetCombinedCandidatePositionDetails(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<any | null>;
 };

@@ -689,121 +689,120 @@ const HodViewScorecard = (props: any) => {
     {
       label: TabName.Scorecard,
       value: "tab2",
-      content:
-        scoreData.length === 3 ? (
-          <Card
-            variant="outlined"
-            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-          >
-            <CardContent>
+      content: (
+        <Card
+          variant="outlined"
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+        >
+          <CardContent>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "20px",
+              }}
+            >
+              <h2 style={{ color: "#EF3340" }}>Scorecard Details</h2>
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: "20px",
+                  backgroundColor: "white",
+                  padding: "10px 20px",
+                  borderRadius: "4px",
                 }}
               >
-                <h2 style={{ color: "#EF3340" }}>Scorecard Details</h2>
-                <div
-                  style={{
-                    backgroundColor: "white",
-                    padding: "10px 20px",
-                    borderRadius: "4px",
-                  }}
-                >
-                  <span style={{ color: "#EF3340" }}>
-                    Profile from XYZ Agencies
-                  </span>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  backgroundColor: "#f8f8f8",
-                  padding: "15px",
-                  marginBottom: "20px",
-                }}
-              >
-                <span style={{ marginRight: "20px" }}>
-                  Interview Panel member: {scoreData.length}
+                <span style={{ color: "#EF3340" }}>
+                  Profile from XYZ Agencies
                 </span>
-                {interviewPanelTitles.map((interviewer, index) => (
-                  <span key={index} style={{ marginRight: "20px" }}>
-                    Interviewer {index + 1} - {interviewer}
-                  </span>
-                ))}
               </div>
+            </div>
 
-              <div style={{ overflowX: "auto" }}>
-                <DataTable value={transformedData} responsiveLayout="scroll">
-                  <Column field="criteria" header="Criteria" />
-                  {Array.from({ length: interviewerCount }).map((_, index) => (
-                    <Column
-                      key={index}
-                      field={`interviewer_${index + 1}`}
-                      header={`Interviewer ${index + 1}`}
-                    />
-                  ))}
-                </DataTable>
-              </div>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg12">
-                  <div
-                    className="ms-Grid-col ms-lg4"
-                    style={{ marginLeft: "-5px" }}
+            <div
+              style={{
+                backgroundColor: "#f8f8f8",
+                padding: "15px",
+                marginBottom: "20px",
+              }}
+            >
+              <span style={{ marginRight: "20px" }}>
+                Interview Panel member: {scoreData.length}
+              </span>
+              {interviewPanelTitles.map((interviewer, index) => (
+                <span key={index} style={{ marginRight: "20px" }}>
+                  Interviewer {index + 1} - {interviewer}
+                </span>
+              ))}
+            </div>
+
+            <div style={{ overflowX: "auto" }}>
+              <DataTable value={transformedData} responsiveLayout="scroll">
+                <Column field="criteria" header="Criteria" />
+                {Array.from({ length: interviewerCount }).map((_, index) => (
+                  <Column
+                    key={index}
+                    field={`interviewer_${index + 1}`}
+                    header={`Interviewer ${index + 1}`}
+                  />
+                ))}
+              </DataTable>
+            </div>
+            <div className="ms-Grid-row">
+              <div className="ms-Grid-col ms-lg12">
+                <div
+                  className="ms-Grid-col ms-lg4"
+                  style={{ marginLeft: "-5px" }}
+                >
+                  <CustomLabel value={" View Justifications"} />
+                  <PrimaryButton
+                    style={{
+                      borderColor: "rgb(205, 45, 45)",
+                      backgroundColor: "#EF3340",
+                      color: "white",
+                      borderRadius: "10px",
+                    }}
+                    onClick={OpenComments}
                   >
-                    <CustomLabel value={" View Justifications"} />
-                    <PrimaryButton
-                      style={{
-                        borderColor: "rgb(205, 45, 45)",
-                        backgroundColor: "#EF3340",
-                        color: "white",
-                        borderRadius: "10px",
-                      }}
-                      onClick={OpenComments}
-                    >
-                      {" "}
-                      View
-                    </PrimaryButton>
-                  </div>
+                    {" "}
+                    View
+                  </PrimaryButton>
                 </div>
               </div>
-              <CustomTextArea
-                label="HOD Feedback"
-                value={justification}
-                onChange={setJustification}
-                error={isError}
-                placeholder="Enter justification"
-                mandatory={true}
+            </div>
+            <CustomTextArea
+              label="HOD Feedback"
+              value={justification}
+              onChange={setJustification}
+              error={isError}
+              placeholder="Enter justification"
+              mandatory={true}
+            />
+            <div className="ms-Grid-col ms-lg12">
+              <SignatureCheckbox
+                label={"I hereby agree for submitted this request"}
+                checked={Checkboxs}
+                error={false}
+                onChange={(value: boolean) => setCheckbox(value)}
               />
+            </div>
+            <div className="ms-Grid-row">
               <div className="ms-Grid-col ms-lg12">
-                <SignatureCheckbox
-                  label={"I hereby agree for submitted this request"}
-                  checked={Checkboxs}
-                  error={false}
-                  onChange={(value: boolean) => setCheckbox(value)}
+                <CustomSignature
+                  Name={
+                    (props.userDetails[0].FirstName ?? "") +
+                    " " +
+                    (props.userDetails[0]?.MiddleName ?? "") +
+                    " " +
+                    (props.userDetails[0]?.LastName ?? "")
+                  }
+                  JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
+                  JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                  Department={props.userDetails[0].DepartmentName}
+                  Date={CandidateData.SignDate.toString()}
+                  TermsAndCondition={Checkboxs}
                 />
               </div>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg12">
-                  <CustomSignature
-                    Name={
-                      (props.userDetails[0].FirstName ?? "") +
-                      " " +
-                      (props.userDetails[0]?.MiddleName ?? "") +
-                      " " +
-                      (props.userDetails[0]?.LastName ?? "")
-                    }
-                    JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
-                    JobTitleInFrench={props.userDetails[0].JopTitleFrench}
-                    Department={props.userDetails[0].DepartmentName}
-                    Date={CandidateData.SignDate.toString()}
-                    TermsAndCondition={Checkboxs}
-                  />
-                </div>
-              </div>
-            </CardContent>
-            {/* {Checkboxs && (
+            </div>
+          </CardContent>
+          {/* {Checkboxs && (
               <div
                 style={{
                   padding: "1rem",
@@ -849,21 +848,8 @@ const HodViewScorecard = (props: any) => {
                 </Button>
               </div>
             )} */}
-          </Card>
-        ) : (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100vh",
-            }}
-          >
-            <span style={{ color: "red", fontSize: "18px" }}>
-              No record found – The level of interview is not completed
-            </span>
-          </div>
-        ),
+        </Card>
+      ),
     },
   ];
   React.useEffect(() => {
