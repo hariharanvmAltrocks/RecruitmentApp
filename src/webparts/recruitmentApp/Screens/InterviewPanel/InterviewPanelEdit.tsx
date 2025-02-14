@@ -808,9 +808,16 @@ const InterviewPanelEdit = (props: any) => {
                   <CustomInput
                     label="Date of Interview"
                     // value={CandidateData.InterviewDate}
-                    value={new Date(CandidateData.InterviewDate)
-                      .toLocaleDateString("en-GB")
-                      .replace(/\//g, "-")}
+                    // value={new Date(CandidateData.InterviewDate)
+                    //   .toLocaleDateString("en-GB")
+                    //   .replace(/\//g, "-")}
+                    value={
+                      CandidateData.InterviewDate
+                        ? new Date(CandidateData.InterviewDate)
+                            .toLocaleDateString("en-GB")
+                            .replace(/\//g, "-")
+                        : ""
+                    }
                     disabled={true}
                     mandatory={false}
                     onChange={(value) =>
