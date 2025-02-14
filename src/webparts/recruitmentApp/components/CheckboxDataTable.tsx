@@ -10,6 +10,7 @@ import CustomCheckBox from "./CustomCheckBox";
 import CustomAutoComplete from "./CustomAutoComplete";
 import { FilterData } from "./CustomDataTable";
 import { AutoCompleteItem } from "../Models/Screens";
+import SignatureCheckbox from "./SignatureCheckbox";
 
 interface ColumnConfig {
   field: string;
@@ -167,7 +168,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
         </div>
 
 
-        <div className="ms_Grid-row" style={{ marginLeft: "5px" }}>
+        <div className="ms_Grid-row" style={{ marginLeft: "5px", marginRight: "-12%" }}>
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
               label="Department"
@@ -197,13 +198,23 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
               label="Business Unit Name"
-              options={Array.from(
-                new Map(
-                  MasterData?.BusinessUnitCodeAllColumn.map(
-                    (data: any) => [data.Name, { key: data.text, text: data.Name }]
-                  )
-                ).values()
-              ) as AutoCompleteItem[]}
+              options={
+                FilterData.BusinessUnitCode
+                  ? Array.from(
+                    new Map(
+                      MasterData?.BusinessUnitCodeAllColumn
+                        .filter((data: any) => data.text === FilterData.BusinessUnitCode.text)
+                        .map((data: any) => [data.Name, { key: data.text, text: data.Name }])
+                    ).values()
+                  ) as AutoCompleteItem[]
+                  : Array.from(
+                    new Map(
+                      MasterData?.BusinessUnitCodeAllColumn.map(
+                        (data: any) => [data.Name, { key: data.text, text: data.Name }]
+                      )
+                    ).values()
+                  ) as AutoCompleteItem[]
+              }
               value={FilterData.BusinessUnitName}
               disabled={false}
               mandatory={true}
@@ -212,13 +223,13 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
             />
           </div>
 
-          <div className="ms-Grid-col ms-lg3" style={{ marginTop: "4%" }}>
+          <div className="ms-Grid-col ms-lg2" style={{ marginTop: "3.5%" }}>
             <ReuseButton
               label={assignLabel}
               onClick={handleAssignBtn}
               spacing={4}
               error={AssignBtnValidation}
-              Style={{ width: "78%" }}
+              Style={{ width: "78%", backgroundColor: "rgb(217 80 80)", color: "white" }}
             />
           </div>
         </div>
@@ -245,25 +256,37 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                     <Column
                       key={col.field}
                       header={() => (
-                        <CustomCheckBox
-                          label=""
-                          value={selectAll}
-                          onChange={(e, value: boolean) =>
-                            onSelectAllChange(value)
-                          }
+                        <SignatureCheckbox
+                          label={""}
+                          checked={selectAll}
+                          // error={validationErrors.Checkboxalidation}
+                          onChange={(value: boolean) => onSelectAllChange(value)}
                         />
+                        // <CustomCheckBox
+                        //   label=""
+                        //   value={selectAll}
+                        //   onChange={(e, value: boolean) =>
+
+                        //   }
+                        // />
                       )}
                       sortable={false}
                       body={(rowData: any) => {
                         return (
                           <div>
-                            <CustomCheckBox
+                            <SignatureCheckbox
+                              label={""}
+                              checked={rowData?.Checked === true}
+                              // error={validationErrors.Checkboxalidation}
+                              onChange={(value: boolean) => handleCheckbox(value, rowData)}
+                            />
+                            {/* <CustomCheckBox
                               label=""
                               value={rowData?.Checked === true}
                               onChange={(e, value: boolean) =>
                                 handleCheckbox(value, rowData)
                               }
-                            />
+                            /> */}
                           </div>
                         );
                       }}

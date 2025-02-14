@@ -1,27 +1,37 @@
-import * as React from "react";
-import { createContext, useContext, useState } from "react";
+import { useState, useEffect } from "react";
 
-interface TokenContextType {
-    token: string | null;
-    setToken: (token: string | null) => void;
-}
+let globalToken: string | null = null;
+let pendingToken: string | null = null;
+let setGlobalToken: ((token: string | null) => void) | null = null;
 
-const TokenContext = createContext<TokenContextType | undefined>(undefined);
+export const useToken = () => {
+    const [token, setTokenState] = useState<string | null>(globalToken);
+    useEffect(() => {
+        if (pendingToken) {
+            setTokenState(pendingToken);
+            globalToken = pendingToken;
+            pendingToken = null;
+        }
+    }, []);
 
-export const TokenProvider = ({ children }: { children: React.ReactNode }) => {
-    const [token, setToken] = useState<string | null>(null);
+    const setToken = (newToken: string | null) => {
+        globalToken = newToken;
+        setTokenState(newToken);
+    };
 
-    return (
-        <TokenContext.Provider value={{ token, setToken }}>
-            {children}
-        </TokenContext.Provider>
-    );
+    setGlobalToken = setToken;
+
+    return { token, setToken };
 };
 
-export const useToken = (): TokenContextType => {
-    const context = useContext(TokenContext);
-    if (!context) {
-        throw new Error("useToken must be used within a TokenProvider");
+export const getToken = () => pendingToken;
+
+export const setToken = (token: string | null) => {
+    if (setGlobalToken) {
+        useToken()
+        setGlobalToken(token);
+    } else {
+        console.warn("setGlobalToken is not yet initialized. Storing token temporarily.");
+        pendingToken = token;
     }
-    return context;
 };

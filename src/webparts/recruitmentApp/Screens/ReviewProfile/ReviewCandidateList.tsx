@@ -3,26 +3,18 @@ import { Card, CardContent } from "@mui/material";
 import { getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
-    ActionStatus,
     GridStatusBackgroundcolor,
-    ProfileStatus,
-    RoleID,
     TabName,
 } from "../../utilities/Config";
 import CommentsPopup from "../../components/CommentsPopup";
 import { Button } from "primereact/button";
 import BreadcrumbsComponent, { TabNameData } from "../../components/CustomBreadcrumps";
 import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
-import ViewCandidateDetails from "./ViewCandidateDetails";
+import { getProfileData } from "../../Services/ReviewProfileService/ReviewCandidateService";
+import { GetProfileByFilter } from "../../Models/ApIInterface";
 
-export type BreadcrumbTabData = {
-    tab: string,
-    TabName: string,
-    ButtonAction: string,
-    CurrectTab: string;
-    currectAction: string,
-}
 const ReviewCandidateList = (props: any) => {
+    console.log(props, "ReviewCandidateList");
 
     const [CandidateData, setCandidateData] = React.useState<any[]>([]);
     const [rows, setRows] = React.useState<number>(5);
@@ -30,39 +22,33 @@ const ReviewCandidateList = (props: any) => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
     // const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
-    const [ReviewProfile, setReviewProfile] = React.useState<boolean>(false);
+    // const [ReviewProfile, setReviewProfile] = React.useState<boolean>(false);
     const [CommentsPopups, setCommentsPopup] = React.useState<boolean>(false);
-    const [CandidateID, setCandidateID] = React.useState<number>(0);
+    // const [CandidateID, setCandidateID] = React.useState<number>(0);
     const [activeTab, setactiveTab] = React.useState<string>("tab1");
     const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
     const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
-    const [BreadcrumbTab, setBreadcrumbTab] = React.useState<BreadcrumbTabData>({
-        tab: "",
-        TabName: "",
-        ButtonAction: "",
-        CurrectTab: "",
-        currectAction: "",
-    })
-    // const [alertProps, setalertProps] = React.useState<alertPropsData>({
-    //     Message: "",
-    //     Type: "",
-    //     ButtonAction: null,
-    //     visible: false,
-    // });
+    // const [BreadcrumbTab, setBreadcrumbTab] = React.useState<BreadcrumbTabData>({
+    //     tab: "",
+    //     TabName: "",
+    //     ButtonAction: "",
+    //     CurrectTab: "",
+    //     currectAction: "",
+    // })
 
     const columnConfig = (tab: string, ButtonAction: string, TabNamed: string) => [
         {
-            field: "Candidate ID",
+            field: "CandidateID",
             header: "Candidate ID",
             sortable: true,
         },
         {
-            field: "Position Title",
+            field: "PositionTitle",
             header: "Position Title",
             sortable: true,
         },
         {
-            field: "Job Grade",
+            field: "JobGrade",
             header: "Job Grade",
             sortable: true,
         },
@@ -109,16 +95,16 @@ const ReviewCandidateList = (props: any) => {
                     TabNamed: string,
                     ButtonAction: string
                 ): void {
-                    setReviewProfile(true);
-                    setCandidateID(rowData.ID);
-                    let Breadcrumbs: BreadcrumbTabData = {
-                        tab: tab,
-                        TabName: TabNamed,
-                        ButtonAction: ButtonAction,
-                        CurrectTab: TabName.ViewCandidateDetails,
-                        currectAction: "Edit"
-                    }
-                    setBreadcrumbTab(Breadcrumbs)
+                    console.log(rowData, "CandidateRowData");
+                    props.navigation("/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails", {
+                        state: {
+                            ID: rowData?.CandidateID,
+                            RecruitmentID: RecruitmentDetails[0].ID,
+                            tab: tab,
+                            ButtonAction: ButtonAction,
+                            TabNamed: TabNamed
+                        },
+                    });
                 }
 
                 return (
@@ -158,43 +144,31 @@ const ReviewCandidateList = (props: any) => {
     const fetchCandidateData = async (RecruitmentDetails: any) => {
         setIsLoading(true);
         try {
-
-            const filterConditions = [];
-            let Conditions = "";
-
-            if (props.CurrentRoleID === RoleID.LineManager) {
-                filterConditions.push({
-                    FilterKey: "JobCodeId",
-                    Operator: "eq",
-                    FilterValue: RecruitmentDetails[0]?.JobCodeId,
-                });
-                filterConditions.push({
-                    FilterKey: "RecruitmentID",
-                    Operator: "eq",
-                    FilterValue: RecruitmentDetails[0]?.ID,
-                });
-                Conditions = "and";
-                const data = await getVRRDetails.GetInterviewPanelCandidateDetails(
-                    filterConditions,
-                    Conditions
-                );
-                if (data.status === 200 && data.data !== null) {
-                    setCandidateData(data.data);
-                }
-            } else {
-                filterConditions.push({
-                    FilterKey: "JobCodeId",
-                    Operator: "eq",
-                    FilterValue: RecruitmentDetails[0]?.JobCodeId,
-                });
-                const data = await getVRRDetails.GetCandidateDetails(
-                    filterConditions,
-                    Conditions
-                );
-                if (data.status === 200 && data.data !== null) {
-                    setCandidateData(data.data);
-                }
+            let FilterValue: GetProfileByFilter = {
+                filterValue: "",
+                sortBy: "",
+                sortOrder: 0,
+                pageSize: 5,
+                currentPage: 0,
+                totalItems: 0
             }
+            await getProfileData.GetProfileByJobCode("JC0005", FilterValue).then((res) => {
+                if (res.status === 200) {
+                    console.log(res, "GetProfileByFilter Response");
+                    let CandidateDetails = res.data.data.map((item: any) => {
+                        return {
+                            CandidateID: item.jobRequestId,
+                            PositionTitle: item.jobTitle?.displayText,
+                            JobGrade: item.jobCode,
+                            Status: item.applicationStatus?.displayText
+                        }
+                    })
+                    setCandidateData(CandidateDetails)
+                }
+            }).catch((error) => {
+                console.log(error, "GetProfileByJobCode Error");
+
+            })
         } catch (error) {
             console.log("GetVacancyDetails doesn't fetch the data", error);
         }
@@ -259,41 +233,6 @@ const ReviewCandidateList = (props: any) => {
         },
     ];
 
-    // const handleCancel = () => {
-    //     setIsLoading(true);
-    //     const CancelAlert = {
-    //         Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
-    //         Type: HRMSAlertOptions.Confirmation,
-    //         visible: true,
-    //         ButtonAction: async (userClickedOK: boolean) => {
-    //             if (userClickedOK) {
-    //                 props.navigation("/RecurimentProcess");
-    //                 setAlertPopupOpen(false);
-    //             } else {
-    //                 setAlertPopupOpen(false);
-    //             }
-    //         },
-    //     };
-
-    //     setAlertPopupOpen(true);
-    //     setalertProps(CancelAlert);
-    //     setIsLoading(false);
-    // };
-
-    function Shortlists_fn() {
-        const updatedRowData = CandidateData.map((item: any) => {
-            if (item.ID === CandidateID) {
-                return {
-                    ...item,
-                    ProfileStatus: ActionStatus.Shortlists,
-                };
-            }
-            return item;
-        });
-        setCandidateData(updatedRowData);
-        setReviewProfile(false);
-    }
-
     console.log(RecruitmentDetails, "RecruitmentDetails");
 
     const handleBreadcrumbChange = (newItem: string) => {
@@ -338,45 +277,20 @@ const ReviewCandidateList = (props: any) => {
     }, [activeTab]);
     return (
         <>
-            {ReviewProfile ? (
-                <>
-                    <ViewCandidateDetails
-                        ID={CandidateID}
-                        Submit_fn={Shortlists_fn}
-                        back_fn={() => setReviewProfile(false)}
-                        Status={props.CurrentRoleID === RoleID.LineManager ? ProfileStatus.LM : ProfileStatus.HR}
-                        RecuritmentID={RecruitmentDetails[0].ID}
-                        MasterData={props}
-                        TabNames={BreadcrumbTab}
-                    />
-                </>
-            ) : (
-                <>
-                    <CustomLoader isLoading={isLoading}>
-                        <div className="menu-card">
-                            <React.Fragment>
-                                <BreadcrumbsComponent
-                                    items={tabs}
-                                    initialItem={activeTab}
-                                    TabName={TabNameData}
-                                    onBreadcrumbChange={handleBreadcrumbChange}
-                                />
-                            </React.Fragment>
-                        </div>
-                    </CustomLoader>
-                </>
-            )}
-
-            {/* {AlertPopupOpen ? (
-                <>
-                    <CustomAlert
-                        {...alertProps}
-                        onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
-                    />
-                </>
-            ) : (
-                <></>
-            )} */}
+            <>
+                <CustomLoader isLoading={isLoading}>
+                    <div className="menu-card">
+                        <React.Fragment>
+                            <BreadcrumbsComponent
+                                items={tabs}
+                                initialItem={activeTab}
+                                TabName={TabNameData}
+                                onBreadcrumbChange={handleBreadcrumbChange}
+                            />
+                        </React.Fragment>
+                    </div>
+                </CustomLoader>
+            </>
 
             {CommentsPopups ? (
                 <>

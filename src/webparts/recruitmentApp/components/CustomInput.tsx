@@ -41,6 +41,9 @@ function CustomInput({
             borderRadius: "4px",
             boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
             borderColor: "rgb(15, 15, 15)",
+            ...(disabled && {
+              border: "1px soild rgb(210 200 200)"
+            })
           },
           field: {
             ...(disabled && {
@@ -63,7 +66,7 @@ function CustomInput({
         <p
           style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}
         >
-          Field Is Required
+          Field is Required
         </p>
       )}
     </>
