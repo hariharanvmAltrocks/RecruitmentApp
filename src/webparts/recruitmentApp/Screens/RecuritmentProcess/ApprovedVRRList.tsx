@@ -35,6 +35,7 @@ import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { alertPropsData } from "../../Models/Screens";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import axios from "axios";
+//import CustomLabel from "../../components/CustomLabel";
 // import { ApiUrl } from "../../Services/AxiosService/axiosConfig";
 // import 'primeicons/primeicons.css';
 // interface ColumnConfig {
@@ -747,22 +748,40 @@ const RecruitmentProcess = (props: any) => {
     // setActiveTab(tab);
   };
   // Popupfunction
+  //old 7.20
+  // const handleAutoComplete = async (value: AutoCompleteItem | null) => {
+  //   if (value) {
+  //     if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+  //       setAssignRecruitmentAgencies([value] ) ;
+  //       setValidationErrors((prevState) => ({
+  //         ...prevState,
+  //         AssignRecruitmentAgencies: false,
+  //       }));
+  //     } else {
+  //       setAssignRecruitmentHR(value);
+  //       setValidationErrors((prevState) => ({
+  //         ...prevState,
+  //         AssignRecruitmentHR: false,
+  //       }));
+  //     }
+  //   }
+  // };
 
   const handleAutoComplete = async (value: AutoCompleteItem | null) => {
-    if (value) {
-      if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-        setAssignRecruitmentAgencies([value]);
-        setValidationErrors((prevState) => ({
-          ...prevState,
-          AssignRecruitmentAgencies: false,
-        }));
-      } else {
-        setAssignRecruitmentHR(value);
-        setValidationErrors((prevState) => ({
-          ...prevState,
-          AssignRecruitmentHR: false,
-        }));
-      }
+    const defaultValue = { key: 0, text: "" };
+
+    if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+      setAssignRecruitmentAgencies(value ? [value] : [defaultValue]);
+      setValidationErrors((prevState) => ({
+        ...prevState,
+        AssignRecruitmentAgencies: false,
+      }));
+    } else {
+      setAssignRecruitmentHR(value || defaultValue);
+      setValidationErrors((prevState) => ({
+        ...prevState,
+        AssignRecruitmentHR: false,
+      }));
     }
   };
 
@@ -971,7 +990,11 @@ const RecruitmentProcess = (props: any) => {
       setAssignHR(true);
     } else {
       let CancelAlert = {
-        Message: RecuritmentHRMsg.RecruitmentErrorMsg,
+        // Message: RecuritmentHRMsg.RecruitmentErrorMsg,
+        Message:
+          props.CurrentRoleID === RoleID.RecruitmentHR
+            ? RecuritmentHRMsg.AgenciesErrorMsg
+            : RecuritmentHRMsg.RecruitmentErrorMsg,
         Type: HRMSAlertOptions.Error,
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
@@ -1634,51 +1657,84 @@ const RecruitmentProcess = (props: any) => {
         </React.Fragment>
       </CustomLoader>
       {AlertPopupOpen ? (
-        <CustomAlert
-          {...alertProps}
-          onClose={() => setAlertPopupOpen(false)} // Close alert on button click
-        />
+        <CustomAlert {...alertProps} onClose={() => setAlertPopupOpen(false)} />
       ) : null}
       {AssignHR ? (
         <Dialog
           visible={AssignHR}
+          draggable={false}
           style={{
             width: "60vw",
             backgroundColor: "white",
             borderRadius: "26px",
             padding: "20px",
-            maxHeight: "85vh",
-            overflow: "hidden",
+            maxHeight: "80vh",
+            overflow: "auto",
+            paddingLeft: "50px",
           }}
-          // onHide={() => setAssignHR(false)}
-          onHide={() => handleCancel()}
+          // onHide={() => handleCancel()}
+          onHide={() => {}}
+          closable={false}
+          header={
+            <div style={{ textAlign: "center", width: "100%" }}>
+              <h2
+                style={{
+                  color: "red",
+                  fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
+                  -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                }}
+              >
+                {props.CurrentRoleID === RoleID.RecruitmentHR
+                  ? "Assign Agencies"
+                  : "Assign Recruitment HR"}
+              </h2>
+            </div>
+          }
+          footer={
+            <div
+              className="ms-Grid-row"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                padding: "24px 0",
+                gap: "33px",
+              }}
+            >
+              <ReuseButton label="Cancel" onClick={() => handleCancel()} />
+
+              <ReuseButton
+                label="Assign"
+                onClick={async () => {
+                  await AssignHRSubmit();
+                }}
+              />
+            </div>
+          }
         >
-          <div
-            style={{
-              maxHeight: "calc(80vh - 40px)",
-              overflowY: "auto",
-              paddingRight: "10px",
-            }}
-          >
+          <div>
             <JobCodeSelector
               jobCodes={data}
               selectedJobCodes={selectedJobCodes}
               //onSelectionChange={onSelectionChange}
               onSelectAllChange={onSelectAllChange}
               onRowChange={handleCheckbox}
-              label={
-                props.CurrentRoleID === RoleID.RecruitmentHR
-                  ? "Assign Agencies"
-                  : "Assign Recruitment HR"
-              }
             />
-            <span style={{ color: "red", marginTop: "8px", display: "block" }}>
-              Note:- To remove a selected Job Title ,click 'Cancel' and return
+
+            <span
+              style={{
+                color: "red",
+                marginTop: "8px",
+                display: "block",
+                fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
+      -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                fontSize: "13px",
+              }}
+            >
+              Note:- To remove a selected Job Title, click 'Cancel' and return
               to the Dashboard.
             </span>
-
             <div className="ms-Grid-row" style={{ textAlign: "left" }}>
-              <div className="ms-Grid-col ms-lg4">
+              <div className="ms-Grid-col ms-lg6">
                 {props.CurrentRoleID === RoleID.RecruitmentHRLead ? (
                   <CustomAutoComplete
                     label="Assign Recruitment HR"
@@ -1719,14 +1775,13 @@ const RecruitmentProcess = (props: any) => {
                 )}
               </div>
             </div>
-
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg12">
+            <div className="ms-Grid-row" style={{ paddingRight: "16px" }}>
+              <div className="ms-Grid-col ms-lg11">
                 <CustomTextArea
                   label={
                     props.CurrentRoleID === RoleID.RecruitmentHR
                       ? "Notes for Agencies"
-                      : "Notes for RecruitmentHR"
+                      : "Notes for Recruitment HR"
                   }
                   value={Comments}
                   error={validationErrors.Comments}
@@ -1743,41 +1798,6 @@ const RecruitmentProcess = (props: any) => {
               </div>
             </div>
             <div className="ms-Grid-row" style={{ marginTop: "20px" }}></div>
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg4"></div>
-              <div className="ms-Grid-col ms-lg2">
-                <ReuseButton
-                  label="Cancel"
-                  //onClick={() => setAssignHR(false)}
-                  onClick={() => handleCancel()}
-                  Style={{
-                    border: "0",
-                    borderRadius: ".25em",
-                    background: "#dc3741",
-                    color: "#fff",
-                    fontSize: "1em",
-                    display: "inline-block",
-                  }}
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg2">
-                <ReuseButton
-                  label="Assign"
-                  onClick={async () => {
-                    await AssignHRSubmit();
-                  }}
-                  Style={{
-                    border: "0",
-                    borderRadius: ".25em",
-                    background: "#dc3741",
-                    color: "#fff",
-                    fontSize: "1em",
-                    display: "inline-block",
-                  }}
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg4"></div>
-            </div>
           </div>
         </Dialog>
       ) : (

@@ -147,7 +147,7 @@ export const viewLabelcolor = {
 
 export const RecuritmentHRMsg = {
   AdvertisementSubmitMsg: "Advertisement Uploaded Successfully",
-  ScoreCardSubmitMsg: "ScoreCard Uploaded Successfully",
+  ScoreCardSubmitMsg: "Scorecard Entered Successfully",
   ONEMDocumentMsg: "ONEM Document Uploaded Successfully",
   RecuritmentSubmitMsg: "Submitted Successfully",
   ApprovedMsg: "Approved Successfully",
@@ -155,9 +155,10 @@ export const RecuritmentHRMsg = {
     "Are you sure you want to cancel? Any unsaved changes will be lost.",
   BackMsg: "Are you sure you want go to Home Page ?",
   ValidationErrorMsg: "One or more required actions are missing",
-  RecruitmentErrorMsg: "Please select the Job Code",
+  RecruitmentErrorMsg: "Please choose the Job Code to assign Recruitment HR",
   AgencySucess: "Agencies Assigned Successfully",
-  HRSuccess: "HR Assigned Successfully",
+  HRSuccess: "Recruitment HR Assigned Successfully",
+  AgenciesErrorMsg: "Please choose the Job Code to assign Agencies",
 };
 
 export const ADGroupID: IADGroupID = {
