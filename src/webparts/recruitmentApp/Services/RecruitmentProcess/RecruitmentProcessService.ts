@@ -43,7 +43,6 @@ export default class RecruitmentService implements IRecruitmentService {
       const formattedItems: any[] = [];
 
       for (const item of listItems) {
-
         let VRR: any = {
           VRRID: item.Id,
           Nationality: item.Nationality || "",
@@ -83,14 +82,12 @@ export default class RecruitmentService implements IRecruitmentService {
           filter,
           ""
         );
-        await this.GetPositionDetails(filter, "").then(
-          (returnitem: any) => {
-            if (returnitem?.data && returnitem?.data?.length > 0) {
-              positionIDResult = positionIDResult.concat(returnitem.data);
-            }
-            return positionIDResult;
+        await this.GetPositionDetails(filter, "").then((returnitem: any) => {
+          if (returnitem?.data && returnitem?.data?.length > 0) {
+            positionIDResult = positionIDResult.concat(returnitem.data);
           }
-        );
+          return positionIDResult;
+        });
 
         if (positionresult?.data?.length > 0) {
           positionrequestresult.push(positionresult.data[0]);
@@ -124,7 +121,6 @@ export default class RecruitmentService implements IRecruitmentService {
         Expand: "JobTitleEnglish,DRCGrade,JobTitleFrench,PatersonGrade",
         Topcount: count.Topcount,
       });
-
 
       const formattedItems = listItems.map(async (item) => {
         return {
@@ -263,7 +259,6 @@ export default class RecruitmentService implements IRecruitmentService {
       const formattedItems: any[] = [];
       let positionrequestresult: any = [];
       for (const item of listItems) {
-
         let Recruitment: any = {
           ID: item?.ID,
           Nationality: item?.Nationality || "",
@@ -364,7 +359,6 @@ export default class RecruitmentService implements IRecruitmentService {
         Topcount: count.Topcount,
       });
 
-
       const formattedItems = {
         LookupId: listItems[0]?.ID,
         JobTitleInEnglishId: listItems[0]?.JobTitleEnglishId || 0,
@@ -377,7 +371,6 @@ export default class RecruitmentService implements IRecruitmentService {
         PayrollGrade: listItems[0]?.PatersonGrade?.PatersonGrade || "",
         //   PositionList :(await this.GetPositionID(item.JobTitleEnglishId, item.DepartmentId)).data
       };
-
 
       return {
         data: formattedItems,
@@ -505,7 +498,6 @@ export default class RecruitmentService implements IRecruitmentService {
           //AssignLineManagerId: row.AssignLineManager,
         };
 
-
         const response = await SPServices.SPAddItem({
           Listname: ListNames.HRMSRecruitmentPositionDetails,
           RequestJSON: JobDetailsInsert,
@@ -600,7 +592,6 @@ export default class RecruitmentService implements IRecruitmentService {
       });
 
       const formattedItems = listItems.map(async (item) => {
-
         const response = await CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.InterviewPanelCandidateCV,
           item.JobCode?.JobCode,
@@ -630,8 +621,9 @@ export default class RecruitmentService implements IRecruitmentService {
           FristName: item.FristName,
           MiddleName: item.MiddleName,
           LastName: item.LastName,
-          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""
-            }`,
+          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${
+            item.LastName || ""
+          }`,
           ResidentialAddress: item?.ResidentialAddress,
           DOB: item?.DOB,
           ContactNumber: item?.ContactNumber,
@@ -646,7 +638,7 @@ export default class RecruitmentService implements IRecruitmentService {
           CandidateCVDoc: candidateCV,
           RoleProfileDocument: roleprofileDoc,
           AdvertisementDocument: [],
-          ShortlistedValue: ""
+          ShortlistedValue: "",
         };
       });
 
@@ -734,7 +726,8 @@ export default class RecruitmentService implements IRecruitmentService {
           JobGrade: item.JobGrade,
           RoleProfileDocument: [],
           AdvertisementDocument: [],
-          ShortlistedValue: ""
+          ShortlistedValue: "",
+          InterviewDate: item?.InterviewDate,
         };
       });
 
@@ -817,10 +810,10 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
             ? (Employee.FirstName ?? "") +
-            " " +
-            (Employee.MiddleName ?? "") +
-            " " +
-            (Employee.LastName ?? "")
+              " " +
+              (Employee.MiddleName ?? "") +
+              " " +
+              (Employee.LastName ?? "")
             : "",
           // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
         };
