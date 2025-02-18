@@ -37,8 +37,6 @@ import BreadcrumbsComponent, {
 } from "../../components/CustomBreadcrumps";
 import CustomLabel from "../../components/CustomLabel";
 
-//import CustomLabel from "../../components/CustomLabel";
-
 type ValidationError = {
   Qualifications: boolean;
   Experience: boolean;
