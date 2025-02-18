@@ -1616,6 +1616,7 @@ const RecruitmentProcess = (props: any) => {
 
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab);
+    console.log("setActiveTab", activeTab);
   };
 
   return (

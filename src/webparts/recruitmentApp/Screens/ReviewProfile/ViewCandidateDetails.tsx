@@ -22,6 +22,7 @@ import IsValid from "../../components/Validation";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { Dialog } from "primereact/dialog";
 import CustomJsonComments from "../../components/CustomJsonComments";
+import CustomDatePicker from "../../components/CustomDatePicker";
 
 
 type InterviewedLevelValue = {
@@ -29,12 +30,15 @@ type InterviewedLevelValue = {
   AssignInterviewedLevel1Option: AutoCompleteItem[];
   AssignInterviewLevel1: AutoCompleteItem[];
   AssignInterviewedLevel2: AutoCompleteItem[];
+  InterviewedDate: Date | undefined
 }
 
 type ValidationError = {
   Comments: boolean;
   Checkboxalidation: boolean;
   CandidateStatus: boolean;
+  InterviewedDate: boolean,
+  AssignInterviewLevel1: boolean
 }
 
 type ActionValue = {
@@ -70,7 +74,8 @@ const ViewCandidateDetails = (props: any) => {
     Levels: "",
     AssignInterviewedLevel1Option: [],
     AssignInterviewLevel1: [],
-    AssignInterviewedLevel2: []
+    AssignInterviewedLevel2: [],
+    InterviewedDate: undefined
   });
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
@@ -83,7 +88,9 @@ const ViewCandidateDetails = (props: any) => {
   const [validationErrors, setValidationErrors] = React.useState<ValidationError>({
     Comments: false,
     Checkboxalidation: false,
-    CandidateStatus: false
+    CandidateStatus: false,
+    InterviewedDate: false,
+    AssignInterviewLevel1: false
   });
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -207,6 +214,32 @@ const ViewCandidateDetails = (props: any) => {
     }))
   };
 
+  const handleDateChange = (value: Date | null | undefined) => {
+    const newDate = value ?? undefined;
+
+    setInterviewedLevel((prevState: any) => ({
+      ...prevState,
+      InterviewedDate: newDate,
+    }));
+
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      InterviewedDate: false,
+    }));
+  };
+
+  const handleMulitiSelect = (value: AutoCompleteItem[]) => {
+    setInterviewedLevel((prevState: any) => ({
+      ...prevState,
+      AssignInterviewLevel1: value,
+    }));
+
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      AssignInterviewLevel1: false,
+    }));
+  };
+
   const tabs = [
     {
       label: TabName.CandidateDetails,
@@ -324,8 +357,10 @@ const ViewCandidateDetails = (props: any) => {
                           label="Assign Interview Panel - Level 1"
                           value={InterviewedLevel.AssignInterviewLevel1}
                           options={InterviewedLevel.AssignInterviewedLevel1Option}
+                          onChange={(value) => handleMulitiSelect(value)}
                           disabled={false}
                           mandatory={true}
+                          error={validationErrors.AssignInterviewLevel1}
                         />
                       </div>
                       {InterviewedLevel.Levels === "Level 2" && (
@@ -341,6 +376,20 @@ const ViewCandidateDetails = (props: any) => {
                           </div>
                         </div>
                       )}
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomDatePicker
+                            selectedDate={InterviewedLevel.InterviewedDate}
+                            label="Valid To"
+                            error={validationErrors.InterviewedDate}
+                            // maxDate={}
+                            mandatory={true}
+                            onChange={(date) =>
+                              handleDateChange(date ?? undefined)
+                            }
+                          />
+                        </div>
+                      </div>
                     </>
                   ) : (<></>)}
                 </div>
@@ -471,12 +520,27 @@ const ViewCandidateDetails = (props: any) => {
     let errors = {
       Comments: false,
       Checkboxalidation: false,
-      CandidateStatus: false
+      CandidateStatus: false,
+      InterviewedDate: false,
+      AssignInterviewLevel1: false
     };
+    switch (props.CurrentRoleID) {
+      case RoleID.RecruitmentHR: {
+        if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
+          errors.Comments = !IsValid(actionValue.Comments);
+          errors.Checkboxalidation = !IsValid(Checkbox);
+          errors.InterviewedDate = !IsValid(InterviewedLevel.InterviewedDate);
+          errors.AssignInterviewLevel1 = !IsValid(InterviewedLevel.AssignInterviewLevel1?.[0]?.text ?? "")
+        } else {
+          errors.Comments = !IsValid(actionValue.Comments);
+          errors.Checkboxalidation = !IsValid(Checkbox);
+          errors.CandidateStatus = !IsValid(actionValue.CandidateStatus)
+        }
 
-    errors.Comments = !IsValid(actionValue.Comments);
-    errors.Checkboxalidation = !IsValid(Checkbox);
-    errors.CandidateStatus = !IsValid(actionValue.CandidateStatus)
+        break;
+      }
+    }
+
 
     setValidationErrors((prevState) => ({
       ...prevState,

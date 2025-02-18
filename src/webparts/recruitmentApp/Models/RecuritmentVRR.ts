@@ -89,6 +89,7 @@ export type AdvDetails = {
   PreferredExperience: any;
   ValidFrom: Date | undefined;
   ValidTo: Date | undefined;
+  FunctionType: any;
   JobFunctionalType: AutoCompleteItem;
   JobFunctionalTypeOption: AutoCompleteItem[];
 };

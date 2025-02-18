@@ -115,6 +115,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         PreferredExperience: "",
         ValidFrom: undefined,
         ValidTo: undefined,
+        FunctionType: "",
         JobFunctionalType: { key: 0, text: "" },
         JobFunctionalTypeOption: []
     });
@@ -778,7 +779,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             FunctionTypeId: advDetails.JobFunctionalType.key
                         };
                         console.log(AdvData, "AdvData")
-                        debugger;
                         await getVRRDetails.InsertList(AdvData, ListNames.HRMSRecruitmentRoleProfileDetails);
                         resetForm();
                         let UpdateAlert = {
@@ -952,75 +952,98 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 if (response.status === 200) {
                     const data = response.data;
+                    console.log("API Response Data:", data);
+
                     if (data && data.length > 0) {
                         const rawData = data[0];
-                        const roleSpecificKnowledge = rawData.RoleSpecificKnowledgeJson
-                            ? JSON.parse(rawData.RoleSpecificKnowledgeJson)
+                        const roleSpecificKnowledge = Array.isArray(
+                            rawData.RoleSpecificKnowledge
+                        )
+                            ? rawData.RoleSpecificKnowledge
                             : [];
 
                         const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
-                            (item: any) => item.RoleSpeKnowledge
+                            (item: any) => item.RoleSpecificKnowledge
                         );
                         const RequiredLevelValues = roleSpecificKnowledge.map(
                             (item: any) => item.RequiredLevel
                         );
+                        const technicalSkillsKnowledge = Array.isArray(
+                            rawData.TechnicalSkillsKnowledge
+                        )
+                            ? rawData.TechnicalSkillsKnowledge
+                            : [];
+
+                        const TechnicalSkillsOption = technicalSkillsKnowledge.map(
+                            (item: any, index: number) => ({
+                                key: index,
+                                text: item.TechnicalSkills,
+                            })
+                        );
+
+                        const LevelProficiencyOption = technicalSkillsKnowledge.map(
+                            (item: any, index: number) => ({
+                                key: index,
+                                text: item.LevelProficiency,
+                            })
+                        );
+                        const MinQualificationOption = Array.isArray(
+                            rawData.Qualification
+                        )
+                            ? rawData.Qualification.map((item: any, index: any) => ({
+                                key: index,
+                                text: item.text || "N/A",
+                            }))
+                            : [];
+                        const PrefeQualificationOption = Array.isArray(
+                            rawData.PreferredQualification
+                        )
+                            ? rawData.PreferredQualification.map(
+                                (item: any, index: any) => ({
+                                    key: index,
+                                    text: item.text || "N/A",
+                                })
+                            )
+                            : [];
+
                         const mappedData: AdvDetails = {
                             RolePurpose: rawData.RoleProfile || "",
                             JobDescription: rawData.JobDescription || "",
                             RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
                             RequiredLeveloption: RequiredLevelValues,
-                            MinQualificationOption: rawData.Qualification
-                                ? JSON.parse(rawData.Qualification).map((item: any) => ({
-                                    text: item.MinQualification,
-                                }))
-                                : [],
-                            PrefeQualificationOption: rawData.PreferredQualification
-                                ? JSON.parse(rawData.PreferredQualification).map(
-                                    (item: any) => ({
-                                        text: item.PrefeQualification,
-                                    })
-                                )
-                                : [],
+                            MinQualificationOption,
+                            PrefeQualificationOption,
                             TotalExperience: rawData.YearofExperience || "",
                             ExperienceinMiningIndustry: rawData.PreferredExperience || "",
-                            TechnicalSkillsOption: rawData.TechnicalSkillsKnowledgeJson
-                                ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
-                                    (item: any) => ({
-                                        text: item.RoleSpeKnowledge,
-                                    })
-                                )
-                                : [],
-                            LevelProficiencyOption: rawData.TechnicalSkillsKnowledgeJson
-                                ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
-                                    (item: any) => ({
-                                        text: item.RequiredLevel,
-                                    })
-                                )
-                                : [],
+                            TechnicalSkillsOption,
+                            LevelProficiencyOption,
                             addMasterQualification: "",
                             YearofExperience: rawData.YearofExperience || "",
                             PreferredExperience: rawData.PreferredExperience || "",
-                            ValidFrom: undefined,
-                            ValidTo: undefined,
+                            ValidFrom: rawData.ValidFrom,
+                            ValidTo: rawData.ValidTo,
+                            FunctionType: rawData.FunctionType,
                             TotalExperienceOption: [],
                             ExperienceinMiningIndustryOption: [],
-                            JobFunctionalType: { key: 0, text: "" },
+                            JobFunctionalType: {
+                                key: 0,
+                                text: ""
+                            },
                             JobFunctionalTypeOption: []
                         };
 
                         setAdvDetails(mappedData);
                     } else {
-                        console.warn("No data found for the given filter");
+                        console.warn("No data found for the given filter.");
                     }
                 } else {
-                    console.error("Error fetching data: ", response.message);
+                    console.error("Error fetching data:", response.message);
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         };
         void fetchData();
-        // }
     }, [props.CurrentRoleID, props.stateValue?.StatusId]);
 
     const handleDelete = (

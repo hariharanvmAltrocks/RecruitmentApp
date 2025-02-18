@@ -621,9 +621,8 @@ export default class RecruitmentService implements IRecruitmentService {
           FristName: item.FristName,
           MiddleName: item.MiddleName,
           LastName: item.LastName,
-          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${
-            item.LastName || ""
-          }`,
+          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""
+            }`,
           ResidentialAddress: item?.ResidentialAddress,
           DOB: item?.DOB,
           ContactNumber: item?.ContactNumber,
@@ -810,10 +809,10 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
             ? (Employee.FirstName ?? "") +
-              " " +
-              (Employee.MiddleName ?? "") +
-              " " +
-              (Employee.LastName ?? "")
+            " " +
+            (Employee.MiddleName ?? "") +
+            " " +
+            (Employee.LastName ?? "")
             : "",
           // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
         };
@@ -883,32 +882,343 @@ export default class RecruitmentService implements IRecruitmentService {
       };
     }
   }
+
+  // async GetHRMSRecruitmentRoleProfileDetails(
+  //   filterParam: any[],
+  //   filterConditions: any
+  // ): Promise<ApiResponse<any | null>> {
+  //   try {
+  //     const roleKnowledgeMaster: any[] = await SPServices.SPReadItems({
+  //       Listname: ListNames.HRMSRoleSpecificKnowlegeMaster,
+  //       Select: "RoleSpecificKnowledge, Code",
+  //     });
+
+  //     const levelProficiencyMaster: any[] = await SPServices.SPReadItems({
+  //       Listname: ListNames.HRMSLevelOfProficiency,
+  //       Select: "Levels, Code",
+  //     });
+
+  //     const technicalSkillsMaster: any[] = await SPServices.SPReadItems({
+  //       Listname: ListNames.HRMSTechnicalSkills,
+  //       Select: "TechnicalSkills, Code",
+  //     });
+
+  //     const experienceMaster: any[] = await SPServices.SPReadItems({
+  //       Listname: ListNames.HRMSExperienceMaster,
+  //       Select: "ID,ExperienceInYearRange",
+  //     });
+
+  //     const qualificationMaster: any[] = await SPServices.SPReadItems({
+  //       Listname: ListNames.HRMSQualification,
+  //       Select: "Qualification, QualificationCode",
+  //     });
+  //     const functionTypeMaster: any[] = await SPServices.SPReadItems({
+  //       Listname: ListNames.HRMSJobTitleFunctionType,
+  //       Select: "ID,FunctionType",
+  //     });
+  //     const roleKnowledgeMap = roleKnowledgeMaster.reduce((acc, item) => {
+  //       acc[item.Code] = item.RoleSpecificKnowledge;
+  //       return acc;
+  //     }, {} as Record<string, string>);
+
+  //     const levelProficiencyMap = levelProficiencyMaster.reduce((acc, item) => {
+  //       acc[item.Code] = item.Levels;
+  //       return acc;
+  //     }, {} as Record<string, string>);
+
+  //     const technicalSkillsMap = technicalSkillsMaster.reduce((acc, item) => {
+  //       acc[item.Code] = item.TechnicalSkills;
+  //       return acc;
+  //     }, {} as Record<string, string>);
+
+  //     const qualificationMap = qualificationMaster.reduce((acc, item) => {
+  //       acc[item.QualificationCode] = item.Qualification;
+  //       return acc;
+  //     }, {} as Record<string, string>);
+
+  //     const experienceMap = new Map(
+  //       experienceMaster.map((exp) => [exp.ID, exp.ExperienceInYearRange])
+  //     );
+  //     const functionTypeMap = new Map(
+  //       functionTypeMaster.map((exp) => [exp.ID, exp.FunctionType])
+  //     );
+
+  //     console.log("qualificationMap", qualificationMap);
+  //     console.log("functionTypeMap", functionTypeMap);
+  //     console.log("experienceMap", experienceMap);
+
+  //     const listItems: any[] = await SPServices.SPReadItems({
+  //       Listname: ListNames.HRMSRecruitmentRoleProfileDetails,
+  //       Select:
+  //         "RecruitmentID/ID,JobDescription,RoleProfile,RoleSpecificKnowledgeJson,TechnicalSkillsKnowledgeJson,YearofExperience,PreferredExperience/ID,PreferredExperience/ExperienceInYearRange,Qualification,PreferredQualification,TotalPreferredExperience/ID,TotalPreferredExperience/ExperienceInYearRange,ValidFrom,ValidTo,FunctionType/ID,FunctionType/FunctionType",
+  //       Filter: filterParam,
+  //       FilterCondition: filterConditions,
+  //       Expand:
+  //         "RecruitmentID,PreferredExperience,TotalPreferredExperience,FunctionType",
+  //       Orderby: "ID",
+  //       Orderbydecorasc: false,
+  //     });
+
+  //     const formattedItems = listItems.map((item) => {
+  //       const roleKnowledgeArray = JSON.parse(
+  //         item.RoleSpecificKnowledgeJson || "[]"
+  //       );
+  //       const techSkillsArray = JSON.parse(
+  //         item.TechnicalSkillsKnowledgeJson || "[]"
+  //       );
+  //       let qualificationArray: any[] = [];
+  //       let preferredQualificationArray: any[] = [];
+
+  //       if (item.Qualification) {
+  //         try {
+  //           const parsedQ = JSON.parse(item.Qualification);
+  //           qualificationArray = Array.isArray(parsedQ) ? parsedQ : [parsedQ];
+  //         } catch (error) {
+  //           console.error("Error parsing Qualification:", error);
+  //         }
+  //       }
+
+  //       if (item.PreferredQualification) {
+  //         try {
+  //           const parsedPQ = JSON.parse(item.PreferredQualification);
+  //           preferredQualificationArray = Array.isArray(parsedPQ)
+  //             ? parsedPQ
+  //             : [parsedPQ];
+  //         } catch (error) {
+  //           console.error("Error parsing Preferred Qualification:", error);
+  //         }
+  //       }
+  //       return {
+  //         RecruitmentID: item?.RecruitmentID?.ID || "",
+  //         JobDescription: item.JobDescription || "",
+  //         RoleProfile: item.RoleProfile || "",
+  //         RoleSpecificKnowledge: roleKnowledgeArray.map((rk: any) => ({
+  //           RoleSpecificKnowledge:
+  //             roleKnowledgeMap[rk.RoleSpeKnowledge] || rk.RoleSpeKnowledge,
+  //           RequiredLevel:
+  //             levelProficiencyMap[rk.RequiredLevel] || rk.RequiredLevel,
+  //         })),
+  //         TechnicalSkillsKnowledge: techSkillsArray.map((ts: any) => ({
+  //           TechnicalSkills:
+  //             technicalSkillsMap[ts.TechnicalSkills] || ts.TechnicalSkills,
+  //           LevelProficiency:
+  //             levelProficiencyMap[ts.LevelProficiency] || ts.LevelProficiency,
+  //         })),
+
+  //         Qualification: qualificationArray.map((q) => ({
+  //           text:
+  //             qualificationMap[q.MinQualification] ||
+  //             q.MinQualification ||
+  //             "N/A",
+  //         })),
+
+  //         PreferredQualification: preferredQualificationArray.map((pq) => ({
+  //           text:
+  //             qualificationMap[pq.PrefeQualification] ||
+  //             pq.PrefeQualification ||
+  //             "N/A",
+  //         })),
+  //         YearofExperience:
+  //           experienceMap.get(item.TotalPreferredExperience?.ID) || "N/A",
+  //         PreferredExperience:
+  //           experienceMap.get(item.PreferredExperience?.ID) || "N/A",
+  //         TotalPreferredExperience:
+  //           experienceMap.get(item.TotalPreferredExperience?.ID) || "N/A",
+
+  //         ValidFrom: item.ValidFrom
+  //           ? new Date(item.ValidFrom).toISOString()
+  //           : "N/A",
+  //         ValidTo: item.ValidTo ? new Date(item.ValidTo).toISOString() : "N/A",
+  //         FunctionType:
+  //           functionTypeMap.get(Number(item.FunctionType?.ID)) || "N/A",
+  //       };
+  //     });
+
+  //     console.log("Formatted Items:", formattedItems);
+  //     return {
+  //       data: formattedItems,
+  //       status: 200,
+  //       message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+  //     };
+  //   } catch (error) {
+  //     console.error(
+  //       "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+  //       error
+  //     );
+  //     return {
+  //       data: [],
+  //       status: 500,
+  //       message:
+  //         "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+  //     };
+  //   }
+  // }
   async GetHRMSRecruitmentRoleProfileDetails(
     filterParam: any[],
     filterConditions: any
   ): Promise<ApiResponse<any | null>> {
     try {
+      const roleKnowledgeMaster: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRoleSpecificKnowlegeMaster,
+        Select: "RoleSpecificKnowledge, Code",
+      });
+
+      const levelProficiencyMaster: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSLevelOfProficiency,
+        Select: "Levels, Code",
+      });
+
+      const technicalSkillsMaster: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSTechnicalSkills,
+        Select: "TechnicalSkills, Code",
+      });
+
+      const experienceMaster: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSExperienceMaster,
+        Select: "ID,ExperienceInYearRange",
+      });
+
+      const qualificationMaster: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSQualification,
+        Select: "Qualification, QualificationCode",
+      });
+
+      const functionTypeMaster: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSJobTitleFunctionType,
+        Select: "ID,FunctionType",
+      });
+
+      const roleKnowledgeMap = roleKnowledgeMaster.reduce((acc, item) => {
+        acc[item.Code] = item.RoleSpecificKnowledge;
+        return acc;
+      }, {} as Record<string, string>);
+
+      const levelProficiencyMap = levelProficiencyMaster.reduce((acc, item) => {
+        acc[item.Code] = item.Levels;
+        return acc;
+      }, {} as Record<string, string>);
+
+      const technicalSkillsMap = technicalSkillsMaster.reduce((acc, item) => {
+        acc[item.Code] = item.TechnicalSkills;
+        return acc;
+      }, {} as Record<string, string>);
+
+      const qualificationMap = qualificationMaster.reduce((acc, item) => {
+        acc[item.QualificationCode] = item.Qualification;
+        return acc;
+      }, {} as Record<string, string>);
+
+      const experienceMap = new Map(
+        experienceMaster.map((exp) => [exp.ID, exp.ExperienceInYearRange])
+      );
+
+      const functionTypeMap = new Map(
+        functionTypeMaster.map((exp) => [exp.ID, exp.FunctionType])
+      );
+
+      console.log("qualificationMap", qualificationMap);
+      console.log("functionTypeMap", functionTypeMap);
+      console.log("experienceMap", experienceMap);
+
       const listItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentRoleProfileDetails,
         Select:
-          "RecruitmentID/ID,PreferredExperience/Code,TotalPreferredExperience/Code",
+          "*,RecruitmentID/ID,JobDescription,RoleProfile,RoleSpecificKnowledgeJson,TechnicalSkillsKnowledgeJson,YearofExperience,PreferredExperience/ID,PreferredExperience/ExperienceInYearRange,Qualification,PreferredQualification,TotalPreferredExperience/ID,TotalPreferredExperience/ExperienceInYearRange,ValidFrom,ValidTo,FunctionType/FunctionType",
         Filter: filterParam,
         FilterCondition: filterConditions,
-        Expand: "RecruitmentID,PreferredExperience,TotalPreferredExperience",
+        Expand:
+          "RecruitmentID,PreferredExperience,TotalPreferredExperience,FunctionType",
         Orderby: "ID",
         Orderbydecorasc: false,
       });
-      const formattedItems = listItems.map((item) => ({
-        RecruitmentID: item?.RecruitmentID?.ID || "",
-        JobDescription: item.JobDescription || "",
-        RoleProfile: item.RoleProfile || "",
-        RoleSpecificKnowledgeJson: item.RoleSpecificKnowledgeJson || "",
-        TechnicalSkillsKnowledgeJson: item.TechnicalSkillsKnowledgeJson || "",
-        TotalPreferredExperience: item.TotalPreferredExperience?.Code || 0,
-        Qualification: item.Qualification || "",
-        PreferredQualification: item.PreferredQualification || "",
-        PreferredExperience: item.PreferredExperience?.Code || 0,
-      }));
+      console.log("listItems", listItems);
+      const formattedItems = listItems.map((item) => {
+        const roleKnowledgeArray = JSON.parse(
+          item.RoleSpecificKnowledgeJson || "[]"
+        );
+        const techSkillsArray = JSON.parse(
+          item.TechnicalSkillsKnowledgeJson || "[]"
+        );
+        let qualificationArray: any[] = [];
+        let preferredQualificationArray: any[] = [];
+
+        if (item.Qualification) {
+          try {
+            const parsedQ = JSON.parse(item.Qualification);
+            qualificationArray = Array.isArray(parsedQ) ? parsedQ : [parsedQ];
+          } catch (error) {
+            console.error("Error parsing Qualification:", error);
+          }
+        }
+
+        if (item.PreferredQualification) {
+          try {
+            const parsedPQ = JSON.parse(item.PreferredQualification);
+            preferredQualificationArray = Array.isArray(parsedPQ)
+              ? parsedPQ
+              : [parsedPQ];
+          } catch (error) {
+            console.error("Error parsing Preferred Qualification:", error);
+          }
+        }
+        console.log("listItems", listItems);
+        const functionType = item.FunctionType;
+
+        return {
+          RecruitmentID: item?.RecruitmentID?.ID || "",
+          JobDescription: item.JobDescription || "",
+          RoleProfile: item.RoleProfile || "",
+          RoleSpecificKnowledge: roleKnowledgeArray.map((rk: any) => ({
+            RoleSpecificKnowledge:
+              roleKnowledgeMap[rk.RoleSpeKnowledge] || rk.RoleSpeKnowledge,
+            RequiredLevel:
+              levelProficiencyMap[rk.RequiredLevel] || rk.RequiredLevel,
+          })),
+          TechnicalSkillsKnowledge: techSkillsArray.map((ts: any) => ({
+            TechnicalSkills:
+              technicalSkillsMap[ts.TechnicalSkills] || ts.TechnicalSkills,
+            LevelProficiency:
+              levelProficiencyMap[ts.LevelProficiency] || ts.LevelProficiency,
+          })),
+
+          Qualification: qualificationArray.map((q) => ({
+            text:
+              qualificationMap[q.MinQualification] ||
+              q.MinQualification ||
+              "N/A",
+          })),
+
+          PreferredQualification: preferredQualificationArray.map((pq) => ({
+            text:
+              qualificationMap[pq.PrefeQualification] ||
+              pq.PrefeQualification ||
+              "N/A",
+          })),
+          YearofExperience:
+            experienceMap.get(item.TotalPreferredExperience?.ID) || "N/A",
+          PreferredExperience:
+            experienceMap.get(item.PreferredExperience?.ID) || "N/A",
+          TotalPreferredExperience:
+            experienceMap.get(item.TotalPreferredExperience?.ID) || "N/A",
+
+          ValidFrom: item.ValidFrom
+            ? new Date(item.ValidFrom)
+              .toLocaleDateString("en-GB")
+              .replace(/\//g, "-")
+            : "N/A",
+          ValidTo: item.ValidTo
+            ? new Date(item.ValidTo)
+              .toLocaleDateString("en-GB")
+              .replace(/\//g, "-")
+            : "N/A",
+
+          // FunctionType:
+          //   functionTypeMap.get(Number(item.FunctionType?.ID)) || "N/A",
+          FunctionType: functionType ? functionType.FunctionType : "N/A",
+        };
+      });
+
+      console.log("Formatted Items:", formattedItems);
       return {
         data: formattedItems,
         status: 200,

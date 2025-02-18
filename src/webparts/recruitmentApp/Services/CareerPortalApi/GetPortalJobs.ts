@@ -52,8 +52,6 @@ export default class GetPortalJobs implements IGetPortalJobs {
       let GetProfileByJobCodeData: GetProfileByJobCode[] = []
       await getProfileData.GetProfileByJobCode("JC0005", FilterValue).then((res) => {
 
-        console.log(res, "res");
-        debugger;
         GetProfileByJobCodeData = res.data.data.map((item: any) => {
           return {
             CandidateID: item.jobRequestId,
@@ -91,15 +89,14 @@ export default class GetPortalJobs implements IGetPortalJobs {
       await getProfileData.getCandidateProfile(CandidateID).then(async (res) => {
 
         const op = res.data.data;
-        console.log(res, "res");
         const [
           RoleProfileDocment,
           AdvertismentDocment,
           CandidateCVDoc
         ] = await Promise.all([
-          CommonServices.GetAttachmentToLibrary(DocumentLibraray.RoleProfileMaster, op.JobCode, RoleProfileMaster.RoleProfile),
-          CommonServices.GetAttachmentToLibrary(DocumentLibraray.RecruitmentAdvertisementDocument, op.JobCode),
-          CommonServices.GetAttachmentToLibrary(DocumentLibraray.InterviewPanelCandidateCV, op.JobCode, op?.jobRequestId)
+          CommonServices.GetAttachmentToLibrary(DocumentLibraray.RoleProfileMaster, op.jobCode, RoleProfileMaster.RoleProfile),
+          CommonServices.GetAttachmentToLibrary(DocumentLibraray.RecruitmentAdvertisementDocument, op.jobCode),
+          CommonServices.GetAttachmentToLibrary(DocumentLibraray.InterviewPanelCandidateCV, op.jobCode, op?.jobRequestId)
         ]);
         const RoleProfileDoc = RoleProfileDocment.data || [];
         const AdvertismentDocPromises = AdvertismentDocment.data || [];

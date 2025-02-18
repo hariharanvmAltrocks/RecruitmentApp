@@ -56,7 +56,7 @@ const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
                         <div key={scoreIndex}>
                           <div className="ms-Grid-row">
                             <div className="ms-Grid-col ms-lg12">
-                              <Labelheader value="Feedback" />
+                              <Labelheader value="Feedback Ratings Below 2" />
                               <LabelValue value={score?.Feedback ?? "N/A"} />
                             </div>
                           </div>

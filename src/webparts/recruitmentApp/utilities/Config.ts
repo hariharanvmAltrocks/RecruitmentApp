@@ -43,10 +43,11 @@ export const ListNames = {
   HRMSExternalAgentsDetailsForRecruitment:
     "HRMSExternalAgentsDetailsForRecruitment",
   HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
+
 };
 
 export const DocumentLibraray = {
-  InterviewPanelCandidateCV: "InterviewPanelCandidateCV",
+  InterviewPanelCandidateCV: "HRMSRecruitmentCandidateCV",
   HRMSRecruitment: "HRMSRecruitment",
   HRMSRoleProfile: "HRMS_Role_Profile",
   RecruitmentAdvertisementDocument: "HRMSRecruitmentAdvertDocument",
