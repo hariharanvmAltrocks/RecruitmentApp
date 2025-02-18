@@ -558,37 +558,6 @@ const ViewCandidateDetails = (props: any) => {
       console.log(CandidateData, "CandidateData");
       await GetPortalJobsService.UpdateCandidateStatus(CandidateData).then((res) => {
         console.log(res.data, "res");
-        props.stateValue.RecruitmentID
-        // let CandidateDetails = {
-        //   RecruitmentIDId: ,
-        //   JobCodeId: ,
-        //   FristName: ,
-        //   MiddleName: ,
-        //   ResidentialAddress: ,
-        //   DOB: ,
-        //   ContactNumber: "",
-        //   Email:,
-        //   Nationality:,
-        //   Gender: ,
-        //   TotalYearOfExperiance: ,
-        //   Skills: ,
-        //   LanguageKnown: ,
-        //   ReleventExperience: ,
-        //   Qualification: ,
-        //   AssignByInterviewPanelId: ,
-        //   JobRequestID: ,
-        //   PositionTitle: ,
-        //   JobGrade: ,
-        //   ExternalAgentDetailsId: ,
-        //   InterviewDate: ,
-        // }
-        // ListName : HRMSInterviewPanelDetails
-        //  let InterviewpanelList= {
-        //   RecruitmentIDId: ,
-        //   InterviewLevel: ,
-        //   InterviewPanelId: ,
-        //   CandidateID: ,
-        //  } 
         let CancelAlert = {
           Message: RecuritmentHRMsg.ProfileReviewed,
           Type: HRMSAlertOptions.Success,

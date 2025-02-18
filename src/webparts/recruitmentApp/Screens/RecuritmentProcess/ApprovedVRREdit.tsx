@@ -631,7 +631,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     const SaveRecruitment = async () => {
         try {
-            await PostAdvertisement();
 
             const isValid = !Validation();
 
@@ -677,6 +676,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 switch (props.CurrentRoleID) {
                     case RoleID.RecruitmentHRLead: {
                         if (props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc) {
+                            await PostAdvertisement();
                             await CommonServices.uploadAttachmentToLibrary(
                                 formState.JobCode,
                                 formState.OnamSignedStampsAttchment ?? [],
