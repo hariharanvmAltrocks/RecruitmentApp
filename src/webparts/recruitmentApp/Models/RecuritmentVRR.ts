@@ -156,6 +156,7 @@ export type ScoreCardData = {
   //InterviewPanalNames?: string[];
   // InterviewPanelNames: string[]; // Array of names (e.g. ["Fathima John N"])
   interviewPanelTitles: string[];
+  InterviewDate?: string;
 };
 
 export type QualificationValue = {
@@ -208,4 +209,12 @@ export type RecruitementPositionDetails = {
 
 export type ScoreData = {
   SignDate?: Date | any;
+};
+
+//QuestionnairesforInterviewerLogin
+export type QuestionItem = {
+  id: number;
+  question: string;
+  answer: string;
+  rating: number | null;
 };

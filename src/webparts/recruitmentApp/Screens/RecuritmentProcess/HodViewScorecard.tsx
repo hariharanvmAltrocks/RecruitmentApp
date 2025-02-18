@@ -197,6 +197,7 @@ const HodViewScorecard = (props: any) => {
           AdvertisementDocument: advertisementDocuments,
           RoleProfileDocument: roleProfileDocuments,
           PositionTitle: op?.PositionTitle,
+          InterviewDate: op?.InterviewDate,
         }));
       }
     } catch (error) {
@@ -646,7 +647,7 @@ const HodViewScorecard = (props: any) => {
                   />
                 </div>
               </div>
-              <div className="ms-Grid-row">
+              {/* <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Date of Interview"
@@ -677,8 +678,46 @@ const HodViewScorecard = (props: any) => {
                     }
                   />
                 </div>
+              </div> */}
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomInput
+                    label="Date of Interview"
+                    // value={CandidateData.InterviewDate}
+                    // value={new Date(CandidateData.InterviewDate)
+                    //   .toLocaleDateString("en-GB")
+                    //   .replace(/\//g, "-")}
+                    value={
+                      CandidateData.InterviewDate
+                        ? new Date(CandidateData.InterviewDate)
+                            .toLocaleDateString("en-GB")
+                            .replace(/\//g, "-")
+                        : ""
+                    }
+                    disabled={true}
+                    mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                        InterviewDate: value,
+                      }))
+                    }
+                  />
+                </div>
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomInput
+                    label="Interviewed by"
+                    value={CandidateData.interviewPanelTitles?.join(", ") || ""}
+                    disabled={true}
+                    mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                      }))
+                    }
+                  />
+                </div>
               </div>
-
               <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
                 <LabelHeaderComponents value={"Attachments"} />
               </div>

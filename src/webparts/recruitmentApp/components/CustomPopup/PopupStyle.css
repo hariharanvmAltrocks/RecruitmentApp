@@ -22,7 +22,7 @@
   /* Max width to prevent it from being too wide on large screens */
   position: relative;
   /* padding: 20px; */
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
 }
 
 .popup-header {
@@ -45,7 +45,7 @@
   position: absolute;
   top: -7px;
   right: -6px;
-  background-color: #FF748D;
+  background-color: #ff748d;
   color: white;
   border: none;
   width: 20px;
@@ -60,7 +60,7 @@
 }
 
 .popup-close:hover {
-  background-color: #FF748D;
+  background-color: #ff748d;
 }
 
 .popup-body {

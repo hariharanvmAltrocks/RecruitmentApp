@@ -727,6 +727,7 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleProfileDocument: [],
           AdvertisementDocument: [],
           ShortlistedValue: "",
+          InterviewDate: item?.InterviewDate,
         };
       });
 

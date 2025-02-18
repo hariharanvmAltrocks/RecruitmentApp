@@ -1226,11 +1226,11 @@ html {
 
 .p-dialog-header {
   padding-left: 1%;
-  padding-top: 1%;
+  /* padding-top: 1%; */
 }
 
 .p-dialog-footer {
-  padding-bottom: 3%;
+  padding-bottom: 0%;
 }
 
 /* .p-dialog {
@@ -1239,7 +1239,8 @@ html {
 
 .p-dialog-content {
   scroll-behavior: auto;
-  scrollbar-width: none;
+  overflow-x: hidden;
+  /* scrollbar-width: none; */
 }
 
 /* App.css or any other style file */
