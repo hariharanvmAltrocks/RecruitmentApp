@@ -908,97 +908,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }
   }, [AddQualifbtn]);
 
-  // useEffect(() => {
-  //   if (
-  //     props.CurrentRoleID === RoleID.HOD &&
-  //     props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv
-  //   ) {
-  //     const fetchData = async () => {
-  //       try {
-  //         let filterConditions = [
-  //           {
-  //             FilterKey: "RecruitmentIDId",
-  //             Operator: "eq",
-  //             FilterValue: props.stateValue.ID,
-  //           },
-  //         ];
-  //         const response =
-  //           await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
-  //             filterConditions,
-  //             ""
-  //           );
-
-  //         if (response.status === 200) {
-  //           const data = response.data;
-  //           console.log("datadata", data);
-  //           if (data && data.length > 0) {
-  //             const rawData = data[0];
-  //             const roleSpecificKnowledge = rawData.RoleSpecificKnowledgeJson
-  //               ? JSON.parse(rawData.RoleSpecificKnowledgeJson)
-  //               : [];
-
-  //             const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
-  //               (item: any) => item.RoleSpeKnowledge
-  //             );
-  //             const RequiredLevelValues = roleSpecificKnowledge.map(
-  //               (item: any) => item.RequiredLevel
-  //             );
-  //             const mappedData: AdvDetails = {
-  //               RolePurpose: rawData.RoleProfile || "",
-  //               JobDescription: rawData.JobDescription || "",
-  //               RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
-  //               RequiredLeveloption: RequiredLevelValues,
-  //               MinQualificationOption: rawData.Qualification
-  //                 ? JSON.parse(rawData.Qualification).map((item: any) => ({
-  //                     text: item.MinQualification,
-  //                   }))
-  //                 : [],
-  //               PrefeQualificationOption: rawData.PreferredQualification
-  //                 ? JSON.parse(rawData.PreferredQualification).map(
-  //                     (item: any) => ({
-  //                       text: item.PrefeQualification,
-  //                     })
-  //                   )
-  //                 : [],
-  //               TotalExperience: rawData.YearofExperience || "",
-  //               ExperienceinMiningIndustry: rawData.PreferredExperience || "",
-  //               TechnicalSkillsOption: rawData.TechnicalSkillsKnowledgeJson
-  //                 ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
-  //                     (item: any) => ({
-  //                       text: item.TechnicalSkills,
-  //                     })
-  //                   )
-  //                 : [],
-  //               LevelProficiencyOption: rawData.TechnicalSkillsKnowledgeJson
-  //                 ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
-  //                     (item: any) => ({
-  //                       text: item.LevelProficiency,
-  //                     })
-  //                   )
-  //                 : [],
-  //               addMasterQualification: "",
-  //               YearofExperience: rawData.YearofExperience || "",
-  //               PreferredExperience: rawData.PreferredExperience || "",
-  //               ValidFrom: undefined,
-  //               ValidTo: undefined,
-  //             };
-
-  //             setAdvDetails(mappedData);
-  //             console.log("mappedData", mappedData);
-  //           } else {
-  //             console.warn("No data found for the given filter");
-  //           }
-  //         } else {
-  //           console.error("Error fetching data: ", response.message);
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching data:", error);
-  //       }
-  //     };
-  //     void fetchData();
-  //   }
-  // }, [props.CurrentRoleID, props.stateValue?.StatusId]);
-
   useEffect(() => {
     if (
       props.CurrentRoleID === RoleID.HOD &&
@@ -1025,8 +934,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
             if (data && data.length > 0) {
               const rawData = data[0];
-
-              // Parsing RoleSpecificKnowledge JSON
               const roleSpecificKnowledge = Array.isArray(
                 rawData.RoleSpecificKnowledge
               )
@@ -1039,8 +946,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               const RequiredLevelValues = roleSpecificKnowledge.map(
                 (item: any) => item.RequiredLevel
               );
-
-              // Parsing TechnicalSkillsKnowledge JSON
               const technicalSkillsKnowledge = Array.isArray(
                 rawData.TechnicalSkillsKnowledge
               )
@@ -1060,7 +965,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   text: item.LevelProficiency,
                 })
               );
-
               const MinQualificationOption = Array.isArray(
                 rawData.Qualification
               )
@@ -1069,7 +973,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     text: item.text || "N/A",
                   }))
                 : [];
-
               const PrefeQualificationOption = Array.isArray(
                 rawData.PreferredQualification
               )
@@ -1101,7 +1004,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               };
 
               setAdvDetails(mappedData);
-              console.log("Mapped Data:", mappedData);
             } else {
               console.warn("No data found for the given filter.");
             }
