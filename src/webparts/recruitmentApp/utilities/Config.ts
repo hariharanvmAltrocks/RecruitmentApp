@@ -41,6 +41,8 @@ export const ListNames = {
   HRMSExternalAgentsDetailsForRecruitment:
     "HRMSExternalAgentsDetailsForRecruitment",
   HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
+  HRMSExperienceMaster: "HRMSExperienceMaster",
+  HRMSJobTitleFunctionType: "HRMSJobTitleFunctionType",
 };
 
 export const DocumentLibraray = {

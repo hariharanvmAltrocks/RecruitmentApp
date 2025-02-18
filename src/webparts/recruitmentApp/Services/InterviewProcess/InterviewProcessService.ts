@@ -1,5 +1,8 @@
+import { CandidateData } from "../../Models/RecuritmentVRR";
 import { InterviewPanaldata } from "../../Models/Screens";
-import { ListNames } from "../../utilities/Config";
+import { count, DocumentLibraray, ListNames } from "../../utilities/Config";
+import { CommonServices } from "../ServiceExport";
+import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
 import {
   CommentsDatas,
@@ -258,6 +261,320 @@ export default class InterviewProcessService
         status: 500,
         message:
           "Error fetching data from HRMSInterviewPanelDetails and HRMSCandidateScoreCard",
+      };
+    }
+  }
+
+  //
+  async GetInterviewPanelCandidateDetails(
+    filterParam: any,
+    filterConditions: any
+  ) {
+    try {
+      const CandidateDetails: CandidateData[] = [];
+      const listItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Select:
+          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID",
+        Expand: "JobCode,AssignByInterviewPanel,RecruitmentID",
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Topcount: count.Topcount,
+      });
+
+      const formattedItems = listItems.map(async (item) => {
+        const response = await CommonServices.GetAttachmentToLibrary(
+          DocumentLibraray.InterviewPanelCandidateCV,
+          item.JobCode?.JobCode,
+          item?.PassportID
+        );
+        let candidateCV: IDocFiles[] = [];
+        if (response.status === 200 && response.data) {
+          candidateCV = response.data;
+        } else {
+          console.error("Error retrieving attachments:", response.message);
+        }
+
+        return {
+          ID: item.ID,
+          RecruitmentID: item?.RecruitmentID?.ID,
+          JobCode: item?.JobCode?.JobCode,
+          JobCodeId: item?.JobCodeId,
+          PassportID: item?.PassportID,
+          FristName: item?.FristName,
+          MiddleName: item?.MiddleName,
+          LastName: item?.LastName,
+          FullName:
+            (item?.FristName ?? "") +
+            " " +
+            (item?.MiddleName ?? "") +
+            " " +
+            (item?.LastName ?? ""),
+          ResidentialAddress: item?.ResidentialAddress,
+          DOB: item?.DOB,
+          ContactNumber: item?.ContactNumber,
+          Email: item?.Email,
+          Nationality: item?.Nationality,
+          Gender: item?.Gender,
+          TotalYearOfExperiance: item?.TotalYearOfExperiance,
+          Skills: item?.Skills,
+          LanguageKnown: item?.LanguageKnown,
+          ReleventExperience: item?.ReleventExperience,
+          Qualification: item?.Qualification,
+          RecuritmentHR: item?.RecuritmentHR,
+          AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
+          CandidateCVDoc: candidateCV,
+          PositionTitle: item.PositionTitle,
+          JobGrade: item.JobGrade,
+          RoleProfileDocument: [],
+          AdvertisementDocument: [],
+          ShortlistedValue: "",
+        };
+      });
+
+      const resolvedItems = await Promise.all(formattedItems);
+
+      CandidateDetails.push(...resolvedItems);
+
+      return {
+        data: CandidateDetails,
+        status: 200,
+        message: "HRMSRecruitmentCandidateDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data HRMSRecruitmentCandidateDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data from HRMSRecruitmentCandidateDetails",
+      };
+    }
+  }
+  async GetRecrutimentPositionDetails(filterParam: any, filterConditions: any) {
+    try {
+      const listItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentPositionDetails,
+        Select:
+          "*,JobTitleEnglish/JobTitleInEnglish,DRCGrade/DRCGrade,PatersonGrade/PatersonGrade,JobTitleFrench/JobTitleInFrench,RecruitmentID/ID,PositionID/PositionID",
+        Filter: filterParam,
+        Expand: "JobTitleEnglish,DRCGrade,PatersonGrade,JobTitleFrench",
+        Topcount: count.Topcount,
+      });
+
+      const formattedItems = {
+        LookupId: listItems[0]?.ID,
+        JobTitleInEnglishId: listItems[0]?.JobTitleEnglishId || 0,
+        JobTitleInEnglish:
+          listItems[0]?.JobTitleEnglish?.JobTitleInEnglish || "",
+        JobTitleInFrench: listItems[0]?.JobTitleFrench?.JobTitleInFrench || 0,
+        DRCGradeId: listItems[0]?.DRCGradeId,
+        DRCGrade: listItems[0]?.DRCGrade?.DRCGrade || "",
+        PayrollGradeId: listItems[0]?.PatersonGradeId,
+        PayrollGrade: listItems[0]?.PatersonGrade?.PatersonGrade || "",
+        RecruitmentIDId: listItems[0]?.RecruitmentID,
+        PositionIDId: listItems[0]?.PositionID,
+      };
+
+      return {
+        data: formattedItems,
+        status: 200,
+        message: "GetRecrutimentPositionDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data GetRecrutimentPositionDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data from GetRecrutimentPositionDetails",
+      };
+    }
+  }
+
+  async GetPositionDetails(filterParam: any, filterConditions: any) {
+    try {
+      const positionDetails: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentPositionDetails,
+        Select:
+          "JobTitleEnglish/JobTitleInEnglish,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade,RecruitmentID/ID,PositionID/PositionID,AssignLineManager/EMail,JobTitleFrench/JobTitleInFrench,AssignHOD/EMail",
+        Expand:
+          "JobTitleEnglish,PatersonGrade,DRCGrade,RecruitmentID,PositionID,AssignLineManager,JobTitleFrench,AssignHOD",
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Topcount: count.Topcount,
+      });
+
+      const formattedItems = positionDetails.map((position) => {
+        return {
+          RecruitmentID: position?.RecruitmentID?.ID,
+          PositionID: position?.PositionID?.ID,
+          JobTitleInEnglish: position?.JobTitleEnglish?.JobTitleInEnglish || "",
+          PatersonGrade: position?.PatersonGrade?.PatersonGrade || "",
+          DRCGrade: position?.DRCGrade?.DRCGrade || "",
+          JobTitleInFrench: position?.JobTitleFrench?.JobTitleInFrench || "",
+          AssignLineManagerEmail: position?.AssignLineManager?.EMail || "",
+          AssignHODEmail: position?.AssignHOD?.EMail || "",
+        };
+      });
+
+      return {
+        data: formattedItems,
+        status: 200,
+        message: "Position Details fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching position details:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data from Position Details",
+      };
+    }
+  }
+
+  async GetCombinedCandidatePositionDetails(
+    filterParam: any,
+    filterConditions: any
+  ) {
+    try {
+      const CandidateDetails: CandidateData[] = [];
+      const candidateItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Select:
+          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName",
+        Expand:
+          "JobCode,AssignByInterviewPanel,RecruitmentID,ExternalAgentDetails",
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Topcount: count.Topcount,
+      });
+
+      const positionItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentPositionDetails,
+        Select:
+          "JobTitleEnglish/JobTitleInEnglish,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade,RecruitmentID/ID,PositionID/PositionID,AssignLineManager/EMail,JobTitleFrench/JobTitleInFrench,AssignHOD/EMail",
+        Expand:
+          "JobTitleEnglish,PatersonGrade,DRCGrade,RecruitmentID,PositionID,AssignLineManager,JobTitleFrench,AssignHOD",
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Topcount: count.Topcount,
+      });
+
+      const positionsByRecruitment = positionItems.reduce(
+        (acc: any, position) => {
+          const recruitmentID = position?.RecruitmentID?.ID;
+          if (!acc[recruitmentID]) {
+            acc[recruitmentID] = [];
+          }
+          acc[recruitmentID].push(position);
+          return acc;
+        },
+        {}
+      );
+
+      const formattedItems = await Promise.all(
+        candidateItems.map(async (item) => {
+          const response = await CommonServices.GetAttachmentToLibrary(
+            DocumentLibraray.InterviewPanelCandidateCV,
+            item.JobCode?.JobCode,
+            item?.PassportID
+          );
+          let candidateCV: IDocFiles[] = [];
+          if (response.status === 200 && response.data) {
+            candidateCV = response.data;
+          } else {
+            console.error("Error retrieving attachments:", response.message);
+          }
+
+          const positionData =
+            positionsByRecruitment[item?.RecruitmentID?.ID] || [];
+
+          return {
+            ID: item.ID,
+            RecruitmentID: item?.RecruitmentID?.ID,
+            JobCode: item?.JobCode?.JobCode,
+            JobCodeId: item?.JobCodeId,
+            PassportID: item?.PassportID,
+            FristName: item?.FristName,
+            MiddleName: item?.MiddleName,
+            LastName: item?.LastName,
+            FullName:
+              (item?.FristName ?? "") +
+              " " +
+              (item?.MiddleName ?? "") +
+              " " +
+              (item?.LastName ?? ""),
+            ResidentialAddress: item?.ResidentialAddress,
+            DOB: item?.DOB,
+            ContactNumber: item?.ContactNumber,
+            Email: item?.Email,
+            Nationality: item?.Nationality,
+            Gender: item?.Gender,
+            TotalYearOfExperiance: item?.TotalYearOfExperiance,
+            Skills: item?.Skills,
+            LanguageKnown: item?.LanguageKnown,
+            ReleventExperience: item?.ReleventExperience,
+            Qualification: item?.Qualification,
+            RecuritmentHR: item?.RecuritmentHR,
+            AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
+            CandidateCVDoc: candidateCV,
+            PositionData: positionData.map(
+              (position: {
+                PositionID: { PositionID: any };
+                JobTitleEnglish: { JobTitleInEnglish: any };
+                PatersonGrade: { PatersonGrade: any };
+                DRCGrade: { DRCGrade: any };
+                JobTitleFrench: { JobTitleInFrench: any };
+                AssignLineManager: { EMail: any };
+                AssignHOD: { EMail: any };
+                RecruitmentID: { ID: any };
+              }) => ({
+                PositionID: position?.PositionID?.PositionID || "",
+                RecruitmentID: position?.RecruitmentID?.ID || "",
+                PositionTitles:
+                  position?.JobTitleEnglish?.JobTitleInEnglish || "",
+                JobGrade: position?.PatersonGrade?.PatersonGrade || "",
+                DRCGrade: position?.DRCGrade?.DRCGrade || "",
+                JobTitleFrench:
+                  position?.JobTitleFrench?.JobTitleInFrench || "",
+                AssignLineManagerEmail:
+                  position?.AssignLineManager?.EMail || "",
+                AssignHODEmail: position?.AssignHOD?.EMail || "",
+              })
+            ),
+            RoleProfileDocument: [],
+            AdvertisementDocument: [],
+            ShortlistedValue: "",
+            PositionTitle: item.PositionTitle,
+            JobGrade: item.JobGrade,
+            ExternalAgentDetails: item?.ExternalAgentDetails
+              ? {
+                  AgentName: item?.ExternalAgentDetails?.AgentName,
+                }
+              : null,
+          };
+        })
+      );
+
+      CandidateDetails.push(...formattedItems);
+      return {
+        data: CandidateDetails,
+        status: 200,
+        message:
+          "Combined Candidate, Position, and External Agent Details fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching combined data:", error);
+      return {
+        data: [],
+        status: 500,
+        message:
+          "Error fetching combined data from Candidate, Position, and External Agent Details",
       };
     }
   }

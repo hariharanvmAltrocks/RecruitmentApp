@@ -34,6 +34,14 @@ function CustomTextArea({
       <Textarea
         value={value}
         placeholder={placeholder}
+        // style={{
+        //   color: "#808080",
+        //   borderRadius: "5px",
+        //   borderWidth: "1px",
+        //   marginLeft: "0rem",
+        //   width: "100%",
+        //   border: "groove",
+        // }}
         style={{
           //color: "#808080",
           color: value ? "#000000" : "#808080",

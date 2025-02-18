@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
-import { getVRRDetails } from "../../Services/ServiceExport";
+import { InterviewServices } from "../../Services/ServiceExport";
+// import { getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { RoleID, TabName } from "../../utilities/Config";
 import SearchableDataTable from "../../components/CustomDataTable";
@@ -55,7 +56,7 @@ const CandidateList = (props: any) => {
     },
     { field: "ID", header: "Candidate ID", sortable: true },
     { field: "FullName", header: "Applicant Name", sortable: true },
-    { field: "JobCode", header: "Job Code", sortable: true },
+    // { field: "JobCode", header: "Job Code", sortable: true },
     { field: "PositionTitle", header: "Position Title", sortable: true },
     { field: "JobGrade", header: "Job Grade", sortable: true },
     { field: "GPA", header: "GPA", sortable: true },
@@ -77,9 +78,10 @@ const CandidateList = (props: any) => {
           >
             {ButtonAction === "view" ? (
               <Button
-                onClick={() =>
-                  handleRedirectView(rowData, tab, TabName, ButtonAction)
-                }
+                onClick={() => {
+                  console.log("rowData1", rowData);
+                  handleRedirectView(rowData, tab, TabName, ButtonAction);
+                }}
                 className="table_btn"
                 icon="pi pi-eye"
                 style={{
@@ -91,9 +93,11 @@ const CandidateList = (props: any) => {
             ) : (
               <>
                 <Button
-                  onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction)
-                  }
+                  onClick={() => {
+                    console.log(rowData.RequirementID);
+                    console.log("rowData2", rowData);
+                    handleRedirectView(rowData, tab, TabName, ButtonAction);
+                  }}
                   className="table_btn"
                   icon="pi pi-eye"
                   style={{
@@ -116,6 +120,8 @@ const CandidateList = (props: any) => {
                 </Button>
                 {/* <Button
                   onClick={() => {
+                    console.log(rowData.RequirementID);
+                    console.log("rowData3", rowData);
                     setSelectedCandidate(rowData);
                     setShowAssignModal(true);
                   }}
@@ -126,7 +132,17 @@ const CandidateList = (props: any) => {
                     padding: "3px",
                   }}
                 >
-                  <i className="pi pi-check" style={{ fontSize: "1rem" }} />
+                  <img
+                    src={
+                      require("../../assets/edit_icon.png") ||
+                      "/placeholder.svg"
+                    }
+                    alt="Edit Icon"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
                 </Button> */}
               </>
             )}
@@ -147,11 +163,16 @@ const CandidateList = (props: any) => {
       const filterConditions = [
         { FilterKey: "JobCode", Operator: "eq", FilterValue: jobCode },
       ];
-      const response = await getVRRDetails.GetInterviewPanelCandidateDetails(
-        " ",
-        filterConditions
-      );
-
+      // const response = await getVRRDetails.GetInterviewPanelCandidateDetails(
+      //   " ",
+      //   filterConditions
+      // );
+      const response =
+        await InterviewServices.GetCombinedCandidatePositionDetails(
+          " ",
+          filterConditions
+        );
+      console.log("response", response);
       if (response?.status === 200 && response?.data?.length) {
         const filteredCandidates = response.data
           .filter(
@@ -238,7 +259,7 @@ const CandidateList = (props: any) => {
 
   // const handleAssignPosition = (data: {
   //   positionId: string;
-  //   reasons: string;
+  //   justification: string;
   // }) => {
   //   setShowAssignModal(false);
   // };
