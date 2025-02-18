@@ -35,6 +35,7 @@ import CustomViewDocument from "../../components/CustomViewDocument";
 import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
+import CustomLabel from "../../components/CustomLabel";
 
 //import CustomLabel from "../../components/CustomLabel";
 
@@ -851,21 +852,21 @@ const InterviewPanelEdit = (props: any) => {
 
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"RoleProfile Documents"} />
                   <CustomViewDocument
                     Attachment={CandidateData.RoleProfileDocument}
-                    Label={"Role Profile Documents"}
                   />
                 </div>
                 <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"Advertisement Documents"} />
                   <CustomViewDocument
                     Attachment={CandidateData.AdvertisementDocument}
-                    Label={"Advertisement Documents"}
                   />
                 </div>
                 <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"Candidate Resume"} />
                   <CustomViewDocument
                     Attachment={CandidateData.CandidateCVDoc}
-                    Label={"Candidate Resume"}
                   />
                 </div>
               </div>
