@@ -83,7 +83,7 @@ const HodViewScorecard = (props: any) => {
     interviewPanelTitles: [] as string[],
   });
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
-  const [activeTab, setactiveTab] = React.useState<string>("tab1");
+  const [activeTab, setactiveTab] = React.useState<string>("tab2");
   const [MainComponent, setMainComponent] = React.useState<boolean>(true);
   const [CommentData, setCommentsData] = React.useState<
     CommentsDatas[] | undefined
@@ -140,7 +140,7 @@ const HodViewScorecard = (props: any) => {
 
         const response = await CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.RecruitmentAdvertisementDocument,
-          String(op?.RecruitmentID),
+          // String(op?.RecruitmentID),
           op?.JobCode
         );
 
@@ -492,7 +492,7 @@ const HodViewScorecard = (props: any) => {
   const tabs = [
     {
       label: TabName.CandidateDetails,
-      value: "tab1",
+      value: "tab2",
       content: (
         <Card
           variant="outlined"
@@ -768,7 +768,7 @@ const HodViewScorecard = (props: any) => {
     },
     {
       label: TabName.Scorecard,
-      value: "tab2",
+      value: "tab3",
       content: (
         <div
           style={{
@@ -961,7 +961,7 @@ const HodViewScorecard = (props: any) => {
   React.useEffect(() => {
     const activeTabObj = tabs.find((item) => item.value === activeTab);
 
-    if (activeTab === "tab1") {
+    if (activeTab === "tab2") {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
           { tabName: props.stateValue?.TabName },

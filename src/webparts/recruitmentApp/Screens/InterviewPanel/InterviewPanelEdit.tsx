@@ -198,7 +198,7 @@ const InterviewPanelEdit = (props: any) => {
 
         const response = await CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.RecruitmentAdvertisementDocument,
-          String(op?.RecruitmentID),
+          // String(op?.RecruitmentID),
           op?.JobCode
         );
 

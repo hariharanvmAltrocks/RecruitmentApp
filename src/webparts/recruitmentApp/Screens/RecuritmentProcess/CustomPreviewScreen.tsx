@@ -141,8 +141,8 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
                       </div>
                     </div>
                   ) : null}
-
-                  {data.RoleSpeKnowledgeoption?.length > 0 && (
+                  {(data.TotalExperience ||
+                    data.ExperienceinMiningIndustry) && (
                     <div
                       className="ms-Grid-row"
                       style={{ marginBottom: "20px" }}
@@ -152,6 +152,7 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
                           className="ms-Grid-row"
                           style={{ marginTop: "8px" }}
                         >
+                          {/* New Headings */}
                           <div
                             style={{
                               display: "flex",
@@ -161,7 +162,7 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
                           >
                             <div className="ms-Grid-col ms-lg4">
                               <b style={{ fontSize: "17px" }}>
-                                Role Specific Knowledge
+                                Total Experience
                               </b>
                             </div>
                             <div
@@ -172,31 +173,32 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
                             </div>
                             <div className="ms-Grid-col ms-lg4">
                               <b style={{ fontSize: "17px" }}>
-                                {" "}
-                                Required Level
+                                Experience in Mining Industry (Years)
                               </b>
                             </div>
                           </div>
 
-                          {data.RoleSpeKnowledgeoption?.map((item, index) => (
+                          <div style={{ display: "flex", marginTop: "8px" }}>
+                            <div className="ms-Grid-col ms-lg4">
+                              {data.TotalExperience
+                                ? `${data.TotalExperience} years`
+                                : ""}
+                            </div>
                             <div
-                              key={index}
-                              style={{ display: "flex", marginTop: "8px" }}
+                              className="ms-Grid-col ms-lg1"
+                              style={{ textAlign: "center" }}
                             >
-                              <div className="ms-Grid-col ms-lg4">{item}</div>
-                              <div
-                                className="ms-Grid-col ms-lg1"
-                                style={{ textAlign: "center" }}
-                              >
-                                {data.RequiredLeveloption?.[index] && (
+                              {data.TotalExperience &&
+                                data.ExperienceinMiningIndustry && (
                                   <span>-</span>
                                 )}
-                              </div>
-                              <div className="ms-Grid-col ms-lg4">
-                                {data.RequiredLeveloption?.[index]}
-                              </div>
                             </div>
-                          ))}
+                            <div className="ms-Grid-col ms-lg4">
+                              {data.ExperienceinMiningIndustry
+                                ? `${data.ExperienceinMiningIndustry} years in Mining`
+                                : ""}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -263,9 +265,7 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
                       </div>
                     </div>
                   )}
-
-                  {(data.TotalExperience ||
-                    data.ExperienceinMiningIndustry) && (
+                  {data.RoleSpeKnowledgeoption?.length > 0 && (
                     <div
                       className="ms-Grid-row"
                       style={{ marginBottom: "20px" }}
@@ -275,7 +275,6 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
                           className="ms-Grid-row"
                           style={{ marginTop: "8px" }}
                         >
-                          {/* New Headings */}
                           <div
                             style={{
                               display: "flex",
@@ -285,7 +284,7 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
                           >
                             <div className="ms-Grid-col ms-lg4">
                               <b style={{ fontSize: "17px" }}>
-                                Total Experience
+                                Role Specific Knowledge
                               </b>
                             </div>
                             <div
@@ -296,32 +295,31 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
                             </div>
                             <div className="ms-Grid-col ms-lg4">
                               <b style={{ fontSize: "17px" }}>
-                                Experience in Mining Industry (Years)
+                                {" "}
+                                Required Level
                               </b>
                             </div>
                           </div>
 
-                          <div style={{ display: "flex", marginTop: "8px" }}>
-                            <div className="ms-Grid-col ms-lg4">
-                              {data.TotalExperience
-                                ? `${data.TotalExperience} years`
-                                : ""}
-                            </div>
+                          {data.RoleSpeKnowledgeoption?.map((item, index) => (
                             <div
-                              className="ms-Grid-col ms-lg1"
-                              style={{ textAlign: "center" }}
+                              key={index}
+                              style={{ display: "flex", marginTop: "8px" }}
                             >
-                              {data.TotalExperience &&
-                                data.ExperienceinMiningIndustry && (
+                              <div className="ms-Grid-col ms-lg4">{item}</div>
+                              <div
+                                className="ms-Grid-col ms-lg1"
+                                style={{ textAlign: "center" }}
+                              >
+                                {data.RequiredLeveloption?.[index] && (
                                   <span>-</span>
                                 )}
+                              </div>
+                              <div className="ms-Grid-col ms-lg4">
+                                {data.RequiredLeveloption?.[index]}
+                              </div>
                             </div>
-                            <div className="ms-Grid-col ms-lg4">
-                              {data.ExperienceinMiningIndustry
-                                ? `${data.ExperienceinMiningIndustry} years in Mining`
-                                : ""}
-                            </div>
-                          </div>
+                          ))}
                         </div>
                       </div>
                     </div>
