@@ -31,7 +31,7 @@ interface SearchableDataTableProps {
   selectAll: boolean;
   handleRefresh: () => void;
   assignLabel?: string;
-  MasterData: any
+  MasterData: any;
 }
 
 const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
@@ -46,7 +46,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   handleRefresh,
   selectAll,
   assignLabel,
-  MasterData
+  MasterData,
 }) => {
   const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
   // const [first, setFirst] = React.useState<number>(0);
@@ -65,7 +65,6 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     setFilteredItems(data);
   }, [data]);
 
-
   const handleSearch = (event: any) => {
     setDashboardSearch({
       global: {
@@ -81,7 +80,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   };
 
   const search_fn = (field: string, item: AutoCompleteItem) => {
-    let filtered = data.filter(i => {
+    let filtered = data.filter((i) => {
       if (field === "Department") return i.Department === item.text;
       if (field === "BusinessUnitCode") return i.BusinessUnitCode === item.text;
       if (field === "BusinessUnitName") return i.BusinessUnitCode === item.key;
@@ -91,8 +90,11 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     setFilteredItems(filtered);
   };
 
-  const handleAutoComplete = (field: keyof FilterData, item: AutoCompleteItem | null) => {
-    setFilterData(prev => ({
+  const handleAutoComplete = (
+    field: keyof FilterData,
+    item: AutoCompleteItem | null
+  ) => {
+    setFilterData((prev) => ({
       ...prev,
       [field]: item,
     }));
@@ -156,8 +158,8 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                     value: "",
                     matchMode: FilterMatchMode.CONTAINS,
                   },
-                })
-                handleRefresh()
+                });
+                handleRefresh();
               }}
               spacing={4}
               height="33px"
@@ -167,8 +169,10 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           </div>
         </div>
 
-
-        <div className="ms_Grid-row" style={{ marginLeft: "5px", marginRight: "-12%" }}>
+        <div
+          className="ms_Grid-row"
+          style={{ marginLeft: "5px", marginRight: "-12%" }}
+        >
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
               label="Department"
@@ -176,23 +180,22 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               value={FilterData.Department}
               disabled={false}
               mandatory={true}
-              onChange={(item) => handleAutoComplete("Department", item)
-              }
+              onChange={(item) => handleAutoComplete("Department", item)}
             />
           </div>
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
               label="Business Unit Code"
-              options={MasterData?.BusinessUnitCodeAllColumn
-                .map((data: any) => ({
+              options={MasterData?.BusinessUnitCodeAllColumn.map(
+                (data: any) => ({
                   key: data.key,
                   text: data.text,
-                }))}
+                })
+              )}
               value={FilterData.BusinessUnitCode}
               disabled={false}
               mandatory={true}
-              onChange={(item) => handleAutoComplete("BusinessUnitCode", item)
-              }
+              onChange={(item) => handleAutoComplete("BusinessUnitCode", item)}
             />
           </div>
           <div className="ms-Grid-col ms-lg3">
@@ -218,18 +221,26 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               value={FilterData.BusinessUnitName}
               disabled={false}
               mandatory={true}
-              onChange={(item) => handleAutoComplete("BusinessUnitName", item)
-              }
+              onChange={(item) => handleAutoComplete("BusinessUnitName", item)}
             />
           </div>
 
-          <div className="ms-Grid-col ms-lg2" style={{ marginTop: "3.5%" }}>
+          <div className="ms-Grid-col ms-lg2" style={{ marginTop: "4.2%" }}>
             <ReuseButton
               label={assignLabel}
               onClick={handleAssignBtn}
               spacing={4}
               error={AssignBtnValidation}
-              Style={{ width: "78%", backgroundColor: "rgb(217 80 80)", color: "white" }}
+              Style={{
+                // width: "78%",
+                // backgroundColor: "rgb(217 80 80)",
+                // color: "white",
+                width: "79%",
+                backgroundColor: "#EF3340",
+                color: "white",
+                height: "47px",
+                marginTop: "-1px",
+              }}
             />
           </div>
         </div>
@@ -260,7 +271,9 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                           label={""}
                           checked={selectAll}
                           // error={validationErrors.Checkboxalidation}
-                          onChange={(value: boolean) => onSelectAllChange(value)}
+                          onChange={(value: boolean) =>
+                            onSelectAllChange(value)
+                          }
                         />
                         // <CustomCheckBox
                         //   label=""
@@ -278,7 +291,9 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                               label={""}
                               checked={rowData?.Checked === true}
                               // error={validationErrors.Checkboxalidation}
-                              onChange={(value: boolean) => handleCheckbox(value, rowData)}
+                              onChange={(value: boolean) =>
+                                handleCheckbox(value, rowData)
+                              }
                             />
                             {/* <CustomCheckBox
                               label=""

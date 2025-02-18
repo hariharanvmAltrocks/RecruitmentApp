@@ -307,7 +307,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         item: AutoCompleteItem | null,
         key: string, // Generalized key
         index: number,
-        stateKey: "RoleSpeKnowledgeValue" | "QualificationValue" | "TechnicalSkillValue"
+        stateKey:
+            | "RoleSpeKnowledgeValue"
+            | "QualificationValue"
+            | "TechnicalSkillValue"
     ) => {
         if (stateKey === "RoleSpeKnowledgeValue") {
             setRoleSpeKnowledgeValue((prevState) => {
@@ -328,7 +331,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     RequiredLevel: false,
                 }));
             }
-
         }
 
         if (stateKey === "QualificationValue") {
@@ -374,7 +376,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }
     };
 
-
     const fetchData = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -399,7 +400,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         filterConditionsVRR,
                         Conditions
                     );
-
 
             if (response.data) {
                 const op =
@@ -528,7 +528,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             OnamSignedStampsAttchment,
         } = formState;
 
-
         let errors = {
             AssignRecruitmentHR: false,
             Comments: false,
@@ -555,11 +554,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 if (props.stateValue?.tab === "tab1") {
                     errors.AssignRecruitmentHR = !IsValid(AssignRecruitmentHR.text);
                     errors.Comments = !IsValid(Comments);
-                    errors.Checkboxalidation = !IsValid(Checkbox)
+                    errors.Checkboxalidation = !IsValid(Checkbox);
                 } else if (props.stateValue?.tab === "tab2") {
-                    errors.OnamSignedStampsAttchment = !IsValid(OnamSignedStampsAttchment);
+                    errors.OnamSignedStampsAttchment = !IsValid(
+                        OnamSignedStampsAttchment
+                    );
                     errors.Comments = !IsValid(Comments);
-                    errors.Checkboxalidation = !IsValid(Checkbox)
+                    errors.Checkboxalidation = !IsValid(Checkbox);
                 }
                 break;
             }
@@ -591,7 +592,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             case RoleID.HOD: {
                 if (props.stateValue?.tab === "tab1") {
                     errors.Comments = !IsValid(Comments);
-                    errors.Checkboxalidation = !IsValid(Checkbox)
+                    errors.Checkboxalidation = !IsValid(Checkbox);
                 }
                 break;
             }
@@ -631,7 +632,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     const SaveRecruitment = async () => {
         try {
-
             const isValid = !Validation();
 
             if (isValid) {
@@ -662,13 +662,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 const obj: any = {
                     ActionId: WorkflowAction.Approved,
-                }
+                };
                 if (formState.Comments) {
                     const commentsData: InsertComments = {
                         RoleId: props.CurrentRoleID,
                         RecruitmentIDId: props.stateValue?.ID,
                         Comments: formState.Comments,
-                    }
+                    };
 
                     await getVRRDetails.InsertCommentsList(commentsData);
                 }
@@ -710,27 +710,27 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         await CommonServices.uploadAttachmentToLibrary(
                             formState.JobCode,
                             formState?.AdvertisementAttachement ?? [],
-                            DocumentLibraray.RecruitmentAdvertisementDocument,
+                            DocumentLibraray.RecruitmentAdvertisementDocument
                         );
                         await SPServices.SPUpdateItem({
                             Listname: ListNames.HRMSRecruitmentDptDetails,
                             RequestJSON: obj,
                             ID: props.stateValue?.ID,
-                        })
+                        });
                         let QualificatioDetails: {
-                            MinQualification: string
+                            MinQualification: string;
                         }[] = [];
                         let PrefeQualification: {
-                            PrefeQualification: string
+                            PrefeQualification: string;
                         }[] = [];
                         let RoleSpecificKnowledgeJson: {
                             RoleSpeKnowledge: string;
-                            RequiredLevel: string
+                            RequiredLevel: string;
                         }[] = [];
 
                         let TechnicalSkillsKnowledgeJson: {
                             TechnicalSkills: string;
-                            LevelProficiency: string
+                            LevelProficiency: string;
                         }[] = [];
 
                         TechnicalSkillValue.forEach((item) => {
@@ -804,7 +804,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             Listname: ListNames.HRMSRecruitmentDptDetails,
                             RequestJSON: obj,
                             ID: props.stateValue?.ID,
-                        })
+                        });
                         resetForm();
 
                         let approveAlert = {
@@ -826,13 +826,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     }
                 }
             }
-
         } catch (error) {
             console.error("Failed to fetch Vacancy Details:", error);
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
         const initialize = async () => {
@@ -1024,9 +1023,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         // }
     }, [props.CurrentRoleID, props.stateValue?.StatusId]);
 
-    const handleDelete = (index: number, attachmentType: 'AdvertisementAttachement' | 'OnamSignedStampsAttchment' | 'CandidateCVAttachment') => {
+    const handleDelete = (
+        index: number,
+        attachmentType:
+            | "AdvertisementAttachement"
+            | "OnamSignedStampsAttchment"
+            | "CandidateCVAttachment"
+    ) => {
         setFormState((prevState) => {
-            const updatedAttachments = [...prevState[attachmentType] ?? []];
+            const updatedAttachments = [...(prevState[attachmentType] ?? [])];
             updatedAttachments.splice(index, 1);
 
             return {
@@ -1074,7 +1079,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         setAddQualifbtn(true);
         setHeaderValue(Header);
         setLabelValue(LabelValue);
-    }
+    };
 
     const handleRichTextEditor = (
         value: string | any,
@@ -1108,19 +1113,16 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
         setValidationError((prevState) => ({
             ...prevState,
-            [StateValue]: false
+            [StateValue]: false,
         }));
     };
 
-
-    const handleCheckbox = (
-        value: boolean,
-    ) => {
-        setCheckbox(value)
+    const handleCheckbox = (value: boolean) => {
+        setCheckbox(value);
         setValidationError((prevState) => ({
             ...prevState,
-            Checkboxalidation: false
-        }))
+            Checkboxalidation: false,
+        }));
     };
 
     const handleFileAttachment = (
@@ -1254,7 +1256,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             content: (
                 <Card
                     variant="outlined"
-                    sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", borderRadius: "10px", marginTop: "2%" }}
+                    sx={{
+                        boxShadow: "0px 7px 4px 3px #d3d3d3",
+                        borderRadius: "10px",
+                        marginTop: "2%",
+                    }}
                 >
                     <CardContent>
                         <div>
@@ -1275,7 +1281,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 </div>
                             </div>
                             <div className="ms-Grid-row">
-
                                 <div className="ms-Grid-col ms-lg3">
                                     <CustomInput
                                         label="Business Unit Code"
@@ -1284,10 +1289,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         disabled={true}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, BusinessUnitCode: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                BusinessUnitCode: value,
+                                            }))
                                         }
                                     />
-
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
                                     <CustomInput
@@ -1297,7 +1304,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         error={false}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, BusinessUnitName: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                BusinessUnitName: value,
+                                            }))
                                         }
                                     />
                                 </div>
@@ -1309,7 +1319,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         disabled={true}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, BusinessUnitDescription: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                BusinessUnitDescription: value,
+                                            }))
                                         }
                                     />
                                 </div>
@@ -1320,14 +1333,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         disabled={true}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, Department: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                Department: value,
+                                            }))
                                         }
                                     />
                                 </div>
-
                             </div>
                             <div className="ms-Grid-row">
-
                                 <div className="ms-Grid-col ms-lg3">
                                     <CustomInput
                                         label="Sub-Department"
@@ -1335,10 +1349,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         disabled={true}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, SubDepartment: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                SubDepartment: value,
+                                            }))
                                         }
                                     />
-
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
                                     <CustomInput
@@ -1347,10 +1363,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         disabled={true}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, Section: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                Section: value,
+                                            }))
                                         }
                                     />
-
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
                                     <CustomInput
@@ -1359,10 +1377,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         disabled={true}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, DepartmentCode: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                DepartmentCode: value,
+                                            }))
                                         }
                                     />
-
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
                                     <CustomInput
@@ -1371,11 +1391,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         disabled={true}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, Nationality: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                Nationality: value,
+                                            }))
                                         }
                                     />
                                 </div>
-
                             </div>
                             <div className="ms-Grid-row">
                                 {/*                                    
@@ -1408,7 +1430,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         disabled={true}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, PatersonGrade: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                PatersonGrade: value,
+                                            }))
                                         }
                                     />
                                 </div>
@@ -1420,7 +1445,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         disabled={true}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, DRCGrade: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                DRCGrade: value,
+                                            }))
                                         }
                                     />
                                 </div>
@@ -1432,7 +1460,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         error={false}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, EmployementCategory: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                EmployementCategory: value,
+                                            }))
                                         }
                                     />
                                 </div>
@@ -1444,14 +1475,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         error={false}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, ContractType: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                ContractType: value,
+                                            }))
                                         }
                                     />
                                 </div>
-
                             </div>
                             <div className="ms-Grid-row">
-
                                 <div className="ms-Grid-col ms-lg3">
                                     <CustomInput
                                         label="Area of Work"
@@ -1460,7 +1492,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         error={false}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, AreaOfWork: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                AreaOfWork: value,
+                                            }))
                                         }
                                     />
                                 </div>
@@ -1473,7 +1508,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         error={false}
                                         mandatory={false}
                                         onChange={(value) =>
-                                            setFormState((prevState) => ({ ...prevState, NoofPositionAssigned: value }))
+                                            setFormState((prevState) => ({
+                                                ...prevState,
+                                                NoofPositionAssigned: value,
+                                            }))
                                         }
                                     />
                                 </div>
@@ -1491,22 +1529,24 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
                                     <CustomLabel value={"Grading Documents"} />
-                                    <CustomViewDocument
-                                        Attachment={formState.GradingDocument}
-                                    />
+                                    <CustomViewDocument Attachment={formState.GradingDocument} />
                                 </div>
 
                                 {(props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-                                    props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc) ||
+                                    props.stateValue?.StatusId ===
+                                    StatusId.PendingwithHRLeadtouploadONEMsigneddoc) ||
                                     (props.CurrentRoleID === RoleID.HOD &&
-                                        props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv) && (
-                                        <>
-                                            <div className="ms-Grid-col ms-lg3">
-                                                <CustomLabel value={"Advertisement Documents"} />
-                                                <CustomViewDocument Attachment={formState.AdvertisementDocument} />
-                                            </div>
-                                        </>
-                                    )}
+                                        props.stateValue?.StatusId ===
+                                        StatusId.PendingwithHODtoreviewAdv && (
+                                            <>
+                                                <div className="ms-Grid-col ms-lg3">
+                                                    <CustomLabel value={"Advertisement Documents"} />
+                                                    <CustomViewDocument
+                                                        Attachment={formState.AdvertisementDocument}
+                                                    />
+                                                </div>
+                                            </>
+                                        ))}
 
                                 {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
                                     <>
@@ -1521,72 +1561,83 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                             </div>
 
-                            {props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv ? (
+                            {props.CurrentRoleID === RoleID.RecruitmentHR &&
+                                props.stateValue?.StatusId ===
+                                StatusId.PendingwithRecruitmentHRtouploadAdv ? (
                                 <></>
                             ) : (
                                 <>
+                                    {props.stateValue?.StatusId ===
+                                        StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                                            <>
+                                                <div className="ms-Grid-row">
+                                                    <div className="ms-Grid-col ms-lg1.8">
+                                                        <CustomLabel value={"ONEM Signed Doc"} />
+                                                        <AttachmentButton
+                                                            label="Upload"
+                                                            AttachState={(newAttachment: any) => {
+                                                                let attachment: IDocFiles[] = newAttachment.map(
+                                                                    (item: any) => {
+                                                                        return {
+                                                                            name: item.name,
+                                                                            content: item.file,
+                                                                            type: "New",
+                                                                        };
+                                                                    }
+                                                                );
+                                                                const attachments = [
+                                                                    ...(formState.OnamSignedStampsAttchment || []),
+                                                                    ...attachment,
+                                                                ];
+                                                                handleFileAttachment(
+                                                                    "OnamSignedStampsAttchment",
+                                                                    attachments
+                                                                );
+                                                            }}
+                                                            mandatory={true}
+                                                            error={validationErrors.OnamSignedStampsAttchment}
+                                                        // Style={{ backgroundColor: "rgb(217 80 80)", color: "white", marginLeft: "4%", padding: "0px" }}
+                                                        />
+                                                    </div>
+                                                    <div
+                                                        className="ms-Grid-col ms-lg6"
+                                                        style={{ marginTop: "4%" }}
+                                                    >
+                                                        {formState.OnamSignedStampsAttchment?.map(
+                                                            (file: any, index: number) => {
+                                                                const fileName = file.fileName || file.name;
 
-                                    {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
-                                        <>
-
-                                            <div className="ms-Grid-row">
-                                                <div className="ms-Grid-col ms-lg1.8">
-                                                    <CustomLabel value={"ONEM Signed Doc"} />
-                                                    <AttachmentButton
-                                                        label="Upload"
-                                                        AttachState={(newAttachment: any) => {
-                                                            let attachment: IDocFiles[] = newAttachment.map((item: any) => {
-                                                                return {
-                                                                    name: item.name,
-                                                                    content: item.file,
-                                                                    type: "New",
-                                                                }
-                                                            });
-                                                            const attachments = [...formState.OnamSignedStampsAttchment || [], ...attachment];
-                                                            handleFileAttachment(
-                                                                "OnamSignedStampsAttchment",
-                                                                attachments)
-                                                        }}
-                                                        mandatory={true}
-                                                        error={validationErrors.OnamSignedStampsAttchment}
-                                                    // Style={{ backgroundColor: "rgb(217 80 80)", color: "white", marginLeft: "4%", padding: "0px" }}
-                                                    />
-
+                                                                return (
+                                                                    <div key={index} className="ms-Grid-row">
+                                                                        <div className="ms-Grid-col ms-lg12">
+                                                                            <Label style={{ color: "blue" }}>
+                                                                                {fileName}
+                                                                                <span>
+                                                                                    <Icon
+                                                                                        iconName="Delete"
+                                                                                        style={{
+                                                                                            marginLeft: "8px",
+                                                                                            fontSize: "16px",
+                                                                                            cursor: "pointer",
+                                                                                        }}
+                                                                                        onClick={() =>
+                                                                                            handleDelete(
+                                                                                                index,
+                                                                                                "OnamSignedStampsAttchment"
+                                                                                            )
+                                                                                        } // Call the delete function
+                                                                                    />
+                                                                                </span>
+                                                                            </Label>
+                                                                        </div>
+                                                                    </div>
+                                                                );
+                                                            }
+                                                        )}
+                                                    </div>
                                                 </div>
-                                                <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
-                                                    {formState.OnamSignedStampsAttchment?.map((file: any, index: number) => {
-                                                        const fileName = file.fileName || file.name;
-
-                                                        return (
-                                                            <div key={index} className="ms-Grid-row">
-                                                                <div className="ms-Grid-col ms-lg12">
-                                                                    <Label style={{ color: "blue" }}>
-                                                                        {fileName}
-                                                                        <span>
-                                                                            <Icon
-                                                                                iconName="Delete"
-                                                                                style={{
-                                                                                    marginLeft: "8px",
-                                                                                    fontSize: "16px",
-                                                                                    cursor: "pointer",
-                                                                                }}
-                                                                                onClick={() => handleDelete(index, 'OnamSignedStampsAttchment')} // Call the delete function
-                                                                            />
-                                                                        </span>
-                                                                    </Label>
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })}
-
-                                                </div>
-                                            </div>
-
-
-                                        </>
-                                    )}
-
-
+                                            </>
+                                        )}
 
                                     {/* {props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoAssignExternalAgency && (
                                         <>
@@ -1610,24 +1661,29 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         </>
                                     )} */}
 
-                                    {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
-                                        <>
-                                            <div className="ms-Grid-row">
-                                                <div className="ms-Grid-col ms-lg12">
-                                                    <div className="ms-Grid-col ms-lg4" style={{ marginLeft: "-5px" }}>
-                                                        <CustomLabel value={" View Justifications"} />
-                                                        <PrimaryButton
-                                                            style={{
-                                                                borderColor: "rgb(205, 45, 45)",
-                                                                backgroundColor: "#EF3340",
-                                                                color: "white",
-                                                                borderRadius: "10px",
-                                                            }}
-                                                            onClick={OpenComments}
-
-                                                        > View
-                                                        </PrimaryButton>
-                                                        {/* <ReuseButton
+                                    {props.stateValue?.StatusId ===
+                                        StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                                            <>
+                                                <div className="ms-Grid-row">
+                                                    <div className="ms-Grid-col ms-lg12">
+                                                        <div
+                                                            className="ms-Grid-col ms-lg4"
+                                                            style={{ marginLeft: "-5px" }}
+                                                        >
+                                                            <CustomLabel value={" View Justifications"} />
+                                                            <PrimaryButton
+                                                                style={{
+                                                                    borderColor: "rgb(205, 45, 45)",
+                                                                    backgroundColor: "#EF3340",
+                                                                    color: "white",
+                                                                    borderRadius: "10px",
+                                                                }}
+                                                                onClick={OpenComments}
+                                                            >
+                                                                {" "}
+                                                                View
+                                                            </PrimaryButton>
+                                                            {/* <ReuseButton
                                                                 label="VIEW"
                                                                 onClick={OpenComments}
                                                                 spacing={4}
@@ -1636,640 +1692,797 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                             // imgSrcHover={require("../../assets/viewSubmision-white.svg")}
                                                             // imgAltHover="Image"
                                                             /> */}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </>
-                                    )}
+                                            </>
+                                        )}
 
-                                    {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
-                                        <>
-                                            <div className="ms-Grid-row">
-                                                <div className="ms-Grid-col ms-lg12">
-                                                    <CustomTextArea
-                                                        label="Justification"
-                                                        value={formState.Comments}
-                                                        error={validationErrors.Comments}
-                                                        onChange={(value) =>
-                                                            handleInputChangeTextArea(
-                                                                value,
-                                                                "Comments"
-                                                            )
-                                                        }
-                                                        mandatory={true}
-                                                    />
+                                    {props.stateValue?.StatusId ===
+                                        StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                                            <>
+                                                <div className="ms-Grid-row">
+                                                    <div className="ms-Grid-col ms-lg12">
+                                                        <CustomTextArea
+                                                            label="Justification"
+                                                            value={formState.Comments}
+                                                            error={validationErrors.Comments}
+                                                            onChange={(value) =>
+                                                                handleInputChangeTextArea(value, "Comments")
+                                                            }
+                                                            mandatory={true}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div className="ms-Grid-row"
-                                                style={{
-                                                    padding: "3px",
-                                                    marginTop: "20px",
-                                                    marginBottom: "-33px",
-                                                }}
-                                            >
-                                                <div className="ms-Grid-col ms-lg12">
-                                                    <SignatureCheckbox
-                                                        label={"I hereby agree for submitted this request"}
-                                                        checked={Checkbox}
-                                                        error={validationErrors.Checkboxalidation}
-                                                        onChange={(value: boolean) => setCheckbox(value)}
-                                                    />
+                                                <div
+                                                    className="ms-Grid-row"
+                                                    style={{
+                                                        padding: "3px",
+                                                        marginTop: "20px",
+                                                        marginBottom: "-33px",
+                                                    }}
+                                                >
+                                                    <div className="ms-Grid-col ms-lg12">
+                                                        <SignatureCheckbox
+                                                            label={"I hereby agree for submitted this request"}
+                                                            checked={Checkbox}
+                                                            error={validationErrors.Checkboxalidation}
+                                                            onChange={(value: boolean) => setCheckbox(value)}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="ms-Grid-row">
-                                                <div className="ms-Grid-col ms-lg12">
-                                                    <CustomSignature
-                                                        Name={(props.userDetails[0].FirstName ?? "") + " " + (props.userDetails[0]?.MiddleName ?? "") + " " + (props.userDetails[0]?.LastName ?? "")}
-                                                        JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
-                                                        JobTitleInFrench={props.userDetails[0].JopTitleFrench}
-                                                        Department={props.userDetails[0].DepartmentName}
-                                                        Date={formState.SignDate.toString()}
-                                                        TermsAndCondition={Checkbox}
-                                                    />
+                                                <div className="ms-Grid-row">
+                                                    <div className="ms-Grid-col ms-lg12">
+                                                        <CustomSignature
+                                                            Name={
+                                                                (props.userDetails[0].FirstName ?? "") +
+                                                                " " +
+                                                                (props.userDetails[0]?.MiddleName ?? "") +
+                                                                " " +
+                                                                (props.userDetails[0]?.LastName ?? "")
+                                                            }
+                                                            JobTitleInEnglish={
+                                                                props.userDetails[0].JopTitleEnglish
+                                                            }
+                                                            JobTitleInFrench={
+                                                                props.userDetails[0].JopTitleFrench
+                                                            }
+                                                            Department={props.userDetails[0].DepartmentName}
+                                                            Date={formState.SignDate.toString()}
+                                                            TermsAndCondition={Checkbox}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-
-                                        </>
-
-
-                                    )}
-
+                                            </>
+                                        )}
                                 </>
                             )}
-
                         </div>
                     </CardContent>
                 </Card>
             ),
         },
-        ...(props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv
-            ? [{
-                label: TabName.AdvertisementDetails, //"Advertisement Details",
-                value: "tab2",
-                content: (
-                    <Card variant="outlined" sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", border: "0px solid rgba(0, 0, 0, 0.12)", marginTop: "2%" }}>
-                        <CardContent>
-                            <div>
-                                <>
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg1">
-                                            <Labelheader value={"Advertisement"}> </Labelheader>
-                                            <AttachmentButton
-                                                label="Upload"
-                                                // iconName="CloudUpload"
-                                                // iconNameHover="CloudUpload"
-                                                AttachState={(newAttachment: any) => {
-                                                    let attachment: IDocFiles[] = newAttachment.map((item: any) => {
-                                                        return {
-                                                            name: item.name,
-                                                            content: item.file,
-                                                            type: "New",
-                                                        }
-                                                    });
-                                                    const attachments = [...formState.AdvertisementAttachement || [], ...attachment];
-                                                    handleFileAttachment(
-                                                        "AdvertisementAttachement",
-                                                        attachments)
-                                                }}
-                                                mandatory={true}
-                                                error={validationErrors.AdvertisementAttachement}
-                                            // Style={{ backgroundColor: "rgb(217 80 80)", color: "white" }}
-                                            />
-
-                                        </div>
-                                        <div className="ms-Grid-col ms-lg6" style={{ marginTop: "4%" }}>
-                                            {formState.AdvertisementAttachement?.map((file: any, index: number) => {
-                                                const fileName = file.fileName || file.name; // Ensure proper name display
-                                                return (
-                                                    <div key={index} className="ms-Grid-row">
-                                                        <div className="ms-Grid-col ms-lg12">
-                                                            <Label style={{ color: "blue" }}>
-                                                                {fileName}
-                                                                <span>
-                                                                    <Icon
-                                                                        iconName="Delete"
-                                                                        style={{
-                                                                            marginLeft: "8px",
-                                                                            fontSize: "16px",
-                                                                            cursor: "pointer",
-                                                                        }}
-                                                                        onClick={() => handleDelete(index, 'AdvertisementAttachement')} // Call the delete function
-                                                                    />
-                                                                </span>
-                                                            </Label>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-
-                                        </div>
-                                    </div>
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg4">
-                                            <CustomDatePicker
-                                                selectedDate={advDetails.ValidFrom}
-                                                label="Valid From"
-                                                error={validationErrors.ValidFrom}
-                                                minDate={todaydate}
-                                                mandatory={true}
-                                                onChange={(date) => handleDateChange(date, "ValidFrom")}
-                                            />
-                                        </div>
-                                        <div className="ms-Grid-col ms-lg4">
-                                            <CustomDatePicker
-                                                selectedDate={advDetails.ValidTo}
-                                                label="Valid To"
-                                                error={validationErrors.ValidTo}
-                                                minDate={advDetails.ValidFrom
-                                                    ? new Date(advDetails.ValidFrom.getTime() + 13 * 24 * 60 * 60 * 1000)
-                                                    : undefined}
-                                                // maxDate={}
-                                                mandatory={true}
-                                                onChange={(date) => handleDateChange(date, "ValidTo")}
-                                            />
-                                        </div>
-                                    </div>
-
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <RichTextEditor
-                                                label="Role Purpose"
-                                                value={advDetails.RolePurpose}
-                                                mandatory={true}
-                                                onChange={(value) => handleRichTextEditor(value, "RolePurpose")}
-                                                error={validationErrors.RolePurpose}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <RichTextEditor
-                                                label="Job Description"
-                                                value={advDetails.JobDescription}
-                                                mandatory={true}
-                                                onChange={(value) => handleRichTextEditor(value, "JobDescription")}
-                                                error={validationErrors.JobDescription}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
-                                            <CustomAutoComplete
-                                                label="Job Functional Type"
-                                                options={advDetails.JobFunctionalTypeOption}
-                                                value={advDetails.JobFunctionalType}
-                                                disabled={false}
-                                                mandatory={true}
-                                                onChange={(item) =>
-                                                    handleAutoComplete(item, "JobFunctionalType")
-                                                }
-                                                error={validationErrors.JobFunctionalType}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg10">
-                                            <div className="ms-Grid-row">
-                                                <div className="ms-Grid-col ms-lg5">
-                                                    <CustomAutoComplete
-                                                        label="Preferred Total Experience"
-                                                        options={advDetails.TotalExperienceOption}
-                                                        value={advDetails.TotalExperience}
-                                                        disabled={false}
-                                                        mandatory={true}
-                                                        onChange={(item) =>
-                                                            handleAutoComplete(item, "TotalExperience")
-                                                        }
-                                                        error={validationErrors.TotalExperience}
-                                                    />
-                                                </div>
-                                                <div className="ms-Grid-col ms-lg5">
-                                                    <CustomAutoComplete
-                                                        label="Preferred Experience in Mining Industry (Years)"
-                                                        options={advDetails.ExperienceinMiningIndustryOption}
-                                                        value={advDetails.ExperienceinMiningIndustry}
-                                                        disabled={false}
-                                                        mandatory={true}
-                                                        onChange={(item) =>
-                                                            handleAutoComplete(item, "ExperienceinMiningIndustry")
-                                                        }
-                                                        error={validationErrors.ExperienceinMiningIndustry}
-                                                    />
-                                                </div>
-                                                <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
-                                                </div>
+        ...(props.CurrentRoleID === RoleID.RecruitmentHR &&
+            props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv
+            ? [
+                {
+                    label: TabName.AdvertisementDetails, //"Advertisement Details",
+                    value: "tab2",
+                    content: (
+                        <Card
+                            variant="outlined"
+                            sx={{
+                                boxShadow: "0px 7px 4px 3px #d3d3d3",
+                                border: "0px solid rgba(0, 0, 0, 0.12)",
+                                marginTop: "2%",
+                            }}
+                        >
+                            <CardContent>
+                                <div>
+                                    <>
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg1">
+                                                <Labelheader value={"Advertisement"}> </Labelheader>
+                                                <AttachmentButton
+                                                    label="Upload"
+                                                    // iconName="CloudUpload"
+                                                    // iconNameHover="CloudUpload"
+                                                    AttachState={(newAttachment: any) => {
+                                                        let attachment: IDocFiles[] = newAttachment.map(
+                                                            (item: any) => {
+                                                                return {
+                                                                    name: item.name,
+                                                                    content: item.file,
+                                                                    type: "New",
+                                                                };
+                                                            }
+                                                        );
+                                                        const attachments = [
+                                                            ...(formState.AdvertisementAttachement || []),
+                                                            ...attachment,
+                                                        ];
+                                                        handleFileAttachment(
+                                                            "AdvertisementAttachement",
+                                                            attachments
+                                                        );
+                                                    }}
+                                                    mandatory={true}
+                                                    error={validationErrors.AdvertisementAttachement}
+                                                // Style={{ backgroundColor: "rgb(217 80 80)", color: "white" }}
+                                                />
+                                            </div>
+                                            <div
+                                                className="ms-Grid-col ms-lg6"
+                                                style={{ marginTop: "4%" }}
+                                            >
+                                                {formState.AdvertisementAttachement?.map(
+                                                    (file: any, index: number) => {
+                                                        const fileName = file.fileName || file.name; // Ensure proper name display
+                                                        return (
+                                                            <div key={index} className="ms-Grid-row">
+                                                                <div className="ms-Grid-col ms-lg12">
+                                                                    <Label style={{ color: "blue" }}>
+                                                                        {fileName}
+                                                                        <span>
+                                                                            <Icon
+                                                                                iconName="Delete"
+                                                                                style={{
+                                                                                    marginLeft: "8px",
+                                                                                    fontSize: "16px",
+                                                                                    cursor: "pointer",
+                                                                                }}
+                                                                                onClick={() =>
+                                                                                    handleDelete(
+                                                                                        index,
+                                                                                        "AdvertisementAttachement"
+                                                                                    )
+                                                                                } // Call the delete function
+                                                                            />
+                                                                        </span>
+                                                                    </Label>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    }
+                                                )}
                                             </div>
                                         </div>
-                                        <div className="ms-Grid-col ms-lg2"></div>
-                                    </div>
 
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg4">
+                                                <CustomDatePicker
+                                                    selectedDate={advDetails.ValidFrom}
+                                                    label="Valid From"
+                                                    error={validationErrors.ValidFrom}
+                                                    minDate={todaydate}
+                                                    mandatory={true}
+                                                    onChange={(date) =>
+                                                        handleDateChange(date, "ValidFrom")
+                                                    }
+                                                />
+                                            </div>
+                                            <div className="ms-Grid-col ms-lg4">
+                                                <CustomDatePicker
+                                                    selectedDate={advDetails.ValidTo}
+                                                    label="Valid To"
+                                                    error={validationErrors.ValidTo}
+                                                    minDate={
+                                                        advDetails.ValidFrom
+                                                            ? new Date(
+                                                                advDetails.ValidFrom.getTime() +
+                                                                13 * 24 * 60 * 60 * 1000
+                                                            )
+                                                            : undefined
+                                                    }
+                                                    // maxDate={}
+                                                    mandatory={true}
+                                                    onChange={(date) =>
+                                                        handleDateChange(date, "ValidTo")
+                                                    }
+                                                />
+                                            </div>
+                                        </div>
 
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg12">
+                                                <RichTextEditor
+                                                    label="Role Purpose"
+                                                    value={advDetails.RolePurpose}
+                                                    mandatory={true}
+                                                    onChange={(value) =>
+                                                        handleRichTextEditor(value, "RolePurpose")
+                                                    }
+                                                    error={validationErrors.RolePurpose}
+                                                />
+                                            </div>
+                                        </div>
 
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg10">
-                                            {QualificationValue.map((row, index) => (
-                                                <div className="ms-Grid-row" key={index}>
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg12">
+                                                <RichTextEditor
+                                                    label="Job Description"
+                                                    value={advDetails.JobDescription}
+                                                    mandatory={true}
+                                                    onChange={(value) => handleRichTextEditor(value, "JobDescription")}
+                                                    error={validationErrors.JobDescription}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
+                                                <CustomAutoComplete
+                                                    label="Job Functional Type"
+                                                    options={advDetails.JobFunctionalTypeOption}
+                                                    value={advDetails.JobFunctionalType}
+                                                    disabled={false}
+                                                    mandatory={true}
+                                                    onChange={(item) =>
+                                                        handleAutoComplete(item, "JobFunctionalType")
+                                                    }
+                                                    error={validationErrors.JobFunctionalType}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg10">
+                                                <div className="ms-Grid-row">
                                                     <div className="ms-Grid-col ms-lg5">
                                                         <CustomAutoComplete
-                                                            label="Minimum Qualification"
-                                                            options={advDetails.MinQualificationOption}
-                                                            value={row.MinQualification}
+                                                            label="Preferred Total Experience"
+                                                            options={advDetails.TotalExperienceOption}
+                                                            value={advDetails.TotalExperience}
                                                             disabled={false}
                                                             mandatory={true}
                                                             onChange={(item) =>
-                                                                handleAutoCompleterow(item, "MinQualification", index, "QualificationValue")
+                                                                handleAutoComplete(item, "TotalExperience")
                                                             }
-                                                            error={validationErrors.MinQualification}
+                                                            error={validationErrors.TotalExperience}
                                                         />
                                                     </div>
                                                     <div className="ms-Grid-col ms-lg5">
                                                         <CustomAutoComplete
-                                                            label="Preferred Qualification"
-                                                            options={advDetails.PrefeQualificationOption}
-                                                            value={row.PrefeQualification}
+                                                            label="Preferred Experience in Mining Industry (Years)"
+                                                            options={advDetails.ExperienceinMiningIndustryOption}
+                                                            value={advDetails.ExperienceinMiningIndustry}
                                                             disabled={false}
                                                             mandatory={true}
                                                             onChange={(item) =>
-                                                                handleAutoCompleterow(item, "PrefeQualification", index, "QualificationValue")
+                                                                handleAutoComplete(item, "ExperienceinMiningIndustry")
                                                             }
-                                                            error={validationErrors.PrefeQualification}
+                                                            error={validationErrors.ExperienceinMiningIndustry}
                                                         />
                                                     </div>
                                                     <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
-                                                        {index > 0 ? (
-                                                            <>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="ms-Grid-col ms-lg2"></div>
+                                        </div>
+
+
+
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg10">
+                                                {QualificationValue.map((row, index) => (
+                                                    <div className="ms-Grid-row" key={index}>
+                                                        <div className="ms-Grid-col ms-lg5">
+                                                            <CustomAutoComplete
+                                                                label="Minimum Qualification"
+                                                                options={advDetails.MinQualificationOption}
+                                                                value={row.MinQualification}
+                                                                disabled={false}
+                                                                mandatory={true}
+                                                                onChange={(item) =>
+                                                                    handleAutoCompleterow(
+                                                                        item,
+                                                                        "MinQualification",
+                                                                        index,
+                                                                        "QualificationValue"
+                                                                    )
+                                                                }
+                                                                error={validationErrors.MinQualification}
+                                                            />
+                                                        </div>
+                                                        <div className="ms-Grid-col ms-lg5">
+                                                            <CustomAutoComplete
+                                                                label="Preferred Qualification"
+                                                                options={advDetails.PrefeQualificationOption}
+                                                                value={row.PrefeQualification}
+                                                                disabled={false}
+                                                                mandatory={true}
+                                                                onChange={(item) =>
+                                                                    handleAutoCompleterow(
+                                                                        item,
+                                                                        "PrefeQualification",
+                                                                        index,
+                                                                        "QualificationValue"
+                                                                    )
+                                                                }
+                                                                error={validationErrors.PrefeQualification}
+                                                            />
+                                                        </div>
+                                                        <div
+                                                            className="ms-Grid-col ms-lg2"
+                                                            style={{
+                                                                textAlign: "right",
+                                                                marginTop: "45px",
+                                                            }}
+                                                        >
+                                                            {index > 0 ? (
+                                                                <>
+                                                                    <PrimaryButton
+                                                                        style={{
+                                                                            borderColor: "rgb(205, 45, 45)",
+                                                                            backgroundColor: "#EF3340",
+                                                                            color: "white",
+                                                                            borderRadius: "10px",
+                                                                            marginRight: "4%",
+                                                                            minWidth: "60px",
+                                                                        }}
+                                                                        onClick={() =>
+                                                                            handleDeleteRow(
+                                                                                index,
+                                                                                RoleDescription.QualificationValue
+                                                                            )
+                                                                        }
+                                                                        iconProps={{
+                                                                            iconName: "Delete",
+                                                                            style: { color: "white" },
+                                                                        }}
+                                                                    ></PrimaryButton>
+                                                                    <PrimaryButton
+                                                                        style={{
+                                                                            borderColor: "rgb(205, 45, 45)",
+                                                                            backgroundColor: "#EF3340",
+                                                                            color: "white",
+                                                                            borderRadius: "10px",
+                                                                            minWidth: "60px",
+                                                                        }}
+                                                                        onClick={() =>
+                                                                            handleAddRow(
+                                                                                RoleDescription.QualificationValue
+                                                                            )
+                                                                        }
+                                                                        iconProps={{
+                                                                            iconName: "Add",
+                                                                            style: { color: "white" },
+                                                                        }}
+                                                                    ></PrimaryButton>
+                                                                </>
+                                                            ) : (
                                                                 <PrimaryButton
                                                                     style={{
                                                                         borderColor: "rgb(205, 45, 45)",
                                                                         backgroundColor: "#EF3340",
                                                                         color: "white",
                                                                         borderRadius: "10px",
-                                                                        marginRight: "4%",
-                                                                        minWidth: "60px"
+                                                                        minWidth: "60px",
                                                                     }}
-                                                                    onClick={() => handleDeleteRow(index, RoleDescription.QualificationValue)}
-                                                                    iconProps={{
-                                                                        iconName: "Delete",
-                                                                        style: { color: "white" },
-                                                                    }}
-                                                                >
-                                                                </PrimaryButton>
-                                                                <PrimaryButton
-                                                                    style={{
-                                                                        borderColor: "rgb(205, 45, 45)",
-                                                                        backgroundColor: "#EF3340",
-                                                                        color: "white",
-                                                                        borderRadius: "10px",
-                                                                        minWidth: "60px"
-                                                                    }}
-                                                                    onClick={() => handleAddRow(RoleDescription.QualificationValue)}
+                                                                    onClick={() =>
+                                                                        handleAddRow(
+                                                                            RoleDescription.QualificationValue
+                                                                        )
+                                                                    }
                                                                     iconProps={{
                                                                         iconName: "Add",
                                                                         style: { color: "white" },
                                                                     }}
-                                                                >
-                                                                </PrimaryButton>
-                                                            </>
-                                                        ) : (
-                                                            <PrimaryButton
-                                                                style={{
-                                                                    borderColor: "rgb(205, 45, 45)",
-                                                                    backgroundColor: "#EF3340",
-                                                                    color: "white",
-                                                                    borderRadius: "10px",
-                                                                    minWidth: "60px"
-                                                                }}
-                                                                onClick={() => handleAddRow(RoleDescription.QualificationValue)}
-                                                                iconProps={{
-                                                                    iconName: "Add",
-                                                                    style: { color: "white" },
-                                                                }}
-                                                            >
-                                                            </PrimaryButton>
-                                                        )}
+                                                                ></PrimaryButton>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <div className="ms-Grid-col ms-lg2"
-                                            style={{
-                                                marginTop: "45px"
-                                            }}>
-                                            <PrimaryButton
+                                                ))}
+                                            </div>
+                                            <div
+                                                className="ms-Grid-col ms-lg2"
                                                 style={{
-                                                    borderColor: "rgb(205, 45, 45)",
-                                                    backgroundColor: "#EF3340",
-                                                    color: "white",
-                                                    borderRadius: "10px",
+                                                    marginTop: "45px",
                                                 }}
-                                                onClick={() => AddMasterData_fn(RoleDescriptionData.Qualification, "Add Qualification")}
-                                                iconProps={{
-                                                    iconName: "Add",
-                                                    style: { color: "white" },
-                                                }}
-                                            > Add New Item
-                                            </PrimaryButton>
+                                            >
+                                                <PrimaryButton
+                                                    style={{
+                                                        borderColor: "rgb(205, 45, 45)",
+                                                        backgroundColor: "#EF3340",
+                                                        color: "white",
+                                                        borderRadius: "10px",
+                                                    }}
+                                                    onClick={() =>
+                                                        AddMasterData_fn(
+                                                            RoleDescriptionData.Qualification,
+                                                            "Add Qualification"
+                                                        )
+                                                    }
+                                                    iconProps={{
+                                                        iconName: "Add",
+                                                        style: { color: "white" },
+                                                    }}
+                                                >
+                                                    {" "}
+                                                    Add New Item
+                                                </PrimaryButton>
+                                            </div>
                                         </div>
-                                    </div>
 
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg10">
-                                            {RoleSpeKnowledgeValue.map((row, index) => (
-                                                <div className="ms-Grid-row" key={index}>
-                                                    <div className="ms-Grid-col ms-lg5">
-                                                        <CustomAutoComplete
-                                                            label="Role Specific Knowledge"
-                                                            options={advDetails.RoleSpeKnowledgeoption}
-                                                            value={row.RoleSpeKnowledge}
-                                                            disabled={false}
-                                                            mandatory={true}
-                                                            onChange={(item) =>
-                                                                handleAutoCompleterow(item, "RoleSpeKnowledge", index, "RoleSpeKnowledgeValue")
-                                                            }
-                                                            error={validationErrors.RoleSpeKnowledge}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg5">
-                                                        <CustomAutoComplete
-                                                            label="Required Level"
-                                                            options={advDetails.RequiredLeveloption}
-                                                            value={row.RequiredLevel}
-                                                            disabled={false}
-                                                            mandatory={true}
-                                                            onChange={(item) =>
-                                                                handleAutoCompleterow(item, "RequiredLevel", index, "RoleSpeKnowledgeValue")
-                                                            }
-                                                            error={validationErrors.RequiredLevel}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
-                                                        {index > 0 ? (
-                                                            <>
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg10">
+                                                {RoleSpeKnowledgeValue.map((row, index) => (
+                                                    <div className="ms-Grid-row" key={index}>
+                                                        <div className="ms-Grid-col ms-lg5">
+                                                            <CustomAutoComplete
+                                                                label="Role Specific Knowledge"
+                                                                options={advDetails.RoleSpeKnowledgeoption}
+                                                                value={row.RoleSpeKnowledge}
+                                                                disabled={false}
+                                                                mandatory={true}
+                                                                onChange={(item) =>
+                                                                    handleAutoCompleterow(
+                                                                        item,
+                                                                        "RoleSpeKnowledge",
+                                                                        index,
+                                                                        "RoleSpeKnowledgeValue"
+                                                                    )
+                                                                }
+                                                                error={validationErrors.RoleSpeKnowledge}
+                                                            />
+                                                        </div>
+                                                        <div className="ms-Grid-col ms-lg5">
+                                                            <CustomAutoComplete
+                                                                label="Required Level"
+                                                                options={advDetails.RequiredLeveloption}
+                                                                value={row.RequiredLevel}
+                                                                disabled={false}
+                                                                mandatory={true}
+                                                                onChange={(item) =>
+                                                                    handleAutoCompleterow(
+                                                                        item,
+                                                                        "RequiredLevel",
+                                                                        index,
+                                                                        "RoleSpeKnowledgeValue"
+                                                                    )
+                                                                }
+                                                                error={validationErrors.RequiredLevel}
+                                                            />
+                                                        </div>
+                                                        <div
+                                                            className="ms-Grid-col ms-lg2"
+                                                            style={{
+                                                                textAlign: "right",
+                                                                marginTop: "45px",
+                                                            }}
+                                                        >
+                                                            {index > 0 ? (
+                                                                <>
+                                                                    <PrimaryButton
+                                                                        style={{
+                                                                            borderColor: "rgb(205, 45, 45)",
+                                                                            backgroundColor: "#EF3340",
+                                                                            color: "white",
+                                                                            borderRadius: "10px",
+                                                                            marginRight: "4%",
+                                                                            minWidth: "60px",
+                                                                        }}
+                                                                        onClick={() =>
+                                                                            handleDeleteRow(
+                                                                                index,
+                                                                                RoleDescription.RoleSpeKnowledgeValue
+                                                                            )
+                                                                        }
+                                                                        iconProps={{
+                                                                            iconName: "Delete",
+                                                                            style: { color: "white" },
+                                                                        }}
+                                                                    ></PrimaryButton>
+                                                                    <PrimaryButton
+                                                                        style={{
+                                                                            borderColor: "rgb(205, 45, 45)",
+                                                                            backgroundColor: "#EF3340",
+                                                                            color: "white",
+                                                                            borderRadius: "10px",
+                                                                            minWidth: "60px",
+                                                                        }}
+                                                                        onClick={() =>
+                                                                            handleAddRow(
+                                                                                RoleDescription.RoleSpeKnowledgeValue
+                                                                            )
+                                                                        }
+                                                                        iconProps={{
+                                                                            iconName: "Add",
+                                                                            style: { color: "white" },
+                                                                        }}
+                                                                    ></PrimaryButton>
+                                                                </>
+                                                            ) : (
                                                                 <PrimaryButton
                                                                     style={{
                                                                         borderColor: "rgb(205, 45, 45)",
                                                                         backgroundColor: "#EF3340",
                                                                         color: "white",
                                                                         borderRadius: "10px",
-                                                                        marginRight: "4%",
-                                                                        minWidth: "60px"
+                                                                        minWidth: "60px",
                                                                     }}
-                                                                    onClick={() => handleDeleteRow(index, RoleDescription.RoleSpeKnowledgeValue)}
-                                                                    iconProps={{
-                                                                        iconName: "Delete",
-                                                                        style: { color: "white" },
-                                                                    }}
-                                                                >
-                                                                </PrimaryButton>
-                                                                <PrimaryButton
-                                                                    style={{
-                                                                        borderColor: "rgb(205, 45, 45)",
-                                                                        backgroundColor: "#EF3340",
-                                                                        color: "white",
-                                                                        borderRadius: "10px",
-                                                                        minWidth: "60px"
-                                                                    }}
-                                                                    onClick={() => handleAddRow(RoleDescription.RoleSpeKnowledgeValue)}
+                                                                    onClick={() =>
+                                                                        handleAddRow(
+                                                                            RoleDescription.RoleSpeKnowledgeValue
+                                                                        )
+                                                                    }
                                                                     iconProps={{
                                                                         iconName: "Add",
                                                                         style: { color: "white" },
                                                                     }}
-                                                                >
-                                                                </PrimaryButton>
-                                                            </>
-                                                        ) : (
-                                                            <PrimaryButton
-                                                                style={{
-                                                                    borderColor: "rgb(205, 45, 45)",
-                                                                    backgroundColor: "#EF3340",
-                                                                    color: "white",
-                                                                    borderRadius: "10px",
-                                                                    minWidth: "60px"
-                                                                }}
-                                                                onClick={() => handleAddRow(RoleDescription.RoleSpeKnowledgeValue)}
-                                                                iconProps={{
-                                                                    iconName: "Add",
-                                                                    style: { color: "white" },
-                                                                }}
-                                                            >
-                                                            </PrimaryButton>
-                                                        )}
+                                                                ></PrimaryButton>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <div className="ms-Grid-col ms-lg2"
-                                            style={{
-                                                marginTop: "45px"
-                                            }}>
-                                            <PrimaryButton
+                                                ))}
+                                            </div>
+                                            <div
+                                                className="ms-Grid-col ms-lg2"
                                                 style={{
-                                                    borderColor: "rgb(205, 45, 45)",
-                                                    backgroundColor: "#EF3340",
-                                                    color: "white",
-                                                    borderRadius: "10px",
+                                                    marginTop: "45px",
                                                 }}
-                                                onClick={() => AddMasterData_fn(RoleDescriptionData.RoleSpeKnowledge, "Add Role Specific Knowledge")}
-                                                iconProps={{
-                                                    iconName: "Add",
-                                                    style: { color: "white" },
-                                                }}
-                                            > Add New Item
-                                            </PrimaryButton>
+                                            >
+                                                <PrimaryButton
+                                                    style={{
+                                                        borderColor: "rgb(205, 45, 45)",
+                                                        backgroundColor: "#EF3340",
+                                                        color: "white",
+                                                        borderRadius: "10px",
+                                                    }}
+                                                    onClick={() =>
+                                                        AddMasterData_fn(
+                                                            RoleDescriptionData.RoleSpeKnowledge,
+                                                            "Add Role Specific Knowledge"
+                                                        )
+                                                    }
+                                                    iconProps={{
+                                                        iconName: "Add",
+                                                        style: { color: "white" },
+                                                    }}
+                                                >
+                                                    {" "}
+                                                    Add New Item
+                                                </PrimaryButton>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg10">
-                                            {TechnicalSkillValue.map((row, index) => (
-                                                <div className="ms-Grid-row" key={index}>
-                                                    <div className="ms-Grid-col ms-lg5">
-                                                        <CustomAutoComplete
-                                                            label="Technical Skills - Ability to apply Knowledge"
-                                                            options={advDetails.TechnicalSkillsOption}
-                                                            value={row.TechnicalSkills}
-                                                            disabled={false}
-                                                            mandatory={true}
-                                                            onChange={(item) =>
-                                                                handleAutoCompleterow(item, "TechnicalSkills", index, "TechnicalSkillValue")
-                                                            }
-                                                            error={validationErrors.TechnicalSkills}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg5">
-                                                        <CustomAutoComplete
-                                                            label="Level of Proficiency"
-                                                            options={advDetails.LevelProficiencyOption}
-                                                            value={row.LevelProficiency}
-                                                            disabled={false}
-                                                            mandatory={true}
-                                                            onChange={(item) =>
-                                                                handleAutoCompleterow(item, "LevelProficiency", index, "TechnicalSkillValue")
-                                                            }
-                                                            error={validationErrors.LevelProficiency}
-                                                        />
-                                                    </div>
-                                                    <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
-                                                        {index > 0 ? (
-                                                            <>
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg10">
+                                                {TechnicalSkillValue.map((row, index) => (
+                                                    <div className="ms-Grid-row" key={index}>
+                                                        <div className="ms-Grid-col ms-lg5">
+                                                            <CustomAutoComplete
+                                                                label="Technical Skills - Ability to apply Knowledge"
+                                                                options={advDetails.TechnicalSkillsOption}
+                                                                value={row.TechnicalSkills}
+                                                                disabled={false}
+                                                                mandatory={true}
+                                                                onChange={(item) =>
+                                                                    handleAutoCompleterow(
+                                                                        item,
+                                                                        "TechnicalSkills",
+                                                                        index,
+                                                                        "TechnicalSkillValue"
+                                                                    )
+                                                                }
+                                                                error={validationErrors.TechnicalSkills}
+                                                            />
+                                                        </div>
+                                                        <div className="ms-Grid-col ms-lg5">
+                                                            <CustomAutoComplete
+                                                                label="Level of Proficiency"
+                                                                options={advDetails.LevelProficiencyOption}
+                                                                value={row.LevelProficiency}
+                                                                disabled={false}
+                                                                mandatory={true}
+                                                                onChange={(item) =>
+                                                                    handleAutoCompleterow(
+                                                                        item,
+                                                                        "LevelProficiency",
+                                                                        index,
+                                                                        "TechnicalSkillValue"
+                                                                    )
+                                                                }
+                                                                error={validationErrors.LevelProficiency}
+                                                            />
+                                                        </div>
+                                                        <div
+                                                            className="ms-Grid-col ms-lg2"
+                                                            style={{
+                                                                textAlign: "right",
+                                                                marginTop: "45px",
+                                                            }}
+                                                        >
+                                                            {index > 0 ? (
+                                                                <>
+                                                                    <PrimaryButton
+                                                                        style={{
+                                                                            borderColor: "rgb(205, 45, 45)",
+                                                                            backgroundColor: "#EF3340",
+                                                                            color: "white",
+                                                                            borderRadius: "10px",
+                                                                            marginRight: "4%",
+                                                                            minWidth: "60px",
+                                                                        }}
+                                                                        onClick={() =>
+                                                                            handleDeleteRow(
+                                                                                index,
+                                                                                RoleDescription.TechnicalSkillValue
+                                                                            )
+                                                                        }
+                                                                        iconProps={{
+                                                                            iconName: "Delete",
+                                                                            style: { color: "white" },
+                                                                        }}
+                                                                    ></PrimaryButton>
+                                                                    <PrimaryButton
+                                                                        style={{
+                                                                            borderColor: "rgb(205, 45, 45)",
+                                                                            backgroundColor: "#EF3340",
+                                                                            color: "white",
+                                                                            borderRadius: "10px",
+                                                                            minWidth: "60px",
+                                                                        }}
+                                                                        onClick={() =>
+                                                                            handleAddRow(
+                                                                                RoleDescription.TechnicalSkillValue
+                                                                            )
+                                                                        }
+                                                                        iconProps={{
+                                                                            iconName: "Add",
+                                                                            style: { color: "white" },
+                                                                        }}
+                                                                    ></PrimaryButton>
+                                                                </>
+                                                            ) : (
                                                                 <PrimaryButton
                                                                     style={{
                                                                         borderColor: "rgb(205, 45, 45)",
                                                                         backgroundColor: "#EF3340",
                                                                         color: "white",
                                                                         borderRadius: "10px",
-                                                                        marginRight: "4%",
-                                                                        minWidth: "60px"
+                                                                        minWidth: "60px",
                                                                     }}
-                                                                    onClick={() => handleDeleteRow(index, RoleDescription.TechnicalSkillValue)}
-                                                                    iconProps={{
-                                                                        iconName: "Delete",
-                                                                        style: { color: "white" },
-                                                                    }}
-                                                                >
-                                                                </PrimaryButton>
-                                                                <PrimaryButton
-                                                                    style={{
-                                                                        borderColor: "rgb(205, 45, 45)",
-                                                                        backgroundColor: "#EF3340",
-                                                                        color: "white",
-                                                                        borderRadius: "10px",
-                                                                        minWidth: "60px"
-                                                                    }}
-                                                                    onClick={() => handleAddRow(RoleDescription.TechnicalSkillValue)}
+                                                                    onClick={() =>
+                                                                        handleAddRow(
+                                                                            RoleDescription.TechnicalSkillValue
+                                                                        )
+                                                                    }
                                                                     iconProps={{
                                                                         iconName: "Add",
                                                                         style: { color: "white" },
                                                                     }}
-                                                                >
-                                                                </PrimaryButton>
-                                                            </>
-                                                        ) : (
-                                                            <PrimaryButton
-                                                                style={{
-                                                                    borderColor: "rgb(205, 45, 45)",
-                                                                    backgroundColor: "#EF3340",
-                                                                    color: "white",
-                                                                    borderRadius: "10px",
-                                                                    minWidth: "60px"
-                                                                }}
-                                                                onClick={() => handleAddRow(RoleDescription.TechnicalSkillValue)}
-                                                                iconProps={{
-                                                                    iconName: "Add",
-                                                                    style: { color: "white" },
-                                                                }}
-                                                            >
-                                                            </PrimaryButton>
-                                                        )}
+                                                                ></PrimaryButton>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))}
-                                        </div>
+                                                ))}
+                                            </div>
 
-                                        <div className="ms-Grid-col ms-lg2"
-                                            style={{
-                                                marginTop: "45px"
-                                            }}>
-                                            <PrimaryButton
+                                            <div
+                                                className="ms-Grid-col ms-lg2"
                                                 style={{
-                                                    borderColor: "rgb(205, 45, 45)",
-                                                    backgroundColor: "#EF3340",
-                                                    color: "white",
-                                                    borderRadius: "10px",
+                                                    marginTop: "45px",
                                                 }}
-                                                onClick={() => AddMasterData_fn(RoleDescriptionData.TechnicalSkill, "Add Technical Skills")}
-                                                iconProps={{
-                                                    iconName: "Add",
-                                                    style: { color: "white" },
-                                                }}
-                                            > Add New Item
-                                            </PrimaryButton>
+                                            >
+                                                <PrimaryButton
+                                                    style={{
+                                                        borderColor: "rgb(205, 45, 45)",
+                                                        backgroundColor: "#EF3340",
+                                                        color: "white",
+                                                        borderRadius: "10px",
+                                                    }}
+                                                    onClick={() =>
+                                                        AddMasterData_fn(
+                                                            RoleDescriptionData.TechnicalSkill,
+                                                            "Add Technical Skills"
+                                                        )
+                                                    }
+                                                    iconProps={{
+                                                        iconName: "Add",
+                                                        style: { color: "white" },
+                                                    }}
+                                                >
+                                                    {" "}
+                                                    Add New Item
+                                                </PrimaryButton>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <CustomLabel value={" View Justifications"} />
-                                    <PrimaryButton
-                                        style={{
-                                            borderColor: "rgb(205, 45, 45)",
-                                            backgroundColor: "#EF3340",
-                                            color: "white",
-                                            borderRadius: "10px",
-                                        }}
-                                        onClick={OpenComments}
+                                        <CustomLabel value={" View Justifications"} />
+                                        <PrimaryButton
+                                            style={{
+                                                borderColor: "rgb(205, 45, 45)",
+                                                backgroundColor: "#EF3340",
+                                                color: "white",
+                                                borderRadius: "10px",
+                                            }}
+                                            onClick={OpenComments}
+                                        >
+                                            {" "}
+                                            View
+                                        </PrimaryButton>
 
-                                    > View
-                                    </PrimaryButton>
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <CustomTextArea
-                                                label="Justification"
-                                                value={formState.Comments}
-                                                error={validationErrors.Comments}
-                                                onChange={(value) =>
-                                                    handleInputChangeTextArea(
-                                                        value,
-                                                        "Comments"
-                                                    )
-                                                }
-                                                mandatory={true}
-                                            />
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg12">
+                                                <CustomTextArea
+                                                    label="Justification"
+                                                    value={formState.Comments}
+                                                    error={validationErrors.Comments}
+                                                    onChange={(value) =>
+                                                        handleInputChangeTextArea(value, "Comments")
+                                                    }
+                                                    mandatory={true}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="ms-Grid-row"
-                                        style={{
-                                            padding: "3px",
-                                            marginTop: "20px",
-                                            marginBottom: "-33px",
-                                        }}
-                                    >
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <SignatureCheckbox
-                                                label={"I hereby agree for submitted this request"}
-                                                checked={Checkbox}
-                                                error={validationErrors.Checkboxalidation}
-                                                onChange={(value: boolean) => handleCheckbox(value)}
-                                            />
+                                        <div
+                                            className="ms-Grid-row"
+                                            style={{
+                                                padding: "3px",
+                                                marginTop: "20px",
+                                                marginBottom: "-33px",
+                                            }}
+                                        >
+                                            <div className="ms-Grid-col ms-lg12">
+                                                <SignatureCheckbox
+                                                    label={"I hereby agree for submitted this request"}
+                                                    checked={Checkbox}
+                                                    error={validationErrors.Checkboxalidation}
+                                                    onChange={(value: boolean) => handleCheckbox(value)}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <CustomSignature
-                                                Name={(props.userDetails[0].FirstName ?? "") + " " + (props.userDetails[0]?.MiddleName ?? "") + " " + (props.userDetails[0]?.LastName ?? "")}
-                                                JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
-                                                JobTitleInFrench={props.userDetails[0].JopTitleFrench}
-                                                Department={props.userDetails[0].DepartmentName}
-                                                Date={formState.SignDate.toString()}
-                                                TermsAndCondition={Checkbox}
-                                            />
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg12">
+                                                <CustomSignature
+                                                    Name={
+                                                        (props.userDetails[0].FirstName ?? "") +
+                                                        " " +
+                                                        (props.userDetails[0]?.MiddleName ?? "") +
+                                                        " " +
+                                                        (props.userDetails[0]?.LastName ?? "")
+                                                    }
+                                                    JobTitleInEnglish={
+                                                        props.userDetails[0].JopTitleEnglish
+                                                    }
+                                                    JobTitleInFrench={
+                                                        props.userDetails[0].JopTitleFrench
+                                                    }
+                                                    Department={props.userDetails[0].DepartmentName}
+                                                    Date={formState.SignDate.toString()}
+                                                    TermsAndCondition={Checkbox}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-
-
-                                </>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ),
-            },
+                                    </>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ),
+                },
             ]
             : []),
-        ...(props.CurrentRoleID === RoleID.HOD && props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv
-            ? [{
-                label: TabName.ReviewONEMAdvertisement,
-                value: "tab2",
-                content: (
-                    <Card variant="outlined" sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", border: "0px solid rgba(0, 0, 0, 0.12)", marginTop: "2%" }}>
-                        <CardContent>
-                            <div>
-                                <>
-                                    {/* <div className="ms-Grid-row">
+        ...(props.CurrentRoleID === RoleID.HOD &&
+            props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv
+            ? [
+                {
+                    label: TabName.ReviewONEMAdvertisement,
+                    value: "tab2",
+                    content: (
+                        <Card
+                            variant="outlined"
+                            sx={{
+                                boxShadow: "0px 7px 4px 3px #d3d3d3",
+                                border: "0px solid rgba(0, 0, 0, 0.12)",
+                                marginTop: "2%",
+                            }}
+                        >
+                            <CardContent>
+                                <div>
+                                    <>
+                                        {/* <div className="ms-Grid-row">
                                         <CustomLabel value={"Advertisement Documents"} mandatory={true} />
                                     </div>
                                     <div className="ms-Grid-row">
@@ -2279,107 +2492,113 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                             />
                                         </div>
                                     </div> */}
-                                    <div className="ms-Grid-row">
-                                        <div
-                                            className="ms-Grid-col ms-lg2"
-                                            style={{ position: "relative", right: "1px" }}
+                                        <div className="ms-Grid-row">
+                                            <div
+                                                className="ms-Grid-col ms-lg2"
+                                                style={{ position: "relative", right: "1px" }}
+                                            >
+                                                <div>
+                                                    <Label>View Advertisement</Label>
+                                                    <ReuseButton
+                                                        Style={{
+                                                            minWidth: "117px",
+                                                            fontSize: "13px",
+                                                            paddingBottom: "24px",
+                                                            display: "flex",
+                                                            flexDirection: "column",
+                                                            height: "41px",
+                                                            paddingTop: "22px",
+                                                        }}
+                                                        label="VIEW"
+                                                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                                                        onClick={async () => {
+                                                            setPreview(true);
+                                                            setMainComponent(false);
+                                                        }}
+                                                        imgAltHover="Image"
+                                                        spacing={4}
+                                                        imgSrc={require("../../assets/Viewicon.svg")}
+                                                        imgAlt="ssss"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <CustomLabel value={" View Justifications"} />
+                                        <PrimaryButton
+                                            style={{
+                                                borderColor: "rgb(205, 45, 45)",
+                                                backgroundColor: "#EF3340",
+                                                color: "white",
+                                                borderRadius: "10px",
+                                            }}
+                                            onClick={OpenComments}
                                         >
-                                            <div>
-                                                <Label>View Advertisement</Label>
-                                                <ReuseButton
-                                                    Style={{
-                                                        minWidth: "117px",
-                                                        fontSize: "13px",
-                                                        paddingBottom: "24px",
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        height: "41px",
-                                                        paddingTop: "22px",
-                                                    }}
-                                                    label="VIEW"
-                                                    imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                                                    onClick={async () => {
-                                                        setPreview(true);
-                                                        setMainComponent(false);
-                                                    }}
-                                                    imgAltHover="Image"
-                                                    spacing={4}
-                                                    imgSrc={require("../../assets/Viewicon.svg")}
-                                                    imgAlt="ssss"
+                                            {" "}
+                                            View
+                                        </PrimaryButton>
+
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg12">
+                                                <CustomTextArea
+                                                    label="Justification"
+                                                    value={formState.Comments}
+                                                    error={validationErrors.Comments}
+                                                    onChange={(value) =>
+                                                        handleInputChangeTextArea(value, "Comments")
+                                                    }
+                                                    mandatory={true}
                                                 />
                                             </div>
                                         </div>
-                                    </div>
 
-
-
-                                    <CustomLabel value={" View Justifications"} />
-                                    <PrimaryButton
-                                        style={{
-                                            borderColor: "rgb(205, 45, 45)",
-                                            backgroundColor: "#EF3340",
-                                            color: "white",
-                                            borderRadius: "10px",
-                                        }}
-                                        onClick={OpenComments}
-
-                                    > View
-                                    </PrimaryButton>
-
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <CustomTextArea
-                                                label="Justification"
-                                                value={formState.Comments}
-                                                error={validationErrors.Comments}
-                                                onChange={(value) =>
-                                                    handleInputChangeTextArea(
-                                                        value,
-                                                        "Comments"
-                                                    )
-                                                }
-                                                mandatory={true}
-                                            />
+                                        <div
+                                            className="ms-Grid-row"
+                                            style={{
+                                                padding: "3px",
+                                                marginTop: "20px",
+                                                marginBottom: "-33px",
+                                            }}
+                                        >
+                                            <div className="ms-Grid-col ms-lg12">
+                                                <SignatureCheckbox
+                                                    label={"I hereby agree for submitted this request"}
+                                                    checked={Checkbox}
+                                                    error={validationErrors.Checkboxalidation}
+                                                    onChange={(value: boolean) => setCheckbox(value)}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div className="ms-Grid-row"
-                                        style={{
-                                            padding: "3px",
-                                            marginTop: "20px",
-                                            marginBottom: "-33px",
-                                        }}
-                                    >
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <SignatureCheckbox
-                                                label={"I hereby agree for submitted this request"}
-                                                checked={Checkbox}
-                                                error={validationErrors.Checkboxalidation}
-                                                onChange={(value: boolean) => setCheckbox(value)}
-                                            />
+                                        <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg12">
+                                                <CustomSignature
+                                                    Name={
+                                                        (props.userDetails[0].FirstName ?? "") +
+                                                        " " +
+                                                        (props.userDetails[0]?.MiddleName ?? "") +
+                                                        " " +
+                                                        (props.userDetails[0]?.LastName ?? "")
+                                                    }
+                                                    JobTitleInEnglish={
+                                                        props.userDetails[0].JopTitleEnglish
+                                                    }
+                                                    JobTitleInFrench={
+                                                        props.userDetails[0].JopTitleFrench
+                                                    }
+                                                    Department={props.userDetails[0].DepartmentName}
+                                                    Date={formState.SignDate.toString()}
+                                                    TermsAndCondition={Checkbox}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg12">
-                                            <CustomSignature
-                                                Name={(props.userDetails[0].FirstName ?? "") + " " + (props.userDetails[0]?.MiddleName ?? "") + " " + (props.userDetails[0]?.LastName ?? "")}
-                                                JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
-                                                JobTitleInFrench={props.userDetails[0].JopTitleFrench}
-                                                Department={props.userDetails[0].DepartmentName}
-                                                Date={formState.SignDate.toString()}
-                                                TermsAndCondition={Checkbox}
-                                            />
-                                        </div>
-                                    </div>
-
-
-                                </>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ),
-            }]
-            : [])
+                                    </>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ),
+                },
+            ]
+            : []),
     ];
 
     useEffect(() => {
@@ -2442,41 +2661,52 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     async function InsertMasterData(Value: string) {
         const isValid = !MasterDataValidation();
         if (isValid) {
-            let MasterData
+            let MasterData;
             switch (Value) {
-                case RoleDescriptionData.Qualification: {
-                    MasterData = {
-                        Qualification: advDetails.addMasterQualification
+                case RoleDescriptionData.Qualification:
+                    {
+                        MasterData = {
+                            Qualification: advDetails.addMasterQualification,
+                        };
+                        await getVRRDetails.InsertList(
+                            MasterData,
+                            ListNames.HRMSQualification
+                        );
                     }
-                    await getVRRDetails.InsertList(MasterData, ListNames.HRMSQualification);
-                }
                     break;
-                case RoleDescriptionData.RoleSpeKnowledge: {
-                    MasterData = {
-                        RoleSpecificKnowledge: advDetails.addMasterQualification
+                case RoleDescriptionData.RoleSpeKnowledge:
+                    {
+                        MasterData = {
+                            RoleSpecificKnowledge: advDetails.addMasterQualification,
+                        };
+                        await getVRRDetails.InsertList(
+                            MasterData,
+                            ListNames.HRMSRoleSpecificKnowlegeMaster
+                        );
                     }
-                    await getVRRDetails.InsertList(MasterData, ListNames.HRMSRoleSpecificKnowlegeMaster);
-
-                }
                     break;
-                case RoleDescriptionData.TechnicalSkill: {
-                    MasterData = {
-                        TechnicalSkills: advDetails.addMasterQualification
+                case RoleDescriptionData.TechnicalSkill:
+                    {
+                        MasterData = {
+                            TechnicalSkills: advDetails.addMasterQualification,
+                        };
+                        await getVRRDetails.InsertList(
+                            MasterData,
+                            ListNames.HRMSTechnicalSkills
+                        );
                     }
-                    await getVRRDetails.InsertList(MasterData, ListNames.HRMSTechnicalSkills);
-                }
                     break;
             }
             setAddQualifbtn(false);
             setAdvDetails((prevState) => ({
                 ...prevState,
-                addMasterQualification: ""
-            }))
+                addMasterQualification: "",
+            }));
         }
     }
 
     const handleBreadcrumbChange = (newItem: string) => {
-        setactiveTab(newItem)
+        setactiveTab(newItem);
     };
 
     return (
@@ -2492,7 +2722,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 handleCancel={handleCancel}
                                 onBreadcrumbChange={handleBreadcrumbChange}
                                 additionalButtons={
-                                    props.CurrentRoleID === RoleID.RecruitmentHRLead && props.stateValue?.StatusId === StatusId.PendingwithHRLeadtoAssignRecruitmentHR || props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoAssignExternalAgency
+                                    (props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                                        props.stateValue?.StatusId ===
+                                        StatusId.PendingwithHRLeadtoAssignRecruitmentHR) ||
+                                        (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                                            props.stateValue?.StatusId ===
+                                            StatusId.PendingwithRecruitmentHRtoAssignExternalAgency)
                                         ? [
                                             {
                                                 label: "Close",
@@ -2501,20 +2736,21 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                 },
                                             },
                                         ]
-                                        :
-                                        props.CurrentRoleID === RoleID.RecruitmentHRLead && props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc
-                                            ?
-                                            [
+                                        : props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                                            props.stateValue?.StatusId ===
+                                            StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+                                            ? [
                                                 {
                                                     label: "Upload",
                                                     onClick: async () => {
                                                         await SaveRecruitment();
                                                     },
                                                 },
-                                            ] :
-                                            props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv
-                                                ?
-                                                [
+                                            ]
+                                            : props.CurrentRoleID === RoleID.RecruitmentHR &&
+                                                props.stateValue?.StatusId ===
+                                                StatusId.PendingwithRecruitmentHRtouploadAdv
+                                                ? [
                                                     {
                                                         label: "Preview",
                                                         onClick: async () => {
@@ -2527,10 +2763,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                         onClick: async () => {
                                                             await SaveRecruitment();
                                                         },
-                                                        disable: SubmitBtn
+                                                        disable: SubmitBtn,
                                                     },
-                                                ] :
-                                                props.CurrentRoleID === RoleID.HOD && props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv
+                                                ]
+                                                : props.CurrentRoleID === RoleID.HOD &&
+                                                    props.stateValue?.StatusId ===
+                                                    StatusId.PendingwithHODtoreviewAdv
                                                     ? [
                                                         {
                                                             label: "Approve",
@@ -2538,7 +2776,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                                                 await SaveRecruitment();
                                                             },
                                                         },
-                                                    ] : []
+                                                    ]
+                                                    : []
                                 }
                             />
                             {/* <TabsComponent
