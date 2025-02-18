@@ -1,45 +1,41 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
-import { getVRRDetails } from "../../Services/ServiceExport";
+import { GetPortalJobsService, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
     GridStatusBackgroundcolor,
+    RoleID,
     TabName,
+    workflowStatusApi,
 } from "../../utilities/Config";
 import CommentsPopup from "../../components/CommentsPopup";
 import { Button } from "primereact/button";
 import BreadcrumbsComponent, { TabNameData } from "../../components/CustomBreadcrumps";
 import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
-import { getProfileData } from "../../Services/ReviewProfileService/ReviewCandidateService";
-import { GetProfileByFilter } from "../../Models/ApIInterface";
+import { GetProfileByFilter, GetProfileByJobCode } from "../../Models/ApIInterface";
 
 const ReviewCandidateList = (props: any) => {
     console.log(props, "ReviewCandidateList");
 
-    const [CandidateData, setCandidateData] = React.useState<any[]>([]);
+    const [CandidateData, setCandidateData] = React.useState<GetProfileByJobCode[] | null>([]);
     const [rows, setRows] = React.useState<number>(5);
     // const [first, setFirst] = React.useState<number>(0);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
-    // const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
-    // const [ReviewProfile, setReviewProfile] = React.useState<boolean>(false);
     const [CommentsPopups, setCommentsPopup] = React.useState<boolean>(false);
-    // const [CandidateID, setCandidateID] = React.useState<number>(0);
     const [activeTab, setactiveTab] = React.useState<string>("tab1");
     const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
     const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
-    // const [BreadcrumbTab, setBreadcrumbTab] = React.useState<BreadcrumbTabData>({
-    //     tab: "",
-    //     TabName: "",
-    //     ButtonAction: "",
-    //     CurrectTab: "",
-    //     currectAction: "",
-    // })
 
     const columnConfig = (tab: string, ButtonAction: string, TabNamed: string) => [
         {
             field: "CandidateID",
             header: "Candidate ID",
+            sortable: true,
+        },
+        {
+            field: "ApplicantName",
+            header: "Applicant Name",
             sortable: true,
         },
         {
@@ -99,10 +95,11 @@ const ReviewCandidateList = (props: any) => {
                     props.navigation("/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails", {
                         state: {
                             ID: rowData?.CandidateID,
-                            RecruitmentID: RecruitmentDetails[0].ID,
+                            RecruitmentID: props.stateValue.ID,
                             tab: tab,
                             ButtonAction: ButtonAction,
-                            TabNamed: TabNamed
+                            TabNamed: TabNamed,
+                            initialTab: props.stateValue?.TabName,
                         },
                     });
                 }
@@ -137,40 +134,64 @@ const ReviewCandidateList = (props: any) => {
         },
     ];
 
-    // function OpenCommentsPopup(): void {
-    //     setCommentsPopup(true);
-    // }
-
-    const fetchCandidateData = async (RecruitmentDetails: any) => {
+    const fetchCandidateData = async () => {
         setIsLoading(true);
         try {
-            let FilterValue: GetProfileByFilter = {
-                filterValue: "",
-                sortBy: "",
-                sortOrder: 0,
-                pageSize: 5,
-                currentPage: 0,
-                totalItems: 0
-            }
-            await getProfileData.GetProfileByJobCode("JC0005", FilterValue).then((res) => {
-                if (res.status === 200) {
-                    console.log(res, "GetProfileByFilter Response");
-                    let CandidateDetails = res.data.data.map((item: any) => {
-                        return {
-                            CandidateID: item.jobRequestId,
-                            PositionTitle: item.jobTitle?.displayText,
-                            JobGrade: item.jobCode,
-                            Status: item.applicationStatus?.displayText
-                        }
-                    })
-                    setCandidateData(CandidateDetails)
+            let FilterValue: GetProfileByFilter
+            switch (props.CurrentRoleID) {
+                case RoleID.LineManager: {
+                    FilterValue = {
+                        filterValue: "",
+                        sortBy: "",
+                        sortOrder: 0,
+                        pageSize: rows,
+                        currentPage: 0,
+                        totalItems: 0
+                    }
                 }
-            }).catch((error) => {
-                console.log(error, "GetProfileByJobCode Error");
+                    break;
+                case RoleID.RecruitmentHR: {
+                    if (props.stateValue?.TabName === TabName.AssignInterviewPanel) {
+                        FilterValue = {
+                            filterValue: workflowStatusApi.InterviewScheduled,
+                            sortBy: "",
+                            sortOrder: 0,
+                            pageSize: rows,
+                            currentPage: 0,
+                            totalItems: 0
+                        }
+                    } else {
+                        FilterValue = {
+                            filterValue: workflowStatusApi.HRPending,
+                            sortBy: "",
+                            sortOrder: 0,
+                            pageSize: rows,
+                            currentPage: 0,
+                            totalItems: 0
+                        }
+                    }
 
+                }
+                    break;
+                default: {
+                    FilterValue = {
+                        filterValue: "",
+                        sortBy: "",
+                        sortOrder: 0,
+                        pageSize: rows,
+                        currentPage: 0,
+                        totalItems: 0
+                    }
+                }
+            }
+            await GetPortalJobsService.getCandidateDetailsInJobCode("JC0005", FilterValue).then((res) => {
+                console.log(res, "res");
+                setCandidateData(res.data)
+            }).catch((error) => {
+                console.log("Candidate details doesn't fetch the data", error);
             })
         } catch (error) {
-            console.log("GetVacancyDetails doesn't fetch the data", error);
+            console.log("Candidate Api failed", error);
         }
         setIsLoading(false);
     };
@@ -189,17 +210,18 @@ const ReviewCandidateList = (props: any) => {
         );
         if (RecruitmentDetails.status === 200 && RecruitmentDetails.data !== null) {
             setRecruitmentDetails(RecruitmentDetails.data);
-            await fetchCandidateData(RecruitmentDetails.data);
+
         }
     };
 
     React.useEffect(() => {
         const fetchData = async () => {
             await fetchRecuritmentData();
+            await fetchCandidateData();
         };
 
         void fetchData();
-    }, []);
+    }, [rows, activeTab]);
 
     const onPageChange = (event: any) => {
         // setFirst(event.first);
@@ -218,7 +240,7 @@ const ReviewCandidateList = (props: any) => {
                 >
                     <CardContent>
                         <ReviewProfileDatatable
-                            data={CandidateData}
+                            data={CandidateData ?? []}
                             columns={columnConfig(
                                 "tab1",
                                 "view",

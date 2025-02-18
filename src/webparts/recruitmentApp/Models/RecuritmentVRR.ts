@@ -81,12 +81,16 @@ export type AdvDetails = {
   RolePurpose: string;
   JobDescription: string;
   addMasterQualification: string;
-  TotalExperience: string;
-  ExperienceinMiningIndustry: string;
+  TotalExperience: AutoCompleteItem;
+  ExperienceinMiningIndustry: AutoCompleteItem;
+  TotalExperienceOption: AutoCompleteItem[];
+  ExperienceinMiningIndustryOption: AutoCompleteItem[];
   YearofExperience: any;
   PreferredExperience: any;
   ValidFrom: Date | undefined;
   ValidTo: Date | undefined;
+  JobFunctionalType: AutoCompleteItem;
+  JobFunctionalTypeOption: AutoCompleteItem[];
 };
 
 export type CandidateData = {

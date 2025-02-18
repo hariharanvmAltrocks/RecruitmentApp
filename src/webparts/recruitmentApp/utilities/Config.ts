@@ -37,6 +37,8 @@ export const ListNames = {
   HRMSRoleSpecificKnowlegeMaster: "HRMSRoleSpecificKnowlegeMaster",
   HRMSTechnicalSkills: "HRMSTechnicalSkills",
   HRMSLevelOfProficiency: "HRMSLevelOfProficiency",
+  HRMSExperienceMaster: "HRMSExperienceMaster",
+  HRMSJobTitleFunctionType: "HRMSJobTitleFunctionType",
   HRMSExternalAgents: "HRMSExternalAgents",
   HRMSExternalAgentsDetailsForRecruitment:
     "HRMSExternalAgentsDetailsForRecruitment",
@@ -158,6 +160,7 @@ export const RecuritmentHRMsg = {
   RecruitmentErrorMsg: "Please select the Job Code",
   AgencySucess: "Agencies Assigned Successfully",
   HRSuccess: "HR Assigned Successfully",
+  ProfileReviewed: "Profile Reviewed Successfully"
 };
 
 export const ADGroupID: IADGroupID = {
@@ -237,3 +240,25 @@ export const ProfileStatus = {
   HR: "Pending with HR - Review Profile",
   LM: "Pending with LM - Review Profile",
 };
+
+export const Nationality = {
+  Nationals: "Nationals (Congolese)",
+  Expatriate: "Expatriate"
+};
+
+export const workflowStatusApi = {
+  HRPending: "WS01",
+  LineManagerL1Pending: "WS02",
+  LineManagerL2Pending: "WS03",
+  InterviewScheduled: "WS04",
+  HODSelectionPending: "WS05",
+  Selected: "WS06",
+  OnHold: "WS07",
+  Rejected: "WS08"
+};
+
+export const CandidateStatus = {
+  Yes: "Yes",
+  No: "No",
+  WaitingList: "Waiting List"
+}

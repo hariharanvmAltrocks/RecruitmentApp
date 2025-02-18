@@ -898,10 +898,10 @@ export default class RecruitmentService implements IRecruitmentService {
       const listItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentRoleProfileDetails,
         Select:
-          "RecruitmentID/ID,JobDescription,RoleProfile,RoleSpecificKnowledgeJson,TechnicalSkillsKnowledgeJson,YearofExperience,Qualification,PreferredQualification,PreferredExperience",
+          "RecruitmentID/ID,PreferredExperience/Code,TotalPreferredExperience/Code",
         Filter: filterParam,
         FilterCondition: filterConditions,
-        Expand: "RecruitmentID",
+        Expand: "RecruitmentID,PreferredExperience,TotalPreferredExperience",
         Orderby: "ID",
         Orderbydecorasc: false,
       });
@@ -911,10 +911,10 @@ export default class RecruitmentService implements IRecruitmentService {
         RoleProfile: item.RoleProfile || "",
         RoleSpecificKnowledgeJson: item.RoleSpecificKnowledgeJson || "",
         TechnicalSkillsKnowledgeJson: item.TechnicalSkillsKnowledgeJson || "",
-        YearofExperience: item.YearofExperience || 0,
+        TotalPreferredExperience: item.TotalPreferredExperience?.Code || 0,
         Qualification: item.Qualification || "",
         PreferredQualification: item.PreferredQualification || "",
-        PreferredExperience: item.PreferredExperience || 0,
+        PreferredExperience: item.PreferredExperience?.Code || 0,
       }));
       return {
         data: formattedItems,
@@ -1052,6 +1052,48 @@ export default class RecruitmentService implements IRecruitmentService {
         status: 500,
         message:
           "Error fetching data from HRMSInterviewPanelDetails and HRMSCandidateScoreCard",
+      };
+    }
+  }
+
+  async GetDataInList(
+    ListName: string,
+    filterParam: any[],
+    filterConditions: any,
+    Select: string,
+    Expand: string,
+  ): Promise<ApiResponse<any | null>> {
+    try {
+      let GetItem: any
+      await SPServices.SPReadItems({
+        Listname: ListName,
+        Select: Select,
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Expand: Expand,
+        Orderby: "ID",
+        Orderbydecorasc: false,
+      }).then((res) => {
+        console.log(res, "res");
+        GetItem = res
+      }).catch((error) => {
+        console.log("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error);
+      })
+      return {
+        data: GetItem,
+        status: 200,
+        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message:
+          "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
       };
     }
   }

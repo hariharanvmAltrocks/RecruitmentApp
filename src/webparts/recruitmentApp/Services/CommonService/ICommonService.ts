@@ -8,4 +8,5 @@ export type ICommonService = {
   getUserGuidByEmail(email: string): Promise<ApiResponse<AutoCompleteItem | null>>;
   GetMasterData(ListName: string,): Promise<ApiResponse<any[]>>;
   GetGradeLevel(PatersonGrade: string): Promise<ApiResponse<any | null>>;
+  GetAttachmentLink(PositionCode: string, Listname: string): Promise<ApiResponse<any>>;
 }

@@ -1,4 +1,4 @@
-import { AdvertisementDetails } from "../../Models/ApIInterface";
+import { AdvertisementDetails, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
 export const getProfileData = {
@@ -17,6 +17,11 @@ export const getProfileData = {
             `/GetAllMasters`,
         );
     },
+    UpdateCandidateStatus: async function (params: WorkflowJson) {
+        return await AxiosInstance.post(
+            `/UpdateWorkflowStatus`, params
+        );
+    }
 
 };
 

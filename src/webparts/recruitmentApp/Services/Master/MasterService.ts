@@ -282,6 +282,7 @@ export default class MasterService implements IMasterService {
                             masterData.Department.push({
                                 key: item.Id ? item.Id : "",
                                 text: item?.DepartmentName ? item?.DepartmentName : "",
+                                code: item?.Code ? item?.Code : ""
                             })
                         })
                     }

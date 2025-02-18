@@ -1,3 +1,5 @@
+import GetPortalJobs from "./CareerPortalApi/GetPortalJobs";
+import { IGetPortalJobs } from "./CareerPortalApi/IGetPortalJobs";
 import CommonService from "./CommonService/CommonService";
 import { ICommonService } from "./CommonService/ICommonService";
 import { IInterviewProcessService } from "./InterviewProcess/IInterviewProcessService";
@@ -12,3 +14,4 @@ export const getVRRDetails: IRecruitmentService = new RecruitmentService();
 export const CommonServices: ICommonService = new CommonService();
 export const InterviewServices: IInterviewProcessService =
   new InterviewProcessService();
+export const GetPortalJobsService: IGetPortalJobs = new GetPortalJobs();

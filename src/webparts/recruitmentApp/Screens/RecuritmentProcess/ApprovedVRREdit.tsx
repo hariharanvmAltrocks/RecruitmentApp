@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import "../../App.css";
-import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
+import { CommonServices, GetPortalJobsService, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
@@ -13,6 +13,7 @@ import {
     DocumentLibraray,
     HRMSAlertOptions,
     ListNames,
+    Nationality,
     RecuritmentHRMsg,
     RoleDescription,
     RoleDescriptionData,
@@ -55,6 +56,9 @@ import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomPreviewScreen from "./CustomPreviewScreen";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
+import * as moment from "moment";
+import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
+// import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 
 
 type formValidation = {
@@ -77,6 +81,7 @@ type formValidation = {
     Checkboxalidation: boolean;
     ValidFrom: boolean;
     ValidTo: boolean;
+    JobFunctionalType: boolean;
 };
 
 const ApprovedVRREdit: React.FC = (props: any) => {
@@ -102,12 +107,16 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         RolePurpose: "",
         JobDescription: "",
         addMasterQualification: "",
-        TotalExperience: "",
-        ExperienceinMiningIndustry: "",
+        TotalExperience: { key: 0, text: "" },
+        ExperienceinMiningIndustry: { key: 0, text: "" },
+        TotalExperienceOption: [],
+        ExperienceinMiningIndustryOption: [],
         YearofExperience: " ",
         PreferredExperience: "",
         ValidFrom: undefined,
         ValidTo: undefined,
+        JobFunctionalType: { key: 0, text: "" },
+        JobFunctionalTypeOption: []
     });
     const [formState, setFormState] = useState<RecuritmentData>({
         VRRID: 0,
@@ -186,7 +195,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         addMasterQualification: false,
         Checkboxalidation: false,
         ValidFrom: false,
-        ValidTo: false
+        ValidTo: false,
+        JobFunctionalType: false
     })
     const [MainComponent, setMainComponent] = useState<boolean>(true);
     const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
@@ -218,8 +228,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     const [Checkbox, setCheckbox] = useState<boolean>(false);
     const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
     const [Preview, setPreview] = useState<boolean>(false);
-
-
 
     const handleAddRow = (stateValue: string) => {
         switch (stateValue) {
@@ -279,6 +287,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 );
             }
         }
+    };
+
+    const handleAutoComplete = (
+        item: AutoCompleteItem | null,
+        StateValue: string,
+    ) => {
+        setAdvDetails((prevState) => ({
+            ...prevState,
+            [StateValue]: item
+        }))
+        setValidationError((prevState) => ({
+            ...prevState,
+            [StateValue]: false
+        }))
     };
 
     const handleAutoCompleterow = (
@@ -525,6 +547,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             Checkboxalidation: false,
             ValidFrom: false,
             ValidTo: false,
+            JobFunctionalType: false,
         };
 
         switch (props.CurrentRoleID) {
@@ -558,7 +581,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     errors.TotalExperience = !IsValid(advDetails.TotalExperience);
                     errors.Checkboxalidation = !IsValid(Checkbox);
                     errors.ValidFrom = !IsValid(advDetails.ValidFrom);
-                    errors.ValidTo = !IsValid(advDetails.ValidTo)
+                    errors.ValidTo = !IsValid(advDetails.ValidTo);
+                    errors.JobFunctionalType = !IsValid(advDetails.JobFunctionalType.text)
                 }
 
                 break;
@@ -607,6 +631,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     const SaveRecruitment = async () => {
         try {
+            await PostAdvertisement();
 
             const isValid = !Validation();
 
@@ -710,16 +735,16 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                         TechnicalSkillValue.forEach((item) => {
                             let TechnicalSkillsData = {
-                                TechnicalSkills: item.TechnicalSkills.text,
-                                LevelProficiency: item.LevelProficiency.text
+                                TechnicalSkills: String(item.TechnicalSkills.key),
+                                LevelProficiency: String(item.LevelProficiency.key)
                             };
                             TechnicalSkillsKnowledgeJson.push(TechnicalSkillsData);
                         })
 
                         RoleSpeKnowledgeValue.forEach((item) => {
                             let details = {
-                                RoleSpeKnowledge: item.RoleSpeKnowledge.text,
-                                RequiredLevel: item.RequiredLevel.text
+                                RoleSpeKnowledge: String(item.RoleSpeKnowledge.key),
+                                RequiredLevel: String(item.RequiredLevel.key)
                             };
                             RoleSpecificKnowledgeJson.push(details);
                         })
@@ -727,13 +752,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                         QualificationValue.forEach((item) => {
                             let details = {
-                                MinQualification: item.MinQualification.text
+                                MinQualification: String(item.MinQualification.key)
                             };
                             QualificatioDetails.push(details);
                         });
                         QualificationValue.forEach((item) => {
                             let details = {
-                                PrefeQualification: item.PrefeQualification.text
+                                PrefeQualification: String(item.PrefeQualification.key)
                             };
                             PrefeQualification.push(details);
                         });
@@ -746,9 +771,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             RoleSpecificKnowledgeJson: JSON.stringify(RoleSpecificKnowledgeJson),
                             TechnicalSkillsKnowledgeJson: JSON.stringify(TechnicalSkillsKnowledgeJson),
                             RecruitmentIDId: props.stateValue?.ID,
-                            YearofExperience: Number(advDetails.TotalExperience),
-                            PreferredExperience: Number(advDetails.ExperienceinMiningIndustry)
+                            TotalPreferredExperienceId: Number(advDetails.TotalExperience.key),
+                            PreferredExperienceId: Number(advDetails.ExperienceinMiningIndustry.key),
+                            ValidFrom: moment(advDetails.ValidFrom).format("YYYY-MM-DD"),
+                            ValidTo: moment(advDetails.ValidTo).format("YYYY-MM-DD"),
+                            FunctionTypeId: advDetails.JobFunctionalType.key
                         };
+                        console.log(AdvData, "AdvData")
+                        debugger;
                         await getVRRDetails.InsertList(AdvData, ListNames.HRMSRecruitmentRoleProfileDetails);
                         resetForm();
                         let UpdateAlert = {
@@ -812,45 +842,83 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         void initialize();
     }, []);
 
-
     useEffect(() => {
         const MasterDataOption = async () => {
             // Fetch Qualification data
             const Qualification = await CommonServices.GetMasterData(ListNames.HRMSQualification);
-            const QualificationOption: AutoCompleteItem[] = Qualification.data.map((item: any) => ({
-                key: item.Id,
-                text: item.Qualification,
-            }));
+            // const QualificationOption: AutoCompleteItem[] = Qualification.data.map((item: any) => ({
+            //     key: item.Code,
+            //     text: item.Qualification,
+            // }));
+            const QualificationOption: AutoCompleteItem[] = Qualification.data
+                .filter((Qualitem) =>
+                    !QualificationValue.some((item) => item.PrefeQualification.key === Qualitem.QualificationCode)
+                )
+                .map((item: any) => ({
+                    key: item.QualificationCode,
+                    text: item.Qualification,
+                }));
+            const PrefeQualificationOption: AutoCompleteItem[] = Qualification.data
+                .filter((Qualitem) =>
+                    !QualificationValue.some((item) => item.MinQualification.key === Qualitem.QualificationCode)
+                )
+                .map((item: any) => ({
+                    key: item.QualificationCode,
+                    text: item.Qualification,
+                }));
+
 
             // Fetch RoleSpecificKnowledge data
             const RoleSpecificKnowlege = await CommonServices.GetMasterData(ListNames.HRMSRoleSpecificKnowlegeMaster);
             const RoleSpecificKnowlegeOption: AutoCompleteItem[] = RoleSpecificKnowlege.data.map((item: any) => ({
-                key: item.Id,
+                key: item.Code,
                 text: item.RoleSpecificKnowledge,
             }));
 
             // Fetch TechnicalSkills data
             const TechnicalSkills = await CommonServices.GetMasterData(ListNames.HRMSTechnicalSkills);
             const TechnicalSkillsOption: AutoCompleteItem[] = TechnicalSkills.data.map((item: any) => ({
-                key: item.Id,
+                key: item.Code,
                 text: item.TechnicalSkills,
             }));
 
             // Fetch LevelOfProficiency data
             const LevelOfProficiency = await CommonServices.GetMasterData(ListNames.HRMSLevelOfProficiency);
             const LevelOfProficiencyOption: AutoCompleteItem[] = LevelOfProficiency.data.map((item: any) => ({
-                key: item.Id,
+                key: item.Code,
                 text: item.Levels,
+            }));
+
+            const YearofExperiance = await CommonServices.GetMasterData(ListNames.HRMSExperienceMaster);
+            const YearofExperianceOption: AutoCompleteItem[] = YearofExperiance.data.map((item: any) => ({
+                key: item.Id,
+                text: item.ExperienceInYearRange,
+            }));
+
+            const ExperienceinMiningOption: AutoCompleteItem[] = YearofExperiance.data
+                .filter((exper) => advDetails.TotalExperience.key != exper.Id) // Correct filter syntax
+                .map((item: any) => ({
+                    key: item.Id,
+                    text: item.ExperienceInYearRange,
+                }));
+
+            const JobTitleFunctionType = await CommonServices.GetMasterData(ListNames.HRMSJobTitleFunctionType);
+            const JobTitleFunctionTypeOption: AutoCompleteItem[] = JobTitleFunctionType.data.map((item: any) => ({
+                key: item.Id,
+                text: item.FunctionType,
             }));
 
             setAdvDetails((prevState) => ({
                 ...prevState,
                 MinQualificationOption: QualificationOption,
-                PrefeQualificationOption: QualificationOption,
+                PrefeQualificationOption: PrefeQualificationOption,
                 RoleSpeKnowledgeoption: RoleSpecificKnowlegeOption,
                 TechnicalSkillsOption: TechnicalSkillsOption,
                 LevelProficiencyOption: LevelOfProficiencyOption,
                 RequiredLeveloption: LevelOfProficiencyOption,
+                TotalExperienceOption: YearofExperianceOption,
+                ExperienceinMiningIndustryOption: ExperienceinMiningOption,
+                JobFunctionalTypeOption: JobTitleFunctionTypeOption
             }));
 
         };
@@ -861,95 +929,99 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         ) {
             void MasterDataOption();
         }
-    }, [AddQualifbtn]);
+    }, [AddQualifbtn, QualificationValue, advDetails.TotalExperience]);
+
 
     useEffect(() => {
-        if (
-            props.CurrentRoleID === RoleID.HOD &&
-            props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv
-        ) {
-            const fetchData = async () => {
-                try {
-                    let filterConditions = [
-                        {
-                            FilterKey: "RecruitmentIDId",
-                            Operator: "eq",
-                            FilterValue: props.stateValue.ID,
-                        },
-                    ];
-                    const response =
-                        await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
-                            filterConditions,
-                            ""
+        // if (
+        //     (props.CurrentRoleID === RoleID.HOD && props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv) || (props.CurrentRoleID === RoleID.RecruitmentHR && props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoAssignExternalAgency)
+        // ) {
+        const fetchData = async () => {
+            try {
+                let filterConditions = [
+                    {
+                        FilterKey: "RecruitmentIDId",
+                        Operator: "eq",
+                        FilterValue: props.stateValue.ID,
+                    },
+                ];
+                const response =
+                    await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+                        filterConditions,
+                        ""
+                    );
+
+                if (response.status === 200) {
+                    const data = response.data;
+                    if (data && data.length > 0) {
+                        const rawData = data[0];
+                        const roleSpecificKnowledge = rawData.RoleSpecificKnowledgeJson
+                            ? JSON.parse(rawData.RoleSpecificKnowledgeJson)
+                            : [];
+
+                        const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+                            (item: any) => item.RoleSpeKnowledge
                         );
+                        const RequiredLevelValues = roleSpecificKnowledge.map(
+                            (item: any) => item.RequiredLevel
+                        );
+                        const mappedData: AdvDetails = {
+                            RolePurpose: rawData.RoleProfile || "",
+                            JobDescription: rawData.JobDescription || "",
+                            RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+                            RequiredLeveloption: RequiredLevelValues,
+                            MinQualificationOption: rawData.Qualification
+                                ? JSON.parse(rawData.Qualification).map((item: any) => ({
+                                    text: item.MinQualification,
+                                }))
+                                : [],
+                            PrefeQualificationOption: rawData.PreferredQualification
+                                ? JSON.parse(rawData.PreferredQualification).map(
+                                    (item: any) => ({
+                                        text: item.PrefeQualification,
+                                    })
+                                )
+                                : [],
+                            TotalExperience: rawData.YearofExperience || "",
+                            ExperienceinMiningIndustry: rawData.PreferredExperience || "",
+                            TechnicalSkillsOption: rawData.TechnicalSkillsKnowledgeJson
+                                ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
+                                    (item: any) => ({
+                                        text: item.RoleSpeKnowledge,
+                                    })
+                                )
+                                : [],
+                            LevelProficiencyOption: rawData.TechnicalSkillsKnowledgeJson
+                                ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
+                                    (item: any) => ({
+                                        text: item.RequiredLevel,
+                                    })
+                                )
+                                : [],
+                            addMasterQualification: "",
+                            YearofExperience: rawData.YearofExperience || "",
+                            PreferredExperience: rawData.PreferredExperience || "",
+                            ValidFrom: undefined,
+                            ValidTo: undefined,
+                            TotalExperienceOption: [],
+                            ExperienceinMiningIndustryOption: [],
+                            JobFunctionalType: { key: 0, text: "" },
+                            JobFunctionalTypeOption: []
+                        };
 
-                    if (response.status === 200) {
-                        const data = response.data;
-                        if (data && data.length > 0) {
-                            const rawData = data[0];
-                            const roleSpecificKnowledge = rawData.RoleSpecificKnowledgeJson
-                                ? JSON.parse(rawData.RoleSpecificKnowledgeJson)
-                                : [];
-
-                            const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
-                                (item: any) => item.RoleSpeKnowledge
-                            );
-                            const RequiredLevelValues = roleSpecificKnowledge.map(
-                                (item: any) => item.RequiredLevel
-                            );
-                            const mappedData: AdvDetails = {
-                                RolePurpose: rawData.RoleProfile || "",
-                                JobDescription: rawData.JobDescription || "",
-                                RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
-                                RequiredLeveloption: RequiredLevelValues,
-                                MinQualificationOption: rawData.Qualification
-                                    ? JSON.parse(rawData.Qualification).map((item: any) => ({
-                                        text: item.MinQualification,
-                                    }))
-                                    : [],
-                                PrefeQualificationOption: rawData.PreferredQualification
-                                    ? JSON.parse(rawData.PreferredQualification).map(
-                                        (item: any) => ({
-                                            text: item.PrefeQualification,
-                                        })
-                                    )
-                                    : [],
-                                TotalExperience: rawData.YearofExperience || "",
-                                ExperienceinMiningIndustry: rawData.PreferredExperience || "",
-                                TechnicalSkillsOption: rawData.TechnicalSkillsKnowledgeJson
-                                    ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
-                                        (item: any) => ({
-                                            text: item.RoleSpeKnowledge,
-                                        })
-                                    )
-                                    : [],
-                                LevelProficiencyOption: rawData.TechnicalSkillsKnowledgeJson
-                                    ? JSON.parse(rawData.TechnicalSkillsKnowledgeJson).map(
-                                        (item: any) => ({
-                                            text: item.RequiredLevel,
-                                        })
-                                    )
-                                    : [],
-                                addMasterQualification: "",
-                                YearofExperience: rawData.YearofExperience || "",
-                                PreferredExperience: rawData.PreferredExperience || "",
-                                ValidFrom: undefined,
-                                ValidTo: undefined
-                            };
-
-                            setAdvDetails(mappedData);
-                        } else {
-                            console.warn("No data found for the given filter");
-                        }
+                        setAdvDetails(mappedData);
                     } else {
-                        console.error("Error fetching data: ", response.message);
+                        console.warn("No data found for the given filter");
                     }
-                } catch (error) {
-                    console.error("Error fetching data:", error);
+                } else {
+                    console.error("Error fetching data: ", response.message);
                 }
-            };
-            void fetchData();
-        }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        void fetchData();
+        // }
     }, [props.CurrentRoleID, props.stateValue?.StatusId]);
 
     const handleDelete = (index: number, attachmentType: 'AdvertisementAttachement' | 'OnamSignedStampsAttchment' | 'CandidateCVAttachment') => {
@@ -1018,20 +1090,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }))
     };
 
-    const handleInputChange = (
-        value: string | any,
-        StateValue: string
-    ) => {
-        setAdvDetails((prevState) => ({
-            ...prevState,
-            [StateValue]: value
-        }))
-        setValidationError((prevState) => ({
-            ...prevState,
-            [StateValue]: false
-        }))
-    };
-
     const handleDateChange = (value: Date | null, StateValue: string) => {
         setAdvDetails((prevState) => {
             const updatedState = { ...prevState, [StateValue]: value };
@@ -1078,6 +1136,116 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             [StateValue]: false,
         }));
     };
+
+    async function PostAdvertisement() {
+        try {
+
+            let filterConditions = [
+                {
+                    FilterKey: "RecruitmentIDId",
+                    Operator: "eq",
+                    FilterValue: 437,
+                },
+            ];
+            await getVRRDetails.GetDataInList(
+                ListNames.HRMSRecruitmentRoleProfileDetails,
+                filterConditions,
+                "",
+                "*,RecruitmentID/ID,JobDescription,RoleProfile,TotalPreferredExperience/ExperienceInYearRange,PreferredExperience/ExperienceInYearRange,FunctionType/Code",
+                "RecruitmentID,PreferredExperience,TotalPreferredExperience,FunctionType",
+            ).then(async (res) => {
+                console.log(res, "res");
+                const data = res.data[0];
+                const roleSpecificKnowledge = data.RoleSpecificKnowledgeJson
+                    ? JSON.parse(data.RoleSpecificKnowledgeJson)
+                    : [];
+                const technicalSkill = data.TechnicalSkillsKnowledgeJson
+                    ? JSON.parse(data.TechnicalSkillsKnowledgeJson)
+                    : [];
+                let technicalSkillsValues = technicalSkill.map((item: any) => item.TechnicalSkills);
+                let LevelProficiency = technicalSkill.map((item: any) => item.LevelProficiency);
+
+
+                const RoleSpeKnowledgeValues = roleSpecificKnowledge.map((item: any) => item.RoleSpeKnowledge);
+                const RequiredLevelValues = roleSpecificKnowledge.map((item: any) => item.RequiredLevel);
+
+                const roleSpecificSkills: RoleAndTechSkills[] = RoleSpeKnowledgeValues.map((role: any, index: number) => ({
+                    skillId: String(role || ""),
+                    levelId: String(RequiredLevelValues[index] || ""),
+                }));
+
+                const technicalSkills: RoleAndTechSkills[] = technicalSkillsValues.map((tech: any, index: number) => ({
+                    skillId: String(tech || ""),
+                    levelId: String(LevelProficiency[index] || ""),
+                }));
+
+                const Roleandtechnical: RoleAndTechSkills[] = [
+                    ...roleSpecificSkills,
+                    ...technicalSkills,
+                ];
+
+                const minQualifications: MinAndPreferedQualifications[] = data.Qualification
+                    ? JSON.parse(data.Qualification).map((item: any) => ({
+                        qualification: item.MinQualification, // Adjust as needed
+                        type: 0,
+                    }))
+                    : [];
+
+                const preferredQualifications: MinAndPreferedQualifications[] = data.PreferredQualification
+                    ? JSON.parse(data.PreferredQualification).map((item: any) => ({
+                        qualification: item.PrefeQualification, // Adjust as needed
+                        type: 1,
+                    }))
+                    : [];
+
+                // Combine the two arrays into one
+                const MinAndPreferedQualification: MinAndPreferedQualifications[] = [
+                    ...minQualifications,
+                    ...preferredQualifications,
+                ];
+
+                const Description: Descriptions = {
+                    jobTitle: formState.JobNameInEnglish,
+                    jobShortSummary: String(data.RoleProfile || ""),
+                    jobSummary: String(data.JobDescription || ""),
+                };
+
+                const onamdocpathfile = await CommonServices.GetAttachmentLink(formState.JobCode, DocumentLibraray.ONAMSignedStampDocuments);
+
+                const onemdocPath = String(onamdocpathfile.data);
+                const DepartmentCode = props.Department.filter((item: { text: string; }) => item.text === formState.Department)
+                let NationalityValue = formState.Nationality === Nationality.Nationals ? "Congolese" : formState.Nationality;
+                const AdvertisementDetails: AdvertisementDetails = {
+                    jobCode: formState.JobCode,
+                    noOfPositions: String(formState.NoofPositionAssigned),
+                    validFrom: data.ValidFrom,
+                    validTo: data.ValidTo,
+                    employmentType: "Full Time",
+                    departmentId: DepartmentCode[0]?.code || "",
+                    role: null,
+                    functionId: String(data.FunctionType?.Code || ""),
+                    onemdocPath: String(onemdocPath),
+                    experience: String(data.TotalPreferredExperience?.ExperienceInYearRange || ""),
+                    nationality: NationalityValue,
+                    Descriptions_en: Description,
+                    Descriptions_fr: Description,
+                    RoleAndTechSkills: Roleandtechnical,
+                    MinAndPreferedQualifications: MinAndPreferedQualification,
+                };
+
+                console.log(AdvertisementDetails, "AdvertisementDetails");
+                await GetPortalJobsService.UpsertJobs(AdvertisementDetails).then((res) => {
+                    console.log(res, "res");
+                }).catch((error) => {
+                    console.log("Candidate details doesn't fetch the data", error);
+                })
+            }).catch((error) => {
+                console.log("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error)
+            })
+        } catch {
+
+        }
+    }
 
     const tabs = [
         {
@@ -1342,6 +1510,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                                 {props.stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
                                     <>
+                                        {console.log(formState.AdvertisementDocument, "formState.AdvertisementDocument")
+                                        }
                                         <div className="ms-Grid-col ms-lg3">
                                             <CustomLabel value={"Advertisement Documents"} />
                                             <CustomViewDocument Attachment={formState.AdvertisementDocument} />
@@ -1647,27 +1817,47 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         </div>
                                     </div>
                                     <div className="ms-Grid-row">
+                                        <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
+                                            <CustomAutoComplete
+                                                label="Job Functional Type"
+                                                options={advDetails.JobFunctionalTypeOption}
+                                                value={advDetails.JobFunctionalType}
+                                                disabled={false}
+                                                mandatory={true}
+                                                onChange={(item) =>
+                                                    handleAutoComplete(item, "JobFunctionalType")
+                                                }
+                                                error={validationErrors.JobFunctionalType}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="ms-Grid-row">
                                         <div className="ms-Grid-col ms-lg10">
                                             <div className="ms-Grid-row">
                                                 <div className="ms-Grid-col ms-lg5">
-                                                    <CustomInput
-                                                        label="Total Experience"
+                                                    <CustomAutoComplete
+                                                        label="Preferred Total Experience"
+                                                        options={advDetails.TotalExperienceOption}
                                                         value={advDetails.TotalExperience}
                                                         disabled={false}
-                                                        error={validationErrors.TotalExperience}
                                                         mandatory={true}
-                                                        onChange={(value) => handleInputChange(value, "TotalExperience")}
+                                                        onChange={(item) =>
+                                                            handleAutoComplete(item, "TotalExperience")
+                                                        }
+                                                        error={validationErrors.TotalExperience}
                                                     />
                                                 </div>
                                                 <div className="ms-Grid-col ms-lg5">
-                                                    <CustomInput
-                                                        label="Experience in Mining Industry (Years)"
+                                                    <CustomAutoComplete
+                                                        label="Preferred Experience in Mining Industry (Years)"
+                                                        options={advDetails.ExperienceinMiningIndustryOption}
                                                         value={advDetails.ExperienceinMiningIndustry}
                                                         disabled={false}
-                                                        error={validationErrors.ExperienceinMiningIndustry}
                                                         mandatory={true}
-                                                        onChange={(value) => handleInputChange(value, "ExperienceinMiningIndustry")}
-
+                                                        onChange={(item) =>
+                                                            handleAutoComplete(item, "ExperienceinMiningIndustry")
+                                                        }
+                                                        error={validationErrors.ExperienceinMiningIndustry}
                                                     />
                                                 </div>
                                                 <div className="ms-Grid-col ms-lg2" style={{ textAlign: "right", marginTop: "45px" }}>
