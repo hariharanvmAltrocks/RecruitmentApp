@@ -10,7 +10,7 @@ import { Button } from "primereact/button";
 import BreadcrumbsComponent, {
   type TabNameData,
 } from "../../components/CustomBreadcrumps";
-import { AssignPositionDialog } from "./AssignPositionDialog";
+// import { AssignPositionDialog } from "./AssignPositionDialog";
 
 const CandidateList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
@@ -18,8 +18,8 @@ const CandidateList = (props: any) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
-  const [showAssignModal, setShowAssignModal] = React.useState(false);
-  const [selectedCandidate, setSelectedCandidate] = React.useState(null);
+  // const [showAssignModal, setShowAssignModal] = React.useState(false);
+  // const [selectedCandidate, setSelectedCandidate] = React.useState(null);
   const jobCode = props?.stateValue?.JobCode?.toString().trim();
   const Status = props?.stateValue?.Status;
 
@@ -78,9 +78,10 @@ const CandidateList = (props: any) => {
           >
             {ButtonAction === "view" ? (
               <Button
-                onClick={() =>
-                  handleRedirectView(rowData, tab, TabName, ButtonAction)
-                }
+                onClick={() => {
+                  console.log("rowData1", rowData);
+                  handleRedirectView(rowData, tab, TabName, ButtonAction);
+                }}
                 className="table_btn"
                 icon="pi pi-eye"
                 style={{
@@ -94,7 +95,7 @@ const CandidateList = (props: any) => {
                 <Button
                   onClick={() => {
                     console.log(rowData.RequirementID);
-                    console.log("rowData", rowData);
+                    console.log("rowData2", rowData);
                     handleRedirectView(rowData, tab, TabName, ButtonAction);
                   }}
                   className="table_btn"
@@ -117,10 +118,10 @@ const CandidateList = (props: any) => {
                     }}
                   />
                 </Button>
-                <Button
+                {/* <Button
                   onClick={() => {
                     console.log(rowData.RequirementID);
-                    console.log("rowData", rowData);
+                    console.log("rowData3", rowData);
                     setSelectedCandidate(rowData);
                     setShowAssignModal(true);
                   }}
@@ -142,7 +143,7 @@ const CandidateList = (props: any) => {
                       height: "100%",
                     }}
                   />
-                </Button>
+                </Button> */}
               </>
             )}
           </div>
@@ -256,12 +257,12 @@ const CandidateList = (props: any) => {
     }
   }, [activeTab, tabs, props.stateValue, TabNameData]);
 
-  const handleAssignPosition = (data: {
-    positionId: string;
-    justification: string;
-  }) => {
-    setShowAssignModal(false);
-  };
+  // const handleAssignPosition = (data: {
+  //   positionId: string;
+  //   justification: string;
+  // }) => {
+  //   setShowAssignModal(false);
+  // };
 
   return (
     <CustomLoader isLoading={isLoading}>
@@ -273,12 +274,12 @@ const CandidateList = (props: any) => {
           onBreadcrumbChange={handleBreadcrumbChange}
         />
       </div>
-      <AssignPositionDialog
+      {/* <AssignPositionDialog
         visible={showAssignModal}
         onHide={() => setShowAssignModal(false)}
         candidateData={selectedCandidate}
         onAssign={handleAssignPosition}
-      />
+      /> */}
     </CustomLoader>
   );
 };

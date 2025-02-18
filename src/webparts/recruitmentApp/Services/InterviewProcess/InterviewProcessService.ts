@@ -437,264 +437,23 @@ export default class InterviewProcessService
     }
   }
 
-  // async GetCombinedCandidatePositionDetails(
-  //   filterParam: any,
-  //   filterConditions: any
-  // ) {
-  //   try {
-  //     // Step 1: Fetching Candidate Details
-  //     const CandidateDetails: CandidateData[] = [];
-  //     const candidateItems: any[] = await SPServices.SPReadItems({
-  //       Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-  //       Select:
-  //         "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID",
-  //       Expand: "JobCode,AssignByInterviewPanel,RecruitmentID",
-  //       Filter: filterParam,
-  //       FilterCondition: filterConditions,
-  //       Topcount: count.Topcount,
-  //     });
-
-  //     // Step 2: Fetching Position Details
-  //     const positionItems: any[] = await SPServices.SPReadItems({
-  //       Listname: ListNames.HRMSRecruitmentPositionDetails,
-  //       Select:
-  //         "JobTitleEnglish/JobTitleInEnglish,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade,RecruitmentID/ID,PositionID/PositionID,AssignLineManager/EMail,JobTitleFrench/JobTitleInFrench,AssignHOD/EMail",
-  //       Expand:
-  //         "JobTitleEnglish,PatersonGrade,DRCGrade,RecruitmentID,PositionID,AssignLineManager,JobTitleFrench,AssignHOD",
-  //       Filter: filterParam,
-  //       FilterCondition: filterConditions,
-  //       Topcount: count.Topcount,
-  //     });
-  //     console.log("positionItems", positionItems);
-  //     // Step 3: Combining Candidate and Position Data
-  //     const formattedItems = await Promise.all(
-  //       candidateItems.map(async (item) => {
-  //         // Fetching attachments (CV) for candidate
-  //         const response = await CommonServices.GetAttachmentToLibrary(
-  //           DocumentLibraray.InterviewPanelCandidateCV,
-  //           item.JobCode?.JobCode,
-  //           item?.PassportID
-  //         );
-  //         let candidateCV: IDocFiles[] = [];
-  //         if (response.status === 200 && response.data) {
-  //           candidateCV = response.data;
-  //         } else {
-  //           console.error("Error retrieving attachments:", response.message);
-  //         }
-
-  //         // Fetching position data for the candidate
-  //         const positionData = positionItems.find(
-  //           (position) =>
-  //             position?.RecruitmentID?.ID === item?.RecruitmentID?.ID
-  //         );
-
-  //         // Returning the combined data with missing properties
-  //         return {
-  //           ID: item.ID,
-  //           RecruitmentID: item?.RecruitmentID?.ID,
-  //           JobCode: item?.JobCode?.JobCode,
-  //           JobCodeId: item?.JobCodeId,
-  //           PassportID: item?.PassportID,
-  //           FristName: item?.FristName,
-  //           MiddleName: item?.MiddleName,
-  //           LastName: item?.LastName,
-  //           FullName:
-  //             (item?.FristName ?? "") +
-  //             " " +
-  //             (item?.MiddleName ?? "") +
-  //             " " +
-  //             (item?.LastName ?? ""),
-  //           ResidentialAddress: item?.ResidentialAddress,
-  //           DOB: item?.DOB,
-  //           ContactNumber: item?.ContactNumber,
-  //           Email: item?.Email,
-  //           Nationality: item?.Nationality,
-  //           Gender: item?.Gender,
-  //           TotalYearOfExperiance: item?.TotalYearOfExperiance,
-  //           Skills: item?.Skills,
-  //           LanguageKnown: item?.LanguageKnown,
-  //           ReleventExperience: item?.ReleventExperience,
-  //           Qualification: item?.Qualification,
-  //           RecuritmentHR: item?.RecuritmentHR,
-  //           AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
-  //           CandidateCVDoc: candidateCV,
-  //           PositionTitle:
-  //             positionData?.JobTitleEnglish?.JobTitleInEnglish || "",
-  //           JobGrade: positionData?.PatersonGrade?.PatersonGrade || "",
-  //           DRCGrade: positionData?.DRCGrade?.DRCGrade || "",
-  //           JobTitleFrench:
-  //             positionData?.JobTitleFrench?.JobTitleInFrench || "",
-  //           AssignLineManagerEmail:
-  //             positionData?.AssignLineManager?.EMail || "",
-  //           AssignHODEmail: positionData?.AssignHOD?.EMail || "",
-  //           PositionID: positionData?.PositionID?.ID || "",
-  //           RoleProfileDocument: [], // Default empty array or fetch if necessary
-  //           AdvertisementDocument: [], // Default empty array or fetch if necessary
-  //           ShortlistedValue: "", // Adjust according to your logic, default value or fetch if needed
-  //         };
-  //       })
-  //     );
-
-  //     CandidateDetails.push(...formattedItems);
-  //     console.log("CandidateDetails", CandidateDetails);
-  //     return {
-  //       data: CandidateDetails,
-  //       status: 200,
-  //       message: "Combined Candidate and Position Details fetched successfully",
-  //     };
-  //   } catch (error) {
-  //     console.error("Error fetching combined data:", error);
-  //     return {
-  //       data: [],
-  //       status: 500,
-  //       message:
-  //         "Error fetching combined data from Candidate and Position Details",
-  //     };
-  //   }
-  // }
-
-  // async GetCombinedCandidatePositionDetails(
-  //   filterParam: any,
-  //   filterConditions: any
-  // ) {
-  //   try {
-  //     // Step 1: Fetching Candidate Details
-  //     const CandidateDetails: CandidateData[] = [];
-  //     const candidateItems: any[] = await SPServices.SPReadItems({
-  //       Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-  //       Select:
-  //         "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID",
-  //       Expand: "JobCode,AssignByInterviewPanel,RecruitmentID",
-  //       Filter: filterParam,
-  //       FilterCondition: filterConditions,
-  //       Topcount: count.Topcount,
-  //     });
-
-  //     // Step 2: Fetching Position Details
-  //     const positionItems: any[] = await SPServices.SPReadItems({
-  //       Listname: ListNames.HRMSRecruitmentPositionDetails,
-  //       Select:
-  //         "JobTitleEnglish/JobTitleInEnglish,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade,RecruitmentID/ID,PositionID/PositionID,AssignLineManager/EMail,JobTitleFrench/JobTitleInFrench,AssignHOD/EMail",
-  //       Expand:
-  //         "JobTitleEnglish,PatersonGrade,DRCGrade,RecruitmentID,PositionID,AssignLineManager,JobTitleFrench,AssignHOD",
-  //       Filter: filterParam,
-  //       FilterCondition: filterConditions,
-  //       Topcount: count.Topcount,
-  //     });
-  //     console.log("positionItems", positionItems);
-
-  //     const positionsByRecruitment = positionItems.reduce(
-  //       (acc: any, position) => {
-  //         const recruitmentID = position?.RecruitmentID?.ID;
-  //         if (!acc[recruitmentID]) {
-  //           acc[recruitmentID] = [];
-  //         }
-  //         // Push only PositionID to the recruitment group
-  //         acc[recruitmentID].push(position?.PositionID?.PositionID);
-  //         return acc;
-  //       },
-  //       {}
-  //     );
-
-  //     console.log("positionsByRecruitment", positionsByRecruitment);
-
-  //     // Step 3: Combining Candidate and Position Data
-  //     const formattedItems = await Promise.all(
-  //       candidateItems.map(async (item) => {
-  //         // Fetching attachments (CV) for candidate
-  //         const response = await CommonServices.GetAttachmentToLibrary(
-  //           DocumentLibraray.InterviewPanelCandidateCV,
-  //           item.JobCode?.JobCode,
-  //           item?.PassportID
-  //         );
-  //         let candidateCV: IDocFiles[] = [];
-  //         if (response.status === 200 && response.data) {
-  //           candidateCV = response.data;
-  //         } else {
-  //           console.error("Error retrieving attachments:", response.message);
-  //         }
-
-  //         // Fetching PositionID using the RecruitmentID from positionsByRecruitment
-  //         const positionIDs =
-  //           positionsByRecruitment[item?.RecruitmentID?.ID] || [];
-  //         console.log("Position IDs for this candidate:", positionIDs);
-
-  //         // Returning the combined data with missing properties
-  //         return {
-  //           ID: item.ID,
-  //           RecruitmentID: item?.RecruitmentID?.ID,
-  //           JobCode: item?.JobCode?.JobCode,
-  //           JobCodeId: item?.JobCodeId,
-  //           PassportID: item?.PassportID,
-  //           FristName: item?.FristName,
-  //           MiddleName: item?.MiddleName,
-  //           LastName: item?.LastName,
-  //           FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${
-  //             item?.LastName ?? ""
-  //           }`,
-  //           ResidentialAddress: item?.ResidentialAddress,
-  //           DOB: item?.DOB,
-  //           ContactNumber: item?.ContactNumber,
-  //           Email: item?.Email,
-  //           Nationality: item?.Nationality,
-  //           Gender: item?.Gender,
-  //           TotalYearOfExperiance: item?.TotalYearOfExperiance,
-  //           Skills: item?.Skills,
-  //           LanguageKnown: item?.LanguageKnown,
-  //           ReleventExperience: item?.ReleventExperience,
-  //           Qualification: item?.Qualification,
-  //           RecuritmentHR: item?.RecuritmentHR,
-  //           AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
-  //           CandidateCVDoc: candidateCV,
-  //           PositionIDs: positionIDs, // Here, positionIDs are mapped to the candidate
-  //           RoleProfileDocument: [], // Default empty array or fetch if necessary
-  //           AdvertisementDocument: [], // Default empty array or fetch if necessary
-  //           ShortlistedValue: "",
-
-  //           PositionTitle: item.PositionTitle,
-  //           JobGrade: item.JobGrade,
-  //           // // Adjust according to your logic, default value or fetch if needed
-  //         };
-  //       })
-  //     );
-
-  //     CandidateDetails.push(...formattedItems);
-  //     console.log("CandidateDetails", CandidateDetails);
-
-  //     return {
-  //       data: CandidateDetails,
-  //       status: 200,
-  //       message: "Combined Candidate and Position Details fetched successfully",
-  //     };
-  //   } catch (error) {
-  //     console.error("Error fetching combined data:", error);
-  //     return {
-  //       data: [],
-  //       status: 500,
-  //       message:
-  //         "Error fetching combined data from Candidate and Position Details",
-  //     };
-  //   }
-  // }
-
   async GetCombinedCandidatePositionDetails(
     filterParam: any,
     filterConditions: any
   ) {
     try {
-      // Step 1: Fetch Candidate Details
       const CandidateDetails: CandidateData[] = [];
       const candidateItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Select:
-          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID",
-        Expand: "JobCode,AssignByInterviewPanel,RecruitmentID",
+          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName",
+        Expand:
+          "JobCode,AssignByInterviewPanel,RecruitmentID,ExternalAgentDetails",
         Filter: filterParam,
         FilterCondition: filterConditions,
         Topcount: count.Topcount,
       });
 
-      // Step 2: Fetch Position Details
       const positionItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentPositionDetails,
         Select:
@@ -706,7 +465,6 @@ export default class InterviewProcessService
         Topcount: count.Topcount,
       });
 
-      // Step 3: Group Position Items by RecruitmentID
       const positionsByRecruitment = positionItems.reduce(
         (acc: any, position) => {
           const recruitmentID = position?.RecruitmentID?.ID;
@@ -719,10 +477,8 @@ export default class InterviewProcessService
         {}
       );
 
-      // Step 4: Combine Candidate and Position Data
       const formattedItems = await Promise.all(
         candidateItems.map(async (item) => {
-          // Fetching attachments (CV) for candidate
           const response = await CommonServices.GetAttachmentToLibrary(
             DocumentLibraray.InterviewPanelCandidateCV,
             item.JobCode?.JobCode,
@@ -735,11 +491,9 @@ export default class InterviewProcessService
             console.error("Error retrieving attachments:", response.message);
           }
 
-          // Fetching position data for the candidate (Ensure it's an array)
           const positionData =
             positionsByRecruitment[item?.RecruitmentID?.ID] || [];
 
-          // Returning the combined data with missing properties
           return {
             ID: item.ID,
             RecruitmentID: item?.RecruitmentID?.ID,
@@ -769,30 +523,6 @@ export default class InterviewProcessService
             RecuritmentHR: item?.RecuritmentHR,
             AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
             CandidateCVDoc: candidateCV,
-            // PositionData: positionData.map(
-            //   (position: {
-            //     PositionID: { PositionID: any };
-            //     JobTitleEnglish: { JobTitleInEnglish: any };
-            //     PatersonGrade: { PatersonGrade: any };
-            //     DRCGrade: { DRCGrade: any };
-            //     JobTitleFrench: { JobTitleInFrench: any };
-            //     AssignLineManager: { EMail: any };
-            //     AssignHOD: { EMail: any };
-            //     RecruitmentID: { RecruitmentID: any };
-            //   }) => ({
-            //     PositionID: position?.PositionID?.PositionID || "",
-            //     RecruitmentID: position?.RecruitmentID?.RecruitmentID?.ID || "",
-            //     PositionTitles:
-            //       position?.JobTitleEnglish?.JobTitleInEnglish || "",
-            //     JobGrade: position?.PatersonGrade?.PatersonGrade || "",
-            //     DRCGrade: position?.DRCGrade?.DRCGrade || "",
-            //     JobTitleFrench:
-            //       position?.JobTitleFrench?.JobTitleInFrench || "",
-            //     AssignLineManagerEmail:
-            //       position?.AssignLineManager?.EMail || "",
-            //     AssignHODEmail: position?.AssignHOD?.EMail || "",
-            //   })
-            // ),
             PositionData: positionData.map(
               (position: {
                 PositionID: { PositionID: any };
@@ -802,10 +532,10 @@ export default class InterviewProcessService
                 JobTitleFrench: { JobTitleInFrench: any };
                 AssignLineManager: { EMail: any };
                 AssignHOD: { EMail: any };
-                RecruitmentID: { ID: any }; // Ensure correct structure
+                RecruitmentID: { ID: any };
               }) => ({
                 PositionID: position?.PositionID?.PositionID || "",
-                RecruitmentID: position?.RecruitmentID?.ID || "", // Corrected access
+                RecruitmentID: position?.RecruitmentID?.ID || "",
                 PositionTitles:
                   position?.JobTitleEnglish?.JobTitleInEnglish || "",
                 JobGrade: position?.PatersonGrade?.PatersonGrade || "",
@@ -817,22 +547,26 @@ export default class InterviewProcessService
                 AssignHODEmail: position?.AssignHOD?.EMail || "",
               })
             ),
-
             RoleProfileDocument: [],
             AdvertisementDocument: [],
             ShortlistedValue: "",
             PositionTitle: item.PositionTitle,
             JobGrade: item.JobGrade,
+            ExternalAgentDetails: item?.ExternalAgentDetails
+              ? {
+                  AgentName: item?.ExternalAgentDetails?.AgentName,
+                }
+              : null,
           };
         })
       );
 
       CandidateDetails.push(...formattedItems);
-      console.log("CandidateDetails", CandidateDetails);
       return {
         data: CandidateDetails,
         status: 200,
-        message: "Combined Candidate and Position Details fetched successfully",
+        message:
+          "Combined Candidate, Position, and External Agent Details fetched successfully",
       };
     } catch (error) {
       console.error("Error fetching combined data:", error);
@@ -840,7 +574,7 @@ export default class InterviewProcessService
         data: [],
         status: 500,
         message:
-          "Error fetching combined data from Candidate and Position Details",
+          "Error fetching combined data from Candidate, Position, and External Agent Details",
       };
     }
   }

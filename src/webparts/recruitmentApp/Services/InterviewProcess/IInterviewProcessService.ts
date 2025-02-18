@@ -1,16 +1,4 @@
 import { InterviewPanaldata } from "../../Models/Screens";
-
-// export type CommentsDatas = {
-//   Id: number | null;
-//   Name: string;
-//   JobTitleInEnglish: string;
-//   JobTitleInFrench: string;
-//   comments: string;
-//   Department: string;
-//   Date: Date | null;
-//   JobTitle: string;
-//   Role: any;
-// };
 export interface CommentsDatas {
   Id: string;
   JobTitleInEnglish: string;

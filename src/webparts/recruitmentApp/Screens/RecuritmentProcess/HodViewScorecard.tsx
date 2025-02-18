@@ -33,7 +33,7 @@ import CustomLabel from "../../components/CustomLabel";
 import { PrimaryButton } from "office-ui-fabric-react";
 import CommentView from "./CommentView";
 import { CommentsDatas } from "../../Services/InterviewProcess/IInterviewProcessService";
-
+import "../../App.css";
 const HodViewScorecard = (props: any) => {
   const todaydate = new Date();
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
@@ -104,6 +104,7 @@ const HodViewScorecard = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
+  const [agentName, setIagentName] = React.useState<"">("");
   const [InterviewPanelData, setInterviewPanelData] = React.useState<
     InterviewPanaldata[]
   >([
@@ -248,21 +249,31 @@ const HodViewScorecard = (props: any) => {
             FilterValue: candidateID,
           },
         ];
+
         const scoreResponse = await InterviewServices.HRMSCandidateScoreCard(
           "",
           filterConditions,
           candidateID
         );
+
+        const response =
+          await InterviewServices.GetCombinedCandidatePositionDetails(
+            " ",
+            filterConditions
+          );
+
         if (scoreResponse?.status === 200 && scoreResponse?.data?.length) {
           const candidateData = scoreResponse.data.filter(
             (candidate: any) => candidate.CandidateID === candidateID
           );
+
           const filteredScores = candidateData.flatMap(
             (candidate: any) =>
               candidate.CandidateScoreCard?.filter(
                 (score: any) => candidate.ID === score.InterviewPanelID
               ) || []
           );
+
           if (candidateData.length > 0) {
             const panelTitles = candidateData.map(
               (panel: any) => panel.InterviewPanelTitle
@@ -277,6 +288,17 @@ const HodViewScorecard = (props: any) => {
         } else {
           setScoreData([]);
           setInterviewPanelTitles([]);
+        }
+        if (response?.status === 200 && response?.data) {
+          response.data.forEach((candidate: any) => {
+            const agentNames = candidate?.ExternalAgentDetails?.AgentName;
+
+            if (agentNames && candidate?.ID === candidateID) {
+              setIagentName(agentNames);
+            } else if (!agentNames) {
+              console.log("No External Agent Name Found");
+            }
+          });
         }
       } catch (error) {
         console.error("Error fetching candidate data:", error);
@@ -460,7 +482,6 @@ const HodViewScorecard = (props: any) => {
         (candidate: any) => candidate.CandidateID === candidateID
       );
       setCommentsData(candidateData);
-      console.log("Comments", candidateData);
     } else {
       console.warn("No comments found for RecruitmentID:", recruitmentID);
       setCommentsData([]);
@@ -661,7 +682,7 @@ const HodViewScorecard = (props: any) => {
               <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
                 <LabelHeaderComponents value={"Attachments"} />
               </div>
-              <div className="ms-Grid-row">
+              {/* <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomViewDocument
                     Attachment={CandidateData.RoleProfileDocument}
@@ -680,6 +701,26 @@ const HodViewScorecard = (props: any) => {
                     Label={"Candidate Resume"}
                   />
                 </div>
+              </div> */}
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"RoleProfile Documents"} />
+                  <CustomViewDocument
+                    Attachment={CandidateData.RoleProfileDocument}
+                  />
+                </div>
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"Advertisement Documents"} />
+                  <CustomViewDocument
+                    Attachment={CandidateData.AdvertisementDocument}
+                  />
+                </div>
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"Candidate Resume"} />
+                  <CustomViewDocument
+                    Attachment={CandidateData.CandidateCVDoc}
+                  />
+                </div>
               </div>
             </div>
           </CardContent>
@@ -690,119 +731,144 @@ const HodViewScorecard = (props: any) => {
       label: TabName.Scorecard,
       value: "tab2",
       content: (
-        <Card
-          variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+        <div
+          style={{
+            fontFamily:
+              "Segoe UI, Segoe UI Web (West European), Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif",
+          }}
         >
-          <CardContent>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: "20px",
-              }}
-            >
-              <h2 style={{ color: "#EF3340" }}>Scorecard Details</h2>
+          <Card
+            variant="outlined"
+            sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+          >
+            <CardContent>
               <div
                 style={{
-                  backgroundColor: "white",
-                  padding: "10px 20px",
-                  borderRadius: "4px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  // marginBottom: "20px",
+                  marginBottom: "12px",
                 }}
               >
-                <span style={{ color: "#EF3340" }}>
-                  Profile from XYZ Agencies
-                </span>
-              </div>
-            </div>
-
-            <div
-              style={{
-                backgroundColor: "#f8f8f8",
-                padding: "15px",
-                marginBottom: "20px",
-              }}
-            >
-              <span style={{ marginRight: "20px" }}>
-                Interview Panel member: {scoreData.length}
-              </span>
-              {interviewPanelTitles.map((interviewer, index) => (
-                <span key={index} style={{ marginRight: "20px" }}>
-                  Interviewer {index + 1} - {interviewer}
-                </span>
-              ))}
-            </div>
-
-            <div style={{ overflowX: "auto" }}>
-              <DataTable value={transformedData} responsiveLayout="scroll">
-                <Column field="criteria" header="Criteria" />
-                {Array.from({ length: interviewerCount }).map((_, index) => (
-                  <Column
-                    key={index}
-                    field={`interviewer_${index + 1}`}
-                    header={`Interviewer ${index + 1}`}
-                  />
-                ))}
-              </DataTable>
-            </div>
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg12">
+                <h2 style={{ color: "#EF3340", fontSize: "18px" }}>
+                  Scorecard Details
+                </h2>
                 <div
-                  className="ms-Grid-col ms-lg4"
-                  style={{ marginLeft: "-5px" }}
+                  style={{
+                    backgroundColor: "white",
+                    padding: "10px 20px",
+                    borderRadius: "7px",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  }}
                 >
-                  <CustomLabel value={" View Justifications"} />
-                  <PrimaryButton
+                  <span
                     style={{
-                      borderColor: "rgb(205, 45, 45)",
-                      backgroundColor: "#EF3340",
-                      color: "white",
-                      borderRadius: "10px",
+                      position: "relative",
+                      color: "#EF3340",
+                      fontSize: "16px",
+                      fontWeight: 600,
+                      top: "7px",
                     }}
-                    onClick={OpenComments}
                   >
-                    {" "}
-                    View
-                  </PrimaryButton>
+                    {`Profile from ${agentName} Agencies`}
+                  </span>
                 </div>
               </div>
-            </div>
-            <CustomTextArea
-              label="HOD Feedback"
-              value={justification}
-              onChange={setJustification}
-              error={isError}
-              placeholder="Enter justification"
-              mandatory={true}
-            />
-            <div className="ms-Grid-col ms-lg12">
-              <SignatureCheckbox
-                label={"I hereby agree for submitted this request"}
-                checked={Checkboxs}
-                error={false}
-                onChange={(value: boolean) => setCheckbox(value)}
+
+              <div
+                style={{
+                  // backgroundColor: "#f8f8f8",
+                  padding: "15px",
+                  marginBottom: "0px",
+                  fontSize: "14px",
+                  color: "-moz-initial",
+                  fontWeight: "600",
+                }}
+              >
+                <span style={{ marginRight: "20px" }}>
+                  Interview Panel member: {interviewPanelTitles.length}
+                </span>
+                {interviewPanelTitles.map((interviewer, index) => (
+                  <span key={index} style={{ marginRight: "20px" }}>
+                    Interviewer {index + 1} - {interviewer}
+                  </span>
+                ))}
+              </div>
+
+              <div style={{ overflowX: "auto" }}>
+                <DataTable
+                  value={transformedData}
+                  responsiveLayout="scroll"
+                  stripedRows
+                >
+                  <Column field="criteria" header="Criteria" />
+                  {Array.from({ length: interviewerCount }).map((_, index) => (
+                    <Column
+                      key={index}
+                      field={`interviewer_${index + 1}`}
+                      header={`Interviewer ${index + 1}`}
+                    />
+                  ))}
+                </DataTable>
+              </div>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg12">
+                  <div
+                    className="ms-Grid-col ms-lg4"
+                    style={{ marginLeft: "-5px" }}
+                  >
+                    <CustomLabel value={" View Justifications"} />
+                    <PrimaryButton
+                      style={{
+                        borderColor: "rgb(205, 45, 45)",
+                        backgroundColor: "#EF3340",
+                        color: "white",
+                        borderRadius: "10px",
+                      }}
+                      onClick={OpenComments}
+                    >
+                      {" "}
+                      View
+                    </PrimaryButton>
+                  </div>
+                </div>
+              </div>
+              <CustomTextArea
+                label="HOD Feedback"
+                value={justification}
+                onChange={setJustification}
+                error={isError}
+                placeholder="Enter justification"
+                mandatory={true}
               />
-            </div>
-            <div className="ms-Grid-row">
               <div className="ms-Grid-col ms-lg12">
-                <CustomSignature
-                  Name={
-                    (props.userDetails[0].FirstName ?? "") +
-                    " " +
-                    (props.userDetails[0]?.MiddleName ?? "") +
-                    " " +
-                    (props.userDetails[0]?.LastName ?? "")
-                  }
-                  JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
-                  JobTitleInFrench={props.userDetails[0].JopTitleFrench}
-                  Department={props.userDetails[0].DepartmentName}
-                  Date={CandidateData.SignDate.toString()}
-                  TermsAndCondition={Checkboxs}
+                <SignatureCheckbox
+                  label={"I hereby agree for submitted this request"}
+                  checked={Checkboxs}
+                  error={false}
+                  onChange={(value: boolean) => setCheckbox(value)}
                 />
               </div>
-            </div>
-          </CardContent>
-          {/* {Checkboxs && (
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg12">
+                  <CustomSignature
+                    Name={
+                      (props.userDetails[0].FirstName ?? "") +
+                      " " +
+                      (props.userDetails[0]?.MiddleName ?? "") +
+                      " " +
+                      (props.userDetails[0]?.LastName ?? "")
+                    }
+                    JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
+                    JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                    Department={props.userDetails[0].DepartmentName}
+                    Date={CandidateData.SignDate.toString()}
+                    TermsAndCondition={Checkboxs}
+                  />
+                </div>
+              </div>
+            </CardContent>
+            {/* {Checkboxs && (
               <div
                 style={{
                   padding: "1rem",
@@ -848,7 +914,8 @@ const HodViewScorecard = (props: any) => {
                 </Button>
               </div>
             )} */}
-        </Card>
+          </Card>
+        </div>
       ),
     },
   ];
@@ -916,7 +983,6 @@ const HodViewScorecard = (props: any) => {
 
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
-    console.log("", newItem);
   };
 
   return (

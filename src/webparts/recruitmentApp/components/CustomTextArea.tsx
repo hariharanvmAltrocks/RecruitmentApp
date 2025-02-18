@@ -34,13 +34,26 @@ function CustomTextArea({
       <Textarea
         value={value}
         placeholder={placeholder}
+        // style={{
+        //   color: "#808080",
+        //   borderRadius: "5px",
+        //   borderWidth: "1px",
+        //   marginLeft: "0rem",
+        //   width: "100%",
+        //   border: "groove",
+        // }}
         style={{
-          color: "#808080",
+          //color: "#808080",
+          color: value ? "#000000" : "#808080",
           borderRadius: "5px",
           borderWidth: "1px",
           marginLeft: "0rem",
           width: "100%",
           border: "groove",
+          fontSize: value ? "13px" : "11px",
+          // paddingTop: value ? "" : "7px",
+          // paddingLeft: value ? "" : "11px",
+          fontFamily: "sans-serif",
         }}
         onChange={
           onChange ? (event, value) => onChange(value?.value || "") : undefined

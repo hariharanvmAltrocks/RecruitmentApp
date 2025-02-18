@@ -235,47 +235,6 @@ export const AssignPositionDialog = ({
             mandatory={true}
           />
         </DialogContent>
-
-        {/* <DialogActions
-          sx={{
-            p: 3,
-            pt: 0,
-            display: "flex",
-            justifyContent: "center",
-            fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-          }}
-        >
-          <Button
-            onClick={onHide}
-            variant="outlined"
-            sx={{
-              borderColor: "#EF3340",
-              color: "#EF3340",
-              textTransform: "capitalize",
-              "&:hover": {
-                borderColor: "#EF3340",
-                backgroundColor: "rgba(239, 51, 64, 0.04)",
-              },
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{
-              bgcolor: "#EF3340",
-              ml: 2,
-              textTransform: "capitalize", // Ensure first letter is capitalized
-              "&:hover": {
-                bgcolor: "#d91a2a",
-              },
-            }}
-          >
-            Assign
-          </Button>
-        </DialogActions> */}
-
         <DialogActions
           sx={{
             p: 3,
@@ -291,11 +250,13 @@ export const AssignPositionDialog = ({
             sx={{
               borderColor: "#EF3340",
               color: "#EF3340",
+              backgroundColor: "white",
               textTransform: "capitalize",
               mr: 2.5,
               "&:hover": {
                 borderColor: "#EF3340",
-                backgroundColor: "rgba(239, 51, 64, 0.1)",
+                backgroundColor: "#EF3340",
+                color: "#FFFFFF",
               },
             }}
           >
@@ -304,12 +265,17 @@ export const AssignPositionDialog = ({
 
           <Button
             type="submit"
-            variant="contained"
+            variant="outlined"
             sx={{
-              bgcolor: "#EF3340",
+              borderColor: "#EF3340",
+              color: "#EF3340",
+              backgroundColor: "white",
               textTransform: "capitalize",
+              mr: 2.5,
               "&:hover": {
-                bgcolor: "#d91a2a",
+                borderColor: "#EF3340",
+                backgroundColor: "#EF3340",
+                color: "#FFFFFF",
               },
             }}
           >
