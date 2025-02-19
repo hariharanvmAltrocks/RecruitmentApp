@@ -1,7 +1,8 @@
 import { AdvertisementDetails, CandidateProfile, GetProfileByFilter, GetProfileByJobCode, profileJobsComments, WorkflowJson } from "../../Models/ApIInterface";
-import { DocumentLibraray, RoleProfileMaster } from "../../utilities/Config";
+import { DocumentLibraray, ListNames, RoleProfileMaster } from "../../utilities/Config";
 import { getProfileData, postAdveDetails } from "../ReviewProfileService/ReviewCandidateService";
 import { CommonServices } from "../ServiceExport";
+import SPServices from "../SPService/SPServices";
 import { IGetPortalJobs } from "./IGetPortalJobs";
 
 export default class GetPortalJobs implements IGetPortalJobs {
@@ -87,8 +88,9 @@ export default class GetPortalJobs implements IGetPortalJobs {
     try {
       let GetProfileByJobCodeData: CandidateProfile[] = [];
       await getProfileData.getCandidateProfile(CandidateID).then(async (res) => {
-
         const op = res.data.data;
+        console.log(op, "OP");
+
         const [
           RoleProfileDocment,
           AdvertismentDocment,
@@ -116,6 +118,12 @@ export default class GetPortalJobs implements IGetPortalJobs {
           JobTitle: op?.jobDetail?.descriptions_en?.jobTitle,
           ApplicantName: `${op?.profile?.firstName || ""} ${op?.profile?.middleName || ""} ${op?.profile?.lastName || ""}`,
           ApplicantSurName: op?.profile?.lastName,
+          FristName: op?.profile?.firstName,
+          MiddleName: op?.profile?.middleName,
+          ResidentialAddress: op?.profile?.profileAddress?.address1,
+          DOB: op?.profile?.dob,
+          ContactNumber: op?.profile?.contactNumber1,
+          Email: op?.profile?.email,
           Nationality: op?.profile?.nationality,
           Gender: op?.profile?.gender,
           HighestQualification: op?.profile?.education?.displayText,
@@ -172,6 +180,83 @@ export default class GetPortalJobs implements IGetPortalJobs {
         data: [],
         status: 500,
         message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+
+  async InsertCandidateDetailsInList(
+    CandidateDetails: any,
+    InterviewPanel: any
+  ): Promise<ApiResponse<any | null>> {
+    try {
+      let response: any = await SPServices.SPAddItem({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        RequestJSON: CandidateDetails,
+      });
+
+      if (response?.data?.ID) {
+        const jobDetailsResponse = await this.InsertInterviewPanel(
+          InterviewPanel,
+          parseInt(response?.data?.ID)
+        );
+        return {
+          data: jobDetailsResponse.data,
+          status: jobDetailsResponse.status,
+          message: jobDetailsResponse.message,
+        };
+      }
+
+      return {
+        data: [],
+        status: 200,
+        message: "Failed to insert RecruitmentDptDetails",
+      };
+    } catch (error) {
+      console.error(
+        "Error inserting data into HRMSRecruitmentDptDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting data into HRMSRecruitmentDptDetails",
+      };
+    }
+  }
+  async InsertInterviewPanel(
+    InterviewPanel: any[],
+    CandidateId: number
+  ): Promise<ApiResponse<any | null>> {
+    try {
+      let insertedRecords: any[] = [];
+
+      for (const item of InterviewPanel) {
+        const JobDetailsInsert = {
+          RecruitmentIDId: item.RecruitmentIDId,
+          InterviewLevel: item.InterviewLevel,
+          InterviewPanelId: item.InterviewPanelId,
+          CandidateIDId: CandidateId,
+        };
+
+        const response = await SPServices.SPAddItem({
+          Listname: ListNames.HRMSInterviewPanelDetails,
+          RequestJSON: JobDetailsInsert,
+        });
+
+        insertedRecords.push(response);
+      }
+
+      return {
+        data: insertedRecords,
+        status: 200,
+        message: "Job details inserted successfully",
+      };
+    } catch (error) {
+      console.error("Error inserting job details:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting job details",
       };
     }
   }

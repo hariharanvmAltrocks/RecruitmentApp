@@ -163,7 +163,7 @@ function PreviewScreen({
                           className="ms-Grid-col ms-lg1"
                           style={{ textAlign: "center" }}
                         >
-                          && <span>-</span>
+                          <span>-</span>
                         </div>
                         <div className="ms-Grid-col ms-lg4">
                           {data.ExperienceinMiningIndustry

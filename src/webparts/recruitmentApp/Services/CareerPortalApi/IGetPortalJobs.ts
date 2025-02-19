@@ -5,4 +5,5 @@ export type IGetPortalJobs = {
     getCandidateDetailsInJobCode(JobCode: string, FilterValue: GetProfileByFilter): Promise<ApiResponse<GetProfileByJobCode[] | null>>;
     getCandidateProfile(CandidateID: string,): Promise<ApiResponse<CandidateProfile[] | null>>;
     UpdateCandidateStatus(data: WorkflowJson): Promise<ApiResponse<any | null>>;
+    InsertCandidateDetailsInList(CandidateDetails: any, InterviewPanel: any): Promise<ApiResponse<any | null>>
 }

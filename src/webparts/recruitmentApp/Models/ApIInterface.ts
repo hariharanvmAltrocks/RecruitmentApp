@@ -51,6 +51,12 @@ export type CandidateProfile = {
     JobCode: string,
     JobTitle: string,
     ApplicantName: string;
+    FristName: string;
+    MiddleName: string
+    ResidentialAddress: string;
+    DOB: string;
+    ContactNumber: number;
+    Email: string;
     ApplicantSurName: string;
     Nationality: string;
     Gender: string;

@@ -61,6 +61,7 @@ export const StatusId = {
   PendingwithHODtoreviewAdv: 26,
   PendingwithHRLeadtouploadONEMsigneddoc: 118,
   PendingwithRecruitmentHRtoAssignExternalAgency: 119,
+  RecruitmentInProgress: 28
 };
 
 export const RoleID = {

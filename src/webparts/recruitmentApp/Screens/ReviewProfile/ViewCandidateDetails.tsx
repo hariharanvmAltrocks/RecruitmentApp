@@ -58,6 +58,12 @@ const ViewCandidateDetails = (props: any) => {
     ApplicantName: "",
     ApplicantSurName: "",
     Nationality: "",
+    FristName: "",
+    MiddleName: "",
+    ResidentialAddress: "",
+    DOB: "",
+    ContactNumber: 0,
+    Email: "",
     Gender: "",
     HighestQualification: "",
     ExperienceMining: 0,
@@ -117,6 +123,12 @@ const ViewCandidateDetails = (props: any) => {
           ApplicantName: response?.ApplicantName,
           ApplicantSurName: response?.ApplicantSurName,
           Nationality: response?.Nationality,
+          FristName: response?.FristName,
+          MiddleName: response?.MiddleName,
+          ResidentialAddress: response?.ResidentialAddress,
+          DOB: response?.DOB,
+          ContactNumber: response?.ContactNumber,
+          Email: response?.Email,
           Gender: response?.Gender,
           HighestQualification: response?.HighestQualification,
           ExperienceMining: response?.ExperienceMining,
@@ -438,7 +450,7 @@ const ViewCandidateDetails = (props: any) => {
                   </>
                 )}
 
-                {props.CurrentRoleID === RoleID.LineManager && (
+                {props.CurrentRoleID === RoleID.LineManager || props.stateValue?.initialTab === TabName.AssignInterviewPanel && (
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
                       <CustomLabel value={"View Justification"} />
@@ -560,6 +572,68 @@ const ViewCandidateDetails = (props: any) => {
     });
   }
 
+  const UploadCandidateDetails = async () => {
+    const filterConditions = [];
+    const Conditions = "";
+    filterConditions.push({
+      FilterKey: "ID",
+      Operator: "eq",
+      FilterValue: props.stateValue.RecruitmentID,
+    });
+    const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails(
+      filterConditions,
+      Conditions
+    );
+    const CandidateDetails: any = {
+      RecruitmentIDId: props.stateValue.RecruitmentID,
+      JobCodeId: RecruitmentDetails.data[0].JobCodeId,
+      FristName: CandidateProfile.FristName,
+      MiddleName: CandidateProfile.MiddleName,
+      LastName: CandidateProfile.ApplicantSurName,
+      ResidentialAddress: CandidateProfile.ResidentialAddress,
+      DOB: CandidateProfile.DOB ? new Date(CandidateProfile.DOB).toISOString() : null,
+      ContactNumber: CandidateProfile.ContactNumber,
+      Email: CandidateProfile.Email,
+      // Nationality: CandidateProfile.Nationality,
+      Gender: CandidateProfile.Gender,
+      TotalYearOfExperiance: String(CandidateProfile.ExperRelatedfield),
+      // Skills: ,
+      // LanguageKnown: ,
+      ReleventExperience: CandidateProfile.ExperienceMining,
+      Qualification: CandidateProfile.HighestQualification,
+      JobRequestID: String(CandidateProfile.CandidateID),
+      PositionTitle: RecruitmentDetails.data[0].JobTitleInEnglish,
+      JobGrade: RecruitmentDetails.data[0].DRCGrade,
+      // ExternalAgentDetailsId: CandidateProfile.Agencies,
+      InterviewDate: InterviewedLevel.InterviewedDate ? new Date(InterviewedLevel.InterviewedDate).toISOString() : null,
+
+    };
+    let selectedinterviewpanal: any[] = []; // Initialize as an array
+
+    for (let i = 0; i < InterviewedLevel.AssignInterviewLevel1.length; i++) {
+      const currentItem = InterviewedLevel.AssignInterviewLevel1[i];
+
+      let selectedinterview = {
+        RecruitmentIDId: RecruitmentDetails.data[0].ID,
+        InterviewLevel: InterviewedLevel.Levels,
+        InterviewPanelId: currentItem.key,
+        CandidateID: 0,
+      };
+
+      selectedinterviewpanal.push(selectedinterview);
+    }
+    console.log(selectedinterviewpanal, "selectedinterviewpanal");
+    console.log(CandidateDetails, "CandidateDetails");
+    await GetPortalJobsService.InsertCandidateDetailsInList(CandidateDetails, selectedinterviewpanal).then((res) => {
+      console.log(res, "res");
+    }).catch((error) => {
+      console.log(error, "Candidate upload failed");
+
+    })
+
+  }
+
+
   async function Submit_fn() {
     const isValid = !Validation();
     if (isValid) {
@@ -616,33 +690,41 @@ const ViewCandidateDetails = (props: any) => {
         }
 
         default:
-          throw new Error("Invalid CandidateStatus: " + actionValue.CandidateStatus);
+          CandidateData = {
+            workflowStatus: workflowStatusApi.LineManagerL1Pending,
+            jobRequestId: props.stateValue?.ID,
+            comments: actionValue.Comments,
+            actionBy: props.CurrentUserRole,
+          };
       }
 
       console.log(CandidateData, "CandidateData");
-      await GetPortalJobsService.UpdateCandidateStatus(CandidateData).then((res) => {
+      await GetPortalJobsService.UpdateCandidateStatus(CandidateData).then(async (res) => {
         console.log(res.data, "res");
-        let CancelAlert = {
-          Message: RecuritmentHRMsg.ProfileReviewed,
-          Type: HRMSAlertOptions.Success,
-          visible: true,
-          ButtonAction: async (userClickedOK: boolean) => {
-            if (userClickedOK) {
-              props.navigation("/ReviewProfileList/ReviewCandidateList", {
-                state: {
-                  ID: props.stateValue?.RecruitmentID,
-                  TabName: props.stateValue?.initialTab,
-                  ButtonAction: TabName.ViewPositionDetails,
-                },
-              });
-              setAlertPopupOpen(false);
+        if (res.data) {
+          await UploadCandidateDetails()
+          let CancelAlert = {
+            Message: RecuritmentHRMsg.ProfileReviewed,
+            Type: HRMSAlertOptions.Success,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+              if (userClickedOK) {
+                props.navigation("/ReviewProfileList/ReviewCandidateList", {
+                  state: {
+                    ID: props.stateValue?.RecruitmentID,
+                    TabName: props.stateValue?.initialTab,
+                    ButtonAction: TabName.ViewPositionDetails,
+                  },
+                });
+                setAlertPopupOpen(false);
+              }
             }
           }
+          setAlertPopupOpen(true);
+          setalertProps(CancelAlert);
+          setIsLoading(false);
         }
 
-        setAlertPopupOpen(true);
-        setalertProps(CancelAlert);
-        setIsLoading(false);
       }).catch((error) => {
         console.log("Candidate details doesn't fetch the data", error);
       })

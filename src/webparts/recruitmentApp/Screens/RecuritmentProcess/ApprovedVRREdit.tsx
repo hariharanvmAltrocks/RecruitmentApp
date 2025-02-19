@@ -1169,7 +1169,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 {
                     FilterKey: "RecruitmentIDId",
                     Operator: "eq",
-                    FilterValue: 437,
+                    FilterValue: props.stateValue.ID,
                 },
             ];
             await getVRRDetails.GetDataInList(
@@ -2874,6 +2874,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         setMainComponent(true);
                         setactiveTab("tab2");
                     }}
+                    JobTitle={formState.JobNameInEnglish}
                 />
             ) : (
                 <>

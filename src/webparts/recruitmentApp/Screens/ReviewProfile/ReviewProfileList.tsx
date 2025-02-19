@@ -123,7 +123,7 @@ const ReviewProfileList = (props: any) => {
       filterConditionsRecuritment.push({
         FilterKey: "StatusId",
         Operator: "eq",
-        FilterValue: StatusId.PendingwithRecruitmentHRtouploadAdv,
+        FilterValue: StatusId.RecruitmentInProgress,
       });
       const data = await getVRRDetails.GetRecruitmentDetails(
         filterConditionsRecuritment,

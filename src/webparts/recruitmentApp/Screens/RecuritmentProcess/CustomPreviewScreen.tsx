@@ -4,14 +4,16 @@ import ReuseButton from "../../components/ReuseButton";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
+import CustomLabel from "../../components/CustomLabel";
 
 interface FormFields {
   data: AdvDetails;
   onclose: () => void;
   Ok_btnfn: () => void;
+  JobTitle: string;
 }
 
-function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
+function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) {
   console.log("data", data);
   const ValidTo = data.ValidTo;
   const ValidFrom = data.ValidFrom;
@@ -60,6 +62,12 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
                 </div>
               ) : (
                 <>
+                  <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+                    <CustomLabel
+                      value={`JobTitle - ${JobTitle}`}
+                      style={{ fontSize: "17px", fontWeight: "bold" }}
+                    />
+                  </div>
                   {data.RolePurpose && (
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg12">
