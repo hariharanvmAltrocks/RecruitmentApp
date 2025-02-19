@@ -1449,3 +1449,13 @@ footer {
   border-color: #ef3340 !important;
   background-color: white !important;
 }
+
+.agencies_card {
+  background-color: white;
+  padding: 4px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px 3px lightgray;
+  margin-left: 73%;
+  margin-top: -4%;
+  width: 26%;
+}

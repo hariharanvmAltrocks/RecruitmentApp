@@ -4,14 +4,16 @@ import ReuseButton from "../../components/ReuseButton";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
+import CustomLabel from "../../components/CustomLabel";
 
 interface FormFields {
   data: AdvDetails;
   onclose: () => void;
   Ok_btnfn: () => void;
+  JobTitle: string;
 }
 
-function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
+function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) {
   console.log("data", data);
   const ValidTo = data.ValidTo;
   const ValidFrom = data.ValidFrom;
@@ -60,6 +62,12 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
                 </div>
               ) : (
                 <>
+                  <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+                    <CustomLabel
+                      value={`JobTitle - ${JobTitle}`}
+                      style={{ fontSize: "17px", fontWeight: "bold" }}
+                    />
+                  </div>
                   {data.RolePurpose && (
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg12">
@@ -143,66 +151,66 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn }: FormFields) {
                   ) : null}
                   {(data.TotalExperience ||
                     data.ExperienceinMiningIndustry) && (
-                    <div
-                      className="ms-Grid-row"
-                      style={{ marginBottom: "20px" }}
-                    >
-                      <div className="ms-Grid-col ms-lg12">
-                        <div
-                          className="ms-Grid-row"
-                          style={{ marginTop: "8px" }}
-                        >
-                          {/* New Headings */}
+                      <div
+                        className="ms-Grid-row"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        <div className="ms-Grid-col ms-lg12">
                           <div
-                            style={{
-                              display: "flex",
-                              fontWeight: "bold",
-                              marginBottom: "8px",
-                            }}
+                            className="ms-Grid-row"
+                            style={{ marginTop: "8px" }}
                           >
-                            <div className="ms-Grid-col ms-lg4">
-                              <b style={{ fontSize: "17px" }}>
-                                Total Experience
-                              </b>
-                            </div>
+                            {/* New Headings */}
                             <div
-                              className="ms-Grid-col ms-lg1"
-                              style={{ textAlign: "center" }}
+                              style={{
+                                display: "flex",
+                                fontWeight: "bold",
+                                marginBottom: "8px",
+                              }}
                             >
-                              {/* - */}
+                              <div className="ms-Grid-col ms-lg4">
+                                <b style={{ fontSize: "17px" }}>
+                                  Preferred Total Experience
+                                </b>
+                              </div>
+                              <div
+                                className="ms-Grid-col ms-lg1"
+                                style={{ textAlign: "center" }}
+                              >
+                                {/* - */}
+                              </div>
+                              <div className="ms-Grid-col ms-lg4">
+                                <b style={{ fontSize: "17px" }}>
+                                  Preferred  Experience in Mining Industry (Years)
+                                </b>
+                              </div>
                             </div>
-                            <div className="ms-Grid-col ms-lg4">
-                              <b style={{ fontSize: "17px" }}>
-                                Experience in Mining Industry (Years)
-                              </b>
-                            </div>
-                          </div>
 
-                          <div style={{ display: "flex", marginTop: "8px" }}>
-                            <div className="ms-Grid-col ms-lg4">
-                              {data.TotalExperience
-                                ? `${data.TotalExperience} years`
-                                : ""}
-                            </div>
-                            <div
-                              className="ms-Grid-col ms-lg1"
-                              style={{ textAlign: "center" }}
-                            >
-                              {data.TotalExperience &&
-                                data.ExperienceinMiningIndustry && (
-                                  <span>-</span>
-                                )}
-                            </div>
-                            <div className="ms-Grid-col ms-lg4">
-                              {data.ExperienceinMiningIndustry
-                                ? `${data.ExperienceinMiningIndustry} years in Mining`
-                                : ""}
+                            <div style={{ display: "flex", marginTop: "8px" }}>
+                              <div className="ms-Grid-col ms-lg4">
+                                {data.TotalExperience
+                                  ? `${data.TotalExperience} years`
+                                  : ""}
+                              </div>
+                              <div
+                                className="ms-Grid-col ms-lg1"
+                                style={{ textAlign: "center" }}
+                              >
+                                {data.TotalExperience &&
+                                  data.ExperienceinMiningIndustry && (
+                                    <span>-</span>
+                                  )}
+                              </div>
+                              <div className="ms-Grid-col ms-lg4">
+                                {data.ExperienceinMiningIndustry
+                                  ? `${data.ExperienceinMiningIndustry} years in Mining`
+                                  : ""}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {data.MinQualificationOption?.length > 0 && (
                     <div

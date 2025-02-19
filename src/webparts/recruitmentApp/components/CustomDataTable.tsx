@@ -189,7 +189,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                     <CustomAutoComplete
                         label="Business Unit Name"
                         options={
-                            FilterData.BusinessUnitCode
+                            FilterData.BusinessUnitCode?.text
                                 ? Array.from(
                                     new Map(
                                         MasterData?.BusinessUnitCodeAllColumn

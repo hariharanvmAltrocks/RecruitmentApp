@@ -26,6 +26,11 @@ export type IDropDownKeys = {
     key: number;
     text: string;
 }
+export type MasterDepartment = {
+    key: number;
+    text: string;
+    code: string;
+}
 
 export type IEmployeeKeys = {
     key: number;
@@ -153,7 +158,7 @@ export type MasterData = {
     JobInFrenchList: IDropDowJoptitle[];
     BusinessUnitCode: IDropDownKeys[];
     BusinessUnitCodeAllColumn: any[];
-    Department: IDropDownKeys[];
+    Department: MasterDepartment[];
     AllSubDepartmentList: SubDepartmentResponse[];
     SectionList: SectionResponse[];
     DepartmentCodeList: SectiontoDCodeResponse[];

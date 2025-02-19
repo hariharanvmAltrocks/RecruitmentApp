@@ -37,16 +37,17 @@ export const ListNames = {
   HRMSRoleSpecificKnowlegeMaster: "HRMSRoleSpecificKnowlegeMaster",
   HRMSTechnicalSkills: "HRMSTechnicalSkills",
   HRMSLevelOfProficiency: "HRMSLevelOfProficiency",
+  HRMSExperienceMaster: "HRMSExperienceMaster",
+  HRMSJobTitleFunctionType: "HRMSJobTitleFunctionType",
   HRMSExternalAgents: "HRMSExternalAgents",
   HRMSExternalAgentsDetailsForRecruitment:
     "HRMSExternalAgentsDetailsForRecruitment",
   HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
-  HRMSExperienceMaster: "HRMSExperienceMaster",
-  HRMSJobTitleFunctionType: "HRMSJobTitleFunctionType",
+
 };
 
 export const DocumentLibraray = {
-  InterviewPanelCandidateCV: "InterviewPanelCandidateCV",
+  InterviewPanelCandidateCV: "HRMSRecruitmentCandidateCV",
   HRMSRecruitment: "HRMSRecruitment",
   HRMSRoleProfile: "HRMS_Role_Profile",
   RecruitmentAdvertisementDocument: "HRMSRecruitmentAdvertDocument",
@@ -60,6 +61,7 @@ export const StatusId = {
   PendingwithHODtoreviewAdv: 26,
   PendingwithHRLeadtouploadONEMsigneddoc: 118,
   PendingwithRecruitmentHRtoAssignExternalAgency: 119,
+  RecruitmentInProgress: 28
 };
 
 export const RoleID = {
@@ -161,6 +163,7 @@ export const RecuritmentHRMsg = {
   AgencySucess: "Agencies Assigned Successfully",
   HRSuccess: "Recruitment HR Assigned Successfully",
   AgenciesErrorMsg: "Please choose the Job Code to assign Agencies",
+  ProfileReviewed: "Profile Reviewed Successfully"
 };
 
 export const ADGroupID: IADGroupID = {
@@ -240,3 +243,25 @@ export const ProfileStatus = {
   HR: "Pending with HR - Review Profile",
   LM: "Pending with LM - Review Profile",
 };
+
+export const Nationality = {
+  Nationals: "Nationals (Congolese)",
+  Expatriate: "Expatriate"
+};
+
+export const workflowStatusApi = {
+  HRPending: "WS01",
+  LineManagerL1Pending: "WS02",
+  LineManagerL2Pending: "WS03",
+  InterviewScheduled: "WS04",
+  HODSelectionPending: "WS05",
+  Selected: "WS06",
+  OnHold: "WS07",
+  Rejected: "WS08"
+};
+
+export const CandidateStatus = {
+  Yes: "Yes",
+  No: "No",
+  WaitingList: "Waiting List"
+}

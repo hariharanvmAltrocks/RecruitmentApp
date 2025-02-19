@@ -10,6 +10,7 @@ import LabelHeaderComponents from "../../components/TitleHeader";
 import CustomLabel from "../../components/CustomLabel";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
+import * as moment from "moment";
 
 interface FormFields {
   data: AdvDetails;
@@ -31,8 +32,6 @@ function PreviewScreen({
   JobTitle,
 }: FormFields) {
   console.log("data", data);
-  const ValidTo = data.ValidTo;
-  const ValidFrom = data.ValidFrom;
   return (
     <>
       <div className="ms-Grid-row">
@@ -112,14 +111,14 @@ function PreviewScreen({
 
                       {data.ValidFrom && data.ValidTo && (
                         <div style={{ display: "flex", marginTop: "8px" }}>
-                          <div className="ms-Grid-col ms-lg4">{ValidFrom}</div>
+                          <div className="ms-Grid-col ms-lg4">{moment(data.ValidFrom).format("DD-MMM-YYYY - hh:mm A")}</div>
                           <div
                             className="ms-Grid-col ms-lg1"
                             style={{ textAlign: "center" }}
                           >
                             -
                           </div>
-                          <div className="ms-Grid-col ms-lg4">{ValidTo}</div>
+                          <div className="ms-Grid-col ms-lg4">{moment(data.ValidTo).format("DD-MMM-YYYY - hh:mm A")}</div>
                         </div>
                       )}
                     </div>
@@ -139,7 +138,7 @@ function PreviewScreen({
                         }}
                       >
                         <div className="ms-Grid-col ms-lg4">
-                          <b style={{ fontSize: "17px" }}>Total Experience</b>
+                          <b style={{ fontSize: "17px" }}>Preferred Total Experience</b>
                         </div>
                         <div
                           className="ms-Grid-col ms-lg1"
@@ -149,7 +148,7 @@ function PreviewScreen({
                         </div>
                         <div className="ms-Grid-col ms-lg4">
                           <b style={{ fontSize: "17px" }}>
-                            Experience in Mining Industry (Years)
+                            Preferred Experience in Mining Industry (Years)
                           </b>
                         </div>
                       </div>
@@ -157,19 +156,18 @@ function PreviewScreen({
                       <div style={{ display: "flex", marginTop: "8px" }}>
                         <div className="ms-Grid-col ms-lg4">
                           {data.TotalExperience
-                            ? `${data.TotalExperience} years`
+                            ? `${data.TotalExperience?.text} years`
                             : ""}
                         </div>
                         <div
                           className="ms-Grid-col ms-lg1"
                           style={{ textAlign: "center" }}
                         >
-                          {data.TotalExperience &&
-                            data.ExperienceinMiningIndustry && <span>-</span>}
+                          <span>-</span>
                         </div>
                         <div className="ms-Grid-col ms-lg4">
                           {data.ExperienceinMiningIndustry
-                            ? `${data.ExperienceinMiningIndustry} years in Mining`
+                            ? `${data.ExperienceinMiningIndustry.text} years in Mining`
                             : ""}
                         </div>
                       </div>
@@ -219,8 +217,7 @@ function PreviewScreen({
                             className="ms-Grid-col ms-lg1"
                             style={{ textAlign: "center" }}
                           >
-                            {data.TotalExperience &&
-                              data.ExperienceinMiningIndustry && <span>-</span>}
+                            <span>-</span>
                           </div>
                           <div className="ms-Grid-col ms-lg4">
                             {item.PrefeQualification?.text || "N/A"}
@@ -270,9 +267,9 @@ function PreviewScreen({
                             className="ms-Grid-col ms-lg1"
                             style={{ textAlign: "center" }}
                           >
-                            {data.RequiredLeveloption?.[index] && (
-                              <span>-</span>
-                            )}
+
+                            <span>-</span>
+
                           </div>
                           <div className="ms-Grid-col ms-lg4">
                             {item.RequiredLevel?.text || "N/A"}
@@ -326,9 +323,9 @@ function PreviewScreen({
                             className="ms-Grid-col ms-lg1"
                             style={{ textAlign: "center" }}
                           >
-                            {data.LevelProficiencyOption?.[index] && (
-                              <span>-</span>
-                            )}
+
+                            <span>-</span>
+
                           </div>
                           <div className="ms-Grid-col ms-lg4">
                             {item.LevelProficiency?.text || "N/A"}
@@ -340,7 +337,7 @@ function PreviewScreen({
                           <div className="ms-Grid-col ms-lg12">
                             <p>
                               <b style={{ fontSize: "17px" }}>Function Type:</b>{" "}
-                              {data.FunctionType}
+                              {data.JobFunctionalType.text}
                             </p>
                           </div>
                         </div>

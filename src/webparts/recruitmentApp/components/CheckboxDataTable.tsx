@@ -202,28 +202,21 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
             <CustomAutoComplete
               label="Business Unit Name"
               options={
-                FilterData.BusinessUnitCode
-                  ? (Array.from(
-                      new Map(
-                        MasterData?.BusinessUnitCodeAllColumn.filter(
-                          (data: any) =>
-                            data.text === FilterData.BusinessUnitCode.text
-                        ).map((data: any) => [
-                          data.Name,
-                          { key: data.text, text: data.Name },
-                        ])
-                      ).values()
-                    ) as AutoCompleteItem[])
-                  : (Array.from(
-                      new Map(
-                        MasterData?.BusinessUnitCodeAllColumn.map(
-                          (data: any) => [
-                            data.Name,
-                            { key: data.text, text: data.Name },
-                          ]
-                        )
-                      ).values()
-                    ) as AutoCompleteItem[])
+                FilterData.BusinessUnitCode?.text
+                  ? Array.from(
+                    new Map(
+                      MasterData?.BusinessUnitCodeAllColumn
+                        .filter((data: any) => data.text === FilterData.BusinessUnitCode.text)
+                        .map((data: any) => [data.Name, { key: data.text, text: data.Name }])
+                    ).values()
+                  ) as AutoCompleteItem[]
+                  : Array.from(
+                    new Map(
+                      MasterData?.BusinessUnitCodeAllColumn.map(
+                        (data: any) => [data.Name, { key: data.text, text: data.Name }]
+                      )
+                    ).values()
+                  ) as AutoCompleteItem[]
               }
               value={FilterData.BusinessUnitName}
               disabled={false}
@@ -245,8 +238,8 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 width: "79%",
                 backgroundColor: "#EF3340",
                 color: "white",
-                height: "47px",
-                marginTop: "-1px",
+                height: "48px",
+                marginTop: "-8px",
               }}
             />
           </div>

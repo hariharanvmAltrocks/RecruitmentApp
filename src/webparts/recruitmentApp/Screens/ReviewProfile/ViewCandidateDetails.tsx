@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
+import { CommonServices, GetPortalJobsService, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import CustomLabel from "../../components/CustomLabel";
 import CustomTextArea from "../../components/CustomTextArea";
@@ -10,13 +10,19 @@ import CustomRadioGroup from "../../components/CustomRadioGroup";
 import ReuseButton from "../../components/ReuseButton";
 import CustomInput from "../../components/CustomInput";
 import BreadcrumbsComponent, { TabNameData } from "../../components/CustomBreadcrumps";
-import { ADGroupID, DocumentLibraray, RoleProfileMaster, TabName } from "../../utilities/Config";
+import { ADGroupID, CandidateStatus, HRMSAlertOptions, RecuritmentHRMsg, RoleID, TabName, workflowStatusApi } from "../../utilities/Config";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import CustomViewDocument from "../../components/CustomViewDocument";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
-import { AutoCompleteItem } from "../../Models/Screens";
+import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
-import { getProfileData } from "../../Services/ReviewProfileService/ReviewCandidateService";
+import { CandidateProfile, WorkflowJson } from "../../Models/ApIInterface";
+import CustomSignature from "../../components/CustomSignature";
+import IsValid from "../../components/Validation";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
+import { Dialog } from "primereact/dialog";
+import CustomJsonComments from "../../components/CustomJsonComments";
+import CustomDatePicker from "../../components/CustomDatePicker";
 
 
 type InterviewedLevelValue = {
@@ -24,110 +30,119 @@ type InterviewedLevelValue = {
   AssignInterviewedLevel1Option: AutoCompleteItem[];
   AssignInterviewLevel1: AutoCompleteItem[];
   AssignInterviewedLevel2: AutoCompleteItem[];
+  InterviewedDate: Date | undefined
 }
 
+type ValidationError = {
+  Comments: boolean;
+  Checkboxalidation: boolean;
+  CandidateStatus: boolean;
+  InterviewedDate: boolean,
+  AssignInterviewLevel1: boolean
+}
+
+type ActionValue = {
+  CandidateStatus: string;
+  Comments: string;
+}
+
+
 const ViewCandidateDetails = (props: any) => {
+  console.log(props, "ViewCandidateDetailsProps");
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [formState, setFormState] = useState<any>({
+  const [CandidateProfile, setCandidateProfile] = useState<CandidateProfile>({
+    CandidateID: "",
     JobCode: "",
     JobTitle: "",
-    JobCodeId: 0,
-    PassportID: "",
+    ApplicantName: "",
+    ApplicantSurName: "",
+    Nationality: "",
     FristName: "",
     MiddleName: "",
-    LastName: "",
-    FullName: "",
     ResidentialAddress: "",
     DOB: "",
-    ContactNumber: "",
+    ContactNumber: 0,
     Email: "",
-    Nationality: "",
     Gender: "",
-    TotalYearOfExperiance: "",
-    Skills: "",
+    HighestQualification: "",
+    ExperienceMining: 0,
+    ExperRelatedfield: 0,
     Status: "",
-    Agencies: " ",
-    LanguageKnown: "",
-    ReleventExperience: "",
-    Qualification: "",
-    ShortlistedValue: "",
-    CandidateCVDoc: [],
-    RoleProfileDocument: [],
-    AdvertisementDocument: [],
+    Agencies: "",
+    CandidateResume: [],
+    RoleProfile: [],
+    Advertisement: [],
+    Comments: []
   });
   const todaydate = new Date();
-  const [Comments, setComment] = useState<string>("");
   const [InterviewedLevel, setInterviewedLevel] = useState<InterviewedLevelValue>({
     Levels: "",
     AssignInterviewedLevel1Option: [],
     AssignInterviewLevel1: [],
-    AssignInterviewedLevel2: []
+    AssignInterviewedLevel2: [],
+    InterviewedDate: undefined
   });
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [Checkbox, setCheckbox] = useState<boolean>(false);
   const [SignDate, setSignDate] = useState<Date | any>();
-  const [validationErrors, setValidationErrors] = React.useState<{
-    Comments: boolean;
-    Checkboxalidation: boolean
-  }>({
-    Comments: false,
-    Checkboxalidation: false
+  const [actionValue, setActionValue] = useState<ActionValue>({
+    CandidateStatus: "",
+    Comments: ""
   });
+  const [validationErrors, setValidationErrors] = React.useState<ValidationError>({
+    Comments: false,
+    Checkboxalidation: false,
+    CandidateStatus: false,
+    InterviewedDate: false,
+    AssignInterviewLevel1: false
+  });
+  const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
+  const [alertProps, setalertProps] = React.useState<alertPropsData>({
+    Message: "",
+    Type: "",
+    ButtonAction: null,
+    visible: false,
+  });
+  const [OpenComments, setOpenComments] = useState<boolean>(false);
 
   const fetchData = async () => {
     if (isLoading) return;
     setIsLoading(true);
     try {
       console.log(SignDate);
-
-      await getProfileData.getCandidateProfile(props.stateValue?.ID).then(async (res) => {
-        if (res.status === 200 && res.data !== null) {
-          console.log(res, "getCandidateProfile Response");
-
-          const op = res.data.data;
-          const [
-            RoleProfileDocment,
-            AdvertismentDocment,
-            CandidateCVDoc
-          ] = await Promise.all([
-            CommonServices.GetAttachmentToLibrary(DocumentLibraray.RoleProfileMaster, op.JobCode, RoleProfileMaster.RoleProfile),
-            CommonServices.GetAttachmentToLibrary(DocumentLibraray.RecruitmentAdvertisementDocument, op.JobCode),
-            CommonServices.GetAttachmentToLibrary(DocumentLibraray.InterviewPanelCandidateCV, op.JobCode, op?.PassportID)
-          ]);
-          const RoleProfileDoc = RoleProfileDocment.data || [];
-          const AdvertismentDocPromises = AdvertismentDocment.data || [];
-          const CandidateCVDocPromises = CandidateCVDoc.data || [];
-          setFormState((prevState: any) => ({
-            ...prevState,
-            JobCode: op?.jobCode,
-            JobTitle: op?.jobDetail?.descriptions_en?.jobTitle,
-            // PassportID: op?.PassportID,
-            FullName: `${op?.profile?.firstName || ""} ${op?.profile?.middleName || ""} ${op?.profile?.lastName || ""}`,
-            LastName: op?.profile?.middleName,
-            // ResidentialAddress: op?.ResidentialAddress,
-            // DOB: op?.DOB,
-            // ContactNumber: op?.ContactNumber,
-            // Email: op?.Email,
-            Nationality: op?.profile?.nationality,
-            Gender: op?.profile?.gender,
-            TotalYearOfExperiance: op?.profile?.totalYearOfExperiance,
-            // Skills: op?.Skills,
-            // LanguageKnown: op?.LanguageKnown,
-            ReleventExperience: op?.profile?.releventExperience,
-            Qualification: op?.profile?.education?.displayText,
-            CandidateCVDoc: CandidateCVDocPromises,
-            RoleProfileDocment: RoleProfileDoc,
-            AdvertismentDocment: AdvertismentDocPromises,
-            Status: op?.workflowStatus?.displayText,
-            Agencies: op?.profileXAgent?.agent?.name,
-          }));
-        }
+      await GetPortalJobsService.getCandidateProfile(props.stateValue?.ID).then((res) => {
+        console.log(res, "res");
+        let response = res.data?.[0]
+        setCandidateProfile((prevState: any) => ({
+          ...prevState,
+          CandidateID: response?.CandidateID,
+          JobCode: response?.JobCode,
+          JobTitle: response?.JobTitle,
+          ApplicantName: response?.ApplicantName,
+          ApplicantSurName: response?.ApplicantSurName,
+          Nationality: response?.Nationality,
+          FristName: response?.FristName,
+          MiddleName: response?.MiddleName,
+          ResidentialAddress: response?.ResidentialAddress,
+          DOB: response?.DOB,
+          ContactNumber: response?.ContactNumber,
+          Email: response?.Email,
+          Gender: response?.Gender,
+          HighestQualification: response?.HighestQualification,
+          ExperienceMining: response?.ExperienceMining,
+          ExperRelatedfield: response?.ExperRelatedfield,
+          CandidateResume: response?.CandidateResume,
+          RoleProfile: response?.RoleProfile,
+          Advertisement: response?.Advertisement,
+          Status: response?.Status,
+          Agencies: response?.Agencies,
+          Comments: response?.Comments
+        }));
       }).catch((error) => {
-        console.log(error, "getCandidateProfile Error");
-
+        console.log("Candidate details doesn't fetch the data", error);
       })
-
     } catch (error) {
       console.error("Failed to fetch Vacancy Details:", error);
     } finally {
@@ -146,7 +161,7 @@ const ViewCandidateDetails = (props: any) => {
       todaydate.getSeconds()
     ))
     const newTabNames = [
-      // { tabName: TabNames.TabName },
+      { tabName: props.stateValue?.initialTab },
       { tabName: TabName.PositionDetails },
       { tabName: "Edit" },
       { tabName: TabName.CandidateDetails },
@@ -160,7 +175,7 @@ const ViewCandidateDetails = (props: any) => {
         {
           FilterKey: "ID",
           Operator: "eq",
-          FilterValue: 0,
+          FilterValue: props.stateValue?.RecruitmentID,
         },
       ];
       const Conditions = "";
@@ -181,27 +196,59 @@ const ViewCandidateDetails = (props: any) => {
       }));
 
     }
-    // if( TabNames.TabName === TabName.AssignInterviewPanel){
-    void getRecurtimentList()
-    // }
+    if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
+      void getRecurtimentList()
+    }
   }, [])
 
 
   const handleRadioChange = async (item: string) => {
-    setFormState((prevState: any) => ({
+    setActionValue((prevState: any) => ({
       ...prevState,
-      ShortlistedValue: item,
+      CandidateStatus: item,
     }));
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      CandidateStatus: false
+    }))
   };
 
   const handleInputChangeTextArea = (
     value: string | any,
-    StateValue: string
   ) => {
-    setComment(value);
+    setActionValue((prevState: any) => ({
+      ...prevState,
+      Comments: value,
+    }));
     setValidationErrors((prevState) => ({
       ...prevState,
-      [StateValue]: false,
+      Comments: false
+    }))
+  };
+
+  const handleDateChange = (value: Date | null | undefined) => {
+    const newDate = value ?? undefined;
+
+    setInterviewedLevel((prevState: any) => ({
+      ...prevState,
+      InterviewedDate: newDate,
+    }));
+
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      InterviewedDate: false,
+    }));
+  };
+
+  const handleMulitiSelect = (value: AutoCompleteItem[]) => {
+    setInterviewedLevel((prevState: any) => ({
+      ...prevState,
+      AssignInterviewLevel1: value,
+    }));
+
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      AssignInterviewLevel1: false,
     }));
   };
 
@@ -210,233 +257,269 @@ const ViewCandidateDetails = (props: any) => {
       label: TabName.CandidateDetails,
       value: "tab1",
       content: (
-        <Card
-          variant="outlined"
-          sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", border: "0px solid rgba(0, 0, 0, 0.12)", borderRadius: "30px", marginTop: "2%" }}
-        >
-          <CardContent>
-            <div>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg6">
-                  <LabelHeaderComponents
-                    value={`Job Title - ${formState.JobTitle} (${formState.JobCode})`}
-                  >
-                    {" "}
-                  </LabelHeaderComponents>
-                </div>
-                <div className="ms-Grid-col ms-lg6">
-                  <LabelHeaderComponents
-                    value={`Status - ${formState.Status}`}
-                  >
-                    {" "}
-                  </LabelHeaderComponents>
-                </div>
-              </div>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Applicant Name"
-                    value={formState.FullName}
-                    disabled={true}
-                    mandatory={false}
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Applicant Surname"
-                    value={formState.LastName}
-                    disabled={true}
-                    mandatory={false}
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Nationality"
-                    value={formState.Nationality}
-                    disabled={true}
-                    mandatory={false}
-                  />
-                </div>
-              </div>
+        <>
+          {props.stateValue?.initialTab === TabName.AssignInterviewPanel ? (
+            <></>
+          ) : (<>
+            <div className="agencies_card ">
+              <LabelHeaderComponents
+                value={`Profile form ${CandidateProfile.Agencies} Agencies`} />
+            </div>
+          </>)}
 
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Gender"
-                    value={formState.Gender}
-                    disabled={true}
-                    mandatory={false}
-                  />
+          <Card
+            variant="outlined"
+            sx={{ boxShadow: "0px 7px 4px 3px #d3d3d3", borderRadius: "10px", marginTop: "2%" }}
+          >
+            <CardContent>
+              <div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg6">
+                    <LabelHeaderComponents
+                      value={`Job Title - ${CandidateProfile.JobTitle} (${CandidateProfile.JobCode})`}
+                    >
+                      {" "}
+                    </LabelHeaderComponents>
+                  </div>
+                  <div className="ms-Grid-col ms-lg6">
+                    <LabelHeaderComponents
+                      value={`Status - ${CandidateProfile.Status}`}
+                    >
+                      {" "}
+                    </LabelHeaderComponents>
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Applicant Name"
+                      value={CandidateProfile.ApplicantName}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Applicant Surname"
+                      value={CandidateProfile.ApplicantSurName}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Nationality"
+                      value={CandidateProfile.Nationality}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
                 </div>
 
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Age"
-                    value={"40"}
-                    disabled={true}
-                    mandatory={false}
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Highest Relevant Qualification"
-                    value={formState?.Qualification}
-                    disabled={true}
-                    mandatory={false}
-                  />
-                </div>
-              </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Gender"
+                      value={CandidateProfile.Gender}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
 
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Experience in Mining Industry(Years)"
-                    value={formState?.TotalYearOfExperiance}
-                    disabled={true}
-                    mandatory={false}
-                  />
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Highest Relevant Qualification"
+                      value={CandidateProfile?.HighestQualification}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Experience in Mining Industry(Years)"
+                      value={CandidateProfile?.ExperienceMining}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
                 </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Experience in related field(Years)"
-                    value={formState?.ReleventExperience}
-                    disabled={true}
-                    mandatory={false}
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomViewDocument
-                    Attachment={formState.CandidateCVDoc}
-                  // Label={"Candidate Resume"}
-                  />
-                </div>
-              </div>
-              {TabName.AssignInterviewPanel ? (
-                <>
-                  <div className="ms-Grid-row">
-                    <div className="ms-Grid-col ms-lg4">
-                      <CustomInput
-                        label="Level of Interview"
-                        value={InterviewedLevel.Levels}
-                        disabled={true}
-                        mandatory={false}
-                      />
-                    </div>
-                    <div className="ms-Grid-col ms-lg4">
-                      <CustomMultiSelect
-                        label="Assign Interview Panel - Level 1"
-                        value={InterviewedLevel.AssignInterviewLevel1}
-                        options={InterviewedLevel.AssignInterviewedLevel1Option}
-                        disabled={false}
-                        mandatory={true}
-                      />
-                    </div>
-                    {InterviewedLevel.Levels === "Level 2" && (
+
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Experience in related field(Years)"
+                      value={CandidateProfile?.ExperRelatedfield}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                  {props.stateValue?.initialTab === TabName.AssignInterviewPanel ? (
+                    <>
                       <div className="ms-Grid-col ms-lg4">
-                        <CustomMultiSelect
-                          label="Interview Panel - Level 2"
-                          value={InterviewedLevel.AssignInterviewedLevel1Option}
-                          options={InterviewedLevel.AssignInterviewedLevel1Option}
+                        <CustomInput
+                          label="Level of Interview"
+                          value={InterviewedLevel.Levels}
                           disabled={true}
-                          mandatory={true}
+                          mandatory={false}
                         />
                       </div>
-                    )}
-                  </div>
-                </>
-              ) : (<></>)}
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomMultiSelect
+                          label="Assign Interview Panel - Level 1"
+                          value={InterviewedLevel.AssignInterviewLevel1}
+                          options={InterviewedLevel.AssignInterviewedLevel1Option}
+                          onChange={(value) => handleMulitiSelect(value)}
+                          disabled={false}
+                          mandatory={true}
+                          error={validationErrors.AssignInterviewLevel1}
+                        />
+                      </div>
+                      {InterviewedLevel.Levels === "Level 2" && (
+                        <div className="ms-Grid-row">
+                          <div className="ms-Grid-col ms-lg4">
+                            <CustomMultiSelect
+                              label="Interview Panel - Level 2"
+                              value={InterviewedLevel.AssignInterviewedLevel1Option}
+                              options={InterviewedLevel.AssignInterviewedLevel1Option}
+                              disabled={true}
+                              mandatory={true}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomDatePicker
+                            selectedDate={InterviewedLevel.InterviewedDate}
+                            label="Valid To"
+                            error={validationErrors.InterviewedDate}
+                            // maxDate={}
+                            mandatory={true}
+                            onChange={(date) =>
+                              handleDateChange(date ?? undefined)
+                            }
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (<></>)}
+                </div>
 
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg4">
+
+                <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
+                  <LabelHeaderComponents value={"Attachments"} />
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomLabel value={"Candidate Resume"} />
+                    <CustomViewDocument
+                      Attachment={CandidateProfile.CandidateResume}
+                    // Label={"Candidate Resume"}
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomLabel value={"Role Profile Document"} />
+                    <CustomViewDocument
+                      Attachment={CandidateProfile.RoleProfile}
+                    // Label={"Role Profile Document"}
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomLabel value={"Advertisement Documents"} />
+                    <CustomViewDocument
+                      Attachment={CandidateProfile.Advertisement}
+                    // Label={"Advertisement Documents"}
+                    />
+                  </div>
+                </div>
+                {props.stateValue?.initialTab === TabName.ReviewProfile && (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg6">
+                        <CustomRadioGroup
+                          label="Is the Candidate suits for the vaccancy position: "
+                          value={actionValue.CandidateStatus}
+                          options={["Yes", "No", "Waiting List"]}
+                          error={false}
+                          mandatory={false}
+                          onChange={(item) => handleRadioChange(item)}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {props.CurrentRoleID === RoleID.LineManager || props.stateValue?.initialTab === TabName.AssignInterviewPanel && (
                   <div className="ms-Grid-row">
-                    <div className="ms-Grid-col ms-lg6">
-                      <CustomViewDocument
-                        Attachment={formState.RoleProfileDocument}
-                      // Label={"Role Profile Document"}
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomLabel value={"View Justification"} />
+
+                      <ReuseButton
+                        label="View"
+                        onClick={() => setOpenComments(true)}
+                        spacing={4}
                       />
                     </div>
+
+                  </div>
+                )}
+                <div className="ms-Grid-row">
+                  <div
+                    className="ms-Grid-col ms-lg12"
+                    style={{ marginBottom: "7px" }}
+                  >
+                    <CustomTextArea
+                      label="Justification"
+                      value={actionValue.Comments}
+                      error={validationErrors.Comments}
+                      onChange={(value) =>
+                        handleInputChangeTextArea(value)
+                      }
+                      mandatory={true}
+                    />
                   </div>
                 </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <div className="ms-Grid-row">
-                    <div className="ms-Grid-col ms-lg6">
-                      <CustomViewDocument
-                        Attachment={formState.AdvertisementDocument}
-                      // Label={"Advertisement Documents"}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
 
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg6">
-                  <CustomRadioGroup
-                    label="Is the Candidate suits for the vaccancy position: "
-                    value={formState.ShortlistedValue}
-                    options={["Yes", "No", "Waiting List"]}
-                    error={false}
-                    mandatory={false}
-                    onChange={(item) => handleRadioChange(item)}
-                  />
-                </div>
-              </div>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomLabel value={"View Justification"} />
-
-                  <ReuseButton
-                    label="View"
-                    //onClick={()}
-                    spacing={4}
-                  />
-                </div>
-                <div
-                  className="ms-Grid-col ms-lg12"
-                  style={{ marginBottom: "7px" }}
+                <div className="ms-Grid-row"
+                  style={{
+                    padding: "3px",
+                    marginTop: "20px",
+                    marginBottom: "-33px",
+                  }}
                 >
-                  <CustomTextArea
-                    label="Justification"
-                    value={Comments}
-                    error={validationErrors.Comments}
-                    onChange={(value) =>
-                      handleInputChangeTextArea(value, "Comments")
-                    }
-                    mandatory={true}
-                  />
+                  <div className="ms-Grid-col ms-lg12">
+                    <SignatureCheckbox
+                      label={"I hereby agree for submitted this request"}
+                      checked={Checkbox}
+                      error={validationErrors.Checkboxalidation}
+                      onChange={(value: boolean) => {
+                        setCheckbox(value); setValidationErrors((prevState) => ({
+                          ...prevState,
+                          Checkboxalidation: false
+                        }))
+                      }
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg12">
+                    <CustomSignature
+                      Name={(props.userDetails[0].FirstName ?? "") + " " + (props.userDetails[0]?.MiddleName ?? "") + " " + (props.userDetails[0]?.LastName ?? "")}
+                      JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
+                      JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                      Department={props.userDetails[0].DepartmentName}
+                      Date={SignDate}
+                      TermsAndCondition={Checkbox}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="ms-Grid-row"
-                style={{
-                  padding: "3px",
-                  marginTop: "20px",
-                  marginBottom: "-33px",
-                }}
-              >
-                <div className="ms-Grid-col ms-lg12">
-                  <SignatureCheckbox
-                    label={"I hereby agree for submitted this request"}
-                    checked={Checkbox}
-                    error={validationErrors.Checkboxalidation}
-                    onChange={(value: boolean) => setCheckbox(value)}
-                  />
-                </div>
-              </div>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg12">
-                  {/* <CustomSignature
-                    Name={(MasterData.userDetails[0].FirstName ?? "") + " " + (MasterData.userDetails[0]?.MiddleName ?? "") + " " + (MasterData.userDetails[0]?.LastName ?? "")}
-                    JobTitleInEnglish={MasterData.userDetails[0].JopTitleEnglish}
-                    JobTitleInFrench={MasterData.userDetails[0].JopTitleFrench}
-                    Department={MasterData.userDetails[0].DepartmentName}
-                    Date={SignDate ? SignDate.toString() : ""}
-                    TermsAndCondition={Checkbox}
-                  /> */}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </>
+
       ),
     },
   ];
@@ -444,12 +527,208 @@ const ViewCandidateDetails = (props: any) => {
     setactiveTab(newItem)
   };
 
+  const Validation = (): boolean => {
+
+    let errors = {
+      Comments: false,
+      Checkboxalidation: false,
+      CandidateStatus: false,
+      InterviewedDate: false,
+      AssignInterviewLevel1: false
+    };
+    switch (props.CurrentRoleID) {
+      case RoleID.RecruitmentHR: {
+        if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
+          errors.Comments = !IsValid(actionValue.Comments);
+          errors.Checkboxalidation = !IsValid(Checkbox);
+          errors.InterviewedDate = !IsValid(InterviewedLevel.InterviewedDate);
+          errors.AssignInterviewLevel1 = !IsValid(InterviewedLevel.AssignInterviewLevel1?.[0]?.text ?? "")
+        } else {
+          errors.Comments = !IsValid(actionValue.Comments);
+          errors.Checkboxalidation = !IsValid(Checkbox);
+          errors.CandidateStatus = !IsValid(actionValue.CandidateStatus)
+        }
+
+        break;
+      }
+    }
+
+
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      ...errors,
+    }));
+
+    return Object.values(errors).some((error) => error);
+  };
+
   function back_fn() {
-    throw new Error("Function not implemented.");
+    props.navigation("/ReviewProfileList/ReviewCandidateList", {
+      state: {
+        ID: props.stateValue?.RecruitmentID,
+        TabName: props.stateValue?.initialTab,
+        ButtonAction: TabName.ViewPositionDetails,
+      },
+    });
   }
 
-  function Submit_fn() {
-    throw new Error("Function not implemented.");
+  const UploadCandidateDetails = async () => {
+    const filterConditions = [];
+    const Conditions = "";
+    filterConditions.push({
+      FilterKey: "ID",
+      Operator: "eq",
+      FilterValue: props.stateValue.RecruitmentID,
+    });
+    const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails(
+      filterConditions,
+      Conditions
+    );
+    const CandidateDetails: any = {
+      RecruitmentIDId: props.stateValue.RecruitmentID,
+      JobCodeId: RecruitmentDetails.data[0].JobCodeId,
+      FristName: CandidateProfile.FristName,
+      MiddleName: CandidateProfile.MiddleName,
+      LastName: CandidateProfile.ApplicantSurName,
+      ResidentialAddress: CandidateProfile.ResidentialAddress,
+      DOB: CandidateProfile.DOB ? new Date(CandidateProfile.DOB).toISOString() : null,
+      ContactNumber: CandidateProfile.ContactNumber,
+      Email: CandidateProfile.Email,
+      // Nationality: CandidateProfile.Nationality,
+      Gender: CandidateProfile.Gender,
+      TotalYearOfExperiance: String(CandidateProfile.ExperRelatedfield),
+      // Skills: ,
+      // LanguageKnown: ,
+      ReleventExperience: CandidateProfile.ExperienceMining,
+      Qualification: CandidateProfile.HighestQualification,
+      JobRequestID: String(CandidateProfile.CandidateID),
+      PositionTitle: RecruitmentDetails.data[0].JobTitleInEnglish,
+      JobGrade: RecruitmentDetails.data[0].DRCGrade,
+      // ExternalAgentDetailsId: CandidateProfile.Agencies,
+      InterviewDate: InterviewedLevel.InterviewedDate ? new Date(InterviewedLevel.InterviewedDate).toISOString() : null,
+
+    };
+    let selectedinterviewpanal: any[] = []; // Initialize as an array
+
+    for (let i = 0; i < InterviewedLevel.AssignInterviewLevel1.length; i++) {
+      const currentItem = InterviewedLevel.AssignInterviewLevel1[i];
+
+      let selectedinterview = {
+        RecruitmentIDId: RecruitmentDetails.data[0].ID,
+        InterviewLevel: InterviewedLevel.Levels,
+        InterviewPanelId: currentItem.key,
+        CandidateID: 0,
+      };
+
+      selectedinterviewpanal.push(selectedinterview);
+    }
+    console.log(selectedinterviewpanal, "selectedinterviewpanal");
+    console.log(CandidateDetails, "CandidateDetails");
+    await GetPortalJobsService.InsertCandidateDetailsInList(CandidateDetails, selectedinterviewpanal).then((res) => {
+      console.log(res, "res");
+    }).catch((error) => {
+      console.log(error, "Candidate upload failed");
+
+    })
+
+  }
+
+
+  async function Submit_fn() {
+    const isValid = !Validation();
+    if (isValid) {
+      let CandidateData: WorkflowJson;
+
+      switch (actionValue.CandidateStatus) {
+        case CandidateStatus.Yes: {
+          if (props.CurrentRoleID === RoleID.LineManager) {
+            if (CandidateProfile.Status === "Pending with Line Manager Level 2 Review") {
+              CandidateData = {
+                workflowStatus: workflowStatusApi.InterviewScheduled,
+                jobRequestId: props.stateValue?.ID,
+                comments: actionValue.Comments,
+                actionBy: props.CurrentUserRole,
+              };
+            } else (
+              CandidateData = {
+                workflowStatus: workflowStatusApi.LineManagerL2Pending,
+                jobRequestId: props.stateValue?.ID,
+                comments: actionValue.Comments,
+                actionBy: props.CurrentUserRole,
+              }
+            )
+
+          } else {
+            CandidateData = {
+              workflowStatus: workflowStatusApi.LineManagerL1Pending,
+              jobRequestId: props.stateValue?.ID,
+              comments: actionValue.Comments,
+              actionBy: props.CurrentUserRole,
+            };
+          }
+          break;
+        }
+
+        case CandidateStatus.No: {
+          CandidateData = {
+            workflowStatus: workflowStatusApi.Rejected,
+            jobRequestId: props.stateValue?.ID,
+            comments: actionValue.Comments,
+            actionBy: props.CurrentUserRole,
+          };
+          break;
+        }
+
+        case CandidateStatus.WaitingList: {
+          CandidateData = {
+            workflowStatus: workflowStatusApi.OnHold,
+            jobRequestId: props.stateValue?.ID,
+            comments: actionValue.Comments,
+            actionBy: props.CurrentUserRole,
+          };
+          break;
+        }
+
+        default:
+          CandidateData = {
+            workflowStatus: workflowStatusApi.LineManagerL1Pending,
+            jobRequestId: props.stateValue?.ID,
+            comments: actionValue.Comments,
+            actionBy: props.CurrentUserRole,
+          };
+      }
+
+      console.log(CandidateData, "CandidateData");
+      await GetPortalJobsService.UpdateCandidateStatus(CandidateData).then(async (res) => {
+        console.log(res.data, "res");
+        if (res.data) {
+          await UploadCandidateDetails()
+          let CancelAlert = {
+            Message: RecuritmentHRMsg.ProfileReviewed,
+            Type: HRMSAlertOptions.Success,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+              if (userClickedOK) {
+                props.navigation("/ReviewProfileList/ReviewCandidateList", {
+                  state: {
+                    ID: props.stateValue?.RecruitmentID,
+                    TabName: props.stateValue?.initialTab,
+                    ButtonAction: TabName.ViewPositionDetails,
+                  },
+                });
+                setAlertPopupOpen(false);
+              }
+            }
+          }
+          setAlertPopupOpen(true);
+          setalertProps(CancelAlert);
+          setIsLoading(false);
+        }
+
+      }).catch((error) => {
+        console.log("Candidate details doesn't fetch the data", error);
+      })
+    }
   }
 
   return (
@@ -463,7 +742,7 @@ const ViewCandidateDetails = (props: any) => {
             onBreadcrumbChange={handleBreadcrumbChange}
             additionalButtons={[
               {
-                label: "Close",
+                label: "Back",
                 onClick: async () => {
                   back_fn();
                 },
@@ -471,7 +750,7 @@ const ViewCandidateDetails = (props: any) => {
               {
                 label: "Submit ",
                 onClick: async () => {
-                  Submit_fn();
+                  await Submit_fn();
                 },
               },
             ]}
@@ -484,14 +763,38 @@ const ViewCandidateDetails = (props: any) => {
         </div>
       </CustomLoader>
 
-      {/* {AlertPopupOpen ? (
-                <>
-                    <CustomAlert
-                        {...alertProps}
-                        onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
-                    />
-                </>
-            ) : <></>} */}
+      {AlertPopupOpen ? (
+        <>
+          <CustomAlert
+            {...alertProps}
+            onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
+          />
+        </>
+      ) : <></>}
+
+      {OpenComments && (
+        <Dialog
+          header={
+            <>
+              <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+                <LabelHeaderComponents value="Justifications" />
+              </div>
+            </>
+          }
+          visible={OpenComments}
+          style={{
+            width: "26vw",
+            backgroundColor: "white",
+            borderRadius: "26px",
+            padding: "20px",
+          }}
+          onHide={() => setOpenComments(false)}
+        >
+          <CustomJsonComments
+            onClose={() => setOpenComments(false)}
+            Comments={CandidateProfile.Comments} />
+        </Dialog>
+      )}
     </>
   );
 };

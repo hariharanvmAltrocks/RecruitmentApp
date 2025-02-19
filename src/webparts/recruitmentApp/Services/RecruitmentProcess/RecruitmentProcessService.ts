@@ -621,9 +621,8 @@ export default class RecruitmentService implements IRecruitmentService {
           FristName: item.FristName,
           MiddleName: item.MiddleName,
           LastName: item.LastName,
-          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${
-            item.LastName || ""
-          }`,
+          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""
+            }`,
           ResidentialAddress: item?.ResidentialAddress,
           DOB: item?.DOB,
           ContactNumber: item?.ContactNumber,
@@ -810,10 +809,10 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
             ? (Employee.FirstName ?? "") +
-              " " +
-              (Employee.MiddleName ?? "") +
-              " " +
-              (Employee.LastName ?? "")
+            " " +
+            (Employee.MiddleName ?? "") +
+            " " +
+            (Employee.LastName ?? "")
             : "",
           // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
         };
@@ -1204,13 +1203,13 @@ export default class RecruitmentService implements IRecruitmentService {
 
           ValidFrom: item.ValidFrom
             ? new Date(item.ValidFrom)
-                .toLocaleDateString("en-GB")
-                .replace(/\//g, "-")
+              .toLocaleDateString("en-GB")
+              .replace(/\//g, "-")
             : "N/A",
           ValidTo: item.ValidTo
             ? new Date(item.ValidTo)
-                .toLocaleDateString("en-GB")
-                .replace(/\//g, "-")
+              .toLocaleDateString("en-GB")
+              .replace(/\//g, "-")
             : "N/A",
 
           // FunctionType:
@@ -1356,6 +1355,48 @@ export default class RecruitmentService implements IRecruitmentService {
         status: 500,
         message:
           "Error fetching data from HRMSInterviewPanelDetails and HRMSCandidateScoreCard",
+      };
+    }
+  }
+
+  async GetDataInList(
+    ListName: string,
+    filterParam: any[],
+    filterConditions: any,
+    Select: string,
+    Expand: string,
+  ): Promise<ApiResponse<any | null>> {
+    try {
+      let GetItem: any
+      await SPServices.SPReadItems({
+        Listname: ListName,
+        Select: Select,
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Expand: Expand,
+        Orderby: "ID",
+        Orderbydecorasc: false,
+      }).then((res) => {
+        console.log(res, "res");
+        GetItem = res
+      }).catch((error) => {
+        console.log("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error);
+      })
+      return {
+        data: GetItem,
+        status: 200,
+        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message:
+          "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
       };
     }
   }

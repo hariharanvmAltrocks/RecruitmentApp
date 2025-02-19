@@ -1,3 +1,5 @@
+import { IDocFiles } from "../Services/SPService/ISPServicesProps";
+
 export type AdvertisementDetails = {
     jobCode: string;
     noOfPositions: string;
@@ -36,4 +38,49 @@ export type GetProfileByFilter = {
     pageSize: number,
     currentPage: number,
     totalItems: number
+}
+export type GetProfileByJobCode = {
+    CandidateID: string,
+    ApplicantName: string,
+    PositionTitle: string,
+    JobGrade: string,
+    Status: string
+}
+export type CandidateProfile = {
+    CandidateID: string,
+    JobCode: string,
+    JobTitle: string,
+    ApplicantName: string;
+    FristName: string;
+    MiddleName: string
+    ResidentialAddress: string;
+    DOB: string;
+    ContactNumber: number;
+    Email: string;
+    ApplicantSurName: string;
+    Nationality: string;
+    Gender: string;
+    HighestQualification: string;
+    ExperienceMining: number;
+    ExperRelatedfield: number;
+    Status: string;
+    Agencies: string;
+    CandidateResume: IDocFiles[];
+    RoleProfile: IDocFiles[];
+    Advertisement: IDocFiles[];
+    Comments: profileJobsComments[];
+}
+
+export type WorkflowJson = {
+    workflowStatus: string,
+    jobRequestId: number,
+    comments: string,
+    actionBy: string
+}
+
+export type profileJobsComments = {
+    comments: number,
+    RoleName: string,
+    createdDate: string,
+    jobRequestId: number
 }

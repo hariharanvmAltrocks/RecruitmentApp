@@ -81,4 +81,11 @@ export type IRecruitmentService = {
     filterConditions: any,
     candidateID: number
   ): Promise<ApiResponse<any | null>>;
+  GetDataInList(
+    ListName: string,
+    filterParam: any[],
+    filterConditions: any,
+    Select: string,
+    Expand: string,
+  ): Promise<ApiResponse<any | null>>
 };
