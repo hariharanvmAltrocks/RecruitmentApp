@@ -30,7 +30,7 @@ const ReviewCandidateList = (props: any) => {
     const columnConfig = (tab: string, ButtonAction: string, TabNamed: string) => [
         {
             field: "CandidateID",
-            header: "Candidate ID",
+            header: "Request ID",
             sortable: true,
         },
         {
@@ -45,7 +45,7 @@ const ReviewCandidateList = (props: any) => {
         },
         {
             field: "JobGrade",
-            header: "Job Grade",
+            header: "Job Code",
             sortable: true,
         },
 
@@ -153,7 +153,7 @@ const ReviewCandidateList = (props: any) => {
                 case RoleID.RecruitmentHR: {
                     if (props.stateValue?.TabName === TabName.AssignInterviewPanel) {
                         FilterValue = {
-                            filterValue: workflowStatusApi.InterviewScheduled,
+                            filterValue: "",//workflowStatusApi.InterviewScheduled,
                             sortBy: "",
                             sortOrder: 0,
                             pageSize: rows,

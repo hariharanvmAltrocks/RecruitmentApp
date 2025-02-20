@@ -73,12 +73,12 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
 
 
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "16px" }}>
-
-                {handleCancel && (
+                {handleCancel && !additionalButtons.some(button => button.label === "Close") && (
                     <div style={{ marginRight: "10px" }}>
                         <ReuseButton label="Cancel" onClick={handleCancel} spacing={4} />
                     </div>
                 )}
+
                 {currentIndex > 0 && (
                     <div style={{ marginRight: "10px" }}>
                         <ReuseButton label="Back" onClick={handleBackClick} spacing={4} />
