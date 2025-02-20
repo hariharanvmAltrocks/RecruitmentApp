@@ -124,7 +124,9 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 fieldGroup: {
                   borderRadius: "4px",
                   boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-                  borderColor: "red",
+                  // borderColor: "red",
+                  borderColor: "#c9bdbd",
+                  height: "42px",
                 },
               }}
               value={dashboardSearch.global.value}
@@ -133,7 +135,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
             <Icon
               iconName="Search"
               style={{
-                fontSize: "20px",
+                fontSize: "28px",
                 position: "absolute",
                 top: "5%",
                 right: "11px",
@@ -141,14 +143,21 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               }}
             />
           </div>
-          <div className="ms-Grid-col ms-lg1">
+          <div className="ms-Grid-col ms-lg2">
             <ReuseButton
               icon={
                 <RefreshIcon
+                  // style={{
+                  //   fontSize: "2rem",
+                  //   marginTop: "4%",
+                  //   marginLeft: "18%",
+                  // }}
                   style={{
-                    fontSize: "2rem",
-                    marginTop: "4%",
-                    marginLeft: "18%",
+                    fontSize: "38px",
+                    marginTop: "1%",
+                    marginLeft: "6%",
+                    minWidth: "119px",
+                    height: "43px",
                   }}
                 />
               }
@@ -164,7 +173,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               spacing={4}
               height="33px"
               width="32%"
-              Style={{ marginRight: "11px" }}
+              Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
             />
           </div>
         </div>
@@ -203,20 +212,27 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               label="Business Unit Name"
               options={
                 FilterData.BusinessUnitCode?.text
-                  ? Array.from(
-                    new Map(
-                      MasterData?.BusinessUnitCodeAllColumn
-                        .filter((data: any) => data.text === FilterData.BusinessUnitCode.text)
-                        .map((data: any) => [data.Name, { key: data.text, text: data.Name }])
-                    ).values()
-                  ) as AutoCompleteItem[]
-                  : Array.from(
-                    new Map(
-                      MasterData?.BusinessUnitCodeAllColumn.map(
-                        (data: any) => [data.Name, { key: data.text, text: data.Name }]
-                      )
-                    ).values()
-                  ) as AutoCompleteItem[]
+                  ? (Array.from(
+                      new Map(
+                        MasterData?.BusinessUnitCodeAllColumn.filter(
+                          (data: any) =>
+                            data.text === FilterData.BusinessUnitCode.text
+                        ).map((data: any) => [
+                          data.Name,
+                          { key: data.text, text: data.Name },
+                        ])
+                      ).values()
+                    ) as AutoCompleteItem[])
+                  : (Array.from(
+                      new Map(
+                        MasterData?.BusinessUnitCodeAllColumn.map(
+                          (data: any) => [
+                            data.Name,
+                            { key: data.text, text: data.Name },
+                          ]
+                        )
+                      ).values()
+                    ) as AutoCompleteItem[])
               }
               value={FilterData.BusinessUnitName}
               disabled={false}
@@ -238,8 +254,9 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 width: "79%",
                 backgroundColor: "#EF3340",
                 color: "white",
-                height: "48px",
-                marginTop: "-8px",
+                height: "42px",
+                marginTop: "-1px",
+                lineHeight: "normal",
               }}
             />
           </div>
