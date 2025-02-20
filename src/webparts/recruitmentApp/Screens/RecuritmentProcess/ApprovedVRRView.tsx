@@ -548,15 +548,19 @@ const ApprovedVRRView: React.FC = (props: any) => {
                                                     display: "flex",
                                                     flexDirection: "column",
                                                     height: "41px",
-                                                    paddingTop: "22px",
+                                                    paddingTop: "23px",
+                                                    backgroundColor: "#EF3340",
+                                                    color: "white",
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
                                                 }}
                                                 label="VIEW"
+                                                imgSrc={require("../../assets/Viewicon.svg")}
+                                                imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                                                imgAlt="View"
+                                                imgAltHover="Hovered View"
                                                 onClick={OpenComments}
                                                 spacing={4}
-                                                imgSrc={require("../../assets/Viewicon.svg")}
-                                                imgAlt="ssss"
-                                                imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                                                imgAltHover="Image"
                                             />
                                         </div>
                                     </div>
