@@ -153,7 +153,7 @@ const ReviewCandidateList = (props: any) => {
                 case RoleID.RecruitmentHR: {
                     if (props.stateValue?.TabName === TabName.AssignInterviewPanel) {
                         FilterValue = {
-                            filterValue: "",//workflowStatusApi.InterviewScheduled,
+                            filterValue: workflowStatusApi.InterviewScheduled,
                             sortBy: "",
                             sortOrder: 0,
                             pageSize: rows,

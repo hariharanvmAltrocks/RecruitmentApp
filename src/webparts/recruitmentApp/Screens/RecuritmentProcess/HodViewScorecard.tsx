@@ -691,8 +691,8 @@ const HodViewScorecard = (props: any) => {
                     value={
                       CandidateData.InterviewDate
                         ? new Date(CandidateData.InterviewDate)
-                            .toLocaleDateString("en-GB")
-                            .replace(/\//g, "-")
+                          .toLocaleDateString("en-GB")
+                          .replace(/\//g, "-")
                         : ""
                     }
                     disabled={true}
@@ -873,7 +873,7 @@ const HodViewScorecard = (props: any) => {
                         alignItems: "center",
                       }}
                       label="VIEW"
-                      imgSrc={require("../../assets/Viewicon.svg")}
+                      imgSrc={require("../../assets/viewSubmision-white.svg")}
                       imgSrcHover={require("../../assets/viewSubmision-white.svg")}
                       imgAlt="View"
                       imgAltHover="Hovered View"
@@ -1025,7 +1025,7 @@ const HodViewScorecard = (props: any) => {
             }
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     };
 
     fetchData();

@@ -201,7 +201,7 @@ const RecruitmentProcess = (props: any) => {
                     }}
                   >
                     <img
-                      src={require("../../assets/Edit button.svg")}
+                      src={require("../../assets/Editbutton.svg")}
                       alt="Stamp Icon"
                       style={{
                         width: "100%",
@@ -225,7 +225,7 @@ const RecruitmentProcess = (props: any) => {
                     }}
                   >
                     <img
-                      src={require("../../assets/Upload Icon.svg")}
+                      src={require("../../assets/UploadIcon.svg")}
                       alt="Stamp Icon"
                       style={{
                         width: "100%",
@@ -249,7 +249,7 @@ const RecruitmentProcess = (props: any) => {
                     }}
                   >
                     <img
-                      src={require("../../assets/View icon.svg")}
+                      src={require("../../assets/Viewicon.svg")}
                       alt="Stamp Icon"
                       style={{
                         width: "100%",
@@ -346,7 +346,7 @@ const RecruitmentProcess = (props: any) => {
                   >
                   </Button> */}
                 <img
-                  src={require("../../assets/Edit button.svg")}
+                  src={require("../../assets/Editbutton.svg")}
                   alt="Stamp Icon"
                   onClick={() =>
                     handleRedirectView(rowData, tab, TabName, ButtonAction)
@@ -372,7 +372,7 @@ const RecruitmentProcess = (props: any) => {
                     
                   </Button> */}
                 <img
-                  src={require("../../assets/Upload Icon.svg")}
+                  src={require("../../assets/UploadIcon.svg")}
                   alt="Stamp Icon"
                   style={{
                     width: "60%",
@@ -400,7 +400,7 @@ const RecruitmentProcess = (props: any) => {
                    
                   </Button> */}
                 <img
-                  src={require("../../assets/View icon.svg")}
+                  src={require("../../assets/Viewicon.svg")}
                   alt="Stamp Icon"
                   style={{
                     width: "70%",

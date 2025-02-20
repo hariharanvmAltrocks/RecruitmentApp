@@ -174,7 +174,8 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               spacing={4}
               height="33px"
               width="32%"
-              Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
+              //Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
+              Style={{ marginRight: "11px", minWidth: "146px", height: "42px" }}
             />
           </div>
         </div>
@@ -257,7 +258,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 color: "white",
                 height: "42px",
                 // marginTop: "-1px", //Dev
-                marginTop: "-4px", //SIT
+                marginTop: "-9px", //SIT
                 lineHeight: "normal",
               }}
             />

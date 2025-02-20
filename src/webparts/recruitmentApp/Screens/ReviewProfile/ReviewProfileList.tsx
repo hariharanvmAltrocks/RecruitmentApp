@@ -11,8 +11,8 @@ import {
   TabName,
   tabType,
 } from "../../utilities/Config";
-import { Button } from "primereact/button";
 import SearchableDataTable from "../../components/CustomDataTable";
+import { Button } from "primereact/button";
 
 const ReviewProfileList = (props: any) => {
 
@@ -71,6 +71,7 @@ const ReviewProfileList = (props: any) => {
     {
       field: "",
       header: "Action",
+      style: { width: '8%' },
       sortable: false,
       body: (rowData: any) => {
         function handleRedirectView(
@@ -95,7 +96,7 @@ const ReviewProfileList = (props: any) => {
         return (
           <div>
             <span>
-              <Button
+              {/* <Button
                 onClick={() => handleRedirectView(rowData, tab, TabName, ButtonAction)}
                 className="table_btn"
                 icon="pi pi-eye"
@@ -104,8 +105,26 @@ const ReviewProfileList = (props: any) => {
                   marginRight: "7px",
                   padding: "3px",
                 }}
-              />
-
+              /> */}
+              <Button
+                onClick={() => handleRedirectView(rowData, tab, TabName, ButtonAction)}
+                className="table_btn"
+                // icon="pi pi-eye"
+                style={{
+                  width: "30px",
+                  marginRight: "7px",
+                  padding: "3px",
+                }}
+              >
+                <img
+                  src={require("../../assets/edit_icon.png")}
+                  alt="Stamp Icon"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                  }}
+                />
+              </Button>
 
             </span>
           </div>

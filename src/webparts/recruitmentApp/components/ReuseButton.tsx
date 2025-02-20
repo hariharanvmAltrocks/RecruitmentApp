@@ -143,9 +143,11 @@ export default class ReuseButton extends React.Component<ReuseButtonProps> {
               {label}
 
               {this.state.isHovered ? (
-                <img src={imgSrcHover} alt={imgAltHover} style={{ filter: "brightness(0) invert(1)" }} />
+                <img src={imgSrcHover} alt={imgAltHover}
+                />
               ) : (
-                <img src={imgSrc} alt={imgAlt} style={{ filter: "brightness(0) invert(1)" }} />
+                <img src={imgSrc} alt={imgAlt}
+                />
               )}
               {onChange && (
                 <input
