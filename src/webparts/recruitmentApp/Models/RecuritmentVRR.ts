@@ -164,8 +164,8 @@ export type ScoreCardData = {
 };
 
 export type QualificationValue = {
-  MinQualification: AutoCompleteItem;
-  PrefeQualification: AutoCompleteItem;
+  MinQualification: AutoCompleteItem[];
+  PrefeQualification: AutoCompleteItem[];
 };
 
 export type RoleSpecKnowledge = {

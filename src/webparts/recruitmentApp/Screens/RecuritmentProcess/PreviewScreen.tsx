@@ -15,7 +15,7 @@ import * as moment from "moment";
 interface FormFields {
   data: AdvDetails;
   RoleSpec: RoleSpecKnowledge[];
-  Qualification: QualificationValue[];
+  Qualification: QualificationValue;
   TechinicalSkills: TechnicalSkills[];
   onclose: () => void;
   Ok_btnfn: () => void;
@@ -111,14 +111,18 @@ function PreviewScreen({
 
                       {data.ValidFrom && data.ValidTo && (
                         <div style={{ display: "flex", marginTop: "8px" }}>
-                          <div className="ms-Grid-col ms-lg4">{moment(data.ValidFrom).format("DD-MMM-YYYY - hh:mm A")}</div>
+                          <div className="ms-Grid-col ms-lg4">
+                            {moment(data.ValidFrom).format("DD-MM-YYYY")}
+                          </div>
                           <div
                             className="ms-Grid-col ms-lg1"
                             style={{ textAlign: "center" }}
                           >
-                            -
+                            {/* - */}
                           </div>
-                          <div className="ms-Grid-col ms-lg4">{moment(data.ValidTo).format("DD-MMM-YYYY - hh:mm A")}</div>
+                          <div className="ms-Grid-col ms-lg4">
+                            {moment(data.ValidTo).format("DD-MM-YYYY")}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -138,7 +142,9 @@ function PreviewScreen({
                         }}
                       >
                         <div className="ms-Grid-col ms-lg4">
-                          <b style={{ fontSize: "17px" }}>Preferred Total Experience</b>
+                          <b style={{ fontSize: "17px" }}>
+                            Preferred Total Experience
+                          </b>
                         </div>
                         <div
                           className="ms-Grid-col ms-lg1"
@@ -163,7 +169,7 @@ function PreviewScreen({
                           className="ms-Grid-col ms-lg1"
                           style={{ textAlign: "center" }}
                         >
-                          <span>-</span>
+                          {/* <span>-</span> */}
                         </div>
                         <div className="ms-Grid-col ms-lg4">
                           {data.ExperienceinMiningIndustry
@@ -176,7 +182,8 @@ function PreviewScreen({
                 </div>
               )}
 
-              {Qualification.length > 0 && (
+              {(Qualification?.MinQualification?.length > 0 ||
+                Qualification?.PrefeQualification?.length > 0) && (
                 <div className="ms-Grid-row" style={{ marginBottom: "20px" }}>
                   <div className="ms-Grid-col ms-lg12">
                     <div className="ms-Grid-row" style={{ marginTop: "8px" }}>
@@ -196,7 +203,7 @@ function PreviewScreen({
                           className="ms-Grid-col ms-lg1"
                           style={{ textAlign: "center" }}
                         >
-                          {/* - */}
+                          {/* Separator */}
                         </div>
                         <div className="ms-Grid-col ms-lg4">
                           <b style={{ fontSize: "17px" }}>
@@ -205,29 +212,35 @@ function PreviewScreen({
                         </div>
                       </div>
 
-                      {Qualification.map((item: any, index: number) => (
-                        <div
-                          key={index}
-                          style={{ display: "flex", marginTop: "8px" }}
-                        >
-                          <div className="ms-Grid-col ms-lg4">
-                            {item.MinQualification?.text || "N/A"}
-                          </div>
-                          <div
-                            className="ms-Grid-col ms-lg1"
-                            style={{ textAlign: "center" }}
-                          >
-                            <span>-</span>
-                          </div>
-                          <div className="ms-Grid-col ms-lg4">
-                            {item.PrefeQualification?.text || "N/A"}
-                          </div>
+                      {/* Display Minimum and Preferred Qualification as comma-separated values */}
+                      <div style={{ display: "flex", marginTop: "8px" }}>
+                        {/* Minimum Qualification */}
+                        <div className="ms-Grid-col ms-lg4">
+                          {Qualification?.MinQualification?.map(
+                            (item: any) => item?.text || "N/A"
+                          ).join(", ")}
                         </div>
-                      ))}
+
+                        <div
+                          className="ms-Grid-col ms-lg1"
+                          style={{ textAlign: "center" }}
+                        ></div>
+
+                        {/* Preferred Qualification */}
+                        <div className="ms-Grid-col ms-lg4">
+                          {Qualification?.PrefeQualification?.map(
+                            (item: any) => item?.text || "N/A"
+                          ).join(", ")}
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  <hr
+                    style={{ border: "1px solid #d3d3d3", margin: "10px 0" }}
+                  />
                 </div>
               )}
+
               {RoleSpec.length > 0 && (
                 <div className="ms-Grid-row" style={{ marginBottom: "20px" }}>
                   <div className="ms-Grid-col ms-lg12">
@@ -267,9 +280,7 @@ function PreviewScreen({
                             className="ms-Grid-col ms-lg1"
                             style={{ textAlign: "center" }}
                           >
-
                             <span>-</span>
-
                           </div>
                           <div className="ms-Grid-col ms-lg4">
                             {item.RequiredLevel?.text || "N/A"}
@@ -323,20 +334,33 @@ function PreviewScreen({
                             className="ms-Grid-col ms-lg1"
                             style={{ textAlign: "center" }}
                           >
-
                             <span>-</span>
-
                           </div>
                           <div className="ms-Grid-col ms-lg4">
                             {item.LevelProficiency?.text || "N/A"}
                           </div>
                         </div>
                       ))}
-                      {data.FunctionType && (
+                      {/* {data.FunctionType && (
                         <div className="ms-Grid-row">
                           <div className="ms-Grid-col ms-lg12">
                             <p>
                               <b style={{ fontSize: "17px" }}>Function Type:</b>{" "}
+                              {data.JobFunctionalType.text}
+                            </p>
+                          </div>
+                        </div>
+                      )} */}
+                      {data.FunctionType && (
+                        <div className="ms-Grid-row">
+                          <div
+                            className="ms-Grid-col ms-lg12"
+                            style={{ marginTop: "-2%" }}
+                          >
+                            <p>
+                              <b style={{ fontSize: "17px" }}>Function Type</b>{" "}
+                            </p>
+                            <p style={{ position: "relative", bottom: "8px" }}>
                               {data.JobFunctionalType.text}
                             </p>
                           </div>

@@ -57,10 +57,10 @@ function CustomTextArea({
           //border: "1px solid #5f5f5f",
 
           fontSize: value ? "13px" : "11px",
-          paddingTop: value ? "" : "7px",
-          paddingLeft: value ? "" : "11px",
+
           fontFamily: "sans-serif",
-          //height: "10px",
+          paddingTop: value ? "5px" : "7px",
+          paddingLeft: value ? "7px" : "11px",
         }}
         onChange={
           onChange ? (event, value) => onChange(value?.value || "") : undefined
