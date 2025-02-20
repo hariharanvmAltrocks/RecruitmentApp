@@ -1,8 +1,8 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import * as React from "react";
+import { Button } from "primereact/button";
 import { Icon } from "@fluentui/react/lib/Icon";
 import { Label } from "@fluentui/react";
-import { PrimaryButton } from "office-ui-fabric-react";
 
 interface AttachmentButtonProps {
   iconName?: string;
@@ -41,7 +41,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
   AttachState,
 }: AttachmentButtonProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const onAttachmentIconClick = () => {
     if (fileInputRef.current) {
@@ -87,10 +87,25 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
   //   padding: "6px",
   //   borderRadius: "5px",
   //   ...Style,
-  // };
 
-  const LabelStyle = {
+  // };
+  const buttonStyle: React.CSSProperties = {
+    minWidth: "117px",
+    fontSize: "13px",
+    paddingBottom: "24px",
+    display: "flex",
+    flexDirection: "column",
+    height: "55px",
+
+    backgroundColor: "rgb(239, 51, 64)",
     color: "white",
+    border: "rgb(239, 51, 64)",
+
+    borderRadius: "5px",
+    ...Style,
+  };
+  const LabelStyle = {
+    color: "rgb(239, 51, 64)",
     marginBottom: "0",
     ...Style,
   };
@@ -99,20 +114,20 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
     marginRight: "8px",
     marginLeft: "6px",
     fontSize: "20px",
-    color: "rgb(205, 45, 45)",
+    color: "white",
   };
 
-  // const LabelStyleHover = {
-  //   color: "#FFFF",
-  // };
+  const LabelStyleHover = {
+    color: "#FFFF",
+  };
 
-  // const IconStyleHover = {
-  //   color: "#FFFF",
-  //   backgroundColor: "#EF3340",
-  //   marginRight: "8px",
-  //   marginLeft: "6px",
-  //   fontSize: "20px",
-  // };
+  const IconStyleHover = {
+    color: "#FFFF",
+    backgroundColor: "#EF3340",
+    marginRight: "8px",
+    marginLeft: "6px",
+    fontSize: "20px",
+  };
 
   return (
     <div>
@@ -122,23 +137,26 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
           {mandatory && <span style={{ color: "red" }}> *</span>}
         </Label>
       )}
-      <PrimaryButton
-        style={{
-          borderColor: "rgb(205, 45, 45)",
-          backgroundColor: "rgb(239, 51, 64)",
-          color: "white",
-          borderRadius: "10px",
-          width: "60%"
-        }}
+      <Button
         onClick={onAttachmentIconClick}
-      // style={buttonStyle}
-
+        style={buttonStyle}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <Label style={LabelStyle}>
-          {label}
-          {/* {mandatory && <span style={{ color: "red" }}> *</span>} */}
-        </Label>
-        <Icon iconName={iconName} style={IconStyle}></Icon>
+        {isHovered ? (
+          <>
+            <Label style={LabelStyleHover}>{label}</Label>
+            <Icon iconName={iconNameHover} style={IconStyleHover}></Icon>
+          </>
+        ) : (
+          <>
+            <Label style={LabelStyle}>
+              {label}
+              {/* {mandatory && <span style={{ color: "red" }}> *</span>} */}
+            </Label>
+            <Icon iconName={iconName} style={IconStyle}></Icon>
+          </>
+        )}
         <input
           type="file"
           multiple={true}
@@ -147,9 +165,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
           style={{ display: "none" }}
           accept=".pdf, .doc, .docx"
         />
-
-      </PrimaryButton>
-
+      </Button>
       {error && (
         <p
           style={{
@@ -160,7 +176,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
             ...paragraphStyle,
           }}
         >
-          File is Required
+          File Is Required
         </p>
       )}
     </div>

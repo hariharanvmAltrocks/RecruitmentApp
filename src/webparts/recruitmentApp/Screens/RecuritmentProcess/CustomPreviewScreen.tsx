@@ -13,11 +13,15 @@ interface FormFields {
   JobTitle: string;
 }
 
-function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) {
-  console.log("data", data);
+function CustomPreviewScreen({
+  data,
+  onclose,
+  Ok_btnfn,
+  JobTitle,
+}: FormFields) {
   const ValidTo = data.ValidTo;
   const ValidFrom = data.ValidFrom;
-  console.log("validate", ValidTo);
+
   const isEmptyData =
     !data ||
     (!data.RolePurpose &&
@@ -70,7 +74,10 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
                   </div>
                   {data.RolePurpose && (
                     <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg12">
+                      <div
+                        className="ms-Grid-col ms-lg12"
+                        // style={{ marginBottom: "-7%" }}
+                      >
                         <p>
                           <b style={{ fontSize: "17px" }}>Role Purpose:</b>{" "}
                           <span
@@ -85,7 +92,10 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
 
                   {data.JobDescription && (
                     <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg12">
+                      <div
+                        className="ms-Grid-col ms-lg12"
+                        // style={{ marginBottom: "-7%" }}
+                      >
                         <p>
                           <b style={{ fontSize: "17px" }}>Job Description:</b>{" "}
                           <span
@@ -106,7 +116,7 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
                       <div className="ms-Grid-col ms-lg12">
                         <div
                           className="ms-Grid-row"
-                          style={{ marginTop: "8px" }}
+                          // style={{ marginTop: "8px" }}
                         >
                           <div
                             style={{
@@ -121,9 +131,7 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
                             <div
                               className="ms-Grid-col ms-lg1"
                               style={{ textAlign: "center" }}
-                            >
-                              {/* - */}
-                            </div>
+                            ></div>
                             <div className="ms-Grid-col ms-lg4">
                               <b style={{ fontSize: "17px" }}>Valid To</b>
                             </div>
@@ -137,9 +145,7 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
                               <div
                                 className="ms-Grid-col ms-lg1"
                                 style={{ textAlign: "center" }}
-                              >
-                                -
-                              </div>
+                              ></div>
                               <div className="ms-Grid-col ms-lg4">
                                 {ValidTo}
                               </div>
@@ -151,68 +157,6 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
                   ) : null}
                   {(data.TotalExperience ||
                     data.ExperienceinMiningIndustry) && (
-                      <div
-                        className="ms-Grid-row"
-                        style={{ marginBottom: "20px" }}
-                      >
-                        <div className="ms-Grid-col ms-lg12">
-                          <div
-                            className="ms-Grid-row"
-                            style={{ marginTop: "8px" }}
-                          >
-                            {/* New Headings */}
-                            <div
-                              style={{
-                                display: "flex",
-                                fontWeight: "bold",
-                                marginBottom: "8px",
-                              }}
-                            >
-                              <div className="ms-Grid-col ms-lg4">
-                                <b style={{ fontSize: "17px" }}>
-                                  Preferred Total Experience
-                                </b>
-                              </div>
-                              <div
-                                className="ms-Grid-col ms-lg1"
-                                style={{ textAlign: "center" }}
-                              >
-                                {/* - */}
-                              </div>
-                              <div className="ms-Grid-col ms-lg4">
-                                <b style={{ fontSize: "17px" }}>
-                                  Preferred  Experience in Mining Industry (Years)
-                                </b>
-                              </div>
-                            </div>
-
-                            <div style={{ display: "flex", marginTop: "8px" }}>
-                              <div className="ms-Grid-col ms-lg4">
-                                {data.TotalExperience
-                                  ? `${data.TotalExperience} years`
-                                  : ""}
-                              </div>
-                              <div
-                                className="ms-Grid-col ms-lg1"
-                                style={{ textAlign: "center" }}
-                              >
-                                {data.TotalExperience &&
-                                  data.ExperienceinMiningIndustry && (
-                                    <span>-</span>
-                                  )}
-                              </div>
-                              <div className="ms-Grid-col ms-lg4">
-                                {data.ExperienceinMiningIndustry
-                                  ? `${data.ExperienceinMiningIndustry} years in Mining`
-                                  : ""}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                  {data.MinQualificationOption?.length > 0 && (
                     <div
                       className="ms-Grid-row"
                       style={{ marginBottom: "20px" }}
@@ -222,7 +166,6 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
                           className="ms-Grid-row"
                           style={{ marginTop: "8px" }}
                         >
-                          {/* New Headings */}
                           <div
                             style={{
                               display: "flex",
@@ -232,47 +175,114 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
                           >
                             <div className="ms-Grid-col ms-lg4">
                               <b style={{ fontSize: "17px" }}>
-                                Minimum Qualification
+                                Preferred Total Experience
                               </b>
                             </div>
                             <div
                               className="ms-Grid-col ms-lg1"
                               style={{ textAlign: "center" }}
-                            >
-                              {/* - */}
-                            </div>
+                            ></div>
                             <div className="ms-Grid-col ms-lg4">
                               <b style={{ fontSize: "17px" }}>
-                                Preferred Qualification
+                                Preferred Experience in Mining Industry (Years)
                               </b>
                             </div>
                           </div>
 
-                          {data.MinQualificationOption.map((item, index) => (
-                            <div
-                              key={index}
-                              style={{ display: "flex", marginTop: "8px" }}
-                            >
-                              <div className="ms-Grid-col ms-lg4">
-                                {item.text}
-                              </div>
-                              <div
-                                className="ms-Grid-col ms-lg1"
-                                style={{ textAlign: "center" }}
-                              >
-                                {data.PrefeQualificationOption?.[index] && (
-                                  <span>-</span>
-                                )}
-                              </div>
-                              <div className="ms-Grid-col ms-lg4">
-                                {data.PrefeQualificationOption?.[index]?.text}
-                              </div>
+                          <div style={{ display: "flex", marginTop: "8px" }}>
+                            <div className="ms-Grid-col ms-lg4">
+                              {data.TotalExperience
+                                ? `${data.TotalExperience} years`
+                                : ""}
                             </div>
-                          ))}
+                            <div
+                              className="ms-Grid-col ms-lg1"
+                              style={{ textAlign: "center" }}
+                            >
+                              {data.TotalExperience &&
+                                data.ExperienceinMiningIndustry && (
+                                  <span> </span>
+                                )}
+                            </div>
+                            <div className="ms-Grid-col ms-lg4">
+                              {data.ExperienceinMiningIndustry
+                                ? `${data.ExperienceinMiningIndustry} years in Mining`
+                                : ""}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   )}
+
+                  {data.MinQualificationOption?.length > 0 && (
+                    <>
+                      <div
+                        className="ms-Grid-row"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        <div className="ms-Grid-col ms-lg12">
+                          <div
+                            className="ms-Grid-row"
+                            style={{ marginTop: "4px" }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                fontWeight: "bold",
+                                marginBottom: "8px",
+                              }}
+                            >
+                              <div className="ms-Grid-col ms-lg4">
+                                <b style={{ fontSize: "17px" }}>
+                                  Minimum Qualification
+                                </b>
+                              </div>
+                              <div
+                                className="ms-Grid-col ms-lg1"
+                                style={{ textAlign: "center" }}
+                              ></div>
+                              <div className="ms-Grid-col ms-lg4">
+                                <b style={{ fontSize: "17px" }}>
+                                  Preferred Qualification
+                                </b>
+                              </div>
+                            </div>
+
+                            {data.MinQualificationOption.map((item, index) => (
+                              <div
+                                key={index}
+                                style={{ display: "flex", marginTop: "8px" }}
+                              >
+                                <div className="ms-Grid-col ms-lg4">
+                                  {item.text}
+                                </div>
+                                <div
+                                  className="ms-Grid-col ms-lg1"
+                                  style={{ textAlign: "center" }}
+                                >
+                                  {data.PrefeQualificationOption?.[index] && (
+                                    <span></span>
+                                  )}
+                                </div>
+                                <div className="ms-Grid-col ms-lg4">
+                                  {data.PrefeQualificationOption?.[index]?.text}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <hr
+                        style={{
+                          border: "1px solid #d3d3d3",
+                          margin: "10px 0",
+                        }}
+                      />{" "}
+                      {/* Add this line */}
+                    </>
+                  )}
+
                   {data.RoleSpeKnowledgeoption?.length > 0 && (
                     <div
                       className="ms-Grid-row"
@@ -281,7 +291,7 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
                       <div className="ms-Grid-col ms-lg12">
                         <div
                           className="ms-Grid-row"
-                          style={{ marginTop: "8px" }}
+                          style={{ marginTop: "4px" }}
                         >
                           <div
                             style={{
@@ -341,9 +351,8 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
                       <div className="ms-Grid-col ms-lg12">
                         <div
                           className="ms-Grid-row"
-                          style={{ marginTop: "8px" }}
+                          style={{ marginTop: "4px" }}
                         >
-                          {/* New Headings */}
                           <div
                             style={{
                               display: "flex",
@@ -359,9 +368,7 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
                             <div
                               className="ms-Grid-col ms-lg1"
                               style={{ textAlign: "center" }}
-                            >
-                              {/* - */}
-                            </div>
+                            ></div>
                             <div className="ms-Grid-col ms-lg4">
                               <b style={{ fontSize: "17px" }}>
                                 Level of Proficiency
@@ -396,9 +403,14 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
                   )}
                   {data.FunctionType && (
                     <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg12">
+                      <div
+                        className="ms-Grid-col ms-lg12"
+                        style={{ marginTop: "-2%" }}
+                      >
                         <p>
-                          <b style={{ fontSize: "17px" }}>Function Type:</b>{" "}
+                          <b style={{ fontSize: "17px" }}>Function Type</b>{" "}
+                        </p>
+                        <p style={{ position: "relative", bottom: "8px" }}>
                           {data.FunctionType}
                         </p>
                       </div>
@@ -418,11 +430,11 @@ function CustomPreviewScreen({ data, onclose, Ok_btnfn, JobTitle }: FormFields) 
             className="ms-Grid-col ms-lg12"
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <div style={{ marginRight: "10px" }}>
+            {/* <div style={{ marginRight: "10px" }}>
               <ReuseButton label="Cancel" onClick={onclose} spacing={4} />
-            </div>
+            </div> */}
             <div style={{ marginRight: "10px" }}>
-              <ReuseButton label="OK" onClick={Ok_btnfn} spacing={4} />
+              <ReuseButton label="Close" onClick={Ok_btnfn} spacing={4} />
             </div>
           </div>
         </div>

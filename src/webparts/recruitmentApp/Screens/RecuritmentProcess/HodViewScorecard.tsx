@@ -30,10 +30,11 @@ import CustomTextArea from "../../components/CustomTextArea";
 import CustomSignature from "../../components/CustomSignature";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomLabel from "../../components/CustomLabel";
-import { PrimaryButton } from "office-ui-fabric-react";
+// import { PrimaryButton } from "office-ui-fabric-react";
 import CommentView from "./CommentView";
 import { CommentsDatas } from "../../Services/InterviewProcess/IInterviewProcessService";
 import "../../App.css";
+import ReuseButton from "../../components/ReuseButton";
 const HodViewScorecard = (props: any) => {
   const todaydate = new Date();
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
@@ -857,18 +858,28 @@ const HodViewScorecard = (props: any) => {
                     style={{ marginLeft: "-5px" }}
                   >
                     <CustomLabel value={" View Justifications"} />
-                    <PrimaryButton
-                      style={{
-                        borderColor: "rgb(205, 45, 45)",
+                    <ReuseButton
+                      Style={{
+                        minWidth: "117px",
+                        fontSize: "13px",
+                        paddingBottom: "24px",
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "41px",
+                        paddingTop: "23px",
                         backgroundColor: "#EF3340",
                         color: "white",
-                        borderRadius: "10px",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
+                      label="VIEW"
+                      imgSrc={require("../../assets/Viewicon.svg")}
+                      imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                      imgAlt="View"
+                      imgAltHover="Hovered View"
                       onClick={OpenComments}
-                    >
-                      {" "}
-                      View
-                    </PrimaryButton>
+                      spacing={4}
+                    />
                   </div>
                 </div>
               </div>

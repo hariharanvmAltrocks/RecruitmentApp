@@ -621,8 +621,9 @@ export default class RecruitmentService implements IRecruitmentService {
           FristName: item.FristName,
           MiddleName: item.MiddleName,
           LastName: item.LastName,
-          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""
-            }`,
+          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${
+            item.LastName || ""
+          }`,
           ResidentialAddress: item?.ResidentialAddress,
           DOB: item?.DOB,
           ContactNumber: item?.ContactNumber,
@@ -809,10 +810,10 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
             ? (Employee.FirstName ?? "") +
-            " " +
-            (Employee.MiddleName ?? "") +
-            " " +
-            (Employee.LastName ?? "")
+              " " +
+              (Employee.MiddleName ?? "") +
+              " " +
+              (Employee.LastName ?? "")
             : "",
           // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
         };
@@ -1053,6 +1054,7 @@ export default class RecruitmentService implements IRecruitmentService {
   //     };
   //   }
   // }
+
   async GetHRMSRecruitmentRoleProfileDetails(
     filterParam: any[],
     filterConditions: any
@@ -1082,7 +1084,7 @@ export default class RecruitmentService implements IRecruitmentService {
         Listname: ListNames.HRMSQualification,
         Select: "Qualification, QualificationCode",
       });
-
+      console.log("Qualification", qualificationMaster);
       const functionTypeMaster: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSJobTitleFunctionType,
         Select: "ID,FunctionType",
@@ -1150,7 +1152,7 @@ export default class RecruitmentService implements IRecruitmentService {
             console.error("Error parsing Qualification:", error);
           }
         }
-
+        console.log("item.Qualification", item.Qualification);
         if (item.PreferredQualification) {
           try {
             const parsedPQ = JSON.parse(item.PreferredQualification);
@@ -1161,6 +1163,7 @@ export default class RecruitmentService implements IRecruitmentService {
             console.error("Error parsing Preferred Qualification:", error);
           }
         }
+        console.log("item.Qualification", item.Qualification);
         console.log("listItems", listItems);
         const functionType = item.FunctionType;
 
@@ -1181,19 +1184,37 @@ export default class RecruitmentService implements IRecruitmentService {
               levelProficiencyMap[ts.LevelProficiency] || ts.LevelProficiency,
           })),
 
-          Qualification: qualificationArray.map((q) => ({
-            text:
-              qualificationMap[q.MinQualification] ||
-              q.MinQualification ||
-              "N/A",
-          })),
+          // Qualification: qualificationArray.map((q) => ({
+          //   text:
+          //     qualificationMap[q.MinQualification] ||
+          //     q.MinQualification ||
+          //     "N/A",
+          // })),
+          // Converting multiple values into comma-separated strings
+          Qualification: qualificationArray
+            .map(
+              (q) =>
+                qualificationMap[q.MinQualification] ||
+                q.MinQualification ||
+                "N/A"
+            )
+            .join(", "),
 
-          PreferredQualification: preferredQualificationArray.map((pq) => ({
-            text:
-              qualificationMap[pq.PrefeQualification] ||
-              pq.PrefeQualification ||
-              "N/A",
-          })),
+          // PreferredQualification: preferredQualificationArray.map((pq) => ({
+          //   text:
+          //     qualificationMap[pq.PrefeQualification] ||
+          //     pq.PrefeQualification ||
+          //     "N/A",
+          // })),
+
+          PreferredQualification: preferredQualificationArray
+            .map(
+              (pq) =>
+                qualificationMap[pq.PrefeQualification] ||
+                pq.PrefeQualification ||
+                "N/A"
+            )
+            .join(", "),
           YearofExperience:
             experienceMap.get(item.TotalPreferredExperience?.ID) || "N/A",
           PreferredExperience:
@@ -1203,13 +1224,13 @@ export default class RecruitmentService implements IRecruitmentService {
 
           ValidFrom: item.ValidFrom
             ? new Date(item.ValidFrom)
-              .toLocaleDateString("en-GB")
-              .replace(/\//g, "-")
+                .toLocaleDateString("en-GB")
+                .replace(/\//g, "-")
             : "N/A",
           ValidTo: item.ValidTo
             ? new Date(item.ValidTo)
-              .toLocaleDateString("en-GB")
-              .replace(/\//g, "-")
+                .toLocaleDateString("en-GB")
+                .replace(/\//g, "-")
             : "N/A",
 
           // FunctionType:
@@ -1364,10 +1385,10 @@ export default class RecruitmentService implements IRecruitmentService {
     filterParam: any[],
     filterConditions: any,
     Select: string,
-    Expand: string,
+    Expand: string
   ): Promise<ApiResponse<any | null>> {
     try {
-      let GetItem: any
+      let GetItem: any;
       await SPServices.SPReadItems({
         Listname: ListName,
         Select: Select,
@@ -1376,12 +1397,17 @@ export default class RecruitmentService implements IRecruitmentService {
         Expand: Expand,
         Orderby: "ID",
         Orderbydecorasc: false,
-      }).then((res) => {
-        console.log(res, "res");
-        GetItem = res
-      }).catch((error) => {
-        console.log("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error);
       })
+        .then((res) => {
+          console.log(res, "res");
+          GetItem = res;
+        })
+        .catch((error) => {
+          console.log(
+            "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+            error
+          );
+        });
       return {
         data: GetItem,
         status: 200,
