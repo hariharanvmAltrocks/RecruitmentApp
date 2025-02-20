@@ -46,8 +46,8 @@ const JobCodeSelector: React.FC<JobCodeSelectorProps> = ({
             root: {
               display: "flex",
               flexFlow: "column",
-              width: 485,
-              height: 121,
+              // width: 485,
+              // height: 121,
               boxSizing: "border-box",
               border: "1px solid rgb(191, 182, 182)",
               borderRadius: 0,
@@ -55,9 +55,16 @@ const JobCodeSelector: React.FC<JobCodeSelectorProps> = ({
               overflowY: "auto",
               paddingLeft: 30,
               marginTop: 1,
-              fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
-    -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+              //fontFamily: "sans-serif",
+
+              fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
+              -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
               fontSize: "13px",
+              // borderColor: "#5f5f5f",
+              borderColor: "#CBCBCB",
+              boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+              width: "475px",
+              height: "105px",
             },
           }}
 
