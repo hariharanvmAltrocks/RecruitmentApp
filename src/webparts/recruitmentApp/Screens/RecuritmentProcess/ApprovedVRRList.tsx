@@ -1616,7 +1616,6 @@ const RecruitmentProcess = (props: any) => {
 
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab);
-    console.log("setActiveTab", activeTab);
   };
 
   return (
@@ -1641,7 +1640,7 @@ const RecruitmentProcess = (props: any) => {
           visible={AssignHR}
           draggable={false}
           style={{
-            width: "60vw",
+            width: "55vw",
             backgroundColor: "white",
             borderRadius: "26px",
             padding: "20px",
@@ -1673,16 +1672,29 @@ const RecruitmentProcess = (props: any) => {
               style={{
                 display: "flex",
                 justifyContent: "center",
-                padding: "24px 0",
+                padding: "10px 0",
                 gap: "33px",
               }}
             >
-              <ReuseButton label="Cancel" onClick={() => handleCancel()} />
+              <ReuseButton
+                label="Cancel"
+                onClick={() => handleCancel()}
+                Style={{
+                  backgroundColor: "#EF3340",
+                  color: "white",
+                  width: "50%",
+                }}
+              />
 
               <ReuseButton
                 label="Assign"
                 onClick={async () => {
                   await AssignHRSubmit();
+                }}
+                Style={{
+                  backgroundColor: "#EF3340",
+                  color: "white",
+                  width: "50%",
                 }}
               />
             </div>
@@ -1702,12 +1714,13 @@ const RecruitmentProcess = (props: any) => {
                 color: "red",
                 marginTop: "8px",
                 display: "block",
-                fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
-      -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                fontFamily: "sans-serif",
+                //           fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
+                // -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
                 fontSize: "13px",
               }}
             >
-              Note:- To remove a selected Job Title, click 'Cancel' and return
+              Note:- To remove a selected Job Title, click ' Cancel ' and return
               to the Dashboard.
             </span>
             <div className="ms-Grid-row" style={{ textAlign: "left" }}>
@@ -1743,6 +1756,10 @@ const RecruitmentProcess = (props: any) => {
                           color: "red",
                           marginTop: "8px",
                           display: "block",
+                          fontFamily: "sans-serif",
+                          // fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
+                          // -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                          fontSize: "13px",
                         }}
                       >
                         Note:- You can assign multiple Agencies.
