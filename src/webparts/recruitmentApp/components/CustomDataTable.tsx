@@ -110,8 +110,11 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
             styles={{
               fieldGroup: {
                 borderRadius: "4px",
+                // boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+                // borderColor: "red",
                 boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-                borderColor: "red",
+                borderColor: "#c9bdbd",
+                height: "42px",
               },
             }}
             value={dashboardSearch.global.value}
@@ -120,7 +123,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
           <Icon
             iconName="Search"
             style={{
-              fontSize: "26px",
+              fontSize: "28px",
               position: "absolute",
               top: "5%",
               right: "11px",
@@ -129,14 +132,21 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
             }}
           />
         </div>
-        <div className="ms-Grid-col ms-lg1">
+        <div className="ms-Grid-col ms-lg2">
           <ReuseButton
             icon={
               <RefreshIcon
+                // style={{
+                //   fontSize: "2rem",
+                //   marginTop: "5%",
+                //   marginLeft: "18%",
+                // }}
                 style={{
-                  fontSize: "2rem",
-                  marginTop: "5%",
-                  marginLeft: "18%",
+                  fontSize: "38px",
+                  marginTop: "1%",
+                  marginLeft: "6%",
+                  minWidth: "119px",
+                  height: "43px",
                 }}
               />
             }
@@ -152,7 +162,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
             spacing={4}
             height="33px"
             width="32%"
-            Style={{ marginRight: "11px" }}
+            Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
           />
         </div>
         {handleAssignBtn && (

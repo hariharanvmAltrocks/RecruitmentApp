@@ -255,7 +255,8 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 backgroundColor: "#EF3340",
                 color: "white",
                 height: "42px",
-                marginTop: "-1px",
+                // marginTop: "-1px", //Dev
+                marginTop: "-4px", //SIT
                 lineHeight: "normal",
               }}
             />
