@@ -30,7 +30,7 @@ const ReviewCandidateList = (props: any) => {
     const columnConfig = (tab: string, ButtonAction: string, TabNamed: string) => [
         {
             field: "CandidateID",
-            header: "Candidate ID",
+            header: "Request ID",
             sortable: true,
         },
         {
@@ -45,7 +45,7 @@ const ReviewCandidateList = (props: any) => {
         },
         {
             field: "JobGrade",
-            header: "Job Grade",
+            header: "Job Code",
             sortable: true,
         },
 

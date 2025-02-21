@@ -121,117 +121,150 @@ const RecruitmentProcess = (props: any) => {
     ButtonAction: string,
     TabName: string
   ) => [
-    {
-      field: "Checkbox",
-      header: "",
-      sortable: false,
-    },
-    {
-      field: "JobCode",
-      header: "Job Code",
-      sortable: true,
-    },
-    {
-      field: "JobTitleInEnglish",
-      header: "Job Title",
-      sortable: true,
-    },
-    {
-      field: "BusinessUnitCode",
-      header: "BusinessUnit Code",
-      sortable: true,
-    },
-    {
-      field: "Status",
-      header: "Status",
-      fieldName: "Status",
-      sortable: false,
-      body: (rowData: any) => {
-        return (
-          <span
-            style={{
-              backgroundColor:
-                rowData.Status.includes("Pending") === true
-                  ? GridStatusBackgroundcolor.Pending
-                  : rowData.Status.includes("Completed") === true
-                  ? GridStatusBackgroundcolor.CompletedOrApproved
-                  : rowData.Status.includes("Rejected") === true
-                  ? GridStatusBackgroundcolor.Rejected
-                  : rowData.Status.includes("Reverted") === true
-                  ? GridStatusBackgroundcolor.Reverted
-                  : rowData.Status.includes("Resubmitted") === true
-                  ? GridStatusBackgroundcolor.ReSubmitted
-                  : rowData.Status.includes("Draft") === true
-                  ? GridStatusBackgroundcolor.Draft
-                  : "",
-              borderRadius: "5px",
-            }}
-          >
-            {rowData.Status}
-          </span>
-        );
+      {
+        field: "Checkbox",
+        header: "",
+        sortable: false,
       },
-    },
-    {
-      field: "Action",
-      header: "Action",
-      sortable: false,
-      body: (rowData: any) => {
-        return (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "5px",
-            }}
-          >
-            {ButtonAction === "view" ? (
-              <>
-                <Button
-                  onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction)
-                  }
-                  className="table_btn"
-                  icon="pi pi-eye"
-                  style={{
-                    width: "30px",
-                    marginRight: "7px",
-                    padding: "3px",
-                  }}
-                ></Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction)
-                  }
-                  className="table_btn"
-                  // icon="pi pi-eye"
-                  style={{
-                    width: "30px",
-                    marginRight: "7px",
-                    padding: "3px",
-                  }}
-                >
-                  <img
-                    src={require("../../assets/edit_icon.png")}
-                    alt="Stamp Icon"
+      {
+        field: "JobCode",
+        header: "Job Code",
+        sortable: true,
+      },
+      {
+        field: "JobTitleInEnglish",
+        header: "Job Title",
+        sortable: true,
+      },
+      {
+        field: "BusinessUnitCode",
+        header: "BusinessUnit Code",
+        sortable: true,
+      },
+      {
+        field: "Status",
+        header: "Status",
+        fieldName: "Status",
+        sortable: false,
+        body: (rowData: any) => {
+          return (
+            <span
+              style={{
+                backgroundColor:
+                  rowData.Status.includes("Pending") === true
+                    ? GridStatusBackgroundcolor.Pending
+                    : rowData.Status.includes("Completed") === true
+                      ? GridStatusBackgroundcolor.CompletedOrApproved
+                      : rowData.Status.includes("Rejected") === true
+                        ? GridStatusBackgroundcolor.Rejected
+                        : rowData.Status.includes("Reverted") === true
+                          ? GridStatusBackgroundcolor.Reverted
+                          : rowData.Status.includes("Resubmitted") === true
+                            ? GridStatusBackgroundcolor.ReSubmitted
+                            : rowData.Status.includes("Draft") === true
+                              ? GridStatusBackgroundcolor.Draft
+                              : "",
+                borderRadius: "5px",
+              }}
+            >
+              {rowData.Status}
+            </span>
+          );
+        },
+      },
+      {
+        field: "Action",
+        header: "Action",
+        sortable: false,
+        body: (rowData: any) => {
+          return (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "5px",
+              }}
+            >
+              {ButtonAction === "Edit" ? (
+                <>
+                  <Button
+                    onClick={() =>
+                      handleRedirectView(rowData, tab, TabName, ButtonAction)
+                    }
+                    className="table_btn"
                     style={{
-                      width: "100%",
-                      height: "100%",
+                      width: "30px",
+                      marginRight: "7px",
+                      padding: "3px",
                     }}
-                  />
-                </Button>
-              </>
-            )}
-          </div>
-        );
+                  >
+                    <img
+                      src={require("../../assets/Editbutton.svg")}
+                      alt="Stamp Icon"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    />
+                  </Button>
+                </>
+              ) : ButtonAction === "Upload" ? (
+                <>
+                  <Button
+                    onClick={() =>
+                      handleRedirectView(rowData, tab, TabName, ButtonAction)
+                    }
+                    className="table_btn"
+                    // icon="pi pi-eye"
+                    style={{
+                      width: "30px",
+                      marginRight: "7px",
+                      padding: "3px",
+                    }}
+                  >
+                    <img
+                      src={require("../../assets/UploadIcon.svg")}
+                      alt="Stamp Icon"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={() =>
+                      handleRedirectView(rowData, tab, TabName, ButtonAction)
+                    }
+                    className="table_btn"
+                    // icon="pi pi-eye"
+                    style={{
+                      width: "30px",
+                      marginRight: "7px",
+                      padding: "3px",
+                    }}
+                  >
+                    <img
+                      src={require("../../assets/Viewicon.svg")}
+                      alt="Stamp Icon"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    />
+                  </Button>
+                </>
+              )}
+            </div>
+          );
+        },
       },
-    },
-  ];
+    ];
+
   const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
     {
       field: "Checkbox",
@@ -266,16 +299,16 @@ const RecruitmentProcess = (props: any) => {
                 rowData.Status.includes("Pending") === true // "Pending"
                   ? GridStatusBackgroundcolor.Pending
                   : rowData.Status.includes("Completed") === true
-                  ? GridStatusBackgroundcolor.CompletedOrApproved
-                  : rowData.Status.includes("Rejected") === true
-                  ? GridStatusBackgroundcolor.Rejected
-                  : rowData.Status.includes("Reverted") === true
-                  ? GridStatusBackgroundcolor.Reverted
-                  : rowData.Status.includes("Resubmitted") === true
-                  ? GridStatusBackgroundcolor.ReSubmitted
-                  : rowData.Status.includes("Draft") === true
-                  ? GridStatusBackgroundcolor.Draft
-                  : "",
+                    ? GridStatusBackgroundcolor.CompletedOrApproved
+                    : rowData.Status.includes("Rejected") === true
+                      ? GridStatusBackgroundcolor.Rejected
+                      : rowData.Status.includes("Reverted") === true
+                        ? GridStatusBackgroundcolor.Reverted
+                        : rowData.Status.includes("Resubmitted") === true
+                          ? GridStatusBackgroundcolor.ReSubmitted
+                          : rowData.Status.includes("Draft") === true
+                            ? GridStatusBackgroundcolor.Draft
+                            : "",
               borderRadius: "5px",
             }}
           >
@@ -288,6 +321,7 @@ const RecruitmentProcess = (props: any) => {
       field: "Action",
       header: "Action",
       sortable: false,
+      style: { width: '8%' },
       body: (rowData: any) => {
         return (
           <div
@@ -299,44 +333,83 @@ const RecruitmentProcess = (props: any) => {
               gap: "5px",
             }}
           >
-            {ButtonAction === "view" ? (
+            {ButtonAction === "Edit" ? (
               <>
-                <Button
+                {/* <Button
+                    
+                    className="table_btn"
+                    style={{
+                      width: "30px",
+                      marginRight: "7px",
+                      padding: "3px",
+                    }}
+                  >
+                  </Button> */}
+                <img
+                  src={require("../../assets/Editbutton.svg")}
+                  alt="Stamp Icon"
                   onClick={() =>
                     handleRedirectView(rowData, tab, TabName, ButtonAction)
                   }
-                  className="table_btn"
-                  icon="pi pi-eye"
                   style={{
-                    width: "30px",
-                    marginRight: "7px",
-                    padding: "3px",
+                    width: "70%",
+                    height: "60%",
                   }}
-                ></Button>
+                />
+              </>
+            ) : ButtonAction === "Upload" ? (
+              <>
+                {/* <Button
+                    
+                    className="table_btn"
+                    // icon="pi pi-eye"
+                    style={{
+                      width: "30px",
+                      marginRight: "7px",
+                      padding: "3px",
+                    }}
+                  >
+                    
+                  </Button> */}
+                <img
+                  src={require("../../assets/UploadIcon.svg")}
+                  alt="Stamp Icon"
+                  style={{
+                    width: "60%",
+                    height: "60%",
+                  }}
+                  onClick={() =>
+                    handleRedirectView(rowData, tab, TabName, ButtonAction)
+                  }
+                />
               </>
             ) : (
               <>
-                <Button
+                {/* <Button
+                    onClick={() =>
+                      handleRedirectView(rowData, tab, TabName, ButtonAction)
+                    }
+                    className="table_btn"
+                    // icon="pi pi-eye"
+                    style={{
+                      width: "30px",
+                      marginRight: "7px",
+                      padding: "3px",
+                    }}
+                  >
+                   
+                  </Button> */}
+                <img
+                  src={require("../../assets/Viewicon.svg")}
+                  alt="Stamp Icon"
+                  style={{
+                    width: "70%",
+                    height: "60%",
+                  }}
                   onClick={() =>
                     handleRedirectView(rowData, tab, TabName, ButtonAction)
                   }
-                  className="table_btn"
-                  // icon="pi pi-eye"
-                  style={{
-                    width: "30px",
-                    marginRight: "7px",
-                    padding: "3px",
-                  }}
-                >
-                  <img
-                    src={require("../../assets/edit_icon.png")}
-                    alt="Stamp Icon"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  />
-                </Button>
+                />
               </>
             )}
           </div>
@@ -344,6 +417,8 @@ const RecruitmentProcess = (props: any) => {
       },
     },
   ];
+
+
 
   async function handleRedirectView(
     rowData: any,
@@ -530,7 +605,7 @@ const RecruitmentProcess = (props: any) => {
 
           setAssignRecruitmentAgencies([{ key: 0, text: "" }]);
         }
-      } catch (error) {}
+      } catch (error) { }
 
       const dataPromise = getVRRDetails.GetVacancyDetails(
         filterConditions,
@@ -861,7 +936,7 @@ const RecruitmentProcess = (props: any) => {
 
     setSelectAll(
       selectedJobCodes.length > 0 &&
-        selectedJobCodes.length === updatedDataset.length
+      selectedJobCodes.length === updatedDataset.length
     );
   };
 
@@ -903,7 +978,7 @@ const RecruitmentProcess = (props: any) => {
 
     setSelectAll(
       selectedJobCodes.length > 0 &&
-        selectedJobCodes.length === updatedDataset.length
+      selectedJobCodes.length === updatedDataset.length
     );
   };
   //oldcode
@@ -1340,101 +1415,179 @@ const RecruitmentProcess = (props: any) => {
   const tabs = [
     ...(props.CurrentRoleID === RoleID.RecruitmentHRLead
       ? [
-          {
-            label: TabName.AssignRecuritmentHR, //"Assign Recuritment HR",
-            value: "tab1",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  {/* <SearchableDataTable
+        {
+          label: TabName.AssignRecuritmentHR, //"Assign Recuritment HR",
+          value: "tab1",
+          content: (
+            <Card
+              variant="outlined"
+              sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+            >
+              <CardContent>
+                {/* <SearchableDataTable
                                 data={data}
                                 columns={columnConfig("tab1", "view", TabName.AssignRecuritmentHR,)}
                                 rows={rows}
                                 onPageChange={(event) => onPageChange(event, "Recruitment")}
                                 handleRefresh={() => handleRefresh("tab1")}
                             /> */}
-                  <CheckboxDataTable //AssignHR
-                    data={data}
-                    columns={columnConfig(
-                      "tab1",
-                      "View",
-                      TabName.AssignRecuritmentHR
-                    )}
-                    rows={rows}
-                    onPageChange={(event) => onPageChange(event, "Recruitment")}
-                    handleRefresh={() => handleRefresh("tab1")}
-                    handleAssignBtn={AssignBtn_fn}
-                    AssignBtnValidation={false}
-                    handleCheckbox={handleCheckbox}
-                    selectAll={selectAll}
-                    onSelectAllChange={onSelectAllChange}
-                    assignLabel={
-                      props.CurrentRoleID === RoleID.RecruitmentHR
-                        ? "Assign Agencies"
-                        : "Assign HR"
-                    }
-                    MasterData={props || {}}
-                    //checkedValue={}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-          {
-            label: TabName.UploadONEMDoc, //"upload Signed Doc",
-            value: "tab2",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  <SearchableDataTable
-                    data={RecruitmentDetails}
-                    columns={columnConfig(
-                      "tab2",
-                      "Upload",
-                      TabName.UploadONEMDoc
-                    )}
-                    rows={rows}
-                    onPageChange={(event) => onPageChange(event, "VRR")}
-                    handleRefresh={() => handleRefresh("tab2")}
-                    MasterData={props}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-          {
-            label: TabName.MySubmission, //"My Submission",
-            value: "tab3",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  <SearchableDataTable
-                    data={RecruitmentDetails}
-                    columns={columnConfig("tab3", "View", TabName.MySubmission)}
-                    rows={rows}
-                    onPageChange={(event) => onPageChange(event, "VRR")}
-                    handleRefresh={() => handleRefresh("tab3")}
-                    MasterData={props}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-        ]
+                <CheckboxDataTable //AssignHR
+                  data={data}
+                  columns={columnConfig(
+                    "tab1",
+                    "View",
+                    TabName.AssignRecuritmentHR
+                  )}
+                  rows={rows}
+                  onPageChange={(event) => onPageChange(event, "Recruitment")}
+                  handleRefresh={() => handleRefresh("tab1")}
+                  handleAssignBtn={AssignBtn_fn}
+                  AssignBtnValidation={false}
+                  handleCheckbox={handleCheckbox}
+                  selectAll={selectAll}
+                  onSelectAllChange={onSelectAllChange}
+                  assignLabel={
+                    props.CurrentRoleID === RoleID.RecruitmentHR
+                      ? "Assign Agencies"
+                      : "Assign HR"
+                  }
+                  MasterData={props || {}}
+                //checkedValue={}
+                />
+              </CardContent>
+            </Card>
+          ),
+        },
+        {
+          label: TabName.UploadONEMDoc, //"upload Signed Doc",
+          value: "tab2",
+          content: (
+            <Card
+              variant="outlined"
+              sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+            >
+              <CardContent>
+                <SearchableDataTable
+                  data={RecruitmentDetails}
+                  columns={columnConfig(
+                    "tab2",
+                    "Upload",
+                    TabName.UploadONEMDoc
+                  )}
+                  rows={rows}
+                  onPageChange={(event) => onPageChange(event, "VRR")}
+                  handleRefresh={() => handleRefresh("tab2")}
+                  MasterData={props}
+                />
+              </CardContent>
+            </Card>
+          ),
+        },
+        {
+          label: TabName.MySubmission, //"My Submission",
+          value: "tab3",
+          content: (
+            <Card
+              variant="outlined"
+              sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+            >
+              <CardContent>
+                <SearchableDataTable
+                  data={RecruitmentDetails}
+                  columns={columnConfig("tab3", "View", TabName.MySubmission)}
+                  rows={rows}
+                  onPageChange={(event) => onPageChange(event, "VRR")}
+                  handleRefresh={() => handleRefresh("tab3")}
+                  MasterData={props}
+                />
+              </CardContent>
+            </Card>
+          ),
+        },
+      ]
       : [
-          ...(props.CurrentRoleID === RoleID.RecruitmentHR
-            ? [
+        ...(props.CurrentRoleID === RoleID.RecruitmentHR
+          ? [
+            {
+              label: TabName.UploadAdvertisement, //"Upload Advertisement",
+              value: "tab1",
+              content: (
+                <Card
+                  variant="outlined"
+                  sx={{
+                    boxShadow: "0px 2px 4px 3px #d3d3d3",
+                    marginTop: "2%",
+                  }}
+                >
+                  <CardContent>
+                    <SearchableDataTable
+                      data={RecruitmentDetails}
+                      columns={columnConfig(
+                        "tab1",
+                        "Upload",
+                        TabName.UploadAdvertisement
+                      )}
+                      rows={rows}
+                      onPageChange={(event) => onPageChange(event, "VRR")}
+                      handleRefresh={() => handleRefresh("tab1")}
+                      MasterData={props}
+                    />
+                  </CardContent>
+                </Card>
+              ),
+            },
+            {
+              label: TabName.AssignAgencies, //"Assigne Agencies",
+              value: "tab2",
+              content: (
+                <Card
+                  variant="outlined"
+                  sx={{
+                    boxShadow: "0px 2px 4px 3px #d3d3d3",
+                    marginTop: "2%",
+                  }}
+                >
+                  <CardContent>
+                    {/* <SearchableDataTable
+                                    data={RecruitmentDetails}
+                                    columns={columnConfig("tab2", "view", TabName.AssignAgencies)}
+                                    rows={rows}
+                                    onPageChange={(event) => onPageChange(event, "VRR")}
+                                    handleRefresh={() => handleRefresh("tab2")}
+                                /> */}
+                    <CheckboxDataTable //AssignAgency
+                      data={RecruitmentDetails}
+                      columns={columnConfig(
+                        "tab2",
+                        "View",
+                        TabName.AssignAgencies
+                      )}
+                      rows={rows}
+                      onPageChange={(event) => onPageChange(event, "VRR")}
+                      handleRefresh={() => handleRefresh("tab2")}
+                      handleAssignBtn={AssignBtn_fn}
+                      AssignBtnValidation={false}
+                      handleCheckbox={handleCheckbox}
+                      selectAll={selectAll}
+                      onSelectAllChange={onSelectAllChange}
+                      assignLabel={
+                        props.CurrentRoleID === RoleID.RecruitmentHR
+                          ? "Assign Agencies"
+                          : "Assign HR"
+                      }
+                      MasterData={props}
+                    //checkedValue={}
+                    />
+                  </CardContent>
+                </Card>
+              ),
+            },
+          ]
+          : [
+            ...(props.CurrentRoleID === RoleID.HOD
+              ? [
                 {
-                  label: TabName.UploadAdvertisement, //"Upload Advertisement",
+                  label: TabName.ReviewONEMAdvertisement,
                   value: "tab1",
                   content: (
                     <Card
@@ -1449,11 +1602,13 @@ const RecruitmentProcess = (props: any) => {
                           data={RecruitmentDetails}
                           columns={columnConfig(
                             "tab1",
-                            "Upload",
-                            TabName.UploadAdvertisement
+                            "Edit",
+                            TabName.ReviewONEMAdvertisement
                           )}
                           rows={rows}
-                          onPageChange={(event) => onPageChange(event, "VRR")}
+                          onPageChange={(event) =>
+                            onPageChange(event, "VRR")
+                          }
                           handleRefresh={() => handleRefresh("tab1")}
                           MasterData={props}
                         />
@@ -1462,7 +1617,7 @@ const RecruitmentProcess = (props: any) => {
                   ),
                 },
                 {
-                  label: TabName.AssignAgencies, //"Assigne Agencies",
+                  label: TabName.ScorecardDetails,
                   value: "tab2",
                   content: (
                     <Card
@@ -1473,145 +1628,65 @@ const RecruitmentProcess = (props: any) => {
                       }}
                     >
                       <CardContent>
-                        {/* <SearchableDataTable
-                                    data={RecruitmentDetails}
-                                    columns={columnConfig("tab2", "view", TabName.AssignAgencies)}
-                                    rows={rows}
-                                    onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={() => handleRefresh("tab2")}
-                                /> */}
-                        <CheckboxDataTable //AssignAgency
+                        <SearchableDataTable
                           data={RecruitmentDetails}
-                          columns={columnConfig(
+                          columns={columnConfigs(
                             "tab2",
-                            "View",
-                            TabName.AssignAgencies
+                            "View Position Details",
+                            TabName.ScorecardDetails
                           )}
                           rows={rows}
-                          onPageChange={(event) => onPageChange(event, "VRR")}
-                          handleRefresh={() => handleRefresh("tab2")}
-                          handleAssignBtn={AssignBtn_fn}
-                          AssignBtnValidation={false}
-                          handleCheckbox={handleCheckbox}
-                          selectAll={selectAll}
-                          onSelectAllChange={onSelectAllChange}
-                          assignLabel={
-                            props.CurrentRoleID === RoleID.RecruitmentHR
-                              ? "Assign Agencies"
-                              : "Assign HR"
+                          onPageChange={(event) =>
+                            onPageChange(event, "VRR")
                           }
+                          handleRefresh={() => handleRefresh("tab2")}
                           MasterData={props}
-                          //checkedValue={}
                         />
                       </CardContent>
                     </Card>
                   ),
                 },
               ]
-            : [
-                ...(props.CurrentRoleID === RoleID.HOD
+              : [
+                ...(props.CurrentRoleID === RoleID.LineManager
                   ? [
-                      {
-                        label: TabName.ReviewONEMAdvertisement,
-                        value: "tab1",
-                        content: (
-                          <Card
-                            variant="outlined"
-                            sx={{
-                              boxShadow: "0px 2px 4px 3px #d3d3d3",
-                              marginTop: "2%",
-                            }}
-                          >
-                            <CardContent>
-                              <SearchableDataTable
-                                data={RecruitmentDetails}
-                                columns={columnConfig(
-                                  "tab1",
-                                  "Edit",
-                                  TabName.ReviewONEMAdvertisement
-                                )}
-                                rows={rows}
-                                onPageChange={(event) =>
-                                  onPageChange(event, "VRR")
-                                }
-                                handleRefresh={() => handleRefresh("tab1")}
-                                MasterData={props}
-                              />
-                            </CardContent>
-                          </Card>
-                        ),
-                      },
-                      {
-                        label: TabName.ScorecardDetails,
-                        value: "tab2",
-                        content: (
-                          <Card
-                            variant="outlined"
-                            sx={{
-                              boxShadow: "0px 2px 4px 3px #d3d3d3",
-                              marginTop: "2%",
-                            }}
-                          >
-                            <CardContent>
-                              <SearchableDataTable
-                                data={RecruitmentDetails}
-                                columns={columnConfigs(
-                                  "tab2",
-                                  "View Position Details",
-                                  TabName.ScorecardDetails
-                                )}
-                                rows={rows}
-                                onPageChange={(event) =>
-                                  onPageChange(event, "VRR")
-                                }
-                                handleRefresh={() => handleRefresh("tab2")}
-                                MasterData={props}
-                              />
-                            </CardContent>
-                          </Card>
-                        ),
-                      },
-                    ]
-                  : [
-                      ...(props.CurrentRoleID === RoleID.LineManager
-                        ? [
-                            {
-                              label: TabName.ReviewProfile,
-                              value: "tab1",
-                              content: (
-                                <Card
-                                  variant="outlined"
-                                  sx={{
-                                    boxShadow: "0px 2px 4px 3px #d3d3d3",
-                                    marginTop: "2%",
-                                  }}
-                                >
-                                  <CardContent>
-                                    <SearchableDataTable
-                                      data={RecruitmentDetails}
-                                      columns={columnConfig(
-                                        "tab1",
-                                        "Edit",
-                                        TabName.ReviewProfile
-                                      )}
-                                      rows={rows}
-                                      onPageChange={(event) =>
-                                        onPageChange(event, "VRR")
-                                      }
-                                      handleRefresh={() =>
-                                        handleRefresh("tab1")
-                                      }
-                                      MasterData={props}
-                                    />
-                                  </CardContent>
-                                </Card>
-                              ),
-                            },
-                          ]
-                        : []),
-                    ]),
+                    {
+                      label: TabName.ReviewProfile,
+                      value: "tab1",
+                      content: (
+                        <Card
+                          variant="outlined"
+                          sx={{
+                            boxShadow: "0px 2px 4px 3px #d3d3d3",
+                            marginTop: "2%",
+                          }}
+                        >
+                          <CardContent>
+                            <SearchableDataTable
+                              data={RecruitmentDetails}
+                              columns={columnConfig(
+                                "tab1",
+                                "Edit",
+                                TabName.ReviewProfile
+                              )}
+                              rows={rows}
+                              onPageChange={(event) =>
+                                onPageChange(event, "VRR")
+                              }
+                              handleRefresh={() =>
+                                handleRefresh("tab1")
+                              }
+                              MasterData={props}
+                            />
+                          </CardContent>
+                        </Card>
+                      ),
+                    },
+                  ]
+                  : []),
               ]),
-        ]),
+          ]),
+      ]),
   ];
 
   const handleTabChange = (newTab: string) => {
@@ -1649,7 +1724,7 @@ const RecruitmentProcess = (props: any) => {
             paddingLeft: "50px",
           }}
           // onHide={() => handleCancel()}
-          onHide={() => {}}
+          onHide={() => { }}
           closable={false}
           header={
             <div style={{ textAlign: "center", width: "100%" }}>

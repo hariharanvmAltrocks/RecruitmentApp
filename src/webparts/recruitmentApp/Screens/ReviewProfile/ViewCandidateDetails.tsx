@@ -374,6 +374,11 @@ const ViewCandidateDetails = (props: any) => {
                           mandatory={true}
                           error={validationErrors.AssignInterviewLevel1}
                         />
+                        {InterviewedLevel.AssignInterviewLevel1.length > 0 && InterviewedLevel.AssignInterviewLevel1.length < 3 && (
+                          <p style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}>
+                            Minimum of three is required
+                          </p>
+                        )}
                       </div>
                       {InterviewedLevel.Levels === "Level 2" && (
                         <div className="ms-Grid-row">
@@ -389,10 +394,10 @@ const ViewCandidateDetails = (props: any) => {
                         </div>
                       )}
                       <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg4">
+                        <div className="ms-Grid-col ms-lg4" style={{ marginLeft: "7px" }}>
                           <CustomDatePicker
                             selectedDate={InterviewedLevel.InterviewedDate}
-                            label="Valid To"
+                            label="Interviewed Date"
                             error={validationErrors.InterviewedDate}
                             // maxDate={}
                             mandatory={true}
@@ -438,7 +443,7 @@ const ViewCandidateDetails = (props: any) => {
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg6">
                         <CustomRadioGroup
-                          label="Is the Candidate suits for the vaccancy position: "
+                          label="Does the candidate fit for the vacant position ?"
                           value={actionValue.CandidateStatus}
                           options={["Yes", "No", "Waiting List"]}
                           error={false}
@@ -450,7 +455,21 @@ const ViewCandidateDetails = (props: any) => {
                   </>
                 )}
 
-                {props.CurrentRoleID === RoleID.LineManager || props.stateValue?.initialTab === TabName.AssignInterviewPanel && (
+                {props.CurrentRoleID === RoleID.LineManager && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomLabel value={"View Justification"} />
+
+                      <ReuseButton
+                        label="View"
+                        onClick={() => setOpenComments(true)}
+                        spacing={4}
+                      />
+                    </div>
+
+                  </div>
+                )}
+                {props.stateValue?.initialTab === TabName.AssignInterviewPanel && (
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
                       <CustomLabel value={"View Justification"} />
@@ -490,7 +509,7 @@ const ViewCandidateDetails = (props: any) => {
                 >
                   <div className="ms-Grid-col ms-lg12">
                     <SignatureCheckbox
-                      label={"I hereby agree for submitted this request"}
+                      label={"I hereby agree for submitted this request."}
                       checked={Checkbox}
                       error={validationErrors.Checkboxalidation}
                       onChange={(value: boolean) => {
@@ -542,7 +561,7 @@ const ViewCandidateDetails = (props: any) => {
           errors.Comments = !IsValid(actionValue.Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
           errors.InterviewedDate = !IsValid(InterviewedLevel.InterviewedDate);
-          errors.AssignInterviewLevel1 = !IsValid(InterviewedLevel.AssignInterviewLevel1?.[0]?.text ?? "")
+          errors.AssignInterviewLevel1 = !IsValid(InterviewedLevel.AssignInterviewLevel1?.[2]?.text ?? "")
         } else {
           errors.Comments = !IsValid(actionValue.Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);

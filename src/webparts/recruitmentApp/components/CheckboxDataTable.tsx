@@ -17,6 +17,7 @@ interface ColumnConfig {
   header: string | ((item?: any) => React.ReactNode);
   sortable: boolean;
   body?: (item?: any, index?: number, column?: ColumnConfig) => React.ReactNode;
+  style?: React.CSSProperties;
 }
 
 interface SearchableDataTableProps {
@@ -173,7 +174,8 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               spacing={4}
               height="33px"
               width="32%"
-              Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
+              //Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
+              Style={{ marginRight: "11px", minWidth: "146px", height: "42px" }}
             />
           </div>
         </div>
@@ -213,26 +215,26 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               options={
                 FilterData.BusinessUnitCode?.text
                   ? (Array.from(
-                      new Map(
-                        MasterData?.BusinessUnitCodeAllColumn.filter(
-                          (data: any) =>
-                            data.text === FilterData.BusinessUnitCode.text
-                        ).map((data: any) => [
+                    new Map(
+                      MasterData?.BusinessUnitCodeAllColumn.filter(
+                        (data: any) =>
+                          data.text === FilterData.BusinessUnitCode.text
+                      ).map((data: any) => [
+                        data.Name,
+                        { key: data.text, text: data.Name },
+                      ])
+                    ).values()
+                  ) as AutoCompleteItem[])
+                  : (Array.from(
+                    new Map(
+                      MasterData?.BusinessUnitCodeAllColumn.map(
+                        (data: any) => [
                           data.Name,
                           { key: data.text, text: data.Name },
-                        ])
-                      ).values()
-                    ) as AutoCompleteItem[])
-                  : (Array.from(
-                      new Map(
-                        MasterData?.BusinessUnitCodeAllColumn.map(
-                          (data: any) => [
-                            data.Name,
-                            { key: data.text, text: data.Name },
-                          ]
-                        )
-                      ).values()
-                    ) as AutoCompleteItem[])
+                        ]
+                      )
+                    ).values()
+                  ) as AutoCompleteItem[])
               }
               value={FilterData.BusinessUnitName}
               disabled={false}
@@ -256,7 +258,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 color: "white",
                 height: "42px",
                 // marginTop: "-1px", //Dev
-                marginTop: "-4px", //SIT
+                marginTop: "-9px", //SIT
                 lineHeight: "normal",
               }}
             />
@@ -355,6 +357,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                     header={col.header}
                     sortable={col.sortable}
                     body={col.body}
+                    style={col.style}
                   />
                 );
               })}
