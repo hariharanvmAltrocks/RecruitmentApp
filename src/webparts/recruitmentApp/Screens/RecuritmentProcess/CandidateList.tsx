@@ -21,16 +21,19 @@ const CandidateList = (props: any) => {
   // const [showAssignModal, setShowAssignModal] = React.useState(false);
   // const [selectedCandidate, setSelectedCandidate] = React.useState(null);
   const jobCode = props?.stateValue?.JobCode?.toString().trim();
+  const ID = props?.stateValue?.ID?.toString().trim();
   const Status = props?.stateValue?.Status;
-
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   function handleRedirectView(
     rowData: any,
     tab: string,
     TabName: string,
-    ButtonAction: string
+    ButtonAction: string,
+    previousTabName: string
   ) {
     switch (props.CurrentRoleID) {
       case RoleID.HOD:
+        // eslint-disable-next-line no-lone-blocks
         {
           if (tab === "tab1") {
             props.navigation("/RecurimentProcess/HodViewScorecard", {
@@ -39,6 +42,7 @@ const CandidateList = (props: any) => {
                 tab,
                 StatusId: rowData?.StatusId,
                 Status: rowData?.Status,
+                PreviousTabName: previousTabName,
                 TabName: TabName,
                 ButtonAction,
               },
@@ -48,7 +52,12 @@ const CandidateList = (props: any) => {
         break;
     }
   }
-  const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
+  const columnConfig = (
+    tab: string,
+    ButtonAction: string,
+    TabName: string,
+    previousTabName: string
+  ) => [
     {
       field: "Checkbox",
       header: "",
@@ -80,7 +89,13 @@ const CandidateList = (props: any) => {
               <Button
                 onClick={() => {
                   console.log("rowData1", rowData);
-                  handleRedirectView(rowData, tab, TabName, ButtonAction);
+                  handleRedirectView(
+                    rowData,
+                    tab,
+                    TabName,
+                    ButtonAction,
+                    previousTabName
+                  );
                 }}
                 className="table_btn"
                 icon="pi pi-eye"
@@ -96,7 +111,13 @@ const CandidateList = (props: any) => {
                   onClick={() => {
                     console.log(rowData.RequirementID);
                     console.log("rowData2", rowData);
-                    handleRedirectView(rowData, tab, TabName, ButtonAction);
+                    handleRedirectView(
+                      rowData,
+                      tab,
+                      TabName,
+                      ButtonAction,
+                      previousTabName
+                    );
                   }}
                   className="table_btn"
                   icon="pi pi-eye"
@@ -151,10 +172,9 @@ const CandidateList = (props: any) => {
       },
     },
   ];
-
   const fetchCandidateData = async () => {
-    if (!jobCode) {
-      console.error("JobCode is missing");
+    if (!jobCode || !ID) {
+      console.error("JobCode or ID is missing");
       return;
     }
 
@@ -162,21 +182,21 @@ const CandidateList = (props: any) => {
     try {
       const filterConditions = [
         { FilterKey: "JobCode", Operator: "eq", FilterValue: jobCode },
+        { FilterKey: "ID", Operator: "eq", FilterValue: ID }, // Filtering by ID
       ];
-      // const response = await getVRRDetails.GetInterviewPanelCandidateDetails(
-      //   " ",
-      //   filterConditions
-      // );
+
       const response =
         await InterviewServices.GetCombinedCandidatePositionDetails(
           " ",
           filterConditions
         );
-      console.log("response", response);
+
       if (response?.status === 200 && response?.data?.length) {
         const filteredCandidates = response.data
           .filter(
-            (candidate: any) => candidate.JobCode?.toString().trim() === jobCode
+            (candidate: any) =>
+              candidate.JobCode?.toString().trim() === jobCode &&
+              candidate.RecruitmentID?.toString().trim() === ID
           )
           .map((candidate: any) => ({
             ...candidate,
@@ -186,7 +206,7 @@ const CandidateList = (props: any) => {
         setCandidateData(filteredCandidates);
       } else {
         setCandidateData([]);
-        console.warn("No candidates found.");
+        console.warn("No matching candidates found.");
       }
     } catch (error) {
       console.error("Error fetching candidate data:", error);
@@ -223,6 +243,7 @@ const CandidateList = (props: any) => {
               columns={columnConfig(
                 "tab1",
                 "Edit",
+                props.stateValue?.TabName,
                 TabName.ViewCandiadteDetails
               )}
               rows={rows}
@@ -238,7 +259,6 @@ const CandidateList = (props: any) => {
 
   const handleBreadcrumbChange = (newItem: string) => {
     setActiveTab(newItem);
-    console.log("Breadcrumb changed to:", newItem);
   };
 
   React.useEffect(() => {

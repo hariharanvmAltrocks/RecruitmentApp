@@ -43,7 +43,6 @@ export const ListNames = {
   HRMSExternalAgentsDetailsForRecruitment:
     "HRMSExternalAgentsDetailsForRecruitment",
   HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
-
 };
 
 export const DocumentLibraray = {
@@ -61,7 +60,7 @@ export const StatusId = {
   PendingwithHODtoreviewAdv: 26,
   PendingwithHRLeadtouploadONEMsigneddoc: 118,
   PendingwithRecruitmentHRtoAssignExternalAgency: 119,
-  RecruitmentInProgress: 28
+  RecruitmentInProgress: 28,
 };
 
 export const RoleID = {
@@ -163,7 +162,7 @@ export const RecuritmentHRMsg = {
   AgencySucess: "Agencies Assigned Successfully",
   HRSuccess: "Recruitment HR Assigned Successfully",
   AgenciesErrorMsg: "Please choose the Job Code to assign Agencies",
-  ProfileReviewed: "Profile Reviewed Successfully"
+  ProfileReviewed: "Profile Reviewed Successfully",
 };
 
 export const ADGroupID: IADGroupID = {
@@ -226,7 +225,7 @@ export const TabName = {
   ReviewAdvertisement: "Review Advertisement",
   ReviewScorecard: "Review Scorecard",
   Evaluation: "Evaluation",
-  CandidateDetails: "Candidate Details",
+  CandidateDetails: "View Candidate Details",
   PositionDetails: "Position Details",
   AdvertisementDetails: "Advertisement Details",
   AdvertisementViewDetails: "View Advertisement ",
@@ -246,7 +245,7 @@ export const ProfileStatus = {
 
 export const Nationality = {
   Nationals: "Nationals (Congolese)",
-  Expatriate: "Expatriate"
+  Expatriate: "Expatriate",
 };
 
 export const workflowStatusApi = {
@@ -257,11 +256,11 @@ export const workflowStatusApi = {
   HODSelectionPending: "WS05",
   Selected: "WS06",
   OnHold: "WS07",
-  Rejected: "WS08"
+  Rejected: "WS08",
 };
 
 export const CandidateStatus = {
   Yes: "Yes",
   No: "No",
-  WaitingList: "Waiting List"
-}
+  WaitingList: "Waiting List",
+};

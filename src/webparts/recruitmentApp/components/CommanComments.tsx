@@ -19,10 +19,14 @@ interface props {
 const boldLabelStyles: React.CSSProperties = {
   fontWeight: "bold",
   fontSize: "18px",
+  margin: 0,
+  padding: 0,
 };
 
 const labelStyles: React.CSSProperties = {
   fontSize: "15px",
+  margin: 0,
+  padding: 0,
 };
 
 function CommanComments({ onClose, Comments }: props) {
@@ -102,6 +106,7 @@ function CommanComments({ onClose, Comments }: props) {
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg12">
                         <Labelheader value="Justification" />
+
                         <LabelValue value={item?.comments ?? "N/A"} />
                       </div>
                     </div>

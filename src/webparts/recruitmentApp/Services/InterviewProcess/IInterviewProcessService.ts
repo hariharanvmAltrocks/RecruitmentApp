@@ -26,7 +26,6 @@ export type IInterviewProcessService = {
     filterConditions: any,
     candidateID: number
   ): Promise<ApiResponse<any | null>>;
-
   GetMergedData(
     EmployeeList: any[],
     Conditions: string,
