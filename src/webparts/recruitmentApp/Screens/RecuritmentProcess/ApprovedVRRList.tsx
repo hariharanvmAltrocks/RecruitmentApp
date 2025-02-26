@@ -236,27 +236,31 @@ const RecruitmentProcess = (props: any) => {
               </>
             ) : (
               <>
-                <Button
+                {/* <Button
+                    onClick={() =>
+                      handleRedirectView(rowData, tab, TabName, ButtonAction)
+                    }
+                    className="table_btn"
+                    // icon="pi pi-eye"
+                    style={{
+                      width: "30px",
+                      marginRight: "7px",
+                      padding: "3px",
+                    }}
+                  >
+                   
+                  </Button> */}
+                <img
+                  src={require("../../assets/Viewicon.svg")}
+                  alt="Stamp Icon"
+                  style={{
+                    width: "70%",
+                    height: "60%",
+                  }}
                   onClick={() =>
                     handleRedirectView(rowData, tab, TabName, ButtonAction)
                   }
-                  className="table_btn"
-                  // icon="pi pi-eye"
-                  style={{
-                    width: "30px",
-                    marginRight: "7px",
-                    padding: "3px",
-                  }}
-                >
-                  <img
-                    src={require("../../assets/Viewicon.svg")}
-                    alt="Stamp Icon"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  />
-                </Button>
+                />
               </>
             )}
           </div>

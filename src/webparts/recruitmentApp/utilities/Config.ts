@@ -236,7 +236,7 @@ export const TabName = {
   ReviewAdvertisement: "Review Advertisement",
   ReviewScorecard: "Review Scorecard",
   Evaluation: "Evaluation",
-  CandidateDetails: "Candidate Details",
+  CandidateDetails: "View Candidate Details",
   PositionDetails: "Position Details",
   AdvertisementDetails: "Advertisement Details",
   AdvertisementViewDetails: "View Advertisement ",

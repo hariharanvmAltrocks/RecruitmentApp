@@ -92,6 +92,7 @@ export type AdvDetails = {
   FunctionType: any;
   JobFunctionalType: AutoCompleteItem;
   JobFunctionalTypeOption: AutoCompleteItem[];
+  addMasterMinimumQualification: string;
 };
 
 export type CandidateData = {
