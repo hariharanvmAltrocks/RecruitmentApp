@@ -43,7 +43,7 @@ export const ListNames = {
   HRMSExternalAgentsDetailsForRecruitment:
     "HRMSExternalAgentsDetailsForRecruitment",
   HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
-
+  HRMSRecruitmentWorkFlowMasterStatus: "HRMSRecruitmentWorkFlowMasterStatus",
 };
 
 export const DocumentLibraray = {
@@ -61,7 +61,7 @@ export const StatusId = {
   PendingwithHODtoreviewAdv: 26,
   PendingwithHRLeadtouploadONEMsigneddoc: 118,
   PendingwithRecruitmentHRtoAssignExternalAgency: 119,
-  RecruitmentInProgress: 28
+  RecruitmentInProgress: 28,
 };
 
 export const RoleID = {
@@ -150,20 +150,30 @@ export const viewLabelcolor = {
 };
 
 export const RecuritmentHRMsg = {
-  AdvertisementSubmitMsg: "Advertisement Uploaded Successfully",
-  ScoreCardSubmitMsg: "Scorecard Entered Successfully",
-  ONEMDocumentMsg: "ONEM Document Uploaded Successfully",
-  RecuritmentSubmitMsg: "Submitted Successfully",
-  ApprovedMsg: "Approved Successfully",
+  AdvertisementSubmitMsg:
+    "Advertisement for the Job Title Submitted Successfully.",
+  ScoreCardSubmitMsg:
+    "The Candidate has been Interviewed and Scorecard Submitted for Final Selection.",
+  ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Sucessfully.",
+  RecuritmentSubmitMsg: "Submitted Successfully.",
+  ApprovedMsg:
+    "Advertisement Reviewed Sucessfully. Ready for ONEM Process (Offline).",
   RecuritmentHRMsgCancel:
-    "Are you sure you want to cancel? Any unsaved changes will be lost.",
-  BackMsg: "Are you sure you want go to Home Page ?",
-  ValidationErrorMsg: "One or more required actions are missing",
-  RecruitmentErrorMsg: "Please choose the Job Code to assign Recruitment HR",
-  AgencySucess: "Agencies Assigned Successfully",
-  HRSuccess: "Recruitment HR Assigned Successfully",
-  AgenciesErrorMsg: "Please choose the Job Code to assign Agencies",
-  ProfileReviewed: "Profile Reviewed Successfully"
+    "Are you sure want to cancel? Any unsaved changes will be lost.",
+  BackMsg: "Are you sure want go back to Home Page ?",
+  ValidationErrorMsg:
+    "One or more mandatory field are missing.Please do the needful and submit again.",
+  RecruitmentErrorMsg: "Please choose the Job Code to assign Recruitment HR.",
+  AgencySucess: "Agencies Assigned for the Selected Job Titles.",
+  HRSuccess: "Recruitment HR Assigned for the Selected Job Titles.",
+  AgenciesErrorMsg: "Please choose the Job Code to Assign Agencies.",
+  ProfileReviewed:
+    "Candidate Profile for the Job Title Reviewed and Shortlisted.",
+  ProfileReviewedNo:
+    "Candidate Profile for the Job Title Reviewed and Rejected.",
+  ProfileReviewedWaitingList:
+    "Candidate Profile for the Job Title Reviewed and On - Hold.",
+  InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
 };
 
 export const ADGroupID: IADGroupID = {
@@ -246,7 +256,7 @@ export const ProfileStatus = {
 
 export const Nationality = {
   Nationals: "Nationals (Congolese)",
-  Expatriate: "Expatriate"
+  Expatriate: "Expatriate",
 };
 
 export const workflowStatusApi = {
@@ -257,11 +267,17 @@ export const workflowStatusApi = {
   HODSelectionPending: "WS05",
   Selected: "WS06",
   OnHold: "WS07",
-  Rejected: "WS08"
+  Rejected: "WS08",
 };
 
 export const CandidateStatus = {
   Yes: "Yes",
   No: "No",
-  WaitingList: "Waiting List"
-}
+  WaitingList: "Waiting List",
+};
+
+export const InterviewLevels = {
+  Level1: "Level 1",
+  Level2: "Level 2",
+  Level3: "Level 3",
+};

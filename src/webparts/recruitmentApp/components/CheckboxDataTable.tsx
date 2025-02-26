@@ -125,7 +125,6 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 fieldGroup: {
                   borderRadius: "4px",
                   boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-                  // borderColor: "red",
                   borderColor: "#c9bdbd",
                   height: "42px",
                 },
@@ -148,11 +147,6 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
             <ReuseButton
               icon={
                 <RefreshIcon
-                  // style={{
-                  //   fontSize: "2rem",
-                  //   marginTop: "4%",
-                  //   marginLeft: "18%",
-                  // }}
                   style={{
                     fontSize: "38px",
                     marginTop: "1%",
@@ -174,8 +168,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               spacing={4}
               height="33px"
               width="32%"
-              //Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
-              Style={{ marginRight: "11px", minWidth: "146px", height: "42px" }}
+              Style={{ marginRight: "11px", minWidth: "121px", height: "42px" }}
             />
           </div>
         </div>
@@ -215,26 +208,26 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               options={
                 FilterData.BusinessUnitCode?.text
                   ? (Array.from(
-                    new Map(
-                      MasterData?.BusinessUnitCodeAllColumn.filter(
-                        (data: any) =>
-                          data.text === FilterData.BusinessUnitCode.text
-                      ).map((data: any) => [
-                        data.Name,
-                        { key: data.text, text: data.Name },
-                      ])
-                    ).values()
-                  ) as AutoCompleteItem[])
-                  : (Array.from(
-                    new Map(
-                      MasterData?.BusinessUnitCodeAllColumn.map(
-                        (data: any) => [
+                      new Map(
+                        MasterData?.BusinessUnitCodeAllColumn.filter(
+                          (data: any) =>
+                            data.text === FilterData.BusinessUnitCode.text
+                        ).map((data: any) => [
                           data.Name,
                           { key: data.text, text: data.Name },
-                        ]
-                      )
-                    ).values()
-                  ) as AutoCompleteItem[])
+                        ])
+                      ).values()
+                    ) as AutoCompleteItem[])
+                  : (Array.from(
+                      new Map(
+                        MasterData?.BusinessUnitCodeAllColumn.map(
+                          (data: any) => [
+                            data.Name,
+                            { key: data.text, text: data.Name },
+                          ]
+                        )
+                      ).values()
+                    ) as AutoCompleteItem[])
               }
               value={FilterData.BusinessUnitName}
               disabled={false}
@@ -250,15 +243,10 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               spacing={4}
               error={AssignBtnValidation}
               Style={{
-                // width: "78%",
-                // backgroundColor: "rgb(217 80 80)",
-                // color: "white",
-                width: "79%",
+                width: "80%",
                 backgroundColor: "#EF3340",
                 color: "white",
                 height: "42px",
-                // marginTop: "-1px", //Dev
-                marginTop: "-9px", //SIT
                 lineHeight: "normal",
               }}
             />
@@ -295,13 +283,6 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                             onSelectAllChange(value)
                           }
                         />
-                        // <CustomCheckBox
-                        //   label=""
-                        //   value={selectAll}
-                        //   onChange={(e, value: boolean) =>
-
-                        //   }
-                        // />
                       )}
                       sortable={false}
                       body={(rowData: any) => {

@@ -231,32 +231,6 @@ const InterviewPanelList = (props: any) => {
       },
     },
   ];
-  //oldCode
-  // const fetchCandidateData = async (CurrentUserID: any) => {
-  //   setIsLoading(true);
-  //   try {
-  //     console.log(CurrentUserID, "CurrentUserID");
-
-  //     let filterConditions = [];
-  //     let Conditions = "";
-  //     filterConditions.push({
-  //       FilterKey: "AssignByInterviewPanel",
-  //       Operator: "eq",
-  //       FilterValue: CurrentUserID,
-  //     });
-  //     const data = await getVRRDetails.GetInterviewPanelCandidateDetails(
-  //       filterConditions,
-  //       Conditions
-  //     );
-  //     if (data.status === 200 && data.data !== null) {
-  //       console.log(data.data, "GetVacancyDetails");
-  //       setCandidateData(data.data);
-  //     }
-  //   } catch (error) {
-  //     console.log("GetVacancyDetails doesn't fetch the data", error);
-  //   }
-  //   setIsLoading(false);
-  // };
 
   const fetchCandidateData = async (CurrentUserID: any) => {
     setIsLoading(true);
@@ -276,9 +250,7 @@ const InterviewPanelList = (props: any) => {
 
       const filteredPanels = interviewPanelResponse.data.filter(
         (panel: any) =>
-          panel.InterviewPanelId &&
-          Array.isArray(panel.InterviewPanelId) &&
-          panel.InterviewPanelId.includes(CurrentUserID)
+          panel.InterviewPanelId && panel.InterviewPanelId === CurrentUserID
       );
 
       if (filteredPanels.length === 0) {
@@ -327,10 +299,13 @@ const InterviewPanelList = (props: any) => {
       }));
 
       setCandidateData(candidateNames);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching candidate data:", error);
+    }
 
     setIsLoading(false);
   };
+
   const fetchData = async () => {
     try {
       const getCurrentUserEmailID = await CommonServices.getUserGuidByEmail(
@@ -346,7 +321,6 @@ const InterviewPanelList = (props: any) => {
   };
   const handleRefresh = (tab: string) => {
     void fetchData();
-    // setActiveTab(tab);
   };
 
   React.useEffect(() => {
@@ -354,7 +328,6 @@ const InterviewPanelList = (props: any) => {
   }, []);
 
   const onPageChange = (event: any) => {
-    // setFirst(event.first);
     setRows(event.rows);
   };
 
