@@ -1048,7 +1048,7 @@ const InterviewPanelEdit = (props: any) => {
               >
                 <div className="ms-Grid-col ms-lg12">
                   <SignatureCheckbox
-                    label={"I hereby agree for submitted this request"}
+                    label={"I hereby agree for submitted this request."}
                     checked={Checkbox}
                     error={ValidationError.CheckboxValidation}
                     onChange={(value: boolean) => setCheckbox(value)}

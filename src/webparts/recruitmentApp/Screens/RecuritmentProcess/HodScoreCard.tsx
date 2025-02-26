@@ -79,149 +79,11 @@ const HodScoreCard = (props: any) => {
       setIsLoading(false);
     }
   };
-
-  // const fetchCandidateData = React.useCallback(
-  //   async (interviewPanels: any[]) => {
-  //     try {
-  //       setIsLoading(true);
-  //       const filterConditions = [
-  //         {
-  //           FilterKey: "CandidateID/Id",
-  //           Operator: "eq",
-  //           FilterValue: candidateID,
-  //         },
-  //       ];
-  //       const scoreResponse = await InterviewServices.HRMSCandidateScoreCard(
-  //         "",
-  //         filterConditions,
-  //         candidateID
-  //       );
-
-  //       if (scoreResponse?.status === 200 && scoreResponse?.data?.length) {
-  //         const candidateData = scoreResponse.data.filter(
-  //           (candidate: any) => candidate.CandidateID === candidateID
-  //         );
-  //         const filteredScores = candidateData.flatMap(
-  //           (candidate: any) =>
-  //             candidate.CandidateScoreCard?.filter(
-  //               (score: any) => candidate.ID === score.InterviewPanelID
-  //             ) || []
-  //         );
-  //         if (candidateData.length > 0) {
-  //           const panelTitles = candidateData.map(
-  //             (panel: any) => panel.InterviewPanelTitle
-  //           );
-  //           setInterviewPanelTitles(panelTitles);
-  //           setScoreData(filteredScores);
-  //           console.log("scoreData", scoreData);
-  //         } else {
-  //           setScoreData([]);
-  //           setInterviewPanelTitles([]);
-  //           console.warn("No scores found.");
-  //         }
-  //       } else {
-  //         setScoreData([]);
-  //         setInterviewPanelTitles([]);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching candidate data:", error);
-  //       setScoreData([]);
-  //       setInterviewPanelTitles([]);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   },
-  //   [candidateID]
-  // );
-  // const fetchCandidateData = React.useCallback(
-  //   async (interviewPanels: any[]) => {
-  //     try {
-  //       setIsLoading(true);
-  //       const filterConditions = [
-  //         {
-  //           FilterKey: "CandidateID/Id",
-  //           Operator: "eq",
-  //           FilterValue: candidateID,
-  //         },
-  //       ];
-
-  //       // Fetch candidate scorecard data
-  //       const scoreResponse = await InterviewServices.HRMSCandidateScoreCard(
-  //         "",
-  //         filterConditions,
-  //         candidateID
-  //       );
-
-  //       // Fetch combined candidate position details
-  //       const response =
-  //         await InterviewServices.GetCombinedCandidatePositionDetails(
-  //           " ",
-  //           filterConditions
-  //         );
-
-  //       if (scoreResponse?.status === 200 && scoreResponse?.data?.length) {
-  //         const candidateData = scoreResponse.data.filter(
-  //           (candidate: any) => candidate.CandidateID === candidateID
-  //         );
-
-  //         const filteredScores = candidateData.flatMap(
-  //           (candidate: any) =>
-  //             candidate.CandidateScoreCard?.filter(
-  //               (score: any) => candidate.ID === score.InterviewPanelID
-  //             ) || []
-  //         );
-
-  //         if (candidateData.length > 0) {
-  //           const panelTitles = candidateData.map(
-  //             (panel: any) => panel.InterviewPanelTitle
-  //           );
-  //           setInterviewPanelTitles(panelTitles);
-  //           setScoreData(filteredScores);
-  //           console.log("scoreData", scoreData);
-  //         } else {
-  //           setScoreData([]);
-  //           setInterviewPanelTitles([]);
-  //           console.warn("No scores found.");
-  //         }
-  //       } else {
-  //         setScoreData([]);
-  //         setInterviewPanelTitles([]);
-  //       }
-
-  //       // Handle response from GetCombinedCandidatePositionDetails (if needed)
-  //       // if (response?.status === 200 && response?.data) {
-  //       //   console.log("Combined Candidate Position Details:", response.data);
-  //       //   // Process and use response.data as needed
-  //       // }
-  //       if (response?.status === 200 && response?.data) {
-  //         console.log("Combined Candidate Position Details:", response.data);
-
-  //         // Assuming response.data is an array
-  //         response.data.forEach((candidate: any) => {
-  //           const agentNames = candidate?.ExternalAgentDetails?.AgentName;
-
-  //           if (agentNames) {
-  //             console.log("External Agent Name:", agentNames);
-  //             setIagentName(agentNames);
-  //           } else {
-  //             console.log("No External Agent Name Found");
-  //           }
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching candidate data:", error);
-  //       setScoreData([]);
-  //       setInterviewPanelTitles([]);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   },
-  //   [candidateID]
-  // );
   const fetchCandidateData = React.useCallback(
     async (interviewPanels: any[]) => {
       try {
         setIsLoading(true);
+
         const filterConditions = [
           {
             FilterKey: "CandidateID/Id",
@@ -516,7 +378,7 @@ const HodScoreCard = (props: any) => {
               />
               <div className="ms-Grid-col ms-lg12">
                 <SignatureCheckbox
-                  label={"I hereby agree for submitted this request"}
+                  label={"I hereby agree for submitted this request."}
                   checked={Checkboxs}
                   error={false}
                   onChange={(value: boolean) => setCheckbox(value)}
@@ -609,7 +471,6 @@ const HodScoreCard = (props: any) => {
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
   };
-
   return (
     <>
       {MainComponent ? (
@@ -636,5 +497,4 @@ const HodScoreCard = (props: any) => {
     </>
   );
 };
-
 export default HodScoreCard;

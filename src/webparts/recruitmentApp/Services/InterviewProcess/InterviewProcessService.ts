@@ -18,34 +18,56 @@ export default class InterviewProcessService
     let InterviewPanelDetails: InterviewPanaldata[] = [];
 
     try {
-      let listItems: any = await SPServices.SPReadItems({
+      let listItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSInterviewPanelDetails,
         Select:
-          "ID, CandidateIDId, RecruitmentIDId, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title",
+          "ID, CandidateIDId, RecruitmentIDId, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail",
         Expand: "InterviewPanel",
         Filter: filterConditions,
       });
 
-      InterviewPanelDetails = listItems.map((objresult: any) => ({
-        ID: objresult.ID,
-        CandidateID: objresult.CandidateIDId,
-        RecruitmentID: objresult.RecruitmentIDId,
-        InterviewLevel: objresult.InterviewLevel,
-        InterviewPanel:
-          objresult.InterviewPanel && objresult.InterviewPanel.length > 0
-            ? objresult.InterviewPanel.map((panel: any) => panel.Id)
+      const panelEmails = listItems
+        .map((interview) => interview.InterviewPanel?.EMail)
+        .filter((email) => email);
+
+      let emailToAuthorMap: Record<string, string> = {};
+
+      if (panelEmails.length > 0) {
+        const sageListItems: any[] = await SPServices.SPReadItems({
+          Listname: ListNames.HRMSSageList,
+          Select: "EmailId,FirstName,LastName",
+          FilterCondition: [
+            {
+              FilterKey: "EmailId",
+              Operator: "in",
+              FilterValue: panelEmails.join(","),
+            },
+          ],
+        });
+
+        emailToAuthorMap = sageListItems.reduce((acc, item) => {
+          acc[item.EmailId] = `${item.FirstName} `;
+          return acc;
+        }, {});
+      }
+      InterviewPanelDetails = listItems.map((objresult: any) => {
+        const panelEmail = objresult.InterviewPanel?.EMail || "N/A";
+        const authorName = emailToAuthorMap[panelEmail] || "Unknown";
+
+        return {
+          ID: objresult.ID,
+          CandidateID: objresult.CandidateIDId,
+          RecruitmentID: objresult.RecruitmentIDId,
+          InterviewLevel: objresult.InterviewLevel,
+          InterviewPanel: objresult.InterviewPanel
+            ? objresult.InterviewPanel.Id
+            : 0,
+          InterviewPanelTitle: authorName,
+          InterviewPanalNames: objresult.InterviewPanel
+            ? [objresult.InterviewPanel.Title]
             : [],
-        InterviewPanelTitle:
-          objresult.InterviewPanel && objresult.InterviewPanel.length > 0
-            ? objresult.InterviewPanel.map((panel: any) => panel.Title).join(
-                ", "
-              )
-            : "N/A",
-        InterviewPanalNames:
-          objresult.InterviewPanel && objresult.InterviewPanel.length > 0
-            ? objresult.InterviewPanel.map((panel: any) => panel.Title)
-            : [],
-      }));
+        };
+      });
 
       return {
         data: InterviewPanelDetails,
@@ -71,13 +93,14 @@ export default class InterviewProcessService
       const interviewPanelItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSInterviewPanelDetails,
         Select:
-          "ID,RecruitmentID/ID,InterviewLevel,InterviewPanel/Title,InterviewPanel/ID,CandidateID/ID",
+          "ID,RecruitmentID/ID,InterviewLevel,InterviewPanel/Title,InterviewPanel/ID,CandidateID/ID,InterviewPanel/EMail",
         Expand: "RecruitmentID,InterviewPanel,CandidateID",
         Orderby: "ID",
         Orderbydecorasc: false,
         Filter: filterParam,
         FilterCondition: filterConditions,
       });
+
       const candidateScoreCardItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSCandidateScoreCard,
         Select:
@@ -94,20 +117,45 @@ export default class InterviewProcessService
         ],
       });
 
+      const panelEmails = interviewPanelItems
+        .map((interview) => interview.InterviewPanel?.EMail)
+        .filter((email) => email);
+
+      let emailToAuthorMap: Record<string, string> = {};
+
+      if (panelEmails.length > 0) {
+        const sageListItems: any[] = await SPServices.SPReadItems({
+          Listname: ListNames.HRMSSageList,
+          Select: "EmailId,FirstName,LastName",
+          FilterCondition: [
+            {
+              FilterKey: "EmailId",
+              Operator: "in",
+              FilterValue: panelEmails.join(","),
+            },
+          ],
+        });
+
+        emailToAuthorMap = sageListItems.reduce((acc, item) => {
+          acc[item.EmailId] = `${item.FirstName}`;
+          return acc;
+        }, {});
+      }
+
       const formattedItems = interviewPanelItems.map((interview) => {
         const relatedScores = candidateScoreCardItems.filter(
           (score) => score?.InterviewPanelID?.ID === interview?.ID
         );
 
+        const panelEmail = interview.InterviewPanel?.EMail || "N/A";
+        const authorName = emailToAuthorMap[panelEmail] || "Unknown";
+
         return {
           ID: interview.ID,
           RecruitmentID: interview?.RecruitmentID?.ID || "",
           InterviewLevel: interview.InterviewLevel || "",
-          // InterviewPanel: interview?.InterviewPanel?.Title || "",
-          InterviewPanelTitle:
-            interview.InterviewPanel && interview.InterviewPanel.length > 0
-              ? interview.InterviewPanel.map((panel: any) => panel.Title)
-              : "N/A",
+          InterviewPanelTitle: authorName,
+          InterviewPanelEmail: panelEmail,
           CandidateID: interview.CandidateID?.ID || "",
           CandidateScoreCard: relatedScores.map((score) => ({
             InterviewPanelID: score.InterviewPanelID?.ID || "",
@@ -129,6 +177,8 @@ export default class InterviewProcessService
           })),
         };
       });
+
+      console.log("formattedItemsHOS", formattedItems);
       return {
         data: formattedItems,
         status: 200,
@@ -166,7 +216,6 @@ export default class InterviewProcessService
         FilterCondition: filterConditions,
       });
 
-      // Fetch candidate scorecard details
       const candidateScoreCardItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSCandidateScoreCard,
         Select:
