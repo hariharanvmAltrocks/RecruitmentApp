@@ -44,7 +44,8 @@ export type GetProfileByJobCode = {
     ApplicantName: string,
     PositionTitle: string,
     JobGrade: string,
-    Status: string
+    Status: string,
+    workflowStatusId: string
 }
 export type CandidateProfile = {
     CandidateID: string,
@@ -69,6 +70,7 @@ export type CandidateProfile = {
     RoleProfile: IDocFiles[];
     Advertisement: IDocFiles[];
     Comments: profileJobsComments[];
+    workflowStatusId: string;
 }
 
 export type WorkflowJson = {

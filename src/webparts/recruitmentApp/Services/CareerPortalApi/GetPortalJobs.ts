@@ -52,6 +52,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
     try {
       let GetProfileByJobCodeData: GetProfileByJobCode[] = []
       await getProfileData.GetProfileByJobCode("JC0005", FilterValue).then((res) => {
+        console.log(res, "res");
 
         GetProfileByJobCodeData = res.data.data.map((item: any) => {
           return {
@@ -59,7 +60,8 @@ export default class GetPortalJobs implements IGetPortalJobs {
             ApplicantName: item.applicantName,
             PositionTitle: item.jobTitle?.displayText,
             JobGrade: item.jobCode,
-            Status: item.workflowStatus?.displayText
+            Status: item.workflowStatus?.displayText,
+            workflowStatusId: item.workflowStatusId
           }
         })
       }
@@ -125,7 +127,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           ContactNumber: op?.profile?.contactNumber1,
           Email: op?.profile?.email,
           Nationality: op?.profile?.nationality?.displayText,
-          Gender: op?.profile?.gender?.displayText,
+          Gender: op?.profile?.gender?.displayText ? op?.profile?.gender?.displayText : op?.profile?.genderId,
           HighestQualification: op?.profile?.education?.displayText,
           ExperienceMining: op?.profile?.totalYearOfExperiance,
           ExperRelatedfield: op?.profile?.releventExperience,
@@ -134,7 +136,8 @@ export default class GetPortalJobs implements IGetPortalJobs {
           CandidateResume: CandidateCVDocPromises,//op?.profileJobsDocuments[0]?.filePath,
           RoleProfile: RoleProfileDoc,
           Advertisement: AdvertismentDocPromises,
-          Comments: CommentsData
+          Comments: CommentsData,
+          workflowStatusId: op?.workflowStatusId
         }
         GetProfileByJobCodeData.push(GetProfileDahboard)
       }
@@ -234,7 +237,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         const JobDetailsInsert = {
           RecruitmentIDId: item.RecruitmentIDId,
           InterviewLevel: item.InterviewLevel,
-          InterviewPanelId: item.InterviewPanelId,
+          InterviewPanelId: item.InterviewPanel,
           CandidateIDId: CandidateId,
         };
 
