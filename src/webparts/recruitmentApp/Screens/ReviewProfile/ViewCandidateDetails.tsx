@@ -7,6 +7,11 @@ import {
   GetPortalJobsService,
   getVRRDetails,
 } from "../../Services/ServiceExport";
+import {
+  CommonServices,
+  GetPortalJobsService,
+  getVRRDetails,
+} from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import CustomLabel from "../../components/CustomLabel";
 import CustomTextArea from "../../components/CustomTextArea";
@@ -47,6 +52,8 @@ type InterviewedLevelValue = {
   AssignInterviewedLevel2: AutoCompleteItem[];
   InterviewedDate: Date | undefined;
 };
+  InterviewedDate: Date | undefined;
+};
 
 type ValidationError = {
   Comments: boolean;
@@ -55,10 +62,14 @@ type ValidationError = {
   InterviewedDate: boolean;
   AssignInterviewLevel1: boolean;
 };
+  InterviewedDate: boolean;
+  AssignInterviewLevel1: boolean;
+};
 
 type ActionValue = {
   CandidateStatus: string;
   Comments: string;
+};
 };
 
 const ViewCandidateDetails = (props: any) => {
@@ -98,6 +109,14 @@ const ViewCandidateDetails = (props: any) => {
       AssignInterviewedLevel2: [],
       InterviewedDate: undefined,
     });
+  const [InterviewedLevel, setInterviewedLevel] =
+    useState<InterviewedLevelValue>({
+      Levels: "",
+      AssignInterviewedLevel1Option: [],
+      AssignInterviewLevel1: [],
+      AssignInterviewedLevel2: [],
+      InterviewedDate: undefined,
+    });
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [Checkbox, setCheckbox] = useState<boolean>(false);
@@ -105,7 +124,16 @@ const ViewCandidateDetails = (props: any) => {
   const [actionValue, setActionValue] = useState<ActionValue>({
     CandidateStatus: "",
     Comments: "",
+    Comments: "",
   });
+  const [validationErrors, setValidationErrors] =
+    React.useState<ValidationError>({
+      Comments: false,
+      Checkboxalidation: false,
+      CandidateStatus: false,
+      InterviewedDate: false,
+      AssignInterviewLevel1: false,
+    });
   const [validationErrors, setValidationErrors] =
     React.useState<ValidationError>({
       Comments: false,
@@ -221,6 +249,7 @@ const ViewCandidateDetails = (props: any) => {
       { tabName: TabName.CandidateDetails },
     ];
     setTabNameData(newTabNames);
+    setTabNameData(newTabNames);
   }, []);
 
   React.useEffect(() => {
@@ -288,9 +317,12 @@ const ViewCandidateDetails = (props: any) => {
         AssignInterviewedLevel2: Level2Value,
       }));
     };
+    };
     if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
       void getRecurtimentList();
+      void getRecurtimentList();
     }
+  }, []);
   }, []);
 
   const handleRadioChange = async (item: string) => {
@@ -302,8 +334,11 @@ const ViewCandidateDetails = (props: any) => {
       ...prevState,
       CandidateStatus: false,
     }));
+      CandidateStatus: false,
+    }));
   };
 
+  const handleInputChangeTextArea = (value: string | any) => {
   const handleInputChangeTextArea = (value: string | any) => {
     setActionValue((prevState: any) => ({
       ...prevState,
@@ -311,6 +346,8 @@ const ViewCandidateDetails = (props: any) => {
     }));
     setValidationErrors((prevState) => ({
       ...prevState,
+      Comments: false,
+    }));
       Comments: false,
     }));
   };
@@ -362,6 +399,11 @@ const ViewCandidateDetails = (props: any) => {
 
           <Card
             variant="outlined"
+            sx={{
+              boxShadow: "0px 7px 4px 3px #d3d3d3",
+              borderRadius: "10px",
+              marginTop: "2%",
+            }}
             sx={{
               boxShadow: "0px 7px 4px 3px #d3d3d3",
               borderRadius: "10px",
@@ -453,6 +495,8 @@ const ViewCandidateDetails = (props: any) => {
                   </div>
                   {props.stateValue?.initialTab ===
                   TabName.AssignInterviewPanel ? (
+                  {props.stateValue?.initialTab ===
+                  TabName.AssignInterviewPanel ? (
                     <>
                       <div className="ms-Grid-col ms-lg4">
                         <CustomInput
@@ -470,11 +514,27 @@ const ViewCandidateDetails = (props: any) => {
                           options={
                             InterviewedLevel.AssignInterviewedLevel1Option
                           }
+                          options={
+                            InterviewedLevel.AssignInterviewedLevel1Option
+                          }
                           onChange={(value) => handleMulitiSelect(value)}
                           disabled={false}
                           mandatory={true}
                           error={validationErrors.AssignInterviewLevel1}
                         />
+                        {InterviewedLevel.AssignInterviewLevel1.length > 0 &&
+                          InterviewedLevel.AssignInterviewLevel1.length < 3 && (
+                            <p
+                              style={{
+                                marginTop: 5,
+                                color: "red",
+                                fontSize: 12,
+                                marginLeft: 0,
+                              }}
+                            >
+                              Minimum of three is required
+                            </p>
+                          )}
                         {InterviewedLevel.AssignInterviewLevel1.length > 0 &&
                           InterviewedLevel.AssignInterviewLevel1.length < 3 && (
                             <p
@@ -512,6 +572,10 @@ const ViewCandidateDetails = (props: any) => {
                           className="ms-Grid-col ms-lg4"
                           style={{ marginLeft: "7px" }}
                         >
+                        <div
+                          className="ms-Grid-col ms-lg4"
+                          style={{ marginLeft: "7px" }}
+                        >
                           <CustomDatePicker
                             selectedDate={InterviewedLevel.InterviewedDate}
                             label="Interviewed Date"
@@ -528,6 +592,9 @@ const ViewCandidateDetails = (props: any) => {
                   ) : (
                     <></>
                   )}
+                  ) : (
+                    <></>
+                  )}
                 </div>
 
                 <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
@@ -539,6 +606,7 @@ const ViewCandidateDetails = (props: any) => {
                     <CustomViewDocument
                       Attachment={CandidateProfile.CandidateResume}
                       // Label={"Candidate Resume"}
+                      // Label={"Candidate Resume"}
                     />
                   </div>
                   <div className="ms-Grid-col ms-lg4">
@@ -546,12 +614,14 @@ const ViewCandidateDetails = (props: any) => {
                     <CustomViewDocument
                       Attachment={CandidateProfile.RoleProfile}
                       // Label={"Role Profile Document"}
+                      // Label={"Role Profile Document"}
                     />
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomLabel value={"Advertisement Documents"} />
                     <CustomViewDocument
                       Attachment={CandidateProfile.Advertisement}
+                      // Label={"Advertisement Documents"}
                       // Label={"Advertisement Documents"}
                     />
                   </div>
@@ -584,8 +654,30 @@ const ViewCandidateDetails = (props: any) => {
                     <div className="ms-Grid-col ms-lg4">
                       <CustomLabel value={"View Justification"} />
 
-                      <ReuseButton
+                      {/* <ReuseButton
                         label="View"
+                        onClick={() => setOpenComments(true)}
+                        spacing={4}
+                      /> */}
+                      <ReuseButton
+                        Style={{
+                          minWidth: "117px",
+                          fontSize: "13px",
+                          paddingBottom: "24px",
+                          display: "flex",
+                          flexDirection: "column",
+                          height: "41px",
+                          paddingTop: "23px",
+                          backgroundColor: "#EF3340",
+                          color: "white",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        label="VIEW"
+                        imgSrc={require("../../assets/viewSubmision-white.svg")}
+                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                        imgAlt="View"
+                        imgAltHover="Hovered View"
                         onClick={() => setOpenComments(true)}
                         spacing={4}
                       />
@@ -594,15 +686,17 @@ const ViewCandidateDetails = (props: any) => {
                 )}
                 {props.stateValue?.initialTab ===
                   TabName.AssignInterviewPanel && (
+                {props.stateValue?.initialTab ===
+                  TabName.AssignInterviewPanel && (
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
                       <CustomLabel value={"View Justification"} />
 
-                      <ReuseButton
+                      {/* <ReuseButton
                         label="View"
                         onClick={() => setOpenComments(true)}
                         spacing={4}
-                      />
+                      /> */}
                     </div>
                   </div>
                 )}
@@ -679,6 +773,7 @@ const ViewCandidateDetails = (props: any) => {
   ];
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
+    setactiveTab(newItem);
   };
 
   const Validation = (): boolean => {
@@ -687,6 +782,7 @@ const ViewCandidateDetails = (props: any) => {
       Checkboxalidation: false,
       CandidateStatus: false,
       InterviewedDate: false,
+      AssignInterviewLevel1: false,
       AssignInterviewLevel1: false,
     };
     switch (props.CurrentRoleID) {
@@ -698,9 +794,13 @@ const ViewCandidateDetails = (props: any) => {
           errors.AssignInterviewLevel1 = !IsValid(
             InterviewedLevel.AssignInterviewLevel1?.[2]?.text ?? ""
           );
+          errors.AssignInterviewLevel1 = !IsValid(
+            InterviewedLevel.AssignInterviewLevel1?.[2]?.text ?? ""
+          );
         } else {
           errors.Comments = !IsValid(actionValue.Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
+          errors.CandidateStatus = !IsValid(actionValue.CandidateStatus);
           errors.CandidateStatus = !IsValid(actionValue.CandidateStatus);
         }
 
@@ -748,6 +848,9 @@ const ViewCandidateDetails = (props: any) => {
       DOB: CandidateProfile.DOB
         ? new Date(CandidateProfile.DOB).toISOString()
         : null,
+      DOB: CandidateProfile.DOB
+        ? new Date(CandidateProfile.DOB).toISOString()
+        : null,
       ContactNumber: CandidateProfile.ContactNumber,
       Email: CandidateProfile.Email,
       // Nationality: CandidateProfile.Nationality,
@@ -766,6 +869,7 @@ const ViewCandidateDetails = (props: any) => {
         : null,
       ActionId: WorkflowAction.Approved,
     };
+    let selectedinterviewpanal: any[] = [];
     let selectedinterviewpanal: any[] = [];
 
     for (let i = 0; i < InterviewedLevel.AssignInterviewLevel1.length; i++) {
@@ -946,11 +1050,6 @@ const ViewCandidateDetails = (props: any) => {
                   ]
             }
           />
-          {/* <TabsComponent
-            tabs={tabs}
-            initialTab="tab1"
-            
-          /> */}
         </div>
       </CustomLoader>
 
@@ -961,6 +1060,9 @@ const ViewCandidateDetails = (props: any) => {
             onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
           />
         </>
+      ) : (
+        <></>
+      )}
       ) : (
         <></>
       )}
@@ -985,6 +1087,8 @@ const ViewCandidateDetails = (props: any) => {
         >
           <CustomJsonComments
             onClose={() => setOpenComments(false)}
+            Comments={CandidateProfile.Comments}
+          />
             Comments={CandidateProfile.Comments}
           />
         </Dialog>

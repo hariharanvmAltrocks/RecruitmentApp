@@ -22,6 +22,7 @@ interface FormFields {
   JobTitle: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function PreviewScreen({
   data,
   onclose,
@@ -31,7 +32,6 @@ function PreviewScreen({
   TechinicalSkills,
   JobTitle,
 }: FormFields) {
-  console.log("data", data);
   return (
     <>
       <div className="ms-Grid-row">
@@ -84,6 +84,7 @@ function PreviewScreen({
                   </div>
                 </div>
               )}
+
               {data.ValidFrom && data.ValidTo ? (
                 <div className="ms-Grid-row" style={{ marginBottom: "20px" }}>
                   <div className="ms-Grid-col ms-lg12">
@@ -101,9 +102,7 @@ function PreviewScreen({
                         <div
                           className="ms-Grid-col ms-lg1"
                           style={{ textAlign: "center" }}
-                        >
-                          {/* - */}
-                        </div>
+                        />
                         <div className="ms-Grid-col ms-lg4">
                           <b style={{ fontSize: "17px" }}>Valid To</b>
                         </div>
@@ -117,9 +116,7 @@ function PreviewScreen({
                           <div
                             className="ms-Grid-col ms-lg1"
                             style={{ textAlign: "center" }}
-                          >
-                            {/* - */}
-                          </div>
+                          />
                           <div className="ms-Grid-col ms-lg4">
                             {moment(data.ValidTo).format("DD-MM-YYYY")}
                           </div>
@@ -129,11 +126,11 @@ function PreviewScreen({
                   </div>
                 </div>
               ) : null}
+
               {(data.TotalExperience || data.ExperienceinMiningIndustry) && (
                 <div className="ms-Grid-row" style={{ marginBottom: "20px" }}>
                   <div className="ms-Grid-col ms-lg12">
                     <div className="ms-Grid-row" style={{ marginTop: "8px" }}>
-                      {/* New Headings */}
                       <div
                         style={{
                           display: "flex",
@@ -149,9 +146,7 @@ function PreviewScreen({
                         <div
                           className="ms-Grid-col ms-lg1"
                           style={{ textAlign: "center" }}
-                        >
-                          {/* - */}
-                        </div>
+                        />
                         <div className="ms-Grid-col ms-lg4">
                           <b style={{ fontSize: "17px" }}>
                             Preferred Experience in Mining Industry (Years)
@@ -168,9 +163,7 @@ function PreviewScreen({
                         <div
                           className="ms-Grid-col ms-lg1"
                           style={{ textAlign: "center" }}
-                        >
-                          {/* <span>-</span> */}
-                        </div>
+                        />
                         <div className="ms-Grid-col ms-lg4">
                           {data.ExperienceinMiningIndustry
                             ? `${data.ExperienceinMiningIndustry.text} years in Mining`
@@ -202,9 +195,7 @@ function PreviewScreen({
                         <div
                           className="ms-Grid-col ms-lg1"
                           style={{ textAlign: "center" }}
-                        >
-                          {/* Separator */}
-                        </div>
+                        />
                         <div className="ms-Grid-col ms-lg4">
                           <b style={{ fontSize: "17px" }}>
                             Preferred Qualification
@@ -212,9 +203,7 @@ function PreviewScreen({
                         </div>
                       </div>
 
-                      {/* Display Minimum and Preferred Qualification as comma-separated values */}
                       <div style={{ display: "flex", marginTop: "8px" }}>
-                        {/* Minimum Qualification */}
                         <div className="ms-Grid-col ms-lg4">
                           {Qualification?.MinQualification?.map(
                             (item: any) => item?.text || "N/A"
@@ -224,9 +213,8 @@ function PreviewScreen({
                         <div
                           className="ms-Grid-col ms-lg1"
                           style={{ textAlign: "center" }}
-                        ></div>
+                        />
 
-                        {/* Preferred Qualification */}
                         <div className="ms-Grid-col ms-lg4">
                           {Qualification?.PrefeQualification?.map(
                             (item: any) => item?.text || "N/A"
@@ -236,7 +224,11 @@ function PreviewScreen({
                     </div>
                   </div>
                   <hr
-                    style={{ border: "1px solid #d3d3d3", margin: "10px 0" }}
+                    style={{
+                      border: "1px solid #d3d3d3",
+                      position: "relative",
+                      top: "21px",
+                    }}
                   />
                 </div>
               )}
@@ -260,9 +252,7 @@ function PreviewScreen({
                         <div
                           className="ms-Grid-col ms-lg1"
                           style={{ textAlign: "center" }}
-                        >
-                          {/* - */}
-                        </div>
+                        />
                         <div className="ms-Grid-col ms-lg4">
                           <b style={{ fontSize: "17px" }}> Required Level</b>
                         </div>
@@ -311,12 +301,9 @@ function PreviewScreen({
                         <div
                           className="ms-Grid-col ms-lg1"
                           style={{ textAlign: "center" }}
-                        >
-                          {/* - */}
-                        </div>
+                        />
                         <div className="ms-Grid-col ms-lg4">
                           <b style={{ fontSize: "17px" }}>
-                            {" "}
                             Level of Proficiency
                           </b>
                         </div>
@@ -341,16 +328,7 @@ function PreviewScreen({
                           </div>
                         </div>
                       ))}
-                      {/* {data.FunctionType && (
-                        <div className="ms-Grid-row">
-                          <div className="ms-Grid-col ms-lg12">
-                            <p>
-                              <b style={{ fontSize: "17px" }}>Function Type:</b>{" "}
-                              {data.JobFunctionalType.text}
-                            </p>
-                          </div>
-                        </div>
-                      )} */}
+
                       {data.FunctionType && (
                         <div className="ms-Grid-row">
                           <div
@@ -389,14 +367,25 @@ function PreviewScreen({
             }}
           >
             <div style={{ marginRight: "10px" }}>
-              <ReuseButton label="Cancel" onClick={onclose} spacing={4} />
+              <ReuseButton
+                label="Rework"
+                onClick={onclose}
+                spacing={4}
+                Style={{ width: "123px", height: "41px", lineHeight: "20px" }}
+              />
             </div>
 
             <div style={{ marginRight: "10px" }}>
-              <ReuseButton label="OK" onClick={Ok_btnfn} spacing={4} />
+              <ReuseButton
+                label="Proceed To Submit"
+                onClick={Ok_btnfn}
+                spacing={4}
+                Style={{ width: "123px", height: "41px", lineHeight: "20px" }}
+              />
             </div>
           </div>
         </div>
+        has context menu
       </div>
     </>
   );

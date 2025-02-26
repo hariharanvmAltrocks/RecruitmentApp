@@ -81,7 +81,7 @@ p:hover .tooltip {
 
 /* verify */
 
-.p-datatable .p-datatable-thead>tr>th {
+.p-datatable .p-datatable-thead > tr > th {
   text-align: left;
   padding: 1rem 1rem;
   border: 1px solid #dee2e6;
@@ -104,13 +104,13 @@ p:hover .tooltip {
 
 /* verify */
 
-.p-datatable .p-datatable-tbody>tr {
+.p-datatable .p-datatable-tbody > tr {
   background: #ffffff;
 
   transition: box-shadow 0.2s;
 }
 
-.p-datatable .p-datatable-tbody>tr>td {
+.p-datatable .p-datatable-tbody > tr > td {
   text-align: left;
   border: 1px solid #dee2e6;
   border-width: 0 0 1px 0;
@@ -123,7 +123,7 @@ p:hover .tooltip {
   /* color: black; */
 }
 
-.LabourPlanMainGrid .p-datatable-thead>tr>th {
+.LabourPlanMainGrid .p-datatable-thead > tr > th {
   text-align: center;
   padding: 1rem 13px;
   border: 1px solid #dee2e6;
@@ -135,7 +135,7 @@ p:hover .tooltip {
   font-weight: bold;
 }
 
-.LabourPlanMainGrid .p-datatable-tbody>tr>td {
+.LabourPlanMainGrid .p-datatable-tbody > tr > td {
   text-align: left;
   border: 1px solid #edf1f4;
   border-width: 0 0 1px 0;
@@ -214,11 +214,11 @@ p:hover .tooltip {
   border-bottom-right-radius: 6px;
 }
 
-.p-datatable-scrollable-table>.p-datatable-thead {
+.p-datatable-scrollable-table > .p-datatable-thead {
   z-index: 1 !important;
 }
 
-.ui-datatable .LabourPlanMainGrid .p-datatable-tbody>tr>td {
+.ui-datatable .LabourPlanMainGrid .p-datatable-tbody > tr > td {
   padding: 1rem 4px !important;
 }
 
@@ -239,7 +239,7 @@ p:hover .tooltip {
     overflow-x: scroll;
   }
 
-  .ui-datatable .LabourPlanMainGrid .p-datatable-tbody>tr>td {
+  .ui-datatable .LabourPlanMainGrid .p-datatable-tbody > tr > td {
     padding: 0.5rem 2px !important;
   }
 }
@@ -382,7 +382,7 @@ p:hover .tooltip {
 }
 
 /* rows */
-.p-datatable.p-datatable-striped .p-datatable-tbody>tr.p-row-odd {
+.p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd {
   background: #ff8d8d40;
 }
 
@@ -1451,14 +1451,16 @@ footer {
 }
 
 .agencies_card {
+  position: "relative";
   background-color: white;
-  padding: 4px;
+  padding: 7px;
   border-radius: 5px;
   box-shadow: 0px 2px 4px 3px lightgray;
-  margin-left: 73%;
-  margin-top: -4%;
-  width: 26%;
+  margin-left: 665px;
+  margin-top: -5%;
+  width: 31%;
   text-align: center;
+  left: "6px";
 }
 
 /* sneka */

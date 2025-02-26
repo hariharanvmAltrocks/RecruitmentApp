@@ -1,5 +1,5 @@
 import * as React from "react";
-import { viewLabelcolor } from "../utilities/Config"; 
+import { viewLabelcolor } from "../utilities/Config";
 import { Label, ILabelStyles } from "@fluentui/react";
 
 interface FieldItems {
@@ -7,7 +7,7 @@ interface FieldItems {
 }
 
 const labelStyles: ILabelStyles = {
-  root: { marginTop: 10, overflowWrap: "inherit" },
+  root: { marginTop: 0, overflowWrap: "inherit" },
 };
 
 const Labelheader: React.FC<FieldItems> = ({ value }) => {

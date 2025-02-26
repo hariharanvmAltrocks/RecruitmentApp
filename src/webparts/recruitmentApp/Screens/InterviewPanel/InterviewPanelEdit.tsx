@@ -20,6 +20,7 @@ import {
   RoleProfileMaster,
   ScoreRanking,
   TabName,
+  InterviewLevels,
 } from "../../utilities/Config";
 import { ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
@@ -36,6 +37,7 @@ import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
 import CustomLabel from "../../components/CustomLabel";
+import SPServices from "../../Services/SPService/SPServices";
 
 type ValidationError = {
   Qualifications: boolean;
@@ -197,7 +199,6 @@ const InterviewPanelEdit = (props: any) => {
 
         const response = await CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.RecruitmentAdvertisementDocument,
-          // String(op?.RecruitmentID),
           op?.JobCode
         );
 
@@ -395,26 +396,7 @@ const InterviewPanelEdit = (props: any) => {
     return Object.values(ValidationError).some((error) => error);
   };
 
-  // const Validation = (): boolean => {
-  //   const { EvaluationFeedback, OverAllEvaluationFeedback } = CandidateData;
-
-  //   ValidationError.EvaluationFeedback = shouldShowTextArea
-  //     ? !IsValid(EvaluationFeedback)
-  //     : false;
-
-  //   ValidationError.OverAllEvaluationFeedback = !IsValid(
-  //     OverAllEvaluationFeedback
-  //   );
-
-  //   setValidationError((prevState) => ({
-  //     ...prevState,
-  //     ...ValidationError,
-  //   }));
-
-  //   return Object.values(ValidationError).some((error) => error);
-  // };
-
-  //Correctly Worked
+  //CorrectlyWorked--5.54
   const Submit_fn = async () => {
     try {
       let isValid = !Validation();
@@ -438,33 +420,29 @@ const InterviewPanelEdit = (props: any) => {
         ]);
 
       if (!CandidatePersonalDetails.data || !InterviewPanelResponse.data) {
-        console.error();
         return;
       }
 
-      const matchingPanels = InterviewPanelResponse.data.filter((panel) => {
-        const isCandidateMatch = props.stateValue?.ID === panel.CandidateIDId;
-        const isRecruitmentIDMatch =
-          CandidateData?.RecruitmentID === panel.RecruitmentIDId;
-        return isCandidateMatch && isRecruitmentIDMatch;
-      });
+      const matchingPanels = InterviewPanelResponse.data.filter(
+        (panel) =>
+          props.stateValue?.ID === panel.CandidateIDId &&
+          CandidateData?.RecruitmentID === panel.RecruitmentIDId
+      );
 
       if (matchingPanels.length === 0) {
         return;
       }
 
-      const userPanels = matchingPanels.filter((panel) => {
-        const isUserIncluded =
-          panel.InterviewPanelStringId?.includes(currentUserKey);
-
-        return isUserIncluded;
-      });
+      const userPanels = matchingPanels.filter((panel) =>
+        panel.InterviewPanelStringId?.includes(currentUserKey)
+      );
 
       if (userPanels.length === 0) {
         return;
       }
 
       const groupedByLevel: Record<string, any[]> = {};
+
       userPanels.forEach((panel) => {
         const level = panel.InterviewLevel;
         if (!groupedByLevel[level]) {
@@ -488,21 +466,22 @@ const InterviewPanelEdit = (props: any) => {
             );
 
             const scorecardObj = {
-              RelevantQualification: String(CandidateData?.Qualifications.key),
-              ReleventExperience: String(CandidateData?.Experience.key),
-              Knowledge: String(CandidateData?.Knowledge.key),
-              EnergyLevel: String(CandidateData?.Energylevel.key),
-              MeetJobRequirement: String(CandidateData?.Requirements.key),
+              RelevantQualification: String(CandidateData?.Qualifications?.key),
+              ReleventExperience: String(CandidateData?.Experience?.key),
+              Knowledge: String(CandidateData?.Knowledge?.key),
+              EnergyLevel: String(CandidateData?.Energylevel?.key),
+              MeetJobRequirement: String(CandidateData?.Requirements?.key),
               ContributeTowardsCultureRequried: String(
-                CandidateData?.contributeculture.key
+                CandidateData?.contributeculture?.key
               ),
-              Experience: String(CandidateData?.ExpatExperienceCongolese.key),
-              OtherCriteriaScore: String(CandidateData?.CriteriaRecognised.key),
+              Experience: String(CandidateData?.ExpatExperienceCongolese?.key),
+              OtherCriteriaScore: String(
+                CandidateData?.CriteriaRecognised?.key
+              ),
               ConsiderForEmployment: CandidateData?.Employment,
               ...(shouldShowTextArea && {
                 Feedback: CandidateData?.EvaluationFeedback,
               }),
-              //Feedback: CandidateData?.EvaluationFeedback,
               OverAllEvaluationFeedback:
                 CandidateData?.OverAllEvaluationFeedback,
               RecruitmentIDId: CandidateData?.RecruitmentID,
@@ -521,27 +500,48 @@ const InterviewPanelEdit = (props: any) => {
                   ListNames.HRMSCandidateScoreCard
                 );
 
-              if (ScorecardUpdateResponse.status === 200) {
-                //console.log("Scorecard Updated Successfully.");
-              } else {
-                //console.error("Failed to update Scorecard.");
+              if (ScorecardUpdateResponse.status !== 200) {
               }
             } else {
-              //   console.log(
-              //     "No existing Scorecard found. Creating a new record..."
-              //   );
-
               const newRecordResponse = await getVRRDetails.InsertList(
                 scorecardObj,
                 ListNames.HRMSCandidateScoreCard
               );
 
-              // console.log("", newRecordResponse);
+              if (newRecordResponse.status !== 201) {
+              }
+            }
 
-              if (newRecordResponse.status === 201) {
-                //console.log("New Scorecard Created Successfully.");
-              } else {
-                //console.error("Failed to create Scorecard.");
+            await SPServices.SPUpdateItem({
+              Listname: ListNames.HRMSInterviewPanelDetails,
+              RequestJSON: { IsScoreSheetUploaded: "Yes" },
+              ID: InterviewPanelID,
+            });
+
+            const updatedInterviewPanelResponse =
+              await CommonServices.GetMasterData(
+                ListNames.HRMSInterviewPanelDetails
+              );
+
+            if (panel.InterviewLevel === InterviewLevels.Level1) {
+              const level1Panels = updatedInterviewPanelResponse.data.filter(
+                (p) =>
+                  p.CandidateIDId === panel.CandidateIDId &&
+                  p.InterviewLevel === InterviewLevels.Level1
+              );
+
+              const uploadedCount = level1Panels.filter(
+                (p) => p.IsScoreSheetUploaded === "Yes"
+              ).length;
+
+              if (uploadedCount === level1Panels.length) {
+                try {
+                  await SPServices.SPUpdateItem({
+                    Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                    RequestJSON: { IsScoreSheetUploaded: "Yes" },
+                    ID: panel.CandidateIDId,
+                  });
+                } catch (finalUpdateError) {}
               }
             }
           }
@@ -564,7 +564,6 @@ const InterviewPanelEdit = (props: any) => {
       setalertProps(CancelAlert);
       setIsLoading(false);
     } catch (error) {
-      //console.error("An error occurred during the submission process:", error);
       throw new Error("Failed to submit data. Please try again later.");
     }
   };
@@ -1048,7 +1047,7 @@ const InterviewPanelEdit = (props: any) => {
               >
                 <div className="ms-Grid-col ms-lg12">
                   <SignatureCheckbox
-                    label={"I hereby agree for submitted this request"}
+                    label={"I hereby agree for submitted this request."}
                     checked={Checkbox}
                     error={ValidationError.CheckboxValidation}
                     onChange={(value: boolean) => setCheckbox(value)}
@@ -1417,7 +1416,6 @@ const InterviewPanelEdit = (props: any) => {
                 (panel) => panel.InterviewPanelTitle
               );
 
-              //console.log("", interviewPanelTitles);
               console.log("", InterviewPanelData);
               setInterviewPanelData((prevState) => ({
                 ...prevState,
@@ -1431,9 +1429,7 @@ const InterviewPanelEdit = (props: any) => {
             }
           }
         })
-        .catch((error) => {
-          //console.error("Error fetching data:", error);
-        });
+        .catch((error) => {});
     };
 
     fetchData();

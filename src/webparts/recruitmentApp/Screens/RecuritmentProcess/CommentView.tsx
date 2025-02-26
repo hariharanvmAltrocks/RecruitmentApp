@@ -19,10 +19,14 @@ interface CommentViewProps {
 const boldLabelStyles: React.CSSProperties = {
   fontWeight: "bold",
   fontSize: "18px",
+  margin: 0,
+  padding: 0,
 };
 
 const labelStyles: React.CSSProperties = {
   fontSize: "15px",
+  margin: 0,
+  padding: 0,
 };
 
 const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
