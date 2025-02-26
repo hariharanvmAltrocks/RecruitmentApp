@@ -791,6 +791,8 @@ export default class RecruitmentService implements IRecruitmentService {
         Select: "*, Author/EMail,Author/Title,Role/RoleTitle,RecruitmentID/ID",
         Expand: "Author,Role,RecruitmentID",
         Filter: filterConditions,
+        Orderby: "ID",
+        Orderbydecorasc: false,
       });
       listItems.forEach((objresult: any) => {
         const Email = objresult.Author?.EMail.toLowerCase();

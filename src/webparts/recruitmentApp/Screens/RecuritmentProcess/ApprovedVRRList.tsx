@@ -1336,16 +1336,16 @@ const RecruitmentProcess = (props: any) => {
 
       if (props.CurrentRoleID === RoleID.RecruitmentHR) {
         if (!AssignRecruitmentAgencies[0]?.key) {
-          errors.AssignRecruitmentAgencies = "Please select an agency.";
+          errors.AssignRecruitmentAgencies = true;
         }
       } else {
         if (!AssignRecruitmentHR.key) {
-          errors.AssignRecruitmentHR = "Please select an HR.";
+          errors.AssignRecruitmentHR = true;
         }
       }
 
       if (!Comments.trim()) {
-        errors.Comments = "Please enter a reason.";
+        errors.Comments = true;
       }
 
       if (Object.keys(errors).length > 0) {
