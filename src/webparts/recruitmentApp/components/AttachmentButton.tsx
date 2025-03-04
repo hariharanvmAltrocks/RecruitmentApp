@@ -163,7 +163,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
           ref={fileInputRef}
           onChange={handleFileChange}
           style={{ display: "none" }}
-          accept=".pdf, .doc, .docx"
+          accept=".pdf" //.doc, .docx"
         />
       </Button>
       {error && (

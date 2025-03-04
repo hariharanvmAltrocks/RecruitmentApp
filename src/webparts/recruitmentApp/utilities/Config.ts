@@ -31,6 +31,7 @@ export const ListNames = {
   HRMSCandidateScoreCard: "HRMSCandidateScoreCard",
 
   HRMSRecruitmentRoleProfileDetails: "HRMSRecruitmentRoleProfileDetails",
+  HRMSSelectedCandidateDetailsByHOD: "HRMSSelectedCandidateDetailsByHOD",
 
   //Master List
   HRMSQualification: "HRMSQualification",
@@ -44,6 +45,7 @@ export const ListNames = {
     "HRMSExternalAgentsDetailsForRecruitment",
   HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
   HRMSRecruitmentWorkFlowMasterStatus: "HRMSRecruitmentWorkFlowMasterStatus",
+  HRMSPositionIDMaster: "HRMSPositionIDMaster"
 };
 
 export const DocumentLibraray = {
@@ -53,6 +55,7 @@ export const DocumentLibraray = {
   RecruitmentAdvertisementDocument: "HRMSRecruitmentAdvertDocument",
   ONAMSignedStampDocuments: "HRMSRecruitmentOnamStampedDocuments",
   RoleProfileMaster: "RoleProfileMaster",
+  HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV"
 };
 
 export const StatusId = {
@@ -62,6 +65,7 @@ export const StatusId = {
   PendingwithHRLeadtouploadONEMsigneddoc: 118,
   PendingwithRecruitmentHRtoAssignExternalAgency: 119,
   RecruitmentInProgress: 28,
+  PendingwithHODtoselectthecandidate: 121,
 };
 
 export const RoleID = {
@@ -107,6 +111,8 @@ export const GridStatusBackgroundcolor = {
   Reverted: "#afb4b6",
   ReSubmitted: "#87caff",
   Initiated: "#e6eef2",
+  Selected: "90ee90",
+  InterviewScheduled: "D7FDD7",
 };
 
 export const HRMSAlertOptions = {
@@ -174,6 +180,10 @@ export const RecuritmentHRMsg = {
   ProfileReviewedWaitingList:
     "Candidate Profile for the Job Title Reviewed and On - Hold.",
   InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
+  CandidateSelected: "Candidate Selected",
+  CandidateRejected: "Candidate Rejected",
+  PositionIDassigned: "Position ID assigned for the selected Candidate.",
+  InterviewScoredAlready: "The scorecard for the candidate has already been submitted."
 };
 
 export const ADGroupID: IADGroupID = {

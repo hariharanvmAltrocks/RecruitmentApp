@@ -55,29 +55,34 @@ const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
                         />
                       </div>
                     </div>
-                    {comment.CandidateScoreCard.map(
-                      (score: any, scoreIndex: number) => (
-                        <div key={scoreIndex}>
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg12">
-                              <Labelheader value="Feedback Ratings Below 2" />
-                              <LabelValue value={score?.Feedback ?? "N/A"} />
+                    {comment.CandidateScoreCard &&
+                      comment.CandidateScoreCard.length > 0 &&
+                      comment.CandidateScoreCard.map(
+                        (score: any, scoreIndex: number) =>
+                          score.Feedback || score.OverAllEvaluationFeedback ? (
+                            <div key={scoreIndex}>
+                              {score.Feedback && (
+                                <>
+                                  <Labelheader value="Feedback Ratings Below 2" />
+                                  <LabelValue value={score.Feedback} />
+                                </>
+                              )}
+                              {score.OverAllEvaluationFeedback && (
+                                <>
+                                  <Labelheader value="Overall Evaluation" />
+                                  <LabelValue
+                                    value={score.OverAllEvaluationFeedback}
+                                  />
+                                </>
+                              )}
                             </div>
-                          </div>
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg12">
-                              <Labelheader value="Overall Evaluation" />
-                              <LabelValue
-                                value={
-                                  score?.OverAllEvaluationFeedback ?? "N/A"
-                                }
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    )}
-                    <div className="ms-Grid-row"></div>
+                          ) : null
+                      )}
+
+                    <div
+                      className="ms-Grid-row"
+                      style={{ marginBottom: "2%" }}
+                    ></div>
                     {comment?.Name && (
                       <div>
                         <Label style={boldLabelStyles}>{comment?.Name}</Label>

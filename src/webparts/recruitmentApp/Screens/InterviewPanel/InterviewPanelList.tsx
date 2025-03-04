@@ -1,18 +1,35 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
-import { CommonServices } from "../../Services/ServiceExport";
+import {
+  CommonServices,
+  InterviewServices,
+} from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
-import { ListNames, RoleID } from "../../utilities/Config";
-import { Button } from "primereact/button";
+import {
+  GridStatusBackgroundcolor,
+  HRMSAlertOptions,
+  ListNames,
+  RecuritmentHRMsg,
+  RoleID,
+} from "../../utilities/Config";
 import { TabName } from "../../utilities/Config";
-import SearchableDataTable from "../../components/CustomDataTable";
+import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
+import { alertPropsData } from "../../Models/Screens";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
 
 const InterviewPanelList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
+  const [alertProps, setalertProps] = React.useState<alertPropsData>({
+    Message: "",
+    Type: "",
+    ButtonAction: null,
+    visible: false,
+  });
 
   // const HRFileHandle = (serverUrl: string, fileName: string) => {
   //   console.log(serverUrl, "ServerUrl");
@@ -91,6 +108,22 @@ const InterviewPanelList = (props: any) => {
     }
   }
 
+  function handleAlert() {
+    let CancelAlert = {
+      Message: RecuritmentHRMsg.InterviewScoredAlready,
+      Type: HRMSAlertOptions.Error,
+      visible: true,
+      ButtonAction: async (userClickedOK: boolean) => {
+        if (userClickedOK) {
+          setAlertPopupOpen(false);
+        }
+      },
+    };
+    setAlertPopupOpen(true);
+    setalertProps(CancelAlert);
+    setIsLoading(false);
+  }
+
   const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
     {
       field: "ID",
@@ -123,10 +156,26 @@ const InterviewPanelList = (props: any) => {
     //   sortable: true,
     // },
     {
-      field: "",
+      field: "Status",
       header: "Status",
-      sortable: true,
+      sortable: false,
+      body: (rowData: any) => {
+        return (
+          <span
+            style={{
+              backgroundColor:
+                rowData.Status.includes("Interview Scheduled") === true
+                  ? GridStatusBackgroundcolor.CompletedOrApproved
+                  : "",
+              borderRadius: "5px",
+            }}
+          >
+            {rowData.Status}
+          </span>
+        );
+      },
     },
+
     // {
     //   field: "Nationality",
     //   header: "Nationality",
@@ -191,41 +240,44 @@ const InterviewPanelList = (props: any) => {
               gap: "5px",
             }}
           >
-            {ButtonAction === "view" ? (
-              <Button
-                onClick={() =>
-                  handleRedirectView(rowData, tab, TabName, ButtonAction)
-                }
-                className="table_btn"
-                icon="pi pi-eye"
-                style={{
-                  width: "30px",
-                  marginRight: "7px",
-                  padding: "3px",
-                }}
-              />
-            ) : (
-              <Button
-                onClick={() =>
-                  handleRedirectView(rowData, tab, TabName, ButtonAction)
-                }
-                className="table_btn"
-                style={{
-                  width: "30px",
-                  marginRight: "7px",
-                  padding: "3px",
-                }}
-              >
+            {props.stateValue?.AlreadySubmitted === "Yes" ? (
+              <>
                 <img
-                  src={require("../../assets/edit_icon.png")}
-                  alt="Edit Icon"
+                  src={require("../../assets/Editbutton.svg")}
+                  alt="Stamp Icon"
+                  onClick={() => handleAlert()}
                   style={{
-                    width: "100%",
-                    height: "100%",
+                    width: "70%",
+                    height: "60%",
                   }}
                 />
-              </Button>
+              </>
+            ) : (
+              <>
+                <img
+                  src={require("../../assets/Editbutton.svg")}
+                  alt="Stamp Icon"
+                  onClick={() =>
+                    handleRedirectView(rowData, tab, TabName, ButtonAction)
+                  }
+                  style={{
+                    width: "70%",
+                    height: "60%",
+                  }}
+                />
+              </>
             )}
+            {/* <img
+              src={require("../../assets/Editbutton.svg")}
+              alt="Stamp Icon"
+              onClick={() =>
+                handleRedirectView(rowData, tab, TabName, ButtonAction)
+              }
+              style={{
+                width: "70%",
+                height: "60%",
+              }}
+            /> */}
           </div>
         );
       },
@@ -244,6 +296,7 @@ const InterviewPanelList = (props: any) => {
         !interviewPanelResponse.data ||
         interviewPanelResponse.data.length === 0
       ) {
+        // console.log("No data found in HRMSInterviewPanelDetails");
         setIsLoading(false);
         return;
       }
@@ -254,6 +307,7 @@ const InterviewPanelList = (props: any) => {
       );
 
       if (filteredPanels.length === 0) {
+        // console.log("No matching InterviewPanelId found");
         setCandidateData([]);
         setIsLoading(false);
         return;
@@ -262,8 +316,10 @@ const InterviewPanelList = (props: any) => {
       const candidateIDs = filteredPanels.map(
         (panel: any) => panel.CandidateIDId
       );
+      //console.log("Filtered Candidate IDs:", candidateIDs);
 
       if (candidateIDs.length === 0) {
+        //console.log("No Candidate IDs found for this panel");
         setCandidateData([]);
         setIsLoading(false);
         return;
@@ -277,6 +333,9 @@ const InterviewPanelList = (props: any) => {
         !candidateDetailsResponse.data ||
         candidateDetailsResponse.data.length === 0
       ) {
+        // console.log(
+        //   "No candidates found in HRMSRecruitmentCandidatePersonalDetails"
+        // );
         setIsLoading(false);
         return;
       }
@@ -286,24 +345,56 @@ const InterviewPanelList = (props: any) => {
       );
 
       if (matchedCandidates.length === 0) {
+        //  console.log("No matched candidates found");
         setCandidateData([]);
         setIsLoading(false);
         return;
       }
 
-      const candidateNames = matchedCandidates.map((candidate: any) => ({
-        ID: candidate.ID,
-        FristName: candidate.FristName || "",
-        PositionTitle: candidate.PositionTitle || "",
-        JobGrade: candidate.JobGrade || "",
-      }));
+      const filterCondition = candidateIDs
+        .map((id) => `ID eq ${id}`)
+        .join(" or ");
+      // console.log("Generated Filter Condition:", `(${filterCondition})`);
+
+      const statusResponse =
+        await InterviewServices.GetCandidateDetailsInterviewPanal(
+          `(${filterCondition}) and Status/StatusDescription eq 'Interview Scheduled'`,
+          ""
+        );
+
+      const statusMap = new Map(
+        statusResponse.data?.map((status: any) => [
+          status.ID,
+          status.Status || "",
+        ])
+      );
+
+      // console.log("Status Data:", statusMap);
+
+      const candidateNames = matchedCandidates
+        .filter(
+          (candidate: any) =>
+            statusMap.get(candidate.ID) === "Interview Scheduled"
+        )
+        .map((candidate: any) => ({
+          ID: candidate.ID,
+          FristName: candidate.FristName || "",
+          PositionTitle: candidate.PositionTitle || "",
+          JobGrade: candidate.JobGrade || "",
+          Status: statusMap.get(candidate.ID) || "",
+        }));
+
+      // console.log(
+      //   "Final Candidate Data (Only 'Interview Scheduled'):",
+      //   candidateNames
+      // );
 
       setCandidateData(candidateNames);
     } catch (error) {
-      console.error("Error fetching candidate data:", error);
+      // console.error("Error fetching candidate data:", error);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const fetchData = async () => {
@@ -341,13 +432,12 @@ const InterviewPanelList = (props: any) => {
           sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
         >
           <CardContent>
-            <SearchableDataTable
+            <ReviewProfileDatatable
               data={CandidateData}
               columns={columnConfig("tab1", "Edit", TabName.Evaluation)}
               rows={rows}
               onPageChange={onPageChange}
               handleRefresh={() => handleRefresh("tab1")}
-              MasterData={props}
             />
           </CardContent>
         </Card>
@@ -364,6 +454,16 @@ const InterviewPanelList = (props: any) => {
           </React.Fragment>
         </div>
       </CustomLoader>
+      {AlertPopupOpen ? (
+        <>
+          <CustomAlert
+            {...alertProps}
+            onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
+          />
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
 };

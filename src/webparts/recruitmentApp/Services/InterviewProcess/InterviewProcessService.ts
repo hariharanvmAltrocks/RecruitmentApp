@@ -5,13 +5,14 @@ import { CommonServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
 import {
+  ActionUpdate,
+  AssignPositionID,
   CommentsDatas,
   IInterviewProcessService,
 } from "./IInterviewProcessService";
 
 export default class InterviewProcessService
-  implements IInterviewProcessService
-{
+  implements IInterviewProcessService {
   async GetInterviewPanelDetails(
     filterConditions: any[] = []
   ): Promise<ApiResponse<InterviewPanaldata[]>> {
@@ -253,8 +254,7 @@ export default class InterviewProcessService
           Date: interview.Created ? new Date(interview.Created) : null,
           JobTitle: interview.JobTitle || "",
           Name: Employee
-            ? `${Employee.FirstName ?? ""} ${Employee.MiddleName ?? ""} ${
-                Employee.LastName ?? ""
+            ? `${Employee.FirstName ?? ""} ${Employee.MiddleName ?? ""} ${Employee.LastName ?? ""
               }`.trim()
             : "",
           ID: interview.ID,
@@ -495,9 +495,9 @@ export default class InterviewProcessService
       const candidateItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Select:
-          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName",
+          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName,Status/ID,Status/StatusDescription",
         Expand:
-          "JobCode,AssignByInterviewPanel,RecruitmentID,ExternalAgentDetails",
+          "JobCode,AssignByInterviewPanel,RecruitmentID,ExternalAgentDetails,Status",
         Filter: filterParam,
         FilterCondition: filterConditions,
         Topcount: count.Topcount,
@@ -572,6 +572,7 @@ export default class InterviewProcessService
             RecuritmentHR: item?.RecuritmentHR,
             AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
             CandidateCVDoc: candidateCV,
+            Status: item?.Status?.StatusDescription || "",
             PositionData: positionData.map(
               (position: {
                 PositionID: { PositionID: any };
@@ -603,8 +604,8 @@ export default class InterviewProcessService
             JobGrade: item.JobGrade,
             ExternalAgentDetails: item?.ExternalAgentDetails
               ? {
-                  AgentName: item?.ExternalAgentDetails?.AgentName,
-                }
+                AgentName: item?.ExternalAgentDetails?.AgentName,
+              }
               : null,
           };
         })
@@ -624,6 +625,126 @@ export default class InterviewProcessService
         status: 500,
         message:
           "Error fetching combined data from Candidate, Position, and External Agent Details",
+      };
+    }
+  }
+
+  async GetCandidateDetailsInterviewPanal(
+    filterParam: any,
+    filterConditions: any
+  ) {
+    try {
+      const CandidateDetails: CandidateData[] = [];
+
+      const candidateItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Select: "*,Status/ID,Status/StatusDescription",
+        Expand: "Status",
+        Filter: `${filterParam} and Status/StatusDescription eq 'Interview Scheduled'`,
+        FilterCondition: filterConditions,
+        Topcount: count.Topcount,
+      });
+
+      const formattedItems: CandidateData[] = candidateItems.map((item) => ({
+        ID: item.ID,
+        JobCode: item?.JobCode?.JobCode || "",
+        JobCodeId: item?.JobCodeId || "",
+        PassportID: item?.PassportID || "",
+        FristName: item?.FristName || "",
+        MiddleName: item?.MiddleName || "",
+        LastName: item?.LastName || "",
+        FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
+          }`.trim(),
+        PositionTitle: item?.PositionTitle || "",
+        JobGrade: item?.JobGrade || "",
+        Status: item?.Status?.StatusDescription || "",
+        ContactNumber: item?.ContactNumber || "",
+        Email: item?.Email || "",
+        ResidentialAddress: item?.ResidentialAddress || "",
+        DOB: item?.DOB || "",
+        Nationality: item?.Nationality || "",
+        Gender: item?.Gender || "",
+        TotalYearOfExperiance: item?.TotalYearOfExperiance || "",
+        Skills: item?.Skills || "",
+        LanguageKnown: item?.LanguageKnown || "",
+        ReleventExperience: item?.ReleventExperience || "",
+        Qualification: item?.Qualification || "",
+        RecuritmentHR: item?.RecuritmentHR || "",
+        AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail || "",
+        CandidateCVDoc: [],
+        RoleProfileDocument: [],
+        AdvertisementDocument: [],
+        ShortlistedValue: "",
+        ExternalAgentDetails: item?.ExternalAgentDetails
+          ? { AgentName: item?.ExternalAgentDetails?.AgentName }
+          : null,
+      }));
+
+      CandidateDetails.push(...formattedItems);
+
+      return {
+        data: CandidateDetails,
+        status: 200,
+        message:
+          "Filtered Candidates with Interview Scheduled status fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching candidate details:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching candidate details",
+      };
+    }
+  }
+
+  async CandidateSeletionApi(
+    obj: ActionUpdate,
+    ListName: string
+  ): Promise<ApiResponse<null>> {
+    try {
+      await SPServices.SPUpdateItem({
+        Listname: ListName,
+        RequestJSON: obj,
+        ID: obj.Id,
+      });
+
+      return {
+        data: null,
+        status: 200,
+        message: "Data Submitted successfully",
+      };
+    } catch (error) {
+      console.error("Error posting user data:", error);
+      return {
+        data: null,
+        status: 400,
+        message: "Error On Posting Data",
+      };
+    }
+  }
+
+  async AssignPositionID(
+    obj: AssignPositionID,
+    ListName: string
+  ): Promise<ApiResponse<null>> {
+    try {
+      await SPServices.SPAddItem({
+        Listname: ListName,
+        RequestJSON: obj,
+      });
+
+      return {
+        data: null,
+        status: 200,
+        message: "Data Submitted successfully",
+      };
+    } catch (error) {
+      console.error("Error posting user data:", error);
+      return {
+        data: null,
+        status: 400,
+        message: "Error On Posting Data",
       };
     }
   }

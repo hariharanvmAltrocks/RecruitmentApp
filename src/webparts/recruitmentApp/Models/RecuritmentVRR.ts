@@ -162,6 +162,7 @@ export type ScoreCardData = {
   // InterviewPanelNames: string[]; // Array of names (e.g. ["Fathima John N"])
   interviewPanelTitles: string[];
   InterviewDate?: string;
+  JobRequestID: string;
 };
 
 export type QualificationValue = {

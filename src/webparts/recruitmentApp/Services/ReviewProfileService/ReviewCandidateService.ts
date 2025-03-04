@@ -2,9 +2,9 @@ import { AdvertisementDetails, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
 export const getProfileData = {
-    GetProfileByJobCode: async function (JobCode: string, params: any) {
+    GetProfileByJobCode: async function (params: any) {
         return await AxiosInstance.post(
-            `/GetProfileByJobCode?jobCode=${JobCode}`, params
+            `/GetProfileByJobCode?jobCode`, params
         );
     },
     getCandidateProfile: async function (id: any) {

@@ -51,7 +51,7 @@ const ReviewProfileList = (props: any) => {
                   ? GridStatusBackgroundcolor.CompletedOrApproved
                   : rowData.Status.includes("Rejected") === true
                   ? GridStatusBackgroundcolor.Rejected
-                  : rowData.Status.includes("Reverted") === true
+                  : rowData.Status.includes("InProgress") === true
                   ? GridStatusBackgroundcolor.Reverted
                   : rowData.Status.includes("Resubmitted") === true
                   ? GridStatusBackgroundcolor.ReSubmitted
@@ -81,7 +81,7 @@ const ReviewProfileList = (props: any) => {
           props.navigation("/ReviewProfileList/ReviewCandidateList", {
             state: {
               ID: rowData?.ID,
-              data: rowData,
+              JobCode: rowData?.JobCode,
               tab,
               StatusId: rowData?.StatusId,
               Status: rowData?.Status,

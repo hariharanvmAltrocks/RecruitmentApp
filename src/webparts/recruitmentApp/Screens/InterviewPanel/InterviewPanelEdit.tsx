@@ -1,6 +1,7 @@
 import * as React from "react";
 import {
   CommonServices,
+  GetPortalJobsService,
   getVRRDetails,
   InterviewServices,
 } from "../../Services/ServiceExport";
@@ -21,6 +22,8 @@ import {
   ScoreRanking,
   TabName,
   InterviewLevels,
+  WorkflowAction,
+  workflowStatusApi,
 } from "../../utilities/Config";
 import { ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
@@ -38,6 +41,7 @@ import BreadcrumbsComponent, {
 } from "../../components/CustomBreadcrumps";
 import CustomLabel from "../../components/CustomLabel";
 import SPServices from "../../Services/SPService/SPServices";
+import { WorkflowJson } from "../../Models/ApIInterface";
 
 type ValidationError = {
   Qualifications: boolean;
@@ -57,6 +61,7 @@ type ValidationError = {
 
 const InterviewPanelEdit = (props: any) => {
   const todaydate = new Date();
+  console.log(props, "props");
 
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
@@ -104,6 +109,7 @@ const InterviewPanelEdit = (props: any) => {
     PositionTitle: "",
     interviewPanelTitles: [] as string[],
     InterviewDate: "",
+    JobRequestID: "",
   });
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -256,6 +262,7 @@ const InterviewPanelEdit = (props: any) => {
           RoleProfileDocument: roleProfileDocuments,
           PositionTitle: op?.PositionTitle,
           InterviewDate: op?.InterviewDate,
+          JobRequestID: op?.JobRequestID,
         }));
       }
     } catch (error) {
@@ -275,6 +282,14 @@ const InterviewPanelEdit = (props: any) => {
         [key]: false,
       }));
     }
+  };
+
+  const handleCheckbox = (value: boolean) => {
+    setCheckbox(value);
+    setValidationError((prevState) => ({
+      ...prevState,
+      Checkboxalidation: false,
+    }));
   };
 
   const handleAutoComplete = async (
@@ -387,6 +402,7 @@ const InterviewPanelEdit = (props: any) => {
     ValidationError.OverAllEvaluationFeedback = !IsValid(
       OverAllEvaluationFeedback
     );
+    ValidationError.CheckboxValidation = !IsValid(Checkbox);
 
     setValidationError((prevState) => ({
       ...prevState,
@@ -536,9 +552,22 @@ const InterviewPanelEdit = (props: any) => {
 
               if (uploadedCount === level1Panels.length) {
                 try {
+                  let CandidateDatas: WorkflowJson = {
+                    workflowStatus: workflowStatusApi.pendingHODSelection,
+                    jobRequestId: Number(CandidateData.JobRequestID),
+                    comments: "",
+                    actionBy: props.CurrentUserRole,
+                  };
+                  console.log(CandidateDatas);
+                  await GetPortalJobsService.UpdateCandidateStatus(
+                    CandidateDatas
+                  );
                   await SPServices.SPUpdateItem({
                     Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-                    RequestJSON: { IsScoreSheetUploaded: "Yes" },
+                    RequestJSON: {
+                      IsScoreSheetUploaded: "Yes",
+                      ActionId: WorkflowAction.Approved,
+                    },
                     ID: panel.CandidateIDId,
                   });
                 } catch (finalUpdateError) {}
@@ -554,7 +583,11 @@ const InterviewPanelEdit = (props: any) => {
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
           if (userClickedOK) {
-            props.navigation("/InterviewPanelList");
+            props.navigation("/InterviewPanelList", {
+              state: {
+                AlreadySubmitted: "Yes",
+              },
+            });
             setAlertPopupOpen(false);
           }
         },
@@ -589,8 +622,8 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg6">
                   <LabelHeaderComponents
-                    //   value={`Status - ${props.stateValue?.Status}`}
-                    value={`Status - ${""}`}
+                    value={`Status - ${props.stateValue?.Status}`}
+                    //value={`Status - ${""}`}
                   >
                     {" "}
                   </LabelHeaderComponents>
@@ -1050,7 +1083,7 @@ const InterviewPanelEdit = (props: any) => {
                     label={"I hereby agree for submitted this request."}
                     checked={Checkbox}
                     error={ValidationError.CheckboxValidation}
-                    onChange={(value: boolean) => setCheckbox(value)}
+                    onChange={(value: boolean) => handleCheckbox(value)}
                   />
                 </div>
               </div>
@@ -1477,7 +1510,7 @@ const InterviewPanelEdit = (props: any) => {
                   onClick: async () => {
                     await Submit_fn();
                   },
-                  disable: !Checkbox,
+                  // disable: !Checkbox,
                 },
               ]}
             />

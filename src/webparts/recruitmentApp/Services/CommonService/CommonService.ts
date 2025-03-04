@@ -14,13 +14,21 @@ export default class CommonService implements ICommonService {
     Listname: string
   ): Promise<ApiResponse<any>> => {
     try {
-      if (AttachFile) {
+      if (AttachFile.length > 0) {
         const attachmentsLibrary = sp.web.lists.getByTitle(Listname);
         const rootFolder = await attachmentsLibrary.rootFolder.get();
-        const folderUrl = `${rootFolder.ServerRelativeUrl}/${PositionCode}`
+        const folderUrl = `${rootFolder.ServerRelativeUrl}/${PositionCode}`;
 
-        await sp.web.getFolderByServerRelativeUrl(folderUrl).delete();
+        const existingFiles = await sp.web.getFolderByServerRelativeUrl(folderUrl).files();
 
+        for (const file of existingFiles) {
+          try {
+            await sp.web.getFileByServerRelativeUrl(file.ServerRelativeUrl).delete();
+            console.log(`✅ Deleted existing file: ${file.Name}`);
+          } catch (error) {
+            console.warn(`⚠️ Error deleting file: ${file.Name}`, error);
+          }
+        }
 
         await SPServices.addDocLibFiles({
           FilePath: Listname,
@@ -28,29 +36,30 @@ export default class CommonService implements ICommonService {
           Datas: AttachFile,
         });
 
-        console.log("✅ Files deleted and new files added successfully");
+        console.log("✅ All existing files deleted, and new files added successfully");
 
         return {
           data: "Successfully Replaced Document",
           status: 200,
-          message: "Attachment replaced successfully"
+          message: "Attachment replaced successfully",
         };
       }
 
       return {
         data: null,
         status: 400,
-        message: "No attachments provided"
+        message: "No attachments provided",
       };
     } catch (error) {
       console.error("❌ Error during file replacement process:", error);
       return {
         data: null,
         status: 500,
-        message: `Error during file replacement: ${error.message}`
+        message: `Error during file replacement: ${error.message}`,
       };
     }
   };
+
 
   GetAttachmentLink = async (PositionCode: string, Listname: string): Promise<ApiResponse<any>> => {
     try {

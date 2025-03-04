@@ -140,6 +140,7 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
                   header={col.header}
                   sortable={col.sortable}
                   body={col.body}
+                  style={col.style}
                 />
               );
             })}

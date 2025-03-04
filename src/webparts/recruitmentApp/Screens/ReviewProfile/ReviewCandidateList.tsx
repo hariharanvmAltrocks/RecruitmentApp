@@ -20,6 +20,7 @@ import BreadcrumbsComponent, {
 } from "../../components/CustomBreadcrumps";
 import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
 import {
+  FilterItem,
   GetProfileByFilter,
   GetProfileByJobCode,
 } from "../../Models/ApIInterface";
@@ -83,7 +84,7 @@ const ReviewCandidateList = (props: any) => {
               backgroundColor:
                 rowData?.Status?.includes("Pending") === true // "Pending"
                   ? GridStatusBackgroundcolor.Pending
-                  : rowData?.Status?.includes("Completed") === true
+                  : rowData?.Status?.includes("On-Hold") === true
                   ? GridStatusBackgroundcolor.CompletedOrApproved
                   : rowData?.Status?.includes("Rejected") === true
                   ? GridStatusBackgroundcolor.Rejected
@@ -163,7 +164,7 @@ const ReviewCandidateList = (props: any) => {
                       )
                     }
                     style={{
-                      width: "70%",
+                      width: "60%",
                       height: "60%",
                     }}
                   />
@@ -183,7 +184,7 @@ const ReviewCandidateList = (props: any) => {
                       )
                     }
                     style={{
-                      width: "70%",
+                      width: "60%",
                       height: "60%",
                     }}
                   />
@@ -215,16 +216,7 @@ const ReviewCandidateList = (props: any) => {
   const fetchCandidateData = async (tabs: string) => {
     setIsLoading(true);
     try {
-      const createFilter = (filterValue: string): GetProfileByFilter => ({
-        filterValue,
-        sortBy: "",
-        sortOrder: 0,
-        pageSize: rows,
-        currentPage: 0,
-        totalItems: 0,
-      });
-
-      let FilterValue: GetProfileByFilter = {
+      let FilterValueData: GetProfileByFilter = {
         filterValue: "",
         sortBy: "",
         sortOrder: 0,
@@ -232,71 +224,89 @@ const ReviewCandidateList = (props: any) => {
         currentPage: 0,
         totalItems: 0,
       };
+      debugger;
+      let createFilter = (workflowStausId: string[]): FilterItem => ({
+        jobCode: props.stateValue?.JobCode, //"JC0005",
+        workflowStausId: workflowStausId,
+        pagination: FilterValueData,
+      });
+
+      let FilterValue: FilterItem = {
+        jobCode: "",
+        workflowStausId: [],
+        pagination: {
+          filterValue: "",
+          sortBy: "",
+          sortOrder: 0,
+          pageSize: 0,
+          currentPage: 0,
+          totalItems: 0,
+        },
+      };
 
       switch (tabs) {
         case "tab1":
           if (props.stateValue?.TabName === TabName.AssignInterviewPanel) {
-            FilterValue = createFilter(
-              workflowStatusApi.PendingRecruitmentHRscheduleInterview
-            );
+            FilterValue = createFilter([
+              workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+            ]);
           } else if (props.CurrentRoleID === RoleID.LineManager) {
-            FilterValue = createFilter(workflowStatusApi.LineManagerL1Pending);
+            FilterValue = createFilter([
+              workflowStatusApi.LineManagerL1Pending,
+            ]);
           } else {
-            FilterValue = createFilter(workflowStatusApi.HRPending);
+            FilterValue = createFilter([workflowStatusApi.HRPending]);
           }
           break;
 
         case "tab2":
           if (props.CurrentRoleID === RoleID.LineManager) {
-            FilterValue = createFilter(
-              workflowStatusApi.PendingRecruitmentHRscheduleInterview
-            );
+            FilterValue = createFilter([
+              workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+            ]);
           } else {
-            FilterValue = createFilter(workflowStatusApi.LineManagerL1Pending);
+            FilterValue = createFilter([
+              workflowStatusApi.LineManagerL1Pending,
+            ]);
           }
           break;
 
         case "tab2 - Level 2":
           if (props.CurrentRoleID === RoleID.LineManager) {
-            FilterValue = createFilter(workflowStatusApi.LineManagerL2Pending);
+            FilterValue = createFilter([
+              workflowStatusApi.LineManagerL2Pending,
+            ]);
           }
           break;
 
         case "tab3":
           if (props.CurrentRoleID === RoleID.LineManager) {
-            FilterValue = createFilter(
-              workflowStatusApi.LineManagerLevel1OnHold
-            );
-            // FilterValue = createFilter(
-            //   workflowStatusApi.LineManagerLevel2OnHold
-            // );
+            FilterValue = createFilter([
+              workflowStatusApi.LineManagerLevel1OnHold,
+              workflowStatusApi.LineManagerLevel2OnHold,
+            ]);
           } else {
-            FilterValue = createFilter(workflowStatusApi.HROnHold);
+            FilterValue = createFilter([workflowStatusApi.HROnHold]);
           }
           break;
 
         case "tab4":
           if (props.CurrentRoleID === RoleID.LineManager) {
-            FilterValue = createFilter(
-              workflowStatusApi.LineManagerLevel1Rejected
-            );
-            // FilterValue = createFilter(
-            //   workflowStatusApi.LineManagerLevel2Rejected
-            // );
+            FilterValue = createFilter([
+              workflowStatusApi.LineManagerLevel1Rejected,
+              workflowStatusApi.LineManagerLevel2Rejected,
+            ]);
           } else {
-            FilterValue = createFilter(workflowStatusApi.HRRejected);
+            FilterValue = createFilter([workflowStatusApi.HRRejected]);
           }
           //   FilterValue = createFilter(workflowStatusApi.Rejected);
           break;
 
         default:
-          FilterValue = createFilter("");
+          FilterValue = createFilter([]);
       }
 
-      await GetPortalJobsService.getCandidateDetailsInJobCode(
-        "JC0005",
-        FilterValue
-      )
+      await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
         .then((res) => {
           console.log(res, "res");
           setCandidateData(res.data);

@@ -1224,10 +1224,35 @@ html {
   transition-property: background-color;
 }
 
-.p-dialog-header {
+/* .p-dialog-header {
   padding-left: 1%;
-  /* padding-top: 1%; */
+   padding-top: 1%; 
+} */
+
+ 
+.p-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 1px;
+  padding-top: 1%;
 }
+ 
+.p-dialog-title {
+  margin-top: -24px;
+  font-size: 1rem;
+}
+.p-dialog-header-icon {
+  transform: scale(1.5);
+  padding: 3px;
+  cursor: pointer;
+}
+.p-dialog-header-icons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+ 
 
 .p-dialog-footer {
   padding-bottom: 0%;
@@ -1456,7 +1481,7 @@ footer {
   padding: 7px;
   border-radius: 5px;
   box-shadow: 0px 2px 4px 3px lightgray;
-  margin-left: 665px;
+  margin-left: 67%;
   margin-top: -5%;
   width: 31%;
   text-align: center;
@@ -1475,4 +1500,11 @@ footer {
   text-overflow: ellipsis;
   display: inline-block;
   max-width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+  .a_b_50a7110f:not(.j_b_50a7110f) .m_b_50a7110f{
+    display: flex;
+    max-width: none;
+  }
 }

@@ -621,9 +621,8 @@ export default class RecruitmentService implements IRecruitmentService {
           FristName: item.FristName,
           MiddleName: item.MiddleName,
           LastName: item.LastName,
-          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${
-            item.LastName || ""
-          }`,
+          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""
+            }`,
           ResidentialAddress: item?.ResidentialAddress,
           DOB: item?.DOB,
           ContactNumber: item?.ContactNumber,
@@ -728,6 +727,7 @@ export default class RecruitmentService implements IRecruitmentService {
           AdvertisementDocument: [],
           ShortlistedValue: "",
           InterviewDate: item?.InterviewDate,
+          JobRequestID: item?.JobRequestID
         };
       });
 
@@ -812,10 +812,10 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
             ? (Employee.FirstName ?? "") +
-              " " +
-              (Employee.MiddleName ?? "") +
-              " " +
-              (Employee.LastName ?? "")
+            " " +
+            (Employee.MiddleName ?? "") +
+            " " +
+            (Employee.LastName ?? "")
             : "",
           // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
         };
@@ -1226,13 +1226,13 @@ export default class RecruitmentService implements IRecruitmentService {
 
           ValidFrom: item.ValidFrom
             ? new Date(item.ValidFrom)
-                .toLocaleDateString("en-GB")
-                .replace(/\//g, "-")
+              .toLocaleDateString("en-GB")
+              .replace(/\//g, "-")
             : "N/A",
           ValidTo: item.ValidTo
             ? new Date(item.ValidTo)
-                .toLocaleDateString("en-GB")
-                .replace(/\//g, "-")
+              .toLocaleDateString("en-GB")
+              .replace(/\//g, "-")
             : "N/A",
 
           // FunctionType:

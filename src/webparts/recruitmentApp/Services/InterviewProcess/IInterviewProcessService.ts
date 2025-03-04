@@ -17,6 +17,17 @@ export interface CommentsDatas {
   Role: string;
 }
 
+export type ActionUpdate = {
+  ActionId: number;
+  Id: number;
+}
+
+export type AssignPositionID = {
+  PositionIDId: number;
+  CandidateIDId: number;
+  RecruitmentIDId: number;
+}
+
 export type IInterviewProcessService = {
   GetInterviewPanelDetails(
     filterConditions: any[]
@@ -46,4 +57,16 @@ export type IInterviewProcessService = {
     filterParam: any,
     filterConditions: any
   ): Promise<any | null>;
+  GetCandidateDetailsInterviewPanal(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<any | null>;
+  CandidateSeletionApi(
+    obj: ActionUpdate,
+    ListName: string
+  ): Promise<ApiResponse<null>>;
+  AssignPositionID(
+    obj: AssignPositionID,
+    ListName: string
+  ): Promise<ApiResponse<null>>;
 };

@@ -15,7 +15,23 @@ export type AdvertisementDetails = {
     Descriptions_en: Descriptions,
     Descriptions_fr: Descriptions,
     RoleAndTechSkills: RoleAndTechSkills[],
-    MinAndPreferedQualifications: MinAndPreferedQualifications[]
+    MinAndPreferedQualifications: MinAndPreferedQualifications[];
+    // profileXAgent: profileXagent;
+}
+
+export type profileXagent = {
+    profileId: number;
+    agentCode: string;
+    isSuspended: number;
+    agent: agent
+}
+
+export type agent = {
+    exUserCode: string,
+    name: string,
+    email: string,
+    externalUserType: string,
+    userId: string
 }
 
 export type RoleAndTechSkills = {
@@ -39,6 +55,12 @@ export type GetProfileByFilter = {
     currentPage: number,
     totalItems: number
 }
+export type FilterItem = {
+    jobCode: string;
+    workflowStausId: String[];
+    pagination: GetProfileByFilter
+}
+
 export type GetProfileByJobCode = {
     CandidateID: string,
     ApplicantName: string,
