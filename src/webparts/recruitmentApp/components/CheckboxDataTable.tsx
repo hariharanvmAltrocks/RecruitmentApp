@@ -236,7 +236,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
             />
           </div>
 
-          <div className="ms-Grid-col ms-lg2" style={{ marginTop: "4.2%" }}>
+          <div className="ms-Grid-col ms-lg2" style={{ marginTop: "43px" }}>
             <ReuseButton
               label={assignLabel}
               onClick={handleAssignBtn}
@@ -248,6 +248,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 color: "white",
                 height: "42px",
                 lineHeight: "normal",
+                marginTop: "1px",
               }}
             />
           </div>

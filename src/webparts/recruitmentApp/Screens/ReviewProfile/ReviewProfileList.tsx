@@ -12,10 +12,8 @@ import {
   tabType,
 } from "../../utilities/Config";
 import SearchableDataTable from "../../components/CustomDataTable";
-import { Button } from "primereact/button";
 
 const ReviewProfileList = (props: any) => {
-
   const [RecuritmentData, setRecuritmentData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   // const [first, setFirst] = React.useState<number>(0);
@@ -50,16 +48,16 @@ const ReviewProfileList = (props: any) => {
                 rowData.Status.includes("Pending") === true // "Pending"
                   ? GridStatusBackgroundcolor.Pending
                   : rowData.Status.includes("Completed") === true
-                    ? GridStatusBackgroundcolor.CompletedOrApproved
-                    : rowData.Status.includes("Rejected") === true
-                      ? GridStatusBackgroundcolor.Rejected
-                      : rowData.Status.includes("Reverted") === true
-                        ? GridStatusBackgroundcolor.Reverted
-                        : rowData.Status.includes("Resubmitted") === true
-                          ? GridStatusBackgroundcolor.ReSubmitted
-                          : rowData.Status.includes("Draft") === true
-                            ? GridStatusBackgroundcolor.Draft
-                            : "",
+                  ? GridStatusBackgroundcolor.CompletedOrApproved
+                  : rowData.Status.includes("Rejected") === true
+                  ? GridStatusBackgroundcolor.Rejected
+                  : rowData.Status.includes("InProgress") === true
+                  ? GridStatusBackgroundcolor.Reverted
+                  : rowData.Status.includes("Resubmitted") === true
+                  ? GridStatusBackgroundcolor.ReSubmitted
+                  : rowData.Status.includes("Draft") === true
+                  ? GridStatusBackgroundcolor.Draft
+                  : "",
               borderRadius: "5px",
             }}
           >
@@ -71,7 +69,7 @@ const ReviewProfileList = (props: any) => {
     {
       field: "",
       header: "Action",
-      style: { width: '8%' },
+      style: { width: "8%" },
       sortable: false,
       body: (rowData: any) => {
         function handleRedirectView(
@@ -83,7 +81,7 @@ const ReviewProfileList = (props: any) => {
           props.navigation("/ReviewProfileList/ReviewCandidateList", {
             state: {
               ID: rowData?.ID,
-              data: rowData,
+              JobCode: rowData?.JobCode,
               tab,
               StatusId: rowData?.StatusId,
               Status: rowData?.Status,
@@ -97,16 +95,6 @@ const ReviewProfileList = (props: any) => {
           <div>
             <span>
               {/* <Button
-                onClick={() => handleRedirectView(rowData, tab, TabName, ButtonAction)}
-                className="table_btn"
-                icon="pi pi-eye"
-                style={{
-                  width: "30px",
-                  marginRight: "7px",
-                  padding: "3px",
-                }}
-              /> */}
-              <Button
                 onClick={() => handleRedirectView(rowData, tab, TabName, ButtonAction)}
                 className="table_btn"
                 // icon="pi pi-eye"
@@ -124,8 +112,19 @@ const ReviewProfileList = (props: any) => {
                     height: "100%",
                   }}
                 />
-              </Button>
+              </Button> */}
 
+              <img
+                src={require("../../assets/Viewicon.svg")}
+                alt="Stamp Icon"
+                style={{
+                  width: "70%",
+                  height: "60%",
+                }}
+                onClick={() =>
+                  handleRedirectView(rowData, tab, TabName, ButtonAction)
+                }
+              />
             </span>
           </div>
         );
@@ -136,7 +135,6 @@ const ReviewProfileList = (props: any) => {
   const fetchRecuritmentData = async () => {
     setIsLoading(true);
     try {
-
       let filterConditionsRecuritment = [];
       let RecuritmentConditions = "";
       filterConditionsRecuritment.push({
@@ -151,13 +149,11 @@ const ReviewProfileList = (props: any) => {
       if (data.status === 200 && data.data !== null) {
         setRecuritmentData(data.data);
       }
-
     } catch (error) {
       console.log("GetVacancyDetails doesn't fetch the data", error);
     }
     setIsLoading(false);
   };
-
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -178,86 +174,86 @@ const ReviewProfileList = (props: any) => {
   };
 
   const tabs = [
-    ...(props.CurrentRoleID === RoleID.RecruitmentHR)
+    ...(props.CurrentRoleID === RoleID.RecruitmentHR
       ? [
-        {
-          label: TabName.ReviewProfile,
-          value: "tab1",
-          content: (
-            <Card
-              variant="outlined"
-              sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-            >
-              <CardContent>
-                <SearchableDataTable
-                  data={RecuritmentData}
-                  columns={columnConfig(
-                    "tab1",
-                    TabName.ViewPositionDetails,
-                    TabName.ReviewProfile
-                  )}
-                  rows={rows}
-                  onPageChange={onPageChange}
-                  handleRefresh={() => handleRefresh("tab1")}
-                  MasterData={props}
-                />
-              </CardContent>
-            </Card>
-          ),
-        },
-        {
-          label: TabName.AssignInterviewPanel,
-          value: "tab2",
-          content: (
-            <Card
-              variant="outlined"
-              sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-            >
-              <CardContent>
-                <SearchableDataTable
-                  data={RecuritmentData}
-                  columns={columnConfig(
-                    "tab1",
-                    "view",
-                    TabName.AssignInterviewPanel
-                  )}
-                  rows={rows}
-                  onPageChange={onPageChange}
-                  handleRefresh={() => handleRefresh("tab2")}
-                  MasterData={props}
-                />
-              </CardContent>
-            </Card>
-          ),
-        },
-      ] : [
-        {
-          label: TabName.ReviewProfile,
-          value: "tab1",
-          content: (
-            <Card
-              variant="outlined"
-              sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-            >
-              <CardContent>
-                <SearchableDataTable
-                  data={RecuritmentData}
-                  columns={columnConfig(
-                    "tab1",
-                    TabName.ViewPositionDetails,
-                    TabName.ReviewProfile
-                  )}
-                  rows={rows}
-                  onPageChange={onPageChange}
-                  handleRefresh={() => handleRefresh("tab1")}
-                  MasterData={props}
-                />
-              </CardContent>
-            </Card>
-          ),
-        },
-      ]
-
+          {
+            label: TabName.ReviewProfile,
+            value: "tab1",
+            content: (
+              <Card
+                variant="outlined"
+                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+              >
+                <CardContent>
+                  <SearchableDataTable
+                    data={RecuritmentData}
+                    columns={columnConfig(
+                      "tab1",
+                      TabName.ViewPositionDetails,
+                      TabName.ReviewProfile
+                    )}
+                    rows={rows}
+                    onPageChange={onPageChange}
+                    handleRefresh={() => handleRefresh("tab1")}
+                    MasterData={props}
+                  />
+                </CardContent>
+              </Card>
+            ),
+          },
+          {
+            label: TabName.AssignInterviewPanel,
+            value: "tab2",
+            content: (
+              <Card
+                variant="outlined"
+                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+              >
+                <CardContent>
+                  <SearchableDataTable
+                    data={RecuritmentData}
+                    columns={columnConfig(
+                      "tab1",
+                      "view",
+                      TabName.AssignInterviewPanel
+                    )}
+                    rows={rows}
+                    onPageChange={onPageChange}
+                    handleRefresh={() => handleRefresh("tab2")}
+                    MasterData={props}
+                  />
+                </CardContent>
+              </Card>
+            ),
+          },
+        ]
+      : [
+          {
+            label: TabName.ReviewProfile,
+            value: "tab1",
+            content: (
+              <Card
+                variant="outlined"
+                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+              >
+                <CardContent>
+                  <SearchableDataTable
+                    data={RecuritmentData}
+                    columns={columnConfig(
+                      "tab1",
+                      TabName.ViewPositionDetails,
+                      TabName.ReviewProfile
+                    )}
+                    rows={rows}
+                    onPageChange={onPageChange}
+                    handleRefresh={() => handleRefresh("tab1")}
+                    MasterData={props}
+                  />
+                </CardContent>
+              </Card>
+            ),
+          },
+        ]),
   ];
 
   return (

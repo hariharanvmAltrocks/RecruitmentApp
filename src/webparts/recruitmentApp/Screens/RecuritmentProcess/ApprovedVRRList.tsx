@@ -2,7 +2,11 @@ import * as React from "react";
 import TabsComponent from "../../components/TabsComponent ";
 import SearchableDataTable from "../../components/CustomDataTable";
 import "../../App.css";
-import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
+import {
+  CommonServices,
+  GetPortalJobsService,
+  getVRRDetails,
+} from "../../Services/ServiceExport";
 import {
   GridStatusBackgroundcolor,
   RoleID,
@@ -14,9 +18,10 @@ import {
   ListNames,
   RecuritmentHRMsg,
   WorkflowAction,
+  DocumentLibraray,
+  Nationality,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import { Button } from "primereact/button";
 import { Card, CardContent } from "@mui/material";
 import { Dialog } from "primereact/dialog";
 import JobCodeSelector from "../../components/CustomMultiselectwithswipe";
@@ -34,6 +39,15 @@ import CheckboxDataTable from "../../components/CheckboxDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { alertPropsData } from "../../Models/Screens";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
+import {
+  AdvertisementDetails,
+  // agent,
+  Descriptions,
+  MinAndPreferedQualifications,
+  // profileXagent,
+  RoleAndTechSkills,
+} from "../../Models/ApIInterface";
+// import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 // import { ApiUrl } from "../../Services/AxiosService/axiosConfig";
 // import 'primeicons/primeicons.css';
 // interface ColumnConfig {
@@ -91,6 +105,7 @@ const RecruitmentProcess = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
+  const [AgenciesData, setAgenciesData] = React.useState<any>();
 
   type formValidation = {
     Comments: boolean;
@@ -115,159 +130,6 @@ const RecruitmentProcess = (props: any) => {
       Comments: "",
     }
   );
-
-  const columnConfigs = (
-    tab: string,
-    ButtonAction: string,
-    TabName: string
-  ) => [
-    {
-      field: "Checkbox",
-      header: "",
-      sortable: false,
-    },
-    {
-      field: "JobCode",
-      header: "Job Code",
-      sortable: true,
-    },
-    {
-      field: "JobTitleInEnglish",
-      header: "Job Title",
-      sortable: true,
-    },
-    {
-      field: "BusinessUnitCode",
-      header: "BusinessUnit Code",
-      sortable: true,
-    },
-    {
-      field: "Status",
-      header: "Status",
-      fieldName: "Status",
-      sortable: false,
-      body: (rowData: any) => {
-        return (
-          <span
-            style={{
-              backgroundColor:
-                rowData.Status.includes("Pending") === true
-                  ? GridStatusBackgroundcolor.Pending
-                  : rowData.Status.includes("Completed") === true
-                  ? GridStatusBackgroundcolor.CompletedOrApproved
-                  : rowData.Status.includes("Rejected") === true
-                  ? GridStatusBackgroundcolor.Rejected
-                  : rowData.Status.includes("Reverted") === true
-                  ? GridStatusBackgroundcolor.Reverted
-                  : rowData.Status.includes("Resubmitted") === true
-                  ? GridStatusBackgroundcolor.ReSubmitted
-                  : rowData.Status.includes("Draft") === true
-                  ? GridStatusBackgroundcolor.Draft
-                  : "",
-              borderRadius: "5px",
-            }}
-          >
-            {rowData.Status}
-          </span>
-        );
-      },
-    },
-    {
-      field: "Action",
-      header: "Action",
-      sortable: false,
-      body: (rowData: any) => {
-        return (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "5px",
-            }}
-          >
-            {ButtonAction === "Edit" ? (
-              <>
-                <Button
-                  onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction)
-                  }
-                  className="table_btn"
-                  style={{
-                    width: "30px",
-                    marginRight: "7px",
-                    padding: "3px",
-                  }}
-                >
-                  <img
-                    src={require("../../assets/Editbutton.svg")}
-                    alt="Stamp Icon"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  />
-                </Button>
-              </>
-            ) : ButtonAction === "Upload" ? (
-              <>
-                <Button
-                  onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction)
-                  }
-                  className="table_btn"
-                  // icon="pi pi-eye"
-                  style={{
-                    width: "30px",
-                    marginRight: "7px",
-                    padding: "3px",
-                  }}
-                >
-                  <img
-                    src={require("../../assets/UploadIcon.svg")}
-                    alt="Stamp Icon"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  />
-                </Button>
-              </>
-            ) : (
-              <>
-                {/* <Button
-                    onClick={() =>
-                      handleRedirectView(rowData, tab, TabName, ButtonAction)
-                    }
-                    className="table_btn"
-                    // icon="pi pi-eye"
-                    style={{
-                      width: "30px",
-                      marginRight: "7px",
-                      padding: "3px",
-                    }}
-                  >
-                   
-                  </Button> */}
-                <img
-                  src={require("../../assets/Viewicon.svg")}
-                  alt="Stamp Icon"
-                  style={{
-                    width: "70%",
-                    height: "60%",
-                  }}
-                  onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction)
-                  }
-                />
-              </>
-            )}
-          </div>
-        );
-      },
-    },
-  ];
 
   const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
     {
@@ -302,7 +164,7 @@ const RecruitmentProcess = (props: any) => {
               backgroundColor:
                 rowData.Status.includes("Pending") === true // "Pending"
                   ? GridStatusBackgroundcolor.Pending
-                  : rowData.Status.includes("Completed") === true
+                  : rowData.Status.includes("InProgress") === true
                   ? GridStatusBackgroundcolor.CompletedOrApproved
                   : rowData.Status.includes("Rejected") === true
                   ? GridStatusBackgroundcolor.Rejected
@@ -598,7 +460,7 @@ const RecruitmentProcess = (props: any) => {
               key: item.Id,
               text: item.AgentName,
             }));
-
+          setAgenciesData(HRMSExternalAgents.data);
           setAssignRecruitmentAgenciesOption(HRMSExternalAgentsOption);
 
           setAssignRecruitmentAgencies([{ key: 0, text: "" }]);
@@ -640,8 +502,7 @@ const RecruitmentProcess = (props: any) => {
               filterConditionsRecuritment.push({
                 FilterKey: "StatusId",
                 Operator: "eq",
-                FilterValue:
-                  StatusId.PendingwithRecruitmentHRtoAssignExternalAgency,
+                FilterValue: StatusId.RecruitmentInProgress,
               });
             }
             break;
@@ -657,7 +518,7 @@ const RecruitmentProcess = (props: any) => {
               filterConditionsRecuritment.push({
                 FilterKey: "StatusId",
                 Operator: "eq",
-                FilterValue: StatusId.PendingwithRecruitmentHRtouploadAdv,
+                FilterValue: StatusId.RecruitmentInProgress,
               });
             }
             break;
@@ -1199,6 +1060,175 @@ const RecruitmentProcess = (props: any) => {
     }
   };
 
+  async function PostAdvertisement() {
+    try {
+      const filterConditionsVRR = [
+        {
+          FilterKey: "ID",
+          Operator: "eq",
+          FilterValue: selectedJobCodes[0]?.RecruitmentID,
+        },
+      ];
+      const Conditions = "";
+      const RecuritmentData = await getVRRDetails.GetRecruitmentDetails(
+        filterConditionsVRR,
+        Conditions
+      );
+      let formState = RecuritmentData.data[0];
+      let filterConditions = [
+        {
+          FilterKey: "RecruitmentIDId",
+          Operator: "eq",
+          FilterValue: selectedJobCodes[0]?.RecruitmentID,
+        },
+      ];
+      await getVRRDetails
+        .GetDataInList(
+          ListNames.HRMSRecruitmentRoleProfileDetails,
+          filterConditions,
+          "",
+          "*,RecruitmentID/ID,JobDescription,RoleProfile,TotalPreferredExperience/ExperienceInYearRange,PreferredExperience/ExperienceInYearRange,FunctionType/Code",
+          "RecruitmentID,PreferredExperience,TotalPreferredExperience,FunctionType"
+        )
+        .then(async (res) => {
+          const data = res.data[0];
+          const roleSpecificKnowledge = data.RoleSpecificKnowledgeJson
+            ? JSON.parse(data.RoleSpecificKnowledgeJson)
+            : [];
+          const technicalSkill = data.TechnicalSkillsKnowledgeJson
+            ? JSON.parse(data.TechnicalSkillsKnowledgeJson)
+            : [];
+          let technicalSkillsValues = technicalSkill.map(
+            (item: any) => item.TechnicalSkills
+          );
+          let LevelProficiency = technicalSkill.map(
+            (item: any) => item.LevelProficiency
+          );
+
+          const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+            (item: any) => item.RoleSpeKnowledge
+          );
+          const RequiredLevelValues = roleSpecificKnowledge.map(
+            (item: any) => item.RequiredLevel
+          );
+
+          const roleSpecificSkills: RoleAndTechSkills[] =
+            RoleSpeKnowledgeValues.map((role: any, index: number) => ({
+              skillId: String(role || ""),
+              levelId: String(RequiredLevelValues[index] || ""),
+            }));
+
+          const technicalSkills: RoleAndTechSkills[] =
+            technicalSkillsValues.map((tech: any, index: number) => ({
+              skillId: String(tech || ""),
+              levelId: String(LevelProficiency[index] || ""),
+            }));
+
+          const Roleandtechnical: RoleAndTechSkills[] = [
+            ...roleSpecificSkills,
+            ...technicalSkills,
+          ];
+
+          const minQualifications: MinAndPreferedQualifications[] =
+            data.Qualification
+              ? JSON.parse(data.Qualification).map((item: any) => ({
+                  qualification: item.MinQualification, // Adjust as needed
+                  type: 0,
+                }))
+              : [];
+
+          const preferredQualifications: MinAndPreferedQualifications[] =
+            data.PreferredQualification
+              ? JSON.parse(data.PreferredQualification).map((item: any) => ({
+                  qualification: item.PrefeQualification, // Adjust as needed
+                  type: 1,
+                }))
+              : [];
+
+         
+          const MinAndPreferedQualification: MinAndPreferedQualifications[] = [
+            ...minQualifications,
+            ...preferredQualifications,
+          ];
+
+          const Description: Descriptions = {
+            jobTitle: formState.JobNameInEnglish,
+            jobShortSummary: String(data.RoleProfile || ""),
+            jobSummary: String(data.JobDescription || ""),
+          };
+
+          const onamdocpathfile = await CommonServices.GetAttachmentLink(
+            formState.JobCode,
+            DocumentLibraray.ONAMSignedStampDocuments
+          );
+
+          const onemdocPath = String(onamdocpathfile.data);
+          const DepartmentCode = props.Department.filter(
+            (item: { text: string }) => item.text === formState.Department
+          );
+          let NationalityValue =
+            formState.Nationality === Nationality.Nationals
+              ? "Congolese"
+              : formState.Nationality;
+          let Agencies = AgenciesData.map(
+            (item: any) => item.ID === AssignRecruitmentAgencies[0]?.key
+          );
+          console.log(Agencies, "Agencies");
+          // let agents: agent = {
+          //   exUserCode: "",
+          //   name: "",
+          //   email: "",
+          //   externalUserType: "",
+          //   userId: "",
+          // };
+          // let profileagent: profileXagent = {
+          //   profileId: 0,
+          //   agentCode: "",
+          //   isSuspended: 0,
+          //   agent: agents,
+          // };
+
+          const AdvertisementDetails: AdvertisementDetails = {
+            jobCode: formState.JobCode,
+            noOfPositions: String(formState.NoofPositionAssigned)
+              ? String(formState.NoofPositionAssigned)
+              : "",
+            validFrom: data.ValidFrom,
+            validTo: data.ValidTo,
+            employmentType: "Full Time",
+            departmentId: DepartmentCode[0]?.code || "",
+            role: null,
+            functionId: String(data.FunctionType?.Code || ""),
+            onemdocPath: String(onemdocPath),
+            experience: String(
+              data.TotalPreferredExperience?.ExperienceInYearRange || ""
+            ),
+            nationality: NationalityValue,
+            Descriptions_en: Description,
+            Descriptions_fr: Description,
+            RoleAndTechSkills: Roleandtechnical,
+            MinAndPreferedQualifications: MinAndPreferedQualification,
+            // profileXAgent: profileagent,
+          };
+          console.log(AdvertisementDetails, "AdvertisementDetails");
+
+          await GetPortalJobsService.UpsertJobs(AdvertisementDetails)
+            .then((res) => {
+              console.log(res, "res");
+            })
+            .catch((error) => {
+              console.log("Candidate details doesn't fetch the data", error);
+            });
+        })
+        .catch((error) => {
+          console.log(
+            "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+            error
+          );
+        });
+    } catch {}
+  }
+
   const handleAgencySubmit = async () => {
     try {
       setIsLoading(true);
@@ -1226,7 +1256,6 @@ const RecruitmentProcess = (props: any) => {
             if (agencyIDs.length === 0) {
               continue;
             }
-
             const agencyData = agencyIDs.map((agencyID) => ({
               key: agencyID,
               text:
@@ -1248,7 +1277,7 @@ const RecruitmentProcess = (props: any) => {
             try {
               await SPServices.SPUpdateItem({
                 Listname: ListNames.HRMSRecruitmentDptDetails,
-                RequestJSON: { ActionId: WorkflowAction.Approved },
+                RequestJSON: { Action: WorkflowAction.Approved },
                 ID: recruitmentID,
               });
             } catch (updateError) {
@@ -1273,6 +1302,7 @@ const RecruitmentProcess = (props: any) => {
               };
 
               await getVRRDetails.InsertCommentsList(commentsData);
+              await PostAdvertisement();
             }
           } else {
             console.log(
@@ -1632,7 +1662,7 @@ const RecruitmentProcess = (props: any) => {
                             <CardContent>
                               <SearchableDataTable
                                 data={RecruitmentDetails}
-                                columns={columnConfigs(
+                                columns={columnConfig(
                                   "tab2",
                                   "View Position Details",
                                   TabName.ScorecardDetails
@@ -1726,8 +1756,10 @@ const RecruitmentProcess = (props: any) => {
             paddingLeft: "50px",
           }}
           // onHide={() => handleCancel()}
-          onHide={() => {}}
-          closable={false}
+          // onHide={() => {}}
+          // closable={false}
+          onHide={handleCancel}
+          closable={true}
           header={
             <div style={{ textAlign: "center", width: "100%" }}>
               <h2

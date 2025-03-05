@@ -20,9 +20,11 @@ import {
   ADGroupID,
   CandidateStatus,
   HRMSAlertOptions,
+  ListNames,
   RecuritmentHRMsg,
   RoleID,
   TabName,
+  WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
 import LabelHeaderComponents from "../../components/TitleHeader";
@@ -60,6 +62,7 @@ type ActionValue = {
 };
 
 const ViewCandidateDetails = (props: any) => {
+  console.log(props, "ViewCandidateDetailsProps");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [CandidateProfile, setCandidateProfile] = useState<CandidateProfile>({
     CandidateID: "",
@@ -84,6 +87,7 @@ const ViewCandidateDetails = (props: any) => {
     RoleProfile: [],
     Advertisement: [],
     Comments: [],
+    workflowStatusId: "",
   });
   const todaydate = new Date();
   const [InterviewedLevel, setInterviewedLevel] =
@@ -118,13 +122,16 @@ const ViewCandidateDetails = (props: any) => {
     visible: false,
   });
   const [OpenComments, setOpenComments] = useState<boolean>(false);
+  const [submitBtn, setSubmitBtn] = React.useState<string>("");
 
   const fetchData = async () => {
     if (isLoading) return;
     setIsLoading(true);
     try {
+      console.log(SignDate);
       await GetPortalJobsService.getCandidateProfile(props.stateValue?.ID)
         .then((res) => {
+          console.log(res, "res");
           let response = res.data?.[0];
           setCandidateProfile((prevState: any) => ({
             ...prevState,
@@ -150,7 +157,34 @@ const ViewCandidateDetails = (props: any) => {
             Status: response?.Status,
             Agencies: response?.Agencies,
             Comments: response?.Comments,
+            workflowStatusId: response?.workflowStatusId,
           }));
+          if (
+            response?.workflowStatusId === workflowStatusApi.HROnHold ||
+            response?.workflowStatusId === workflowStatusApi.HROnHold ||
+            response?.workflowStatusId ===
+              workflowStatusApi.LineManagerLevel1OnHold ||
+            response?.workflowStatusId ===
+              workflowStatusApi.LineManagerLevel2OnHold
+          ) {
+            setActionValue((prevState: any) => ({
+              ...prevState,
+              CandidateStatus: CandidateStatus.WaitingList,
+            }));
+          }
+          if (
+            (props.stateValue?.ActionBtn === "View" &&
+              response?.workflowStatusId === workflowStatusApi.HRRejected) ||
+            response?.workflowStatusId ===
+              workflowStatusApi.LineManagerLevel1Rejected ||
+            response?.workflowStatusId ===
+              workflowStatusApi.LineManagerLevel2Rejected
+          ) {
+            setActionValue((prevState: any) => ({
+              ...prevState,
+              CandidateStatus: CandidateStatus.No,
+            }));
+          }
         })
         .catch((error) => {
           console.log("Candidate details doesn't fetch the data", error);
@@ -173,6 +207,12 @@ const ViewCandidateDetails = (props: any) => {
         todaydate.getMinutes(),
         todaydate.getSeconds()
       )
+    );
+
+    setSubmitBtn(
+      props.stateValue?.initialTab === TabName.AssignInterviewPanel
+        ? "Schedule for Interview "
+        : "Submit"
     );
     const newTabNames = [
       { tabName: props.stateValue?.initialTab },
@@ -200,15 +240,48 @@ const ViewCandidateDetails = (props: any) => {
       const Gradelevel = await CommonServices.GetGradeLevel(
         response.data[0]?.PayrollGrade
       );
+
+      const filterJDEMapping = [
+        {
+          FilterKey: "BUCId",
+          Operator: "eq",
+          FilterValue: response.data[0]?.BusinessUnitCodeId,
+        },
+      ];
+      const AssignInterviewPanel = await getVRRDetails.GetDataInList(
+        ListNames.JDEDataMapping,
+        filterJDEMapping,
+        Conditions,
+        "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
+        "BUC,LineManager,HOD,HR,EXCO"
+      );
+      console.log(AssignInterviewPanel.data, "AssignInterviewPanel");
+
       const interviewpanelOption = await CommonServices.GetADgruopsEmailIDs(
         ADGroupID.HRMSInterviewPanel
+      );
+      console.log(interviewpanelOption);
+
+      const Level1Value = interviewpanelOption.data.filter((item: any) =>
+        [
+          73, // AssignInterviewPanel.data[0]?.LineManagerId,
+          89, // response.data[0]?.AssignedHRId,
+        ].includes(item.key)
+      );
+
+      const Level2Value = interviewpanelOption.data.filter((item: any) =>
+        [
+          73, //AssignInterviewPanel.data[0]?.HODId,
+          89, //AssignInterviewPanel.data[0]?.EXCOId,
+        ].includes(item.key)
       );
 
       setInterviewedLevel((prevState) => ({
         ...prevState,
         Levels: Gradelevel.data[0]?.Level,
         AssignInterviewedLevel1Option: interviewpanelOption.data,
-        AssignInterviewedLevel2: interviewpanelOption.data,
+        AssignInterviewLevel1: Level1Value,
+        AssignInterviewedLevel2: Level2Value,
       }));
     };
     if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
@@ -263,6 +336,7 @@ const ViewCandidateDetails = (props: any) => {
       AssignInterviewLevel1: false,
     }));
   };
+  console.log(InterviewedLevel.AssignInterviewLevel1, "AssignInterviewLevel1");
 
   const tabs = [
     {
@@ -276,7 +350,11 @@ const ViewCandidateDetails = (props: any) => {
             <>
               <div className="agencies_card ">
                 <LabelHeaderComponents
-                  value={`Profile form ${CandidateProfile.Agencies} Agencies`}
+                  value={
+                    CandidateProfile.Agencies === undefined
+                      ? `Profile from Candidate `
+                      : `Profile from ${CandidateProfile.Agencies} Agencies`
+                  }
                 />
               </div>
             </>
@@ -384,6 +462,7 @@ const ViewCandidateDetails = (props: any) => {
                           mandatory={false}
                         />
                       </div>
+
                       <div className="ms-Grid-col ms-lg4">
                         <CustomMultiSelect
                           label="Assign Interview Panel - Level 1"
@@ -412,12 +491,13 @@ const ViewCandidateDetails = (props: any) => {
                       </div>
                       {InterviewedLevel.Levels === "Level 2" && (
                         <div className="ms-Grid-row">
-                          <div className="ms-Grid-col ms-lg4">
+                          <div
+                            className="ms-Grid-col ms-lg4"
+                            style={{ marginLeft: "7px" }}
+                          >
                             <CustomMultiSelect
                               label="Interview Panel - Level 2"
-                              value={
-                                InterviewedLevel.AssignInterviewedLevel1Option
-                              }
+                              value={InterviewedLevel.AssignInterviewedLevel2}
                               options={
                                 InterviewedLevel.AssignInterviewedLevel1Option
                               }
@@ -436,7 +516,7 @@ const ViewCandidateDetails = (props: any) => {
                             selectedDate={InterviewedLevel.InterviewedDate}
                             label="Interviewed Date"
                             error={validationErrors.InterviewedDate}
-                            // maxDate={}
+                            minDate={todaydate}
                             mandatory={true}
                             onChange={(date) =>
                               handleDateChange(date ?? undefined)
@@ -476,33 +556,33 @@ const ViewCandidateDetails = (props: any) => {
                     />
                   </div>
                 </div>
-                {props.stateValue?.initialTab === TabName.ReviewProfile && (
-                  <>
-                    <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg6">
-                        <CustomRadioGroup
-                          label="Does the candidate fit for the vacant position ?"
-                          value={actionValue.CandidateStatus}
-                          options={["Yes", "No", "Waiting List"]}
-                          error={false}
-                          mandatory={false}
-                          onChange={(item) => handleRadioChange(item)}
-                        />
+                {props.stateValue?.initialTab === TabName.ReviewProfile &&
+                  props.stateValue?.ActionBtn === "Edit" && (
+                    <>
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg5">
+                          <CustomRadioGroup
+                            label="Does the candidate fit for the vacant position ?"
+                            value={actionValue.CandidateStatus}
+                            options={["Yes", "No", "Waiting List"]}
+                            error={false}
+                            mandatory={false}
+                            onChange={(item) => handleRadioChange(item)}
+                            disabled={
+                              props.stateValue?.ActionBtn === "View"
+                                ? true
+                                : false
+                            }
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                  )}
 
                 {props.CurrentRoleID === RoleID.LineManager && (
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
-                      <CustomLabel value={"View Justification"} />
-
-                      {/* <ReuseButton
-                        label="View"
-                        onClick={() => setOpenComments(true)}
-                        spacing={4}
-                      /> */}
+                      <CustomLabel value={"View Justifications"} />
                       <ReuseButton
                         Style={{
                           minWidth: "117px",
@@ -532,72 +612,96 @@ const ViewCandidateDetails = (props: any) => {
                   TabName.AssignInterviewPanel && (
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
-                      <CustomLabel value={"View Justification"} />
-
-                      {/* <ReuseButton
-                        label="View"
+                      <CustomLabel value={"View Justifications"} />
+                      <ReuseButton
+                        Style={{
+                          minWidth: "117px",
+                          fontSize: "13px",
+                          paddingBottom: "24px",
+                          display: "flex",
+                          flexDirection: "column",
+                          height: "41px",
+                          paddingTop: "23px",
+                          backgroundColor: "#EF3340",
+                          color: "white",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        label="VIEW"
+                        imgSrc={require("../../assets/viewSubmision-white.svg")}
+                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                        imgAlt="View"
+                        imgAltHover="Hovered View"
                         onClick={() => setOpenComments(true)}
                         spacing={4}
-                      /> */}
+                      />
                     </div>
                   </div>
                 )}
-                <div className="ms-Grid-row">
-                  <div
-                    className="ms-Grid-col ms-lg12"
-                    style={{ marginBottom: "7px" }}
-                  >
-                    <CustomTextArea
-                      label="Justification"
-                      value={actionValue.Comments}
-                      error={validationErrors.Comments}
-                      onChange={(value) => handleInputChangeTextArea(value)}
-                      mandatory={true}
-                    />
-                  </div>
-                </div>
+                {props.stateValue?.ActionBtn === "View" ? (
+                  <></>
+                ) : (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div
+                        className="ms-Grid-col ms-lg12"
+                        style={{ marginBottom: "7px" }}
+                      >
+                        <CustomTextArea
+                          label="Justification"
+                          value={actionValue.Comments}
+                          error={validationErrors.Comments}
+                          onChange={(value) => handleInputChangeTextArea(value)}
+                          mandatory={true}
+                        />
+                      </div>
+                    </div>
 
-                <div
-                  className="ms-Grid-row"
-                  style={{
-                    padding: "3px",
-                    marginTop: "20px",
-                    marginBottom: "-33px",
-                  }}
-                >
-                  <div className="ms-Grid-col ms-lg12">
-                    <SignatureCheckbox
-                      label={"I hereby agree for submitted this request."}
-                      checked={Checkbox}
-                      error={validationErrors.Checkboxalidation}
-                      onChange={(value: boolean) => {
-                        setCheckbox(value);
-                        setValidationErrors((prevState) => ({
-                          ...prevState,
-                          Checkboxalidation: false,
-                        }));
+                    <div
+                      className="ms-Grid-row"
+                      style={{
+                        padding: "3px",
+                        marginTop: "20px",
+                        marginBottom: "-33px",
                       }}
-                    />
-                  </div>
-                </div>
-                <div className="ms-Grid-row">
-                  <div className="ms-Grid-col ms-lg12">
-                    <CustomSignature
-                      Name={
-                        (props.userDetails[0].FirstName ?? "") +
-                        " " +
-                        (props.userDetails[0]?.MiddleName ?? "") +
-                        " " +
-                        (props.userDetails[0]?.LastName ?? "")
-                      }
-                      JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
-                      JobTitleInFrench={props.userDetails[0].JopTitleFrench}
-                      Department={props.userDetails[0].DepartmentName}
-                      Date={SignDate}
-                      TermsAndCondition={Checkbox}
-                    />
-                  </div>
-                </div>
+                    >
+                      <div className="ms-Grid-col ms-lg12">
+                        <SignatureCheckbox
+                          label={"I hereby agree for submitted this request."}
+                          checked={Checkbox}
+                          error={validationErrors.Checkboxalidation}
+                          onChange={(value: boolean) => {
+                            setCheckbox(value);
+                            setValidationErrors((prevState) => ({
+                              ...prevState,
+                              Checkboxalidation: false,
+                            }));
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg12">
+                        <CustomSignature
+                          Name={
+                            (props.userDetails[0].FirstName ?? "") +
+                            " " +
+                            (props.userDetails[0]?.MiddleName ?? "") +
+                            " " +
+                            (props.userDetails[0]?.LastName ?? "")
+                          }
+                          JobTitleInEnglish={
+                            props.userDetails[0].JopTitleEnglish
+                          }
+                          JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                          Department={props.userDetails[0].DepartmentName}
+                          Date={SignDate}
+                          TermsAndCondition={Checkbox}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -618,7 +722,7 @@ const ViewCandidateDetails = (props: any) => {
       AssignInterviewLevel1: false,
     };
     switch (props.CurrentRoleID) {
-      case RoleID.RecruitmentHR: {
+      case RoleID.RecruitmentHR:
         if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
           errors.Comments = !IsValid(actionValue.Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
@@ -631,9 +735,14 @@ const ViewCandidateDetails = (props: any) => {
           errors.Checkboxalidation = !IsValid(Checkbox);
           errors.CandidateStatus = !IsValid(actionValue.CandidateStatus);
         }
-
         break;
-      }
+      case RoleID.LineManager:
+        {
+          errors.Comments = !IsValid(actionValue.Comments);
+          errors.Checkboxalidation = !IsValid(Checkbox);
+          errors.CandidateStatus = !IsValid(actionValue.CandidateStatus);
+        }
+        break;
     }
 
     setValidationErrors((prevState) => ({
@@ -650,6 +759,7 @@ const ViewCandidateDetails = (props: any) => {
         ID: props.stateValue?.RecruitmentID,
         TabName: props.stateValue?.initialTab,
         ButtonAction: TabName.ViewPositionDetails,
+        JobCode: CandidateProfile?.JobCode,
       },
     });
   }
@@ -692,21 +802,25 @@ const ViewCandidateDetails = (props: any) => {
       InterviewDate: InterviewedLevel.InterviewedDate
         ? new Date(InterviewedLevel.InterviewedDate).toISOString()
         : null,
+      ActionId: WorkflowAction.Approved,
     };
     let selectedinterviewpanal: any[] = [];
 
     for (let i = 0; i < InterviewedLevel.AssignInterviewLevel1.length; i++) {
+      debugger;
       const currentItem = InterviewedLevel.AssignInterviewLevel1[i];
 
       let selectedinterview = {
         RecruitmentIDId: RecruitmentDetails.data[0].ID,
         InterviewLevel: InterviewedLevel.Levels,
-        InterviewPanelId: currentItem.key,
+        InterviewPanel: currentItem.key,
         CandidateID: 0,
       };
 
       selectedinterviewpanal.push(selectedinterview);
     }
+    console.log(selectedinterviewpanal, "selectedinterviewpanal");
+    console.log(CandidateDetails, "CandidateDetails");
     await GetPortalJobsService.InsertCandidateDetailsInList(
       CandidateDetails,
       selectedinterviewpanal
@@ -720,98 +834,132 @@ const ViewCandidateDetails = (props: any) => {
   };
 
   async function Submit_fn() {
-    const isValid = !Validation();
-    if (isValid) {
-      let CandidateData: WorkflowJson;
-
+    setIsLoading(true);
+    try {
+      const isValid = !Validation();
+      if (!isValid) {
+        return;
+      }
+      const createFilter = (workflowStatus: string): WorkflowJson => ({
+        workflowStatus: workflowStatus,
+        jobRequestId: props.stateValue?.ID,
+        comments: actionValue.Comments,
+        actionBy: props.CurrentUserRole,
+      });
+      let CandidateData: WorkflowJson = {
+        workflowStatus: "",
+        jobRequestId: 0,
+        comments: "",
+        actionBy: "",
+      };
+      let PopupMessage: string = "";
       switch (actionValue.CandidateStatus) {
-        case CandidateStatus.Yes: {
+        case CandidateStatus.Yes:
           if (props.CurrentRoleID === RoleID.LineManager) {
             if (
               CandidateProfile.Status ===
               "Pending with Line Manager Level 2 Review"
             ) {
-              CandidateData = {
-                workflowStatus: workflowStatusApi.InterviewScheduled,
-                jobRequestId: props.stateValue?.ID,
-                comments: actionValue.Comments,
-                actionBy: props.CurrentUserRole,
-              };
-            } else
-              CandidateData = {
-                workflowStatus: workflowStatusApi.LineManagerL2Pending,
-                jobRequestId: props.stateValue?.ID,
-                comments: actionValue.Comments,
-                actionBy: props.CurrentUserRole,
-              };
+              CandidateData = createFilter(
+                workflowStatusApi.PendingRecruitmentHRscheduleInterview
+              );
+              PopupMessage = RecuritmentHRMsg.ProfileReviewed;
+            } else {
+              CandidateData = createFilter(
+                workflowStatusApi.LineManagerL2Pending
+              );
+              PopupMessage = RecuritmentHRMsg.ProfileReviewed;
+            }
           } else {
-            CandidateData = {
-              workflowStatus: workflowStatusApi.LineManagerL1Pending,
-              jobRequestId: props.stateValue?.ID,
-              comments: actionValue.Comments,
-              actionBy: props.CurrentUserRole,
-            };
+            CandidateData = createFilter(
+              workflowStatusApi.LineManagerL1Pending
+            );
+            PopupMessage = RecuritmentHRMsg.ProfileReviewed;
           }
           break;
-        }
 
-        case CandidateStatus.No: {
-          CandidateData = {
-            workflowStatus: workflowStatusApi.Rejected,
-            jobRequestId: props.stateValue?.ID,
-            comments: actionValue.Comments,
-            actionBy: props.CurrentUserRole,
-          };
+        case CandidateStatus.No:
+          if (props.CurrentRoleID === RoleID.LineManager) {
+            if (
+              CandidateProfile.Status ===
+              "Pending with Line Manager Level 2 Review"
+            ) {
+              CandidateData = createFilter(
+                workflowStatusApi.LineManagerLevel2Rejected
+              );
+              PopupMessage = RecuritmentHRMsg.ProfileReviewedNo;
+            } else {
+              CandidateData = createFilter(
+                workflowStatusApi.LineManagerLevel1Rejected
+              );
+              PopupMessage = RecuritmentHRMsg.ProfileReviewedNo;
+            }
+          } else {
+            CandidateData = createFilter(workflowStatusApi.HRRejected);
+            PopupMessage = RecuritmentHRMsg.ProfileReviewedNo;
+          }
           break;
-        }
 
-        case CandidateStatus.WaitingList: {
-          CandidateData = {
-            workflowStatus: workflowStatusApi.OnHold,
-            jobRequestId: props.stateValue?.ID,
-            comments: actionValue.Comments,
-            actionBy: props.CurrentUserRole,
-          };
+        case CandidateStatus.WaitingList:
+          if (props.CurrentRoleID === RoleID.LineManager) {
+            if (
+              CandidateProfile.Status ===
+              "Pending with Line Manager Level 2 Review"
+            ) {
+              CandidateData = createFilter(
+                workflowStatusApi.LineManagerLevel2OnHold
+              );
+              PopupMessage = RecuritmentHRMsg.ProfileReviewedWaitingList;
+            } else {
+              CandidateData = createFilter(
+                workflowStatusApi.LineManagerLevel1OnHold
+              );
+              PopupMessage = RecuritmentHRMsg.ProfileReviewedWaitingList;
+            }
+          } else {
+            CandidateData = createFilter(workflowStatusApi.HROnHold);
+            PopupMessage = RecuritmentHRMsg.ProfileReviewedWaitingList;
+          }
           break;
-        }
-
-        default:
-          CandidateData = {
-            workflowStatus: workflowStatusApi.LineManagerL1Pending,
-            jobRequestId: props.stateValue?.ID,
-            comments: actionValue.Comments,
-            actionBy: props.CurrentUserRole,
-          };
       }
-      await GetPortalJobsService.UpdateCandidateStatus(CandidateData)
-        .then(async (res) => {
-          if (res.data) {
-            await UploadCandidateDetails();
-            let CancelAlert = {
-              Message: RecuritmentHRMsg.ProfileReviewed,
-              Type: HRMSAlertOptions.Success,
-              visible: true,
-              ButtonAction: async (userClickedOK: boolean) => {
-                if (userClickedOK) {
-                  props.navigation("/ReviewProfileList/ReviewCandidateList", {
-                    state: {
-                      ID: props.stateValue?.RecruitmentID,
-                      TabName: props.stateValue?.initialTab,
-                      ButtonAction: TabName.ViewPositionDetails,
-                    },
-                  });
-                  setAlertPopupOpen(false);
-                }
-              },
-            };
-            setAlertPopupOpen(true);
-            setalertProps(CancelAlert);
-            setIsLoading(false);
-          }
-        })
-        .catch((error) => {
-          console.log("Candidate details doesn't fetch the data", error);
-        });
+
+      if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
+        CandidateData = createFilter(workflowStatusApi.InterviewScheduled);
+        PopupMessage = RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
+      }
+      console.log(CandidateData, "CandidateData");
+
+      const res = await GetPortalJobsService.UpdateCandidateStatus(
+        CandidateData
+      );
+      console.log(res.data, "res");
+      if (res.data) {
+        await UploadCandidateDetails();
+        const CancelAlert = {
+          Message: PopupMessage,
+          Type: HRMSAlertOptions.Success,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              props.navigation("/ReviewProfileList/ReviewCandidateList", {
+                state: {
+                  ID: props.stateValue?.RecruitmentID,
+                  TabName: props.stateValue?.initialTab,
+                  ButtonAction: TabName.ViewPositionDetails,
+                  JobCode: CandidateProfile?.JobCode,
+                },
+              });
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+        setAlertPopupOpen(true);
+        setalertProps(CancelAlert);
+      }
+    } catch (error) {
+      console.error("Error submitting candidate details", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -824,21 +972,37 @@ const ViewCandidateDetails = (props: any) => {
             initialItem={activeTab}
             TabName={TabNameData}
             onBreadcrumbChange={handleBreadcrumbChange}
-            additionalButtons={[
-              {
-                label: "Back",
-                onClick: async () => {
-                  back_fn();
-                },
-              },
-              {
-                label: "Submit ",
-                onClick: async () => {
-                  await Submit_fn();
-                },
-              },
-            ]}
+            additionalButtons={
+              props.stateValue?.ActionBtn === "View"
+                ? [
+                    {
+                      label: "Back",
+                      onClick: async () => {
+                        back_fn();
+                      },
+                    },
+                  ]
+                : [
+                    {
+                      label: "Back",
+                      onClick: async () => {
+                        back_fn();
+                      },
+                    },
+                    {
+                      label: submitBtn,
+                      onClick: async () => {
+                        await Submit_fn();
+                      },
+                    },
+                  ]
+            }
           />
+          {/* <TabsComponent
+            tabs={tabs}
+            initialTab="tab1"
+            
+          /> */}
         </div>
       </CustomLoader>
 

@@ -248,6 +248,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   const [isViewed, setIsViewed] = useState(false);
   const [showQualificationInput, setShowQualificationInput] = useState(false);
   const [AddQualifMasterbtn, setAddQualifMasterbtn] = useState<boolean>(false);
+  const [experValidation, setExperValidation] = useState<boolean>(false);
 
   const handleAddRow = (stateValue: string) => {
     switch (stateValue) {
@@ -321,6 +322,29 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       ...prevState,
       [StateValue]: false,
     }));
+    if (StateValue === "ExperienceinMiningIndustry") {
+      const experienceRange = item?.text.match(/\d+/g)?.map(Number) ?? [];
+      const totalRange =
+        advDetails.TotalExperience.text.match(/\d+/g)?.map(Number) ?? [];
+      if (
+        (totalRange[1] ?? 0) <
+        (experienceRange[1] === undefined
+          ? experienceRange[0]
+          : experienceRange[1])
+      ) {
+        console.log(
+          "Invalid selection: Mining Experience cannot exceed Total Experience."
+        );
+        setExperValidation(true);
+        setAdvDetails((prevState) => ({
+          ...prevState,
+          ExperienceinMiningIndustry: { key: 0, text: "" },
+        }));
+      } else {
+        setExperValidation(false);
+      }
+      console.log(experienceRange, "experienceRange");
+    }
   };
 
   const handleAutoCompleterow = (
@@ -614,9 +638,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           errors.RolePurpose = !IsValid(advDetails.RolePurpose);
           errors.JobDescription = !IsValid(advDetails.JobDescription);
           errors.ExperienceinMiningIndustry = !IsValid(
-            advDetails.ExperienceinMiningIndustry
+            advDetails.ExperienceinMiningIndustry.text
           );
-          errors.TotalExperience = !IsValid(advDetails.TotalExperience);
+          errors.TotalExperience = !IsValid(advDetails.TotalExperience.text);
           errors.Checkboxalidation = !IsValid(Checkbox);
           errors.ValidFrom = !IsValid(advDetails.ValidFrom);
           errors.ValidTo = !IsValid(advDetails.ValidTo);
@@ -671,6 +695,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
   const SaveRecruitment = async () => {
     try {
+      setIsLoading(true);
       const isValid = !Validation();
 
       if (isValid) {
@@ -964,9 +989,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           text: item.ExperienceInYearRange,
         }));
 
-      const ExperienceinMiningOption: AutoCompleteItem[] = YearofExperiance.data
-        .filter((exper) => advDetails.TotalExperience.key != exper.Id) // Correct filter syntax
-        .map((item: any) => ({
+      const ExperienceinMiningOption: AutoCompleteItem[] =
+        YearofExperiance.data.map((item: any) => ({
           key: item.Id,
           text: item.ExperienceInYearRange,
         }));
@@ -1445,6 +1469,21 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             formState.Nationality === Nationality.Nationals
               ? "Congolese"
               : formState.Nationality;
+
+          // let agents: agent = {
+          //   exUserCode: "",
+          //   name: "",
+          //   email: "",
+          //   externalUserType: "",
+          //   userId: "",
+          // };
+          // let profileagent: profileXagent = {
+          //   profileId: 0,
+          //   agentCode: "",
+          //   isSuspended: 0,
+          //   agent: agents,
+          // };
+
           const AdvertisementDetails: AdvertisementDetails = {
             jobCode: formState.JobCode,
             noOfPositions: String(formState.NoofPositionAssigned),
@@ -1463,7 +1502,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             Descriptions_fr: Description,
             RoleAndTechSkills: Roleandtechnical,
             MinAndPreferedQualifications: MinAndPreferedQualification,
+            // profileXAgent: profileagent,
           };
+          console.log(AdvertisementDetails, "AdvertisementDetails");
 
           await GetPortalJobsService.UpsertJobs(AdvertisementDetails)
             .then((res) => {
@@ -1848,7 +1889,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg1.8">
                           <CustomLabel
-                            value={"ONEM Signed Doc"}
+                            value={"ONEM Signed and Stamped Document"}
                             mandatory={true}
                           />
                           <AttachmentButton
@@ -1882,10 +1923,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             }}
                           />
                         </div>
-                        <div
-                          className="ms-Grid-col ms-lg6"
-                          style={{ marginTop: "4%" }}
-                        >
+                      </div>
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg6">
                           {formState.OnamSignedStampsAttchment?.map(
                             (file: any, index: number) => {
                               const fileName = file.fileName || file.name;
@@ -1954,7 +1994,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           <div>
                             <CustomLabel
                               value={"View Advertisement"}
-                              mandatory={true}
+                              // mandatory={true}
                             />
                             <ReuseButton
                               Style={{
@@ -2059,7 +2099,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             label={"I hereby agree for submitted this request."}
                             checked={Checkbox}
                             error={validationErrors.Checkboxalidation}
-                            onChange={(value: boolean) => setCheckbox(value)}
+                            onChange={(value: boolean) => {
+                              setCheckbox(value);
+                              setValidationError((prevState) => ({
+                                ...prevState,
+                                Checkboxalidation: false,
+                              }));
+                            }}
                           />
                         </div>
                       </div>
@@ -2203,7 +2249,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           <CustomDatePicker
                             selectedDate={advDetails.ValidTo}
                             label="Valid To"
-                            error={validationErrors.ValidTo}
+                            error={false}
                             // minDate={
                             //   advDetails.ValidFrom
                             //     ? new Date(
@@ -2284,7 +2330,22 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                   validationErrors.ExperienceinMiningIndustry
                                 }
                               />
+                              {experValidation && (
+                                <>
+                                  <p
+                                    style={{
+                                      marginTop: 5,
+                                      color: "red",
+                                      fontSize: 12,
+                                      marginLeft: 0,
+                                    }}
+                                  >
+                                    Invalid Selection
+                                  </p>
+                                </>
+                              )}
                             </div>
+
                             <div
                               className="ms-Grid-col ms-lg2"
                               style={{ textAlign: "right", marginTop: "45px" }}
@@ -2349,7 +2410,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               
                           /> */}
                           <CustomButton
-                            text="Add new Qualification"
+                            text="Add New Qualification"
                             onClick={() => setShowQualificationInput(true)}
                           />
                         </div>
@@ -3069,18 +3130,23 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             onHide={() => setAddQualifbtn(false)}
           >
             <div className="ms-Grid-row" style={{ marginLeft: "6%" }}>
-              <div className="ms-Grid-col ms-lg8">
+              <div className="ms-Grid-col ms-lg9">
                 <CustomInput
                   label={LabelValue}
                   value={advDetails.addMasterQualification}
                   disabled={false}
                   mandatory={true}
-                  onChange={(value) =>
+                  onChange={(value) => {
                     setAdvDetails((prevState) => ({
                       ...prevState,
                       addMasterQualification: value,
-                    }))
-                  }
+                    }));
+                    setValidationError((prevState) => ({
+                      ...prevState,
+                      addMasterQualification: false,
+                    }));
+                  }}
+                  error={validationErrors.addMasterQualification}
                 />
               </div>
             </div>
@@ -3100,6 +3166,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   setAdvDetails((prevState) => ({
                     ...prevState,
                     addMasterQualification: "",
+                  }));
+                  setValidationError((prevState) => ({
+                    ...prevState,
+                    addMasterQualification: false,
                   }));
                 }}
                 spacing={4}

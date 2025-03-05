@@ -1,7 +1,8 @@
-import { AdvertisementDetails, CandidateProfile, GetProfileByFilter, GetProfileByJobCode, profileJobsComments, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, FilterItem, GetProfileByJobCode, profileJobsComments, WorkflowJson } from "../../Models/ApIInterface";
 import { DocumentLibraray, ListNames, RoleProfileMaster } from "../../utilities/Config";
 import { getProfileData, postAdveDetails } from "../ReviewProfileService/ReviewCandidateService";
 import { CommonServices } from "../ServiceExport";
+import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
 import { IGetPortalJobs } from "./IGetPortalJobs";
 
@@ -23,7 +24,8 @@ export default class GetPortalJobs implements IGetPortalJobs {
         Descriptions_en: data?.Descriptions_en,
         Descriptions_fr: data?.Descriptions_fr,
         RoleAndTechSkills: data?.RoleAndTechSkills,
-        MinAndPreferedQualifications: data?.MinAndPreferedQualifications
+        MinAndPreferedQualifications: data?.MinAndPreferedQualifications,
+        // profileXAgent: data?.profileXAgent
       }
       await postAdveDetails.postUpsertJobs(AdvertisementDetails).then((res) =>
         console.log(res, "res")
@@ -48,10 +50,11 @@ export default class GetPortalJobs implements IGetPortalJobs {
     }
   }
 
-  async getCandidateDetailsInJobCode(JobCode: string, FilterValue: GetProfileByFilter): Promise<ApiResponse<GetProfileByJobCode[] | null>> {
+  async getCandidateDetailsInJobCode(FilterValue: FilterItem): Promise<ApiResponse<GetProfileByJobCode[] | null>> {
     try {
       let GetProfileByJobCodeData: GetProfileByJobCode[] = []
-      await getProfileData.GetProfileByJobCode("JC0005", FilterValue).then((res) => {
+      await getProfileData.GetProfileByJobCode(FilterValue).then((res) => {
+        console.log(res, "res");
 
         GetProfileByJobCodeData = res.data.data.map((item: any) => {
           return {
@@ -59,7 +62,8 @@ export default class GetPortalJobs implements IGetPortalJobs {
             ApplicantName: item.applicantName,
             PositionTitle: item.jobTitle?.displayText,
             JobGrade: item.jobCode,
-            Status: item.workflowStatus?.displayText
+            Status: item.workflowStatus?.displayText,
+            workflowStatusId: item.workflowStatusId
           }
         })
       }
@@ -84,7 +88,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
     }
   }
 
-  async getCandidateProfile(CandidateID: string,): Promise<ApiResponse<CandidateProfile[] | null>> {
+  async getCandidateProfile(CandidateID: string): Promise<ApiResponse<CandidateProfile[] | null>> {
     try {
       let GetProfileByJobCodeData: CandidateProfile[] = [];
       await getProfileData.getCandidateProfile(CandidateID).then(async (res) => {
@@ -94,23 +98,51 @@ export default class GetPortalJobs implements IGetPortalJobs {
         const [
           RoleProfileDocment,
           AdvertismentDocment,
-          CandidateCVDoc
         ] = await Promise.all([
           CommonServices.GetAttachmentToLibrary(DocumentLibraray.RoleProfileMaster, op.jobCode, RoleProfileMaster.RoleProfile),
           CommonServices.GetAttachmentToLibrary(DocumentLibraray.RecruitmentAdvertisementDocument, op.jobCode),
-          CommonServices.GetAttachmentToLibrary(DocumentLibraray.InterviewPanelCandidateCV, op.jobCode, op?.jobRequestId)
+          CommonServices.GetAttachmentToLibrary(DocumentLibraray.InterviewPanelCandidateCV, op.jobCode, op?.jobRequestId),
         ]);
+
         const RoleProfileDoc = RoleProfileDocment.data || [];
         const AdvertismentDocPromises = AdvertismentDocment.data || [];
-        const CandidateCVDocPromises = CandidateCVDoc.data || [];
+
         let CommentsData: profileJobsComments[] = op?.profileJobsComments.map((item: any) => {
           return {
             comments: item?.comments,
             RoleName: item?.createdBy,
             createdDate: item.createdOn,
             jobRequestId: item?.jobRequestId
+          };
+        }) || [];
+
+        let url = op?.document?.filePath || "";
+
+        // Initialize filteredFiles as an empty array
+        let filteredFiles: IDocFiles[] = [];
+
+        if (url) {
+          const extractedPath = url.split("/root:/")[1]?.split(":/content")[0] || "";
+
+          if (extractedPath) {
+            const folderPath = extractedPath.substring(0, extractedPath.lastIndexOf("/")) || "";
+
+            try {
+              let FileData = (await SPServices.getDocLibFiles({
+                FilePath: `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${folderPath}`,
+              })) as IDocFiles[];
+
+              if (FileData && FileData.length > 0) {
+                const fileName = extractedPath.split("/").pop();
+                filteredFiles = FileData.filter((file) => file.name === fileName);
+              } else {
+                console.warn("Warning: No files found in the directory");
+              }
+            } catch (error) {
+              console.error("Error fetching document library files:", error);
+            }
           }
-        })
+        }
 
         let GetProfileDahboard: CandidateProfile = {
           CandidateID: op?.jobRequestId,
@@ -125,32 +157,32 @@ export default class GetPortalJobs implements IGetPortalJobs {
           ContactNumber: op?.profile?.contactNumber1,
           Email: op?.profile?.email,
           Nationality: op?.profile?.nationality?.displayText,
-          Gender: op?.profile?.gender?.displayText,
+          Gender: op?.profile?.gender?.displayText ? op?.profile?.gender?.displayText : op?.profile?.genderId,
           HighestQualification: op?.profile?.education?.displayText,
           ExperienceMining: op?.profile?.totalYearOfExperiance,
           ExperRelatedfield: op?.profile?.releventExperience,
           Status: op?.workflowStatus?.displayText,
           Agencies: op?.profile?.profileXAgent?.agent?.name,
-          CandidateResume: CandidateCVDocPromises,//op?.profileJobsDocuments[0]?.filePath,
+          CandidateResume: filteredFiles, // This will always be [] if `url` is empty
           RoleProfile: RoleProfileDoc,
           Advertisement: AdvertismentDocPromises,
-          Comments: CommentsData
-        }
-        GetProfileByJobCodeData.push(GetProfileDahboard)
-      }
-      ).catch((error) => {
+          Comments: CommentsData,
+          workflowStatusId: op?.workflowStatusId,
+        };
+
+        GetProfileByJobCodeData.push(GetProfileDahboard);
+        console.log(filteredFiles, "Filtered Files");
+      }).catch((error) => {
         console.log(error, "error");
-      })
+      });
+
       return {
         data: GetProfileByJobCodeData,
         status: 200,
-        message: "Failed to insert RecruitmentDptDetails",
+        message: "Success",
       };
     } catch (error) {
-      console.error(
-        "Error inserting data into HRMSRecruitmentDptDetails:",
-        error
-      );
+      console.error("Error inserting data into HRMSRecruitmentDptDetails:", error);
       return {
         data: [],
         status: 500,
@@ -158,6 +190,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
       };
     }
   }
+
 
   async UpdateCandidateStatus(data: WorkflowJson): Promise<ApiResponse<any | null>> {
     try {
@@ -234,7 +267,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         const JobDetailsInsert = {
           RecruitmentIDId: item.RecruitmentIDId,
           InterviewLevel: item.InterviewLevel,
-          InterviewPanelId: item.InterviewPanelId,
+          InterviewPanelId: item.InterviewPanel,
           CandidateIDId: CandidateId,
         };
 

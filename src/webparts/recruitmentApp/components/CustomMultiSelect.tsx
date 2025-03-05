@@ -41,10 +41,7 @@ const removeDuplicates = (items: AutoCompleteItem[]) => {
 
   items.forEach((item) => {
     if (item && item.text) {
-      const normalizedText = item.text
-        .trim()
-        .replace(/\s+/g, " ")
-        .toLowerCase();
+      const normalizedText = item.text.trim().replace(/\s+/g, " ");
 
       if (!uniqueItems.has(normalizedText)) {
         uniqueItems.set(normalizedText, { ...item, text: normalizedText });
@@ -131,8 +128,8 @@ function CustomMultiSelect({
             display: "flex",
             flexWrap: "wrap",
             gap: "4px",
-            maxHeight: tagValue.length > 3 ? "80px" : "auto",
-            overflowY: tagValue.length > 3 ? "auto" : "visible",
+            maxHeight: tagValue.length > 2 ? "80px" : "auto",
+            overflowY: tagValue.length > 2 ? "auto" : "visible",
           };
           return (
             <div style={containerStyle}>

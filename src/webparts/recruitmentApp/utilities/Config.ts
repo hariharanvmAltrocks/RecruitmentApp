@@ -31,6 +31,7 @@ export const ListNames = {
   HRMSCandidateScoreCard: "HRMSCandidateScoreCard",
 
   HRMSRecruitmentRoleProfileDetails: "HRMSRecruitmentRoleProfileDetails",
+  HRMSSelectedCandidateDetailsByHOD: "HRMSSelectedCandidateDetailsByHOD",
 
   //Master List
   HRMSQualification: "HRMSQualification",
@@ -44,6 +45,7 @@ export const ListNames = {
     "HRMSExternalAgentsDetailsForRecruitment",
   HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
   HRMSRecruitmentWorkFlowMasterStatus: "HRMSRecruitmentWorkFlowMasterStatus",
+  HRMSPositionIDMaster: "HRMSPositionIDMaster"
 };
 
 export const DocumentLibraray = {
@@ -53,6 +55,7 @@ export const DocumentLibraray = {
   RecruitmentAdvertisementDocument: "HRMSRecruitmentAdvertDocument",
   ONAMSignedStampDocuments: "HRMSRecruitmentOnamStampedDocuments",
   RoleProfileMaster: "RoleProfileMaster",
+  HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV"
 };
 
 export const StatusId = {
@@ -62,6 +65,7 @@ export const StatusId = {
   PendingwithHRLeadtouploadONEMsigneddoc: 118,
   PendingwithRecruitmentHRtoAssignExternalAgency: 119,
   RecruitmentInProgress: 28,
+  PendingwithHODtoselectthecandidate: 121,
 };
 
 export const RoleID = {
@@ -107,6 +111,8 @@ export const GridStatusBackgroundcolor = {
   Reverted: "#afb4b6",
   ReSubmitted: "#87caff",
   Initiated: "#e6eef2",
+  Selected: "90ee90",
+  InterviewScheduled: "D7FDD7",
 };
 
 export const HRMSAlertOptions = {
@@ -174,6 +180,10 @@ export const RecuritmentHRMsg = {
   ProfileReviewedWaitingList:
     "Candidate Profile for the Job Title Reviewed and On - Hold.",
   InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
+  CandidateSelected: "Candidate Selected",
+  CandidateRejected: "Candidate Rejected",
+  PositionIDassigned: "Position ID assigned for the selected Candidate.",
+  InterviewScoredAlready: "The scorecard for the candidate has already been submitted."
 };
 
 export const ADGroupID: IADGroupID = {
@@ -259,17 +269,6 @@ export const Nationality = {
   Expatriate: "Expatriate",
 };
 
-export const workflowStatusApi = {
-  HRPending: "WS01",
-  LineManagerL1Pending: "WS02",
-  LineManagerL2Pending: "WS03",
-  InterviewScheduled: "WS04",
-  HODSelectionPending: "WS05",
-  Selected: "WS06",
-  OnHold: "WS07",
-  Rejected: "WS08",
-};
-
 export const CandidateStatus = {
   Yes: "Yes",
   No: "No",
@@ -281,3 +280,22 @@ export const InterviewLevels = {
   Level2: "Level 2",
   Level3: "Level 3",
 };
+
+export const workflowStatusApi = {
+  HRPending: "WS01",
+  LineManagerL1Pending: "WS02",
+  LineManagerL2Pending: "WS03",
+  InterviewScheduled: "WS04",
+  pendingHODSelection: "WS05",
+  CandidateSelectedIPanel: "WS06",
+  CandidateOnHoldIPanel: "WS07",
+  CandidateRejectedIPanel: "WS08",
+  PendingRecruitmentHRscheduleInterview: "WS09",
+  HRRejected: "WS10",
+  HROnHold: "WS11",
+  LineManagerLevel1OnHold: "WS12",
+  LineManagerLevel2OnHold: "WS13",
+  LineManagerLevel1Rejected: "WS14",
+  LineManagerLevel2Rejected: "WS15",
+};
+
