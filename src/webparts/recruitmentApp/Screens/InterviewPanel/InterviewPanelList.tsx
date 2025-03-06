@@ -17,6 +17,7 @@ import { TabName } from "../../utilities/Config";
 import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
 import { alertPropsData } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
+import SearchableDataTable from "../../components/CustomDataTable";
 
 const InterviewPanelList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
@@ -31,80 +32,23 @@ const InterviewPanelList = (props: any) => {
     visible: false,
   });
 
-  // const HRFileHandle = (serverUrl: string, fileName: string) => {
-  //   console.log(serverUrl, "ServerUrl");
-  //   try {
-  //     if (serverUrl) {
-  //       if (
-  //         fileName
-  //           .split(".")
-  //           [fileName.split(".").length - 1].toLocaleLowerCase() == "pdf"
-  //       ) {
-  //         window.open(serverUrl);
-  //       } else {
-  //         window.open(serverUrl + "?web=1");
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Error setting up SharePoint:", error);
-  //   }
-  // };
-
-  // const handleAttachmentState = (newAttachments: Item[], rowData: any) => {
-  //     const updatedRowAttachment = CandidateData.map((item: any) => {
-  //         if (item.ID === rowData.ID) {
-  //             if (item.Checked === true) {
-  //                 return item;
-  //             }
-  //             return {
-  //                 ...item,
-  //                 ScoreCardAttch: [...(item.ScoreCardAttch || []), ...newAttachments],
-  //             };
-  //         }
-  //         return item;
-  //     });
-  //     setCandidateData(updatedRowAttachment);
-  // };
-
-  // const handleDelete = (index: number, rowData: any) => {
-  //     console.log("Deleting attachment at index:", index);
-  //     const updatedCandidateData = CandidateData.map((item: any) => {
-  //         if (item.ID === rowData.ID) {
-  //             const updatedAttachments = item.ScoreCardAttch.filter((_: any, i: number) => i !== index);
-  //             return {
-  //                 ...item,
-  //                 ScoreCardAttch: updatedAttachments,
-  //             };
-  //         }
-  //         return item;
-  //     });
-
-  //     setCandidateData(updatedCandidateData);
-  // };
   function handleRedirectView(
     rowData: any,
     tab: string,
     TabName: string,
     ButtonAction: string
   ) {
-    switch (props.CurrentRoleID) {
-      case RoleID.InterviewPanel:
-        {
-          if (tab === "tab1") {
-            props.navigation("/InterviewPanelList/InterviewPanelEdit", {
-              state: {
-                //type: "VRR",
-                ID: rowData?.ID,
-                tab,
-                StatusId: rowData?.StatusId,
-                Status: rowData?.Status,
-                TabName: TabName,
-                ButtonAction,
-              },
-            });
-          }
-        }
-        break;
+    if (tab === "tab1") {
+      props.navigation("/InterviewPanelList/InterviewPanelEdit", {
+        state: {
+          ID: rowData?.ID,
+          tab,
+          StatusId: rowData?.StatusId,
+          Status: rowData?.Status,
+          TabName: TabName,
+          ButtonAction,
+        },
+      });
     }
   }
 
@@ -145,16 +89,7 @@ const InterviewPanelList = (props: any) => {
       header: "JobGrade",
       sortable: true,
     },
-    // {
-    //   field: "InterviewLevel",
-    //   header: "Level",
-    //   sortable: true,
-    // },
-    // {
-    //   field: "JobCode",
-    //   header: "JobCode",
-    //   sortable: true,
-    // },
+
     {
       field: "Status",
       header: "Status",
@@ -176,60 +111,62 @@ const InterviewPanelList = (props: any) => {
       },
     },
 
-    // {
-    //   field: "Nationality",
-    //   header: "Nationality",
-    //   sortable: true,
-    // },
-    // {
-    //   field: "PassportID",
-    //   header: "PassportID",
-    //   sortable: true,
-    // },
-    // {
-    //   field: "",
-    //   header: "Name",
-    //   sortable: true,
-    // },
-    // {
-    //   field: "",
-    //   header: "CV",
-    //   sortable: false,
-    //   body: (rowData: any) => {
-    //     if (
-    //       rowData?.CandidateCVDoc?.[0] &&
-    //       rowData?.CandidateCVDoc?.[0]?.name
-    //     ) {
-    //       return (
-    //         <div>
-    //           <Link
-    //             onClick={() =>
-    //               HRFileHandle(
-    //                 rowData?.CandidateCVDoc[0]?.content || "",
-    //                 rowData?.CandidateCVDoc[0]?.name || ""
-    //               )
-    //             }
-    //           >
-    //             {rowData?.CandidateCVDoc?.[0]?.name}
-    //           </Link>
-    //         </div>
-    //       );
-    //     } else {
-    //       return <span>No CV available</span>;
-    //     }
-    //   },
-    // },
-    // {
-    //   field: "Interviewed",
-    //   header: "Interviewed",
-    //   sortable: false,
-    // },
-
     {
       field: "Action",
       header: "Action",
       sortable: false,
       body: (rowData: any) => {
+        const checkIsScoreSheetUploaded = async () => {
+          try {
+            const [interviewPanelResponse, currentUserResponse] =
+              await Promise.all([
+                CommonServices.GetMasterData(
+                  ListNames.HRMSInterviewPanelDetails
+                ),
+                CommonServices.getUserGuidByEmail(props.CurrentUserEmailId),
+              ]);
+
+            const currentUserKey = currentUserResponse.data?.key?.toString();
+            if (!currentUserKey) {
+              return;
+            }
+
+            if (
+              !interviewPanelResponse?.data ||
+              interviewPanelResponse.data.length === 0
+            ) {
+              return;
+            }
+
+            const candidatePanels = interviewPanelResponse.data.filter(
+              (panel) =>
+                panel.CandidateIDId?.toString() === rowData.ID?.toString()
+            );
+
+            if (candidatePanels.length === 0) {
+              return;
+            }
+
+            const userPanels = candidatePanels.filter((panel) =>
+              panel.InterviewPanelStringId?.includes(currentUserKey)
+            );
+
+            if (userPanels.length === 0) {
+              return;
+            }
+
+            const isScoreSheetUploaded = userPanels.some(
+              (panel) => panel.IsScoreSheetUploaded === "Yes"
+            );
+
+            if (isScoreSheetUploaded) {
+              handleAlert();
+            } else {
+              handleRedirectView(rowData, "tab1", "Evaluation", "Edit");
+            }
+          } catch (error) {}
+        };
+
         return (
           <div
             style={{
@@ -240,44 +177,16 @@ const InterviewPanelList = (props: any) => {
               gap: "5px",
             }}
           >
-            {props.stateValue?.AlreadySubmitted === "Yes" ? (
-              <>
-                <img
-                  src={require("../../assets/Editbutton.svg")}
-                  alt="Stamp Icon"
-                  onClick={() => handleAlert()}
-                  style={{
-                    width: "70%",
-                    height: "60%",
-                  }}
-                />
-              </>
-            ) : (
-              <>
-                <img
-                  src={require("../../assets/Editbutton.svg")}
-                  alt="Stamp Icon"
-                  onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction)
-                  }
-                  style={{
-                    width: "70%",
-                    height: "60%",
-                  }}
-                />
-              </>
-            )}
-            {/* <img
+            <img
               src={require("../../assets/Editbutton.svg")}
-              alt="Stamp Icon"
-              onClick={() =>
-                handleRedirectView(rowData, tab, TabName, ButtonAction)
-              }
+              alt="Edit Icon"
+              onClick={checkIsScoreSheetUploaded}
               style={{
                 width: "70%",
                 height: "60%",
+                cursor: "pointer",
               }}
-            /> */}
+            />
           </div>
         );
       },
@@ -296,7 +205,6 @@ const InterviewPanelList = (props: any) => {
         !interviewPanelResponse.data ||
         interviewPanelResponse.data.length === 0
       ) {
-        // console.log("No data found in HRMSInterviewPanelDetails");
         setIsLoading(false);
         return;
       }
@@ -307,7 +215,6 @@ const InterviewPanelList = (props: any) => {
       );
 
       if (filteredPanels.length === 0) {
-        // console.log("No matching InterviewPanelId found");
         setCandidateData([]);
         setIsLoading(false);
         return;
@@ -316,10 +223,8 @@ const InterviewPanelList = (props: any) => {
       const candidateIDs = filteredPanels.map(
         (panel: any) => panel.CandidateIDId
       );
-      //console.log("Filtered Candidate IDs:", candidateIDs);
 
       if (candidateIDs.length === 0) {
-        //console.log("No Candidate IDs found for this panel");
         setCandidateData([]);
         setIsLoading(false);
         return;
@@ -333,9 +238,6 @@ const InterviewPanelList = (props: any) => {
         !candidateDetailsResponse.data ||
         candidateDetailsResponse.data.length === 0
       ) {
-        // console.log(
-        //   "No candidates found in HRMSRecruitmentCandidatePersonalDetails"
-        // );
         setIsLoading(false);
         return;
       }
@@ -345,7 +247,6 @@ const InterviewPanelList = (props: any) => {
       );
 
       if (matchedCandidates.length === 0) {
-        //  console.log("No matched candidates found");
         setCandidateData([]);
         setIsLoading(false);
         return;
@@ -354,7 +255,6 @@ const InterviewPanelList = (props: any) => {
       const filterCondition = candidateIDs
         .map((id) => `ID eq ${id}`)
         .join(" or ");
-      // console.log("Generated Filter Condition:", `(${filterCondition})`);
 
       const statusResponse =
         await InterviewServices.GetCandidateDetailsInterviewPanal(
@@ -369,8 +269,6 @@ const InterviewPanelList = (props: any) => {
         ])
       );
 
-      // console.log("Status Data:", statusMap);
-
       const candidateNames = matchedCandidates
         .filter(
           (candidate: any) =>
@@ -384,14 +282,8 @@ const InterviewPanelList = (props: any) => {
           Status: statusMap.get(candidate.ID) || "",
         }));
 
-      // console.log(
-      //   "Final Candidate Data (Only 'Interview Scheduled'):",
-      //   candidateNames
-      // );
-
       setCandidateData(candidateNames);
     } catch (error) {
-      // console.error("Error fetching candidate data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -449,9 +341,18 @@ const InterviewPanelList = (props: any) => {
     <>
       <CustomLoader isLoading={isLoading}>
         <div className="menu-card">
-          <React.Fragment>
+          {props.CurrentRoleID === RoleID.InterviewPanel ? (
             <TabsComponent tabs={tabs} initialTab="tab1" tabClassName={"Tab"} />
-          </React.Fragment>
+          ) : (
+            <SearchableDataTable
+              data={CandidateData}
+              columns={columnConfig("tab1", "Edit", TabName.Evaluation)}
+              rows={rows}
+              onPageChange={onPageChange}
+              handleRefresh={() => handleRefresh("tab1")}
+              MasterData={props}
+            />
+          )}
         </div>
       </CustomLoader>
       {AlertPopupOpen ? (

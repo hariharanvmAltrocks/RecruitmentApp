@@ -24,6 +24,7 @@ import {
   InterviewLevels,
   WorkflowAction,
   workflowStatusApi,
+  RoleID,
 } from "../../utilities/Config";
 import { ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
@@ -61,7 +62,7 @@ type ValidationError = {
 
 const InterviewPanelEdit = (props: any) => {
   const todaydate = new Date();
-  console.log(props, "props");
+  console.log(props, "");
 
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
@@ -318,45 +319,6 @@ const InterviewPanelEdit = (props: any) => {
     }));
   };
 
-  // const Validation = (): boolean => {
-  //   const {
-  //     Qualifications,
-  //     Experience,
-  //     Knowledge,
-  //     Energylevel,
-  //     Requirements,
-  //     contributeculture,
-  //     ExpatExperienceCongolese,
-  //     CriteriaRecognised,
-  //     Employment,
-  //     EvaluationFeedback,
-  //     OverAllEvaluationFeedback,
-  //   } = CandidateData;
-
-  //   ValidationError.Qualifications = !IsValid(Qualifications.text);
-  //   ValidationError.Experience = !IsValid(Experience.text);
-  //   ValidationError.Knowledge = !IsValid(Knowledge.text);
-  //   ValidationError.Energylevel = !IsValid(Energylevel.text);
-  //   ValidationError.Requirements = !IsValid(Requirements.text);
-  //   ValidationError.contributeculture = !IsValid(contributeculture.text);
-  //   ValidationError.ExpatExperienceCongolese = !IsValid(
-  //     ExpatExperienceCongolese.text
-  //   );
-  //   ValidationError.CriteriaRecognised = !IsValid(CriteriaRecognised.text);
-  //   ValidationError.Employment = !IsValid(Employment);
-  //   ValidationError.EvaluationFeedback = !IsValid(EvaluationFeedback);
-  //   ValidationError.OverAllEvaluationFeedback = !IsValid(
-  //     OverAllEvaluationFeedback
-  //   );
-
-  //   setValidationError((prevState) => ({
-  //     ...prevState,
-  //     ...ValidationError,
-  //   }));
-
-  //   return Object.values(ValidationError).some((error) => error);
-  // };
-
   const shouldShowTextArea = [
     CandidateData.Qualifications,
     CandidateData.Experience,
@@ -412,7 +374,6 @@ const InterviewPanelEdit = (props: any) => {
     return Object.values(ValidationError).some((error) => error);
   };
 
-  //CorrectlyWorked--5.54
   const Submit_fn = async () => {
     try {
       let isValid = !Validation();
@@ -583,11 +544,29 @@ const InterviewPanelEdit = (props: any) => {
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
           if (userClickedOK) {
-            props.navigation("/InterviewPanelList", {
-              state: {
-                AlreadySubmitted: "Yes",
-              },
-            });
+            if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+              props.navigation("/ReviewProfileList", {
+                state: {
+                  activeTab: "tab3",
+                },
+              });
+            } else if (props.CurrentRoleID === RoleID.HOD) {
+              props.navigation("/RecurimentProcess", {
+                state: {
+                  activeTab: "tab3",
+                },
+              });
+            } else if (props.CurrentRoleID === RoleID.LineManager) {
+              props.navigation("/ReviewProfileList", {
+                state: {
+                  activeTab: "tab2",
+                },
+              });
+            } else {
+              props.navigation("/InterviewPanelList");
+            }
+            setAlertPopupOpen(false);
+          } else {
             setAlertPopupOpen(false);
           }
         },
@@ -623,26 +602,12 @@ const InterviewPanelEdit = (props: any) => {
                 <div className="ms-Grid-col ms-lg6">
                   <LabelHeaderComponents
                     value={`Status - ${props.stateValue?.Status}`}
-                    //value={`Status - ${""}`}
                   >
                     {" "}
                   </LabelHeaderComponents>
                 </div>
               </div>
-              {/* <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Position Title"
-                    value={CandidateData.JobCode}
-                    disabled={true}
-                    mandatory={false}
-                    onChange={(value) =>
-                      setCandidateData((prevState) => ({
-                        ...prevState,
-                        TotalYearOfExperiance: value,
-                      }))
-                    }
-                  />
-                </div> */}
+
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
@@ -689,35 +654,6 @@ const InterviewPanelEdit = (props: any) => {
               </div>
 
               <div className="ms-Grid-row">
-                {/* <div className="ms-Grid-col ms-lg4">
-                    <CustomInput
-                      label="Candidate ID"
-                      value={CandidateData.CandidateID}
-                      disabled={true}
-                      mandatory={false}
-                      onChange={(value) =>
-                        setCandidateData((prevState) => ({
-                          ...prevState,
-                          TotalYearOfExperiance: value,
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="ms-Grid-col ms-lg4">
-                    <CustomInput
-                      label="Applicant Name"
-                      value={CandidateData.FullName}
-                      disabled={true}
-                      mandatory={false}
-                      onChange={(value) =>
-                        setCandidateData((prevState) => ({
-                          ...prevState,
-                          ContactNumber: value,
-                        }))
-                      }
-                    />
-                  </div> */}
-
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Applicant Surname"
@@ -762,35 +698,6 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
               </div>
               <div className="ms-Grid-row">
-                {/* <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Nationality"
-                    value={CandidateData.Nationality}
-                    disabled={true}
-                    mandatory={false}
-                    onChange={(value) =>
-                      setCandidateData((prevState) => ({
-                        ...prevState,
-                        TotalYearOfExperiance: value,
-                      }))
-                    }
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Gender and Age"
-                    value={CandidateData.Gender}
-                    disabled={true}
-                    mandatory={false}
-                    onChange={(value) =>
-                      setCandidateData((prevState) => ({
-                        ...prevState,
-                        ContactNumber: value,
-                      }))
-                    }
-                  />
-                </div> */}
-
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Highest Relevant Qualification"
@@ -838,10 +745,6 @@ const InterviewPanelEdit = (props: any) => {
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Date of Interview"
-                    // value={CandidateData.InterviewDate}
-                    // value={new Date(CandidateData.InterviewDate)
-                    //   .toLocaleDateString("en-GB")
-                    //   .replace(/\//g, "-")}
                     value={
                       CandidateData.InterviewDate
                         ? new Date(CandidateData.InterviewDate)
@@ -1110,7 +1013,6 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div>
-              {/* </div> */}
             </div>
           </CardContent>
         </Card>
@@ -1470,13 +1372,34 @@ const InterviewPanelEdit = (props: any) => {
 
   const handleCancel = () => {
     setIsLoading(true);
+
     let CancelAlert = {
       Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
       Type: HRMSAlertOptions.Confirmation,
       visible: true,
       ButtonAction: async (userClickedOK: boolean) => {
         if (userClickedOK) {
-          props.navigation("/InterviewPanelList");
+          if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+            props.navigation("/ReviewProfileList", {
+              state: {
+                activeTab: "tab3",
+              },
+            });
+          } else if (props.CurrentRoleID === RoleID.HOD) {
+            props.navigation("/RecurimentProcess", {
+              state: {
+                activeTab: "tab3",
+              },
+            });
+          } else if (props.CurrentRoleID === RoleID.LineManager) {
+            props.navigation("/ReviewProfileList", {
+              state: {
+                activeTab: "tab2",
+              },
+            });
+          } else {
+            props.navigation("/InterviewPanelList");
+          }
           setAlertPopupOpen(false);
         } else {
           setAlertPopupOpen(false);
@@ -1488,6 +1411,7 @@ const InterviewPanelEdit = (props: any) => {
     setalertProps(CancelAlert);
     setIsLoading(false);
   };
+
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
     console.log("", newItem);
@@ -1510,7 +1434,6 @@ const InterviewPanelEdit = (props: any) => {
                   onClick: async () => {
                     await Submit_fn();
                   },
-                  // disable: !Checkbox,
                 },
               ]}
             />

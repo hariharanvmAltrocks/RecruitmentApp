@@ -1,23 +1,29 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
 //import { Link } from "@mui/material";
-import { getVRRDetails } from "../../Services/ServiceExport";
+import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import {
   GridStatusBackgroundcolor,
+  ListNames,
   RoleID,
   StatusId,
   TabName,
   tabType,
 } from "../../utilities/Config";
 import SearchableDataTable from "../../components/CustomDataTable";
+import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
 
 const ReviewProfileList = (props: any) => {
+  console.log(props, "");
   const [RecuritmentData, setRecuritmentData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   // const [first, setFirst] = React.useState<number>(0);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [assignedCandidates, setAssignedCandidates] =
+    React.useState<boolean>(false);
+  const [activeTab, setActiveTab] = React.useState<string>("");
 
   const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
     {
@@ -155,12 +161,83 @@ const ReviewProfileList = (props: any) => {
     setIsLoading(false);
   };
 
+  const fetchCandidateData = async (CurrentUserID: any) => {
+    setIsLoading(true);
+    try {
+      const interviewPanelResponse = await CommonServices.GetMasterData(
+        ListNames.HRMSInterviewPanelDetails
+      );
+
+      if (
+        !interviewPanelResponse.data ||
+        interviewPanelResponse.data.length === 0
+      ) {
+        setIsLoading(false);
+        return;
+      }
+
+      const filteredPanels = interviewPanelResponse.data.filter(
+        (panel) => panel.InterviewPanelId === CurrentUserID
+      );
+
+      if (filteredPanels.length === 0) {
+        setAssignedCandidates(false);
+        setIsLoading(false);
+        return;
+      }
+
+      const candidateIDs = filteredPanels.map((panel) => panel.CandidateIDId);
+
+      const candidateDetailsResponse = await CommonServices.GetMasterData(
+        ListNames.HRMSRecruitmentCandidatePersonalDetails
+      );
+
+      if (
+        !candidateDetailsResponse.data ||
+        candidateDetailsResponse.data.length === 0
+      ) {
+        setIsLoading(false);
+        return;
+      }
+
+      const matchedCandidates = candidateDetailsResponse.data.filter(
+        (candidate) => candidateIDs.includes(candidate.ID)
+      );
+
+      const matchedCandidate = matchedCandidates.length > 0;
+      setAssignedCandidates(matchedCandidate);
+    } catch (error) {
+      console.error("Error fetching candidate data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   React.useEffect(() => {
     const fetchData = async () => {
-      await fetchRecuritmentData();
+      setIsLoading(true);
+      try {
+        await fetchRecuritmentData();
+
+        const getCurrentUserEmailID = await CommonServices.getUserGuidByEmail(
+          props.CurrentUserEmailId
+        );
+
+        if (
+          getCurrentUserEmailID.status === 200 &&
+          getCurrentUserEmailID.data
+        ) {
+          const userGUID = getCurrentUserEmailID.data.key;
+          await fetchCandidateData(userGUID);
+        }
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+      setIsLoading(false);
     };
 
     void fetchData();
+    setActiveTab(props.stateValue?.activeTab ?? "tab1");
   }, []);
 
   const onPageChange = (event: any) => {
@@ -170,7 +247,11 @@ const ReviewProfileList = (props: any) => {
 
   const handleRefresh = (tab: string) => {
     void fetchRecuritmentData();
-    // setActiveTab(tab);
+    setActiveTab(tab);
+  };
+
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
   };
 
   const tabs = [
@@ -226,6 +307,15 @@ const ReviewProfileList = (props: any) => {
               </Card>
             ),
           },
+          ...(assignedCandidates
+            ? [
+                {
+                  label: TabName.Evaluation, //"EvaluationTab for HR",
+                  value: "tab3",
+                  content: <InterviewPanelList {...props} />,
+                },
+              ]
+            : []),
         ]
       : [
           {
@@ -253,6 +343,15 @@ const ReviewProfileList = (props: any) => {
               </Card>
             ),
           },
+          ...(assignedCandidates
+            ? [
+                {
+                  label: TabName.Evaluation, //"EvaluationTab for LineManager",
+                  value: "tab2",
+                  content: <InterviewPanelList {...props} />,
+                },
+              ]
+            : []),
         ]),
   ];
 
@@ -262,10 +361,15 @@ const ReviewProfileList = (props: any) => {
         <div className="menu-card">
           <React.Fragment>
             <TabsComponent
+              // tabs={tabs}
+              // initialTab="tab1"
+              // tabClassName={"Tab"}
+              // tabtype={tabType.Dashboard}
               tabs={tabs}
-              initialTab="tab1"
-              tabClassName={"Tab"}
+              initialTab={activeTab}
               tabtype={tabType.Dashboard}
+              onTabChange={handleTabChange}
+              tabClassName={"Tab"}
             />
           </React.Fragment>
         </div>
