@@ -45,7 +45,7 @@ export const ListNames = {
     "HRMSExternalAgentsDetailsForRecruitment",
   HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
   HRMSRecruitmentWorkFlowMasterStatus: "HRMSRecruitmentWorkFlowMasterStatus",
-  HRMSPositionIDMaster: "HRMSPositionIDMaster"
+  HRMSPositionIDMaster: "HRMSPositionIDMaster",
 };
 
 export const DocumentLibraray = {
@@ -55,7 +55,7 @@ export const DocumentLibraray = {
   RecruitmentAdvertisementDocument: "HRMSRecruitmentAdvertDocument",
   ONAMSignedStampDocuments: "HRMSRecruitmentOnamStampedDocuments",
   RoleProfileMaster: "RoleProfileMaster",
-  HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV"
+  HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV",
 };
 
 export const StatusId = {
@@ -183,7 +183,9 @@ export const RecuritmentHRMsg = {
   CandidateSelected: "Candidate Selected",
   CandidateRejected: "Candidate Rejected",
   PositionIDassigned: "Position ID assigned for the selected Candidate.",
-  InterviewScoredAlready: "The scorecard for the candidate has already been submitted."
+  InterviewScoredAlready:
+    "The scorecard for the candidate has already been submitted.",
+  APIErrorMsg: "Network Issue Please try again",
 };
 
 export const ADGroupID: IADGroupID = {
@@ -257,6 +259,9 @@ export const TabName = {
   ViewPositionDetails: "View Position Details",
   ViewCandidateDetails: "View Candidate Details",
   ViewJustification: "View Justification",
+  EvaluationTab: "Candidate Details",
+  InterviewQuestion: "Interview Questions",
+  AdvertExtension: "Advert Extension",
 };
 
 export const ProfileStatus = {
@@ -298,4 +303,3 @@ export const workflowStatusApi = {
   LineManagerLevel1Rejected: "WS14",
   LineManagerLevel2Rejected: "WS15",
 };
-

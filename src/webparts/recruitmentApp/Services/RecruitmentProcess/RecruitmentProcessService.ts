@@ -621,8 +621,9 @@ export default class RecruitmentService implements IRecruitmentService {
           FristName: item.FristName,
           MiddleName: item.MiddleName,
           LastName: item.LastName,
-          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""
-            }`,
+          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${
+            item.LastName || ""
+          }`,
           ResidentialAddress: item?.ResidentialAddress,
           DOB: item?.DOB,
           ContactNumber: item?.ContactNumber,
@@ -669,6 +670,7 @@ export default class RecruitmentService implements IRecruitmentService {
   ) {
     try {
       const CandidateDetails: CandidateData[] = [];
+
       const listItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Select:
@@ -679,61 +681,78 @@ export default class RecruitmentService implements IRecruitmentService {
         Topcount: count.Topcount,
       });
 
-      const formattedItems = listItems.map(async (item) => {
-        const response = await CommonServices.GetAttachmentToLibrary(
-          DocumentLibraray.InterviewPanelCandidateCV,
-          item.JobCode?.JobCode,
-          item?.PassportID
-        );
-        let candidateCV: IDocFiles[] = [];
-        if (response.status === 200 && response.data) {
-          candidateCV = response.data;
-        } else {
-          console.error("Error retrieving attachments:", response.message);
-        }
+      const resolvedItems = await Promise.all(
+        listItems.map(async (item) => {
+          let candidateCV: IDocFiles[] = [];
 
-        return {
-          ID: item.ID,
-          RecruitmentID: item?.RecruitmentID?.ID,
-          JobCode: item?.JobCode?.JobCode,
-          JobCodeId: item?.JobCodeId,
-          PassportID: item?.PassportID,
-          FristName: item?.FristName,
-          MiddleName: item?.MiddleName,
-          LastName: item?.LastName,
-          FullName:
-            (item?.FristName ?? "") +
-            " " +
-            (item?.MiddleName ?? "") +
-            " " +
-            (item?.LastName ?? ""),
-          ResidentialAddress: item?.ResidentialAddress,
-          DOB: item?.DOB,
-          ContactNumber: item?.ContactNumber,
-          Email: item?.Email,
-          Nationality: item?.Nationality,
-          Gender: item?.Gender,
-          TotalYearOfExperiance: item?.TotalYearOfExperiance,
-          Skills: item?.Skills,
-          LanguageKnown: item?.LanguageKnown,
-          ReleventExperience: item?.ReleventExperience,
-          Qualification: item?.Qualification,
-          RecuritmentHR: item?.RecuritmentHR,
-          AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
-          CandidateCVDoc: candidateCV,
-          PositionTitle: item.PositionTitle,
-          JobGrade: item.JobGrade,
-          RoleProfileDocument: [],
-          AdvertisementDocument: [],
-          ShortlistedValue: "",
-          InterviewDate: item?.InterviewDate,
-          JobRequestID: item?.JobRequestID
-        };
-      });
+          const jobCode = item?.JobCode?.JobCode ?? "";
+          const profileID = item?.ProfileID ?? "";
 
-      const resolvedItems = await Promise.all(formattedItems);
+          if (jobCode && profileID) {
+            const filePath = `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${profileID}/CV`;
+
+            const response = (await SPServices.getDocLibFiles({
+              FilePath: filePath,
+            })) as IDocFiles[];
+            candidateCV = response.filter((file) =>
+              file.name.includes(jobCode)
+            );
+
+            if (candidateCV.length === 0) {
+              console.log(
+                `No CV found for ProfileID: ${profileID}, JobCode: ${jobCode}`
+              );
+            }
+          } else {
+            console.log(
+              "No JobCode or ProfileID provided, skipping attachment fetch."
+            );
+          }
+
+          return {
+            ID: item.ID,
+            RecruitmentID: item?.RecruitmentID?.ID,
+            JobCode: jobCode,
+            JobCodeId: item?.JobCodeId,
+            PassportID: item?.PassportID,
+            FristName: item?.FristName,
+            MiddleName: item?.MiddleName,
+            LastName: item?.LastName,
+            FullName:
+              (item?.FristName ?? "") +
+              " " +
+              (item?.MiddleName ?? "") +
+              " " +
+              (item?.LastName ?? ""),
+            ResidentialAddress: item?.ResidentialAddress,
+            DOB: item?.DOB,
+            ContactNumber: item?.ContactNumber,
+            Email: item?.Email,
+            Nationality: item?.Nationality,
+            Gender: item?.Gender,
+            TotalYearOfExperiance: item?.TotalYearOfExperiance,
+            Skills: item?.Skills,
+            LanguageKnown: item?.LanguageKnown,
+            ReleventExperience: item?.ReleventExperience,
+            Qualification: item?.Qualification,
+            RecuritmentHR: item?.RecuritmentHR,
+            AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
+            CandidateCVDoc: candidateCV,
+            PositionTitle: item.PositionTitle,
+            JobGrade: item.JobGrade,
+            RoleProfileDocument: [],
+            AdvertisementDocument: [],
+            ShortlistedValue: "",
+            InterviewDate: item?.InterviewDate,
+            JobRequestID: item?.JobRequestID,
+            ProfileID: profileID,
+          };
+        })
+      );
 
       CandidateDetails.push(...resolvedItems);
+
+      console.log("Fetched Candidate Details:", CandidateDetails);
 
       return {
         data: CandidateDetails,
@@ -812,10 +831,10 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
             ? (Employee.FirstName ?? "") +
-            " " +
-            (Employee.MiddleName ?? "") +
-            " " +
-            (Employee.LastName ?? "")
+              " " +
+              (Employee.MiddleName ?? "") +
+              " " +
+              (Employee.LastName ?? "")
             : "",
           // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
         };
@@ -1226,13 +1245,13 @@ export default class RecruitmentService implements IRecruitmentService {
 
           ValidFrom: item.ValidFrom
             ? new Date(item.ValidFrom)
-              .toLocaleDateString("en-GB")
-              .replace(/\//g, "-")
+                .toLocaleDateString("en-GB")
+                .replace(/\//g, "-")
             : "N/A",
           ValidTo: item.ValidTo
             ? new Date(item.ValidTo)
-              .toLocaleDateString("en-GB")
-              .replace(/\//g, "-")
+                .toLocaleDateString("en-GB")
+                .replace(/\//g, "-")
             : "N/A",
 
           // FunctionType:
