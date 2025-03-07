@@ -75,7 +75,7 @@ export const AssignPositionDialog = ({
     value: string,
     stateKey: keyof AssignHod
   ) => {
-    setReasons((prevState) => ({
+    setReasons((prevState: any) => ({
       ...prevState,
       [stateKey]: value,
     }));
