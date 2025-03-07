@@ -1428,4 +1428,65 @@ export default class RecruitmentService implements IRecruitmentService {
       };
     }
   }
+
+  GetMasterData = async (ListName: string): Promise<ApiResponse<any[]>> => {
+    try {
+      const listItems: any[] = await SPServices.SPReadItems({
+        Listname: ListName,
+        Select: "*,CategoryID/CategoryCode",
+        Expand: "CategoryID",
+      });
+      const filter = [
+        { FilterKey: "CategoryCode", Operator: "eq", FilterValue: listItems[0].CategoryID?.CategoryCode },
+      ];
+      let GetCategoryData: any = await this.GetFilterInCategory(
+        filter,
+      );
+      listItems.push(GetCategoryData.data)
+      return {
+        data: listItems,
+        status: 200,
+        message: "HRMSRecruitmentCandidateDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data HRMSRecruitmentCandidateDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data from HRMSRecruitmentCandidateDetails",
+      };
+    }
+  }
+
+  async GetFilterInCategory(filterConditions: any) {
+    try {
+      const Category: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSExperienceMaster,
+        Select: "*",
+        Filter: filterConditions
+      });
+      const CategoryData = {
+        CategoryCode: Category[0]?.CategoryCode,
+        CategoryName: Category[0]?.Category,
+      };
+      return {
+        data: CategoryData,
+        status: 200,
+        message: "HRMSRecruitmentCandidateDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data HRMSRecruitmentCandidateDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data from HRMSRecruitmentCandidateDetails",
+      };
+    }
+  }
 }

@@ -933,9 +933,9 @@ const ViewCandidateDetails = (props: any) => {
         CandidateData
       );
       console.log(res.data, "res");
-      if (res.data) {
+      if (res.status === 200) {
         await UploadCandidateDetails();
-        const CancelAlert = {
+        const SuccessAlert = {
           Message: PopupMessage,
           Type: HRMSAlertOptions.Success,
           visible: true,
@@ -954,7 +954,28 @@ const ViewCandidateDetails = (props: any) => {
           },
         };
         setAlertPopupOpen(true);
-        setalertProps(CancelAlert);
+        setalertProps(SuccessAlert);
+      } else {
+        const APIErrorAlert = {
+          Message: RecuritmentHRMsg.APIErrorMsg,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              props.navigation("/ReviewProfileList/ReviewCandidateList", {
+                state: {
+                  ID: props.stateValue?.RecruitmentID,
+                  TabName: props.stateValue?.initialTab,
+                  ButtonAction: TabName.ViewPositionDetails,
+                  JobCode: CandidateProfile?.JobCode,
+                },
+              });
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+        setAlertPopupOpen(true);
+        setalertProps(APIErrorAlert);
       }
     } catch (error) {
       console.error("Error submitting candidate details", error);

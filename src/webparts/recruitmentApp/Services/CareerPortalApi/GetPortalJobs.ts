@@ -1,4 +1,4 @@
-import { AdvertisementDetails, CandidateProfile, FilterItem, GetProfileByJobCode, profileJobsComments, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, FilterItem, GetProfileByJobCode, profileJobsComments, profileXagent, WorkflowJson } from "../../Models/ApIInterface";
 import { DocumentLibraray, ListNames, RoleProfileMaster } from "../../utilities/Config";
 import { getProfileData, postAdveDetails } from "../ReviewProfileService/ReviewCandidateService";
 import { CommonServices } from "../ServiceExport";
@@ -27,15 +27,35 @@ export default class GetPortalJobs implements IGetPortalJobs {
         MinAndPreferedQualifications: data?.MinAndPreferedQualifications,
         // profileXAgent: data?.profileXAgent
       }
-      await postAdveDetails.postUpsertJobs(AdvertisementDetails).then((res) =>
-        console.log(res, "res")
-      ).catch((error) => {
-        console.log(error, "error");
-      })
+      const response = await postAdveDetails.postUpsertJobs(AdvertisementDetails);
+      return {
+        data: response.data,
+        status: response.status,
+        message: response.data.message,
+      };
+    } catch (error) {
+      console.error(
+        "Error inserting data into AdvertisementDetails:",
+        error
+      );
       return {
         data: [],
-        status: 200,
-        message: "Failed to insert AdvertisementDetails",
+        status: 500,
+        message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+  async UpsertAgenciesJobs(data: profileXagent): Promise<ApiResponse<any | null>> {
+    try {
+      let AgentDetails: profileXagent = {
+        jobCode: data?.jobCode,
+        agent: data?.agent
+      }
+      const response = await postAdveDetails.postAgenciesJobs(AgentDetails);
+      return {
+        data: response.data,
+        status: response.status,
+        message: response.data.message,
       };
     } catch (error) {
       console.error(
@@ -194,14 +214,14 @@ export default class GetPortalJobs implements IGetPortalJobs {
 
   async UpdateCandidateStatus(data: WorkflowJson): Promise<ApiResponse<any | null>> {
     try {
-      let Response: any
-      Response = await getProfileData.UpdateCandidateStatus(data);
+
+      const Response = await getProfileData.UpdateCandidateStatus(data);
       console.log(Response, "res");
 
       return {
-        data: Response,
-        status: 200,
-        message: "Failed to insert AdvertisementDetails",
+        data: Response.data,
+        status: Response.status,
+        message: Response.data.message,
       };
 
     } catch (error) {

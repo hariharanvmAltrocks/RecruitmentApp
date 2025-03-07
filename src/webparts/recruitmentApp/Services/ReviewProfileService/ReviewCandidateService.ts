@@ -1,4 +1,4 @@
-import { AdvertisementDetails, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, profileXagent, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
 export const getProfileData = {
@@ -30,5 +30,11 @@ export const postAdveDetails = {
         return await AxiosInstance.post(
             `/UpsertJobs`, params
         )
+    },
+    postAgenciesJobs: async function (params: profileXagent) {
+        return await AxiosInstance.post(
+            `/UpsertAgentForJobs`, params
+        )
     }
+
 }

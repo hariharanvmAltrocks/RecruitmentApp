@@ -20,18 +20,13 @@ export type AdvertisementDetails = {
 }
 
 export type profileXagent = {
-    profileId: number;
-    agentCode: string;
-    isSuspended: number;
-    agent: agent
+    jobCode: string,
+    agent: jobsXAgents[]
 }
 
-export type agent = {
-    exUserCode: string,
-    name: string,
-    email: string,
-    externalUserType: string,
-    userId: string
+export type jobsXAgents = {
+    agentId: string,
+    // isSuspended: number
 }
 
 export type RoleAndTechSkills = {

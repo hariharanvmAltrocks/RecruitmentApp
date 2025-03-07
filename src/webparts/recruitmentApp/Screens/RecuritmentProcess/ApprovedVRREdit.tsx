@@ -742,33 +742,49 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               props.stateValue?.StatusId ===
               StatusId.PendingwithHRLeadtouploadONEMsigneddoc
             ) {
-              await PostAdvertisement();
-              await CommonServices.uploadAttachmentToLibrary(
-                formState.JobCode,
-                formState.OnamSignedStampsAttchment ?? [],
-                DocumentLibraray.ONAMSignedStampDocuments
-              );
-              await SPServices.SPUpdateItem({
-                Listname: ListNames.HRMSRecruitmentDptDetails,
-                RequestJSON: obj,
-                ID: props.stateValue?.ID,
-              });
-              resetForm();
-              let CancelAlert = {
-                Message: RecuritmentHRMsg.ONEMDocumentMsg,
-                Type: HRMSAlertOptions.Success,
-                visible: true,
-                ButtonAction: async (userClickedOK: boolean) => {
-                  if (userClickedOK) {
-                    props.navigation("/RecurimentProcess");
-                    setAlertPopupOpen(false);
-                  }
-                },
-              };
-
-              setAlertPopupOpen(true);
-              setalertProps(CancelAlert);
-              setIsLoading(false);
+              const result = await PostAdvertisement();
+              if (result?.status === 200) {
+                await CommonServices.uploadAttachmentToLibrary(
+                  formState.JobCode,
+                  formState.OnamSignedStampsAttchment ?? [],
+                  DocumentLibraray.ONAMSignedStampDocuments
+                );
+                await SPServices.SPUpdateItem({
+                  Listname: ListNames.HRMSRecruitmentDptDetails,
+                  RequestJSON: obj,
+                  ID: props.stateValue?.ID,
+                });
+                resetForm();
+                let SuccessAlert = {
+                  Message: RecuritmentHRMsg.ONEMDocumentMsg,
+                  Type: HRMSAlertOptions.Success,
+                  visible: true,
+                  ButtonAction: async (userClickedOK: boolean) => {
+                    if (userClickedOK) {
+                      props.navigation("/RecurimentProcess");
+                      setAlertPopupOpen(false);
+                    }
+                  },
+                };
+                setAlertPopupOpen(true);
+                setalertProps(SuccessAlert);
+                setIsLoading(false);
+              } else {
+                let APIFailed = {
+                  Message: RecuritmentHRMsg.APIErrorMsg,
+                  Type: HRMSAlertOptions.Error,
+                  visible: true,
+                  ButtonAction: async (userClickedOK: boolean) => {
+                    if (userClickedOK) {
+                      props.navigation("/RecurimentProcess");
+                      setAlertPopupOpen(false);
+                    }
+                  },
+                };
+                setAlertPopupOpen(true);
+                setalertProps(APIFailed);
+                setIsLoading(false);
+              }
             }
             break;
           }
@@ -1372,7 +1388,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }));
   };
 
-  async function PostAdvertisement() {
+  async function PostAdvertisement(): Promise<{
+    status: number;
+    message?: string;
+  }> {
     try {
       let filterConditions = [
         {
@@ -1381,146 +1400,139 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           FilterValue: props.stateValue.ID,
         },
       ];
-      await getVRRDetails
-        .GetDataInList(
-          ListNames.HRMSRecruitmentRoleProfileDetails,
-          filterConditions,
-          "",
-          "*,RecruitmentID/ID,JobDescription,RoleProfile,TotalPreferredExperience/ExperienceInYearRange,PreferredExperience/ExperienceInYearRange,FunctionType/Code",
-          "RecruitmentID,PreferredExperience,TotalPreferredExperience,FunctionType"
-        )
-        .then(async (res) => {
-          const data = res.data[0];
-          const roleSpecificKnowledge = data.RoleSpecificKnowledgeJson
-            ? JSON.parse(data.RoleSpecificKnowledgeJson)
-            : [];
-          const technicalSkill = data.TechnicalSkillsKnowledgeJson
-            ? JSON.parse(data.TechnicalSkillsKnowledgeJson)
-            : [];
-          let technicalSkillsValues = technicalSkill.map(
-            (item: any) => item.TechnicalSkills
-          );
-          let LevelProficiency = technicalSkill.map(
-            (item: any) => item.LevelProficiency
-          );
 
-          const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
-            (item: any) => item.RoleSpeKnowledge
-          );
-          const RequiredLevelValues = roleSpecificKnowledge.map(
-            (item: any) => item.RequiredLevel
-          );
+      const res = await getVRRDetails.GetDataInList(
+        ListNames.HRMSRecruitmentRoleProfileDetails,
+        filterConditions,
+        "",
+        "*,RecruitmentID/ID,JobDescription,RoleProfile,TotalPreferredExperience/ExperienceInYearRange,PreferredExperience/ExperienceInYearRange,FunctionType/Code",
+        "RecruitmentID,PreferredExperience,TotalPreferredExperience,FunctionType"
+      );
 
-          const roleSpecificSkills: RoleAndTechSkills[] =
-            RoleSpeKnowledgeValues.map((role: any, index: number) => ({
-              skillId: String(role || ""),
-              levelId: String(RequiredLevelValues[index] || ""),
-            }));
+      if (!res || !res.data || res.data.length === 0) {
+        console.log("No data found in GetHRMSRecruitmentRoleProfileDetails");
+        return { status: 400, message: "No data found" };
+      }
 
-          const technicalSkills: RoleAndTechSkills[] =
-            technicalSkillsValues.map((tech: any, index: number) => ({
-              skillId: String(tech || ""),
-              levelId: String(LevelProficiency[index] || ""),
-            }));
+      const data = res.data[0];
 
-          const Roleandtechnical: RoleAndTechSkills[] = [
-            ...roleSpecificSkills,
-            ...technicalSkills,
-          ];
+      const roleSpecificKnowledge = data.RoleSpecificKnowledgeJson
+        ? JSON.parse(data.RoleSpecificKnowledgeJson)
+        : [];
+      const technicalSkill = data.TechnicalSkillsKnowledgeJson
+        ? JSON.parse(data.TechnicalSkillsKnowledgeJson)
+        : [];
 
-          const minQualifications: MinAndPreferedQualifications[] =
-            data.Qualification
-              ? JSON.parse(data.Qualification).map((item: any) => ({
-                  qualification: item.MinQualification, // Adjust as needed
-                  type: 0,
-                }))
-              : [];
+      let technicalSkillsValues = technicalSkill.map(
+        (item: any) => item.TechnicalSkills
+      );
+      let LevelProficiency = technicalSkill.map(
+        (item: any) => item.LevelProficiency
+      );
 
-          const preferredQualifications: MinAndPreferedQualifications[] =
-            data.PreferredQualification
-              ? JSON.parse(data.PreferredQualification).map((item: any) => ({
-                  qualification: item.PrefeQualification, // Adjust as needed
-                  type: 1,
-                }))
-              : [];
+      const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+        (item: any) => item.RoleSpeKnowledge
+      );
+      const RequiredLevelValues = roleSpecificKnowledge.map(
+        (item: any) => item.RequiredLevel
+      );
 
-          // Combine the two arrays into one
-          const MinAndPreferedQualification: MinAndPreferedQualifications[] = [
-            ...minQualifications,
-            ...preferredQualifications,
-          ];
+      const roleSpecificSkills: RoleAndTechSkills[] =
+        RoleSpeKnowledgeValues.map((role: any, index: number) => ({
+          skillId: String(role || ""),
+          levelId: String(RequiredLevelValues[index] || ""),
+        }));
 
-          const Description: Descriptions = {
-            jobTitle: formState.JobNameInEnglish,
-            jobShortSummary: String(data.RoleProfile || ""),
-            jobSummary: String(data.JobDescription || ""),
-          };
-
-          const onamdocpathfile = await CommonServices.GetAttachmentLink(
-            formState.JobCode,
-            DocumentLibraray.ONAMSignedStampDocuments
-          );
-
-          const onemdocPath = String(onamdocpathfile.data);
-          const DepartmentCode = props.Department.filter(
-            (item: { text: string }) => item.text === formState.Department
-          );
-          let NationalityValue =
-            formState.Nationality === Nationality.Nationals
-              ? "Congolese"
-              : formState.Nationality;
-
-          // let agents: agent = {
-          //   exUserCode: "",
-          //   name: "",
-          //   email: "",
-          //   externalUserType: "",
-          //   userId: "",
-          // };
-          // let profileagent: profileXagent = {
-          //   profileId: 0,
-          //   agentCode: "",
-          //   isSuspended: 0,
-          //   agent: agents,
-          // };
-
-          const AdvertisementDetails: AdvertisementDetails = {
-            jobCode: formState.JobCode,
-            noOfPositions: String(formState.NoofPositionAssigned),
-            validFrom: data.ValidFrom,
-            validTo: data.ValidTo,
-            employmentType: "Full Time",
-            departmentId: DepartmentCode[0]?.code || "",
-            role: null,
-            functionId: String(data.FunctionType?.Code || ""),
-            onemdocPath: String(onemdocPath),
-            experience: String(
-              data.TotalPreferredExperience?.ExperienceInYearRange || ""
-            ),
-            nationality: NationalityValue,
-            Descriptions_en: Description,
-            Descriptions_fr: Description,
-            RoleAndTechSkills: Roleandtechnical,
-            MinAndPreferedQualifications: MinAndPreferedQualification,
-            // profileXAgent: profileagent,
-          };
-          console.log(AdvertisementDetails, "AdvertisementDetails");
-
-          await GetPortalJobsService.UpsertJobs(AdvertisementDetails)
-            .then((res) => {
-              console.log(res, "res");
-            })
-            .catch((error) => {
-              console.log("Candidate details doesn't fetch the data", error);
-            });
+      const technicalSkills: RoleAndTechSkills[] = technicalSkillsValues.map(
+        (tech: any, index: number) => ({
+          skillId: String(tech || ""),
+          levelId: String(LevelProficiency[index] || ""),
         })
-        .catch((error) => {
-          console.log(
-            "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
-            error
-          );
-        });
-    } catch {}
+      );
+
+      const Roleandtechnical: RoleAndTechSkills[] = [
+        ...roleSpecificSkills,
+        ...technicalSkills,
+      ];
+
+      const minQualifications: MinAndPreferedQualifications[] =
+        data.Qualification
+          ? JSON.parse(data.Qualification).map((item: any) => ({
+              qualification: item.MinQualification,
+              type: 0,
+            }))
+          : [];
+
+      const preferredQualifications: MinAndPreferedQualifications[] =
+        data.PreferredQualification
+          ? JSON.parse(data.PreferredQualification).map((item: any) => ({
+              qualification: item.PrefeQualification,
+              type: 1,
+            }))
+          : [];
+
+      const MinAndPreferedQualification: MinAndPreferedQualifications[] = [
+        ...minQualifications,
+        ...preferredQualifications,
+      ];
+
+      const Description: Descriptions = {
+        jobTitle: formState.JobNameInEnglish,
+        jobShortSummary: String(data.RoleProfile || ""),
+        jobSummary: String(data.JobDescription || ""),
+      };
+
+      const onamdocpathfile = await CommonServices.GetAttachmentLink(
+        formState.JobCode,
+        DocumentLibraray.ONAMSignedStampDocuments
+      );
+
+      const onemdocPath = String(onamdocpathfile.data);
+      const DepartmentCode = props.Department.find(
+        (item: { text: string }) => item.text === formState.Department
+      );
+      let NationalityValue =
+        formState.Nationality === Nationality.Nationals
+          ? "Congolese"
+          : formState.Nationality;
+
+      const AdvertisementDetails: AdvertisementDetails = {
+        jobCode: formState.JobCode,
+        noOfPositions: String(formState.NoofPositionAssigned),
+        validFrom: data.ValidFrom,
+        validTo: data.ValidTo,
+        employmentType: "Full Time",
+        departmentId: DepartmentCode?.code || "",
+        role: null,
+        functionId: String(data.FunctionType?.Code || ""),
+        onemdocPath: String(onemdocPath),
+        experience: String(
+          data.TotalPreferredExperience?.ExperienceInYearRange || ""
+        ),
+        nationality: NationalityValue,
+        Descriptions_en: Description,
+        Descriptions_fr: Description,
+        RoleAndTechSkills: Roleandtechnical,
+        MinAndPreferedQualifications: MinAndPreferedQualification,
+      };
+
+      console.log(AdvertisementDetails, "AdvertisementDetails");
+
+      const response = await GetPortalJobsService.UpsertJobs(
+        AdvertisementDetails
+      );
+
+      if (response?.status === 200) {
+        console.log("Advertisement posted successfully:", response);
+        return { status: 200, message: "Success" };
+      } else {
+        console.log("Error posting advertisement:", response);
+        return { status: response?.status || 500, message: "API Error" };
+      }
+    } catch (error) {
+      console.log("Error in PostAdvertisement:", error);
+      return { status: 500, message: "Internal Server Error" };
+    }
   }
 
   const tabs = [
