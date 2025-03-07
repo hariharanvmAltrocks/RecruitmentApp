@@ -111,6 +111,7 @@ const InterviewPanelEdit = (props: any) => {
     interviewPanelTitles: [] as string[],
     InterviewDate: "",
     JobRequestID: "",
+    Comments: "",
   });
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);

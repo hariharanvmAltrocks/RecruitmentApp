@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
 import { getVRRDetails, InterviewServices } from "../../Services/ServiceExport";
-// import { getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
   GridStatusBackgroundcolor,
@@ -18,7 +17,7 @@ import BreadcrumbsComponent, {
 import { AssignPositionDialog } from "./AssignPositionDialog";
 import { AssignPositionID } from "../../Services/InterviewProcess/IInterviewProcessService";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
-import { alertPropsData } from "../../Models/Screens";
+import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
 
 const CandidateList = (props: any) => {
@@ -129,13 +128,11 @@ const CandidateList = (props: any) => {
                 src={require("../../assets/AssignPositionID.svg")}
                 alt="Stamp Icon"
                 onClick={() => {
-                  console.log(rowData.RequirementID);
-                  console.log("rowData3", rowData);
                   setCandidateID(rowData.ID);
-                  const positionOptions =
-                    rowData.PositionData?.map((pos: any) => ({
-                      id: pos.PositionID,
-                      label: pos.PositionID,
+                  const positionOptions: AutoCompleteItem[] =
+                    rowData.PositionData?.map((pos: any, index: number) => ({
+                      key: index + 1,
+                      text: pos.PositionID,
                     })) || [];
 
                   setSelectedCandidate({
@@ -178,7 +175,6 @@ const CandidateList = (props: any) => {
   ];
   const fetchCandidateData = async () => {
     if (!jobCode || !ID) {
-      console.error("JobCode or ID is missing");
       return;
     }
 
@@ -186,7 +182,7 @@ const CandidateList = (props: any) => {
     try {
       const filterConditions = [
         { FilterKey: "JobCode", Operator: "eq", FilterValue: jobCode },
-        { FilterKey: "ID", Operator: "eq", FilterValue: ID }, // Filtering by ID
+        { FilterKey: "ID", Operator: "eq", FilterValue: ID },
       ];
 
       const response =
@@ -207,16 +203,14 @@ const CandidateList = (props: any) => {
           )
           .map((candidate: any) => ({
             ...candidate,
-            // Status: Status || candidate.Status,
           }));
 
         setCandidateData(filteredCandidates);
       } else {
         setCandidateData([]);
-        console.warn("No matching candidates found.");
       }
     } catch (error) {
-      console.error("Error fetching candidate data:", error);
+      console.error("", error);
       setCandidateData([]);
     } finally {
       setIsLoading(false);
@@ -225,9 +219,7 @@ const CandidateList = (props: any) => {
 
   React.useEffect(() => {
     if (jobCode) {
-      fetchCandidateData().catch((error) =>
-        console.error("Error in fetching candidate data:", error)
-      );
+      fetchCandidateData().catch((error) => console.error("", error));
     }
   }, [jobCode, Status]);
 
@@ -284,59 +276,74 @@ const CandidateList = (props: any) => {
   }, [activeTab, tabs, props.stateValue, TabNameData]);
 
   const handleAssignPosition = async (data: {
-    positionId: string;
-    justification: string;
+    positionId: AutoCompleteItem | null;
+    Reasons: string;
   }) => {
-    console.log("Assigned Position Data:", data);
+    if (!data.positionId) {
+      return;
+    }
+
+    const positionIdString =
+      typeof data.positionId === "string"
+        ? data.positionId
+        : (data.positionId as any).key || (data.positionId as any).text;
+
+    if (!positionIdString) {
+      return;
+    }
     let filterConditions = [];
     let Conditions = "";
     filterConditions.push({
       FilterKey: "PositionID",
       Operator: "eq",
-      FilterValue: data.positionId,
+      FilterValue: data.positionId.text,
     });
-    const GetPositionID = await getVRRDetails.GetDataInList(
-      ListNames.HRMSPositionIDMaster,
-      filterConditions,
-      Conditions,
-      "*,JobCode/JobCode",
-      "JobCode"
-    );
-    console.log(GetPositionID, "GetPositionID");
 
-    let obj: AssignPositionID = {
-      PositionIDId: GetPositionID.data[0].ID,
-      CandidateIDId: candidateID,
-      RecruitmentIDId: props.stateValue.ID,
-    };
-    await InterviewServices.AssignPositionID(
-      obj,
-      ListNames.HRMSSelectedCandidateDetailsByHOD
-    )
-      .then((res) => {
-        console.log(res, "PositionID Assign Candidate");
-        if (res.status === 200) {
-          setIsLoading(true);
-          let CancelAlert = {
-            Message: RecuritmentHRMsg.PositionIDassigned,
-            Type: HRMSAlertOptions.Success,
-            visible: true,
-            ButtonAction: async (userClickedOK: boolean) => {
-              if (userClickedOK) {
-                setShowAssignModal(false);
-                setAlertPopupOpen(false);
-              }
-            },
-          };
+    try {
+      const GetPositionID = await getVRRDetails.GetDataInList(
+        ListNames.HRMSPositionIDMaster,
+        filterConditions,
+        Conditions,
+        "*,JobCode/JobCode",
+        "JobCode"
+      );
 
-          setAlertPopupOpen(true);
-          setalertProps(CancelAlert);
-          setIsLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.log("Error in Post the Candidate Assign Api", error);
-      });
+      if (!GetPositionID.data || GetPositionID.data.length === 0) {
+        return;
+      }
+
+      let obj: AssignPositionID = {
+        PositionIDId: GetPositionID.data[0]?.ID,
+        CandidateIDId: candidateID,
+        RecruitmentIDId: props.stateValue.ID,
+      };
+
+      const res = await InterviewServices.AssignPositionID(
+        obj,
+        ListNames.HRMSSelectedCandidateDetailsByHOD
+      );
+
+      if (res.status === 200) {
+        setIsLoading(true);
+        let CancelAlert = {
+          Message: RecuritmentHRMsg.PositionIDassigned,
+          Type: HRMSAlertOptions.Success,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              setShowAssignModal(false);
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+
+        setAlertPopupOpen(true);
+        setalertProps(CancelAlert);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error in Post the Candidate Assign API", error);
+    }
     setShowAssignModal(false);
   };
 
@@ -354,7 +361,7 @@ const CandidateList = (props: any) => {
         visible={showAssignModal}
         onHide={() => setShowAssignModal(false)}
         candidateData={selectedCandidate}
-        onAssign={handleAssignPosition} // Ensure this is passed correctly
+        onAssign={handleAssignPosition}
       />
       {AlertPopupOpen ? (
         <CustomAlert {...alertProps} onClose={() => setAlertPopupOpen(false)} />

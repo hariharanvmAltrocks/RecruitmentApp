@@ -163,7 +163,7 @@ export type ScoreCardData = {
   interviewPanelTitles: string[];
   InterviewDate?: string;
   JobRequestID: string;
-  Comments?: any;
+  Comments: string;
 };
 
 export type QualificationValue = {
@@ -224,4 +224,7 @@ export type QuestionItem = {
   question: string;
   answer: string;
   rating: number | null;
+};
+export type AssignHod = {
+  Comments: string;
 };
