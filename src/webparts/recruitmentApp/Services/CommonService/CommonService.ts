@@ -7,7 +7,6 @@ import { AutoCompleteItem } from "../../Models/Screens";
 import { ListNames } from "../../utilities/Config";
 
 export default class CommonService implements ICommonService {
-
   uploadAttachmentToLibrary = async (
     PositionCode: string,
     AttachFile: IDocFiles[],
@@ -19,14 +18,18 @@ export default class CommonService implements ICommonService {
         const rootFolder = await attachmentsLibrary.rootFolder.get();
         const folderUrl = `${rootFolder.ServerRelativeUrl}/${PositionCode}`;
 
-        const existingFiles = await sp.web.getFolderByServerRelativeUrl(folderUrl).files();
+        const existingFiles = await sp.web
+          .getFolderByServerRelativeUrl(folderUrl)
+          .files();
 
         for (const file of existingFiles) {
           try {
-            await sp.web.getFileByServerRelativeUrl(file.ServerRelativeUrl).delete();
-            console.log(`✅ Deleted existing file: ${file.Name}`);
+            await sp.web
+              .getFileByServerRelativeUrl(file.ServerRelativeUrl)
+              .delete();
+            console.log(`Deleted existing file: ${file.Name}`);
           } catch (error) {
-            console.warn(`⚠️ Error deleting file: ${file.Name}`, error);
+            console.warn(` Error deleting file: ${file.Name}`, error);
           }
         }
 
@@ -36,7 +39,9 @@ export default class CommonService implements ICommonService {
           Datas: AttachFile,
         });
 
-        console.log("✅ All existing files deleted, and new files added successfully");
+        console.log(
+          "All existing files deleted, and new files added successfully"
+        );
 
         return {
           data: "Successfully Replaced Document",
@@ -51,7 +56,7 @@ export default class CommonService implements ICommonService {
         message: "No attachments provided",
       };
     } catch (error) {
-      console.error("❌ Error during file replacement process:", error);
+      console.error("Error during file replacement process:", error);
       return {
         data: null,
         status: 500,
@@ -60,48 +65,53 @@ export default class CommonService implements ICommonService {
     }
   };
 
-
-  GetAttachmentLink = async (PositionCode: string, Listname: string): Promise<ApiResponse<any>> => {
+  GetAttachmentLink = async (
+    PositionCode: string,
+    Listname: string
+  ): Promise<ApiResponse<any>> => {
     try {
       if (Listname) {
-
         const attachmentsLibrary = sp.web.lists.getByTitle(Listname);
         const rootFolder = await attachmentsLibrary.rootFolder.get();
-        const folderUrl = `${rootFolder.ServerRelativeUrl}/${PositionCode}`
+        const folderUrl = `${rootFolder.ServerRelativeUrl}/${PositionCode}`;
 
         return {
           data: folderUrl,
           status: 200,
-          message: "Attachment replaced successfully"
+          message: "Attachment replaced successfully",
         };
       }
 
       return {
         data: null,
         status: 400,
-        message: "No attachments provided"
+        message: "No attachments provided",
       };
     } catch (error) {
-      console.error("❌ Error during file replacement process:", error);
+      console.error(" Error during file replacement process:", error);
       return {
         data: null,
         status: 500,
-        message: `Error during file replacement: ${error.message}`
+        message: `Error during file replacement: ${error.message}`,
       };
     }
   };
 
-
   GetAttachmentToLibrary = async (
     listName: string,
     JobCode?: string,
-    PassportID?: string
+    RoleProfile?: string,
+    ProfileID?: string
   ): Promise<ApiResponse<IDocFiles[]>> => {
     try {
       let response;
-      if (PassportID) {
+      if (RoleProfile) {
         response = (await SPServices.getDocLibFiles({
-          FilePath: `${listName}/${JobCode}/${PassportID}`,
+          FilePath: `${listName}/${JobCode}/${RoleProfile}`,
+        })) as IDocFiles[];
+      } else if (ProfileID) {
+        response = (await SPServices.getDocLibFiles({
+          FilePath: `${listName}/${ProfileID}/$CV/`,
         })) as IDocFiles[];
       } else if (JobCode) {
         response = (await SPServices.getDocLibFiles({

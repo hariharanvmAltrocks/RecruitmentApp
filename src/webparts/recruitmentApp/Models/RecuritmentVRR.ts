@@ -163,6 +163,7 @@ export type ScoreCardData = {
   interviewPanelTitles: string[];
   InterviewDate?: string;
   JobRequestID: string;
+  Comments?: any;
 };
 
 export type QualificationValue = {
