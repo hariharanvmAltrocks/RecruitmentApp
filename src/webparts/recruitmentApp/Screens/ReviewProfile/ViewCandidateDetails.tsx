@@ -66,6 +66,7 @@ const ViewCandidateDetails = (props: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [CandidateProfile, setCandidateProfile] = useState<CandidateProfile>({
     CandidateID: "",
+    profileID: 0,
     JobCode: "",
     JobTitle: "",
     ApplicantName: "",
@@ -136,6 +137,7 @@ const ViewCandidateDetails = (props: any) => {
           setCandidateProfile((prevState: any) => ({
             ...prevState,
             CandidateID: response?.CandidateID,
+            profileID: response?.profileID,
             JobCode: response?.JobCode,
             JobTitle: response?.JobTitle,
             ApplicantName: response?.ApplicantName,
@@ -264,15 +266,15 @@ const ViewCandidateDetails = (props: any) => {
 
       const Level1Value = interviewpanelOption.data.filter((item: any) =>
         [
-          73, // AssignInterviewPanel.data[0]?.LineManagerId,
-          89, // response.data[0]?.AssignedHRId,
+          AssignInterviewPanel.data[0]?.LineManagerId,
+          response.data[0]?.AssignedHRId,
         ].includes(item.key)
       );
 
       const Level2Value = interviewpanelOption.data.filter((item: any) =>
         [
-          73, //AssignInterviewPanel.data[0]?.HODId,
-          89, //AssignInterviewPanel.data[0]?.EXCOId,
+          AssignInterviewPanel.data[0]?.HODId,
+          AssignInterviewPanel.data[0]?.EXCOId,
         ].includes(item.key)
       );
 
@@ -796,6 +798,7 @@ const ViewCandidateDetails = (props: any) => {
       ReleventExperience: CandidateProfile.ExperienceMining,
       Qualification: CandidateProfile.HighestQualification,
       JobRequestID: String(CandidateProfile.CandidateID),
+      ProfileID: CandidateProfile.profileID,
       PositionTitle: RecruitmentDetails.data[0].JobTitleInEnglish,
       JobGrade: RecruitmentDetails.data[0].DRCGrade,
       // ExternalAgentDetailsId: CandidateProfile.Agencies,
@@ -807,7 +810,6 @@ const ViewCandidateDetails = (props: any) => {
     let selectedinterviewpanal: any[] = [];
 
     for (let i = 0; i < InterviewedLevel.AssignInterviewLevel1.length; i++) {
-      debugger;
       const currentItem = InterviewedLevel.AssignInterviewLevel1[i];
 
       let selectedinterview = {

@@ -17,7 +17,6 @@ import { TabName } from "../../utilities/Config";
 import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
 import { alertPropsData } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
-import SearchableDataTable from "../../components/CustomDataTable";
 
 const InterviewPanelList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
@@ -115,6 +114,7 @@ const InterviewPanelList = (props: any) => {
       field: "Action",
       header: "Action",
       sortable: false,
+      style: { width: "8%" },
       body: (rowData: any) => {
         const checkIsScoreSheetUploaded = async () => {
           try {
@@ -344,13 +344,13 @@ const InterviewPanelList = (props: any) => {
           {props.CurrentRoleID === RoleID.InterviewPanel ? (
             <TabsComponent tabs={tabs} initialTab="tab1" tabClassName={"Tab"} />
           ) : (
-            <SearchableDataTable
+            <ReviewProfileDatatable
               data={CandidateData}
               columns={columnConfig("tab1", "Edit", TabName.Evaluation)}
               rows={rows}
               onPageChange={onPageChange}
               handleRefresh={() => handleRefresh("tab1")}
-              MasterData={props}
+              // MasterData={props}
             />
           )}
         </div>

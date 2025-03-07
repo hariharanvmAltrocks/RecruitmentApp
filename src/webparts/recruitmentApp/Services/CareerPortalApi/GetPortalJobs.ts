@@ -166,6 +166,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
 
         let GetProfileDahboard: CandidateProfile = {
           CandidateID: op?.jobRequestId,
+          profileID: op?.profileId,
           JobCode: op?.jobCode,
           JobTitle: op?.jobDetail?.descriptions_en?.jobTitle,
           ApplicantName: `${op?.profile?.firstName || ""} ${op?.profile?.middleName || ""} ${op?.profile?.lastName || ""}`,
@@ -183,7 +184,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           ExperRelatedfield: op?.profile?.releventExperience,
           Status: op?.workflowStatus?.displayText,
           Agencies: op?.profile?.profileXAgent?.agent?.name,
-          CandidateResume: filteredFiles, // This will always be [] if `url` is empty
+          CandidateResume: filteredFiles,
           RoleProfile: RoleProfileDoc,
           Advertisement: AdvertismentDocPromises,
           Comments: CommentsData,

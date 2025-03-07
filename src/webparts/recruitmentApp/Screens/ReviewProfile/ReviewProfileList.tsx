@@ -295,7 +295,7 @@ const ReviewProfileList = (props: any) => {
                     data={RecuritmentData}
                     columns={columnConfig(
                       "tab1",
-                      "view",
+                      "View",
                       TabName.AssignInterviewPanel
                     )}
                     rows={rows}

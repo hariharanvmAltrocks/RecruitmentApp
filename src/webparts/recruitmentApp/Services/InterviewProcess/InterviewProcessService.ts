@@ -12,8 +12,7 @@ import {
 } from "./IInterviewProcessService";
 
 export default class InterviewProcessService
-  implements IInterviewProcessService
-{
+  implements IInterviewProcessService {
   async GetInterviewPanelDetails(
     filterConditions: any[] = []
   ): Promise<ApiResponse<InterviewPanaldata[]>> {
@@ -109,9 +108,8 @@ export default class InterviewProcessService
         FristName: item?.FristName || "",
         MiddleName: item?.MiddleName || "",
         LastName: item?.LastName || "",
-        FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${
-          item?.LastName ?? ""
-        }`.trim(),
+        FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
+          }`.trim(),
         PositionTitle: item?.PositionTitle || "",
         JobGrade: item?.JobGrade || "",
         Status: item?.Status?.StatusDescription || "",
@@ -161,7 +159,6 @@ export default class InterviewProcessService
     candidateID: number
   ): Promise<ApiResponse<any | null>> {
     try {
-      debugger;
       let CommentsData: CommentsDatas[] = [];
 
       const interviewPanelItems: any[] = await SPServices.SPReadItems({
@@ -201,7 +198,7 @@ export default class InterviewProcessService
         const sageListItems: any[] = await SPServices.SPReadItems({
           Listname: ListNames.HRMSSageList,
           Select:
-            "EmailId,FirstName,LastName,MiddleName,Title,IdentityNo,HomeAddress,ContactNumber,Department/DepartmentName,BusinessUnit/Title,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench,DRCGrade/Title,PatersonGrade/Title",
+            "EmailId,FirstName,LastName,MiddleName,Title,HomeAddress,ContactNumber,Department/DepartmentName,BusinessUnit/Title,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench,DRCGrade/Title,PatersonGrade/Title",
           Expand:
             "Department,BusinessUnit,JobTitleInEnglish,JobTitleInFrench,DRCGrade,PatersonGrade",
           FilterCondition: [
@@ -215,9 +212,7 @@ export default class InterviewProcessService
 
         emailToAuthorMap = sageListItems.reduce((acc, item) => {
           acc[item.EmailId] = {
-            FullName: `${item.FirstName} ${item.MiddleName || ""} ${
-              item.LastName
-            }`.trim(),
+            FullName: `${item.FirstName}`.trim(),
             Department: item.Department?.DepartmentName || "",
             JobTitleInEnglish: item.JobTitleInEnglish || "",
             JobTitleInFrench: item.JobTitleInFrench || "",
@@ -252,7 +247,7 @@ export default class InterviewProcessService
           ID: interview.ID,
           RecruitmentID: interview?.RecruitmentID?.ID || 0,
           InterviewLevel: interview.InterviewLevel || "",
-          InterviewPanelTitle: [panelDetails.Title],
+          InterviewPanelTitle: [panelDetails.FullName],
           CandidateID: interview.CandidateID?.ID || 0,
           CandidateScoreCard: relatedScores.map((score) => ({
             InterviewPanelID: score.InterviewPanelID?.ID || 0,
@@ -285,7 +280,7 @@ export default class InterviewProcessService
         CommentsData.push(formattedItem);
         return formattedItem;
       });
-
+      console.log("formattedItemsHOD", formattedItems);
       return {
         data: formattedItems,
         status: 200,
@@ -421,8 +416,8 @@ export default class InterviewProcessService
             JobGrade: item.JobGrade,
             ExternalAgentDetails: item?.ExternalAgentDetails
               ? {
-                  AgentName: item?.ExternalAgentDetails?.AgentName,
-                }
+                AgentName: item?.ExternalAgentDetails?.AgentName,
+              }
               : null,
           };
         })

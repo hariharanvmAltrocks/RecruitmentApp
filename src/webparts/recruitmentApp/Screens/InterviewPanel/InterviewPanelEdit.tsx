@@ -583,7 +583,7 @@ const InterviewPanelEdit = (props: any) => {
 
   const tabs = [
     {
-      label: TabName.CandidateDetails,
+      label: TabName.EvaluationTab,
       value: "tab1",
       content: (
         <Card

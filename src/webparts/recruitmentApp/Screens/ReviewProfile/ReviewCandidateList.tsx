@@ -224,7 +224,6 @@ const ReviewCandidateList = (props: any) => {
         currentPage: 0,
         totalItems: 0,
       };
-      debugger;
       let createFilter = (workflowStausId: string[]): FilterItem => ({
         jobCode: props.stateValue?.JobCode, //"JC0005",
         workflowStausId: workflowStausId,

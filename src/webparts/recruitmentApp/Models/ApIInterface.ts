@@ -66,6 +66,7 @@ export type GetProfileByJobCode = {
 }
 export type CandidateProfile = {
     CandidateID: string,
+    profileID: number,
     JobCode: string,
     JobTitle: string,
     ApplicantName: string;
