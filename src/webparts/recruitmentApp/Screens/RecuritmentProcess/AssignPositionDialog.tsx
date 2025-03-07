@@ -1,292 +1,3 @@
-// import * as React from "react";
-// import {
-//   Dialog,
-//   DialogTitle,
-//   DialogContent,
-//   DialogActions,
-//   Button,
-//   Select,
-//   MenuItem,
-//   FormControl,
-//   IconButton,
-//   InputAdornment,
-//   OutlinedInput,
-//   FormLabel,
-// } from "@mui/material";
-// import CloseIcon from "@mui/icons-material/Close";
-// import CustomTextArea from "../../components/CustomTextArea";
-
-// interface AssignPositionDialogProps {
-//   visible: boolean;
-//   onHide: () => void;
-//   candidateData: {
-//     FullName: string;
-//     PositionTitle: string;
-//     JobCode: string;
-//   } | null;
-//   onAssign: (data: { positionId: string; justification: string }) => void;
-// }
-// export const AssignPositionDialog = ({
-//   visible,
-//   onHide,
-//   candidateData,
-//   onAssign,
-// }: AssignPositionDialogProps) => {
-//   const [selectedJobCode, setSelectedJobCode] = React.useState("");
-
-//   const jobCodeOptions = [
-//     { id: "JC001", label: "JC001" },
-//     { id: "JC002", label: "JC002" },
-//     { id: "JC003", label: "JC003" },
-//     { id: "JC004", label: "JC004" },
-//     { id: "JC005", label: "JC005" },
-//     { id: "JC004", label: "JC006" },
-//     { id: "JC005", label: "JC007" },
-//     { id: "JC004", label: "JC008" },
-//     { id: "JC005", label: "JC009" },
-//     { id: "JC004", label: "JC0010" },
-//   ];
-
-//   const [justification, setJustification] = React.useState("");
-
-//   const handleSubmit = (event: React.FormEvent) => {
-//     event.preventDefault();
-//     onAssign({
-//       positionId: selectedJobCode,
-//       justification,
-//     });
-//   };
-
-//   return (
-//     <Dialog
-//       open={visible}
-//       onClose={onHide}
-//       maxWidth="sm"
-//       fullWidth
-//       sx={{
-//         "& .MuiPaper-root": {
-//           borderRadius: "26px",
-//           fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-//         },
-//         overflow: "hidden",
-//       }}
-//     >
-//       <DialogTitle
-//         sx={{
-//           display: "flex",
-//           justifyContent: "center",
-//           alignItems: "center",
-//           padding: "16px 24px",
-//           color: "#EF3340",
-//           fontWeight: "bold",
-//           position: "relative",
-//           marginTop: "8px",
-//           fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-//         }}
-//       >
-//         <span style={{ flexGrow: 1, textAlign: "center" }}>
-//           Assign Position ID
-//         </span>
-//       </DialogTitle>
-
-//       <form onSubmit={handleSubmit}>
-//         <DialogContent
-//           sx={{
-//             pt: 1,
-//             marginTop: "-11px",
-//             fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-//           }}
-//         >
-//           <div style={{ marginBottom: "20px" }}>
-//             <div style={{ display: "flex", marginBottom: "16px" }}>
-//               <span
-//                 style={{
-//                   width: "127px",
-//                   fontWeight: "bold",
-//                   color: "black",
-//                 }}
-//               >
-//                 Job Title
-//               </span>
-//               <span
-//                 style={{
-//                   marginLeft: "8px",
-//                   fontWeight: "bold",
-//                   color: "black",
-//                 }}
-//               >
-//                 -
-//               </span>
-//               <span
-//                 style={{
-//                   marginLeft: "31px",
-//                   fontWeight: "bold",
-//                   color: "black",
-//                 }}
-//               >
-//                 {candidateData?.PositionTitle ?? "N/A"}
-//               </span>
-//             </div>
-//             <div style={{ display: "flex", marginBottom: "16px" }}>
-//               <span
-//                 style={{
-//                   width: "127px",
-//                   fontWeight: "bold",
-//                   color: "black",
-//                 }}
-//               >
-//                 Candidate Name
-//               </span>
-//               <span
-//                 style={{
-//                   marginLeft: "8px",
-//                   fontWeight: "bold",
-//                   color: "black",
-//                 }}
-//               >
-//                 -
-//               </span>
-//               <span
-//                 style={{
-//                   marginLeft: "31px",
-//                   fontWeight: "bold",
-//                   color: "black",
-//                 }}
-//               >
-//                 {candidateData?.FullName ?? "N/A"}
-//               </span>
-//             </div>
-//           </div>
-//           <FormControl sx={{ width: "300px" }}>
-//             <FormLabel
-//               sx={{
-//                 fontSize: "14px",
-//                 color: "rgb(54 53 52 / 100%)",
-//                 fontWeight: 600,
-//                 fontFamily:
-//                   '"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
-//                 marginBottom: "4px",
-//                 "&.Mui-focused": {
-//                   color: "rgb(54 53 52 / 100%) !important",
-//                 },
-//               }}
-//             >
-//               Assign PositionID <span style={{ color: "red" }}>*</span>
-//             </FormLabel>
-
-//             <Select
-//               value={selectedJobCode}
-//               onChange={(e) => setSelectedJobCode(e.target.value)}
-//               displayEmpty
-//               input={
-//                 <OutlinedInput
-//                   sx={{
-//                     height: "42px",
-//                     paddingRight: "32px",
-//                     color: "rgb(54 53 52 / 100%)",
-//                     "& .MuiOutlinedInput-notchedOutline": {
-//                       borderColor: "rgb(54 53 52 / 100%) !important",
-//                     },
-//                     "&:hover .MuiOutlinedInput-notchedOutline": {
-//                       borderColor: "rgb(54 53 52 / 70%) !important",
-//                     },
-//                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-//                       borderColor: "rgb(54 53 52 / 70%) !important",
-//                     },
-//                   }}
-//                   endAdornment={
-//                     selectedJobCode && (
-//                       <InputAdornment position="end">
-//                         <IconButton
-//                           onClick={() => setSelectedJobCode("")}
-//                           edge="end"
-//                           // sx={{ mr: 0.5 }}
-//                         >
-//                           <CloseIcon />
-//                         </IconButton>
-//                       </InputAdornment>
-//                     )
-//                   }
-//                 />
-//               }
-//               MenuProps={{
-//                 PaperProps: {
-//                   style: {
-//                     maxHeight: "120px",
-//                     overflowY: "auto",
-//                   },
-//                 },
-//               }}
-//             >
-//               {jobCodeOptions.map((option) => (
-//                 <MenuItem key={option.id} value={option.id}>
-//                   {option.label}
-//                 </MenuItem>
-//               ))}
-//             </Select>
-//           </FormControl>
-
-//           <CustomTextArea
-//             label="Reasons"
-//             value={justification}
-//             onChange={setJustification}
-//             error={false}
-//             placeholder="Enter Reasons"
-//             mandatory={true}
-//           />
-//         </DialogContent>
-//         <DialogActions
-//           sx={{
-//             p: 3,
-//             pt: 0,
-//             display: "flex",
-//             justifyContent: "center",
-//             fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-//           }}
-//         >
-//           <Button
-//             onClick={onHide}
-//             variant="outlined"
-//             sx={{
-//               borderColor: "#EF3340",
-//               color: "#EF3340",
-//               backgroundColor: "white",
-//               textTransform: "capitalize",
-//               mr: 2.5,
-//               "&:hover": {
-//                 borderColor: "#EF3340",
-//                 backgroundColor: "#EF3340",
-//                 color: "#FFFFFF",
-//               },
-//             }}
-//           >
-//             Cancel
-//           </Button>
-
-//           <Button
-//             type="submit"
-//             variant="outlined"
-//             sx={{
-//               borderColor: "#EF3340",
-//               color: "#EF3340",
-//               backgroundColor: "white",
-//               textTransform: "capitalize",
-//               mr: 2.5,
-//               "&:hover": {
-//                 borderColor: "#EF3340",
-//                 backgroundColor: "#EF3340",
-//                 color: "#FFFFFF",
-//               },
-//             }}
-//           >
-//             Assign
-//           </Button>
-//         </DialogActions>
-//       </form>
-//     </Dialog>
-//   );
-// };
-
 import * as React from "react";
 import {
   Dialog,
@@ -294,16 +5,11 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  Select,
-  MenuItem,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  OutlinedInput,
-  FormLabel,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import CustomTextArea from "../../components/CustomTextArea";
+import { AutoCompleteItem } from "../../Models/Screens";
+import { AssignHod } from "../../Models/RecuritmentVRR";
+import CustomAutoComplete from "../../components/CustomAutoComplete";
 
 interface AssignPositionDialogProps {
   visible: boolean;
@@ -312,10 +18,19 @@ interface AssignPositionDialogProps {
     FullName: string;
     PositionTitle: string;
     JobCode: string;
-    positionOptions?: { id: string; label: string }[]; // ✅ Added Position ID options
+    positionOptions?: AutoCompleteItem[];
+    Comments?: string;
   } | null;
-  onAssign: (data: { positionId: string; justification: string }) => void;
+  onAssign: (data: {
+    positionId: AutoCompleteItem | null;
+    Reasons: string;
+  }) => void;
 }
+
+type ValidationError = {
+  Comments: boolean;
+  PositionID: boolean;
+};
 
 export const AssignPositionDialog = ({
   visible,
@@ -323,33 +38,87 @@ export const AssignPositionDialog = ({
   candidateData,
   onAssign,
 }: AssignPositionDialogProps) => {
-  const [selectedPositionId, setSelectedPositionId] = React.useState("");
-  const [justification, setJustification] = React.useState("");
-
-  // Get the position options from candidateData
+  const [selectedPosition, setSelectedPosition] =
+    React.useState<AutoCompleteItem | null>(null);
   const positionOptions = candidateData?.positionOptions || [];
+
+  const [Reasons, setReasons] = React.useState<AssignHod>({
+    Comments: candidateData?.Comments || "",
+  });
+
+  const [validationErrors, setValidationErrors] =
+    React.useState<ValidationError>({
+      Comments: false,
+      PositionID: false,
+    });
+
+  const resetForm = () => {
+    setSelectedPosition(null);
+    setReasons({ Comments: "" });
+    setValidationErrors({ Comments: false, PositionID: false });
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onHide();
+  };
+
+  const handleAutoComplete = (value: AutoCompleteItem | null) => {
+    setSelectedPosition(value);
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      PositionID: false,
+    }));
+  };
+
+  const handleInputChangeTextArea = (
+    value: string,
+    stateKey: keyof AssignHod
+  ) => {
+    setReasons((prevState) => ({
+      ...prevState,
+      [stateKey]: value,
+    }));
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      [stateKey]: false,
+    }));
+  };
+
+  const validate = (): boolean => {
+    const errors: ValidationError = {
+      Comments: !Reasons.Comments.trim(),
+      PositionID: selectedPosition === null,
+    };
+    setValidationErrors(errors);
+    return Object.values(errors).every((error) => !error);
+  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    if (!validate()) return;
+
     onAssign({
-      positionId: selectedPositionId,
-      justification,
+      positionId: selectedPosition,
+      Reasons: Reasons.Comments,
     });
+
+    handleClose();
   };
 
   return (
     <Dialog
       open={visible}
-      onClose={onHide}
+      onClose={handleClose}
       maxWidth="sm"
       fullWidth
-      sx={{
-        "& .MuiPaper-root": {
+      PaperProps={{
+        sx: {
           borderRadius: "26px",
           fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
         },
-        overflow: "hidden",
       }}
+      sx={{ overflow: "hidden" }}
     >
       <DialogTitle
         sx={{
@@ -361,7 +130,6 @@ export const AssignPositionDialog = ({
           fontWeight: "bold",
           position: "relative",
           marginTop: "8px",
-          fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
         }}
       >
         <span style={{ flexGrow: 1, textAlign: "center" }}>
@@ -424,72 +192,28 @@ export const AssignPositionDialog = ({
             </div>
           </div>
 
-          {/* Position ID Selection */}
-          <FormControl sx={{ width: "300px" }}>
-            <FormLabel
-              sx={{
-                fontSize: "14px",
-                color: "rgb(54 53 52 / 100%)",
-                fontWeight: 600,
-                marginBottom: "4px",
-                "&.Mui-focused": { color: "rgb(54 53 52 / 100%) !important" },
-              }}
-            >
-              Assign Position ID <span style={{ color: "red" }}>*</span>
-            </FormLabel>
+          <div className="ms-Grid-row" style={{ textAlign: "left" }}>
+            <div className="ms-Grid-col ms-lg6">
+              <CustomAutoComplete
+                label="Assign PositionID"
+                options={positionOptions}
+                value={selectedPosition}
+                onChange={(item: AutoCompleteItem | null) =>
+                  handleAutoComplete(item)
+                }
+                error={validationErrors.PositionID}
+                disabled={false}
+                mandatory={true}
+                placeholder="Select a position"
+              />
+            </div>
+          </div>
 
-            <Select
-              value={selectedPositionId}
-              onChange={(e) => setSelectedPositionId(e.target.value)}
-              displayEmpty
-              input={
-                <OutlinedInput
-                  sx={{
-                    height: "42px",
-                    paddingRight: "32px",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "rgb(54 53 52 / 100%) !important",
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "rgb(54 53 52 / 70%) !important",
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "rgb(54 53 52 / 70%) !important",
-                    },
-                  }}
-                  endAdornment={
-                    selectedPositionId && (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setSelectedPositionId("")}
-                          edge="end"
-                        >
-                          <CloseIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    )
-                  }
-                />
-              }
-            >
-              {positionOptions.length > 0 ? (
-                positionOptions.map((option) => (
-                  <MenuItem key={option.id} value={option.id}>
-                    {option.label}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>No positions available</MenuItem>
-              )}
-            </Select>
-          </FormControl>
-
-          {/* Justification Text Area */}
           <CustomTextArea
             label="Reasons"
-            value={justification}
-            onChange={setJustification}
-            error={false}
+            value={Reasons.Comments}
+            onChange={(value) => handleInputChangeTextArea(value, "Comments")}
+            error={validationErrors.Comments}
             placeholder="Enter Reasons"
             mandatory={true}
           />
@@ -499,7 +223,7 @@ export const AssignPositionDialog = ({
           sx={{ p: 3, pt: 0, display: "flex", justifyContent: "center" }}
         >
           <Button
-            onClick={onHide}
+            onClick={handleClose}
             variant="outlined"
             sx={{
               borderColor: "#EF3340",

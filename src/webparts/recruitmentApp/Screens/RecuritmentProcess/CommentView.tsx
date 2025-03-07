@@ -1,7 +1,7 @@
 import * as React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import * as moment from "moment";
+
 import { Label } from "@fluentui/react";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import Labelheader from "../../components/LabelHeader";
@@ -30,6 +30,7 @@ const labelStyles: React.CSSProperties = {
 };
 
 const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
+  console.log("comments", comments);
   const tabs = [
     {
       label: TabName.ViewJustification,
@@ -88,20 +89,29 @@ const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
                         <Label style={boldLabelStyles}>{comment?.Name}</Label>
                       </div>
                     )}
-                    {comment?.JobTitleInEnglish && (
+                    {comment?.JobTitleInEnglish?.JobTitleInEnglish ? (
                       <div>
                         <Label className="title" style={labelStyles}>
-                          {comment?.JobTitleInEnglish}
+                          {comment.JobTitleInEnglish.JobTitleInEnglish}
                         </Label>
                       </div>
+                    ) : (
+                      <Label className="title" style={labelStyles}>
+                        No Job Title Available
+                      </Label>
                     )}
-                    {comment?.JobTitleInFrench && (
+                    {comment?.JobTitleInFrench?.JobTitleInFrench ? (
                       <div>
                         <Label className="title" style={labelStyles}>
-                          {comment?.JobTitleInFrench}
+                          {comment.JobTitleInFrench.JobTitleInFrench}
                         </Label>
                       </div>
+                    ) : (
+                      <Label className="title" style={labelStyles}>
+                        No Job Title Available
+                      </Label>
                     )}
+
                     {comment.UserRoleName && (
                       <div>
                         <Label style={labelStyles}>
@@ -114,11 +124,20 @@ const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
                         <Label style={labelStyles}>{comment.Department}</Label>
                       </div>
                     )}
-                    {comment?.Date && (
-                      <Label style={labelStyles}>
-                        {moment(comment?.Date).format("DD-MMM-YYYY - hh:mm A")}
-                      </Label>
-                    )}
+                    {comment.CandidateScoreCard &&
+                      comment.CandidateScoreCard.length > 0 &&
+                      comment.CandidateScoreCard.map(
+                        (score: any, scoreIndex: number) => (
+                          <div key={scoreIndex}>
+                            {score.CreatedDate &&
+                              score.CreatedDate !== "N/A" && (
+                                <Label style={labelStyles}>
+                                  {score.CreatedDate}
+                                </Label>
+                              )}
+                          </div>
+                        )
+                      )}
                   </div>
                 ))}
               </>
