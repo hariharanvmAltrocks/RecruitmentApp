@@ -1,14 +1,12 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
 import {
-  CommonServices,
   GetPortalJobsService,
   getVRRDetails,
 } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
   GridStatusBackgroundcolor,
-  ListNames,
   RoleID,
   TabName,
   tabType,
@@ -25,11 +23,8 @@ import {
   GetProfileByJobCode,
 } from "../../Models/ApIInterface";
 import TabsComponent from "../../components/TabsComponent ";
-import { AutoCompleteItem } from "../../Models/Screens";
 
 const ReviewCandidateList = (props: any) => {
-  console.log(props, "ReviewCandidateList");
-
   const [CandidateData, setCandidateData] = React.useState<
     GetProfileByJobCode[] | null
   >([]);
@@ -42,9 +37,6 @@ const ReviewCandidateList = (props: any) => {
   const [breadcrumbTab, setBreadcrumbTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
-  const [MasterStatus, setMasterStatus] = React.useState<AutoCompleteItem[]>(
-    []
-  );
 
   const columnConfig = (
     tab: string,
@@ -116,13 +108,12 @@ const ReviewCandidateList = (props: any) => {
           ButtonAction: string,
           ActionBtn: string
         ): void {
-          console.log(rowData, "CandidateRowData");
           props.navigation(
             "/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails",
             {
               state: {
                 ID: rowData?.CandidateID,
-                RecruitmentID: props.stateValue.ID,
+                RecruitmentID: RecruitmentDetails[0].ID,
                 tab: tab,
                 ButtonAction: ButtonAction,
                 TabNamed: TabNamed,
@@ -197,21 +188,18 @@ const ReviewCandidateList = (props: any) => {
     },
   ];
 
-  React.useEffect(() => {
-    const getMasterData = async () => {
-      const StatusMaster = await CommonServices.GetMasterData(
-        ListNames.HRMSRecruitmentWorkFlowMasterStatus
-      );
-      console.log(StatusMaster.data, "StatusMaster");
-      let MasterStatusData = StatusMaster.data.map((item) => ({
-        key: item.Code,
-        text: item.Status,
-      }));
-      console.log(MasterStatusData, "MasterStatusData");
-      setMasterStatus(MasterStatusData);
-    };
-    void getMasterData();
-  }, [activeTab]);
+  // React.useEffect(() => {
+  //   const getMasterData = async () => {
+  //     const StatusMaster = await CommonServices.GetMasterData(
+  //       ListNames.HRMSRecruitmentWorkFlowMasterStatus
+  //     );
+  //     let MasterStatusData = StatusMaster.data.map((item) => ({
+  //       key: item.Code,
+  //       text: item.Status,
+  //     }));
+  //   };
+  //   void getMasterData();
+  // }, [activeTab]);
 
   const fetchCandidateData = async (tabs: string) => {
     setIsLoading(true);
@@ -224,7 +212,6 @@ const ReviewCandidateList = (props: any) => {
         currentPage: 0,
         totalItems: 0,
       };
-      debugger;
       let createFilter = (workflowStausId: string[]): FilterItem => ({
         jobCode: props.stateValue?.JobCode, //"JC0005",
         workflowStausId: workflowStausId,
@@ -308,7 +295,6 @@ const ReviewCandidateList = (props: any) => {
 
       await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
         .then((res) => {
-          console.log(res, "res");
           setCandidateData(res.data);
         })
         .catch((error) => {
@@ -377,9 +363,6 @@ const ReviewCandidateList = (props: any) => {
       ),
     },
   ];
-
-  console.log(RecruitmentDetails, "RecruitmentDetails");
-  console.log(MasterStatus, "MasterStatus");
 
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
@@ -467,7 +450,7 @@ const ReviewCandidateList = (props: any) => {
         ]
       : []),
     {
-      label: "Shrotlisted",
+      label: "Shortlisted",
       value: "tab2",
       content: (
         <Card
