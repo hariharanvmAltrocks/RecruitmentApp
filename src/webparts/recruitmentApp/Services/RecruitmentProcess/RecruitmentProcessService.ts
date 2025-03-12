@@ -621,9 +621,8 @@ export default class RecruitmentService implements IRecruitmentService {
           FristName: item.FristName,
           MiddleName: item.MiddleName,
           LastName: item.LastName,
-          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${
-            item.LastName || ""
-          }`,
+          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""
+            }`,
           ResidentialAddress: item?.ResidentialAddress,
           DOB: item?.DOB,
           ContactNumber: item?.ContactNumber,
@@ -831,10 +830,10 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
             ? (Employee.FirstName ?? "") +
-              " " +
-              (Employee.MiddleName ?? "") +
-              " " +
-              (Employee.LastName ?? "")
+            " " +
+            (Employee.MiddleName ?? "") +
+            " " +
+            (Employee.LastName ?? "")
             : "",
           // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
         };
@@ -1245,13 +1244,13 @@ export default class RecruitmentService implements IRecruitmentService {
 
           ValidFrom: item.ValidFrom
             ? new Date(item.ValidFrom)
-                .toLocaleDateString("en-GB")
-                .replace(/\//g, "-")
+              .toLocaleDateString("en-GB")
+              .replace(/\//g, "-")
             : "N/A",
           ValidTo: item.ValidTo
             ? new Date(item.ValidTo)
-                .toLocaleDateString("en-GB")
-                .replace(/\//g, "-")
+              .toLocaleDateString("en-GB")
+              .replace(/\//g, "-")
             : "N/A",
 
           // FunctionType:
@@ -1448,63 +1447,27 @@ export default class RecruitmentService implements IRecruitmentService {
     }
   }
 
-  GetMasterData = async (ListName: string): Promise<ApiResponse<any[]>> => {
-    try {
-      const listItems: any[] = await SPServices.SPReadItems({
-        Listname: ListName,
-        Select: "*,CategoryID/CategoryCode",
-        Expand: "CategoryID",
-      });
-      const filter = [
-        { FilterKey: "CategoryCode", Operator: "eq", FilterValue: listItems[0].CategoryID?.CategoryCode },
-      ];
-      let GetCategoryData: any = await this.GetFilterInCategory(
-        filter,
-      );
-      listItems.push(GetCategoryData.data)
-      return {
-        data: listItems,
-        status: 200,
-        message: "HRMSRecruitmentCandidateDetails fetched successfully",
-      };
-    } catch (error) {
-      console.error(
-        "Error fetching data HRMSRecruitmentCandidateDetails:",
-        error
-      );
-      return {
-        data: [],
-        status: 500,
-        message: "Error fetching data from HRMSRecruitmentCandidateDetails",
-      };
-    }
-  }
-
-  async GetFilterInCategory(filterConditions: any) {
+  GetFilterInCategory = async (filterConditions: any): Promise<ApiResponse<any[]>> => {
     try {
       const Category: any[] = await SPServices.SPReadItems({
-        Listname: ListNames.HRMSExperienceMaster,
+        Listname: ListNames.HRMSCategoryMaster,
         Select: "*",
         Filter: filterConditions
       });
-      const CategoryData = {
-        CategoryCode: Category[0]?.CategoryCode,
-        CategoryName: Category[0]?.Category,
-      };
       return {
-        data: CategoryData,
+        data: Category,
         status: 200,
-        message: "HRMSRecruitmentCandidateDetails fetched successfully",
+        message: "fetched Category successfully",
       };
     } catch (error) {
       console.error(
-        "Error fetching data HRMSRecruitmentCandidateDetails:",
+        "Error fetching data Category:",
         error
       );
       return {
         data: [],
         status: 500,
-        message: "Error fetching data from HRMSRecruitmentCandidateDetails",
+        message: "Error fetching data from Category",
       };
     }
   }

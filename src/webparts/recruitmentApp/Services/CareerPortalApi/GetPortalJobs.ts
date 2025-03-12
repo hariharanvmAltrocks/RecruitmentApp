@@ -1,4 +1,4 @@
-import { AdvertisementDetails, CandidateProfile, FilterItem, GetProfileByJobCode, profileJobsComments, profileXagent, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, FilterItem, GetProfileByJobCode, profileJobsComments, profileXagent, UpsertMasters, WorkflowJson } from "../../Models/ApIInterface";
 import { DocumentLibraray, ListNames, RoleProfileMaster } from "../../utilities/Config";
 import { getProfileData, postAdveDetails } from "../ReviewProfileService/ReviewCandidateService";
 import { CommonServices } from "../ServiceExport";
@@ -45,6 +45,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
       };
     }
   }
+
   async UpsertAgenciesJobs(data: profileXagent): Promise<ApiResponse<any | null>> {
     try {
       let AgentDetails: profileXagent = {
@@ -74,8 +75,6 @@ export default class GetPortalJobs implements IGetPortalJobs {
     try {
       let GetProfileByJobCodeData: GetProfileByJobCode[] = []
       await getProfileData.GetProfileByJobCode(FilterValue).then((res) => {
-        console.log(res, "res");
-
         GetProfileByJobCodeData = res.data.data.map((item: any) => {
           return {
             CandidateID: item.jobRequestId,
@@ -114,7 +113,6 @@ export default class GetPortalJobs implements IGetPortalJobs {
       await getProfileData.getCandidateProfile(CandidateID).then(async (res) => {
         const op = res.data.data;
         console.log(op, "OP");
-
         const [
           RoleProfileDocment,
           AdvertismentDocment,
@@ -192,7 +190,6 @@ export default class GetPortalJobs implements IGetPortalJobs {
         };
 
         GetProfileByJobCodeData.push(GetProfileDahboard);
-        console.log(filteredFiles, "Filtered Files");
       }).catch((error) => {
         console.log(error, "error");
       });
@@ -217,8 +214,6 @@ export default class GetPortalJobs implements IGetPortalJobs {
     try {
 
       const Response = await getProfileData.UpdateCandidateStatus(data);
-      console.log(Response, "res");
-
       return {
         data: Response.data,
         status: Response.status,
@@ -277,6 +272,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
       };
     }
   }
+
   async InsertInterviewPanel(
     InterviewPanel: any[],
     CandidateId: number
@@ -314,4 +310,32 @@ export default class GetPortalJobs implements IGetPortalJobs {
       };
     }
   }
+
+  async UpsertMaster(data: UpsertMasters): Promise<ApiResponse<any | null>> {
+    try {
+      let MasterDetails: UpsertMasters = {
+        value: data.value,
+        displayText: data.displayText,
+        displayText_fr: data.displayText_fr,
+        category: data.category
+      }
+      const response = await postAdveDetails.PostMaster(MasterDetails);
+      return {
+        data: response.data,
+        status: response.status,
+        message: response.data.message,
+      };
+    } catch (error) {
+      console.error(
+        "Error inserting data into AdvertisementDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+
 }

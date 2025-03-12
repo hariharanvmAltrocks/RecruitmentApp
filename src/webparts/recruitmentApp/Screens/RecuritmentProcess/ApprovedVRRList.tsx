@@ -1160,7 +1160,6 @@ const RecruitmentProcess = (props: any) => {
           };
           await GetPortalJobsService.UpsertAgenciesJobs(AgentDetails)
             .then(async (res) => {
-              console.log(res, "res");
               if (res.status === 200) {
                 if (correspondingJob) {
                   const recruitmentID = isHR
@@ -1892,7 +1891,7 @@ const RecruitmentProcess = (props: any) => {
                   mandatory={true}
                   placeholder={
                     props.CurrentRoleID === RoleID.RecruitmentHRLead
-                      ? "You may provide Hiring Lining Manager and Hiring HOD name and number here to RecruitmentHR...."
+                      ? "You may provide Hiring Line Manager and Hiring HOD name and number here to RecruitmentHR...."
                       : ""
                   }
                 />

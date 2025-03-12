@@ -6,7 +6,7 @@ import "../../App.css";
 import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import { DocumentLibraray, RoleProfileMaster } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import { RecuritmentData } from "../../Models/RecuritmentVRR";
+import { AdvDetails, RecuritmentData } from "../../Models/RecuritmentVRR";
 import CustomLabel from "../../components/CustomLabel";
 import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 import CommanComments from "../../components/CommanComments";
@@ -17,6 +17,8 @@ import LabelHeaderComponents from "../../components/TitleHeader";
 import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
+
+import CustomPreviewScreen from "./CustomPreviewScreen";
 
 const ApprovedVRRView: React.FC = (props: any) => {
   const [tabVisibility, setTabVisibility] = useState({
@@ -80,6 +82,172 @@ const ApprovedVRRView: React.FC = (props: any) => {
   const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
   const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
   const [activeTab, setactiveTab] = useState<string>("tab1");
+  const [Preview, setPreview] = useState<boolean>(false);
+  //const [isViewed, setIsViewed] = useState(false);
+  // const [RoleSpeKnowledgeValue, setRoleSpeKnowledgeValue] = useState<
+  //     RoleSpecKnowledge[]
+  //   >([
+  //     {
+  //       RoleSpeKnowledge: { key: 0, text: "" },
+  //       RequiredLevel: { key: 0, text: "" },
+  //     },
+  //   ]);
+  //    const [qualificationValue, setQualificationValue] =
+  //       useState<QualificationValue>({
+  //         MinQualification: [],
+  //         PrefeQualification: [],
+  //       });
+  //     const [TechnicalSkillValue, setTechnicalSkillValue] = useState<
+  //       TechnicalSkills[]
+  //     >([
+  //       {
+  //         TechnicalSkills: { key: 0, text: "" },
+  //         LevelProficiency: { key: 0, text: "" },
+  //       },
+  //     ]);
+  const [advDetails, setAdvDetails] = useState<AdvDetails>({
+    MinQualificationOption: [],
+    PrefeQualificationOption: [],
+    RoleSpeKnowledgeoption: [],
+    RequiredLeveloption: [],
+    TechnicalSkillsOption: [],
+    LevelProficiencyOption: [],
+    RolePurpose: "",
+    JobDescription: "",
+    addMasterQualification: "",
+    TotalExperience: { key: 0, text: "" },
+    ExperienceinMiningIndustry: { key: 0, text: "" },
+    TotalExperienceOption: [],
+    ExperienceinMiningIndustryOption: [],
+    YearofExperience: " ",
+    PreferredExperience: "",
+    ValidFrom: undefined,
+    ValidTo: undefined,
+    FunctionType: "",
+    JobFunctionalType: { key: 0, text: "" },
+    JobFunctionalTypeOption: [],
+    addMasterMinimumQualification: "",
+  });
+
+  // const fetchData = async () => {
+  //   if (isLoading) return;
+  //   setIsLoading(true);
+
+  //   try {
+  //     const filterConditionsVRR = [
+  //       {
+  //         FilterKey: "ID",
+  //         Operator: "eq",
+  //         FilterValue: props.stateValue?.ID,
+  //       },
+  //     ];
+  //     const Conditions = "";
+
+  //     const response = await getVRRDetails.GetRecruitmentDetails(
+  //       filterConditionsVRR,
+  //       Conditions
+  //     );
+
+  //     if (response.data) {
+  //       const op = response.data[0];
+  //       // const NoofPositionAssigned = response.data[1];
+
+  //       const BUName =
+  //         props?.BusinessUnitCodeAllColumn.find(
+  //           (item: any) => item.key === op.BusinessUnitCodeId
+  //         ) || {};
+  //       const JobtitleFrench =
+  //         props?.JobInFrenchList.find(
+  //           (item: any) => item.key === op.JobTitleInFrenchId
+  //         ) || {};
+
+  //       const [
+  //         RoleProfileDocment,
+  //         GradingDocument,
+  //         AdvertismentDocment,
+  //         OnamSignedStampsDocment,
+  //       ] = await Promise.all([
+  //         CommonServices.GetAttachmentToLibrary(
+  //           DocumentLibraray.RoleProfileMaster,
+  //           op.JobCode,
+  //           RoleProfileMaster.RoleProfile
+  //         ),
+  //         CommonServices.GetAttachmentToLibrary(
+  //           DocumentLibraray.RoleProfileMaster,
+  //           op.JobCode,
+  //           RoleProfileMaster.Grading
+  //         ),
+  //         CommonServices.GetAttachmentToLibrary(
+  //           DocumentLibraray.RecruitmentAdvertisementDocument,
+  //           op.JobCode
+  //         ),
+  //         CommonServices.GetAttachmentToLibrary(
+  //           DocumentLibraray.ONAMSignedStampDocuments,
+  //           op.JobCode
+  //         ),
+  //       ]);
+
+  //       if (
+  //         RoleProfileDocment.status === 200 ||
+  //         AdvertismentDocment.status === 200
+  //       ) {
+  //         const RoleProfileDoc = RoleProfileDocment.data || [];
+  //         const AdvertismentDocPromises = AdvertismentDocment.data || [];
+  //         const ONAMSignedStampDoc = OnamSignedStampsDocment.data || [];
+  //         const GradingDoc = GradingDocument.data || [];
+
+  //         setData((prevState) => ({
+  //           ...prevState,
+  //           VRRID: op.VRRID,
+  //           BusinessUnitCodeID: op.BusinessUnitCodeId,
+  //           DepartmentID: op.DepartmentId,
+  //           SubDepartmentID: op.SubDepartmentId,
+  //           SectionID: op.SectionId,
+  //           DepartmentCodeID: op.DepartmentCodeId,
+  //           JobNameInEnglishID: op.JobTitleInEnglishId,
+  //           JobNameInFrenchID: op.JobTitleInFrenchId,
+  //           PatersonGradeID: op.PayrollGradeId,
+  //           DRCGradeID: op.DRCGradeId,
+  //           JobCodeID: op.JobCodeId,
+  //           BusinessUnitCode: op.BusinessUnitCode || "",
+  //           BusinessUnitName: BUName.Name || "",
+  //           BusinessUnitDescription: BUName.Description || "",
+  //           Department: op.Department || "",
+  //           SubDepartment: op.SubDepartment || "",
+  //           Section: op.Section || "",
+  //           DepartmentCode: op.DepartmentCode || "",
+  //           Nationality: op.Nationality || "",
+  //           JobNameInEnglish: op.JobTitleInEnglish || "",
+  //           JobNameInFrench: JobtitleFrench.text || "",
+  //           PatersonGrade: op.PayrollGrade || "",
+  //           DRCGrade: op.DRCGrade || "",
+  //           EmployementCategory: op.EmploymentCategory || "",
+  //           ContractType: op.TypeOfContract || "",
+  //           JobCode: op.JobCode || "",
+  //           AreaOfWork: op.AreaofWork || "",
+  //           NoofPositionAssigned: op.NumberOfPersonNeeded || 0,
+  //           ReasonForVacancy: op.ReasonForVacancy || "",
+  //           RecruitmentAuthorised: op.RecruitmentAuthorised || "",
+  //           IsPayrollEmailed: op.IsPayrollEmailed || "",
+  //           EnterNumberOfMonths: op.EnterNumberOfMonths || 0,
+  //           DateRequried: op.DateRequried || null,
+  //           IsRevert: op.IsRevert || "",
+  //           VacancyConfirmed: op.VacancyConfirmed || "",
+  //           RoleProfileDocument: RoleProfileDoc,
+  //           GradingDocument: GradingDoc,
+  //           AdvertisementDocument: AdvertismentDocPromises,
+  //           OnamSignedStampsDocument: ONAMSignedStampDoc,
+  //         }));
+  //       } else {
+  //         console.error("Error retrieving attachments:", response);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to fetch Vacancy Details:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const fetchData = async () => {
     if (isLoading) return;
@@ -102,7 +270,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
 
       if (response.data) {
         const op = response.data[0];
-        // const NoofPositionAssigned = response.data[1];
 
         const BUName =
           props?.BusinessUnitCodeAllColumn.find(
@@ -143,11 +310,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
           RoleProfileDocment.status === 200 ||
           AdvertismentDocment.status === 200
         ) {
-          const RoleProfileDoc = RoleProfileDocment.data || [];
-          const AdvertismentDocPromises = AdvertismentDocment.data || [];
-          const ONAMSignedStampDoc = OnamSignedStampsDocment.data || [];
-          const GradingDoc = GradingDocument.data || [];
-
           setData((prevState) => ({
             ...prevState,
             VRRID: op.VRRID,
@@ -185,17 +347,96 @@ const ApprovedVRRView: React.FC = (props: any) => {
             DateRequried: op.DateRequried || null,
             IsRevert: op.IsRevert || "",
             VacancyConfirmed: op.VacancyConfirmed || "",
-            RoleProfileDocument: RoleProfileDoc,
-            GradingDocument: GradingDoc,
-            AdvertisementDocument: AdvertismentDocPromises,
-            OnamSignedStampsDocument: ONAMSignedStampDoc,
+            RoleProfileDocument: RoleProfileDocment.data || [],
+            GradingDocument: GradingDocument.data || [],
+            AdvertisementDocument: AdvertismentDocment.data || [],
+            OnamSignedStampsDocument: OnamSignedStampsDocment.data || [],
           }));
-        } else {
-          console.error("Error retrieving attachments:", response);
+        }
+      }
+      const filterConditions = [
+        {
+          FilterKey: "RecruitmentIDId",
+          Operator: "eq",
+          FilterValue: props.stateValue.ID,
+        },
+      ];
+      const Advresponse =
+        await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+          filterConditions,
+          ""
+        );
+
+      if (Advresponse.status === 200) {
+        const data = Advresponse.data;
+
+        if (data && data.length > 0) {
+          const rawData = data[0];
+
+          const RoleSpeKnowledgeValues =
+            rawData.RoleSpecificKnowledge?.map(
+              (item: any) => item.RoleSpecificKnowledge
+            ) || [];
+          const RequiredLevelValues =
+            rawData.RoleSpecificKnowledge?.map(
+              (item: any) => item.RequiredLevel
+            ) || [];
+
+          const TechnicalSkillsOption =
+            rawData.TechnicalSkillsKnowledge?.map(
+              (item: any, index: number) => ({
+                key: index,
+                text: item.TechnicalSkills,
+              })
+            ) || [];
+
+          const LevelProficiencyOption =
+            rawData.TechnicalSkillsKnowledge?.map(
+              (item: any, index: number) => ({
+                key: index,
+                text: item.LevelProficiency,
+              })
+            ) || [];
+
+          const MinQualificationOption = rawData.Qualification
+            ? [{ key: 0, text: rawData.Qualification }]
+            : [];
+          const PrefeQualificationOption = rawData.PreferredQualification
+            ? [{ key: 0, text: rawData.PreferredQualification }]
+            : [];
+
+          const mappedData: AdvDetails = {
+            RolePurpose: rawData.RoleProfile || "",
+            JobDescription: rawData.JobDescription || "",
+            RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+            RequiredLeveloption: RequiredLevelValues,
+            MinQualificationOption,
+            PrefeQualificationOption,
+            TotalExperience: rawData.YearofExperience || "",
+            ExperienceinMiningIndustry: rawData.PreferredExperience || "",
+            TechnicalSkillsOption,
+            LevelProficiencyOption,
+            addMasterQualification: "",
+            YearofExperience: rawData.YearofExperience || "",
+            PreferredExperience: rawData.PreferredExperience || "",
+            ValidFrom: rawData.ValidFrom,
+            ValidTo: rawData.ValidTo,
+            FunctionType: rawData.FunctionType,
+            TotalExperienceOption: [],
+            ExperienceinMiningIndustryOption: [],
+            JobFunctionalType: {
+              key: 0,
+              text: "",
+            },
+            JobFunctionalTypeOption: [],
+            addMasterMinimumQualification: "",
+          };
+
+          setAdvDetails(mappedData);
         }
       }
     } catch (error) {
-      console.error("Failed to fetch Vacancy Details:", error);
+      console.error("Failed to fetch data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -213,13 +454,13 @@ const ApprovedVRRView: React.FC = (props: any) => {
         return newTabNames;
       });
       try {
-        await fetchData(); // Await the asynchronous fetchData
+        await fetchData();
       } catch (error) {
-        console.error("Error fetching data:", error); // Handle errors
+        console.error("Error fetching data:", error);
       }
     };
 
-    void initialize(); // Mark the call as intentionally unawaited
+    void initialize();
   }, []);
 
   const OpenComments = async () => {
@@ -534,37 +775,82 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     />
                   </div>
                 </div>
+                {advDetails.RolePurpose != "" ? (
+                  <div className="ms-Grid-row">
+                    <div
+                      className="ms-Grid-col ms-lg2"
+                      style={{ position: "relative", right: "1px" }}
+                    >
+                      <div>
+                        <CustomLabel
+                          value={"View Advertisement"}
+                          // mandatory={true}
+                        />
+                        <ReuseButton
+                          Style={{
+                            minWidth: "117px",
+                            fontSize: "13px",
+                            paddingBottom: "24px",
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "41px",
+                            paddingTop: "23px",
+                            backgroundColor: "#EF3340",
+                            color: "white",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                          label="VIEW"
+                          imgSrc={require("../../assets/viewSubmision-white.svg")}
+                          imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                          imgAlt="View"
+                          imgAltHover="Hovered View"
+                          onClick={async () => {
+                            setPreview(true);
+                            setMainComponent(false);
+                          }}
+                          spacing={4}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
 
                 <div className="ms-Grid-row">
-                  <div className="ms-Grid-col ms-lg12">
-                    <div className="ms-Grid-col ms-lg4">
-                      <CustomLabel value={" View Justifications"} />
-                      <ReuseButton
-                        Style={{
-                          minWidth: "117px",
-                          fontSize: "13px",
-                          paddingBottom: "24px",
-                          display: "flex",
-                          flexDirection: "column",
-                          height: "41px",
-                          paddingTop: "23px",
-                          backgroundColor: "#EF3340",
-                          color: "white",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                        label="VIEW"
-                        imgSrc={require("../../assets/viewSubmision-white.svg")}
-                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                        imgAlt="View"
-                        imgAltHover="Hovered View"
-                        onClick={OpenComments}
-                        spacing={4}
-                      />
-                    </div>
+                  <div
+                    className="ms-Grid-col ms-lg2"
+                    style={{ position: "relative", right: "1px" }}
+                  >
+                    {/* <div className="ms-Grid-col ms-lg4"> */}
+                    <CustomLabel value={" View Justifications"} />
+                    <ReuseButton
+                      Style={{
+                        minWidth: "117px",
+                        fontSize: "13px",
+                        paddingBottom: "24px",
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "41px",
+                        paddingTop: "23px",
+                        backgroundColor: "#EF3340",
+                        color: "white",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      label="VIEW"
+                      imgSrc={require("../../assets/viewSubmision-white.svg")}
+                      imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                      imgAlt="View"
+                      imgAltHover="Hovered View"
+                      onClick={OpenComments}
+                      spacing={4}
+                    />
                   </div>
                 </div>
               </div>
+              // </div>
             )}
           </CardContent>
         </Card>
@@ -581,7 +867,20 @@ const ApprovedVRRView: React.FC = (props: any) => {
 
   return (
     <>
-      {MainComponent ? (
+      {Preview ? (
+        <CustomPreviewScreen
+          data={advDetails}
+          onclose={() => {
+            setPreview(false);
+            setMainComponent(true);
+          }}
+          Ok_btnfn={() => {
+            setPreview(false);
+            setMainComponent(true);
+          }}
+          JobTitle={data.JobNameInEnglish}
+        />
+      ) : MainComponent ? (
         <>
           <CustomLoader isLoading={isLoading}>
             <div className="menu-card">

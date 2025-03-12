@@ -88,5 +88,5 @@ export type IRecruitmentService = {
     Select: string,
     Expand: string,
   ): Promise<ApiResponse<any | null>>;
-  GetMasterData(ListName: string): Promise<ApiResponse<any[]>>;
+  GetFilterInCategory(filterConditions: any): Promise<ApiResponse<any[]>>;
 };

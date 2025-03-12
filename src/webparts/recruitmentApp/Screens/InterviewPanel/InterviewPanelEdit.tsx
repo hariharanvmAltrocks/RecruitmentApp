@@ -62,8 +62,6 @@ type ValidationError = {
 
 const InterviewPanelEdit = (props: any) => {
   const todaydate = new Date();
-  console.log(props, "");
-
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
     RecruitmentID: 0,
@@ -520,7 +518,7 @@ const InterviewPanelEdit = (props: any) => {
                     comments: "",
                     actionBy: props.CurrentUserRole,
                   };
-                  console.log(CandidateDatas);
+                  // console.log(CandidateDatas);
                   await GetPortalJobsService.UpdateCandidateStatus(
                     CandidateDatas
                   );
@@ -984,7 +982,7 @@ const InterviewPanelEdit = (props: any) => {
               >
                 <div className="ms-Grid-col ms-lg12">
                   <SignatureCheckbox
-                    label={"I hereby agree for submitted this request."}
+                    label={TabName.CheckboxContent}
                     checked={Checkbox}
                     error={ValidationError.CheckboxValidation}
                     onChange={(value: boolean) => handleCheckbox(value)}
@@ -1415,7 +1413,7 @@ const InterviewPanelEdit = (props: any) => {
 
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
-    console.log("", newItem);
+    // console.log("", newItem);
   };
 
   return (

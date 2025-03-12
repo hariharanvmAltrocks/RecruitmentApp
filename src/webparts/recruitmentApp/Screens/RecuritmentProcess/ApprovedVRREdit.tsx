@@ -63,9 +63,11 @@ import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
 import * as moment from "moment";
 import {
   AdvertisementDetails,
+  category,
   Descriptions,
   MinAndPreferedQualifications,
   RoleAndTechSkills,
+  UpsertMasters,
 } from "../../Models/ApIInterface";
 import CustomButton from "../../components/CustomButton";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
@@ -343,7 +345,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       } else {
         setExperValidation(false);
       }
-      console.log(experienceRange, "experienceRange");
+      // console.log(experienceRange, "experienceRange");
     }
   };
 
@@ -693,36 +695,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }));
   };
 
+  function previewBtn_Fn() {
+    const isValid = !Validation();
+    if (isValid) {
+      setPreviewBtn(true);
+      setMainComponent(false);
+    }
+  }
+
   const SaveRecruitment = async () => {
     try {
       setIsLoading(true);
       const isValid = !Validation();
 
       if (isValid) {
-        let Table1: any = {
-          // VRRID: formState.VRRID,
-          BusinessUnitCodeId: formState.BusinessUnitCodeID,
-          Nationality: formState.Nationality,
-          EmploymentCategory: formState.EmployementCategory,
-          DepartmentId: formState.DepartmentID,
-          SubDepartmentId: formState.SubDepartmentID,
-          SectionId: formState.SectionID,
-          DepartmentCodeId: formState.DepartmentCodeID,
-          NumberOfPersonNeeded: formState.NoofPositionAssigned,
-          EnterNumberOfMonths: formState.EnterNumberOfMonths,
-          TypeOfContract: formState.ContractType,
-          DateRequried: formState.DateRequried,
-          IsRevert: formState.IsRevert,
-          ReasonForVacancy: formState.ReasonForVacancy,
-          AreaofWork: formState.AreaOfWork,
-          JobCodeId: formState.JobCodeID,
-          VacancyConfirmed: formState.VacancyConfirmed,
-          RecruitmentAuthorised: formState.RecruitmentAuthorised,
-          IsPayrollEmailed: formState.IsPayrollEmailed,
-          AssignedHRId: formState.AssignRecruitmentHR.key,
-          ActionId: WorkflowAction.Approved,
-        };
-        console.log(Table1, "Table1");
         const obj: any = {
           ActionId: WorkflowAction.Approved,
         };
@@ -1276,27 +1262,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     return errors.addMasterMinimumQualification;
   };
 
-  const AddMasterDataQualification_fn = async () => {
-    const isValid = !AddMasterMinimumQualification();
-
-    if (isValid) {
-      const MasterData = {
-        Qualification: advDetails.addMasterMinimumQualification,
-      };
-
-      await getVRRDetails.InsertList(MasterData, ListNames.HRMSQualification);
-
-      setAddQualifMasterbtn(!AddQualifMasterbtn);
-      setAdvDetails((prevState) => ({
-        ...prevState,
-        addMasterMinimumQualification: "",
-      }));
-      setShowQualificationInput(false);
-    } else {
-      //console.log("Validation failed for addMasterMinimumQualification");
-    }
-  };
-
   const handleRichTextEditor = (value: string | any, StateValue: string) => {
     setAdvDetails((prevState) => ({
       ...prevState,
@@ -1515,9 +1480,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         RoleAndTechSkills: Roleandtechnical,
         MinAndPreferedQualifications: MinAndPreferedQualification,
       };
-
-      console.log(AdvertisementDetails, "AdvertisementDetails");
-
       const response = await GetPortalJobsService.UpsertJobs(
         AdvertisementDetails
       );
@@ -2108,7 +2070,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       >
                         <div className="ms-Grid-col ms-lg12">
                           <SignatureCheckbox
-                            label={"I hereby agree for submitted this request."}
+                            label={TabName.CheckboxContent}
                             checked={Checkbox}
                             error={validationErrors.Checkboxalidation}
                             onChange={(value: boolean) => {
@@ -2463,7 +2425,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               <ReuseButton
                                 label="Add"
                                 onClick={async () => {
-                                  void AddMasterDataQualification_fn();
+                                  void InsertMasterData(
+                                    RoleDescriptionData.Qualification
+                                  );
                                 }}
                                 spacing={4}
                               />
@@ -2780,7 +2744,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       >
                         <div className="ms-Grid-col ms-lg12">
                           <SignatureCheckbox
-                            label={"I hereby agree for submitted this request."}
+                            label={TabName.CheckboxContent}
                             checked={Checkbox}
                             error={validationErrors.Checkboxalidation}
                             onChange={(value: boolean) => handleCheckbox(value)}
@@ -2877,23 +2841,50 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   };
 
   async function InsertMasterData(Value: string) {
-    const isValid = !MasterDataValidation();
-    if (isValid) {
-      let MasterData;
-      switch (Value) {
-        case RoleDescriptionData.Qualification:
-          {
+    let MasterData;
+    switch (Value) {
+      case RoleDescriptionData.Qualification:
+        {
+          const isValid = !AddMasterMinimumQualification();
+          if (isValid) {
+            setAddQualifMasterbtn(!AddQualifMasterbtn);
+            let filterConditions = [
+              {
+                FilterKey: "Category",
+                Operator: "eq",
+                FilterValue: RoleDescriptionData.Qualification,
+              },
+            ];
+            const CategoryData = await getVRRDetails.GetFilterInCategory(
+              filterConditions
+            );
+            let category: category = {
+              id: CategoryData.data[0]?.CategoryCode,
+              name: CategoryData.data[0]?.Category,
+            };
+            let AgentDetails: UpsertMasters = {
+              value: "",
+              displayText: advDetails.addMasterMinimumQualification,
+              displayText_fr: advDetails.addMasterMinimumQualification,
+              category: category,
+            };
+            console.log(AgentDetails, "AgentDetails");
+
+            await GetPortalJobsService.UpsertMaster(AgentDetails);
             MasterData = {
               Qualification: advDetails.addMasterQualification,
             };
-            await getVRRDetails.InsertList(
-              MasterData,
-              ListNames.HRMSQualification
-            );
+            // await getVRRDetails.InsertList(
+            //   MasterData,
+            //   ListNames.HRMSQualification
+            // );
           }
-          break;
-        case RoleDescriptionData.RoleSpeKnowledge:
-          {
+        }
+        break;
+      case RoleDescriptionData.RoleSpeKnowledge:
+        {
+          const isValid = !MasterDataValidation();
+          if (isValid) {
             MasterData = {
               RoleSpecificKnowledge: advDetails.addMasterQualification,
             };
@@ -2902,9 +2893,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               ListNames.HRMSRoleSpecificKnowlegeMaster
             );
           }
-          break;
-        case RoleDescriptionData.TechnicalSkill:
-          {
+        }
+        break;
+      case RoleDescriptionData.TechnicalSkill:
+        {
+          const isValid = !MasterDataValidation();
+          if (isValid) {
             MasterData = {
               TechnicalSkills: advDetails.addMasterQualification,
             };
@@ -2913,14 +2907,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               ListNames.HRMSTechnicalSkills
             );
           }
-          break;
-      }
-      setAddQualifbtn(false);
-      setAdvDetails((prevState) => ({
-        ...prevState,
-        addMasterQualification: "",
-      }));
+        }
+        break;
     }
+    setAddQualifbtn(false);
+    setAdvDetails((prevState) => ({
+      ...prevState,
+      addMasterQualification: "",
+    }));
   }
 
   const handleBreadcrumbChange = (newItem: string) => {
@@ -2991,8 +2985,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         {
                           label: "Preview",
                           onClick: async () => {
-                            setPreviewBtn(true);
-                            setMainComponent(false);
+                            previewBtn_Fn();
                           },
                         },
                         ...(isViewed

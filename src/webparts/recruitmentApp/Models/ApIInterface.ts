@@ -104,3 +104,15 @@ export type profileJobsComments = {
     createdDate: string,
     jobRequestId: number
 }
+
+export type UpsertMasters = {
+    value?: string,
+    displayText: string,
+    displayText_fr: string,
+    category: category;
+}
+
+export type category = {
+    id: 0,
+    name: string;
+}

@@ -446,7 +446,11 @@ const HodViewScorecard = (props: any) => {
         <>
           <div className="agencies_card ">
             <LabelHeaderComponents
-              value={`Profile from ${agentName} Agencies`}
+              value={
+                agentName === undefined
+                  ? `Profile from Candidate `
+                  : `Profile from ${agentName} Agencies`
+              }
             />
           </div>
           <Card
@@ -714,7 +718,9 @@ const HodViewScorecard = (props: any) => {
                       top: "7px",
                     }}
                   >
-                    {`Profile from ${agentName} Agencies`}
+                    {agentName === undefined
+                      ? `Profile from Candidate `
+                      : `Profile from ${agentName} Agencies`}
                   </span>
                 </div>
               </div>
@@ -802,7 +808,7 @@ const HodViewScorecard = (props: any) => {
               </div>
               <div className="ms-Grid-col ms-lg12">
                 <SignatureCheckbox
-                  label={"I hereby agree for submitted this request."}
+                  label={TabName.CheckboxContent}
                   checked={Checkboxs}
                   error={false}
                   onChange={(value: boolean) => setCheckbox(value)}
