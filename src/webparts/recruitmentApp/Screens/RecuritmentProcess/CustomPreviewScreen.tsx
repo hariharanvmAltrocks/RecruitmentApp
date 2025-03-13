@@ -19,8 +19,8 @@ function CustomPreviewScreen({
   Ok_btnfn,
   JobTitle,
 }: FormFields) {
-  const ValidTo = data.ValidTo;
-  const ValidFrom = data.ValidFrom;
+  // const ValidTo = data.ValidTo;
+  // const ValidFrom = data.ValidFrom;
 
   const isEmptyData =
     !data ||
@@ -107,7 +107,7 @@ function CustomPreviewScreen({
                       </div>
                     </div>
                   )}
-
+                  {/* 
                   {data.ValidFrom && data.ValidTo ? (
                     <div
                       className="ms-Grid-row"
@@ -154,7 +154,7 @@ function CustomPreviewScreen({
                         </div>
                       </div>
                     </div>
-                  ) : null}
+                  ) : null} */}
                   {(data.TotalExperience ||
                     data.ExperienceinMiningIndustry) && (
                     <div
