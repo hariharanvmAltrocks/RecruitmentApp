@@ -20,18 +20,13 @@ export type AdvertisementDetails = {
 }
 
 export type profileXagent = {
-    profileId: number;
-    agentCode: string;
-    isSuspended: number;
-    agent: agent
+    jobCode: string,
+    agent: jobsXAgents[]
 }
 
-export type agent = {
-    exUserCode: string,
-    name: string,
-    email: string,
-    externalUserType: string,
-    userId: string
+export type jobsXAgents = {
+    agentId: string,
+    // isSuspended: number
 }
 
 export type RoleAndTechSkills = {
@@ -71,6 +66,7 @@ export type GetProfileByJobCode = {
 }
 export type CandidateProfile = {
     CandidateID: string,
+    profileID: number,
     JobCode: string,
     JobTitle: string,
     ApplicantName: string;
@@ -107,4 +103,16 @@ export type profileJobsComments = {
     RoleName: string,
     createdDate: string,
     jobRequestId: number
+}
+
+export type UpsertMasters = {
+    value?: string,
+    displayText: string,
+    displayText_fr: string,
+    category: category;
+}
+
+export type category = {
+    id: 0,
+    name: string;
 }

@@ -621,9 +621,8 @@ export default class RecruitmentService implements IRecruitmentService {
           FristName: item.FristName,
           MiddleName: item.MiddleName,
           LastName: item.LastName,
-          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${
-            item.LastName || ""
-          }`,
+          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""
+            }`,
           ResidentialAddress: item?.ResidentialAddress,
           DOB: item?.DOB,
           ContactNumber: item?.ContactNumber,
@@ -831,10 +830,10 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
             ? (Employee.FirstName ?? "") +
-              " " +
-              (Employee.MiddleName ?? "") +
-              " " +
-              (Employee.LastName ?? "")
+            " " +
+            (Employee.MiddleName ?? "") +
+            " " +
+            (Employee.LastName ?? "")
             : "",
           // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
         };
@@ -1245,13 +1244,13 @@ export default class RecruitmentService implements IRecruitmentService {
 
           ValidFrom: item.ValidFrom
             ? new Date(item.ValidFrom)
-                .toLocaleDateString("en-GB")
-                .replace(/\//g, "-")
+              .toLocaleDateString("en-GB")
+              .replace(/\//g, "-")
             : "N/A",
           ValidTo: item.ValidTo
             ? new Date(item.ValidTo)
-                .toLocaleDateString("en-GB")
-                .replace(/\//g, "-")
+              .toLocaleDateString("en-GB")
+              .replace(/\//g, "-")
             : "N/A",
 
           // FunctionType:
@@ -1444,6 +1443,31 @@ export default class RecruitmentService implements IRecruitmentService {
         status: 500,
         message:
           "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+      };
+    }
+  }
+
+  GetFilterInCategory = async (filterConditions: any): Promise<ApiResponse<any[]>> => {
+    try {
+      const Category: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSCategoryMaster,
+        Select: "*",
+        Filter: filterConditions
+      });
+      return {
+        data: Category,
+        status: 200,
+        message: "fetched Category successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data Category:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data from Category",
       };
     }
   }

@@ -20,13 +20,13 @@ export interface CommentsDatas {
 export type ActionUpdate = {
   ActionId: number;
   Id: number;
-}
+};
 
 export type AssignPositionID = {
   PositionIDId: number;
   CandidateIDId: number;
   RecruitmentIDId: number;
-}
+};
 
 export type IInterviewProcessService = {
   GetInterviewPanelDetails(
@@ -37,21 +37,6 @@ export type IInterviewProcessService = {
     filterConditions: any,
     candidateID: number
   ): Promise<ApiResponse<any | null>>;
-  GetMergedData(
-    EmployeeList: any[],
-    Conditions: string,
-    filterConditions: any,
-    filterParam: any,
-    candidateID: number
-  ): Promise<ApiResponse<any>>;
-  GetInterviewPanelCandidateDetails(
-    filterParam: any,
-    filterConditions: any
-  ): Promise<any | null>;
-  GetPositionDetails(
-    filterParam: any,
-    filterConditions: any
-  ): Promise<any | null>;
 
   GetCombinedCandidatePositionDetails(
     filterParam: any,

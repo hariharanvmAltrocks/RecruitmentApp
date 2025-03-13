@@ -13,6 +13,7 @@ import {
   HRMSAlertOptions,
   ListNames,
   RecuritmentHRMsg,
+  RoleID,
   RoleProfileMaster,
   TabName,
   WorkflowAction,
@@ -21,9 +22,7 @@ import {
 import { ScoreCardData } from "../../Models/RecuritmentVRR";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
-
 import { Card, CardContent } from "@mui/material";
-
 import CustomViewDocument from "../../components/CustomViewDocument";
 import BreadcrumbsComponent, {
   TabNameData,
@@ -42,12 +41,15 @@ import {
 import "../../App.css";
 import ReuseButton from "../../components/ReuseButton";
 import { WorkflowJson } from "../../Models/ApIInterface";
+import IsValid from "../../components/Validation";
 
-// type ValidationError = {
-//   Comments: boolean;
-// };
+type ValidationError = {
+  Comments: boolean;
+};
+
 const HodViewScorecard = (props: any) => {
   const todaydate = new Date();
+
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
     RecruitmentID: 0,
@@ -94,14 +96,19 @@ const HodViewScorecard = (props: any) => {
     PositionTitle: "",
     interviewPanelTitles: [] as string[],
     JobRequestID: "",
+    Comments: "",
   });
+
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [activeTab, setactiveTab] = React.useState<string>("tab2");
   const [MainComponent, setMainComponent] = React.useState<boolean>(true);
   const [CommentData, setCommentsData] = React.useState<
     CommentsDatas[] | undefined
   >();
-  const [justification, setJustification] = React.useState("");
+  const [validationErrors, setValidationError] =
+    React.useState<ValidationError>({
+      Comments: false,
+    });
   const [scoreData, setScoreData] = React.useState<any[]>([]);
   const [interviewPanelTitles, setInterviewPanelTitles] = React.useState<
     string[]
@@ -116,6 +123,7 @@ const HodViewScorecard = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
+
   const [agentName, setIagentName] = React.useState<"">("");
   const [InterviewPanelData, setInterviewPanelData] = React.useState<
     InterviewPanaldata[]
@@ -259,7 +267,6 @@ const HodViewScorecard = (props: any) => {
       } else {
         setScoreData([]);
         setInterviewPanelTitles([]);
-        console.warn("No scores found.");
       }
 
       if (positionResponse?.status === 200 && positionResponse?.data) {
@@ -268,11 +275,9 @@ const HodViewScorecard = (props: any) => {
         );
         setIagentName(candidate?.ExternalAgentDetails?.AgentName || "");
         if (!candidate?.ExternalAgentDetails?.AgentName) {
-          console.log("No External Agent Name Found");
         }
       }
     } catch (error) {
-      console.error("Error fetching candidate data:", error);
       setScoreData([]);
       setInterviewPanelTitles([]);
     } finally {
@@ -351,15 +356,6 @@ const HodViewScorecard = (props: any) => {
 
   const transformedData = transformScoreData(scoreData);
   const interviewerCount = scoreData.length;
-
-  // const handleReject = () => {
-  //   console.log("Rejected clicked");
-  // };
-
-  // const handleSelect = () => {
-  //   console.log("Selected clicked");
-  // };
-
   const handleCancel = () => {
     setIsLoading(true);
     let CancelAlert = {
@@ -393,40 +389,55 @@ const HodViewScorecard = (props: any) => {
   const OpenComments = async () => {
     setMainComponent(false);
     if (scoreData.length === 0) {
-      console.warn("No score data available to fetch RecruitmentID.");
       return;
     }
 
     const recruitmentID = scoreData[0].RecruitmentID;
 
-    let filterConditions = [];
-    let Conditions = "";
+    let filterConditions = [
+      {
+        FilterKey: "CandidateID/Id",
+        Operator: "eq",
+        FilterValue: candidateID,
+      },
+    ];
 
-    filterConditions.push({
-      FilterKey: "CandidateID/Id",
-      Operator: "eq",
-      FilterValue: candidateID,
-    });
-
-    const CommentsList = await InterviewServices.GetMergedData(
-      props.EmployeeList,
-      Conditions,
-      filterConditions,
-      "",
-      candidateID
-    );
-    if (CommentsList?.status === 200 && CommentsList?.data?.length) {
-      const candidateData = CommentsList.data.filter(
-        (candidate: any) => candidate.CandidateID === candidateID
+    try {
+      const CommentsList = await InterviewServices.HRMSCandidateScoreCard(
+        "",
+        filterConditions,
+        candidateID
       );
-      setCommentsData(candidateData);
-    } else {
-      console.warn("No comments found for RecruitmentID:", recruitmentID);
+
+      if (CommentsList?.status === 200 && CommentsList?.data?.length) {
+        const candidateData = CommentsList.data.filter(
+          (candidate: any) =>
+            candidate.CandidateID === candidateID &&
+            candidate.RecruitmentID === recruitmentID
+        );
+
+        setCommentsData(candidateData);
+      } else {
+        setCommentsData([]);
+      }
+    } catch (error) {
       setCommentsData([]);
     }
-    console.log("setCommentsData", CommentsList.data);
   };
 
+  const handleInputChangeTextArea = (
+    value: string | any,
+    StateValue: string
+  ) => {
+    setCandidateData((prevState) => ({
+      ...prevState,
+      [StateValue]: value,
+    }));
+    setValidationError((prevState) => ({
+      ...prevState,
+      [StateValue]: false,
+    }));
+  };
   const tabs = [
     {
       label: TabName.CandidateDetails,
@@ -435,7 +446,11 @@ const HodViewScorecard = (props: any) => {
         <>
           <div className="agencies_card ">
             <LabelHeaderComponents
-              value={`Profile from ${agentName} Agencies`}
+              value={
+                agentName === undefined
+                  ? `Profile from Candidate `
+                  : `Profile from ${agentName} Agencies`
+              }
             />
           </div>
           <Card
@@ -633,26 +648,7 @@ const HodViewScorecard = (props: any) => {
                 <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
                   <LabelHeaderComponents value={"Attachments"} />
                 </div>
-                {/* <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomViewDocument
-                    Attachment={CandidateData.RoleProfileDocument}
-                    Label={"Role Profile Documents"}
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomViewDocument
-                    Attachment={CandidateData.AdvertisementDocument}
-                    Label={"Advertisement Documents"}
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomViewDocument
-                    Attachment={CandidateData.CandidateCVDoc}
-                    Label={"Candidate Resume"}
-                  />
-                </div>
-              </div> */}
+
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomLabel value={"RoleProfile Documents"} />
@@ -722,7 +718,9 @@ const HodViewScorecard = (props: any) => {
                       top: "7px",
                     }}
                   >
-                    {`Profile from ${agentName} Agencies`}
+                    {agentName === undefined
+                      ? `Profile from Candidate `
+                      : `Profile from ${agentName} Agencies`}
                   </span>
                 </div>
               </div>
@@ -795,17 +793,22 @@ const HodViewScorecard = (props: any) => {
                   </div>
                 </div>
               </div>
-              <CustomTextArea
-                label="HOD Feedback"
-                value={justification}
-                onChange={setJustification}
-                error={false}
-                placeholder="Enter justification"
-                mandatory={true}
-              />
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg12">
+                  <CustomTextArea
+                    label="HOD Feedback"
+                    value={CandidateData.Comments}
+                    error={validationErrors.Comments}
+                    onChange={(value) =>
+                      handleInputChangeTextArea(value, "Comments")
+                    }
+                    mandatory={true}
+                  />
+                </div>
+              </div>
               <div className="ms-Grid-col ms-lg12">
                 <SignatureCheckbox
-                  label={"I hereby agree for submitted this request."}
+                  label={TabName.CheckboxContent}
                   checked={Checkboxs}
                   error={false}
                   onChange={(value: boolean) => setCheckbox(value)}
@@ -830,52 +833,6 @@ const HodViewScorecard = (props: any) => {
                 </div>
               </div>
             </CardContent>
-            {/* {Checkboxs && (
-              <div
-                style={{
-                  padding: "1rem",
-                  backgroundColor: "white",
-                  display: "flex",
-                  gap: "1rem",
-                  justifyContent: "flex-end",
-                  marginTop: "20px",
-                }}
-              >
-                <Button
-                  variant="contained"
-                  onClick={handleCancel}
-                  sx={{
-                    bgcolor: "#EF3340",
-                    color: "white",
-                    "&:hover": { bgcolor: "#d42130" },
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="contained"
-                  onClick={handleReject}
-                  sx={{
-                    bgcolor: "#EF3340",
-                    color: "white",
-                    "&:hover": { bgcolor: "#d42130" },
-                  }}
-                >
-                  Rejected
-                </Button>
-                <Button
-                  variant="contained"
-                  onClick={handleSelect}
-                  sx={{
-                    bgcolor: "#EF3340",
-                    color: "white",
-                    "&:hover": { bgcolor: "#d42130" },
-                  }}
-                >
-                  Selected
-                </Button>
-              </div>
-            )} */}
           </Card>
         </div>
       ),
@@ -990,7 +947,7 @@ const HodViewScorecard = (props: any) => {
               const interviewPanelTitles = filteredPanels.map(
                 (panel) => panel.InterviewPanelTitle
               );
-              console.log("InterviewPanelData", InterviewPanelData);
+              console.log("", InterviewPanelData);
               setInterviewPanelData((prevState) => ({
                 ...prevState,
                 interviewPanelTitles: interviewPanelTitles || [],
@@ -1012,100 +969,117 @@ const HodViewScorecard = (props: any) => {
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
   };
+  const Validation = (): boolean => {
+    const { Comments } = CandidateData;
 
+    let errors = {
+      Comments: false,
+    };
+    switch (props.CurrentRoleID) {
+      case RoleID.HOD: {
+        if (props.stateValue?.tab === "tab1") {
+          errors.Comments = !IsValid(Comments);
+        }
+        break;
+      }
+    }
+
+    setValidationError((prevState) => ({
+      ...prevState,
+      ...errors,
+    }));
+
+    return Object.values(errors).some((error) => error);
+  };
   const Submit_fn = async (Action: string) => {
-    let obj: ActionUpdate;
-    let SuccessMessage: string;
+    if (!CandidateData.Comments.trim()) {
+      setValidationError((prevState) => ({
+        ...prevState,
+        Comments: true,
+      }));
+      return;
+    }
+    const isValid = !Validation();
+    if (!isValid) return;
+
     const createFilter = (workflowStatus: string): WorkflowJson => ({
-      workflowStatus: workflowStatus,
+      workflowStatus,
       jobRequestId: Number(CandidateData.JobRequestID),
-      comments: justification,
+      comments: CandidateData.Comments,
       actionBy: props.CurrentUserRole,
     });
+
+    let obj: ActionUpdate = { ActionId: 0, Id: 0 };
     let CandidateDatas: WorkflowJson = {
       workflowStatus: "",
       jobRequestId: 0,
       comments: "",
       actionBy: "",
     };
+    let SuccessMessage: string = "";
 
     switch (Action) {
       case "Selected":
-        obj = {
-          ActionId: WorkflowAction.Approved,
-          Id: props.stateValue.ID,
-        };
-
+        obj = { ActionId: WorkflowAction.Approved, Id: props.stateValue.ID };
         CandidateDatas = createFilter(
           workflowStatusApi.CandidateSelectedIPanel
         );
         SuccessMessage = RecuritmentHRMsg.CandidateSelected;
-
         break;
+
       case "Rejected":
-        obj = {
-          ActionId: WorkflowAction.Reject,
-          Id: props.stateValue.ID,
-        };
+        obj = { ActionId: WorkflowAction.Reject, Id: props.stateValue.ID };
         CandidateDatas = createFilter(
           workflowStatusApi.CandidateRejectedIPanel
         );
         SuccessMessage = RecuritmentHRMsg.CandidateRejected;
         break;
-      default:
-        obj = {
-          ActionId: 0,
-          Id: 0,
-        };
     }
-    const res = await GetPortalJobsService.UpdateCandidateStatus(
-      CandidateDatas
-    );
-    console.log(res);
 
-    await InterviewServices.CandidateSeletionApi(
-      obj,
-      ListNames.HRMSRecruitmentCandidatePersonalDetails
-    )
-      .then((res) => {
-        console.log(res, "CandidateSelectionResponse");
-        if (res.status === 200) {
-          setIsLoading(true);
-          let SuccessAlert = {
-            Message: SuccessMessage,
-            Type: HRMSAlertOptions.Success,
-            visible: true,
-            ButtonAction: async (userClickedOK: boolean) => {
-              if (userClickedOK) {
-                props.navigation(
-                  "/RecurimentProcess/HodScoreCard/CandidateList",
-                  {
-                    state: {
-                      ID: CandidateData?.RecruitmentID,
-                      Status: props.stateValue?.Status,
-                      TabName: props.stateValue?.TabName,
-                      ButtonAction: props.stateValue?.PreviousTabName,
-                      JobCode: CandidateData?.JobCode,
-                      StatusId: props.stateValue?.StatusId,
-                    },
-                  }
-                );
-                setAlertPopupOpen(false);
-              } else {
-                setAlertPopupOpen(false);
-              }
-            },
-          };
+    try {
+      const res = await GetPortalJobsService.UpdateCandidateStatus(
+        CandidateDatas
+      );
+      console.log("", res);
 
-          setAlertPopupOpen(true);
-          setalertProps(SuccessAlert);
-          setIsLoading(false);
-        }
-      })
-      .then((error) => {
-        console.log("Candidate Selection API Failed", error);
-      });
+      const selectionResponse = await InterviewServices.CandidateSeletionApi(
+        obj,
+        ListNames.HRMSRecruitmentCandidatePersonalDetails
+      );
+
+      if (selectionResponse.status === 200) {
+        setIsLoading(true);
+        setAlertPopupOpen(true);
+        setalertProps({
+          Message: SuccessMessage,
+          Type: HRMSAlertOptions.Success,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              props.navigation(
+                "/RecurimentProcess/HodScoreCard/CandidateList",
+                {
+                  state: {
+                    ID: CandidateData?.RecruitmentID,
+                    Status: props.stateValue?.Status,
+                    TabName: props.stateValue?.TabName,
+                    ButtonAction: props.stateValue?.PreviousTabName,
+                    JobCode: CandidateData?.JobCode,
+                    StatusId: props.stateValue?.StatusId,
+                  },
+                }
+              );
+            }
+            setAlertPopupOpen(false);
+          },
+        });
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("", error);
+    }
   };
+
   return (
     <>
       {MainComponent ? (

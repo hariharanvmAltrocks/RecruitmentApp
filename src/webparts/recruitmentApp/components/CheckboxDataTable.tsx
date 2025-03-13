@@ -60,6 +60,9 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     Department: { key: 0, text: "" },
     BusinessUnitCode: { key: 0, text: "" },
     BusinessUnitName: { key: 0, text: "" },
+    DepartmentOption: [],
+    BusinessUnitCodeOption: [],
+    BusinessUnitNameOption: [],
   });
 
   React.useEffect(() => {
@@ -102,6 +105,38 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
 
     if (item) {
       search_fn(field, item);
+    }
+    if (field === "Department") {
+      const DepatmentToBu = MasterData?.BuCodeToDepartmentMappingList.filter(
+        (data: any) => data.DepartmentName === item?.text
+      );
+
+      const DepatrmentOption: AutoCompleteItem[] = DepatmentToBu.map(
+        (item: { key: any; text: any }) => ({
+          key: item.key,
+          text: item.text,
+        })
+      );
+      setFilterData((prev) => ({
+        ...prev,
+        BusinessUnitCodeOption: DepatrmentOption,
+      }));
+    }
+    if (field === "BusinessUnitCode") {
+      const BUCodeTOBUName = MasterData?.BusinessUnitCodeAllColumn.filter(
+        (data: any) => data.text === item?.text
+      );
+
+      const BUNameOption: AutoCompleteItem[] = BUCodeTOBUName.map(
+        (item: { Name: any; key: any; text: any }) => ({
+          key: item.text,
+          text: item.Name,
+        })
+      );
+      setFilterData((prev) => ({
+        ...prev,
+        BusinessUnitNameOption: BUNameOption,
+      }));
     }
   };
 
@@ -180,7 +215,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
               label="Department"
-              options={MasterData?.Department}
+              options={MasterData?.Department ?? []}
               value={FilterData.Department}
               disabled={false}
               mandatory={true}
@@ -190,12 +225,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
               label="Business Unit Code"
-              options={MasterData?.BusinessUnitCodeAllColumn.map(
-                (data: any) => ({
-                  key: data.key,
-                  text: data.text,
-                })
-              )}
+              options={FilterData.BusinessUnitCodeOption ?? []}
               value={FilterData.BusinessUnitCode}
               disabled={false}
               mandatory={true}
@@ -205,30 +235,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
               label="Business Unit Name"
-              options={
-                FilterData.BusinessUnitCode?.text
-                  ? (Array.from(
-                      new Map(
-                        MasterData?.BusinessUnitCodeAllColumn.filter(
-                          (data: any) =>
-                            data.text === FilterData.BusinessUnitCode.text
-                        ).map((data: any) => [
-                          data.Name,
-                          { key: data.text, text: data.Name },
-                        ])
-                      ).values()
-                    ) as AutoCompleteItem[])
-                  : (Array.from(
-                      new Map(
-                        MasterData?.BusinessUnitCodeAllColumn.map(
-                          (data: any) => [
-                            data.Name,
-                            { key: data.text, text: data.Name },
-                          ]
-                        )
-                      ).values()
-                    ) as AutoCompleteItem[])
-              }
+              options={FilterData.BusinessUnitNameOption ?? []}
               value={FilterData.BusinessUnitName}
               disabled={false}
               mandatory={true}

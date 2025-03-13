@@ -62,10 +62,10 @@ type ActionValue = {
 };
 
 const ViewCandidateDetails = (props: any) => {
-  console.log(props, "ViewCandidateDetailsProps");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [CandidateProfile, setCandidateProfile] = useState<CandidateProfile>({
     CandidateID: "",
+    profileID: 0,
     JobCode: "",
     JobTitle: "",
     ApplicantName: "",
@@ -128,14 +128,13 @@ const ViewCandidateDetails = (props: any) => {
     if (isLoading) return;
     setIsLoading(true);
     try {
-      console.log(SignDate);
       await GetPortalJobsService.getCandidateProfile(props.stateValue?.ID)
         .then((res) => {
-          console.log(res, "res");
           let response = res.data?.[0];
           setCandidateProfile((prevState: any) => ({
             ...prevState,
             CandidateID: response?.CandidateID,
+            profileID: response?.profileID,
             JobCode: response?.JobCode,
             JobTitle: response?.JobTitle,
             ApplicantName: response?.ApplicantName,
@@ -255,24 +254,20 @@ const ViewCandidateDetails = (props: any) => {
         "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
         "BUC,LineManager,HOD,HR,EXCO"
       );
-      console.log(AssignInterviewPanel.data, "AssignInterviewPanel");
-
       const interviewpanelOption = await CommonServices.GetADgruopsEmailIDs(
         ADGroupID.HRMSInterviewPanel
       );
-      console.log(interviewpanelOption);
-
       const Level1Value = interviewpanelOption.data.filter((item: any) =>
         [
-          73, // AssignInterviewPanel.data[0]?.LineManagerId,
-          89, // response.data[0]?.AssignedHRId,
+          AssignInterviewPanel.data[0]?.LineManagerId,
+          response.data[0]?.AssignedHRId,
         ].includes(item.key)
       );
 
       const Level2Value = interviewpanelOption.data.filter((item: any) =>
         [
-          73, //AssignInterviewPanel.data[0]?.HODId,
-          89, //AssignInterviewPanel.data[0]?.EXCOId,
+          AssignInterviewPanel.data[0]?.HODId,
+          AssignInterviewPanel.data[0]?.EXCOId,
         ].includes(item.key)
       );
 
@@ -336,7 +331,6 @@ const ViewCandidateDetails = (props: any) => {
       AssignInterviewLevel1: false,
     }));
   };
-  console.log(InterviewedLevel.AssignInterviewLevel1, "AssignInterviewLevel1");
 
   const tabs = [
     {
@@ -667,7 +661,7 @@ const ViewCandidateDetails = (props: any) => {
                     >
                       <div className="ms-Grid-col ms-lg12">
                         <SignatureCheckbox
-                          label={"I hereby agree for submitted this request."}
+                          label={TabName.CheckboxContent}
                           checked={Checkbox}
                           error={validationErrors.Checkboxalidation}
                           onChange={(value: boolean) => {
@@ -796,6 +790,7 @@ const ViewCandidateDetails = (props: any) => {
       ReleventExperience: CandidateProfile.ExperienceMining,
       Qualification: CandidateProfile.HighestQualification,
       JobRequestID: String(CandidateProfile.CandidateID),
+      ProfileID: CandidateProfile.profileID,
       PositionTitle: RecruitmentDetails.data[0].JobTitleInEnglish,
       JobGrade: RecruitmentDetails.data[0].DRCGrade,
       // ExternalAgentDetailsId: CandidateProfile.Agencies,
@@ -807,7 +802,6 @@ const ViewCandidateDetails = (props: any) => {
     let selectedinterviewpanal: any[] = [];
 
     for (let i = 0; i < InterviewedLevel.AssignInterviewLevel1.length; i++) {
-      debugger;
       const currentItem = InterviewedLevel.AssignInterviewLevel1[i];
 
       let selectedinterview = {
@@ -819,8 +813,6 @@ const ViewCandidateDetails = (props: any) => {
 
       selectedinterviewpanal.push(selectedinterview);
     }
-    console.log(selectedinterviewpanal, "selectedinterviewpanal");
-    console.log(CandidateDetails, "CandidateDetails");
     await GetPortalJobsService.InsertCandidateDetailsInList(
       CandidateDetails,
       selectedinterviewpanal
@@ -927,15 +919,15 @@ const ViewCandidateDetails = (props: any) => {
         CandidateData = createFilter(workflowStatusApi.InterviewScheduled);
         PopupMessage = RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
       }
-      console.log(CandidateData, "CandidateData");
 
       const res = await GetPortalJobsService.UpdateCandidateStatus(
         CandidateData
       );
-      console.log(res.data, "res");
-      if (res.data) {
-        await UploadCandidateDetails();
-        const CancelAlert = {
+      if (res.status === 200) {
+        if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
+          await UploadCandidateDetails();
+        }
+        const SuccessAlert = {
           Message: PopupMessage,
           Type: HRMSAlertOptions.Success,
           visible: true,
@@ -954,7 +946,28 @@ const ViewCandidateDetails = (props: any) => {
           },
         };
         setAlertPopupOpen(true);
-        setalertProps(CancelAlert);
+        setalertProps(SuccessAlert);
+      } else {
+        const APIErrorAlert = {
+          Message: RecuritmentHRMsg.APIErrorMsg,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              props.navigation("/ReviewProfileList/ReviewCandidateList", {
+                state: {
+                  ID: props.stateValue?.RecruitmentID,
+                  TabName: props.stateValue?.initialTab,
+                  ButtonAction: TabName.ViewPositionDetails,
+                  JobCode: CandidateProfile?.JobCode,
+                },
+              });
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+        setAlertPopupOpen(true);
+        setalertProps(APIErrorAlert);
       }
     } catch (error) {
       console.error("Error submitting candidate details", error);

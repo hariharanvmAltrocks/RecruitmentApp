@@ -46,6 +46,7 @@ export const ListNames = {
   HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
   HRMSRecruitmentWorkFlowMasterStatus: "HRMSRecruitmentWorkFlowMasterStatus",
   HRMSPositionIDMaster: "HRMSPositionIDMaster",
+  HRMSCategoryMaster: "HRMSCategoryMaster"
 };
 
 export const DocumentLibraray = {
@@ -219,7 +220,7 @@ export const RoleDescription = {
 export const RoleDescriptionData = {
   RoleSpeKnowledge: "Role Specific Knowledge",
   Qualification: "Qualification",
-  TechnicalSkill: "Technical Skills",
+  TechnicalSkill: "Technical Skill",
 };
 
 export const ScoreRanking: AutoCompleteItem[] = [
@@ -262,6 +263,7 @@ export const TabName = {
   EvaluationTab: "Candidate Details",
   InterviewQuestion: "Interview Questions",
   AdvertExtension: "Advert Extension",
+  CheckboxContent: "I hereby agree for submitting this request."
 };
 
 export const ProfileStatus = {

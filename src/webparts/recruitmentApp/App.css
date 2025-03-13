@@ -1503,8 +1503,8 @@ footer {
 }
 
 @media screen and (min-width: 1024px) {
-  .a_b_50a7110f:not(.j_b_50a7110f) .m_b_50a7110f{
-    display: flex;
-    max-width: none;
+  .CanvasZoneSectionContainer{
+    display: flex !important;
+    max-width: none !important;
   }
 }
