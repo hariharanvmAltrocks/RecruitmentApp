@@ -60,7 +60,7 @@ import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomPreviewScreen from "./CustomPreviewScreen";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
-import * as moment from "moment";
+//import * as moment from "moment";
 import {
   AdvertisementDetails,
   category,
@@ -607,6 +607,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           );
           errors.Comments = !IsValid(Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
+          // errors.ValidFrom = !IsValid(advDetails.ValidFrom);  // ONEM Page Validition for Valid from and Valid To Changes
+          // errors.ValidTo = !IsValid(advDetails.ValidTo);
         }
         break;
       }
@@ -644,8 +646,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           );
           errors.TotalExperience = !IsValid(advDetails.TotalExperience.text);
           errors.Checkboxalidation = !IsValid(Checkbox);
-          errors.ValidFrom = !IsValid(advDetails.ValidFrom);
-          errors.ValidTo = !IsValid(advDetails.ValidTo);
+          // errors.ValidFrom = !IsValid(advDetails.ValidFrom);
+          // errors.ValidTo = !IsValid(advDetails.ValidTo);
           errors.JobFunctionalType = !IsValid(
             advDetails.JobFunctionalType.text
           );
@@ -712,6 +714,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         const obj: any = {
           ActionId: WorkflowAction.Approved,
         };
+        // let AdvData: any = {                             // ONEM Page Validition for Valid from and Valid To Changes
+        //   ValidFrom: moment(advDetails.ValidFrom).format("YYYY-MM-DD"),
+        //   ValidTo: moment(advDetails.ValidTo).format("YYYY-MM-DD"),
+        //   RecruitmentID: props.stateValue?.ID,
+        // };
         if (formState.Comments) {
           const commentsData: InsertComments = {
             RoleId: props.CurrentRoleID,
@@ -848,8 +855,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               PreferredExperienceId: Number(
                 advDetails.ExperienceinMiningIndustry.key
               ),
-              ValidFrom: moment(advDetails.ValidFrom).format("YYYY-MM-DD"),
-              ValidTo: moment(advDetails.ValidTo).format("YYYY-MM-DD"),
+              // ValidFrom: moment(advDetails.ValidFrom).format("YYYY-MM-DD"),
+              // ValidTo: moment(advDetails.ValidTo).format("YYYY-MM-DD"),
               FunctionTypeId: advDetails.JobFunctionalType.key,
             };
 
@@ -1315,6 +1322,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     return validToDate;
   };
+
   const handleDateChange = (value: Date | null, stateKey: string) => {
     setAdvDetails((prevState) => {
       const updatedState = { ...prevState, [stateKey]: value };
@@ -1765,6 +1773,45 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
               </div>
 
+              {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                props.stateValue?.StatusId ===
+                  StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomDatePicker
+                          selectedDate={advDetails.ValidFrom}
+                          label="Valid From"
+                          error={validationErrors.ValidFrom}
+                          minDate={todaydate}
+                          mandatory={true}
+                          onChange={(date) =>
+                            handleDateChange(date, "ValidFrom")
+                          }
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomDatePicker
+                          selectedDate={advDetails.ValidTo}
+                          label="Valid To"
+                          error={false}
+                          // minDate={
+                          //   advDetails.ValidFrom
+                          //     ? new Date(
+                          //         advDetails.ValidFrom.getTime() +
+                          //           13 * 24 * 60 * 60 * 1000
+                          //       )
+                          //     : undefined
+                          // }
+                          disabled={true}
+                          mandatory={false}
+                          onChange={(date) => handleDateChange(date, "ValidTo")}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
               <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
                 <LabelHeaderComponents value={"Attachments"} />
               </div>
@@ -2206,7 +2253,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         </div>
                       </div>
 
-                      <div className="ms-Grid-row">
+                      {/* <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomDatePicker
                             selectedDate={advDetails.ValidFrom}
@@ -2239,7 +2286,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             }
                           />
                         </div>
-                      </div>
+                      </div> */}
 
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg12">

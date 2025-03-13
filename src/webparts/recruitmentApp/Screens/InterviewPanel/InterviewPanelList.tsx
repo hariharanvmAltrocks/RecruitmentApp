@@ -74,7 +74,7 @@ const InterviewPanelList = (props: any) => {
       sortable: true,
     },
     {
-      field: "FristName",
+      field: "ApplicantName",
       header: "ApplicantName",
       sortable: true,
     },
@@ -257,7 +257,7 @@ const InterviewPanelList = (props: any) => {
         .join(" or ");
 
       const statusResponse =
-        await InterviewServices.GetCandidateDetailsInterviewPanal(
+        await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
           `(${filterCondition}) and Status/StatusDescription eq 'Interview Scheduled'`,
           ""
         );
@@ -277,6 +277,10 @@ const InterviewPanelList = (props: any) => {
         .map((candidate: any) => ({
           ID: candidate.ID,
           FristName: candidate.FristName || "",
+          LastName: candidate.LastName || "",
+          ApplicantName: `${candidate.FristName || ""} ${
+            candidate.LastName || ""
+          }`.trim(),
           PositionTitle: candidate.PositionTitle || "",
           JobGrade: candidate.JobGrade || "",
           Status: statusMap.get(candidate.ID) || "",
