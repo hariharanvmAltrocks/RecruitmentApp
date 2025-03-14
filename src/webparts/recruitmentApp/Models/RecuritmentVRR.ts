@@ -227,17 +227,6 @@ export type QuestionItem = {
   header?: string;
 };
 
-export type InterviewQues = {
-  Disciplines: AutoCompleteItem;
-  QuestionType: AutoCompleteItem;
-  QuestionNumber: AutoCompleteItem;
-  Question: string;
-  ExpectedAnswer: string;
-  Catogry: string;
-  PositionTitle?: string;
-  OptionsType?: { text: string }[];
-  Disqualification?: any;
-};
 export type AssignHod = {
   Comments: string;
 };

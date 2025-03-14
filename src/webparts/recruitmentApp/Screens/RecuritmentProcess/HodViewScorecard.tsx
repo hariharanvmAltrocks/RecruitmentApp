@@ -228,23 +228,24 @@ const HodViewScorecard = (props: any) => {
 
   const fetchCandidateDatas = React.useCallback(async () => {
     try {
-      const filterConditions = [
+      let filterConditions = [
         {
           FilterKey: "CandidateID/Id",
           Operator: "eq",
           FilterValue: candidateID,
         },
       ];
+      let Conditions = "";
 
       const [scoreResponse, positionResponse] = await Promise.all([
         InterviewServices.HRMSCandidateScoreCard(
-          "",
           filterConditions,
+          Conditions,
           candidateID
         ),
         InterviewServices.GetCombinedCandidatePositionDetails(
-          " ",
-          filterConditions
+          filterConditions,
+          Conditions
         ),
       ]);
 
@@ -401,11 +402,12 @@ const HodViewScorecard = (props: any) => {
         FilterValue: candidateID,
       },
     ];
+    let Conditions = "";
 
     try {
       const CommentsList = await InterviewServices.HRMSCandidateScoreCard(
-        "",
         filterConditions,
+        Conditions,
         candidateID
       );
 
