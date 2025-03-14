@@ -27,13 +27,15 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 
 import {
   CatogryOption,
+  DisciplinesOption,
   HRMSAlertOptions,
+  isDisqualificationOption,
   RecuritmentHRMsg,
   RoleID,
 } from "../../utilities/Config";
 import LabelHeaderComponents from "../../components/TitleHeader";
 
-type ValidationError = {
+type InterviewQuesValidationError = {
   QuestionType: boolean;
   QuestionNumber: boolean;
   Disciplines: boolean;
@@ -79,19 +81,17 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     { key: 0, text: "", isCorrect: false },
   ]);
 
-  const [ValidationError, setValidationError] = useState<ValidationError>({
-    QuestionType: false,
-    QuestionNumber: false,
-    Disciplines: false,
-    Question: false,
-    ExpectedAnswer: false,
-    OptionsType: false,
-    Catogry: false,
-    Disqualification: false,
-  });
-  const JobTitleInEnglish = props?.stateValue?.JobTitleInEnglish;
-
-  const JobCode = props?.stateValue?.JobCode;
+  const [ValidationError, setValidationError] =
+    useState<InterviewQuesValidationError>({
+      QuestionType: false,
+      QuestionNumber: false,
+      Disciplines: false,
+      Question: false,
+      ExpectedAnswer: false,
+      OptionsType: false,
+      Catogry: false,
+      Disqualification: false,
+    });
 
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
 
@@ -369,7 +369,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       Disqualification,
     } = InterviewQuesData;
 
-    let errors: Partial<ValidationError> = {};
+    let errors: Partial<InterviewQuesValidationError> = {};
 
     if (!Disciplines.text) errors.Disciplines = true;
     if (!QuestionType.text) errors.QuestionType = true;
@@ -405,8 +405,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
     console.log("OptionsType after validation:", OptionsType);
 
-    const correctAnswers = OptionsType.filter((opt) => opt.isCorrect) // Keep only correct answers
-      .map((opt, i) => ({ key: i, text: opt.text }));
+    const correctAnswers = OptionsType.filter((opt) => opt.isCorrect).map(
+      (opt, i) => ({ key: i, text: opt.text })
+    );
 
     const questionData: QuestionItem = {
       id:
@@ -426,7 +427,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       expectedAnswer:
         InterviewQuesData.QuestionType.text === "Multiple Choice" ||
         InterviewQuesData.QuestionType.text === "Single Choice"
-          ? JSON.stringify(correctAnswers) // Ensure storing previous correct answers
+          ? JSON.stringify(correctAnswers)
           : InterviewQuesData.ExpectedAnswer,
       options:
         InterviewQuesData.QuestionType.text === "Multiple Choice" ||
@@ -436,33 +437,42 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       Disqualification: InterviewQuesData.Disqualification === "YES",
     };
 
-    console.log("Question data before saving:", questionData);
+    new Promise((resolve, reject) => {
+      try {
+        if (editingQuestionIndex !== null) {
+          const updated = [...questions];
+          updated[editingQuestionIndex] = questionData;
+          setQuestions(updated);
+          setEditingQuestionIndex(null);
+        } else {
+          setQuestions((prev) => [...prev, questionData]);
+        }
+        resolve(true);
+      } catch (error) {
+        reject(error);
+      }
+    })
+      .then(() => {
+        console.log("Updated Questions List:", questions);
 
-    if (editingQuestionIndex !== null) {
-      const updated = [...questions];
-      updated[editingQuestionIndex] = questionData;
-      setQuestions(updated);
-      setEditingQuestionIndex(null);
-    } else {
-      setQuestions((prev) => [...prev, questionData]);
-    }
+        setInterviewQuesData((prev) => ({
+          Disciplines: prev.Disciplines,
+          QuestionNumber: { key: 0, text: "" },
+          QuestionType: { key: 0, text: "" },
+          Question: "",
+          ExpectedAnswer: "",
+          Disqualification: "",
+          Catogry: prev.Catogry,
+        }));
 
-    console.log("Updated Questions List:", questions);
+        setOptionsType([{ key: 0, text: "", isCorrect: false }]);
+        console.log("OptionsType after reset:", OptionsType);
 
-    setInterviewQuesData((prev) => ({
-      Disciplines: prev.Disciplines,
-      QuestionNumber: { key: 0, text: "" },
-      QuestionType: { key: 0, text: "" },
-      Question: "",
-      ExpectedAnswer: "",
-      Disqualification: "",
-      Catogry: prev.Catogry,
-    }));
-
-    setOptionsType([{ key: 0, text: "", isCorrect: false }]);
-    console.log("OptionsType after reset:", OptionsType);
-
-    setValidationError({} as ValidationError);
+        setValidationError({} as InterviewQuesValidationError);
+      })
+      .catch((error) => {
+        console.error("Error in handleSaveQuestion:", error);
+      });
   };
 
   // Display the Accordion
@@ -572,6 +582,19 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       return updated;
     });
   };
+  const handleCommonRadioChange =
+    (qIndex: number, field: string) => (value: string) => {
+      setQuestions((prev) =>
+        prev.map((q, i) =>
+          i === qIndex
+            ? {
+                ...q,
+                [field]: value === "YES",
+              }
+            : q
+        )
+      );
+    };
 
   // breadCrumb
 
@@ -583,26 +606,31 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   const handleCancel = () => {
     setIsLoading(true);
+
     const CancelAlert = {
       Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
       Type: HRMSAlertOptions.Confirmation,
       visible: true,
       ButtonAction: async (userClickedOK: boolean) => {
         if (userClickedOK) {
-          if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-            props.navigation("/ReviewProfileList", {
-              state: { activeTab: "tab3" },
-            });
-          } else if (props.CurrentRoleID === RoleID.HOD) {
-            props.navigation("/RecurimentProcess", {
-              state: { activeTab: "tab3" },
-            });
-          } else if (props.CurrentRoleID === RoleID.LineManager) {
-            props.navigation("/ReviewProfileList", {
-              state: { activeTab: "tab2" },
-            });
-          } else {
-            props.navigation("/InterviewPanelList");
+          switch (props.CurrentRoleID) {
+            case RoleID.RecruitmentHR:
+              props.navigation("/ReviewProfileList", {
+                state: { activeTab: "tab3" },
+              });
+              break;
+            case RoleID.HOD:
+              props.navigation("/RecurimentProcess", {
+                state: { activeTab: "tab3" },
+              });
+              break;
+            case RoleID.LineManager:
+              props.navigation("/ReviewProfileList", {
+                state: { activeTab: "tab2" },
+              });
+              break;
+            default:
+              props.navigation("/InterviewPanelList");
           }
           setAlertPopupOpen(false);
         } else {
@@ -610,10 +638,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         }
       },
     };
+
     setAlertPopupOpen(true);
     setalertProps(CancelAlert);
     setIsLoading(false);
   };
+
   // DisQualification
   const handleIsDisqualificationChange = async (
     key: keyof InterviewQues,
@@ -667,7 +697,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             <div className="ms-Grid-row" style={{ marginBottom: "2px" }}>
               <div className="ms-Grid-col ms-lg6">
                 <LabelHeaderComponents
-                  value={`Job Title - ${JobTitleInEnglish} (${JobCode})`}
+                  value={`Job Title - ${props?.stateValue?.JobTitleInEnglish} (${props?.stateValue?.JobCode})`}
                 >
                   {" "}
                 </LabelHeaderComponents>
@@ -781,11 +811,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                     <div className="ms-Grid-col ms-lg5">
                       <CustomAutoComplete
                         label="Disciplines"
-                        options={[
-                          { key: 0, text: "Scope" },
-                          { key: 1, text: "Technical" },
-                          { key: 2, text: "Behavioral" },
-                        ]}
+                        options={DisciplinesOption}
                         value={InterviewQuesData.Disciplines}
                         onChange={(val) =>
                           handleAutoComplete("Disciplines", val)
@@ -1065,17 +1091,15 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                           value={
                                             q.Disqualification ? "YES" : "NO"
                                           }
-                                          onChange={(val) =>
-                                            handleQuestionFieldChange(
-                                              index,
-                                              "isDisqualification",
-                                              val === "YES"
-                                            )
-                                          }
+                                          onChange={handleCommonRadioChange(
+                                            index,
+                                            "Disqualification"
+                                          )}
                                           mandatory={true}
-                                          options={["YES", "NO"]}
+                                          options={isDisqualificationOption}
                                         />
                                       </Box>
+
                                       <Box
                                         sx={{
                                           display: "flex",
@@ -1307,7 +1331,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       <CustomRadioGroup
                         label="Disqualification Question?"
                         value={InterviewQuesData.Disqualification}
-                        options={["YES", "NO"]}
+                        options={isDisqualificationOption}
                         error={ValidationError.Disqualification}
                         mandatory={true}
                         onChange={(value) =>

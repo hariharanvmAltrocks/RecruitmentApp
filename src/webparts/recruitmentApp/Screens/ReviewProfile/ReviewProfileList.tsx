@@ -114,8 +114,8 @@ const ReviewProfileList = (props: any) => {
 
         return (
           <div style={{ display: "flex", gap: "10px" }}>
-            {rowData.Status?.trim() ===
-              "Pending Interview Question with LineManager and HR" ||
+            {rowData.StatusId ===
+              StatusId.PendingInterviewQuestionwithLineManagerandHR ||
             tab === "tab2" ? (
               <img
                 src={require("../../assets/Editbutton.svg")}

@@ -141,58 +141,71 @@ const HodViewScorecard = (props: any) => {
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
-    try {
-      let filterConditions = [];
-      let Conditions = "";
-      filterConditions.push({
-        FilterKey: "ID",
-        Operator: "eq",
-        FilterValue: ID,
-      });
 
-      const data = await getVRRDetails.GetInterviewPanelCandidateDetails(
-        filterConditions,
-        Conditions
-      );
+    let filterConditions = [];
+    let Conditions = "";
+    filterConditions.push({
+      FilterKey: "ID",
+      Operator: "eq",
+      FilterValue: ID,
+    });
 
-      if (data.status === 200 && data.data !== null) {
-        const op = data.data[0];
+    getVRRDetails
+      .GetInterviewPanelCandidateDetails(filterConditions, Conditions)
+      .then((data) => {
+        if (data.status === 200 && data.data !== null) {
+          const op = data.data[0];
+          return CommonServices.GetAttachmentToLibrary(
+            DocumentLibraray.RecruitmentAdvertisementDocument,
+            op?.JobCode
+          )
+            .then((adResponse) => {
+              let advertisementDocuments: any[] = [];
+              if (adResponse.status === 200 && adResponse.data?.length > 0) {
+                advertisementDocuments = adResponse.data.map((doc: any) => ({
+                  name: doc.name,
+                  content: doc.content,
+                }));
+              }
 
-        const response = await CommonServices.GetAttachmentToLibrary(
-          DocumentLibraray.RecruitmentAdvertisementDocument,
-          op?.JobCode
-        );
-
-        let advertisementDocuments: any[] = [];
-        if (
-          response.status === 200 &&
-          response.data &&
-          response.data.length > 0
-        ) {
-          advertisementDocuments = response.data.map((doc: any) => ({
-            name: doc.name,
-            content: doc.content,
-          }));
+              return { op, advertisementDocuments };
+            })
+            .catch((error) => {
+              console.error("Error fetching advertisement documents:", error);
+              return { op, advertisementDocuments: [] };
+            });
+        } else {
+          throw new Error("No candidate data found");
         }
-
-        const RoleProfileresponse = await CommonServices.GetAttachmentToLibrary(
+      })
+      .then(({ op, advertisementDocuments }) => {
+        return CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.RoleProfileMaster,
           op?.JobCode,
           RoleProfileMaster.RoleProfile
-        );
+        )
+          .then((roleProfileResponse) => {
+            let roleProfileDocuments: any[] = [];
+            if (
+              roleProfileResponse.status === 200 &&
+              roleProfileResponse.data?.length > 0
+            ) {
+              roleProfileDocuments = roleProfileResponse.data.map(
+                (doc: any) => ({
+                  name: doc.name,
+                  content: doc.content,
+                })
+              );
+            }
 
-        let roleProfileDocuments: any[] = [];
-        if (
-          RoleProfileresponse.status === 200 &&
-          RoleProfileresponse.data &&
-          RoleProfileresponse.data.length > 0
-        ) {
-          roleProfileDocuments = RoleProfileresponse.data.map((doc: any) => ({
-            name: doc.name,
-            content: doc.content,
-          }));
-        }
-
+            return { op, advertisementDocuments, roleProfileDocuments };
+          })
+          .catch((error) => {
+            console.error("Error fetching role profile documents:", error);
+            return { op, advertisementDocuments, roleProfileDocuments: [] };
+          });
+      })
+      .then(({ op, advertisementDocuments, roleProfileDocuments }) => {
         setCandidateData((prevState) => ({
           ...prevState,
           CandidateID: op?.ID,
@@ -219,78 +232,92 @@ const HodViewScorecard = (props: any) => {
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
         }));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching candidate data:", error);
+      });
   };
 
-  const fetchCandidateDatas = React.useCallback(async () => {
-    try {
-      let filterConditions = [
-        {
-          FilterKey: "CandidateID/Id",
-          Operator: "eq",
-          FilterValue: candidateID,
-        },
-      ];
-      let Conditions = "";
+  const fetchCandidateDatas = React.useCallback(() => {
+    setIsLoading(true);
 
-      const [scoreResponse, positionResponse] = await Promise.all([
-        InterviewServices.HRMSCandidateScoreCard(
-          filterConditions,
-          Conditions,
-          candidateID
-        ),
-        InterviewServices.GetCombinedCandidatePositionDetails(
-          filterConditions,
-          Conditions
-        ),
-      ]);
+    let filterConditions = [
+      {
+        FilterKey: "CandidateID/Id",
+        Operator: "eq",
+        FilterValue: candidateID,
+      },
+    ];
+    let Conditions = "";
 
-      if (scoreResponse?.status === 200 && scoreResponse?.data?.length) {
-        const candidateData = scoreResponse.data.filter(
-          (candidate: any) => candidate.CandidateID === candidateID
-        );
+    console.log("Fetching Candidate Data with Filters:", filterConditions);
 
-        const filteredScores = candidateData.flatMap(
-          (candidate: any) =>
-            candidate.CandidateScoreCard?.filter(
-              (score: any) => candidate.ID === score.InterviewPanelID
-            ) || []
-        );
+    Promise.all([
+      InterviewServices.HRMSCandidateScoreCard(
+        filterConditions,
+        Conditions,
+        candidateID
+      ),
+      InterviewServices.GetCombinedCandidatePositionDetails(
+        filterConditions,
+        Conditions
+      ),
+    ])
+      .then(([scoreResponse, positionResponse]) => {
+        if (scoreResponse?.status === 200 && scoreResponse?.data?.length) {
+          const candidateData = scoreResponse.data.filter(
+            (candidate: any) => candidate.CandidateID === candidateID
+          );
 
-        setInterviewPanelTitles(
-          candidateData.map((panel: any) => panel.InterviewPanelTitle)
-        );
-        setScoreData(filteredScores);
-      } else {
+          const filteredScores = candidateData.flatMap(
+            (candidate: any) =>
+              candidate.CandidateScoreCard?.filter(
+                (score: any) => candidate.ID === score.InterviewPanelID
+              ) || []
+          );
+
+          setInterviewPanelTitles(
+            candidateData.map((panel: any) => panel.InterviewPanelTitle)
+          );
+          setScoreData(filteredScores);
+        } else {
+          console.warn("No score data found.");
+          setScoreData([]);
+          setInterviewPanelTitles([]);
+        }
+
+        if (positionResponse?.status === 200 && positionResponse?.data) {
+          const candidate = positionResponse.data.find(
+            (c: any) => c.ID === candidateID
+          );
+          setIagentName(candidate?.ExternalAgentDetails?.AgentName || "");
+
+          if (!candidate?.ExternalAgentDetails?.AgentName) {
+            console.warn("No agent name found for the candidate.");
+          }
+        } else {
+          console.warn("No position data found.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching candidate data:", error);
         setScoreData([]);
         setInterviewPanelTitles([]);
-      }
-
-      if (positionResponse?.status === 200 && positionResponse?.data) {
-        const candidate = positionResponse.data.find(
-          (c: any) => c.ID === candidateID
-        );
-        setIagentName(candidate?.ExternalAgentDetails?.AgentName || "");
-        if (!candidate?.ExternalAgentDetails?.AgentName) {
-        }
-      }
-    } catch (error) {
-      setScoreData([]);
-      setInterviewPanelTitles([]);
-    } finally {
-      setIsLoading(false);
-    }
+      });
   }, [candidateID]);
 
   React.useEffect(() => {
-    if (candidateID) {
-      // eslint-disable-next-line no-void
-      void fetchCandidateDatas();
-    }
+    const fetchData = async () => {
+      try {
+        if (candidateID) {
+          await fetchCandidateDatas();
+        }
+      } catch (error) {
+        console.error("Error fetching candidate data:", error);
+      }
+    };
+
+    void fetchData();
   }, [candidateID, fetchCandidateDatas]);
 
   const transformScoreData = (rawData: any[]) => {
@@ -387,8 +414,9 @@ const HodViewScorecard = (props: any) => {
     setIsLoading(false);
   };
 
-  const OpenComments = async () => {
+  const OpenComments = () => {
     setMainComponent(false);
+
     if (scoreData.length === 0) {
       return;
     }
@@ -404,27 +432,28 @@ const HodViewScorecard = (props: any) => {
     ];
     let Conditions = "";
 
-    try {
-      const CommentsList = await InterviewServices.HRMSCandidateScoreCard(
-        filterConditions,
-        Conditions,
-        candidateID
-      );
+    InterviewServices.HRMSCandidateScoreCard(
+      filterConditions,
+      Conditions,
+      candidateID
+    )
+      .then((CommentsList) => {
+        if (CommentsList?.status === 200 && CommentsList?.data?.length) {
+          const candidateData = CommentsList.data.filter(
+            (candidate: any) =>
+              candidate.CandidateID === candidateID &&
+              candidate.RecruitmentID === recruitmentID
+          );
 
-      if (CommentsList?.status === 200 && CommentsList?.data?.length) {
-        const candidateData = CommentsList.data.filter(
-          (candidate: any) =>
-            candidate.CandidateID === candidateID &&
-            candidate.RecruitmentID === recruitmentID
-        );
-
-        setCommentsData(candidateData);
-      } else {
+          setCommentsData(candidateData);
+        } else {
+          setCommentsData([]);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching comments:", error);
         setCommentsData([]);
-      }
-    } catch (error) {
-      setCommentsData([]);
-    }
+      });
   };
 
   const handleInputChangeTextArea = (

@@ -18,13 +18,14 @@ interface AssignPositionDialogProps {
     FullName: string;
     PositionTitle: string;
     JobCode: string;
-    positionOptions?: AutoCompleteItem[];
+
     Comments?: string;
   } | null;
   onAssign: (data: {
     positionId: AutoCompleteItem | null;
     Reasons: string;
   }) => void;
+  AssignOption: AutoCompleteItem[];
 }
 
 type ValidationError = {
@@ -37,11 +38,12 @@ export const AssignPositionDialog = ({
   onHide,
   candidateData,
   onAssign,
+  AssignOption,
 }: AssignPositionDialogProps) => {
+  console.log("AssignOption", AssignOption);
   const [selectedPosition, setSelectedPosition] =
     React.useState<AutoCompleteItem | null>(null);
-  const positionOptions = candidateData?.positionOptions || [];
-
+  const positionOptions = AssignOption || [];
   const [Reasons, setReasons] = React.useState<AssignHod>({
     Comments: candidateData?.Comments || "",
   });
