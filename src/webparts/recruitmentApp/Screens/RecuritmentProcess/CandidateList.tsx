@@ -72,7 +72,7 @@ const CandidateList = (props: any) => {
       },
     ];
 
-    let Conditions = "";
+    let Conditions = "and";
 
     InterviewServices.GetPositionDetails(filterConditions, Conditions)
       .then((response) => {
@@ -80,11 +80,10 @@ const CandidateList = (props: any) => {
           setPositionData(response);
         } else {
           setPositionData([]);
-          console.log("No position data found, setting empty array.");
         }
       })
       .catch((error) => {
-        console.error("Error fetching position data:", error);
+        console.error(error);
         setPositionData([]);
       });
   };
@@ -122,7 +121,7 @@ const CandidateList = (props: any) => {
         setCandidateData([]);
       }
     } catch (error) {
-      console.error("", error);
+      console.error(error);
       setCandidateData([]);
     } finally {
       setIsLoading(false);
@@ -164,7 +163,7 @@ const CandidateList = (props: any) => {
       setSelectedCandidate({ ...rowData });
       setShowAssignModal(true);
     } catch (error) {
-      console.error("Error in handleAssignClick:", error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -268,9 +267,17 @@ const CandidateList = (props: any) => {
   ];
 
   React.useEffect(() => {
-    if (props?.stateValue?.JobCode) {
-      fetchCandidateData().catch((error) => console.error("", error));
-    }
+    const fetchData = async () => {
+      try {
+        if (props?.stateValue?.JobCode) {
+          await fetchCandidateData();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    void fetchData();
   }, [props?.stateValue?.JobCode, props?.stateValue?.ID]);
 
   const onPageChange = (event: any) => {
@@ -330,22 +337,16 @@ const CandidateList = (props: any) => {
     Reasons: string;
   }) => {
     if (!data.positionId) {
-      console.error("");
       return;
     }
-
     const positionIdString =
       typeof data.positionId === "string"
         ? data.positionId
         : (data.positionId as any).key || (data.positionId as any).text;
-
     if (!positionIdString) {
-      console.error("");
       return;
     }
-
     setIsLoading(true);
-
     try {
       const filterConditions = [
         {
@@ -362,13 +363,10 @@ const CandidateList = (props: any) => {
         "*,JobCode/JobCode",
         "JobCode"
       );
-
       if (!GetPositionID.data || GetPositionID.data.length === 0) {
-        console.error("");
         setIsLoading(false);
         return;
       }
-
       const selectedPosition = GetPositionID.data[0];
 
       let assignPositionPayload: AssignPositionID = {
@@ -403,11 +401,9 @@ const CandidateList = (props: any) => {
         });
 
         setAlertPopupOpen(true);
-      } else {
-        console.error("");
       }
     } catch (error) {
-      console.error("", error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }

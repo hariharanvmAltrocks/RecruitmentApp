@@ -77,7 +77,7 @@ export default class InterviewProcessService
         message: "Interview Panel Details fetched successfully",
       };
     } catch (error) {
-      console.error("Error fetching interview panel details:", error);
+      console.error(error);
       return {
         data: [],
         status: 400,
@@ -146,7 +146,7 @@ export default class InterviewProcessService
           "Filtered Candidates with Interview Scheduled status fetched successfully",
       };
     } catch (error) {
-      console.error("Error fetching candidate details:", error);
+      console.error(error);
       return {
         data: [],
         status: 500,
@@ -301,8 +301,6 @@ export default class InterviewProcessService
             return formattedItem;
           });
 
-          console.log("Formatted Items:", formattedItems);
-
           return {
             data: formattedItems,
             status: 200,
@@ -312,7 +310,7 @@ export default class InterviewProcessService
         }
       )
       .catch((error) => {
-        console.error("Error in HRMSCandidateScoreCard:", error);
+        console.error(error);
         return {
           data: [],
           status: 500,
@@ -350,7 +348,7 @@ export default class InterviewProcessService
           if (response.status === 200 && response.data) {
             candidateCV = response.data;
           } else {
-            console.error("", response.message);
+            console.error(response.message);
           }
 
           return {
@@ -398,7 +396,6 @@ export default class InterviewProcessService
       );
 
       CandidateDetails.push(...formattedItems);
-      console.log("CandidateDetails", CandidateDetails);
       return {
         data: CandidateDetails,
         status: 200,
@@ -406,7 +403,7 @@ export default class InterviewProcessService
           "Combined Candidate and External Agent Details fetched successfully",
       };
     } catch (error) {
-      console.error("", error);
+      console.error(error);
       return {
         data: [],
         status: 500,
@@ -429,14 +426,7 @@ export default class InterviewProcessService
       ].join(","),
       Expand: "RecruitmentID,PositionID",
       Filter: filterParam,
-      FilterCondition: [
-        ...filterConditions,
-        {
-          FilterKey: "IsPositionIDAssigned",
-          Operator: "eq",
-          FilterValue: "No",
-        },
-      ],
+      FilterCondition: filterConditions,
       Topcount: count.Topcount,
     })
       .then((positionItems: any[]) => {
@@ -451,8 +441,6 @@ export default class InterviewProcessService
           IsPositionIDAssigned: item.IsPositionIDAssigned || "",
         }));
 
-        console.log("PositionDataAPI:", formattedData);
-
         positionOptions = formattedData.map((pos: any) => ({
           key: pos.ID,
           text: pos.PositionID,
@@ -461,7 +449,7 @@ export default class InterviewProcessService
         return positionOptions;
       })
       .catch((error) => {
-        console.error("Error in GetPositionDetails:", error);
+        console.error(error);
         return [];
       });
   }
@@ -483,7 +471,7 @@ export default class InterviewProcessService
         message: "Data Submitted successfully",
       };
     } catch (error) {
-      console.error("", error);
+      console.error(error);
       return {
         data: null,
         status: 400,
@@ -508,7 +496,7 @@ export default class InterviewProcessService
         message: "Data Submitted successfully",
       };
     } catch (error) {
-      console.error("", error);
+      console.error(error);
       return {
         data: null,
         status: 400,

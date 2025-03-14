@@ -141,71 +141,58 @@ const HodViewScorecard = (props: any) => {
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
+    try {
+      let filterConditions = [];
+      let Conditions = "";
+      filterConditions.push({
+        FilterKey: "ID",
+        Operator: "eq",
+        FilterValue: ID,
+      });
 
-    let filterConditions = [];
-    let Conditions = "";
-    filterConditions.push({
-      FilterKey: "ID",
-      Operator: "eq",
-      FilterValue: ID,
-    });
+      const data = await getVRRDetails.GetInterviewPanelCandidateDetails(
+        filterConditions,
+        Conditions
+      );
 
-    getVRRDetails
-      .GetInterviewPanelCandidateDetails(filterConditions, Conditions)
-      .then((data) => {
-        if (data.status === 200 && data.data !== null) {
-          const op = data.data[0];
-          return CommonServices.GetAttachmentToLibrary(
-            DocumentLibraray.RecruitmentAdvertisementDocument,
-            op?.JobCode
-          )
-            .then((adResponse) => {
-              let advertisementDocuments: any[] = [];
-              if (adResponse.status === 200 && adResponse.data?.length > 0) {
-                advertisementDocuments = adResponse.data.map((doc: any) => ({
-                  name: doc.name,
-                  content: doc.content,
-                }));
-              }
+      if (data.status === 200 && data.data !== null) {
+        const op = data.data[0];
 
-              return { op, advertisementDocuments };
-            })
-            .catch((error) => {
-              console.error("Error fetching advertisement documents:", error);
-              return { op, advertisementDocuments: [] };
-            });
-        } else {
-          throw new Error("No candidate data found");
+        const response = await CommonServices.GetAttachmentToLibrary(
+          DocumentLibraray.RecruitmentAdvertisementDocument,
+          op?.JobCode
+        );
+
+        let advertisementDocuments: any[] = [];
+        if (
+          response.status === 200 &&
+          response.data &&
+          response.data.length > 0
+        ) {
+          advertisementDocuments = response.data.map((doc: any) => ({
+            name: doc.name,
+            content: doc.content,
+          }));
         }
-      })
-      .then(({ op, advertisementDocuments }) => {
-        return CommonServices.GetAttachmentToLibrary(
+
+        const RoleProfileresponse = await CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.RoleProfileMaster,
           op?.JobCode,
           RoleProfileMaster.RoleProfile
-        )
-          .then((roleProfileResponse) => {
-            let roleProfileDocuments: any[] = [];
-            if (
-              roleProfileResponse.status === 200 &&
-              roleProfileResponse.data?.length > 0
-            ) {
-              roleProfileDocuments = roleProfileResponse.data.map(
-                (doc: any) => ({
-                  name: doc.name,
-                  content: doc.content,
-                })
-              );
-            }
+        );
 
-            return { op, advertisementDocuments, roleProfileDocuments };
-          })
-          .catch((error) => {
-            console.error("Error fetching role profile documents:", error);
-            return { op, advertisementDocuments, roleProfileDocuments: [] };
-          });
-      })
-      .then(({ op, advertisementDocuments, roleProfileDocuments }) => {
+        let roleProfileDocuments: any[] = [];
+        if (
+          RoleProfileresponse.status === 200 &&
+          RoleProfileresponse.data &&
+          RoleProfileresponse.data.length > 0
+        ) {
+          roleProfileDocuments = RoleProfileresponse.data.map((doc: any) => ({
+            name: doc.name,
+            content: doc.content,
+          }));
+        }
+
         setCandidateData((prevState) => ({
           ...prevState,
           CandidateID: op?.ID,
@@ -232,10 +219,11 @@ const HodViewScorecard = (props: any) => {
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
         }));
-      })
-      .catch((error) => {
-        console.error("Error fetching candidate data:", error);
-      });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
   };
 
   const fetchCandidateDatas = React.useCallback(() => {
@@ -249,8 +237,6 @@ const HodViewScorecard = (props: any) => {
       },
     ];
     let Conditions = "";
-
-    console.log("Fetching Candidate Data with Filters:", filterConditions);
 
     Promise.all([
       InterviewServices.HRMSCandidateScoreCard(
@@ -281,7 +267,6 @@ const HodViewScorecard = (props: any) => {
           );
           setScoreData(filteredScores);
         } else {
-          console.warn("No score data found.");
           setScoreData([]);
           setInterviewPanelTitles([]);
         }
@@ -291,16 +276,10 @@ const HodViewScorecard = (props: any) => {
             (c: any) => c.ID === candidateID
           );
           setIagentName(candidate?.ExternalAgentDetails?.AgentName || "");
-
-          if (!candidate?.ExternalAgentDetails?.AgentName) {
-            console.warn("No agent name found for the candidate.");
-          }
-        } else {
-          console.warn("No position data found.");
         }
       })
       .catch((error) => {
-        console.error("Error fetching candidate data:", error);
+        console.error(error);
         setScoreData([]);
         setInterviewPanelTitles([]);
       });
@@ -313,7 +292,7 @@ const HodViewScorecard = (props: any) => {
           await fetchCandidateDatas();
         }
       } catch (error) {
-        console.error("Error fetching candidate data:", error);
+        console.error(error);
       }
     };
 
@@ -451,7 +430,7 @@ const HodViewScorecard = (props: any) => {
         }
       })
       .catch((error) => {
-        console.error("Error fetching comments:", error);
+        console.error(error);
         setCommentsData([]);
       });
   };
@@ -958,7 +937,7 @@ const HodViewScorecard = (props: any) => {
             {
               FilterKey: "CandidateIDId",
               Operator: "eq",
-              FilterValue: props.stateValue?.ID,
+              FilterValue: props.stateValue.ID,
             },
           ];
 
@@ -978,7 +957,7 @@ const HodViewScorecard = (props: any) => {
               const interviewPanelTitles = filteredPanels.map(
                 (panel) => panel.InterviewPanelTitle
               );
-              console.log("", InterviewPanelData);
+              console.log(InterviewPanelData);
               setInterviewPanelData((prevState) => ({
                 ...prevState,
                 interviewPanelTitles: interviewPanelTitles || [],
@@ -991,7 +970,9 @@ const HodViewScorecard = (props: any) => {
             }
           }
         })
-        .catch((error) => {});
+        .catch((error) => {
+          console.log(error);
+        });
     };
 
     fetchData();
@@ -1048,7 +1029,6 @@ const HodViewScorecard = (props: any) => {
       actionBy: "",
     };
     let SuccessMessage: string = "";
-
     switch (Action) {
       case "Selected":
         obj = { ActionId: WorkflowAction.Approved, Id: props.stateValue.ID };
@@ -1065,21 +1045,22 @@ const HodViewScorecard = (props: any) => {
         );
         SuccessMessage = RecuritmentHRMsg.CandidateRejected;
         break;
+
+      default:
+        console.error(Action);
+        return;
     }
 
     try {
-      const res = await GetPortalJobsService.UpdateCandidateStatus(
-        CandidateDatas
-      );
-      console.log("", res);
+      setIsLoading(true);
 
+      await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
       const selectionResponse = await InterviewServices.CandidateSeletionApi(
         obj,
         ListNames.HRMSRecruitmentCandidatePersonalDetails
       );
 
       if (selectionResponse.status === 200) {
-        setIsLoading(true);
         setAlertPopupOpen(true);
         setalertProps({
           Message: SuccessMessage,
@@ -1104,10 +1085,11 @@ const HodViewScorecard = (props: any) => {
             setAlertPopupOpen(false);
           },
         });
-        setIsLoading(false);
       }
     } catch (error) {
-      console.error("", error);
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

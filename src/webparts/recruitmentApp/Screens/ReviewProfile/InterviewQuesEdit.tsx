@@ -199,8 +199,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       ...prev,
       ExpectedAnswer: JSON.stringify(selectedAnswers),
     }));
-
-    console.log("Expected Answer:", selectedAnswers);
   };
 
   const handleSelectCorrectAnswer = (index: number) => {
@@ -235,10 +233,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   };
 
   const handleAnswerSelection = (qIndex: number, optIndex: number) => {
-    console.log(
-      `Toggling correct answer for option ${optIndex} in question ${qIndex}`
-    );
-
     setQuestions((prev) => {
       const updated = [...prev];
       const question = { ...updated[qIndex] };
@@ -258,14 +252,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           isCorrect: !updatedOptions[optIndex].isCorrect,
         };
       }
-
-      console.log("Updated options list:", updatedOptions);
-
       question.options = updatedOptions;
       question.expectedAnswer = updatedOptions.filter((opt) => opt.isCorrect);
-
-      console.log("Updated expected answer:", question.expectedAnswer);
-
       updated[qIndex] = question;
       return updated;
     });
@@ -294,8 +282,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         ...prevData,
         ExpectedAnswer: JSON.stringify(updatedCorrectAnswers),
       }));
-
-      console.log("Updated Expected Answer:", updatedCorrectAnswers);
       return updatedOptions;
     });
   };
@@ -320,12 +306,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     field: string,
     value: { key: number; text: string } | null
   ) => {
-    console.log(`handleAutoComplete: field=${field}, value=`, value);
-
     setInterviewQuesData((prev) => {
       let updatedData = { ...prev, [field]: value };
       if (field === "QuestionType" && value?.text === "Single Choice") {
-        console.log("Single Choice Selected: Ensuring at least one option");
         setOptionsType([
           {
             key: 0,
@@ -383,28 +366,19 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       const anyOptionFilled = OptionsType.some((opt) => opt.text.trim() !== "");
       if (!anyOptionFilled) {
         errors.OptionsType = true;
-        console.error("Validation Error: At least one option is required.");
       }
     } else {
       if (!ExpectedAnswer) errors.ExpectedAnswer = true;
     }
 
     setValidationError((prev) => ({ ...prev, ...errors }));
-
-    console.log("Validation Errors:", errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleSaveQuestion = () => {
-    console.log("OptionsType before validation:", OptionsType);
-
     if (!Validation()) {
-      console.error("Validation failed! Stopping execution.");
       return;
     }
-
-    console.log("OptionsType after validation:", OptionsType);
-
     const correctAnswers = OptionsType.filter((opt) => opt.isCorrect).map(
       (opt, i) => ({ key: i, text: opt.text })
     );
@@ -453,8 +427,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       }
     })
       .then(() => {
-        console.log("Updated Questions List:", questions);
-
         setInterviewQuesData((prev) => ({
           Disciplines: prev.Disciplines,
           QuestionNumber: { key: 0, text: "" },
@@ -466,13 +438,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         }));
 
         setOptionsType([{ key: 0, text: "", isCorrect: false }]);
-        console.log("OptionsType after reset:", OptionsType);
-
         setValidationError({} as InterviewQuesValidationError);
       })
-      .catch((error) => {
-        console.error("Error in handleSaveQuestion:", error);
-      });
+      .catch((error) => {});
   };
 
   // Display the Accordion
@@ -506,10 +474,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     optIndex: number,
     newVal: string
   ) => {
-    console.log(
-      `Updating option text at index ${optIndex} in question ${qIndex}`
-    );
-
     setQuestions((prev) => {
       const updated = [...prev];
       const question = { ...updated[qIndex] };
@@ -519,22 +483,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         ...updatedOptions[optIndex],
         text: newVal,
       };
-
-      console.log("Updated Options List:", updatedOptions);
-
       question.options = updatedOptions;
       question.expectedAnswer = updatedOptions;
-
-      console.log("Updated expected answer1:", question.expectedAnswer);
-
       updated[qIndex] = question;
       return updated;
     });
   };
 
   const handleQuestionAddRow = (qIndex: number) => {
-    console.log(`Adding new option for question ${qIndex}`);
-
     setQuestions((prev) => {
       const updated = [...prev];
       const question = { ...updated[qIndex] };
@@ -550,9 +506,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       };
 
       question.options = [...question.options, newOption];
-
-      console.log("All options after addition:", question.options);
-
       updated[qIndex] = question;
       return updated;
     });
@@ -574,11 +527,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       question.expectedAnswer = JSON.stringify(selectedAnswers);
 
       updated[qIndex] = question;
-
-      console.log("Deleted Option Index:", optIndex);
-      console.log("Remaining Options:", question.options);
-      console.log("Updated Expected Answer:", question.expectedAnswer);
-
       return updated;
     });
   };

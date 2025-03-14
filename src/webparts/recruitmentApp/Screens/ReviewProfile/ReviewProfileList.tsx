@@ -159,7 +159,7 @@ const ReviewProfileList = (props: any) => {
         setRecuritmentData(data.data);
       }
     } catch (error) {
-      console.log("GetVacancyDetails doesn't fetch the data", error);
+      console.log(error);
     }
     setIsLoading(false);
   };
@@ -210,7 +210,7 @@ const ReviewProfileList = (props: any) => {
       const matchedCandidate = matchedCandidates.length > 0;
       setAssignedCandidates(matchedCandidate);
     } catch (error) {
-      console.error("Error fetching candidate data:", error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -234,7 +234,7 @@ const ReviewProfileList = (props: any) => {
           await fetchCandidateData(userGUID);
         }
       } catch (error) {
-        console.error("Error fetching data", error);
+        console.error(error);
       }
       setIsLoading(false);
     };
