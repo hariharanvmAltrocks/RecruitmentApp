@@ -60,12 +60,14 @@ import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomPreviewScreen from "./CustomPreviewScreen";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
-import * as moment from "moment";
+//import * as moment from "moment";
 import {
   AdvertisementDetails,
+  category,
   Descriptions,
   MinAndPreferedQualifications,
   RoleAndTechSkills,
+  UpsertMasters,
 } from "../../Models/ApIInterface";
 import CustomButton from "../../components/CustomButton";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
@@ -343,7 +345,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       } else {
         setExperValidation(false);
       }
-      console.log(experienceRange, "experienceRange");
+      // console.log(experienceRange, "experienceRange");
     }
   };
 
@@ -605,6 +607,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           );
           errors.Comments = !IsValid(Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
+          // errors.ValidFrom = !IsValid(advDetails.ValidFrom);  // ONEM Page Validition for Valid from and Valid To Changes
+          // errors.ValidTo = !IsValid(advDetails.ValidTo);
         }
         break;
       }
@@ -642,8 +646,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           );
           errors.TotalExperience = !IsValid(advDetails.TotalExperience.text);
           errors.Checkboxalidation = !IsValid(Checkbox);
-          errors.ValidFrom = !IsValid(advDetails.ValidFrom);
-          errors.ValidTo = !IsValid(advDetails.ValidTo);
+          // errors.ValidFrom = !IsValid(advDetails.ValidFrom);
+          // errors.ValidTo = !IsValid(advDetails.ValidTo);
           errors.JobFunctionalType = !IsValid(
             advDetails.JobFunctionalType.text
           );
@@ -693,39 +697,28 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }));
   };
 
+  function previewBtn_Fn() {
+    const isValid = !Validation();
+    if (isValid) {
+      setPreviewBtn(true);
+      setMainComponent(false);
+    }
+  }
+
   const SaveRecruitment = async () => {
     try {
       setIsLoading(true);
       const isValid = !Validation();
 
       if (isValid) {
-        let Table1: any = {
-          // VRRID: formState.VRRID,
-          BusinessUnitCodeId: formState.BusinessUnitCodeID,
-          Nationality: formState.Nationality,
-          EmploymentCategory: formState.EmployementCategory,
-          DepartmentId: formState.DepartmentID,
-          SubDepartmentId: formState.SubDepartmentID,
-          SectionId: formState.SectionID,
-          DepartmentCodeId: formState.DepartmentCodeID,
-          NumberOfPersonNeeded: formState.NoofPositionAssigned,
-          EnterNumberOfMonths: formState.EnterNumberOfMonths,
-          TypeOfContract: formState.ContractType,
-          DateRequried: formState.DateRequried,
-          IsRevert: formState.IsRevert,
-          ReasonForVacancy: formState.ReasonForVacancy,
-          AreaofWork: formState.AreaOfWork,
-          JobCodeId: formState.JobCodeID,
-          VacancyConfirmed: formState.VacancyConfirmed,
-          RecruitmentAuthorised: formState.RecruitmentAuthorised,
-          IsPayrollEmailed: formState.IsPayrollEmailed,
-          AssignedHRId: formState.AssignRecruitmentHR.key,
-          ActionId: WorkflowAction.Approved,
-        };
-        console.log(Table1, "Table1");
         const obj: any = {
           ActionId: WorkflowAction.Approved,
         };
+        // let AdvData: any = {                             // ONEM Page Validition for Valid from and Valid To Changes
+        //   ValidFrom: moment(advDetails.ValidFrom).format("YYYY-MM-DD"),
+        //   ValidTo: moment(advDetails.ValidTo).format("YYYY-MM-DD"),
+        //   RecruitmentID: props.stateValue?.ID,
+        // };
         if (formState.Comments) {
           const commentsData: InsertComments = {
             RoleId: props.CurrentRoleID,
@@ -742,33 +735,49 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               props.stateValue?.StatusId ===
               StatusId.PendingwithHRLeadtouploadONEMsigneddoc
             ) {
-              await PostAdvertisement();
-              await CommonServices.uploadAttachmentToLibrary(
-                formState.JobCode,
-                formState.OnamSignedStampsAttchment ?? [],
-                DocumentLibraray.ONAMSignedStampDocuments
-              );
-              await SPServices.SPUpdateItem({
-                Listname: ListNames.HRMSRecruitmentDptDetails,
-                RequestJSON: obj,
-                ID: props.stateValue?.ID,
-              });
-              resetForm();
-              let CancelAlert = {
-                Message: RecuritmentHRMsg.ONEMDocumentMsg,
-                Type: HRMSAlertOptions.Success,
-                visible: true,
-                ButtonAction: async (userClickedOK: boolean) => {
-                  if (userClickedOK) {
-                    props.navigation("/RecurimentProcess");
-                    setAlertPopupOpen(false);
-                  }
-                },
-              };
-
-              setAlertPopupOpen(true);
-              setalertProps(CancelAlert);
-              setIsLoading(false);
+              const result = await PostAdvertisement();
+              if (result?.status === 200) {
+                await CommonServices.uploadAttachmentToLibrary(
+                  formState.JobCode,
+                  formState.OnamSignedStampsAttchment ?? [],
+                  DocumentLibraray.ONAMSignedStampDocuments
+                );
+                await SPServices.SPUpdateItem({
+                  Listname: ListNames.HRMSRecruitmentDptDetails,
+                  RequestJSON: obj,
+                  ID: props.stateValue?.ID,
+                });
+                resetForm();
+                let SuccessAlert = {
+                  Message: RecuritmentHRMsg.ONEMDocumentMsg,
+                  Type: HRMSAlertOptions.Success,
+                  visible: true,
+                  ButtonAction: async (userClickedOK: boolean) => {
+                    if (userClickedOK) {
+                      props.navigation("/RecurimentProcess");
+                      setAlertPopupOpen(false);
+                    }
+                  },
+                };
+                setAlertPopupOpen(true);
+                setalertProps(SuccessAlert);
+                setIsLoading(false);
+              } else {
+                let APIFailed = {
+                  Message: RecuritmentHRMsg.APIErrorMsg,
+                  Type: HRMSAlertOptions.Error,
+                  visible: true,
+                  ButtonAction: async (userClickedOK: boolean) => {
+                    if (userClickedOK) {
+                      props.navigation("/RecurimentProcess");
+                      setAlertPopupOpen(false);
+                    }
+                  },
+                };
+                setAlertPopupOpen(true);
+                setalertProps(APIFailed);
+                setIsLoading(false);
+              }
             }
             break;
           }
@@ -846,8 +855,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               PreferredExperienceId: Number(
                 advDetails.ExperienceinMiningIndustry.key
               ),
-              ValidFrom: moment(advDetails.ValidFrom).format("YYYY-MM-DD"),
-              ValidTo: moment(advDetails.ValidTo).format("YYYY-MM-DD"),
+              // ValidFrom: moment(advDetails.ValidFrom).format("YYYY-MM-DD"),
+              // ValidTo: moment(advDetails.ValidTo).format("YYYY-MM-DD"),
               FunctionTypeId: advDetails.JobFunctionalType.key,
             };
 
@@ -1260,27 +1269,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     return errors.addMasterMinimumQualification;
   };
 
-  const AddMasterDataQualification_fn = async () => {
-    const isValid = !AddMasterMinimumQualification();
-
-    if (isValid) {
-      const MasterData = {
-        Qualification: advDetails.addMasterMinimumQualification,
-      };
-
-      await getVRRDetails.InsertList(MasterData, ListNames.HRMSQualification);
-
-      setAddQualifMasterbtn(!AddQualifMasterbtn);
-      setAdvDetails((prevState) => ({
-        ...prevState,
-        addMasterMinimumQualification: "",
-      }));
-      setShowQualificationInput(false);
-    } else {
-      //console.log("Validation failed for addMasterMinimumQualification");
-    }
-  };
-
   const handleRichTextEditor = (value: string | any, StateValue: string) => {
     setAdvDetails((prevState) => ({
       ...prevState,
@@ -1334,6 +1322,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     return validToDate;
   };
+
   const handleDateChange = (value: Date | null, stateKey: string) => {
     setAdvDetails((prevState) => {
       const updatedState = { ...prevState, [stateKey]: value };
@@ -1372,7 +1361,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }));
   };
 
-  async function PostAdvertisement() {
+  async function PostAdvertisement(): Promise<{
+    status: number;
+    message?: string;
+  }> {
     try {
       let filterConditions = [
         {
@@ -1381,146 +1373,136 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           FilterValue: props.stateValue.ID,
         },
       ];
-      await getVRRDetails
-        .GetDataInList(
-          ListNames.HRMSRecruitmentRoleProfileDetails,
-          filterConditions,
-          "",
-          "*,RecruitmentID/ID,JobDescription,RoleProfile,TotalPreferredExperience/ExperienceInYearRange,PreferredExperience/ExperienceInYearRange,FunctionType/Code",
-          "RecruitmentID,PreferredExperience,TotalPreferredExperience,FunctionType"
-        )
-        .then(async (res) => {
-          const data = res.data[0];
-          const roleSpecificKnowledge = data.RoleSpecificKnowledgeJson
-            ? JSON.parse(data.RoleSpecificKnowledgeJson)
-            : [];
-          const technicalSkill = data.TechnicalSkillsKnowledgeJson
-            ? JSON.parse(data.TechnicalSkillsKnowledgeJson)
-            : [];
-          let technicalSkillsValues = technicalSkill.map(
-            (item: any) => item.TechnicalSkills
-          );
-          let LevelProficiency = technicalSkill.map(
-            (item: any) => item.LevelProficiency
-          );
 
-          const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
-            (item: any) => item.RoleSpeKnowledge
-          );
-          const RequiredLevelValues = roleSpecificKnowledge.map(
-            (item: any) => item.RequiredLevel
-          );
+      const res = await getVRRDetails.GetDataInList(
+        ListNames.HRMSRecruitmentRoleProfileDetails,
+        filterConditions,
+        "",
+        "*,RecruitmentID/ID,JobDescription,RoleProfile,TotalPreferredExperience/ExperienceInYearRange,PreferredExperience/ExperienceInYearRange,FunctionType/Code",
+        "RecruitmentID,PreferredExperience,TotalPreferredExperience,FunctionType"
+      );
 
-          const roleSpecificSkills: RoleAndTechSkills[] =
-            RoleSpeKnowledgeValues.map((role: any, index: number) => ({
-              skillId: String(role || ""),
-              levelId: String(RequiredLevelValues[index] || ""),
-            }));
+      if (!res || !res.data || res.data.length === 0) {
+        console.log("No data found in GetHRMSRecruitmentRoleProfileDetails");
+        return { status: 400, message: "No data found" };
+      }
 
-          const technicalSkills: RoleAndTechSkills[] =
-            technicalSkillsValues.map((tech: any, index: number) => ({
-              skillId: String(tech || ""),
-              levelId: String(LevelProficiency[index] || ""),
-            }));
+      const data = res.data[0];
 
-          const Roleandtechnical: RoleAndTechSkills[] = [
-            ...roleSpecificSkills,
-            ...technicalSkills,
-          ];
+      const roleSpecificKnowledge = data.RoleSpecificKnowledgeJson
+        ? JSON.parse(data.RoleSpecificKnowledgeJson)
+        : [];
+      const technicalSkill = data.TechnicalSkillsKnowledgeJson
+        ? JSON.parse(data.TechnicalSkillsKnowledgeJson)
+        : [];
 
-          const minQualifications: MinAndPreferedQualifications[] =
-            data.Qualification
-              ? JSON.parse(data.Qualification).map((item: any) => ({
-                  qualification: item.MinQualification, // Adjust as needed
-                  type: 0,
-                }))
-              : [];
+      let technicalSkillsValues = technicalSkill.map(
+        (item: any) => item.TechnicalSkills
+      );
+      let LevelProficiency = technicalSkill.map(
+        (item: any) => item.LevelProficiency
+      );
 
-          const preferredQualifications: MinAndPreferedQualifications[] =
-            data.PreferredQualification
-              ? JSON.parse(data.PreferredQualification).map((item: any) => ({
-                  qualification: item.PrefeQualification, // Adjust as needed
-                  type: 1,
-                }))
-              : [];
+      const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+        (item: any) => item.RoleSpeKnowledge
+      );
+      const RequiredLevelValues = roleSpecificKnowledge.map(
+        (item: any) => item.RequiredLevel
+      );
 
-          // Combine the two arrays into one
-          const MinAndPreferedQualification: MinAndPreferedQualifications[] = [
-            ...minQualifications,
-            ...preferredQualifications,
-          ];
+      const roleSpecificSkills: RoleAndTechSkills[] =
+        RoleSpeKnowledgeValues.map((role: any, index: number) => ({
+          skillId: String(role || ""),
+          levelId: String(RequiredLevelValues[index] || ""),
+        }));
 
-          const Description: Descriptions = {
-            jobTitle: formState.JobNameInEnglish,
-            jobShortSummary: String(data.RoleProfile || ""),
-            jobSummary: String(data.JobDescription || ""),
-          };
-
-          const onamdocpathfile = await CommonServices.GetAttachmentLink(
-            formState.JobCode,
-            DocumentLibraray.ONAMSignedStampDocuments
-          );
-
-          const onemdocPath = String(onamdocpathfile.data);
-          const DepartmentCode = props.Department.filter(
-            (item: { text: string }) => item.text === formState.Department
-          );
-          let NationalityValue =
-            formState.Nationality === Nationality.Nationals
-              ? "Congolese"
-              : formState.Nationality;
-
-          // let agents: agent = {
-          //   exUserCode: "",
-          //   name: "",
-          //   email: "",
-          //   externalUserType: "",
-          //   userId: "",
-          // };
-          // let profileagent: profileXagent = {
-          //   profileId: 0,
-          //   agentCode: "",
-          //   isSuspended: 0,
-          //   agent: agents,
-          // };
-
-          const AdvertisementDetails: AdvertisementDetails = {
-            jobCode: formState.JobCode,
-            noOfPositions: String(formState.NoofPositionAssigned),
-            validFrom: data.ValidFrom,
-            validTo: data.ValidTo,
-            employmentType: "Full Time",
-            departmentId: DepartmentCode[0]?.code || "",
-            role: null,
-            functionId: String(data.FunctionType?.Code || ""),
-            onemdocPath: String(onemdocPath),
-            experience: String(
-              data.TotalPreferredExperience?.ExperienceInYearRange || ""
-            ),
-            nationality: NationalityValue,
-            Descriptions_en: Description,
-            Descriptions_fr: Description,
-            RoleAndTechSkills: Roleandtechnical,
-            MinAndPreferedQualifications: MinAndPreferedQualification,
-            // profileXAgent: profileagent,
-          };
-          console.log(AdvertisementDetails, "AdvertisementDetails");
-
-          await GetPortalJobsService.UpsertJobs(AdvertisementDetails)
-            .then((res) => {
-              console.log(res, "res");
-            })
-            .catch((error) => {
-              console.log("Candidate details doesn't fetch the data", error);
-            });
+      const technicalSkills: RoleAndTechSkills[] = technicalSkillsValues.map(
+        (tech: any, index: number) => ({
+          skillId: String(tech || ""),
+          levelId: String(LevelProficiency[index] || ""),
         })
-        .catch((error) => {
-          console.log(
-            "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
-            error
-          );
-        });
-    } catch {}
+      );
+
+      const Roleandtechnical: RoleAndTechSkills[] = [
+        ...roleSpecificSkills,
+        ...technicalSkills,
+      ];
+
+      const minQualifications: MinAndPreferedQualifications[] =
+        data.Qualification
+          ? JSON.parse(data.Qualification).map((item: any) => ({
+              qualification: item.MinQualification,
+              type: 0,
+            }))
+          : [];
+
+      const preferredQualifications: MinAndPreferedQualifications[] =
+        data.PreferredQualification
+          ? JSON.parse(data.PreferredQualification).map((item: any) => ({
+              qualification: item.PrefeQualification,
+              type: 1,
+            }))
+          : [];
+
+      const MinAndPreferedQualification: MinAndPreferedQualifications[] = [
+        ...minQualifications,
+        ...preferredQualifications,
+      ];
+
+      const Description: Descriptions = {
+        jobTitle: formState.JobNameInEnglish,
+        jobShortSummary: String(data.RoleProfile || ""),
+        jobSummary: String(data.JobDescription || ""),
+      };
+
+      const onamdocpathfile = await CommonServices.GetAttachmentLink(
+        formState.JobCode,
+        DocumentLibraray.ONAMSignedStampDocuments
+      );
+
+      const onemdocPath = String(onamdocpathfile.data);
+      const DepartmentCode = props.Department.find(
+        (item: { text: string }) => item.text === formState.Department
+      );
+      let NationalityValue =
+        formState.Nationality === Nationality.Nationals
+          ? "Congolese"
+          : formState.Nationality;
+
+      const AdvertisementDetails: AdvertisementDetails = {
+        jobCode: formState.JobCode,
+        noOfPositions: String(formState.NoofPositionAssigned),
+        validFrom: data.ValidFrom,
+        validTo: data.ValidTo,
+        employmentType: "Full Time",
+        departmentId: DepartmentCode?.code || "",
+        role: null,
+        functionId: String(data.FunctionType?.Code || ""),
+        onemdocPath: String(onemdocPath),
+        experience: String(
+          data.TotalPreferredExperience?.ExperienceInYearRange || ""
+        ),
+        nationality: NationalityValue,
+        Descriptions_en: Description,
+        Descriptions_fr: Description,
+        RoleAndTechSkills: Roleandtechnical,
+        MinAndPreferedQualifications: MinAndPreferedQualification,
+      };
+      const response = await GetPortalJobsService.UpsertJobs(
+        AdvertisementDetails
+      );
+
+      if (response?.status === 200) {
+        console.log("Advertisement posted successfully:", response);
+        return { status: 200, message: "Success" };
+      } else {
+        console.log("Error posting advertisement:", response);
+        return { status: response?.status || 500, message: "API Error" };
+      }
+    } catch (error) {
+      console.log("Error in PostAdvertisement:", error);
+      return { status: 500, message: "Internal Server Error" };
+    }
   }
 
   const tabs = [
@@ -1790,6 +1772,45 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   />
                 </div>
               </div>
+
+              {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                props.stateValue?.StatusId ===
+                  StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomDatePicker
+                          selectedDate={advDetails.ValidFrom}
+                          label="Valid From"
+                          error={validationErrors.ValidFrom}
+                          minDate={todaydate}
+                          mandatory={true}
+                          onChange={(date) =>
+                            handleDateChange(date, "ValidFrom")
+                          }
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomDatePicker
+                          selectedDate={advDetails.ValidTo}
+                          label="Valid To"
+                          error={false}
+                          // minDate={
+                          //   advDetails.ValidFrom
+                          //     ? new Date(
+                          //         advDetails.ValidFrom.getTime() +
+                          //           13 * 24 * 60 * 60 * 1000
+                          //       )
+                          //     : undefined
+                          // }
+                          disabled={true}
+                          mandatory={false}
+                          onChange={(date) => handleDateChange(date, "ValidTo")}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
 
               <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
                 <LabelHeaderComponents value={"Attachments"} />
@@ -2096,7 +2117,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       >
                         <div className="ms-Grid-col ms-lg12">
                           <SignatureCheckbox
-                            label={"I hereby agree for submitted this request."}
+                            label={TabName.CheckboxContent}
                             checked={Checkbox}
                             error={validationErrors.Checkboxalidation}
                             onChange={(value: boolean) => {
@@ -2232,7 +2253,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         </div>
                       </div>
 
-                      <div className="ms-Grid-row">
+                      {/* <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomDatePicker
                             selectedDate={advDetails.ValidFrom}
@@ -2265,7 +2286,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             }
                           />
                         </div>
-                      </div>
+                      </div> */}
 
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg12">
@@ -2451,7 +2472,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               <ReuseButton
                                 label="Add"
                                 onClick={async () => {
-                                  void AddMasterDataQualification_fn();
+                                  void InsertMasterData(
+                                    RoleDescriptionData.Qualification
+                                  );
                                 }}
                                 spacing={4}
                               />
@@ -2768,7 +2791,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       >
                         <div className="ms-Grid-col ms-lg12">
                           <SignatureCheckbox
-                            label={"I hereby agree for submitted this request."}
+                            label={TabName.CheckboxContent}
                             checked={Checkbox}
                             error={validationErrors.Checkboxalidation}
                             onChange={(value: boolean) => handleCheckbox(value)}
@@ -2865,23 +2888,50 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   };
 
   async function InsertMasterData(Value: string) {
-    const isValid = !MasterDataValidation();
-    if (isValid) {
-      let MasterData;
-      switch (Value) {
-        case RoleDescriptionData.Qualification:
-          {
+    let MasterData;
+    switch (Value) {
+      case RoleDescriptionData.Qualification:
+        {
+          const isValid = !AddMasterMinimumQualification();
+          if (isValid) {
+            setAddQualifMasterbtn(!AddQualifMasterbtn);
+            let filterConditions = [
+              {
+                FilterKey: "Category",
+                Operator: "eq",
+                FilterValue: RoleDescriptionData.Qualification,
+              },
+            ];
+            const CategoryData = await getVRRDetails.GetFilterInCategory(
+              filterConditions
+            );
+            let category: category = {
+              id: CategoryData.data[0]?.CategoryCode,
+              name: CategoryData.data[0]?.Category,
+            };
+            let AgentDetails: UpsertMasters = {
+              value: "",
+              displayText: advDetails.addMasterMinimumQualification,
+              displayText_fr: advDetails.addMasterMinimumQualification,
+              category: category,
+            };
+            console.log(AgentDetails, "AgentDetails");
+
+            await GetPortalJobsService.UpsertMaster(AgentDetails);
             MasterData = {
               Qualification: advDetails.addMasterQualification,
             };
-            await getVRRDetails.InsertList(
-              MasterData,
-              ListNames.HRMSQualification
-            );
+            // await getVRRDetails.InsertList(
+            //   MasterData,
+            //   ListNames.HRMSQualification
+            // );
           }
-          break;
-        case RoleDescriptionData.RoleSpeKnowledge:
-          {
+        }
+        break;
+      case RoleDescriptionData.RoleSpeKnowledge:
+        {
+          const isValid = !MasterDataValidation();
+          if (isValid) {
             MasterData = {
               RoleSpecificKnowledge: advDetails.addMasterQualification,
             };
@@ -2890,9 +2940,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               ListNames.HRMSRoleSpecificKnowlegeMaster
             );
           }
-          break;
-        case RoleDescriptionData.TechnicalSkill:
-          {
+        }
+        break;
+      case RoleDescriptionData.TechnicalSkill:
+        {
+          const isValid = !MasterDataValidation();
+          if (isValid) {
             MasterData = {
               TechnicalSkills: advDetails.addMasterQualification,
             };
@@ -2901,14 +2954,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               ListNames.HRMSTechnicalSkills
             );
           }
-          break;
-      }
-      setAddQualifbtn(false);
-      setAdvDetails((prevState) => ({
-        ...prevState,
-        addMasterQualification: "",
-      }));
+        }
+        break;
     }
+    setAddQualifbtn(false);
+    setAdvDetails((prevState) => ({
+      ...prevState,
+      addMasterQualification: "",
+    }));
   }
 
   const handleBreadcrumbChange = (newItem: string) => {
@@ -2979,8 +3032,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         {
                           label: "Preview",
                           onClick: async () => {
-                            setPreviewBtn(true);
-                            setMainComponent(false);
+                            previewBtn_Fn();
                           },
                         },
                         ...(isViewed

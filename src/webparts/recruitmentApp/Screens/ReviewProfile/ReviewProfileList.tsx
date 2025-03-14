@@ -16,7 +16,6 @@ import SearchableDataTable from "../../components/CustomDataTable";
 import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
 
 const ReviewProfileList = (props: any) => {
-  console.log(props, "");
   const [RecuritmentData, setRecuritmentData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   // const [first, setFirst] = React.useState<number>(0);
@@ -298,7 +297,7 @@ const ReviewProfileList = (props: any) => {
                     data={RecuritmentData}
                     columns={columnConfig(
                       "tab1",
-                      "view",
+                      "View",
                       TabName.AssignInterviewPanel
                     )}
                     rows={rows}

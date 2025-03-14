@@ -12,8 +12,7 @@ import {
 } from "./IInterviewProcessService";
 
 export default class InterviewProcessService
-  implements IInterviewProcessService
-{
+  implements IInterviewProcessService {
   async GetInterviewPanelDetails(
     filterConditions: any[] = []
   ): Promise<ApiResponse<InterviewPanaldata[]>> {
@@ -109,9 +108,8 @@ export default class InterviewProcessService
         FristName: item?.FristName || "",
         MiddleName: item?.MiddleName || "",
         LastName: item?.LastName || "",
-        FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${
-          item?.LastName ?? ""
-        }`.trim(),
+        FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
+          }`.trim(),
         PositionTitle: item?.PositionTitle || "",
         JobGrade: item?.JobGrade || "",
         Status: item?.Status?.StatusDescription || "",
@@ -422,8 +420,8 @@ export default class InterviewProcessService
             JobGrade: item.JobGrade,
             ExternalAgentDetails: item?.ExternalAgentDetails
               ? {
-                  AgentName: item?.ExternalAgentDetails?.AgentName,
-                }
+                AgentName: item?.ExternalAgentDetails?.AgentName,
+              }
               : null,
           };
         })
