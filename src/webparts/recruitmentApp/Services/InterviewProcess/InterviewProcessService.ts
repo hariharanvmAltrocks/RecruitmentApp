@@ -1,5 +1,5 @@
 import { CandidateData } from "../../Models/RecuritmentVRR";
-import { InterviewPanaldata } from "../../Models/Screens";
+import { AutoCompleteItem, InterviewPanaldata } from "../../Models/Screens";
 import { count, DocumentLibraray, ListNames } from "../../utilities/Config";
 import { CommonServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
@@ -85,7 +85,7 @@ export default class InterviewProcessService
       };
     }
   }
-  async GetCandidateDetailsInterviewPanal(
+  async GetCandidateDetailsInterviewPanalDashboard(
     filterParam: any,
     filterConditions: any
   ) {
@@ -161,7 +161,6 @@ export default class InterviewProcessService
     candidateID: number
   ): Promise<ApiResponse<any | null>> {
     try {
-      debugger;
       let CommentsData: CommentsDatas[] = [];
 
       const interviewPanelItems: any[] = await SPServices.SPReadItems({
@@ -201,7 +200,7 @@ export default class InterviewProcessService
         const sageListItems: any[] = await SPServices.SPReadItems({
           Listname: ListNames.HRMSSageList,
           Select:
-            "EmailId,FirstName,LastName,MiddleName,Title,IdentityNo,HomeAddress,ContactNumber,Department/DepartmentName,BusinessUnit/Title,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench,DRCGrade/Title,PatersonGrade/Title",
+            "EmailId,FirstName,LastName,MiddleName,Title,HomeAddress,ContactNumber,Department/DepartmentName,BusinessUnit/Title,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench,DRCGrade/Title,PatersonGrade/Title",
           Expand:
             "Department,BusinessUnit,JobTitleInEnglish,JobTitleInFrench,DRCGrade,PatersonGrade",
           FilterCondition: [
@@ -215,9 +214,7 @@ export default class InterviewProcessService
 
         emailToAuthorMap = sageListItems.reduce((acc, item) => {
           acc[item.EmailId] = {
-            FullName: `${item.FirstName} ${item.MiddleName || ""} ${
-              item.LastName
-            }`.trim(),
+            FullName: `${item.FirstName}`.trim(),
             Department: item.Department?.DepartmentName || "",
             JobTitleInEnglish: item.JobTitleInEnglish || "",
             JobTitleInFrench: item.JobTitleInFrench || "",
@@ -252,7 +249,7 @@ export default class InterviewProcessService
           ID: interview.ID,
           RecruitmentID: interview?.RecruitmentID?.ID || 0,
           InterviewLevel: interview.InterviewLevel || "",
-          InterviewPanelTitle: [panelDetails.Title],
+          InterviewPanelTitle: [panelDetails.FullName],
           CandidateID: interview.CandidateID?.ID || 0,
           CandidateScoreCard: relatedScores.map((score) => ({
             InterviewPanelID: score.InterviewPanelID?.ID || 0,
@@ -285,7 +282,7 @@ export default class InterviewProcessService
         CommentsData.push(formattedItem);
         return formattedItem;
       });
-
+      console.log("formattedItemsHOD", formattedItems);
       return {
         data: formattedItems,
         status: 200,
@@ -312,7 +309,7 @@ export default class InterviewProcessService
       const candidateItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Select:
-          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName,Status/ID,Status/StatusDescription",
+          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName,Status/ID,Status/StatusDescription,ID",
         Expand:
           "JobCode,AssignByInterviewPanel,RecruitmentID,ExternalAgentDetails,Status",
         Filter: filterParam,
@@ -323,7 +320,7 @@ export default class InterviewProcessService
       const positionItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentPositionDetails,
         Select:
-          "JobTitleEnglish/JobTitleInEnglish,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade,RecruitmentID/ID,PositionID/PositionID,AssignLineManager/EMail,JobTitleFrench/JobTitleInFrench,AssignHOD/EMail",
+          "ID,IsPositionIDAssigned,JobTitleEnglish/JobTitleInEnglish,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade,RecruitmentID/ID,PositionID/PositionID,AssignLineManager/EMail,JobTitleFrench/JobTitleInFrench,AssignHOD/EMail",
         Expand:
           "JobTitleEnglish,PatersonGrade,DRCGrade,RecruitmentID,PositionID,AssignLineManager,JobTitleFrench,AssignHOD",
         Filter: filterParam,
@@ -392,6 +389,7 @@ export default class InterviewProcessService
             Status: item?.Status?.StatusDescription || "",
             PositionData: positionData.map(
               (position: {
+                ID: number;
                 PositionID: { PositionID: any };
                 JobTitleEnglish: { JobTitleInEnglish: any };
                 PatersonGrade: { PatersonGrade: any };
@@ -400,7 +398,10 @@ export default class InterviewProcessService
                 AssignLineManager: { EMail: any };
                 AssignHOD: { EMail: any };
                 RecruitmentID: { ID: any };
+                IsPositionIDAssigned: { IsPositionIDAssigned: any };
               }) => ({
+                ID: position?.ID ?? "N/A", //
+                IsPositionIDAssigned: position?.IsPositionIDAssigned ?? "",
                 PositionID: position?.PositionID?.PositionID || "",
                 RecruitmentID: position?.RecruitmentID?.ID || "",
                 PositionTitles:
@@ -429,7 +430,7 @@ export default class InterviewProcessService
       );
 
       CandidateDetails.push(...formattedItems);
-
+      console.log("CandidateDetails", CandidateDetails);
       return {
         data: CandidateDetails,
         status: 200,
@@ -444,6 +445,57 @@ export default class InterviewProcessService
         message:
           "Error fetching combined data from Candidate, Position, and External Agent Details",
       };
+    }
+  }
+
+  async GetPositionDetails(filterParam: any, filterConditions: any) {
+    try {
+      const positionItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentPositionDetails,
+        Select: [
+          "ID",
+          "PositionID/PositionID",
+          "RecruitmentID/ID",
+          "IsPositionIDAssigned",
+        ].join(","),
+        Expand: "RecruitmentID,PositionID",
+        Filter: filterParam,
+        FilterCondition: [
+          ...filterConditions,
+          {
+            FilterKey: "IsPositionIDAssigned",
+            Operator: "eq",
+            FilterValue: "No",
+          },
+        ],
+        Topcount: count.Topcount,
+      });
+
+      if (!positionItems.length) {
+        return [];
+      }
+
+      const formattedData = positionItems.map((item) => ({
+        ID: item.ID,
+        PositionID: item.PositionID?.PositionID || "",
+
+        RecruitmentID: item.RecruitmentID?.ID || "",
+
+        IsPositionIDAssigned: item.IsPositionIDAssigned || "",
+      }));
+
+      console.log("PositionDataAPI:", formattedData);
+
+      const positionOptions: AutoCompleteItem[] = formattedData.map(
+        (pos: any) => ({
+          key: pos.ID,
+          text: pos.PositionID,
+        })
+      );
+      return positionOptions;
+    } catch (error) {
+      console.error("Error in GetPositionDetails:", error);
+      return [];
     }
   }
 

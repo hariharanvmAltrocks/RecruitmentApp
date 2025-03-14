@@ -186,6 +186,8 @@ export const RecuritmentHRMsg = {
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
   APIErrorMsg: "Network Issue Please try again",
+  InterviewQues:
+    "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
 };
 
 export const ADGroupID: IADGroupID = {
@@ -303,3 +305,10 @@ export const workflowStatusApi = {
   LineManagerLevel1Rejected: "WS14",
   LineManagerLevel2Rejected: "WS15",
 };
+// sneka
+export const CatogryOption = [
+  "Interview Panel",
+  "Recruitment Process (Portal)",
+];
+
+export const isDisqualificationOption = ["Yes", "No"];

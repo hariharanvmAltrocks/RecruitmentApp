@@ -228,3 +228,16 @@ export type QuestionItem = {
 export type AssignHod = {
   Comments: string;
 };
+// sneka
+export type InterviewQues = {
+  Disciplines: AutoCompleteItem;
+  QuestionType: AutoCompleteItem;
+  QuestionNumber: AutoCompleteItem;
+  Question: string;
+  ExpectedAnswer: string;
+  Catogry: string;
+  PositionTitle?: string;
+  // OptionsType?: { text: string }[];
+  OptionsType?: AutoCompleteItem;
+  Disqualification?: any;
+};

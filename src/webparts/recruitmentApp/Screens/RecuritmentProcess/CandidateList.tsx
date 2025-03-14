@@ -19,6 +19,7 @@ import { AssignPositionID } from "../../Services/InterviewProcess/IInterviewProc
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
+import SPServices from "../../Services/SPService/SPServices";
 
 const CandidateList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
@@ -27,9 +28,17 @@ const CandidateList = (props: any) => {
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
   const [showAssignModal, setShowAssignModal] = React.useState(false);
-  const [selectedCandidate, setSelectedCandidate] = React.useState(null);
+
+  const [selectedCandidate, setSelectedCandidate] = React.useState<{
+    FullName: string;
+    PositionTitle: string;
+    JobCode: string;
+    Comments?: string;
+  } | null>(null);
+
   const [candidateID, setCandidateID] = React.useState<number>(0);
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
+
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
     Message: "",
     Type: "",
@@ -38,9 +47,94 @@ const CandidateList = (props: any) => {
   });
 
   const jobCode = props?.stateValue?.JobCode?.toString().trim();
+
   const ID = props?.stateValue?.ID?.toString().trim();
+
   const Status = props?.stateValue?.Status;
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+
+  const [positionData, setPositionData] = React.useState<AutoCompleteItem[]>(
+    []
+  );
+
+  const [positionOptions] = React.useState<AutoCompleteItem[]>([]);
+
+  const fetchPositionData = async () => {
+    setIsLoading(true);
+    try {
+      let filterConditions = [
+        {
+          FilterKey: "RecruitmentIDId",
+          Operator: "eq",
+          FilterValue: ID,
+        },
+        {
+          FilterKey: "IsPositionIDAssigned",
+          Operator: "eq",
+          FilterValue: "No",
+        },
+      ];
+      let Conditions = "";
+
+      const response = await InterviewServices.GetPositionDetails(
+        filterConditions,
+        Conditions
+      );
+      if (response) {
+        setPositionData(response);
+      } else {
+        setPositionData([]);
+      }
+    } catch (error) {
+      console.error("", error);
+      setPositionData([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchCandidateData = async () => {
+    if (!jobCode || !ID) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      let filterConditions = [
+        { FilterKey: "RecruitmentIDId", Operator: "eq", FilterValue: ID },
+      ];
+      let Conditions = "";
+
+      const response =
+        await InterviewServices.GetCombinedCandidatePositionDetails(
+          filterConditions,
+          Conditions
+        );
+
+      if (response?.status === 200 && response?.data?.length) {
+        const filteredCandidates = response.data
+          .filter(
+            (candidate: any) =>
+              candidate.JobCode?.toString().trim() === jobCode &&
+              candidate.RecruitmentID?.toString().trim() === ID &&
+              (candidate.Status ===
+                "Pending with HOD to select the candidate" ||
+                candidate.Status === "Selected")
+          )
+          .map((candidate: any) => ({
+            ...candidate,
+          }));
+
+        setCandidateData(filteredCandidates);
+      } else {
+        setCandidateData([]);
+      }
+    } catch (error) {
+      console.error("", error);
+      setCandidateData([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   function handleRedirectView(
     rowData: any,
     tab: string,
@@ -50,7 +144,6 @@ const CandidateList = (props: any) => {
   ) {
     switch (props.CurrentRoleID) {
       case RoleID.HOD:
-        // eslint-disable-next-line no-lone-blocks
         {
           if (tab === "tab1") {
             props.navigation("/RecurimentProcess/HodViewScorecard", {
@@ -70,6 +163,15 @@ const CandidateList = (props: any) => {
     }
   }
 
+  const handleAssignClick = async (rowData: any) => {
+    setIsLoading(true);
+    await fetchPositionData();
+    setCandidateID(rowData.ID);
+    setSelectedCandidate({ ...rowData, positionOptions });
+    setShowAssignModal(true);
+    setIsLoading(false);
+  };
+
   const columnConfig = (
     tab: string,
     ButtonAction: string,
@@ -83,7 +185,6 @@ const CandidateList = (props: any) => {
     },
     { field: "ID", header: "Candidate ID", sortable: true },
     { field: "FullName", header: "Applicant Name", sortable: true },
-    // { field: "JobCode", header: "Job Code", sortable: true },
     { field: "PositionTitle", header: "Position Title", sortable: true },
     { field: "JobGrade", header: "Job Grade", sortable: true },
     { field: "GPA", header: "GPA", sortable: true },
@@ -128,19 +229,7 @@ const CandidateList = (props: any) => {
                 src={require("../../assets/AssignPositionID.svg")}
                 alt="Stamp Icon"
                 onClick={() => {
-                  setCandidateID(rowData.ID);
-                  const positionOptions: AutoCompleteItem[] =
-                    rowData.PositionData?.map((pos: any, index: number) => ({
-                      key: index + 1,
-                      text: pos.PositionID,
-                    })) || [];
-
-                  setSelectedCandidate({
-                    ...rowData,
-                    positionOptions,
-                  });
-
-                  setShowAssignModal(true);
+                  void handleAssignClick(rowData);
                 }}
                 style={{
                   width: "70%",
@@ -173,49 +262,6 @@ const CandidateList = (props: any) => {
       },
     },
   ];
-  const fetchCandidateData = async () => {
-    if (!jobCode || !ID) {
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const filterConditions = [
-        { FilterKey: "JobCode", Operator: "eq", FilterValue: jobCode },
-        { FilterKey: "ID", Operator: "eq", FilterValue: ID },
-      ];
-
-      const response =
-        await InterviewServices.GetCombinedCandidatePositionDetails(
-          " ",
-          filterConditions
-        );
-
-      if (response?.status === 200 && response?.data?.length) {
-        const filteredCandidates = response.data
-          .filter(
-            (candidate: any) =>
-              candidate.JobCode?.toString().trim() === jobCode &&
-              candidate.RecruitmentID?.toString().trim() === ID &&
-              (candidate.Status ===
-                "Pending with HOD to select the candidate" ||
-                candidate.Status === "Selected")
-          )
-          .map((candidate: any) => ({
-            ...candidate,
-          }));
-
-        setCandidateData(filteredCandidates);
-      } else {
-        setCandidateData([]);
-      }
-    } catch (error) {
-      console.error("", error);
-      setCandidateData([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   React.useEffect(() => {
     if (jobCode) {
@@ -280,6 +326,7 @@ const CandidateList = (props: any) => {
     Reasons: string;
   }) => {
     if (!data.positionId) {
+      console.error("");
       return;
     }
 
@@ -289,43 +336,56 @@ const CandidateList = (props: any) => {
         : (data.positionId as any).key || (data.positionId as any).text;
 
     if (!positionIdString) {
+      console.error("");
       return;
     }
-    let filterConditions = [];
-    let Conditions = "";
-    filterConditions.push({
-      FilterKey: "PositionID",
-      Operator: "eq",
-      FilterValue: data.positionId.text,
-    });
+
+    setIsLoading(true);
 
     try {
+      const filterConditions = [
+        {
+          FilterKey: "PositionID",
+          Operator: "eq",
+          FilterValue: data.positionId.text,
+        },
+      ];
+
       const GetPositionID = await getVRRDetails.GetDataInList(
         ListNames.HRMSPositionIDMaster,
         filterConditions,
-        Conditions,
+        "",
         "*,JobCode/JobCode",
         "JobCode"
       );
 
       if (!GetPositionID.data || GetPositionID.data.length === 0) {
+        console.error("");
+        setIsLoading(false);
         return;
       }
 
-      let obj: AssignPositionID = {
-        PositionIDId: GetPositionID.data[0]?.ID,
+      const selectedPosition = GetPositionID.data[0];
+
+      let assignPositionPayload: AssignPositionID = {
+        PositionIDId: selectedPosition.ID,
         CandidateIDId: candidateID,
         RecruitmentIDId: props.stateValue.ID,
       };
 
       const res = await InterviewServices.AssignPositionID(
-        obj,
+        assignPositionPayload,
         ListNames.HRMSSelectedCandidateDetailsByHOD
       );
 
       if (res.status === 200) {
-        setIsLoading(true);
-        let CancelAlert = {
+        await SPServices.SPUpdateItem({
+          Listname: ListNames.HRMSRecruitmentPositionDetails,
+          RequestJSON: { IsPositionIDAssigned: "Yes" },
+          ID: data.positionId.key,
+        });
+
+        setalertProps({
           Message: RecuritmentHRMsg.PositionIDassigned,
           Type: HRMSAlertOptions.Success,
           visible: true,
@@ -333,18 +393,20 @@ const CandidateList = (props: any) => {
             if (userClickedOK) {
               setShowAssignModal(false);
               setAlertPopupOpen(false);
+              await fetchCandidateData();
             }
           },
-        };
+        });
 
         setAlertPopupOpen(true);
-        setalertProps(CancelAlert);
-        setIsLoading(false);
+      } else {
+        console.error("");
       }
     } catch (error) {
-      console.error("Error in Post the Candidate Assign API", error);
+      console.error("", error);
+    } finally {
+      setIsLoading(false);
     }
-    setShowAssignModal(false);
   };
 
   return (
@@ -360,7 +422,17 @@ const CandidateList = (props: any) => {
       <AssignPositionDialog
         visible={showAssignModal}
         onHide={() => setShowAssignModal(false)}
-        candidateData={selectedCandidate}
+        candidateData={
+          selectedCandidate
+            ? {
+                FullName: selectedCandidate?.FullName,
+                PositionTitle: selectedCandidate.PositionTitle,
+                JobCode: selectedCandidate.JobCode,
+                Comments: selectedCandidate.Comments,
+                positionOptions: positionData,
+              }
+            : null
+        }
         onAssign={handleAssignPosition}
       />
       {AlertPopupOpen ? (
