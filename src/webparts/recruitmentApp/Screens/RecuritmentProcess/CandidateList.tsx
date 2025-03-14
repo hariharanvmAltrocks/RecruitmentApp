@@ -74,8 +74,6 @@ const CandidateList = (props: any) => {
 
     let Conditions = "";
 
-    console.log("Fetching Position Data with Conditions:", filterConditions);
-
     InterviewServices.GetPositionDetails(filterConditions, Conditions)
       .then((response) => {
         if (response) {
