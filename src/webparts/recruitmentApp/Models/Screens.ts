@@ -27,3 +27,10 @@ export type InterviewPanaldata = {
   InterviewPanalNames: string[];
   InterviewPanelTitle: string;
 };
+
+export type SelectedCandidateData = {
+  FullName: string;
+  PositionTitle: string;
+  JobCode: string;
+  Comments?: string;
+};

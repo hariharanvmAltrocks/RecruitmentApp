@@ -567,7 +567,7 @@ const InterviewPanelEdit = (props: any) => {
             } else if (props.CurrentRoleID === RoleID.LineManager) {
               props.navigation("/ReviewProfileList", {
                 state: {
-                  activeTab: "tab2",
+                  activeTab: "tab3",
                 },
               });
             } else {
@@ -1412,7 +1412,7 @@ const InterviewPanelEdit = (props: any) => {
           } else if (props.CurrentRoleID === RoleID.LineManager) {
             props.navigation("/ReviewProfileList", {
               state: {
-                activeTab: "tab2",
+                activeTab: "tab3",
               },
             });
           } else {

@@ -46,7 +46,7 @@ export const ListNames = {
   HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
   HRMSRecruitmentWorkFlowMasterStatus: "HRMSRecruitmentWorkFlowMasterStatus",
   HRMSPositionIDMaster: "HRMSPositionIDMaster",
-  HRMSCategoryMaster: "HRMSCategoryMaster"
+  HRMSCategoryMaster: "HRMSCategoryMaster",
 };
 
 export const DocumentLibraray = {
@@ -67,6 +67,8 @@ export const StatusId = {
   PendingwithRecruitmentHRtoAssignExternalAgency: 119,
   RecruitmentInProgress: 28,
   PendingwithHODtoselectthecandidate: 121,
+  Selected: 122,
+  PendingInterviewQuestionwithLineManagerandHR: 39,
 };
 
 export const RoleID = {
@@ -187,6 +189,8 @@ export const RecuritmentHRMsg = {
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
   APIErrorMsg: "Network Issue Please try again",
+  InterviewQues:
+    "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
 };
 
 export const ADGroupID: IADGroupID = {
@@ -263,7 +267,7 @@ export const TabName = {
   EvaluationTab: "Candidate Details",
   InterviewQuestion: "Interview Questions",
   AdvertExtension: "Advert Extension",
-  CheckboxContent: "I hereby agree for submitting this request."
+  CheckboxContent: "I hereby agree for submitting this request.",
 };
 
 export const ProfileStatus = {
@@ -305,3 +309,14 @@ export const workflowStatusApi = {
   LineManagerLevel1Rejected: "WS14",
   LineManagerLevel2Rejected: "WS15",
 };
+// sneka
+export const CatogryOption = [
+  "Interview Panel",
+  "Recruitment Process (Portal)",
+];
+export const DisciplinesOption = [
+  { key: 0, text: "Scope" },
+  { key: 1, text: "Technical" },
+  { key: 2, text: "Behavioral" },
+];
+export const isDisqualificationOption = ["Yes", "No"];

@@ -226,70 +226,77 @@ const HodViewScorecard = (props: any) => {
     setIsLoading(false);
   };
 
-  const fetchCandidateDatas = React.useCallback(async () => {
-    try {
-      const filterConditions = [
-        {
-          FilterKey: "CandidateID/Id",
-          Operator: "eq",
-          FilterValue: candidateID,
-        },
-      ];
+  const fetchCandidateDatas = React.useCallback(() => {
+    setIsLoading(true);
 
-      const [scoreResponse, positionResponse] = await Promise.all([
-        InterviewServices.HRMSCandidateScoreCard(
-          "",
-          filterConditions,
-          candidateID
-        ),
-        InterviewServices.GetCombinedCandidatePositionDetails(
-          " ",
-          filterConditions
-        ),
-      ]);
+    let filterConditions = [
+      {
+        FilterKey: "CandidateID/Id",
+        Operator: "eq",
+        FilterValue: candidateID,
+      },
+    ];
+    let Conditions = "";
 
-      if (scoreResponse?.status === 200 && scoreResponse?.data?.length) {
-        const candidateData = scoreResponse.data.filter(
-          (candidate: any) => candidate.CandidateID === candidateID
-        );
+    Promise.all([
+      InterviewServices.HRMSCandidateScoreCard(
+        filterConditions,
+        Conditions,
+        candidateID
+      ),
+      InterviewServices.GetCombinedCandidatePositionDetails(
+        filterConditions,
+        Conditions
+      ),
+    ])
+      .then(([scoreResponse, positionResponse]) => {
+        if (scoreResponse?.status === 200 && scoreResponse?.data?.length) {
+          const candidateData = scoreResponse.data.filter(
+            (candidate: any) => candidate.CandidateID === candidateID
+          );
 
-        const filteredScores = candidateData.flatMap(
-          (candidate: any) =>
-            candidate.CandidateScoreCard?.filter(
-              (score: any) => candidate.ID === score.InterviewPanelID
-            ) || []
-        );
+          const filteredScores = candidateData.flatMap(
+            (candidate: any) =>
+              candidate.CandidateScoreCard?.filter(
+                (score: any) => candidate.ID === score.InterviewPanelID
+              ) || []
+          );
 
-        setInterviewPanelTitles(
-          candidateData.map((panel: any) => panel.InterviewPanelTitle)
-        );
-        setScoreData(filteredScores);
-      } else {
+          setInterviewPanelTitles(
+            candidateData.map((panel: any) => panel.InterviewPanelTitle)
+          );
+          setScoreData(filteredScores);
+        } else {
+          setScoreData([]);
+          setInterviewPanelTitles([]);
+        }
+
+        if (positionResponse?.status === 200 && positionResponse?.data) {
+          const candidate = positionResponse.data.find(
+            (c: any) => c.ID === candidateID
+          );
+          setIagentName(candidate?.ExternalAgentDetails?.AgentName || "");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
         setScoreData([]);
         setInterviewPanelTitles([]);
-      }
-
-      if (positionResponse?.status === 200 && positionResponse?.data) {
-        const candidate = positionResponse.data.find(
-          (c: any) => c.ID === candidateID
-        );
-        setIagentName(candidate?.ExternalAgentDetails?.AgentName || "");
-        if (!candidate?.ExternalAgentDetails?.AgentName) {
-        }
-      }
-    } catch (error) {
-      setScoreData([]);
-      setInterviewPanelTitles([]);
-    } finally {
-      setIsLoading(false);
-    }
+      });
   }, [candidateID]);
 
   React.useEffect(() => {
-    if (candidateID) {
-      // eslint-disable-next-line no-void
-      void fetchCandidateDatas();
-    }
+    const fetchData = async () => {
+      try {
+        if (candidateID) {
+          await fetchCandidateDatas();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    void fetchData();
   }, [candidateID, fetchCandidateDatas]);
 
   const transformScoreData = (rawData: any[]) => {
@@ -386,8 +393,9 @@ const HodViewScorecard = (props: any) => {
     setIsLoading(false);
   };
 
-  const OpenComments = async () => {
+  const OpenComments = () => {
     setMainComponent(false);
+
     if (scoreData.length === 0) {
       return;
     }
@@ -401,28 +409,30 @@ const HodViewScorecard = (props: any) => {
         FilterValue: candidateID,
       },
     ];
+    let Conditions = "";
 
-    try {
-      const CommentsList = await InterviewServices.HRMSCandidateScoreCard(
-        "",
-        filterConditions,
-        candidateID
-      );
+    InterviewServices.HRMSCandidateScoreCard(
+      filterConditions,
+      Conditions,
+      candidateID
+    )
+      .then((CommentsList) => {
+        if (CommentsList?.status === 200 && CommentsList?.data?.length) {
+          const candidateData = CommentsList.data.filter(
+            (candidate: any) =>
+              candidate.CandidateID === candidateID &&
+              candidate.RecruitmentID === recruitmentID
+          );
 
-      if (CommentsList?.status === 200 && CommentsList?.data?.length) {
-        const candidateData = CommentsList.data.filter(
-          (candidate: any) =>
-            candidate.CandidateID === candidateID &&
-            candidate.RecruitmentID === recruitmentID
-        );
-
-        setCommentsData(candidateData);
-      } else {
+          setCommentsData(candidateData);
+        } else {
+          setCommentsData([]);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
         setCommentsData([]);
-      }
-    } catch (error) {
-      setCommentsData([]);
-    }
+      });
   };
 
   const handleInputChangeTextArea = (
@@ -927,7 +937,7 @@ const HodViewScorecard = (props: any) => {
             {
               FilterKey: "CandidateIDId",
               Operator: "eq",
-              FilterValue: props.stateValue?.ID,
+              FilterValue: props.stateValue.ID,
             },
           ];
 
@@ -947,7 +957,7 @@ const HodViewScorecard = (props: any) => {
               const interviewPanelTitles = filteredPanels.map(
                 (panel) => panel.InterviewPanelTitle
               );
-              console.log("", InterviewPanelData);
+              console.log(InterviewPanelData);
               setInterviewPanelData((prevState) => ({
                 ...prevState,
                 interviewPanelTitles: interviewPanelTitles || [],
@@ -960,7 +970,9 @@ const HodViewScorecard = (props: any) => {
             }
           }
         })
-        .catch((error) => {});
+        .catch((error) => {
+          console.log(error);
+        });
     };
 
     fetchData();
@@ -1017,7 +1029,6 @@ const HodViewScorecard = (props: any) => {
       actionBy: "",
     };
     let SuccessMessage: string = "";
-
     switch (Action) {
       case "Selected":
         obj = { ActionId: WorkflowAction.Approved, Id: props.stateValue.ID };
@@ -1034,21 +1045,22 @@ const HodViewScorecard = (props: any) => {
         );
         SuccessMessage = RecuritmentHRMsg.CandidateRejected;
         break;
+
+      default:
+        console.error(Action);
+        return;
     }
 
     try {
-      const res = await GetPortalJobsService.UpdateCandidateStatus(
-        CandidateDatas
-      );
-      console.log("", res);
+      setIsLoading(true);
 
+      await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
       const selectionResponse = await InterviewServices.CandidateSeletionApi(
         obj,
         ListNames.HRMSRecruitmentCandidatePersonalDetails
       );
 
       if (selectionResponse.status === 200) {
-        setIsLoading(true);
         setAlertPopupOpen(true);
         setalertProps({
           Message: SuccessMessage,
@@ -1073,10 +1085,11 @@ const HodViewScorecard = (props: any) => {
             setAlertPopupOpen(false);
           },
         });
-        setIsLoading(false);
       }
     } catch (error) {
-      console.error("", error);
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

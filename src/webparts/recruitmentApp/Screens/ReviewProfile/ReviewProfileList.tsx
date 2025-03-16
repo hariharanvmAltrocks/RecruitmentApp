@@ -77,60 +77,64 @@ const ReviewProfileList = (props: any) => {
       style: { width: "8%" },
       sortable: false,
       body: (rowData: any) => {
-        function handleRedirectView(
+        const handleRedirectView = (
           rowData: any,
           tab: string,
           TabName: string,
           ButtonAction: string
-        ): void {
-          props.navigation("/ReviewProfileList/ReviewCandidateList", {
-            state: {
-              ID: rowData?.ID,
-              JobCode: rowData?.JobCode,
-              tab,
-              StatusId: rowData?.StatusId,
-              Status: rowData?.Status,
-              TabName: TabName,
-              ButtonAction,
-            },
-          });
-        }
+        ): void => {
+          if (tab === "tab2") {
+            props.navigation("/ReviewProfileList/InterviewQuesEdit", {
+              state: {
+                ID: rowData?.ID,
+                AssignedHRId: rowData?.AssignedHRId,
+                tab: "tab2",
+                StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                JobTitleInEnglish: rowData.JobTitleInEnglish,
+                JobCode: rowData.JobCode,
+                TabName,
+                ButtonAction,
+              },
+            });
+          } else {
+            props.navigation("/ReviewProfileList/ReviewCandidateList", {
+              state: {
+                ID: rowData?.ID,
+                JobCode: rowData?.JobCode,
+                tab: "tab1",
+                StatusId: rowData?.StatusId,
+                Status: rowData?.Status,
+                TabName,
+                ButtonAction,
+              },
+            });
+          }
+        };
 
         return (
-          <div>
-            <span>
-              {/* <Button
-                onClick={() => handleRedirectView(rowData, tab, TabName, ButtonAction)}
-                className="table_btn"
-                // icon="pi pi-eye"
-                style={{
-                  width: "30px",
-                  marginRight: "7px",
-                  padding: "3px",
-                }}
-              >
-                <img
-                  src={require("../../assets/edit_icon.png")}
-                  alt="Stamp Icon"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                  }}
-                />
-              </Button> */}
-
+          <div style={{ display: "flex", gap: "10px" }}>
+            {rowData.StatusId ===
+              StatusId.PendingInterviewQuestionwithLineManagerandHR ||
+            tab === "tab2" ? (
               <img
-                src={require("../../assets/Viewicon.svg")}
-                alt="Stamp Icon"
-                style={{
-                  width: "70%",
-                  height: "60%",
-                }}
+                src={require("../../assets/Editbutton.svg")}
+                alt="Edit Icon"
+                style={{ width: "70%", height: "60%", cursor: "pointer" }}
                 onClick={() =>
-                  handleRedirectView(rowData, tab, TabName, ButtonAction)
+                  handleRedirectView(rowData, "tab2", TabName, ButtonAction)
                 }
               />
-            </span>
+            ) : (
+              <img
+                src={require("../../assets/Viewicon.svg")}
+                alt="View Icon"
+                style={{ width: "70%", height: "60%", cursor: "pointer" }}
+                onClick={() =>
+                  handleRedirectView(rowData, "tab1", TabName, ButtonAction)
+                }
+              />
+            )}
           </div>
         );
       },
@@ -155,7 +159,7 @@ const ReviewProfileList = (props: any) => {
         setRecuritmentData(data.data);
       }
     } catch (error) {
-      console.log("GetVacancyDetails doesn't fetch the data", error);
+      console.log(error);
     }
     setIsLoading(false);
   };
@@ -206,7 +210,7 @@ const ReviewProfileList = (props: any) => {
       const matchedCandidate = matchedCandidates.length > 0;
       setAssignedCandidates(matchedCandidate);
     } catch (error) {
-      console.error("Error fetching candidate data:", error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -230,7 +234,7 @@ const ReviewProfileList = (props: any) => {
           await fetchCandidateData(userGUID);
         }
       } catch (error) {
-        console.error("Error fetching data", error);
+        console.error(error);
       }
       setIsLoading(false);
     };
@@ -240,7 +244,6 @@ const ReviewProfileList = (props: any) => {
   }, []);
 
   const onPageChange = (event: any) => {
-    // setFirst(event.first);
     setRows(event.rows);
   };
 
@@ -309,7 +312,7 @@ const ReviewProfileList = (props: any) => {
           ...(assignedCandidates
             ? [
                 {
-                  label: TabName.Evaluation, //"EvaluationTab for HR",
+                  label: TabName.Evaluation,
                   value: "tab3",
                   content: <InterviewPanelList {...props} />,
                 },
@@ -342,11 +345,36 @@ const ReviewProfileList = (props: any) => {
               </Card>
             ),
           },
+          {
+            label: TabName.InterviewQuestion,
+            value: "tab2",
+            content: (
+              <Card
+                variant="outlined"
+                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+              >
+                <CardContent>
+                  <SearchableDataTable
+                    data={RecuritmentData}
+                    columns={columnConfig(
+                      "tab2",
+                      "Edit",
+                      TabName.InterviewQuestion
+                    )}
+                    rows={rows}
+                    onPageChange={onPageChange}
+                    handleRefresh={() => handleRefresh("tab2")}
+                    MasterData={props}
+                  />
+                </CardContent>
+              </Card>
+            ),
+          },
           ...(assignedCandidates
             ? [
                 {
-                  label: TabName.Evaluation, //"EvaluationTab for LineManager",
-                  value: "tab2",
+                  label: TabName.Evaluation,
+                  value: "tab3",
                   content: <InterviewPanelList {...props} />,
                 },
               ]
@@ -360,10 +388,6 @@ const ReviewProfileList = (props: any) => {
         <div className="menu-card">
           <React.Fragment>
             <TabsComponent
-              // tabs={tabs}
-              // initialTab="tab1"
-              // tabClassName={"Tab"}
-              // tabtype={tabType.Dashboard}
               tabs={tabs}
               initialTab={activeTab}
               tabtype={tabType.Dashboard}
