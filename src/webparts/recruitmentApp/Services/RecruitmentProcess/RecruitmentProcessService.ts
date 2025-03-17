@@ -9,6 +9,7 @@ import { CandidateData } from "../../Models/RecuritmentVRR";
 import { sp } from "@pnp/sp/presets/all";
 import { CommonServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
+import * as moment from "moment";
 
 interface IAttachmentExampleState {
   file: File | any;
@@ -37,12 +38,13 @@ export default class RecruitmentService implements IRecruitmentService {
         Expand:
           "Department, SubDepartment, Section, DepartmentCode, Status, Action, BusinessUnitCode, JobCode",
         Orderby: "ID",
-        Orderbydecorasc: false,
+        Orderbydecorasc: true,
       });
 
       const formattedItems: any[] = [];
 
       for (const item of listItems) {
+        console.log("item", item);
         let VRR: any = {
           VRRID: item.Id,
           Nationality: item.Nationality || "",
@@ -64,7 +66,7 @@ export default class RecruitmentService implements IRecruitmentService {
           TypeOfContract: item.TypeOfContract || "",
           BusinessUnitCodeId: item.BusinessUnitCodeId || 0,
           BusinessUnitCode: item.BusinessUnitCode?.BusineesUnitCode || "",
-          DateRequired: item.DateRequired || null,
+          DateRequired: moment(item.DateRequired).format("DD/MM/YYYY") || null,
           IsRevert: item.IsRevert || "",
           ReasonForVacancy: item.ReasonForVacancy || "",
           AreaofWork: item.AreaofWork || "",
@@ -253,12 +255,13 @@ export default class RecruitmentService implements IRecruitmentService {
                 `,
         Topcount: count.Topcount,
         Orderby: "ID",
-        Orderbydecorasc: false,
+        Orderbydecorasc: true,
       });
 
       const formattedItems: any[] = [];
       let positionrequestresult: any = [];
       for (const item of listItems) {
+        console.log("GetRecruitmentDetails......!!!!", item);
         let Recruitment: any = {
           ID: item?.ID,
           Nationality: item?.Nationality || "",
@@ -621,8 +624,9 @@ export default class RecruitmentService implements IRecruitmentService {
           FristName: item.FristName,
           MiddleName: item.MiddleName,
           LastName: item.LastName,
-          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""
-            }`,
+          FullName: `${item.FristName || ""} ${item.MiddleName || ""} ${
+            item.LastName || ""
+          }`,
           ResidentialAddress: item?.ResidentialAddress,
           DOB: item?.DOB,
           ContactNumber: item?.ContactNumber,
@@ -830,10 +834,10 @@ export default class RecruitmentService implements IRecruitmentService {
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
             ? (Employee.FirstName ?? "") +
-            " " +
-            (Employee.MiddleName ?? "") +
-            " " +
-            (Employee.LastName ?? "")
+              " " +
+              (Employee.MiddleName ?? "") +
+              " " +
+              (Employee.LastName ?? "")
             : "",
           // Name: Employee ? Employee.FirstName + " " + Employee.MiddleName + " " + Employee.LastName : "",
         };
@@ -1244,13 +1248,13 @@ export default class RecruitmentService implements IRecruitmentService {
 
           ValidFrom: item.ValidFrom
             ? new Date(item.ValidFrom)
-              .toLocaleDateString("en-GB")
-              .replace(/\//g, "-")
+                .toLocaleDateString("en-GB")
+                .replace(/\//g, "-")
             : "N/A",
           ValidTo: item.ValidTo
             ? new Date(item.ValidTo)
-              .toLocaleDateString("en-GB")
-              .replace(/\//g, "-")
+                .toLocaleDateString("en-GB")
+                .replace(/\//g, "-")
             : "N/A",
 
           // FunctionType:
@@ -1416,7 +1420,7 @@ export default class RecruitmentService implements IRecruitmentService {
         FilterCondition: filterConditions,
         Expand: Expand,
         Orderby: "ID",
-        Orderbydecorasc: false,
+        Orderbydecorasc: true,
       })
         .then((res) => {
           console.log(res, "res");
@@ -1447,12 +1451,14 @@ export default class RecruitmentService implements IRecruitmentService {
     }
   }
 
-  GetFilterInCategory = async (filterConditions: any): Promise<ApiResponse<any[]>> => {
+  GetFilterInCategory = async (
+    filterConditions: any
+  ): Promise<ApiResponse<any[]>> => {
     try {
       const Category: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSCategoryMaster,
         Select: "*",
-        Filter: filterConditions
+        Filter: filterConditions,
       });
       return {
         data: Category,
@@ -1460,15 +1466,12 @@ export default class RecruitmentService implements IRecruitmentService {
         message: "fetched Category successfully",
       };
     } catch (error) {
-      console.error(
-        "Error fetching data Category:",
-        error
-      );
+      console.error("Error fetching data Category:", error);
       return {
         data: [],
         status: 500,
         message: "Error fetching data from Category",
       };
     }
-  }
+  };
 }

@@ -26,4 +26,5 @@ export type InterviewPanaldata = {
   InterviewPanel: number;
   InterviewPanalNames: string[];
   InterviewPanelTitle: string;
+  IsScoreSheetUploaded: string;
 };

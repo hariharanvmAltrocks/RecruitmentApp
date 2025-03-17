@@ -1771,6 +1771,27 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     }
                   />
                 </div>
+                <div className="ms-Grid-col ms-lg3">
+                  <CustomInput
+                    label="Date When Position Is Required"
+                    value={
+                      formState.DateRequried
+                        ? new Date(formState.DateRequried)
+                            .toLocaleDateString("en-GB")
+                            .replace(/\//g, "-")
+                        : ""
+                    }
+                    disabled={true}
+                    error={false}
+                    mandatory={false}
+                    onChange={(value) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        DateRequried: value,
+                      }))
+                    }
+                  />
+                </div>
               </div>
 
               {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
@@ -2332,7 +2353,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 error={validationErrors.TotalExperience}
                               />
                             </div>
-                            <div className="ms-Grid-col ms-lg5">
+                            <div className="ms-Grid-col ms-lg6">
                               <CustomAutoComplete
                                 label="Preferred Experience in Mining Industry (Years)"
                                 options={

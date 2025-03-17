@@ -42,7 +42,7 @@ export type IInterviewProcessService = {
     filterParam: any,
     filterConditions: any
   ): Promise<any | null>;
-  GetCandidateDetailsInterviewPanal(
+  GetCandidateDetailsInterviewPanalDashboard(
     filterParam: any,
     filterConditions: any
   ): Promise<any | null>;

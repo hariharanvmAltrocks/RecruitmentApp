@@ -12,7 +12,8 @@ import {
 } from "./IInterviewProcessService";
 
 export default class InterviewProcessService
-  implements IInterviewProcessService {
+  implements IInterviewProcessService
+{
   async GetInterviewPanelDetails(
     filterConditions: any[] = []
   ): Promise<ApiResponse<InterviewPanaldata[]>> {
@@ -22,11 +23,10 @@ export default class InterviewProcessService
       let listItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSInterviewPanelDetails,
         Select:
-          "ID, CandidateIDId, RecruitmentIDId, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail",
-        Expand: "InterviewPanel",
+          "ID, CandidateID/ID, RecruitmentID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail,IsScoreSheetUploaded",
+        Expand: "InterviewPanel,RecruitmentID,CandidateID",
         Filter: filterConditions,
       });
-
       const panelEmails = listItems
         .map((interview) => interview.InterviewPanel?.EMail)
         .filter((email) => email);
@@ -36,7 +36,7 @@ export default class InterviewProcessService
       if (panelEmails.length > 0) {
         const sageListItems: any[] = await SPServices.SPReadItems({
           Listname: ListNames.HRMSSageList,
-          Select: "EmailId,FirstName,LastName",
+          Select: "EmailId, FirstName, LastName",
           FilterCondition: [
             {
               FilterKey: "EmailId",
@@ -47,29 +47,28 @@ export default class InterviewProcessService
         });
 
         emailToAuthorMap = sageListItems.reduce((acc, item) => {
-          acc[item.EmailId] = `${item.FirstName} `;
+          acc[item.EmailId] = `${item.FirstName}`;
           return acc;
-        }, {});
+        }, {} as Record<string, string>);
       }
+
       InterviewPanelDetails = listItems.map((objresult: any) => {
         const panelEmail = objresult.InterviewPanel?.EMail || "N/A";
         const authorName = emailToAuthorMap[panelEmail] || "Unknown";
 
         return {
           ID: objresult.ID,
-          CandidateID: objresult.CandidateIDId,
-          RecruitmentID: objresult.RecruitmentIDId,
-          InterviewLevel: objresult.InterviewLevel,
-          InterviewPanel: objresult.InterviewPanel
-            ? objresult.InterviewPanel.Id
-            : 0,
+          CandidateID: objresult.CandidateID?.ID || 0,
+          RecruitmentID: objresult.RecruitmentID?.ID || 0,
+          InterviewLevel: objresult.InterviewLevel || "N/A",
+          InterviewPanel: objresult.InterviewPanel?.Id || 0,
           InterviewPanelTitle: authorName,
-          InterviewPanalNames: objresult.InterviewPanel
+          InterviewPanalNames: objresult.InterviewPanel?.Title
             ? [objresult.InterviewPanel.Title]
             : [],
+          IsScoreSheetUploaded: objresult.IsScoreSheetUploaded || "",
         };
       });
-
       return {
         data: InterviewPanelDetails,
         status: 200,
@@ -84,23 +83,20 @@ export default class InterviewProcessService
       };
     }
   }
-  async GetCandidateDetailsInterviewPanal(
-    filterParam: any,
-    filterConditions: any
+
+  async GetCandidateDetailsInterviewPanalDashboard(
+    filterConditions: any[] = []
   ) {
     try {
-      const CandidateDetails: CandidateData[] = [];
-
       const candidateItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Select: "*,Status/ID,Status/StatusDescription",
-        Expand: "Status",
-        Filter: `${filterParam} and Status/StatusDescription eq 'Interview Scheduled'`,
-        FilterCondition: filterConditions,
+        Select: "*,Status/ID,Status/StatusDescription,RecruitmentID/ID",
+        Expand: "Status,RecruitmentID",
+        Filter: filterConditions,
         Topcount: count.Topcount,
       });
 
-      const formattedItems: CandidateData[] = candidateItems.map((item) => ({
+      const CandidateDetails: CandidateData[] = candidateItems.map((item) => ({
         ID: item.ID,
         JobCode: item?.JobCode?.JobCode || "",
         JobCodeId: item?.JobCodeId || "",
@@ -108,11 +104,13 @@ export default class InterviewProcessService
         FristName: item?.FristName || "",
         MiddleName: item?.MiddleName || "",
         LastName: item?.LastName || "",
-        FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
-          }`.trim(),
+        FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${
+          item?.LastName ?? ""
+        }`.trim(),
         PositionTitle: item?.PositionTitle || "",
         JobGrade: item?.JobGrade || "",
         Status: item?.Status?.StatusDescription || "",
+        StatusId: item?.StatusId || 0,
         ContactNumber: item?.ContactNumber || "",
         Email: item?.Email || "",
         ResidentialAddress: item?.ResidentialAddress || "",
@@ -133,9 +131,8 @@ export default class InterviewProcessService
         ExternalAgentDetails: item?.ExternalAgentDetails
           ? { AgentName: item?.ExternalAgentDetails?.AgentName }
           : null,
+        RecruitmentID: item?.RecruitmentID?.ID || 0,
       }));
-
-      CandidateDetails.push(...formattedItems);
 
       return {
         data: CandidateDetails,
@@ -416,8 +413,8 @@ export default class InterviewProcessService
             JobGrade: item.JobGrade,
             ExternalAgentDetails: item?.ExternalAgentDetails
               ? {
-                AgentName: item?.ExternalAgentDetails?.AgentName,
-              }
+                  AgentName: item?.ExternalAgentDetails?.AgentName,
+                }
               : null,
           };
         })

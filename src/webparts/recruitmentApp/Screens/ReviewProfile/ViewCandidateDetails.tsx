@@ -39,6 +39,7 @@ import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { Dialog } from "primereact/dialog";
 import CustomJsonComments from "../../components/CustomJsonComments";
 import CustomDatePicker from "../../components/CustomDatePicker";
+import CustomTimePicker from "../../components/CustomTimePicker";
 
 type InterviewedLevelValue = {
   Levels: string;
@@ -46,6 +47,8 @@ type InterviewedLevelValue = {
   AssignInterviewLevel1: AutoCompleteItem[];
   AssignInterviewedLevel2: AutoCompleteItem[];
   InterviewedDate: Date | undefined;
+  InterviewMeetingInviteLink: string;
+  InterviewTime: string;
 };
 
 type ValidationError = {
@@ -54,6 +57,8 @@ type ValidationError = {
   CandidateStatus: boolean;
   InterviewedDate: boolean;
   AssignInterviewLevel1: boolean;
+  InterviewMeetingInviteLink: boolean;
+  InterviewTime: boolean;
 };
 
 type ActionValue = {
@@ -97,6 +102,8 @@ const ViewCandidateDetails = (props: any) => {
       AssignInterviewLevel1: [],
       AssignInterviewedLevel2: [],
       InterviewedDate: undefined,
+      InterviewMeetingInviteLink: "",
+      InterviewTime: "",
     });
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
@@ -113,6 +120,8 @@ const ViewCandidateDetails = (props: any) => {
       CandidateStatus: false,
       InterviewedDate: false,
       AssignInterviewLevel1: false,
+      InterviewMeetingInviteLink: false,
+      InterviewTime: false,
     });
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -332,6 +341,28 @@ const ViewCandidateDetails = (props: any) => {
     }));
   };
 
+  const handleInterviewTimeChange = (value: string | undefined) => {
+    setInterviewedLevel((prevState: any) => ({
+      ...prevState,
+      InterviewTime: value,
+    }));
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      InterviewTime: false,
+    }));
+  };
+
+  const handleInputChange = (value: string) => {
+    setInterviewedLevel((prevState: any) => ({
+      ...prevState,
+      InterviewMeetingInviteLink: value,
+    }));
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      InterviewMeetingInviteLink: false,
+    }));
+  };
+
   const tabs = [
     {
       label: TabName.CandidateDetails,
@@ -502,10 +533,7 @@ const ViewCandidateDetails = (props: any) => {
                         </div>
                       )}
                       <div className="ms-Grid-row">
-                        <div
-                          className="ms-Grid-col ms-lg4"
-                          style={{ marginLeft: "7px" }}
-                        >
+                        <div className="ms-Grid-col ms-lg4">
                           <CustomDatePicker
                             selectedDate={InterviewedLevel.InterviewedDate}
                             label="Interviewed Date"
@@ -515,6 +543,24 @@ const ViewCandidateDetails = (props: any) => {
                             onChange={(date) =>
                               handleDateChange(date ?? undefined)
                             }
+                          />
+                        </div>
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomTimePicker
+                            selectedTime={InterviewedLevel.InterviewTime}
+                            label="Interview Time"
+                            error={validationErrors.InterviewTime}
+                            mandatory={true}
+                            onChange={handleInterviewTimeChange}
+                          />
+                        </div>
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomInput
+                            label="Interview Meeting Invite Link"
+                            value={InterviewedLevel.InterviewMeetingInviteLink}
+                            disabled={false}
+                            mandatory={true}
+                            onChange={handleInputChange}
                           />
                         </div>
                       </div>
