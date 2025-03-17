@@ -263,7 +263,12 @@ export const TabName = {
   EvaluationTab: "Candidate Details",
   InterviewQuestion: "Interview Questions",
   AdvertExtension: "Advert Extension",
-  CheckboxContent: "I hereby agree for submitting this request."
+  CheckboxContent: "I hereby agree for submitting this request.",
+  ReviewLevel1: "Review Profile - Level 1",
+  ReviewLevel2: "Review Profile - Level 2",
+  Shortlisted: "Shortlisted",
+  onHold: "On Hold",
+  Rejected: "Rejected"
 };
 
 export const ProfileStatus = {

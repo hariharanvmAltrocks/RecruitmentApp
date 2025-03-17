@@ -407,29 +407,29 @@ const ReviewCandidateList = (props: any) => {
   }, [activeTab]);
 
   const breadcrumbs = [
-    {
-      label: "Review Profile",
-      value: "tab1",
-      content: (
-        <Card
-          variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-        >
-          <CardContent>
-            <BreadcrumbsComponent
-              items={tabs("tab1")}
-              initialItem={activeTab}
-              TabName={TabNameData}
-              onBreadcrumbChange={handleBreadcrumbChange}
-            />
-          </CardContent>
-        </Card>
-      ),
-    },
     ...(props.CurrentRoleID === RoleID.LineManager
       ? [
           {
-            label: "Review Profile-Level 2",
+            label: TabName.ReviewLevel1,
+            value: "tab1",
+            content: (
+              <Card
+                variant="outlined"
+                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+              >
+                <CardContent>
+                  <BreadcrumbsComponent
+                    items={tabs("tab1")}
+                    initialItem={activeTab}
+                    TabName={TabNameData}
+                    onBreadcrumbChange={handleBreadcrumbChange}
+                  />
+                </CardContent>
+              </Card>
+            ),
+          },
+          {
+            label: TabName.ReviewLevel2,
             value: "tab2 - Level 2",
             content: (
               <Card
@@ -447,65 +447,104 @@ const ReviewCandidateList = (props: any) => {
               </Card>
             ),
           },
+          {
+            label: TabName.Shortlisted,
+            value: "tab2",
+            content: (
+              <Card
+                variant="outlined"
+                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+              >
+                <CardContent>
+                  <BreadcrumbsComponent
+                    items={tabs("tab2")}
+                    initialItem={activeTab}
+                    TabName={TabNameData}
+                    onBreadcrumbChange={handleBreadcrumbChange}
+                  />
+                </CardContent>
+              </Card>
+            ),
+          },
+          {
+            label: TabName.onHold,
+            value: "tab3",
+            content: (
+              <Card
+                variant="outlined"
+                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+              >
+                <CardContent>
+                  <BreadcrumbsComponent
+                    items={tabs("tab3")}
+                    initialItem={activeTab}
+                    TabName={TabNameData}
+                    onBreadcrumbChange={handleBreadcrumbChange}
+                  />
+                </CardContent>
+              </Card>
+            ),
+          },
+          {
+            label: TabName.Rejected,
+            value: "tab4",
+            content: (
+              <Card
+                variant="outlined"
+                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+              >
+                <CardContent>
+                  <BreadcrumbsComponent
+                    items={tabs("tab4")}
+                    initialItem={activeTab}
+                    TabName={TabNameData}
+                    onBreadcrumbChange={handleBreadcrumbChange}
+                  />
+                </CardContent>
+              </Card>
+            ),
+          },
         ]
-      : []),
-    {
-      label: "Shortlisted",
-      value: "tab2",
-      content: (
-        <Card
-          variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-        >
-          <CardContent>
-            <BreadcrumbsComponent
-              items={tabs("tab2")}
-              initialItem={activeTab}
-              TabName={TabNameData}
-              onBreadcrumbChange={handleBreadcrumbChange}
-            />
-          </CardContent>
-        </Card>
-      ),
-    },
-    {
-      label: "On Hold",
-      value: "tab3",
-      content: (
-        <Card
-          variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-        >
-          <CardContent>
-            <BreadcrumbsComponent
-              items={tabs("tab3")}
-              initialItem={activeTab}
-              TabName={TabNameData}
-              onBreadcrumbChange={handleBreadcrumbChange}
-            />
-          </CardContent>
-        </Card>
-      ),
-    },
-    {
-      label: "Rejected",
-      value: "tab4",
-      content: (
-        <Card
-          variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-        >
-          <CardContent>
-            <BreadcrumbsComponent
-              items={tabs("tab4")}
-              initialItem={activeTab}
-              TabName={TabNameData}
-              onBreadcrumbChange={handleBreadcrumbChange}
-            />
-          </CardContent>
-        </Card>
-      ),
-    },
+      : [
+          {
+            label: TabName.ReviewProfile,
+            value: "tab1",
+            content: (
+              <Card
+                variant="outlined"
+                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+              >
+                <CardContent>
+                  <BreadcrumbsComponent
+                    items={tabs("tab1")}
+                    initialItem={activeTab}
+                    TabName={TabNameData}
+                    onBreadcrumbChange={handleBreadcrumbChange}
+                  />
+                </CardContent>
+              </Card>
+            ),
+          },
+          {
+            label: TabName.MySubmission,
+            value: "tab2",
+            content: (
+              <Card
+                variant="outlined"
+                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+              >
+                <CardContent>
+                  <BreadcrumbsComponent
+                    items={tabs("tab2")}
+                    initialItem={activeTab}
+                    TabName={TabNameData}
+                    onBreadcrumbChange={handleBreadcrumbChange}
+                  />
+                </CardContent>
+              </Card>
+            ),
+          },
+        ]),
   ];
   const handleTabChange = (newTab: string) => {
     setBreadcrumbTab(newTab);

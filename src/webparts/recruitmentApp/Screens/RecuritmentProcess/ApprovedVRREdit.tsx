@@ -124,7 +124,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     ExperienceinMiningIndustryOption: [],
     YearofExperience: " ",
     PreferredExperience: "",
-    ValidFrom: undefined,
+    ValidFrom: todaydate,
     ValidTo: undefined,
     FunctionType: "",
     JobFunctionalType: { key: 0, text: "" },
@@ -265,17 +265,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           ]);
         }
         break;
-      //   case RoleDescription.QualificationValue:
-      //     {
-      //       setQualificationValue((prevState) => [
-      //         ...prevState,
-      //         {
-      //           MinQualification: { key: 0, text: "" },
-      //           PrefeQualification: { key: 0, text: "" },
-      //         },
-      //       ]);
-      //     }
-      //     break;
       case RoleDescription.TechnicalSkillValue: {
         setTechnicalSkillValue((prevState) => [
           ...prevState,
@@ -297,13 +286,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           );
         }
         break;
-      //   case RoleDescription.QualificationValue:
-      //     {
-      //       setQualificationValue((prevState) =>
-      //         prevState.filter((_, i) => i !== index)
-      //       );
-      //     }
-      //     break;
       case RoleDescription.TechnicalSkillValue: {
         setTechnicalSkillValue((prevState) =>
           prevState.filter((_, i) => i !== index)
@@ -378,27 +360,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }));
       }
     }
-
-    // if (stateKey === "QualificationValue") {
-    //   setQualificationValue((prevState) => {
-    //     const updatedRows = [...prevState];
-    //     if (key === "MinQualification" || key === "PrefeQualification") {
-    //       updatedRows[index][key] = item || { key: 0, text: "" };
-    //     }
-    //     return updatedRows;
-    //   });
-    //   if (key === "MinQualification") {
-    //     setValidationError((prevState) => ({
-    //       ...prevState,
-    //       MinQualification: false,
-    //     }));
-    //   } else if (key === "PrefeQualification") {
-    //     setValidationError((prevState) => ({
-    //       ...prevState,
-    //       PrefeQualification: false,
-    //     }));
-    //   }
-    // }
 
     if (stateKey === "TechnicalSkillValue") {
       setTechnicalSkillValue((prevState) => {
@@ -1764,6 +1725,29 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   />
                 </div>
               </div>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg3">
+                  <CustomDatePicker
+                    selectedDate={advDetails.ValidFrom}
+                    label="Valid From"
+                    error={validationErrors.ValidFrom}
+                    minDate={todaydate}
+                    mandatory={true}
+                    disabled={true}
+                    onChange={(date) => handleDateChange(date, "ValidFrom")}
+                  />
+                </div>
+                <div className="ms-Grid-col ms-lg3">
+                  <CustomDatePicker
+                    selectedDate={advDetails.ValidTo}
+                    label="Valid To"
+                    error={false}
+                    disabled={true}
+                    mandatory={false}
+                    onChange={(date) => handleDateChange(date, "ValidTo")}
+                  />
+                </div>
+              </div>
 
               <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
                 <LabelHeaderComponents value={"Attachments"} />
@@ -2203,41 +2187,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               );
                             }
                           )}
-                        </div>
-                      </div>
-
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg4">
-                          <CustomDatePicker
-                            selectedDate={advDetails.ValidFrom}
-                            label="Valid From"
-                            error={validationErrors.ValidFrom}
-                            minDate={todaydate}
-                            mandatory={true}
-                            onChange={(date) =>
-                              handleDateChange(date, "ValidFrom")
-                            }
-                          />
-                        </div>
-                        <div className="ms-Grid-col ms-lg4">
-                          <CustomDatePicker
-                            selectedDate={advDetails.ValidTo}
-                            label="Valid To"
-                            error={false}
-                            // minDate={
-                            //   advDetails.ValidFrom
-                            //     ? new Date(
-                            //         advDetails.ValidFrom.getTime() +
-                            //           13 * 24 * 60 * 60 * 1000
-                            //       )
-                            //     : undefined
-                            // }
-                            disabled={true}
-                            mandatory={false}
-                            onChange={(date) =>
-                              handleDateChange(date, "ValidTo")
-                            }
-                          />
                         </div>
                       </div>
 
@@ -2813,7 +2762,17 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         return uniqueTabNames;
       });
     }
-
+    if (
+      props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+      props.stateValue?.StatusId ===
+        StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+    ) {
+      const newValidTo = calculateValidTo(todaydate, 13);
+      setAdvDetails((prevState) => ({
+        ...prevState,
+        ValidTo: newValidTo,
+      }));
+    }
     if (activeTab !== prevActiveTab) {
       setPrevActiveTab(activeTab);
     }
@@ -2859,25 +2818,51 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               filterConditions
             );
             let category: category = {
-              id: CategoryData.data[0]?.CategoryCode,
+              id: Number(CategoryData.data[0]?.CategoryCode),
               name: CategoryData.data[0]?.Category,
             };
-            let AgentDetails: UpsertMasters = {
-              value: "",
-              displayText: advDetails.addMasterMinimumQualification,
-              displayText_fr: advDetails.addMasterMinimumQualification,
-              category: category,
-            };
-            console.log(AgentDetails, "AgentDetails");
+            let AgentDetailsList: UpsertMasters[] = [
+              {
+                displayText: advDetails.addMasterMinimumQualification,
+                displayText_fr: advDetails.addMasterMinimumQualification,
+                category: category,
+              },
+            ];
 
-            await GetPortalJobsService.UpsertMaster(AgentDetails);
-            MasterData = {
-              Qualification: advDetails.addMasterQualification,
-            };
-            // await getVRRDetails.InsertList(
-            //   MasterData,
-            //   ListNames.HRMSQualification
-            // );
+            console.log(AgentDetailsList, "AgentDetailsList");
+
+            await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
+              async (res) => {
+                console.log(res, "res");
+                if (res.status === 200) {
+                  MasterData = {
+                    Qualification: res.data.data[0].displayText,
+                    QualificationCode: res.data.data[0].value,
+                  };
+                  await getVRRDetails.InsertList(
+                    MasterData,
+                    ListNames.HRMSQualification
+                  );
+                } else {
+                  let APIError = {
+                    Message: RecuritmentHRMsg.APIErrorMsg,
+                    Type: HRMSAlertOptions.Error,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                      if (userClickedOK) {
+                        setAlertPopupOpen(false);
+                      } else {
+                        setAlertPopupOpen(false);
+                      }
+                    },
+                  };
+
+                  setAlertPopupOpen(true);
+                  setalertProps(APIError);
+                  setIsLoading(false);
+                }
+              }
+            );
           }
         }
         break;
@@ -2885,12 +2870,61 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         {
           const isValid = !MasterDataValidation();
           if (isValid) {
-            MasterData = {
-              RoleSpecificKnowledge: advDetails.addMasterQualification,
+            let filterConditions = [
+              {
+                FilterKey: "Category",
+                Operator: "eq",
+                FilterValue: RoleDescriptionData.Qualification,
+              },
+            ];
+            const CategoryData = await getVRRDetails.GetFilterInCategory(
+              filterConditions
+            );
+            let category: category = {
+              id: Number(CategoryData.data[0]?.CategoryCode),
+              name: CategoryData.data[0]?.Category,
             };
-            await getVRRDetails.InsertList(
-              MasterData,
-              ListNames.HRMSRoleSpecificKnowlegeMaster
+            let AgentDetailsList: UpsertMasters[] = [
+              {
+                displayText: advDetails.addMasterQualification,
+                displayText_fr: advDetails.addMasterQualification,
+                category: category,
+              },
+            ];
+
+            console.log(AgentDetailsList, "AgentDetailsList");
+
+            await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
+              async (res) => {
+                console.log(res, "res");
+                if (res.status === 200) {
+                  MasterData = {
+                    RoleSpecificKnowledge: res.data.data[0].displayText,
+                    Code: res.data.data[0].value,
+                  };
+                  await getVRRDetails.InsertList(
+                    MasterData,
+                    ListNames.HRMSRoleSpecificKnowlegeMaster
+                  );
+                } else {
+                  let APIError = {
+                    Message: RecuritmentHRMsg.APIErrorMsg,
+                    Type: HRMSAlertOptions.Error,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                      if (userClickedOK) {
+                        setAlertPopupOpen(false);
+                      } else {
+                        setAlertPopupOpen(false);
+                      }
+                    },
+                  };
+
+                  setAlertPopupOpen(true);
+                  setalertProps(APIError);
+                  setIsLoading(false);
+                }
+              }
             );
           }
         }
@@ -2899,12 +2933,61 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         {
           const isValid = !MasterDataValidation();
           if (isValid) {
-            MasterData = {
-              TechnicalSkills: advDetails.addMasterQualification,
+            let filterConditions = [
+              {
+                FilterKey: "Category",
+                Operator: "eq",
+                FilterValue: RoleDescriptionData.Qualification,
+              },
+            ];
+            const CategoryData = await getVRRDetails.GetFilterInCategory(
+              filterConditions
+            );
+            let category: category = {
+              id: Number(CategoryData.data[0]?.CategoryCode),
+              name: CategoryData.data[0]?.Category,
             };
-            await getVRRDetails.InsertList(
-              MasterData,
-              ListNames.HRMSTechnicalSkills
+            let AgentDetailsList: UpsertMasters[] = [
+              {
+                displayText: advDetails.addMasterQualification,
+                displayText_fr: advDetails.addMasterQualification,
+                category: category,
+              },
+            ];
+
+            console.log(AgentDetailsList, "AgentDetailsList");
+
+            await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
+              async (res) => {
+                console.log(res, "res");
+                if (res.status === 200) {
+                  MasterData = {
+                    TechnicalSkills: res.data.data[0].displayText,
+                    Code: res.data.data[0].value,
+                  };
+                  await getVRRDetails.InsertList(
+                    MasterData,
+                    ListNames.HRMSTechnicalSkills
+                  );
+                } else {
+                  let APIError = {
+                    Message: RecuritmentHRMsg.APIErrorMsg,
+                    Type: HRMSAlertOptions.Error,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                      if (userClickedOK) {
+                        setAlertPopupOpen(false);
+                      } else {
+                        setAlertPopupOpen(false);
+                      }
+                    },
+                  };
+
+                  setAlertPopupOpen(true);
+                  setalertProps(APIError);
+                  setIsLoading(false);
+                }
+              }
             );
           }
         }
