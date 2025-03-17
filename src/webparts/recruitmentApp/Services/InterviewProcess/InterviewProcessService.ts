@@ -75,7 +75,7 @@ export default class InterviewProcessService
         message: "Interview Panel Details fetched successfully",
       };
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching interview panel details:", error);
       return {
         data: [],
         status: 400,
@@ -141,7 +141,7 @@ export default class InterviewProcessService
           "Filtered Candidates with Interview Scheduled status fetched successfully",
       };
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching candidate details:", error);
       return {
         data: [],
         status: 500,
