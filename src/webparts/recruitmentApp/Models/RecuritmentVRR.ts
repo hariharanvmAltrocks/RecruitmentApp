@@ -227,6 +227,10 @@ export type QuestionItem = {
   header?: string;
 };
 
+export type AssignHod = {
+  Comments: string;
+};
+// sneka
 export type InterviewQues = {
   Disciplines: AutoCompleteItem;
   QuestionType: AutoCompleteItem;
@@ -235,9 +239,7 @@ export type InterviewQues = {
   ExpectedAnswer: string;
   Catogry: string;
   PositionTitle?: string;
-  OptionsType?: { text: string }[];
+  // OptionsType?: { text: string }[];
+  OptionsType?: AutoCompleteItem;
   Disqualification?: any;
-};
-export type AssignHod = {
-  Comments: string;
 };

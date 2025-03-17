@@ -417,13 +417,13 @@ const RecruitmentProcess = (props: any) => {
           } else if (tab === "tab2") {
             props.navigation("/RecurimentProcess/HodScoreCard/CandidateList", {
               state: {
-                ID: rowData?.ID,
+                ID: rowData?.ID.toString().trim(),
                 tab,
                 StatusId: rowData?.StatusId,
                 Status: rowData?.Status,
                 TabName: TabName,
                 ButtonAction,
-                JobCode: rowData?.JobCode,
+                JobCode: rowData?.JobCode?.toString().trim(),
               },
             });
           } else if (tab === "tab3") {

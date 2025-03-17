@@ -17,6 +17,7 @@ import ReviewProfileList from "../Screens/ReviewProfile/ReviewProfileList";
 import ReviewCandidateList from "../Screens/ReviewProfile/ReviewCandidateList";
 import ViewCandidateDetails from "../Screens/ReviewProfile/ViewCandidateDetails";
 import HodViewScorecard from "../Screens/RecuritmentProcess/HodViewScorecard";
+import InterviewQuesEdit from "../Screens/ReviewProfile/InterviewQuesEdit";
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
 
@@ -125,6 +126,11 @@ export default function MainPage(props: any) {
                 <Route
                   path="/RecurimentProcess/HodViewScorecard"
                   element={<HodViewScorecard {...props} {...masterData} />}
+                />
+                {/* sneka */}
+                <Route
+                  path="/ReviewProfileList/InterviewQuesEdit"
+                  element={<InterviewQuesEdit {...props} {...masterData} />}
                 />
               </Routes>
             </>

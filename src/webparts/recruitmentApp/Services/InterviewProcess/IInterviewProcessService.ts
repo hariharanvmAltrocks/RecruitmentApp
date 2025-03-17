@@ -46,6 +46,7 @@ export type IInterviewProcessService = {
     filterParam: any,
     filterConditions: any
   ): Promise<any | null>;
+
   CandidateSeletionApi(
     obj: ActionUpdate,
     ListName: string
@@ -54,4 +55,9 @@ export type IInterviewProcessService = {
     obj: AssignPositionID,
     ListName: string
   ): Promise<ApiResponse<null>>;
+
+  GetPositionDetails(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<any | null>;
 };

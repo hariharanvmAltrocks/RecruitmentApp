@@ -524,9 +524,31 @@ const InterviewPanelEdit = (props: any) => {
         visible: true,
         ButtonAction: (userClickedOK: any) => {
           if (userClickedOK) {
-            props.navigation("/InterviewPanelList");
+            if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+              props.navigation("/ReviewProfileList", {
+                state: {
+                  activeTab: "tab3",
+                },
+              });
+            } else if (props.CurrentRoleID === RoleID.HOD) {
+              props.navigation("/RecurimentProcess", {
+                state: {
+                  activeTab: "tab3",
+                },
+              });
+            } else if (props.CurrentRoleID === RoleID.LineManager) {
+              props.navigation("/ReviewProfileList", {
+                state: {
+                  activeTab: "tab3",
+                },
+              });
+            } else {
+              props.navigation("/InterviewPanelList");
+            }
+            setAlertPopupOpen(false);
+          } else {
+            setAlertPopupOpen(false);
           }
-          setAlertPopupOpen(false);
         },
       });
 
@@ -1361,7 +1383,7 @@ const InterviewPanelEdit = (props: any) => {
           } else if (props.CurrentRoleID === RoleID.LineManager) {
             props.navigation("/ReviewProfileList", {
               state: {
-                activeTab: "tab2",
+                activeTab: "tab3",
               },
             });
           } else {

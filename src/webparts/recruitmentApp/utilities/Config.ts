@@ -68,6 +68,8 @@ export const StatusId = {
   PendingwithRecruitmentHRtoAssignExternalAgency: 119,
   RecruitmentInProgress: 28,
   PendingwithHODtoselectthecandidate: 121,
+  Selected: 122,
+  PendingInterviewQuestionwithLineManagerandHR: 39,
   InterviewScheduled: 40,
 };
 
@@ -189,6 +191,8 @@ export const RecuritmentHRMsg = {
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
   APIErrorMsg: "Network Issue Please try again",
+  InterviewQues:
+    "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
 };
 
 export const ADGroupID: IADGroupID = {
@@ -325,3 +329,14 @@ export const QuestionnaireData: QuestionItem[] = [
     rating: null,
   },
 ];
+// sneka
+export const CatogryOption = [
+  "Interview Panel",
+  "Recruitment Process (Portal)",
+];
+export const DisciplinesOption = [
+  { key: 0, text: "Scope" },
+  { key: 1, text: "Technical" },
+  { key: 2, text: "Behavioral" },
+];
+export const isDisqualificationOption = ["Yes", "No"];
