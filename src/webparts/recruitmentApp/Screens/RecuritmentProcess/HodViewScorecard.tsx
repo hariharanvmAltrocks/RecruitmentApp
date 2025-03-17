@@ -12,6 +12,7 @@ import {
   DocumentLibraray,
   HRMSAlertOptions,
   ListNames,
+  QuestionnaireData,
   RecuritmentHRMsg,
   RoleID,
   RoleProfileMaster,
@@ -19,7 +20,7 @@ import {
   WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
-import { ScoreCardData } from "../../Models/RecuritmentVRR";
+import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import { Card, CardContent } from "@mui/material";
@@ -42,6 +43,9 @@ import "../../App.css";
 import ReuseButton from "../../components/ReuseButton";
 import { WorkflowJson } from "../../Models/ApIInterface";
 import IsValid from "../../components/Validation";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import HODQuestionsView from "./HODQuestionsView";
 
 type ValidationError = {
   Comments: boolean;
@@ -136,8 +140,12 @@ const HodViewScorecard = (props: any) => {
       InterviewPanel: 0,
       InterviewPanalNames: [],
       InterviewPanelTitle: "",
+      IsScoreSheetUploaded: "",
     },
   ]);
+  const [expanded, setExpanded] = React.useState<string | null>(null);
+  const [ViewQABtn, setViewQABtn] = React.useState<boolean>(false);
+  const questionnaire: QuestionItem[] = QuestionnaireData;
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
@@ -363,6 +371,21 @@ const HodViewScorecard = (props: any) => {
 
   const transformedData = transformScoreData(scoreData);
   const interviewerCount = scoreData.length;
+
+  //Questionnaries
+  const handleAccordionChange =
+    (accordion: string) =>
+    (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? accordion : null);
+    };
+
+  const transformedDataforQuestions = questionnaire.map((q, index) => ({
+    criteria: `Question ${index + 1}`,
+    id: q.id,
+    question: q.question,
+    answer: q.answer,
+  }));
+
   const handleCancel = () => {
     setIsLoading(true);
     let CancelAlert = {
@@ -755,7 +778,7 @@ const HodViewScorecard = (props: any) => {
                 ))}
               </div>
 
-              <div style={{ overflowX: "auto" }}>
+              {/* <div style={{ overflowX: "auto" }}>
                 <DataTable
                   value={transformedData}
                   responsiveLayout="scroll"
@@ -770,6 +793,107 @@ const HodViewScorecard = (props: any) => {
                     />
                   ))}
                 </DataTable>
+              </div> */}
+
+              <div>
+                <Accordion
+                  sx={{
+                    marginBottom: "16px",
+                    border: "1px solid rgb(191, 182, 182)",
+                    borderRadius: "4px",
+                  }}
+                  expanded={expanded === "accordion1"}
+                  onChange={handleAccordionChange("accordion1")}
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    Question Evaluation Scorecard
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <div style={{ overflowX: "auto" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          position: "relative",
+                          right: "10px",
+                        }}
+                      >
+                        <ReuseButton
+                          Style={{
+                            minWidth: "158px",
+                            fontSize: "13px",
+                            paddingBottom: "10px",
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "35px",
+                            paddingTop: "10px",
+                            backgroundColor: "#EF3340",
+                            color: "white",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginLeft: "5px",
+                          }}
+                          onClick={async () => {
+                            setViewQABtn(true);
+                            setMainComponent(false);
+                          }}
+                          label="VIEW Q & A"
+                          spacing={4}
+                        />
+                      </div>
+
+                      <DataTable
+                        value={transformedDataforQuestions}
+                        responsiveLayout="scroll"
+                        stripedRows
+                      >
+                        <Column field="criteria" header="Criteria" />
+                        {Array.from({ length: interviewerCount }).map(
+                          (_, index) => (
+                            <Column
+                              key={index}
+                              field={`interviewer_${index + 1}`}
+                              header={`Interviewer ${index + 1}`}
+                            />
+                          )
+                        )}
+                      </DataTable>
+                    </div>
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion
+                  sx={{
+                    marginBottom: "16px",
+                    border: "1px solid rgb(191, 182, 182)",
+                    borderRadius: "4px",
+                  }}
+                  expanded={expanded === "accordion2"}
+                  onChange={handleAccordionChange("accordion2")}
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    Overall Evaluation Scorecard
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <div style={{ overflowX: "auto" }}>
+                      <DataTable
+                        value={transformedData}
+                        responsiveLayout="scroll"
+                        stripedRows
+                      >
+                        <Column field="criteria" header="Criteria" />
+                        {Array.from({ length: interviewerCount }).map(
+                          (_, index) => (
+                            <Column
+                              key={index}
+                              field={`interviewer_${index + 1}`}
+                              header={`Interviewer ${index + 1}`}
+                            />
+                          )
+                        )}
+                      </DataTable>
+                    </div>
+                  </AccordionDetails>
+                </Accordion>
               </div>
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg12">
@@ -1128,14 +1252,24 @@ const HodViewScorecard = (props: any) => {
             />
           ) : null}
         </CustomLoader>
-      ) : (
-        <CommentView
-          onClose={() => {
+      ) : ViewQABtn ? (
+        <HODQuestionsView
+          questionnaire={questionnaire}
+          Ok_btnfn={() => {
+            setViewQABtn(false);
             setMainComponent(true);
-            setactiveTab(activeTab);
           }}
-          comments={CommentData}
         />
+      ) : (
+        <>
+          <CommentView
+            onClose={() => {
+              setMainComponent(true);
+              setactiveTab(activeTab);
+            }}
+            comments={CommentData}
+          />
+        </>
       )}
     </>
   );

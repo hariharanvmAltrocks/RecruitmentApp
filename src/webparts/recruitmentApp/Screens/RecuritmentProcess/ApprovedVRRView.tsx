@@ -746,6 +746,27 @@ const ApprovedVRRView: React.FC = (props: any) => {
                       }
                     />
                   </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Date When Position Is Required"
+                      value={
+                        data.DateRequried
+                          ? new Date(data.DateRequried)
+                              .toLocaleDateString("en-GB")
+                              .replace(/\//g, "-")
+                          : ""
+                      }
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          DateRequried: value,
+                        }))
+                      }
+                    />
+                  </div>
                 </div>
 
                 <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>

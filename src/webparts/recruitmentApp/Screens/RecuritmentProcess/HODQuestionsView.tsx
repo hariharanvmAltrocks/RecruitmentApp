@@ -33,7 +33,6 @@ function HODQuestionsView({ questionnaire, Ok_btnfn }: FormFields) {
                   <LabelHeaderComponents value="Questions and Answers" />
                 </div>
               </div>
-
               <div className="ms-Grid-row">
                 <div style={{ marginTop: "20px" }}>
                   {questionnaire.length === 0 ? (
@@ -48,12 +47,14 @@ function HODQuestionsView({ questionnaire, Ok_btnfn }: FormFields) {
                       No Questions and Answers are found
                     </p>
                   ) : (
-                    questionnaire.map((q) => (
+                    questionnaire.map((q, index) => (
                       <div
                         key={q.id}
                         style={{ marginBottom: "15px", fontSize: "17px" }}
                       >
-                        <p style={{ fontWeight: "bold" }}>{q.question}</p>
+                        <h3 style={{ fontWeight: "bold" }}>
+                          Q{index + 1}: {q.question}
+                        </h3>
                         <p>
                           <strong>Expected Answer:</strong> {q.answer}
                         </p>

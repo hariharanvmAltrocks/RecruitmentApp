@@ -42,6 +42,7 @@ import CustomDialogbox from "../../components/CustomDialogbox";
 import { DateExtension } from "../../components/DateExtension";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
+import * as moment from "moment";
 // import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 // import { ApiUrl } from "../../Services/AxiosService/axiosConfig";
 // import 'primeicons/primeicons.css';
@@ -837,12 +838,14 @@ const RecruitmentProcess = (props: any) => {
     const isHR = props.CurrentRoleID === RoleID.RecruitmentHR;
     const dataset = isHR ? RecruitmentDetails : data;
     const itemIdentifier = isHR ? item.ID : item.VRRID;
+    console.log("Checkbox Clicked | Value:", value, "| Item:", item);
 
     const updatedDataset = dataset.map((currentItem) => {
       const currentItemIdentifier = isHR ? currentItem.ID : currentItem.VRRID;
       if (currentItemIdentifier === itemIdentifier) {
         return { ...currentItem, Checked: value };
       }
+
       return currentItem;
     });
 
@@ -1000,11 +1003,13 @@ const RecruitmentProcess = (props: any) => {
 
   const handleSubmit = async () => {
     try {
+      console.log("selectedJobCodes", selectedJobCodes);
       if (selectedJobCodes.length > 0) {
         for (const selectedJob of selectedJobCodes) {
           const correspondingJob = data.find(
             (item: any) => item.VRRID === selectedJob.VRRId
           );
+          console.log(" Corresponding Job:", correspondingJob);
 
           if (correspondingJob) {
             const Table1: any = {
@@ -1018,7 +1023,10 @@ const RecruitmentProcess = (props: any) => {
               NumberOfPersonNeeded: correspondingJob.NumberOfPersonNeeded,
               EnterNumberOfMonths: correspondingJob.EnterNumberOfMonths,
               TypeOfContract: correspondingJob.TypeOfContract,
-              DateRequried: correspondingJob.DateRequired,
+              DateRequried: moment(
+                correspondingJob.DateRequired,
+                "DD/MM/YYYY"
+              ).toDate(),
               StatusId: correspondingJob.StatusId,
               ActionId: WorkflowAction.Approved,
               JobCodeId: correspondingJob.JobCodeId,

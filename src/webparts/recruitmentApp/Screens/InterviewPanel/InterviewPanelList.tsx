@@ -12,6 +12,7 @@ import {
   ListNames,
   RecuritmentHRMsg,
   RoleID,
+  StatusId,
 } from "../../utilities/Config";
 import { TabName } from "../../utilities/Config";
 import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
@@ -99,7 +100,7 @@ const InterviewPanelList = (props: any) => {
             style={{
               backgroundColor:
                 rowData.Status.includes("Interview Scheduled") === true
-                  ? GridStatusBackgroundcolor.CompletedOrApproved
+                  ? GridStatusBackgroundcolor.Pending
                   : "",
               borderRadius: "5px",
             }}
@@ -197,9 +198,14 @@ const InterviewPanelList = (props: any) => {
     setIsLoading(true);
 
     try {
-      const interviewPanelResponse = await CommonServices.GetMasterData(
-        ListNames.HRMSInterviewPanelDetails
-      );
+      const interviewPanelResponse =
+        await InterviewServices.GetInterviewPanelDetails([
+          {
+            FilterKey: "InterviewPanelId",
+            Operator: "eq",
+            FilterValue: CurrentUserID,
+          },
+        ]);
 
       if (
         !interviewPanelResponse.data ||
@@ -209,19 +215,8 @@ const InterviewPanelList = (props: any) => {
         return;
       }
 
-      const filteredPanels = interviewPanelResponse.data.filter(
-        (panel: any) =>
-          panel.InterviewPanelId && panel.InterviewPanelId === CurrentUserID
-      );
-
-      if (filteredPanels.length === 0) {
-        setCandidateData([]);
-        setIsLoading(false);
-        return;
-      }
-
-      const candidateIDs = filteredPanels.map(
-        (panel: any) => panel.CandidateIDId
+      const candidateIDs = interviewPanelResponse.data.map(
+        (panel: any) => panel.CandidateID
       );
 
       if (candidateIDs.length === 0) {
@@ -230,64 +225,40 @@ const InterviewPanelList = (props: any) => {
         return;
       }
 
-      const candidateDetailsResponse = await CommonServices.GetMasterData(
-        ListNames.HRMSRecruitmentCandidatePersonalDetails
-      );
-
-      if (
-        !candidateDetailsResponse.data ||
-        candidateDetailsResponse.data.length === 0
-      ) {
-        setIsLoading(false);
-        return;
-      }
-
-      const matchedCandidates = candidateDetailsResponse.data.filter(
-        (candidate: any) => candidateIDs.includes(candidate.ID)
-      );
-
-      if (matchedCandidates.length === 0) {
-        setCandidateData([]);
-        setIsLoading(false);
-        return;
-      }
-
-      const filterCondition = candidateIDs
-        .map((id) => `ID eq ${id}`)
-        .join(" or ");
+      let filterConditionsRecuritment = [];
+      let RecuritmentConditions = "and";
+      filterConditionsRecuritment.push({
+        FilterKey: "StatusId",
+        Operator: "eq",
+        FilterValue: StatusId.InterviewScheduled,
+      });
+      filterConditionsRecuritment.push({
+        FilterKey: "ID",
+        Operator: "in",
+        FilterValue: candidateIDs,
+      });
 
       const statusResponse =
         await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
-          `(${filterCondition}) and Status/StatusDescription eq 'Interview Scheduled'`,
-          ""
+          filterConditionsRecuritment,
+          RecuritmentConditions
         );
 
-      const statusMap = new Map(
-        statusResponse.data?.map((status: any) => [
-          status.ID,
-          status.Status || "",
-        ])
-      );
-
-      const candidateNames = matchedCandidates
-        .filter(
-          (candidate: any) =>
-            statusMap.get(candidate.ID) === "Interview Scheduled"
-        )
-        .map((candidate: any) => ({
-          ID: candidate.ID,
-          FristName: candidate.FristName || "",
-          LastName: candidate.LastName || "",
-          ApplicantName: `${candidate.FristName || ""} ${
-            candidate.LastName || ""
-          }`.trim(),
-          PositionTitle: candidate.PositionTitle || "",
-          JobGrade: candidate.JobGrade || "",
-          Status: statusMap.get(candidate.ID) || "",
-        }));
+      const candidateNames = statusResponse.data.map((candidate: any) => ({
+        ID: candidate.ID,
+        FristName: candidate.FristName || "",
+        LastName: candidate.LastName || "",
+        ApplicantName: `${candidate.FristName || ""} ${
+          candidate.LastName || ""
+        }`.trim(),
+        PositionTitle: candidate.PositionTitle || "",
+        JobGrade: candidate.JobGrade || "",
+        Status: candidate.Status || "",
+      }));
 
       setCandidateData(candidateNames);
     } catch (error) {
+      console.error("Error fetching candidate data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -301,11 +272,13 @@ const InterviewPanelList = (props: any) => {
 
       if (getCurrentUserEmailID.status === 200 && getCurrentUserEmailID.data) {
         const userGUID = getCurrentUserEmailID.data.key;
-
         await fetchCandidateData(userGUID);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching current user details:", error);
+    }
   };
+
   const handleRefresh = (tab: string) => {
     void fetchData();
   };
