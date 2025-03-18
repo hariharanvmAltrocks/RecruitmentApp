@@ -10,7 +10,7 @@ import LabelHeaderComponents from "../../components/TitleHeader";
 import CustomLabel from "../../components/CustomLabel";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
-import * as moment from "moment";
+//import * as moment from "moment";
 
 interface FormFields {
   data: AdvDetails;
@@ -84,7 +84,7 @@ function PreviewScreen({
                   </div>
                 </div>
               )}
-
+              {/* 
               {data.ValidFrom && data.ValidTo ? (
                 <div className="ms-Grid-row" style={{ marginBottom: "20px" }}>
                   <div className="ms-Grid-col ms-lg12">
@@ -125,7 +125,7 @@ function PreviewScreen({
                     </div>
                   </div>
                 </div>
-              ) : null}
+              ) : null} */}
 
               {(data.TotalExperience || data.ExperienceinMiningIndustry) && (
                 <div className="ms-Grid-row" style={{ marginBottom: "20px" }}>
@@ -385,7 +385,6 @@ function PreviewScreen({
             </div>
           </div>
         </div>
-        has context menu
       </div>
     </>
   );

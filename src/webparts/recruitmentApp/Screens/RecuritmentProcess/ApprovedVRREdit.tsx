@@ -60,7 +60,7 @@ import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomPreviewScreen from "./CustomPreviewScreen";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
-import * as moment from "moment";
+//import * as moment from "moment";
 import {
   AdvertisementDetails,
   category,
@@ -568,6 +568,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           );
           errors.Comments = !IsValid(Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
+          // errors.ValidFrom = !IsValid(advDetails.ValidFrom);  // ONEM Page Validition for Valid from and Valid To Changes
+          // errors.ValidTo = !IsValid(advDetails.ValidTo);
         }
         break;
       }
@@ -605,8 +607,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           );
           errors.TotalExperience = !IsValid(advDetails.TotalExperience.text);
           errors.Checkboxalidation = !IsValid(Checkbox);
-          errors.ValidFrom = !IsValid(advDetails.ValidFrom);
-          errors.ValidTo = !IsValid(advDetails.ValidTo);
+          // errors.ValidFrom = !IsValid(advDetails.ValidFrom);
+          // errors.ValidTo = !IsValid(advDetails.ValidTo);
           errors.JobFunctionalType = !IsValid(
             advDetails.JobFunctionalType.text
           );
@@ -673,6 +675,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         const obj: any = {
           ActionId: WorkflowAction.Approved,
         };
+        // let AdvData: any = {                             // ONEM Page Validition for Valid from and Valid To Changes
+        //   ValidFrom: moment(advDetails.ValidFrom).format("YYYY-MM-DD"),
+        //   ValidTo: moment(advDetails.ValidTo).format("YYYY-MM-DD"),
+        //   RecruitmentID: props.stateValue?.ID,
+        // };
         if (formState.Comments) {
           const commentsData: InsertComments = {
             RoleId: props.CurrentRoleID,
@@ -809,8 +816,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               PreferredExperienceId: Number(
                 advDetails.ExperienceinMiningIndustry.key
               ),
-              ValidFrom: moment(advDetails.ValidFrom).format("YYYY-MM-DD"),
-              ValidTo: moment(advDetails.ValidTo).format("YYYY-MM-DD"),
+              // ValidFrom: moment(advDetails.ValidFrom).format("YYYY-MM-DD"),
+              // ValidTo: moment(advDetails.ValidTo).format("YYYY-MM-DD"),
               FunctionTypeId: advDetails.JobFunctionalType.key,
             };
 
@@ -871,9 +878,40 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }
   };
 
+  const calculateValidTo = (startDate: Date, daysToAdd: number): Date => {
+    let validToDate = new Date(startDate);
+    let addedDays = 0;
+
+    while (addedDays < daysToAdd) {
+      validToDate.setDate(validToDate.getDate() + 1);
+
+      if (validToDate.getDay() === 0) {
+        continue;
+      }
+
+      addedDays++;
+    }
+
+    if (validToDate.getDay() === 0) {
+      validToDate.setDate(validToDate.getDate() + 1);
+    }
+
+    return validToDate;
+  };
+
   useEffect(() => {
     const initialize = async () => {
       await fetchData();
+      if (
+        props.stateValue?.StatusId ===
+        StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+      ) {
+        const newValidTo = calculateValidTo(todaydate, 13);
+        setAdvDetails((prevState) => ({
+          ...prevState,
+          ValidTo: newValidTo,
+        }));
+      }
     };
 
     void initialize();
@@ -1256,26 +1294,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   //     }));
   //   };
 
-  const calculateValidTo = (startDate: Date, daysToAdd: number): Date => {
-    let validToDate = new Date(startDate);
-    let addedDays = 0;
-
-    while (addedDays < daysToAdd) {
-      validToDate.setDate(validToDate.getDate() + 1);
-
-      if (validToDate.getDay() === 0) {
-        continue;
-      }
-
-      addedDays++;
-    }
-
-    if (validToDate.getDay() === 0) {
-      validToDate.setDate(validToDate.getDate() + 1);
-    }
-
-    return validToDate;
-  };
   const handleDateChange = (value: Date | null, stateKey: string) => {
     setAdvDetails((prevState) => {
       const updatedState = { ...prevState, [stateKey]: value };
@@ -1724,30 +1742,68 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     }
                   />
                 </div>
-              </div>
-              <div className="ms-Grid-row">
+
                 <div className="ms-Grid-col ms-lg3">
-                  <CustomDatePicker
-                    selectedDate={advDetails.ValidFrom}
-                    label="Valid From"
-                    error={validationErrors.ValidFrom}
-                    minDate={todaydate}
-                    mandatory={true}
+                  <CustomInput
+                    label="Date When Position Is Required"
+                    value={
+                      formState.DateRequried
+                        ? new Date(formState.DateRequried)
+                            .toLocaleDateString("en-GB")
+                            .replace(/\//g, "-")
+                        : ""
+                    }
                     disabled={true}
-                    onChange={(date) => handleDateChange(date, "ValidFrom")}
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg3">
-                  <CustomDatePicker
-                    selectedDate={advDetails.ValidTo}
-                    label="Valid To"
                     error={false}
-                    disabled={true}
                     mandatory={false}
-                    onChange={(date) => handleDateChange(date, "ValidTo")}
+                    onChange={(value) =>
+                      setFormState((prevState) => ({
+                        ...prevState,
+                        DateRequried: value,
+                      }))
+                    }
                   />
                 </div>
               </div>
+
+              {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                props.stateValue?.StatusId ===
+                  StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomDatePicker
+                          selectedDate={advDetails.ValidFrom}
+                          label="Valid From"
+                          error={validationErrors.ValidFrom}
+                          minDate={todaydate}
+                          mandatory={true}
+                          onChange={(date) =>
+                            handleDateChange(date, "ValidFrom")
+                          }
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomDatePicker
+                          selectedDate={advDetails.ValidTo}
+                          label="Valid To"
+                          error={false}
+                          // minDate={
+                          //   advDetails.ValidFrom
+                          //     ? new Date(
+                          //         advDetails.ValidFrom.getTime() +
+                          //           13 * 24 * 60 * 60 * 1000
+                          //       )
+                          //     : undefined
+                          // }
+                          disabled={true}
+                          mandatory={false}
+                          onChange={(date) => handleDateChange(date, "ValidTo")}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
 
               <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
                 <LabelHeaderComponents value={"Attachments"} />
@@ -2190,6 +2246,41 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         </div>
                       </div>
 
+                      {/* <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomDatePicker
+                            selectedDate={advDetails.ValidFrom}
+                            label="Valid From"
+                            error={validationErrors.ValidFrom}
+                            minDate={todaydate}
+                            mandatory={true}
+                            onChange={(date) =>
+                              handleDateChange(date, "ValidFrom")
+                            }
+                          />
+                        </div>
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomDatePicker
+                            selectedDate={advDetails.ValidTo}
+                            label="Valid To"
+                            error={false}
+                            // minDate={
+                            //   advDetails.ValidFrom
+                            //     ? new Date(
+                            //         advDetails.ValidFrom.getTime() +
+                            //           13 * 24 * 60 * 60 * 1000
+                            //       )
+                            //     : undefined
+                            // }
+                            disabled={true}
+                            mandatory={false}
+                            onChange={(date) =>
+                              handleDateChange(date, "ValidTo")
+                            }
+                          />
+                        </div>
+                      </div> */}
+
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg12">
                           <RichTextEditor
@@ -2234,7 +2325,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 error={validationErrors.TotalExperience}
                               />
                             </div>
-                            <div className="ms-Grid-col ms-lg5">
+                            <div className="ms-Grid-col ms-lg6">
                               <CustomAutoComplete
                                 label="Preferred Experience in Mining Industry (Years)"
                                 options={

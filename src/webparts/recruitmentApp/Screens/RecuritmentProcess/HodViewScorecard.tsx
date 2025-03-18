@@ -12,6 +12,7 @@ import {
   DocumentLibraray,
   HRMSAlertOptions,
   ListNames,
+  QuestionnaireData,
   RecuritmentHRMsg,
   RoleID,
   RoleProfileMaster,
@@ -19,7 +20,7 @@ import {
   WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
-import { ScoreCardData } from "../../Models/RecuritmentVRR";
+import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import { Card, CardContent } from "@mui/material";
@@ -42,6 +43,9 @@ import "../../App.css";
 import ReuseButton from "../../components/ReuseButton";
 import { WorkflowJson } from "../../Models/ApIInterface";
 import IsValid from "../../components/Validation";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import HODQuestionsView from "./HODQuestionsView";
 
 type ValidationError = {
   Comments: boolean;
@@ -136,8 +140,12 @@ const HodViewScorecard = (props: any) => {
       InterviewPanel: 0,
       InterviewPanalNames: [],
       InterviewPanelTitle: "",
+      IsScoreSheetUploaded: "",
     },
   ]);
+  const [expanded, setExpanded] = React.useState<string | null>(null);
+  const [ViewQABtn, setViewQABtn] = React.useState<boolean>(false);
+  const questionnaire: QuestionItem[] = QuestionnaireData;
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
@@ -226,70 +234,77 @@ const HodViewScorecard = (props: any) => {
     setIsLoading(false);
   };
 
-  const fetchCandidateDatas = React.useCallback(async () => {
-    try {
-      const filterConditions = [
-        {
-          FilterKey: "CandidateID/Id",
-          Operator: "eq",
-          FilterValue: candidateID,
-        },
-      ];
+  const fetchCandidateDatas = React.useCallback(() => {
+    setIsLoading(true);
 
-      const [scoreResponse, positionResponse] = await Promise.all([
-        InterviewServices.HRMSCandidateScoreCard(
-          "",
-          filterConditions,
-          candidateID
-        ),
-        InterviewServices.GetCombinedCandidatePositionDetails(
-          " ",
-          filterConditions
-        ),
-      ]);
+    let filterConditions = [
+      {
+        FilterKey: "CandidateID/Id",
+        Operator: "eq",
+        FilterValue: candidateID,
+      },
+    ];
+    let Conditions = "";
 
-      if (scoreResponse?.status === 200 && scoreResponse?.data?.length) {
-        const candidateData = scoreResponse.data.filter(
-          (candidate: any) => candidate.CandidateID === candidateID
-        );
+    Promise.all([
+      InterviewServices.HRMSCandidateScoreCard(
+        filterConditions,
+        Conditions,
+        candidateID
+      ),
+      InterviewServices.GetCombinedCandidatePositionDetails(
+        filterConditions,
+        Conditions
+      ),
+    ])
+      .then(([scoreResponse, positionResponse]) => {
+        if (scoreResponse?.status === 200 && scoreResponse?.data?.length) {
+          const candidateData = scoreResponse.data.filter(
+            (candidate: any) => candidate.CandidateID === candidateID
+          );
 
-        const filteredScores = candidateData.flatMap(
-          (candidate: any) =>
-            candidate.CandidateScoreCard?.filter(
-              (score: any) => candidate.ID === score.InterviewPanelID
-            ) || []
-        );
+          const filteredScores = candidateData.flatMap(
+            (candidate: any) =>
+              candidate.CandidateScoreCard?.filter(
+                (score: any) => candidate.ID === score.InterviewPanelID
+              ) || []
+          );
 
-        setInterviewPanelTitles(
-          candidateData.map((panel: any) => panel.InterviewPanelTitle)
-        );
-        setScoreData(filteredScores);
-      } else {
+          setInterviewPanelTitles(
+            candidateData.map((panel: any) => panel.InterviewPanelTitle)
+          );
+          setScoreData(filteredScores);
+        } else {
+          setScoreData([]);
+          setInterviewPanelTitles([]);
+        }
+
+        if (positionResponse?.status === 200 && positionResponse?.data) {
+          const candidate = positionResponse.data.find(
+            (c: any) => c.ID === candidateID
+          );
+          setIagentName(candidate?.ExternalAgentDetails?.AgentName || "");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
         setScoreData([]);
         setInterviewPanelTitles([]);
-      }
-
-      if (positionResponse?.status === 200 && positionResponse?.data) {
-        const candidate = positionResponse.data.find(
-          (c: any) => c.ID === candidateID
-        );
-        setIagentName(candidate?.ExternalAgentDetails?.AgentName || "");
-        if (!candidate?.ExternalAgentDetails?.AgentName) {
-        }
-      }
-    } catch (error) {
-      setScoreData([]);
-      setInterviewPanelTitles([]);
-    } finally {
-      setIsLoading(false);
-    }
+      });
   }, [candidateID]);
 
   React.useEffect(() => {
-    if (candidateID) {
-      // eslint-disable-next-line no-void
-      void fetchCandidateDatas();
-    }
+    const fetchData = async () => {
+      try {
+        if (candidateID) {
+          await fetchCandidateDatas();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    void fetchData();
   }, [candidateID, fetchCandidateDatas]);
 
   const transformScoreData = (rawData: any[]) => {
@@ -356,6 +371,21 @@ const HodViewScorecard = (props: any) => {
 
   const transformedData = transformScoreData(scoreData);
   const interviewerCount = scoreData.length;
+
+  //Questionnaries
+  const handleAccordionChange =
+    (accordion: string) =>
+    (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? accordion : null);
+    };
+
+  const transformedDataforQuestions = questionnaire.map((q, index) => ({
+    criteria: `Question ${index + 1}`,
+    id: q.id,
+    question: q.question,
+    answer: q.answer,
+  }));
+
   const handleCancel = () => {
     setIsLoading(true);
     let CancelAlert = {
@@ -386,8 +416,9 @@ const HodViewScorecard = (props: any) => {
     setIsLoading(false);
   };
 
-  const OpenComments = async () => {
+  const OpenComments = () => {
     setMainComponent(false);
+
     if (scoreData.length === 0) {
       return;
     }
@@ -401,28 +432,30 @@ const HodViewScorecard = (props: any) => {
         FilterValue: candidateID,
       },
     ];
+    let Conditions = "";
 
-    try {
-      const CommentsList = await InterviewServices.HRMSCandidateScoreCard(
-        "",
-        filterConditions,
-        candidateID
-      );
+    InterviewServices.HRMSCandidateScoreCard(
+      filterConditions,
+      Conditions,
+      candidateID
+    )
+      .then((CommentsList) => {
+        if (CommentsList?.status === 200 && CommentsList?.data?.length) {
+          const candidateData = CommentsList.data.filter(
+            (candidate: any) =>
+              candidate.CandidateID === candidateID &&
+              candidate.RecruitmentID === recruitmentID
+          );
 
-      if (CommentsList?.status === 200 && CommentsList?.data?.length) {
-        const candidateData = CommentsList.data.filter(
-          (candidate: any) =>
-            candidate.CandidateID === candidateID &&
-            candidate.RecruitmentID === recruitmentID
-        );
-
-        setCommentsData(candidateData);
-      } else {
+          setCommentsData(candidateData);
+        } else {
+          setCommentsData([]);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
         setCommentsData([]);
-      }
-    } catch (error) {
-      setCommentsData([]);
-    }
+      });
   };
 
   const handleInputChangeTextArea = (
@@ -745,7 +778,7 @@ const HodViewScorecard = (props: any) => {
                 ))}
               </div>
 
-              <div style={{ overflowX: "auto" }}>
+              {/* <div style={{ overflowX: "auto" }}>
                 <DataTable
                   value={transformedData}
                   responsiveLayout="scroll"
@@ -760,6 +793,107 @@ const HodViewScorecard = (props: any) => {
                     />
                   ))}
                 </DataTable>
+              </div> */}
+
+              <div>
+                <Accordion
+                  sx={{
+                    marginBottom: "16px",
+                    border: "1px solid rgb(191, 182, 182)",
+                    borderRadius: "4px",
+                  }}
+                  expanded={expanded === "accordion1"}
+                  onChange={handleAccordionChange("accordion1")}
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    Question Evaluation Scorecard
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <div style={{ overflowX: "auto" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          position: "relative",
+                          right: "10px",
+                        }}
+                      >
+                        <ReuseButton
+                          Style={{
+                            minWidth: "158px",
+                            fontSize: "13px",
+                            paddingBottom: "10px",
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "35px",
+                            paddingTop: "10px",
+                            backgroundColor: "#EF3340",
+                            color: "white",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginLeft: "5px",
+                          }}
+                          onClick={async () => {
+                            setViewQABtn(true);
+                            setMainComponent(false);
+                          }}
+                          label="VIEW Q & A"
+                          spacing={4}
+                        />
+                      </div>
+
+                      <DataTable
+                        value={transformedDataforQuestions}
+                        responsiveLayout="scroll"
+                        stripedRows
+                      >
+                        <Column field="criteria" header="Criteria" />
+                        {Array.from({ length: interviewerCount }).map(
+                          (_, index) => (
+                            <Column
+                              key={index}
+                              field={`interviewer_${index + 1}`}
+                              header={`Interviewer ${index + 1}`}
+                            />
+                          )
+                        )}
+                      </DataTable>
+                    </div>
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion
+                  sx={{
+                    marginBottom: "16px",
+                    border: "1px solid rgb(191, 182, 182)",
+                    borderRadius: "4px",
+                  }}
+                  expanded={expanded === "accordion2"}
+                  onChange={handleAccordionChange("accordion2")}
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    Overall Evaluation Scorecard
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <div style={{ overflowX: "auto" }}>
+                      <DataTable
+                        value={transformedData}
+                        responsiveLayout="scroll"
+                        stripedRows
+                      >
+                        <Column field="criteria" header="Criteria" />
+                        {Array.from({ length: interviewerCount }).map(
+                          (_, index) => (
+                            <Column
+                              key={index}
+                              field={`interviewer_${index + 1}`}
+                              header={`Interviewer ${index + 1}`}
+                            />
+                          )
+                        )}
+                      </DataTable>
+                    </div>
+                  </AccordionDetails>
+                </Accordion>
               </div>
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg12">
@@ -927,7 +1061,7 @@ const HodViewScorecard = (props: any) => {
             {
               FilterKey: "CandidateIDId",
               Operator: "eq",
-              FilterValue: props.stateValue?.ID,
+              FilterValue: props.stateValue.ID,
             },
           ];
 
@@ -947,7 +1081,7 @@ const HodViewScorecard = (props: any) => {
               const interviewPanelTitles = filteredPanels.map(
                 (panel) => panel.InterviewPanelTitle
               );
-              console.log("", InterviewPanelData);
+              console.log(InterviewPanelData);
               setInterviewPanelData((prevState) => ({
                 ...prevState,
                 interviewPanelTitles: interviewPanelTitles || [],
@@ -960,7 +1094,9 @@ const HodViewScorecard = (props: any) => {
             }
           }
         })
-        .catch((error) => {});
+        .catch((error) => {
+          console.log(error);
+        });
     };
 
     fetchData();
@@ -1017,7 +1153,6 @@ const HodViewScorecard = (props: any) => {
       actionBy: "",
     };
     let SuccessMessage: string = "";
-
     switch (Action) {
       case "Selected":
         obj = { ActionId: WorkflowAction.Approved, Id: props.stateValue.ID };
@@ -1034,21 +1169,22 @@ const HodViewScorecard = (props: any) => {
         );
         SuccessMessage = RecuritmentHRMsg.CandidateRejected;
         break;
+
+      default:
+        console.error(Action);
+        return;
     }
 
     try {
-      const res = await GetPortalJobsService.UpdateCandidateStatus(
-        CandidateDatas
-      );
-      console.log("", res);
+      setIsLoading(true);
 
+      await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
       const selectionResponse = await InterviewServices.CandidateSeletionApi(
         obj,
         ListNames.HRMSRecruitmentCandidatePersonalDetails
       );
 
       if (selectionResponse.status === 200) {
-        setIsLoading(true);
         setAlertPopupOpen(true);
         setalertProps({
           Message: SuccessMessage,
@@ -1073,10 +1209,11 @@ const HodViewScorecard = (props: any) => {
             setAlertPopupOpen(false);
           },
         });
-        setIsLoading(false);
       }
     } catch (error) {
-      console.error("", error);
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -1115,14 +1252,24 @@ const HodViewScorecard = (props: any) => {
             />
           ) : null}
         </CustomLoader>
-      ) : (
-        <CommentView
-          onClose={() => {
+      ) : ViewQABtn ? (
+        <HODQuestionsView
+          questionnaire={questionnaire}
+          Ok_btnfn={() => {
+            setViewQABtn(false);
             setMainComponent(true);
-            setactiveTab(activeTab);
           }}
-          comments={CommentData}
         />
+      ) : (
+        <>
+          <CommentView
+            onClose={() => {
+              setMainComponent(true);
+              setactiveTab(activeTab);
+            }}
+            comments={CommentData}
+          />
+        </>
       )}
     </>
   );

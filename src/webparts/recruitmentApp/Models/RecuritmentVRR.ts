@@ -224,7 +224,22 @@ export type QuestionItem = {
   question: string;
   answer: string;
   rating: number | null;
+  header?: string;
 };
+
 export type AssignHod = {
   Comments: string;
+};
+// sneka
+export type InterviewQues = {
+  Disciplines: AutoCompleteItem;
+  QuestionType: AutoCompleteItem;
+  QuestionNumber: AutoCompleteItem;
+  Question: string;
+  ExpectedAnswer: string;
+  Catogry: string;
+  PositionTitle?: string;
+  // OptionsType?: { text: string }[];
+  OptionsType?: AutoCompleteItem;
+  Disqualification?: any;
 };

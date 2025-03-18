@@ -254,6 +254,14 @@ const ReviewCandidateList = (props: any) => {
           } else {
             FilterValue = createFilter([
               workflowStatusApi.LineManagerL1Pending,
+              workflowStatusApi.LineManagerL2Pending,
+              workflowStatusApi.LineManagerLevel1OnHold,
+              workflowStatusApi.LineManagerLevel2OnHold,
+              workflowStatusApi.LineManagerLevel1Rejected,
+              workflowStatusApi.LineManagerLevel2Rejected,
+              workflowStatusApi.pendingHODSelection,
+              workflowStatusApi.CandidateSelectedIPanel,
+              workflowStatusApi.CandidateRejectedIPanel,
             ]);
           }
           break;

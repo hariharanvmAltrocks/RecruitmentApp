@@ -25,8 +25,9 @@ import {
   WorkflowAction,
   workflowStatusApi,
   RoleID,
+  QuestionnaireData,
 } from "../../utilities/Config";
-import { ScoreCardData } from "../../Models/RecuritmentVRR";
+import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
@@ -151,38 +152,24 @@ const InterviewPanelEdit = (props: any) => {
       InterviewPanel: 0,
       InterviewPanalNames: [],
       InterviewPanelTitle: "",
+      IsScoreSheetUploaded: "",
     },
   ]);
 
   //Questionaires
-  // const [questionnaire, setQuestionnaire] = React.useState<QuestionItem[]>([
-  //   {
-  //     id: 1,
-  //     question: "What are some key regulations that govern mining operations?",
-  //     answer:
-  //       "Expected Answer:- By using sustainable mining practices, proper waste management, land reclamation, reducing water and air pollution, and implementing renewable energy sources.",
-  //     rating: null,
-  //   },
-  //   {
-  //     id: 2,
-  //     question:
-  //       "What strategies can be used to attract skilled professionals to remote mining locations?",
-  //     answer:
-  //       "Expected Answer:- Providing relocation assistance, offering rotational work schedules, housing facilities, competitive benefits, and care.",
-  //     rating: null,
-  //   },
-  // ]);
+  const [questionnaire, setQuestionnaire] =
+    React.useState<QuestionItem[]>(QuestionnaireData);
 
-  // const handleRatingChange = (id: number, rating: number) => {
-  //   setQuestionnaire((prev) =>
-  //     prev.map((q) => (q.id === id ? { ...q, rating } : q))
-  //   );
-  // };
-  // const ScoreRating = [
-  //   { key: 3, text: "3 - Excellent" },
-  //   { key: 2, text: "2 - Acceptable" },
-  //   { key: 1, text: "1 - Not Acceptable" },
-  // ];
+  const handleRatingChange = (id: number, rating: number) => {
+    setQuestionnaire((prev) =>
+      prev.map((q) => (q.id === id ? { ...q, rating } : q))
+    );
+  };
+  const ScoreRating = [
+    { key: 3, text: "3 - Excellent" },
+    { key: 2, text: "2 - Acceptable" },
+    { key: 1, text: "1 - Not Acceptable" },
+  ];
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
@@ -284,11 +271,20 @@ const InterviewPanelEdit = (props: any) => {
     }
   };
 
+  // const handleCheckbox = (value: boolean) => {
+  //   setCheckbox(value);
+  //   setValidationError((prevState) => ({
+  //     ...prevState,
+  //     Checkboxalidation: false,
+  //   }));
+  // };
+
   const handleCheckbox = (value: boolean) => {
+    console.log("Checkbox clicked:", value);
     setCheckbox(value);
     setValidationError((prevState) => ({
       ...prevState,
-      Checkboxalidation: false,
+      CheckboxValidation: false,
     }));
   };
 
@@ -376,172 +372,157 @@ const InterviewPanelEdit = (props: any) => {
   const Submit_fn = async () => {
     try {
       let isValid = !Validation();
-
-      if (!isValid) {
-        return;
-      }
+      if (!isValid) return;
 
       const CurrentUserResponse = await CommonServices.getUserGuidByEmail(
         props.CurrentUserEmailId
       );
-
       const currentUserKey = CurrentUserResponse.data?.key?.toString();
 
-      const [CandidatePersonalDetails, InterviewPanelResponse] =
-        await Promise.all([
-          CommonServices.GetMasterData(
-            ListNames.HRMSRecruitmentCandidatePersonalDetails
-          ),
-          CommonServices.GetMasterData(ListNames.HRMSInterviewPanelDetails),
+      const CandidatePersonalDetailsResponse =
+        await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
+          undefined,
+          [
+            {
+              FilterKey: "ID",
+              Operator: "eq",
+              FilterValue: props.stateValue?.ID,
+            },
+          ]
+        );
+      const InterviewPanelResponse =
+        await InterviewServices.GetInterviewPanelDetails([
+          {
+            FilterKey: "CandidateIDId",
+            Operator: "eq",
+            FilterValue: props.stateValue?.ID,
+          },
         ]);
 
-      if (!CandidatePersonalDetails.data || !InterviewPanelResponse.data) {
+      if (
+        !CandidatePersonalDetailsResponse.data ||
+        !InterviewPanelResponse.data
+      ) {
         return;
       }
 
+      const CandidateDatares = CandidatePersonalDetailsResponse.data.find(
+        (item: any) => item.ID === props.stateValue?.ID
+      );
+
       const matchingPanels = InterviewPanelResponse.data.filter(
-        (panel) =>
-          props.stateValue?.ID === panel.CandidateIDId &&
-          CandidateData?.RecruitmentID === panel.RecruitmentIDId
+        (panel: any) =>
+          props.stateValue?.ID === panel.CandidateID &&
+          CandidateDatares?.RecruitmentID === panel.RecruitmentID
       );
 
       if (matchingPanels.length === 0) {
         return;
       }
 
-      const userPanels = matchingPanels.filter((panel) =>
-        panel.InterviewPanelStringId?.includes(currentUserKey)
+      const userPanels = matchingPanels.filter(
+        (panel: any) => panel.InterviewPanel === Number(currentUserKey)
       );
 
       if (userPanels.length === 0) {
         return;
       }
 
-      const groupedByLevel: Record<string, any[]> = {};
+      for (const panel of userPanels) {
+        const InterviewPanelID = panel.ID;
 
-      userPanels.forEach((panel) => {
-        const level = panel.InterviewLevel;
-        if (!groupedByLevel[level]) {
-          groupedByLevel[level] = [];
-        }
-        groupedByLevel[level].push(panel);
-      });
+        const scorecardObj = {
+          RelevantQualification: String(CandidateData?.Qualifications?.key),
+          ReleventExperience: String(CandidateData?.Experience?.key),
+          Knowledge: String(CandidateData?.Knowledge?.key),
+          EnergyLevel: String(CandidateData?.Energylevel?.key),
+          MeetJobRequirement: String(CandidateData?.Requirements?.key),
+          ContributeTowardsCultureRequried: String(
+            CandidateData?.contributeculture?.key
+          ),
+          Experience: String(CandidateData?.ExpatExperienceCongolese?.key),
+          OtherCriteriaScore: String(CandidateData?.CriteriaRecognised?.key),
+          ConsiderForEmployment: CandidateData?.Employment,
+          ...(shouldShowTextArea && {
+            Feedback: CandidateData?.EvaluationFeedback,
+          }),
+          OverAllEvaluationFeedback: CandidateData?.OverAllEvaluationFeedback,
+          RecruitmentIDId: CandidateData?.RecruitmentID,
+          RoleId: props.CurrentRoleID,
+          InterviewPersonNameId: currentUserKey,
+          InterviewPanelIDId: InterviewPanelID,
+        };
 
-      for (const level in groupedByLevel) {
-        if (Object.prototype.hasOwnProperty.call(groupedByLevel, level)) {
-          for (const panel of groupedByLevel[level]) {
-            const InterviewPanelID = panel.Id;
+        const newRecordResponse = await getVRRDetails.InsertList(
+          scorecardObj,
+          ListNames.HRMSCandidateScoreCard
+        );
+        console.log("", newRecordResponse);
 
-            const existingScoreCardResponse =
-              await CommonServices.GetMasterData(
-                ListNames.HRMSCandidateScoreCard
-              );
+        await SPServices.SPUpdateItem({
+          Listname: ListNames.HRMSInterviewPanelDetails,
+          RequestJSON: { IsScoreSheetUploaded: "Yes" },
+          ID: InterviewPanelID,
+        });
+      }
+      const updatedInterviewPanelResponse =
+        await InterviewServices.GetInterviewPanelDetails([
+          {
+            FilterKey: "CandidateID",
+            Operator: "eq",
+            FilterValue: props.stateValue?.ID,
+          },
+        ]);
 
-            const existingItem = existingScoreCardResponse.data.find(
-              (item) => item.InterviewPanelIDId === InterviewPanelID
-            );
-
-            const scorecardObj = {
-              RelevantQualification: String(CandidateData?.Qualifications?.key),
-              ReleventExperience: String(CandidateData?.Experience?.key),
-              Knowledge: String(CandidateData?.Knowledge?.key),
-              EnergyLevel: String(CandidateData?.Energylevel?.key),
-              MeetJobRequirement: String(CandidateData?.Requirements?.key),
-              ContributeTowardsCultureRequried: String(
-                CandidateData?.contributeculture?.key
-              ),
-              Experience: String(CandidateData?.ExpatExperienceCongolese?.key),
-              OtherCriteriaScore: String(
-                CandidateData?.CriteriaRecognised?.key
-              ),
-              ConsiderForEmployment: CandidateData?.Employment,
-              ...(shouldShowTextArea && {
-                Feedback: CandidateData?.EvaluationFeedback,
-              }),
-              OverAllEvaluationFeedback:
-                CandidateData?.OverAllEvaluationFeedback,
-              RecruitmentIDId: CandidateData?.RecruitmentID,
-              RoleId: props.CurrentRoleID,
-              InterviewPersonNameId: currentUserKey,
-              InterviewPanelIDId: InterviewPanelID,
-            };
-
-            if (existingItem) {
-              const ItemID = existingItem.ID;
-
-              const ScorecardUpdateResponse =
-                await getVRRDetails.AssignCandidateRecuritmentHR(
-                  ItemID,
-                  scorecardObj,
-                  ListNames.HRMSCandidateScoreCard
-                );
-
-              if (ScorecardUpdateResponse.status !== 200) {
-              }
-            } else {
-              const newRecordResponse = await getVRRDetails.InsertList(
-                scorecardObj,
-                ListNames.HRMSCandidateScoreCard
-              );
-
-              if (newRecordResponse.status !== 201) {
-              }
-            }
-
-            await SPServices.SPUpdateItem({
-              Listname: ListNames.HRMSInterviewPanelDetails,
-              RequestJSON: { IsScoreSheetUploaded: "Yes" },
-              ID: InterviewPanelID,
-            });
-
-            const updatedInterviewPanelResponse =
-              await CommonServices.GetMasterData(
-                ListNames.HRMSInterviewPanelDetails
-              );
-
-            if (panel.InterviewLevel === InterviewLevels.Level1) {
-              const level1Panels = updatedInterviewPanelResponse.data.filter(
-                (p) =>
-                  p.CandidateIDId === panel.CandidateIDId &&
-                  p.InterviewLevel === InterviewLevels.Level1
-              );
-
-              const uploadedCount = level1Panels.filter(
-                (p) => p.IsScoreSheetUploaded === "Yes"
-              ).length;
-
-              if (uploadedCount === level1Panels.length) {
-                try {
-                  let CandidateDatas: WorkflowJson = {
-                    workflowStatus: workflowStatusApi.pendingHODSelection,
-                    jobRequestId: Number(CandidateData.JobRequestID),
-                    comments: "",
-                    actionBy: props.CurrentUserRole,
-                  };
-                  // console.log(CandidateDatas);
-                  await GetPortalJobsService.UpdateCandidateStatus(
-                    CandidateDatas
-                  );
-                  await SPServices.SPUpdateItem({
-                    Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-                    RequestJSON: {
-                      IsScoreSheetUploaded: "Yes",
-                      ActionId: WorkflowAction.Approved,
-                    },
-                    ID: panel.CandidateIDId,
-                  });
-                } catch (finalUpdateError) {}
-              }
-            }
-          }
-        }
+      if (
+        !updatedInterviewPanelResponse.data ||
+        updatedInterviewPanelResponse.data.length === 0
+      ) {
+        return;
       }
 
-      let CancelAlert = {
+      const level1Panels = updatedInterviewPanelResponse.data.filter(
+        (p) => p.InterviewLevel === InterviewLevels.Level1
+      );
+
+      const uploadedCount = level1Panels.filter(
+        (p) => p.IsScoreSheetUploaded === "Yes"
+      ).length;
+
+      if (uploadedCount === level1Panels.length) {
+        try {
+          let CandidateDatas: WorkflowJson = {
+            workflowStatus: workflowStatusApi.pendingHODSelection,
+            jobRequestId: Number(CandidateData.JobRequestID),
+            comments: "",
+            actionBy: props.CurrentUserRole,
+          };
+
+          await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
+
+          const updateResponse = await SPServices.SPUpdateItem({
+            Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+            RequestJSON: {
+              IsScoreSheetUploaded: "Yes",
+              ActionId: WorkflowAction.Approved,
+            },
+            ID: props.stateValue?.ID,
+          });
+
+          console.log("", updateResponse);
+        } catch (finalUpdateError) {
+          console.error("", finalUpdateError);
+        }
+      } else {
+      }
+
+      console.log("Showing Success Popup...");
+      setAlertPopupOpen(true);
+      setalertProps({
         Message: RecuritmentHRMsg.ScoreCardSubmitMsg,
         Type: HRMSAlertOptions.Success,
         visible: true,
-        ButtonAction: async (userClickedOK: boolean) => {
+        ButtonAction: (userClickedOK: any) => {
           if (userClickedOK) {
             if (props.CurrentRoleID === RoleID.RecruitmentHR) {
               props.navigation("/ReviewProfileList", {
@@ -558,7 +539,7 @@ const InterviewPanelEdit = (props: any) => {
             } else if (props.CurrentRoleID === RoleID.LineManager) {
               props.navigation("/ReviewProfileList", {
                 state: {
-                  activeTab: "tab2",
+                  activeTab: "tab3",
                 },
               });
             } else {
@@ -569,12 +550,11 @@ const InterviewPanelEdit = (props: any) => {
             setAlertPopupOpen(false);
           }
         },
-      };
+      });
 
-      setAlertPopupOpen(true);
-      setalertProps(CancelAlert);
       setIsLoading(false);
     } catch (error) {
+      console.error("Error submitting data:", error);
       throw new Error("Failed to submit data. Please try again later.");
     }
   };
@@ -591,14 +571,14 @@ const InterviewPanelEdit = (props: any) => {
           <CardContent>
             <div>
               <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg6">
+                <div className="ms-Grid-col ms-lg8">
                   <LabelHeaderComponents
                     value={`Job Title - ${CandidateData.PositionTitle}`}
                   >
                     {" "}
                   </LabelHeaderComponents>
                 </div>
-                <div className="ms-Grid-col ms-lg6">
+                <div className="ms-Grid-col ms-lg4">
                   <LabelHeaderComponents
                     value={`Status - ${props.stateValue?.Status}`}
                   >
@@ -803,7 +783,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
               </div>
 
-              <div
+              {/* <div
                 className="ms-Grid-row"
                 style={{ marginTop: "21px", marginBottom: "21px" }}
               >
@@ -814,8 +794,8 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
-              </div>
-
+              </div> */}
+              {/* 
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomAutoComplete
@@ -971,8 +951,8 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
-              </div>
-              <div
+              </div> */}
+              {/* <div
                 className="ms-Grid-row"
                 style={{
                   padding: "3px",
@@ -985,11 +965,11 @@ const InterviewPanelEdit = (props: any) => {
                     label={TabName.CheckboxContent}
                     checked={Checkbox}
                     error={ValidationError.CheckboxValidation}
-                    onChange={(value: boolean) => handleCheckbox(value)}
+                    onChange={handleCheckbox}
                   />
                 </div>
-              </div>
-              <div
+              </div> */}
+              {/* <div
                 className="ms-Grid-row"
                 style={{
                   marginLeft: "-13px",
@@ -1011,300 +991,310 @@ const InterviewPanelEdit = (props: any) => {
                     TermsAndCondition={Checkbox}
                   />
                 </div>
+              </div> */}
+            </div>
+          </CardContent>
+        </Card>
+      ),
+    },
+    {
+      label: TabName.EvaluationTab,
+      value: "tab2",
+      content: (
+        <Card
+          variant="outlined"
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+        >
+          <CardContent>
+            <div>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    <LabelHeaderComponents value={"Questionnaires"} />
+                    <CustomLabel
+                      value={
+                        "(Rating Guide: 3 - Excellent, 2 - Acceptable, 1 - Not Acceptable)"
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+              <div style={{ marginTop: "20px" }}>
+                {questionnaire.map((q) => (
+                  <div key={q.id} style={{ marginBottom: "15px" }}>
+                    <p style={{ fontWeight: "bold" }}>{q.question}</p>
+                    <p>
+                      <strong>Expected Answer:</strong> {q.answer}
+                    </p>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                      }}
+                    >
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomAutoComplete
+                          label="Rating "
+                          value={
+                            ScoreRating.find(
+                              (option) => option.key === q.rating
+                            ) || null
+                          }
+                          options={ScoreRating}
+                          onChange={(value) =>
+                            handleRatingChange(q.id, value ? value.key : 0)
+                          }
+                          error={false}
+                          mandatory={true}
+                          disabled={false}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </CardContent>
         </Card>
       ),
     },
-    // {
-    //   label: TabName.CandidateDetails,
-    //   value: "tab2",
-    //   content: (
-    //     <Card
-    //       variant="outlined"
-    //       sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-    //     >
-    //       <CardContent>
-    //         <div>
-    //           <div className="ms-Grid-row">
-    //             <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
-    //               <div
-    //                 style={{
-    //                   display: "flex",
-    //                   alignItems: "center",
-    //                   gap: "10px",
-    //                 }}
-    //               >
-    //                 <LabelHeaderComponents value={"Questionnaires"} />
-    //                 <CustomLabel
-    //                   value={
-    //                     "(Rating Guide: 3 - Excellent, 2 - Acceptable, 1 - Not Acceptable)"
-    //                   }
-    //                 />
-    //               </div>
-    //             </div>
-    //           </div>
-    //           <div style={{ marginTop: "20px" }}>
-    //             {questionnaire.map((q) => (
-    //               <div key={q.id} style={{ marginBottom: "15px" }}>
-    //                 <p style={{ fontWeight: "bold" }}>{q.question}</p>
-    //                 <p>
-    //                   <strong>Expected Answer:</strong> {q.answer}
-    //                 </p>
+    {
+      label: TabName.EvaluationTab,
+      value: "tab3",
+      content: (
+        <Card
+          variant="outlined"
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+        >
+          <CardContent>
+            <div>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
+                  <LabelHeaderComponents
+                    value={"Scorecard Details(1-Lower Score, 5 -Highest Score)"}
+                  />
+                </div>
 
-    //                 <div
-    //                   style={{
-    //                     display: "flex",
-    //                     alignItems: "center",
-    //                     gap: "10px",
-    //                   }}
-    //                 >
-    //                   <div className="ms-Grid-col ms-lg4">
-    //                     <CustomAutoComplete
-    //                       label="Rating "
-    //                       value={
-    //                         ScoreRating.find(
-    //                           (option) => option.key === q.rating
-    //                         ) || null
-    //                       }
-    //                       options={ScoreRating}
-    //                       onChange={(value) =>
-    //                         handleRatingChange(q.id, value ? value.key : 0)
-    //                       }
-    //                       error={false}
-    //                       mandatory={true}
-    //                       disabled={false}
-    //                     />
-    //                   </div>
-    //                 </div>
-    //               </div>
-    //             ))}
-    //           </div>
-    //         </div>
-    //       </CardContent>
-    //     </Card>
-    //   ),
-    // },
-    // {
-    //   label: TabName.CandidateDetails,
-    //   value: "tab3",
-    //   content: (
-    //     <Card
-    //       variant="outlined"
-    //       sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-    //     >
-    //       <CardContent>
-    //         <div>
-    //           <div className="ms-Grid-row">
-    //             <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
-    //               <LabelHeaderComponents
-    //                 value={"Scorecard Details(1-Lower Score, 5 -Highest Score)"}
-    //               />
-    //             </div>
-    //             {/* <div className="sub-menu-card"> */}
-    //             <div className="ms-Grid-row">
-    //               <div className="ms-Grid-col ms-lg4">
-    //                 <CustomAutoComplete
-    //                   label="Qualifications (Relevant)"
-    //                   value={CandidateData.Qualifications}
-    //                   options={ScoreRanking}
-    //                   onChange={(value) =>
-    //                     handleAutoComplete("Qualifications", value)
-    //                   }
-    //                   mandatory={false}
-    //                   error={ValidationError.Qualifications}
-    //                   disabled={false}
-    //                 />
-    //               </div>
+                <div className="ms-Grid-row" style={{ marginLeft: "1px" }}>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Qualifications (Relevant)"
+                      value={CandidateData.Qualifications}
+                      options={ScoreRanking}
+                      onChange={(value) =>
+                        handleAutoComplete("Qualifications", value)
+                      }
+                      mandatory={true}
+                      error={ValidationError.Qualifications}
+                      disabled={false}
+                    />
+                  </div>
 
-    //               <div className="ms-Grid-col ms-lg4">
-    //                 <CustomAutoComplete
-    //                   label="Experience (Relevant)"
-    //                   value={CandidateData.Experience}
-    //                   options={ScoreRanking}
-    //                   onChange={(value) =>
-    //                     handleAutoComplete("Experience", value)
-    //                   }
-    //                   error={ValidationError.Experience}
-    //                   mandatory={false}
-    //                   disabled={false}
-    //                 />
-    //               </div>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Experience (Relevant)"
+                      value={CandidateData.Experience}
+                      options={ScoreRanking}
+                      onChange={(value) =>
+                        handleAutoComplete("Experience", value)
+                      }
+                      error={ValidationError.Experience}
+                      mandatory={true}
+                      disabled={false}
+                    />
+                  </div>
 
-    //               <div className="ms-Grid-col ms-lg4">
-    //                 <CustomAutoComplete
-    //                   label="Knowledge"
-    //                   value={CandidateData.Knowledge}
-    //                   options={ScoreRanking}
-    //                   mandatory={false}
-    //                   onChange={(value) =>
-    //                     handleAutoComplete("Knowledge", value)
-    //                   }
-    //                   error={ValidationError.Knowledge}
-    //                   disabled={false}
-    //                 />
-    //               </div>
-    //             </div>
-    //             <div className="ms-Grid-row">
-    //               <div className="ms-Grid-col ms-lg4">
-    //                 <CustomAutoComplete
-    //                   label="Energy Level"
-    //                   value={CandidateData.Energylevel}
-    //                   options={ScoreRanking}
-    //                   mandatory={false}
-    //                   onChange={(value) =>
-    //                     handleAutoComplete("Energylevel", value)
-    //                   }
-    //                   error={ValidationError.Energylevel}
-    //                   disabled={false}
-    //                 />
-    //               </div>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Knowledge"
+                      value={CandidateData.Knowledge}
+                      options={ScoreRanking}
+                      mandatory={true}
+                      onChange={(value) =>
+                        handleAutoComplete("Knowledge", value)
+                      }
+                      error={ValidationError.Knowledge}
+                      disabled={false}
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row" style={{ marginLeft: "1px" }}>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Energy Level"
+                      value={CandidateData.Energylevel}
+                      options={ScoreRanking}
+                      mandatory={true}
+                      onChange={(value) =>
+                        handleAutoComplete("Energylevel", value)
+                      }
+                      error={ValidationError.Energylevel}
+                      disabled={false}
+                    />
+                  </div>
 
-    //               <div className="ms-Grid-col ms-lg4">
-    //                 <CustomAutoComplete
-    //                   label="Meets All Job Requirements"
-    //                   value={CandidateData.Requirements}
-    //                   options={ScoreRanking}
-    //                   mandatory={false}
-    //                   onChange={(value) =>
-    //                     handleAutoComplete("Requirements", value)
-    //                   }
-    //                   error={ValidationError.Requirements}
-    //                   disabled={false}
-    //                 />
-    //               </div>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Meets All Job Requirements"
+                      value={CandidateData.Requirements}
+                      options={ScoreRanking}
+                      mandatory={true}
+                      onChange={(value) =>
+                        handleAutoComplete("Requirements", value)
+                      }
+                      error={ValidationError.Requirements}
+                      disabled={false}
+                    />
+                  </div>
 
-    //               <div className="ms-Grid-col ms-lg4">
-    //                 <CustomAutoComplete
-    //                   label="Will Contribute to the Culture Required"
-    //                   value={CandidateData.contributeculture}
-    //                   options={ScoreRanking}
-    //                   mandatory={false}
-    //                   onChange={(value) =>
-    //                     handleAutoComplete("contributeculture", value)
-    //                   }
-    //                   error={ValidationError.contributeculture}
-    //                   disabled={false}
-    //                 />
-    //               </div>
-    //             </div>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Will Contribute to the Culture Required"
+                      value={CandidateData.contributeculture}
+                      options={ScoreRanking}
+                      mandatory={true}
+                      onChange={(value) =>
+                        handleAutoComplete("contributeculture", value)
+                      }
+                      error={ValidationError.contributeculture}
+                      disabled={false}
+                    />
+                  </div>
+                </div>
 
-    //             <div className="ms-Grid-row">
-    //               <div className="ms-Grid-col ms-lg4">
-    //                 <CustomAutoComplete
-    //                   label="Expat Experience/Congolese"
-    //                   value={CandidateData.ExpatExperienceCongolese}
-    //                   options={ScoreRanking}
-    //                   mandatory={false}
-    //                   onChange={(value) =>
-    //                     handleAutoComplete("ExpatExperienceCongolese", value)
-    //                   }
-    //                   error={ValidationError.ExpatExperienceCongolese}
-    //                   disabled={false}
-    //                 />
-    //               </div>
+                <div className="ms-Grid-row" style={{ marginLeft: "1px" }}>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Expat Experience/Congolese"
+                      value={CandidateData.ExpatExperienceCongolese}
+                      options={ScoreRanking}
+                      mandatory={true}
+                      onChange={(value) =>
+                        handleAutoComplete("ExpatExperienceCongolese", value)
+                      }
+                      error={ValidationError.ExpatExperienceCongolese}
+                      disabled={false}
+                    />
+                  </div>
 
-    //               <div className="ms-Grid-col ms-lg4">
-    //                 <CustomAutoComplete
-    //                   label="Other Criteria Recognized by the Panel"
-    //                   value={CandidateData.CriteriaRecognised}
-    //                   options={ScoreRanking}
-    //                   mandatory={false}
-    //                   onChange={(value) =>
-    //                     handleAutoComplete("CriteriaRecognised", value)
-    //                   }
-    //                   error={ValidationError.CriteriaRecognised}
-    //                   disabled={false}
-    //                 />
-    //               </div>
-    //             </div>
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomAutoComplete
+                      label="Other Criteria Recognized by the Panel"
+                      value={CandidateData.CriteriaRecognised}
+                      options={ScoreRanking}
+                      mandatory={true}
+                      onChange={(value) =>
+                        handleAutoComplete("CriteriaRecognised", value)
+                      }
+                      error={ValidationError.CriteriaRecognised}
+                      disabled={false}
+                    />
+                  </div>
+                </div>
 
-    //             <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
-    //               <div className="ms-grid-col ms-lg6">
-    //                 <CustomRadioGroup
-    //                   label="To Consider for Employment"
-    //                   value={CandidateData?.Employment}
-    //                   options={EmploymentOption}
-    //                   mandatory={false}
-    //                   error={ValidationError.Employment}
-    //                   onChange={(value) =>
-    //                     handleRadioChange("Employment", value)
-    //                   }
-    //                 />
-    //               </div>
-    //             </div>
-    //             {shouldShowTextArea && (
-    //               <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
-    //                 <div className="ms-grid-col ms-lg10">
-    //                   <CustomTextArea
-    //                     label="Feedback(Required for Ratings Below 2)"
-    //                     value={CandidateData?.EvaluationFeedback}
-    //                     error={ValidationError.EvaluationFeedback}
-    //                     mandatory={true}
-    //                     onChange={(value) =>
-    //                       handletextArea("EvaluationFeedback", value)
-    //                     }
-    //                   />
-    //                 </div>
-    //               </div>
-    //             )}
+                <div className="ms-Grid-row" style={{ marginLeft: "1px" }}>
+                  <div
+                    className="ms-grid-col ms-lg6"
+                    style={{ marginLeft: "11px" }}
+                  >
+                    <CustomRadioGroup
+                      label="To Consider for Employment"
+                      value={CandidateData?.Employment}
+                      options={EmploymentOption}
+                      mandatory={true}
+                      error={ValidationError.Employment}
+                      onChange={(value) =>
+                        handleRadioChange("Employment", value)
+                      }
+                    />
+                  </div>
+                </div>
+                {shouldShowTextArea && (
+                  <div className="ms-Grid-row" style={{ marginLeft: "6px" }}>
+                    <div
+                      className="ms-grid-col ms-lg10"
+                      style={{ marginLeft: "2px" }}
+                    >
+                      <CustomTextArea
+                        label="Feedback(Required for Ratings Below 2)"
+                        value={CandidateData?.EvaluationFeedback}
+                        error={ValidationError.EvaluationFeedback}
+                        mandatory={true}
+                        onChange={(value) =>
+                          handletextArea("EvaluationFeedback", value)
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
 
-    //             <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
-    //               <div className="ms-grid-col ms-lg10">
-    //                 <CustomTextArea
-    //                   label="Overall Evaluation Feedback"
-    //                   value={CandidateData?.OverAllEvaluationFeedback}
-    //                   error={ValidationError.OverAllEvaluationFeedback}
-    //                   mandatory={true}
-    //                   onChange={(value) =>
-    //                     handletextArea("OverAllEvaluationFeedback", value)
-    //                   }
-    //                 />
-    //               </div>
-    //             </div>
-    //             <div
-    //               className="ms-Grid-row"
-    //               style={{
-    //                 padding: "3px",
-    //                 marginTop: "20px",
-    //                 marginBottom: "-33px",
-    //               }}
-    //             >
-    //               <div className="ms-Grid-col ms-lg12">
-    //                 <SignatureCheckbox
-    //                   label={"I hereby agree for submitted this request"}
-    //                   checked={Checkbox}
-    //                   error={ValidationError.CheckboxValidation}
-    //                   onChange={(value: boolean) => setCheckbox(value)}
-    //                 />
-    //               </div>
-    //             </div>
-    //             <div className="ms-Grid-row">
-    //               <div className="ms-Grid-col ms-lg12">
-    //                 <CustomSignature
-    //                   Name={
-    //                     (props.userDetails[0]?.FirstName ?? "") +
-    //                     " " +
-    //                     (props.userDetails[0]?.MiddleName ?? "") +
-    //                     " " +
-    //                     (props.userDetails[0]?.LastName ?? "")
-    //                   }
-    //                   JobTitleInEnglish={props.userDetails[0]?.JopTitleEnglish}
-    //                   JobTitleInFrench={props.userDetails[0]?.JopTitleFrench}
-    //                   Department={props.userDetails[0]?.DepartmentName}
-    //                   Date={CandidateData.SignDate.toString()}
-    //                   TermsAndCondition={Checkbox}
-    //                 />
-    //               </div>
-    //             </div>
-    //             {/* </div> */}
-    //           </div>
-    //         </div>
-    //       </CardContent>
-    //     </Card>
-    //   ),
-    // },
+                <div className="ms-Grid-row" style={{ marginLeft: "1px" }}>
+                  <div
+                    className="ms-grid-col ms-lg10"
+                    style={{ marginLeft: "6px" }}
+                  >
+                    <CustomTextArea
+                      label="Overall Evaluation Feedback"
+                      value={CandidateData?.OverAllEvaluationFeedback}
+                      error={ValidationError.OverAllEvaluationFeedback}
+                      mandatory={true}
+                      onChange={(value) =>
+                        handletextArea("OverAllEvaluationFeedback", value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div
+                  className="ms-Grid-row"
+                  style={{
+                    padding: "3px",
+                    marginTop: "20px",
+                    marginBottom: "-33px",
+                    marginLeft: "0px",
+                  }}
+                >
+                  <div className="ms-Grid-col ms-lg12">
+                    <SignatureCheckbox
+                      label={"I hereby agree for submitted this request"}
+                      checked={Checkbox}
+                      error={ValidationError.CheckboxValidation}
+                      onChange={handleCheckbox}
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg12">
+                    <CustomSignature
+                      Name={
+                        (props.userDetails[0]?.FirstName ?? "") +
+                        " " +
+                        (props.userDetails[0]?.MiddleName ?? "") +
+                        " " +
+                        (props.userDetails[0]?.LastName ?? "")
+                      }
+                      JobTitleInEnglish={props.userDetails[0]?.JopTitleEnglish}
+                      JobTitleInFrench={props.userDetails[0]?.JopTitleFrench}
+                      Department={props.userDetails[0]?.DepartmentName}
+                      Date={CandidateData.SignDate.toString()}
+                      TermsAndCondition={Checkbox}
+                    />
+                  </div>
+                </div>
+                {/* </div> */}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ),
+    },
   ];
   React.useEffect(() => {
     const activeTabObj = tabs.find((item) => item.value === activeTab);
@@ -1393,7 +1383,7 @@ const InterviewPanelEdit = (props: any) => {
           } else if (props.CurrentRoleID === RoleID.LineManager) {
             props.navigation("/ReviewProfileList", {
               state: {
-                activeTab: "tab2",
+                activeTab: "tab3",
               },
             });
           } else {
