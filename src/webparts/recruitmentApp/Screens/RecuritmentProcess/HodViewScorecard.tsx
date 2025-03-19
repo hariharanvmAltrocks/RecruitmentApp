@@ -1145,7 +1145,7 @@ const HodViewScorecard = (props: any) => {
       actionBy: props.CurrentUserRole,
     });
 
-    let obj: ActionUpdate = { ActionId: 0, Id: 0 };
+    let obj: ActionUpdate = { ActionId: 0, Id: 0, ItemCreated: "" };
     let CandidateDatas: WorkflowJson = {
       workflowStatus: "",
       jobRequestId: 0,
@@ -1155,7 +1155,11 @@ const HodViewScorecard = (props: any) => {
     let SuccessMessage: string = "";
     switch (Action) {
       case "Selected":
-        obj = { ActionId: WorkflowAction.Approved, Id: props.stateValue.ID };
+        obj = {
+          ActionId: WorkflowAction.Approved,
+          Id: props.stateValue.ID,
+          ItemCreated: "Yes",
+        };
         CandidateDatas = createFilter(
           workflowStatusApi.CandidateSelectedIPanel
         );
@@ -1163,7 +1167,11 @@ const HodViewScorecard = (props: any) => {
         break;
 
       case "Rejected":
-        obj = { ActionId: WorkflowAction.Reject, Id: props.stateValue.ID };
+        obj = {
+          ActionId: WorkflowAction.Reject,
+          Id: props.stateValue.ID,
+          ItemCreated: "Yes",
+        };
         CandidateDatas = createFilter(
           workflowStatusApi.CandidateRejectedIPanel
         );

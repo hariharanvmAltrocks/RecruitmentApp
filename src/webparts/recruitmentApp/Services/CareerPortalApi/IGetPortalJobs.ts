@@ -1,4 +1,4 @@
-import { AdvertisementDetails, CandidateProfile, FilterItem, GetProfileByJobCode, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 
 export type IGetPortalJobs = {
     UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>>;
@@ -9,4 +9,5 @@ export type IGetPortalJobs = {
     UpsertAgenciesJobs(data: profileXagent): Promise<ApiResponse<any | null>>;
     UpsertMaster(data: UpsertMasters[]): Promise<ApiResponse<any | null>>;
     UpsertQuestions(data: UpsertQuestions[]): Promise<ApiResponse<any | null>>;
+    GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>>;
 }

@@ -100,15 +100,23 @@ const CandidateList = (props: any) => {
           FilterValue: props?.stateValue?.ID,
         },
       ];
-
-      filterConditions.push({
-        FilterKey: "StatusId",
-        Operator: "in",
-        FilterValue: [
-          StatusId.PendingwithHODtoselectthecandidate,
-          StatusId.Selected,
-        ],
-      });
+      filterConditions = [
+        {
+          FilterKey: "StatusId",
+          Operator: "in",
+          FilterValue: [
+            StatusId.PendingwithHODtoselectthecandidate,
+            StatusId.Selected,
+          ],
+        },
+      ];
+      filterConditions = [
+        {
+          FilterKey: "ItemCreated",
+          Operator: "eq",
+          FilterValue: "No",
+        },
+      ];
       const response =
         await InterviewServices.GetCombinedCandidatePositionDetails(
           filterConditions,

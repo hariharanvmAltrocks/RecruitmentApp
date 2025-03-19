@@ -26,7 +26,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 
 import {
-  CatogryOption,
+  CategoryID,
   DisciplinesOption,
   HRMSAlertOptions,
   isDisqualificationOption,
@@ -34,6 +34,12 @@ import {
   RoleID,
 } from "../../utilities/Config";
 import LabelHeaderComponents from "../../components/TitleHeader";
+import {
+  answersValue,
+  optionsValue,
+  UpsertQuestions,
+} from "../../Models/ApIInterface";
+import { GetPortalJobsService } from "../../Services/ServiceExport";
 
 type InterviewQuesValidationError = {
   QuestionType: boolean;
@@ -52,6 +58,12 @@ interface OptionRow {
   isCorrect?: boolean;
 }
 
+export type MasterOption = {
+  category: AutoCompleteItem[];
+  categoryOption: string[];
+  ScopeOption: AutoCompleteItem[];
+  QueType: AutoCompleteItem[];
+};
 interface QuestionItem {
   id: number;
   discipline: AutoCompleteItem;
@@ -114,6 +126,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const [categorySelected, setCategorySelected] = useState(false);
   const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
   const [activeTab, setactiveTab] = useState("tab1");
+  const [getMasterData, setGetMasterData] = useState<MasterOption>({
+    category: [],
+    categoryOption: [],
+    ScopeOption: [],
+    QueType: [],
+  });
 
   const selectedCategory = InterviewQuesData.Catogry || "Interview Panel";
 
@@ -626,6 +644,49 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     }
   }, [InterviewQuesData]);
 
+  useEffect(() => {
+    async function fetchMaster() {
+      const CategoryData = await GetPortalJobsService.GetAllMaster(
+        CategoryID.QuestionCategory
+      );
+      const ScopeData = await GetPortalJobsService.GetAllMaster(
+        CategoryID.QuestionScopes
+      );
+      const QuestionType = await GetPortalJobsService.GetAllMaster(
+        CategoryID.QuestionType
+      );
+      console.log(CategoryData, "GetAllMaster");
+      const CategoryOption: AutoCompleteItem[] = (CategoryData.data ?? []).map(
+        (opt: any) => ({
+          key: Number(opt.value),
+          text: opt.displayText,
+        })
+      );
+      let categoryOptionVal: string[] = CategoryOption.map((item) => item.text);
+
+      const ScopeOption: AutoCompleteItem[] = (ScopeData.data ?? []).map(
+        (opt: any) => ({
+          key: opt.value,
+          text: opt.displayText,
+        })
+      );
+      const QuestionTypeOption: AutoCompleteItem[] = (
+        QuestionType.data ?? []
+      ).map((opt: any) => ({
+        key: opt.value,
+        text: opt.displayText,
+      }));
+
+      setGetMasterData((prevState) => ({
+        ...prevState,
+        category: CategoryOption,
+        categoryOption: categoryOptionVal,
+        ScopeOption: ScopeOption,
+        QueType: QuestionTypeOption,
+      }));
+    }
+    void fetchMaster();
+  }, []);
   // tabs
 
   const tabs = [
@@ -674,7 +735,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                     value={InterviewQuesData.Catogry}
                     onChange={handleCategoryChange}
                     mandatory={true}
-                    options={CatogryOption}
+                    options={getMasterData.categoryOption}
                     error={ValidationError.Catogry}
                   />
 
@@ -1336,7 +1397,38 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   ]);
 
   async function Submit_fn() {
-    alert("Submitted!");
+    console.log(questions, "questions Answers.");
+
+    let QuestionValue: UpsertQuestions[] = questions.map((item) => {
+      const OptionsValue: optionsValue[] =
+        item.options?.map((opt) => ({
+          optionEn: opt.text,
+          optionFr: opt.text,
+          sequence: opt.key,
+        })) || [];
+
+      const answerVal = JSON.parse(item.expectedAnswer || "[]");
+      const answerValue: answersValue[] =
+        answerVal?.map((opt: any) => ({
+          optionEn: opt.text,
+          optionFr: opt.text,
+        })) || [];
+
+      return {
+        questionEn: item.question,
+        questionFr: item.question,
+        scopeId: item.discipline.text,
+        categoryId: InterviewQuesData.Catogry,
+        questionTypeId: item.questionType.text,
+        isQualifier: 0,
+        isAnswerValidate: item.Disqualification === false ? 0 : 1,
+        sequence: item.id,
+        jobCode: props.stateValue.JobCode,
+        options: OptionsValue,
+        answers: answerValue,
+      };
+    });
+    console.log(QuestionValue, "QuestionValue");
 
     setInterviewQuesData((prev) => ({
       ...prev,

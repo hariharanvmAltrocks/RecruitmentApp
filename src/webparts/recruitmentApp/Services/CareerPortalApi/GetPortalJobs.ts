@@ -1,4 +1,4 @@
-import { AdvertisementDetails, CandidateProfile, FilterItem, GetProfileByJobCode, profileJobsComments, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, profileJobsComments, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { DocumentLibraray, ListNames, RoleProfileMaster } from "../../utilities/Config";
 import { getProfileData, postAdveDetails } from "../ReviewProfileService/ReviewCandidateService";
 import { CommonServices } from "../ServiceExport";
@@ -369,6 +369,41 @@ export default class GetPortalJobs implements IGetPortalJobs {
         data: [],
         status: 500,
         message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+
+  async GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>> {
+    try {
+      let GetAllMasterData: GetAllMaster[] = []
+      await postAdveDetails.getMastersByCategory(id).then((res) => {
+        GetAllMasterData = res.data.data.map((item: any) => {
+          return {
+            id: item.id,
+            value: item.value,
+            displayText: item.displayText,
+            displayTextFr: item.displayText_fr,
+          };
+        });
+        console.log(GetAllMasterData, "GetAllMasterData")
+      }
+      ).catch((error) => {
+        console.log(error, "error");
+      })
+      return {
+        data: GetAllMasterData,
+        status: 200,
+        message: "Get Candidate details",
+      };
+    } catch (error) {
+      console.error(
+        "Error Get Candidate details:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error Get Candidate details",
       };
     }
   }

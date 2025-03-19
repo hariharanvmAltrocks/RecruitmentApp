@@ -140,3 +140,11 @@ export type answersValue = {
     optionEn: string,
     optionFr: string
 }
+
+
+export type GetAllMaster = {
+    id: number;
+    value: string;
+    displayText: string;
+    displayTextFr: string;
+}

@@ -20,6 +20,7 @@ import {
   ADGroupID,
   CandidateStatus,
   HRMSAlertOptions,
+  InterviewLevels,
   ListNames,
   RecuritmentHRMsg,
   RoleID,
@@ -293,7 +294,10 @@ const ViewCandidateDetails = (props: any) => {
 
       setInterviewedLevel((prevState) => ({
         ...prevState,
-        Levels: "Level 2", //Gradelevel.data[0]?.Level,
+        Levels:
+          Gradelevel.data[0]?.Level === InterviewLevels.Level1
+            ? InterviewLevels.Level1
+            : InterviewLevels.Level2,
         AssignInterviewedLevel1Option: interviewpanelOption.data,
         AssignInterviewLevel1: Level1Value,
         AssignInterviewedLevel2: Level2Value,

@@ -36,6 +36,11 @@ export const postAdveDetails = {
             `/GetAllMasters`,
         );
     },
+    getMastersByCategory: async function (id: number) {
+        return await AxiosInstance.get(
+            `/GetMastersByCategory=${id}`,
+        );
+    },
     PostMaster: async function (params: UpsertMasters[]) {
         return await AxiosInstance.post(
             `/UpsertMasters`, params

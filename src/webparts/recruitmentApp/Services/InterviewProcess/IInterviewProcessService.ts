@@ -20,6 +20,7 @@ export interface CommentsDatas {
 export type ActionUpdate = {
   ActionId: number;
   Id: number;
+  ItemCreated: string;
 };
 
 export type AssignPositionID = {
