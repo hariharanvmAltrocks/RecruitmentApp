@@ -106,13 +106,45 @@ export type profileJobsComments = {
 }
 
 export type UpsertMasters = {
-    value?: string,
     displayText: string,
     displayText_fr: string,
     category: category;
 }
 
 export type category = {
-    id: 0,
+    id: number,
     name: string;
+}
+
+export type UpsertQuestions = {
+    questionEn: string;
+    questionFr: string;
+    scopeId: string;
+    categoryId: string;
+    questionTypeId: string;
+    isQualifier: number;
+    isAnswerValidate: number;
+    sequence: number;
+    jobCode: string;
+    options: optionsValue[];
+    answers: answersValue[];
+}
+
+export type optionsValue = {
+    optionEn: string,
+    optionFr: string,
+    sequence: number
+}
+
+export type answersValue = {
+    optionEn: string,
+    optionFr: string
+}
+
+
+export type GetAllMaster = {
+    id: number;
+    value: string;
+    displayText: string;
+    displayTextFr: string;
 }

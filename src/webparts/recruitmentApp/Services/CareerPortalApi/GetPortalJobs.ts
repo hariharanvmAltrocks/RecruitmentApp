@@ -1,4 +1,4 @@
-import { AdvertisementDetails, CandidateProfile, FilterItem, GetProfileByJobCode, profileJobsComments, profileXagent, UpsertMasters, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, profileJobsComments, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { DocumentLibraray, ListNames, RoleProfileMaster } from "../../utilities/Config";
 import { getProfileData, postAdveDetails } from "../ReviewProfileService/ReviewCandidateService";
 import { CommonServices } from "../ServiceExport";
@@ -311,14 +311,14 @@ export default class GetPortalJobs implements IGetPortalJobs {
     }
   }
 
-  async UpsertMaster(data: UpsertMasters): Promise<ApiResponse<any | null>> {
+  async UpsertMaster(data: UpsertMasters[]): Promise<ApiResponse<any | null>> {
     try {
-      let MasterDetails: UpsertMasters = {
-        value: data.value,
-        displayText: data.displayText,
-        displayText_fr: data.displayText_fr,
-        category: data.category
-      }
+      let MasterDetails: UpsertMasters[] = data.map((item) => ({
+        displayText: item.displayText,
+        displayText_fr: item.displayText_fr,
+        category: item.category,
+      }));
+
       const response = await postAdveDetails.PostMaster(MasterDetails);
       return {
         data: response.data,
@@ -334,6 +334,76 @@ export default class GetPortalJobs implements IGetPortalJobs {
         data: [],
         status: 500,
         message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+
+  async UpsertQuestions(data: UpsertQuestions[]): Promise<ApiResponse<any | null>> {
+    try {
+      let UpsertQuestions: UpsertQuestions[] = data.map((item) => ({
+        questionEn: item.questionEn,
+        questionFr: item.questionFr,
+        scopeId: item.scopeId,
+        categoryId: item.categoryId,
+        questionTypeId: item.questionTypeId,
+        isQualifier: item.isQualifier,
+        isAnswerValidate: item.isAnswerValidate,
+        sequence: item.sequence,
+        jobCode: item.jobCode,
+        options: item.options,
+        answers: item.answers,
+      }));
+
+      const response = await postAdveDetails.PostQuestion(UpsertQuestions);
+      return {
+        data: response.data,
+        status: response.status,
+        message: response.data.message,
+      };
+    } catch (error) {
+      console.error(
+        "Error inserting data into AdvertisementDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+
+  async GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>> {
+    try {
+      let GetAllMasterData: GetAllMaster[] = []
+      await postAdveDetails.getMastersByCategory(id).then((res) => {
+        GetAllMasterData = res.data.data.map((item: any) => {
+          return {
+            id: item.id,
+            value: item.value,
+            displayText: item.displayText,
+            displayTextFr: item.displayText_fr,
+          };
+        });
+        console.log(GetAllMasterData, "GetAllMasterData")
+      }
+      ).catch((error) => {
+        console.log(error, "error");
+      })
+      return {
+        data: GetAllMasterData,
+        status: 200,
+        message: "Get Candidate details",
+      };
+    } catch (error) {
+      console.error(
+        "Error Get Candidate details:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error Get Candidate details",
       };
     }
   }

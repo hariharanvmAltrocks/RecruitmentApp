@@ -20,9 +20,11 @@ import {
   ADGroupID,
   CandidateStatus,
   HRMSAlertOptions,
+  InterviewLevels,
   ListNames,
   RecuritmentHRMsg,
   RoleID,
+  ScoreRanking,
   TabName,
   WorkflowAction,
   workflowStatusApi,
@@ -39,6 +41,7 @@ import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { Dialog } from "primereact/dialog";
 import CustomJsonComments from "../../components/CustomJsonComments";
 import CustomDatePicker from "../../components/CustomDatePicker";
+import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomTimePicker from "../../components/CustomTimePicker";
 
 type InterviewedLevelValue = {
@@ -49,6 +52,8 @@ type InterviewedLevelValue = {
   InterviewedDate: Date | undefined;
   InterviewMeetingInviteLink: string;
   InterviewTime: string;
+  CandidateScoreValue: AutoCompleteItem;
+  CandidateScoreOption: AutoCompleteItem[];
 };
 
 type ValidationError = {
@@ -59,6 +64,7 @@ type ValidationError = {
   AssignInterviewLevel1: boolean;
   InterviewMeetingInviteLink: boolean;
   InterviewTime: boolean;
+  CandidateScoreValue: boolean;
 };
 
 type ActionValue = {
@@ -104,6 +110,8 @@ const ViewCandidateDetails = (props: any) => {
       InterviewedDate: undefined,
       InterviewMeetingInviteLink: "",
       InterviewTime: "",
+      CandidateScoreValue: { key: 0, text: "" },
+      CandidateScoreOption: ScoreRanking,
     });
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
@@ -122,6 +130,7 @@ const ViewCandidateDetails = (props: any) => {
       AssignInterviewLevel1: false,
       InterviewMeetingInviteLink: false,
       InterviewTime: false,
+      CandidateScoreValue: false,
     });
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -248,6 +257,7 @@ const ViewCandidateDetails = (props: any) => {
       const Gradelevel = await CommonServices.GetGradeLevel(
         response.data[0]?.PayrollGrade
       );
+      console.log(Gradelevel);
 
       const filterJDEMapping = [
         {
@@ -270,11 +280,13 @@ const ViewCandidateDetails = (props: any) => {
         [
           AssignInterviewPanel.data[0]?.LineManagerId,
           response.data[0]?.AssignedHRId,
+          AssignInterviewPanel.data[0]?.HODId,
         ].includes(item.key)
       );
 
       const Level2Value = interviewpanelOption.data.filter((item: any) =>
         [
+          response.data[0]?.AssignedHRId,
           AssignInterviewPanel.data[0]?.HODId,
           AssignInterviewPanel.data[0]?.EXCOId,
         ].includes(item.key)
@@ -282,7 +294,10 @@ const ViewCandidateDetails = (props: any) => {
 
       setInterviewedLevel((prevState) => ({
         ...prevState,
-        Levels: Gradelevel.data[0]?.Level,
+        Levels:
+          Gradelevel.data[0]?.Level === InterviewLevels.Level1
+            ? InterviewLevels.Level1
+            : InterviewLevels.Level2,
         AssignInterviewedLevel1Option: interviewpanelOption.data,
         AssignInterviewLevel1: Level1Value,
         AssignInterviewedLevel2: Level2Value,
@@ -360,6 +375,17 @@ const ViewCandidateDetails = (props: any) => {
     setValidationErrors((prevState) => ({
       ...prevState,
       InterviewMeetingInviteLink: false,
+    }));
+  };
+
+  const handleAutoComplete = async (value: AutoCompleteItem | null) => {
+    setInterviewedLevel((prevState) => ({
+      ...prevState,
+      CandidateScoreValue: value || { key: 0, text: "" },
+    }));
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      CandidateScoreValue: false,
     }));
   };
 
@@ -496,7 +522,7 @@ const ViewCandidateDetails = (props: any) => {
                             InterviewedLevel.AssignInterviewedLevel1Option
                           }
                           onChange={(value) => handleMulitiSelect(value)}
-                          disabled={false}
+                          disabled={true}
                           mandatory={true}
                           error={validationErrors.AssignInterviewLevel1}
                         />
@@ -597,7 +623,8 @@ const ViewCandidateDetails = (props: any) => {
                   </div>
                 </div>
                 {props.stateValue?.initialTab === TabName.ReviewProfile &&
-                  props.stateValue?.ActionBtn === "Edit" && (
+                  props.stateValue?.ActionBtn === "Edit" &&
+                  props.CurrentRoleID === RoleID.LineManager && (
                     <>
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg5">
@@ -613,6 +640,25 @@ const ViewCandidateDetails = (props: any) => {
                                 ? true
                                 : false
                             }
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                {props.stateValue?.initialTab === TabName.ReviewProfile &&
+                  props.CurrentRoleID === RoleID.RecruitmentHR && (
+                    <>
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomAutoComplete
+                            label="Job Functional Type"
+                            options={InterviewedLevel.CandidateScoreOption}
+                            value={InterviewedLevel.CandidateScoreValue}
+                            disabled={props.stateValue?.ActionBtn === "View"}
+                            mandatory={true}
+                            onChange={(item) => handleAutoComplete(item)}
+                            error={validationErrors.CandidateScoreValue}
                           />
                         </div>
                       </div>
@@ -760,6 +806,7 @@ const ViewCandidateDetails = (props: any) => {
       CandidateStatus: false,
       InterviewedDate: false,
       AssignInterviewLevel1: false,
+      CandidateScoreValue: false,
     };
     switch (props.CurrentRoleID) {
       case RoleID.RecruitmentHR:
@@ -768,12 +815,14 @@ const ViewCandidateDetails = (props: any) => {
           errors.Checkboxalidation = !IsValid(Checkbox);
           errors.InterviewedDate = !IsValid(InterviewedLevel.InterviewedDate);
           errors.AssignInterviewLevel1 = !IsValid(
-            InterviewedLevel.AssignInterviewLevel1?.[2]?.text ?? ""
+            InterviewedLevel.AssignInterviewLevel1?.[0]?.text ?? ""
           );
         } else {
           errors.Comments = !IsValid(actionValue.Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
-          errors.CandidateStatus = !IsValid(actionValue.CandidateStatus);
+          errors.CandidateScoreValue = !IsValid(
+            InterviewedLevel.CandidateScoreValue.text
+          );
         }
         break;
       case RoleID.LineManager:
@@ -891,12 +940,14 @@ const ViewCandidateDetails = (props: any) => {
         actionBy: "",
       };
       let PopupMessage: string = "";
-      switch (actionValue.CandidateStatus) {
-        case CandidateStatus.Yes:
-          if (props.CurrentRoleID === RoleID.LineManager) {
+      if (props.CurrentRoleID === RoleID.LineManager) {
+        switch (actionValue.CandidateStatus) {
+          case CandidateStatus.Yes:
             if (
-              CandidateProfile.Status ===
-              "Pending with Line Manager Level 2 Review"
+              CandidateProfile.workflowStatusId ===
+                workflowStatusApi.LineManagerL2Pending ||
+              CandidateProfile.workflowStatusId ===
+                workflowStatusApi.LineManagerLevel2OnHold
             ) {
               CandidateData = createFilter(
                 workflowStatusApi.PendingRecruitmentHRscheduleInterview
@@ -908,19 +959,12 @@ const ViewCandidateDetails = (props: any) => {
               );
               PopupMessage = RecuritmentHRMsg.ProfileReviewed;
             }
-          } else {
-            CandidateData = createFilter(
-              workflowStatusApi.LineManagerL1Pending
-            );
-            PopupMessage = RecuritmentHRMsg.ProfileReviewed;
-          }
-          break;
+            break;
 
-        case CandidateStatus.No:
-          if (props.CurrentRoleID === RoleID.LineManager) {
+          case CandidateStatus.No:
             if (
-              CandidateProfile.Status ===
-              "Pending with Line Manager Level 2 Review"
+              CandidateProfile.workflowStatusId ===
+              workflowStatusApi.LineManagerL2Pending
             ) {
               CandidateData = createFilter(
                 workflowStatusApi.LineManagerLevel2Rejected
@@ -932,17 +976,12 @@ const ViewCandidateDetails = (props: any) => {
               );
               PopupMessage = RecuritmentHRMsg.ProfileReviewedNo;
             }
-          } else {
-            CandidateData = createFilter(workflowStatusApi.HRRejected);
-            PopupMessage = RecuritmentHRMsg.ProfileReviewedNo;
-          }
-          break;
+            break;
 
-        case CandidateStatus.WaitingList:
-          if (props.CurrentRoleID === RoleID.LineManager) {
+          case CandidateStatus.WaitingList:
             if (
-              CandidateProfile.Status ===
-              "Pending with Line Manager Level 2 Review"
+              CandidateProfile.workflowStatusId ===
+              workflowStatusApi.LineManagerL2Pending
             ) {
               CandidateData = createFilter(
                 workflowStatusApi.LineManagerLevel2OnHold
@@ -954,16 +993,16 @@ const ViewCandidateDetails = (props: any) => {
               );
               PopupMessage = RecuritmentHRMsg.ProfileReviewedWaitingList;
             }
-          } else {
-            CandidateData = createFilter(workflowStatusApi.HROnHold);
-            PopupMessage = RecuritmentHRMsg.ProfileReviewedWaitingList;
-          }
-          break;
-      }
-
-      if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
-        CandidateData = createFilter(workflowStatusApi.InterviewScheduled);
-        PopupMessage = RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
+            break;
+        }
+      } else {
+        if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
+          CandidateData = createFilter(workflowStatusApi.InterviewScheduled);
+          PopupMessage = RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
+        } else {
+          CandidateData = createFilter(workflowStatusApi.LineManagerL1Pending);
+          PopupMessage = RecuritmentHRMsg.ProfileReviewed;
+        }
       }
 
       const res = await GetPortalJobsService.UpdateCandidateStatus(

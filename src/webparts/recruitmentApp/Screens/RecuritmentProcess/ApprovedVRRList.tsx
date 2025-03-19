@@ -454,11 +454,16 @@ const RecruitmentProcess = (props: any) => {
     setIsLoading(true);
     try {
       let filterConditions = [];
-      let Conditions = "";
+      let Conditions = "and";
       filterConditions.push({
         FilterKey: "StatusId",
         Operator: "eq",
         FilterValue: StatusId.PendingwithHRLeadtoAssignRecruitmentHR,
+      });
+      filterConditions.push({
+        FilterKey: "ItemCreated",
+        Operator: "eq",
+        FilterValue: "No",
       });
 
       try {
@@ -488,7 +493,7 @@ const RecruitmentProcess = (props: any) => {
       );
 
       let filterConditionsRecuritment = [];
-      let RecuritmentConditions = "";
+      let RecuritmentConditions = "and";
       if (activeTab === "tab3") {
         filterConditionsRecuritment = [];
         RecuritmentConditions = "";
@@ -536,6 +541,11 @@ const RecruitmentProcess = (props: any) => {
           }
         }
       }
+      filterConditions.push({
+        FilterKey: "ItemCreated",
+        Operator: "eq",
+        FilterValue: "No",
+      });
       // const recruitmentDetails = getVRRDetails.GetRecruitmentDetails(
       //   filterConditionsRecuritment,
       //   RecuritmentConditions
@@ -1098,7 +1108,10 @@ const RecruitmentProcess = (props: any) => {
 
                 await SPServices.SPUpdateItem({
                   Listname: ListNames.HRMSVacancyReplacementRequest,
-                  RequestJSON: { ActionId: WorkflowAction.Approved },
+                  RequestJSON: {
+                    ActionId: WorkflowAction.Approved,
+                    ItemCreated: "Yes",
+                  },
                   ID: selectedJob.VRRId,
                 });
               } else {
@@ -1358,23 +1371,6 @@ const RecruitmentProcess = (props: any) => {
 
         if (!itemToUpdate) {
           continue;
-        }
-
-        const obj = {
-          ID: itemToUpdate.ID,
-          AssignHR: AssignRecruitmentHR.key,
-
-          AssignAgencies: AssignRecruitmentAgencies[0]?.key,
-        };
-
-        try {
-          await SPServices.SPUpdateItem({
-            Listname: ListNames.HRMSVacancyReplacementRequest,
-            RequestJSON: obj,
-            ID: job.VRRId,
-          });
-        } catch (error) {
-          console.error(error);
         }
       }
 

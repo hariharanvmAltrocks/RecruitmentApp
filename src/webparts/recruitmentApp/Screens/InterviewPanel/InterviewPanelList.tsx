@@ -233,6 +233,11 @@ const InterviewPanelList = (props: any) => {
         FilterValue: StatusId.InterviewScheduled,
       });
       filterConditionsRecuritment.push({
+        FilterKey: "ItemCreated",
+        Operator: "eq",
+        FilterValue: "No",
+      });
+      filterConditionsRecuritment.push({
         FilterKey: "ID",
         Operator: "in",
         FilterValue: candidateIDs,

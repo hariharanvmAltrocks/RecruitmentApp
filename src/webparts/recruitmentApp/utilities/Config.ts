@@ -270,6 +270,11 @@ export const TabName = {
   InterviewQuestion: "Interview Questions",
   AdvertExtension: "Advert Extension",
   CheckboxContent: "I hereby agree for submitting this request.",
+  ReviewLevel1: "Review Profile - Level 1",
+  ReviewLevel2: "Review Profile - Level 2",
+  Shortlisted: "Shortlisted",
+  onHold: "On Hold",
+  Rejected: "Rejected"
 };
 
 export const ProfileStatus = {
@@ -340,3 +345,30 @@ export const DisciplinesOption = [
   { key: 2, text: "Behavioral" },
 ];
 export const isDisqualificationOption = ["Yes", "No"];
+export const CategoryID = {
+  Department: 1,
+  Function: 2,
+  Level: 3,
+  RoleSpecificKnowledge: 4,
+  TechnicalSkill: 5,
+  Qualification: 6,
+  Nationality: 7,
+  Experience: 8,
+  WorkflowStatus: 9,
+  ApplicationStatus: 10,
+  LanguageProficiency: 11,
+  EducationLevels: 12,
+  QuestionScopes: 13,
+  QuestionCategory: 14,
+  QuestionType: 15,
+  Empty: 16,
+  IvanhoeZijinExperience: 17,
+  ReferralSource: 18,
+  RaceEthicity: 19,
+  CitizenshipStatus: 20,
+  GenderIndentity: 21,
+  Disciplines: 22,
+  ProofofIdentity: 23,
+  TitleforProfile: 24,
+
+}

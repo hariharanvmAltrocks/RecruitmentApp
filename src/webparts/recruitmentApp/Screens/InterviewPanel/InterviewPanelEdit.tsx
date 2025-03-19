@@ -505,6 +505,7 @@ const InterviewPanelEdit = (props: any) => {
             RequestJSON: {
               IsScoreSheetUploaded: "Yes",
               ActionId: WorkflowAction.Approved,
+              ItemCreated: "Yes",
             },
             ID: props.stateValue?.ID,
           });

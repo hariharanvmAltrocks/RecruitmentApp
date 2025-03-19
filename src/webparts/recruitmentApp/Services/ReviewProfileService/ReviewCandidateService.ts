@@ -1,4 +1,4 @@
-import { AdvertisementDetails, profileXagent, UpsertMasters, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
 export const getProfileData = {
@@ -36,9 +36,19 @@ export const postAdveDetails = {
             `/GetAllMasters`,
         );
     },
-    PostMaster: async function (params: UpsertMasters) {
+    getMastersByCategory: async function (id: number) {
+        return await AxiosInstance.get(
+            `/GetMastersByCategory=${id}`,
+        );
+    },
+    PostMaster: async function (params: UpsertMasters[]) {
         return await AxiosInstance.post(
             `/UpsertMasters`, params
+        );
+    },
+    PostQuestion: async function (params: UpsertQuestions[]) {
+        return await AxiosInstance.post(
+            `/UpsertQuestions`, params
         );
     },
 

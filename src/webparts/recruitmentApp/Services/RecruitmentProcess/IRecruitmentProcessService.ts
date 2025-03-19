@@ -1,3 +1,5 @@
+import { AdvDetails, RecuritmentData } from "../../Models/RecuritmentVRR";
+
 export interface IAttachmentExampleState {
   file: File | any;
   fileName: string;
@@ -89,4 +91,11 @@ export type IRecruitmentService = {
     Expand: string,
   ): Promise<ApiResponse<any | null>>;
   GetFilterInCategory(filterConditions: any): Promise<ApiResponse<any[]>>;
+  UploadAdvertisementInPortal(
+    Filter: any[],
+    Condition: string,
+    RecuritmentDetails: RecuritmentData,
+    AdvertisementValue: AdvDetails,
+    MasterData: any
+  ): Promise<ApiResponse<null>>;
 };
