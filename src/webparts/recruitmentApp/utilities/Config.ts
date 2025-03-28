@@ -71,6 +71,8 @@ export const StatusId = {
   Selected: 122,
   PendingInterviewQuestionwithLineManagerandHR: 39,
   InterviewScheduled: 40,
+  //sneka
+  PendingwithHRandLMtocreateinterviewQuestion :124
 };
 
 export const RoleID = {
@@ -372,3 +374,13 @@ export const CategoryID = {
   TitleforProfile: 24,
 
 }
+// sneka
+export const CatogryOptionCode = {
+  CareerPortalCandidate: "Career Portal - Candidate",
+  InterviewPanel: "Interview Panel",
+};
+export const displayTextOptionCode = {
+  SingleAnswer: "Single Answer",
+  MultiAnswer: "Multi Answer",
+  CustomAnswer:"Custom Answer",
+};

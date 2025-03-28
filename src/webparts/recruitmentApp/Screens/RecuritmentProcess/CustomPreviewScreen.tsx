@@ -21,17 +21,17 @@ function CustomPreviewScreen({
 }: FormFields) {
   // const ValidTo = data.ValidTo;
   // const ValidFrom = data.ValidFrom;
-
   const isEmptyData =
-    !data ||
-    (!data.RolePurpose &&
-      !data.JobDescription &&
-      !data.RoleSpeKnowledgeoption?.length &&
-      !data.MinQualificationOption?.length &&
-      !data.TechnicalSkillsOption?.length &&
-      !data.TotalExperience &&
-      !data.ExperienceinMiningIndustry);
-
+  !data ||
+  !(
+    data.RolePurpose &&
+    data.JobDescription &&
+    data.RoleSpeKnowledgeoption?.length &&
+    data.MinQualificationOption?.length &&
+    data.TechnicalSkillsOption?.length &&
+    data.TotalExperience &&
+    data.ExperienceinMiningIndustry
+  );
   return (
     <>
       <div className="ms-Grid-row">
