@@ -18,6 +18,7 @@ import ReviewCandidateList from "../Screens/ReviewProfile/ReviewCandidateList";
 import ViewCandidateDetails from "../Screens/ReviewProfile/ViewCandidateDetails";
 import HodViewScorecard from "../Screens/RecuritmentProcess/HodViewScorecard";
 import InterviewQuesEdit from "../Screens/ReviewProfile/InterviewQuesEdit";
+import ReviewProfileEdit from "../Screens/ReviewProfile/ReviewProfileEdit";
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
 
@@ -131,6 +132,10 @@ export default function MainPage(props: any) {
                 <Route
                   path="/ReviewProfileList/InterviewQuesEdit"
                   element={<InterviewQuesEdit {...props} {...masterData} />}
+                />
+                <Route
+                  path="/ReviewProfileList/ReviewProfileEdit"
+                  element={<ReviewProfileEdit {...props} {...masterData} />}
                 />
               </Routes>
             </>
