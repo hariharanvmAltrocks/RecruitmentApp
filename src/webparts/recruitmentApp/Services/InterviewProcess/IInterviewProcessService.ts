@@ -1,4 +1,4 @@
-import { InterviewPanaldata } from "../../Models/Screens";
+import { AutoCompleteItem, InterviewPanaldata } from "../../Models/Screens";
 export interface CommentsDatas {
   Id: string;
   JobTitleInEnglish: string;
@@ -15,6 +15,13 @@ export interface CommentsDatas {
   CandidateID: number;
   CandidateScoreCard: Array<any>;
   Role: string;
+  MaxOverallScore: number;  
+  SumOverallScores: number; 
+  MaxQuestionScore:number;
+  QuestionBasedScore:number;
+  MaxPossibleScore:number;
+  CombinedScore:number;
+  GPA:number;
 }
 
 export type ActionUpdate = {
@@ -56,9 +63,5 @@ export type IInterviewProcessService = {
     obj: AssignPositionID,
     ListName: string
   ): Promise<ApiResponse<null>>;
-
-  GetPositionDetails(
-    filterParam: any,
-    filterConditions: any
-  ): Promise<any | null>;
+  GetHRMSPositionDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<AutoCompleteItem[]>>
 };

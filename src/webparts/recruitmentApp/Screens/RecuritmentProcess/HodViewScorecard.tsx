@@ -127,7 +127,6 @@ const HodViewScorecard = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
-
   const [agentName, setIagentName] = React.useState<"">("");
   const [InterviewPanelData, setInterviewPanelData] = React.useState<
     InterviewPanaldata[]
@@ -146,97 +145,13 @@ const HodViewScorecard = (props: any) => {
   const [expanded, setExpanded] = React.useState<string | null>(null);
   const [ViewQABtn, setViewQABtn] = React.useState<boolean>(false);
   const questionnaire: QuestionItem[] = QuestionnaireData;
-
-  const fetchCandidateData = async (ID: number) => {
-    setIsLoading(true);
-    try {
-      let filterConditions = [];
-      let Conditions = "";
-      filterConditions.push({
-        FilterKey: "ID",
-        Operator: "eq",
-        FilterValue: ID,
-      });
-
-      const data = await getVRRDetails.GetInterviewPanelCandidateDetails(
-        filterConditions,
-        Conditions
-      );
-
-      if (data.status === 200 && data.data !== null) {
-        const op = data.data[0];
-
-        const response = await CommonServices.GetAttachmentToLibrary(
-          DocumentLibraray.RecruitmentAdvertisementDocument,
-          op?.JobCode
-        );
-
-        let advertisementDocuments: any[] = [];
-        if (
-          response.status === 200 &&
-          response.data &&
-          response.data.length > 0
-        ) {
-          advertisementDocuments = response.data.map((doc: any) => ({
-            name: doc.name,
-            content: doc.content,
-          }));
-        }
-
-        const RoleProfileresponse = await CommonServices.GetAttachmentToLibrary(
-          DocumentLibraray.RoleProfileMaster,
-          op?.JobCode,
-          RoleProfileMaster.RoleProfile
-        );
-
-        let roleProfileDocuments: any[] = [];
-        if (
-          RoleProfileresponse.status === 200 &&
-          RoleProfileresponse.data &&
-          RoleProfileresponse.data.length > 0
-        ) {
-          roleProfileDocuments = RoleProfileresponse.data.map((doc: any) => ({
-            name: doc.name,
-            content: doc.content,
-          }));
-        }
-
-        setCandidateData((prevState) => ({
-          ...prevState,
-          CandidateID: op?.ID,
-          RecruitmentID: op?.RecruitmentID,
-          JobCode: op?.JobCode,
-          JobCodeId: op?.JobCodeId,
-          PassportID: op?.PassportID,
-          FullName: op?.FullName,
-          ResidentialAddress: op?.ResidentialAddress,
-          DOB: op?.DOB,
-          ContactNumber: op?.ContactNumber,
-          Email: op?.Email,
-          Nationality: op?.Nationality,
-          Gender: op?.Gender,
-          TotalYearOfExperiance: op?.TotalYearOfExperiance,
-          Skills: op?.Skills,
-          LanguageKnown: op?.LanguageKnown,
-          ReleventExperience: op?.ReleventExperience,
-          Qualification: op?.Qualification,
-          CandidateCVDoc: op?.CandidateCVDoc,
-          AdvertisementDocument: advertisementDocuments,
-          RoleProfileDocument: roleProfileDocuments,
-          PositionTitle: op?.PositionTitle,
-          InterviewDate: op?.InterviewDate,
-          JobRequestID: op?.JobRequestID,
-        }));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    setIsLoading(false);
-  };
+  const [transformedDataforQuestions, setTransformedDataforQuestions] =
+    React.useState([]);
+  const [interviewerCount, setInterviewerCount] = React.useState(0);
 
   const fetchCandidateDatas = React.useCallback(() => {
     setIsLoading(true);
-
+debugger
     let filterConditions = [
       {
         FilterKey: "CandidateID/Id",
@@ -263,6 +178,8 @@ const HodViewScorecard = (props: any) => {
             (candidate: any) => candidate.CandidateID === candidateID
           );
 
+          console.log("API Response:", scoreResponse?.data);
+
           const filteredScores = candidateData.flatMap(
             (candidate: any) =>
               candidate.CandidateScoreCard?.filter(
@@ -274,11 +191,34 @@ const HodViewScorecard = (props: any) => {
             candidateData.map((panel: any) => panel.InterviewPanelTitle)
           );
           setScoreData(filteredScores);
+
+          let questionScores: any = {};
+          let interviewerCount = 0;
+
+          filteredScores.forEach((score: any, interviewerIndex: number) => {
+            if (score.QuestionJson) {
+              score.QuestionJson.forEach((q: any) => {
+                const key = Object.keys(q)[0];
+
+                if (!questionScores[key]) {
+                  questionScores[key] = { criteria: key };
+                }
+
+                questionScores[key][`interviewer_${interviewerIndex + 1}`] =
+                  q[key];
+              });
+            }
+            interviewerCount++;
+          });
+
+          setTransformedDataforQuestions(Object.values(questionScores));
+          setInterviewerCount(interviewerCount);
         } else {
           setScoreData([]);
           setInterviewPanelTitles([]);
+          setTransformedDataforQuestions([]);
+          setInterviewerCount(0);
         }
-
         if (positionResponse?.status === 200 && positionResponse?.data) {
           const candidate = positionResponse.data.find(
             (c: any) => c.ID === candidateID
@@ -290,22 +230,10 @@ const HodViewScorecard = (props: any) => {
         console.error(error);
         setScoreData([]);
         setInterviewPanelTitles([]);
+        setTransformedDataforQuestions([]);
+        setInterviewerCount(0);
       });
   }, [candidateID]);
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (candidateID) {
-          await fetchCandidateDatas();
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    void fetchData();
-  }, [candidateID, fetchCandidateDatas]);
 
   const transformScoreData = (rawData: any[]) => {
     const criteria = [
@@ -370,7 +298,20 @@ const HodViewScorecard = (props: any) => {
   };
 
   const transformedData = transformScoreData(scoreData);
-  const interviewerCount = scoreData.length;
+
+  const handleInputChangeTextArea = (
+    value: string | any,
+    StateValue: string
+  ) => {
+    setCandidateData((prevState) => ({
+      ...prevState,
+      [StateValue]: value,
+    }));
+    setValidationError((prevState) => ({
+      ...prevState,
+      [StateValue]: false,
+    }));
+  };
 
   //Questionnaries
   const handleAccordionChange =
@@ -378,13 +319,6 @@ const HodViewScorecard = (props: any) => {
     (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? accordion : null);
     };
-
-  const transformedDataforQuestions = questionnaire.map((q, index) => ({
-    criteria: `Question ${index + 1}`,
-    id: q.id,
-    question: q.question,
-    answer: q.answer,
-  }));
 
   const handleCancel = () => {
     setIsLoading(true);
@@ -458,19 +392,6 @@ const HodViewScorecard = (props: any) => {
       });
   };
 
-  const handleInputChangeTextArea = (
-    value: string | any,
-    StateValue: string
-  ) => {
-    setCandidateData((prevState) => ({
-      ...prevState,
-      [StateValue]: value,
-    }));
-    setValidationError((prevState) => ({
-      ...prevState,
-      [StateValue]: false,
-    }));
-  };
   const tabs = [
     {
       label: TabName.CandidateDetails,
@@ -972,6 +893,94 @@ const HodViewScorecard = (props: any) => {
       ),
     },
   ];
+
+  const fetchCandidateData = async (ID: number) => {
+    setIsLoading(true);
+    try {
+      let filterConditions = [];
+      let Conditions = "";
+      filterConditions.push({
+        FilterKey: "ID",
+        Operator: "eq",
+        FilterValue: ID,
+      });
+
+      const data = await getVRRDetails.GetInterviewPanelCandidateDetails(
+        filterConditions,
+        Conditions
+      );
+
+      if (data.status === 200 && data.data !== null) {
+        const op = data.data[0];
+
+        const response = await CommonServices.GetAttachmentToLibrary(
+          DocumentLibraray.RecruitmentAdvertisementDocument,
+          op?.JobCode
+        );
+
+        let advertisementDocuments: any[] = [];
+        if (
+          response.status === 200 &&
+          response.data &&
+          response.data.length > 0
+        ) {
+          advertisementDocuments = response.data.map((doc: any) => ({
+            name: doc.name,
+            content: doc.content,
+          }));
+        }
+
+        const RoleProfileresponse = await CommonServices.GetAttachmentToLibrary(
+          DocumentLibraray.RoleProfileMaster,
+          op?.JobCode,
+          RoleProfileMaster.RoleProfile
+        );
+
+        let roleProfileDocuments: any[] = [];
+        if (
+          RoleProfileresponse.status === 200 &&
+          RoleProfileresponse.data &&
+          RoleProfileresponse.data.length > 0
+        ) {
+          roleProfileDocuments = RoleProfileresponse.data.map((doc: any) => ({
+            name: doc.name,
+            content: doc.content,
+          }));
+        }
+
+        setCandidateData((prevState) => ({
+          ...prevState,
+          CandidateID: op?.ID,
+          RecruitmentID: op?.RecruitmentID,
+          JobCode: op?.JobCode,
+          JobCodeId: op?.JobCodeId,
+          PassportID: op?.PassportID,
+          FullName: op?.FullName,
+          ResidentialAddress: op?.ResidentialAddress,
+          DOB: op?.DOB,
+          ContactNumber: op?.ContactNumber,
+          Email: op?.Email,
+          Nationality: op?.Nationality,
+          Gender: op?.Gender,
+          TotalYearOfExperiance: op?.TotalYearOfExperiance,
+          Skills: op?.Skills,
+          LanguageKnown: op?.LanguageKnown,
+          ReleventExperience: op?.ReleventExperience,
+          Qualification: op?.Qualification,
+          CandidateCVDoc: op?.CandidateCVDoc,
+          AdvertisementDocument: advertisementDocuments,
+          RoleProfileDocument: roleProfileDocuments,
+          PositionTitle: op?.PositionTitle,
+          InterviewDate: op?.InterviewDate,
+          JobRequestID: op?.JobRequestID,
+        }));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  };
+
   React.useEffect(() => {
     const activeTabObj = tabs.find((item) => item.value === activeTab);
 
@@ -1101,6 +1110,20 @@ const HodViewScorecard = (props: any) => {
 
     fetchData();
   }, [props.stateValue?.ID, activeTab]);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (candidateID) {
+          await fetchCandidateDatas();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    void fetchData();
+  }, [candidateID, fetchCandidateDatas]);
 
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
