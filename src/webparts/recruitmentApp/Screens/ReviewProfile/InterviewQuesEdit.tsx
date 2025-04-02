@@ -27,11 +27,14 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 
 import {
   CategoryID,
-  DisciplinesOption,
+  CatogryOptionCode,
+  displayTextOptionCode,
   HRMSAlertOptions,
   isDisqualificationOption,
   RecuritmentHRMsg,
+  ResponeStatus,
   RoleID,
+  StatusId,
 } from "../../utilities/Config";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import {
@@ -75,17 +78,22 @@ interface QuestionItem {
   question: string;
   expectedAnswer?: any;
   options?: OptionRow[];
-  Disqualification: boolean;
+  Disqualification: string;
 }
 
 const InterviewQuesEdit: React.FC = (props: any) => {
+
   const [InterviewQuesData, setInterviewQuesData] = useState<InterviewQues>({
     Disciplines: { key: 0, text: "" },
     QuestionNumber: { key: 0, text: "" },
     QuestionType: { key: 0, text: "" },
     Question: "",
     ExpectedAnswer: "",
-    Catogry: "",
+    Catogry:
+      props?.stateValue?.StatusId ===
+      StatusId?.PendingInterviewQuestionwithLineManagerandHR
+        ? CatogryOptionCode.InterviewPanel
+        : CatogryOptionCode.CareerPortalCandidate,
     Disqualification: "",
   });
 
@@ -123,7 +131,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
-  const [categorySelected, setCategorySelected] = useState(false);
+
   const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
   const [activeTab, setactiveTab] = useState("tab1");
   const [getMasterData, setGetMasterData] = useState<MasterOption>({
@@ -132,69 +140,26 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     ScopeOption: [],
     QueType: [],
   });
-
-  const selectedCategory = InterviewQuesData.Catogry || "Interview Panel";
-
-  const questionTypeOptions =
-    InterviewQuesData.Catogry === "Interview Panel"
-      ? [
-          { key: 0, text: "Short Answer" },
-          { key: 1, text: "Long Answer" },
-        ]
-      : InterviewQuesData.Catogry === "Recruitment Process (Portal)"
-      ? [
-          { key: 0, text: "Single Choice" },
-          { key: 2, text: "Multiple Choice" },
-        ]
-      : [];
-
-  // Category
+  const selectedCategory =
+    InterviewQuesData.Catogry || CatogryOptionCode.InterviewPanel;
 
   const handleCategoryChange = (val: string) => {
-    if (categorySelected) {
-      const CancelAlert = {
-        Message: RecuritmentHRMsg.InterviewQues,
-        Type: HRMSAlertOptions.Confirmation,
-        visible: true,
-        ButtonAction: async (userClickedOK: boolean) => {
-          if (userClickedOK) {
-            setInterviewQuesData((prev) => ({
-              ...prev,
-              Catogry: val,
-              Disciplines: { key: 0, text: "" },
-              QuestionNumber: { key: 0, text: "" },
-              QuestionType: { key: 0, text: "" },
-              Question: "",
-              ExpectedAnswer: "",
-              Disqualification: "",
-            }));
-            setQuestions([]);
-            setAlertPopupOpen(false);
-          } else {
-            setAlertPopupOpen(false);
-          }
-        },
-      };
+    setInterviewQuesData((prev) => ({
+      ...prev,
+      Catogry: val,
+      Disciplines: { key: 0, text: "" },
+      QuestionNumber: { key: 0, text: "" },
+      QuestionType: { key: 0, text: "" },
+      Question: "",
+      ExpectedAnswer: "",
+      Disqualification: "",
+    }));
 
-      setalertProps(CancelAlert);
-      setAlertPopupOpen(true);
-    } else {
-      setInterviewQuesData((prev) => ({
-        ...prev,
-        Catogry: val,
-        QuestionType: { key: 0, text: "" },
-      }));
-
-      setValidationError((prev) => ({
-        ...prev,
-        Catogry: false,
-      }));
-
-      setCategorySelected(true);
-    }
+    setValidationError((prev) => ({
+      ...prev,
+      Catogry: false,
+    }));
   };
-
-  //Create the Ques  Add Question in Multiple and single choices
 
   const handleOptionChange = (index: number, newVal: string) => {
     setOptionsType((prev) => {
@@ -218,6 +183,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       ExpectedAnswer: JSON.stringify(selectedAnswers),
     }));
   };
+  const removeValidationIfNeeded = (updatedOptions: typeof OptionsType) => {
+    const hasCorrectAnswer = updatedOptions.some(
+      (opt) => opt.isCorrect && opt.text.trim() !== ""
+    );
+
+    setValidationError((prev) => ({
+      ...prev,
+      OptionsType: hasCorrectAnswer ? false : prev.OptionsType,
+    }));
+  };
 
   const handleSelectCorrectAnswer = (index: number) => {
     setOptionsType((prev) => {
@@ -225,6 +200,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         i === index ? { ...opt, isCorrect: !opt.isCorrect } : opt
       );
 
+      removeValidationIfNeeded(updatedOptions);
       updateExpectedAnswer(updatedOptions);
       return updatedOptions;
     });
@@ -237,13 +213,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         isCorrect: i === index,
       }));
 
+      removeValidationIfNeeded(updatedOptions);
       updateExpectedAnswer(updatedOptions);
       return updatedOptions;
     });
   };
 
   const handleAnswerSelections = (index: number) => {
-    if (InterviewQuesData.QuestionType.text === "Multiple Choice") {
+    if (
+      InterviewQuesData.QuestionType.text === displayTextOptionCode.MultiAnswer
+    ) {
       handleSelectCorrectAnswer(index);
     } else {
       handleSingleAnswer(index);
@@ -259,7 +238,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
       let updatedOptions = [...question.options];
 
-      if (question.questionType.text === "Single Choice") {
+      if (question.questionType.text === displayTextOptionCode.SingleAnswer) {
         updatedOptions = updatedOptions.map((opt, index) => ({
           ...opt,
           isCorrect: index === optIndex,
@@ -270,8 +249,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           isCorrect: !updatedOptions[optIndex].isCorrect,
         };
       }
+
       question.options = updatedOptions;
       question.expectedAnswer = updatedOptions.filter((opt) => opt.isCorrect);
+
       updated[qIndex] = question;
       return updated;
     });
@@ -326,7 +307,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   ) => {
     setInterviewQuesData((prev) => {
       let updatedData = { ...prev, [field]: value };
-      if (field === "QuestionType" && value?.text === "Single Choice") {
+      if (
+        field === "QuestionType" &&
+        value?.text === displayTextOptionCode.SingleAnswer
+      ) {
         setOptionsType([
           {
             key: 0,
@@ -358,8 +342,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     setExpandedQuestionIndex((prev) => (prev === index ? null : index));
   };
 
-  // Add save  and vaidation :
-
   const Validation = (): boolean => {
     const {
       QuestionType,
@@ -377,19 +359,41 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     if (!Question) errors.Question = true;
     if (!Catogry) errors.Catogry = true;
     if (!Disqualification) errors.Disqualification = true;
+
     if (
-      QuestionType.text === "Multiple Choice" ||
-      QuestionType.text === "Single Choice"
+      [
+        displayTextOptionCode.MultiAnswer,
+        displayTextOptionCode.SingleAnswer,
+      ].includes(QuestionType.text)
     ) {
+      const selectedOptions = OptionsType.filter(
+        (opt) => opt.isCorrect && opt.text.trim() !== ""
+      );
       const anyOptionFilled = OptionsType.some((opt) => opt.text.trim() !== "");
+
       if (!anyOptionFilled) {
         errors.OptionsType = true;
+      }
+
+      if (QuestionType.text === displayTextOptionCode.MultiAnswer) {
+        if (selectedOptions.length === 0) {
+          errors.OptionsType = true;
+        } else {
+          delete errors.OptionsType;
+        }
+      } else if (QuestionType.text === displayTextOptionCode.SingleAnswer) {
+        if (selectedOptions.length !== 1) {
+          errors.OptionsType = true;
+        } else {
+          delete errors.OptionsType;
+        }
       }
     } else {
       if (!ExpectedAnswer) errors.ExpectedAnswer = true;
     }
 
     setValidationError((prev) => ({ ...prev, ...errors }));
+
     return Object.keys(errors).length === 0;
   };
 
@@ -417,48 +421,47 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       questionType: InterviewQuesData.QuestionType,
       question: InterviewQuesData.Question,
       expectedAnswer:
-        InterviewQuesData.QuestionType.text === "Multiple Choice" ||
-        InterviewQuesData.QuestionType.text === "Single Choice"
+        InterviewQuesData.QuestionType.text ===
+          displayTextOptionCode.MultiAnswer ||
+        InterviewQuesData.QuestionType.text ===
+          displayTextOptionCode.SingleAnswer
           ? JSON.stringify(correctAnswers)
           : InterviewQuesData.ExpectedAnswer,
       options:
-        InterviewQuesData.QuestionType.text === "Multiple Choice" ||
-        InterviewQuesData.QuestionType.text === "Single Choice"
+        InterviewQuesData.QuestionType.text ===
+          displayTextOptionCode.MultiAnswer ||
+        InterviewQuesData.QuestionType.text ===
+          displayTextOptionCode.SingleAnswer
           ? [...OptionsType]
           : undefined,
-      Disqualification: InterviewQuesData.Disqualification === "YES",
+      Disqualification: InterviewQuesData.Disqualification || "",
     };
 
-    new Promise((resolve, reject) => {
-      try {
-        if (editingQuestionIndex !== null) {
-          const updated = [...questions];
-          updated[editingQuestionIndex] = questionData;
-          setQuestions(updated);
-          setEditingQuestionIndex(null);
-        } else {
-          setQuestions((prev) => [...prev, questionData]);
-        }
-        resolve(true);
-      } catch (error) {
-        reject(error);
-      }
-    })
-      .then(() => {
-        setInterviewQuesData((prev) => ({
-          Disciplines: prev.Disciplines,
-          QuestionNumber: { key: 0, text: "" },
-          QuestionType: { key: 0, text: "" },
-          Question: "",
-          ExpectedAnswer: "",
-          Disqualification: "",
-          Catogry: prev.Catogry,
-        }));
+    if (editingQuestionIndex !== null) {
+      
+      setQuestions((prev) => {
+        const updated = [...prev];
+        updated[editingQuestionIndex] = questionData;
+        return updated;
+      });
+      setEditingQuestionIndex(null);
+    } else {
+      
+      setQuestions((prev) => [...prev, questionData]);
+    }
 
-        setOptionsType([{ key: 0, text: "", isCorrect: false }]);
-        setValidationError({} as InterviewQuesValidationError);
-      })
-      .catch((error) => {});
+    setInterviewQuesData((prev) => ({
+      Disciplines: prev.Disciplines,
+      QuestionNumber: { key: 0, text: "" },
+      QuestionType: { key: 0, text: "" },
+      Question: "",
+      ExpectedAnswer: "",
+      Disqualification: "", 
+      Catogry: prev.Catogry,
+    }));
+
+    setOptionsType([{ key: 0, text: "", isCorrect: false }]);
+    setValidationError({} as InterviewQuesValidationError);
   };
 
   // Display the Accordion
@@ -475,8 +478,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               [field]: value,
               options:
                 field === "questionType" &&
-                (value?.text === "Multiple Choice" ||
-                  value?.text === "Single Choice")
+                (value?.text === displayTextOptionCode.MultiAnswer ||
+                  value?.text === displayTextOptionCode.SingleAnswer)
                   ? [{ key: 0, text: "", isCorrect: false }]
                   : field === "questionType"
                   ? []
@@ -548,19 +551,20 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       return updated;
     });
   };
-  const handleCommonRadioChange =
-    (qIndex: number, field: string) => (value: string) => {
-      setQuestions((prev) =>
-        prev.map((q, i) =>
-          i === qIndex
-            ? {
-                ...q,
-                [field]: value === "YES",
-              }
-            : q
-        )
+
+  const handleCommonRadioChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    setQuestions((prevQuestions) => {
+      const updatedQuestions = prevQuestions.map((q, i) =>
+        i === index ? { ...q, [field]: value } : q
       );
-    };
+
+      return updatedQuestions;
+    });
+  };
 
   // breadCrumb
 
@@ -626,23 +630,30 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       }));
     }
   };
-  // in Option type changes
+  useEffect(() => {
+    if (props?.stateValue?.StatusId) {
+      setInterviewQuesData((prev) => ({
+        ...prev,
+        Catogry:
+          props.stateValue.StatusId ===
+          StatusId?.PendingInterviewQuestionwithLineManagerandHR
+            ? CatogryOptionCode.InterviewPanel
+            : CatogryOptionCode.CareerPortalCandidate,
+      }));
+    }
+  }, [props?.stateValue?.StatusId]);
   useEffect(() => {
     if (
-      ["multiple choice", "single choice"].includes(
-        InterviewQuesData.QuestionType?.text?.trim().toLowerCase() || ""
-      ) &&
-      OptionsType.length === 0
+      [
+        displayTextOptionCode.MultiAnswer,
+        displayTextOptionCode.SingleAnswer,
+      ].includes(InterviewQuesData.QuestionType?.text?.trim() || "")
     ) {
-      setOptionsType([
-        {
-          key: 0,
-          text: "",
-          isCorrect: false,
-        },
-      ]);
+      setOptionsType([{ key: 1, text: "", isCorrect: false }]);
+    } else {
+      setOptionsType([]);
     }
-  }, [InterviewQuesData]);
+  }, [InterviewQuesData.QuestionType]);
 
   useEffect(() => {
     async function fetchMaster() {
@@ -655,10 +666,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       const QuestionType = await GetPortalJobsService.GetAllMaster(
         CategoryID.QuestionType
       );
-      console.log(CategoryData, "GetAllMaster");
+
       const CategoryOption: AutoCompleteItem[] = (CategoryData.data ?? []).map(
         (opt: any) => ({
-          key: Number(opt.value),
+          key: opt.value,
           text: opt.displayText,
         })
       );
@@ -670,12 +681,25 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           text: opt.displayText,
         })
       );
-      const QuestionTypeOption: AutoCompleteItem[] = (
-        QuestionType.data ?? []
-      ).map((opt: any) => ({
-        key: opt.value,
-        text: opt.displayText,
-      }));
+
+      const QuestionTypeOption: AutoCompleteItem[] = (QuestionType.data ?? [])
+        .filter((opt: any) => {
+          if (InterviewQuesData.Catogry === CatogryOptionCode.InterviewPanel) {
+            return opt.displayText === displayTextOptionCode.CustomAnswer;
+          } else if (
+            InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
+          ) {
+            return (
+              opt.displayText === displayTextOptionCode.MultiAnswer ||
+              opt.displayText === displayTextOptionCode.SingleAnswer
+            );
+          }
+          return false;
+        })
+        .map((opt: any) => ({
+          key: opt.value,
+          text: opt.displayText,
+        }));
 
       setGetMasterData((prevState) => ({
         ...prevState,
@@ -686,7 +710,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       }));
     }
     void fetchMaster();
-  }, []);
+  }, [InterviewQuesData.Catogry]);
   // tabs
 
   const tabs = [
@@ -737,6 +761,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                     mandatory={true}
                     options={getMasterData.categoryOption}
                     error={ValidationError.Catogry}
+                    disabled={true}
                   />
 
                   {AlertPopupOpen && (
@@ -761,7 +786,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   alignItems: "center",
                 }}
               >
-                {selectedCategory === "Interview Panel" && (
+                {selectedCategory === CatogryOptionCode.InterviewPanel && (
                   <>
                     <Box sx={{ textAlign: "center", mt: 2 }}>
                       <img
@@ -786,7 +811,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   </>
                 )}
 
-                {selectedCategory === "Recruitment Process (Portal)" && (
+                {selectedCategory ===
+                  CatogryOptionCode.CareerPortalCandidate && (
                   <>
                     <Box sx={{ textAlign: "center", mt: 2 }}>
                       <img
@@ -820,7 +846,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                     <div className="ms-Grid-col ms-lg5">
                       <CustomAutoComplete
                         label="Disciplines"
-                        options={DisciplinesOption}
+                        options={getMasterData.ScopeOption}
                         value={InterviewQuesData.Disciplines}
                         onChange={(val) =>
                           handleAutoComplete("Disciplines", val)
@@ -905,7 +931,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                           <div className="ms-Grid-col ms-lg5">
                                             <CustomAutoComplete
                                               label="Type of Question"
-                                              options={questionTypeOptions}
+                                              options={getMasterData.QueType}
                                               value={q.questionType}
                                               onChange={(val) =>
                                                 handleQuestionFieldChange(
@@ -937,9 +963,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                       </Box>
 
                                       {q?.questionType?.text ===
-                                        "Multiple Choice" ||
+                                        displayTextOptionCode.MultiAnswer ||
                                       q?.questionType?.text ===
-                                        "Single Choice" ? (
+                                        displayTextOptionCode.SingleAnswer ? (
                                         <Box sx={{ mb: 2 }}>
                                           {q.options?.map(
                                             (option, optIndex) => {
@@ -1093,17 +1119,15 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
                                       <Box sx={{ mb: 2 }}>
                                         <CustomRadioGroup
-                                          key={
-                                            q.Disqualification ? "yes" : "no"
-                                          }
                                           label="Disqualification Question?"
-                                          value={
-                                            q.Disqualification ? "YES" : "NO"
+                                          value={q.Disqualification ?? "NO"} 
+                                          onChange={(val) =>
+                                            handleCommonRadioChange(
+                                              index,
+                                              "Disqualification",
+                                              val
+                                            )
                                           }
-                                          onChange={handleCommonRadioChange(
-                                            index,
-                                            "Disqualification"
-                                          )}
                                           mandatory={true}
                                           options={isDisqualificationOption}
                                         />
@@ -1146,9 +1170,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                     </CardContent>
                   </Card>
                 )}
-
                 {/*Create the Ques   */}
-
                 <Box
                   sx={{
                     p: 2,
@@ -1186,7 +1208,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         <div className="ms-Grid-col ms-lg5">
                           <CustomAutoComplete
                             label="Type of Question"
-                            options={questionTypeOptions}
+                            options={getMasterData.QueType}
                             value={InterviewQuesData.QuestionType}
                             onChange={(val) => {
                               handleAutoComplete("QuestionType", val);
@@ -1211,10 +1233,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       />
                     </Box>
 
-                    {["multiple choice", "single choice"].includes(
-                      InterviewQuesData.QuestionType?.text
-                        ?.trim()
-                        .toLowerCase() || ""
+                    {[
+                      displayTextOptionCode.MultiAnswer,
+                      displayTextOptionCode.SingleAnswer,
+                    ].includes(
+                      InterviewQuesData.QuestionType?.text?.trim() || ""
                     ) ? (
                       <Box sx={{ mb: 2 }}>
                         {OptionsType && OptionsType.length > 0 ? (
@@ -1339,7 +1362,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                     <Box sx={{ mb: 2 }}>
                       <CustomRadioGroup
                         label="Disqualification Question?"
-                        value={InterviewQuesData.Disqualification}
+                        value={InterviewQuesData?.Disqualification ?? ""}
                         options={isDisqualificationOption}
                         error={ValidationError.Disqualification}
                         mandatory={true}
@@ -1397,7 +1420,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   ]);
 
   async function Submit_fn() {
-    console.log(questions, "questions Answers.");
+    
 
     let QuestionValue: UpsertQuestions[] = questions.map((item) => {
       const OptionsValue: optionsValue[] =
@@ -1413,27 +1436,71 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           optionEn: opt.text,
           optionFr: opt.text,
         })) || [];
-
+      const category = getMasterData.category.filter(
+        (item) => item.text === InterviewQuesData.Catogry
+      );
       return {
         questionEn: item.question,
         questionFr: item.question,
-        scopeId: item.discipline.text,
-        categoryId: InterviewQuesData.Catogry,
-        questionTypeId: item.questionType.text,
-        isQualifier: 0,
-        isAnswerValidate: item.Disqualification === false ? 0 : 1,
+        scopeId: String(item.discipline.key),
+        categoryId: String(category[0].key),
+        questionTypeId: String(item.questionType.key),
+        isQualifier:
+          InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
+            ? 1
+            : 0,
+        isAnswerValidate: item.Disqualification === "" ? 0 : 1, // item.Disqualification === "No" ? 0 : 1
         sequence: item.id,
         jobCode: props.stateValue.JobCode,
         options: OptionsValue,
         answers: answerValue,
       };
     });
-    console.log(QuestionValue, "QuestionValue");
+    
+    const response = await GetPortalJobsService.UpsertQuestions(QuestionValue);
+    console.log(response,);
+    if (response.status === ResponeStatus.SUCCESS) {
+      const SuccessAlert = {
+        Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
+        Type: HRMSAlertOptions.Success,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            props.navigation("/RecurimentProcess", {
+              state: { activeTab: "tab3" },
+            });
+            setAlertPopupOpen(false);
+          } else {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
 
-    setInterviewQuesData((prev) => ({
-      ...prev,
-      Catogry: "",
-    }));
+      setAlertPopupOpen(true);
+      setalertProps(SuccessAlert);
+      setIsLoading(false);
+      setInterviewQuesData((prev) => ({
+        ...prev,
+        Catogry: "",
+      }));
+    } else {
+      const APIError = {
+        Message: RecuritmentHRMsg.APIErrorMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          } else {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+
+      setAlertPopupOpen(true);
+      setalertProps(APIError);
+      setIsLoading(false);
+    }
   }
 
   return (
