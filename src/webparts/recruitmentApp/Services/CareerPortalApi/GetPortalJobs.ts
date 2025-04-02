@@ -1,6 +1,7 @@
 import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, profileJobsComments, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { QuestionItem } from "../../Models/RecuritmentVRR";
 import { DocumentLibraray, ListNames, RoleProfileMaster } from "../../utilities/Config";
-import { getProfileData, postAdveDetails } from "../ReviewProfileService/ReviewCandidateService";
+import { getProfileData, postAdveDetails, QuestionnaireApi } from "../ReviewProfileService/ReviewCandidateService";
 import { CommonServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
@@ -50,7 +51,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
     try {
       let AgentDetails: profileXagent = {
         jobCode: data?.jobCode,
-        agent: data?.agent
+        jobsXAgents: data?.jobsXAgents
       }
       const response = await postAdveDetails.postAgenciesJobs(AgentDetails);
       return {
@@ -187,6 +188,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           Advertisement: AdvertismentDocPromises,
           Comments: CommentsData,
           workflowStatusId: op?.workflowStatusId,
+          hrComments: op?.hrComments
         };
 
         GetProfileByJobCodeData.push(GetProfileDahboard);
@@ -354,7 +356,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         answers: item.answers,
       }));
 
-      const response = await postAdveDetails.PostQuestion(UpsertQuestions);
+      const response = await QuestionnaireApi.PostQuestionnaire(UpsertQuestions);
       return {
         data: response.data,
         status: response.status,
@@ -375,24 +377,49 @@ export default class GetPortalJobs implements IGetPortalJobs {
 
   async GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>> {
     try {
-      let GetAllMasterData: GetAllMaster[] = []
-      await postAdveDetails.getMastersByCategory(id).then((res) => {
-        GetAllMasterData = res.data.data.map((item: any) => {
-          return {
-            id: item.id,
-            value: item.value,
-            displayText: item.displayText,
-            displayTextFr: item.displayText_fr,
-          };
-        });
-        console.log(GetAllMasterData, "GetAllMasterData")
-      }
-      ).catch((error) => {
-        console.log(error, "error");
-      })
+      const response = await postAdveDetails.getMastersByCategory(id);
+      const GetAllMasterData: GetAllMaster[] = response.data.data.map((item: any) => ({
+        id: item.id,
+        value: item.value,
+        displayText: item.displayText,
+        displayTextFr: item.displayText_fr,
+      }));
+
+      console.log(GetAllMasterData, "GetAllMasterData");
+
       return {
         data: GetAllMasterData,
-        status: 200,
+        status: response.status,
+        message: "Get Candidate details",
+      };
+
+    } catch (error) {
+      console.error(
+        "Error Get Candidate details:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error Get Candidate details",
+      };
+    }
+  }
+
+  async getQuestionnaire(jobCode: string): Promise<ApiResponse<QuestionItem[] | null>> {
+    try {
+      const response = await QuestionnaireApi.GetQuestionnaire(jobCode);
+      const GetQuestionnaire: QuestionItem[] = response.data.data.map((item: any) => ({
+        id: item.id,
+        question: item?.question?.quesContent?.contentEn,
+        answer: "",
+        rating: 0,
+        header: "",
+      }));
+      console.log(response, "GetAllMasterData");
+      return {
+        data: GetQuestionnaire,
+        status: response.status,
         message: "Get Candidate details",
       };
     } catch (error) {
@@ -407,5 +434,4 @@ export default class GetPortalJobs implements IGetPortalJobs {
       };
     }
   }
-
 }

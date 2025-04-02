@@ -1,4 +1,5 @@
 import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { QuestionItem } from "../../Models/RecuritmentVRR";
 
 export type IGetPortalJobs = {
     UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>>;
@@ -10,4 +11,5 @@ export type IGetPortalJobs = {
     UpsertMaster(data: UpsertMasters[]): Promise<ApiResponse<any | null>>;
     UpsertQuestions(data: UpsertQuestions[]): Promise<ApiResponse<any | null>>;
     GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>>;
+    getQuestionnaire(JobCode: string): Promise<ApiResponse<QuestionItem[] | null>>;
 }

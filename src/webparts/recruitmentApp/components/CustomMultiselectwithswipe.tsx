@@ -80,7 +80,7 @@ const JobCodeSelector: React.FC<JobCodeSelectorProps> = ({
         >
           {selectedJobCodes.length > 0 ? (
             selectedJobCodes.map((jobCode, index) => (
-              <div key={jobCode.id}>
+              <div key={jobCode.ID}>
                 {index + 1}. {jobCode.JobCode} - {jobCode.JobTitle}{" "}
               </div>
             ))

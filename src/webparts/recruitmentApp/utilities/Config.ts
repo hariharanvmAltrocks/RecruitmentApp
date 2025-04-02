@@ -48,6 +48,14 @@ export const ListNames = {
   HRMSRecruitmentWorkFlowMasterStatus: "HRMSRecruitmentWorkFlowMasterStatus",
   HRMSPositionIDMaster: "HRMSPositionIDMaster",
   HRMSCategoryMaster: "HRMSCategoryMaster",
+
+  //Additional Exisiting
+  HRMSAdditionalHeadCountForExisitingPosition: "HRMSAdditionalHeadCountForExisitingPosition",
+  HRMSAdditionalHCForExisitingPositionWithHeadCountDetails: "HRMSAdditionalHCForExisitingPositionWithHeadCountDetails",
+
+  //New Position
+  HRMSNewPositionRequest: "HRMSNewPositionRequest",
+  HRMSNewPositionRequestPositionDetails: "HRMSNewPositionRequestPositionDetails",
 };
 
 export const DocumentLibraray = {
@@ -71,8 +79,9 @@ export const StatusId = {
   Selected: 122,
   PendingInterviewQuestionwithLineManagerandHR: 39,
   InterviewScheduled: 40,
-  //sneka
-  PendingwithHRandLMtocreateinterviewQuestion :124
+  Completed: 13,
+  PendingwithHRandLMtocreateinterviewQuestion: 124,
+  PendingwithLineManagereviewAdv: 125,
 };
 
 export const RoleID = {
@@ -108,6 +117,7 @@ export const RoleID = {
   RecruitmentAppExternalAgency: 34,
   InterviewPanel: 35,
   EXCOMD: 31,
+  TitleforProfile: 24,
 };
 
 export const GridStatusBackgroundcolor = {
@@ -195,6 +205,7 @@ export const RecuritmentHRMsg = {
   APIErrorMsg: "Network Issue Please try again",
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
+  QuestionSuccessMsg: "The question has been created successfully"
 };
 
 export const ADGroupID: IADGroupID = {
@@ -242,6 +253,14 @@ export const ScoreRanking: AutoCompleteItem[] = [
   { key: 3, text: "3" },
   { key: 4, text: "4" },
   { key: 5, text: "5" },
+];
+
+export const ReviewProfileScore: AutoCompleteItem[] = [
+  { key: 1, text: "Excellent" },
+  { key: 2, text: "Good" },
+  { key: 3, text: "Average" },
+  { key: 4, text: "Below Average" },
+  { key: 5, text: "Poor" },
 ];
 
 export const EmploymentOption = ["Yes", "No"];
@@ -301,6 +320,11 @@ export const InterviewLevels = {
   Level3: "Level 3",
 };
 
+export const DataFrom = {
+  NewPosition: "New Position Request",
+  ExistingPosition: "Additional Headcount for Existing Position"
+}
+
 export const workflowStatusApi = {
   HRPending: "WS01",
   LineManagerL1Pending: "WS02",
@@ -346,6 +370,10 @@ export const DisciplinesOption = [
   { key: 1, text: "Technical" },
   { key: 2, text: "Behavioral" },
 ];
+export const Choices = {
+  Yes: "Yes",
+  No: "No"
+}
 export const isDisqualificationOption = ["Yes", "No"];
 export const CategoryID = {
   Department: 1,
@@ -372,9 +400,8 @@ export const CategoryID = {
   Disciplines: 22,
   ProofofIdentity: 23,
   TitleforProfile: 24,
-
 }
-// sneka
+
 export const CatogryOptionCode = {
   CareerPortalCandidate: "Career Portal - Candidate",
   InterviewPanel: "Interview Panel",
@@ -382,5 +409,9 @@ export const CatogryOptionCode = {
 export const displayTextOptionCode = {
   SingleAnswer: "Single Answer",
   MultiAnswer: "Multi Answer",
-  CustomAnswer:"Custom Answer",
+  CustomAnswer: "Custom Answer",
 };
+export const categoryOption = [
+  "Career Portal - Candidate",
+  "Interview Panel"
+];

@@ -55,8 +55,6 @@ export type RecuritmentData = {
   DateRequried: string;
   IsRevert: string;
   VacancyConfirmed: string;
-  AdvertisementAttachement: IDocFiles[] | null;
-  PositionDetails: any[];
   RoleProfileDocument: any[];
   GradingDocument: any[];
   AdvertisementDocument: any[];
@@ -93,6 +91,8 @@ export type AdvDetails = {
   JobFunctionalType: AutoCompleteItem;
   JobFunctionalTypeOption: AutoCompleteItem[];
   addMasterMinimumQualification: string;
+  AdvertisementAttachement: IDocFiles[] | null;
+  JobcodeChecked: boolean;
 };
 
 export type CandidateData = {
@@ -182,13 +182,9 @@ export type TechnicalSkills = {
 };
 
 export type JobCodeTilte = {
-  id: string;
-  // name: string;
-  VRRId: number;
   JobTitle: string;
   JobCode: string;
-  ID?: number;
-  RecruitmentID?: number;
+  ID?: number | undefined;
 };
 
 // export type RecruitementPositionDetails = {

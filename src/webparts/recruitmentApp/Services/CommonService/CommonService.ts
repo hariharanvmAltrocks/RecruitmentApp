@@ -193,7 +193,6 @@ export default class CommonService implements ICommonService {
   };
 
   GetMasterData = async (ListName: string): Promise<ApiResponse<any[]>> => {
-    // Here, specify the type that ApiResponse should work with, in this case, an array of any type
     try {
       const listItems: any[] = await SPServices.SPReadItems({
         Listname: ListName,

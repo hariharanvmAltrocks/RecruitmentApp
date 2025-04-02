@@ -74,12 +74,14 @@ const ReviewProfileEdit: React.FC = (props: any) => {
     ExperienceinMiningIndustryOption: [],
     YearofExperience: " ",
     PreferredExperience: "",
-    ValidFrom: todaydate,
+    ValidFrom: undefined,
     ValidTo: undefined,
     FunctionType: "",
     JobFunctionalType: { key: 0, text: "" },
     JobFunctionalTypeOption: [],
     addMasterMinimumQualification: "",
+    AdvertisementAttachement: [],
+    JobcodeChecked: false,
   });
   const [formState, setFormState] = useState<RecuritmentData>({
     VRRID: 0,
@@ -117,8 +119,6 @@ const ReviewProfileEdit: React.FC = (props: any) => {
     DateRequried: "",
     IsRevert: "",
     VacancyConfirmed: "",
-    AdvertisementAttachement: [],
-    PositionDetails: [],
     RoleProfileDocument: [],
     GradingDocument: [],
     AdvertisementDocument: [],
@@ -169,7 +169,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
         .then((response) => {
           if (response.status === 200) {
             const data = response.data;
-  
+
             if (data && data.length > 0) {
               const rawData = data[0];
               const roleSpecificKnowledge = Array.isArray(
@@ -177,7 +177,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
               )
                 ? rawData.RoleSpecificKnowledge
                 : [];
-  
+
               const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
                 (item: any) => item.RoleSpecificKnowledge
               );
@@ -189,70 +189,59 @@ const ReviewProfileEdit: React.FC = (props: any) => {
               )
                 ? rawData.TechnicalSkillsKnowledge
                 : [];
-  
+
               const TechnicalSkillsOption = technicalSkillsKnowledge.map(
                 (item: any, index: number) => ({
                   key: index,
                   text: item.TechnicalSkills,
                 })
               );
-  
+
               const LevelProficiencyOption = technicalSkillsKnowledge.map(
                 (item: any, index: number) => ({
                   key: index,
                   text: item.LevelProficiency,
                 })
               );
-  
+
               const MinQualificationOption = rawData.Qualification
                 ? [{ key: 0, text: rawData.Qualification }]
                 : [];
-  
+
               const PrefeQualificationOption = rawData.PreferredQualification
                 ? [{ key: 0, text: rawData.PreferredQualification }]
                 : [];
-  
-              const mappedData: AdvDetails = {
+
+              setAdvDetails((prevState) => ({
+                ...prevState,
                 RolePurpose: rawData.RoleProfile || "",
                 JobDescription: rawData.JobDescription || "",
+                MinQualificationOption: MinQualificationOption,
+                PrefeQualificationOption: PrefeQualificationOption,
+                TechnicalSkillsOption: TechnicalSkillsOption,
+                LevelProficiencyOption: LevelProficiencyOption,
                 RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
                 RequiredLeveloption: RequiredLevelValues,
-                MinQualificationOption,
-                PrefeQualificationOption,
                 TotalExperience: rawData.YearofExperience || "",
                 ExperienceinMiningIndustry: rawData.PreferredExperience || "",
-                TechnicalSkillsOption,
-                LevelProficiencyOption,
-                addMasterQualification: "",
                 YearofExperience: rawData.YearofExperience || "",
                 PreferredExperience: rawData.PreferredExperience || "",
-                ValidFrom: rawData.ValidFrom,
-                ValidTo: rawData.ValidTo,
                 FunctionType: rawData.FunctionType,
-                TotalExperienceOption: [],
-                ExperienceinMiningIndustryOption: [],
-                JobFunctionalType: {
-                  key: 0,
-                  text: "",
-                },
-                JobFunctionalTypeOption: [],
-                addMasterMinimumQualification: "",
-              };
-  
-              setAdvDetails(mappedData);
-            } 
+                JobcodeChecked: true,
+              }));
+            }
           } else {
-            console.error( response.message);
+            console.error(response.message);
           }
         })
         .catch((error) => {
-          console.error( error);
+          console.error(error);
         });
     } catch (error) {
-      console.error( error);
+      console.error(error);
     }
   };
-  
+
   const fetchData = async () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -283,7 +272,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
           ) || {};
         const JobtitleFrench =
           props?.JobInFrenchList.find(
-            (item: any) => item.key === op.JobTitleInFrenchId
+            (item: any) => item.key === op.JobTitleFrenchId
           ) || {};
 
         const [
@@ -323,15 +312,15 @@ const ReviewProfileEdit: React.FC = (props: any) => {
 
           setFormState((prevState) => ({
             ...prevState,
-            VRRID: op.VRRID,
+            ID: op.ID,
             BusinessUnitCodeID: op.BusinessUnitCodeId,
             DepartmentID: op.DepartmentId,
             SubDepartmentID: op.SubDepartmentId,
             SectionID: op.SectionId,
             DepartmentCodeID: op.DepartmentCodeId,
-            JobNameInEnglishID: op.JobTitleInEnglishId,
-            JobNameInFrenchID: op.JobTitleInFrenchId,
-            PatersonGradeID: op.PayrollGradeId,
+            JobNameInEnglishID: op.JobTitleEnglishId,
+            JobNameInFrenchID: op.JobTitleFrenchId,
+            PatersonGradeID: op.PatersonGradeId,
             DRCGradeID: op.DRCGradeId,
             JobCodeID: op.JobCodeId,
             BusinessUnitCode: op.BusinessUnitCode || "",
@@ -342,36 +331,34 @@ const ReviewProfileEdit: React.FC = (props: any) => {
             Section: op.Section || "",
             DepartmentCode: op.DepartmentCode || "",
             Nationality: op.Nationality || "",
-            JobNameInEnglish: op.JobTitleInEnglish || "",
+            JobNameInEnglish: op.JobTitleEnglish || "",
             JobNameInFrench: JobtitleFrench.text || "",
-            PatersonGrade: op.PayrollGrade || "",
+            PatersonGrade: op.PatersonGrade || "",
             DRCGrade: op.DRCGrade || "",
             EmployementCategory: op.EmploymentCategory || "",
             ContractType: op.TypeOfContract || "",
             JobCode: op.JobCode || "",
             AreaOfWork: op.AreaofWork || "",
-            NoofPositionAssigned: op.NumberOfPersonNeeded || 0,
+            NoofPositionAssigned: op.NumberOfPersonNeeded || "",
             ReasonForVacancy: op.ReasonForVacancy || "",
             RecruitmentAuthorised: op.RecruitmentAuthorised || "",
             IsPayrollEmailed: op.IsPayrollEmailed || "",
-            EnterNumberOfMonths: op.EnterNumberOfMonths || 0,
-            DateRequried: op.DateRequried || null,
-            IsRevert: op.IsRevert || "",
+            EnterNumberOfMonths: Number(op.EnterNumberOfMonths) || 0,
+            DateRequried: String(op.DateRequried) || "",
             VacancyConfirmed: op.VacancyConfirmed || "",
             RoleProfileDocument: RoleProfileDoc,
             GradingDocument: GradingDoc,
             AdvertisementDocument: AdvertismentDocPromises,
             OnamSignedStampsDocument: ONAMSignedStampDoc,
           }));
-         
 
           await fetchDataRole(op.JobCodeId);
         } else {
-          console.error( response);
+          console.error(response);
         }
       }
     } catch (error) {
-      console.error( error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }

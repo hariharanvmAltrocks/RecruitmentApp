@@ -13,86 +13,65 @@ import {
   StatusId,
   TabName,
   tabType,
-  ADGroupID,
   HRMSAlertOptions,
   ListNames,
   RecuritmentHRMsg,
   WorkflowAction,
+  Choices,
+  ResponeStatus,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Card, CardContent } from "@mui/material";
-import { Dialog } from "primereact/dialog";
-import JobCodeSelector from "../../components/CustomMultiselectwithswipe";
 import { AutoCompleteItem } from "../../Models/Screens";
-import CustomAutoComplete from "../../components/CustomAutoComplete";
-import CustomTextArea from "../../components/CustomTextArea";
-import ReuseButton from "../../components/ReuseButton";
+import { JobCodeTilte } from "../../Models/RecuritmentVRR";
 import {
-  JobCodeTilte,
-  RecruitementPositionDetails,
-} from "../../Models/RecuritmentVRR";
-import SPServices from "../../Services/SPService/SPServices";
-import { InsertComments } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
+  DataSyncToRecruitmentResponse,
+  InsertComments,
+  PostRecuritmentData,
+} from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 import CheckboxDataTable from "../../components/CheckboxDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { alertPropsData } from "../../Models/Screens";
-import CustomMultiSelect from "../../components/CustomMultiSelect";
 import { jobsXAgents, profileXagent } from "../../Models/ApIInterface";
 import CustomDialogbox from "../../components/CustomDialogbox";
 import { DateExtension } from "../../components/DateExtension";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
-import * as moment from "moment";
-// import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
-// import { ApiUrl } from "../../Services/AxiosService/axiosConfig";
-// import 'primeicons/primeicons.css';
-// interface ColumnConfig {
-//     field: string;
-//     header: string;
-//     sortable: boolean;
-//     body?: (item?: {}) => {};
-// }
+import {
+  AssignHRData,
+  AssignRecuritmentHR,
+} from "../ScreenComponent/AssignRecuritmentHR";
+
+export type formValidation = {
+  Comments: boolean;
+  AssignRecruitmentHR: boolean;
+  AssignRecruitmentAgencies: boolean;
+};
 
 const RecruitmentProcess = (props: any) => {
   // console.log(props, "ApprovedVRR");
 
-  const [data, setData] = React.useState<any[]>([]);
-  const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
-  // const [RecruitmentDetail, setRecruitmentDetail] = React.useState<any[]>([]);
+  const [data, setData] = React.useState<DataSyncToRecruitmentResponse[]>([]);
+  // const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
-  // const [first, setFirst] = React.useState<number>(0);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
   const [AssignHR, setAssignHR] = React.useState<boolean>(false);
-  const [AssignRecruitmentHR, setAssignRecruitmentHR] =
-    React.useState<AutoCompleteItem>({ key: 0, text: "" });
-  const [AssignRecruitmentHROption, setAssignRecruitmentHROption] =
-    React.useState<AutoCompleteItem[]>([]);
-  // const [AssignRecruitmentAgencies, setAssignRecruitmentAgencies] =
-  //   React.useState<AutoCompleteItem>({
-  //     key: 0,
-  //     text: "",
-  //   });
-  const [AssignRecruitmentAgencies, setAssignRecruitmentAgencies] =
-    React.useState<AutoCompleteItem[]>([]);
-  const [AssignRecruitmentAgenciesOption, setAssignRecruitmentAgenciesOption] =
-    React.useState<AutoCompleteItem[]>([]);
-  //JobTitle
+  const [AssignHRData, setAssignHRData] = React.useState<AssignHRData>({
+    AssignRecruitmentHR: { key: 0, text: "" },
+    AssignRecruitmentAgencies: [],
+    Comments: "",
+  });
   const [allJobData, setJobCodeTitle] = React.useState<JobCodeTilte[]>([
     {
-      id: "",
-      VRRId: 0,
       JobTitle: "",
       JobCode: " ",
       ID: 0,
-      RecruitmentID: 0,
     },
   ]);
   const [selectedJobCodes, setSelectedJobCodes] = React.useState<
     JobCodeTilte[]
   >([]);
-  const [Comments, setComment] = React.useState<string>("");
-  //const [checkedValue, setCheckedValue] = React.useState<any[]>([]);
   const [selectAll, setSelectAll] = React.useState<boolean>(false);
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -101,16 +80,9 @@ const RecruitmentProcess = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
-  const [AgenciesData, setAgenciesData] = React.useState<any>();
   const [DatePopup, setDatePopup] = React.useState<boolean>(false);
   const [assignedCandidates, setAssignedCandidates] =
     React.useState<boolean>(false);
-
-  type formValidation = {
-    Comments: boolean;
-    AssignRecruitmentHR: boolean;
-    AssignRecruitmentAgencies: boolean;
-  };
 
   const [validationErrors, setValidationErrors] =
     React.useState<formValidation>({
@@ -118,17 +90,6 @@ const RecruitmentProcess = (props: any) => {
       AssignRecruitmentHR: false,
       AssignRecruitmentAgencies: false,
     });
-
-  const [formState, setFormState] = React.useState<RecruitementPositionDetails>(
-    {
-      JobNameInEnglishID: 0,
-      JobNameInFrenchID: 0,
-      PatersonGradeID: 0,
-      DRCGradeID: 0,
-      PositionDetails: [],
-      Comments: "",
-    }
-  );
 
   const columnConfig = (
     tab: string,
@@ -146,7 +107,7 @@ const RecruitmentProcess = (props: any) => {
       sortable: true,
     },
     {
-      field: "JobTitleInEnglish",
+      field: "JobTitleEnglish",
       header: "Job Title",
       sortable: true,
     },
@@ -314,8 +275,8 @@ const RecruitmentProcess = (props: any) => {
           if (tab === "tab1") {
             props.navigation("/RecurimentProcess/ApprovedVRREdit", {
               state: {
-                type: "VRR",
-                ID: rowData?.VRRID,
+                type: rowData?.Type,
+                ID: rowData?.ID,
                 tab,
                 StatusId: rowData?.StatusId,
                 Status: rowData?.Status,
@@ -458,98 +419,70 @@ const RecruitmentProcess = (props: any) => {
       filterConditions.push({
         FilterKey: "StatusId",
         Operator: "eq",
-        FilterValue: StatusId.PendingwithHRLeadtoAssignRecruitmentHR,
+        FilterValue: StatusId.Completed,
       });
       filterConditions.push({
-        FilterKey: "ItemCreated",
+        FilterKey: "IsDataSyncToRecruitment",
         Operator: "eq",
-        FilterValue: "No",
+        FilterValue: Choices.Yes,
       });
-
-      try {
-        const HRMSExternalAgents = await CommonServices.GetMasterData(
-          ListNames.HRMSExternalAgents
-        );
-        if (HRMSExternalAgents.data && HRMSExternalAgents.data.length > 0) {
-          const HRMSExternalAgentsOption: AutoCompleteItem[] =
-            HRMSExternalAgents.data.map((item: any) => ({
-              key: item.Id,
-              text: item.AgentName,
-            }));
-          setAgenciesData(HRMSExternalAgents.data);
-          setAssignRecruitmentAgenciesOption(HRMSExternalAgentsOption);
-
-          setAssignRecruitmentAgencies([{ key: 0, text: "" }]);
-        } else {
-          setAssignRecruitmentAgenciesOption([]);
-
-          setAssignRecruitmentAgencies([{ key: 0, text: "" }]);
-        }
-      } catch (error) {}
-
-      const dataPromise = getVRRDetails.GetVacancyDetails(
+      const dataPromise = getVRRDetails.GetJobTitleInNPEP(
         filterConditions,
-        Conditions
+        Conditions,
+        props
       );
 
       let filterConditionsRecuritment = [];
       let RecuritmentConditions = "and";
-      if (activeTab === "tab3") {
-        filterConditionsRecuritment = [];
-        RecuritmentConditions = "";
-      } else {
-        switch (props.CurrentRoleID) {
-          case RoleID.RecruitmentHRLead: {
+      switch (props.CurrentRoleID) {
+        case RoleID.RecruitmentHRLead: {
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
+          });
+          break;
+        }
+        case RoleID.RecruitmentHR: {
+          if (activeTab === "tab1") {
             filterConditionsRecuritment.push({
               FilterKey: "StatusId",
               Operator: "eq",
-              FilterValue: StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
+              FilterValue: StatusId.PendingwithRecruitmentHRtouploadAdv,
             });
-            break;
+          } else if (activeTab === "tab2") {
+            filterConditionsRecuritment.push({
+              FilterKey: "StatusId",
+              Operator: "eq",
+              FilterValue: StatusId.RecruitmentInProgress,
+            });
           }
-          case RoleID.RecruitmentHR: {
-            if (activeTab === "tab1") {
-              filterConditionsRecuritment.push({
-                FilterKey: "StatusId",
-                Operator: "eq",
-                FilterValue: StatusId.PendingwithRecruitmentHRtouploadAdv,
-              });
-            } else if (activeTab === "tab2") {
-              filterConditionsRecuritment.push({
-                FilterKey: "StatusId",
-                Operator: "eq",
-                FilterValue: StatusId.RecruitmentInProgress,
-              });
-            }
-            break;
+          break;
+        }
+        case RoleID.HOD: {
+          if (activeTab === "tab1") {
+            filterConditionsRecuritment.push({
+              FilterKey: "StatusId",
+              Operator: "eq",
+              FilterValue: StatusId.PendingwithHODtoreviewAdv,
+            });
+          } else if (activeTab === "tab2") {
+            filterConditionsRecuritment.push({
+              FilterKey: "StatusId",
+              Operator: "eq",
+              FilterValue: StatusId.RecruitmentInProgress,
+            });
           }
-          case RoleID.HOD: {
-            if (activeTab === "tab1") {
-              filterConditionsRecuritment.push({
-                FilterKey: "StatusId",
-                Operator: "eq",
-                FilterValue: StatusId.PendingwithHODtoreviewAdv,
-              });
-            } else if (activeTab === "tab2") {
-              filterConditionsRecuritment.push({
-                FilterKey: "StatusId",
-                Operator: "eq",
-                FilterValue: StatusId.RecruitmentInProgress,
-              });
-            }
-            break;
-          }
+          break;
         }
       }
-      filterConditions.push({
-        FilterKey: "ItemCreated",
-        Operator: "eq",
-        FilterValue: "No",
-      });
-      // const recruitmentDetails = getVRRDetails.GetRecruitmentDetails(
-      //   filterConditionsRecuritment,
-      //   RecuritmentConditions
-      // );
+      // if (filterConditionsRecuritment.length > 0) {
+      //   filterConditionsRecuritment.push({
+      //     FilterKey: "ItemCreated",
+      //     Operator: "eq",
+      //     FilterValue: "No",
+      //   });
+      // }
       const recruitmentDetailsPromise = getVRRDetails.GetRecruitmentDetails(
         filterConditionsRecuritment,
         RecuritmentConditions
@@ -560,48 +493,30 @@ const RecruitmentProcess = (props: any) => {
         recruitmentDetailsPromise,
       ]);
 
-      if (data.status === 200 && data.data !== null) {
-        setData(data.data[0]);
-        const JobCode = data.data[0].map(
-          (item: { JobCode: any; VRRID: number }) => ({
-            JobCode: item.JobCode,
-            VRRId: item.VRRID,
-          })
-        );
-
-        const allJobData: JobCodeTilte[] = [];
-
-        for (const { JobCode: jobCode, VRRId } of JobCode) {
-          const JobTitles = props.JobInEnglishList.find(
-            (item: { JobCode: any }) => item.JobCode === jobCode
-          );
-
-          if (JobTitles) {
-            const JobData: JobCodeTilte = {
-              id: JobTitles.JobCode,
-              // name: JobTitles.text,
-              VRRId: VRRId,
-              JobTitle: JobTitles.text,
-              JobCode: JobTitles.JobCode,
-            };
-
-            allJobData.push(JobData);
-          }
-        }
-
-        const uniqueJobData = allJobData.filter(
-          (job, index, self) =>
-            index === self.findIndex((item) => item.id === job.id)
-        );
-
-        setJobCodeTitle(uniqueJobData);
-      }
-
       if (
-        RecruitmentDetails.status === 200 &&
-        RecruitmentDetails.data !== null
+        props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+        activeTab === "tab1"
       ) {
-        setRecruitmentDetails(RecruitmentDetails.data);
+        if (data.status === 200 && data.data !== null) {
+          setData(data.data);
+          const JobCode = data.data.map((item) => ({
+            ID: item.ID,
+            JobCode: item.JobCode,
+            JobTitle: item.JobTitleEnglish,
+          }));
+          const uniqueJobData = JobCode.filter(
+            (job, index, self) =>
+              index === self.findIndex((item) => item.ID === job.ID)
+          );
+          setJobCodeTitle(uniqueJobData);
+        }
+      } else {
+        if (
+          RecruitmentDetails.status === 200 &&
+          RecruitmentDetails.data !== null
+        ) {
+          setData(RecruitmentDetails.data);
+        }
       }
     } catch (error) {
       console.log("GetVacancyDetails doesn't fetch the data", error);
@@ -665,30 +580,6 @@ const RecruitmentProcess = (props: any) => {
     const fetchDataAndGetADGroupsOption = async () => {
       try {
         await fetchData();
-
-        const AssignRecurtimentHROption =
-          await CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSRecruitmentHR);
-
-        if (
-          AssignRecurtimentHROption.status === 200 &&
-          AssignRecurtimentHROption.data
-        ) {
-          const AssignRecrutiment = AssignRecurtimentHROption.data.filter(
-            (item: { key: any }) => item.key === props.stateValue?.AssignedHRId
-          );
-
-          const AssignRecrutimentObject = AssignRecrutiment.reduce(
-            (acc: { [key: string]: any }, item: { key: any }) => {
-              return item;
-            },
-            {}
-          );
-
-          setAssignRecruitmentHR(AssignRecrutimentObject);
-          setAssignRecruitmentHROption(AssignRecurtimentHROption.data);
-        } else {
-          console.error(AssignRecurtimentHROption.data.message);
-        }
         const getCurrentUserEmailID = await CommonServices.getUserGuidByEmail(
           props.CurrentUserEmailId
         );
@@ -721,9 +612,11 @@ const RecruitmentProcess = (props: any) => {
   const handleCancel = () => {
     setIsLoading(false);
     setAssignHR(false);
-    setAssignRecruitmentHR({ key: 0, text: "" });
-    setComment("");
-
+    setAssignHRData((prevState) => ({
+      ...prevState,
+      AssignRecruitmentHR: { key: 0, text: "" },
+      Comments: "",
+    }));
     setData((prevData) =>
       prevData.map((item) => ({
         ...item,
@@ -746,37 +639,24 @@ const RecruitmentProcess = (props: any) => {
     void fetchData();
     // setActiveTab(tab);
   };
-  // Popupfunction
-  //old 7.20
-  // const handleAutoComplete = async (value: AutoCompleteItem | null) => {
-  //   if (value) {
-  //     if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-  //       setAssignRecruitmentAgencies([value] ) ;
-  //       setValidationErrors((prevState) => ({
-  //         ...prevState,
-  //         AssignRecruitmentAgencies: false,
-  //       }));
-  //     } else {
-  //       setAssignRecruitmentHR(value);
-  //       setValidationErrors((prevState) => ({
-  //         ...prevState,
-  //         AssignRecruitmentHR: false,
-  //       }));
-  //     }
-  //   }
-  // };
 
   const handleAutoComplete = async (value: AutoCompleteItem | null) => {
     const defaultValue = { key: 0, text: "" };
 
     if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-      setAssignRecruitmentAgencies(value ? [value] : [defaultValue]);
+      setAssignHRData((prevState) => ({
+        ...prevState,
+        AssignRecruitmentAgencies: value ? [value] : [defaultValue],
+      }));
       setValidationErrors((prevState) => ({
         ...prevState,
         AssignRecruitmentAgencies: false,
       }));
     } else {
-      setAssignRecruitmentHR(value || defaultValue);
+      setAssignHRData((prevState) => ({
+        ...prevState,
+        AssignRecruitmentHR: value || defaultValue,
+      }));
       setValidationErrors((prevState) => ({
         ...prevState,
         AssignRecruitmentHR: false,
@@ -786,72 +666,32 @@ const RecruitmentProcess = (props: any) => {
 
   const handleAgencyChange = (value: AutoCompleteItem[]) => {
     if (value.length > 0) {
-      setAssignRecruitmentAgencies(value);
+      setAssignHRData((prevState) => ({
+        ...prevState,
+        AssignRecruitmentAgencies: value,
+      }));
       setValidationErrors((prevState) => ({
         ...prevState,
         AssignRecruitmentAgencies: false,
       }));
     } else {
-      setAssignRecruitmentAgencies([]);
+      setAssignHRData((prevState) => ({
+        ...prevState,
+        AssignRecruitmentAgencies: [],
+      }));
       setValidationErrors((prevState) => ({
         ...prevState,
         AssignRecruitmentAgencies: true,
       }));
     }
   };
-  //oldcode
-  //   const handleCheckbox = (value: boolean, item: any) => {
-  //     const isHR = props.CurrentRoleID === RoleID.RecruitmentHR;
 
-  //     const dataset = isHR ? RecruitmentDetails : data;
-
-  //     const itemIdentifier = isHR ? item.ID : item.VRRID;
-
-  //     const updatedDataset = dataset.map((currentItem) => {
-  //       const currentItemIdentifier = isHR ? currentItem.ID : currentItem.VRRID;
-
-  //       if (currentItemIdentifier === itemIdentifier) {
-  //         return {
-  //           ...currentItem,
-  //           Checked: value,
-  //         };
-  //       }
-  //       return currentItem;
-  //     });
-
-  //     const selectedJobCodes = updatedDataset
-  //       .filter((currentItem) => currentItem.Checked)
-  //       .map((currentItem) => {
-  //         const JobTitle = props.JobInEnglishList.find(
-  //           (job: { JobCode: string; text: string }) =>
-  //             job.JobCode === currentItem.JobCode
-  //         );
-
-  //         return {
-  //           JobCode: currentItem.JobCode,
-  //           VRRId: currentItem.VRRID,
-  //           id: currentItem.JobCodeId,
-  //           JobTitle: JobTitle ? JobTitle.text : "",
-  //           RecruitmentID: isHR ? currentItem.ID : currentItem.VRRID,
-  //         };
-  //       });
-
-  //     if (isHR) {
-  //       setRecruitmentDetails(updatedDataset);
-  //     } else {
-  //       setData(updatedDataset);
-  //     }
-
-  //     setSelectedJobCodes(selectedJobCodes);
-  //   };
   const handleCheckbox = (value: boolean, item: any) => {
-    const isHR = props.CurrentRoleID === RoleID.RecruitmentHR;
-    const dataset = isHR ? RecruitmentDetails : data;
-    const itemIdentifier = isHR ? item.ID : item.VRRID;
+    const itemIdentifier = item.ID;
     console.log("Checkbox Clicked | Value:", value, "| Item:", item);
 
-    const updatedDataset = dataset.map((currentItem) => {
-      const currentItemIdentifier = isHR ? currentItem.ID : currentItem.VRRID;
+    const updatedDataset = data.map((currentItem) => {
+      const currentItemIdentifier = currentItem.ID;
       if (currentItemIdentifier === itemIdentifier) {
         return { ...currentItem, Checked: value };
       }
@@ -868,19 +708,14 @@ const RecruitmentProcess = (props: any) => {
         );
 
         return {
+          ID: currentItem.ID,
           JobCode: currentItem.JobCode,
-          VRRId: currentItem.VRRID,
-          id: currentItem.JobCodeId,
+          JobCodeId: currentItem.JobCodeId,
           JobTitle: JobTitle ? JobTitle.text : "",
-          RecruitmentID: isHR ? currentItem.ID : currentItem.VRRID,
         };
       });
 
-    if (isHR) {
-      setRecruitmentDetails(updatedDataset);
-    } else {
-      setData(updatedDataset);
-    }
+    setData(updatedDataset);
 
     setSelectedJobCodes(selectedJobCodes);
 
@@ -891,10 +726,7 @@ const RecruitmentProcess = (props: any) => {
   };
 
   const onSelectAllChange = (value: boolean) => {
-    const isHR = props.CurrentRoleID === RoleID.RecruitmentHR;
-    const dataset = isHR ? RecruitmentDetails : data;
-
-    const updatedDataset = dataset.map((item) => ({
+    const updatedDataset = data.map((item) => ({
       ...item,
       Checked: value,
     }));
@@ -907,22 +739,15 @@ const RecruitmentProcess = (props: any) => {
             job.JobCode === item.JobCode
         );
 
-        const JobCodeData = isHR ? item.ID : item.VRRID;
-
         return {
+          ID: item.JobCodeId,
           JobCode: item.JobCode,
-          VRRId: item.VRRID,
-          id: item.JobCodeId,
+          JobCodeId: item.JobCodeId,
           JobTitle: JobTitle ? JobTitle.text : "",
-          RecruitmentID: JobCodeData,
         };
       });
 
-    if (isHR) {
-      setRecruitmentDetails(updatedDataset);
-    } else {
-      setData(updatedDataset);
-    }
+    setData(updatedDataset);
 
     setSelectedJobCodes(selectedJobCodes);
 
@@ -931,55 +756,15 @@ const RecruitmentProcess = (props: any) => {
         selectedJobCodes.length === updatedDataset.length
     );
   };
-  //oldcode
-  //   const onSelectAllChange = (value: boolean) => {
-  //     const isHR = props.CurrentRoleID === RoleID.RecruitmentHR;
 
-  //     const dataset = isHR ? RecruitmentDetails : data;
-
-  //     const updatedDataset = dataset.map((item) => ({
-  //       ...item,
-  //       Checked: value,
-  //     }));
-
-  //     const selectedJobCodes = updatedDataset
-  //       .filter((item) => item.Checked)
-  //       .map((item) => {
-  //         const JobTitle = props.JobInEnglishList.find(
-  //           (job: { JobCode: string; text: string }) =>
-  //             job.JobCode === item.JobCode
-  //         );
-
-  //         const JobCodeData = isHR ? item.ID : item.VRRID;
-
-  //         return {
-  //           JobCode: item.JobCode,
-  //           VRRId: item.VRRID,
-  //           id: item.JobCodeId,
-  //           JobTitle: JobTitle ? JobTitle.text : "",
-  //           RecruitmentID: JobCodeData,
-  //         };
-  //       });
-
-  //     if (isHR) {
-  //       setRecruitmentDetails(updatedDataset);
-  //     } else {
-  //       setData(updatedDataset);
-  //     }
-
-  //     setSelectedJobCodes(selectedJobCodes);
-
-  //     setSelectAll(value);
-  //   };
-
-  const handleInputChangeTextArea = (
-    value: string | any,
-    StateValue: string
-  ) => {
-    setComment(value);
+  const handleInputChangeTextArea = (value: string) => {
+    setAssignHRData((prevState) => ({
+      ...prevState,
+      Comments: value,
+    }));
     setValidationErrors((prevState) => ({
       ...prevState,
-      [StateValue]: false,
+      Comments: false,
     }));
   };
 
@@ -1017,130 +802,95 @@ const RecruitmentProcess = (props: any) => {
       if (selectedJobCodes.length > 0) {
         for (const selectedJob of selectedJobCodes) {
           const correspondingJob = data.find(
-            (item: any) => item.VRRID === selectedJob.VRRId
+            (item: any) => item.ID === selectedJob.ID
           );
-          console.log(" Corresponding Job:", correspondingJob);
+          console.log("Corresponding Job:", correspondingJob);
 
           if (correspondingJob) {
-            const Table1: any = {
-              BusinessUnitCodeId: correspondingJob.BusinessUnitCodeId,
-              Nationality: correspondingJob.Nationality,
-              EmploymentCategory: correspondingJob.EmploymentCategory,
-              DepartmentId: correspondingJob.DepartmentId,
-              SubDepartmentId: correspondingJob.SubDepartmentId,
-              SectionId: correspondingJob.SectionId,
-              DepartmentCodeId: correspondingJob.DepartmentCodeId,
-              NumberOfPersonNeeded: correspondingJob.NumberOfPersonNeeded,
-              EnterNumberOfMonths: correspondingJob.EnterNumberOfMonths,
-              TypeOfContract: correspondingJob.TypeOfContract,
-              DateRequried: moment(
-                correspondingJob.DateRequired,
-                "DD/MM/YYYY"
-              ).toDate(),
-              StatusId: correspondingJob.StatusId,
-              ActionId: WorkflowAction.Approved,
-              JobCodeId: correspondingJob.JobCodeId,
-              ReasonForVacancy: correspondingJob.ReasonForVacancy,
-              AreaofWork: correspondingJob.AreaOfWork,
-              VacancyConfirmed: correspondingJob.VacancyConfirmed,
-              RecruitmentAuthorised: correspondingJob.RecruitmentAuthorised,
-              IsPayrollEmailed: correspondingJob.IsPayrollEmailed,
-              AssignedHRId: AssignRecruitmentHR.key,
+            const RecruitmentValue: PostRecuritmentData = {
+              Data: {
+                BusinessUnitCodeId: correspondingJob.BusinessUnitCodeId,
+                Nationality: correspondingJob.Nationality,
+                EmploymentCategory: correspondingJob.EmploymentCategory,
+                DepartmentId: correspondingJob.DepartmentId,
+                SubDepartmentId: correspondingJob.SubDepartmentId,
+                SectionId: correspondingJob.SectionId,
+                DepartmentCodeId: correspondingJob.DepartmentCodeId,
+                NumberOfPersonNeeded: Number(
+                  correspondingJob.NumberOfPersonNeeded
+                ),
+                EnterNumberOfMonths:
+                  correspondingJob.EnterNumberOfMonths ?? "1",
+                TypeOfContract: correspondingJob.TypeOfContract,
+                DateRequried: correspondingJob?.DateRequried,
+                StatusId: StatusId.PendingwithHRLeadtoAssignRecruitmentHR,
+                ActionId: WorkflowAction.Approved,
+                JobCodeId: correspondingJob.JobCodeId,
+                AreaofWork: correspondingJob.AreaofWork,
+                AssignedHRId: AssignHRData.AssignRecruitmentHR.key,
+                DataFrom: correspondingJob.Type ?? "",
+              },
+              PositionData: {
+                PatersonGradeId: correspondingJob.PatersonGradeId ?? 0,
+                DRCGradeId: correspondingJob.DRCGradeId ?? 0,
+                JobTitleEnglishId: correspondingJob.JobTitleEnglishId ?? 0,
+                JobTitleFrenchId: correspondingJob.JobTitleFrenchId ?? 0,
+              },
+              CommentsList: {
+                RoleId: props.CurrentRoleID,
+                RecruitmentIDId: 0,
+                Comments: AssignHRData.Comments,
+              },
+              updatePreList: {
+                ID: selectedJob.ID ?? 0,
+                ActionId: WorkflowAction.Approved,
+                ItemCreated: "Yes",
+                IsDataSyncToRecruitment: "No",
+              },
             };
 
-            const positionDetails = await getVRRDetails.GetPositionDetails(
-              [
-                {
-                  FilterKey: "VRRID",
-                  Operator: "eq",
-                  FilterValue: correspondingJob.VRRID,
-                },
-              ],
-              ""
+            const response = await getVRRDetails.InsertRecruitmentDpt(
+              RecruitmentValue
             );
-
-            const positionIds: number[] =
-              positionDetails.data?.map(
-                (item: { PositionID: number }) => item.PositionID
-              ) || [];
-
-            if (correspondingJob.NumberOfPersonNeeded > 0) {
-              const updatedPositions: any[] = [];
-              let positionIndex = 0;
-
-              for (let i = 0; i < correspondingJob.NumberOfPersonNeeded; i++) {
-                const positionId =
-                  positionIds[positionIndex % positionIds.length];
-                updatedPositions.push({
-                  VRRID: correspondingJob.VRRID,
-                  PatersonGradeID: correspondingJob.PayrollGradeId ?? 0,
-                  DRCGradeID: correspondingJob.DRCGradeId ?? 0,
-                  JobNameInEnglishID: correspondingJob.JobTitleInEnglishId ?? 0,
-                  JobNameInFrenchID: correspondingJob.JobTitleInFrenchId ?? 0,
-                  PositionID: positionId,
-                });
-
-                positionIndex++;
-              }
-
-              setFormState((prevState) => ({
-                ...prevState,
-                PositionDetails: updatedPositions,
-              }));
-
-              console.log(formState.PositionDetails);
-
-              const response = await getVRRDetails.InsertRecruitmentDpt(
-                Table1,
-                updatedPositions
-              );
-
-              const recruitmentID = response?.data?.[0]?.data?.RecruitmentIDId;
-
-              if (recruitmentID) {
-                const commentsData: InsertComments = {
-                  RoleId: props.CurrentRoleID,
-                  RecruitmentIDId: recruitmentID,
-                  Comments: Comments,
-                };
-
-                await getVRRDetails.InsertCommentsList(commentsData);
-
-                await SPServices.SPUpdateItem({
-                  Listname: ListNames.HRMSVacancyReplacementRequest,
-                  RequestJSON: {
-                    ActionId: WorkflowAction.Approved,
-                    ItemCreated: "Yes",
-                  },
-                  ID: selectedJob.VRRId,
-                });
-              } else {
-              }
+            if (response.status === ResponeStatus.SUCCESS) {
+              let SuccessAlert = {
+                Message: RecuritmentHRMsg.HRSuccess,
+                Type: HRMSAlertOptions.Success,
+                visible: true,
+                ButtonAction: async (userClickedOK: boolean) => {
+                  if (userClickedOK) {
+                    setAlertPopupOpen(false);
+                  }
+                },
+              };
+              setAlertPopupOpen(true);
+              setalertProps(SuccessAlert);
+            } else {
+              let APIErrorAlert = {
+                Message: RecuritmentHRMsg.APIErrorMsg,
+                Type: HRMSAlertOptions.Error,
+                visible: true,
+                ButtonAction: async (userClickedOK: boolean) => {
+                  if (userClickedOK) {
+                    setAlertPopupOpen(false);
+                  }
+                },
+              };
+              setAlertPopupOpen(true);
+              setalertProps(APIErrorAlert);
             }
           }
         }
-
-        let CancelAlert = {
-          Message: RecuritmentHRMsg.HRSuccess,
-          Type: HRMSAlertOptions.Success,
-          visible: true,
-          ButtonAction: async (userClickedOK: boolean) => {
-            if (userClickedOK) {
-              setAlertPopupOpen(false);
-            }
-          },
-        };
-
-        // Show the success alert
-        setAlertPopupOpen(true);
-        setalertProps(CancelAlert);
-      } else {
       }
     } catch (error) {
+      console.log("failed Insert Recruitment Data ", error);
     } finally {
       setAssignHR(false);
-      setAssignRecruitmentHR({ key: 0, text: "" });
-      setComment("");
+      setAssignHRData((prevState) => ({
+        ...prevState,
+        AssignRecruitmentHR: { key: 0, text: "" },
+        Comments: "",
+      }));
       setData((prevData) =>
         prevData.map((item) => ({
           ...item,
@@ -1156,20 +906,23 @@ const RecruitmentProcess = (props: any) => {
     try {
       if (selectedJobCodes.length > 0) {
         for (const selectedJob of selectedJobCodes) {
-          const isHR = props.CurrentRoleID === RoleID.RecruitmentHR;
-          const dataset = isHR ? RecruitmentDetails : data;
-
-          const correspondingJob = dataset.find((item) =>
-            isHR
-              ? item.ID === selectedJob.RecruitmentID
-              : item.VRRID === selectedJob.VRRId
+          const correspondingJob = data.find(
+            (item) => item.ID === selectedJob.ID
           );
-          let matchedAgents = AgenciesData.filter((data: { Id: number }) =>
-            AssignRecruitmentAgencies.some((item) => item.key === data.Id)
+          const HRMSExternalAgents = await CommonServices.GetMasterData(
+            ListNames.HRMSExternalAgents
+          );
+          let matchedAgents = HRMSExternalAgents.data.filter(
+            (data: { Id: number }) =>
+              AssignHRData.AssignRecruitmentAgencies.some(
+                (item) => item.key === data.Id
+              )
           );
 
           let agentDetails: jobsXAgents[] = matchedAgents.map((item: any) => {
-            AssignRecruitmentAgencies.filter((data) => data.key === item.Id);
+            AssignHRData.AssignRecruitmentAgencies.filter(
+              (data) => data.key === item.Id
+            );
             return {
               agentId: item.AgentCode,
               // isSuspended: 1,
@@ -1177,17 +930,15 @@ const RecruitmentProcess = (props: any) => {
           });
           const AgentDetails: profileXagent = {
             jobCode: selectedJob.JobCode,
-            agent: agentDetails,
+            jobsXAgents: agentDetails,
           };
           await GetPortalJobsService.UpsertAgenciesJobs(AgentDetails)
             .then(async (res) => {
               if (res.status === 200) {
                 if (correspondingJob) {
-                  const recruitmentID = isHR
-                    ? correspondingJob.ID
-                    : correspondingJob.VRRID;
+                  const recruitmentID: number = correspondingJob.ID;
 
-                  const agencyIDs = AssignRecruitmentAgencies.map(
+                  const agencyIDs = AssignHRData.AssignRecruitmentAgencies.map(
                     (agency) => agency.key
                   );
 
@@ -1197,9 +948,9 @@ const RecruitmentProcess = (props: any) => {
                   const agencyData = agencyIDs.map((agencyID) => ({
                     key: agencyID,
                     text:
-                      AssignRecruitmentAgencies.find(
+                      AssignHRData.AssignRecruitmentAgencies.find(
                         (agency) => agency.key === agencyID
-                      )?.text || AssignRecruitmentHR.text,
+                      )?.text || AssignHRData.AssignRecruitmentHR.text,
                     RecruitmentID: recruitmentID,
                   }));
 
@@ -1210,37 +961,23 @@ const RecruitmentProcess = (props: any) => {
                     );
 
                   if (response.status === 200) {
-                  } else {
-                  }
-
-                  try {
-                    // await SPServices.SPUpdateItem({
-                    //   Listname: ListNames.HRMSRecruitmentDptDetails,
-                    //   RequestJSON: { Action: WorkflowAction.Approved },
-                    //   ID: recruitmentID,
-                    // });
-                  } catch (updateError) {
-                    console.error(updateError);
-                  }
-
-                  if (Array.isArray(Comments) && Comments.length > 0) {
-                    for (const comment of Comments) {
-                      const commentsData: InsertComments = {
-                        RoleId: props.CurrentRoleID,
-                        RecruitmentIDId: recruitmentID,
-                        Comments: comment,
-                      };
-
-                      await getVRRDetails.InsertCommentsList(commentsData);
-                    }
-                  } else {
                     const commentsData: InsertComments = {
                       RoleId: props.CurrentRoleID,
                       RecruitmentIDId: recruitmentID,
-                      Comments: Comments,
+                      Comments: AssignHRData.Comments,
                     };
 
                     await getVRRDetails.InsertCommentsList(commentsData);
+
+                    try {
+                      // await SPServices.SPUpdateItem({
+                      //   Listname: ListNames.HRMSRecruitmentDptDetails,
+                      //   RequestJSON: { Action: WorkflowAction.Approved },
+                      //   ID: recruitmentID,
+                      // });
+                    } catch (updateError) {
+                      console.error(updateError);
+                    }
 
                     let CancelAlert = {
                       Message: RecuritmentHRMsg.AgencySucess,
@@ -1258,7 +995,7 @@ const RecruitmentProcess = (props: any) => {
                   }
                 } else {
                   console.log(
-                    `No corresponding job found for RecruitmentID/VRRId: ${selectedJob.RecruitmentID}`
+                    `No corresponding job found for RecruitmentID/VRRId: ${selectedJob.ID}`
                   );
                 }
               } else {
@@ -1286,25 +1023,17 @@ const RecruitmentProcess = (props: any) => {
     } catch (error) {
     } finally {
       setAssignHR(false);
-      setAssignRecruitmentAgencies([{ key: 0, text: "" }]);
-      setComment("");
-
-      if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-        setRecruitmentDetails((prevData) =>
-          prevData.map((item) => ({
-            ...item,
-            Checked: false,
-          }))
-        );
-      } else {
-        setData((prevData) =>
-          prevData.map((item) => ({
-            ...item,
-            Checked: false,
-          }))
-        );
-      }
-
+      setAssignHRData((prevState) => ({
+        ...prevState,
+        AssignRecruitmentAgencies: [],
+        Comments: "",
+      }));
+      setData((prevData) =>
+        prevData.map((item) => ({
+          ...item,
+          Checked: false,
+        }))
+      );
       setSelectedJobCodes([]);
       setSelectAll(false);
     }
@@ -1322,16 +1051,16 @@ const RecruitmentProcess = (props: any) => {
       let errors: any = {};
 
       if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-        if (!AssignRecruitmentAgencies[0]?.key) {
+        if (!AssignHRData.AssignRecruitmentAgencies[0]?.key) {
           errors.AssignRecruitmentAgencies = true;
         }
       } else {
-        if (!AssignRecruitmentHR.key) {
+        if (!AssignHRData.AssignRecruitmentHR.key) {
           errors.AssignRecruitmentHR = true;
         }
       }
 
-      if (!Comments.trim()) {
+      if (!AssignHRData.Comments.trim()) {
         errors.Comments = true;
       }
 
@@ -1339,35 +1068,23 @@ const RecruitmentProcess = (props: any) => {
         setValidationErrors(errors);
         return;
       }
-
-      const datasetToUpdate =
-        props.CurrentRoleID === RoleID.RecruitmentHR
-          ? RecruitmentDetails
-          : data;
-
-      const updatedRowData = datasetToUpdate.map((item: any) => {
-        const selectedJob = allJobData.find((job) => job.VRRId === item.ID);
+      const updatedRowData = data.map((item: any) => {
+        const selectedJob = allJobData.find((job) => job.ID === item.ID);
 
         if (selectedJob) {
           return {
             ...item,
-            AssignHR: AssignRecruitmentHR.key,
-            AssignAgencies: AssignRecruitmentAgencies[0]?.key,
+            AssignHR: AssignHRData.AssignRecruitmentHR.key,
+            AssignAgencies: AssignHRData.AssignRecruitmentAgencies[0]?.key,
           };
         }
         return item;
       });
 
-      if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-        setRecruitmentDetails(updatedRowData);
-      } else {
-        setData(updatedRowData);
-      }
+      setData(updatedRowData);
 
       for (const job of allJobData) {
-        const itemToUpdate = datasetToUpdate.find(
-          (item: any) => item.ID === job.VRRId
-        );
+        const itemToUpdate = data.find((item: any) => item.ID === job.ID);
 
         if (!itemToUpdate) {
           continue;
@@ -1441,7 +1158,7 @@ const RecruitmentProcess = (props: any) => {
               >
                 <CardContent>
                   <SearchableDataTable
-                    data={RecruitmentDetails}
+                    data={data}
                     columns={columnConfig(
                       "tab2",
                       "Upload",
@@ -1466,7 +1183,7 @@ const RecruitmentProcess = (props: any) => {
               >
                 <CardContent>
                   <SearchableDataTable
-                    data={RecruitmentDetails}
+                    data={data}
                     columns={columnConfig("tab3", "View", TabName.MySubmission)}
                     rows={rows}
                     onPageChange={(event) => onPageChange(event, "VRR")}
@@ -1494,7 +1211,7 @@ const RecruitmentProcess = (props: any) => {
                     >
                       <CardContent>
                         <SearchableDataTable
-                          data={RecruitmentDetails}
+                          data={data}
                           columns={columnConfig(
                             "tab1",
                             "Upload",
@@ -1529,7 +1246,7 @@ const RecruitmentProcess = (props: any) => {
                                     handleRefresh={() => handleRefresh("tab2")}
                                 /> */}
                         <CheckboxDataTable //AssignAgency
-                          data={RecruitmentDetails}
+                          data={data}
                           columns={columnConfig(
                             "tab2",
                             "View",
@@ -1572,7 +1289,7 @@ const RecruitmentProcess = (props: any) => {
                           >
                             <CardContent>
                               <SearchableDataTable
-                                data={RecruitmentDetails}
+                                data={data}
                                 columns={columnConfig(
                                   "tab1",
                                   "Edit",
@@ -1602,7 +1319,7 @@ const RecruitmentProcess = (props: any) => {
                           >
                             <CardContent>
                               <SearchableDataTable
-                                data={RecruitmentDetails}
+                                data={data}
                                 columns={columnConfig(
                                   "tab2",
                                   "View Position Details",
@@ -1675,7 +1392,7 @@ const RecruitmentProcess = (props: any) => {
                                 >
                                   <CardContent>
                                     <SearchableDataTable
-                                      data={RecruitmentDetails}
+                                      data={data}
                                       columns={columnConfig(
                                         "tab1",
                                         "Edit",
@@ -1744,166 +1461,49 @@ const RecruitmentProcess = (props: any) => {
         </>
       )}
       {AssignHR ? (
-        <Dialog
-          visible={AssignHR}
-          draggable={false}
-          style={{
-            width: "55vw",
-            backgroundColor: "white",
-            borderRadius: "26px",
-            padding: "20px",
-            maxHeight: "80vh",
-            overflow: "auto",
-            paddingLeft: "50px",
-          }}
-          // onHide={() => handleCancel()}
-          // onHide={() => {}}
-          // closable={false}
-          onHide={handleCancel}
-          closable={true}
-          header={
-            <div style={{ textAlign: "center", width: "100%" }}>
-              <h2
-                style={{
-                  color: "red",
-                  fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
-                  -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                }}
-              >
-                {props.CurrentRoleID === RoleID.RecruitmentHR
-                  ? "Assign Agencies"
-                  : "Assign Recruitment HR"}
-              </h2>
-            </div>
-          }
-          footer={
-            <div
-              className="ms-Grid-row"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                padding: "10px 0",
-                gap: "33px",
-              }}
-            >
-              <ReuseButton
-                label="Cancel"
-                onClick={() => handleCancel()}
-                Style={{
-                  backgroundColor: "#EF3340",
-                  color: "white",
-                  width: "50%",
-                }}
+        <>
+          <CustomDialogbox
+            Style={{ width: "45vw", height: "35vw" }}
+            visible={AssignHR}
+            children={
+              <AssignRecuritmentHR
+                jobCodes={allJobData}
+                selectedJobCodes={selectedJobCodes}
+                onSelectAllChange={onSelectAllChange}
+                onRowChange={handleCheckbox}
+                CurrentRole={props.CurrentRoleID}
+                onClose={handleCancel}
+                AssignedHRId={props.stateValue?.AssignedHRId}
+                validationErrors={validationErrors}
+                ValueData={AssignHRData}
+                handleAutoComplete={(item) => handleAutoComplete(item)}
+                handleAgencyChange={(item: AutoCompleteItem[]) =>
+                  handleAgencyChange(item)
+                }
+                handleInputChangeTextArea={(item: string) =>
+                  handleInputChangeTextArea(item)
+                }
+                AssignHRSubmit={() => AssignHRSubmit()}
               />
-
-              <ReuseButton
-                label="Assign"
-                onClick={async () => {
-                  await AssignHRSubmit();
-                }}
-                Style={{
-                  backgroundColor: "#EF3340",
-                  color: "white",
-                  width: "50%",
-                }}
-              />
-            </div>
-          }
-        >
-          <div>
-            <JobCodeSelector
-              jobCodes={data}
-              selectedJobCodes={selectedJobCodes}
-              //onSelectionChange={onSelectionChange}
-              onSelectAllChange={onSelectAllChange}
-              onRowChange={handleCheckbox}
-            />
-
-            <span
-              style={{
-                color: "red",
-                marginTop: "8px",
-                display: "block",
-                fontFamily: "sans-serif",
-                //           fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
-                // -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                fontSize: "13px",
-              }}
-            >
-              Note:- To remove a selected Job Title, click ' Cancel ' and return
-              to the Dashboard.
-            </span>
-            <div className="ms-Grid-row" style={{ textAlign: "left" }}>
-              <div className="ms-Grid-col ms-lg6">
-                {props.CurrentRoleID === RoleID.RecruitmentHRLead ? (
-                  <CustomAutoComplete
-                    label="Assign Recruitment HR"
-                    options={AssignRecruitmentHROption}
-                    value={AssignRecruitmentHR}
-                    disabled={false}
-                    mandatory={true}
-                    onChange={(item) => handleAutoComplete(item)}
-                    error={validationErrors.AssignRecruitmentHR}
-                  />
-                ) : (
-                  <>
-                    <CustomMultiSelect
-                      label="Assign Agencies"
-                      disabled={false}
-                      mandatory={true}
-                      value={
-                        AssignRecruitmentAgencies?.filter(
-                          (item) => item.key !== 0
-                        ) ?? []
-                      }
-                      options={AssignRecruitmentAgenciesOption ?? []}
-                      onChange={handleAgencyChange}
-                      error={validationErrors.AssignRecruitmentAgencies}
-                    />
-                    {props.CurrentRoleID === RoleID.RecruitmentHR && (
-                      <span
-                        style={{
-                          color: "red",
-                          marginTop: "8px",
-                          display: "block",
-                          fontFamily: "sans-serif",
-                          // fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
-                          // -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                          fontSize: "13px",
-                        }}
-                      >
-                        Note:- You can assign multiple Agencies.
-                      </span>
-                    )}
-                  </>
-                )}
+            }
+            onClose={() => setAssignHR(false)}
+            header={
+              <div style={{ textAlign: "center", width: "100%" }}>
+                <h2
+                  style={{
+                    color: "red",
+                    fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
+                    -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                  }}
+                >
+                  {props.CurrentRoleID === RoleID.RecruitmentHR
+                    ? "Assign Agencies"
+                    : "Assign Recruitment HR"}
+                </h2>
               </div>
-            </div>
-            <div className="ms-Grid-row" style={{ paddingRight: "16px" }}>
-              <div className="ms-Grid-col ms-lg11">
-                <CustomTextArea
-                  label={
-                    props.CurrentRoleID === RoleID.RecruitmentHR
-                      ? "Notes for Agencies"
-                      : "Notes for Recruitment HR"
-                  }
-                  value={Comments}
-                  error={validationErrors.Comments}
-                  onChange={(value) =>
-                    handleInputChangeTextArea(value, "Comments")
-                  }
-                  mandatory={true}
-                  placeholder={
-                    props.CurrentRoleID === RoleID.RecruitmentHRLead
-                      ? "You may provide Hiring Line Manager and Hiring HOD name and number here to RecruitmentHR...."
-                      : ""
-                  }
-                />
-              </div>
-            </div>
-            <div className="ms-Grid-row" style={{ marginTop: "20px" }}></div>
-          </div>
-        </Dialog>
+            }
+          />
+        </>
       ) : (
         <></>
       )}
