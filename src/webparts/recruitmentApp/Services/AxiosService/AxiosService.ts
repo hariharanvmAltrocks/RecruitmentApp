@@ -23,7 +23,7 @@ AxiosInstance.interceptors.request.use(
             AuthorizationHeader
           );
 
-          token = res.data.tokens.jwtToken;
+          token = res?.data?.tokens?.jwtToken;
           setToken(token);
         }
 

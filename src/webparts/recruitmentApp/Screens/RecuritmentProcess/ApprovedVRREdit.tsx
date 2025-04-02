@@ -3,23 +3,19 @@ import { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import "../../App.css";
-import {
-  CommonServices,
-  GetPortalJobsService,
-  getVRRDetails,
-} from "../../Services/ServiceExport";
+import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import { Icon, Label } from "office-ui-fabric-react";
 import AttachmentButton from "../../components/AttachmentButton";
 import {
+  Choices,
   DocumentLibraray,
   HRMSAlertOptions,
   ListNames,
   RecuritmentHRMsg,
   RoleDescription,
-  RoleDescriptionData,
   RoleID,
   RoleProfileMaster,
   StatusId,
@@ -27,7 +23,6 @@ import {
   WorkflowAction,
 } from "../../utilities/Config";
 
-import CustomAutoComplete from "../../components/CustomAutoComplete";
 import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomLabel from "../../components/CustomLabel";
@@ -44,12 +39,11 @@ import ReuseButton from "../../components/ReuseButton";
 import CommanComments from "../../components/CommanComments";
 import {
   CommentsData,
+  DataSyncToRecruitmentResponse,
   InsertComments,
 } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 import CustomViewDocument from "../../components/CustomViewDocument";
-import RichTextEditor from "../../components/CustomRichTextEditor";
 import PreviewScreen from "./PreviewScreen";
-import { Dialog } from "primereact/dialog";
 import SPServices from "../../Services/SPService/SPServices";
 import BreadcrumbsComponent, {
   TabNameData,
@@ -60,12 +54,18 @@ import CustomPreviewScreen from "./CustomPreviewScreen";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
 //import * as moment from "moment";
-import { category, UpsertMasters } from "../../Models/ApIInterface";
-import CustomButton from "../../components/CustomButton";
-import CustomMultiSelect from "../../components/CustomMultiSelect";
+import { UploadAdvertisement } from "../ScreenComponent/UploadAdvertisement";
 // import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 
-type formValidation = {
+export type roleSpeKnowledgeValidationErrors = {
+  RoleSpeKnowledge: boolean;
+  RequiredLevel: boolean;
+};
+export type technicalSkillsKnowledge = {
+  TechnicalSkills: boolean;
+  LevelProficiency: boolean;
+};
+export type formValidationEdit = {
   AssignRecruitmentHR: boolean;
   AssignAgencies: boolean;
   Comments: boolean;
@@ -73,10 +73,8 @@ type formValidation = {
   OnamSignedStampsAttchment: boolean;
   MinQualification: boolean;
   PrefeQualification: boolean;
-  RoleSpeKnowledge: boolean;
-  RequiredLevel: boolean;
-  TechnicalSkills: boolean;
-  LevelProficiency: boolean;
+  RoleSpeKnowledgeValidation: roleSpeKnowledgeValidationErrors[];
+  technicalSkillsKnowledge: technicalSkillsKnowledge[];
   RolePurpose: boolean;
   JobDescription: boolean;
   TotalExperience: boolean;
@@ -122,6 +120,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     JobFunctionalType: { key: 0, text: "" },
     JobFunctionalTypeOption: [],
     addMasterMinimumQualification: "",
+    AdvertisementAttachement: [],
+    JobcodeChecked: false,
   });
   const [formState, setFormState] = useState<RecuritmentData>({
     VRRID: 0,
@@ -159,8 +159,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     DateRequried: "",
     IsRevert: "",
     VacancyConfirmed: "",
-    AdvertisementAttachement: [],
-    PositionDetails: [],
     RoleProfileDocument: [],
     GradingDocument: [],
     AdvertisementDocument: [],
@@ -181,8 +179,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       todaydate.getSeconds()
     ),
   });
-  const [validationErrors, setValidationError] = React.useState<formValidation>(
-    {
+  const [validationErrors, setValidationError] =
+    React.useState<formValidationEdit>({
       AssignRecruitmentHR: false,
       AssignAgencies: false,
       Comments: false,
@@ -190,10 +188,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       OnamSignedStampsAttchment: false,
       MinQualification: false,
       PrefeQualification: false,
-      RoleSpeKnowledge: false,
-      RequiredLevel: false,
-      TechnicalSkills: false,
-      LevelProficiency: false,
+      RoleSpeKnowledgeValidation: [],
+      technicalSkillsKnowledge: [],
       RolePurpose: false,
       JobDescription: false,
       TotalExperience: false,
@@ -204,13 +200,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       ValidTo: false,
       JobFunctionalType: false,
       addMasterMinimumQualification: false,
-    }
-  );
+    });
   const [MainComponent, setMainComponent] = useState<boolean>(true);
   const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
   const [PreviewBtn, setPreviewBtn] = useState<boolean>(false);
-  // const [SubmitBtn, setSubmitBtn] = useState<boolean>(true);
-  const [AddQualifbtn, setAddQualifbtn] = useState<boolean>(false);
   const [activeTab, setactiveTab] = useState<string>("tab1");
   const [RoleSpeKnowledgeValue, setRoleSpeKnowledgeValue] = useState<
     RoleSpecKnowledge[]
@@ -233,38 +226,97 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       LevelProficiency: { key: 0, text: "" },
     },
   ]);
-  const [HeaderValue, setHeaderValue] = useState<string>("");
-  const [LabelValue, setLabelValue] = useState<string>("");
   const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
   const [Checkbox, setCheckbox] = useState<boolean>(false);
   const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
   const [Preview, setPreview] = useState<boolean>(false);
   const [isViewed, setIsViewed] = useState(false);
-  const [showQualificationInput, setShowQualificationInput] = useState(false);
-  const [AddQualifMasterbtn, setAddQualifMasterbtn] = useState<boolean>(false);
   const [experValidation, setExperValidation] = useState<boolean>(false);
 
-  const handleAddRow = (stateValue: string) => {
+  const handleAddRow = (stateValue: string, index: number) => {
     switch (stateValue) {
       case RoleDescription.RoleSpeKnowledgeValue:
         {
-          setRoleSpeKnowledgeValue((prevState) => [
-            ...prevState,
-            {
-              RoleSpeKnowledge: { key: 0, text: "" },
-              RequiredLevel: { key: 0, text: "" },
-            },
-          ]);
+          const currentItem = RoleSpeKnowledgeValue[index];
+          const isRoleKnowledgeValid = IsValid(
+            currentItem?.RoleSpeKnowledge.text
+          );
+          const isRequiredLevelValid = IsValid(currentItem?.RequiredLevel.text);
+
+          setValidationError((prevErrors) => {
+            const updatedErrors = [...prevErrors.RoleSpeKnowledgeValidation];
+            updatedErrors[index] = {
+              RoleSpeKnowledge: !isRoleKnowledgeValid,
+              RequiredLevel: !isRequiredLevelValid,
+            };
+            return {
+              ...prevErrors,
+              RoleSpeKnowledgeValidation: updatedErrors,
+            };
+          });
+
+          if (isRoleKnowledgeValid && isRequiredLevelValid) {
+            setRoleSpeKnowledgeValue((prevState) => [
+              ...prevState,
+              {
+                RoleSpeKnowledge: { key: 0, text: "" },
+                RequiredLevel: { key: 0, text: "" },
+              },
+            ]);
+
+            setValidationError((prevErrors) => ({
+              ...prevErrors,
+              RoleSpeKnowledgeValidation: [
+                ...prevErrors.RoleSpeKnowledgeValidation,
+                { RoleSpeKnowledge: false, RequiredLevel: false },
+              ],
+            }));
+          }
         }
         break;
       case RoleDescription.TechnicalSkillValue: {
-        setTechnicalSkillValue((prevState) => [
-          ...prevState,
-          {
-            TechnicalSkills: { key: 0, text: "" },
-            LevelProficiency: { key: 0, text: "" },
-          },
-        ]);
+        const currentItem = TechnicalSkillValue[index];
+        const isTechnicalSkillValid = IsValid(
+          currentItem?.TechnicalSkills.text
+        );
+        const isLevelProficiencyValid = IsValid(
+          currentItem?.LevelProficiency.text
+        );
+
+        setValidationError((prevErrors) => {
+          const updatedErrors = [...prevErrors.technicalSkillsKnowledge];
+          updatedErrors[index] = updatedErrors[index] || {
+            TechnicalSkills: false,
+            LevelProficiency: false,
+          };
+          updatedErrors[index] = {
+            TechnicalSkills: !isTechnicalSkillValid,
+            LevelProficiency: !isLevelProficiencyValid,
+          };
+          return {
+            ...prevErrors,
+            technicalSkillsKnowledge: updatedErrors,
+          };
+        });
+
+        if (isTechnicalSkillValid && isLevelProficiencyValid) {
+          setTechnicalSkillValue((prevState) => [
+            ...prevState,
+            {
+              TechnicalSkills: { key: 0, text: "" },
+              LevelProficiency: { key: 0, text: "" },
+            },
+          ]);
+
+          setValidationError((prevErrors) => ({
+            ...prevErrors,
+            technicalSkillsKnowledge: [
+              ...prevErrors.technicalSkillsKnowledge,
+              { TechnicalSkills: false, LevelProficiency: false },
+            ],
+          }));
+        }
+        break;
       }
     }
   };
@@ -325,7 +377,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
   const handleAutoCompleterow = (
     item: AutoCompleteItem | null,
-    key: string, // Generalized key
+    key: string,
     index: number,
     stateKey:
       | "RoleSpeKnowledgeValue"
@@ -340,17 +392,25 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }
         return updatedRows;
       });
-      if (key === "RoleSpeKnowledge") {
-        setValidationError((prevState) => ({
-          ...prevState,
+
+      setValidationError((prevErrors) => {
+        const updatedErrors = [...prevErrors.RoleSpeKnowledgeValidation];
+        updatedErrors[index] = updatedErrors[index] || {
           RoleSpeKnowledge: false,
-        }));
-      } else if (key === "RequiredLevel") {
-        setValidationError((prevState) => ({
-          ...prevState,
           RequiredLevel: false,
-        }));
-      }
+        };
+
+        if (key === "RoleSpeKnowledge") {
+          updatedErrors[index].RoleSpeKnowledge = false;
+        } else if (key === "RequiredLevel") {
+          updatedErrors[index].RequiredLevel = false;
+        }
+
+        return {
+          ...prevErrors,
+          RoleSpeKnowledgeValidation: updatedErrors,
+        };
+      });
     }
 
     if (stateKey === "TechnicalSkillValue") {
@@ -361,17 +421,116 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         }
         return updatedRows;
       });
-      if (key === "TechnicalSkills") {
-        setValidationError((prevState) => ({
-          ...prevState,
+
+      setValidationError((prevErrors) => {
+        const updatedErrors = [...prevErrors.technicalSkillsKnowledge];
+        updatedErrors[index] = updatedErrors[index] || {
           TechnicalSkills: false,
-        }));
-      } else if (key === "LevelProficiency") {
-        setValidationError((prevState) => ({
-          ...prevState,
           LevelProficiency: false,
-        }));
+        };
+
+        if (key === "TechnicalSkills") {
+          updatedErrors[index].TechnicalSkills = false;
+        } else if (key === "LevelProficiency") {
+          updatedErrors[index].LevelProficiency = false;
+        }
+
+        return {
+          ...prevErrors,
+          technicalSkillsKnowledge: updatedErrors,
+        };
+      });
+    }
+  };
+
+  const fetchRoleProfileData = async (JobCodeID: number) => {
+    try {
+      let filterConditions = [
+        {
+          FilterKey: "JobCode",
+          Operator: "eq",
+          FilterValue: JobCodeID,
+        },
+      ];
+      const response = await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+        filterConditions,
+        ""
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+
+        if (data && data.length > 0) {
+          const rawData = data[0];
+          const roleSpecificKnowledge = Array.isArray(
+            rawData.RoleSpecificKnowledge
+          )
+            ? rawData.RoleSpecificKnowledge
+            : [];
+
+          const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+            (item: any) => item.RoleSpecificKnowledge
+          );
+          const RequiredLevelValues = roleSpecificKnowledge.map(
+            (item: any) => item.RequiredLevel
+          );
+          const technicalSkillsKnowledge = Array.isArray(
+            rawData.TechnicalSkillsKnowledge
+          )
+            ? rawData.TechnicalSkillsKnowledge
+            : [];
+
+          const TechnicalSkillsOption = technicalSkillsKnowledge.map(
+            (item: any, index: number) => ({
+              key: index,
+              text: item.TechnicalSkills,
+            })
+          );
+
+          const LevelProficiencyOption = technicalSkillsKnowledge.map(
+            (item: any, index: number) => ({
+              key: index,
+              text: item.LevelProficiency,
+            })
+          );
+          const MinQualificationOption = rawData.Qualification
+            ? [{ key: 0, text: rawData.Qualification }]
+            : [];
+
+          // Set Preferred Qualification as comma-separated values
+          const PrefeQualificationOption = rawData.PreferredQualification
+            ? [{ key: 0, text: rawData.PreferredQualification }]
+            : [];
+
+          setAdvDetails((prevState) => ({
+            ...prevState,
+            RolePurpose: rawData.RoleProfile || "",
+            JobDescription: rawData.JobDescription || "",
+            MinQualificationOption: MinQualificationOption,
+            PrefeQualificationOption: PrefeQualificationOption,
+            TechnicalSkillsOption: TechnicalSkillsOption,
+            LevelProficiencyOption: LevelProficiencyOption,
+            RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+            RequiredLeveloption: RequiredLevelValues,
+            TotalExperience: rawData.YearofExperience || "",
+            ExperienceinMiningIndustry: rawData.PreferredExperience || "",
+            YearofExperience: rawData.YearofExperience || "",
+            PreferredExperience: rawData.PreferredExperience || "",
+            FunctionType: rawData.FunctionType,
+            JobcodeChecked: true,
+          }));
+        } else {
+          setAdvDetails((prev) => ({
+            ...prev,
+            JobcodeChecked: false,
+          }));
+          console.warn("No data found for the given filter.");
+        }
+      } else {
+        console.error("Error fetching data:", response.message);
       }
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -380,40 +539,62 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     setIsLoading(true);
 
     try {
-      const filterConditionsVRR = [
+      const filterConditionsRecuritment = [
         {
           FilterKey: "ID",
           Operator: "eq",
           FilterValue: props.stateValue?.ID,
         },
       ];
-      const Conditions = "";
+      const RecuritmentConditions = "";
+      let filterConditions = [];
+      let Conditions = "and";
+      filterConditions.push({
+        FilterKey: "StatusId",
+        Operator: "eq",
+        FilterValue: StatusId.Completed,
+      });
+      filterConditions.push({
+        FilterKey: "IsDataSyncToRecruitment",
+        Operator: "eq",
+        FilterValue: Choices.Yes,
+      });
 
       const response =
-        props.stateValue?.type === "VRR"
-          ? await getVRRDetails.GetVacancyDetails(
-              filterConditionsVRR,
-              Conditions
+        props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+        props.stateValue?.StatusId === StatusId.Completed
+          ? await getVRRDetails.GetJobTitleInNPEP(
+              filterConditions,
+              Conditions,
+              props
             )
           : await getVRRDetails.GetRecruitmentDetails(
-              filterConditionsVRR,
-              Conditions
+              filterConditionsRecuritment,
+              RecuritmentConditions
             );
 
       if (response.data) {
-        const op =
-          props.stateValue?.type === "VRR"
-            ? response.data[0][0]
-            : response.data[0];
-        const NoofPositionAssigned = response.data[1];
+        const NewpositionData =
+          response?.data?.filter((item) => item.ID === props.stateValue?.ID) ||
+          [];
+
+        // Ensure `op` is always a single object
+        const op: DataSyncToRecruitmentResponse =
+          props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+          props.stateValue?.StatusId === StatusId.Completed
+            ? NewpositionData.length > 0
+              ? NewpositionData[0]
+              : response?.data?.[0] || ({} as DataSyncToRecruitmentResponse)
+            : response?.data?.[0] || ({} as DataSyncToRecruitmentResponse);
 
         const BUName =
           props?.BusinessUnitCodeAllColumn.find(
-            (item: any) => item.key === op.BusinessUnitCodeId
+            (item: any) => item.key === op?.BusinessUnitCodeId
           ) || {};
+
         const JobtitleFrench =
           props?.JobInFrenchList.find(
-            (item: any) => item.key === op.JobTitleInFrenchId
+            (item: any) => item.key === op?.JobTitleFrenchId
           ) || {};
 
         const [
@@ -453,15 +634,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
           setFormState((prevState) => ({
             ...prevState,
-            VRRID: op.VRRID,
+            ID: op.ID,
             BusinessUnitCodeID: op.BusinessUnitCodeId,
             DepartmentID: op.DepartmentId,
             SubDepartmentID: op.SubDepartmentId,
             SectionID: op.SectionId,
             DepartmentCodeID: op.DepartmentCodeId,
-            JobNameInEnglishID: op.JobTitleInEnglishId,
-            JobNameInFrenchID: op.JobTitleInFrenchId,
-            PatersonGradeID: op.PayrollGradeId,
+            JobNameInEnglishID: op.JobTitleEnglishId,
+            JobNameInFrenchID: op.JobTitleFrenchId,
+            PatersonGradeID: op.PatersonGradeId,
             DRCGradeID: op.DRCGradeId,
             JobCodeID: op.JobCodeId,
             BusinessUnitCode: op.BusinessUnitCode || "",
@@ -472,42 +653,27 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             Section: op.Section || "",
             DepartmentCode: op.DepartmentCode || "",
             Nationality: op.Nationality || "",
-            JobNameInEnglish: op.JobTitleInEnglish || "",
+            JobNameInEnglish: op.JobTitleEnglish || "",
             JobNameInFrench: JobtitleFrench.text || "",
-            PatersonGrade: op.PayrollGrade || "",
+            PatersonGrade: op.PatersonGrade || "",
             DRCGrade: op.DRCGrade || "",
             EmployementCategory: op.EmploymentCategory || "",
             ContractType: op.TypeOfContract || "",
             JobCode: op.JobCode || "",
             AreaOfWork: op.AreaofWork || "",
-            NoofPositionAssigned: op.NumberOfPersonNeeded || 0,
+            NoofPositionAssigned: op.NumberOfPersonNeeded || "",
             ReasonForVacancy: op.ReasonForVacancy || "",
             RecruitmentAuthorised: op.RecruitmentAuthorised || "",
             IsPayrollEmailed: op.IsPayrollEmailed || "",
-            EnterNumberOfMonths: op.EnterNumberOfMonths || 0,
-            DateRequried: op.DateRequried || null,
-            IsRevert: op.IsRevert || "",
+            EnterNumberOfMonths: Number(op.EnterNumberOfMonths) || 0,
+            DateRequried: String(op.DateRequried) || "",
             VacancyConfirmed: op.VacancyConfirmed || "",
             RoleProfileDocument: RoleProfileDoc,
             GradingDocument: GradingDoc,
             AdvertisementDocument: AdvertismentDocPromises,
             OnamSignedStampsDocument: ONAMSignedStampDoc,
           }));
-
-          if (NoofPositionAssigned?.length > 0) {
-            const updatedPositions = NoofPositionAssigned.map(
-              (position: any) => ({
-                ...position,
-                PatersonGradeID: op.PayrollGradeId,
-                DRCGradeID: op.DRCGradeId,
-              })
-            );
-
-            setFormState((prevState) => ({
-              ...prevState,
-              PositionDetails: updatedPositions,
-            }));
-          }
+          await fetchRoleProfileData(op.JobCodeId);
         } else {
           console.error("Error retrieving attachments:", response);
         }
@@ -520,12 +686,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   };
 
   const Validation = (): boolean => {
-    const {
-      AssignRecruitmentHR,
-      Comments,
-      AdvertisementAttachement,
-      OnamSignedStampsAttchment,
-    } = formState;
+    const { AssignRecruitmentHR, Comments, OnamSignedStampsAttchment } =
+      formState;
 
     let errors = {
       AssignRecruitmentHR: false,
@@ -572,7 +734,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           StatusId.PendingwithRecruitmentHRtouploadAdv
         ) {
           errors.Comments = !IsValid(Comments);
-          errors.AdvertisementAttachement = !IsValid(AdvertisementAttachement);
+          errors.AdvertisementAttachement = !IsValid(
+            advDetails.AdvertisementAttachement
+          );
           errors.Comments = !IsValid(Comments);
           errors.MinQualification = !IsValid(
             qualificationValue.MinQualification[0]?.text
@@ -626,23 +790,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     return Object.values(errors).some((error) => error);
   };
 
-  const MasterDataValidation = (): boolean => {
-    const { addMasterQualification } = advDetails;
-
-    let errors = {
-      addMasterQualification: false,
-    };
-
-    errors.addMasterQualification = !IsValid(addMasterQualification);
-
-    setValidationError((prevState) => ({
-      ...prevState,
-      ...errors,
-    }));
-
-    return Object.values(errors).some((error) => error);
-  };
-
   const resetForm = () => {
     setFormState((prevState) => ({
       ...prevState,
@@ -687,9 +834,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             ) {
               const filterConditions = [
                 {
-                  FilterKey: "ID",
+                  FilterKey: "JobCode",
                   Operator: "eq",
-                  FilterValue: props.stateValue?.ID,
+                  FilterValue: formState.JobCodeID,
                 },
               ];
               const Conditions = "";
@@ -755,7 +902,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           case RoleID.RecruitmentHR: {
             await CommonServices.uploadAttachmentToLibrary(
               formState.JobCode,
-              formState?.AdvertisementAttachement ?? [],
+              advDetails?.AdvertisementAttachement ?? [],
               DocumentLibraray.RecruitmentAdvertisementDocument
             );
             await SPServices.SPUpdateItem({
@@ -819,15 +966,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               TechnicalSkillsKnowledgeJson: JSON.stringify(
                 TechnicalSkillsKnowledgeJson
               ),
-              RecruitmentIDId: props.stateValue?.ID,
+              JobCodeId: formState.JobCodeID,
               TotalPreferredExperienceId: Number(
                 advDetails.TotalExperience.key
               ),
               PreferredExperienceId: Number(
                 advDetails.ExperienceinMiningIndustry.key
               ),
-              // ValidFrom: moment(advDetails.ValidFrom).format("YYYY-MM-DD"),
-              // ValidTo: moment(advDetails.ValidTo).format("YYYY-MM-DD"),
               FunctionTypeId: advDetails.JobFunctionalType.key,
             };
 
@@ -927,247 +1072,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     void initialize();
   }, []);
 
-  useEffect(() => {
-    const MasterDataOption = async () => {
-      // Fetch Qualification data
-      const Qualification = await CommonServices.GetMasterData(
-        ListNames.HRMSQualification
-      );
-      // const QualificationOption: AutoCompleteItem[] = Qualification.data.map((item: any) => ({
-      //     key: item.Code,
-      //     text: item.Qualification,
-      // }));
-      const QualificationOption: AutoCompleteItem[] = Qualification.data
-        .filter(
-          (Qualitem) =>
-            !qualificationValue.MinQualification.some(
-              (item) => item.key === Qualitem.QualificationCode
-            )
-        )
-        .map((item: any) => ({
-          key: item.QualificationCode,
-          text: item.Qualification,
-        }));
-      const PrefeQualificationOption: AutoCompleteItem[] = Qualification.data
-        .filter(
-          (Qualitem) =>
-            // !QualificationValue.some((item) => item.MinQualification.key === Qualitem.QualificationCode)
-            !qualificationValue.MinQualification.some(
-              (item) => item.key === Qualitem.QualificationCode
-            )
-        )
-        .map((item: any) => ({
-          key: item.QualificationCode,
-          text: item.Qualification,
-        }));
-
-      // Fetch RoleSpecificKnowledge data
-      const RoleSpecificKnowlege = await CommonServices.GetMasterData(
-        ListNames.HRMSRoleSpecificKnowlegeMaster
-      );
-      const RoleSpecificKnowlegeOption: AutoCompleteItem[] =
-        RoleSpecificKnowlege.data.map((item: any) => ({
-          key: item.Code,
-          text: item.RoleSpecificKnowledge,
-        }));
-
-      // Fetch TechnicalSkills data
-      const TechnicalSkills = await CommonServices.GetMasterData(
-        ListNames.HRMSTechnicalSkills
-      );
-      const TechnicalSkillsOption: AutoCompleteItem[] =
-        TechnicalSkills.data.map((item: any) => ({
-          key: item.Code,
-          text: item.TechnicalSkills,
-        }));
-
-      // Fetch LevelOfProficiency data
-      const LevelOfProficiency = await CommonServices.GetMasterData(
-        ListNames.HRMSLevelOfProficiency
-      );
-      const LevelOfProficiencyOption: AutoCompleteItem[] =
-        LevelOfProficiency.data.map((item: any) => ({
-          key: item.Code,
-          text: item.Levels,
-        }));
-
-      const YearofExperiance = await CommonServices.GetMasterData(
-        ListNames.HRMSExperienceMaster
-      );
-      const YearofExperianceOption: AutoCompleteItem[] =
-        YearofExperiance.data.map((item: any) => ({
-          key: item.Id,
-          text: item.ExperienceInYearRange,
-        }));
-
-      const ExperienceinMiningOption: AutoCompleteItem[] =
-        YearofExperiance.data.map((item: any) => ({
-          key: item.Id,
-          text: item.ExperienceInYearRange,
-        }));
-
-      const JobTitleFunctionType = await CommonServices.GetMasterData(
-        ListNames.HRMSJobTitleFunctionType
-      );
-      const JobTitleFunctionTypeOption: AutoCompleteItem[] =
-        JobTitleFunctionType.data.map((item: any) => ({
-          key: item.Id,
-          text: item.FunctionType,
-        }));
-
-      setAdvDetails((prevState) => ({
-        ...prevState,
-        MinQualificationOption: QualificationOption,
-        PrefeQualificationOption: PrefeQualificationOption,
-        RoleSpeKnowledgeoption: RoleSpecificKnowlegeOption,
-        TechnicalSkillsOption: TechnicalSkillsOption,
-        LevelProficiencyOption: LevelOfProficiencyOption,
-        RequiredLeveloption: LevelOfProficiencyOption,
-        TotalExperienceOption: YearofExperianceOption,
-        ExperienceinMiningIndustryOption: ExperienceinMiningOption,
-        JobFunctionalTypeOption: JobTitleFunctionTypeOption,
-      }));
-    };
-
-    if (
-      props.CurrentRoleID === RoleID.RecruitmentHR &&
-      props.stateValue?.StatusId ===
-        StatusId.PendingwithRecruitmentHRtouploadAdv
-    ) {
-      void MasterDataOption();
-    }
-  }, [
-    AddQualifbtn,
-    qualificationValue,
-    advDetails.TotalExperience,
-    AddQualifMasterbtn,
-  ]);
-
-  useEffect(() => {
-    if (
-      (props.CurrentRoleID === RoleID.HOD &&
-        props.stateValue?.StatusId === StatusId.PendingwithHODtoreviewAdv) ||
-      (props.CurrentRoleID === RoleID.RecruitmentHR &&
-        props.stateValue?.StatusId ===
-          StatusId.PendingwithRecruitmentHRtoAssignExternalAgency)
-    ) {
-      const fetchData = async () => {
-        try {
-          let filterConditions = [
-            {
-              FilterKey: "RecruitmentIDId",
-              Operator: "eq",
-              FilterValue: props.stateValue.ID,
-            },
-          ];
-          const response =
-            await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
-              filterConditions,
-              ""
-            );
-
-          if (response.status === 200) {
-            const data = response.data;
-
-            if (data && data.length > 0) {
-              const rawData = data[0];
-              const roleSpecificKnowledge = Array.isArray(
-                rawData.RoleSpecificKnowledge
-              )
-                ? rawData.RoleSpecificKnowledge
-                : [];
-
-              const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
-                (item: any) => item.RoleSpecificKnowledge
-              );
-              const RequiredLevelValues = roleSpecificKnowledge.map(
-                (item: any) => item.RequiredLevel
-              );
-              const technicalSkillsKnowledge = Array.isArray(
-                rawData.TechnicalSkillsKnowledge
-              )
-                ? rawData.TechnicalSkillsKnowledge
-                : [];
-
-              const TechnicalSkillsOption = technicalSkillsKnowledge.map(
-                (item: any, index: number) => ({
-                  key: index,
-                  text: item.TechnicalSkills,
-                })
-              );
-
-              const LevelProficiencyOption = technicalSkillsKnowledge.map(
-                (item: any, index: number) => ({
-                  key: index,
-                  text: item.LevelProficiency,
-                })
-              );
-              //   const MinQualificationOption = Array.isArray(rawData.Qualification)
-              //     ? rawData.Qualification.map((item: any, index: any) => ({
-              //         key: index,
-              //         text: item.text || "N/A",
-              //       }))
-              //     : [];
-              //   const PrefeQualificationOption = Array.isArray(
-              //     rawData.PreferredQualification
-              //   )
-              //     ? rawData.PreferredQualification.map((item: any, index: any) => ({
-              //         key: index,
-              //         text: item.text || "N/A",
-              //       }))
-              //     : [];
-              // Set Qualification as comma-separated values
-              const MinQualificationOption = rawData.Qualification
-                ? [{ key: 0, text: rawData.Qualification }]
-                : [];
-
-              // Set Preferred Qualification as comma-separated values
-              const PrefeQualificationOption = rawData.PreferredQualification
-                ? [{ key: 0, text: rawData.PreferredQualification }]
-                : [];
-
-              const mappedData: AdvDetails = {
-                RolePurpose: rawData.RoleProfile || "",
-                JobDescription: rawData.JobDescription || "",
-                RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
-                RequiredLeveloption: RequiredLevelValues,
-                MinQualificationOption,
-                PrefeQualificationOption,
-                TotalExperience: rawData.YearofExperience || "",
-                ExperienceinMiningIndustry: rawData.PreferredExperience || "",
-                TechnicalSkillsOption,
-                LevelProficiencyOption,
-                addMasterQualification: "",
-                YearofExperience: rawData.YearofExperience || "",
-                PreferredExperience: rawData.PreferredExperience || "",
-                ValidFrom: rawData.ValidFrom,
-                ValidTo: rawData.ValidTo,
-                FunctionType: rawData.FunctionType,
-                TotalExperienceOption: [],
-                ExperienceinMiningIndustryOption: [],
-                JobFunctionalType: {
-                  key: 0,
-                  text: "",
-                },
-                JobFunctionalTypeOption: [],
-                addMasterMinimumQualification: "",
-              };
-
-              setAdvDetails(mappedData);
-            } else {
-              console.warn("No data found for the given filter.");
-            }
-          } else {
-            console.error("Error fetching data:", response.message);
-          }
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-      void fetchData();
-    }
-  }, [props.CurrentRoleID, props.stateValue?.StatusId]);
-
   const handleDelete = (
     index: number,
     attachmentType:
@@ -1175,15 +1079,27 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       | "OnamSignedStampsAttchment"
       | "CandidateCVAttachment"
   ) => {
-    setFormState((prevState) => {
-      const updatedAttachments = [...(prevState[attachmentType] ?? [])];
-      updatedAttachments.splice(index, 1);
+    if (attachmentType === "AdvertisementAttachement") {
+      setAdvDetails((prevState) => {
+        const updatedAttachments = [...(prevState[attachmentType] ?? [])];
+        updatedAttachments.splice(index, 1);
 
-      return {
-        ...prevState,
-        [attachmentType]: updatedAttachments,
-      };
-    });
+        return {
+          ...prevState,
+          [attachmentType]: updatedAttachments,
+        };
+      });
+    } else {
+      setFormState((prevState) => {
+        const updatedAttachments = [...(prevState[attachmentType] ?? [])];
+        updatedAttachments.splice(index, 1);
+
+        return {
+          ...prevState,
+          [attachmentType]: updatedAttachments,
+        };
+      });
+    }
   };
 
   const handleInputChangeTextArea = (
@@ -1199,17 +1115,17 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       [StateValue]: false,
     }));
   };
-  const handleCustomInputChange = (value: string | any, StateValue: string) => {
-    setAdvDetails((prevState) => ({
-      ...prevState,
-      [StateValue]: value,
-    }));
+  // const handleCustomInputChange = (value: string | any, StateValue: string) => {
+  //   setAdvDetails((prevState) => ({
+  //     ...prevState,
+  //     [StateValue]: value,
+  //   }));
 
-    setValidationError((prevState) => ({
-      ...prevState,
-      [StateValue]: false,
-    }));
-  };
+  //   setValidationError((prevState) => ({
+  //     ...prevState,
+  //     [StateValue]: false,
+  //   }));
+  // };
 
   const handleMulitiSelect = (
     value: AutoCompleteItem[],
@@ -1219,7 +1135,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       ...prevState,
       [StateValue]: value,
     }));
-
     setValidationError((prevState) => ({
       ...prevState,
       [StateValue]: false,
@@ -1246,31 +1161,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }
   };
 
-  const AddMasterData_fn = (Header: string, LabelValue: string) => {
-    setAddQualifbtn(true);
-    setHeaderValue(Header);
-    setLabelValue(LabelValue);
-  };
-
-  const AddMasterMinimumQualification = (): boolean => {
-    const { addMasterMinimumQualification } = advDetails;
-
-    let errors = {
-      addMasterMinimumQualification: false,
-    };
-
-    errors.addMasterMinimumQualification = !IsValid(
-      addMasterMinimumQualification
-    );
-
-    setValidationError((prevState) => ({
-      ...prevState,
-      ...errors,
-    }));
-
-    return errors.addMasterMinimumQualification;
-  };
-
   const handleRichTextEditor = (value: string | any, StateValue: string) => {
     setAdvDetails((prevState) => ({
       ...prevState,
@@ -1281,28 +1171,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       [StateValue]: false,
     }));
   };
-
-  //   const handleDateChange = (value: Date | null, StateValue: string) => {
-  //     setAdvDetails((prevState) => {
-  //       const updatedState = { ...prevState, [StateValue]: value };
-
-  //       if (StateValue === "ValidFrom" && value) {
-  //         const maxValidToDate = new Date(value);
-  //         maxValidToDate.setDate(maxValidToDate.getDate() + 14);
-
-  //         if (updatedState.ValidTo && updatedState.ValidTo > maxValidToDate) {
-  //           updatedState.ValidTo = maxValidToDate;
-  //         }
-  //       }
-
-  //       return updatedState;
-  //     });
-
-  //     setValidationError((prevState) => ({
-  //       ...prevState,
-  //       [StateValue]: false,
-  //     }));
-  //   };
 
   const handleDateChange = (value: Date | null, stateKey: string) => {
     setAdvDetails((prevState) => {
@@ -1332,159 +1200,23 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   };
 
   const handleFileAttachment = (StateValue: string, value: IDocFiles[]) => {
-    setFormState((prevState) => ({
-      ...prevState,
-      [StateValue]: value,
-    }));
+    if (StateValue === "AdvertisementAttachement") {
+      setAdvDetails((prevState) => ({
+        ...prevState,
+        [StateValue]: value,
+      }));
+    } else {
+      setFormState((prevState) => ({
+        ...prevState,
+        [StateValue]: value,
+      }));
+    }
+
     setValidationError((prevState: any) => ({
       ...prevState,
       [StateValue]: false,
     }));
   };
-
-  // async function PostAdvertisement(): Promise<{
-  //   status: number;
-  //   message?: string;
-  // }> {
-  //   try {
-  //     let filterConditions = [
-  //       {
-  //         FilterKey: "RecruitmentIDId",
-  //         Operator: "eq",
-  //         FilterValue: props.stateValue.ID,
-  //       },
-  //     ];
-
-  //     const res = await getVRRDetails.GetDataInList(
-  //       ListNames.HRMSRecruitmentRoleProfileDetails,
-  //       filterConditions,
-  //       "",
-  //       "*,RecruitmentID/ID,JobDescription,RoleProfile,TotalPreferredExperience/ExperienceInYearRange,PreferredExperience/ExperienceInYearRange,FunctionType/Code",
-  //       "RecruitmentID,PreferredExperience,TotalPreferredExperience,FunctionType"
-  //     );
-
-  //     if (!res || !res.data || res.data.length === 0) {
-  //       console.log("No data found in GetHRMSRecruitmentRoleProfileDetails");
-  //       return { status: 400, message: "No data found" };
-  //     }
-
-  //     const data = res.data[0];
-
-  //     const roleSpecificKnowledge = data.RoleSpecificKnowledgeJson
-  //       ? JSON.parse(data.RoleSpecificKnowledgeJson)
-  //       : [];
-  //     const technicalSkill = data.TechnicalSkillsKnowledgeJson
-  //       ? JSON.parse(data.TechnicalSkillsKnowledgeJson)
-  //       : [];
-
-  //     let technicalSkillsValues = technicalSkill.map(
-  //       (item: any) => item.TechnicalSkills
-  //     );
-  //     let LevelProficiency = technicalSkill.map(
-  //       (item: any) => item.LevelProficiency
-  //     );
-
-  //     const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
-  //       (item: any) => item.RoleSpeKnowledge
-  //     );
-  //     const RequiredLevelValues = roleSpecificKnowledge.map(
-  //       (item: any) => item.RequiredLevel
-  //     );
-
-  //     const roleSpecificSkills: RoleAndTechSkills[] =
-  //       RoleSpeKnowledgeValues.map((role: any, index: number) => ({
-  //         skillId: String(role || ""),
-  //         levelId: String(RequiredLevelValues[index] || ""),
-  //       }));
-
-  //     const technicalSkills: RoleAndTechSkills[] = technicalSkillsValues.map(
-  //       (tech: any, index: number) => ({
-  //         skillId: String(tech || ""),
-  //         levelId: String(LevelProficiency[index] || ""),
-  //       })
-  //     );
-
-  //     const Roleandtechnical: RoleAndTechSkills[] = [
-  //       ...roleSpecificSkills,
-  //       ...technicalSkills,
-  //     ];
-
-  //     const minQualifications: MinAndPreferedQualifications[] =
-  //       data.Qualification
-  //         ? JSON.parse(data.Qualification).map((item: any) => ({
-  //             qualification: item.MinQualification,
-  //             type: 0,
-  //           }))
-  //         : [];
-
-  //     const preferredQualifications: MinAndPreferedQualifications[] =
-  //       data.PreferredQualification
-  //         ? JSON.parse(data.PreferredQualification).map((item: any) => ({
-  //             qualification: item.PrefeQualification,
-  //             type: 1,
-  //           }))
-  //         : [];
-
-  //     const MinAndPreferedQualification: MinAndPreferedQualifications[] = [
-  //       ...minQualifications,
-  //       ...preferredQualifications,
-  //     ];
-
-  //     const Description: Descriptions = {
-  //       jobTitle: formState.JobNameInEnglish,
-  //       jobShortSummary: String(data.RoleProfile || ""),
-  //       jobSummary: String(data.JobDescription || ""),
-  //     };
-
-  //     const onamdocpathfile = await CommonServices.GetAttachmentLink(
-  //       formState.JobCode,
-  //       DocumentLibraray.ONAMSignedStampDocuments
-  //     );
-
-  //     const onemdocPath = String(onamdocpathfile.data);
-  //     const DepartmentCode = props.Department.find(
-  //       (item: { text: string }) => item.text === formState.Department
-  //     );
-  //     let NationalityValue =
-  //       formState.Nationality === Nationality.Nationals
-  //         ? "Congolese"
-  //         : formState.Nationality;
-
-  //     const AdvertisementDetails: AdvertisementDetails = {
-  //       jobCode: formState.JobCode,
-  //       noOfPositions: String(formState.NoofPositionAssigned),
-  //       validFrom: advDetails.ValidFrom,
-  //       validTo: advDetails.ValidTo,
-  //       employmentType: "Full Time",
-  //       departmentId: DepartmentCode?.code || "",
-  //       role: null,
-  //       functionId: String(data.FunctionType?.Code || ""),
-  //       onemdocPath: String(onemdocPath),
-  //       experience: String(
-  //         data.TotalPreferredExperience?.ExperienceInYearRange || ""
-  //       ),
-  //       nationality: NationalityValue,
-  //       Descriptions_en: Description,
-  //       Descriptions_fr: Description,
-  //       RoleAndTechSkills: Roleandtechnical,
-  //       MinAndPreferedQualifications: MinAndPreferedQualification,
-  //     };
-  //     const response = await GetPortalJobsService.UpsertJobs(
-  //       AdvertisementDetails
-  //     );
-
-  //     if (response?.status === 200) {
-  //       console.log("Advertisement posted successfully:", response);
-  //       return { status: 200, message: "Success" };
-  //     } else {
-  //       console.log("Error posting advertisement:", response);
-  //       return { status: response?.status || 500, message: "API Error" };
-  //     }
-  //   } catch (error) {
-  //     console.log("Error in PostAdvertisement:", error);
-  //     return { status: 500, message: "Internal Server Error" };
-  //   }
-  // }
 
   const tabs = [
     {
@@ -1902,262 +1634,241 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 )}
               </div>
 
-              {props.CurrentRoleID === RoleID.RecruitmentHR &&
-              props.stateValue?.StatusId ===
-                StatusId.PendingwithRecruitmentHRtouploadAdv ? (
-                <></>
-              ) : (
+              {props.stateValue?.StatusId ===
+                StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
                 <>
-                  {props.stateValue?.StatusId ===
-                    StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
-                    <>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg1.8">
-                          <CustomLabel
-                            value={"ONEM Signed and Stamped Document"}
-                            mandatory={true}
-                          />
-                          <AttachmentButton
-                            label="Upload"
-                            iconName="CloudUpload"
-                            iconNameHover="CloudUpload"
-                            AttachState={(newAttachment: any) => {
-                              let attachment: IDocFiles[] = newAttachment.map(
-                                (item: any) => {
-                                  return {
-                                    name: item.name,
-                                    content: item.file,
-                                    type: "New",
-                                  };
-                                }
-                              );
-                              const attachments = [
-                                ...(formState.OnamSignedStampsAttchment || []),
-                                ...attachment,
-                              ];
-                              handleFileAttachment(
-                                "OnamSignedStampsAttchment",
-                                attachments
-                              );
-                            }}
-                            mandatory={true}
-                            error={validationErrors.OnamSignedStampsAttchment}
-                            Style={{
-                              backgroundColor: "rgb(239, 51, 64)",
-                              color: "white",
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg6">
-                          {formState.OnamSignedStampsAttchment?.map(
-                            (file: any, index: number) => {
-                              const fileName = file.fileName || file.name;
-
-                              return (
-                                <div key={index} className="ms-Grid-row">
-                                  <div className="ms-Grid-col ms-lg12">
-                                    <Label style={{ color: "blue" }}>
-                                      {fileName}
-                                      <span>
-                                        <Icon
-                                          iconName="Delete"
-                                          style={{
-                                            marginLeft: "8px",
-                                            fontSize: "16px",
-                                            cursor: "pointer",
-                                          }}
-                                          onClick={() =>
-                                            handleDelete(
-                                              index,
-                                              "OnamSignedStampsAttchment"
-                                            )
-                                          } // Call the delete function
-                                        />
-                                      </span>
-                                    </Label>
-                                  </div>
-                                </div>
-                              );
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg1.8">
+                      <CustomLabel
+                        value={"ONEM Signed and Stamped Document"}
+                        mandatory={true}
+                      />
+                      <AttachmentButton
+                        label="Upload"
+                        iconName="CloudUpload"
+                        iconNameHover="CloudUpload"
+                        AttachState={(newAttachment: any) => {
+                          let attachment: IDocFiles[] = newAttachment.map(
+                            (item: any) => {
+                              return {
+                                name: item.name,
+                                content: item.file,
+                                type: "New",
+                              };
                             }
-                          )}
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  {/* {props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoAssignExternalAgency && (
-                                        <>
-                                            <div className="ms-Grid-row">
-                                                <div className="ms-Grid-col ms-lg6">
-                                                    <CustomViewDocument
-                                                        Attachment={formState.AdvertisementDocument}
-                                                        Label={"Advertisement Documents"}
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className="ms-Grid-row">
-                                                <div className="ms-Grid-col ms-lg6">
-                                                    <CustomViewDocument
-                                                        Attachment={formState.OnamSignedStampsDocument}
-                                                        Label={"ONEM Signed&Stamps Documents"}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </>
-                                    )} */}
-                  {props.CurrentRoleID === RoleID.HOD &&
-                    props.stateValue?.StatusId ===
-                      StatusId.PendingwithHODtoreviewAdv && (
-                      <div className="ms-Grid-row">
-                        <div
-                          className="ms-Grid-col ms-lg2"
-                          style={{ position: "relative", right: "1px" }}
-                        >
-                          <div>
-                            <CustomLabel
-                              value={"View Advertisement"}
-                              // mandatory={true}
-                            />
-                            <ReuseButton
-                              Style={{
-                                minWidth: "117px",
-                                fontSize: "13px",
-                                paddingBottom: "24px",
-                                display: "flex",
-                                flexDirection: "column",
-                                height: "41px",
-                                paddingTop: "23px",
-                                backgroundColor: "#EF3340",
-                                color: "white",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                              label="VIEW"
-                              imgSrc={require("../../assets/viewSubmision-white.svg")}
-                              imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                              imgAlt="View"
-                              imgAltHover="Hovered View"
-                              onClick={async () => {
-                                setPreview(true);
-                                setMainComponent(false);
-                                setIsViewed(true);
-                              }}
-                              spacing={4}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                  {(props.stateValue?.StatusId ===
-                    StatusId.PendingwithHRLeadtouploadONEMsigneddoc ||
-                    props.stateValue?.StatusId ===
-                      StatusId.PendingwithHODtoreviewAdv) && (
-                    <>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg12">
-                          <div
-                            className="ms-Grid-col ms-lg4"
-                            style={{ marginLeft: "-5px" }}
-                          >
-                            <CustomLabel value={"View Justifications"} />
-                            <ReuseButton
-                              Style={{
-                                minWidth: "117px",
-                                fontSize: "13px",
-                                paddingBottom: "24px",
-                                display: "flex",
-                                flexDirection: "column",
-                                height: "41px",
-                                paddingTop: "23px",
-                                backgroundColor: "#EF3340",
-                                color: "white",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                              label="VIEW"
-                              imgSrc={require("../../assets/viewSubmision-white.svg")}
-                              imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                              imgAlt="View"
-                              imgAltHover="Hovered View"
-                              onClick={OpenComments}
-                              spacing={4}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  {(props.stateValue?.StatusId ===
-                    StatusId.PendingwithHRLeadtouploadONEMsigneddoc ||
-                    props.stateValue?.StatusId ===
-                      StatusId.PendingwithHODtoreviewAdv) && (
-                    <>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg12">
-                          <CustomTextArea
-                            label="Justification"
-                            value={formState.Comments}
-                            error={validationErrors.Comments}
-                            onChange={(value) =>
-                              handleInputChangeTextArea(value, "Comments")
-                            }
-                            mandatory={true}
-                          />
-                        </div>
-                      </div>
-
-                      <div
-                        className="ms-Grid-row"
-                        style={{
-                          padding: "3px",
-                          marginTop: "20px",
-                          marginBottom: "-33px",
+                          );
+                          const attachments = [
+                            ...(formState.OnamSignedStampsAttchment || []),
+                            ...attachment,
+                          ];
+                          handleFileAttachment(
+                            "OnamSignedStampsAttchment",
+                            attachments
+                          );
                         }}
-                      >
-                        <div className="ms-Grid-col ms-lg12">
-                          <SignatureCheckbox
-                            label={TabName.CheckboxContent}
-                            checked={Checkbox}
-                            error={validationErrors.Checkboxalidation}
-                            onChange={(value: boolean) => {
-                              setCheckbox(value);
-                              setValidationError((prevState) => ({
-                                ...prevState,
-                                Checkboxalidation: false,
-                              }));
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg12">
-                          <CustomSignature
-                            Name={
-                              (props.userDetails[0].FirstName ?? "") +
-                              " " +
-                              (props.userDetails[0]?.MiddleName ?? "") +
-                              " " +
-                              (props.userDetails[0]?.LastName ?? "")
-                            }
-                            JobTitleInEnglish={
-                              props.userDetails[0].JopTitleEnglish
-                            }
-                            JobTitleInFrench={
-                              props.userDetails[0].JopTitleFrench
-                            }
-                            Department={props.userDetails[0].DepartmentName}
-                            Date={formState.SignDate.toString()}
-                            TermsAndCondition={Checkbox}
-                          />
-                        </div>
-                      </div>
-                    </>
-                  )}
+                        mandatory={true}
+                        error={validationErrors.OnamSignedStampsAttchment}
+                        Style={{
+                          backgroundColor: "rgb(239, 51, 64)",
+                          color: "white",
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg6">
+                      {formState.OnamSignedStampsAttchment?.map(
+                        (file: any, index: number) => {
+                          const fileName = file.fileName || file.name;
+
+                          return (
+                            <div key={index} className="ms-Grid-row">
+                              <div className="ms-Grid-col ms-lg12">
+                                <Label style={{ color: "blue" }}>
+                                  {fileName}
+                                  <span>
+                                    <Icon
+                                      iconName="Delete"
+                                      style={{
+                                        marginLeft: "8px",
+                                        fontSize: "16px",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() =>
+                                        handleDelete(
+                                          index,
+                                          "OnamSignedStampsAttchment"
+                                        )
+                                      } // Call the delete function
+                                    />
+                                  </span>
+                                </Label>
+                              </div>
+                            </div>
+                          );
+                        }
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {((props.CurrentRoleID === RoleID.HOD &&
+                props.stateValue?.StatusId ===
+                  StatusId.PendingwithHODtoreviewAdv) ||
+                (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithRecruitmentHRtouploadAdv &&
+                  advDetails.JobcodeChecked === true)) && (
+                <div className="ms-Grid-row">
+                  <div
+                    className="ms-Grid-col ms-lg2"
+                    style={{ position: "relative", right: "1px" }}
+                  >
+                    <div>
+                      <CustomLabel
+                        value={"View Advertisement"}
+                        // mandatory={true}
+                      />
+                      <ReuseButton
+                        Style={{
+                          minWidth: "117px",
+                          fontSize: "13px",
+                          paddingBottom: "24px",
+                          display: "flex",
+                          flexDirection: "column",
+                          height: "41px",
+                          paddingTop: "23px",
+                          backgroundColor: "#EF3340",
+                          color: "white",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        label="VIEW"
+                        imgSrc={require("../../assets/viewSubmision-white.svg")}
+                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                        imgAlt="View"
+                        imgAltHover="Hovered View"
+                        onClick={async () => {
+                          setPreview(true);
+                          setMainComponent(false);
+                          setIsViewed(true);
+                        }}
+                        spacing={4}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {((props.CurrentRoleID === RoleID.HOD &&
+                props.stateValue?.StatusId ===
+                  StatusId.PendingwithHODtoreviewAdv) ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingwithHRLeadtouploadONEMsigneddoc ||
+                (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithRecruitmentHRtouploadAdv &&
+                  advDetails.JobcodeChecked === true)) && (
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg12">
+                    <div
+                      className="ms-Grid-col ms-lg4"
+                      style={{ marginLeft: "-5px" }}
+                    >
+                      <CustomLabel value={"View Justifications"} />
+                      <ReuseButton
+                        Style={{
+                          minWidth: "117px",
+                          fontSize: "13px",
+                          paddingBottom: "24px",
+                          display: "flex",
+                          flexDirection: "column",
+                          height: "41px",
+                          paddingTop: "23px",
+                          backgroundColor: "#EF3340",
+                          color: "white",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        label="VIEW"
+                        imgSrc={require("../../assets/viewSubmision-white.svg")}
+                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                        imgAlt="View"
+                        imgAltHover="Hovered View"
+                        onClick={OpenComments}
+                        spacing={4}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {((props.CurrentRoleID === RoleID.HOD &&
+                props.stateValue?.StatusId ===
+                  StatusId.PendingwithHODtoreviewAdv) ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingwithHRLeadtouploadONEMsigneddoc ||
+                (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithRecruitmentHRtouploadAdv &&
+                  advDetails.JobcodeChecked === true)) && (
+                <>
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg12">
+                      <CustomTextArea
+                        label="Justification"
+                        value={formState.Comments}
+                        error={validationErrors.Comments}
+                        onChange={(value) =>
+                          handleInputChangeTextArea(value, "Comments")
+                        }
+                        mandatory={true}
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    className="ms-Grid-row"
+                    style={{
+                      padding: "3px",
+                      marginTop: "20px",
+                      marginBottom: "-33px",
+                    }}
+                  >
+                    <div className="ms-Grid-col ms-lg12">
+                      <SignatureCheckbox
+                        label={TabName.CheckboxContent}
+                        checked={Checkbox}
+                        error={validationErrors.Checkboxalidation}
+                        onChange={(value: boolean) => {
+                          setCheckbox(value);
+                          setValidationError((prevState) => ({
+                            ...prevState,
+                            Checkboxalidation: false,
+                          }));
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg12">
+                      <CustomSignature
+                        Name={
+                          (props.userDetails[0].FirstName ?? "") +
+                          " " +
+                          (props.userDetails[0]?.MiddleName ?? "") +
+                          " " +
+                          (props.userDetails[0]?.LastName ?? "")
+                        }
+                        JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
+                        JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                        Department={props.userDetails[0].DepartmentName}
+                        Date={formState.SignDate.toString()}
+                        TermsAndCondition={Checkbox}
+                      />
+                    </div>
+                  </div>
                 </>
               )}
             </div>
@@ -2166,7 +1877,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       ),
     },
     ...(props.CurrentRoleID === RoleID.RecruitmentHR &&
-    props.stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv
+    props.stateValue?.StatusId ===
+      StatusId.PendingwithRecruitmentHRtouploadAdv &&
+    advDetails.JobcodeChecked === false
       ? [
           {
             label: TabName.AdvertisementDetails, //"Advertisement Details",
@@ -2181,572 +1894,68 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 }}
               >
                 <CardContent>
-                  <div>
-                    <>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg12">
-                          <CustomLabel
-                            value={"Advertisement"}
-                            mandatory={true}
-                          />
-                          <AttachmentButton
-                            label="Upload"
-                            iconName="CloudUpload"
-                            iconNameHover="CloudUpload"
-                            AttachState={(newAttachment: any) => {
-                              let attachment: IDocFiles[] = newAttachment.map(
-                                (item: any) => {
-                                  return {
-                                    name: item.name,
-                                    content: item.file,
-                                    type: "New",
-                                  };
-                                }
-                              );
-                              const attachments = [
-                                ...(formState.AdvertisementAttachement || []),
-                                ...attachment,
-                              ];
-                              handleFileAttachment(
-                                "AdvertisementAttachement",
-                                attachments
-                              );
-                            }}
-                            mandatory={true}
-                            error={validationErrors.AdvertisementAttachement}
-                            Style={{
-                              backgroundColor: "rgb(239, 51, 64)",
-                              color: "white",
-                            }}
-                          />
-                        </div>
-                        <div
-                          className="ms-Grid-col ms-lg6"
-                          //   style={{ marginTop: "4%" }}
-                        >
-                          {formState.AdvertisementAttachement?.map(
-                            (file: any, index: number) => {
-                              const fileName = file.fileName || file.name; // Ensure proper name display
-                              return (
-                                <div key={index} className="ms-Grid-row">
-                                  <div className="ms-Grid-col ms-lg12">
-                                    <Label style={{ color: "blue" }}>
-                                      {fileName}
-                                      <span>
-                                        <Icon
-                                          iconName="Delete"
-                                          style={{
-                                            marginLeft: "8px",
-                                            fontSize: "16px",
-                                            cursor: "pointer",
-                                          }}
-                                          onClick={() =>
-                                            handleDelete(
-                                              index,
-                                              "AdvertisementAttachement"
-                                            )
-                                          } // Call the delete function
-                                        />
-                                      </span>
-                                    </Label>
-                                  </div>
-                                </div>
-                              );
-                            }
-                          )}
-                        </div>
-                      </div>
-
-                      {/* <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg4">
-                          <CustomDatePicker
-                            selectedDate={advDetails.ValidFrom}
-                            label="Valid From"
-                            error={validationErrors.ValidFrom}
-                            minDate={todaydate}
-                            mandatory={true}
-                            onChange={(date) =>
-                              handleDateChange(date, "ValidFrom")
-                            }
-                          />
-                        </div>
-                        <div className="ms-Grid-col ms-lg4">
-                          <CustomDatePicker
-                            selectedDate={advDetails.ValidTo}
-                            label="Valid To"
-                            error={false}
-                            // minDate={
-                            //   advDetails.ValidFrom
-                            //     ? new Date(
-                            //         advDetails.ValidFrom.getTime() +
-                            //           13 * 24 * 60 * 60 * 1000
-                            //       )
-                            //     : undefined
-                            // }
-                            disabled={true}
-                            mandatory={false}
-                            onChange={(date) =>
-                              handleDateChange(date, "ValidTo")
-                            }
-                          />
-                        </div>
-                      </div> */}
-
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg12">
-                          <RichTextEditor
-                            label="Role Purpose"
-                            value={advDetails.RolePurpose}
-                            mandatory={true}
-                            onChange={(value) =>
-                              handleRichTextEditor(value, "RolePurpose")
-                            }
-                            error={validationErrors.RolePurpose}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg12">
-                          <RichTextEditor
-                            label="Job Description"
-                            value={advDetails.JobDescription}
-                            mandatory={true}
-                            onChange={(value) =>
-                              handleRichTextEditor(value, "JobDescription")
-                            }
-                            error={validationErrors.JobDescription}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg10">
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg5">
-                              <CustomAutoComplete
-                                label="Preferred Total Experience"
-                                options={advDetails.TotalExperienceOption}
-                                value={advDetails.TotalExperience}
-                                disabled={false}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleAutoComplete(item, "TotalExperience")
-                                }
-                                error={validationErrors.TotalExperience}
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg5">
-                              <CustomAutoComplete
-                                label="Preferred Experience in Mining Industry (Years)"
-                                options={
-                                  advDetails.ExperienceinMiningIndustryOption
-                                }
-                                value={advDetails.ExperienceinMiningIndustry}
-                                disabled={false}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleAutoComplete(
-                                    item,
-                                    "ExperienceinMiningIndustry"
-                                  )
-                                }
-                                error={
-                                  validationErrors.ExperienceinMiningIndustry
-                                }
-                              />
-                              {experValidation && (
-                                <>
-                                  <p
-                                    style={{
-                                      marginTop: 5,
-                                      color: "red",
-                                      fontSize: 12,
-                                      marginLeft: 0,
-                                    }}
-                                  >
-                                    Invalid Selection
-                                  </p>
-                                </>
-                              )}
-                            </div>
-
-                            <div
-                              className="ms-Grid-col ms-lg2"
-                              style={{ textAlign: "right", marginTop: "45px" }}
-                            ></div>
-                          </div>
-                        </div>
-                        <div className="ms-Grid-col ms-lg2"></div>
-                      </div>
-
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg10">
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg5">
-                              <CustomMultiSelect
-                                label="Minimum Qualification"
-                                value={qualificationValue.MinQualification}
-                                options={advDetails.MinQualificationOption}
-                                onChange={(value) =>
-                                  handleMulitiSelect(value, "MinQualification")
-                                }
-                                disabled={false}
-                                mandatory={true}
-                                error={validationErrors.MinQualification}
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg5">
-                              <CustomMultiSelect
-                                label="Preferred Qualification"
-                                value={qualificationValue.PrefeQualification}
-                                options={advDetails.MinQualificationOption}
-                                onChange={(value) =>
-                                  handleMulitiSelect(
-                                    value,
-                                    "PrefeQualification"
-                                  )
-                                }
-                                disabled={false}
-                                // mandatory={true}
-                                error={validationErrors.PrefeQualification}
-                              />
-                            </div>
-                            <div
-                              className="ms-Grid-col ms-lg2"
-                              style={{ textAlign: "right", marginTop: "45px" }}
-                            ></div>
-                          </div>
-                        </div>
-                        <div
-                          className="ms-Grid-col ms-lg2"
-                          style={{
-                            marginTop: "45px",
-                          }}
-                        >
-                          {/* <CustomButton
-                            text="Add New Qualification"
-                            onClick={() =>
-                              AddMasterData_fn(
-                                RoleDescriptionData.Qualification,
-                                "Add Qualification"
-                              )
-                            }
-                              
-                          /> */}
-                          <CustomButton
-                            text="Add New Qualification"
-                            onClick={() => setShowQualificationInput(true)}
-                          />
-                        </div>
-                      </div>
-                      {showQualificationInput && (
+                  <>
+                    <div>
+                      {advDetails.JobcodeChecked ? (
                         <div className="ms-Grid-row">
-                          <div className="ms-Grid-col ms-lg10">
-                            <div
-                              className="ms-Grid-col ms-lg5"
-                              style={{ marginLeft: "-6px", width: "336px" }}
-                            >
-                              <CustomInput
-                                label="Add New Qualification"
-                                value={advDetails.addMasterMinimumQualification}
-                                disabled={false}
-                                mandatory={true}
-                                onChange={(value) =>
-                                  handleCustomInputChange(
-                                    value,
-                                    "addMasterMinimumQualification"
-                                  )
-                                }
-                                // onChange={(value) =>
-                                //   setAdvDetails((prevState) => ({
-                                //     ...prevState,
-                                //     addMasterMinimumQualification: value,
-                                //   }))
-                                // }
-                                error={
-                                  validationErrors.addMasterMinimumQualification
-                                }
+                          <div
+                            className="ms-Grid-col ms-lg2"
+                            style={{ position: "relative", right: "1px" }}
+                          >
+                            <div>
+                              <CustomLabel
+                                value={"View Advertisement"}
+                                // mandatory={true}
                               />
-                            </div>
-                            <div
-                              className="ms-Grid-col ms-lg1"
-                              style={{ marginTop: "39px", marginRight: "24px" }}
-                            >
                               <ReuseButton
-                                label="Add"
+                                Style={{
+                                  minWidth: "117px",
+                                  fontSize: "13px",
+                                  paddingBottom: "24px",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  height: "41px",
+                                  paddingTop: "23px",
+                                  backgroundColor: "#EF3340",
+                                  color: "white",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                                label="VIEW"
+                                imgSrc={require("../../assets/viewSubmision-white.svg")}
+                                imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                                imgAlt="View"
+                                imgAltHover="Hovered View"
                                 onClick={async () => {
-                                  void InsertMasterData(
-                                    RoleDescriptionData.Qualification
-                                  );
+                                  setPreview(true);
+                                  setMainComponent(false);
+                                  setIsViewed(true);
                                 }}
                                 spacing={4}
                               />
                             </div>
-                            <div
-                              className="ms-Grid-col ms-lg1"
-                              style={{ marginTop: "39px" }}
-                            >
-                              <ReuseButton
-                                label="Remove"
-                                onClick={() => {
-                                  setShowQualificationInput(false);
-
-                                  setAdvDetails((prevState) => ({
-                                    ...prevState,
-                                    addMasterMinimumQualification: "",
-                                  }));
-
-                                  setValidationError((prevState) => ({
-                                    ...prevState,
-                                    addMasterMinimumQualification: false,
-                                  }));
-                                }}
-                                spacing={4}
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3"></div>
                           </div>
                         </div>
+                      ) : (
+                        <UploadAdvertisement
+                          advDetails={advDetails}
+                          validationErrors={validationErrors}
+                          handleFileAttachment={handleFileAttachment}
+                          handleRichTextEditor={handleRichTextEditor}
+                          handleAutoComplete={handleAutoComplete}
+                          handleMulitiSelect={handleMulitiSelect}
+                          handleDelete={handleDelete}
+                          handleAutoCompleterow={handleAutoCompleterow}
+                          handleAddRow={handleAddRow}
+                          handleDeleteRow={handleDeleteRow}
+                          InvaildSelection={experValidation}
+                          qualificationValue={qualificationValue}
+                          TechnicalSkillValue={TechnicalSkillValue}
+                          RoleSpeKnowledgeValue={RoleSpeKnowledgeValue}
+                          setAdvDetails={setAdvDetails}
+                        />
                       )}
 
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg10">
-                          {RoleSpeKnowledgeValue.map((row, index) => (
-                            <div className="ms-Grid-row" key={index}>
-                              <div className="ms-Grid-col ms-lg5">
-                                <CustomAutoComplete
-                                  label="Role Specific Knowledge"
-                                  options={advDetails.RoleSpeKnowledgeoption}
-                                  value={row.RoleSpeKnowledge}
-                                  disabled={false}
-                                  mandatory={true}
-                                  onChange={(item) =>
-                                    handleAutoCompleterow(
-                                      item,
-                                      "RoleSpeKnowledge",
-                                      index,
-                                      "RoleSpeKnowledgeValue"
-                                    )
-                                  }
-                                  error={validationErrors.RoleSpeKnowledge}
-                                />
-                              </div>
-                              <div className="ms-Grid-col ms-lg5">
-                                <CustomAutoComplete
-                                  label="Required Level"
-                                  options={advDetails.RequiredLeveloption}
-                                  value={row.RequiredLevel}
-                                  disabled={false}
-                                  mandatory={true}
-                                  onChange={(item) =>
-                                    handleAutoCompleterow(
-                                      item,
-                                      "RequiredLevel",
-                                      index,
-                                      "RoleSpeKnowledgeValue"
-                                    )
-                                  }
-                                  error={validationErrors.RequiredLevel}
-                                />
-                              </div>
-                              <div
-                                className="ms-Grid-col ms-lg2"
-                                style={{
-                                  textAlign: "right",
-                                  marginTop: "42px",
-                                  display: "flex",
-                                  gap: "15px",
-                                }}
-                              >
-                                {index > 0 ? (
-                                  <>
-                                    <CustomButton
-                                      onClick={() =>
-                                        handleDeleteRow(
-                                          index,
-                                          RoleDescription.RoleSpeKnowledgeValue
-                                        )
-                                      }
-                                      iconName="Delete"
-                                      style={{ marginRight: "4%" }}
-                                    />
-                                    <CustomButton
-                                      onClick={() =>
-                                        handleAddRow(
-                                          RoleDescription.RoleSpeKnowledgeValue
-                                        )
-                                      }
-                                      iconName="Add"
-                                    />
-                                  </>
-                                ) : (
-                                  <CustomButton
-                                    onClick={() =>
-                                      handleAddRow(
-                                        RoleDescription.RoleSpeKnowledgeValue
-                                      )
-                                    }
-                                    iconName="Add"
-                                  />
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        <div
-                          className="ms-Grid-col ms-lg2"
-                          style={{ marginTop: "42px" }}
-                        >
-                          <CustomButton
-                            text="Add New Role Specific Knowledge"
-                            onClick={() =>
-                              AddMasterData_fn(
-                                RoleDescriptionData.RoleSpeKnowledge,
-                                "Add Role Specific Knowledge"
-                              )
-                            }
-                          />
-                        </div>
-                      </div>
-
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg10">
-                          {TechnicalSkillValue.map((row, index) => (
-                            <div className="ms-Grid-row" key={index}>
-                              <div className="ms-Grid-col ms-lg5">
-                                <CustomAutoComplete
-                                  label="Technical Skills - Ability to apply Knowledge"
-                                  options={advDetails.TechnicalSkillsOption}
-                                  value={row.TechnicalSkills}
-                                  disabled={false}
-                                  mandatory={true}
-                                  onChange={(item) =>
-                                    handleAutoCompleterow(
-                                      item,
-                                      "TechnicalSkills",
-                                      index,
-                                      "TechnicalSkillValue"
-                                    )
-                                  }
-                                  error={validationErrors.TechnicalSkills}
-                                />
-                              </div>
-                              <div className="ms-Grid-col ms-lg5">
-                                <CustomAutoComplete
-                                  label="Level of Proficiency"
-                                  options={advDetails.LevelProficiencyOption}
-                                  value={row.LevelProficiency}
-                                  disabled={false}
-                                  mandatory={true}
-                                  onChange={(item) =>
-                                    handleAutoCompleterow(
-                                      item,
-                                      "LevelProficiency",
-                                      index,
-                                      "TechnicalSkillValue"
-                                    )
-                                  }
-                                  error={validationErrors.LevelProficiency}
-                                />
-                              </div>
-                              <div
-                                className="ms-Grid-col ms-lg2"
-                                style={{
-                                  textAlign: "right",
-                                  marginTop: "42px",
-                                  display: "flex",
-                                  gap: "15px",
-                                }}
-                              >
-                                {index > 0 ? (
-                                  <>
-                                    <CustomButton
-                                      onClick={() =>
-                                        handleDeleteRow(
-                                          index,
-                                          RoleDescription.TechnicalSkillValue
-                                        )
-                                      }
-                                      iconName="Delete"
-                                      style={{
-                                        borderRadius: "5px",
-                                        marginRight: "4%",
-                                        minWidth: "60px",
-                                      }}
-                                    />
-                                    <CustomButton
-                                      onClick={() =>
-                                        handleAddRow(
-                                          RoleDescription.TechnicalSkillValue
-                                        )
-                                      }
-                                      iconName="Add"
-                                      style={{
-                                        borderRadius: "5px",
-                                        minWidth: "60px",
-                                      }}
-                                    />
-                                  </>
-                                ) : (
-                                  <CustomButton
-                                    onClick={() =>
-                                      handleAddRow(
-                                        RoleDescription.TechnicalSkillValue
-                                      )
-                                    }
-                                    iconName="Add"
-                                    style={{
-                                      borderRadius: "5px",
-                                      minWidth: "60px",
-                                    }}
-                                  />
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div
-                          className="ms-Grid-col ms-lg2"
-                          style={{
-                            marginTop: "42px",
-                          }}
-                        >
-                          <CustomButton
-                            text="Add New Technical Skills"
-                            onClick={() =>
-                              AddMasterData_fn(
-                                RoleDescriptionData.TechnicalSkill,
-                                "Add Technical Skills"
-                              )
-                            }
-                            // iconName="Add"
-                            // style={{
-                            //   borderRadius: "10px",
-                            // }}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="ms-Grid-row">
-                        <div
-                          className="ms-Grid-col ms-lg5"
-                          style={{ width: "34.9%" }}
-                        >
-                          <CustomAutoComplete
-                            label="Job Functional Type"
-                            options={advDetails.JobFunctionalTypeOption}
-                            value={advDetails.JobFunctionalType}
-                            disabled={false}
-                            mandatory={true}
-                            onChange={(item) =>
-                              handleAutoComplete(item, "JobFunctionalType")
-                            }
-                            error={validationErrors.JobFunctionalType}
-                          />
-                        </div>
-                      </div>
                       <CustomLabel value={" View Justifications"} />
                       <ReuseButton
                         Style={{
@@ -2824,8 +2033,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           />
                         </div>
                       </div>
-                    </>
-                  </div>
+                    </div>
+                  </>
                 </CardContent>
               </Card>
             ),
@@ -2901,207 +2110,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     setIsLoading(false);
   };
 
-  async function InsertMasterData(Value: string) {
-    let MasterData;
-    switch (Value) {
-      case RoleDescriptionData.Qualification:
-        {
-          const isValid = !AddMasterMinimumQualification();
-          if (isValid) {
-            setAddQualifMasterbtn(!AddQualifMasterbtn);
-            let filterConditions = [
-              {
-                FilterKey: "Category",
-                Operator: "eq",
-                FilterValue: RoleDescriptionData.Qualification,
-              },
-            ];
-            const CategoryData = await getVRRDetails.GetFilterInCategory(
-              filterConditions
-            );
-            let category: category = {
-              id: Number(CategoryData.data[0]?.CategoryCode),
-              name: CategoryData.data[0]?.Category,
-            };
-            let AgentDetailsList: UpsertMasters[] = [
-              {
-                displayText: advDetails.addMasterMinimumQualification,
-                displayText_fr: advDetails.addMasterMinimumQualification,
-                category: category,
-              },
-            ];
-
-            console.log(AgentDetailsList, "AgentDetailsList");
-
-            await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
-              async (res) => {
-                console.log(res, "res");
-                if (res.status === 200) {
-                  MasterData = {
-                    Qualification: res.data.data[0].displayText,
-                    QualificationCode: res.data.data[0].value,
-                  };
-                  await getVRRDetails.InsertList(
-                    MasterData,
-                    ListNames.HRMSQualification
-                  );
-                } else {
-                  let APIError = {
-                    Message: RecuritmentHRMsg.APIErrorMsg,
-                    Type: HRMSAlertOptions.Error,
-                    visible: true,
-                    ButtonAction: async (userClickedOK: boolean) => {
-                      if (userClickedOK) {
-                        setAlertPopupOpen(false);
-                      } else {
-                        setAlertPopupOpen(false);
-                      }
-                    },
-                  };
-
-                  setAlertPopupOpen(true);
-                  setalertProps(APIError);
-                  setIsLoading(false);
-                }
-              }
-            );
-          }
-        }
-        break;
-      case RoleDescriptionData.RoleSpeKnowledge:
-        {
-          const isValid = !MasterDataValidation();
-          if (isValid) {
-            let filterConditions = [
-              {
-                FilterKey: "Category",
-                Operator: "eq",
-                FilterValue: RoleDescriptionData.Qualification,
-              },
-            ];
-            const CategoryData = await getVRRDetails.GetFilterInCategory(
-              filterConditions
-            );
-            let category: category = {
-              id: Number(CategoryData.data[0]?.CategoryCode),
-              name: CategoryData.data[0]?.Category,
-            };
-            let AgentDetailsList: UpsertMasters[] = [
-              {
-                displayText: advDetails.addMasterQualification,
-                displayText_fr: advDetails.addMasterQualification,
-                category: category,
-              },
-            ];
-
-            console.log(AgentDetailsList, "AgentDetailsList");
-
-            await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
-              async (res) => {
-                console.log(res, "res");
-                if (res.status === 200) {
-                  MasterData = {
-                    RoleSpecificKnowledge: res.data.data[0].displayText,
-                    Code: res.data.data[0].value,
-                  };
-                  await getVRRDetails.InsertList(
-                    MasterData,
-                    ListNames.HRMSRoleSpecificKnowlegeMaster
-                  );
-                } else {
-                  let APIError = {
-                    Message: RecuritmentHRMsg.APIErrorMsg,
-                    Type: HRMSAlertOptions.Error,
-                    visible: true,
-                    ButtonAction: async (userClickedOK: boolean) => {
-                      if (userClickedOK) {
-                        setAlertPopupOpen(false);
-                      } else {
-                        setAlertPopupOpen(false);
-                      }
-                    },
-                  };
-
-                  setAlertPopupOpen(true);
-                  setalertProps(APIError);
-                  setIsLoading(false);
-                }
-              }
-            );
-          }
-        }
-        break;
-      case RoleDescriptionData.TechnicalSkill:
-        {
-          const isValid = !MasterDataValidation();
-          if (isValid) {
-            let filterConditions = [
-              {
-                FilterKey: "Category",
-                Operator: "eq",
-                FilterValue: RoleDescriptionData.Qualification,
-              },
-            ];
-            const CategoryData = await getVRRDetails.GetFilterInCategory(
-              filterConditions
-            );
-            let category: category = {
-              id: Number(CategoryData.data[0]?.CategoryCode),
-              name: CategoryData.data[0]?.Category,
-            };
-            let AgentDetailsList: UpsertMasters[] = [
-              {
-                displayText: advDetails.addMasterQualification,
-                displayText_fr: advDetails.addMasterQualification,
-                category: category,
-              },
-            ];
-
-            console.log(AgentDetailsList, "AgentDetailsList");
-
-            await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
-              async (res) => {
-                console.log(res, "res");
-                if (res.status === 200) {
-                  MasterData = {
-                    TechnicalSkills: res.data.data[0].displayText,
-                    Code: res.data.data[0].value,
-                  };
-                  await getVRRDetails.InsertList(
-                    MasterData,
-                    ListNames.HRMSTechnicalSkills
-                  );
-                } else {
-                  let APIError = {
-                    Message: RecuritmentHRMsg.APIErrorMsg,
-                    Type: HRMSAlertOptions.Error,
-                    visible: true,
-                    ButtonAction: async (userClickedOK: boolean) => {
-                      if (userClickedOK) {
-                        setAlertPopupOpen(false);
-                      } else {
-                        setAlertPopupOpen(false);
-                      }
-                    },
-                  };
-
-                  setAlertPopupOpen(true);
-                  setalertProps(APIError);
-                  setIsLoading(false);
-                }
-              }
-            );
-          }
-        }
-        break;
-    }
-    setAddQualifbtn(false);
-    setAdvDetails((prevState) => ({
-      ...prevState,
-      addMasterQualification: "",
-    }));
-  }
-
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
   };
@@ -3120,8 +2128,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 onBreadcrumbChange={handleBreadcrumbChange}
                 additionalButtons={
                   (props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-                    props.stateValue?.StatusId ===
-                      StatusId.PendingwithHRLeadtoAssignRecruitmentHR) ||
+                    props.stateValue?.StatusId === StatusId.Completed) ||
                   (props.CurrentRoleID === RoleID.RecruitmentHR &&
                     props.stateValue?.StatusId ===
                       StatusId.PendingwithRecruitmentHRtoAssignExternalAgency)
@@ -3144,35 +2151,21 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           },
                         },
                       ]
-                    : //  props.CurrentRoleID === RoleID.RecruitmentHR &&
-                    //   props.stateValue?.StatusId ===
-                    //     StatusId.PendingwithRecruitmentHRtouploadAdv
-                    // ? [
-                    //     {
-                    //       label: "Preview",
-                    //       onClick: async () => {
-                    //         setPreviewBtn(true);
-                    //         setMainComponent(false);
-                    //       },
-                    //     },
-                    //     {
-                    //       label: "Submit",
-                    //       onClick: async () => {
-                    //         await SaveRecruitment();
-                    //       },
-                    //       disable: SubmitBtn,
-                    //     },
-                    //   ]
-                    props.CurrentRoleID === RoleID.RecruitmentHR &&
+                    : props.CurrentRoleID === RoleID.RecruitmentHR &&
                       props.stateValue?.StatusId ===
                         StatusId.PendingwithRecruitmentHRtouploadAdv
                     ? [
-                        {
-                          label: "Preview",
-                          onClick: async () => {
-                            previewBtn_Fn();
-                          },
-                        },
+                        ...(advDetails.JobcodeChecked === false
+                          ? [
+                              {
+                                label: "Preview",
+                                onClick: async () => {
+                                  previewBtn_Fn();
+                                },
+                              },
+                            ]
+                          : []),
+
                         ...(isViewed
                           ? [
                               {
@@ -3200,39 +2193,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     : []
                 }
               />
-              {/* <TabsComponent
-                                tabs={tabs}
-                                initialTab={activeTab}
-                                handleCancel={handleCancel}
-                                additionalButtons={
-                                    advDetails.RolePurpose
-                                        ? [
-                                            {
-                                                label: "Preview",
-                                                onClick: async () => {
-                                                    setPreviewBtn(true);
-                                                    setMainComponent(false);
-                                                },
-                                            },
-                                            {
-                                                label: ButtonLabel,
-                                                onClick: async () => {
-                                                    await SaveRecruitment();
-                                                },
-                                                disable: SubmitBtn
-                                            },
-                                        ]
-                                        : [
-                                            {
-                                                label: ButtonLabel,
-                                                onClick: async () => {
-                                                    await SaveRecruitment();
-                                                },
-                                                // disable: SubmitBtn
-                                            },
-                                        ]
-                                }
-                            /> */}
             </div>
           </CustomLoader>
         </>
@@ -3295,87 +2255,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         </>
       ) : (
         <></>
-      )}
-
-      {AddQualifbtn && (
-        <>
-          <Dialog
-            header={
-              <>
-                <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                  <div className="ms-Grid-col ms-lg12">
-                    <LabelHeaderComponents value={HeaderValue} />
-                  </div>
-                </div>
-              </>
-            }
-            visible={AddQualifbtn}
-            style={{
-              width: "28vw",
-              backgroundColor: "white",
-              borderRadius: "26px",
-              padding: "20px",
-              height: "37vh",
-            }}
-            onHide={() => setAddQualifbtn(false)}
-          >
-            <div className="ms-Grid-row" style={{ marginLeft: "6%" }}>
-              <div className="ms-Grid-col ms-lg9">
-                <CustomInput
-                  label={LabelValue}
-                  value={advDetails.addMasterQualification}
-                  disabled={false}
-                  mandatory={true}
-                  onChange={(value) => {
-                    setAdvDetails((prevState) => ({
-                      ...prevState,
-                      addMasterQualification: value,
-                    }));
-                    setValidationError((prevState) => ({
-                      ...prevState,
-                      addMasterQualification: false,
-                    }));
-                  }}
-                  error={validationErrors.addMasterQualification}
-                />
-              </div>
-            </div>
-
-            <div
-              className="ms-Grid-row"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "11%",
-              }}
-            >
-              <ReuseButton
-                label="Close"
-                onClick={() => {
-                  setAddQualifbtn(false);
-                  setAdvDetails((prevState) => ({
-                    ...prevState,
-                    addMasterQualification: "",
-                  }));
-                  setValidationError((prevState) => ({
-                    ...prevState,
-                    addMasterQualification: false,
-                  }));
-                }}
-                spacing={4}
-                Style={{
-                  marginRight: "14px",
-                }}
-              />
-
-              <ReuseButton
-                label="Add"
-                onClick={() => InsertMasterData(HeaderValue)}
-                spacing={4}
-              />
-            </div>
-          </Dialog>
-        </>
       )}
     </>
   );

@@ -21,7 +21,7 @@ export type AdvertisementDetails = {
 
 export type profileXagent = {
     jobCode: string,
-    agent: jobsXAgents[]
+    jobsXAgents: jobsXAgents[]
 }
 
 export type jobsXAgents = {
@@ -89,13 +89,15 @@ export type CandidateProfile = {
     Advertisement: IDocFiles[];
     Comments: profileJobsComments[];
     workflowStatusId: string;
+    hrComments: string;
 }
 
 export type WorkflowJson = {
     workflowStatus: string,
     jobRequestId: number,
     comments: string,
-    actionBy: string
+    actionBy: string,
+    hrComments?: string
 }
 
 export type profileJobsComments = {

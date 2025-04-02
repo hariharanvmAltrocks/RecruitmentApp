@@ -26,6 +26,7 @@ import {
   workflowStatusApi,
   RoleID,
   QuestionnaireData,
+  ResponeStatus,
 } from "../../utilities/Config";
 import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
@@ -430,7 +431,15 @@ const InterviewPanelEdit = (props: any) => {
 
       for (const panel of userPanels) {
         const InterviewPanelID = panel.ID;
+        let QuestionScore: { header: string; score: number }[] = [];
 
+        questionnaire.forEach((item) => {
+          let QuestionScoreData = {
+            header: item?.header ?? "",
+            score: item?.rating ?? 0,
+          };
+          QuestionScore.push(QuestionScoreData);
+        });
         const scorecardObj = {
           RelevantQualification: String(CandidateData?.Qualifications?.key),
           ReleventExperience: String(CandidateData?.Experience?.key),
@@ -451,6 +460,7 @@ const InterviewPanelEdit = (props: any) => {
           RoleId: props.CurrentRoleID,
           InterviewPersonNameId: currentUserKey,
           InterviewPanelIDId: InterviewPanelID,
+          QuestionJson: JSON.stringify(QuestionScore),
         };
 
         const newRecordResponse = await getVRRDetails.InsertList(
@@ -1311,53 +1321,59 @@ const InterviewPanelEdit = (props: any) => {
       });
     }
 
-    const fetchData = () => {
+    const fetchData = async () => {
       setIsLoading(true);
 
-      fetchCandidateData(props.stateValue?.ID)
-        .then(() => {
-          const filterConditions = [
-            {
-              FilterKey: "CandidateIDId",
-              Operator: "eq",
-              FilterValue: props.stateValue?.ID,
-            },
-          ];
+      const getQuestion = await GetPortalJobsService.getQuestionnaire(
+        CandidateData.JobCode
+      );
+      if (getQuestion.status === ResponeStatus.SUCCESS) {
+        setQuestionnaire(getQuestion?.data ?? []);
+        fetchCandidateData(props.stateValue?.ID)
+          .then(() => {
+            const filterConditions = [
+              {
+                FilterKey: "CandidateIDId",
+                Operator: "eq",
+                FilterValue: props.stateValue?.ID,
+              },
+            ];
 
-          return InterviewServices.GetInterviewPanelDetails(filterConditions);
-        })
-        .then((response) => {
-          if (
-            response?.data &&
-            Array.isArray(response.data) &&
-            response.data.length > 0
-          ) {
-            const filteredPanels = response.data.filter(
-              (item) => item.CandidateID === props.stateValue?.ID
-            );
-
-            if (filteredPanels.length > 0) {
-              const interviewPanelTitles = filteredPanels.map(
-                (panel) => panel.InterviewPanelTitle
+            return InterviewServices.GetInterviewPanelDetails(filterConditions);
+          })
+          .then((response) => {
+            if (
+              response?.data &&
+              Array.isArray(response.data) &&
+              response.data.length > 0
+            ) {
+              const filteredPanels = response.data.filter(
+                (item) => item.CandidateID === props.stateValue?.ID
               );
 
-              console.log("", InterviewPanelData);
-              setInterviewPanelData((prevState) => ({
-                ...prevState,
-                interviewPanelTitles: interviewPanelTitles || [],
-              }));
+              if (filteredPanels.length > 0) {
+                const interviewPanelTitles = filteredPanels.map(
+                  (panel) => panel.InterviewPanelTitle
+                );
 
-              setCandidateData((prevState) => ({
-                ...prevState,
-                interviewPanelTitles: interviewPanelTitles || [],
-              }));
+                console.log("", InterviewPanelData);
+                setInterviewPanelData((prevState) => ({
+                  ...prevState,
+                  interviewPanelTitles: interviewPanelTitles || [],
+                }));
+
+                setCandidateData((prevState) => ({
+                  ...prevState,
+                  interviewPanelTitles: interviewPanelTitles || [],
+                }));
+              }
             }
-          }
-        })
-        .catch((error) => {});
+          })
+          .catch((error) => {});
+      }
     };
 
-    fetchData();
+    void fetchData();
   }, [props.stateValue?.ID, activeTab]);
 
   const handleCancel = () => {
