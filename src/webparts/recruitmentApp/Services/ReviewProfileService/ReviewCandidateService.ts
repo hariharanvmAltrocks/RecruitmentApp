@@ -38,7 +38,7 @@ export const postAdveDetails = {
     },
     getMastersByCategory: async function (id: number) {
         return await AxiosInstance.get(
-            `/GetMastersByCategory=${id}`,
+            `/GetMastersByCategory?catId=${id}`,
         );
     },
     PostMaster: async function (params: UpsertMasters[]) {
@@ -46,10 +46,17 @@ export const postAdveDetails = {
             `/UpsertMasters`, params
         );
     },
-    PostQuestion: async function (params: UpsertQuestions[]) {
+}
+
+export const QuestionnaireApi = {
+    PostQuestionnaire: async function (params: UpsertQuestions[]) {
         return await AxiosInstance.post(
             `/UpsertQuestions`, params
         );
     },
-
+    GetQuestionnaire: async function (JobCode: string) {
+        return await AxiosInstance.post(
+            `/GetInterviewPanelQuestionsByJobCode?jobCode=${JobCode}`
+        );
+    },
 }

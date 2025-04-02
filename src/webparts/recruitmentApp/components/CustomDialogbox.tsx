@@ -6,18 +6,13 @@ interface DynamicFormDialogProps {
   children?: React.ReactNode;
   visible: boolean;
   header: React.ReactNode;
+  footer?: React.ReactNode;
   width?: string;
   Style?: React.CSSProperties;
 }
 
 export default function CustomDialogbox(props: DynamicFormDialogProps) {
   React.useEffect(() => {}, [props]);
-
-  const footerContent = (
-    <div
-      style={{ display: "flex", justifyContent: "end", paddingRight: "1%" }}
-    ></div>
-  );
 
   const DialogStyles: React.CSSProperties = {
     minWidth: "10%",
@@ -37,7 +32,7 @@ export default function CustomDialogbox(props: DynamicFormDialogProps) {
         visible={props.visible}
         style={DialogStyles}
         onHide={() => props.onClose()}
-        footer={footerContent}
+        footer={props.footer}
         closable={false}
       >
         {props.children}

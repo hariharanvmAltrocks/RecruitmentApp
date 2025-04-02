@@ -23,8 +23,8 @@ import {
   InterviewLevels,
   ListNames,
   RecuritmentHRMsg,
+  ReviewProfileScore,
   RoleID,
-  ScoreRanking,
   TabName,
   WorkflowAction,
   workflowStatusApi,
@@ -99,6 +99,7 @@ const ViewCandidateDetails = (props: any) => {
     Advertisement: [],
     Comments: [],
     workflowStatusId: "",
+    hrComments: "",
   });
   const todaydate = new Date();
   const [InterviewedLevel, setInterviewedLevel] =
@@ -111,7 +112,7 @@ const ViewCandidateDetails = (props: any) => {
       InterviewMeetingInviteLink: "",
       InterviewTime: "",
       CandidateScoreValue: { key: 0, text: "" },
-      CandidateScoreOption: ScoreRanking,
+      CandidateScoreOption: ReviewProfileScore,
     });
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
@@ -175,6 +176,7 @@ const ViewCandidateDetails = (props: any) => {
             Agencies: response?.Agencies,
             Comments: response?.Comments,
             workflowStatusId: response?.workflowStatusId,
+            hrComments: response?.hrComments,
           }));
           if (
             response?.workflowStatusId === workflowStatusApi.HROnHold ||
@@ -202,6 +204,13 @@ const ViewCandidateDetails = (props: any) => {
               CandidateStatus: CandidateStatus.No,
             }));
           }
+          let CandidateScore = ReviewProfileScore.filter(
+            (item) => item.text === CandidateProfile.hrComments
+          );
+          setInterviewedLevel((prevState) => ({
+            ...prevState,
+            CandidateScoreValue: CandidateScore[0],
+          }));
         })
         .catch((error) => {
           console.log("Candidate details doesn't fetch the data", error);
@@ -255,7 +264,7 @@ const ViewCandidateDetails = (props: any) => {
         Conditions
       );
       const Gradelevel = await CommonServices.GetGradeLevel(
-        response.data[0]?.PayrollGrade
+        response.data[0]?.PatersonGrade
       );
       console.log(Gradelevel);
 
@@ -294,10 +303,10 @@ const ViewCandidateDetails = (props: any) => {
 
       setInterviewedLevel((prevState) => ({
         ...prevState,
-        Levels:
-          Gradelevel.data[0]?.Level === InterviewLevels.Level1
-            ? InterviewLevels.Level1
-            : InterviewLevels.Level2,
+        Levels: InterviewLevels.Level2,
+        // Gradelevel.data[0]?.Level === InterviewLevels.Level1
+        //   ? InterviewLevels.Level1
+        //   : InterviewLevels.Level2,
         AssignInterviewedLevel1Option: interviewpanelOption.data,
         AssignInterviewLevel1: Level1Value,
         AssignInterviewedLevel2: Level2Value,
@@ -652,13 +661,30 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomAutoComplete
-                            label="Job Functional Type"
+                            label="Review profile Feedback"
                             options={InterviewedLevel.CandidateScoreOption}
                             value={InterviewedLevel.CandidateScoreValue}
                             disabled={props.stateValue?.ActionBtn === "View"}
                             mandatory={true}
                             onChange={(item) => handleAutoComplete(item)}
                             error={validationErrors.CandidateScoreValue}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                {props.stateValue?.initialTab === TabName.ReviewProfile &&
+                  props.CurrentRoleID === RoleID.LineManager && (
+                    <>
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomInput
+                            label="Review profile Feedback"
+                            value={CandidateProfile.hrComments}
+                            disabled={true}
+                            // mandatory={true}
+                            // onChange={handleInputChange}
                           />
                         </div>
                       </div>
@@ -885,13 +911,15 @@ const ViewCandidateDetails = (props: any) => {
       ReleventExperience: CandidateProfile.ExperienceMining,
       Qualification: CandidateProfile.HighestQualification,
       JobRequestID: String(CandidateProfile.CandidateID),
-      ProfileID: CandidateProfile.profileID,
-      PositionTitle: RecruitmentDetails.data[0].JobTitleInEnglish,
+      ProfileID: String(CandidateProfile.profileID),
+      PositionTitle: RecruitmentDetails.data[0].JobTitleEnglish,
       JobGrade: RecruitmentDetails.data[0].DRCGrade,
       // ExternalAgentDetailsId: CandidateProfile.Agencies,
       InterviewDate: InterviewedLevel.InterviewedDate
         ? new Date(InterviewedLevel.InterviewedDate).toISOString()
         : null,
+      InterviewTime: InterviewedLevel.InterviewTime,
+      InterviewLink: InterviewedLevel.InterviewMeetingInviteLink,
       ActionId: WorkflowAction.Approved,
     };
     let selectedinterviewpanal: any[] = [];
@@ -932,12 +960,18 @@ const ViewCandidateDetails = (props: any) => {
         jobRequestId: props.stateValue?.ID,
         comments: actionValue.Comments,
         actionBy: props.CurrentUserRole,
+        hrComments:
+          props.CurrentRoleID === RoleID.RecruitmentHR &&
+          props.stateValue?.initialTab === TabName.ReviewProfile
+            ? InterviewedLevel.CandidateScoreValue.text ?? ""
+            : "",
       });
       let CandidateData: WorkflowJson = {
         workflowStatus: "",
         jobRequestId: 0,
         comments: "",
         actionBy: "",
+        hrComments: "",
       };
       let PopupMessage: string = "";
       if (props.CurrentRoleID === RoleID.LineManager) {
