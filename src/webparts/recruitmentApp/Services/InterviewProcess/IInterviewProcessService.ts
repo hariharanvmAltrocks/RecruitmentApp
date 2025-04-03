@@ -15,13 +15,13 @@ export interface CommentsDatas {
   CandidateID: number;
   CandidateScoreCard: Array<any>;
   Role: string;
-  MaxOverallScore: number;  
-  SumOverallScores: number; 
-  MaxQuestionScore:number;
-  QuestionBasedScore:number;
-  MaxPossibleScore:number;
-  CombinedScore:number;
-  GPA:number;
+  MaxOverallScore: number;
+  SumOverallScores: number;
+  MaxQuestionScore: number;
+  QuestionBasedScore: number;
+  MaxPossibleScore: number;
+  CombinedScore: number;
+  GPA: number;
 }
 
 export type ActionUpdate = {
@@ -40,6 +40,10 @@ export type IInterviewProcessService = {
   GetInterviewPanelDetails(
     filterConditions: any[]
   ): Promise<ApiResponse<InterviewPanaldata[]>>;
+  GetCandidateDetailsInterviewPanalDashboard(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<any | null>;
   HRMSCandidateScoreCard(
     filterParam: any,
     filterConditions: any,
@@ -50,10 +54,7 @@ export type IInterviewProcessService = {
     filterParam: any,
     filterConditions: any
   ): Promise<any | null>;
-  GetCandidateDetailsInterviewPanalDashboard(
-    filterParam: any,
-    filterConditions: any
-  ): Promise<any | null>;
+ 
 
   CandidateSeletionApi(
     obj: ActionUpdate,
@@ -63,5 +64,8 @@ export type IInterviewProcessService = {
     obj: AssignPositionID,
     ListName: string
   ): Promise<ApiResponse<null>>;
-  GetHRMSPositionDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<AutoCompleteItem[]>>
+  GetHRMSPositionDetails(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<AutoCompleteItem[]>>;
 };

@@ -177,9 +177,6 @@ debugger
           const candidateData = scoreResponse.data.filter(
             (candidate: any) => candidate.CandidateID === candidateID
           );
-
-          console.log("API Response:", scoreResponse?.data);
-
           const filteredScores = candidateData.flatMap(
             (candidate: any) =>
               candidate.CandidateScoreCard?.filter(

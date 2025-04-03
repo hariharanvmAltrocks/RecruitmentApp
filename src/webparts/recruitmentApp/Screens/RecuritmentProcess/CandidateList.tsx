@@ -27,7 +27,6 @@ import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
 import SPServices from "../../Services/SPService/SPServices";
 
 const CandidateList = (props: any) => {
- 
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -59,47 +58,41 @@ const CandidateList = (props: any) => {
 
   const fetchPositionData = () => {
     setIsLoading(true);
-  
-    
+
     let filterConditions = [
       {
         FilterKey: "JobCode",
         Operator: "eq",
-        FilterValue: props.stateValue.JobCodeId, 
+        FilterValue: props.stateValue.JobCodeId,
       },
       {
         FilterKey: "Department",
         Operator: "eq",
-        FilterValue: props.stateValue.Department, 
+        FilterValue: props.stateValue.Department,
       },
     ];
-  
-  
+
     filterConditions.push({
       FilterKey: "PositionIDStatus",
       Operator: "eq",
       FilterValue: "Vacant",
     });
-  
-    let Conditions = "and"; 
-  
-    
+
+    let Conditions = "and";
+
     InterviewServices.GetHRMSPositionDetails(filterConditions, Conditions)
       .then((response) => {
         if (response && response.data) {
-      
-          setPositionData(response.data); 
+          setPositionData(response.data);
         } else {
-          setPositionData([]);  
+          setPositionData([]);
         }
       })
       .catch((error) => {
-        console.error( error);
-        setPositionData([]);  
-      })
-     
+        console.error(error);
+        setPositionData([]);
+      });
   };
-  
 
   const fetchCandidateData = async () => {
     setIsLoading(true);
@@ -111,7 +104,7 @@ const CandidateList = (props: any) => {
         Operator: "eq",
         FilterValue: props?.stateValue?.ID,
       });
-  
+
       filterConditions.push({
         FilterKey: "StatusId",
         Operator: "in",
@@ -130,20 +123,20 @@ const CandidateList = (props: any) => {
           filterConditions,
           Conditions
         );
-  
+
       if (response?.status === 200 && Array.isArray(response.data)) {
         setCandidateData(response.data);
       } else {
         setCandidateData([]);
       }
     } catch (error) {
-      console.error( error);
+      console.error(error);
       setCandidateData([]);
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   function handleRedirectView(
     rowData: any,
     tab: string,
@@ -399,9 +392,9 @@ const CandidateList = (props: any) => {
 
       if (res.status === 200) {
         await SPServices.SPUpdateItem({
-          Listname: ListNames.HRMSPositionIDMaster, 
-          RequestJSON: { PositionIDStatus: "Recruitment InProgress" }, 
-          ID: selectedPosition.ID, 
+          Listname: ListNames.HRMSPositionIDMaster,
+          RequestJSON: { PositionIDStatus: "Recruitment InProgress" },
+          ID: selectedPosition.ID,
         });
 
         setalertProps({
