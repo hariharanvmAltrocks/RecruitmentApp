@@ -61,23 +61,29 @@ const CandidateList = (props: any) => {
 
     let filterConditions = [
       {
-        FilterKey: "RecruitmentIDId",
+        FilterKey: "JobCode",
         Operator: "eq",
-        FilterValue: props.stateValue.ID,
+        FilterValue: props.stateValue.JobCodeId,
       },
       {
-        FilterKey: "IsPositionIDAssigned",
+        FilterKey: "Department",
         Operator: "eq",
-        FilterValue: "No",
+        FilterValue: props.stateValue.Department,
       },
     ];
 
+    filterConditions.push({
+      FilterKey: "PositionIDStatus",
+      Operator: "eq",
+      FilterValue: "Vacant",
+    });
+
     let Conditions = "and";
 
-    InterviewServices.GetPositionDetails(filterConditions, Conditions)
+    InterviewServices.GetHRMSPositionDetails(filterConditions, Conditions)
       .then((response) => {
-        if (response) {
-          setPositionData(response);
+        if (response && response.data) {
+          setPositionData(response.data);
         } else {
           setPositionData([]);
         }
@@ -93,37 +99,32 @@ const CandidateList = (props: any) => {
     try {
       let filterConditions = [];
       const Conditions = "and";
-      filterConditions = [
-        {
-          FilterKey: "RecruitmentIDId",
-          Operator: "eq",
-          FilterValue: props?.stateValue?.ID,
-        },
-      ];
-      filterConditions = [
-        {
-          FilterKey: "StatusId",
-          Operator: "in",
-          FilterValue: [
-            StatusId.PendingwithHODtoselectthecandidate,
-            StatusId.Selected,
-          ],
-        },
-      ];
-      filterConditions = [
-        {
-          FilterKey: "ItemCreated",
-          Operator: "eq",
-          FilterValue: "No",
-        },
-      ];
+      filterConditions.push({
+        FilterKey: "RecruitmentIDId",
+        Operator: "eq",
+        FilterValue: props?.stateValue?.ID,
+      });
+
+      filterConditions.push({
+        FilterKey: "StatusId",
+        Operator: "in",
+        FilterValue: [
+          StatusId.PendingwithHODtoselectthecandidate,
+          StatusId.Selected,
+        ],
+      });
+      filterConditions.push({
+        FilterKey: "ItemCreated",
+        Operator: "eq",
+        FilterValue: "No",
+      });
       const response =
         await InterviewServices.GetCombinedCandidatePositionDetails(
           filterConditions,
           Conditions
         );
 
-      if (response?.status === 200 && response?.data?.length) {
+      if (response?.status === 200 && Array.isArray(response.data)) {
         setCandidateData(response.data);
       } else {
         setCandidateData([]);
@@ -135,6 +136,7 @@ const CandidateList = (props: any) => {
       setIsLoading(false);
     }
   };
+
   function handleRedirectView(
     rowData: any,
     tab: string,
@@ -390,9 +392,9 @@ const CandidateList = (props: any) => {
 
       if (res.status === 200) {
         await SPServices.SPUpdateItem({
-          Listname: ListNames.HRMSRecruitmentPositionDetails,
-          RequestJSON: { IsPositionIDAssigned: "Yes" },
-          ID: data.positionId.key,
+          Listname: ListNames.HRMSPositionIDMaster,
+          RequestJSON: { PositionIDStatus: "Recruitment InProgress" },
+          ID: selectedPosition.ID,
         });
 
         setalertProps({

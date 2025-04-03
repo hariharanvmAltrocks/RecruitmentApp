@@ -15,6 +15,7 @@ import {
   RecuritmentHRMsg,
   RoleID,
   RoleProfileMaster,
+  StatusId,
   TabName,
   WorkflowAction,
 } from "../../utilities/Config";
