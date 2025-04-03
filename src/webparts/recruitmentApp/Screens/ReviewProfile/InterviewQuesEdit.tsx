@@ -58,11 +58,11 @@ type InterviewQuesValidationError = {
   Disqualification: boolean;
 };
 
-interface OptionRow {
+export type OptionRow = {
   key: number;
   text: string;
   isCorrect?: boolean;
-}
+};
 
 export type MasterOption = {
   category: AutoCompleteItem[];
@@ -79,7 +79,8 @@ interface QuestionItem {
   };
   questionType: AutoCompleteItem;
   question: string;
-  expectedAnswer?: any;
+  expectedAnswer: string;
+  CareerportalAnswer: OptionRow[];
   options?: OptionRow[];
   Disqualification: string;
 }
@@ -93,10 +94,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     ExpectedAnswer: "",
     Catogry:
       props?.stateValue?.StatusId ===
-      StatusId?.PendingInterviewQuestionwithLineManagerandHR
+      StatusId?.PendingwithHRandLMtocreateinterviewQuestion
         ? CatogryOptionCode.InterviewPanel
         : CatogryOptionCode.CareerPortalCandidate,
     Disqualification: "",
+    CareerportalAnswer: [],
   });
 
   const [OptionsType, setOptionsType] = useState<OptionRow[]>([
@@ -172,17 +174,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   };
 
   const updateExpectedAnswer = (options: OptionRow[]) => {
-    const selectedAnswers = options
+    const selectedAnswers: OptionRow[] = options
       .map((opt, index) => ({
         key: index,
         text: opt.text,
         isCorrect: opt.isCorrect,
       }))
       .filter((opt) => opt.isCorrect);
-
     setInterviewQuesData((prev) => ({
       ...prev,
-      ExpectedAnswer: JSON.stringify(selectedAnswers),
+      CareerportalAnswer: selectedAnswers, //JSON.stringify(selectedAnswers),
     }));
   };
   const removeValidationIfNeeded = (updatedOptions: typeof OptionsType) => {
@@ -253,7 +254,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       }
 
       question.options = updatedOptions;
-      question.expectedAnswer = updatedOptions.filter((opt) => opt.isCorrect);
+      question.CareerportalAnswer = updatedOptions.filter(
+        (opt) => opt.isCorrect
+      );
 
       updated[qIndex] = question;
       return updated;
@@ -422,13 +425,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       },
       questionType: InterviewQuesData.QuestionType,
       question: InterviewQuesData.Question,
-      expectedAnswer:
-        InterviewQuesData.QuestionType.text ===
-          displayTextOptionCode.MultiAnswer ||
-        InterviewQuesData.QuestionType.text ===
-          displayTextOptionCode.SingleAnswer
-          ? JSON.stringify(correctAnswers)
-          : InterviewQuesData.ExpectedAnswer,
+      expectedAnswer: InterviewQuesData.ExpectedAnswer,
+      CareerportalAnswer: correctAnswers,
       options:
         InterviewQuesData.QuestionType.text ===
           displayTextOptionCode.MultiAnswer ||
@@ -458,6 +456,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       ExpectedAnswer: "",
       Disqualification: "",
       Catogry: prev.Catogry,
+      CareerportalAnswer: [],
     }));
 
     setOptionsType([{ key: 0, text: "", isCorrect: false }]);
@@ -505,7 +504,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         text: newVal,
       };
       question.options = updatedOptions;
-      question.expectedAnswer = updatedOptions;
+      question.CareerportalAnswer = updatedOptions;
       updated[qIndex] = question;
       return updated;
     });
@@ -636,7 +635,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         ...prev,
         Catogry:
           props.stateValue.StatusId ===
-          StatusId?.PendingInterviewQuestionwithLineManagerandHR
+          StatusId?.PendingwithHRandLMtocreateinterviewQuestion
             ? CatogryOptionCode.InterviewPanel
             : CatogryOptionCode.CareerPortalCandidate,
       }));
@@ -657,6 +656,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   useEffect(() => {
     async function fetchMaster() {
+      setIsLoading(true);
       const CategoryData = await GetPortalJobsService.GetAllMaster(
         CategoryID.QuestionCategory
       );
@@ -717,6 +717,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           ScopeOption: ScopeOption,
           QueType: QuestionTypeOption,
         }));
+        setIsLoading(false);
       } else {
         setIsLoading(false);
         const APIError = {
@@ -1134,7 +1135,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                         <Box sx={{ mb: 2 }}>
                                           <RichTextEditor
                                             label="Expected Answer"
-                                            value={q.expectedAnswer || []}
+                                            value={q.expectedAnswer || ""}
                                             onChange={(val) =>
                                               handleQuestionFieldChange(
                                                 index,
@@ -1453,29 +1454,56 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     console.log(questions, "questions Answers.");
 
     let QuestionValue: UpsertQuestions[] = questions.map((item) => {
-      const OptionsValue: optionsValue[] =
-        item.options?.map((opt) => ({
-          optionEn: opt.text,
-          optionFr: opt.text,
-          sequence: opt.key,
-        })) || [];
-
-      // const answerVal = JSON.parse(item.expectedAnswer || "[]");
-      const answerValue: answersValue[] = [
-        {
-          optionEn: item.expectedAnswer,
-          optionFr: item.expectedAnswer,
-        },
-      ];
-
-      const category = getMasterData.category.filter(
-        (item) => item.text === InterviewQuesData.Catogry
+      const category = getMasterData.category.find(
+        (cat) => cat.text === InterviewQuesData.Catogry
       );
+
+      // Initialize variables
+      let OptionsValue: optionsValue[] = [];
+      let answerValue: answersValue[] = [];
+
+      if (category?.text === CatogryOptionCode.CareerPortalCandidate) {
+        OptionsValue =
+          item.options?.map((opt) => ({
+            optionEn: opt.text,
+            optionFr: opt.text,
+            sequence: opt.key,
+          })) || [];
+
+        answerValue =
+          item.CareerportalAnswer?.map((ans) => ({
+            optionEn: ans.text,
+            optionFr: ans.text,
+          })) || [];
+      } else {
+        OptionsValue =
+          item.options?.map((opt) => ({
+            optionEn: opt.text,
+            optionFr: opt.text,
+            sequence: opt.key,
+          })) || [];
+
+        OptionsValue = [
+          {
+            optionEn: item.expectedAnswer,
+            optionFr: item.expectedAnswer,
+            sequence: 1,
+          },
+        ];
+
+        answerValue = [
+          {
+            optionEn: item.expectedAnswer,
+            optionFr: item.expectedAnswer,
+          },
+        ];
+      }
+
       return {
         questionEn: item.question,
         questionFr: item.question,
         scopeId: String(item.discipline.key),
-        categoryId: String(category[0].key),
+        categoryId: String(category?.key),
         questionTypeId: String(item.questionType.key),
         isQualifier:
           InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
@@ -1488,6 +1516,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         answers: answerValue,
       };
     });
+
     console.log(QuestionValue, "QuestionValue");
     const response = await GetPortalJobsService.UpsertQuestions(QuestionValue);
     console.log(response, "response");
@@ -1507,8 +1536,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
           if (userClickedOK) {
-            props.navigation("/RecurimentProcess", {
-              state: { activeTab: "tab3" },
+            props.navigation("/ReviewProfileList", {
+              state: { activeTab: "tab2" },
             });
             setAlertPopupOpen(false);
           } else {

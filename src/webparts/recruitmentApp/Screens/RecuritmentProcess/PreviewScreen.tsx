@@ -329,12 +329,9 @@ function PreviewScreen({
                         </div>
                       ))}
 
-                      {data.FunctionType && (
-                        <div className="ms-Grid-row">
-                          <div
-                            className="ms-Grid-col ms-lg12"
-                            style={{ marginTop: "-2%" }}
-                          >
+                      {data.JobFunctionalType && (
+                        <div className="ms-Grid-row" style={{ padding: "1%" }}>
+                          <div className="ms-Grid-col ms-lg12">
                             <p>
                               <b style={{ fontSize: "17px" }}>Function Type</b>{" "}
                             </p>

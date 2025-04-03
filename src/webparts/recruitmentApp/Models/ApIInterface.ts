@@ -3,8 +3,8 @@ import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 export type AdvertisementDetails = {
     jobCode: string;
     noOfPositions: string;
-    validFrom: Date | undefined;
-    validTo: Date | undefined;
+    validFrom: Date | null;
+    validTo: Date | null;
     employmentType: string;
     departmentId: string;
     role: null,
@@ -16,6 +16,7 @@ export type AdvertisementDetails = {
     Descriptions_fr: Descriptions,
     RoleAndTechSkills: RoleAndTechSkills[],
     MinAndPreferedQualifications: MinAndPreferedQualifications[];
+    IsActive: number;
     // profileXAgent: profileXagent;
 }
 

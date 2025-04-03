@@ -25,7 +25,6 @@ import {
   WorkflowAction,
   workflowStatusApi,
   RoleID,
-  QuestionnaireData,
   ResponeStatus,
 } from "../../utilities/Config";
 import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
@@ -158,14 +157,16 @@ const InterviewPanelEdit = (props: any) => {
   ]);
 
   //Questionaires
-  const [questionnaire, setQuestionnaire] =
-    React.useState<QuestionItem[]>(QuestionnaireData);
+  const [questionnaire, setQuestionnaire] = React.useState<QuestionItem[]>([]);
 
-  const handleRatingChange = (id: number, rating: number) => {
-    setQuestionnaire((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, rating } : q))
+  const handleRatingChange = (id: number, value: AutoCompleteItem | null) => {
+    setQuestionnaire((prevState) =>
+      prevState.map((q) =>
+        q.id === id ? { ...q, rating: value?.key ?? 0 } : q
+      )
     );
   };
+
   const ScoreRating = [
     { key: 3, text: "3 - Excellent" },
     { key: 2, text: "2 - Acceptable" },
@@ -371,6 +372,7 @@ const InterviewPanelEdit = (props: any) => {
   };
 
   const Submit_fn = async () => {
+    setIsLoading(true);
     try {
       let isValid = !Validation();
       if (!isValid) return;
@@ -492,7 +494,8 @@ const InterviewPanelEdit = (props: any) => {
       }
 
       const level1Panels = updatedInterviewPanelResponse.data.filter(
-        (p) => p.InterviewLevel === InterviewLevels.Level1
+        (p) =>
+          p.InterviewLevel === InterviewLevels.Level1 || InterviewLevels.Level2
       );
 
       const uploadedCount = level1Panels.filter(
@@ -1060,9 +1063,7 @@ const InterviewPanelEdit = (props: any) => {
                             ) || null
                           }
                           options={ScoreRating}
-                          onChange={(value) =>
-                            handleRatingChange(q.id, value ? value.key : 0)
-                          }
+                          onChange={(value) => handleRatingChange(q.id, value)}
                           error={false}
                           mandatory={true}
                           disabled={false}
@@ -1307,6 +1308,7 @@ const InterviewPanelEdit = (props: any) => {
       ),
     },
   ];
+
   React.useEffect(() => {
     const activeTabObj = tabs.find((item) => item.value === activeTab);
 
@@ -1323,58 +1325,65 @@ const InterviewPanelEdit = (props: any) => {
 
     const fetchData = async () => {
       setIsLoading(true);
+      fetchCandidateData(props.stateValue?.ID)
+        .then(() => {
+          const filterConditions = [
+            {
+              FilterKey: "CandidateIDId",
+              Operator: "eq",
+              FilterValue: props.stateValue?.ID,
+            },
+          ];
 
-      const getQuestion = await GetPortalJobsService.getQuestionnaire(
-        CandidateData.JobCode
-      );
-      if (getQuestion.status === ResponeStatus.SUCCESS) {
-        setQuestionnaire(getQuestion?.data ?? []);
-        fetchCandidateData(props.stateValue?.ID)
-          .then(() => {
-            const filterConditions = [
-              {
-                FilterKey: "CandidateIDId",
-                Operator: "eq",
-                FilterValue: props.stateValue?.ID,
-              },
-            ];
+          return InterviewServices.GetInterviewPanelDetails(filterConditions);
+        })
+        .then((response) => {
+          if (
+            response?.data &&
+            Array.isArray(response.data) &&
+            response.data.length > 0
+          ) {
+            const filteredPanels = response.data.filter(
+              (item) => item.CandidateID === props.stateValue?.ID
+            );
 
-            return InterviewServices.GetInterviewPanelDetails(filterConditions);
-          })
-          .then((response) => {
-            if (
-              response?.data &&
-              Array.isArray(response.data) &&
-              response.data.length > 0
-            ) {
-              const filteredPanels = response.data.filter(
-                (item) => item.CandidateID === props.stateValue?.ID
+            if (filteredPanels.length > 0) {
+              const interviewPanelTitles = filteredPanels.map(
+                (panel) => panel.InterviewPanelTitle
               );
 
-              if (filteredPanels.length > 0) {
-                const interviewPanelTitles = filteredPanels.map(
-                  (panel) => panel.InterviewPanelTitle
-                );
+              console.log("", InterviewPanelData);
+              setInterviewPanelData((prevState) => ({
+                ...prevState,
+                interviewPanelTitles: interviewPanelTitles || [],
+              }));
 
-                console.log("", InterviewPanelData);
-                setInterviewPanelData((prevState) => ({
-                  ...prevState,
-                  interviewPanelTitles: interviewPanelTitles || [],
-                }));
-
-                setCandidateData((prevState) => ({
-                  ...prevState,
-                  interviewPanelTitles: interviewPanelTitles || [],
-                }));
-              }
+              setCandidateData((prevState) => ({
+                ...prevState,
+                interviewPanelTitles: interviewPanelTitles || [],
+              }));
             }
-          })
-          .catch((error) => {});
-      }
+          }
+        })
+        .catch((error) => {});
     };
 
     void fetchData();
   }, [props.stateValue?.ID, activeTab]);
+
+  React.useEffect(() => {
+    const fetchQuestion = async () => {
+      const getQuestion = await GetPortalJobsService.getQuestionnaire(
+        "WOR004" // CandidateData.JobCode
+      );
+      console.log(getQuestion, "getQuestion");
+
+      if (getQuestion.status === ResponeStatus.SUCCESS) {
+        setQuestionnaire(getQuestion?.data ?? []);
+      }
+    };
+    void fetchQuestion();
+  }, []);
 
   const handleCancel = () => {
     setIsLoading(true);

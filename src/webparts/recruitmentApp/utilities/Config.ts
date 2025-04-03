@@ -82,6 +82,7 @@ export const StatusId = {
   Completed: 13,
   PendingwithHRandLMtocreateinterviewQuestion: 124,
   PendingwithLineManagereviewAdv: 125,
+  PendingwithLMcreateDisqualificationQuestion: 126
 };
 
 export const RoleID = {
@@ -205,7 +206,8 @@ export const RecuritmentHRMsg = {
   APIErrorMsg: "Network Issue Please try again",
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
-  QuestionSuccessMsg: "The question has been created successfully"
+  QuestionSuccessMsg: "The question has been created successfully",
+  AddedMsg: "Added Successfully"
 };
 
 export const ADGroupID: IADGroupID = {

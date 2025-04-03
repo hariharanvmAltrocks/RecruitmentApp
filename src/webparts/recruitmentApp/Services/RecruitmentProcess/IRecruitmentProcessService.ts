@@ -237,7 +237,8 @@ export type IRecruitmentService = {
     Condition: string,
     RecuritmentDetails: RecuritmentData,
     AdvertisementValue: AdvDetails,
-    MasterData: any
+    MasterData: any,
+    IsActive: number
   ): Promise<ApiResponse<null>>;
 
 };

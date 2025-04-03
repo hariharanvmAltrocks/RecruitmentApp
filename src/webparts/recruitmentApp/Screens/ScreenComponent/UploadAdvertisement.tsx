@@ -112,14 +112,14 @@ export const UploadAdvertisement = ({
       //     key: item.Code,
       //     text: item.Qualification,
       // }));
-      const QualificationOption: AutoCompleteItem[] = Qualification.data
+      const QualificationOption = Qualification.data
         .filter(
-          (Qualitem) =>
+          (qualItem) =>
             !qualificationValue.MinQualification.some(
-              (item) => item.key === Qualitem.QualificationCode
+              (minQual) => minQual.key === qualItem.QualificationCode
             )
         )
-        .map((item: any) => ({
+        .map((item) => ({
           key: item.QualificationCode,
           text: item.Qualification,
         }));
@@ -302,6 +302,22 @@ export const UploadAdvertisement = ({
                     MasterData,
                     ListNames.HRMSQualification
                   );
+                  let SuccessMsg = {
+                    Message: RecuritmentHRMsg.AddedMsg,
+                    Type: HRMSAlertOptions.Success,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                      if (userClickedOK) {
+                        setAlertPopupOpen(false);
+                      } else {
+                        setAlertPopupOpen(false);
+                      }
+                    },
+                  };
+
+                  setAlertPopupOpen(true);
+                  setalertProps(SuccessMsg);
+                  setIsLoading(false);
                 } else {
                   let APIError = {
                     Message: RecuritmentHRMsg.APIErrorMsg,
@@ -362,6 +378,21 @@ export const UploadAdvertisement = ({
                     MasterData,
                     ListNames.HRMSRoleSpecificKnowlegeMaster
                   );
+                  let SuccessMsg = {
+                    Message: RecuritmentHRMsg.AddedMsg,
+                    Type: HRMSAlertOptions.Success,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                      if (userClickedOK) {
+                        setAlertPopupOpen(false);
+                      } else {
+                        setAlertPopupOpen(false);
+                      }
+                    },
+                  };
+                  setAlertPopupOpen(true);
+                  setalertProps(SuccessMsg);
+                  setIsLoading(false);
                 } else {
                   let APIError = {
                     Message: RecuritmentHRMsg.APIErrorMsg,
@@ -422,6 +453,21 @@ export const UploadAdvertisement = ({
                     MasterData,
                     ListNames.HRMSTechnicalSkills
                   );
+                  let SuccessMsg = {
+                    Message: RecuritmentHRMsg.AddedMsg,
+                    Type: HRMSAlertOptions.Success,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                      if (userClickedOK) {
+                        setAlertPopupOpen(false);
+                      } else {
+                        setAlertPopupOpen(false);
+                      }
+                    },
+                  };
+                  setAlertPopupOpen(true);
+                  setalertProps(SuccessMsg);
+                  setIsLoading(false);
                 } else {
                   let APIError = {
                     Message: RecuritmentHRMsg.APIErrorMsg,

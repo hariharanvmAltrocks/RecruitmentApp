@@ -1,3 +1,4 @@
+import { OptionRow } from "../Screens/ReviewProfile/InterviewQuesEdit";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 import { AutoCompleteItem } from "./Screens";
 
@@ -233,6 +234,7 @@ export type InterviewQues = {
   QuestionNumber: AutoCompleteItem;
   Question: string;
   ExpectedAnswer: string;
+  CareerportalAnswer: OptionRow[]
   Catogry: string;
   PositionTitle?: string;
   // OptionsType?: { text: string }[];

@@ -15,7 +15,6 @@ import {
   RecuritmentHRMsg,
   RoleID,
   RoleProfileMaster,
-  StatusId,
   TabName,
   WorkflowAction,
 } from "../../utilities/Config";
@@ -434,7 +433,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
               visible: true,
               ButtonAction: async (userClickedOK: boolean) => {
                 if (userClickedOK) {
-                  props.navigation("/RecurimentProcess");
+                  props.navigation("/ReviewProfileList");
                   setAlertPopupOpen(false);
                 }
               },
@@ -798,199 +797,151 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                   </div>
                 </div>
 
-                {props.CurrentRoleID === RoleID.LineManager &&
-                  props.stateValue?.StatusId ===
-                    StatusId.PendingwithHODtoreviewAdv && (
-                    <>
-                      <div className="ms-Grid-col ms-lg3 custom-document-column">
-                        <CustomLabel value={"Advertisement Documents"} />
-                        <div
-                          className="document-wrapper"
-                          title={
-                            Array.isArray(formState.AdvertisementDocument)
-                              ? formState.AdvertisementDocument.join(", ")
-                              : formState.AdvertisementDocument
-                          }
-                        >
-                          <CustomViewDocument
-                            Attachment={formState.AdvertisementDocument}
-                          />
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                {props.stateValue?.StatusId ===
-                  StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
-                  <>
-                    <div className="ms-Grid-col ms-lg3">
-                      <CustomLabel value={"Advertisement Documents"} />
-                      <CustomViewDocument
-                        Attachment={formState.AdvertisementDocument}
-                      />
-                    </div>
-                  </>
-                )}
+                <div className="ms-Grid-col ms-lg3 custom-document-column">
+                  <CustomLabel value={"Advertisement Documents"} />
+                  <div
+                    className="document-wrapper"
+                    title={
+                      Array.isArray(formState.AdvertisementDocument)
+                        ? formState.AdvertisementDocument.join(", ")
+                        : formState.AdvertisementDocument
+                    }
+                  >
+                    <CustomViewDocument
+                      Attachment={formState.AdvertisementDocument}
+                    />
+                  </div>
+                </div>
               </div>
 
-              {props.CurrentRoleID === RoleID.RecruitmentHR &&
-              props.stateValue?.StatusId ===
-                StatusId.PendingwithRecruitmentHRtouploadAdv ? (
-                <></>
-              ) : (
-                <>
-                  {props.CurrentRoleID === RoleID.LineManager &&
-                    props.stateValue?.StatusId ===
-                      StatusId.PendingwithHODtoreviewAdv && (
-                      <div className="ms-Grid-row">
-                        <div
-                          className="ms-Grid-col ms-lg2"
-                          style={{ position: "relative", right: "1px" }}
-                        >
-                          <div>
-                            <CustomLabel
-                              value={"View Advertisement"}
-                              // mandatory={true}
-                            />
-                            <ReuseButton
-                              Style={{
-                                minWidth: "117px",
-                                fontSize: "13px",
-                                paddingBottom: "24px",
-                                display: "flex",
-                                flexDirection: "column",
-                                height: "41px",
-                                paddingTop: "23px",
-                                backgroundColor: "#EF3340",
-                                color: "white",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                              label="VIEW"
-                              imgSrc={require("../../assets/viewSubmision-white.svg")}
-                              imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                              imgAlt="View"
-                              imgAltHover="Hovered View"
-                              onClick={async () => {
-                                setPreview(true);
-                                setMainComponent(false);
-                                setIsViewed(true);
-                              }}
-                              spacing={4}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
+              <div className="ms-Grid-row">
+                <div
+                  className="ms-Grid-col ms-lg2"
+                  style={{ position: "relative", right: "1px" }}
+                >
+                  <div>
+                    <CustomLabel
+                      value={"View Advertisement"}
+                      // mandatory={true}
+                    />
+                    <ReuseButton
+                      Style={{
+                        minWidth: "117px",
+                        fontSize: "13px",
+                        paddingBottom: "24px",
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "41px",
+                        paddingTop: "23px",
+                        backgroundColor: "#EF3340",
+                        color: "white",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      label="VIEW"
+                      imgSrc={require("../../assets/viewSubmision-white.svg")}
+                      imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                      imgAlt="View"
+                      imgAltHover="Hovered View"
+                      onClick={async () => {
+                        setPreview(true);
+                        setMainComponent(false);
+                        setIsViewed(true);
+                      }}
+                      spacing={4}
+                    />
+                  </div>
+                </div>
+              </div>
 
-                  {(props.stateValue?.StatusId ===
-                    StatusId.PendingwithHRLeadtouploadONEMsigneddoc ||
-                    props.stateValue?.StatusId ===
-                      StatusId.PendingwithHODtoreviewAdv) && (
-                    <>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg12">
-                          <div
-                            className="ms-Grid-col ms-lg4"
-                            style={{ marginLeft: "-5px" }}
-                          >
-                            <CustomLabel value={"View Justifications"} />
-                            <ReuseButton
-                              Style={{
-                                minWidth: "117px",
-                                fontSize: "13px",
-                                paddingBottom: "24px",
-                                display: "flex",
-                                flexDirection: "column",
-                                height: "41px",
-                                paddingTop: "23px",
-                                backgroundColor: "#EF3340",
-                                color: "white",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                              label="VIEW"
-                              imgSrc={require("../../assets/viewSubmision-white.svg")}
-                              imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                              imgAlt="View"
-                              imgAltHover="Hovered View"
-                              onClick={OpenComments}
-                              spacing={4}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg12">
+                  <div
+                    className="ms-Grid-col ms-lg4"
+                    style={{ marginLeft: "-5px" }}
+                  >
+                    <CustomLabel value={"View Justifications"} />
+                    <ReuseButton
+                      Style={{
+                        minWidth: "117px",
+                        fontSize: "13px",
+                        paddingBottom: "24px",
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "41px",
+                        paddingTop: "23px",
+                        backgroundColor: "#EF3340",
+                        color: "white",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      label="VIEW"
+                      imgSrc={require("../../assets/viewSubmision-white.svg")}
+                      imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                      imgAlt="View"
+                      imgAltHover="Hovered View"
+                      onClick={OpenComments}
+                      spacing={4}
+                    />
+                  </div>
+                </div>
+              </div>
 
-                  {(props.stateValue?.StatusId ===
-                    StatusId.PendingwithHRLeadtouploadONEMsigneddoc ||
-                    props.stateValue?.StatusId ===
-                      StatusId.PendingwithHODtoreviewAdv) && (
-                    <>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg12">
-                          <CustomTextArea
-                            label="Justification"
-                            value={formState.Comments}
-                            error={validationErrors.Comments}
-                            onChange={(value) =>
-                              handleInputChangeTextArea(value, "Comments")
-                            }
-                            mandatory={true}
-                          />
-                        </div>
-                      </div>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg12">
+                  <CustomTextArea
+                    label="Justification"
+                    value={formState.Comments}
+                    error={validationErrors.Comments}
+                    onChange={(value) =>
+                      handleInputChangeTextArea(value, "Comments")
+                    }
+                    mandatory={true}
+                  />
+                </div>
+              </div>
 
-                      <div
-                        className="ms-Grid-row"
-                        style={{
-                          padding: "3px",
-                          marginTop: "20px",
-                          marginBottom: "-33px",
-                        }}
-                      >
-                        <div className="ms-Grid-col ms-lg12">
-                          <SignatureCheckbox
-                            label={TabName.CheckboxContent}
-                            checked={Checkbox}
-                            error={validationErrors.Checkboxalidation}
-                            onChange={(value: boolean) => {
-                              setCheckbox(value);
-                              setValidationError((prevState) => ({
-                                ...prevState,
-                                Checkboxalidation: false,
-                              }));
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg12">
-                          <CustomSignature
-                            Name={
-                              (props.userDetails[0].FirstName ?? "") +
-                              " " +
-                              (props.userDetails[0]?.MiddleName ?? "") +
-                              " " +
-                              (props.userDetails[0]?.LastName ?? "")
-                            }
-                            JobTitleInEnglish={
-                              props.userDetails[0].JopTitleEnglish
-                            }
-                            JobTitleInFrench={
-                              props.userDetails[0].JopTitleFrench
-                            }
-                            Department={props.userDetails[0].DepartmentName}
-                            Date={formState.SignDate.toString()}
-                            TermsAndCondition={Checkbox}
-                          />
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </>
-              )}
+              <div
+                className="ms-Grid-row"
+                style={{
+                  padding: "3px",
+                  marginTop: "20px",
+                  marginBottom: "-33px",
+                }}
+              >
+                <div className="ms-Grid-col ms-lg12">
+                  <SignatureCheckbox
+                    label={TabName.CheckboxContent}
+                    checked={Checkbox}
+                    error={validationErrors.Checkboxalidation}
+                    onChange={(value: boolean) => {
+                      setCheckbox(value);
+                      setValidationError((prevState) => ({
+                        ...prevState,
+                        Checkboxalidation: false,
+                      }));
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg12">
+                  <CustomSignature
+                    Name={
+                      (props.userDetails[0].FirstName ?? "") +
+                      " " +
+                      (props.userDetails[0]?.MiddleName ?? "") +
+                      " " +
+                      (props.userDetails[0]?.LastName ?? "")
+                    }
+                    JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
+                    JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                    Department={props.userDetails[0].DepartmentName}
+                    Date={formState.SignDate.toString()}
+                    TermsAndCondition={Checkbox}
+                  />
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -1076,10 +1027,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                 handleCancel={handleCancel}
                 onBreadcrumbChange={handleBreadcrumbChange}
                 additionalButtons={
-                  props.CurrentRoleID === RoleID.LineManager &&
-                  props.stateValue?.StatusId ===
-                    StatusId.PendingwithHODtoreviewAdv &&
-                  isViewed
+                  props.CurrentRoleID === RoleID.LineManager && isViewed
                     ? [
                         {
                           label: "Approve",
