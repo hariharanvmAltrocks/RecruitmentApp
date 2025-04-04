@@ -367,7 +367,7 @@ const InterviewPanelList = (props: any) => {
   return (
     <>
       <CustomLoader isLoading={isLoading}>
-        <div className="menu-card">
+        <div className="sub-menu-card ">
           {props.CurrentRoleID === RoleID.InterviewPanel ? (
             <TabsComponent tabs={tabs} initialTab="tab1" tabClassName={"Tab"} />
           ) : (

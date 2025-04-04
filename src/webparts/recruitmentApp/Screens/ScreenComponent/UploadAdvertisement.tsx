@@ -205,7 +205,7 @@ export const UploadAdvertisement = ({
     };
 
     void MasterDataOption();
-  }, [AddQualifbtn, masterAddQuali, masterdataValue]);
+  }, [AddQualifbtn, masterAddQuali, masterdataValue, qualificationValue]);
 
   const AddMasterData_fn = (Header: string, LabelValue: string) => {
     setAddQualifbtn(true);

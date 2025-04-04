@@ -253,6 +253,50 @@ const InterviewPanelEdit = (props: any) => {
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
         }));
+        const getQuestion = await GetPortalJobsService.getQuestionnaire(
+          op?.JobCode
+        );
+        if (getQuestion.status === ResponeStatus.SUCCESS) {
+          setQuestionnaire(getQuestion?.data ?? []);
+        } else {
+          let APIErrorMsg = {
+            Message: RecuritmentHRMsg.APIErrorMsg,
+            Type: HRMSAlertOptions.Error,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+              if (userClickedOK) {
+                if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+                  props.navigation("/ReviewProfileList", {
+                    state: {
+                      activeTab: "tab3",
+                    },
+                  });
+                } else if (props.CurrentRoleID === RoleID.HOD) {
+                  props.navigation("/RecurimentProcess", {
+                    state: {
+                      activeTab: "tab3",
+                    },
+                  });
+                } else if (props.CurrentRoleID === RoleID.LineManager) {
+                  props.navigation("/ReviewProfileList", {
+                    state: {
+                      activeTab: "tab3",
+                    },
+                  });
+                } else {
+                  props.navigation("/InterviewPanelList");
+                }
+                setAlertPopupOpen(false);
+              } else {
+                setAlertPopupOpen(false);
+              }
+            },
+          };
+
+          setAlertPopupOpen(true);
+          setalertProps(APIErrorMsg);
+          setIsLoading(false);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -282,7 +326,6 @@ const InterviewPanelEdit = (props: any) => {
   // };
 
   const handleCheckbox = (value: boolean) => {
-    console.log("Checkbox clicked:", value);
     setCheckbox(value);
     setValidationError((prevState) => ({
       ...prevState,
@@ -433,15 +476,15 @@ const InterviewPanelEdit = (props: any) => {
 
       for (const panel of userPanels) {
         const InterviewPanelID = panel.ID;
-        let QuestionScore: { header: string; score: number }[] = [];
+        let QuestionScore: { [key: string]: number }[] = [];
 
         questionnaire.forEach((item) => {
           let QuestionScoreData = {
-            header: item?.header ?? "",
-            score: item?.rating ?? 0,
+            [item.header as string]: item.rating ?? 0,
           };
           QuestionScore.push(QuestionScoreData);
         });
+
         const scorecardObj = {
           RelevantQualification: String(CandidateData?.Qualifications?.key),
           ReleventExperience: String(CandidateData?.Experience?.key),
@@ -1374,16 +1417,33 @@ const InterviewPanelEdit = (props: any) => {
   React.useEffect(() => {
     const fetchQuestion = async () => {
       const getQuestion = await GetPortalJobsService.getQuestionnaire(
-        "WOR004" // CandidateData.JobCode
+        CandidateData.JobCode
       );
       console.log(getQuestion, "getQuestion");
 
       if (getQuestion.status === ResponeStatus.SUCCESS) {
         setQuestionnaire(getQuestion?.data ?? []);
+      } else {
+        let APIErrorMsg = {
+          Message: RecuritmentHRMsg.APIErrorMsg,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              setAlertPopupOpen(false);
+            } else {
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+
+        setAlertPopupOpen(true);
+        setalertProps(APIErrorMsg);
+        setIsLoading(false);
       }
     };
     void fetchQuestion();
-  }, []);
+  }, [activeTab]);
 
   const handleCancel = () => {
     setIsLoading(true);

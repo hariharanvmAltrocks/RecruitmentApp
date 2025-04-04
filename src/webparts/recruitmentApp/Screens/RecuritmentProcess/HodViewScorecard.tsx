@@ -12,8 +12,8 @@ import {
   DocumentLibraray,
   HRMSAlertOptions,
   ListNames,
-  QuestionnaireData,
   RecuritmentHRMsg,
+  ResponeStatus,
   RoleID,
   RoleProfileMaster,
   TabName,
@@ -144,14 +144,13 @@ const HodViewScorecard = (props: any) => {
   ]);
   const [expanded, setExpanded] = React.useState<string | null>(null);
   const [ViewQABtn, setViewQABtn] = React.useState<boolean>(false);
-  const questionnaire: QuestionItem[] = QuestionnaireData;
   const [transformedDataforQuestions, setTransformedDataforQuestions] =
     React.useState([]);
   const [interviewerCount, setInterviewerCount] = React.useState(0);
+  const [questionnaire, setquestionnaire] = React.useState<QuestionItem[]>([]);
 
   const fetchCandidateDatas = React.useCallback(() => {
     setIsLoading(true);
-debugger
     let filterConditions = [
       {
         FilterKey: "CandidateID/Id",
@@ -387,6 +386,36 @@ debugger
         console.error(error);
         setCommentsData([]);
       });
+  };
+
+  const View_Btnfn = async () => {
+    const getQuestion = await GetPortalJobsService.getQuestionnaire(
+      CandidateData.JobCode
+    );
+    console.log(getQuestion, "getQuestion");
+
+    if (getQuestion.status === ResponeStatus.SUCCESS) {
+      setquestionnaire(getQuestion?.data ?? []);
+      setViewQABtn(true);
+      setMainComponent(false);
+    } else {
+      let APIErrorMsg = {
+        Message: RecuritmentHRMsg.APIErrorMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          } else {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+
+      setAlertPopupOpen(true);
+      setalertProps(APIErrorMsg);
+      setIsLoading(false);
+    }
   };
 
   const tabs = [
@@ -751,10 +780,7 @@ debugger
                             alignItems: "center",
                             marginLeft: "5px",
                           }}
-                          onClick={async () => {
-                            setViewQABtn(true);
-                            setMainComponent(false);
-                          }}
+                          onClick={() => View_Btnfn()}
                           label="VIEW Q & A"
                           spacing={4}
                         />

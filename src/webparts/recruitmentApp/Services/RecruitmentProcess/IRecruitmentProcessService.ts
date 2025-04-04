@@ -144,7 +144,7 @@ export type PostRecuritmentData = {
     NumberOfPersonNeeded: number,
     EnterNumberOfMonths: string,
     AreaofWork: string,
-    DateRequried: Date | undefined,
+    DateRequried: Date | null,
     DataFrom: string,
     StatusId: number,
     ActionId: number,

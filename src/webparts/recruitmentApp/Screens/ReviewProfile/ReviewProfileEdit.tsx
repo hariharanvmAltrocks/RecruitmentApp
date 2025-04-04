@@ -244,9 +244,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
   const fetchData = async () => {
     if (isLoading) return;
     setIsLoading(true);
-
     try {
-      debugger;
       const filterConditionsVRR = [
         {
           FilterKey: "ID",

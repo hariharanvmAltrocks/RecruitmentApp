@@ -238,7 +238,7 @@ export default class RecruitmentService implements IRecruitmentService {
               NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
               EnterNumberOfMonths: item?.EnterNumberOfMonths,
               AreaofWork: item.AreaofWork,
-              DateRequried: item.DateRequried ? item?.DateRequried : "",
+              DateRequried: item.DateRequried ? item?.DateRequried : null,
               Type: DataFrom.NewPosition,
               Status: item.Status ? item.Status.StatusDescription : "",
               StatusId: item?.StatusId,

@@ -838,9 +838,9 @@ const RecruitmentProcess = (props: any) => {
                   correspondingJob.NumberOfPersonNeeded
                 ),
                 EnterNumberOfMonths:
-                  correspondingJob.EnterNumberOfMonths ?? "1",
+                  correspondingJob.EnterNumberOfMonths ?? "0",
                 TypeOfContract: correspondingJob.TypeOfContract,
-                DateRequried: correspondingJob?.DateRequried,
+                DateRequried: correspondingJob?.DateRequried ?? null,
                 StatusId: StatusId.PendingwithHRLeadtoAssignRecruitmentHR,
                 ActionId: WorkflowAction.Approved,
                 JobCodeId: correspondingJob.JobCodeId,

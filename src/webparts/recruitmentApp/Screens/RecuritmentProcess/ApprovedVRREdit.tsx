@@ -976,75 +976,76 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               ),
               FunctionTypeId: advDetails.JobFunctionalType.key,
             };
+            let AdvDetailsResponse;
             if (advDetails.JobcodeChecked === false) {
-              const AdvDetailsResponse = await getVRRDetails.InsertList(
+              AdvDetailsResponse = await getVRRDetails.InsertList(
                 AdvData,
                 ListNames.HRMSRecruitmentRoleProfileDetails
               );
-              console.log(AdvDetailsResponse.data, "AdvDetailsResponse");
+              // console.log(AdvDetailsResponse.data, "AdvDetailsResponse");
             }
-
-            const filterConditions = [
-              {
-                FilterKey: "JobCode",
-                Operator: "eq",
-                FilterValue: formState.JobCodeID,
-              },
-            ];
-            let Conditions = "";
-            const result = await getVRRDetails.UploadAdvertisementInPortal(
-              filterConditions,
-              Conditions,
-              formState,
-              advDetails,
-              props,
-              0
-            );
-            if (result.status === ResponeStatus.SUCCESS) {
-              await CommonServices.uploadAttachmentToLibrary(
-                formState.JobCode,
-                advDetails?.AdvertisementAttachement ?? [],
-                DocumentLibraray.RecruitmentAdvertisementDocument
+            if (AdvDetailsResponse?.status === ResponeStatus.SUCCESS) {
+              const filterConditions = [
+                {
+                  FilterKey: "JobCode",
+                  Operator: "eq",
+                  FilterValue: formState.JobCodeID,
+                },
+              ];
+              let Conditions = "";
+              const result = await getVRRDetails.UploadAdvertisementInPortal(
+                filterConditions,
+                Conditions,
+                formState,
+                advDetails,
+                props,
+                0
               );
-              await SPServices.SPUpdateItem({
-                Listname: ListNames.HRMSRecruitmentDptDetails,
-                RequestJSON: obj,
-                ID: props.stateValue?.ID,
-              });
-              resetForm();
-              let UpdateAlert = {
-                Message: RecuritmentHRMsg.AdvertisementSubmitMsg,
-                Type: HRMSAlertOptions.Success,
-                visible: true,
-                ButtonAction: async (userClickedOK: boolean) => {
-                  if (userClickedOK) {
-                    props.navigation("/RecurimentProcess");
-                    setAlertPopupOpen(false);
-                  }
-                },
-              };
+              if (result.status === ResponeStatus.SUCCESS) {
+                await CommonServices.uploadAttachmentToLibrary(
+                  formState.JobCode,
+                  advDetails?.AdvertisementAttachement ?? [],
+                  DocumentLibraray.RecruitmentAdvertisementDocument
+                );
+                await SPServices.SPUpdateItem({
+                  Listname: ListNames.HRMSRecruitmentDptDetails,
+                  RequestJSON: obj,
+                  ID: props.stateValue?.ID,
+                });
+                resetForm();
+                let UpdateAlert = {
+                  Message: RecuritmentHRMsg.AdvertisementSubmitMsg,
+                  Type: HRMSAlertOptions.Success,
+                  visible: true,
+                  ButtonAction: async (userClickedOK: boolean) => {
+                    if (userClickedOK) {
+                      props.navigation("/RecurimentProcess");
+                      setAlertPopupOpen(false);
+                    }
+                  },
+                };
 
-              setAlertPopupOpen(true);
-              setalertProps(UpdateAlert);
-              setIsLoading(false);
-            } else {
-              let APIError = {
-                Message: RecuritmentHRMsg.APIErrorMsg,
-                Type: HRMSAlertOptions.Error,
-                visible: true,
-                ButtonAction: async (userClickedOK: boolean) => {
-                  if (userClickedOK) {
-                    // props.navigation("/RecurimentProcess");
-                    setAlertPopupOpen(false);
-                  }
-                },
-              };
+                setAlertPopupOpen(true);
+                setalertProps(UpdateAlert);
+                setIsLoading(false);
+              } else {
+                let APIError = {
+                  Message: RecuritmentHRMsg.APIErrorMsg,
+                  Type: HRMSAlertOptions.Error,
+                  visible: true,
+                  ButtonAction: async (userClickedOK: boolean) => {
+                    if (userClickedOK) {
+                      // props.navigation("/RecurimentProcess");
+                      setAlertPopupOpen(false);
+                    }
+                  },
+                };
 
-              setAlertPopupOpen(true);
-              setalertProps(APIError);
-              setIsLoading(false);
+                setAlertPopupOpen(true);
+                setalertProps(APIError);
+                setIsLoading(false);
+              }
             }
-
             break;
           }
           case RoleID.HOD: {
