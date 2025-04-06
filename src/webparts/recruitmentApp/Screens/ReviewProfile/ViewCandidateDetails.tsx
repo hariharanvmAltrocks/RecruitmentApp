@@ -303,10 +303,10 @@ const ViewCandidateDetails = (props: any) => {
 
       setInterviewedLevel((prevState) => ({
         ...prevState,
-        Levels: InterviewLevels.Level2,
-        // Gradelevel.data[0]?.Level === InterviewLevels.Level1
-        //   ? InterviewLevels.Level1
-        //   : InterviewLevels.Level2,
+        Levels:
+          Gradelevel.data[0]?.Level === InterviewLevels.Level1
+            ? InterviewLevels.Level1
+            : InterviewLevels.Level2,
         AssignInterviewedLevel1Option: interviewpanelOption.data,
         AssignInterviewLevel1: Level1Value,
         AssignInterviewedLevel2: Level2Value,
@@ -661,7 +661,7 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomAutoComplete
-                            label="Review profile Feedback"
+                            label="Review Profile Feedback - HR"
                             options={InterviewedLevel.CandidateScoreOption}
                             value={InterviewedLevel.CandidateScoreValue}
                             disabled={props.stateValue?.ActionBtn === "View"}
@@ -891,6 +891,14 @@ const ViewCandidateDetails = (props: any) => {
       filterConditions,
       Conditions
     );
+    const HRMSExternalAgents = await CommonServices.GetMasterData(
+      ListNames.HRMSExternalAgents
+    );
+    let matchedAgents = HRMSExternalAgents.data.filter(
+      (item) => item.AgentName === CandidateProfile.Agencies
+    );
+    console.log(matchedAgents[0].Id, "HRMSExternalAgents");
+
     const CandidateDetails: any = {
       RecruitmentIDId: props.stateValue.RecruitmentID,
       JobCodeId: RecruitmentDetails.data[0].JobCodeId,
@@ -912,14 +920,14 @@ const ViewCandidateDetails = (props: any) => {
       Qualification: CandidateProfile.HighestQualification,
       JobRequestID: String(CandidateProfile.CandidateID),
       ProfileID: String(CandidateProfile.profileID),
-      PositionTitle: RecruitmentDetails.data[0].JobTitleEnglish,
-      JobGrade: RecruitmentDetails.data[0].DRCGrade,
-      // ExternalAgentDetailsId: CandidateProfile.Agencies,
-      InterviewDate: InterviewedLevel.InterviewedDate
-        ? new Date(InterviewedLevel.InterviewedDate).toISOString()
+      PositionTitle: RecruitmentDetails?.data[0]?.JobTitleEnglish,
+      JobGrade: RecruitmentDetails?.data[0]?.DRCGrade,
+      ExternalAgentDetailsId: matchedAgents[0]?.ID,
+      InterviewDate: InterviewedLevel?.InterviewedDate
+        ? new Date(InterviewedLevel?.InterviewedDate).toISOString()
         : null,
-      InterviewTime: InterviewedLevel.InterviewTime,
-      InterviewLink: InterviewedLevel.InterviewMeetingInviteLink,
+      InterviewTime: InterviewedLevel?.InterviewTime,
+      InterviewLink: InterviewedLevel?.InterviewMeetingInviteLink,
       ActionId: WorkflowAction.Approved,
     };
     let selectedinterviewpanal: any[] = [];

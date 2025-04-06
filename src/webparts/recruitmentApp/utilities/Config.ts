@@ -207,7 +207,8 @@ export const RecuritmentHRMsg = {
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
   QuestionSuccessMsg: "The question has been created successfully",
-  AddedMsg: "Added Successfully"
+  AddedMsg: "Added Successfully",
+  deleteMsg: "Are you sure you want to delete this? Any unsaved changes will be lost"
 };
 
 export const ADGroupID: IADGroupID = {
@@ -417,3 +418,26 @@ export const categoryOption = [
   "Career Portal - Candidate",
   "Interview Panel"
 ];
+
+
+export const ColorCode = {
+  TabColorCode: {
+    Tabcolor: "#EF3340",
+    TabboxShadowRed: "rgba(239, 51, 64, 0.2)",
+  },
+  SideNavColorCode: {
+    SideNavColor: "#f5f5f5",
+  },
+  LabelStyleColorCode: {
+    LabelStyleColor: "#EF3340",
+    boxShadowRed: "rgba(239, 51, 64, 0.2)",
+  },
+  ButtonColorCode: {
+    ButtonColor: "#EF3340",
+    boxShadowRed: "rgba(239, 51, 64, 0.2)",
+    color: "#EF3340",
+    backgroundColor: "white",
+    ButtonbordeColor: "rgba(239, 51, 64)",
+    ButtonHoverColor: "#FFFFFF",
+  }
+}

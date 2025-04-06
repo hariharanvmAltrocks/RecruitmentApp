@@ -253,49 +253,51 @@ const InterviewPanelEdit = (props: any) => {
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
         }));
-        const getQuestion = await GetPortalJobsService.getQuestionnaire(
-          op?.JobCode
-        );
-        if (getQuestion.status === ResponeStatus.SUCCESS) {
-          setQuestionnaire(getQuestion?.data ?? []);
-        } else {
-          let APIErrorMsg = {
-            Message: RecuritmentHRMsg.APIErrorMsg,
-            Type: HRMSAlertOptions.Error,
-            visible: true,
-            ButtonAction: async (userClickedOK: boolean) => {
-              if (userClickedOK) {
-                if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-                  props.navigation("/ReviewProfileList", {
-                    state: {
-                      activeTab: "tab3",
-                    },
-                  });
-                } else if (props.CurrentRoleID === RoleID.HOD) {
-                  props.navigation("/RecurimentProcess", {
-                    state: {
-                      activeTab: "tab3",
-                    },
-                  });
-                } else if (props.CurrentRoleID === RoleID.LineManager) {
-                  props.navigation("/ReviewProfileList", {
-                    state: {
-                      activeTab: "tab3",
-                    },
-                  });
+        if (questionnaire.length < 0) {
+          const getQuestion = await GetPortalJobsService.getQuestionnaire(
+            op?.JobCode
+          );
+          if (getQuestion.status === ResponeStatus.SUCCESS) {
+            setQuestionnaire(getQuestion?.data ?? []);
+          } else {
+            let APIErrorMsg = {
+              Message: RecuritmentHRMsg.APIErrorMsg,
+              Type: HRMSAlertOptions.Error,
+              visible: true,
+              ButtonAction: async (userClickedOK: boolean) => {
+                if (userClickedOK) {
+                  if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+                    props.navigation("/ReviewProfileList", {
+                      // state: {
+                      //   activeTab: "tab3",
+                      // },
+                    });
+                  } else if (props.CurrentRoleID === RoleID.HOD) {
+                    props.navigation("/RecurimentProcess", {
+                      // state: {
+                      //   activeTab: "tab3",
+                      // },
+                    });
+                  } else if (props.CurrentRoleID === RoleID.LineManager) {
+                    props.navigation("/ReviewProfileList", {
+                      // state: {
+                      //   activeTab: "tab3",
+                      // },
+                    });
+                  } else {
+                    props.navigation("/InterviewPanelList");
+                  }
+                  setAlertPopupOpen(false);
                 } else {
-                  props.navigation("/InterviewPanelList");
+                  setAlertPopupOpen(false);
                 }
-                setAlertPopupOpen(false);
-              } else {
-                setAlertPopupOpen(false);
-              }
-            },
-          };
+              },
+            };
 
-          setAlertPopupOpen(true);
-          setalertProps(APIErrorMsg);
-          setIsLoading(false);
+            setAlertPopupOpen(true);
+            setalertProps(APIErrorMsg);
+            setIsLoading(false);
+          }
         }
       }
     } catch (error) {
@@ -583,21 +585,21 @@ const InterviewPanelEdit = (props: any) => {
           if (userClickedOK) {
             if (props.CurrentRoleID === RoleID.RecruitmentHR) {
               props.navigation("/ReviewProfileList", {
-                state: {
-                  activeTab: "tab3",
-                },
+                // state: {
+                //   activeTab: "tab3",
+                // },
               });
             } else if (props.CurrentRoleID === RoleID.HOD) {
               props.navigation("/RecurimentProcess", {
-                state: {
-                  activeTab: "tab3",
-                },
+                // state: {
+                //   activeTab: "tab3",
+                // },
               });
             } else if (props.CurrentRoleID === RoleID.LineManager) {
               props.navigation("/ReviewProfileList", {
-                state: {
-                  activeTab: "tab3",
-                },
+                // state: {
+                //   activeTab: "tab3",
+                // },
               });
             } else {
               props.navigation("/InterviewPanelList");
@@ -1085,9 +1087,21 @@ const InterviewPanelEdit = (props: any) => {
               <div style={{ marginTop: "20px" }}>
                 {questionnaire.map((q) => (
                   <div key={q.id} style={{ marginBottom: "15px" }}>
-                    <p style={{ fontWeight: "bold" }}>{q.question}</p>
+                    <p style={{ fontWeight: "bold" }}>
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: q.question,
+                        }}
+                      />
+                    </p>
                     <p>
-                      <strong>Expected Answer:</strong> {q.answer}
+                      <strong>Expected Answer:</strong>
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: q.answer,
+                        }}
+                      />
+                      {/* {q.answer} */}
                     </p>
 
                     <div
@@ -1414,36 +1428,36 @@ const InterviewPanelEdit = (props: any) => {
     void fetchData();
   }, [props.stateValue?.ID, activeTab]);
 
-  React.useEffect(() => {
-    const fetchQuestion = async () => {
-      const getQuestion = await GetPortalJobsService.getQuestionnaire(
-        CandidateData.JobCode
-      );
-      console.log(getQuestion, "getQuestion");
+  // React.useEffect(() => {
+  //   const fetchQuestion = async () => {
+  //     const getQuestion = await GetPortalJobsService.getQuestionnaire(
+  //       CandidateData.JobCode
+  //     );
+  //     console.log(getQuestion, "getQuestion");
 
-      if (getQuestion.status === ResponeStatus.SUCCESS) {
-        setQuestionnaire(getQuestion?.data ?? []);
-      } else {
-        let APIErrorMsg = {
-          Message: RecuritmentHRMsg.APIErrorMsg,
-          Type: HRMSAlertOptions.Error,
-          visible: true,
-          ButtonAction: async (userClickedOK: boolean) => {
-            if (userClickedOK) {
-              setAlertPopupOpen(false);
-            } else {
-              setAlertPopupOpen(false);
-            }
-          },
-        };
+  //     if (getQuestion.status === ResponeStatus.SUCCESS) {
+  //       setQuestionnaire(getQuestion?.data ?? []);
+  //     } else {
+  //       let APIErrorMsg = {
+  //         Message: RecuritmentHRMsg.APIErrorMsg,
+  //         Type: HRMSAlertOptions.Error,
+  //         visible: true,
+  //         ButtonAction: async (userClickedOK: boolean) => {
+  //           if (userClickedOK) {
+  //             setAlertPopupOpen(false);
+  //           } else {
+  //             setAlertPopupOpen(false);
+  //           }
+  //         },
+  //       };
 
-        setAlertPopupOpen(true);
-        setalertProps(APIErrorMsg);
-        setIsLoading(false);
-      }
-    };
-    void fetchQuestion();
-  }, [activeTab]);
+  //       setAlertPopupOpen(true);
+  //       setalertProps(APIErrorMsg);
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   void fetchQuestion();
+  // }, [activeTab]);
 
   const handleCancel = () => {
     setIsLoading(true);
@@ -1456,21 +1470,21 @@ const InterviewPanelEdit = (props: any) => {
         if (userClickedOK) {
           if (props.CurrentRoleID === RoleID.RecruitmentHR) {
             props.navigation("/ReviewProfileList", {
-              state: {
-                activeTab: "tab3",
-              },
+              // state: {
+              //   activeTab: "tab3",
+              // },
             });
           } else if (props.CurrentRoleID === RoleID.HOD) {
             props.navigation("/RecurimentProcess", {
-              state: {
-                activeTab: "tab3",
-              },
+              // state: {
+              //   activeTab: "tab3",
+              // },
             });
           } else if (props.CurrentRoleID === RoleID.LineManager) {
             props.navigation("/ReviewProfileList", {
-              state: {
-                activeTab: "tab3",
-              },
+              // state: {
+              //   activeTab: "tab3",
+              // },
             });
           } else {
             props.navigation("/InterviewPanelList");

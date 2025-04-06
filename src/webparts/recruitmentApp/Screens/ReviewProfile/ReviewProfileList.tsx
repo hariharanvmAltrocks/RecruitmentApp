@@ -50,17 +50,17 @@ const ReviewProfileList = (props: any) => {
           <span
             style={{
               backgroundColor:
-                rowData.Status.includes("Pending") === true // "Pending"
+                rowData?.Status?.includes("Pending") === true // "Pending"
                   ? GridStatusBackgroundcolor.Pending
-                  : rowData.Status.includes("Completed") === true
+                  : rowData?.Status?.includes("Completed") === true
                   ? GridStatusBackgroundcolor.CompletedOrApproved
-                  : rowData.Status.includes("Rejected") === true
+                  : rowData?.Status?.includes("Rejected") === true
                   ? GridStatusBackgroundcolor.Rejected
-                  : rowData.Status.includes("InProgress") === true
+                  : rowData?.Status?.includes("InProgress") === true
                   ? GridStatusBackgroundcolor.Reverted
-                  : rowData.Status.includes("Resubmitted") === true
+                  : rowData?.Status?.includes("Resubmitted") === true
                   ? GridStatusBackgroundcolor.ReSubmitted
-                  : rowData.Status.includes("Draft") === true
+                  : rowData?.Status?.includes("Draft") === true
                   ? GridStatusBackgroundcolor.Draft
                   : "",
               borderRadius: "5px",

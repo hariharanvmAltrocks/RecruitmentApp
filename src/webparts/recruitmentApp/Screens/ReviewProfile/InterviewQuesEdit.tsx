@@ -292,17 +292,35 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   // buuton delete
   const handleDelete = (index: number) => {
-    setQuestions((prevQuestions) => {
-      const updatedQuestions = prevQuestions.filter((_, i) => i !== index);
+    const DeleteConfimationMsg = {
+      Message: RecuritmentHRMsg.deleteMsg,
+      Type: HRMSAlertOptions.Confirmation,
+      visible: true,
+      ButtonAction: async (userClickedOK: boolean) => {
+        if (userClickedOK) {
+          setQuestions((prevQuestions) => {
+            const updatedQuestions = prevQuestions.filter(
+              (_, i) => i !== index
+            );
 
-      const reorderedQuestions = updatedQuestions.map((q, i) => ({
-        ...q,
-        id: i + 1,
-        questionNumber: { key: i + 1, text: `Question ${i + 1}` },
-      }));
+            const reorderedQuestions = updatedQuestions.map((q, i) => ({
+              ...q,
+              id: i + 1,
+              questionNumber: { key: i + 1, text: `Question ${i + 1}` },
+            }));
 
-      return reorderedQuestions;
-    });
+            return reorderedQuestions;
+          });
+          setAlertPopupOpen(false);
+        } else {
+          setAlertPopupOpen(false);
+        }
+      },
+    };
+
+    setAlertPopupOpen(true);
+    setalertProps(DeleteConfimationMsg);
+    setIsLoading(false);
   };
 
   // Drop down
@@ -1148,21 +1166,24 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                         </Box>
                                       )}
 
-                                      <Box sx={{ mb: 2 }}>
-                                        <CustomRadioGroup
-                                          label="Disqualification Question?"
-                                          value={q.Disqualification ?? "NO"}
-                                          onChange={(val) =>
-                                            handleCommonRadioChange(
-                                              index,
-                                              "Disqualification",
-                                              val
-                                            )
-                                          }
-                                          mandatory={true}
-                                          options={isDisqualificationOption}
-                                        />
-                                      </Box>
+                                      {props?.stateValue?.StatusId ===
+                                        StatusId.PendingwithLMcreateDisqualificationQuestion && (
+                                        <Box sx={{ mb: 2 }}>
+                                          <CustomRadioGroup
+                                            label="Disqualification Question?"
+                                            value={q.Disqualification ?? "NO"}
+                                            onChange={(val) =>
+                                              handleCommonRadioChange(
+                                                index,
+                                                "Disqualification",
+                                                val
+                                              )
+                                            }
+                                            mandatory={true}
+                                            options={isDisqualificationOption}
+                                          />
+                                        </Box>
+                                      )}
 
                                       <Box
                                         sx={{
@@ -1390,21 +1411,24 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       </Box>
                     )}
 
-                    <Box sx={{ mb: 2 }}>
-                      <CustomRadioGroup
-                        label="Disqualification Question?"
-                        value={InterviewQuesData?.Disqualification ?? ""}
-                        options={isDisqualificationOption}
-                        error={ValidationError.Disqualification}
-                        mandatory={true}
-                        onChange={(value) =>
-                          handleIsDisqualificationChange(
-                            "Disqualification",
-                            value
-                          )
-                        }
-                      />
-                    </Box>
+                    {props?.stateValue?.StatusId ===
+                      StatusId.PendingwithLMcreateDisqualificationQuestion && (
+                      <Box sx={{ mb: 2 }}>
+                        <CustomRadioGroup
+                          label="Disqualification Question?"
+                          value={InterviewQuesData?.Disqualification ?? ""}
+                          options={isDisqualificationOption}
+                          error={ValidationError.Disqualification}
+                          mandatory={true}
+                          onChange={(value) =>
+                            handleIsDisqualificationChange(
+                              "Disqualification",
+                              value
+                            )
+                          }
+                        />
+                      </Box>
+                    )}
                   </>
 
                   <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
@@ -1452,7 +1476,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   async function Submit_fn() {
     console.log(questions, "questions Answers.");
-
+    if (!Validation()) {
+      return;
+    }
     let QuestionValue: UpsertQuestions[] = questions.map((item) => {
       const category = getMasterData.category.find(
         (cat) => cat.text === InterviewQuesData.Catogry

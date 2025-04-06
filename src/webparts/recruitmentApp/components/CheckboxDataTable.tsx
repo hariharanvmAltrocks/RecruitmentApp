@@ -218,7 +218,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               options={MasterData?.Department ?? []}
               value={FilterData.Department}
               disabled={false}
-              mandatory={true}
+              // mandatory={true}
               onChange={(item) => handleAutoComplete("Department", item)}
             />
           </div>
@@ -228,7 +228,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               options={FilterData.BusinessUnitCodeOption ?? []}
               value={FilterData.BusinessUnitCode}
               disabled={false}
-              mandatory={true}
+              // mandatory={true}
               onChange={(item) => handleAutoComplete("BusinessUnitCode", item)}
             />
           </div>
@@ -238,7 +238,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               options={FilterData.BusinessUnitNameOption ?? []}
               value={FilterData.BusinessUnitName}
               disabled={false}
-              mandatory={true}
+              // mandatory={true}
               onChange={(item) => handleAutoComplete("BusinessUnitName", item)}
             />
           </div>

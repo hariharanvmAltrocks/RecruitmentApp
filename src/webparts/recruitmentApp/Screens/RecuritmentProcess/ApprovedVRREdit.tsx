@@ -739,7 +739,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           props.stateValue?.StatusId ===
           StatusId.PendingwithRecruitmentHRtouploadAdv
         ) {
-          if (advDetails.JobcodeChecked) {
+          if (advDetails.JobcodeChecked === true) {
             errors.Comments = !IsValid(Comments);
             errors.Checkboxalidation = !IsValid(Checkbox);
           } else {
@@ -984,7 +984,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               );
               // console.log(AdvDetailsResponse.data, "AdvDetailsResponse");
             }
-            if (AdvDetailsResponse?.status === ResponeStatus.SUCCESS) {
+            if (
+              advDetails.JobcodeChecked === false
+                ? AdvDetailsResponse?.status === ResponeStatus.SUCCESS
+                : true
+            ) {
               const filterConditions = [
                 {
                   FilterKey: "JobCode",
@@ -1570,7 +1574,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           label="Valid From"
                           error={validationErrors.ValidFrom}
                           minDate={todaydate}
-                          mandatory={true}
+                          // mandatory={true}
                           disabled={true}
                           onChange={(date) =>
                             handleDateChange(date, "ValidFrom")
