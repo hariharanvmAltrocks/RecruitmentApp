@@ -15,6 +15,7 @@ import {
   HRMSAlertOptions,
   ListNames,
   RecuritmentHRMsg,
+  ResponeStatus,
   RoleDescription,
   RoleID,
   RoleProfileMaster,
@@ -559,6 +560,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         Operator: "eq",
         FilterValue: Choices.Yes,
       });
+      filterConditions.push({
+        FilterKey: "ItemCreated",
+        Operator: "eq",
+        FilterValue: Choices.No,
+      });
 
       const response =
         props.CurrentRoleID === RoleID.RecruitmentHRLead &&
@@ -733,41 +739,45 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           props.stateValue?.StatusId ===
           StatusId.PendingwithRecruitmentHRtouploadAdv
         ) {
-          errors.Comments = !IsValid(Comments);
-          errors.AdvertisementAttachement = !IsValid(
-            advDetails.AdvertisementAttachement
-          );
-          errors.Comments = !IsValid(Comments);
-          errors.MinQualification = !IsValid(
-            qualificationValue.MinQualification[0]?.text
-          );
-          errors.PrefeQualification = !IsValid(
-            qualificationValue.PrefeQualification[0]?.text
-          );
-          errors.RoleSpeKnowledge = !IsValid(
-            RoleSpeKnowledgeValue[0]?.RoleSpeKnowledge.text
-          );
-          errors.RequiredLevel = !IsValid(
-            RoleSpeKnowledgeValue[0]?.RequiredLevel.text
-          );
-          errors.TechnicalSkills = !IsValid(
-            TechnicalSkillValue[0]?.TechnicalSkills.text
-          );
-          errors.LevelProficiency = !IsValid(
-            TechnicalSkillValue[0]?.LevelProficiency.text
-          );
-          errors.RolePurpose = !IsValid(advDetails.RolePurpose);
-          errors.JobDescription = !IsValid(advDetails.JobDescription);
-          errors.ExperienceinMiningIndustry = !IsValid(
-            advDetails.ExperienceinMiningIndustry.text
-          );
-          errors.TotalExperience = !IsValid(advDetails.TotalExperience.text);
-          errors.Checkboxalidation = !IsValid(Checkbox);
-          // errors.ValidFrom = !IsValid(advDetails.ValidFrom);
-          // errors.ValidTo = !IsValid(advDetails.ValidTo);
-          errors.JobFunctionalType = !IsValid(
-            advDetails.JobFunctionalType.text
-          );
+          if (advDetails.JobcodeChecked === true) {
+            errors.Comments = !IsValid(Comments);
+            errors.Checkboxalidation = !IsValid(Checkbox);
+          } else {
+            errors.AdvertisementAttachement = !IsValid(
+              advDetails.AdvertisementAttachement
+            );
+            errors.Comments = !IsValid(Comments);
+            errors.MinQualification = !IsValid(
+              qualificationValue.MinQualification[0]?.text
+            );
+            errors.PrefeQualification = !IsValid(
+              qualificationValue.PrefeQualification[0]?.text
+            );
+            errors.RoleSpeKnowledge = !IsValid(
+              RoleSpeKnowledgeValue[0]?.RoleSpeKnowledge.text
+            );
+            errors.RequiredLevel = !IsValid(
+              RoleSpeKnowledgeValue[0]?.RequiredLevel.text
+            );
+            errors.TechnicalSkills = !IsValid(
+              TechnicalSkillValue[0]?.TechnicalSkills.text
+            );
+            errors.LevelProficiency = !IsValid(
+              TechnicalSkillValue[0]?.LevelProficiency.text
+            );
+            errors.RolePurpose = !IsValid(advDetails.RolePurpose);
+            errors.JobDescription = !IsValid(advDetails.JobDescription);
+            errors.ExperienceinMiningIndustry = !IsValid(
+              advDetails.ExperienceinMiningIndustry.text
+            );
+            errors.TotalExperience = !IsValid(advDetails.TotalExperience.text);
+            errors.Checkboxalidation = !IsValid(Checkbox);
+            // errors.ValidFrom = !IsValid(advDetails.ValidFrom);
+            // errors.ValidTo = !IsValid(advDetails.ValidTo);
+            errors.JobFunctionalType = !IsValid(
+              advDetails.JobFunctionalType.text
+            );
+          }
         }
 
         break;
@@ -845,7 +855,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 Conditions,
                 formState,
                 advDetails,
-                props
+                props,
+                1
               );
 
               if (result?.status === 200) {
@@ -900,16 +911,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             break;
           }
           case RoleID.RecruitmentHR: {
-            await CommonServices.uploadAttachmentToLibrary(
-              formState.JobCode,
-              advDetails?.AdvertisementAttachement ?? [],
-              DocumentLibraray.RecruitmentAdvertisementDocument
-            );
-            await SPServices.SPUpdateItem({
-              Listname: ListNames.HRMSRecruitmentDptDetails,
-              RequestJSON: obj,
-              ID: props.stateValue?.ID,
-            });
             let QualificatioDetails: {
               MinQualification: string;
             }[] = [];
@@ -975,28 +976,80 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               ),
               FunctionTypeId: advDetails.JobFunctionalType.key,
             };
+            let AdvDetailsResponse;
+            if (advDetails.JobcodeChecked === false) {
+              AdvDetailsResponse = await getVRRDetails.InsertList(
+                AdvData,
+                ListNames.HRMSRecruitmentRoleProfileDetails
+              );
+              // console.log(AdvDetailsResponse.data, "AdvDetailsResponse");
+            }
+            if (
+              advDetails.JobcodeChecked === false
+                ? AdvDetailsResponse?.status === ResponeStatus.SUCCESS
+                : true
+            ) {
+              const filterConditions = [
+                {
+                  FilterKey: "JobCode",
+                  Operator: "eq",
+                  FilterValue: formState.JobCodeID,
+                },
+              ];
+              let Conditions = "";
+              const result = await getVRRDetails.UploadAdvertisementInPortal(
+                filterConditions,
+                Conditions,
+                formState,
+                advDetails,
+                props,
+                0
+              );
+              if (result.status === ResponeStatus.SUCCESS) {
+                await CommonServices.uploadAttachmentToLibrary(
+                  formState.JobCode,
+                  advDetails?.AdvertisementAttachement ?? [],
+                  DocumentLibraray.RecruitmentAdvertisementDocument
+                );
+                await SPServices.SPUpdateItem({
+                  Listname: ListNames.HRMSRecruitmentDptDetails,
+                  RequestJSON: obj,
+                  ID: props.stateValue?.ID,
+                });
+                resetForm();
+                let UpdateAlert = {
+                  Message: RecuritmentHRMsg.AdvertisementSubmitMsg,
+                  Type: HRMSAlertOptions.Success,
+                  visible: true,
+                  ButtonAction: async (userClickedOK: boolean) => {
+                    if (userClickedOK) {
+                      props.navigation("/RecurimentProcess");
+                      setAlertPopupOpen(false);
+                    }
+                  },
+                };
 
-            await getVRRDetails.InsertList(
-              AdvData,
-              ListNames.HRMSRecruitmentRoleProfileDetails
-            );
-            resetForm();
-            let UpdateAlert = {
-              Message: RecuritmentHRMsg.AdvertisementSubmitMsg,
-              Type: HRMSAlertOptions.Success,
-              visible: true,
-              ButtonAction: async (userClickedOK: boolean) => {
-                if (userClickedOK) {
-                  props.navigation("/RecurimentProcess");
-                  setAlertPopupOpen(false);
-                }
-              },
-            };
+                setAlertPopupOpen(true);
+                setalertProps(UpdateAlert);
+                setIsLoading(false);
+              } else {
+                let APIError = {
+                  Message: RecuritmentHRMsg.APIErrorMsg,
+                  Type: HRMSAlertOptions.Error,
+                  visible: true,
+                  ButtonAction: async (userClickedOK: boolean) => {
+                    if (userClickedOK) {
+                      // props.navigation("/RecurimentProcess");
+                      setAlertPopupOpen(false);
+                    }
+                  },
+                };
 
-            setAlertPopupOpen(true);
-            setalertProps(UpdateAlert);
-            setIsLoading(false);
-
+                setAlertPopupOpen(true);
+                setalertProps(APIError);
+                setIsLoading(false);
+              }
+            }
             break;
           }
           case RoleID.HOD: {
@@ -1059,7 +1112,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       await fetchData();
       if (
         props.stateValue?.StatusId ===
-        StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+          StatusId.PendingwithHRLeadtouploadONEMsigneddoc ||
+        props.stateValue?.StatusId ===
+          StatusId.PendingwithRecruitmentHRtouploadAdv
       ) {
         const newValidTo = calculateValidTo(todaydate, 13);
         setAdvDetails((prevState) => ({
@@ -1519,7 +1574,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           label="Valid From"
                           error={validationErrors.ValidFrom}
                           minDate={todaydate}
-                          mandatory={true}
+                          // mandatory={true}
                           disabled={true}
                           onChange={(date) =>
                             handleDateChange(date, "ValidFrom")

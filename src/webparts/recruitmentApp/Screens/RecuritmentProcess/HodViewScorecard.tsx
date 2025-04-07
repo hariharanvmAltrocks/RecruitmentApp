@@ -12,8 +12,8 @@ import {
   DocumentLibraray,
   HRMSAlertOptions,
   ListNames,
-  QuestionnaireData,
   RecuritmentHRMsg,
+  ResponeStatus,
   RoleID,
   RoleProfileMaster,
   TabName,
@@ -144,39 +144,41 @@ const HodViewScorecard = (props: any) => {
   ]);
   const [expanded, setExpanded] = React.useState<string | null>(null);
   const [ViewQABtn, setViewQABtn] = React.useState<boolean>(false);
-  const questionnaire: QuestionItem[] = QuestionnaireData;
   const [transformedDataforQuestions, setTransformedDataforQuestions] =
     React.useState([]);
   const [interviewerCount, setInterviewerCount] = React.useState(0);
+  const [questionnaire, setquestionnaire] = React.useState<QuestionItem[]>([]);
 
-  const fetchCandidateDatas = React.useCallback(() => {
-    setIsLoading(true);
-debugger
-    let filterConditions = [
-      {
-        FilterKey: "CandidateID/Id",
-        Operator: "eq",
-        FilterValue: candidateID,
-      },
-    ];
-    let Conditions = "";
+  const fetchCandidateDatas = React.useCallback(
+    async (idParam: number) => {
+      try {
+        setIsLoading(true);
 
-    Promise.all([
-      InterviewServices.HRMSCandidateScoreCard(
-        filterConditions,
-        Conditions,
-        candidateID
-      ),
-      InterviewServices.GetCombinedCandidatePositionDetails(
-        filterConditions,
-        Conditions
-      ),
-    ])
-      .then(([scoreResponse, positionResponse]) => {
+        const filterConditions = [
+          {
+            FilterKey: "CandidateID/Id",
+            Operator: "eq",
+            FilterValue: idParam,
+          },
+        ];
+
+        const [scoreResponse, positionResponse] = await Promise.all([
+          InterviewServices.HRMSCandidateScoreCard(
+            "",
+            filterConditions,
+            idParam
+          ),
+          InterviewServices.GetCombinedCandidatePositionDetails(
+            " ",
+            filterConditions
+          ),
+        ]);
+
         if (scoreResponse?.status === 200 && scoreResponse?.data?.length) {
           const candidateData = scoreResponse.data.filter(
-            (candidate: any) => candidate.CandidateID === candidateID
+            (candidate: any) => candidate.CandidateID === idParam
           );
+
           const filteredScores = candidateData.flatMap(
             (candidate: any) =>
               candidate.CandidateScoreCard?.filter(
@@ -196,11 +198,9 @@ debugger
             if (score.QuestionJson) {
               score.QuestionJson.forEach((q: any) => {
                 const key = Object.keys(q)[0];
-
                 if (!questionScores[key]) {
                   questionScores[key] = { criteria: key };
                 }
-
                 questionScores[key][`interviewer_${interviewerIndex + 1}`] =
                   q[key];
               });
@@ -216,21 +216,25 @@ debugger
           setTransformedDataforQuestions([]);
           setInterviewerCount(0);
         }
+
         if (positionResponse?.status === 200 && positionResponse?.data) {
           const candidate = positionResponse.data.find(
-            (c: any) => c.ID === candidateID
+            (c: any) => c.ID === idParam
           );
           setIagentName(candidate?.ExternalAgentDetails?.AgentName || "");
         }
-      })
-      .catch((error) => {
-        console.error(error);
+      } catch (error) {
+        console.error("Error fetching candidate data:", error);
         setScoreData([]);
         setInterviewPanelTitles([]);
         setTransformedDataforQuestions([]);
         setInterviewerCount(0);
-      });
-  }, [candidateID]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [candidateID]
+  );
 
   const transformScoreData = (rawData: any[]) => {
     const criteria = [
@@ -389,6 +393,36 @@ debugger
       });
   };
 
+  const View_Btnfn = async () => {
+    const getQuestion = await GetPortalJobsService.getQuestionnaire(
+      CandidateData.JobCode
+    );
+    console.log(getQuestion, "getQuestion");
+
+    if (getQuestion.status === ResponeStatus.SUCCESS) {
+      setquestionnaire(getQuestion?.data ?? []);
+      setViewQABtn(true);
+      setMainComponent(false);
+    } else {
+      let APIErrorMsg = {
+        Message: RecuritmentHRMsg.APIErrorMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          } else {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+
+      setAlertPopupOpen(true);
+      setalertProps(APIErrorMsg);
+      setIsLoading(false);
+    }
+  };
+
   const tabs = [
     {
       label: TabName.CandidateDetails,
@@ -397,11 +431,9 @@ debugger
         <>
           <div className="agencies_card ">
             <LabelHeaderComponents
-              value={
-                agentName === undefined
-                  ? `Profile from Candidate `
-                  : `Profile from ${agentName} Agencies`
-              }
+              value={`Profile from ${
+                agentName ? agentName + " Agencies" : "Candidate"
+              }`}
             />
           </div>
           <Card
@@ -669,9 +701,9 @@ debugger
                       top: "7px",
                     }}
                   >
-                    {agentName === undefined
-                      ? `Profile from Candidate `
-                      : `Profile from ${agentName} Agencies`}
+                    {`Profile from ${
+                      agentName ? agentName + " Agencies" : "Candidate"
+                    }`}
                   </span>
                 </div>
               </div>
@@ -751,10 +783,7 @@ debugger
                             alignItems: "center",
                             marginLeft: "5px",
                           }}
-                          onClick={async () => {
-                            setViewQABtn(true);
-                            setMainComponent(false);
-                          }}
+                          onClick={() => View_Btnfn()}
                           label="VIEW Q & A"
                           spacing={4}
                         />
@@ -916,11 +945,7 @@ debugger
         );
 
         let advertisementDocuments: any[] = [];
-        if (
-          response.status === 200 &&
-          response.data &&
-          response.data.length > 0
-        ) {
+        if (response.status === 200 && response.data?.length > 0) {
           advertisementDocuments = response.data.map((doc: any) => ({
             name: doc.name,
             content: doc.content,
@@ -936,8 +961,7 @@ debugger
         let roleProfileDocuments: any[] = [];
         if (
           RoleProfileresponse.status === 200 &&
-          RoleProfileresponse.data &&
-          RoleProfileresponse.data.length > 0
+          RoleProfileresponse.data?.length > 0
         ) {
           roleProfileDocuments = RoleProfileresponse.data.map((doc: any) => ({
             name: doc.name,
@@ -971,156 +995,85 @@ debugger
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
         }));
+
+        await fetchCandidateDatas(ID);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   React.useEffect(() => {
     const activeTabObj = tabs.find((item) => item.value === activeTab);
 
-    if (activeTab === "tab2") {
-      setTabNameData((prevTabNames) => {
-        const newTabNames = [
-          { tabName: props.stateValue?.TabName },
-          { tabName: props.stateValue?.PreviousTabName },
+    if (activeTab === "tab2" || activeTab === "tab3") {
+      const newTabNames = [
+        { tabName: props.stateValue?.TabName },
+        { tabName: props.stateValue?.PreviousTabName },
+        { tabName: props.stateValue?.ButtonAction },
+      ];
 
-          { tabName: props.stateValue?.ButtonAction },
-          { tabName: activeTabObj?.label },
-        ];
-        return newTabNames;
-      });
+      if (activeTab === "tab3") {
+        newTabNames.push({ tabName: props.stateValue?.PreviousTabName });
+      }
+
+      newTabNames.push({ tabName: activeTabObj?.label });
+
+      setTabNameData(newTabNames);
     }
 
-    const fetchData = () => {
-      setIsLoading(true);
-
-      fetchCandidateData(props.stateValue?.ID)
-        .then(() => {
-          const filterConditions = [
-            {
-              FilterKey: "CandidateIDId",
-              Operator: "eq",
-              FilterValue: props.stateValue?.ID,
-            },
-          ];
-
-          return InterviewServices.GetInterviewPanelDetails(filterConditions);
-        })
-        .then((response) => {
-          if (
-            response?.data &&
-            Array.isArray(response.data) &&
-            response.data.length > 0
-          ) {
-            const filteredPanels = response.data.filter(
-              (item) => item.CandidateID === props.stateValue?.ID
-            );
-
-            if (filteredPanels.length > 0) {
-              const interviewPanelTitles = filteredPanels.map(
-                (panel) => panel.InterviewPanelTitle
-              );
-
-              setInterviewPanelData((prevState) => ({
-                ...prevState,
-                interviewPanelTitles: interviewPanelTitles || [],
-              }));
-
-              setCandidateData((prevState) => ({
-                ...prevState,
-                interviewPanelTitles: interviewPanelTitles || [],
-              }));
-            }
-          }
-        })
-        .catch((error) => {});
-    };
-
-    fetchData();
-  }, [props.stateValue?.ID, activeTab]);
-
-  React.useEffect(() => {
-    const activeTabObj = tabs.find((item) => item.value === activeTab);
-
-    if (activeTab === "tab3") {
-      setTabNameData((prevTabNames) => {
-        const newTabNames = [
-          { tabName: props.stateValue?.TabName },
-          { tabName: props.stateValue?.PreviousTabName },
-          { tabName: props.stateValue?.ButtonAction },
-          { tabName: props.stateValue?.PreviousTabName },
-          { tabName: activeTabObj?.label },
-        ];
-        return newTabNames;
-      });
-    }
-
-    const fetchData = () => {
-      setIsLoading(true);
-
-      fetchCandidateData(props.stateValue?.ID)
-        .then(() => {
-          const filterConditions = [
-            {
-              FilterKey: "CandidateIDId",
-              Operator: "eq",
-              FilterValue: props.stateValue.ID,
-            },
-          ];
-
-          return InterviewServices.GetInterviewPanelDetails(filterConditions);
-        })
-        .then((response) => {
-          if (
-            response?.data &&
-            Array.isArray(response.data) &&
-            response.data.length > 0
-          ) {
-            const filteredPanels = response.data.filter(
-              (item) => item.CandidateID === props.stateValue?.ID
-            );
-
-            if (filteredPanels.length > 0) {
-              const interviewPanelTitles = filteredPanels.map(
-                (panel) => panel.InterviewPanelTitle
-              );
-              console.log(InterviewPanelData);
-              setInterviewPanelData((prevState) => ({
-                ...prevState,
-                interviewPanelTitles: interviewPanelTitles || [],
-              }));
-
-              setCandidateData((prevState) => ({
-                ...prevState,
-                interviewPanelTitles: interviewPanelTitles || [],
-              }));
-            }
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-
-    fetchData();
-  }, [props.stateValue?.ID, activeTab]);
-
-  React.useEffect(() => {
-    const fetchData = async () => {
+    const fetchAllData = async () => {
       try {
-        if (candidateID) {
-          await fetchCandidateDatas();
+        setIsLoading(true);
+
+        await fetchCandidateData(props.stateValue?.ID);
+
+        const filterConditions = [
+          {
+            FilterKey: "CandidateIDId",
+            Operator: "eq",
+            FilterValue: props.stateValue?.ID,
+          },
+        ];
+
+        const panelResponse = await InterviewServices.GetInterviewPanelDetails(
+          filterConditions
+        );
+
+        if (
+          panelResponse?.data &&
+          Array.isArray(panelResponse.data) &&
+          panelResponse.data.length > 0
+        ) {
+          const filteredPanels = panelResponse.data.filter(
+            (item) => item.CandidateID === props.stateValue?.ID
+          );
+
+          const interviewPanelTitles = filteredPanels.map(
+            (panel) => panel.InterviewPanelTitle
+          );
+          console.log(InterviewPanelData);
+          setInterviewPanelData((prev) => ({
+            ...prev,
+            interviewPanelTitles: interviewPanelTitles || [],
+          }));
+
+          setCandidateData((prev) => ({
+            ...prev,
+            interviewPanelTitles: interviewPanelTitles || [],
+          }));
         }
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error("Error in fetching data:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    void fetchData();
-  }, [candidateID, fetchCandidateDatas]);
+    void fetchAllData();
+  }, [props.stateValue?.ID, activeTab]);
 
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);

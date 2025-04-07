@@ -385,6 +385,8 @@ const RecruitmentProcess = (props: any) => {
                 TabName: TabName,
                 ButtonAction,
                 JobCode: rowData?.JobCode?.toString().trim(),
+                JobCodeId: rowData?.JobCodeId,
+                Department: rowData?.DepartmentId,
               },
             });
           } else if (tab === "tab3") {
@@ -426,21 +428,31 @@ const RecruitmentProcess = (props: any) => {
         Operator: "eq",
         FilterValue: Choices.Yes,
       });
-      const dataPromise = getVRRDetails.GetJobTitleInNPEP(
-        filterConditions,
-        Conditions,
-        props
-      );
+      filterConditions.push({
+        FilterKey: "ItemCreated",
+        Operator: "eq",
+        FilterValue: Choices.No,
+      });
 
       let filterConditionsRecuritment = [];
       let RecuritmentConditions = "and";
       switch (props.CurrentRoleID) {
         case RoleID.RecruitmentHRLead: {
-          filterConditionsRecuritment.push({
-            FilterKey: "StatusId",
-            Operator: "eq",
-            FilterValue: StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
-          });
+          if (activeTab === "tab2") {
+            filterConditionsRecuritment.push({
+              FilterKey: "StatusId",
+              Operator: "eq",
+              FilterValue: StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
+            });
+            filterConditionsRecuritment.push({
+              FilterKey: "ItemCreated",
+              Operator: "eq",
+              FilterValue: Choices.No,
+            });
+          } else {
+            filterConditionsRecuritment = [];
+            RecuritmentConditions = "";
+          }
           break;
         }
         case RoleID.RecruitmentHR: {
@@ -450,11 +462,21 @@ const RecruitmentProcess = (props: any) => {
               Operator: "eq",
               FilterValue: StatusId.PendingwithRecruitmentHRtouploadAdv,
             });
+            filterConditionsRecuritment.push({
+              FilterKey: "ItemCreated",
+              Operator: "eq",
+              FilterValue: Choices.No,
+            });
           } else if (activeTab === "tab2") {
             filterConditionsRecuritment.push({
               FilterKey: "StatusId",
               Operator: "eq",
               FilterValue: StatusId.RecruitmentInProgress,
+            });
+            filterConditionsRecuritment.push({
+              FilterKey: "ItemCreated",
+              Operator: "eq",
+              FilterValue: Choices.No,
             });
           }
           break;
@@ -466,57 +488,53 @@ const RecruitmentProcess = (props: any) => {
               Operator: "eq",
               FilterValue: StatusId.PendingwithHODtoreviewAdv,
             });
+            filterConditionsRecuritment.push({
+              FilterKey: "ItemCreated",
+              Operator: "eq",
+              FilterValue: Choices.No,
+            });
           } else if (activeTab === "tab2") {
             filterConditionsRecuritment.push({
               FilterKey: "StatusId",
               Operator: "eq",
               FilterValue: StatusId.RecruitmentInProgress,
             });
+            filterConditionsRecuritment.push({
+              FilterKey: "ItemCreated",
+              Operator: "eq",
+              FilterValue: Choices.No,
+            });
           }
           break;
         }
+        default: {
+          filterConditionsRecuritment = [];
+          RecuritmentConditions = "and";
+        }
       }
-      // if (filterConditionsRecuritment.length > 0) {
-      //   filterConditionsRecuritment.push({
-      //     FilterKey: "ItemCreated",
-      //     Operator: "eq",
-      //     FilterValue: "No",
-      //   });
-      // }
-      const recruitmentDetailsPromise = getVRRDetails.GetRecruitmentDetails(
-        filterConditionsRecuritment,
-        RecuritmentConditions
-      );
-
-      const [data, RecruitmentDetails] = await Promise.all([
-        dataPromise,
-        recruitmentDetailsPromise,
-      ]);
-
-      if (
-        props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-        activeTab === "tab1"
-      ) {
-        if (data.status === 200 && data.data !== null) {
-          setData(data.data);
-          const JobCode = data.data.map((item) => ({
-            ID: item.ID,
-            JobCode: item.JobCode,
-            JobTitle: item.JobTitleEnglish,
-          }));
-          const uniqueJobData = JobCode.filter(
-            (job, index, self) =>
-              index === self.findIndex((item) => item.ID === job.ID)
-          );
-          setJobCodeTitle(uniqueJobData);
-        }
-      } else {
-        if (
-          RecruitmentDetails.status === 200 &&
-          RecruitmentDetails.data !== null
-        ) {
-          setData(RecruitmentDetails.data);
-        }
+      const response =
+        props.CurrentRoleID === RoleID.RecruitmentHRLead && activeTab === "tab1"
+          ? await getVRRDetails.GetJobTitleInNPEP(
+              filterConditions,
+              Conditions,
+              props
+            )
+          : await getVRRDetails.GetRecruitmentDetails(
+              filterConditionsRecuritment,
+              RecuritmentConditions
+            );
+      if (response.status === 200) {
+        setData(response.data);
+        const JobCode = response.data.map((item) => ({
+          ID: item.ID,
+          JobCode: item.JobCode,
+          JobTitle: item.JobTitleEnglish,
+        }));
+        const uniqueJobData = JobCode.filter(
+          (job, index, self) =>
+            index === self.findIndex((item) => item.ID === job.ID)
+        );
+        setJobCodeTitle(uniqueJobData);
       }
     } catch (error) {
       console.log("GetVacancyDetails doesn't fetch the data", error);
@@ -820,9 +838,9 @@ const RecruitmentProcess = (props: any) => {
                   correspondingJob.NumberOfPersonNeeded
                 ),
                 EnterNumberOfMonths:
-                  correspondingJob.EnterNumberOfMonths ?? "1",
+                  correspondingJob.EnterNumberOfMonths ?? "0",
                 TypeOfContract: correspondingJob.TypeOfContract,
-                DateRequried: correspondingJob?.DateRequried,
+                DateRequried: correspondingJob?.DateRequried ?? null,
                 StatusId: StatusId.PendingwithHRLeadtoAssignRecruitmentHR,
                 ActionId: WorkflowAction.Approved,
                 JobCodeId: correspondingJob.JobCodeId,

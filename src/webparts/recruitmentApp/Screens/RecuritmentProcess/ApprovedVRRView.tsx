@@ -236,75 +236,76 @@ const ApprovedVRRView: React.FC = (props: any) => {
             OnamSignedStampsDocument: OnamSignedStampsDocment.data || [],
           }));
         }
-      }
-      const filterConditions = [
-        {
-          FilterKey: "RecruitmentIDId",
-          Operator: "eq",
-          FilterValue: props.stateValue.ID,
-        },
-      ];
-      const Advresponse =
-        await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
-          filterConditions,
-          ""
-        );
+        const filterConditions = [
+          {
+            FilterKey: "JobCode",
+            Operator: "eq",
+            FilterValue: op.JobCodeId,
+          },
+        ];
 
-      if (Advresponse.status === 200) {
-        const data = Advresponse.data;
+        const Advresponse =
+          await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+            filterConditions,
+            ""
+          );
 
-        if (data && data.length > 0) {
-          const rawData = data[0];
+        if (Advresponse.status === 200) {
+          const data = Advresponse.data;
 
-          const RoleSpeKnowledgeValues =
-            rawData.RoleSpecificKnowledge?.map(
-              (item: any) => item.RoleSpecificKnowledge
-            ) || [];
-          const RequiredLevelValues =
-            rawData.RoleSpecificKnowledge?.map(
-              (item: any) => item.RequiredLevel
-            ) || [];
+          if (data && data.length > 0) {
+            const rawData = data[0];
 
-          const TechnicalSkillsOption =
-            rawData.TechnicalSkillsKnowledge?.map(
-              (item: any, index: number) => ({
-                key: index,
-                text: item.TechnicalSkills,
-              })
-            ) || [];
+            const RoleSpeKnowledgeValues =
+              rawData.RoleSpecificKnowledge?.map(
+                (item: any) => item.RoleSpecificKnowledge
+              ) || [];
+            const RequiredLevelValues =
+              rawData.RoleSpecificKnowledge?.map(
+                (item: any) => item.RequiredLevel
+              ) || [];
 
-          const LevelProficiencyOption =
-            rawData.TechnicalSkillsKnowledge?.map(
-              (item: any, index: number) => ({
-                key: index,
-                text: item.LevelProficiency,
-              })
-            ) || [];
+            const TechnicalSkillsOption =
+              rawData.TechnicalSkillsKnowledge?.map(
+                (item: any, index: number) => ({
+                  key: index,
+                  text: item.TechnicalSkills,
+                })
+              ) || [];
 
-          const MinQualificationOption = rawData.Qualification
-            ? [{ key: 0, text: rawData.Qualification }]
-            : [];
-          const PrefeQualificationOption = rawData.PreferredQualification
-            ? [{ key: 0, text: rawData.PreferredQualification }]
-            : [];
+            const LevelProficiencyOption =
+              rawData.TechnicalSkillsKnowledge?.map(
+                (item: any, index: number) => ({
+                  key: index,
+                  text: item.LevelProficiency,
+                })
+              ) || [];
 
-          setAdvDetails((prevState) => ({
-            ...prevState,
-            RolePurpose: rawData.RoleProfile || "",
-            JobDescription: rawData.JobDescription || "",
-            MinQualificationOption: MinQualificationOption,
-            PrefeQualificationOption: PrefeQualificationOption,
-            TechnicalSkillsOption: TechnicalSkillsOption,
-            LevelProficiencyOption: LevelProficiencyOption,
-            RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
-            RequiredLeveloption: RequiredLevelValues,
-            TotalExperience: rawData.YearofExperience || "",
-            ExperienceinMiningIndustry: rawData.PreferredExperience || "",
-            YearofExperience: rawData.YearofExperience || "",
-            PreferredExperience: rawData.PreferredExperience || "",
-            FunctionType: rawData.FunctionType,
-            JobcodeChecked: true,
-          }));
+            const MinQualificationOption = rawData.Qualification
+              ? [{ key: 0, text: rawData.Qualification }]
+              : [];
+            const PrefeQualificationOption = rawData.PreferredQualification
+              ? [{ key: 0, text: rawData.PreferredQualification }]
+              : [];
+
+            setAdvDetails((prevState) => ({
+              ...prevState,
+              RolePurpose: rawData.RoleProfile || "",
+              JobDescription: rawData.JobDescription || "",
+              MinQualificationOption: MinQualificationOption,
+              PrefeQualificationOption: PrefeQualificationOption,
+              TechnicalSkillsOption: TechnicalSkillsOption,
+              LevelProficiencyOption: LevelProficiencyOption,
+              RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+              RequiredLeveloption: RequiredLevelValues,
+              TotalExperience: rawData.YearofExperience || "",
+              ExperienceinMiningIndustry: rawData.PreferredExperience || "",
+              YearofExperience: rawData.YearofExperience || "",
+              PreferredExperience: rawData.PreferredExperience || "",
+              FunctionType: rawData.FunctionType,
+              JobcodeChecked: true,
+            }));
+          }
         }
       }
     } catch (error) {

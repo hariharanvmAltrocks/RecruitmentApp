@@ -39,16 +39,61 @@ const InterviewPanelList = (props: any) => {
     ButtonAction: string
   ) {
     if (tab === "tab1") {
-      props.navigation("/InterviewPanelList/InterviewPanelEdit", {
-        state: {
-          ID: rowData?.ID,
-          tab,
-          StatusId: rowData?.StatusId,
-          Status: rowData?.Status,
-          TabName: TabName,
-          ButtonAction,
-        },
-      });
+      if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+        props.navigation(
+          "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit",
+          {
+            state: {
+              ID: rowData?.ID,
+              tab,
+              StatusId: rowData?.StatusId,
+              Status: rowData?.Status,
+              TabName: TabName,
+              ButtonAction,
+            },
+          }
+        );
+      } else if (props.CurrentRoleID === RoleID.HOD) {
+        props.navigation(
+          "/RecurimentProcess/InterviewPanelList/InterviewPanelEdit",
+          {
+            state: {
+              ID: rowData?.ID,
+              tab,
+              StatusId: rowData?.StatusId,
+              Status: rowData?.Status,
+              TabName: TabName,
+              ButtonAction,
+            },
+          }
+        );
+      } else if (props.CurrentRoleID === RoleID.LineManager) {
+        props.navigation(
+          "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit",
+          {
+            state: {
+              ID: rowData?.ID,
+              tab,
+              StatusId: rowData?.StatusId,
+              Status: rowData?.Status,
+              TabName: TabName,
+              ButtonAction,
+            },
+          }
+        );
+      } else {
+        props.navigation("InterviewPanelList/InterviewPanelEdit", {
+          state: {
+            ID: rowData?.ID,
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            TabName: TabName,
+            ButtonAction,
+          },
+        });
+        props.navigation("/InterviewPanelList");
+      }
     }
   }
 
@@ -322,7 +367,7 @@ const InterviewPanelList = (props: any) => {
   return (
     <>
       <CustomLoader isLoading={isLoading}>
-        <div className="menu-card">
+        <div className="sub-menu-card ">
           {props.CurrentRoleID === RoleID.InterviewPanel ? (
             <TabsComponent tabs={tabs} initialTab="tab1" tabClassName={"Tab"} />
           ) : (

@@ -55,7 +55,7 @@ export const QuestionnaireApi = {
         );
     },
     GetQuestionnaire: async function (JobCode: string) {
-        return await AxiosInstance.post(
+        return await AxiosInstance.get(
             `/GetInterviewPanelQuestionsByJobCode?jobCode=${JobCode}`
         );
     },

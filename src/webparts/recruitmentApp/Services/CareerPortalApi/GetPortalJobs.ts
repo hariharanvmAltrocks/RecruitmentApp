@@ -26,7 +26,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         Descriptions_fr: data?.Descriptions_fr,
         RoleAndTechSkills: data?.RoleAndTechSkills,
         MinAndPreferedQualifications: data?.MinAndPreferedQualifications,
-        // profileXAgent: data?.profileXAgent
+        IsActive: data?.IsActive
       }
       const response = await postAdveDetails.postUpsertJobs(AdvertisementDetails);
       return {
@@ -410,11 +410,11 @@ export default class GetPortalJobs implements IGetPortalJobs {
     try {
       const response = await QuestionnaireApi.GetQuestionnaire(jobCode);
       const GetQuestionnaire: QuestionItem[] = response.data.data.map((item: any) => ({
-        id: item.id,
+        id: item.sequence,
         question: item?.question?.quesContent?.contentEn,
-        answer: "",
+        answer: item?.question?.questionXAnswer?.optContent?.contentEn,
         rating: 0,
-        header: "",
+        header: "Q" + item.sequence,
       }));
       console.log(response, "GetAllMasterData");
       return {

@@ -140,7 +140,9 @@ const ReviewCandidateList = (props: any) => {
                   workflowStatusApi.LineManagerL2Pending) ||
               (props.CurrentRoleID === RoleID.LineManager &&
                 rowData.workflowStatusId ===
-                  workflowStatusApi.PendingRecruitmentHRscheduleInterview) ? (
+                  workflowStatusApi.PendingRecruitmentHRscheduleInterview) ||
+              (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                tab === "tab2") ? (
                 <>
                   <img
                     src={require("../../assets/Viewicon.svg")}

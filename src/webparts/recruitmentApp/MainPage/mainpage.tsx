@@ -113,6 +113,14 @@ export default function MainPage(props: any) {
                   path="/InterviewPanelList/InterviewPanelEdit"
                   element={<InterviewPanelEdit {...props} {...masterData} />}
                 />
+                <Route
+                  path="/RecurimentProcess/InterviewPanelList/InterviewPanelEdit"
+                  element={<InterviewPanelEdit {...props} {...masterData} />}
+                />
+                <Route
+                  path="/ReviewProfileList/InterviewPanelList/InterviewPanelEdit"
+                  element={<InterviewPanelEdit {...props} {...masterData} />}
+                />
 
                 <Route
                   path="/RecurimentProcess/HodScoreCard/CandidateList"

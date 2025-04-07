@@ -25,7 +25,6 @@ import {
   WorkflowAction,
   workflowStatusApi,
   RoleID,
-  QuestionnaireData,
   ResponeStatus,
 } from "../../utilities/Config";
 import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
@@ -158,14 +157,16 @@ const InterviewPanelEdit = (props: any) => {
   ]);
 
   //Questionaires
-  const [questionnaire, setQuestionnaire] =
-    React.useState<QuestionItem[]>(QuestionnaireData);
+  const [questionnaire, setQuestionnaire] = React.useState<QuestionItem[]>([]);
 
-  const handleRatingChange = (id: number, rating: number) => {
-    setQuestionnaire((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, rating } : q))
+  const handleRatingChange = (id: number, value: AutoCompleteItem | null) => {
+    setQuestionnaire((prevState) =>
+      prevState.map((q) =>
+        q.id === id ? { ...q, rating: value?.key ?? 0 } : q
+      )
     );
   };
+
   const ScoreRating = [
     { key: 3, text: "3 - Excellent" },
     { key: 2, text: "2 - Acceptable" },
@@ -252,6 +253,52 @@ const InterviewPanelEdit = (props: any) => {
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
         }));
+        if (questionnaire.length < 0) {
+          const getQuestion = await GetPortalJobsService.getQuestionnaire(
+            op?.JobCode
+          );
+          if (getQuestion.status === ResponeStatus.SUCCESS) {
+            setQuestionnaire(getQuestion?.data ?? []);
+          } else {
+            let APIErrorMsg = {
+              Message: RecuritmentHRMsg.APIErrorMsg,
+              Type: HRMSAlertOptions.Error,
+              visible: true,
+              ButtonAction: async (userClickedOK: boolean) => {
+                if (userClickedOK) {
+                  if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+                    props.navigation("/ReviewProfileList", {
+                      // state: {
+                      //   activeTab: "tab3",
+                      // },
+                    });
+                  } else if (props.CurrentRoleID === RoleID.HOD) {
+                    props.navigation("/RecurimentProcess", {
+                      // state: {
+                      //   activeTab: "tab3",
+                      // },
+                    });
+                  } else if (props.CurrentRoleID === RoleID.LineManager) {
+                    props.navigation("/ReviewProfileList", {
+                      // state: {
+                      //   activeTab: "tab3",
+                      // },
+                    });
+                  } else {
+                    props.navigation("/InterviewPanelList");
+                  }
+                  setAlertPopupOpen(false);
+                } else {
+                  setAlertPopupOpen(false);
+                }
+              },
+            };
+
+            setAlertPopupOpen(true);
+            setalertProps(APIErrorMsg);
+            setIsLoading(false);
+          }
+        }
       }
     } catch (error) {
       console.log(error);
@@ -281,7 +328,6 @@ const InterviewPanelEdit = (props: any) => {
   // };
 
   const handleCheckbox = (value: boolean) => {
-    console.log("Checkbox clicked:", value);
     setCheckbox(value);
     setValidationError((prevState) => ({
       ...prevState,
@@ -371,6 +417,7 @@ const InterviewPanelEdit = (props: any) => {
   };
 
   const Submit_fn = async () => {
+    setIsLoading(true);
     try {
       let isValid = !Validation();
       if (!isValid) return;
@@ -431,15 +478,15 @@ const InterviewPanelEdit = (props: any) => {
 
       for (const panel of userPanels) {
         const InterviewPanelID = panel.ID;
-        let QuestionScore: { header: string; score: number }[] = [];
+        let QuestionScore: { [key: string]: number }[] = [];
 
         questionnaire.forEach((item) => {
           let QuestionScoreData = {
-            header: item?.header ?? "",
-            score: item?.rating ?? 0,
+            [item.header as string]: item.rating ?? 0,
           };
           QuestionScore.push(QuestionScoreData);
         });
+
         const scorecardObj = {
           RelevantQualification: String(CandidateData?.Qualifications?.key),
           ReleventExperience: String(CandidateData?.Experience?.key),
@@ -492,7 +539,8 @@ const InterviewPanelEdit = (props: any) => {
       }
 
       const level1Panels = updatedInterviewPanelResponse.data.filter(
-        (p) => p.InterviewLevel === InterviewLevels.Level1
+        (p) =>
+          p.InterviewLevel === InterviewLevels.Level1 || InterviewLevels.Level2
       );
 
       const uploadedCount = level1Panels.filter(
@@ -537,21 +585,21 @@ const InterviewPanelEdit = (props: any) => {
           if (userClickedOK) {
             if (props.CurrentRoleID === RoleID.RecruitmentHR) {
               props.navigation("/ReviewProfileList", {
-                state: {
-                  activeTab: "tab3",
-                },
+                // state: {
+                //   activeTab: "tab3",
+                // },
               });
             } else if (props.CurrentRoleID === RoleID.HOD) {
               props.navigation("/RecurimentProcess", {
-                state: {
-                  activeTab: "tab3",
-                },
+                // state: {
+                //   activeTab: "tab3",
+                // },
               });
             } else if (props.CurrentRoleID === RoleID.LineManager) {
               props.navigation("/ReviewProfileList", {
-                state: {
-                  activeTab: "tab3",
-                },
+                // state: {
+                //   activeTab: "tab3",
+                // },
               });
             } else {
               props.navigation("/InterviewPanelList");
@@ -1039,9 +1087,21 @@ const InterviewPanelEdit = (props: any) => {
               <div style={{ marginTop: "20px" }}>
                 {questionnaire.map((q) => (
                   <div key={q.id} style={{ marginBottom: "15px" }}>
-                    <p style={{ fontWeight: "bold" }}>{q.question}</p>
+                    <p style={{ fontWeight: "bold" }}>
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: q.question,
+                        }}
+                      />
+                    </p>
                     <p>
-                      <strong>Expected Answer:</strong> {q.answer}
+                      <strong>Expected Answer:</strong>
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: q.answer,
+                        }}
+                      />
+                      {/* {q.answer} */}
                     </p>
 
                     <div
@@ -1060,9 +1120,7 @@ const InterviewPanelEdit = (props: any) => {
                             ) || null
                           }
                           options={ScoreRating}
-                          onChange={(value) =>
-                            handleRatingChange(q.id, value ? value.key : 0)
-                          }
+                          onChange={(value) => handleRatingChange(q.id, value)}
                           error={false}
                           mandatory={true}
                           disabled={false}
@@ -1307,6 +1365,7 @@ const InterviewPanelEdit = (props: any) => {
       ),
     },
   ];
+
   React.useEffect(() => {
     const activeTabObj = tabs.find((item) => item.value === activeTab);
 
@@ -1323,58 +1382,82 @@ const InterviewPanelEdit = (props: any) => {
 
     const fetchData = async () => {
       setIsLoading(true);
+      fetchCandidateData(props.stateValue?.ID)
+        .then(() => {
+          const filterConditions = [
+            {
+              FilterKey: "CandidateIDId",
+              Operator: "eq",
+              FilterValue: props.stateValue?.ID,
+            },
+          ];
 
-      const getQuestion = await GetPortalJobsService.getQuestionnaire(
-        CandidateData.JobCode
-      );
-      if (getQuestion.status === ResponeStatus.SUCCESS) {
-        setQuestionnaire(getQuestion?.data ?? []);
-        fetchCandidateData(props.stateValue?.ID)
-          .then(() => {
-            const filterConditions = [
-              {
-                FilterKey: "CandidateIDId",
-                Operator: "eq",
-                FilterValue: props.stateValue?.ID,
-              },
-            ];
+          return InterviewServices.GetInterviewPanelDetails(filterConditions);
+        })
+        .then((response) => {
+          if (
+            response?.data &&
+            Array.isArray(response.data) &&
+            response.data.length > 0
+          ) {
+            const filteredPanels = response.data.filter(
+              (item) => item.CandidateID === props.stateValue?.ID
+            );
 
-            return InterviewServices.GetInterviewPanelDetails(filterConditions);
-          })
-          .then((response) => {
-            if (
-              response?.data &&
-              Array.isArray(response.data) &&
-              response.data.length > 0
-            ) {
-              const filteredPanels = response.data.filter(
-                (item) => item.CandidateID === props.stateValue?.ID
+            if (filteredPanels.length > 0) {
+              const interviewPanelTitles = filteredPanels.map(
+                (panel) => panel.InterviewPanelTitle
               );
 
-              if (filteredPanels.length > 0) {
-                const interviewPanelTitles = filteredPanels.map(
-                  (panel) => panel.InterviewPanelTitle
-                );
+              console.log("", InterviewPanelData);
+              setInterviewPanelData((prevState) => ({
+                ...prevState,
+                interviewPanelTitles: interviewPanelTitles || [],
+              }));
 
-                console.log("", InterviewPanelData);
-                setInterviewPanelData((prevState) => ({
-                  ...prevState,
-                  interviewPanelTitles: interviewPanelTitles || [],
-                }));
-
-                setCandidateData((prevState) => ({
-                  ...prevState,
-                  interviewPanelTitles: interviewPanelTitles || [],
-                }));
-              }
+              setCandidateData((prevState) => ({
+                ...prevState,
+                interviewPanelTitles: interviewPanelTitles || [],
+              }));
             }
-          })
-          .catch((error) => {});
-      }
+          }
+        })
+        .catch((error) => {});
     };
 
     void fetchData();
   }, [props.stateValue?.ID, activeTab]);
+
+  // React.useEffect(() => {
+  //   const fetchQuestion = async () => {
+  //     const getQuestion = await GetPortalJobsService.getQuestionnaire(
+  //       CandidateData.JobCode
+  //     );
+  //     console.log(getQuestion, "getQuestion");
+
+  //     if (getQuestion.status === ResponeStatus.SUCCESS) {
+  //       setQuestionnaire(getQuestion?.data ?? []);
+  //     } else {
+  //       let APIErrorMsg = {
+  //         Message: RecuritmentHRMsg.APIErrorMsg,
+  //         Type: HRMSAlertOptions.Error,
+  //         visible: true,
+  //         ButtonAction: async (userClickedOK: boolean) => {
+  //           if (userClickedOK) {
+  //             setAlertPopupOpen(false);
+  //           } else {
+  //             setAlertPopupOpen(false);
+  //           }
+  //         },
+  //       };
+
+  //       setAlertPopupOpen(true);
+  //       setalertProps(APIErrorMsg);
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   void fetchQuestion();
+  // }, [activeTab]);
 
   const handleCancel = () => {
     setIsLoading(true);
@@ -1387,21 +1470,21 @@ const InterviewPanelEdit = (props: any) => {
         if (userClickedOK) {
           if (props.CurrentRoleID === RoleID.RecruitmentHR) {
             props.navigation("/ReviewProfileList", {
-              state: {
-                activeTab: "tab3",
-              },
+              // state: {
+              //   activeTab: "tab3",
+              // },
             });
           } else if (props.CurrentRoleID === RoleID.HOD) {
             props.navigation("/RecurimentProcess", {
-              state: {
-                activeTab: "tab3",
-              },
+              // state: {
+              //   activeTab: "tab3",
+              // },
             });
           } else if (props.CurrentRoleID === RoleID.LineManager) {
             props.navigation("/ReviewProfileList", {
-              state: {
-                activeTab: "tab3",
-              },
+              // state: {
+              //   activeTab: "tab3",
+              // },
             });
           } else {
             props.navigation("/InterviewPanelList");

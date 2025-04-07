@@ -238,7 +238,7 @@ export default class RecruitmentService implements IRecruitmentService {
               NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
               EnterNumberOfMonths: item?.EnterNumberOfMonths,
               AreaofWork: item.AreaofWork,
-              DateRequried: item.DateRequried ? item?.DateRequried : "",
+              DateRequried: item.DateRequried ? item?.DateRequried : null,
               Type: DataFrom.NewPosition,
               Status: item.Status ? item.Status.StatusDescription : "",
               StatusId: item?.StatusId,
@@ -1090,13 +1090,13 @@ export default class RecruitmentService implements IRecruitmentService {
     ListName: string
   ): Promise<ApiResponse<null>> {
     try {
-      await SPServices.SPAddItem({
+      const response = await SPServices.SPAddItem({
         Listname: ListName,
         RequestJSON: obj,
       });
 
       return {
-        data: null,
+        data: response.data,
         status: 200,
         message: "Data Submitted successfully",
       };
@@ -1499,7 +1499,8 @@ export default class RecruitmentService implements IRecruitmentService {
     Condition: string,
     RecuritmentDetails: RecuritmentData,
     AdvertisementValue: AdvDetails,
-    MasterData: any
+    MasterData: any,
+    IsActive: number,
   ): Promise<ApiResponse<null>> {
     try {
       const res = await SPServices.SPGetItems({
@@ -1587,14 +1588,15 @@ export default class RecruitmentService implements IRecruitmentService {
 
       const AdvertisementDetails: AdvertisementDetails = {
         jobCode: RecuritmentDetails.JobCode,
+        IsActive: IsActive,
         noOfPositions: String(RecuritmentDetails.NoofPositionAssigned),
-        validFrom: AdvertisementValue.ValidFrom,
-        validTo: AdvertisementValue.ValidTo,
+        validFrom: AdvertisementValue.ValidFrom ?? null,
+        validTo: AdvertisementValue.ValidTo ?? null,
         employmentType: "Full Time",
         departmentId: DepartmentCode?.code || "",
         role: null,
         functionId: String(data.FunctionType?.Code || ""),
-        onemdocPath: onemdocPath,
+        onemdocPath: onemdocPath ?? "",
         experience: String(
           data.TotalPreferredExperience?.ExperienceInYearRange || ""
         ),

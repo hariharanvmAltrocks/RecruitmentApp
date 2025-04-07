@@ -144,7 +144,7 @@ export type PostRecuritmentData = {
     NumberOfPersonNeeded: number,
     EnterNumberOfMonths: string,
     AreaofWork: string,
-    DateRequried: Date | undefined,
+    DateRequried: Date | null,
     DataFrom: string,
     StatusId: number,
     ActionId: number,
@@ -237,7 +237,8 @@ export type IRecruitmentService = {
     Condition: string,
     RecuritmentDetails: RecuritmentData,
     AdvertisementValue: AdvDetails,
-    MasterData: any
+    MasterData: any,
+    IsActive: number
   ): Promise<ApiResponse<null>>;
 
 };
