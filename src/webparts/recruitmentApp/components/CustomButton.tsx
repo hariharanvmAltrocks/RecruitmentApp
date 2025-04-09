@@ -1,5 +1,6 @@
 import * as React from "react";
 import { PrimaryButton } from "@fluentui/react";
+import { ColorCode } from "../utilities/Config";
 
 interface CustomButtonProps {
   text?: string;
@@ -27,7 +28,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       <PrimaryButton
         style={{
           borderColor: "rgb(205, 45, 45)",
-          backgroundColor: "#EF3340",
+          backgroundColor:ColorCode.ButtonColorCode.ButtonColor,
           color: "white",
           borderRadius: "5px",
           minWidth: "60px",

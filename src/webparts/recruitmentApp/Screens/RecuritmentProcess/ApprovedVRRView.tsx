@@ -4,7 +4,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import "../../App.css";
 import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
-import { DocumentLibraray, RoleProfileMaster } from "../../utilities/Config";
+import { ColorCode, DocumentLibraray, RoleProfileMaster } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { AdvDetails, RecuritmentData } from "../../Models/RecuritmentVRR";
 import CustomLabel from "../../components/CustomLabel";
@@ -689,7 +689,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                             flexDirection: "column",
                             height: "41px",
                             paddingTop: "23px",
-                            backgroundColor: "#EF3340",
+                            backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                             color: "white",
                             justifyContent: "center",
                             alignItems: "center",
@@ -728,7 +728,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                         flexDirection: "column",
                         height: "41px",
                         paddingTop: "23px",
-                        backgroundColor: "#EF3340",
+                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                         color: "white",
                         justifyContent: "center",
                         alignItems: "center",

@@ -6,7 +6,7 @@ import {
 } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
-  GridStatusBackgroundcolor,
+  
   RoleID,
   TabName,
   tabType,
@@ -72,23 +72,7 @@ const ReviewCandidateList = (props: any) => {
       body: (rowData: any) => {
         return (
           <span
-            style={{
-              backgroundColor:
-                rowData?.Status?.includes("Pending") === true // "Pending"
-                  ? GridStatusBackgroundcolor.Pending
-                  : rowData?.Status?.includes("On-Hold") === true
-                  ? GridStatusBackgroundcolor.CompletedOrApproved
-                  : rowData?.Status?.includes("Rejected") === true
-                  ? GridStatusBackgroundcolor.Rejected
-                  : rowData?.Status?.includes("Reverted") === true
-                  ? GridStatusBackgroundcolor.Reverted
-                  : rowData?.Status?.includes("Resubmitted") === true
-                  ? GridStatusBackgroundcolor.ReSubmitted
-                  : rowData?.Status?.includes("Draft") === true
-                  ? GridStatusBackgroundcolor.Draft
-                  : "",
-              borderRadius: "5px",
-            }}
+         
           >
             {rowData.Status}
           </span>
@@ -579,7 +563,7 @@ const ReviewCandidateList = (props: any) => {
                   <TabsComponent
                     tabs={breadcrumbs}
                     initialTab={breadcrumbTab}
-                    tabClassName={"Tab"}
+                    // tabClassName={"Tab"}
                     tabtype={tabType.Dashboard}
                     onTabChange={handleTabChange}
                   />

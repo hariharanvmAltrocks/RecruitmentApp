@@ -11,6 +11,7 @@ import { Icon, Label } from "office-ui-fabric-react";
 import AttachmentButton from "../../components/AttachmentButton";
 import {
   Choices,
+  ColorCode,
   DocumentLibraray,
   HRMSAlertOptions,
   ListNames,
@@ -1724,7 +1725,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         mandatory={true}
                         error={validationErrors.OnamSignedStampsAttchment}
                         Style={{
-                          backgroundColor: "rgb(239, 51, 64)",
+                          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                           color: "white",
                         }}
                       />
@@ -1794,7 +1795,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           flexDirection: "column",
                           height: "41px",
                           paddingTop: "23px",
-                          backgroundColor: "#EF3340",
+                          backgroundColor:ColorCode.ButtonColorCode.ButtonColor,
                           color: "white",
                           justifyContent: "center",
                           alignItems: "center",
@@ -1841,7 +1842,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           flexDirection: "column",
                           height: "41px",
                           paddingTop: "23px",
-                          backgroundColor: "#EF3340",
+                          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                           color: "white",
                           justifyContent: "center",
                           alignItems: "center",
@@ -1971,7 +1972,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                   flexDirection: "column",
                                   height: "41px",
                                   paddingTop: "23px",
-                                  backgroundColor: "#EF3340",
+                                  backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                                   color: "white",
                                   justifyContent: "center",
                                   alignItems: "center",
@@ -2021,7 +2022,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           flexDirection: "column",
                           height: "41px",
                           paddingTop: "23px",
-                          backgroundColor: "#EF3340",
+                          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                           color: "white",
                           justifyContent: "center",
                           alignItems: "center",

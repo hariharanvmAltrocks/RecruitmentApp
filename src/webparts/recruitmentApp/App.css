@@ -62,9 +62,13 @@ p:hover .tooltip {
 }
 
 .MuiButtonBase-root.Mui-selected {
-  color: black !important;
-  background-color: white !important;
+  color: white !important;
+  background-color:#0D547B !important;
   border-radius: 4px 4px 4px 4px !important;
+  text-decoration: underline;
+  text-underline-position: under;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
 }
 
 .MuiTabs-flexContainer button {
@@ -176,7 +180,7 @@ p:hover .tooltip {
 .p-paginator .p-dropdown {
   background: #ffffff;
   /* border: 1px solid #d1d5db; */
-  border: 1px solid #ef3340;
+  border: 1px solid #EEEEEE ;
   /* transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s; */
   border-radius: 6px;
   align-items: center;
@@ -332,7 +336,7 @@ p:hover .tooltip {
 
 .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
   /* color: #0e7490; */
-  background: #ff8d8d40;
+  background: #EEEEEE ;
   color: #ecfeff;
 }
 
@@ -383,7 +387,7 @@ p:hover .tooltip {
 
 /* rows */
 .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd {
-  background: #ff8d8d40;
+  background: #EEEEEE ;
 }
 
 /* --------------------------------------------------DataTable--------------------------------------------- */
@@ -391,7 +395,7 @@ p:hover .tooltip {
 /* --------------------------------------------------Menu Css--------------------------------------------- */
 
 .menu-card {
-  background-color: white;
+  background-color:#EEEEEE;
   /* Set the background color */
   padding: 20px;
   /* Add some padding for spacing */
@@ -1115,7 +1119,7 @@ html {
 /* --------------------------------------------------Menu Css--------------------------------------------- */
 
 .title {
-  color: #ef3340;
+  color: #597b98;
   font-family: "Roboto", sans-serif !important;
   font-size: 22px;
   font-style: normal;

@@ -203,7 +203,7 @@ export const RecuritmentHRMsg = {
   PositionIDassigned: "Position ID assigned for the selected Candidate.",
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
-  APIErrorMsg: "Network Issue Please try again",
+  APIErrorMsg: "Service is temporarily unavailable.",
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
   QuestionSuccessMsg: "The question has been created successfully",
@@ -422,22 +422,22 @@ export const categoryOption = [
 
 export const ColorCode = {
   TabColorCode: {
-    Tabcolor: "#EF3340",
-    TabboxShadowRed: "rgba(239, 51, 64, 0.2)",
+    Tabcolor: "#a8b8c6",
+    TabboxShadow:  "#93a6b7",
   },
   SideNavColorCode: {
     SideNavColor: "#f5f5f5",
   },
   LabelStyleColorCode: {
-    LabelStyleColor: "#EF3340",
-    boxShadowRed: "rgba(239, 51, 64, 0.2)",
+    LabelStyleColor: "#597b98",
+    boxShadow: "rgba(239, 51, 64, 0.2)",
   },
   ButtonColorCode: {
-    ButtonColor: "#EF3340",
+    ButtonColor: "#0D547B",
     boxShadowRed: "rgba(239, 51, 64, 0.2)",
-    color: "#EF3340",
+    color: "white !important",
     backgroundColor: "white",
     ButtonbordeColor: "rgba(239, 51, 64)",
-    ButtonHoverColor: "#FFFFFF",
+    ButtonHoverColor: "white !important",
   }
 }

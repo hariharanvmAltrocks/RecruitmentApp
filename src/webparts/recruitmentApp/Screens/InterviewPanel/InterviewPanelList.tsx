@@ -7,7 +7,7 @@ import {
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import {
-  GridStatusBackgroundcolor,
+  // GridStatusBackgroundcolor,
   HRMSAlertOptions,
   ListNames,
   RecuritmentHRMsg,
@@ -142,13 +142,6 @@ const InterviewPanelList = (props: any) => {
       body: (rowData: any) => {
         return (
           <span
-            style={{
-              backgroundColor:
-                rowData.Status.includes("Interview Scheduled") === true
-                  ? GridStatusBackgroundcolor.Pending
-                  : "",
-              borderRadius: "5px",
-            }}
           >
             {rowData.Status}
           </span>
@@ -369,7 +362,10 @@ const InterviewPanelList = (props: any) => {
       <CustomLoader isLoading={isLoading}>
         <div className="sub-menu-card ">
           {props.CurrentRoleID === RoleID.InterviewPanel ? (
-            <TabsComponent tabs={tabs} initialTab="tab1" tabClassName={"Tab"} />
+            <TabsComponent tabs={tabs}
+             initialTab="tab1"
+            //  tabClassName={"Tab"}
+              />
           ) : (
             <ReviewProfileDatatable
               data={CandidateData}

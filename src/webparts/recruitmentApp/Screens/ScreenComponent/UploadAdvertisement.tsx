@@ -18,6 +18,7 @@ import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CustomInput from "../../components/CustomInput";
 import ReuseButton from "../../components/ReuseButton";
 import {
+  ColorCode,
   HRMSAlertOptions,
   ListNames,
   RecuritmentHRMsg,
@@ -528,7 +529,7 @@ export const UploadAdvertisement = ({
                 mandatory={true}
                 error={validationErrors.AdvertisementAttachement}
                 Style={{
-                  backgroundColor: "rgb(239, 51, 64)",
+                  backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                   color: "white",
                 }}
               />

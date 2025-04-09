@@ -4,7 +4,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import "../App.css";
 import ReuseButton from "./ReuseButton";
 import StatusBar from "./StatusBar";
-import { tabType } from "../utilities/Config";
+import { ColorCode, tabType } from "../utilities/Config";
 
 interface TabData {
     label: string;
@@ -96,12 +96,11 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                                 variant="scrollable"
                                 scrollButtons
                                 sx={{
-                                    backgroundColor: "#EF3340",
+                                    backgroundColor:ColorCode.TabColorCode.Tabcolor,
                                     width: "95%",
                                     borderRadius: "6px",
                                     height: "80px",
-                                    boxShadow:
-                                        " 0 2px 4px 3px rgba(235,3,3,.2)",
+                                    boxShadow: `0 2px 4px 3px ${ColorCode.TabColorCode.TabboxShadow}`,
                                     marginLeft: "30px",
                                     textAlign: "center",
                                     justifyContent: "space-evenly",
