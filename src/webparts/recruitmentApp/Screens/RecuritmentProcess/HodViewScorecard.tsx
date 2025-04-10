@@ -9,6 +9,7 @@ import CustomLoader from "../../Services/Loader/CustomLoader";
 import { alertPropsData, InterviewPanaldata } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import {
+  ColorCode,
   DocumentLibraray,
   HRMSAlertOptions,
   ListNames,
@@ -49,6 +50,7 @@ import HODQuestionsView from "./HODQuestionsView";
 
 type ValidationError = {
   Comments: boolean;
+  Checkboxalidation: boolean,
 };
 
 const HodViewScorecard = (props: any) => {
@@ -112,13 +114,14 @@ const HodViewScorecard = (props: any) => {
   const [validationErrors, setValidationError] =
     React.useState<ValidationError>({
       Comments: false,
+      Checkboxalidation: false,
     });
   const [scoreData, setScoreData] = React.useState<any[]>([]);
   const [interviewPanelTitles, setInterviewPanelTitles] = React.useState<
     string[]
   >([]);
   const candidateID = props.stateValue?.ID;
-  const [Checkboxs, setCheckbox] = React.useState<boolean>(false);
+  const [Checkbox, setCheckbox] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -193,18 +196,21 @@ const HodViewScorecard = (props: any) => {
 
           let questionScores: any = {};
           let interviewerCount = 0;
-
           filteredScores.forEach((score: any, interviewerIndex: number) => {
-            if (score.QuestionJson) {
-              score.QuestionJson.forEach((q: any) => {
-                const key = Object.keys(q)[0];
-                if (!questionScores[key]) {
-                  questionScores[key] = { criteria: key };
+            let questions = score.QuestionJson;
+            if (Array.isArray(questions)) {
+              questions.forEach((q: any) => {
+                const header = q.header;
+                const scoreValue = q.score;
+
+                if (!questionScores[header]) {
+                  questionScores[header] = { criteria: header };
                 }
-                questionScores[key][`interviewer_${interviewerIndex + 1}`] =
-                  q[key];
+
+                questionScores[header][`interviewer_${interviewerIndex + 1}`] = scoreValue;
               });
             }
+
             interviewerCount++;
           });
 
@@ -317,9 +323,9 @@ const HodViewScorecard = (props: any) => {
   //Questionnaries
   const handleAccordionChange =
     (accordion: string) =>
-    (event: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? accordion : null);
-    };
+      (event: React.SyntheticEvent, isExpanded: boolean) => {
+        setExpanded(isExpanded ? accordion : null);
+      };
 
   const handleCancel = () => {
     setIsLoading(true);
@@ -431,9 +437,8 @@ const HodViewScorecard = (props: any) => {
         <>
           <div className="agencies_card ">
             <LabelHeaderComponents
-              value={`Profile from ${
-                agentName ? agentName + " Agencies" : "Candidate"
-              }`}
+              value={`Profile from ${agentName ? agentName + " Agencies" : "Candidate"
+                }`}
             />
           </div>
           <Card
@@ -598,8 +603,8 @@ const HodViewScorecard = (props: any) => {
                       value={
                         CandidateData.InterviewDate
                           ? new Date(CandidateData.InterviewDate)
-                              .toLocaleDateString("en-GB")
-                              .replace(/\//g, "-")
+                            .toLocaleDateString("en-GB")
+                            .replace(/\//g, "-")
                           : ""
                       }
                       disabled={true}
@@ -681,7 +686,7 @@ const HodViewScorecard = (props: any) => {
                   marginBottom: "12px",
                 }}
               >
-                <h2 style={{ color: "#EF3340", fontSize: "18px" }}>
+                <h2 style={{ color: ColorCode.ButtonColorCode.ButtonColor, fontSize: "18px" }}>
                   Scorecard Details
                 </h2>
                 <div
@@ -694,16 +699,15 @@ const HodViewScorecard = (props: any) => {
                 >
                   <span
                     style={{
-                      color: "#ef3340 ",
+                      color: ColorCode.LabelStyleColorCode.LabelStyleColor,
                       position: "relative",
                       fontSize: "18px",
                       fontWeight: 700,
                       top: "7px",
                     }}
                   >
-                    {`Profile from ${
-                      agentName ? agentName + " Agencies" : "Candidate"
-                    }`}
+                    {`Profile from ${agentName ? agentName + " Agencies" : "Candidate"
+                      }`}
                   </span>
                 </div>
               </div>
@@ -777,7 +781,7 @@ const HodViewScorecard = (props: any) => {
                             flexDirection: "column",
                             height: "35px",
                             paddingTop: "10px",
-                            backgroundColor: "#EF3340",
+                            backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                             color: "white",
                             justifyContent: "center",
                             alignItems: "center",
@@ -858,7 +862,7 @@ const HodViewScorecard = (props: any) => {
                         flexDirection: "column",
                         height: "41px",
                         paddingTop: "23px",
-                        backgroundColor: "#EF3340",
+                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                         color: "white",
                         justifyContent: "center",
                         alignItems: "center",
@@ -890,9 +894,15 @@ const HodViewScorecard = (props: any) => {
               <div className="ms-Grid-col ms-lg12">
                 <SignatureCheckbox
                   label={TabName.CheckboxContent}
-                  checked={Checkboxs}
-                  error={false}
-                  onChange={(value: boolean) => setCheckbox(value)}
+                  checked={Checkbox}
+                  error={validationErrors.Checkboxalidation}
+                  onChange={(value: boolean) => {
+                    setCheckbox(value);
+                    setValidationError((prevState) => ({
+                      ...prevState,
+                      Checkboxalidation: false,
+                    }));
+                  }}
                 />
               </div>
               <div className="ms-Grid-row">
@@ -909,7 +919,7 @@ const HodViewScorecard = (props: any) => {
                     JobTitleInFrench={props.userDetails[0].JopTitleFrench}
                     Department={props.userDetails[0].DepartmentName}
                     Date={CandidateData.SignDate.toString()}
-                    TermsAndCondition={Checkboxs}
+                    TermsAndCondition={Checkbox}
                   />
                 </div>
               </div>
@@ -1079,15 +1089,17 @@ const HodViewScorecard = (props: any) => {
     setactiveTab(newItem);
   };
   const Validation = (): boolean => {
-    const { Comments } = CandidateData;
+    const { Comments, } = CandidateData;
 
     let errors = {
       Comments: false,
+      Checkboxalidation: false
     };
     switch (props.CurrentRoleID) {
       case RoleID.HOD: {
         if (props.stateValue?.tab === "tab1") {
           errors.Comments = !IsValid(Comments);
+          errors.Checkboxalidation = !IsValid(Checkbox);
         }
         break;
       }
@@ -1105,6 +1117,7 @@ const HodViewScorecard = (props: any) => {
       setValidationError((prevState) => ({
         ...prevState,
         Comments: true,
+        Checkboxalidation:true
       }));
       return;
     }

@@ -3,6 +3,7 @@ import * as React from "react";
 import { Button } from "primereact/button";
 import { Icon } from "@fluentui/react/lib/Icon";
 import { Label } from "@fluentui/react";
+import { ColorCode } from "../utilities/Config";
 
 interface AttachmentButtonProps {
   iconName?: string;
@@ -80,15 +81,6 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
       }
     }
   };
-
-  // const buttonStyle = {
-  //   backgroundColor: isHovered ? "#EF3340" : backgroundColor || "white",
-  //   border: "1px solid rgb(205, 45, 45)",
-  //   padding: "6px",
-  //   borderRadius: "5px",
-  //   ...Style,
-
-  // };
   const buttonStyle: React.CSSProperties = {
     minWidth: "117px",
     fontSize: "13px",
@@ -97,15 +89,15 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
     flexDirection: "column",
     height: "55px",
 
-    backgroundColor: "rgb(239, 51, 64)",
+    backgroundColor:ColorCode.ButtonColorCode.ButtonColor,
     color: "white",
-    border: "rgb(239, 51, 64)",
+    border: ColorCode.ButtonColorCode.ButtonbordeColor,
 
     borderRadius: "5px",
     ...Style,
   };
   const LabelStyle = {
-    color: "rgb(239, 51, 64)",
+    color: ColorCode.ButtonColorCode.ButtonColor,
     marginBottom: "0",
     ...Style,
   };
@@ -114,16 +106,16 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
     marginRight: "8px",
     marginLeft: "6px",
     fontSize: "20px",
-    color: "white",
+    color:  ColorCode.ButtonColorCode.color,
   };
 
   const LabelStyleHover = {
-    color: "#FFFF",
+    color:  ColorCode.ButtonColorCode.color,
   };
 
   const IconStyleHover = {
-    color: "#FFFF",
-    backgroundColor: "#EF3340",
+    color: ColorCode.ButtonColorCode.color,
+    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
     marginRight: "8px",
     marginLeft: "6px",
     fontSize: "20px",

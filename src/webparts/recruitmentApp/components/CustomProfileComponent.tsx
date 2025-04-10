@@ -29,7 +29,7 @@ function CustomProfileComponent({
           boxShadow: "0px 5px 10px 0px #0F4B8426",
         }}
       >
-        <AccountCircleIcon style={{ fontSize: 46, color: "#EF3340" }} />
+        <AccountCircleIcon style={{ fontSize: 46, color: "#597b98" }} />
 
         <div>
           <p
@@ -37,7 +37,7 @@ function CustomProfileComponent({
               display: "flex",
               alignItems: "center",
               marginLeft: "5px",
-              color: "#EF3340", //"#0D547B",
+              color: "#597b98", //"#0D547B",
               fontWeight: "400",
               fontSize: "12px",
               marginTop: "5px",
@@ -47,7 +47,7 @@ function CustomProfileComponent({
             <p
               style={{
                 fontWeight: "bold",
-                color: "#EF3340", // "#0D547B",
+                color: "#597b98", // "#0D547B",
               }}
             >
               {userName}
@@ -62,7 +62,7 @@ function CustomProfileComponent({
                 fontWeight: "400",
                 fontSize: "12px",
                 marginLeft: "5px",
-                color: "#EF3340", //"#0D547B",
+                color: "#597b98", //"#0D547B",
               }}
             >
               ({userRole} - {Department?.split("-")[1] ?? ""})

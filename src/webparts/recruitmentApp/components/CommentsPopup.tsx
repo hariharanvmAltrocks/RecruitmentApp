@@ -4,6 +4,7 @@ import ReuseButton from "./ReuseButton";
 import LabelHeaderComponents from "./TitleHeader";
 import * as moment from "moment";
 import CustomPopup from "./CustomPopup/CustomPopup";
+import { ColorCode } from "../utilities/Config";
 
 type IProps = {
     CommentsDetail?: [];
@@ -60,7 +61,7 @@ function CommentsPopup({
                                             minWidth: "auto",
                                             paddingLeft: "10px",
                                             paddingRight: "10px",
-                                            backgroundColor: "#EF3340",
+                                            backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                                         }}
                                         imgSrc={require("../assets/Viewicon.svg")}
                                         imgAlt="Close"

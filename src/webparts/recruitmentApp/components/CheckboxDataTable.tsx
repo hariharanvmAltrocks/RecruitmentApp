@@ -11,6 +11,7 @@ import CustomAutoComplete from "./CustomAutoComplete";
 import { FilterData } from "./CustomDataTable";
 import { AutoCompleteItem } from "../Models/Screens";
 import SignatureCheckbox from "./SignatureCheckbox";
+import { ColorCode } from "../utilities/Config";
 
 interface ColumnConfig {
   field: string;
@@ -78,10 +79,10 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     });
   };
 
-  const onSelectionChange = (event: any) => {
-    const value = event.value;
-    console.log(value);
-  };
+  // const onSelectionChange = (event: any) => {
+  //   const value = event.value;
+  //   console.log(value);
+  // };
 
   const search_fn = (field: string, item: AutoCompleteItem) => {
     let filtered = data.filter((i) => {
@@ -251,7 +252,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               error={AssignBtnValidation}
               Style={{
                 width: "80%",
-                backgroundColor: "#EF3340",
+                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                 color: "white",
                 height: "42px",
                 lineHeight: "normal",
@@ -264,18 +265,18 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
         <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
           <div className="ms-Grid-col ms-lg12">
             <DataTable
-              value={filteredItems}
-              // first={first}
-              rows={rows}
-              paginator
-              onSelectionChange={onSelectionChange}
-              dataKey="id"
-              paginatorTemplate=" RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-              currentPageReportTemplate="{first} to {last} of {totalRecords}"
-              stripedRows
-              scrollable
-              // scrollHeight="300px"
-              filters={dashboardSearch}
+             value={filteredItems}
+             // first={first}
+             rows={rows}
+             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+             currentPageReportTemplate="{first} to {last} of {totalRecords}"
+             scrollable
+             // scrollHeight="300px"
+             rowsPerPageOptions={[5, 10, 20]}
+             paginator
+             // onPage={onPageChange}
+             stripedRows
+             filters={dashboardSearch}
             >
               {columns.map((col) => {
                 if (col.field === "Checkbox") {

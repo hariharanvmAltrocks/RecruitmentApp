@@ -185,7 +185,10 @@ const CommanFieldTemplate = (props: any) => {
             <CustomLoader isLoading={isLoading}>
                 <Card variant="outlined" sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3" }}>
                     <React.Fragment>
-                        <TabsComponent tabs={tabs} initialTab="tab1" tabClassName={"Tab"} />
+                        <TabsComponent
+                         tabs={tabs} initialTab="tab1"
+                        //  tabClassName={"Tab"} 
+                         />
                     </React.Fragment>
                 </Card>
             </CustomLoader>

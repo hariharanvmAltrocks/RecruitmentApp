@@ -2,7 +2,7 @@ import * as React from "react";
 import Labelheader from "./LabelHeader";
 import CustomDatePicker from "./CustomDatePicker";
 import { getVRRDetails } from "../Services/ServiceExport";
-import { ListNames } from "../utilities/Config";
+import { ColorCode, ListNames } from "../utilities/Config";
 import ReuseButton from "./ReuseButton";
 
 interface AssignPositionDialogProps {
@@ -213,7 +213,7 @@ export const DateExtension = ({
             label="Cancel"
             onClick={() => onClose()}
             Style={{
-              backgroundColor: "#EF3340",
+              backgroundColor:ColorCode.ButtonColorCode.ButtonColor,
               color: "white",
               width: "50%",
             }}
@@ -225,7 +225,7 @@ export const DateExtension = ({
               //   await AssignHRSubmit();
             }}
             Style={{
-              backgroundColor: "#EF3340",
+              backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
               color: "white",
               width: "50%",
             }}

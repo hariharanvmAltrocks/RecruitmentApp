@@ -1,6 +1,6 @@
 import * as React from "react";
 import JobCodeSelector from "../../components/CustomMultiselectwithswipe";
-import { ADGroupID, ListNames, RoleID } from "../../utilities/Config";
+import { ADGroupID, ColorCode, ListNames, RoleID } from "../../utilities/Config";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import { JobCodeTilte } from "../../Models/RecuritmentVRR";
@@ -193,7 +193,7 @@ export const AssignRecuritmentHR = ({
             label="Cancel"
             onClick={onClose}
             Style={{
-              backgroundColor: "#EF3340",
+              backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
               color: "white",
               width: "50%",
             }}
@@ -205,7 +205,7 @@ export const AssignRecuritmentHR = ({
               await AssignHRSubmit();
             }}
             Style={{
-              backgroundColor: "#EF3340",
+              backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
               color: "white",
               width: "50%",
             }}

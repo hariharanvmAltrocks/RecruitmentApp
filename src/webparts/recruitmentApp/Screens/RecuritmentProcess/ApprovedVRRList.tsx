@@ -8,7 +8,7 @@ import {
   getVRRDetails,
 } from "../../Services/ServiceExport";
 import {
-  GridStatusBackgroundcolor,
+ 
   RoleID,
   StatusId,
   TabName,
@@ -19,6 +19,7 @@ import {
   WorkflowAction,
   Choices,
   ResponeStatus,
+  ColorCode,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Card, CardContent } from "@mui/material";
@@ -124,23 +125,7 @@ const RecruitmentProcess = (props: any) => {
       body: (rowData: any) => {
         return (
           <span
-            style={{
-              backgroundColor:
-                rowData.Status.includes("Pending") === true // "Pending"
-                  ? GridStatusBackgroundcolor.Pending
-                  : rowData.Status.includes("InProgress") === true
-                  ? GridStatusBackgroundcolor.CompletedOrApproved
-                  : rowData.Status.includes("Rejected") === true
-                  ? GridStatusBackgroundcolor.Rejected
-                  : rowData.Status.includes("Reverted") === true
-                  ? GridStatusBackgroundcolor.Reverted
-                  : rowData.Status.includes("Resubmitted") === true
-                  ? GridStatusBackgroundcolor.ReSubmitted
-                  : rowData.Status.includes("Draft") === true
-                  ? GridStatusBackgroundcolor.Draft
-                  : "",
-              borderRadius: "5px",
-            }}
+           
           >
             {rowData.Status}
           </span>
@@ -1509,7 +1494,7 @@ const RecruitmentProcess = (props: any) => {
               <div style={{ textAlign: "center", width: "100%" }}>
                 <h2
                   style={{
-                    color: "red",
+                    color:ColorCode.LabelStyleColorCode.LabelStyleColor,
                     fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
                     -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
                   }}
