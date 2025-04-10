@@ -463,7 +463,7 @@ const CommanTemplate = (props: any) => {
                             tabs={tabs}
                             initialTab="tab1"
                             handleCancel={handleCancel}
-                            tabClassName={"Tab"}
+                            // tabClassName={"Tab"}
                             validateTab={validateTab1}
                             additionalButtons={[
                                 { label: "Submit" },

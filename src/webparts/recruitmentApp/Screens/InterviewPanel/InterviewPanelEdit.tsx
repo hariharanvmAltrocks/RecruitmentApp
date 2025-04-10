@@ -253,7 +253,7 @@ const InterviewPanelEdit = (props: any) => {
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
         }));
-        if (questionnaire.length < 0) {
+        if (questionnaire.length === 0) {
           const getQuestion = await GetPortalJobsService.getQuestionnaire(
             op?.JobCode
           );

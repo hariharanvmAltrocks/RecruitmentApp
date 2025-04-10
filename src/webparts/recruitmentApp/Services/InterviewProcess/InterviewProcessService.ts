@@ -391,22 +391,19 @@ export default class InterviewProcessService
         }, 0);
 
         sumOverallScores += totalScore;
-        relatedScores.forEach((score) => {
-          const questionData = score.QuestionJson
-            ? JSON.parse(score.QuestionJson)
-            : [];
-          const questionScore = questionData.reduce((acc: any, q: any) => {
-            return (
-              acc +
-              Object.values(q).reduce(
-                (sum: any, value) => sum + Number(value),
-                0
-              )
-            );
-          }, 0);
-          sumQuestionScores += questionScore;
-          maxQuestionScore += questionData.length * 3;
-        });
+
+         relatedScores.forEach((score) => {
+        const questionData = score.QuestionJson
+          ? JSON.parse(score.QuestionJson)
+          : [];
+
+        const questionScore = questionData.reduce((acc: number, q: any) => {
+          return acc + (Number(q.score) || 0);
+        }, 0);
+
+        sumQuestionScores += questionScore;
+        maxQuestionScore += questionData.length * 3; 
+      });
 
         const panelEmail = interview.InterviewPanel?.EMail || "";
         const panelDetails = emailToAuthorMap[panelEmail] || {
@@ -420,7 +417,8 @@ export default class InterviewProcessService
         const maxOverallScore = interviewPanelItems.length * 40;
         const combinedScore = sumOverallScores + sumQuestionScores;
         const maxPossibleScore = maxOverallScore + maxQuestionScore;
-        const gpa = (combinedScore / maxPossibleScore) * 5;
+        const rawGpa = (combinedScore / maxPossibleScore) * 5;
+        const gpa = Math.floor(rawGpa * 100) / 100;
 
         const formattedItem: CommentsDatas = {
           Id: interview.ID.toString(),

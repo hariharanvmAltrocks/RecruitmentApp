@@ -9,6 +9,7 @@ import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 
 import {
+  ColorCode,
   DocumentLibraray,
   HRMSAlertOptions,
   ListNames,
@@ -141,7 +142,6 @@ const ReviewProfileEdit: React.FC = (props: any) => {
   const [validationErrors, setValidationError] = React.useState<formValidation>(
     {
       Comments: false,
-
       Checkboxalidation: false,
     }
   );
@@ -831,7 +831,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                         flexDirection: "column",
                         height: "41px",
                         paddingTop: "23px",
-                        backgroundColor: "#EF3340",
+                        backgroundColor:ColorCode.ButtonColorCode.ButtonColor,
                         color: "white",
                         justifyContent: "center",
                         alignItems: "center",
@@ -868,7 +868,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                         flexDirection: "column",
                         height: "41px",
                         paddingTop: "23px",
-                        backgroundColor: "#EF3340",
+                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                         color: "white",
                         justifyContent: "center",
                         alignItems: "center",

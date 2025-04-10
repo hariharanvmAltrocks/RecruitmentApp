@@ -5,7 +5,7 @@ import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import {
-  GridStatusBackgroundcolor,
+
   ListNames,
   RoleID,
   StatusId,
@@ -48,23 +48,7 @@ const ReviewProfileList = (props: any) => {
       body: (rowData: any) => {
         return (
           <span
-            style={{
-              backgroundColor:
-                rowData?.Status?.includes("Pending") === true // "Pending"
-                  ? GridStatusBackgroundcolor.Pending
-                  : rowData?.Status?.includes("Completed") === true
-                  ? GridStatusBackgroundcolor.CompletedOrApproved
-                  : rowData?.Status?.includes("Rejected") === true
-                  ? GridStatusBackgroundcolor.Rejected
-                  : rowData?.Status?.includes("InProgress") === true
-                  ? GridStatusBackgroundcolor.Reverted
-                  : rowData?.Status?.includes("Resubmitted") === true
-                  ? GridStatusBackgroundcolor.ReSubmitted
-                  : rowData?.Status?.includes("Draft") === true
-                  ? GridStatusBackgroundcolor.Draft
-                  : "",
-              borderRadius: "5px",
-            }}
+         
           >
             {rowData.Status}
           </span>
@@ -531,7 +515,7 @@ const ReviewProfileList = (props: any) => {
               initialTab={activeTab}
               tabtype={tabType.Dashboard}
               onTabChange={handleTabChange}
-              tabClassName={"Tab"}
+              // tabClassName={"Tab"}
             />
           </React.Fragment>
         </div>

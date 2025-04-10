@@ -10,6 +10,7 @@ import CustomTextArea from "../../components/CustomTextArea";
 import { AutoCompleteItem } from "../../Models/Screens";
 import { AssignHod } from "../../Models/RecuritmentVRR";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
+import { ColorCode } from "../../utilities/Config";
 
 interface AssignPositionDialogProps {
   visible: boolean;
@@ -128,7 +129,7 @@ export const AssignPositionDialog = ({
           justifyContent: "center",
           alignItems: "center",
           padding: "16px 24px",
-          color: "#EF3340",
+          color: ColorCode.LabelStyleColorCode.LabelStyleColor,
           fontWeight: "bold",
           position: "relative",
           marginTop: "8px",
@@ -228,15 +229,15 @@ export const AssignPositionDialog = ({
             onClick={handleClose}
             variant="outlined"
             sx={{
-              borderColor: "#EF3340",
-              color: "#EF3340",
-              backgroundColor: "white",
+              borderColor:  ColorCode.ButtonColorCode.ButtonColor,
+              color:  ColorCode.ButtonColorCode.color,
+              backgroundColor:  ColorCode.ButtonColorCode.ButtonColor,
               textTransform: "capitalize",
               mr: 2.5,
               "&:hover": {
-                borderColor: "#EF3340",
-                backgroundColor: "#EF3340",
-                color: "#FFFFFF",
+                borderColor:  ColorCode.ButtonColorCode.ButtonColor,
+                backgroundColor:  ColorCode.ButtonColorCode.ButtonColor,
+                color: ColorCode.ButtonColorCode.color,
               },
             }}
           >
@@ -247,15 +248,15 @@ export const AssignPositionDialog = ({
             type="submit"
             variant="outlined"
             sx={{
-              borderColor: "#EF3340",
-              color: "#EF3340",
-              backgroundColor: "white",
+              borderColor:  ColorCode.ButtonColorCode.ButtonColor,
+              color:  ColorCode.ButtonColorCode.color,
+              backgroundColor:  ColorCode.ButtonColorCode.ButtonColor,
               textTransform: "capitalize",
               mr: 2.5,
               "&:hover": {
-                borderColor: "#EF3340",
-                backgroundColor: "#EF3340",
-                color: "#FFFFFF",
+                borderColor:  ColorCode.ButtonColorCode.ButtonColor,
+                backgroundColor:  ColorCode.ButtonColorCode.ButtonColor,
+                color: ColorCode.ButtonColorCode.color,
               },
             }}
           >

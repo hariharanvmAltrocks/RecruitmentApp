@@ -2,6 +2,7 @@ import * as React from "react";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { Label } from "@fluentui/react";
+import { ColorCode } from "../utilities/Config";
 
 interface ReuseButtonProps {
   label?: string;
@@ -56,13 +57,13 @@ export default class ReuseButton extends React.Component<ReuseButtonProps> {
     const buttonStyles = {
       height: height || "40px",
       width: width || "40px",
-      background: backgroundColor || "white",
+      background: backgroundColor || ColorCode.ButtonColorCode.ButtonColor,
 
-      border: "1px solid rgb(205, 45, 45)",
+      border: ColorCode.ButtonColorCode.ButtonColor,
       fontWeight: "500",
       fontSize: "17px",
       fontFamily: "Roboto, sans-serif",
-      color: "#EF3340 !important",
+      color: `${ColorCode.ButtonColorCode.color}!important`,
       transition: "background 0.3s ease, color 0.3s ease",
       textTransform: "none",
       textDecoration: "none",
@@ -72,9 +73,8 @@ export default class ReuseButton extends React.Component<ReuseButtonProps> {
       ...Style,
       "&:hover": {
         cursor: "pointer",
-        background: backgroundColor || "#EF3340",
-
-        color: "white !important",
+        background: backgroundColor ||ColorCode.ButtonColorCode.ButtonColor,
+        color: `${ColorCode.ButtonColorCode.ButtonHoverColor}!important`,
         textDecoration: "none",
       },
     };
@@ -82,13 +82,13 @@ export default class ReuseButton extends React.Component<ReuseButtonProps> {
     const iconButtonStyles = {
       height: height || "40px",
       width: width || "40px",
-      background: backgroundColor || "#EF3340",
+      background: backgroundColor ||ColorCode.ButtonColorCode.ButtonColor,
 
-      border: "1px solid rgb(205, 45, 45)",
+      border: ColorCode.ButtonColorCode.ButtonColor,
       fontWeight: "500",
       fontSize: "17px",
       fontFamily: "Roboto, sans-serif",
-      color: "#FFFF !important",
+      color: `${ColorCode.ButtonColorCode.color}!important`,
       transition: "background 0.3s ease, color 0.3s ease",
       textTransform: "none",
       textDecoration: "none",
@@ -98,7 +98,7 @@ export default class ReuseButton extends React.Component<ReuseButtonProps> {
       maxWidth: "80px",
       ...Style,
       "&:hover": {
-        background: backgroundColor || "#EF3340",
+        background: backgroundColor || ColorCode.ButtonColorCode.ButtonColor,
         textDecoration: "none",
       },
     };

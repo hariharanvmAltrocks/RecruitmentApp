@@ -366,7 +366,7 @@ const AssignInterviewPanel = (props: any) => {
                         <TabsComponent
                             tabs={tabs}
                             initialTab="tab1"
-                            tabClassName={"Tab"}
+                            // tabClassName={"Tab"}
                             handleCancel={handleCancel}
                             additionalButtons={[
                                 {

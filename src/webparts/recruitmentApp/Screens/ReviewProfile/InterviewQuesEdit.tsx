@@ -28,6 +28,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import {
   CategoryID,
   CatogryOptionCode,
+  ColorCode,
   displayTextOptionCode,
   HRMSAlertOptions,
   isDisqualificationOption,
@@ -381,7 +382,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     if (!QuestionType.text) errors.QuestionType = true;
     if (!Question) errors.Question = true;
     if (!Catogry) errors.Catogry = true;
-    if (!Disqualification) errors.Disqualification = true;
 
     if (
       [
@@ -411,6 +411,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           delete errors.OptionsType;
         }
       }
+    if (!Disqualification) errors.Disqualification = true;
     } else {
       if (!ExpectedAnswer) errors.ExpectedAnswer = true;
     }
@@ -848,7 +849,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       <Typography
                         variant="h6"
                         sx={{
-                          color: "#d32f2f",
+                          color: "#597b98",
                           fontWeight: "bold",
                           fontSize: "1.1rem",
                           mt: 1,
@@ -874,7 +875,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       <Typography
                         variant="h6"
                         sx={{
-                          color: "#d32f2f",
+                          color: "#597b98",
                           fontWeight: "bold",
                           fontSize: "1.1rem",
                           mt: 1,
@@ -1099,8 +1100,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       <Button
                                                         variant="contained"
                                                         sx={{
-                                                          backgroundColor:
-                                                            "red",
+                                                          backgroundColor:ColorCode.ButtonColorCode.ButtonColor,
+                                                           
                                                           color: "white",
                                                           minWidth: 40,
                                                           "&:hover": {
@@ -1125,8 +1126,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       <Button
                                                         variant="contained"
                                                         sx={{
-                                                          backgroundColor:
-                                                            "red",
+                                                          backgroundColor:ColorCode.ButtonColorCode.ButtonColor,
+                                                        
                                                           color: "white",
                                                           minWidth: 40,
                                                           "&:hover": {
@@ -1194,7 +1195,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                         <Button
                                           variant="contained"
                                           sx={{
-                                            backgroundColor: "#d32f2f",
+                                            backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                                             color: "white",
                                             "&:hover": {
                                               backgroundColor: "#b71c1c",
@@ -1352,11 +1353,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                     <Button
                                       variant="contained"
                                       sx={{
-                                        backgroundColor: "red",
-                                        color: "white",
+                                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                                        color: ColorCode.ButtonColorCode.color,
                                         minWidth: 40,
                                         "&:hover": {
-                                          backgroundColor: "#b71c1c",
+                                          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                                         },
                                       }}
                                       onClick={() => handleDeleteRow(index)}
@@ -1369,11 +1370,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                     <Button
                                       variant="contained"
                                       sx={{
-                                        backgroundColor: "red",
-                                        color: "white",
+                                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                                        color: ColorCode.ButtonColorCode.color,
                                         minWidth: 40,
                                         "&:hover": {
-                                          backgroundColor: "#b71c1c",
+                                          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                                         },
                                       }}
                                       onClick={handleAddRow}
@@ -1437,9 +1438,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       startIcon={<AddIcon />}
                       onClick={handleSaveQuestion}
                       sx={{
-                        backgroundColor: "#d32f2f",
+                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                         color: "white",
-                        "&:hover": { backgroundColor: "#b71c1c" },
+                        "&:hover": { backgroundColor: ColorCode.ButtonColorCode.ButtonColor },
                         textTransform: "none",
                         borderRadius: "4px",
                         px: 3,
@@ -1475,10 +1476,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   ]);
 
   async function Submit_fn() {
-    console.log(questions, "questions Answers.");
-    if (!Validation()) {
-      return;
-    }
+   
     let QuestionValue: UpsertQuestions[] = questions.map((item) => {
       const category = getMasterData.category.find(
         (cat) => cat.text === InterviewQuesData.Catogry
@@ -1619,12 +1617,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                     });
                   },
                 },
-                {
-                  label: "Submit",
-                  onClick: async () => {
-                    await Submit_fn();
-                  },
-                },
+                ...(questions.length > 0
+                  ? [
+                      {
+                        label: "Submit",
+                        onClick: async () => {
+                          await Submit_fn();
+                        },
+                      },
+                    ]
+                  : [])
               ]}
             />
           </React.Fragment>

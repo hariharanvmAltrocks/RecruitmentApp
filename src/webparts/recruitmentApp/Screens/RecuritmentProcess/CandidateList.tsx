@@ -3,7 +3,7 @@ import { Card, CardContent } from "@mui/material";
 import { getVRRDetails, InterviewServices } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
-  GridStatusBackgroundcolor,
+ 
   HRMSAlertOptions,
   ListNames,
   RecuritmentHRMsg,
@@ -208,14 +208,7 @@ const CandidateList = (props: any) => {
       body: (rowData: any) => {
         return (
           <span
-            style={{
-              backgroundColor:
-                rowData.Status.includes("Pending") === true
-                  ? GridStatusBackgroundcolor.Pending
-                  : rowData.Status.includes("Selected") === true
-                  ? GridStatusBackgroundcolor.CompletedOrApproved
-                  : "",
-            }}
+            
           >
             {rowData.Status}
           </span>

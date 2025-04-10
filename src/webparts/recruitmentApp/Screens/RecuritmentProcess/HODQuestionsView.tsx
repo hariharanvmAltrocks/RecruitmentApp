@@ -53,10 +53,22 @@ function HODQuestionsView({ questionnaire, Ok_btnfn }: FormFields) {
                         style={{ marginBottom: "15px", fontSize: "17px" }}
                       >
                         <h3 style={{ fontWeight: "bold" }}>
-                          Q{index + 1}: {q.question}
+                          Q{index + 1}:
+                          {/* {q.question} */}
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: q.question,
+                            }}
+                          />
                         </h3>
                         <p>
-                          <strong>Expected Answer:</strong> {q.answer}
+                          <strong>Expected Answer:</strong>
+                          
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html:q.answer,
+                            }}
+                          /> 
                         </p>
                       </div>
                     ))
