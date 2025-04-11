@@ -12,8 +12,7 @@ import {
 } from "./IInterviewProcessService";
 
 export default class InterviewProcessService
-  implements IInterviewProcessService
-{
+  implements IInterviewProcessService {
   async GetInterviewPanelDetails(
     filterConditions: any[] = []
   ): Promise<ApiResponse<InterviewPanaldata[]>> {
@@ -104,9 +103,8 @@ export default class InterviewProcessService
         FristName: item?.FristName || "",
         MiddleName: item?.MiddleName || "",
         LastName: item?.LastName || "",
-        FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${
-          item?.LastName ?? ""
-        }`.trim(),
+        FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
+          }`.trim(),
         PositionTitle: item?.PositionTitle || "",
         JobGrade: item?.JobGrade || "",
         Status: item?.Status?.StatusDescription || "",
@@ -228,9 +226,8 @@ export default class InterviewProcessService
             FristName: item?.FristName,
             MiddleName: item?.MiddleName,
             LastName: item?.LastName,
-            FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${
-              item?.LastName ?? ""
-            }`.trim(),
+            FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
+              }`.trim(),
             ResidentialAddress: item?.ResidentialAddress,
             DOB: item?.DOB,
             ContactNumber: item?.ContactNumber,
@@ -392,18 +389,22 @@ export default class InterviewProcessService
 
         sumOverallScores += totalScore;
 
-         relatedScores.forEach((score) => {
-        const questionData = score.QuestionJson
-          ? JSON.parse(score.QuestionJson)
-          : [];
-
-        const questionScore = questionData.reduce((acc: number, q: any) => {
-          return acc + (Number(q.score) || 0);
-        }, 0);
-
-        sumQuestionScores += questionScore;
-        maxQuestionScore += questionData.length * 3; 
-      });
+        relatedScores.forEach((score) => {
+          const questionData = score.QuestionJson
+            ? JSON.parse(score.QuestionJson)
+            : [];
+          const questionScore = questionData.reduce((acc: any, q: any) => {
+            return (
+              acc +
+              Object.values(q).reduce(
+                (sum: any, value) => sum + Number(value),
+                0
+              )
+            );
+          }, 0);
+          sumQuestionScores += questionScore;
+          maxQuestionScore += questionData.length * 3;
+        });
 
         const panelEmail = interview.InterviewPanel?.EMail || "";
         const panelDetails = emailToAuthorMap[panelEmail] || {

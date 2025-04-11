@@ -50,7 +50,7 @@ import HODQuestionsView from "./HODQuestionsView";
 
 type ValidationError = {
   Comments: boolean;
-  Checkboxalidation: boolean,
+  Checkboxalidation: boolean;
 };
 
 const HodViewScorecard = (props: any) => {
@@ -197,20 +197,16 @@ const HodViewScorecard = (props: any) => {
           let questionScores: any = {};
           let interviewerCount = 0;
           filteredScores.forEach((score: any, interviewerIndex: number) => {
-            let questions = score.QuestionJson;
-            if (Array.isArray(questions)) {
-              questions.forEach((q: any) => {
-                const header = q.header;
-                const scoreValue = q.score;
-
-                if (!questionScores[header]) {
-                  questionScores[header] = { criteria: header };
+            if (score.QuestionJson) {
+              score.QuestionJson.forEach((q: any) => {
+                const key = Object.keys(q)[0];
+                if (!questionScores[key]) {
+                  questionScores[key] = { criteria: key };
                 }
-
-                questionScores[header][`interviewer_${interviewerIndex + 1}`] = scoreValue;
+                questionScores[key][`interviewer_${interviewerIndex + 1}`] =
+                  q[key];
               });
             }
-
             interviewerCount++;
           });
 
@@ -323,9 +319,9 @@ const HodViewScorecard = (props: any) => {
   //Questionnaries
   const handleAccordionChange =
     (accordion: string) =>
-      (event: React.SyntheticEvent, isExpanded: boolean) => {
-        setExpanded(isExpanded ? accordion : null);
-      };
+    (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? accordion : null);
+    };
 
   const handleCancel = () => {
     setIsLoading(true);
@@ -437,8 +433,9 @@ const HodViewScorecard = (props: any) => {
         <>
           <div className="agencies_card ">
             <LabelHeaderComponents
-              value={`Profile from ${agentName ? agentName + " Agencies" : "Candidate"
-                }`}
+              value={`Profile from ${
+                agentName ? agentName + " Agencies" : "Candidate"
+              }`}
             />
           </div>
           <Card
@@ -603,8 +600,8 @@ const HodViewScorecard = (props: any) => {
                       value={
                         CandidateData.InterviewDate
                           ? new Date(CandidateData.InterviewDate)
-                            .toLocaleDateString("en-GB")
-                            .replace(/\//g, "-")
+                              .toLocaleDateString("en-GB")
+                              .replace(/\//g, "-")
                           : ""
                       }
                       disabled={true}
@@ -686,7 +683,12 @@ const HodViewScorecard = (props: any) => {
                   marginBottom: "12px",
                 }}
               >
-                <h2 style={{ color: ColorCode.ButtonColorCode.ButtonColor, fontSize: "18px" }}>
+                <h2
+                  style={{
+                    color: ColorCode.ButtonColorCode.ButtonColor,
+                    fontSize: "18px",
+                  }}
+                >
                   Scorecard Details
                 </h2>
                 <div
@@ -706,8 +708,9 @@ const HodViewScorecard = (props: any) => {
                       top: "7px",
                     }}
                   >
-                    {`Profile from ${agentName ? agentName + " Agencies" : "Candidate"
-                      }`}
+                    {`Profile from ${
+                      agentName ? agentName + " Agencies" : "Candidate"
+                    }`}
                   </span>
                 </div>
               </div>
@@ -781,7 +784,8 @@ const HodViewScorecard = (props: any) => {
                             flexDirection: "column",
                             height: "35px",
                             paddingTop: "10px",
-                            backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                            backgroundColor:
+                              ColorCode.ButtonColorCode.ButtonColor,
                             color: "white",
                             justifyContent: "center",
                             alignItems: "center",
@@ -1089,11 +1093,11 @@ const HodViewScorecard = (props: any) => {
     setactiveTab(newItem);
   };
   const Validation = (): boolean => {
-    const { Comments, } = CandidateData;
+    const { Comments } = CandidateData;
 
     let errors = {
       Comments: false,
-      Checkboxalidation: false
+      Checkboxalidation: false,
     };
     switch (props.CurrentRoleID) {
       case RoleID.HOD: {
@@ -1117,7 +1121,7 @@ const HodViewScorecard = (props: any) => {
       setValidationError((prevState) => ({
         ...prevState,
         Comments: true,
-        Checkboxalidation:true
+        Checkboxalidation: true,
       }));
       return;
     }

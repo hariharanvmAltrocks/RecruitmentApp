@@ -1085,14 +1085,26 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
               </div>
               <div style={{ marginTop: "20px" }}>
-                {questionnaire.map((q) => (
+                {questionnaire.map((q, index) => (
                   <div key={q.id} style={{ marginBottom: "15px" }}>
                     <p style={{ fontWeight: "bold" }}>
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: q.question,
-                        }}
-                      />
+                      <div>
+                        <span>Q{index + 1}:</span>
+
+                        <span
+                          style={{
+                            display: "inline-block",
+                            marginLeft: "1%",
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html: `${q.question
+                              .replace(/<p>/gi, "")
+                              .replace(/<\/p>/gi, "")
+                              .replace(/<br\s*\/?>/gi, "")
+                              .trim()}`,
+                          }}
+                        />
+                      </div>
                     </p>
                     <p>
                       <strong>Expected Answer:</strong>

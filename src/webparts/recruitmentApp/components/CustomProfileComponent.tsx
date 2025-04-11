@@ -1,10 +1,12 @@
 import * as React from "react";
+import { useMediaQuery } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { ColorCode } from "../utilities/Config";
 
 interface FormFields {
-  userName: string | undefined;
-  userRole: string | undefined;
-  Department: string | undefined;
+  userName?: string;
+  userRole?: string;
+  Department?: string;
 }
 
 function CustomProfileComponent({
@@ -12,65 +14,55 @@ function CustomProfileComponent({
   userRole,
   Department,
 }: FormFields) {
-  return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          width: "47%",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "white",
-          borderRadius: "20px",
-          padding: "5px",
-          paddingLeft: "10px",
-          paddingRight: "10px",
-          boxShadow: "0px 5px 10px 0px #0F4B8426",
-        }}
-      >
-        <AccountCircleIcon style={{ fontSize: 46, color: "#597b98" }} />
+  const isMobile = useMediaQuery("(max-width:600px)");
 
-        <div>
-          <p
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginLeft: "5px",
-              color: "#597b98", //"#0D547B",
-              fontWeight: "400",
-              fontSize: "12px",
-              marginTop: "5px",
-            }}
-          >
-            Welcome,
-            <p
-              style={{
-                fontWeight: "bold",
-                color: "#597b98", // "#0D547B",
-              }}
-            >
-              {userName}
-            </p>
-          </p>
-          <div style={{ marginTop: "-9%" }}>
-            <p
-              style={{
-                //display: "flex",
-                //alignItems: "center",
-                // margin: "5px",
-                fontWeight: "400",
-                fontSize: "12px",
-                marginLeft: "5px",
-                color: "#597b98", //"#0D547B",
-              }}
-            >
-              ({userRole} - {Department?.split("-")[1] ?? ""})
-            </p>
-          </div>
-        </div>
+  return (
+    <div
+      style={{
+        display: "flex",
+        // width: isMobile ? "90%" : "47%",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: isMobile ? "flex-start" : "center",
+        backgroundColor: "white",
+        borderRadius: "20px",
+        padding: isMobile ? "10px" : "5px 10px",
+        boxShadow: "0px 5px 10px 0px #0F4B8426",
+        margin: isMobile ? "10px auto" : "0",
+      }}
+    >
+      <AccountCircleIcon
+        style={{
+          fontSize: isMobile ? 36 : 46,
+          color: ColorCode.ProfileColorCode.colorCode,
+          marginRight: "10px",
+        }}
+      />
+      <div>
+        <p
+          style={{
+            margin: 0,
+            color: ColorCode.ProfileColorCode.colorCode,
+            fontWeight: "400",
+            fontSize: isMobile ? "12px" : "14px",
+          }}
+        >
+          Welcome,&nbsp;
+          <span style={{ fontWeight: "bold" }}>{userName}</span>
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontWeight: "400",
+            fontSize: isMobile ? "11px" : "12px",
+            color: ColorCode.ProfileColorCode.colorCode,
+            marginTop: "4px",
+          }}
+        >
+          ({userRole} - {Department?.split("-")[1] ?? ""})
+        </p>
       </div>
-    </>
+    </div>
   );
 }
 

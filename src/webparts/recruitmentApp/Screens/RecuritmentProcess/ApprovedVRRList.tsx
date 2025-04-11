@@ -8,7 +8,6 @@ import {
   getVRRDetails,
 } from "../../Services/ServiceExport";
 import {
- 
   RoleID,
   StatusId,
   TabName,
@@ -123,13 +122,7 @@ const RecruitmentProcess = (props: any) => {
       fieldName: "Status",
       sortable: false,
       body: (rowData: any) => {
-        return (
-          <span
-           
-          >
-            {rowData.Status}
-          </span>
-        );
+        return <span>{rowData.Status}</span>;
       },
     },
     {
@@ -398,6 +391,68 @@ const RecruitmentProcess = (props: any) => {
     }
   }
 
+  const fetchCandidateData = async () => {
+    setIsLoading(true);
+    try {
+      const interviewPanelResponse = await CommonServices.GetMasterData(
+        ListNames.HRMSInterviewPanelDetails
+      );
+
+      if (
+        !interviewPanelResponse.data ||
+        interviewPanelResponse.data.length === 0
+      ) {
+        setIsLoading(false);
+        return;
+      }
+
+      const userResponse = await CommonServices.getUserGuidByEmail(
+        props.CurrentUserEmailId
+      );
+
+      if (userResponse.status !== 200 || !userResponse.data) {
+        setIsLoading(false);
+        return;
+      }
+
+      const userGUID = userResponse.data.key;
+
+      const filteredPanels = interviewPanelResponse.data.filter(
+        (panel) => panel.InterviewPanelId === userGUID
+      );
+
+      if (filteredPanels.length === 0) {
+        setAssignedCandidates(false);
+        setIsLoading(false);
+        return;
+      }
+
+      const candidateIDs = filteredPanels.map((panel) => panel.CandidateIDId);
+
+      const candidateDetailsResponse = await CommonServices.GetMasterData(
+        ListNames.HRMSRecruitmentCandidatePersonalDetails
+      );
+
+      if (
+        !candidateDetailsResponse.data ||
+        candidateDetailsResponse.data.length === 0
+      ) {
+        setIsLoading(false);
+        return;
+      }
+
+      const matchedCandidates = candidateDetailsResponse.data.filter(
+        (candidate) => candidateIDs.includes(candidate.ID)
+      );
+
+      setAssignedCandidates(matchedCandidates.length > 0);
+    } catch (error) {
+      console.error("Error fetching candidate data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -521,84 +576,22 @@ const RecruitmentProcess = (props: any) => {
         );
         setJobCodeTitle(uniqueJobData);
       }
+      if (props.CurrentRoleID === RoleID.HOD) {
+        void fetchCandidateData();
+      }
     } catch (error) {
       console.log("GetVacancyDetails doesn't fetch the data", error);
     }
     setIsLoading(false);
   };
 
-  const fetchCandidateData = async (CurrentUserID: any) => {
-    setIsLoading(true);
-    try {
-      const interviewPanelResponse = await CommonServices.GetMasterData(
-        ListNames.HRMSInterviewPanelDetails
-      );
-
-      if (
-        !interviewPanelResponse.data ||
-        interviewPanelResponse.data.length === 0
-      ) {
-        setIsLoading(false);
-        return;
-      }
-
-      const filteredPanels = interviewPanelResponse.data.filter(
-        (panel) => panel.InterviewPanelId === CurrentUserID
-      );
-
-      if (filteredPanels.length === 0) {
-        setAssignedCandidates(false);
-        setIsLoading(false);
-        return;
-      }
-
-      const candidateIDs = filteredPanels.map((panel) => panel.CandidateIDId);
-
-      const candidateDetailsResponse = await CommonServices.GetMasterData(
-        ListNames.HRMSRecruitmentCandidatePersonalDetails
-      );
-
-      if (
-        !candidateDetailsResponse.data ||
-        candidateDetailsResponse.data.length === 0
-      ) {
-        setIsLoading(false);
-        return;
-      }
-
-      const matchedCandidates = candidateDetailsResponse.data.filter(
-        (candidate) => candidateIDs.includes(candidate.ID)
-      );
-
-      const matchedCandidate = matchedCandidates.length > 0;
-      setAssignedCandidates(matchedCandidate);
-    } catch (error) {
-      console.error("Error fetching candidate data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   React.useEffect(() => {
     const fetchDataAndGetADGroupsOption = async () => {
       try {
         await fetchData();
-        const getCurrentUserEmailID = await CommonServices.getUserGuidByEmail(
-          props.CurrentUserEmailId
-        );
-
-        if (
-          getCurrentUserEmailID.status === 200 &&
-          getCurrentUserEmailID.data
-        ) {
-          const userGUID = getCurrentUserEmailID.data.key;
-
-          await fetchCandidateData(userGUID);
-        }
-
-        if (props.stateValue?.activeTab) {
-          setActiveTab(props.stateValue.activeTab);
-        }
+        // if (props.stateValue?.activeTab) {
+        //   setActiveTab(props.stateValue.activeTab);
+        // }
       } catch (error) {
         console.error(error);
       }
@@ -1494,7 +1487,7 @@ const RecruitmentProcess = (props: any) => {
               <div style={{ textAlign: "center", width: "100%" }}>
                 <h2
                   style={{
-                    color:ColorCode.LabelStyleColorCode.LabelStyleColor,
+                    color: ColorCode.LabelStyleColorCode.LabelStyleColor,
                     fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
                     -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
                   }}
