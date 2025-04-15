@@ -5,7 +5,6 @@ import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import {
-
   ListNames,
   RoleID,
   StatusId,
@@ -46,13 +45,7 @@ const ReviewProfileList = (props: any) => {
       fieldName: "Status",
       sortable: false,
       body: (rowData: any) => {
-        return (
-          <span
-         
-          >
-            {rowData.Status}
-          </span>
-        );
+        return <span>{rowData.Status}</span>;
       },
     },
     {
@@ -78,7 +71,7 @@ const ReviewProfileList = (props: any) => {
                       tab: "tab1",
                       StatusId: rowData?.StatusId,
                       Status: rowData?.Status,
-                      JobTitleInEnglish: rowData.JobTitleInEnglish,
+                      JobTitleInEnglish: rowData.JobTitleEnglish,
                       JobCode: rowData.JobCode,
                       TabName,
                       ButtonAction,
@@ -109,7 +102,7 @@ const ReviewProfileList = (props: any) => {
                       tab: "tab2",
                       StatusId: rowData?.StatusId,
                       Status: rowData?.Status,
-                      JobTitleInEnglish: rowData.JobTitleInEnglish,
+                      JobTitleInEnglish: rowData.JobTitleEnglish,
                       JobCode: rowData.JobCode,
                       TabName,
                       ButtonAction,
@@ -181,6 +174,68 @@ const ReviewProfileList = (props: any) => {
       },
     },
   ];
+  const fetchCandidateData = async () => {
+    setIsLoading(true);
+    try {
+      const interviewPanelResponse = await CommonServices.GetMasterData(
+        ListNames.HRMSInterviewPanelDetails
+      );
+
+      if (
+        !interviewPanelResponse.data ||
+        interviewPanelResponse.data.length === 0
+      ) {
+        setIsLoading(false);
+        return;
+      }
+
+      const userResponse = await CommonServices.getUserGuidByEmail(
+        props.CurrentUserEmailId
+      );
+
+      if (userResponse.status !== 200 || !userResponse.data) {
+        setIsLoading(false);
+        return;
+      }
+
+      const userGUID = userResponse.data.key;
+
+      const filteredPanels = interviewPanelResponse.data.filter(
+        (panel) => panel.InterviewPanelId === userGUID
+      );
+
+      if (filteredPanels.length === 0) {
+        setAssignedCandidates(false);
+        setIsLoading(false);
+        return;
+      }
+
+      const candidateIDs = filteredPanels.map((panel) => panel.CandidateIDId);
+
+      const candidateDetailsResponse = await CommonServices.GetMasterData(
+        ListNames.HRMSRecruitmentCandidatePersonalDetails
+      );
+
+      if (
+        !candidateDetailsResponse.data ||
+        candidateDetailsResponse.data.length === 0
+      ) {
+        setIsLoading(false);
+        return;
+      }
+
+      const matchedCandidates = candidateDetailsResponse.data.filter(
+        (candidate) => candidateIDs.includes(candidate.ID)
+      );
+
+      setAssignedCandidates(matchedCandidates.length > 0);
+    } catch (error) {
+      console.error("Error fetching candidate data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const fetchRecuritmentData = async () => {
     setIsLoading(true);
     try {
@@ -255,62 +310,16 @@ const ReviewProfileList = (props: any) => {
       if (data.status === 200 && data.data !== null) {
         setRecuritmentData(data.data);
       }
+      if (
+        props.CurrentRoleID === RoleID.LineManager ||
+        props.CurrentRoleID === RoleID.RecruitmentHR
+      ) {
+        void fetchCandidateData();
+      }
     } catch (error) {
       console.log(error);
     }
     setIsLoading(false);
-  };
-
-  const fetchCandidateData = async (CurrentUserID: any) => {
-    setIsLoading(true);
-    try {
-      const interviewPanelResponse = await CommonServices.GetMasterData(
-        ListNames.HRMSInterviewPanelDetails
-      );
-
-      if (
-        !interviewPanelResponse.data ||
-        interviewPanelResponse.data.length === 0
-      ) {
-        setIsLoading(false);
-        return;
-      }
-
-      const filteredPanels = interviewPanelResponse.data.filter(
-        (panel) => panel.InterviewPanelId === CurrentUserID
-      );
-
-      if (filteredPanels.length === 0) {
-        setAssignedCandidates(false);
-        setIsLoading(false);
-        return;
-      }
-
-      const candidateIDs = filteredPanels.map((panel) => panel.CandidateIDId);
-
-      const candidateDetailsResponse = await CommonServices.GetMasterData(
-        ListNames.HRMSRecruitmentCandidatePersonalDetails
-      );
-
-      if (
-        !candidateDetailsResponse.data ||
-        candidateDetailsResponse.data.length === 0
-      ) {
-        setIsLoading(false);
-        return;
-      }
-
-      const matchedCandidates = candidateDetailsResponse.data.filter(
-        (candidate) => candidateIDs.includes(candidate.ID)
-      );
-
-      const matchedCandidate = matchedCandidates.length > 0;
-      setAssignedCandidates(matchedCandidate);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   React.useEffect(() => {
@@ -318,26 +327,12 @@ const ReviewProfileList = (props: any) => {
       setIsLoading(true);
       try {
         await fetchRecuritmentData();
-
-        const getCurrentUserEmailID = await CommonServices.getUserGuidByEmail(
-          props.CurrentUserEmailId
-        );
-
-        if (
-          getCurrentUserEmailID.status === 200 &&
-          getCurrentUserEmailID.data
-        ) {
-          const userGUID = getCurrentUserEmailID.data.key;
-          await fetchCandidateData(userGUID);
-        }
       } catch (error) {
         console.error(error);
       }
       setIsLoading(false);
     };
-
     void fetchData();
-    // setActiveTab(props.stateValue?.activeTab ?? "tab1");
   }, [activeTab]);
 
   const onPageChange = (event: any) => {

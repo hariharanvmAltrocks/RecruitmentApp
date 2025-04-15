@@ -423,7 +423,7 @@ export const categoryOption = [
 export const ColorCode = {
   TabColorCode: {
     Tabcolor: "#a8b8c6",
-    TabboxShadow:  "#93a6b7",
+    TabboxShadow: "#93a6b7",
   },
   SideNavColorCode: {
     SideNavColor: "#f5f5f5",
@@ -439,5 +439,8 @@ export const ColorCode = {
     backgroundColor: "white",
     ButtonbordeColor: "rgba(239, 51, 64)",
     ButtonHoverColor: "white !important",
+  },
+  ProfileColorCode: {
+    colorCode: "#597b98"
   }
 }

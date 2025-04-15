@@ -412,7 +412,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
       const GetQuestionnaire: QuestionItem[] = response.data.data.map((item: any) => ({
         id: item.sequence,
         question: item?.question?.quesContent?.contentEn,
-        answer: item?.question?.questionXAnswer?.optContent?.contentEn,
+        answer: item?.question?.questionXAnswers?.[0]?.optContent?.contentEn ?? "",
         rating: 0,
         header: "Q" + item.sequence,
       }));

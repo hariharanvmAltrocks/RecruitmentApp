@@ -516,7 +516,10 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                     {" "}
                   </LabelHeaderComponents>
                 </div>
-                <div className="ms-Grid-col ms-lg6">
+                <div
+                  className="ms-Grid-col ms-lg6"
+                  style={{ display: "flex", justifyContent: "end" }}
+                >
                   <LabelHeaderComponents
                     value={`Status - ${props.stateValue?.Status}`}
                   >
@@ -831,7 +834,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                         flexDirection: "column",
                         height: "41px",
                         paddingTop: "23px",
-                        backgroundColor:ColorCode.ButtonColorCode.ButtonColor,
+                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                         color: "white",
                         justifyContent: "center",
                         alignItems: "center",

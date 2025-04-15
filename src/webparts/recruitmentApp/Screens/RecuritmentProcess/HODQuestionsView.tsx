@@ -48,27 +48,34 @@ function HODQuestionsView({ questionnaire, Ok_btnfn }: FormFields) {
                     </p>
                   ) : (
                     questionnaire.map((q, index) => (
-                      <div
-                        key={q.id}
-                        style={{ marginBottom: "15px", fontSize: "17px" }}
-                      >
+                      <div key={q.id} style={{ marginBottom: "15px" }}>
                         <h3 style={{ fontWeight: "bold" }}>
-                          Q{index + 1}:
-                          {/* {q.question} */}
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html: q.question,
-                            }}
-                          />
+                          <div>
+                            <span>Q{index + 1}:</span>
+
+                            <span
+                              style={{
+                                display: "inline-block",
+                                marginLeft: "1%",
+                              }}
+                              dangerouslySetInnerHTML={{
+                                __html: `${q.question
+                                  .replace(/<p>/gi, "")
+                                  .replace(/<\/p>/gi, "")
+                                  .replace(/<br\s*\/?>/gi, "")
+                                  .trim()}`,
+                              }}
+                            />
+                          </div>
                         </h3>
                         <p>
                           <strong>Expected Answer:</strong>
-                          
                           <span
                             dangerouslySetInnerHTML={{
-                              __html:q.answer,
+                              __html: q.answer,
                             }}
-                          /> 
+                          />
+                          {/* {q.answer} */}
                         </p>
                       </div>
                     ))

@@ -44,6 +44,7 @@ import CustomJsonComments from "../../components/CustomJsonComments";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomTimePicker from "../../components/CustomTimePicker";
+import { useMediaQuery } from "@mui/material";
 
 type InterviewedLevelValue = {
   Levels: string;
@@ -103,6 +104,9 @@ const ViewCandidateDetails = (props: any) => {
     hrComments: "",
   });
   const todaydate = new Date();
+  const tomorrowDate = new Date(todaydate);
+  tomorrowDate.setDate(todaydate.getDate() + 1);
+
   const [InterviewedLevel, setInterviewedLevel] =
     useState<InterviewedLevelValue>({
       Levels: "",
@@ -398,6 +402,7 @@ const ViewCandidateDetails = (props: any) => {
       CandidateScoreValue: false,
     }));
   };
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   const tabs = [
     {
@@ -409,14 +414,48 @@ const ViewCandidateDetails = (props: any) => {
             <></>
           ) : (
             <>
-              <div className="agencies_card ">
-                <LabelHeaderComponents
-                  value={
-                    CandidateProfile.Agencies === undefined
-                      ? `Profile from Candidate `
-                      : `Profile from ${CandidateProfile.Agencies} Agencies`
-                  }
-                />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "end",
+                  marginTop: "-4%",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    // width: isMobile ? "90%" : "47%",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: isMobile ? "flex-start" : "center",
+                    backgroundColor: "white",
+                    borderRadius: "20px",
+                    padding: isMobile ? "10px" : "5px 10px",
+                    boxShadow: "0px 5px 10px 0px #0F4B8426",
+                    margin: isMobile ? "10px auto" : "0",
+                  }}
+                >
+                  <div>
+                    <p
+                      style={{
+                        margin: 0,
+                        color: "#EF3340",
+                        fontWeight: "400",
+                        fontSize: isMobile ? "12px" : "14px",
+                      }}
+                    >
+                      <span style={{ fontWeight: "bold" }}>
+                        <LabelHeaderComponents
+                          value={
+                            CandidateProfile.Agencies === undefined
+                              ? `Profile from Candidate `
+                              : `Profile from ${CandidateProfile.Agencies} Agencies`
+                          }
+                        />
+                      </span>
+                    </p>
+                  </div>
+                </div>
               </div>
             </>
           )}
@@ -439,7 +478,10 @@ const ViewCandidateDetails = (props: any) => {
                       {" "}
                     </LabelHeaderComponents>
                   </div>
-                  <div className="ms-Grid-col ms-lg6">
+                  <div
+                    className="ms-Grid-col ms-lg6"
+                    style={{ display: "flex", justifyContent: "end" }}
+                  >
                     <LabelHeaderComponents
                       value={`Status - ${CandidateProfile.Status}`}
                     >
@@ -574,7 +616,7 @@ const ViewCandidateDetails = (props: any) => {
                             selectedDate={InterviewedLevel.InterviewedDate}
                             label="Interviewed Date"
                             error={validationErrors.InterviewedDate}
-                            minDate={todaydate}
+                            minDate={tomorrowDate}
                             mandatory={true}
                             onChange={(date) =>
                               handleDateChange(date ?? undefined)
@@ -705,7 +747,8 @@ const ViewCandidateDetails = (props: any) => {
                           flexDirection: "column",
                           height: "41px",
                           paddingTop: "23px",
-                          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
                           color: "white",
                           justifyContent: "center",
                           alignItems: "center",
@@ -735,7 +778,8 @@ const ViewCandidateDetails = (props: any) => {
                           flexDirection: "column",
                           height: "41px",
                           paddingTop: "23px",
-                          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
                           color: "white",
                           justifyContent: "center",
                           alignItems: "center",

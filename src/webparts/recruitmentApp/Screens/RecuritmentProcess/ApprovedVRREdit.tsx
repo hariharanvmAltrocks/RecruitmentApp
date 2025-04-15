@@ -1297,7 +1297,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     {" "}
                   </LabelHeaderComponents>
                 </div>
-                <div className="ms-Grid-col ms-lg6">
+                <div
+                  className="ms-Grid-col ms-lg6"
+                  style={{ display: "flex", justifyContent: "end" }}
+                >
                   <LabelHeaderComponents
                     value={`Status - ${props.stateValue?.Status}`}
                   >
@@ -1725,7 +1728,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         mandatory={true}
                         error={validationErrors.OnamSignedStampsAttchment}
                         Style={{
-                          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
                           color: "white",
                         }}
                       />
@@ -1795,7 +1799,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           flexDirection: "column",
                           height: "41px",
                           paddingTop: "23px",
-                          backgroundColor:ColorCode.ButtonColorCode.ButtonColor,
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
                           color: "white",
                           justifyContent: "center",
                           alignItems: "center",
@@ -1842,7 +1847,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           flexDirection: "column",
                           height: "41px",
                           paddingTop: "23px",
-                          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
                           color: "white",
                           justifyContent: "center",
                           alignItems: "center",
@@ -1972,7 +1978,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                   flexDirection: "column",
                                   height: "41px",
                                   paddingTop: "23px",
-                                  backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                                  backgroundColor:
+                                    ColorCode.ButtonColorCode.ButtonColor,
                                   color: "white",
                                   justifyContent: "center",
                                   alignItems: "center",
@@ -2022,7 +2029,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           flexDirection: "column",
                           height: "41px",
                           paddingTop: "23px",
-                          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
                           color: "white",
                           justifyContent: "center",
                           alignItems: "center",
