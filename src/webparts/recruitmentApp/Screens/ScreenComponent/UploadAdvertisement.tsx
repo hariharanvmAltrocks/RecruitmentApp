@@ -5,12 +5,9 @@ import {
   RoleSpecKnowledge,
   TechnicalSkills,
 } from "../../Models/RecuritmentVRR";
-import CustomLabel from "../../components/CustomLabel";
-import AttachmentButton from "../../components/AttachmentButton";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
 import { formValidationEdit } from "../RecuritmentProcess/ApprovedVRREdit";
 import RichTextEditor from "../../components/CustomRichTextEditor";
-import { Icon, Label } from "office-ui-fabric-react";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import CustomButton from "../../components/CustomButton";
@@ -18,7 +15,6 @@ import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CustomInput from "../../components/CustomInput";
 import ReuseButton from "../../components/ReuseButton";
 import {
-  ColorCode,
   HRMSAlertOptions,
   ListNames,
   RecuritmentHRMsg,
@@ -503,70 +499,6 @@ export const UploadAdvertisement = ({
     <>
       <CustomLoader isLoading={isLoading}>
         <div>
-          <div className="ms-Grid-row">
-            <div className="ms-Grid-col ms-lg12">
-              <CustomLabel value={"Advertisement"} mandatory={true} />
-              <AttachmentButton
-                label="Upload"
-                iconName="CloudUpload"
-                iconNameHover="CloudUpload"
-                AttachState={(newAttachment: any) => {
-                  let attachment: IDocFiles[] = newAttachment.map(
-                    (item: any) => {
-                      return {
-                        name: item.name,
-                        content: item.file,
-                        type: "New",
-                      };
-                    }
-                  );
-                  const attachments = [
-                    ...(advDetails.AdvertisementAttachement || []),
-                    ...attachment,
-                  ];
-                  handleFileAttachment("AdvertisementAttachement", attachments);
-                }}
-                mandatory={true}
-                error={validationErrors.AdvertisementAttachement}
-                Style={{
-                  backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                  color: "white",
-                }}
-              />
-            </div>
-            <div
-              className="ms-Grid-col ms-lg6"
-              //   style={{ marginTop: "4%" }}
-            >
-              {advDetails.AdvertisementAttachement?.map(
-                (file: any, index: number) => {
-                  const fileName = file.fileName || file.name; // Ensure proper name display
-                  return (
-                    <div key={index} className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg12">
-                        <Label style={{ color: "blue" }}>
-                          {fileName}
-                          <span>
-                            <Icon
-                              iconName="Delete"
-                              style={{
-                                marginLeft: "8px",
-                                fontSize: "16px",
-                                cursor: "pointer",
-                              }}
-                              onClick={() =>
-                                handleDelete(index, "AdvertisementAttachement")
-                              } // Call the delete function
-                            />
-                          </span>
-                        </Label>
-                      </div>
-                    </div>
-                  );
-                }
-              )}
-            </div>
-          </div>
           <div className="ms-Grid-row">
             <div className="ms-Grid-col ms-lg12">
               <RichTextEditor

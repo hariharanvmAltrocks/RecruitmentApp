@@ -942,7 +942,6 @@ const ViewCandidateDetails = (props: any) => {
     let matchedAgents = HRMSExternalAgents.data.filter(
       (item) => item.AgentName === CandidateProfile.Agencies
     );
-    console.log(matchedAgents[0].Id, "HRMSExternalAgents");
 
     const CandidateDetails: any = {
       RecruitmentIDId: props.stateValue.RecruitmentID,

@@ -171,6 +171,12 @@ export type IRecruitmentService = {
     Conditions: any,
     ModalDropDown: any
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
+  GetAdditionalExistingPositionEditView(
+    Filter: any[],
+    Conditions: any,
+    ModalDropDown: any
+  ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
+  fetchNewPositionRequest(filterParam: any, filterConditions: any, ModalDropDown: any): Promise<ApiResponse<DataSyncToRecruitmentResponse[] | null>>;
   GetVacancyDetails(
     filterParam: any,
     filterConditions: any

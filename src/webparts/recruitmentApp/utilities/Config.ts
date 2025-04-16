@@ -1,5 +1,4 @@
 import { IADGroupID } from "../Models/MainPage";
-import { QuestionItem } from "../Models/RecuritmentVRR";
 import { AutoCompleteItem } from "../Models/Screens";
 
 export const APIURL = "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
@@ -176,6 +175,7 @@ export const viewLabelcolor = {
 export const RecuritmentHRMsg = {
   AdvertisementSubmitMsg:
     "Advertisement for the Job Title Submitted Successfully.",
+  AdvertisementReveiwMsg: "Advertisement Reviewed Sucessfully",
   ScoreCardSubmitMsg:
     "The Candidate has been Interviewed and Scorecard Submitted for Final Selection.",
   ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Sucessfully.",
@@ -190,6 +190,8 @@ export const RecuritmentHRMsg = {
   RecruitmentErrorMsg: "Please choose the Job Code to assign Recruitment HR.",
   AgencySucess: "Agencies Assigned for the Selected Job Titles.",
   HRSuccess: "Recruitment HR Assigned for the Selected Job Titles.",
+  SingleAgencyMsg: "Agencies Assigned for the Selected Job Title.",
+  SingleHRSuccessMsg: "Recruitment HR Assigned for the Selected Job Title.",
   AgenciesErrorMsg: "Please choose the Job Code to Assign Agencies.",
   ProfileReviewed:
     "Candidate Profile for the Job Title Reviewed and Shortlisted.",
@@ -293,7 +295,9 @@ export const TabName = {
   EvaluationTab: "Candidate Details",
   InterviewQuestion: "Interview Questions",
   AdvertExtension: "Advert Extension",
-  CheckboxContent: "I hereby agree for submitting this request.",
+  CheckboxContent: "I hereby agree for submitting this request for further approvals.",
+  ApprovalCheckbox: "I hereby acknowledge that I have read the submission request and confirm the accuracy of the content shared.",
+
   ReviewLevel1: "Review Profile - Level 1",
   ReviewLevel2: "Review Profile - Level 2",
   Shortlisted: "Shortlisted",
@@ -345,24 +349,10 @@ export const workflowStatusApi = {
   LineManagerLevel1Rejected: "WS14",
   LineManagerLevel2Rejected: "WS15",
 };
-
-export const QuestionnaireData: QuestionItem[] = [
-  {
-    id: 1,
-    question: "What are some key regulations that govern mining operations?",
-    answer:
-      "Expected Answer:- By using sustainable mining practices, proper waste management, land reclamation, reducing water and air pollution, and implementing renewable energy sources.",
-    rating: null,
-  },
-  {
-    id: 2,
-    question:
-      "What strategies can be used to attract skilled professionals to remote mining locations?",
-    answer:
-      "Expected Answer:- Providing relocation assistance, offering rotational work schedules, housing facilities, competitive benefits, and care.",
-    rating: null,
-  },
-];
+export const Notes = {
+  Roleprofile: "Role Profile is not available for the Job Title.",
+  Grding: "Grading Report is not available for the Job Title."
+}
 // sneka
 export const CatogryOption = [
   "Interview Panel",

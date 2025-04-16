@@ -313,7 +313,7 @@ export default class RecruitmentService implements IRecruitmentService {
               item.JobTitleEnglish = filtered.JobTitleEnglish?.JobTitleInEnglish ? filtered.JobTitleEnglish?.JobTitleInEnglish : "";
               item.JobTitleEnglishId = filtered.JobTitleEnglishId ? filtered.JobTitleEnglishId : 0;
               item.JobTitleFrench = filtered.JobTitleFrench?.JobTitleInFrench ? filtered.JobTitleFrench?.JobTitleInFrench : "";
-              item.JobTitleFrenchId = filtered.JobTitleFrenchId ? filtered.JobTitleFrenchId : 0 ;
+              item.JobTitleFrenchId = filtered.JobTitleFrenchId ? filtered.JobTitleFrenchId : 0;
               item.PatersonGrade = filtered.PatersonGrade?.PatersonGrade ? filtered.PatersonGrade?.PatersonGrade : "";
               item.PatersonGradeId = filtered.PatersonGradeId ? filtered.PatersonGradeId : 0;
               item.DRCGradeId = filtered.DRCGradeId ? filtered.DRCGradeId : 0;
@@ -347,8 +347,8 @@ export default class RecruitmentService implements IRecruitmentService {
       });
 
       const JobCode: JobCodeData = {
-        JobCode: res[0].JobCode,
-        JobCodeID: res[0].ID,
+        JobCode: res[0]?.JobCode,
+        JobCodeID: res[0]?.ID,
 
       };
       return {
