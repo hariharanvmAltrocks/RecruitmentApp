@@ -124,6 +124,11 @@ export type DataSyncToRecruitmentResponse = {
   AssignLineManager: string;
   AssignLineManagerId: number;
   ReasonForVacancy: string;
+
+  JobPostingStartDate: Date | undefined,
+  JobPostingEndDate: Date | undefined,
+  JobPostingFirstExtensionEndDate: Date | undefined,
+  JobPostingSecondExtensionEndDate: Date | undefined
 }
 
 export type JobCodeData = {

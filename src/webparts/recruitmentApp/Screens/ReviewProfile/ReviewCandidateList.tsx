@@ -6,7 +6,6 @@ import {
 } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
-  
   RoleID,
   TabName,
   tabType,
@@ -45,7 +44,7 @@ const ReviewCandidateList = (props: any) => {
   ) => [
     {
       field: "CandidateID",
-      header: "Request ID",
+      header: "Applicant ID",
       sortable: true,
     },
     {
@@ -63,20 +62,18 @@ const ReviewCandidateList = (props: any) => {
       header: "Job Code",
       sortable: true,
     },
-
+    {
+      field: "",
+      header: "Profile Received Date",
+      sortable: true,
+    },
     {
       field: "Status",
       header: "Status",
       fieldName: "Status",
       sortable: false,
       body: (rowData: any) => {
-        return (
-          <span
-         
-          >
-            {rowData.Status}
-          </span>
-        );
+        return <span>{rowData.Status}</span>;
       },
     },
     {
@@ -97,6 +94,7 @@ const ReviewCandidateList = (props: any) => {
             {
               state: {
                 ID: rowData?.CandidateID,
+                StatusId: rowData?.workflowStatusId,
                 RecruitmentID: RecruitmentDetails[0].ID,
                 tab: tab,
                 ButtonAction: ButtonAction,
@@ -265,21 +263,18 @@ const ReviewCandidateList = (props: any) => {
             FilterValue = createFilter([
               workflowStatusApi.LineManagerLevel1OnHold,
               workflowStatusApi.LineManagerLevel2OnHold,
-            ]);
-          } else {
-            FilterValue = createFilter([workflowStatusApi.HROnHold]);
-          }
-          break;
-
-        case "tab4":
-          if (props.CurrentRoleID === RoleID.LineManager) {
-            FilterValue = createFilter([
               workflowStatusApi.LineManagerLevel1Rejected,
               workflowStatusApi.LineManagerLevel2Rejected,
             ]);
           } else {
-            FilterValue = createFilter([workflowStatusApi.HRRejected]);
+            FilterValue = createFilter([
+              workflowStatusApi.HROnHold,
+              workflowStatusApi.HRRejected,
+            ]);
           }
+          break;
+
+        case "tab4":
           //   FilterValue = createFilter(workflowStatusApi.Rejected);
           break;
 
@@ -461,7 +456,7 @@ const ReviewCandidateList = (props: any) => {
             ),
           },
           {
-            label: TabName.onHold,
+            label: TabName.OnHoldRejected,
             value: "tab3",
             content: (
               <Card
@@ -471,25 +466,6 @@ const ReviewCandidateList = (props: any) => {
                 <CardContent>
                   <BreadcrumbsComponent
                     items={tabs("tab3")}
-                    initialItem={activeTab}
-                    TabName={TabNameData}
-                    onBreadcrumbChange={handleBreadcrumbChange}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-          {
-            label: TabName.Rejected,
-            value: "tab4",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  <BreadcrumbsComponent
-                    items={tabs("tab4")}
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}

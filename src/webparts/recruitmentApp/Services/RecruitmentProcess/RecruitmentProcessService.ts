@@ -129,6 +129,11 @@ export default class RecruitmentService implements IRecruitmentService {
               AssignLineManager: "",
               AssignLineManagerId: 0,
               ReasonForVacancy: "",
+
+              JobPostingStartDate: undefined,
+              JobPostingEndDate: undefined,
+              JobPostingFirstExtensionEndDate: undefined,
+              JobPostingSecondExtensionEndDate: undefined
             };
             return item;
           })
@@ -266,6 +271,11 @@ export default class RecruitmentService implements IRecruitmentService {
               AssignLineManager: "",
               AssignLineManagerId: 0,
               ReasonForVacancy: "",
+
+              JobPostingStartDate: undefined,
+              JobPostingEndDate: undefined,
+              JobPostingFirstExtensionEndDate: undefined,
+              JobPostingSecondExtensionEndDate: undefined
             };
             return NPData;
           })
@@ -600,7 +610,12 @@ export default class RecruitmentService implements IRecruitmentService {
               AssignedHRId: item?.AssignedHRId || 0,
               AssignLineManager: item?.AssignLineManager?.Title || "",
               AssignLineManagerId: item?.AssignLineManagerId || 0,
-              ReasonForVacancy: item?.ReasonForVacancy || ""
+              ReasonForVacancy: item?.ReasonForVacancy || "",
+
+              JobPostingStartDate: item?.JobPostingStartDate || undefined,
+              JobPostingEndDate: item?.JobPostingEndDate || undefined,
+              JobPostingFirstExtensionEndDate: item?.JobPostingFirstExtensionEndDate || undefined,
+              JobPostingSecondExtensionEndDate: item?.JobPostingSecondExtensionEndDate || undefined
             };
             return Recruitment;
           })

@@ -302,7 +302,8 @@ export const TabName = {
   ReviewLevel2: "Review Profile - Level 2",
   Shortlisted: "Shortlisted",
   onHold: "On Hold",
-  Rejected: "Rejected"
+  Rejected: "Rejected",
+  OnHoldRejected: "On Hold & Rejected"
 };
 
 export const ProfileStatus = {
@@ -409,6 +410,10 @@ export const categoryOption = [
   "Interview Panel"
 ];
 
+export const labelName = {
+  Level1CandidateLabel: "Does the candidate fit for the vacant position ? (Level 1)",
+  Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)"
+};
 
 export const ColorCode = {
   TabColorCode: {

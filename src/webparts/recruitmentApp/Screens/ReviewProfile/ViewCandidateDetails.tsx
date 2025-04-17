@@ -22,6 +22,7 @@ import {
   ColorCode,
   HRMSAlertOptions,
   InterviewLevels,
+  labelName,
   ListNames,
   RecuritmentHRMsg,
   ReviewProfileScore,
@@ -48,6 +49,7 @@ import { useMediaQuery } from "@mui/material";
 
 type InterviewedLevelValue = {
   Levels: string;
+  Grade: string;
   AssignInterviewedLevel1Option: AutoCompleteItem[];
   AssignInterviewLevel1: AutoCompleteItem[];
   AssignInterviewedLevel2: AutoCompleteItem[];
@@ -95,6 +97,7 @@ const ViewCandidateDetails = (props: any) => {
     ExperienceMining: 0,
     ExperRelatedfield: 0,
     Status: "",
+    StatusId: "",
     Agencies: "",
     CandidateResume: [],
     RoleProfile: [],
@@ -102,14 +105,15 @@ const ViewCandidateDetails = (props: any) => {
     Comments: [],
     workflowStatusId: "",
     hrComments: "",
+    JobVaildFromDate: "",
+    JobVaildToDate: "",
   });
   const todaydate = new Date();
-  const tomorrowDate = new Date(todaydate);
-  tomorrowDate.setDate(todaydate.getDate() + 1);
 
   const [InterviewedLevel, setInterviewedLevel] =
     useState<InterviewedLevelValue>({
       Levels: "",
+      Grade: "",
       AssignInterviewedLevel1Option: [],
       AssignInterviewLevel1: [],
       AssignInterviewedLevel2: [],
@@ -182,7 +186,12 @@ const ViewCandidateDetails = (props: any) => {
             Comments: response?.Comments,
             workflowStatusId: response?.workflowStatusId,
             hrComments: response?.hrComments,
+            JobVaildFromDate: response?.JobVaildFromDate,
+            JobVaildToDate: response?.JobVaildToDate,
           }));
+
+          //  JobVaildDate.setDate(jobValidDate)
+
           if (
             response?.workflowStatusId === workflowStatusApi.HROnHold ||
             response?.workflowStatusId === workflowStatusApi.HROnHold ||
@@ -308,6 +317,7 @@ const ViewCandidateDetails = (props: any) => {
 
       setInterviewedLevel((prevState) => ({
         ...prevState,
+        Grade: response.data[0]?.PatersonGrade,
         Levels:
           Gradelevel.data[0]?.Level === InterviewLevels.Level1
             ? InterviewLevels.Level1
@@ -565,58 +575,33 @@ const ViewCandidateDetails = (props: any) => {
                           mandatory={false}
                         />
                       </div>
-
                       <div className="ms-Grid-col ms-lg4">
-                        <CustomMultiSelect
-                          label="Assign Interview Panel - Level 1"
-                          value={InterviewedLevel.AssignInterviewLevel1}
-                          options={
-                            InterviewedLevel.AssignInterviewedLevel1Option
-                          }
-                          onChange={(value) => handleMulitiSelect(value)}
+                        <CustomInput
+                          label="Grade"
+                          value={InterviewedLevel.Grade}
                           disabled={true}
-                          mandatory={true}
-                          error={validationErrors.AssignInterviewLevel1}
+                          mandatory={false}
                         />
-                        {InterviewedLevel.AssignInterviewLevel1.length > 0 &&
-                          InterviewedLevel.AssignInterviewLevel1.length < 3 && (
-                            <p
-                              style={{
-                                marginTop: 5,
-                                color: "red",
-                                fontSize: 12,
-                                marginLeft: 0,
-                              }}
-                            >
-                              Minimum of three is required
-                            </p>
-                          )}
                       </div>
-                      {InterviewedLevel.Levels === "Level 2" && (
-                        <div className="ms-Grid-row">
-                          <div
-                            className="ms-Grid-col ms-lg4"
-                            style={{ marginLeft: "7px" }}
-                          >
-                            <CustomMultiSelect
-                              label="Interview Panel - Level 2"
-                              value={InterviewedLevel.AssignInterviewedLevel2}
-                              options={
-                                InterviewedLevel.AssignInterviewedLevel1Option
-                              }
-                              disabled={true}
-                              mandatory={true}
-                            />
-                          </div>
-                        </div>
-                      )}
-                      <div className="ms-Grid-row">
+                      <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
                         <div className="ms-Grid-col ms-lg4">
                           <CustomDatePicker
                             selectedDate={InterviewedLevel.InterviewedDate}
                             label="Interviewed Date"
                             error={validationErrors.InterviewedDate}
-                            minDate={tomorrowDate}
+                            minDate={
+                              CandidateProfile.JobVaildToDate
+                                ? new Date(
+                                    new Date(
+                                      CandidateProfile.JobVaildToDate
+                                    ).setDate(
+                                      new Date(
+                                        CandidateProfile.JobVaildToDate
+                                      ).getDate() + 1
+                                    )
+                                  )
+                                : undefined
+                            }
                             mandatory={true}
                             onChange={(date) =>
                               handleDateChange(date ?? undefined)
@@ -639,8 +624,56 @@ const ViewCandidateDetails = (props: any) => {
                             disabled={false}
                             mandatory={true}
                             onChange={handleInputChange}
+                            error={validationErrors.InterviewMeetingInviteLink}
                           />
                         </div>
+                      </div>
+                      <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomMultiSelect
+                            label="Assign Interview Panel - Level 1"
+                            value={InterviewedLevel.AssignInterviewLevel1}
+                            options={
+                              InterviewedLevel.AssignInterviewedLevel1Option
+                            }
+                            onChange={(value) => handleMulitiSelect(value)}
+                            disabled={true}
+                            mandatory={true}
+                            error={validationErrors.AssignInterviewLevel1}
+                          />
+                          {InterviewedLevel.AssignInterviewLevel1.length > 0 &&
+                            InterviewedLevel.AssignInterviewLevel1.length <
+                              3 && (
+                              <p
+                                style={{
+                                  marginTop: 5,
+                                  color: "red",
+                                  fontSize: 12,
+                                  marginLeft: 0,
+                                }}
+                              >
+                                Minimum of three is required
+                              </p>
+                            )}
+                        </div>
+                        {InterviewedLevel.Levels === "Level 2" && (
+                          <>
+                            <div
+                              className="ms-Grid-col ms-lg4"
+                              style={{ marginLeft: "7px" }}
+                            >
+                              <CustomMultiSelect
+                                label="Interview Panel - Level 2"
+                                value={InterviewedLevel.AssignInterviewedLevel2}
+                                options={
+                                  InterviewedLevel.AssignInterviewedLevel1Option
+                                }
+                                disabled={true}
+                                mandatory={true}
+                              />
+                            </div>
+                          </>
+                        )}
                       </div>
                     </>
                   ) : (
@@ -681,9 +714,14 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg5">
                           <CustomRadioGroup
-                            label="Does the candidate fit for the vacant position ?"
+                            label={
+                              props.stateValue?.StatusId ===
+                              workflowStatusApi.LineManagerL1Pending
+                                ? labelName.Level1CandidateLabel
+                                : labelName.Level2CandidateLabel
+                            }
                             value={actionValue.CandidateStatus}
-                            options={["Yes", "No", "Waiting List"]}
+                            options={["Yes", "No", "On Hold"]}
                             error={false}
                             mandatory={false}
                             onChange={(item) => handleRadioChange(item)}
@@ -878,6 +916,8 @@ const ViewCandidateDetails = (props: any) => {
       InterviewedDate: false,
       AssignInterviewLevel1: false,
       CandidateScoreValue: false,
+      InterviewMeetingInviteLink: false,
+      InterviewTime: false,
     };
     switch (props.CurrentRoleID) {
       case RoleID.RecruitmentHR:
@@ -887,6 +927,10 @@ const ViewCandidateDetails = (props: any) => {
           errors.InterviewedDate = !IsValid(InterviewedLevel.InterviewedDate);
           errors.AssignInterviewLevel1 = !IsValid(
             InterviewedLevel.AssignInterviewLevel1?.[0]?.text ?? ""
+          );
+          errors.InterviewTime = !IsValid(InterviewedLevel.InterviewTime);
+          errors.InterviewMeetingInviteLink = !IsValid(
+            InterviewedLevel.InterviewMeetingInviteLink
           );
         } else {
           errors.Comments = !IsValid(actionValue.Comments);
