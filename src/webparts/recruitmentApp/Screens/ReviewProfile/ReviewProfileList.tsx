@@ -317,7 +317,7 @@ const ReviewProfileList = (props: any) => {
         void fetchCandidateData();
       }
     } catch (error) {
-      console.log(error);
+      console.log("e",error);
     }
     setIsLoading(false);
   };

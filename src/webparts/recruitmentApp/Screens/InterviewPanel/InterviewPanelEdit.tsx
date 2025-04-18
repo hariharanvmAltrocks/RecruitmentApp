@@ -26,15 +26,16 @@ import {
   workflowStatusApi,
   RoleID,
   ResponeStatus,
+  ColorCode,
 } from "../../utilities/Config";
-import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
+import { AdvDetails, QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomRadioGroup from "../../components/CustomRadioGroup";
 import CustomTextArea from "../../components/CustomTextArea";
-import { Card, CardContent } from "@mui/material";
+import { Card, CardContent, Chip } from "@mui/material";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomSignature from "../../components/CustomSignature";
 import CustomViewDocument from "../../components/CustomViewDocument";
@@ -44,6 +45,8 @@ import BreadcrumbsComponent, {
 import CustomLabel from "../../components/CustomLabel";
 import SPServices from "../../Services/SPService/SPServices";
 import { WorkflowJson } from "../../Models/ApIInterface";
+import ReuseButton from "../../components/ReuseButton";
+import CustomPreviewScreen from "../RecuritmentProcess/CustomPreviewScreen";
 
 type ValidationError = {
   Qualifications: boolean;
@@ -62,6 +65,7 @@ type ValidationError = {
 };
 
 const InterviewPanelEdit = (props: any) => {
+
   const todaydate = new Date();
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
@@ -111,6 +115,7 @@ const InterviewPanelEdit = (props: any) => {
     InterviewDate: "",
     JobRequestID: "",
     Comments: "",
+    JobGrade:""
   });
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -155,7 +160,35 @@ const InterviewPanelEdit = (props: any) => {
       IsScoreSheetUploaded: "",
     },
   ]);
-
+ const [advDetails, setAdvDetails] = React.useState<AdvDetails>({
+    MinQualificationOption: [],
+    PrefeQualificationOption: [],
+    RoleSpeKnowledgeoption: [],
+    RequiredLeveloption: [],
+    TechnicalSkillsOption: [],
+    LevelProficiencyOption: [],
+    RolePurpose: "",
+    JobDescription: "",
+    addMasterQualification: "",
+    TotalExperience: { key: 0, text: "" },
+    ExperienceinMiningIndustry: { key: 0, text: "" },
+    TotalExperienceOption: [],
+    ExperienceinMiningIndustryOption: [],
+    YearofExperience: " ",
+    PreferredExperience: "",
+    ValidFrom: todaydate,
+    ValidTo: undefined,
+    FunctionType: "",
+    JobFunctionalType: { key: 0, text: "" },
+    JobFunctionalTypeOption: [],
+    addMasterMinimumQualification: "",
+    AdvertisementAttachement: [],
+    JobcodeChecked: false,
+  });
+    const [MainComponent, setMainComponent] = React.useState<boolean>(true);
+    const [Preview, setPreview] = React.useState<boolean>(false);
+   
+    
   //Questionaires
   const [questionnaire, setQuestionnaire] = React.useState<QuestionItem[]>([]);
 
@@ -172,6 +205,195 @@ const InterviewPanelEdit = (props: any) => {
     { key: 2, text: "2 - Acceptable" },
     { key: 1, text: "1 - Not Acceptable" },
   ];
+// const fetchRoleProfileData = async (JobCodeID: number) => {
+//     try {
+//       let filterConditions = [
+//         {
+//           FilterKey: "JobCode",
+//           Operator: "eq",
+//           FilterValue: JobCodeID,
+//         },
+//       ];
+//       const response = await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+//         filterConditions,
+//         ""
+//       );
+
+//       if (response.status === 200) {
+//         const data = response.data;
+// console.log("data",data)
+//         if (data && data.length > 0) {
+//           const rawData = data[0];
+//           const roleSpecificKnowledge = Array.isArray(
+//             rawData.RoleSpecificKnowledge
+//           )
+//             ? rawData.RoleSpecificKnowledge
+//             : [];
+
+//           const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+//             (item: any) => item.RoleSpecificKnowledge
+//           );
+//           const RequiredLevelValues = roleSpecificKnowledge.map(
+//             (item: any) => item.RequiredLevel
+//           );
+//           const technicalSkillsKnowledge = Array.isArray(
+//             rawData.TechnicalSkillsKnowledge
+//           )
+//             ? rawData.TechnicalSkillsKnowledge
+//             : [];
+
+//           const TechnicalSkillsOption = technicalSkillsKnowledge.map(
+//             (item: any, index: number) => ({
+//               key: index,
+//               text: item.TechnicalSkills,
+//             })
+//           );
+
+//           const LevelProficiencyOption = technicalSkillsKnowledge.map(
+//             (item: any, index: number) => ({
+//               key: index,
+//               text: item.LevelProficiency,
+//             })
+//           );
+//           const MinQualificationOption = rawData.Qualification
+//             ? [{ key: 0, text: rawData.Qualification }]
+//             : [];
+
+//           // Set Preferred Qualification as comma-separated values
+//           const PrefeQualificationOption = rawData.PreferredQualification
+//             ? [{ key: 0, text: rawData.PreferredQualification }]
+//             : [];
+
+//           setAdvDetails((prevState) => ({
+//             ...prevState,
+//             RolePurpose: rawData.RoleProfile || "",
+//             JobDescription: rawData.JobDescription || "",
+//             MinQualificationOption: MinQualificationOption,
+//             PrefeQualificationOption: PrefeQualificationOption,
+//             TechnicalSkillsOption: TechnicalSkillsOption,
+//             LevelProficiencyOption: LevelProficiencyOption,
+//             RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+//             RequiredLeveloption: RequiredLevelValues,
+//             TotalExperience: rawData.YearofExperience || "",
+//             ExperienceinMiningIndustry: rawData.PreferredExperience || "",
+//             YearofExperience: rawData.YearofExperience || "",
+//             PreferredExperience: rawData.PreferredExperience || "",
+//             FunctionType: rawData.FunctionType,
+//             JobcodeChecked: true,
+//           }));
+//           console.log("advDetails",advDetails);
+//         } else {
+//           setAdvDetails((prev) => ({
+//             ...prev,
+//             JobcodeChecked: false,
+//           }));
+//           console.warn("data Not found");
+//         }
+//       } else {
+//         console.error("Error fetching data:", response.message);
+//       }
+//     } catch (error) {
+//       console.error("Error fetching data:", error);
+//     }
+//   };
+ 
+
+
+const fetchRoleProfileData = async (JobCodeID: number) => {
+  try {
+    const filterConditions = [
+      {
+        FilterKey: "JobCode",
+        Operator: "eq",
+        FilterValue: JobCodeID,
+      },
+    ];
+
+    const response = await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+      filterConditions,
+      ""
+    );
+
+    if (response.status === 200) {
+      const data = response.data;
+      console.log("data", data);
+
+      if (data && data.length > 0) {
+        const rawData = data[0];
+
+        // Role Specific Knowledge
+        const roleSpecificKnowledge = Array.isArray(rawData.RoleSpecificKnowledge)
+          ? rawData.RoleSpecificKnowledge
+          : [];
+
+        const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+          (item: { RoleSpecificKnowledge: any; }) => item.RoleSpecificKnowledge
+        );
+        const RequiredLevelValues = roleSpecificKnowledge.map(
+          (item: { RequiredLevel: any; }) => item.RequiredLevel
+        );
+
+        // Technical Skills Knowledge
+        const technicalSkillsKnowledge = Array.isArray(rawData.TechnicalSkillsKnowledge)
+          ? rawData.TechnicalSkillsKnowledge
+          : [];
+
+        const TechnicalSkillsOption = technicalSkillsKnowledge.map((item: { TechnicalSkills: any; }, index: any) => ({
+          key: index,
+          text: item.TechnicalSkills,
+        }));
+
+        const LevelProficiencyOption = technicalSkillsKnowledge.map((item: { LevelProficiency: any; }, index: any) => ({
+          key: index,
+          text: item.LevelProficiency,
+        }));
+
+        // Qualifications
+        const MinQualificationOption = rawData.Qualification
+          ? [{ key: 0, text: rawData.Qualification }]
+          : [];
+
+        const PrefeQualificationOption = rawData.PreferredQualification
+          ? [{ key: 0, text: rawData.PreferredQualification }]
+          : [];
+
+       setAdvDetails((prev) => {
+  const updatedDetails = {
+    ...prev,
+    RolePurpose: rawData.RoleProfile || "",
+    JobDescription: rawData.JobDescription || "",
+    RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+    RequiredLeveloption: RequiredLevelValues,
+    TechnicalSkillsOption,
+    LevelProficiencyOption,
+    MinQualificationOption,
+    PrefeQualificationOption,
+    YearofExperience: rawData.YearofExperience || "",
+    PreferredExperience: rawData.PreferredExperience || "",
+    TotalExperience: rawData.TotalPreferredExperience || "",
+    FunctionType: rawData.FunctionType || "",
+    JobcodeChecked: true,
+    FullDataResponse: rawData,
+  };
+
+  console.log("Setting advDetails to:", updatedDetails);
+  return updatedDetails;
+});
+      } else {
+        setAdvDetails((prev) => ({
+          ...prev,
+          JobcodeChecked: false,
+        }));
+        console.warn("No data found for JobCodeID", JobCodeID);
+      }
+    } else {
+      console.error("Failed to fetch role profile data:", response.message);
+    }
+  } catch (error) {
+    console.error("Error fetching role profile data:", error);
+  }
+};
+
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
@@ -252,7 +474,9 @@ const InterviewPanelEdit = (props: any) => {
           PositionTitle: op?.PositionTitle,
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
+          JobGrade:   op?.JobGrade,
         }));
+        await fetchRoleProfileData(op.JobCodeId);
         if (questionnaire.length === 0) {
           const getQuestion = await GetPortalJobsService.getQuestionnaire(
             op?.JobCode
@@ -800,10 +1024,11 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
+                
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Interviewed by"
-                    value={CandidateData.interviewPanelTitles?.join(", ") || ""}
+                    label="Grade"
+                    value={CandidateData.JobGrade}
                     disabled={true}
                     mandatory={false}
                     onChange={(value) =>
@@ -813,6 +1038,49 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
+                <div
+                    className="ms-Grid-col ms-lg4"
+                    style={{ position: "relative", top: "14px" }}
+                  >
+                    <label
+                      style={{
+                        fontWeight: 600,
+                        marginBottom: "4px",
+                        display: "block",
+                      }}
+                    >
+                      Interview Panel
+                    </label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "8px",
+                        minHeight: "38px",
+                        // border: "none",
+                        background: "none",
+                        backgroundColor: "rgb(243, 242, 241)",
+                        padding: "8px",
+                        borderRadius: "6px",
+                        border: "rgb(243, 242, 241)",
+                        boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px"
+                      }}
+                    >
+                      {CandidateData.interviewPanelTitles &&CandidateData.interviewPanelTitles.length > 0
+                        ? CandidateData.interviewPanelTitles.map((title, index) => (
+                            <Chip
+                              key={index}
+                              label={title}
+                              size="small"
+                              sx={{
+                                backgroundColor: "rgb(243, 242, 241)",
+                                fontWeight: 500,
+                              }}
+                            />
+                          ))
+                        : null}
+                    </div>
+                  </div>
               </div>
 
               <div className="ms-Grid-row" style={{ marginTop: "10px" }}>
@@ -829,7 +1097,7 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
                 <div className="ms-Grid-col ms-lg4">
-                  <CustomLabel value={"Advertisement Documents"} />
+                <CustomLabel value={"Advertisement Documents (French)"} />
                   <CustomViewDocument
                     Attachment={CandidateData.AdvertisementDocument}
                   />
@@ -1051,6 +1319,46 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div> */}
+
+                 <div className="ms-Grid-row">
+                  <div
+                    className="ms-Grid-col ms-lg2"
+                    style={{ position: "relative", right: "1px" }}
+                  >
+                    <div>
+                      <CustomLabel
+                        value="View Role Purpose"
+                        // mandatory={true}
+                      />
+                      <ReuseButton
+                        Style={{
+                          minWidth: "117px",
+                          fontSize: "13px",
+                          paddingBottom: "24px",
+                          display: "flex",
+                          flexDirection: "column",
+                          height: "41px",
+                          paddingTop: "23px",
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          color: "white",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        label="VIEW"
+                        imgSrc={require("../../assets/viewSubmision-white.svg")}
+                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                        imgAlt="View"
+                        imgAltHover="Hovered View"
+                        onClick={async () => {
+                          setPreview(true);
+                          setMainComponent(false);
+                        }}
+                        spacing={4}
+                      />
+                    </div>
+                  </div>
+                </div>
             </div>
           </CardContent>
         </Card>
@@ -1421,7 +1729,7 @@ const InterviewPanelEdit = (props: any) => {
                 (panel) => panel.InterviewPanelTitle
               );
 
-              console.log("", InterviewPanelData);
+              console.log("sad", InterviewPanelData);
               setInterviewPanelData((prevState) => ({
                 ...prevState,
                 interviewPanelTitles: interviewPanelTitles || [],
@@ -1520,28 +1828,50 @@ const InterviewPanelEdit = (props: any) => {
 
   return (
     <>
-      <CustomLoader isLoading={isLoading}>
-        <div className="menu-card">
-          <React.Fragment>
-            <BreadcrumbsComponent
-              items={tabs}
-              initialItem={activeTab}
-              TabName={TabNameData}
-              onBreadcrumbChange={handleBreadcrumbChange}
-              handleCancel={handleCancel}
-              additionalButtons={[
-                {
-                  label: "Submit",
-                  onClick: async () => {
-                    await Submit_fn();
-                  },
-                },
-              ]}
-            />
-          </React.Fragment>
-        </div>
-      </CustomLoader>
-
+      {MainComponent ? (
+        <>
+             <CustomLoader isLoading={isLoading}>
+            <div className="menu-card">
+              <BreadcrumbsComponent
+                items={tabs}
+                initialItem={activeTab}
+                TabName={TabNameData}
+                onBreadcrumbChange={handleBreadcrumbChange}
+                handleCancel={handleCancel}
+                additionalButtons={[
+                
+                   
+                        {
+                          label: "Submit",
+                          onClick: async () => {
+                            await Submit_fn();
+                          },
+                        },
+                      
+                    
+                ]}
+              />
+            </div>
+          </CustomLoader>
+        </>
+      )  : Preview ? (
+        <CustomPreviewScreen
+          data={advDetails}
+          onclose={() => {
+            setPreview(false);
+            setMainComponent(true);
+          }}
+          Ok_btnfn={() => {
+            setPreview(false);
+            setMainComponent(true);
+          }}
+          JobTitle={CandidateData.PositionTitle || ""}
+        />
+      ) : (
+        <>
+        
+        </>
+      )}
       {AlertPopupOpen ? (
         <>
           <CustomAlert
