@@ -19,6 +19,7 @@ interface AttachmentButtonProps {
   Style?: React.CSSProperties;
   iconNameHover?: string;
   AttachState?: (value: Item[]) => void;
+  fileformat?: string;
 }
 
 interface Item {
@@ -40,6 +41,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
   iconNameHover,
   backgroundColor,
   AttachState,
+  fileformat,
 }: AttachmentButtonProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -89,7 +91,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
     flexDirection: "column",
     height: "55px",
 
-    backgroundColor:ColorCode.ButtonColorCode.ButtonColor,
+    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
     color: "white",
     border: ColorCode.ButtonColorCode.ButtonbordeColor,
 
@@ -106,11 +108,11 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
     marginRight: "8px",
     marginLeft: "6px",
     fontSize: "20px",
-    color:  ColorCode.ButtonColorCode.color,
+    color: ColorCode.ButtonColorCode.color,
   };
 
   const LabelStyleHover = {
-    color:  ColorCode.ButtonColorCode.color,
+    color: ColorCode.ButtonColorCode.color,
   };
 
   const IconStyleHover = {
@@ -155,7 +157,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
           ref={fileInputRef}
           onChange={handleFileChange}
           style={{ display: "none" }}
-          accept=".pdf" //.doc, .docx"
+          accept={fileformat} //".pdf" //.doc, .docx"
         />
       </Button>
       {error && (

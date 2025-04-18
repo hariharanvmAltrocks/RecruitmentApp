@@ -191,6 +191,7 @@ const InterviewPanelEdit = (props: any) => {
     
   //Questionaires
   const [questionnaire, setQuestionnaire] = React.useState<QuestionItem[]>([]);
+  const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
 
   const handleRatingChange = (id: number, value: AutoCompleteItem | null) => {
     setQuestionnaire((prevState) =>
@@ -844,7 +845,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
 
   const tabs = [
     {
-      label: TabName.EvaluationTab,
+      label: TabName.ViewCandidateDetails,
       value: "tab1",
       content: (
         <Card
@@ -1365,7 +1366,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
       ),
     },
     {
-      label: TabName.EvaluationTab,
+      label: TabName.Scorecard,
       value: "tab2",
       content: (
         <Card
@@ -1456,7 +1457,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
       ),
     },
     {
-      label: TabName.EvaluationTab,
+      label: TabName.Scorecard,
       value: "tab3",
       content: (
         <Card
@@ -1687,8 +1688,21 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
   ];
 
   React.useEffect(() => {
-    const activeTabObj = tabs.find((item) => item.value === activeTab);
+    // const activeTabObj = tabs.find((item) => item.value === activeTab);
 
+    // if (activeTab === "tab1") {
+    //   setTabNameData((prevTabNames) => {
+    //     const newTabNames = [
+    //       { tabName: props.stateValue?.TabName },
+    //       { tabName: props.stateValue?.ButtonAction },
+    //       { tabName: TabName.ViewCandiadteDetails },
+    //     ];
+    //     return newTabNames;
+    //   });
+    // }
+
+    const activeTabObj = tabs.find((item) => item.value === activeTab);
+    // const prevTabObj = tabs.find((item) => item.value === prevActiveTab);
     if (activeTab === "tab1") {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
@@ -1698,6 +1712,43 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
         ];
         return newTabNames;
       });
+    } else if (activeTab === "tab2") {
+      setTabNameData((prevTabNames) => {
+        const newTabNames = [
+          { tabName: props.stateValue?.TabName },
+          { tabName: props.stateValue?.ButtonAction },
+          { tabName: TabName.ViewCandidateDetails },
+          { tabName: activeTabObj?.label },
+        ];
+
+        const uniqueTabNames = newTabNames.filter(
+          (item, index, self) =>
+            item.tabName &&
+            self.findIndex((t) => t.tabName === item.tabName) === index
+        );
+
+        return uniqueTabNames;
+      });
+    } else {
+      setTabNameData((prevTabNames) => {
+        const newTabNames = [
+          { tabName: props.stateValue?.TabName },
+          { tabName: props.stateValue?.ButtonAction },
+          { tabName: TabName.ViewCandidateDetails },
+          { tabName: activeTabObj?.label },
+        ];
+
+        const uniqueTabNames = newTabNames.filter(
+          (item, index, self) =>
+            item.tabName &&
+            self.findIndex((t) => t.tabName === item.tabName) === index
+        );
+
+        return uniqueTabNames;
+      });
+    }
+    if (activeTab !== prevActiveTab) {
+      setPrevActiveTab(activeTab);
     }
 
     const fetchData = async () => {

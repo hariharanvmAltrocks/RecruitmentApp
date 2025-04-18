@@ -146,7 +146,36 @@ const ReviewProfileList = (props: any) => {
 
         return (
           <div style={{ display: "flex", gap: "10px" }}>
-            {tab === "tab2" || tab === "tab1" ? (
+            {ButtonAction === "Edit" ? (
+              <>
+                <img
+                  src={require("../../assets/Editbutton.svg")}
+                  alt="Stamp Icon"
+                  onClick={() =>
+                    handleRedirectView(rowData, tab, TabName, ButtonAction)
+                  }
+                  style={{
+                    width: "70%",
+                    height: "60%",
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <img
+                  src={require("../../assets/Viewicon.svg")}
+                  alt="Stamp Icon"
+                  style={{
+                    width: "70%",
+                    height: "60%",
+                  }}
+                  onClick={() =>
+                    handleRedirectView(rowData, tab, TabName, ButtonAction)
+                  }
+                />
+              </>
+            )}
+            {/* {tab === "tab2" || tab === "tab1" ? (
               <img
                 src={require("../../assets/Editbutton.svg")}
                 alt="Edit Icon"
@@ -168,7 +197,7 @@ const ReviewProfileList = (props: any) => {
                   handleRedirectView(rowData, "tab3", TabName, ButtonAction)
                 }
               />
-            )}
+            )} */}
           </div>
         );
       },
@@ -364,7 +393,7 @@ const ReviewProfileList = (props: any) => {
                     data={RecuritmentData}
                     columns={columnConfig(
                       "tab1",
-                      TabName.ViewPositionDetails,
+                      "View",
                       TabName.ReviewProfile
                     )}
                     rows={rows}
@@ -475,7 +504,7 @@ const ReviewProfileList = (props: any) => {
                     data={RecuritmentData}
                     columns={columnConfig(
                       "tab3",
-                      TabName.ViewPositionDetails,
+                      "View",
                       TabName.ReviewProfile
                     )}
                     rows={rows}

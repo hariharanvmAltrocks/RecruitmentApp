@@ -182,13 +182,16 @@ export default class GetPortalJobs implements IGetPortalJobs {
           ExperienceMining: op?.profile?.totalYearOfExperiance,
           ExperRelatedfield: op?.profile?.releventExperience,
           Status: op?.workflowStatus?.displayText,
+          StatusId: op?.workflowStatusId,
           Agencies: op?.profile?.profileXAgent?.agent?.name,
           CandidateResume: filteredFiles,
           RoleProfile: RoleProfileDoc,
           Advertisement: AdvertismentDocPromises,
           Comments: CommentsData,
           workflowStatusId: op?.workflowStatusId,
-          hrComments: op?.hrComments
+          hrComments: op?.hrComments,
+          JobVaildFromDate: op?.jobDetail?.validFrom,
+          JobVaildToDate: op?.jobDetail?.validTo,
         };
 
         GetProfileByJobCodeData.push(GetProfileDahboard);

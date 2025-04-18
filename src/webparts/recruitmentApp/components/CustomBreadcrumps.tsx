@@ -18,6 +18,7 @@ interface BreadcrumbsComponentProps {
   initialItem?: string;
   separator?: string;
   handleCancel?: () => void;
+  ValidationError?: () => boolean;
   onBreadcrumbChange?: (newItem: string) => void;
   additionalButtons?: {
     label: string;
@@ -34,16 +35,21 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
   additionalButtons = [],
   TabName = [],
   handleCancel,
+  ValidationError,
 }) => {
   const [currentValue, setCurrentValue] = React.useState(initialItem);
 
   const currentIndex = items.findIndex((item) => item.value === currentValue);
 
   const handleNextClick = () => {
-    if (currentIndex < items.length - 1) {
-      const nextValue = items[currentIndex + 1].value;
-      setCurrentValue(nextValue);
-      if (onBreadcrumbChange) onBreadcrumbChange(nextValue);
+    const isValid = ValidationError ? !ValidationError() : true;
+
+    if (isValid) {
+      if (currentIndex < items.length - 1) {
+        const nextValue = items[currentIndex + 1].value;
+        setCurrentValue(nextValue);
+        onBreadcrumbChange?.(nextValue);
+      }
     }
   };
 

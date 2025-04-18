@@ -113,7 +113,7 @@ const HodViewScorecard = (props: any) => {
   });
 
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
-  const [activeTab, setactiveTab] = React.useState<string>("tab2");
+  const [activeTab, setactiveTab] = React.useState<string>("tab1");
   const [MainComponent, setMainComponent] = React.useState<boolean>(true);
   const [CommentData, setCommentsData] = React.useState<
     CommentsDatas[] | undefined
@@ -457,13 +457,6 @@ const HodViewScorecard = (props: any) => {
 
   const OpenComments = () => {
     setMainComponent(false);
-
-    if (scoreData.length === 0) {
-      return;
-    }
-
-    const recruitmentID = scoreData[0].RecruitmentID;
-
     let filterConditions = [
       {
         FilterKey: "CandidateID/Id",
@@ -527,8 +520,8 @@ const HodViewScorecard = (props: any) => {
 
   const tabs = [
     {
-      label: TabName.CandidateDetails,
-      value: "tab2",
+      label: TabName.ViewCandidateDetails,
+      value: "tab1",
       content: (
         <>
           <div className="agencies_card ">
@@ -859,8 +852,8 @@ const HodViewScorecard = (props: any) => {
       ),
     },
     {
-      label: TabName.Scorecard,
-      value: "tab3",
+      label: TabName.ViewScoreDetails,
+      value: "tab2",
       content: (
         <div
           style={{
@@ -1253,21 +1246,36 @@ const HodViewScorecard = (props: any) => {
 
   React.useEffect(() => {
     const activeTabObj = tabs.find((item) => item.value === activeTab);
+    if (activeTab === "tab1") {
+      setTabNameData((prevTabNames) => {
+        const newTabNames = [
+          { tabName: props.stateValue?.TabName },
+          { tabName: "View" },
+          { tabName: props.stateValue?.PreviousTabName },
+          { tabName: props.stateValue?.ButtonAction },
+          { tabName: activeTabObj?.label },
+        ];
+        return newTabNames;
+      });
+    } else {
+      setTabNameData((prevTabNames) => {
+        const newTabNames = [
+          { tabName: props.stateValue?.TabName },
+          { tabName: "View" },
+          { tabName: props.stateValue?.PreviousTabName },
+          { tabName: props.stateValue?.ButtonAction },
+          { tabName: TabName.ViewCandidateDetails },
+          { tabName: TabName.ViewScoreDetails },
+        ];
 
-    if (activeTab === "tab2" || activeTab === "tab3") {
-      const newTabNames = [
-        { tabName: props.stateValue?.TabName },
-        { tabName: props.stateValue?.PreviousTabName },
-        { tabName: props.stateValue?.ButtonAction },
-      ];
+        const uniqueTabNames = newTabNames.filter(
+          (item, index, self) =>
+            item.tabName &&
+            self.findIndex((t) => t.tabName === item.tabName) === index
+        );
 
-      if (activeTab === "tab3") {
-        newTabNames.push({ tabName: props.stateValue?.PreviousTabName });
-      }
-
-      newTabNames.push({ tabName: activeTabObj?.label });
-
-      setTabNameData(newTabNames);
+        return uniqueTabNames;
+      });
     }
 
     const fetchAllData = async () => {

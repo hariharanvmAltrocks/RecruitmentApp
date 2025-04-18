@@ -1,6 +1,11 @@
 import * as React from "react";
 import JobCodeSelector from "../../components/CustomMultiselectwithswipe";
-import { ADGroupID, ColorCode, ListNames, RoleID } from "../../utilities/Config";
+import {
+  ADGroupID,
+  ColorCode,
+  ListNames,
+  RoleID,
+} from "../../utilities/Config";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import { JobCodeTilte } from "../../Models/RecuritmentVRR";
@@ -202,7 +207,7 @@ export const AssignRecuritmentHR = ({
           <ReuseButton
             label="Assign"
             onClick={async () => {
-              await AssignHRSubmit();
+              AssignHRSubmit();
             }}
             Style={{
               backgroundColor: ColorCode.ButtonColorCode.ButtonColor,

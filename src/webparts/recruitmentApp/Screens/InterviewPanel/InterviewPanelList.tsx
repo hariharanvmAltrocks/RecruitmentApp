@@ -140,12 +140,7 @@ const InterviewPanelList = (props: any) => {
       header: "Status",
       sortable: false,
       body: (rowData: any) => {
-        return (
-          <span
-          >
-            {rowData.Status}
-          </span>
-        );
+        return <span>{rowData.Status}</span>;
       },
     },
 
@@ -201,7 +196,7 @@ const InterviewPanelList = (props: any) => {
             if (isScoreSheetUploaded) {
               handleAlert();
             } else {
-              handleRedirectView(rowData, "tab1", "Evaluation", "Edit");
+              handleRedirectView(rowData, "tab1", "Evaluation", "View");
             }
           } catch (error) {}
         };
@@ -346,7 +341,7 @@ const InterviewPanelList = (props: any) => {
           <CardContent>
             <ReviewProfileDatatable
               data={CandidateData}
-              columns={columnConfig("tab1", "Edit", TabName.Evaluation)}
+              columns={columnConfig("tab1", "View", TabName.Evaluation)}
               rows={rows}
               onPageChange={onPageChange}
               handleRefresh={() => handleRefresh("tab1")}
@@ -362,14 +357,15 @@ const InterviewPanelList = (props: any) => {
       <CustomLoader isLoading={isLoading}>
         <div className="sub-menu-card ">
           {props.CurrentRoleID === RoleID.InterviewPanel ? (
-            <TabsComponent tabs={tabs}
-             initialTab="tab1"
-            //  tabClassName={"Tab"}
-              />
+            <TabsComponent
+              tabs={tabs}
+              initialTab="tab1"
+              //  tabClassName={"Tab"}
+            />
           ) : (
             <ReviewProfileDatatable
               data={CandidateData}
-              columns={columnConfig("tab1", "Edit", TabName.Evaluation)}
+              columns={columnConfig("tab1", "View", TabName.Evaluation)}
               rows={rows}
               onPageChange={onPageChange}
               handleRefresh={() => handleRefresh("tab1")}

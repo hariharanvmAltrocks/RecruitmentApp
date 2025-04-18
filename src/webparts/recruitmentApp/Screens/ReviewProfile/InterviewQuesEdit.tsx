@@ -36,6 +36,7 @@ import {
   ResponeStatus,
   RoleID,
   StatusId,
+  TabName,
   WorkflowAction,
 } from "../../utilities/Config";
 import LabelHeaderComponents from "../../components/TitleHeader";
@@ -781,7 +782,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   const tabs = [
     {
-      label: "Interview Questions",
+      label: TabName.InterviewQuestion,
       value: "tab1",
       content: (
         <Card
@@ -1505,13 +1506,19 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     },
   ];
   useEffect(() => {
-    const activeTabObj = tabs.find((item) => item.value === activeTab);
+    // const activeTabObj = tabs.find((item) => item.value === activeTab);
     if (activeTab === "tab1") {
       setTabNameData(() => {
         return [
           { tabName: props.stateValue?.TabName },
           { tabName: props.stateValue?.ButtonAction },
-          { tabName: activeTabObj?.label },
+          {
+            tabName:
+              InterviewQuesData.Catogry ===
+              CatogryOptionCode.CareerPortalCandidate
+                ? TabName.CareerPortal
+                : TabName.InterviewPanel,
+          },
         ];
       });
     }
@@ -1569,15 +1576,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         ];
       }
 
-  const questionTypeId =
-  InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
-    ? String(item.questionType.key)
-    : item.questionType?.text === "Custom Answer"
-    ? "QT13" 
-    : "";
-
-
-
       return {
         questionEn: item.question,
         questionFr: item.question,
@@ -1617,7 +1615,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         ID: props.stateValue?.ID,
       });
       const SuccessAlert = {
-        Message: RecuritmentHRMsg.QuestionSuccessMsg,
+        Message:
+          InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
+            ? RecuritmentHRMsg.CareerportalSuccessMsg
+            : RecuritmentHRMsg.InterviewQuestionSuccessMsg,
         Type: HRMSAlertOptions.Success,
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
