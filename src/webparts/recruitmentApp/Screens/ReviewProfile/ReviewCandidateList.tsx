@@ -332,7 +332,7 @@ const ReviewCandidateList = (props: any) => {
 
   const tabs = (tab: string) => [
     {
-      label: TabName.ViewCandidateDetails,
+      label: TabName.ViewCandidateList,
       value: "tab1",
       content: (
         <Card
@@ -342,7 +342,7 @@ const ReviewCandidateList = (props: any) => {
           <CardContent>
             <ReviewProfileDatatable
               data={CandidateData ?? []}
-              columns={columnConfig(tab, "View", TabName.ReviewProfile)}
+              columns={columnConfig(tab, "Edit", TabName.ReviewProfile)}
               rows={rows}
               onPageChange={onPageChange}
               handleRefresh={() => handleRefresh(tab)}

@@ -1039,7 +1039,10 @@ const RecruitmentProcess = (props: any) => {
                         console.error(updateError);
                       }
                       let CancelAlert = {
-                        Message: RecuritmentHRMsg.AgencySucess,
+                        Message:
+                          selectedJobCodes.length === 1
+                            ? RecuritmentHRMsg.SingleAgencyMsg
+                            : RecuritmentHRMsg.AgencySucess,
                         Type: HRMSAlertOptions.Success,
                         visible: true,
                         ButtonAction: async (userClickedOK: boolean) => {
@@ -1238,7 +1241,7 @@ const RecruitmentProcess = (props: any) => {
                           data={data}
                           columns={columnConfig(
                             "tab1",
-                            "Upload",
+                            "View",
                             TabName.UploadAdvertisement
                           )}
                           rows={rows}
@@ -1316,7 +1319,7 @@ const RecruitmentProcess = (props: any) => {
                                 data={data}
                                 columns={columnConfig(
                                   "tab1",
-                                  "Edit",
+                                  "View",
                                   TabName.ReviewONEMAdvertisement
                                 )}
                                 rows={rows}
@@ -1346,7 +1349,7 @@ const RecruitmentProcess = (props: any) => {
                                 data={data}
                                 columns={columnConfig(
                                   "tab2",
-                                  "View Position Details",
+                                  "View",
                                   TabName.ScorecardDetails
                                 )}
                                 rows={rows}

@@ -202,7 +202,7 @@ const ViewCandidateDetails = (props: any) => {
           ) {
             setActionValue((prevState: any) => ({
               ...prevState,
-              CandidateStatus: CandidateStatus.WaitingList,
+              CandidateStatus: CandidateStatus.OnHold,
             }));
           }
           if (
@@ -256,9 +256,9 @@ const ViewCandidateDetails = (props: any) => {
     );
     const newTabNames = [
       { tabName: props.stateValue?.initialTab },
-      { tabName: TabName.PositionDetails },
+      { tabName: TabName.ViewCandidateList },
       { tabName: "Edit" },
-      { tabName: TabName.CandidateDetails },
+      { tabName: TabName.ViewCandidateDetails },
     ];
     setTabNameData(newTabNames);
   }, []);
@@ -737,7 +737,8 @@ const ViewCandidateDetails = (props: any) => {
                   )}
 
                 {props.stateValue?.initialTab === TabName.ReviewProfile &&
-                  props.CurrentRoleID === RoleID.RecruitmentHR && (
+                  props.CurrentRoleID === RoleID.RecruitmentHR &&
+                  props.stateValue?.ActionBtn != "View" && (
                     <>
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
@@ -749,6 +750,24 @@ const ViewCandidateDetails = (props: any) => {
                             mandatory={true}
                             onChange={(item) => handleAutoComplete(item)}
                             error={validationErrors.CandidateScoreValue}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                {props.stateValue?.initialTab === TabName.ReviewProfile &&
+                  props.CurrentRoleID === RoleID.RecruitmentHR &&
+                  props.stateValue?.ActionBtn === "View" && (
+                    <>
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomInput
+                            label="Review profile Feedback"
+                            value={CandidateProfile.hrComments}
+                            disabled={true}
+                            // mandatory={true}
+                            // onChange={handleInputChange}
                           />
                         </div>
                       </div>
@@ -1060,7 +1079,7 @@ const ViewCandidateDetails = (props: any) => {
           props.CurrentRoleID === RoleID.RecruitmentHR &&
           props.stateValue?.initialTab === TabName.ReviewProfile
             ? InterviewedLevel.CandidateScoreValue.text ?? ""
-            : "",
+            : CandidateProfile?.hrComments,
       });
       let CandidateData: WorkflowJson = {
         workflowStatus: "",
@@ -1108,7 +1127,7 @@ const ViewCandidateDetails = (props: any) => {
             }
             break;
 
-          case CandidateStatus.WaitingList:
+          case CandidateStatus.OnHold:
             if (
               CandidateProfile.workflowStatusId ===
               workflowStatusApi.LineManagerL2Pending
@@ -1131,7 +1150,7 @@ const ViewCandidateDetails = (props: any) => {
           PopupMessage = RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
         } else {
           CandidateData = createFilter(workflowStatusApi.LineManagerL1Pending);
-          PopupMessage = RecuritmentHRMsg.ProfileReviewed;
+          PopupMessage = RecuritmentHRMsg.HRReviewCandidate;
         }
       }
 

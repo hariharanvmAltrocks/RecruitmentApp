@@ -3,7 +3,6 @@ import { Card, CardContent } from "@mui/material";
 import { getVRRDetails, InterviewServices } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
- 
   HRMSAlertOptions,
   ListNames,
   RecuritmentHRMsg,
@@ -206,13 +205,7 @@ const CandidateList = (props: any) => {
       header: "Status",
       sortable: false,
       body: (rowData: any) => {
-        return (
-          <span
-            
-          >
-            {rowData.Status}
-          </span>
-        );
+        return <span>{rowData.Status}</span>;
       },
     },
     {
@@ -289,7 +282,7 @@ const CandidateList = (props: any) => {
 
   const tabs = [
     {
-      label: TabName.ViewCandiadteDetails,
+      label: TabName.ViewCandidateList,
       value: "tab1",
       content: (
         <Card
@@ -303,7 +296,7 @@ const CandidateList = (props: any) => {
                 "tab1",
                 "Edit",
                 props.stateValue?.TabName,
-                TabName.ViewCandiadteDetails
+                TabName.ViewCandidateList
               )}
               rows={rows}
               onPageChange={onPageChange}
