@@ -22,4 +22,10 @@ export type ICommonService = {
     PositionCode: string,
     Listname: string
   ): Promise<ApiResponse<any>>;
+  uploadRoleProfileMaster(
+    PositionCode: string,
+    DocumentName: string,
+    AttachFile: IDocFiles[],
+    Listname: string
+  ): Promise<ApiResponse<any>>;
 };

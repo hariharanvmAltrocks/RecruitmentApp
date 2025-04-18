@@ -41,6 +41,7 @@ import {
   AssignHRData,
   AssignRecuritmentHR,
 } from "../ScreenComponent/AssignRecuritmentHR";
+import IsValid from "../../components/Validation";
 
 export type formValidation = {
   Comments: boolean;
@@ -598,7 +599,7 @@ const RecruitmentProcess = (props: any) => {
     };
 
     void fetchDataAndGetADGroupsOption();
-  }, [AssignHR, activeTab]);
+  }, [activeTab]);
 
   const onPageChange = (event: any, Type: string) => {
     // setFirst(event.first);
@@ -791,89 +792,145 @@ const RecruitmentProcess = (props: any) => {
       setIsLoading(false);
     }
   };
+  const Validation = (): boolean => {
+    let errors = {
+      AssignRecruitmentHR: false,
+      Comments: false,
+      // AssignRecruitmentAgencies: false,
+    };
+    switch (props.CurrentRoleID) {
+      case RoleID.RecruitmentHRLead: {
+        errors.AssignRecruitmentHR = !IsValid(
+          AssignHRData.AssignRecruitmentHR.text
+        );
+        errors.Comments = !IsValid(AssignHRData.Comments);
+        break;
+      }
+
+      case RoleID.RecruitmentHR: {
+        // errors.AssignRecruitmentAgencies = !IsValid(
+        //   AssignHRData.AssignRecruitmentAgencies[0]?.text
+        // );
+        errors.Comments = !IsValid(AssignHRData.Comments);
+        break;
+      }
+    }
+
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      ...errors,
+    }));
+
+    return Object.values(errors).some((error) => error);
+  };
 
   const handleSubmit = async () => {
     try {
-      console.log("selectedJobCodes", selectedJobCodes);
-      if (selectedJobCodes.length > 0) {
-        for (const selectedJob of selectedJobCodes) {
-          const correspondingJob = data.find(
-            (item: any) => item.ID === selectedJob.ID
-          );
-          console.log("Corresponding Job:", correspondingJob);
-
-          if (correspondingJob) {
-            const RecruitmentValue: PostRecuritmentData = {
-              Data: {
-                BusinessUnitCodeId: correspondingJob.BusinessUnitCodeId,
-                Nationality: correspondingJob.Nationality,
-                EmploymentCategory: correspondingJob.EmploymentCategory,
-                DepartmentId: correspondingJob.DepartmentId,
-                SubDepartmentId: correspondingJob.SubDepartmentId,
-                SectionId: correspondingJob.SectionId,
-                DepartmentCodeId: correspondingJob.DepartmentCodeId,
-                NumberOfPersonNeeded: Number(
-                  correspondingJob.NumberOfPersonNeeded
-                ),
-                EnterNumberOfMonths:
-                  correspondingJob.EnterNumberOfMonths ?? "0",
-                TypeOfContract: correspondingJob.TypeOfContract,
-                DateRequried: correspondingJob?.DateRequried ?? null,
-                StatusId: StatusId.PendingwithHRLeadtoAssignRecruitmentHR,
-                ActionId: WorkflowAction.Approved,
-                JobCodeId: correspondingJob.JobCodeId,
-                AreaofWork: correspondingJob.AreaofWork,
-                AssignedHRId: AssignHRData.AssignRecruitmentHR.key,
-                DataFrom: correspondingJob.Type ?? "",
-              },
-              PositionData: {
-                PatersonGradeId: correspondingJob.PatersonGradeId ?? 0,
-                DRCGradeId: correspondingJob.DRCGradeId ?? 0,
-                JobTitleEnglishId: correspondingJob.JobTitleEnglishId ?? 0,
-                JobTitleFrenchId: correspondingJob.JobTitleFrenchId ?? 0,
-              },
-              CommentsList: {
-                RoleId: props.CurrentRoleID,
-                RecruitmentIDId: 0,
-                Comments: AssignHRData.Comments,
-              },
-              updatePreList: {
-                ID: selectedJob.ID ?? 0,
-                ActionId: WorkflowAction.Approved,
-                ItemCreated: "Yes",
-                IsDataSyncToRecruitment: "No",
-              },
-            };
-
-            const response = await getVRRDetails.InsertRecruitmentDpt(
-              RecruitmentValue
+      const IsVaild = !Validation();
+      if (IsVaild) {
+        setAssignHR(false);
+        setIsLoading(true);
+        console.log("selectedJobCodes", selectedJobCodes);
+        if (selectedJobCodes.length > 0) {
+          for (const selectedJob of selectedJobCodes) {
+            const correspondingJob = data.find(
+              (item: any) => item.ID === selectedJob.ID
             );
-            if (response.status === ResponeStatus.SUCCESS) {
-              let SuccessAlert = {
-                Message: RecuritmentHRMsg.HRSuccess,
-                Type: HRMSAlertOptions.Success,
-                visible: true,
-                ButtonAction: async (userClickedOK: boolean) => {
-                  if (userClickedOK) {
-                    setAlertPopupOpen(false);
-                  }
+            console.log("Corresponding Job:", correspondingJob);
+
+            if (correspondingJob) {
+              const RecruitmentValue: PostRecuritmentData = {
+                Data: {
+                  BusinessUnitCodeId: correspondingJob.BusinessUnitCodeId,
+                  Nationality: correspondingJob.Nationality,
+                  EmploymentCategory: correspondingJob.EmploymentCategory,
+                  DepartmentId: correspondingJob.DepartmentId,
+                  SubDepartmentId: correspondingJob.SubDepartmentId,
+                  SectionId: correspondingJob.SectionId,
+                  DepartmentCodeId: correspondingJob.DepartmentCodeId,
+                  NumberOfPersonNeeded: Number(
+                    correspondingJob.NumberOfPersonNeeded
+                  ),
+                  EnterNumberOfMonths:
+                    correspondingJob.EnterNumberOfMonths ?? "0",
+                  TypeOfContract: correspondingJob.TypeOfContract,
+                  DateRequried: correspondingJob?.DateRequried ?? null,
+                  StatusId: StatusId.PendingwithHRLeadtoAssignRecruitmentHR,
+                  ActionId: WorkflowAction.Approved,
+                  JobCodeId: correspondingJob.JobCodeId,
+                  AreaofWork: correspondingJob.AreaofWork,
+                  AssignedHRId: AssignHRData.AssignRecruitmentHR.key,
+                  DataFrom: correspondingJob.Type ?? "",
+                },
+                PositionData: {
+                  PatersonGradeId: correspondingJob.PatersonGradeId ?? 0,
+                  DRCGradeId: correspondingJob.DRCGradeId ?? 0,
+                  JobTitleEnglishId: correspondingJob.JobTitleEnglishId ?? 0,
+                  JobTitleFrenchId: correspondingJob.JobTitleFrenchId ?? 0,
+                },
+                CommentsList: {
+                  RoleId: props.CurrentRoleID,
+                  RecruitmentIDId: 0,
+                  Comments: AssignHRData.Comments,
+                },
+                updatePreList: {
+                  ID: selectedJob.ID ?? 0,
+                  ActionId: WorkflowAction.Approved,
+                  ItemCreated: "Yes",
+                  IsDataSyncToRecruitment: "No",
                 },
               };
-              setAlertPopupOpen(true);
-              setalertProps(SuccessAlert);
-            } else {
-              let APIErrorAlert = {
-                Message: RecuritmentHRMsg.APIErrorMsg,
-                Type: HRMSAlertOptions.Error,
-                visible: true,
-                ButtonAction: async (userClickedOK: boolean) => {
-                  if (userClickedOK) {
-                    setAlertPopupOpen(false);
-                  }
-                },
-              };
-              setAlertPopupOpen(true);
-              setalertProps(APIErrorAlert);
+
+              const response = await getVRRDetails.InsertRecruitmentDpt(
+                RecruitmentValue
+              );
+              if (response.status === ResponeStatus.SUCCESS) {
+                setAssignHRData((prevState) => ({
+                  ...prevState,
+                  AssignRecruitmentHR: { key: 0, text: "" },
+                  Comments: "",
+                }));
+                setData((prevData) =>
+                  prevData.map((item) => ({
+                    ...item,
+                    Checked: false,
+                  }))
+                );
+                setSelectedJobCodes([]);
+                setSelectAll(false);
+                let SuccessAlert = {
+                  Message:
+                    selectedJobCodes.length === 1
+                      ? RecuritmentHRMsg.SingleHRSuccessMsg
+                      : RecuritmentHRMsg.HRSuccess,
+                  Type: HRMSAlertOptions.Success,
+                  visible: true,
+                  ButtonAction: async (userClickedOK: boolean) => {
+                    if (userClickedOK) {
+                      setAlertPopupOpen(false);
+                      setIsLoading(false);
+                    }
+                  },
+                };
+                setAlertPopupOpen(true);
+                setIsLoading(true);
+                setalertProps(SuccessAlert);
+              } else {
+                let APIErrorAlert = {
+                  Message: RecuritmentHRMsg.APIErrorMsg,
+                  Type: HRMSAlertOptions.Error,
+                  visible: true,
+                  ButtonAction: async (userClickedOK: boolean) => {
+                    if (userClickedOK) {
+                      setAlertPopupOpen(false);
+                      setIsLoading(false);
+                    }
+                  },
+                };
+                setAlertPopupOpen(true);
+                setIsLoading(true);
+                setalertProps(APIErrorAlert);
+              }
             }
           }
         }
@@ -881,144 +938,6 @@ const RecruitmentProcess = (props: any) => {
     } catch (error) {
       console.log("failed Insert Recruitment Data ", error);
     } finally {
-      setAssignHR(false);
-      setAssignHRData((prevState) => ({
-        ...prevState,
-        AssignRecruitmentHR: { key: 0, text: "" },
-        Comments: "",
-      }));
-      setData((prevData) =>
-        prevData.map((item) => ({
-          ...item,
-          Checked: false,
-        }))
-      );
-      setSelectedJobCodes([]);
-      setSelectAll(false);
-    }
-  };
-
-  const handleAgencySubmit = async () => {
-    try {
-      if (selectedJobCodes.length > 0) {
-        for (const selectedJob of selectedJobCodes) {
-          const correspondingJob = data.find(
-            (item) => item.ID === selectedJob.ID
-          );
-          const HRMSExternalAgents = await CommonServices.GetMasterData(
-            ListNames.HRMSExternalAgents
-          );
-          let matchedAgents = HRMSExternalAgents.data.filter(
-            (data: { Id: number }) =>
-              AssignHRData.AssignRecruitmentAgencies.some(
-                (item) => item.key === data.Id
-              )
-          );
-
-          let agentDetails: jobsXAgents[] = matchedAgents.map((item: any) => {
-            AssignHRData.AssignRecruitmentAgencies.filter(
-              (data) => data.key === item.Id
-            );
-            return {
-              agentId: item.AgentCode,
-              // isSuspended: 1,
-            };
-          });
-          const AgentDetails: profileXagent = {
-            jobCode: selectedJob.JobCode,
-            jobsXAgents: agentDetails,
-          };
-          await GetPortalJobsService.UpsertAgenciesJobs(AgentDetails)
-            .then(async (res) => {
-              if (res.status === 200) {
-                if (correspondingJob) {
-                  const recruitmentID: number = correspondingJob.ID;
-
-                  const agencyIDs = AssignHRData.AssignRecruitmentAgencies.map(
-                    (agency) => agency.key
-                  );
-
-                  if (agencyIDs.length === 0) {
-                    return;
-                  }
-                  const agencyData = agencyIDs.map((agencyID) => ({
-                    key: agencyID,
-                    text:
-                      AssignHRData.AssignRecruitmentAgencies.find(
-                        (agency) => agency.key === agencyID
-                      )?.text || AssignHRData.AssignRecruitmentHR.text,
-                    RecruitmentID: recruitmentID,
-                  }));
-
-                  const response =
-                    await getVRRDetails.InsertExternalAgencyDetails(
-                      agencyData,
-                      recruitmentID
-                    );
-
-                  if (response.status === 200) {
-                    const commentsData: InsertComments = {
-                      RoleId: props.CurrentRoleID,
-                      RecruitmentIDId: recruitmentID,
-                      Comments: AssignHRData.Comments,
-                    };
-
-                    await getVRRDetails.InsertCommentsList(commentsData);
-
-                    try {
-                      // await SPServices.SPUpdateItem({
-                      //   Listname: ListNames.HRMSRecruitmentDptDetails,
-                      //   RequestJSON: { Action: WorkflowAction.Approved },
-                      //   ID: recruitmentID,
-                      // });
-                    } catch (updateError) {
-                      console.error(updateError);
-                    }
-
-                    let CancelAlert = {
-                      Message: RecuritmentHRMsg.AgencySucess,
-                      Type: HRMSAlertOptions.Success,
-                      visible: true,
-                      ButtonAction: async (userClickedOK: boolean) => {
-                        if (userClickedOK) {
-                          setAlertPopupOpen(false);
-                        }
-                      },
-                    };
-
-                    setAlertPopupOpen(true);
-                    setalertProps(CancelAlert);
-                  }
-                } else {
-                  console.log(
-                    `No corresponding job found for RecruitmentID/VRRId: ${selectedJob.ID}`
-                  );
-                }
-              } else {
-                let ApiErrorMsg = {
-                  Message: RecuritmentHRMsg.APIErrorMsg,
-                  Type: HRMSAlertOptions.Error,
-                  visible: true,
-                  ButtonAction: async (userClickedOK: boolean) => {
-                    if (userClickedOK) {
-                      setAlertPopupOpen(false);
-                    }
-                  },
-                };
-
-                setAlertPopupOpen(true);
-                setalertProps(ApiErrorMsg);
-              }
-            })
-            .catch((error) => {
-              console.log("Candidate details doesn't fetch the data", error);
-            });
-        }
-      } else {
-      }
-    } catch (error) {
-    } finally {
-      setAssignHR(false);
       setAssignHRData((prevState) => ({
         ...prevState,
         AssignRecruitmentAgencies: [],
@@ -1032,71 +951,183 @@ const RecruitmentProcess = (props: any) => {
       );
       setSelectedJobCodes([]);
       setSelectAll(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     }
   };
 
-  async function AssignHRSubmit() {
+  const handleAgencySubmit = async () => {
     try {
-      setIsLoading(true);
-      setValidationErrors({
-        AssignRecruitmentHR: false,
-        Comments: false,
-        AssignRecruitmentAgencies: false,
-      });
+      const IsVaild = !Validation();
+      if (IsVaild) {
+        setAssignHR(false);
+        setIsLoading(true);
+        if (selectedJobCodes.length > 0) {
+          for (const selectedJob of selectedJobCodes) {
+            const correspondingJob = data.find(
+              (item) => item.ID === selectedJob.ID
+            );
+            const HRMSExternalAgents = await CommonServices.GetMasterData(
+              ListNames.HRMSExternalAgents
+            );
+            let matchedAgents = HRMSExternalAgents.data.filter(
+              (data: { Id: number }) =>
+                AssignHRData.AssignRecruitmentAgencies.some(
+                  (item) => item.key === data.Id
+                )
+            );
 
-      let errors: any = {};
+            let agentDetails: jobsXAgents[] = matchedAgents.map((item: any) => {
+              AssignHRData.AssignRecruitmentAgencies.filter(
+                (data) => data.key === item.Id
+              );
+              return {
+                agentId: item.AgentCode,
+                // isSuspended: 1,
+              };
+            });
+            const AgentDetails: profileXagent = {
+              jobCode: selectedJob.JobCode,
+              jobsXAgents: agentDetails,
+            };
+            await GetPortalJobsService.UpsertAgenciesJobs(AgentDetails)
+              .then(async (res) => {
+                if (res.status === 200) {
+                  if (correspondingJob) {
+                    const recruitmentID: number = correspondingJob.ID;
 
-      if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-        if (!AssignHRData.AssignRecruitmentAgencies[0]?.key) {
-          errors.AssignRecruitmentAgencies = true;
+                    const agencyIDs =
+                      AssignHRData.AssignRecruitmentAgencies.map(
+                        (agency) => agency.key
+                      );
+
+                    if (agencyIDs.length === 0) {
+                      return;
+                    }
+                    const agencyData = agencyIDs.map((agencyID) => ({
+                      key: agencyID,
+                      text:
+                        AssignHRData.AssignRecruitmentAgencies.find(
+                          (agency) => agency.key === agencyID
+                        )?.text || AssignHRData.AssignRecruitmentHR.text,
+                      RecruitmentID: recruitmentID,
+                    }));
+
+                    const response =
+                      await getVRRDetails.InsertExternalAgencyDetails(
+                        agencyData,
+                        recruitmentID
+                      );
+
+                    if (response.status === 200) {
+                      const commentsData: InsertComments = {
+                        RoleId: props.CurrentRoleID,
+                        RecruitmentIDId: recruitmentID,
+                        Comments: AssignHRData.Comments,
+                      };
+
+                      await getVRRDetails.InsertCommentsList(commentsData);
+
+                      try {
+                        // await SPServices.SPUpdateItem({
+                        //   Listname: ListNames.HRMSRecruitmentDptDetails,
+                        //   RequestJSON: { Action: WorkflowAction.Approved },
+                        //   ID: recruitmentID,
+                        // });
+                      } catch (updateError) {
+                        console.error(updateError);
+                      }
+                      let CancelAlert = {
+                        Message:
+                          selectedJobCodes.length === 1
+                            ? RecuritmentHRMsg.SingleAgencyMsg
+                            : RecuritmentHRMsg.AgencySucess,
+                        Type: HRMSAlertOptions.Success,
+                        visible: true,
+                        ButtonAction: async (userClickedOK: boolean) => {
+                          if (userClickedOK) {
+                            setAlertPopupOpen(false);
+                            setIsLoading(false);
+                          }
+                        },
+                      };
+                      setIsLoading(true);
+                      setAlertPopupOpen(true);
+                      setalertProps(CancelAlert);
+                    }
+                  } else {
+                    console.log(
+                      `No corresponding job found for RecruitmentID/VRRId: ${selectedJob.ID}`
+                    );
+                  }
+                } else {
+                  let ApiErrorMsg = {
+                    Message: RecuritmentHRMsg.APIErrorMsg,
+                    Type: HRMSAlertOptions.Error,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                      if (userClickedOK) {
+                        setAlertPopupOpen(false);
+                        setIsLoading(false);
+                      }
+                    },
+                  };
+                  setIsLoading(true);
+                  setAlertPopupOpen(true);
+                  setalertProps(ApiErrorMsg);
+                }
+              })
+              .catch((error) => {
+                console.log("Candidate details doesn't fetch the data", error);
+              });
+          }
         }
-      } else {
-        if (!AssignHRData.AssignRecruitmentHR.key) {
-          errors.AssignRecruitmentHR = true;
-        }
       }
-
-      if (!AssignHRData.Comments.trim()) {
-        errors.Comments = true;
-      }
-
-      if (Object.keys(errors).length > 0) {
-        setValidationErrors(errors);
-        return;
-      }
-      const updatedRowData = data.map((item: any) => {
-        const selectedJob = allJobData.find((job) => job.ID === item.ID);
-
-        if (selectedJob) {
-          return {
-            ...item,
-            AssignHR: AssignHRData.AssignRecruitmentHR.key,
-            AssignAgencies: AssignHRData.AssignRecruitmentAgencies[0]?.key,
-          };
-        }
-        return item;
-      });
-
-      setData(updatedRowData);
-
-      for (const job of allJobData) {
-        const itemToUpdate = data.find((item: any) => item.ID === job.ID);
-
-        if (!itemToUpdate) {
-          continue;
-        }
-      }
-
-      if (props.CurrentRoleID === RoleID.RecruitmentHRLead) {
-        await handleSubmit();
-      } else if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-        await handleAgencySubmit();
-      }
-      setIsLoading(false);
     } catch (error) {
-      console.error(error);
+      console.log("failed Insert Agency Data ", error);
+    } finally {
+      setAssignHRData((prevState) => ({
+        ...prevState,
+        AssignRecruitmentAgencies: [],
+        Comments: "",
+      }));
+      setData((prevData) =>
+        prevData.map((item) => ({
+          ...item,
+          Checked: false,
+        }))
+      );
+      setSelectedJobCodes([]);
+      setSelectAll(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     }
-  }
+  };
+
+  // async function AssignHRSubmit() {S
+  //   try {
+  //     setIsLoading(true);
+
+  //     for (const job of allJobData) {
+  //       const itemToUpdate = data.find((item: any) => item.ID === job.ID);
+
+  //       if (!itemToUpdate) {
+  //         continue;
+  //       }
+  //     }
+
+  //     if (props.CurrentRoleID === RoleID.RecruitmentHRLead) {
+  //       await handleSubmit();
+  //     } else if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+  //       await handleAgencySubmit();
+  //     }
+  //     setIsLoading(false);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   const tabs = [
     ...(props.CurrentRoleID === RoleID.RecruitmentHRLead
@@ -1210,7 +1241,7 @@ const RecruitmentProcess = (props: any) => {
                           data={data}
                           columns={columnConfig(
                             "tab1",
-                            "Upload",
+                            "View",
                             TabName.UploadAdvertisement
                           )}
                           rows={rows}
@@ -1288,7 +1319,7 @@ const RecruitmentProcess = (props: any) => {
                                 data={data}
                                 columns={columnConfig(
                                   "tab1",
-                                  "Edit",
+                                  "View",
                                   TabName.ReviewONEMAdvertisement
                                 )}
                                 rows={rows}
@@ -1318,7 +1349,7 @@ const RecruitmentProcess = (props: any) => {
                                 data={data}
                                 columns={columnConfig(
                                   "tab2",
-                                  "View Position Details",
+                                  "View",
                                   TabName.ScorecardDetails
                                 )}
                                 rows={rows}
@@ -1479,7 +1510,11 @@ const RecruitmentProcess = (props: any) => {
                 handleInputChangeTextArea={(item: string) =>
                   handleInputChangeTextArea(item)
                 }
-                AssignHRSubmit={() => AssignHRSubmit()}
+                AssignHRSubmit={
+                  props.CurrentRoleID === RoleID.RecruitmentHRLead
+                    ? () => handleSubmit()
+                    : () => handleAgencySubmit()
+                }
               />
             }
             onClose={() => setAssignHR(false)}

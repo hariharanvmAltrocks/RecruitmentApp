@@ -1,5 +1,4 @@
 import { IADGroupID } from "../Models/MainPage";
-import { QuestionItem } from "../Models/RecuritmentVRR";
 import { AutoCompleteItem } from "../Models/Screens";
 
 export const APIURL = "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
@@ -174,11 +173,37 @@ export const viewLabelcolor = {
 };
 
 export const RecuritmentHRMsg = {
+  HRSuccess: "Recruitment HR Assigned for the Selected Job Titles.",
+  SingleHRSuccessMsg: "Recruitment HR Assigned for the Selected Job Title.",
+
+  ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Sucessfully.",
+
   AdvertisementSubmitMsg:
     "Advertisement for the Job Title Submitted Successfully.",
+  AdvertisementReveiwMsg: "Advertisement Reviewed Sucessfully",
+
+  AgencySucess: "Agencies Assigned for the Selected Job Titles.",
+  SingleAgencyMsg: "Agencies Assigned for the Selected Job Title.",
+
+  InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
+
   ScoreCardSubmitMsg:
     "The Candidate has been Interviewed and Scorecard Submitted for Final Selection.",
-  ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Sucessfully.",
+
+  InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully",
+  CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully",
+
+  ProfileReviewed:
+    "Candidate Profile for the Job Title Reviewed and Shortlisted.",
+  ProfileReviewedNo:
+    "Candidate Profile for the Job Title Reviewed and Rejected.",
+  ProfileReviewedWaitingList:
+    "Candidate Profile for the Job Title Reviewed and On - Hold.",
+  HRReviewCandidate: "Candidate Profile Reviewed Successfully",
+
+  CandidateSelected: "Candidate Selected",
+  CandidateRejected: "Candidate Rejected",
+
   RecuritmentSubmitMsg: "Submitted Successfully.",
   ApprovedMsg:
     "Advertisement Reviewed Sucessfully. Ready for ONEM Process (Offline).",
@@ -188,25 +213,13 @@ export const RecuritmentHRMsg = {
   ValidationErrorMsg:
     "One or more mandatory field are missing.Please do the needful and submit again.",
   RecruitmentErrorMsg: "Please choose the Job Code to assign Recruitment HR.",
-  AgencySucess: "Agencies Assigned for the Selected Job Titles.",
-  HRSuccess: "Recruitment HR Assigned for the Selected Job Titles.",
   AgenciesErrorMsg: "Please choose the Job Code to Assign Agencies.",
-  ProfileReviewed:
-    "Candidate Profile for the Job Title Reviewed and Shortlisted.",
-  ProfileReviewedNo:
-    "Candidate Profile for the Job Title Reviewed and Rejected.",
-  ProfileReviewedWaitingList:
-    "Candidate Profile for the Job Title Reviewed and On - Hold.",
-  InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
-  CandidateSelected: "Candidate Selected",
-  CandidateRejected: "Candidate Rejected",
-  PositionIDassigned: "Position ID assigned for the selected Candidate.",
+  PositionIDassigned: "Position ID Assigned Successfully in Selected Candidated.",
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
   APIErrorMsg: "Service is temporarily unavailable.",
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
-  QuestionSuccessMsg: "The question has been created successfully",
   AddedMsg: "Added Successfully",
   deleteMsg: "Are you sure you want to delete this? Any unsaved changes will be lost"
 };
@@ -272,33 +285,42 @@ export const TabName = {
   AssignRecuritmentHR: "Assign Recuritment HR",
   UploadONEMDoc: "Upload ONEM Doc",
   MySubmission: "My Submission",
-  UploadAdvertisement: "Upload Advertisement",
+  UploadAdvertisement: "Job Advertisement",
   AssignAgencies: "Assign Agencies",
   ReviewProfile: "Review Profile",
   AssignInterviewPanel: "Assign Interview Panel",
   ReviewAdvertisement: "Review Advertisement",
   ReviewScorecard: "Review Scorecard",
   Evaluation: "Evaluation",
-  CandidateDetails: "View Candidate Details",
+  CandidateDetails: "Applicants Details",
   PositionDetails: "Position Details",
   AdvertisementDetails: "Advertisement Details",
   AdvertisementViewDetails: "View Advertisement ",
   ScorecardDetails: " Review Scorecard ",
-  ViewCandiadteDetails: "View Candidate Details",
+  ViewCandidateDetails: "View Applicants Details",
   Scorecard: "Scorecard",
   ReviewONEMAdvertisement: "Review ONEM Advertisement",
   ViewPositionDetails: "View Position Details",
-  ViewCandidateDetails: "View Candidate Details",
+  ViewCandidateList: "View Applicants List",
   ViewJustification: "View Justification",
   EvaluationTab: "Candidate Details",
   InterviewQuestion: "Interview Questions",
   AdvertExtension: "Advert Extension",
-  CheckboxContent: "I hereby agree for submitting this request.",
+  CheckboxContent: "I hereby agree for submitting this request for further approvals.",
+  ApprovalCheckbox: "I hereby acknowledge that I have read the submission request and confirm the accuracy of the content shared.",
+
   ReviewLevel1: "Review Profile - Level 1",
   ReviewLevel2: "Review Profile - Level 2",
   Shortlisted: "Shortlisted",
   onHold: "On Hold",
-  Rejected: "Rejected"
+  Rejected: "Rejected",
+  OnHoldRejected: "On Hold & Rejected",
+
+  InterviewQuestions: "Interview Questions",
+  CareerPortal: "Career Portal",
+  InterviewPanel: "Interview Panel",
+
+  ViewScoreDetails: " View ScoreCard Details"
 };
 
 export const ProfileStatus = {
@@ -314,7 +336,7 @@ export const Nationality = {
 export const CandidateStatus = {
   Yes: "Yes",
   No: "No",
-  WaitingList: "Waiting List",
+  OnHold: "On Hold",
 };
 
 export const InterviewLevels = {
@@ -345,24 +367,11 @@ export const workflowStatusApi = {
   LineManagerLevel1Rejected: "WS14",
   LineManagerLevel2Rejected: "WS15",
 };
-
-export const QuestionnaireData: QuestionItem[] = [
-  {
-    id: 1,
-    question: "What are some key regulations that govern mining operations?",
-    answer:
-      "Expected Answer:- By using sustainable mining practices, proper waste management, land reclamation, reducing water and air pollution, and implementing renewable energy sources.",
-    rating: null,
-  },
-  {
-    id: 2,
-    question:
-      "What strategies can be used to attract skilled professionals to remote mining locations?",
-    answer:
-      "Expected Answer:- Providing relocation assistance, offering rotational work schedules, housing facilities, competitive benefits, and care.",
-    rating: null,
-  },
-];
+export const Notes = {
+  Roleprofile: "Role Profile is not available for the Job Title.",
+  Grding: "Grading Report is not available for the Job Title.",
+  ReviewRolePurpose: "Please review the 'View Submission' details prior to approving or reverting this submission."
+}
 // sneka
 export const CatogryOption = [
   "Interview Panel",
@@ -419,6 +428,10 @@ export const categoryOption = [
   "Interview Panel"
 ];
 
+export const labelName = {
+  Level1CandidateLabel: "Does the candidate fit for the vacant position ? (Level 1)",
+  Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)"
+};
 
 export const ColorCode = {
   TabColorCode: {

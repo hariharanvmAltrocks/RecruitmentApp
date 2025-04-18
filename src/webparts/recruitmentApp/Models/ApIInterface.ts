@@ -84,6 +84,7 @@ export type CandidateProfile = {
     ExperienceMining: number;
     ExperRelatedfield: number;
     Status: string;
+    StatusId: string;
     Agencies: string;
     CandidateResume: IDocFiles[];
     RoleProfile: IDocFiles[];
@@ -91,6 +92,8 @@ export type CandidateProfile = {
     Comments: profileJobsComments[];
     workflowStatusId: string;
     hrComments: string;
+    JobVaildFromDate: string;
+    JobVaildToDate: string;
 }
 
 export type WorkflowJson = {

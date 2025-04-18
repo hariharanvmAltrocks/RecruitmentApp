@@ -124,6 +124,11 @@ export type DataSyncToRecruitmentResponse = {
   AssignLineManager: string;
   AssignLineManagerId: number;
   ReasonForVacancy: string;
+
+  JobPostingStartDate: Date | undefined,
+  JobPostingEndDate: Date | undefined,
+  JobPostingFirstExtensionEndDate: Date | undefined,
+  JobPostingSecondExtensionEndDate: Date | undefined
 }
 
 export type JobCodeData = {
@@ -171,6 +176,12 @@ export type IRecruitmentService = {
     Conditions: any,
     ModalDropDown: any
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
+  GetAdditionalExistingPositionEditView(
+    Filter: any[],
+    Conditions: any,
+    ModalDropDown: any
+  ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
+  fetchNewPositionRequest(filterParam: any, filterConditions: any, ModalDropDown: any): Promise<ApiResponse<DataSyncToRecruitmentResponse[] | null>>;
   GetVacancyDetails(
     filterParam: any,
     filterConditions: any

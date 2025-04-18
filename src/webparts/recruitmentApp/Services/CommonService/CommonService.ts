@@ -65,6 +65,42 @@ export default class CommonService implements ICommonService {
     }
   };
 
+  uploadRoleProfileMaster = async (
+    PositionCode: string,
+    DocumentName: string,
+    AttachFile: IDocFiles[],
+    Listname: string
+  ): Promise<ApiResponse<any>> => {
+    try {
+      if (AttachFile.length > 0) {
+
+        await SPServices.addDocLibFiles({
+          FilePath: Listname,
+          FolderNames: [`${PositionCode.toString()}`, `${DocumentName.toString()}`,],
+          Datas: AttachFile,
+        });
+        return {
+          data: "Successfully Replaced Document",
+          status: 200,
+          message: "Attachment replaced successfully",
+        };
+      }
+
+      return {
+        data: null,
+        status: 400,
+        message: "No attachments provided",
+      };
+    } catch (error) {
+      console.error("Error during file replacement process:", error);
+      return {
+        data: null,
+        status: 500,
+        message: `Error during file replacement: ${error.message}`,
+      };
+    }
+  };
+
   GetAttachmentLink = async (
     PositionCode: string,
     Listname: string
