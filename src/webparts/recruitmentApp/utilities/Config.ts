@@ -217,7 +217,7 @@ export const RecuritmentHRMsg = {
   PositionIDassigned: "Position ID Assigned Successfully in Selected Candidated.",
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
-  APIErrorMsg: "Service is temporarily unavailable.",
+  APIErrorMsg: "Server is temporarily unavailable.",
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
   AddedMsg: "Added Successfully",
@@ -419,8 +419,8 @@ export const CatogryOptionCode = {
   InterviewPanel: "Interview Panel",
 };
 export const displayTextOptionCode = {
-  SingleAnswer: "Single Answer",
-  MultiAnswer: "Multi Answer",
+  SingleAnswer: "Single Choice",
+  MultiAnswer: "Multi Choice",
   CustomAnswer: "Custom Answer",
 };
 export const categoryOption = [

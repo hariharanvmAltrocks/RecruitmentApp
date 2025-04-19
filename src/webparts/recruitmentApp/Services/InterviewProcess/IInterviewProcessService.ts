@@ -1,4 +1,5 @@
 import { AutoCompleteItem, InterviewPanaldata } from "../../Models/Screens";
+
 export interface CommentsDatas {
   Id: string;
   JobTitleInEnglish: string;
@@ -15,13 +16,6 @@ export interface CommentsDatas {
   CandidateID: number;
   CandidateScoreCard: Array<any>;
   Role: string;
-  MaxOverallScore: number;
-  SumOverallScores: number;
-  MaxQuestionScore: number;
-  QuestionBasedScore: number;
-  MaxPossibleScore: number;
-  CombinedScore: number;
-  GPA: number;
 }
 
 export type ActionUpdate = {
@@ -35,6 +29,81 @@ export type AssignPositionID = {
   CandidateIDId: number;
   RecruitmentIDId: number;
 };
+export type ApiResponse<T> = {
+  data: T;
+  status: number;
+  message: string;
+};
+
+export type Question = {
+  question: string;
+  score: number;
+  comment?: string;
+};
+
+export type ScoreCard = {
+  InterviewPanelID: number;
+  RelevantQualification: string;
+  ReleventExperience: string;
+  Knowledge: string;
+  EnergyLevel: string;
+  MeetJobRequirement: string;
+  ContributeTowardsCultureRequried: string;
+  Experience: string;
+  OtherCriteriaScore: string;
+  ConsiderForEmployment: string;
+  Feedback: string;
+  RecruitmentID: number;
+  Role: string;
+  InterviewPersonName: string;
+  OverAllEvaluationFeedback: string;
+  CreatedDate: string;
+  QuestionJson: Question[];
+  RelatedScores?: {
+    QuestionJson: string;
+  }[];
+};
+
+export type Employee = {
+  FirstName: string;
+  MiddleName?: string;
+  LastName: string;
+  Email: string;
+  Department: string;
+  JobTitle: string;
+  JobTitleInFrench: string;
+};
+
+export type InterviewPanelItem = {
+  ID: number;
+  RecruitmentID: number;
+  InterviewLevel: string;
+  InterviewPanelTitle: string[];
+  CandidateID: number;
+  ScoreCard: ScoreCard | null;
+  SumOverallScores: number;
+  SumQuestionScores: number;
+  MaxOverallScore: number;
+  MaxQuestionScore: number;
+  GPA: number;
+  TotalScore: number;
+  QuestionScore: number;
+
+  RelevantQualification: string;
+  ReleventExperience: string;
+  Knowledge: string;
+  EnergyLevel: string;
+  MeetJobRequirement: string;
+  ContributeTowardsCultureRequried: string;
+  Experience: string;
+  OtherCriteriaScore: string;
+
+  PanelFullName: string;
+  Department: string;
+  JobTitleInEnglish: string;
+  JobTitleInFrench: string;
+  PanelEmail: string;
+};
 
 export type IInterviewProcessService = {
   GetInterviewPanelDetails(
@@ -44,18 +113,18 @@ export type IInterviewProcessService = {
     filterParam: any,
     filterConditions: any
   ): Promise<any | null>;
-  HRMSCandidateScoreCard(
-    filterParam: any,
-    filterConditions: any,
-    candidateID: number
-  ): Promise<ApiResponse<any | null>>;
-
   GetCombinedCandidatePositionDetails(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
+    EmployeeList: any[]
   ): Promise<any | null>;
- 
-
+  getInterviewPanelDetails(
+    filterParam: any,
+    filterConditions: any,
+    candidateID: number,
+    EmployeeList: any[]
+  ): Promise<ApiResponse<any[]>>;
+  getCandidateScoreCard(candidateID: number): Promise<ApiResponse<any[]>>;
   CandidateSeletionApi(
     obj: ActionUpdate,
     ListName: string

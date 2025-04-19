@@ -6,9 +6,6 @@ import "../../App.css";
 import { Typography, Button, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
-import CloseIcon from "@mui/icons-material/Close";
-
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import BreadcrumbsComponent, {
@@ -24,6 +21,8 @@ import type { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
+// import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 import {
   CategoryID,
@@ -378,9 +377,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     } = InterviewQuesData;
 
     let errors: Partial<InterviewQuesValidationError> = {};
-
+    const shouldValidateQuestionType =
+      props?.stateValue?.StatusId ===
+      StatusId.PendingwithLMcreateDisqualificationQuestion;
     if (!Disciplines.text) errors.Disciplines = true;
-    if (!QuestionType.text) errors.QuestionType = true;
+    if (shouldValidateQuestionType && !QuestionType.text)
+      errors.QuestionType = true;
     if (!Question) errors.Question = true;
     if (!Catogry) errors.Catogry = true;
 
@@ -423,6 +425,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   };
 
   const handleSaveQuestion = () => {
+    const shouldValidateQuestionType =
+    props?.stateValue?.StatusId === StatusId.PendingwithLMcreateDisqualificationQuestion;
+  const customAnswerType = getMasterData.QueType.find(
+    (q) => q.text === displayTextOptionCode.CustomAnswer
+  );
+  const questionType: AutoCompleteItem = shouldValidateQuestionType
+    ? InterviewQuesData.QuestionType
+    : customAnswerType ||{ key: 0, text: "" }; 
     if (!Validation()) {
       return;
     }
@@ -443,7 +453,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             ? `Question ${editingQuestionIndex + 1}`
             : `Question ${questions.length + 1}`,
       },
-      questionType: InterviewQuesData.QuestionType,
+      
+      questionType,
+      // questionType: InterviewQuesData.QuestionType,
+      // questionType: shouldValidateQuestionType
+      //   ? InterviewQuesData.QuestionType
+      //   : { key: 0, text: "Custom Answer" },
       question: InterviewQuesData.Question,
       expectedAnswer: InterviewQuesData.ExpectedAnswer,
       CareerportalAnswer: correctAnswers,
@@ -661,6 +676,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       }));
     }
   }, [props?.stateValue?.StatusId]);
+
   useEffect(() => {
     if (
       [
@@ -977,26 +993,29 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                 <AccordionDetails>
                                   {isExpanded && (
                                     <>
-                                      <Box sx={{ marginTop: "-25px" }}>
-                                        <div className="ms-Grid-row">
-                                          <div className="ms-Grid-col ms-lg5">
-                                            <CustomAutoComplete
-                                              label="Type of Question"
-                                              options={getMasterData.QueType}
-                                              value={q.questionType}
-                                              onChange={(val) =>
-                                                handleQuestionFieldChange(
-                                                  index,
-                                                  "questionType",
-                                                  val
-                                                )
-                                              }
-                                              disabled={false}
-                                              mandatory={true}
-                                            />
+                                      {props?.stateValue?.StatusId ===
+                                        StatusId.PendingwithLMcreateDisqualificationQuestion && (
+                                        <Box sx={{ marginTop: "-25px" }}>
+                                          <div className="ms-Grid-row">
+                                            <div className="ms-Grid-col ms-lg5">
+                                              <CustomAutoComplete
+                                                label="Type of Question"
+                                                options={getMasterData.QueType}
+                                                value={q.questionType}
+                                                onChange={(val) =>
+                                                  handleQuestionFieldChange(
+                                                    index,
+                                                    "questionType",
+                                                    val
+                                                  )
+                                                }
+                                                disabled={false}
+                                                mandatory={true}
+                                              />
+                                            </div>
                                           </div>
-                                        </div>
-                                      </Box>
+                                        </Box>
+                                      )}
 
                                       <Box sx={{ mb: 2 }}>
                                         <RichTextEditor
@@ -1105,12 +1124,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                             ColorCode
                                                               .ButtonColorCode
                                                               .ButtonColor,
-
                                                           color: "white",
                                                           minWidth: 40,
                                                           "&:hover": {
                                                             backgroundColor:
-                                                              "#b71c1c",
+                                                              ColorCode
+                                                                .ButtonColorCode
+                                                                .ButtonColor,
                                                           },
                                                         }}
                                                         onClick={() =>
@@ -1120,7 +1140,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                           )
                                                         }
                                                       >
-                                                        <CloseIcon
+                                                        <DeleteOutlineIcon
                                                           sx={{ fontSize: 20 }}
                                                         />
                                                       </Button>
@@ -1134,12 +1154,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                             ColorCode
                                                               .ButtonColorCode
                                                               .ButtonColor,
-
                                                           color: "white",
                                                           minWidth: 40,
                                                           "&:hover": {
                                                             backgroundColor:
-                                                              "#b71c1c",
+                                                              ColorCode
+                                                                .ButtonColorCode
+                                                                .ButtonColor,
                                                           },
                                                         }}
                                                         onClick={() =>
@@ -1157,7 +1178,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                             }
                                           )}
                                         </Box>
-                                      ) : (
+                                      ) : props?.stateValue?.StatusId ===
+                                        StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
                                         <Box sx={{ mb: 2 }}>
                                           <RichTextEditor
                                             label="Expected Answer"
@@ -1172,7 +1194,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                             mandatory={true}
                                           />
                                         </Box>
-                                      )}
+                                      ) : null}
 
                                       {props?.stateValue?.StatusId ===
                                         StatusId.PendingwithLMcreateDisqualificationQuestion && (
@@ -1207,7 +1229,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                 .ButtonColor,
                                             color: "white",
                                             "&:hover": {
-                                              backgroundColor: "#b71c1c",
+                                              backgroundColor:
+                                                ColorCode.ButtonColorCode
+                                                  .ButtonColor,
                                             },
                                             textTransform: "none",
                                             borderRadius: "4px",
@@ -1260,29 +1284,32 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
                       }}
                     >
-                      Add Questions
+                      Create Question
                     </Typography>
                   </Box>
 
                   <>
-                    <Box>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg5">
-                          <CustomAutoComplete
-                            label="Type of Question"
-                            options={getMasterData.QueType}
-                            value={InterviewQuesData.QuestionType}
-                            onChange={(val) => {
-                              handleAutoComplete("QuestionType", val);
-                              setExpandedQuestionIndex(null);
-                            }}
-                            disabled={false}
-                            mandatory={true}
-                            error={ValidationError.QuestionType}
-                          />
+                    {props?.stateValue?.StatusId ===
+                      StatusId.PendingwithLMcreateDisqualificationQuestion && (
+                      <Box>
+                        <div className="ms-Grid-row">
+                          <div className="ms-Grid-col ms-lg5">
+                            <CustomAutoComplete
+                              label="Type of Question"
+                              options={getMasterData.QueType}
+                              value={InterviewQuesData.QuestionType}
+                              onChange={(val) => {
+                                handleAutoComplete("QuestionType", val);
+                                setExpandedQuestionIndex(null);
+                              }}
+                              disabled={false}
+                              mandatory={true}
+                              error={ValidationError.QuestionType}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </Box>
+                      </Box>
+                    )}
                     <Box sx={{ mb: 2 }}>
                       <RichTextEditor
                         label="Question"
@@ -1374,7 +1401,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                       }}
                                       onClick={() => handleDeleteRow(index)}
                                     >
-                                      <CloseIcon sx={{ fontSize: 20 }} />
+                                      <DeleteOutlineIcon
+                                        sx={{ fontSize: 20 }}
+                                      />
                                     </Button>
                                   )}
 
@@ -1413,7 +1442,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           </Typography>
                         )}
                       </Box>
-                    ) : (
+                    ) : props?.stateValue?.StatusId ===
+                      StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
                       <Box sx={{ mb: 2 }}>
                         <RichTextEditor
                           label="Expected Answer"
@@ -1425,7 +1455,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           error={ValidationError.ExpectedAnswer}
                         />
                       </Box>
-                    )}
+                    ) : null}
 
                     {props?.stateValue?.StatusId ===
                       StatusId.PendingwithLMcreateDisqualificationQuestion && (
@@ -1450,7 +1480,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
                     <Button
                       variant="contained"
-                      startIcon={<AddIcon />}
+                      // startIcon={<AddIcon />}
                       onClick={handleSaveQuestion}
                       sx={{
                         backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
@@ -1464,7 +1494,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         px: 3,
                       }}
                     >
-                      {editingQuestionIndex !== null ? "Update" : "Add"}
+                      {editingQuestionIndex !== null ? "Update" : "Save"}
                     </Button>
                   </Box>
                 </Box>
@@ -1551,9 +1581,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         questionFr: item.question,
         scopeId: String(item.discipline.key),
         categoryId: String(category?.key),
-        questionTypeId: String(item.questionType.key),
+        // questionTypeId: String(item.questionType.key),
+        questionTypeId:
+        InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate ||
+        (InterviewQuesData.Catogry === CatogryOptionCode.InterviewPanel &&
+         item.questionType?.text === "Custom Answer")
+          ? String(item.questionType.key)
+          : "",
+      
         isQualifier:
-          InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
+          InterviewQuesData.Catogry === CatogryOptionCode.InterviewPanel
             ? 1
             : 0,
         isAnswerValidate: item.Disqualification === "No" ? 0 : 1,
@@ -1564,9 +1601,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       };
     });
 
-    console.log(QuestionValue, "QuestionValue");
+    
     const response = await GetPortalJobsService.UpsertQuestions(QuestionValue);
-    console.log(response, "response");
+ 
     if (response.status === ResponeStatus.SUCCESS) {
       const obj: any = {
         ActionId: WorkflowAction.Approved,

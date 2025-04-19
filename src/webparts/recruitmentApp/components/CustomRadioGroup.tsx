@@ -42,21 +42,31 @@ function CustomRadioGroup({
                 onChange={onChange ? (event, value) => onChange(event.target.value) : undefined}
             >
                 <Grid container spacing={2}>
-                    {options.map((option, index) => (
-                        <Grid item xs={4} key={index}>
-                            <FormControlLabel
-                                value={option}
-                                control={
-                                    <Radio
-                                        sx={{ "&.Mui-checked": { color: "black" } }}
-                                        size="small"
-                                        disabled={disabled} // Disable each Radio based on the prop
-                                    />
-                                }
-                                label={option}
-                            />
-                        </Grid>
-                    ))}
+                    {options.map((option, index) => {
+                        const isSelected = option === value; 
+                        const isDisabled = disabled && !isSelected; 
+                        
+                        return (
+                            <Grid item xs={4} key={index}>
+                                <FormControlLabel
+                                    value={option}
+                                    control={
+                                        <Radio
+                                            sx={{
+                                                "&.Mui-checked": {
+                                                    color: isSelected ? "black" : "#B0B0B0", 
+                                                },
+                                                color: isSelected ? "black" : "#B0B0B0", 
+                                            }}
+                                            size="small"
+                                            disabled={isDisabled} 
+                                        />
+                                    }
+                                    label={option}
+                                />
+                            </Grid>
+                        );
+                    })}
                 </Grid>
             </RadioGroup>
             {error && (

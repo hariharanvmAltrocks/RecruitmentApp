@@ -866,8 +866,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       Grading: false,
     };
     if (tab === "tab1") {
-      errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
-      errors.Grading = !IsValid(masterLibrary.Grading);
+      if(formState.RoleProfileDocument.length === 0) {
+        errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
+      }
+      if(formState.GradingDocument.length === 0) {
+        errors.Grading = !IsValid(masterLibrary.Grading);
+      }
       if (formState.AdvertisementDocument.length === 0) {
         errors.AdvertisementAttachement = !IsValid(
           advDetails.AdvertisementAttachement

@@ -21,6 +21,7 @@ function CustomPreviewScreen({
 }: FormFields) {
   // const ValidTo = data.ValidTo;
   // const ValidFrom = data.ValidFrom;
+ 
   const isEmptyData =
   !data ||
   !(
