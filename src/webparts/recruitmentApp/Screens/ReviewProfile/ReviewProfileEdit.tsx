@@ -426,7 +426,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
             resetForm();
 
             let approveAlert = {
-              Message: RecuritmentHRMsg.ApprovedMsg,
+              Message: RecuritmentHRMsg.AdvertisementReveiwMsg,
               Type: HRMSAlertOptions.Success,
               visible: true,
               ButtonAction: async (userClickedOK: boolean) => {
@@ -1031,7 +1031,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                   props.CurrentRoleID === RoleID.LineManager && isViewed
                     ? [
                         {
-                          label: "Approve",
+                          label: "Reviewed",
                           onClick: async () => {
                             await SaveRecruitment();
                           },

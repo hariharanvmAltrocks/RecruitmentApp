@@ -1241,7 +1241,7 @@ const RecruitmentProcess = (props: any) => {
                           data={data}
                           columns={columnConfig(
                             "tab1",
-                            "View",
+                            "Upload",
                             TabName.UploadAdvertisement
                           )}
                           rows={rows}

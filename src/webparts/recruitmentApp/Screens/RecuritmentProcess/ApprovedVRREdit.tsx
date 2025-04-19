@@ -14,6 +14,7 @@ import {
   DataFrom,
   DocumentLibraray,
   HRMSAlertOptions,
+  labelName,
   ListNames,
   Notes,
   RecuritmentHRMsg,
@@ -1111,10 +1112,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 });
                 resetForm();
                 let UpdateAlert = {
-                  Message:
-                    advDetails.JobcodeChecked === false
-                      ? RecuritmentHRMsg.AdvertisementSubmitMsg
-                      : RecuritmentHRMsg.AdvertisementReveiwMsg,
+                  Message: RecuritmentHRMsg.AdvertisementSubmitMsg,
                   Type: HRMSAlertOptions.Success,
                   visible: true,
                   ButtonAction: async (userClickedOK: boolean) => {
@@ -1396,7 +1394,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
   const tabs = [
     {
-      label: TabName.PositionDetails, //"Position Details",
+      label:
+        props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+        props.stateValue?.StatusId ===
+          StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+          ? TabName.AdvertisementDetails
+          : TabName.PositionDetails,
       value: "tab1",
       content: (
         <Card
@@ -1655,7 +1658,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="No of Position Assigned"
+                    label="No of Personnel Required"
                     value={formState.NoofPositionAssigned}
                     disabled={true}
                     error={false}
@@ -2038,7 +2041,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           style={{ position: "relative", right: "1px" }}
                         >
                           <CustomLabel
-                            value={"View Role Purpose"}
+                            value={labelName.ViewJobAdvetisement}
                             // mandatory={true}
                           />
                           <ReuseButton
@@ -2544,10 +2547,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         ...(isViewed
                           ? [
                               {
-                                label:
-                                  advDetails.JobcodeChecked === false
-                                    ? "Submit"
-                                    : "Review",
+                                label: "Submit",
                                 onClick: async () => {
                                   await SaveRecruitment();
                                 },
@@ -2561,7 +2561,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     ? isViewed
                       ? [
                           {
-                            label: "Review",
+                            label: "Reviewed",
                             onClick: async () => {
                               await SaveRecruitment();
                             },

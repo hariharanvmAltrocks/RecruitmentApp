@@ -179,7 +179,7 @@ export const RecuritmentHRMsg = {
   ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Sucessfully.",
 
   AdvertisementSubmitMsg:
-    "Advertisement for the Job Title Submitted Successfully.",
+    "Advertisement Document Uploaded Successfully.",
   AdvertisementReveiwMsg: "Advertisement Reviewed Sucessfully",
 
   AgencySucess: "Agencies Assigned for the Selected Job Titles.",
@@ -370,7 +370,7 @@ export const workflowStatusApi = {
 export const Notes = {
   Roleprofile: "Role Profile is not available for the Job Title.",
   Grding: "Grading Report is not available for the Job Title.",
-  ReviewRolePurpose: "Please review the 'View Submission' details prior to approving or reverting this submission."
+  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving or reverting this submission."
 }
 // sneka
 export const CatogryOption = [
@@ -430,7 +430,8 @@ export const categoryOption = [
 
 export const labelName = {
   Level1CandidateLabel: "Does the candidate fit for the vacant position ? (Level 1)",
-  Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)"
+  Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)",
+  ViewJobAdvetisement: "View Job Advertisement"
 };
 
 export const ColorCode = {

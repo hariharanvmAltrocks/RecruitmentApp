@@ -1,3 +1,4 @@
+import * as moment from "moment";
 import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, profileJobsComments, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { QuestionItem } from "../../Models/RecuritmentVRR";
 import { DocumentLibraray, ListNames, RoleProfileMaster } from "../../utilities/Config";
@@ -5,7 +6,7 @@ import { getProfileData, postAdveDetails, QuestionnaireApi } from "../ReviewProf
 import { CommonServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
-import { IGetPortalJobs } from "./IGetPortalJobs";
+import { CandidateDetails, IGetPortalJobs } from "./IGetPortalJobs";
 
 export default class GetPortalJobs implements IGetPortalJobs {
   async UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>> {
@@ -77,13 +78,15 @@ export default class GetPortalJobs implements IGetPortalJobs {
       let GetProfileByJobCodeData: GetProfileByJobCode[] = []
       await getProfileData.GetProfileByJobCode(FilterValue).then((res) => {
         GetProfileByJobCodeData = res.data.data.map((item: any) => {
+          let createdon = item.createdOn ? new Date(item.createdOn) : null
           return {
             CandidateID: item.jobRequestId,
             ApplicantName: item.applicantName,
             PositionTitle: item.jobTitle?.displayText,
             JobGrade: item.jobCode,
             Status: item.workflowStatus?.displayText,
-            workflowStatusId: item.workflowStatusId
+            workflowStatusId: item.workflowStatusId,
+            createdOn: moment(createdon).format("DD/MM/YYYY HH:mm:ss")
           }
         })
       }
@@ -239,7 +242,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
   }
 
   async InsertCandidateDetailsInList(
-    CandidateDetails: any,
+    CandidateDetails: CandidateDetails,
     InterviewPanel: any
   ): Promise<ApiResponse<any | null>> {
     try {

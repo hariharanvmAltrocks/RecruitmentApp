@@ -46,6 +46,7 @@ import CustomDatePicker from "../../components/CustomDatePicker";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomTimePicker from "../../components/CustomTimePicker";
 import { useMediaQuery } from "@mui/material";
+import { CandidateDetails } from "../../Services/CareerPortalApi/IGetPortalJobs";
 
 type InterviewedLevelValue = {
   Levels: string;
@@ -256,8 +257,9 @@ const ViewCandidateDetails = (props: any) => {
     );
     const newTabNames = [
       { tabName: props.stateValue?.initialTab },
+      { tabName: "View" },
       { tabName: TabName.ViewCandidateList },
-      { tabName: "Edit" },
+      { tabName: props.stateValue?.ButtonAction },
       { tabName: TabName.ViewCandidateDetails },
     ];
     setTabNameData(newTabNames);
@@ -597,7 +599,7 @@ const ViewCandidateDetails = (props: any) => {
                                     ).setDate(
                                       new Date(
                                         CandidateProfile.JobVaildToDate
-                                      ).getDate() + 1
+                                      ).getDate()
                                     )
                                   )
                                 : undefined
@@ -763,7 +765,7 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomInput
-                            label="Review profile Feedback"
+                            label="Review profile Feedback - HR"
                             value={CandidateProfile.hrComments}
                             disabled={true}
                             // mandatory={true}
@@ -981,7 +983,7 @@ const ViewCandidateDetails = (props: any) => {
       state: {
         ID: props.stateValue?.RecruitmentID,
         TabName: props.stateValue?.initialTab,
-        ButtonAction: TabName.ViewPositionDetails,
+        ButtonAction: "View",
         JobCode: CandidateProfile?.JobCode,
       },
     });
@@ -1005,17 +1007,17 @@ const ViewCandidateDetails = (props: any) => {
     let matchedAgents = HRMSExternalAgents.data.filter(
       (item) => item.AgentName === CandidateProfile.Agencies
     );
-
-    const CandidateDetails: any = {
+    let DOBValue = CandidateProfile.DOB
+      ? new Date(CandidateProfile.DOB)
+      : undefined;
+    const CandidateDetails: CandidateDetails = {
       RecruitmentIDId: props.stateValue.RecruitmentID,
       JobCodeId: RecruitmentDetails.data[0].JobCodeId,
       FristName: CandidateProfile.FristName,
       MiddleName: CandidateProfile.MiddleName,
       LastName: CandidateProfile.ApplicantSurName,
       ResidentialAddress: CandidateProfile.ResidentialAddress,
-      DOB: CandidateProfile.DOB
-        ? new Date(CandidateProfile.DOB).toISOString()
-        : null,
+      DOB: DOBValue,
       ContactNumber: CandidateProfile.ContactNumber,
       Email: CandidateProfile.Email,
       // Nationality: CandidateProfile.Nationality,
@@ -1030,9 +1032,7 @@ const ViewCandidateDetails = (props: any) => {
       PositionTitle: RecruitmentDetails?.data[0]?.JobTitleEnglish,
       JobGrade: RecruitmentDetails?.data[0]?.DRCGrade,
       ExternalAgentDetailsId: matchedAgents[0]?.ID,
-      InterviewDate: InterviewedLevel?.InterviewedDate
-        ? new Date(InterviewedLevel?.InterviewedDate).toISOString()
-        : null,
+      InterviewDate: InterviewedLevel?.InterviewedDate,
       InterviewTime: InterviewedLevel?.InterviewTime,
       InterviewLink: InterviewedLevel?.InterviewMeetingInviteLink,
       ActionId: WorkflowAction.Approved,
@@ -1171,7 +1171,7 @@ const ViewCandidateDetails = (props: any) => {
                 state: {
                   ID: props.stateValue?.RecruitmentID,
                   TabName: props.stateValue?.initialTab,
-                  ButtonAction: TabName.ViewPositionDetails,
+                  ButtonAction: "View",
                   JobCode: CandidateProfile?.JobCode,
                 },
               });
@@ -1192,7 +1192,7 @@ const ViewCandidateDetails = (props: any) => {
                 state: {
                   ID: props.stateValue?.RecruitmentID,
                   TabName: props.stateValue?.initialTab,
-                  ButtonAction: TabName.ViewPositionDetails,
+                  ButtonAction: props.stateValue?.ButtonAction,
                   JobCode: CandidateProfile?.JobCode,
                 },
               });
