@@ -30,7 +30,7 @@ const labelStyles: React.CSSProperties = {
 };
 
 const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
-  console.log("comments", comments);
+
   const tabs = [
     {
       label: TabName.ViewJustification,
@@ -89,26 +89,15 @@ const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
                         <Label style={boldLabelStyles}>{comment?.Name}</Label>
                       </div>
                     )}
-                    {comment?.JobTitleInEnglish?.JobTitleInEnglish ? (
-                      <div>
-                        <Label className="title" style={labelStyles}>
-                          {comment.JobTitleInEnglish.JobTitleInEnglish}
-                        </Label>
-                      </div>
-                    ) : (
+                    {comment?.JobTitleInEnglish && (
                       <Label className="title" style={labelStyles}>
-                        No Job Title Available
+                        {comment.JobTitleInEnglish}
                       </Label>
                     )}
-                    {comment?.JobTitleInFrench?.JobTitleInFrench ? (
-                      <div>
-                        <Label className="title" style={labelStyles}>
-                          {comment.JobTitleInFrench.JobTitleInFrench}
-                        </Label>
-                      </div>
-                    ) : (
+
+                    {comment?.JobTitleInFrench && (
                       <Label className="title" style={labelStyles}>
-                        No Job Title Available
+                        {comment.JobTitleInFrench}
                       </Label>
                     )}
 

@@ -346,7 +346,7 @@ const ReviewProfileList = (props: any) => {
         void fetchCandidateData();
       }
     } catch (error) {
-      console.log(error);
+      console.log("e",error);
     }
     setIsLoading(false);
   };
@@ -454,7 +454,7 @@ const ReviewProfileList = (props: any) => {
                     data={RecuritmentData}
                     columns={columnConfig(
                       "tab1",
-                      "Edit",
+                      "View",
                       TabName.ReviewONEMAdvertisement
                     )}
                     rows={rows}

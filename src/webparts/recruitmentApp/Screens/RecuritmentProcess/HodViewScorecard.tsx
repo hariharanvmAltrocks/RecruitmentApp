@@ -6,7 +6,7 @@ import {
   InterviewServices,
 } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import { alertPropsData, InterviewPanaldata } from "../../Models/Screens";
+import { alertPropsData } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import {
   ColorCode,
@@ -21,7 +21,11 @@ import {
   WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
-import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
+import {
+  AdvDetails,
+  QuestionItem,
+  ScoreCardData,
+} from "../../Models/RecuritmentVRR";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import { Card, CardContent } from "@mui/material";
@@ -47,7 +51,8 @@ import IsValid from "../../components/Validation";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HODQuestionsView from "./HODQuestionsView";
-
+import CustomPreviewScreen from "./CustomPreviewScreen";
+import { Chip } from "@mui/material";
 type ValidationError = {
   Comments: boolean;
   Checkboxalidation: boolean;
@@ -103,6 +108,8 @@ const HodViewScorecard = (props: any) => {
     interviewPanelTitles: [] as string[],
     JobRequestID: "",
     Comments: "",
+    ExternalAgentName: "",
+    JobGrade: "",
   });
 
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
@@ -120,7 +127,7 @@ const HodViewScorecard = (props: any) => {
   const [interviewPanelTitles, setInterviewPanelTitles] = React.useState<
     string[]
   >([]);
-  const candidateID = props.stateValue?.ID;
+  const candidateID: number = props.stateValue?.ID;
   const [Checkbox, setCheckbox] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
@@ -130,72 +137,175 @@ const HodViewScorecard = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
-  const [agentName, setIagentName] = React.useState<"">("");
-  const [InterviewPanelData, setInterviewPanelData] = React.useState<
-    InterviewPanaldata[]
-  >([
-    {
-      ID: 0,
-      CandidateID: 0,
-      RecruitmentID: 0,
-      InterviewLevel: "",
-      InterviewPanel: 0,
-      InterviewPanalNames: [],
-      InterviewPanelTitle: "",
-      IsScoreSheetUploaded: "",
-    },
-  ]);
+
   const [expanded, setExpanded] = React.useState<string | null>(null);
   const [ViewQABtn, setViewQABtn] = React.useState<boolean>(false);
   const [transformedDataforQuestions, setTransformedDataforQuestions] =
     React.useState([]);
-  const [interviewerCount, setInterviewerCount] = React.useState(0);
+  // const [interviewerCount, setInterviewerCount] = React.useState(0);
   const [questionnaire, setquestionnaire] = React.useState<QuestionItem[]>([]);
+  const [advDetails, setAdvDetails] = React.useState<AdvDetails>({
+    MinQualificationOption: [],
+    PrefeQualificationOption: [],
+    RoleSpeKnowledgeoption: [],
+    RequiredLeveloption: [],
+    TechnicalSkillsOption: [],
+    LevelProficiencyOption: [],
+    RolePurpose: "",
+    JobDescription: "",
+    addMasterQualification: "",
+    TotalExperience: { key: 0, text: "" },
+    ExperienceinMiningIndustry: { key: 0, text: "" },
+    TotalExperienceOption: [],
+    ExperienceinMiningIndustryOption: [],
+    YearofExperience: " ",
+    PreferredExperience: "",
+    ValidFrom: todaydate,
+    ValidTo: undefined,
+    FunctionType: "",
+    JobFunctionalType: { key: 0, text: "" },
+    JobFunctionalTypeOption: [],
+    addMasterMinimumQualification: "",
+    AdvertisementAttachement: [],
+    JobcodeChecked: false,
+  });
+  const [Preview, setPreview] = React.useState<boolean>(false);
 
-  const fetchCandidateDatas = React.useCallback(
-    async (idParam: number) => {
-      try {
-        setIsLoading(true);
+  const fetchRoleProfileData = async (JobCodeID: number) => {
+    try {
+      const filterConditions = [
+        {
+          FilterKey: "JobCode",
+          Operator: "eq",
+          FilterValue: JobCodeID,
+        },
+      ];
 
-        const filterConditions = [
-          {
-            FilterKey: "CandidateID/Id",
-            Operator: "eq",
-            FilterValue: idParam,
-          },
-        ];
+      const response = await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+        filterConditions,
+        ""
+      );
 
-        const [scoreResponse, positionResponse] = await Promise.all([
-          InterviewServices.HRMSCandidateScoreCard(
-            "",
-            filterConditions,
-            idParam
-          ),
-          InterviewServices.GetCombinedCandidatePositionDetails(
-            " ",
-            filterConditions
-          ),
-        ]);
+      if (response.status === 200) {
+        const data = response.data;
+     
 
-        if (scoreResponse?.status === 200 && scoreResponse?.data?.length) {
-          const candidateData = scoreResponse.data.filter(
-            (candidate: any) => candidate.CandidateID === idParam
+        if (data && data.length > 0) {
+          const rawData = data[0];
+
+      
+          const roleSpecificKnowledge = Array.isArray(
+            rawData.RoleSpecificKnowledge
+          )
+            ? rawData.RoleSpecificKnowledge
+            : [];
+
+          const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+            (item: { RoleSpecificKnowledge: any }) => item.RoleSpecificKnowledge
+          );
+          const RequiredLevelValues = roleSpecificKnowledge.map(
+            (item: { RequiredLevel: any }) => item.RequiredLevel
           );
 
-          const filteredScores = candidateData.flatMap(
-            (candidate: any) =>
-              candidate.CandidateScoreCard?.filter(
-                (score: any) => candidate.ID === score.InterviewPanelID
-              ) || []
+         
+          const technicalSkillsKnowledge = Array.isArray(
+            rawData.TechnicalSkillsKnowledge
+          )
+            ? rawData.TechnicalSkillsKnowledge
+            : [];
+
+          const TechnicalSkillsOption = technicalSkillsKnowledge.map(
+            (item: { TechnicalSkills: any }, index: any) => ({
+              key: index,
+              text: item.TechnicalSkills,
+            })
           );
 
+          const LevelProficiencyOption = technicalSkillsKnowledge.map(
+            (item: { LevelProficiency: any }, index: any) => ({
+              key: index,
+              text: item.LevelProficiency,
+            })
+          );
+
+        
+          const MinQualificationOption = rawData.Qualification
+            ? [{ key: 0, text: rawData.Qualification }]
+            : [];
+
+          const PrefeQualificationOption = rawData.PreferredQualification
+            ? [{ key: 0, text: rawData.PreferredQualification }]
+            : [];
+
+          setAdvDetails((prev: any) => {
+            const updatedDetails = {
+              ...prev,
+              RolePurpose: rawData.RoleProfile || "",
+              JobDescription: rawData.JobDescription || "",
+              RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+              RequiredLeveloption: RequiredLevelValues,
+              TechnicalSkillsOption,
+              LevelProficiencyOption,
+              MinQualificationOption,
+              PrefeQualificationOption,
+              YearofExperience: rawData.YearofExperience || "",
+              PreferredExperience: rawData.PreferredExperience || "",
+              TotalExperience: rawData.TotalPreferredExperience || "",
+              FunctionType: rawData.FunctionType || "",
+              JobcodeChecked: true,
+              FullDataResponse: rawData,
+            };
+
+       
+            return updatedDetails;
+          });
+        } else {
+          setAdvDetails((prev: any) => ({
+            ...prev,
+            JobcodeChecked: false,
+          }));
+       
+        }
+      } 
+    } catch (error) {
+      console.error("Error fetching role profile data:", error);
+    }
+  };
+  const fetchInterviewPanelDetails = () => {
+    setIsLoading(true);
+    const filterConditions = [
+      {
+        FilterKey: "CandidateID/Id",
+        Operator: "eq",
+        FilterValue: candidateID,
+      },
+    ];
+
+    InterviewServices.getInterviewPanelDetails(
+      "",
+      filterConditions,
+      candidateID,
+      props.EmployeeList
+    )
+      .then((scoreResponse) => {
+        if (scoreResponse?.status === 200) {
+          const candidatePanels = scoreResponse?.data.filter(
+            (candidate: any) => candidate.CandidateID === candidateID
+          );
           setInterviewPanelTitles(
-            candidateData.map((panel: any) => panel.InterviewPanelTitle)
+            candidatePanels.map((panel: any) => panel.PanelFullName)
           );
+          const filteredScores = candidatePanels
+            .map((candidate: any) => {
+              const score = candidate.ScoreCard;
+              return score && candidate.ID === score.InterviewPanelID
+                ? [score]
+                : [];
+            })
+            .reduce((acc: any[], val: any[]) => acc.concat(val), []);
           setScoreData(filteredScores);
-
           let questionScores: any = {};
-          let interviewerCount = 0;
+          // let interviewerCount = 0;
           filteredScores.forEach((score: any, interviewerIndex: number) => {
             if (score.QuestionJson) {
               score.QuestionJson.forEach((q: any) => {
@@ -207,36 +317,26 @@ const HodViewScorecard = (props: any) => {
                   q[key];
               });
             }
-            interviewerCount++;
+            // interviewerCount++;
           });
 
           setTransformedDataforQuestions(Object.values(questionScores));
-          setInterviewerCount(interviewerCount);
+          // setInterviewerCount(interviewerCount);
         } else {
           setScoreData([]);
           setInterviewPanelTitles([]);
-          setTransformedDataforQuestions([]);
-          setInterviewerCount(0);
+          // setTransformedDataforQuestions([]);
+          // setInterviewerCount(0);
         }
-
-        if (positionResponse?.status === 200 && positionResponse?.data) {
-          const candidate = positionResponse.data.find(
-            (c: any) => c.ID === idParam
-          );
-          setIagentName(candidate?.ExternalAgentDetails?.AgentName || "");
-        }
-      } catch (error) {
-        console.error("Error fetching candidate data:", error);
+      })
+      .catch((error) => {
+        console.error("Error fetching panel/score data:", error);
         setScoreData([]);
         setInterviewPanelTitles([]);
         setTransformedDataforQuestions([]);
-        setInterviewerCount(0);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [candidateID]
-  );
+        // setInterviewerCount(0);
+      });
+  };
 
   const transformScoreData = (rawData: any[]) => {
     const criteria = [
@@ -355,13 +455,6 @@ const HodViewScorecard = (props: any) => {
 
   const OpenComments = () => {
     setMainComponent(false);
-
-    if (scoreData.length === 0) {
-      return;
-    }
-
-    const recruitmentID = scoreData[0].RecruitmentID;
-
     let filterConditions = [
       {
         FilterKey: "CandidateID/Id",
@@ -371,20 +464,20 @@ const HodViewScorecard = (props: any) => {
     ];
     let Conditions = "";
 
-    InterviewServices.HRMSCandidateScoreCard(
+    InterviewServices.getInterviewPanelDetails(
       filterConditions,
       Conditions,
-      candidateID
+      candidateID,
+      props.EmployeeList
     )
       .then((CommentsList) => {
-        if (CommentsList?.status === 200 && CommentsList?.data?.length) {
-          const candidateData = CommentsList.data.filter(
-            (candidate: any) =>
-              candidate.CandidateID === candidateID &&
-              candidate.RecruitmentID === recruitmentID
+        if (CommentsList?.status === 200) {
+        
+          const candidateData = CommentsList?.data.filter(
+            (candidate: any) => candidate.CandidateID === candidateID
           );
-
           setCommentsData(candidateData);
+        
         } else {
           setCommentsData([]);
         }
@@ -399,8 +492,6 @@ const HodViewScorecard = (props: any) => {
     const getQuestion = await GetPortalJobsService.getQuestionnaire(
       CandidateData.JobCode
     );
-    console.log(getQuestion, "getQuestion");
-
     if (getQuestion.status === ResponeStatus.SUCCESS) {
       setquestionnaire(getQuestion?.data ?? []);
       setViewQABtn(true);
@@ -434,7 +525,9 @@ const HodViewScorecard = (props: any) => {
           <div className="agencies_card ">
             <LabelHeaderComponents
               value={`Profile from ${
-                agentName ? agentName + " Agencies" : "Candidate"
+                CandidateData.ExternalAgentName
+                  ? CandidateData.ExternalAgentName + " Agencies"
+                  : "Candidate"
               }`}
             />
           </div>
@@ -614,12 +707,10 @@ const HodViewScorecard = (props: any) => {
                       }
                     />
                   </div>
-                  <div className="ms-Grid-col ms-lg4">
+                  {/* <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Interviewed by"
-                      value={
-                        CandidateData.interviewPanelTitles?.join(", ") || ""
-                      }
+                      label="Interview Panel"
+                      value={interviewPanelTitles?.join(", ") || ""}
                       disabled={true}
                       mandatory={false}
                       onChange={(value) =>
@@ -628,6 +719,65 @@ const HodViewScorecard = (props: any) => {
                         }))
                       }
                     />
+                  </div> */}
+
+                
+
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Grade"
+                      value={CandidateData.JobGrade}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setCandidateData((prevState) => ({
+                          ...prevState,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div
+                    className="ms-Grid-col ms-lg4"
+                    style={{ position: "relative", top: "14px" }}
+                  >
+                    <label
+                      style={{
+                        fontWeight: 600,
+                        marginBottom: "4px",
+                        display: "block",
+                      }}
+                    >
+                      Interview Panel
+                    </label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "8px",
+                        minHeight: "38px",
+                        // border: "none",
+                        background: "none",
+                        backgroundColor: "rgb(243, 242, 241)",
+                        padding: "8px",
+                        borderRadius: "6px",
+                        border: "rgb(243, 242, 241)",
+                        boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px"
+                      }}
+                    >
+                      {interviewPanelTitles && interviewPanelTitles.length > 0
+                        ? interviewPanelTitles.map((title, index) => (
+                            <Chip
+                              key={index}
+                              label={title}
+                              size="small"
+                              sx={{
+                                backgroundColor: "rgb(243, 242, 241)",
+                                fontWeight: 500,
+                              }}
+                            />
+                          ))
+                        : null}
+                    </div>
                   </div>
                 </div>
                 <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
@@ -642,7 +792,7 @@ const HodViewScorecard = (props: any) => {
                     />
                   </div>
                   <div className="ms-Grid-col ms-lg4">
-                    <CustomLabel value={"Advertisement Documents"} />
+                    <CustomLabel value={"Advertisement Documents (French)"} />
                     <CustomViewDocument
                       Attachment={CandidateData.AdvertisementDocument}
                     />
@@ -652,6 +802,45 @@ const HodViewScorecard = (props: any) => {
                     <CustomViewDocument
                       Attachment={CandidateData.CandidateCVDoc}
                     />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div
+                    className="ms-Grid-col ms-lg2"
+                    style={{ position: "relative", right: "1px" }}
+                  >
+                    <div>
+                      <CustomLabel
+                        value="View Role Purpose"
+                        // mandatory={true}
+                      />
+                      <ReuseButton
+                        Style={{
+                          minWidth: "117px",
+                          fontSize: "13px",
+                          paddingBottom: "24px",
+                          display: "flex",
+                          flexDirection: "column",
+                          height: "41px",
+                          paddingTop: "23px",
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          color: "white",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        label="VIEW"
+                        imgSrc={require("../../assets/viewSubmision-white.svg")}
+                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                        imgAlt="View"
+                        imgAltHover="Hovered View"
+                        onClick={async () => {
+                          setPreview(true);
+                          setMainComponent(false);
+                        }}
+                        spacing={4}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -709,7 +898,9 @@ const HodViewScorecard = (props: any) => {
                     }}
                   >
                     {`Profile from ${
-                      agentName ? agentName + " Agencies" : "Candidate"
+                      CandidateData.ExternalAgentName
+                        ? CandidateData.ExternalAgentName + " Agencies"
+                        : "Candidate"
                     }`}
                   </span>
                 </div>
@@ -803,7 +994,7 @@ const HodViewScorecard = (props: any) => {
                         stripedRows
                       >
                         <Column field="criteria" header="Criteria" />
-                        {Array.from({ length: interviewerCount }).map(
+                        {/* {Array.from({ length: interviewerCount }).map(
                           (_, index) => (
                             <Column
                               key={index}
@@ -811,7 +1002,21 @@ const HodViewScorecard = (props: any) => {
                               header={`Interviewer ${index + 1}`}
                             />
                           )
-                        )}
+                        )} */}
+                        {interviewPanelTitles.map((name, index) => (
+                          <Column
+                            key={index}
+                            field={`interviewer_${index + 1}`}
+                            header={
+                              <>
+                                <div style={{ fontSize: "12px" }}>
+                                  Interviewer {index + 1}
+                                </div>
+                                <div style={{ fontSize: "14px" }}>({name})</div>
+                              </>
+                            }
+                          />
+                        ))}
                       </DataTable>
                     </div>
                   </AccordionDetails>
@@ -836,15 +1041,20 @@ const HodViewScorecard = (props: any) => {
                         stripedRows
                       >
                         <Column field="criteria" header="Criteria" />
-                        {Array.from({ length: interviewerCount }).map(
-                          (_, index) => (
-                            <Column
-                              key={index}
-                              field={`interviewer_${index + 1}`}
-                              header={`Interviewer ${index + 1}`}
-                            />
-                          )
-                        )}
+                        {interviewPanelTitles.map((name, index) => (
+                          <Column
+                            key={index}
+                            field={`interviewer_${index + 1}`}
+                            header={
+                              <>
+                                <div style={{ fontSize: "12px" }}>
+                                  Interviewer {index + 1}
+                                </div>
+                                <div style={{ fontSize: "14px" }}>({name})</div>
+                              </>
+                            }
+                          />
+                        ))}
                       </DataTable>
                     </div>
                   </AccordionDetails>
@@ -945,76 +1155,90 @@ const HodViewScorecard = (props: any) => {
         FilterValue: ID,
       });
 
-      const data = await getVRRDetails.GetInterviewPanelCandidateDetails(
+      InterviewServices.GetCombinedCandidatePositionDetails(
         filterConditions,
-        Conditions
-      );
+        Conditions,
+        props.EmployeeList
+      )
+        .then(async (data) => {
+          if (data?.status === 200) {
+            const op = data?.data[0];
+            console.log("Candidate details (op):", op);
+            const agentName = op.ExternalAgentDetails?.AgentName;
 
-      if (data.status === 200 && data.data !== null) {
-        const op = data.data[0];
+            try {
+              const response = await CommonServices.GetAttachmentToLibrary(
+                DocumentLibraray.RecruitmentAdvertisementDocument,
+                op?.JobCode
+              );
 
-        const response = await CommonServices.GetAttachmentToLibrary(
-          DocumentLibraray.RecruitmentAdvertisementDocument,
-          op?.JobCode
-        );
+              let advertisementDocuments: any[] = [];
+              if (response?.status === 200) {
+                advertisementDocuments = response?.data.map((doc: any) => ({
+                  name: doc.name,
+                  content: doc.content,
+                }));
+              }
 
-        let advertisementDocuments: any[] = [];
-        if (response.status === 200 && response.data?.length > 0) {
-          advertisementDocuments = response.data.map((doc: any) => ({
-            name: doc.name,
-            content: doc.content,
-          }));
-        }
+              const RoleProfileresponse =
+                await CommonServices.GetAttachmentToLibrary(
+                  DocumentLibraray.RoleProfileMaster,
+                  op?.JobCode,
+                  RoleProfileMaster.RoleProfile
+                );
 
-        const RoleProfileresponse = await CommonServices.GetAttachmentToLibrary(
-          DocumentLibraray.RoleProfileMaster,
-          op?.JobCode,
-          RoleProfileMaster.RoleProfile
-        );
+              let roleProfileDocuments: any[] = [];
+              if (RoleProfileresponse?.status === 200) {
+                roleProfileDocuments = RoleProfileresponse?.data.map(
+                  (doc: any) => ({
+                    name: doc.name,
+                    content: doc.content,
+                  })
+                );
+              }
 
-        let roleProfileDocuments: any[] = [];
-        if (
-          RoleProfileresponse.status === 200 &&
-          RoleProfileresponse.data?.length > 0
-        ) {
-          roleProfileDocuments = RoleProfileresponse.data.map((doc: any) => ({
-            name: doc.name,
-            content: doc.content,
-          }));
-        }
-
-        setCandidateData((prevState) => ({
-          ...prevState,
-          CandidateID: op?.ID,
-          RecruitmentID: op?.RecruitmentID,
-          JobCode: op?.JobCode,
-          JobCodeId: op?.JobCodeId,
-          PassportID: op?.PassportID,
-          FullName: op?.FullName,
-          ResidentialAddress: op?.ResidentialAddress,
-          DOB: op?.DOB,
-          ContactNumber: op?.ContactNumber,
-          Email: op?.Email,
-          Nationality: op?.Nationality,
-          Gender: op?.Gender,
-          TotalYearOfExperiance: op?.TotalYearOfExperiance,
-          Skills: op?.Skills,
-          LanguageKnown: op?.LanguageKnown,
-          ReleventExperience: op?.ReleventExperience,
-          Qualification: op?.Qualification,
-          CandidateCVDoc: op?.CandidateCVDoc,
-          AdvertisementDocument: advertisementDocuments,
-          RoleProfileDocument: roleProfileDocuments,
-          PositionTitle: op?.PositionTitle,
-          InterviewDate: op?.InterviewDate,
-          JobRequestID: op?.JobRequestID,
-        }));
-
-        await fetchCandidateDatas(ID);
-      }
+              setCandidateData((prevState) => ({
+                ...prevState,
+                CandidateID: op?.ID,
+                RecruitmentID: op?.RecruitmentID,
+                JobCode: op?.JobCode,
+                JobCodeId: op?.JobCodeId,
+                PassportID: op?.PassportID,
+                FullName: op?.FullName,
+                ResidentialAddress: op?.ResidentialAddress,
+                DOB: op?.DOB,
+                ContactNumber: op?.ContactNumber,
+                Email: op?.Email,
+                Nationality: op?.Nationality,
+                Gender: op?.Gender,
+                TotalYearOfExperiance: op?.TotalYearOfExperiance,
+                Skills: op?.Skills,
+                LanguageKnown: op?.LanguageKnown,
+                ReleventExperience: op?.ReleventExperience,
+                Qualification: op?.Qualification,
+                CandidateCVDoc: op?.CandidateCVDoc,
+                AdvertisementDocument: advertisementDocuments,
+                RoleProfileDocument: roleProfileDocuments,
+                PositionTitle: op?.PositionTitle,
+                InterviewDate: op?.InterviewDate,
+                JobRequestID: op?.JobRequestID,
+                ExternalAgentName: agentName,
+                JobGrade: op?.JobGrade,
+              }));
+              await fetchRoleProfileData(op.JobCodeId);
+            } catch (error) {
+              console.error("Error fetching documents:", error);
+            } finally {
+              setIsLoading(false);
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching candidate data:", error);
+          setIsLoading(false);
+        });
     } catch (error) {
-      console.log(error);
-    } finally {
+      console.error("Error in initial try block:", error);
       setIsLoading(false);
     }
   };
@@ -1058,42 +1282,6 @@ const HodViewScorecard = (props: any) => {
         setIsLoading(true);
 
         await fetchCandidateData(props.stateValue?.ID);
-
-        const filterConditions = [
-          {
-            FilterKey: "CandidateIDId",
-            Operator: "eq",
-            FilterValue: props.stateValue?.ID,
-          },
-        ];
-
-        const panelResponse = await InterviewServices.GetInterviewPanelDetails(
-          filterConditions
-        );
-
-        if (
-          panelResponse?.data &&
-          Array.isArray(panelResponse.data) &&
-          panelResponse.data.length > 0
-        ) {
-          const filteredPanels = panelResponse.data.filter(
-            (item) => item.CandidateID === props.stateValue?.ID
-          );
-
-          const interviewPanelTitles = filteredPanels.map(
-            (panel) => panel.InterviewPanelTitle
-          );
-          console.log(InterviewPanelData);
-          setInterviewPanelData((prev) => ({
-            ...prev,
-            interviewPanelTitles: interviewPanelTitles || [],
-          }));
-
-          setCandidateData((prev) => ({
-            ...prev,
-            interviewPanelTitles: interviewPanelTitles || [],
-          }));
-        }
       } catch (err) {
         console.error("Error in fetching data:", err);
       } finally {
@@ -1102,6 +1290,7 @@ const HodViewScorecard = (props: any) => {
     };
 
     void fetchAllData();
+    void fetchInterviewPanelDetails();
   }, [props.stateValue?.ID, activeTab]);
 
   const handleBreadcrumbChange = (newItem: string) => {
@@ -1131,6 +1320,105 @@ const HodViewScorecard = (props: any) => {
 
     return Object.values(errors).some((error) => error);
   };
+  // const Submit_fn = async (Action: string) => {
+  //   if (!CandidateData.Comments.trim()) {
+  //     setValidationError((prevState) => ({
+  //       ...prevState,
+  //       Comments: true,
+  //       Checkboxalidation: true,
+  //     }));
+  //     return;
+  //   }
+  //   const isValid = !Validation();
+  //   if (!isValid) return;
+
+  //   const createFilter = (workflowStatus: string): WorkflowJson => ({
+  //     workflowStatus,
+  //     jobRequestId: Number(CandidateData.JobRequestID),
+  //     comments: CandidateData.Comments,
+  //     actionBy: props.CurrentUserRole,
+  //   });
+
+  //   let obj: ActionUpdate = { ActionId: 0, Id: 0, ItemCreated: "" };
+  //   let CandidateDatas: WorkflowJson = {
+  //     workflowStatus: "",
+  //     jobRequestId: 0,
+  //     comments: "",
+  //     actionBy: "",
+  //   };
+  //   let SuccessMessage: string = "";
+  //   switch (Action) {
+  //     case "Selected":
+  //       obj = {
+  //         ActionId: WorkflowAction.Approved,
+  //         Id: props.stateValue.ID,
+  //         ItemCreated: "Yes",
+  //       };
+  //       CandidateDatas = createFilter(
+  //         workflowStatusApi.CandidateSelectedIPanel
+  //       );
+  //       SuccessMessage = RecuritmentHRMsg.CandidateSelected;
+  //       break;
+
+  //     case "Rejected":
+  //       obj = {
+  //         ActionId: WorkflowAction.Reject,
+  //         Id: props.stateValue.ID,
+  //         ItemCreated: "Yes",
+  //       };
+  //       CandidateDatas = createFilter(
+  //         workflowStatusApi.CandidateRejectedIPanel
+  //       );
+  //       SuccessMessage = RecuritmentHRMsg.CandidateRejected;
+  //       break;
+
+  //     default:
+  //       console.error(Action);
+  //       return;
+  //   }
+
+  //   try {
+  //     setIsLoading(true);
+
+  //     await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
+  //     const selectionResponse = await InterviewServices.CandidateSeletionApi(
+  //       obj,
+  //       ListNames.HRMSRecruitmentCandidatePersonalDetails
+  //     );
+
+  //     if (selectionResponse.status === 200) {
+  //       setAlertPopupOpen(true);
+  //       setalertProps({
+  //         Message: SuccessMessage,
+  //         Type: HRMSAlertOptions.Success,
+  //         visible: true,
+  //         ButtonAction: async (userClickedOK: boolean) => {
+  //           if (userClickedOK) {
+  //             props.navigation(
+  //               "/RecurimentProcess/HodScoreCard/CandidateList",
+  //               {
+  //                 state: {
+  //                   ID: CandidateData?.RecruitmentID,
+  //                   Status: props.stateValue?.Status,
+  //                   TabName: props.stateValue?.TabName,
+  //                   ButtonAction: props.stateValue?.PreviousTabName,
+  //                   JobCode: CandidateData?.JobCode,
+  //                   StatusId: props.stateValue?.StatusId,
+  //                 },
+  //               }
+  //             );
+  //           }
+  //           setAlertPopupOpen(false);
+  //         },
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const Submit_fn = async (Action: string) => {
     if (!CandidateData.Comments.trim()) {
       setValidationError((prevState) => ({
@@ -1183,6 +1471,8 @@ const HodViewScorecard = (props: any) => {
         SuccessMessage = RecuritmentHRMsg.CandidateRejected;
         break;
 
+      
+
       default:
         console.error(Action);
         return;
@@ -1229,7 +1519,6 @@ const HodViewScorecard = (props: any) => {
       setIsLoading(false);
     }
   };
-
   return (
     <>
       {MainComponent ? (
@@ -1254,6 +1543,12 @@ const HodViewScorecard = (props: any) => {
                     await Submit_fn("Rejected");
                   },
                 },
+                // {
+                //   label: "OnHold",
+                //   onClick: async () => {
+                //     await Submit_fn("OnHold");
+                //   },
+                // },
               ]}
             />
           </div>
@@ -1272,6 +1567,19 @@ const HodViewScorecard = (props: any) => {
             setViewQABtn(false);
             setMainComponent(true);
           }}
+        />
+      ) : Preview ? (
+        <CustomPreviewScreen
+          data={advDetails}
+          onclose={() => {
+            setPreview(false);
+            setMainComponent(true);
+          }}
+          Ok_btnfn={() => {
+            setPreview(false);
+            setMainComponent(true);
+          }}
+          JobTitle={CandidateData.PositionTitle || ""}
         />
       ) : (
         <>

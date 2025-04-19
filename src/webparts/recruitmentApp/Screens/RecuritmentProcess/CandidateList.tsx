@@ -120,7 +120,8 @@ const CandidateList = (props: any) => {
       const response =
         await InterviewServices.GetCombinedCandidatePositionDetails(
           filterConditions,
-          Conditions
+          Conditions,
+          props.EmployeeList
         );
 
       if (response?.status === 200 && Array.isArray(response.data)) {
