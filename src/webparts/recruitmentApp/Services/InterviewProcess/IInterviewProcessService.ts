@@ -59,9 +59,9 @@ export type ScoreCard = {
   OverAllEvaluationFeedback: string;
   CreatedDate: string;
   QuestionJson: Question[];
-    RelatedScores?: {
-      QuestionJson: string;
-    }[];
+  RelatedScores?: {
+    QuestionJson: string;
+  }[];
 };
 
 export type Employee = {

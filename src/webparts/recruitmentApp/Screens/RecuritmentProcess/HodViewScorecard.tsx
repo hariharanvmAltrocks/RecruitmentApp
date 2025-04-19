@@ -193,7 +193,7 @@ const HodViewScorecard = (props: any) => {
         if (data && data.length > 0) {
           const rawData = data[0];
 
-          // Role Specific Knowledge
+      
           const roleSpecificKnowledge = Array.isArray(
             rawData.RoleSpecificKnowledge
           )
@@ -207,7 +207,7 @@ const HodViewScorecard = (props: any) => {
             (item: { RequiredLevel: any }) => item.RequiredLevel
           );
 
-          // Technical Skills Knowledge
+         
           const technicalSkillsKnowledge = Array.isArray(
             rawData.TechnicalSkillsKnowledge
           )
@@ -228,7 +228,7 @@ const HodViewScorecard = (props: any) => {
             })
           );
 
-          // Qualifications
+        
           const MinQualificationOption = rawData.Qualification
             ? [{ key: 0, text: rawData.Qualification }]
             : [];
@@ -264,11 +264,9 @@ const HodViewScorecard = (props: any) => {
             ...prev,
             JobcodeChecked: false,
           }));
-          console.warn("No data found for JobCodeID", JobCodeID);
+       
         }
-      } else {
-        console.error("Failed to fetch role profile data:", response.message);
-      }
+      } 
     } catch (error) {
       console.error("Error fetching role profile data:", error);
     }
@@ -1165,6 +1163,7 @@ const HodViewScorecard = (props: any) => {
         .then(async (data) => {
           if (data?.status === 200) {
             const op = data?.data[0];
+            console.log("Candidate details (op):", op);
             const agentName = op.ExternalAgentDetails?.AgentName;
 
             try {
@@ -1544,12 +1543,12 @@ const HodViewScorecard = (props: any) => {
                     await Submit_fn("Rejected");
                   },
                 },
-                {
-                  label: "OnHold",
-                  onClick: async () => {
-                    await Submit_fn("OnHold");
-                  },
-                },
+                // {
+                //   label: "OnHold",
+                //   onClick: async () => {
+                //     await Submit_fn("OnHold");
+                //   },
+                // },
               ]}
             />
           </div>

@@ -63,7 +63,7 @@ const ReviewCandidateList = (props: any) => {
       sortable: true,
     },
     {
-      field: "",
+      field: "createdOn",
       header: "Profile Received Date",
       sortable: true,
     },

@@ -454,7 +454,7 @@ const ReviewProfileList = (props: any) => {
                     data={RecuritmentData}
                     columns={columnConfig(
                       "tab1",
-                      "Edit",
+                      "View",
                       TabName.ReviewONEMAdvertisement
                     )}
                     rows={rows}

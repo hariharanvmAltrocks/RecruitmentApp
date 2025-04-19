@@ -909,12 +909,26 @@ const RecruitmentProcess = (props: any) => {
                     if (userClickedOK) {
                       setAlertPopupOpen(false);
                       setIsLoading(false);
+                      await fetchData();
                     }
                   },
                 };
                 setAlertPopupOpen(true);
                 setIsLoading(true);
                 setalertProps(SuccessAlert);
+                setAssignHRData((prevState) => ({
+                  ...prevState,
+                  AssignRecruitmentAgencies: [],
+                  Comments: "",
+                }));
+                setData((prevData) =>
+                  prevData.map((item) => ({
+                    ...item,
+                    Checked: false,
+                  }))
+                );
+                setSelectedJobCodes([]);
+                setSelectAll(false);
               } else {
                 let APIErrorAlert = {
                   Message: RecuritmentHRMsg.APIErrorMsg,
@@ -938,19 +952,7 @@ const RecruitmentProcess = (props: any) => {
     } catch (error) {
       console.log("failed Insert Recruitment Data ", error);
     } finally {
-      setAssignHRData((prevState) => ({
-        ...prevState,
-        AssignRecruitmentAgencies: [],
-        Comments: "",
-      }));
-      setData((prevData) =>
-        prevData.map((item) => ({
-          ...item,
-          Checked: false,
-        }))
-      );
-      setSelectedJobCodes([]);
-      setSelectAll(false);
+     
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
@@ -1049,12 +1051,26 @@ const RecruitmentProcess = (props: any) => {
                           if (userClickedOK) {
                             setAlertPopupOpen(false);
                             setIsLoading(false);
+                            await fetchData();
                           }
                         },
                       };
                       setIsLoading(true);
                       setAlertPopupOpen(true);
                       setalertProps(CancelAlert);
+                      setAssignHRData((prevState) => ({
+                        ...prevState,
+                        AssignRecruitmentAgencies: [],
+                        Comments: "",
+                      }));
+                      setData((prevData) =>
+                        prevData.map((item) => ({
+                          ...item,
+                          Checked: false,
+                        }))
+                      );
+                      setSelectedJobCodes([]);
+                      setSelectAll(false);
                     }
                   } else {
                     console.log(
@@ -1087,19 +1103,7 @@ const RecruitmentProcess = (props: any) => {
     } catch (error) {
       console.log("failed Insert Agency Data ", error);
     } finally {
-      setAssignHRData((prevState) => ({
-        ...prevState,
-        AssignRecruitmentAgencies: [],
-        Comments: "",
-      }));
-      setData((prevData) =>
-        prevData.map((item) => ({
-          ...item,
-          Checked: false,
-        }))
-      );
-      setSelectedJobCodes([]);
-      setSelectAll(false);
+     
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);

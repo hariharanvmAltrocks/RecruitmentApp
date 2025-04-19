@@ -171,18 +171,31 @@ export default class InterviewProcessService
         });
       const formattedItems: any[] = await Promise.all(
         candidateItems.map(async (item) => {
-          let candidateCV: IDocFiles[] = [];
-          const jobCode = item?.JobCode?.JobCode ?? "";
-          const profileID = item?.ProfileID ?? "";
-  
-          if (jobCode && profileID) {
-            const filePath = `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${profileID}/CV`;
-            const response = (await SPServices.getDocLibFiles({
-              FilePath: filePath,
-            })) as IDocFiles[];
-            candidateCV = response.filter((file) => file.name.includes(jobCode));
-           
-          } 
+         let candidateCV: IDocFiles[] = [];
+        
+                  const jobCode = item?.JobCode?.JobCode ?? "";
+                  const profileID = item?.ProfileID ?? "";
+        
+                  if (jobCode && profileID) {
+                    const filePath = `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${profileID}/CV`;
+        
+                    const response = (await SPServices.getDocLibFiles({
+                      FilePath: filePath,
+                    })) as IDocFiles[];
+                    candidateCV = response.filter((file) =>
+                      file.name.includes(jobCode)
+                    );
+        
+                    if (candidateCV.length === 0) {
+                      console.log(
+                        `No CV found for ProfileID: ${profileID}, JobCode: ${jobCode}`
+                      );
+                    }
+                  } else {
+                    console.log(
+                      "No JobCode or ProfileID provided, skipping attachment fetch."
+                    );
+                  }
           const filter = [{ FilterKey: "CandidateID", Operator: "eq", FilterValue: item.ID }];
           let positionResult: any = { data: [] };
   

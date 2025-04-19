@@ -167,6 +167,7 @@ export type ScoreCardData = {
   Comments: string;
   ExternalAgentName?: string; 
   JobGrade:string;
+  PanelFullNames?: string[]; 
 };
 
 export type QualificationValue = {

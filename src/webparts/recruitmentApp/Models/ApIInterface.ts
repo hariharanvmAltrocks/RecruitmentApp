@@ -63,7 +63,8 @@ export type GetProfileByJobCode = {
     PositionTitle: string,
     JobGrade: string,
     Status: string,
-    workflowStatusId: string
+    workflowStatusId: string,
+    createdOn: Date | undefined,
 }
 export type CandidateProfile = {
     CandidateID: string,

@@ -212,7 +212,7 @@ const InterviewPanelList = (props: any) => {
             }}
           >
             <img
-              src={require("../../assets/Editbutton.svg")}
+              src={require("../../assets/Viewicon.svg")}
               alt="Edit Icon"
               onClick={checkIsScoreSheetUploaded}
               style={{

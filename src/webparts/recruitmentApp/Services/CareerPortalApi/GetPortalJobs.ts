@@ -77,13 +77,17 @@ export default class GetPortalJobs implements IGetPortalJobs {
       let GetProfileByJobCodeData: GetProfileByJobCode[] = []
       await getProfileData.GetProfileByJobCode(FilterValue).then((res) => {
         GetProfileByJobCodeData = res.data.data.map((item: any) => {
+          // let Createdon = item?.createdOn ? new Date(item.createdOn) : null;
+          // const formattedDate = Createdon ? Createdon.toLocaleDateString() : null;
+          // Createdon = formattedDate ? new Date(formattedDate) : null;
           return {
-            CandidateID: item.jobRequestId,
-            ApplicantName: item.applicantName,
-            PositionTitle: item.jobTitle?.displayText,
-            JobGrade: item.jobCode,
-            Status: item.workflowStatus?.displayText,
-            workflowStatusId: item.workflowStatusId
+            CandidateID: item?.jobRequestId,
+            ApplicantName: item?.applicantName,
+            PositionTitle: item?.jobTitle?.displayText,
+            JobGrade: item?.jobCode,
+            Status: item?.workflowStatus?.displayText,
+            workflowStatusId: item?.workflowStatusId,
+            createdOn: item.createdOn,
           }
         })
       }

@@ -115,7 +115,8 @@ const InterviewPanelEdit = (props: any) => {
     InterviewDate: "",
     JobRequestID: "",
     Comments: "",
-    JobGrade:""
+    JobGrade: "",
+    PanelFullNames: [],
   });
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -407,14 +408,23 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
         FilterValue: ID,
       });
 
-      const data = await getVRRDetails.GetInterviewPanelCandidateDetails(
+      const data = await 
+            InterviewServices.GetCombinedCandidatePositionDetails(
         filterConditions,
-        Conditions
+        Conditions,
+        props.EmployeeList
       );
 
       if (data.status === 200 && data.data !== null) {
         const op = data.data[0];
-
+        const scoreCardData = op.HRMSCandidateScoreCard;
+        let panelFullNames: string[] = [];
+  
+        if (scoreCardData  && scoreCardData.length > 0) {
+          panelFullNames = scoreCardData
+            .map((item: { PanelFullName: any; }) => item?.PanelFullName)
+            .filter((name: string) => name !== null && name !== undefined);
+        }
         const response = await CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.RecruitmentAdvertisementDocument,
           op?.JobCode
@@ -476,6 +486,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
           JobGrade:   op?.JobGrade,
+          PanelFullNames: panelFullNames,
         }));
         await fetchRoleProfileData(op.JobCodeId);
         if (questionnaire.length === 0) {
@@ -1067,8 +1078,8 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
                         boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px"
                       }}
                     >
-                      {CandidateData.interviewPanelTitles &&CandidateData.interviewPanelTitles.length > 0
-                        ? CandidateData.interviewPanelTitles.map((title, index) => (
+                      {CandidateData.PanelFullNames &&CandidateData.PanelFullNames.length > 0
+                        ? CandidateData.PanelFullNames.map((title, index) => (
                             <Chip
                               key={index}
                               label={title}
@@ -1653,7 +1664,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
                 >
                   <div className="ms-Grid-col ms-lg12">
                     <SignatureCheckbox
-                      label={"I hereby agree for submitted this request"}
+                      label= {TabName.CheckboxContent}
                       checked={Checkbox}
                       error={ValidationError.CheckboxValidation}
                       onChange={handleCheckbox}

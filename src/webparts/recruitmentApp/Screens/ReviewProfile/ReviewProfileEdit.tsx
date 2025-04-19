@@ -13,6 +13,7 @@ import {
   DocumentLibraray,
   HRMSAlertOptions,
   ListNames,
+  Notes,
   RecuritmentHRMsg,
   RoleID,
   RoleProfileMaster,
@@ -889,18 +890,34 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                   />
                 </div>
               </div>
-
+               <div
+                                  className="ms-Grid-row"
+                                  style={{
+                                    margin: "0%",
+                                    marginTop: "1%",
+                                    marginBottom: "-1%",
+                                  }}
+                                >
+                                  <p>
+                                    <span
+                                      style={{
+                                        color: "red",
+                                        marginTop: "8px",
+                                        display: "block",
+                                        fontFamily: "sans-serif",
+              
+                                        fontSize: "13px",
+                                      }}
+                                    >
+                                      Note:- {Notes.ReviewRolePurpose}
+                                    </span>
+                                  </p>
+                                </div>
               <div
-                className="ms-Grid-row"
-                style={{
-                  padding: "3px",
-                  marginTop: "20px",
-                  marginBottom: "-33px",
-                }}
-              >
+                className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg12">
                   <SignatureCheckbox
-                    label={TabName.CheckboxContent}
+                    label={TabName.ApprovalCheckbox}
                     checked={Checkbox}
                     error={validationErrors.Checkboxalidation}
                     onChange={(value: boolean) => {
