@@ -426,13 +426,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   const handleSaveQuestion = () => {
     const shouldValidateQuestionType =
-    props?.stateValue?.StatusId === StatusId.PendingwithLMcreateDisqualificationQuestion;
-  const customAnswerType = getMasterData.QueType.find(
-    (q) => q.text === displayTextOptionCode.CustomAnswer
-  );
-  const questionType: AutoCompleteItem = shouldValidateQuestionType
-    ? InterviewQuesData.QuestionType
-    : customAnswerType ||{ key: 0, text: "" }; 
+      props?.stateValue?.StatusId ===
+      StatusId.PendingwithLMcreateDisqualificationQuestion;
+    const customAnswerType = getMasterData.QueType.find(
+      (q) => q.text === displayTextOptionCode.CustomAnswer
+    );
+    const questionType: AutoCompleteItem = shouldValidateQuestionType
+      ? InterviewQuesData.QuestionType
+      : customAnswerType || { key: 0, text: "" };
     if (!Validation()) {
       return;
     }
@@ -453,7 +454,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             ? `Question ${editingQuestionIndex + 1}`
             : `Question ${questions.length + 1}`,
       },
-      
+
       questionType,
       // questionType: InterviewQuesData.QuestionType,
       // questionType: shouldValidateQuestionType
@@ -1530,6 +1531,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   ]);
 
   async function Submit_fn() {
+    setIsLoading(true);
     let QuestionValue: UpsertQuestions[] = questions.map((item) => {
       const category = getMasterData.category.find(
         (cat) => cat.text === InterviewQuesData.Catogry
@@ -1583,14 +1585,15 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         categoryId: String(category?.key),
         // questionTypeId: String(item.questionType.key),
         questionTypeId:
-        InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate ||
-        (InterviewQuesData.Catogry === CatogryOptionCode.InterviewPanel &&
-         item.questionType?.text === "Custom Answer")
-          ? String(item.questionType.key)
-          : "",
-      
+          InterviewQuesData.Catogry ===
+            CatogryOptionCode.CareerPortalCandidate ||
+          (InterviewQuesData.Catogry === CatogryOptionCode.InterviewPanel &&
+            item.questionType?.text === "Custom Answer")
+            ? String(item.questionType.key)
+            : "",
+
         isQualifier:
-          InterviewQuesData.Catogry === CatogryOptionCode.InterviewPanel
+          InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
             ? 1
             : 0,
         isAnswerValidate: item.Disqualification === "No" ? 0 : 1,
@@ -1601,9 +1604,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       };
     });
 
-    
     const response = await GetPortalJobsService.UpsertQuestions(QuestionValue);
- 
+
     if (response.status === ResponeStatus.SUCCESS) {
       const obj: any = {
         ActionId: WorkflowAction.Approved,
@@ -1658,6 +1660,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       setalertProps(APIError);
       setIsLoading(false);
     }
+    setIsLoading(false);
   }
 
   return (

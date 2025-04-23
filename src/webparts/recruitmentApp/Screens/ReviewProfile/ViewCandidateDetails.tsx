@@ -357,11 +357,26 @@ const ViewCandidateDetails = (props: any) => {
   };
 
   const handleDateChange = (value: Date | null | undefined) => {
-    const newDate = value ?? undefined;
+    if (!value) {
+      setInterviewedLevel((prevState: any) => ({
+        ...prevState,
+        InterviewedDate: undefined,
+      }));
+      return;
+    }
+
+    const now = new Date(); // current time
+    const updatedDate = new Date(value); // selected date
+
+    // Set time to current time
+    updatedDate.setHours(now.getHours());
+    updatedDate.setMinutes(now.getMinutes());
+    updatedDate.setSeconds(now.getSeconds());
+    updatedDate.setMilliseconds(now.getMilliseconds());
 
     setInterviewedLevel((prevState: any) => ({
       ...prevState,
-      InterviewedDate: newDate,
+      InterviewedDate: updatedDate,
     }));
 
     setValidationErrors((prevState) => ({

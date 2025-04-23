@@ -12,6 +12,7 @@ import {
   ColorCode,
   DocumentLibraray,
   HRMSAlertOptions,
+  labelName,
   ListNames,
   Notes,
   RecuritmentHRMsg,
@@ -727,7 +728,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
 
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="No of Position Assigned"
+                    label="No of Personnel Required"
                     value={formState.NoofPositionAssigned}
                     disabled={true}
                     error={false}
@@ -821,7 +822,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                   className="ms-Grid-col ms-lg3"
                   style={{ position: "relative", right: "1px" }}
                 >
-                  <CustomLabel value="View Role Purpose" />
+                  <CustomLabel value={labelName.ViewJobAdvetisement} />
                   <ReuseButton
                     Style={{
                       minWidth: "117px",
@@ -876,7 +877,6 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                   />
                 </div>
               </div>
-
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg12">
                   <CustomTextArea

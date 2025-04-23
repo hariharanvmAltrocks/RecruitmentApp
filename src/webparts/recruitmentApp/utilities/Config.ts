@@ -186,6 +186,7 @@ export const RecuritmentHRMsg = {
   SingleAgencyMsg: "Agencies Assigned for the Selected Job Title.",
 
   InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
+  RescheduleSuccessMsg: "Interview Rescheduled Successfully.",
 
   ScoreCardSubmitMsg:
     "The Candidate has been Interviewed and Scorecard Submitted for Final Selection.",
@@ -320,7 +321,8 @@ export const TabName = {
   CareerPortal: "Career Portal",
   InterviewPanel: "Interview Panel",
 
-  ViewScoreDetails: " View ScoreCard Details"
+  ViewScoreDetails: " View ScoreCard Details",
+  ReschedulInterview: "Reschedule Interview",
 };
 
 export const ProfileStatus = {

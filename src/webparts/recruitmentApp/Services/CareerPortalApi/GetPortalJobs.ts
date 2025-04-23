@@ -415,13 +415,16 @@ export default class GetPortalJobs implements IGetPortalJobs {
   async getQuestionnaire(jobCode: string): Promise<ApiResponse<QuestionItem[] | null>> {
     try {
       const response = await QuestionnaireApi.GetQuestionnaire(jobCode);
-      const GetQuestionnaire: QuestionItem[] = response.data.data.map((item: any) => ({
-        id: item.sequence,
-        question: item?.question?.quesContent?.contentEn,
-        answer: item?.question?.questionXAnswers?.[0]?.optContent?.contentEn ?? "",
-        rating: 0,
-        header: "Q" + item.sequence,
-      }));
+      const GetQuestionnaire: QuestionItem[] = response.data.data.map((item: any, index: number) => {
+        const incrementedIndex = index + 1;
+        return {
+          id: incrementedIndex,
+          question: item?.question?.quesContent?.contentEn,
+          answer: item?.question?.questionXAnswers?.[0]?.optContent?.contentEn ?? "",
+          rating: 0,
+          header: "Q" + incrementedIndex,
+        };
+      });
       console.log(response, "GetAllMasterData");
       return {
         data: GetQuestionnaire,

@@ -866,10 +866,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       Grading: false,
     };
     if (tab === "tab1") {
-      if(formState.RoleProfileDocument.length === 0) {
+      if (formState.RoleProfileDocument.length === 0) {
         errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
       }
-      if(formState.GradingDocument.length === 0) {
+      if (formState.GradingDocument.length === 0) {
         errors.Grading = !IsValid(masterLibrary.Grading);
       }
       if (formState.AdvertisementDocument.length === 0) {
@@ -1091,6 +1091,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 props,
                 0
               );
+              resetForm();
               if (result.status === ResponeStatus.SUCCESS) {
                 await CommonServices.uploadAttachmentToLibrary(
                   formState.JobCode,

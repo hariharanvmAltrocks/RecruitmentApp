@@ -48,7 +48,7 @@ export default class InterviewProcessService
         });
         emailToAuthorMap = sageListItems.reduce((acc, item) => {
           acc[item.EmailId] = `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
-          }`.trim();
+            }`.trim();
           return acc;
         }, {} as Record<string, string>);
       }
@@ -155,7 +155,7 @@ export default class InterviewProcessService
     EmployeeList: any[]
   ) {
     try {
-     
+
       const CandidateDetails: CandidateData[] = [];
       let candidateItems: any[] = [];
       await SPServices.SPReadItems({
@@ -171,34 +171,34 @@ export default class InterviewProcessService
         });
       const formattedItems: any[] = await Promise.all(
         candidateItems.map(async (item) => {
-         let candidateCV: IDocFiles[] = [];
-        
-                  const jobCode = item?.JobCode?.JobCode ?? "";
-                  const profileID = item?.ProfileID ?? "";
-        
-                  if (jobCode && profileID) {
-                    const filePath = `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${profileID}/CV`;
-        
-                    const response = (await SPServices.getDocLibFiles({
-                      FilePath: filePath,
-                    })) as IDocFiles[];
-                    candidateCV = response.filter((file) =>
-                      file.name.includes(jobCode)
-                    );
-        
-                    if (candidateCV.length === 0) {
-                      console.log(
-                        `No CV found for ProfileID: ${profileID}, JobCode: ${jobCode}`
-                      );
-                    }
-                  } else {
-                    console.log(
-                      "No JobCode or ProfileID provided, skipping attachment fetch."
-                    );
-                  }
+          let candidateCV: IDocFiles[] = [];
+
+          const jobCode = item?.JobCode?.JobCode ?? "";
+          const profileID = item?.ProfileID ?? "";
+
+          if (jobCode && profileID) {
+            const filePath = `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${profileID}/CV`;
+
+            const response = (await SPServices.getDocLibFiles({
+              FilePath: filePath,
+            })) as IDocFiles[];
+            candidateCV = response.filter((file) =>
+              file.name.includes(jobCode)
+            );
+
+            if (candidateCV.length === 0) {
+              console.log(
+                `No CV found for ProfileID: ${profileID}, JobCode: ${jobCode}`
+              );
+            }
+          } else {
+            console.log(
+              "No JobCode or ProfileID provided, skipping attachment fetch."
+            );
+          }
           const filter = [{ FilterKey: "CandidateID", Operator: "eq", FilterValue: item.ID }];
           let positionResult: any = { data: [] };
-  
+
           await this.getInterviewPanelDetails(filter, filterConditions, item.ID, EmployeeList)
             .then((data) => {
               positionResult = data;
@@ -244,10 +244,11 @@ export default class InterviewProcessService
               : null,
             HRMSCandidateScoreCard: positionResult?.data || [],
             GPA: lastCandidateGPA,
+            JobRequestID: item?.JobRequestID,
           };
         })
       );
-  
+
       CandidateDetails.push(...formattedItems);
 
       return {
@@ -264,7 +265,7 @@ export default class InterviewProcessService
       };
     }
   }
-  
+
   async getInterviewPanelDetails(
     filterParam: any,
     filterConditions: any,
@@ -422,7 +423,7 @@ export default class InterviewProcessService
         };
       });
   }
-  
+
   async getCandidateScoreCard(candidateID: number): Promise<ApiResponse<ScoreCard[]>> {
     return SPServices.SPReadItems({
       Listname: ListNames.HRMSCandidateScoreCard,
