@@ -245,6 +245,10 @@ export default class InterviewProcessService
             HRMSCandidateScoreCard: positionResult?.data || [],
             GPA: lastCandidateGPA,
             JobRequestID: item?.JobRequestID,
+            ProfileID: item?.ProfileID,
+            InterviewDate: item?.InterviewDate,
+            InterviewTime: item?.InterviewTime,
+            InterviewLink: item?.InterviewLink
           };
         })
       );

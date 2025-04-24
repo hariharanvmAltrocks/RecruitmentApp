@@ -187,6 +187,7 @@ export const RecuritmentHRMsg = {
 
   InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
   RescheduleSuccessMsg: "Interview Rescheduled Successfully.",
+  AdvertExtendsionSuccessMsg: "Advertisement Extension Submitted Successfully.",
 
   ScoreCardSubmitMsg:
     "The Candidate has been Interviewed and Scorecard Submitted for Final Selection.",
