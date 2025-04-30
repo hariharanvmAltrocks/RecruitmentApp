@@ -104,7 +104,7 @@ const CandidateList = (props: any) => {
           StatusId.Selected,
           StatusId.OnHoldbyHOD,
           StatusId.RejectedbyHOD,
-          StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+          StatusId.PendingwithHODtoAssignPositionID,
         ],
       });
       filterConditions.push({
@@ -211,7 +211,7 @@ const CandidateList = (props: any) => {
               rowData.StatusId === StatusId.Selected ||
               rowData.StatusId === StatusId.OnHoldbyHOD ||
               rowData.StatusId === StatusId.PendingwithHODtoselectthecandidate||
-              rowData.StatusId === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+              rowData.StatusId === StatusId.PendingwithHODtoAssignPositionID
             ) && (
               <img
                 src={require("../../assets/Editbutton.svg")}

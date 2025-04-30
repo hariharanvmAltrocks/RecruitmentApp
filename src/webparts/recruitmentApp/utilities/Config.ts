@@ -88,6 +88,8 @@ export const StatusId = {
   RejectedbyHOD: 15,
   PendingwithHODtoselectthecandidateLevel2: 127,
   PendingwithRecruitmentHRtoassignLevel2InterviewPanel:128,
+  InterviewScheduledforLevel2:129,
+  PendingwithHODtoAssignPositionID:130
 };
 
 export const RoleID = {

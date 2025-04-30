@@ -118,13 +118,14 @@ const InterviewPanelList = (props: any) => {
     let navigationPath = "";
   
     if (
-      statusId === StatusId.InterviewScheduled &&
+      (statusId === StatusId.InterviewScheduled ||
+       statusId === StatusId.InterviewScheduledforLevel2) &&
       (CurrentRoleID === RoleID.RecruitmentHR ||
        CurrentRoleID === RoleID.LineManager ||
        CurrentRoleID === RoleID.HOD)
     ) {
       navigationPath = "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit";
-    } else if (
+    }else if (
       statusId === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel &&
       (CurrentRoleID === RoleID.HOD ||
        CurrentRoleID === RoleID.LineManager ||
@@ -318,6 +319,7 @@ const InterviewPanelList = (props: any) => {
         FilterValue: [
           StatusId.InterviewScheduled,
           StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel, 
+          StatusId.InterviewScheduledforLevel2
         ],
       });
       filterConditionsRecuritment.push({
