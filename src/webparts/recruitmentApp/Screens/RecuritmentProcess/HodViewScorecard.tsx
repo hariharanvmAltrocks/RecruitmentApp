@@ -911,7 +911,7 @@ const HodViewScorecard = (props: any) => {
                   >
                     <div>
                       <CustomLabel
-                        value="View Role Purpose"
+                        value="View Job Advertisement"
                         // mandatory={true}
                       />
                       <ReuseButton

@@ -1563,6 +1563,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   ]);
 
   async function Submit_fn() {
+    setIsLoading(true);
     let QuestionValue: UpsertQuestions[] = questions.map((item) => {
       const category = getMasterData.category.find(
         (cat) => cat.text === InterviewQuesData.Catogry
@@ -1624,7 +1625,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             : "",
 
         isQualifier:
-          InterviewQuesData.Catogry === CatogryOptionCode.InterviewPanel
+          InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
             ? 1
             : 0,
         isAnswerValidate: item.Disqualification === "No" ? 0 : 1,
@@ -1691,6 +1692,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       setalertProps(APIError);
       setIsLoading(false);
     }
+    setIsLoading(false);
   }
 
   return (

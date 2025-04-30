@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
-import { Link, Tooltip } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import { Icon } from "office-ui-fabric-react";
 
 interface fieldItems {
@@ -35,10 +35,22 @@ function CustomViewAttachment({
                       <span
                         style={{ display: "inline-flex", alignItems: "center" }}
                       >
-                        <Link
-                          href={`${file.content}?web=1`}
+                        <a
+                          style={{
+                            color: "blue",
+                            fontWeight: "bold",
+                            display: "inline-block",
+                            maxWidth: "100%",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {truncatedFileName}
+                        </a>
+                        {/* <Link
+                          href={file.content}
                           target="_blank"
-                          rel="noopener noreferrer"
                           style={{
                             color: "blue",
                             fontWeight: "bold",
@@ -50,7 +62,7 @@ function CustomViewAttachment({
                           }}
                         >
                           {truncatedFileName}
-                        </Link>
+                        </Link> */}
                         <Icon
                           iconName="Delete"
                           style={{

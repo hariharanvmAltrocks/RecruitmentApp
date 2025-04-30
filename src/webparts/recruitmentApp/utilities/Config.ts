@@ -186,13 +186,15 @@ export const RecuritmentHRMsg = {
   ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Sucessfully.",
 
   AdvertisementSubmitMsg:
-    "Advertisement for the Job Title Submitted Successfully.",
+    "Advertisement Document Uploaded Successfully.",
   AdvertisementReveiwMsg: "Advertisement Reviewed Sucessfully",
 
   AgencySucess: "Agencies Assigned for the Selected Job Titles.",
   SingleAgencyMsg: "Agencies Assigned for the Selected Job Title.",
 
   InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
+  RescheduleSuccessMsg: "Interview Rescheduled Successfully.",
+  AdvertExtendsionSuccessMsg: "Advertisement Extension Submitted Successfully.",
 
   ScoreCardSubmitMsg:
     "The Candidate has been Interviewed and Scorecard Submitted for Final Selection.",
@@ -327,7 +329,8 @@ export const TabName = {
   CareerPortal: "Career Portal",
   InterviewPanel: "Interview Panel",
 
-  ViewScoreDetails: " View ScoreCard Details"
+  ViewScoreDetails: " View ScoreCard Details",
+  ReschedulInterview: "Reschedule Interview",
 };
 
 export const ProfileStatus = {
@@ -377,7 +380,7 @@ export const workflowStatusApi = {
 export const Notes = {
   Roleprofile: "Role Profile is not available for the Job Title.",
   Grding: "Grading Report is not available for the Job Title.",
-  ReviewRolePurpose: "Please review the View Advertisement details prior to submission.",
+  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving or reverting this submission."
 }
 // sneka
 export const CatogryOption = [
@@ -437,7 +440,8 @@ export const categoryOption = [
 
 export const labelName = {
   Level1CandidateLabel: "Does the candidate fit for the vacant position ? (Level 1)",
-  Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)"
+  Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)",
+  ViewJobAdvetisement: "View Job Advertisement"
 };
 
 export const ColorCode = {
