@@ -27,6 +27,7 @@ import {
   RoleID,
   ResponeStatus,
   ColorCode,
+  labelName,
 } from "../../utilities/Config";
 import {
   AdvDetails,
@@ -195,9 +196,6 @@ const InterviewPanelEdit = (props: any) => {
   //Questionaires
   const [questionnaire, setQuestionnaire] = React.useState<QuestionItem[]>([]);
   const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
-  const [ratingErrors, setRatingErrors] = React.useState<
-    Record<number, boolean>
-  >({});
 
   const handleRatingChange = (id: number, value: AutoCompleteItem | null) => {
     setQuestionnaire((prevState) =>
@@ -205,10 +203,6 @@ const InterviewPanelEdit = (props: any) => {
         q.id === id ? { ...q, rating: value?.key ?? 0 } : q
       )
     );
-    setRatingErrors((prev) => ({
-      ...prev,
-      [id]: false,
-    }));
   };
 
   const ScoreRating = [
@@ -307,21 +301,6 @@ const InterviewPanelEdit = (props: any) => {
   //       console.error("Error fetching data:", error);
   //     }
   //   };
-
-  const validateRatings = (tab: string) => {
-    if (tab === "tab2") {
-      const errors: { [key: number]: boolean } = {};
-      questionnaire.forEach((q) => {
-        if (!q.rating) {
-          errors[q.id] = !IsValid(q.rating);
-        }
-      });
-      setRatingErrors(errors);
-      return Object.values(errors).some((error) => error);
-    } else {
-      return false;
-    }
-  };
 
   const fetchRoleProfileData = async (JobCodeID: number) => {
     try {
@@ -1367,7 +1346,7 @@ const InterviewPanelEdit = (props: any) => {
                 >
                   <div>
                     <CustomLabel
-                      value="View Job Advertisement"
+                      value={labelName.ViewJobAdvetisement}
                       // mandatory={true}
                     />
                     <ReuseButton
@@ -1480,7 +1459,7 @@ const InterviewPanelEdit = (props: any) => {
                           }
                           options={ScoreRating}
                           onChange={(value) => handleRatingChange(q.id, value)}
-                          error={ratingErrors[q.id]}
+                          error={false}
                           mandatory={true}
                           disabled={false}
                         />
@@ -1927,7 +1906,6 @@ const InterviewPanelEdit = (props: any) => {
                 TabName={TabNameData}
                 onBreadcrumbChange={handleBreadcrumbChange}
                 handleCancel={handleCancel}
-                ValidationError={() => validateRatings(activeTab)}
                 additionalButtons={[
                   {
                     label: "Submit",

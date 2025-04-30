@@ -6,6 +6,7 @@ import {
   CommonServices,
   GetPortalJobsService,
   getVRRDetails,
+  InterviewServices,
 } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import CustomLabel from "../../components/CustomLabel";
@@ -20,6 +21,7 @@ import {
   ADGroupID,
   CandidateStatus,
   ColorCode,
+  DocumentLibraray,
   HRMSAlertOptions,
   InterviewLevels,
   labelName,
@@ -27,6 +29,8 @@ import {
   RecuritmentHRMsg,
   ReviewProfileScore,
   RoleID,
+  RoleProfileMaster,
+  StatusId,
   TabName,
   WorkflowAction,
   workflowStatusApi,
@@ -75,6 +79,12 @@ type ValidationError = {
 type ActionValue = {
   CandidateStatus: string;
   Comments: string;
+};
+
+type Level2Data = {
+  InterviewedDate: Date | undefined;
+  InterviewMeetingInviteLink: string;
+  InterviewTime: string;
 };
 
 const ViewCandidateDetails = (props: any) => {
@@ -152,47 +162,167 @@ const ViewCandidateDetails = (props: any) => {
   });
   const [OpenComments, setOpenComments] = useState<boolean>(false);
   const [submitBtn, setSubmitBtn] = React.useState<string>("");
+  const [level2Date, setLevel2Date] = useState<boolean>(false);
+  const [level2Data, setLevel2Data] = useState<Level2Data>({
+    InterviewedDate: undefined,
+    InterviewMeetingInviteLink: "",
+    InterviewTime: "",
+  });
+
+  const fetchCandidateData = async (ID: number) => {
+    setIsLoading(true);
+    try {
+      let filterConditions = [];
+      let Conditions = "";
+      filterConditions.push({
+        FilterKey: "ID",
+        Operator: "eq",
+        FilterValue: ID,
+      });
+
+      const data = await InterviewServices.GetCombinedCandidatePositionDetails(
+        filterConditions,
+        Conditions,
+        props.EmployeeList
+      );
+
+      if (data.status === 200 && data.data !== null) {
+        const op = data.data[0];
+        const response = await CommonServices.GetAttachmentToLibrary(
+          DocumentLibraray.RecruitmentAdvertisementDocument,
+          op?.JobCode
+        );
+
+        let advertisementDocuments: any[] = [];
+        if (
+          response.status === 200 &&
+          response.data &&
+          response.data.length > 0
+        ) {
+          advertisementDocuments = response.data.map((doc: any) => ({
+            name: doc.name,
+            content: doc.content,
+          }));
+        }
+
+        const RoleProfileresponse = await CommonServices.GetAttachmentToLibrary(
+          DocumentLibraray.RoleProfileMaster,
+          op?.JobCode,
+          RoleProfileMaster.RoleProfile
+        );
+
+        let roleProfileDocuments: any[] = [];
+        if (
+          RoleProfileresponse.status === 200 &&
+          RoleProfileresponse.data &&
+          RoleProfileresponse.data.length > 0
+        ) {
+          roleProfileDocuments = RoleProfileresponse.data.map((doc: any) => ({
+            name: doc.name,
+            content: doc.content,
+          }));
+        }
+        setCandidateProfile((prevState: any) => ({
+          ...prevState,
+          CandidateID: op?.ID,
+          profileID: op?.ProfileID,
+          JobCode: op?.JobCode,
+          JobTitle: op?.PositionTitle,
+          ApplicantName: op?.FullName,
+          ApplicantSurName: op?.LastName,
+          Nationality: op?.Nationality,
+          FristName: op?.FristName,
+          MiddleName: op?.MiddleName,
+          ResidentialAddress: op?.ResidentialAddress,
+          DOB: op?.DOB,
+          ContactNumber: op?.ContactNumber,
+          Email: op?.Email,
+          Gender: op?.Gender,
+          HighestQualification: op?.Qualification,
+          ExperienceMining: op?.TotalYearOfExperiance,
+          ExperRelatedfield: op?.ReleventExperience,
+          CandidateResume: op?.CandidateCVDoc,
+          RoleProfile: roleProfileDocuments,
+          Advertisement: advertisementDocuments,
+          Status: op?.Status,
+          Agencies: op?.ExternalAgentDetails,
+          Comments: "",
+          workflowStatusId: 0,
+          hrComments: "",
+          JobVaildFromDate: "",
+          JobVaildToDate: "",
+        }));
+        let InterviewDate = new Date(op?.InterviewDate);
+        setInterviewedLevel((prevState: any) => ({
+          ...prevState,
+          InterviewedDate: InterviewDate,
+          InterviewMeetingInviteLink: op?.InterviewLink,
+          InterviewTime: op?.InterviewTime,
+        }));
+        if (
+          props.stateValue?.initialTab === TabName.AssignInterviewPanel &&
+          props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2
+        ) {
+          let InterviewDateLevel2 = new Date(op?.InterviewDateLevel2);
+          setLevel2Data((prevState: any) => ({
+            ...prevState,
+            InterviewedDate: InterviewDateLevel2,
+            InterviewMeetingInviteLink: op?.InterviewLinkLevel2,
+            InterviewTime: op?.InterviewTimeLevel2,
+          }));
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  };
 
   const fetchData = async () => {
     if (isLoading) return;
     setIsLoading(true);
     try {
       await GetPortalJobsService.getCandidateProfile(props.stateValue?.ID)
-        .then((res) => {
+        .then(async (res) => {
           let response = res.data?.[0];
-          setCandidateProfile((prevState: any) => ({
-            ...prevState,
-            CandidateID: response?.CandidateID,
-            profileID: response?.profileID,
-            JobCode: response?.JobCode,
-            JobTitle: response?.JobTitle,
-            ApplicantName: response?.ApplicantName,
-            ApplicantSurName: response?.ApplicantSurName,
-            Nationality: response?.Nationality,
-            FristName: response?.FristName,
-            MiddleName: response?.MiddleName,
-            ResidentialAddress: response?.ResidentialAddress,
-            DOB: response?.DOB,
-            ContactNumber: response?.ContactNumber,
-            Email: response?.Email,
-            Gender: response?.Gender,
-            HighestQualification: response?.HighestQualification,
-            ExperienceMining: response?.ExperienceMining,
-            ExperRelatedfield: response?.ExperRelatedfield,
-            CandidateResume: response?.CandidateResume,
-            RoleProfile: response?.RoleProfile,
-            Advertisement: response?.Advertisement,
-            Status: response?.Status,
-            Agencies: response?.Agencies,
-            Comments: response?.Comments,
-            workflowStatusId: response?.workflowStatusId,
-            hrComments: response?.hrComments,
-            JobVaildFromDate: response?.JobVaildFromDate,
-            JobVaildToDate: response?.JobVaildToDate,
-          }));
-
-          //  JobVaildDate.setDate(jobValidDate)
-
+          if (
+            (props.stateValue.tab === "tab2" ||
+              props.stateValue.tab === "tab3") &&
+            props.stateValue?.initialTab === TabName.AssignInterviewPanel
+          ) {
+            await fetchCandidateData(props.stateValue?.ID);
+          } else {
+            setCandidateProfile((prevState: any) => ({
+              ...prevState,
+              CandidateID: response?.CandidateID,
+              profileID: response?.profileID,
+              JobCode: response?.JobCode,
+              JobTitle: response?.JobTitle,
+              ApplicantName: response?.ApplicantName,
+              ApplicantSurName: response?.ApplicantSurName,
+              Nationality: response?.Nationality,
+              FristName: response?.FristName,
+              MiddleName: response?.MiddleName,
+              ResidentialAddress: response?.ResidentialAddress,
+              DOB: response?.DOB,
+              ContactNumber: response?.ContactNumber,
+              Email: response?.Email,
+              Gender: response?.Gender,
+              HighestQualification: response?.HighestQualification,
+              ExperienceMining: response?.ExperienceMining,
+              ExperRelatedfield: response?.ExperRelatedfield,
+              CandidateResume: response?.CandidateResume,
+              RoleProfile: response?.RoleProfile,
+              Advertisement: response?.Advertisement,
+              Status: response?.Status,
+              Agencies: response?.Agencies,
+              Comments: response?.Comments,
+              workflowStatusId: response?.workflowStatusId,
+              hrComments: response?.hrComments,
+              JobVaildFromDate: response?.JobVaildFromDate,
+              JobVaildToDate: response?.JobVaildToDate,
+            }));
+          }
           if (
             response?.workflowStatusId === workflowStatusApi.HROnHold ||
             response?.workflowStatusId === workflowStatusApi.HROnHold ||
@@ -263,6 +393,14 @@ const ViewCandidateDetails = (props: any) => {
       { tabName: TabName.ViewCandidateDetails },
     ];
     setTabNameData(newTabNames);
+    setLevel2Date(
+      props.stateValue?.initialTab === TabName.AssignInterviewPanel &&
+        (props.stateValue?.StatusId ===
+          StatusId.PendingwithRecruitmentHRassignLevelInterviewPanel ||
+          props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2)
+        ? true
+        : false
+    );
   }, []);
 
   React.useEffect(() => {
@@ -320,10 +458,7 @@ const ViewCandidateDetails = (props: any) => {
       setInterviewedLevel((prevState) => ({
         ...prevState,
         Grade: response.data[0]?.PatersonGrade,
-        Levels:
-          Gradelevel.data[0]?.Level === InterviewLevels.Level1
-            ? InterviewLevels.Level1
-            : InterviewLevels.Level2,
+        Levels: Gradelevel.data[0]?.Level,
         AssignInterviewedLevel1Option: interviewpanelOption.data,
         AssignInterviewLevel1: Level1Value,
         AssignInterviewedLevel2: Level2Value,
@@ -358,10 +493,18 @@ const ViewCandidateDetails = (props: any) => {
 
   const handleDateChange = (value: Date | null | undefined) => {
     if (!value) {
-      setInterviewedLevel((prevState: any) => ({
-        ...prevState,
-        InterviewedDate: undefined,
-      }));
+      if (level2Date) {
+        setLevel2Data((prevState: any) => ({
+          ...prevState,
+          InterviewedDate: undefined,
+        }));
+      } else {
+        setInterviewedLevel((prevState: any) => ({
+          ...prevState,
+          InterviewedDate: undefined,
+        }));
+      }
+
       return;
     }
 
@@ -373,11 +516,17 @@ const ViewCandidateDetails = (props: any) => {
     updatedDate.setMinutes(now.getMinutes());
     updatedDate.setSeconds(now.getSeconds());
     updatedDate.setMilliseconds(now.getMilliseconds());
-
-    setInterviewedLevel((prevState: any) => ({
-      ...prevState,
-      InterviewedDate: updatedDate,
-    }));
+    if (level2Date) {
+      setLevel2Data((prevState: any) => ({
+        ...prevState,
+        InterviewedDate: updatedDate,
+      }));
+    } else {
+      setInterviewedLevel((prevState: any) => ({
+        ...prevState,
+        InterviewedDate: updatedDate,
+      }));
+    }
 
     setValidationErrors((prevState) => ({
       ...prevState,
@@ -398,10 +547,18 @@ const ViewCandidateDetails = (props: any) => {
   };
 
   const handleInterviewTimeChange = (value: string | undefined) => {
-    setInterviewedLevel((prevState: any) => ({
-      ...prevState,
-      InterviewTime: value,
-    }));
+    if (level2Date) {
+      setLevel2Data((prevState: any) => ({
+        ...prevState,
+        InterviewTime: value,
+      }));
+    } else {
+      setInterviewedLevel((prevState: any) => ({
+        ...prevState,
+        InterviewTime: value,
+      }));
+    }
+
     setValidationErrors((prevState) => ({
       ...prevState,
       InterviewTime: false,
@@ -409,10 +566,18 @@ const ViewCandidateDetails = (props: any) => {
   };
 
   const handleInputChange = (value: string) => {
-    setInterviewedLevel((prevState: any) => ({
-      ...prevState,
-      InterviewMeetingInviteLink: value,
-    }));
+    if (level2Date) {
+      setLevel2Data((prevState: any) => ({
+        ...prevState,
+        InterviewMeetingInviteLink: value,
+      }));
+    } else {
+      setInterviewedLevel((prevState: any) => ({
+        ...prevState,
+        InterviewMeetingInviteLink: value,
+      }));
+    }
+
     setValidationErrors((prevState) => ({
       ...prevState,
       InterviewMeetingInviteLink: false,
@@ -608,21 +773,14 @@ const ViewCandidateDetails = (props: any) => {
                             error={validationErrors.InterviewedDate}
                             minDate={
                               CandidateProfile.JobVaildToDate
-                                ? new Date(
-                                    new Date(
-                                      CandidateProfile.JobVaildToDate
-                                    ).setDate(
-                                      new Date(
-                                        CandidateProfile.JobVaildToDate
-                                      ).getDate()
-                                    )
-                                  )
+                                ? new Date(CandidateProfile.JobVaildToDate + 1)
                                 : undefined
                             }
                             mandatory={true}
                             onChange={(date) =>
                               handleDateChange(date ?? undefined)
                             }
+                            disabled={level2Date}
                           />
                         </div>
                         <div className="ms-Grid-col ms-lg4">
@@ -631,6 +789,7 @@ const ViewCandidateDetails = (props: any) => {
                             label="Interview Time"
                             error={validationErrors.InterviewTime}
                             mandatory={true}
+                            disabled={level2Date}
                             onChange={handleInterviewTimeChange}
                           />
                         </div>
@@ -638,13 +797,54 @@ const ViewCandidateDetails = (props: any) => {
                           <CustomInput
                             label="Interview Meeting Invite Link"
                             value={InterviewedLevel.InterviewMeetingInviteLink}
-                            disabled={false}
+                            disabled={level2Date}
                             mandatory={true}
                             onChange={handleInputChange}
                             error={validationErrors.InterviewMeetingInviteLink}
                           />
                         </div>
                       </div>
+                      {level2Date && (
+                        <>
+                          <div
+                            className="ms-Grid-row"
+                            style={{ marginLeft: "0%" }}
+                          >
+                            <div className="ms-Grid-col ms-lg4">
+                              <CustomDatePicker
+                                selectedDate={level2Data.InterviewedDate}
+                                label="Interviewed Date-Level 2"
+                                error={validationErrors.InterviewedDate}
+                                minDate={todaydate}
+                                mandatory={true}
+                                onChange={(date) =>
+                                  handleDateChange(date ?? undefined)
+                                }
+                              />
+                            </div>
+                            <div className="ms-Grid-col ms-lg4">
+                              <CustomTimePicker
+                                selectedTime={level2Data.InterviewTime}
+                                label="Interview Time-Level 2"
+                                error={validationErrors.InterviewTime}
+                                mandatory={true}
+                                onChange={handleInterviewTimeChange}
+                              />
+                            </div>
+                            <div className="ms-Grid-col ms-lg4">
+                              <CustomInput
+                                label="Interview Meeting Invite Link-Level 2"
+                                value={level2Data.InterviewMeetingInviteLink}
+                                mandatory={true}
+                                onChange={handleInputChange}
+                                error={
+                                  validationErrors.InterviewMeetingInviteLink
+                                }
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
                       <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
                         <div className="ms-Grid-col ms-lg4">
                           <CustomMultiSelect
@@ -673,7 +873,7 @@ const ViewCandidateDetails = (props: any) => {
                               </p>
                             )}
                         </div>
-                        {InterviewedLevel.Levels === "Level 2" && (
+                        {InterviewedLevel.Levels === InterviewLevels.Level2 && (
                           <>
                             <div
                               className="ms-Grid-col ms-lg4"
@@ -1059,7 +1259,7 @@ const ViewCandidateDetails = (props: any) => {
 
       let selectedinterview = {
         RecruitmentIDId: RecruitmentDetails.data[0].ID,
-        InterviewLevel: InterviewedLevel.Levels,
+        InterviewLevel: InterviewLevels.Level1, //InterviewedLevel.Levels,
         InterviewPanel: currentItem.key,
         CandidateID: 0,
       };
@@ -1085,138 +1285,220 @@ const ViewCandidateDetails = (props: any) => {
       if (!isValid) {
         return;
       }
-      const createFilter = (workflowStatus: string): WorkflowJson => ({
-        workflowStatus: workflowStatus,
-        jobRequestId: props.stateValue?.ID,
-        comments: actionValue.Comments,
-        actionBy: props.CurrentUserRole,
-        hrComments:
-          props.CurrentRoleID === RoleID.RecruitmentHR &&
-          props.stateValue?.initialTab === TabName.ReviewProfile
-            ? InterviewedLevel.CandidateScoreValue.text ?? ""
-            : CandidateProfile?.hrComments,
-      });
-      let CandidateData: WorkflowJson = {
-        workflowStatus: "",
-        jobRequestId: 0,
-        comments: "",
-        actionBy: "",
-        hrComments: "",
-      };
-      let PopupMessage: string = "";
-      if (props.CurrentRoleID === RoleID.LineManager) {
-        switch (actionValue.CandidateStatus) {
-          case CandidateStatus.Yes:
-            if (
-              CandidateProfile.workflowStatusId ===
-                workflowStatusApi.LineManagerL2Pending ||
-              CandidateProfile.workflowStatusId ===
-                workflowStatusApi.LineManagerLevel2OnHold
-            ) {
-              CandidateData = createFilter(
-                workflowStatusApi.PendingRecruitmentHRscheduleInterview
-              );
-              PopupMessage = RecuritmentHRMsg.ProfileReviewed;
-            } else {
-              CandidateData = createFilter(
-                workflowStatusApi.LineManagerL2Pending
-              );
-              PopupMessage = RecuritmentHRMsg.ProfileReviewed;
-            }
-            break;
+      if (
+        (props.stateValue.tab === "tab2" || props.stateValue.tab === "tab3") &&
+        props.stateValue?.initialTab === TabName.AssignInterviewPanel
+      ) {
+        let obj: any = {};
+        if (level2Date) {
+          obj = {
+            ID: Number(CandidateProfile.CandidateID),
+            InterviewDateLevel2: level2Data?.InterviewedDate,
+            InterviewTimeLevel2: level2Data?.InterviewTime,
+            InterviewLinkLevel2: level2Data?.InterviewMeetingInviteLink,
+          };
 
-          case CandidateStatus.No:
-            if (
-              CandidateProfile.workflowStatusId ===
-              workflowStatusApi.LineManagerL2Pending
-            ) {
-              CandidateData = createFilter(
-                workflowStatusApi.LineManagerLevel2Rejected
-              );
-              PopupMessage = RecuritmentHRMsg.ProfileReviewedNo;
-            } else {
-              CandidateData = createFilter(
-                workflowStatusApi.LineManagerLevel1Rejected
-              );
-              PopupMessage = RecuritmentHRMsg.ProfileReviewedNo;
-            }
-            break;
-
-          case CandidateStatus.OnHold:
-            if (
-              CandidateProfile.workflowStatusId ===
-              workflowStatusApi.LineManagerL2Pending
-            ) {
-              CandidateData = createFilter(
-                workflowStatusApi.LineManagerLevel2OnHold
-              );
-              PopupMessage = RecuritmentHRMsg.ProfileReviewedWaitingList;
-            } else {
-              CandidateData = createFilter(
-                workflowStatusApi.LineManagerLevel1OnHold
-              );
-              PopupMessage = RecuritmentHRMsg.ProfileReviewedWaitingList;
-            }
-            break;
-        }
-      } else {
-        if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
-          CandidateData = createFilter(workflowStatusApi.InterviewScheduled);
-          PopupMessage = RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
+          if (
+            props.stateValue?.initialTab === TabName.AssignInterviewPanel &&
+            props.stateValue?.StatusId ===
+              StatusId.PendingwithRecruitmentHRassignLevelInterviewPanel
+          ) {
+            obj.ActionId = WorkflowAction.Approved;
+          }
         } else {
-          CandidateData = createFilter(workflowStatusApi.LineManagerL1Pending);
-          PopupMessage = RecuritmentHRMsg.HRReviewCandidate;
+          obj = {
+            ID: Number(CandidateProfile.CandidateID),
+            InterviewDate: InterviewedLevel?.InterviewedDate,
+            InterviewTime: InterviewedLevel?.InterviewTime,
+            InterviewLink: InterviewedLevel?.InterviewMeetingInviteLink,
+          };
         }
-      }
+        const UpdateInterviewData =
+          await GetPortalJobsService.RescheduledInterview(
+            obj,
+            ListNames.HRMSRecruitmentCandidatePersonalDetails
+          );
+        if (UpdateInterviewData.status === 200) {
+          let selectedinterviewpanal: any[] = [];
 
-      const res = await GetPortalJobsService.UpdateCandidateStatus(
-        CandidateData
-      );
-      if (res.status === 200) {
-        if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
-          await UploadCandidateDetails();
+          for (
+            let i = 0;
+            i < InterviewedLevel.AssignInterviewedLevel2.length;
+            i++
+          ) {
+            const currentItem = InterviewedLevel.AssignInterviewLevel1[i];
+
+            let selectedinterview = {
+              RecruitmentIDId: 0,
+              InterviewLevel: InterviewLevels.Level2, //InterviewedLevel.Levels,
+              InterviewPanel: currentItem.key,
+              CandidateID: Number(CandidateProfile.CandidateID),
+            };
+
+            selectedinterviewpanal.push(selectedinterview);
+          }
+
+          await GetPortalJobsService.InsertInterviewPanel(
+            selectedinterviewpanal,
+            Number(CandidateProfile.CandidateID)
+          );
+          const SuccessAlert = {
+            Message: RecuritmentHRMsg.RescheduleSuccessMsg,
+            Type: HRMSAlertOptions.Success,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+              if (userClickedOK) {
+                props.navigation("/ReviewProfileList/ReviewCandidateList", {
+                  state: {
+                    ID: props.stateValue?.RecruitmentID,
+                    TabName: props.stateValue?.initialTab,
+                    ButtonAction: "View",
+                    JobCode: CandidateProfile?.JobCode,
+                  },
+                });
+                setAlertPopupOpen(false);
+              }
+            },
+          };
+          setAlertPopupOpen(true);
+          setalertProps(SuccessAlert);
         }
-        const SuccessAlert = {
-          Message: PopupMessage,
-          Type: HRMSAlertOptions.Success,
-          visible: true,
-          ButtonAction: async (userClickedOK: boolean) => {
-            if (userClickedOK) {
-              props.navigation("/ReviewProfileList/ReviewCandidateList", {
-                state: {
-                  ID: props.stateValue?.RecruitmentID,
-                  TabName: props.stateValue?.initialTab,
-                  ButtonAction: "View",
-                  JobCode: CandidateProfile?.JobCode,
-                },
-              });
-              setAlertPopupOpen(false);
-            }
-          },
-        };
-        setAlertPopupOpen(true);
-        setalertProps(SuccessAlert);
       } else {
-        const APIErrorAlert = {
-          Message: RecuritmentHRMsg.APIErrorMsg,
-          Type: HRMSAlertOptions.Error,
-          visible: true,
-          ButtonAction: async (userClickedOK: boolean) => {
-            if (userClickedOK) {
-              props.navigation("/ReviewProfileList/ReviewCandidateList", {
-                state: {
-                  ID: props.stateValue?.RecruitmentID,
-                  TabName: props.stateValue?.initialTab,
-                  ButtonAction: props.stateValue?.ButtonAction,
-                  JobCode: CandidateProfile?.JobCode,
-                },
-              });
-              setAlertPopupOpen(false);
-            }
-          },
+        const createFilter = (workflowStatus: string): WorkflowJson => ({
+          workflowStatus: workflowStatus,
+          jobRequestId: props.stateValue?.ID,
+          comments: actionValue.Comments,
+          actionBy: props.CurrentUserRole,
+          hrComments:
+            props.CurrentRoleID === RoleID.RecruitmentHR &&
+            props.stateValue?.initialTab === TabName.ReviewProfile
+              ? InterviewedLevel.CandidateScoreValue.text ?? ""
+              : CandidateProfile?.hrComments,
+        });
+        let CandidateData: WorkflowJson = {
+          workflowStatus: "",
+          jobRequestId: 0,
+          comments: "",
+          actionBy: "",
+          hrComments: "",
         };
-        setAlertPopupOpen(true);
-        setalertProps(APIErrorAlert);
+        let PopupMessage: string = "";
+        if (props.CurrentRoleID === RoleID.LineManager) {
+          switch (actionValue.CandidateStatus) {
+            case CandidateStatus.Yes:
+              if (
+                CandidateProfile.workflowStatusId ===
+                  workflowStatusApi.LineManagerL2Pending ||
+                CandidateProfile.workflowStatusId ===
+                  workflowStatusApi.LineManagerLevel2OnHold
+              ) {
+                CandidateData = createFilter(
+                  workflowStatusApi.PendingRecruitmentHRscheduleInterview
+                );
+                PopupMessage = RecuritmentHRMsg.ProfileReviewed;
+              } else {
+                CandidateData = createFilter(
+                  workflowStatusApi.LineManagerL2Pending
+                );
+                PopupMessage = RecuritmentHRMsg.ProfileReviewed;
+              }
+              break;
+
+            case CandidateStatus.No:
+              if (
+                CandidateProfile.workflowStatusId ===
+                workflowStatusApi.LineManagerL2Pending
+              ) {
+                CandidateData = createFilter(
+                  workflowStatusApi.LineManagerLevel2Rejected
+                );
+                PopupMessage = RecuritmentHRMsg.ProfileReviewedNo;
+              } else {
+                CandidateData = createFilter(
+                  workflowStatusApi.LineManagerLevel1Rejected
+                );
+                PopupMessage = RecuritmentHRMsg.ProfileReviewedNo;
+              }
+              break;
+
+            case CandidateStatus.OnHold:
+              if (
+                CandidateProfile.workflowStatusId ===
+                workflowStatusApi.LineManagerL2Pending
+              ) {
+                CandidateData = createFilter(
+                  workflowStatusApi.LineManagerLevel2OnHold
+                );
+                PopupMessage = RecuritmentHRMsg.ProfileReviewedWaitingList;
+              } else {
+                CandidateData = createFilter(
+                  workflowStatusApi.LineManagerLevel1OnHold
+                );
+                PopupMessage = RecuritmentHRMsg.ProfileReviewedWaitingList;
+              }
+              break;
+          }
+        } else {
+          if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
+            CandidateData = createFilter(workflowStatusApi.InterviewScheduled);
+            PopupMessage = RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
+          } else {
+            CandidateData = createFilter(
+              workflowStatusApi.LineManagerL1Pending
+            );
+            PopupMessage = RecuritmentHRMsg.HRReviewCandidate;
+          }
+        }
+
+        const res = await GetPortalJobsService.UpdateCandidateStatus(
+          CandidateData
+        );
+        if (res.status === 200) {
+          if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
+            await UploadCandidateDetails();
+          }
+          const SuccessAlert = {
+            Message: PopupMessage,
+            Type: HRMSAlertOptions.Success,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+              if (userClickedOK) {
+                props.navigation("/ReviewProfileList/ReviewCandidateList", {
+                  state: {
+                    ID: props.stateValue?.RecruitmentID,
+                    TabName: props.stateValue?.initialTab,
+                    ButtonAction: "View",
+                    JobCode: CandidateProfile?.JobCode,
+                  },
+                });
+                setAlertPopupOpen(false);
+              }
+            },
+          };
+          setAlertPopupOpen(true);
+          setalertProps(SuccessAlert);
+        } else {
+          const APIErrorAlert = {
+            Message: RecuritmentHRMsg.APIErrorMsg,
+            Type: HRMSAlertOptions.Error,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+              if (userClickedOK) {
+                props.navigation("/ReviewProfileList/ReviewCandidateList", {
+                  state: {
+                    ID: props.stateValue?.RecruitmentID,
+                    TabName: props.stateValue?.initialTab,
+                    ButtonAction: props.stateValue?.ButtonAction,
+                    JobCode: CandidateProfile?.JobCode,
+                  },
+                });
+                setAlertPopupOpen(false);
+              }
+            },
+          };
+          setAlertPopupOpen(true);
+          setalertProps(APIErrorAlert);
+        }
       }
     } catch (error) {
       console.error("Error submitting candidate details", error);

@@ -81,7 +81,9 @@ export const StatusId = {
   Completed: 13,
   PendingwithHRandLMtocreateinterviewQuestion: 124,
   PendingwithLineManagereviewAdv: 125,
-  PendingwithLMcreateDisqualificationQuestion: 126
+  PendingwithLMcreateDisqualificationQuestion: 126,
+  PendingwithRecruitmentHRassignLevelInterviewPanel: 128,
+  InterviewScheduledforLevel2: 129
 };
 
 export const RoleID = {
@@ -223,7 +225,10 @@ export const RecuritmentHRMsg = {
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
   AddedMsg: "Added Successfully",
-  deleteMsg: "Are you sure you want to delete this? Any unsaved changes will be lost"
+  deleteMsg: "Are you sure you want to delete this? Any unsaved changes will be lost",
+
+  SelectedErrorMsg: "Please Choose the Disciplines.",
+  WarningMsg: "Are you sure want to Change the Disciolines? Any unsaved changes will be lost"
 };
 
 export const ADGroupID: IADGroupID = {
@@ -324,6 +329,7 @@ export const TabName = {
 
   ViewScoreDetails: " View ScoreCard Details",
   ReschedulInterview: "Reschedule Interview",
+  Level2Interview: "Level 2 Interview",
 };
 
 export const ProfileStatus = {
@@ -389,6 +395,10 @@ export const Choices = {
   Yes: "Yes",
   No: "No"
 }
+export const DataType = {
+  New: "New",
+  Existing: "Existing"
+}
 export const isDisqualificationOption = ["Yes", "No"];
 export const CategoryID = {
   Department: 1,
@@ -436,6 +446,26 @@ export const labelName = {
   Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)",
   ViewJobAdvetisement: "View Job Advertisement"
 };
+export const ButtonAction = {
+  Update: "Update",
+  Submit: "Submit",
+  Approve: "Approve",
+  Reject: "Reject",
+  Revert: "Revert",
+  Cancel: "Cancel",
+  Back: "Back",
+  Save: "Save",
+  Add: "Add",
+  Delete: "Delete",
+  Edit: "Edit",
+  View: "View",
+  Download: "Download",
+  Upload: "Upload",
+  Reschedule: "Reschedule",
+  Assign: "Assign",
+  Remove: "Remove",
+  close: "Close",
+}
 
 export const ColorCode = {
   TabColorCode: {

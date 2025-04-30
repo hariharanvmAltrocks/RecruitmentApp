@@ -248,7 +248,10 @@ export default class InterviewProcessService
             ProfileID: item?.ProfileID,
             InterviewDate: item?.InterviewDate,
             InterviewTime: item?.InterviewTime,
-            InterviewLink: item?.InterviewLink
+            InterviewLink: item?.InterviewLink,
+            InterviewDateLevel2: item?.InterviewDateLevel2,
+            InterviewTimeLevel2: item?.InterviewTimeLevel2,
+            InterviewLinkLevel2: item?.InterviewLinkLevel2
           };
         })
       );

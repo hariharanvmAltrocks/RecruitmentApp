@@ -53,6 +53,9 @@ const RecruitmentProcess = (props: any) => {
   // console.log(props, "ApprovedVRR");
 
   const [data, setData] = React.useState<DataSyncToRecruitmentResponse[]>([]);
+  const [selectedrowdata, setSelectedrowdata] = React.useState<
+    DataSyncToRecruitmentResponse[]
+  >([]);
   // const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -230,9 +233,11 @@ const RecruitmentProcess = (props: any) => {
                     width: "70%",
                     height: "60%",
                   }}
-                  onClick={() =>
-                    handleRedirectView(rowData, tab, TabNames, ButtonAction)
-                  }
+                  onClick={() => {
+                    let selectedData = [rowData];
+                    setSelectedrowdata(selectedData);
+                    setDatePopup(true);
+                  }}
                 />
               </>
             )}
@@ -369,7 +374,19 @@ const RecruitmentProcess = (props: any) => {
               },
             });
           } else if (tab === "tab3") {
-            setDatePopup(true);
+            if (ButtonAction === "View") {
+              props.navigation("/RecurimentProcess/ApprovedVRRView", {
+                state: {
+                  ID: rowData?.ID,
+                  AssignedHR: rowData?.AssignedHR,
+                  tab,
+                  StatusId: rowData?.StatusId,
+                  Status: rowData?.Status,
+                  TabName: TabName,
+                  ButtonAction,
+                },
+              });
+            }
           }
         }
         break;
@@ -952,7 +969,6 @@ const RecruitmentProcess = (props: any) => {
     } catch (error) {
       console.log("failed Insert Recruitment Data ", error);
     } finally {
-     
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
@@ -1103,7 +1119,6 @@ const RecruitmentProcess = (props: any) => {
     } catch (error) {
       console.log("failed Insert Agency Data ", error);
     } finally {
-     
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
@@ -1367,41 +1382,41 @@ const RecruitmentProcess = (props: any) => {
                           </Card>
                         ),
                       },
-                      // {
-                      //   label: TabName.AdvertExtension,
-                      //   value: "tab3",
-                      //   content: (
-                      //     <Card
-                      //       variant="outlined"
-                      //       sx={{
-                      //         boxShadow: "0px 2px 4px 3px #d3d3d3",
-                      //         marginTop: "2%",
-                      //       }}
-                      //     >
-                      //       <CardContent>
-                      //         <SearchableDataTable
-                      //           data={RecruitmentDetails}
-                      //           columns={columnConfig(
-                      //             "tab3",
-                      //             "View",
-                      //             TabName.AdvertExtension
-                      //           )}
-                      //           rows={rows}
-                      //           onPageChange={(event) =>
-                      //             onPageChange(event, "Rec")
-                      //           }
-                      //           handleRefresh={() => handleRefresh("tab3")}
-                      //           MasterData={props}
-                      //         />
-                      //       </CardContent>
-                      //     </Card>
-                      //   ),
-                      // },
+                      {
+                        label: TabName.AdvertExtension,
+                        value: "tab3",
+                        content: (
+                          <Card
+                            variant="outlined"
+                            sx={{
+                              boxShadow: "0px 2px 4px 3px #d3d3d3",
+                              marginTop: "2%",
+                            }}
+                          >
+                            <CardContent>
+                              <SearchableDataTable
+                                data={data}
+                                columns={columnConfig(
+                                  "tab3",
+                                  "View",
+                                  TabName.AdvertExtension
+                                )}
+                                rows={rows}
+                                onPageChange={(event) =>
+                                  onPageChange(event, "Rec")
+                                }
+                                handleRefresh={() => handleRefresh("tab3")}
+                                MasterData={props}
+                              />
+                            </CardContent>
+                          </Card>
+                        ),
+                      },
                       ...(assignedCandidates
                         ? [
                             {
                               label: TabName.Evaluation, //"EvaluationTab for HR",
-                              value: "tab3",
+                              value: "tab4",
                               content: <InterviewPanelList {...props} />,
                             },
                           ]
@@ -1453,6 +1468,44 @@ const RecruitmentProcess = (props: any) => {
     setActiveTab(newTab);
   };
 
+  const AlertpopupSuccess = () => {
+    setDatePopup(false);
+    setIsLoading(true);
+    if (HRMSAlertOptions.Success) {
+      let SuccessAlert = {
+        Message: RecuritmentHRMsg.AdvertExtendsionSuccessMsg,
+        Type: HRMSAlertOptions.Success,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+
+      setAlertPopupOpen(true);
+      setalertProps(SuccessAlert);
+      setIsLoading(false);
+    } else {
+      let APIError = {
+        Message: RecuritmentHRMsg.APIErrorMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            // props.navigation("/RecurimentProcess");
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+
+      setAlertPopupOpen(true);
+      setalertProps(APIError);
+      setIsLoading(false);
+    }
+    setIsLoading(false);
+  };
+
   return (
     <>
       <CustomLoader isLoading={isLoading}>
@@ -1473,13 +1526,14 @@ const RecruitmentProcess = (props: any) => {
       {DatePopup && (
         <>
           <CustomDialogbox
-            Style={{ width: "40vw" }}
+            Style={{ width: "40vw", height: "28vw" }}
             visible={DatePopup}
             children={
               <DateExtension
-                JobTitle={""}
-                RecuritmentID={450}
+                RecuritmentData={selectedrowdata[0]}
                 onClose={() => setDatePopup(false)}
+                ModelDropDown={props}
+                AlertpopupSuccess={() => AlertpopupSuccess()}
               />
             }
             onClose={() => setDatePopup(false)}

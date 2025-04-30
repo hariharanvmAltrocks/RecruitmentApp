@@ -25,9 +25,11 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 import {
+  ButtonAction,
   CategoryID,
   CatogryOptionCode,
   ColorCode,
+  DataType,
   displayTextOptionCode,
   HRMSAlertOptions,
   isDisqualificationOption,
@@ -42,11 +44,18 @@ import {
 import LabelHeaderComponents from "../../components/TitleHeader";
 import {
   answersValue,
+  getQuestionById,
   optionsValue,
   UpsertQuestions,
 } from "../../Models/ApIInterface";
 import { GetPortalJobsService } from "../../Services/ServiceExport";
 import SPServices from "../../Services/SPService/SPServices";
+import CustomDialogbox from "../../components/CustomDialogbox";
+import ViewQuestionCheckbox, {
+  ViewQuestion,
+} from "../ScreenComponent/ViewQuestionCheckbox";
+import ReuseButton from "../../components/ReuseButton";
+import CustomLabel from "../../components/CustomLabel";
 
 type InterviewQuesValidationError = {
   QuestionType: boolean;
@@ -84,6 +93,7 @@ interface QuestionItem {
   CareerportalAnswer: OptionRow[];
   options?: OptionRow[];
   Disqualification: string;
+  Type?: string;
 }
 
 const InterviewQuesEdit: React.FC = (props: any) => {
@@ -119,12 +129,15 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     });
 
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
-
+  const [viewQA, setViewQA] = useState<boolean>(false);
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<
     number | null
   >(null);
 
   const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<
+    number | null
+  >(null);
+  const [expandedExistingQuestion, setExpandedExistingQuestion] = useState<
     number | null
   >(null);
 
@@ -145,6 +158,18 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     ScopeOption: [],
     QueType: [],
   });
+  const [questionnaire, setQuestionnaire] = React.useState<ViewQuestion[]>([]);
+  const [resuequestionnaire, setresuequestionnaire] = React.useState<
+    ViewQuestion[]
+  >([]);
+  const [showCreateQuestionBox, setShowCreateQuestionBox] = useState(false);
+  const [newquestionnaire, setNewquestionnaire] = React.useState<
+    ViewQuestion[]
+  >([]);
+  const [existingquestionnaire, setExistingquestionnaire] = React.useState<
+    ViewQuestion[]
+  >([]);
+
   const selectedCategory =
     InterviewQuesData.Catogry || CatogryOptionCode.InterviewPanel;
 
@@ -291,46 +316,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     });
   };
 
-  // buuton delete
-  const handleDelete = (index: number) => {
-    const DeleteConfimationMsg = {
-      Message: RecuritmentHRMsg.deleteMsg,
-      Type: HRMSAlertOptions.Confirmation,
-      visible: true,
-      ButtonAction: async (userClickedOK: boolean) => {
-        if (userClickedOK) {
-          setQuestions((prevQuestions) => {
-            const updatedQuestions = prevQuestions.filter(
-              (_, i) => i !== index
-            );
-
-            const reorderedQuestions = updatedQuestions.map((q, i) => ({
-              ...q,
-              id: i + 1,
-              questionNumber: { key: i + 1, text: `Question ${i + 1}` },
-            }));
-
-            return reorderedQuestions;
-          });
-          setAlertPopupOpen(false);
-        } else {
-          setAlertPopupOpen(false);
-        }
-      },
-    };
-
-    setAlertPopupOpen(true);
-    setalertProps(DeleteConfimationMsg);
-    setIsLoading(false);
-  };
-
   // Drop down
-  const handleAutoComplete = (
+  const handleAutoComplete = async (
     field: string,
     value: { key: number; text: string } | null
   ) => {
     setInterviewQuesData((prev) => {
       let updatedData = { ...prev, [field]: value };
+
       if (
         field === "QuestionType" &&
         value?.text === displayTextOptionCode.SingleAnswer
@@ -348,6 +341,67 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
       return updatedData;
     });
+
+    if (field === "Disciplines") {
+      try {
+        if (
+          InterviewQuesData.Disciplines.text !== value?.text &&
+          InterviewQuesData.Disciplines.text !== ""
+        ) {
+          const WarningMsg = {
+            Message: RecuritmentHRMsg.WarningMsg,
+            Type: HRMSAlertOptions.Confirmation,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+              if (userClickedOK) {
+                setresuequestionnaire([]);
+                setQuestions([]);
+                setAlertPopupOpen(false);
+              } else {
+                setInterviewQuesData((prev) => ({
+                  ...prev,
+                  Disciplines: InterviewQuesData?.Disciplines,
+                }));
+                setAlertPopupOpen(false);
+              }
+            },
+          };
+
+          setAlertPopupOpen(true);
+          setalertProps(WarningMsg);
+          setIsLoading(false);
+        }
+        const category = getMasterData.category.find(
+          (cat) => cat.text === InterviewQuesData.Catogry
+        );
+        const obj: getQuestionById = {
+          discipline: String(value?.key || ""),
+          category: String(category?.key),
+        };
+        const res = await GetPortalJobsService.GetQuestionaireByScope(obj);
+        if (res.status === ResponeStatus.SUCCESS) {
+          setQuestionnaire(res.data ?? []); // fallback to [] if null
+        } else {
+          const ApiFailedMsg = {
+            Message: RecuritmentHRMsg.APIErrorMsg,
+            Type: HRMSAlertOptions.Error,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+              if (userClickedOK) {
+                setAlertPopupOpen(false);
+              }
+            },
+          };
+
+          setAlertPopupOpen(true);
+          setalertProps(ApiFailedMsg);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Failed to fetch questionnaire:", error);
+      }
+    }
+
     if (value) {
       setValidationError((prev) => ({ ...prev, [field]: false }));
     }
@@ -364,6 +418,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   const handleToggleExpand = (index: number) => {
     setExpandedQuestionIndex((prev) => (prev === index ? null : index));
+  };
+
+  const handleExpand = (index: number) => {
+    setExpandedExistingQuestion((prev) => (prev === index ? null : index));
   };
 
   const Validation = (): boolean => {
@@ -440,22 +498,26 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     const correctAnswers = OptionsType.filter((opt) => opt.isCorrect).map(
       (opt, i) => ({ key: i, text: opt.text })
     );
+    const lastResueQuestionId =
+      resuequestionnaire.length > 0
+        ? Math.max(...resuequestionnaire.map((item) => item.id))
+        : 0;
 
-    const questionData: QuestionItem = {
+    const nextQuestionId = lastResueQuestionId + 1;
+    const questionData: ViewQuestion = {
       id:
         editingQuestionIndex !== null
           ? questions[editingQuestionIndex].id
-          : questions.length + 1,
+          : nextQuestionId,
       discipline: InterviewQuesData.Disciplines,
-      questionNumber: {
-        key: questions.length + 1,
-        text:
-          editingQuestionIndex !== null
-            ? `Question ${editingQuestionIndex + 1}`
-            : `Question ${questions.length + 1}`,
-      },
-
-      questionType,
+      // questionNumber: {
+      //   key: questions.length + 1,
+      //   text:
+      //     editingQuestionIndex !== null
+      //       ? `Question ${editingQuestionIndex + 1}`
+      //       : `Question ${nextQuestionId}`,
+      // },
+      questionType: questionType,
       // questionType: InterviewQuesData.QuestionType,
       // questionType: shouldValidateQuestionType
       //   ? InterviewQuesData.QuestionType
@@ -471,17 +533,29 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           ? [...OptionsType]
           : undefined,
       Disqualification: InterviewQuesData.Disqualification || "",
+      Type: DataType.New,
+      Checked: false,
+      // header: "Q" + incrementedIndex,
+      HeaderLabel:
+        editingQuestionIndex !== null
+          ? `Question ${editingQuestionIndex + 1}`
+          : `Question ${nextQuestionId + 1}`,
     };
 
     if (editingQuestionIndex !== null) {
-      setQuestions((prev) => {
+      setresuequestionnaire((prev) => {
         const updated = [...prev];
-        updated[editingQuestionIndex] = questionData;
+        updated[editingQuestionIndex] = {
+          ...questionData,
+        };
         return updated;
       });
       setEditingQuestionIndex(null);
     } else {
-      setQuestions((prev) => [...prev, questionData]);
+      setresuequestionnaire((prev) => [
+        ...prev,
+        { ...questionData, Checked: false } as ViewQuestion,
+      ]);
     }
 
     setInterviewQuesData((prev) => ({
@@ -779,7 +853,89 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     }
     void fetchMaster();
   }, [InterviewQuesData.Catogry]);
+
+  useEffect(() => {
+    const existingQuestions = resuequestionnaire.filter(
+      (q) => q.Type === DataType.Existing
+    ); // Example property
+    const newQuestions = resuequestionnaire.filter(
+      (q) => q.Type === DataType.New
+    );
+    setNewquestionnaire(newQuestions);
+    setExistingquestionnaire(existingQuestions);
+  }, [resuequestionnaire]);
   // tabs
+  const getFetchQuestion = () => {
+    if (InterviewQuesData.Disciplines.text) {
+      setViewQA(true);
+    } else {
+      const SelectedMag = {
+        Message: RecuritmentHRMsg.SelectedErrorMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+
+      setAlertPopupOpen(true);
+      setalertProps(SelectedMag);
+      setIsLoading(false);
+    }
+  };
+
+  const handleRemoveQuestionnaire = (id: number, Type: string) => {
+    const DeleteConfirmationMsg = {
+      Message: RecuritmentHRMsg.deleteMsg,
+      Type: HRMSAlertOptions.Confirmation,
+      visible: true,
+      ButtonAction: async (userClickedOK: boolean) => {
+        if (userClickedOK) {
+          let updatedQuestionnaire: ViewQuestion[] = [];
+          if (Type === DataType.Existing) {
+            updatedQuestionnaire = resuequestionnaire.filter(
+              (item) => item.id !== id
+            );
+          } else if (Type === DataType.New) {
+            const existingCount = resuequestionnaire.filter(
+              (item) => item.Type === DataType.Existing
+            ).length;
+
+            const nextQuestionId = existingCount + id;
+            updatedQuestionnaire = resuequestionnaire.filter(
+              (item) => item.id !== nextQuestionId
+            );
+          }
+          // const updatedQuestionnaire = resuequestionnaire.filter(
+          //   (item) => item.id !== id
+          // );
+
+          const questionList: ViewQuestion[] = updatedQuestionnaire.map(
+            (item, idx) => {
+              const incrementedIndex = idx + 1;
+              return {
+                ...item,
+                id: idx,
+                header: "Q" + incrementedIndex,
+                HeaderLabel: `Question ${incrementedIndex}`,
+              };
+            }
+          );
+
+          setresuequestionnaire(questionList);
+
+          setAlertPopupOpen(false);
+        } else {
+          setAlertPopupOpen(false);
+        }
+      },
+    };
+    setAlertPopupOpen(true);
+    setalertProps(DeleteConfirmationMsg);
+    setIsLoading(false);
+  };
 
   const tabs = [
     {
@@ -924,35 +1080,82 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         error={ValidationError.Disciplines}
                       />
                     </div>
+                    <div className="ms-Grid-col ms-lg2.5 ">
+                      <Button
+                        variant="contained"
+                        style={{
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          position: "relative",
+                          top: "39px",
+                          color: "white",
+                          textTransform: "none",
+                          borderRadius: "4px",
+                          padding: "8px 16px",
+                          fontSize: "14px",
+                          fontWeight: "500",
+                        }}
+                        onClick={() => getFetchQuestion()} // Toggle visibility
+                      >
+                        View Questions
+                      </Button>
+                    </div>
+                    <div className="ms-Grid-col ms-lg2.5 ">
+                      <Button
+                        variant="contained"
+                        style={{
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          position: "relative",
+                          top: "39px",
+                          color: "white",
+                          textTransform: "none",
+                          borderRadius: "4px",
+                          padding: "8px 16px",
+                          fontSize: "14px",
+                          fontWeight: "500",
+                        }}
+                        onClick={() =>
+                          setShowCreateQuestionBox(!showCreateQuestionBox)
+                        } // Toggle visibility
+                      >
+                        New Question
+                      </Button>
+                    </div>
                   </div>
                 </Box>
-                {/*  Add the question show  UI  */}
-                {questions.length > 0 && (
-                  <Card
-                    sx={{
-                      mb: 2,
-                      borderRadius: "4px",
-                      borderColor: "#5f5f5f",
-                      boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-                      height: expandedQuestionIndex !== null ? "auto" : "150px",
-                      transition: "height 0.3s ease-in-out",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <CardContent
+
+                {existingquestionnaire.length > 0 && (
+                  <>
+                    <CustomLabel value={"Reuse Question"} />
+                    <Card
                       sx={{
-                        maxHeight:
-                          expandedQuestionIndex !== null ? "none" : 100,
-                        overflowY:
-                          expandedQuestionIndex !== null ? "visible" : "auto",
-                        pr: 1,
+                        mb: 2,
+                        borderRadius: "4px",
+                        borderColor: "#5f5f5f",
+                        boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+                        height:
+                          expandedExistingQuestion !== null ? "auto" : "150px",
+                        transition: "height 0.3s ease-in-out",
+                        overflow: "hidden",
                       }}
                     >
-                      {questions.map((q, index) => {
-                        const isExpanded = expandedQuestionIndex === index;
-                        return (
-                          <>
+                      <CardContent
+                        sx={{
+                          maxHeight:
+                            expandedExistingQuestion !== null ? "none" : 100,
+                          overflowY:
+                            expandedExistingQuestion !== null
+                              ? "visible"
+                              : "auto",
+                          pr: 1,
+                        }}
+                      >
+                        {existingquestionnaire.map((q, index) => {
+                          const isExpanded = expandedExistingQuestion === index; // Determine if the question is expanded
+                          return (
                             <Box
+                              key={q.id}
                               sx={{
                                 boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                                 borderRadius: "4px",
@@ -960,9 +1163,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                               }}
                             >
                               <Accordion
-                                key={q.id}
                                 expanded={isExpanded}
-                                onChange={() => handleToggleExpand(index)}
+                                onChange={() => handleExpand(index)}
                                 sx={{
                                   boxShadow: "none",
                                   borderBottom: "1px solid #ddd",
@@ -988,238 +1190,55 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                       flexGrow: 1,
                                     }}
                                   >
-                                    {q.questionNumber.text}
+                                    {q.HeaderLabel}
                                   </Typography>
                                 </AccordionSummary>
-                                <AccordionDetails>
+                                <AccordionDetails
+                                  style={{
+                                    position: "relative",
+                                    bottom: "24px",
+                                  }}
+                                >
                                   {isExpanded && (
                                     <>
-                                      {props?.stateValue?.StatusId ===
-                                        StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                                        <Box sx={{ marginTop: "-25px" }}>
-                                          <div className="ms-Grid-row">
-                                            <div className="ms-Grid-col ms-lg5">
-                                              <CustomAutoComplete
-                                                label="Type of Question"
-                                                options={getMasterData.QueType}
-                                                value={q.questionType}
-                                                onChange={(val) =>
-                                                  handleQuestionFieldChange(
-                                                    index,
-                                                    "questionType",
-                                                    val
-                                                  )
-                                                }
-                                                disabled={false}
-                                                mandatory={true}
-                                              />
-                                            </div>
-                                          </div>
-                                        </Box>
-                                      )}
-
-                                      <Box sx={{ mb: 2 }}>
-                                        <RichTextEditor
-                                          label="Question"
-                                          value={q.question}
-                                          onChange={(val) =>
-                                            handleQuestionFieldChange(
-                                              index,
-                                              "question",
-                                              val
-                                            )
-                                          }
-                                          mandatory={true}
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <div>
+                                          <span>Q{index + 1}:</span>
+                                          <span
+                                            style={{
+                                              display: "inline-block",
+                                            }}
+                                            dangerouslySetInnerHTML={{
+                                              __html: `${q.question
+                                                .replace(/<p>/gi, "")
+                                                .replace(/<\/p>/gi, "")
+                                                .replace(/<br\s*\/?>/gi, "")
+                                                .trim()}`,
+                                            }}
+                                          />
+                                        </div>
+                                      </div>
+                                      <p
+                                        style={{
+                                          marginTop: "5px",
+                                        }}
+                                      >
+                                        <strong>Expected Answer:</strong>{" "}
+                                        <span
+                                          dangerouslySetInnerHTML={{
+                                            __html: q.expectedAnswer,
+                                          }}
                                         />
-                                      </Box>
-
-                                      {q?.questionType?.text ===
-                                        displayTextOptionCode.MultiAnswer ||
-                                      q?.questionType?.text ===
-                                        displayTextOptionCode.SingleAnswer ? (
-                                        <Box sx={{ mb: 2 }}>
-                                          {q.options?.map(
-                                            (option, optIndex) => {
-                                              const isSelected =
-                                                option.isCorrect;
-                                              return (
-                                                <Box
-                                                  key={optIndex}
-                                                  sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    mb: 2,
-                                                    gap: 1,
-                                                  }}
-                                                >
-                                                  <Typography
-                                                    variant="body1"
-                                                    sx={{
-                                                      width: "80px",
-                                                      fontSize: "14px",
-                                                      fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                                                    }}
-                                                  >
-                                                    Option {optIndex + 1} *
-                                                  </Typography>
-
-                                                  <CustomInput
-                                                    label=""
-                                                    value={option.text}
-                                                    onChange={(val) =>
-                                                      handleQuestionOptionChange(
-                                                        index,
-                                                        optIndex,
-                                                        val
-                                                      )
-                                                    }
-                                                  />
-
-                                                  <Box
-                                                    sx={{
-                                                      backgroundColor:
-                                                        isSelected
-                                                          ? "#4CAF50"
-                                                          : "#D3D3D3",
-                                                      borderRadius: "50%",
-                                                      width: 30,
-                                                      height: 30,
-                                                      display: "flex",
-                                                      alignItems: "center",
-                                                      justifyContent: "center",
-                                                      cursor: "pointer",
-                                                      boxShadow: isSelected
-                                                        ? "0px 0px 5px rgba(0, 128, 0, 0.5)"
-                                                        : "0px 0px 5px rgba(0, 0, 0, 0.2)",
-                                                      transition:
-                                                        "all 0.3s ease-in-out",
-                                                    }}
-                                                    onClick={() =>
-                                                      handleAnswerSelection(
-                                                        index,
-                                                        optIndex
-                                                      )
-                                                    }
-                                                  >
-                                                    <CheckCircleOutlineIcon
-                                                      sx={{
-                                                        color: isSelected
-                                                          ? "white"
-                                                          : "black",
-                                                        fontSize: 24,
-                                                      }}
-                                                    />
-                                                  </Box>
-
-                                                  <Box
-                                                    sx={{
-                                                      display: "flex",
-                                                      gap: 1,
-                                                    }}
-                                                  >
-                                                    {q.options!.length > 1 && (
-                                                      <Button
-                                                        variant="contained"
-                                                        sx={{
-                                                          backgroundColor:
-                                                            ColorCode
-                                                              .ButtonColorCode
-                                                              .ButtonColor,
-                                                          color: "white",
-                                                          minWidth: 40,
-                                                          "&:hover": {
-                                                            backgroundColor:
-                                                              ColorCode
-                                                                .ButtonColorCode
-                                                                .ButtonColor,
-                                                          },
-                                                        }}
-                                                        onClick={() =>
-                                                          handleQuestionDeleteRow(
-                                                            index,
-                                                            optIndex
-                                                          )
-                                                        }
-                                                      >
-                                                        <DeleteOutlineIcon
-                                                          sx={{ fontSize: 20 }}
-                                                        />
-                                                      </Button>
-                                                    )}
-                                                    {optIndex ===
-                                                      q.options!.length - 1 && (
-                                                      <Button
-                                                        variant="contained"
-                                                        sx={{
-                                                          backgroundColor:
-                                                            ColorCode
-                                                              .ButtonColorCode
-                                                              .ButtonColor,
-                                                          color: "white",
-                                                          minWidth: 40,
-                                                          "&:hover": {
-                                                            backgroundColor:
-                                                              ColorCode
-                                                                .ButtonColorCode
-                                                                .ButtonColor,
-                                                          },
-                                                        }}
-                                                        onClick={() =>
-                                                          handleQuestionAddRow(
-                                                            index
-                                                          )
-                                                        }
-                                                      >
-                                                        <AddIcon />
-                                                      </Button>
-                                                    )}
-                                                  </Box>
-                                                </Box>
-                                              );
-                                            }
-                                          )}
-                                        </Box>
-                                      ) : props?.stateValue?.StatusId ===
-                                        StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
-                                        <Box sx={{ mb: 2 }}>
-                                          <RichTextEditor
-                                            label="Expected Answer"
-                                            value={q.expectedAnswer || ""}
-                                            onChange={(val) =>
-                                              handleQuestionFieldChange(
-                                                index,
-                                                "expectedAnswer",
-                                                val
-                                              )
-                                            }
-                                            mandatory={true}
-                                          />
-                                        </Box>
-                                      ) : null}
-
-                                      {props?.stateValue?.StatusId ===
-                                        StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                                        <Box sx={{ mb: 2 }}>
-                                          <CustomRadioGroup
-                                            label="Disqualification Question?"
-                                            value={q.Disqualification ?? "NO"}
-                                            onChange={(val) =>
-                                              handleCommonRadioChange(
-                                                index,
-                                                "Disqualification",
-                                                val
-                                              )
-                                            }
-                                            mandatory={true}
-                                            options={isDisqualificationOption}
-                                          />
-                                        </Box>
-                                      )}
-
+                                      </p>
                                       <Box
                                         sx={{
                                           display: "flex",
-                                          justifyContent: "flex-start",
+                                          justifyContent: "end",
                                         }}
                                       >
                                         <Button
@@ -1240,10 +1259,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                           }}
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            handleDelete(index);
+                                            handleRemoveQuestionnaire(
+                                              index,
+                                              DataType.Existing
+                                            );
                                           }}
                                         >
-                                          Delete
+                                          Remove
                                         </Button>
                                       </Box>
                                     </>
@@ -1251,254 +1273,633 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                 </AccordionDetails>
                               </Accordion>
                             </Box>
-                          </>
-                        );
-                      })}
-                    </CardContent>
-                  </Card>
+                          );
+                        })}
+                      </CardContent>
+                    </Card>
+                  </>
                 )}
-                {/*Create the Ques   */}
-                <Box
-                  sx={{
-                    p: 2,
-                    mb: 2,
-                    boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-                    borderRadius: "4px",
-                    borderColor: "#5f5f5f",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="medium"
+
+                {/*  Add the question show  UI  */}
+                {newquestionnaire.length > 0 && (
+                  <>
+                    <CustomLabel value={"New Question"} />
+                    <Card
                       sx={{
-                        color: " rgb(50, 49, 48)",
-                        fontSize: "14x",
-                        fontFamily: `"Segoe UI", "Segoe UI Web (West European)", 
-                        "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                        mb: 2,
+                        borderRadius: "4px",
+                        borderColor: "#5f5f5f",
+                        boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+                        height:
+                          expandedQuestionIndex !== null ? "auto" : "150px",
+                        transition: "height 0.3s ease-in-out",
+                        overflow: "hidden",
                       }}
                     >
-                      Create Question
-                    </Typography>
-                  </Box>
-
-                  <>
-                    {props?.stateValue?.StatusId ===
-                      StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                      <Box>
-                        <div className="ms-Grid-row">
-                          <div className="ms-Grid-col ms-lg5">
-                            <CustomAutoComplete
-                              label="Type of Question"
-                              options={getMasterData.QueType}
-                              value={InterviewQuesData.QuestionType}
-                              onChange={(val) => {
-                                handleAutoComplete("QuestionType", val);
-                                setExpandedQuestionIndex(null);
-                              }}
-                              disabled={false}
-                              mandatory={true}
-                              error={ValidationError.QuestionType}
-                            />
-                          </div>
-                        </div>
-                      </Box>
-                    )}
-                    <Box sx={{ mb: 2 }}>
-                      <RichTextEditor
-                        label="Question"
-                        value={InterviewQuesData.Question}
-                        onChange={(val) =>
-                          handleRichTextEditor(val, "Question")
-                        }
-                        mandatory={true}
-                        error={ValidationError.Question}
-                      />
-                    </Box>
-
-                    {[
-                      displayTextOptionCode.MultiAnswer,
-                      displayTextOptionCode.SingleAnswer,
-                    ].includes(
-                      InterviewQuesData.QuestionType?.text?.trim() || ""
-                    ) ? (
-                      <Box sx={{ mb: 2 }}>
-                        {OptionsType && OptionsType.length > 0 ? (
-                          OptionsType.map((option, index) => {
-                            const isSelected = option.isCorrect;
-                            return (
+                      <CardContent
+                        sx={{
+                          maxHeight:
+                            expandedQuestionIndex !== null ? "none" : 100,
+                          overflowY:
+                            expandedQuestionIndex !== null ? "visible" : "auto",
+                          pr: 1,
+                        }}
+                      >
+                        {newquestionnaire.map((q, index) => {
+                          const isExpanded = expandedQuestionIndex === index;
+                          return (
+                            <>
                               <Box
-                                key={index}
                                 sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  mb: 2,
-                                  gap: 1,
+                                  boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+                                  borderRadius: "4px",
+                                  borderColor: "#5f5f5f",
                                 }}
                               >
-                                <Typography
-                                  variant="body1"
-                                  sx={{ width: "80px" }}
-                                >
-                                  Option {index + 1} *
-                                </Typography>
-
-                                <CustomInput
-                                  label=""
-                                  value={option.text}
-                                  onChange={(val) =>
-                                    handleOptionChange(index, val)
-                                  }
-                                />
-
-                                <Box
+                                <Accordion
+                                  key={q.id}
+                                  expanded={isExpanded}
+                                  onChange={() => handleToggleExpand(index)}
                                   sx={{
-                                    backgroundColor: isSelected
-                                      ? "#4CAF50"
-                                      : "#D3D3D3",
-                                    borderRadius: "50%",
-                                    width: 30,
-                                    height: 30,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    cursor: "pointer",
-                                    boxShadow: isSelected
-                                      ? "0px 0px 5px rgba(0, 128, 0, 0.5)"
-                                      : "0px 0px 5px rgba(0, 0, 0, 0.2)",
-                                    transition: "all 0.3s ease-in-out",
+                                    boxShadow: "none",
+                                    borderBottom: "1px solid #ddd",
+                                    "&:last-of-type": {
+                                      borderBottom: "none",
+                                    },
+                                    mb: 2,
                                   }}
-                                  onClick={() => handleAnswerSelections(index)}
                                 >
-                                  <CheckCircleOutlineIcon
+                                  <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
                                     sx={{
-                                      color: isSelected ? "white" : "black",
-                                      fontSize: 24,
+                                      color: "rgb(50, 49, 48)",
+                                      cursor: "pointer",
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                      width: "100%",
                                     }}
-                                  />
-                                </Box>
-
-                                <Box sx={{ display: "flex", gap: 1 }}>
-                                  {OptionsType.length > 1 && (
-                                    <Button
-                                      variant="contained"
+                                  >
+                                    <Typography
                                       sx={{
-                                        backgroundColor:
-                                          ColorCode.ButtonColorCode.ButtonColor,
-                                        color: ColorCode.ButtonColorCode.color,
-                                        minWidth: 40,
-                                        "&:hover": {
-                                          backgroundColor:
-                                            ColorCode.ButtonColorCode
-                                              .ButtonColor,
-                                        },
+                                        fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                                        fontSize: "14px",
+                                        flexGrow: 1,
                                       }}
-                                      onClick={() => handleDeleteRow(index)}
                                     >
-                                      <DeleteOutlineIcon
-                                        sx={{ fontSize: 20 }}
-                                      />
-                                    </Button>
-                                  )}
+                                      {q.HeaderLabel}
+                                    </Typography>
+                                  </AccordionSummary>
+                                  <AccordionDetails>
+                                    {isExpanded && (
+                                      <>
+                                        {props?.stateValue?.StatusId ===
+                                          StatusId.PendingwithLMcreateDisqualificationQuestion && (
+                                          <Box sx={{ marginTop: "-25px" }}>
+                                            <div className="ms-Grid-row">
+                                              <div className="ms-Grid-col ms-lg5">
+                                                <CustomAutoComplete
+                                                  label="Type of Question"
+                                                  options={
+                                                    getMasterData.QueType
+                                                  }
+                                                  value={q.questionType}
+                                                  onChange={(val) =>
+                                                    handleQuestionFieldChange(
+                                                      index,
+                                                      "questionType",
+                                                      val
+                                                    )
+                                                  }
+                                                  disabled={false}
+                                                  mandatory={true}
+                                                />
+                                              </div>
+                                            </div>
+                                          </Box>
+                                        )}
 
-                                  {index === OptionsType.length - 1 && (
-                                    <Button
-                                      variant="contained"
-                                      sx={{
-                                        backgroundColor:
-                                          ColorCode.ButtonColorCode.ButtonColor,
-                                        color: ColorCode.ButtonColorCode.color,
-                                        minWidth: 40,
-                                        "&:hover": {
-                                          backgroundColor:
-                                            ColorCode.ButtonColorCode
-                                              .ButtonColor,
-                                        },
-                                      }}
-                                      onClick={handleAddRow}
-                                    >
-                                      <AddIcon />
-                                    </Button>
-                                  )}
-                                </Box>
+                                        <Box sx={{ mb: 2 }}>
+                                          <RichTextEditor
+                                            label="Question"
+                                            value={q.question}
+                                            onChange={(val) =>
+                                              handleQuestionFieldChange(
+                                                index,
+                                                "question",
+                                                val
+                                              )
+                                            }
+                                            mandatory={true}
+                                          />
+                                        </Box>
+
+                                        {q?.questionType?.text ===
+                                          displayTextOptionCode.MultiAnswer ||
+                                        q?.questionType?.text ===
+                                          displayTextOptionCode.SingleAnswer ? (
+                                          <Box sx={{ mb: 2 }}>
+                                            {q.options?.map(
+                                              (option, optIndex) => {
+                                                const isSelected =
+                                                  option.isCorrect;
+                                                return (
+                                                  <Box
+                                                    key={optIndex}
+                                                    sx={{
+                                                      display: "flex",
+                                                      alignItems: "center",
+                                                      mb: 2,
+                                                      gap: 1,
+                                                    }}
+                                                  >
+                                                    <Typography
+                                                      variant="body1"
+                                                      sx={{
+                                                        width: "80px",
+                                                        fontSize: "14px",
+                                                        fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                                                      }}
+                                                    >
+                                                      Option {optIndex + 1} *
+                                                    </Typography>
+
+                                                    <CustomInput
+                                                      label=""
+                                                      value={option.text}
+                                                      onChange={(val) =>
+                                                        handleQuestionOptionChange(
+                                                          index,
+                                                          optIndex,
+                                                          val
+                                                        )
+                                                      }
+                                                    />
+
+                                                    <Box
+                                                      sx={{
+                                                        backgroundColor:
+                                                          isSelected
+                                                            ? "#4CAF50"
+                                                            : "#D3D3D3",
+                                                        borderRadius: "50%",
+                                                        width: 30,
+                                                        height: 30,
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent:
+                                                          "center",
+                                                        cursor: "pointer",
+                                                        boxShadow: isSelected
+                                                          ? "0px 0px 5px rgba(0, 128, 0, 0.5)"
+                                                          : "0px 0px 5px rgba(0, 0, 0, 0.2)",
+                                                        transition:
+                                                          "all 0.3s ease-in-out",
+                                                      }}
+                                                      onClick={() =>
+                                                        handleAnswerSelection(
+                                                          index,
+                                                          optIndex
+                                                        )
+                                                      }
+                                                    >
+                                                      <CheckCircleOutlineIcon
+                                                        sx={{
+                                                          color: isSelected
+                                                            ? "white"
+                                                            : "black",
+                                                          fontSize: 24,
+                                                        }}
+                                                      />
+                                                    </Box>
+
+                                                    <Box
+                                                      sx={{
+                                                        display: "flex",
+                                                        gap: 1,
+                                                      }}
+                                                    >
+                                                      {q.options!.length >
+                                                        1 && (
+                                                        <Button
+                                                          variant="contained"
+                                                          sx={{
+                                                            backgroundColor:
+                                                              ColorCode
+                                                                .ButtonColorCode
+                                                                .ButtonColor,
+                                                            color: "white",
+                                                            minWidth: 40,
+                                                            "&:hover": {
+                                                              backgroundColor:
+                                                                ColorCode
+                                                                  .ButtonColorCode
+                                                                  .ButtonColor,
+                                                            },
+                                                          }}
+                                                          onClick={() =>
+                                                            handleQuestionDeleteRow(
+                                                              index,
+                                                              optIndex
+                                                            )
+                                                          }
+                                                        >
+                                                          <DeleteOutlineIcon
+                                                            sx={{
+                                                              fontSize: 20,
+                                                            }}
+                                                          />
+                                                        </Button>
+                                                      )}
+                                                      {optIndex ===
+                                                        q.options!.length -
+                                                          1 && (
+                                                        <Button
+                                                          variant="contained"
+                                                          sx={{
+                                                            backgroundColor:
+                                                              ColorCode
+                                                                .ButtonColorCode
+                                                                .ButtonColor,
+                                                            color: "white",
+                                                            minWidth: 40,
+                                                            "&:hover": {
+                                                              backgroundColor:
+                                                                ColorCode
+                                                                  .ButtonColorCode
+                                                                  .ButtonColor,
+                                                            },
+                                                          }}
+                                                          onClick={() =>
+                                                            handleQuestionAddRow(
+                                                              index
+                                                            )
+                                                          }
+                                                        >
+                                                          <AddIcon />
+                                                        </Button>
+                                                      )}
+                                                    </Box>
+                                                  </Box>
+                                                );
+                                              }
+                                            )}
+                                          </Box>
+                                        ) : props?.stateValue?.StatusId ===
+                                          StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
+                                          <Box sx={{ mb: 2 }}>
+                                            <RichTextEditor
+                                              label="Expected Answer"
+                                              value={q.expectedAnswer || ""}
+                                              onChange={(val) =>
+                                                handleQuestionFieldChange(
+                                                  index,
+                                                  "expectedAnswer",
+                                                  val
+                                                )
+                                              }
+                                              mandatory={true}
+                                            />
+                                          </Box>
+                                        ) : null}
+
+                                        {props?.stateValue?.StatusId ===
+                                          StatusId.PendingwithLMcreateDisqualificationQuestion && (
+                                          <Box sx={{ mb: 2 }}>
+                                            <CustomRadioGroup
+                                              label="Disqualification Question?"
+                                              value={q.Disqualification ?? "NO"}
+                                              onChange={(val) =>
+                                                handleCommonRadioChange(
+                                                  index,
+                                                  "Disqualification",
+                                                  val
+                                                )
+                                              }
+                                              mandatory={true}
+                                              options={isDisqualificationOption}
+                                            />
+                                          </Box>
+                                        )}
+
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "flex-start",
+                                          }}
+                                        >
+                                          <Button
+                                            variant="contained"
+                                            sx={{
+                                              backgroundColor:
+                                                ColorCode.ButtonColorCode
+                                                  .ButtonColor,
+                                              color: "white",
+                                              "&:hover": {
+                                                backgroundColor:
+                                                  ColorCode.ButtonColorCode
+                                                    .ButtonColor,
+                                              },
+                                              textTransform: "none",
+                                              borderRadius: "4px",
+                                              px: 3,
+                                            }}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleRemoveQuestionnaire(
+                                                index,
+                                                DataType.New
+                                              );
+                                            }}
+                                          >
+                                            Delete
+                                          </Button>
+                                        </Box>
+                                      </>
+                                    )}
+                                  </AccordionDetails>
+                                </Accordion>
                               </Box>
-                            );
-                          })
-                        ) : (
-                          <Typography color="error">
-                            No options available.
-                          </Typography>
-                        )}
-
-                        {ValidationError.OptionsType && (
-                          <Typography color="error">
-                            Please select at least one correct answer.
-                          </Typography>
-                        )}
-                      </Box>
-                    ) : props?.stateValue?.StatusId ===
-                      StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
-                      <Box sx={{ mb: 2 }}>
-                        <RichTextEditor
-                          label="Expected Answer"
-                          value={InterviewQuesData.ExpectedAnswer}
-                          onChange={(val) =>
-                            handleRichTextEditor(val, "ExpectedAnswer")
-                          }
-                          mandatory={true}
-                          error={ValidationError.ExpectedAnswer}
-                        />
-                      </Box>
-                    ) : null}
-
-                    {props?.stateValue?.StatusId ===
-                      StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                      <Box sx={{ mb: 2 }}>
-                        <CustomRadioGroup
-                          label="Disqualification Question?"
-                          value={InterviewQuesData?.Disqualification ?? ""}
-                          options={isDisqualificationOption}
-                          error={ValidationError.Disqualification}
-                          mandatory={true}
-                          onChange={(value) =>
-                            handleIsDisqualificationChange(
-                              "Disqualification",
-                              value
-                            )
-                          }
-                        />
-                      </Box>
-                    )}
+                            </>
+                          );
+                        })}
+                      </CardContent>
+                    </Card>
                   </>
-
-                  <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
-                    <Button
-                      variant="contained"
-                      // startIcon={<AddIcon />}
-                      onClick={handleSaveQuestion}
+                )}
+                {/*Create the Ques   */}
+                {showCreateQuestionBox && (
+                  <Box
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+                      borderRadius: "4px",
+                      borderColor: "#5f5f5f",
+                    }}
+                  >
+                    <Box
                       sx={{
-                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                        color: "white",
-                        "&:hover": {
-                          backgroundColor:
-                            ColorCode.ButtonColorCode.ButtonColor,
-                        },
-                        textTransform: "none",
-                        borderRadius: "4px",
-                        px: 3,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        cursor: "pointer",
                       }}
                     >
-                      {editingQuestionIndex !== null ? "Update" : "Save"}
-                    </Button>
+                      <Typography
+                        variant="subtitle1"
+                        fontWeight="medium"
+                        sx={{
+                          color: " rgb(50, 49, 48)",
+                          fontSize: "14x",
+                          fontFamily: `"Segoe UI", "Segoe UI Web (West European)", 
+                         "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                        }}
+                      >
+                        Create Question
+                      </Typography>
+                    </Box>
+
+                    <>
+                      {props?.stateValue?.StatusId ===
+                        StatusId.PendingwithLMcreateDisqualificationQuestion && (
+                        <Box>
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg5">
+                              <CustomAutoComplete
+                                label="Type of Question"
+                                options={getMasterData.QueType}
+                                value={InterviewQuesData.QuestionType}
+                                onChange={(val) => {
+                                  void handleAutoComplete("QuestionType", val);
+                                  setExpandedQuestionIndex(null);
+                                }}
+                                disabled={false}
+                                mandatory={true}
+                                error={ValidationError.QuestionType}
+                              />
+                            </div>
+                          </div>
+                        </Box>
+                      )}
+                      <Box sx={{ mb: 2 }}>
+                        <RichTextEditor
+                          label={`Question ${resuequestionnaire.length + 1}`}
+                          value={InterviewQuesData.Question}
+                          onChange={(val) =>
+                            handleRichTextEditor(val, "Question")
+                          }
+                          mandatory={true}
+                          error={ValidationError.Question}
+                        />
+                      </Box>
+
+                      {[
+                        displayTextOptionCode.MultiAnswer,
+                        displayTextOptionCode.SingleAnswer,
+                      ].includes(
+                        InterviewQuesData.QuestionType?.text?.trim() || ""
+                      ) ? (
+                        <Box sx={{ mb: 2 }}>
+                          {OptionsType && OptionsType.length > 0 ? (
+                            OptionsType.map((option, index) => {
+                              const isSelected = option.isCorrect;
+                              return (
+                                <Box
+                                  key={index}
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    mb: 2,
+                                    gap: 1,
+                                  }}
+                                >
+                                  <Typography
+                                    variant="body1"
+                                    sx={{ width: "80px" }}
+                                  >
+                                    Option {index + 1} *
+                                  </Typography>
+
+                                  <CustomInput
+                                    label=""
+                                    value={option.text}
+                                    onChange={(val) =>
+                                      handleOptionChange(index, val)
+                                    }
+                                  />
+
+                                  <Box
+                                    sx={{
+                                      backgroundColor: isSelected
+                                        ? "#4CAF50"
+                                        : "#D3D3D3",
+                                      borderRadius: "50%",
+                                      width: 30,
+                                      height: 30,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      cursor: "pointer",
+                                      boxShadow: isSelected
+                                        ? "0px 0px 5px rgba(0, 128, 0, 0.5)"
+                                        : "0px 0px 5px rgba(0, 0, 0, 0.2)",
+                                      transition: "all 0.3s ease-in-out",
+                                    }}
+                                    onClick={() =>
+                                      handleAnswerSelections(index)
+                                    }
+                                  >
+                                    <CheckCircleOutlineIcon
+                                      sx={{
+                                        color: isSelected ? "white" : "black",
+                                        fontSize: 24,
+                                      }}
+                                    />
+                                  </Box>
+
+                                  <Box sx={{ display: "flex", gap: 1 }}>
+                                    {OptionsType.length > 1 && (
+                                      <Button
+                                        variant="contained"
+                                        sx={{
+                                          backgroundColor:
+                                            ColorCode.ButtonColorCode
+                                              .ButtonColor,
+                                          color:
+                                            ColorCode.ButtonColorCode.color,
+                                          minWidth: 40,
+                                          "&:hover": {
+                                            backgroundColor:
+                                              ColorCode.ButtonColorCode
+                                                .ButtonColor,
+                                          },
+                                        }}
+                                        onClick={() => handleDeleteRow(index)}
+                                      >
+                                        <DeleteOutlineIcon
+                                          sx={{ fontSize: 20 }}
+                                        />
+                                      </Button>
+                                    )}
+
+                                    {index === OptionsType.length - 1 && (
+                                      <Button
+                                        variant="contained"
+                                        sx={{
+                                          backgroundColor:
+                                            ColorCode.ButtonColorCode
+                                              .ButtonColor,
+                                          color:
+                                            ColorCode.ButtonColorCode.color,
+                                          minWidth: 40,
+                                          "&:hover": {
+                                            backgroundColor:
+                                              ColorCode.ButtonColorCode
+                                                .ButtonColor,
+                                          },
+                                        }}
+                                        onClick={handleAddRow}
+                                      >
+                                        <AddIcon />
+                                      </Button>
+                                    )}
+                                  </Box>
+                                </Box>
+                              );
+                            })
+                          ) : (
+                            <Typography color="error">
+                              No options available.
+                            </Typography>
+                          )}
+
+                          {ValidationError.OptionsType && (
+                            <Typography color="error">
+                              Please select at least one correct answer.
+                            </Typography>
+                          )}
+                        </Box>
+                      ) : props?.stateValue?.StatusId ===
+                        StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
+                        <Box sx={{ mb: 2 }}>
+                          <RichTextEditor
+                            label="Expected Answer"
+                            value={InterviewQuesData.ExpectedAnswer}
+                            onChange={(val) =>
+                              handleRichTextEditor(val, "ExpectedAnswer")
+                            }
+                            mandatory={true}
+                            error={ValidationError.ExpectedAnswer}
+                          />
+                        </Box>
+                      ) : null}
+
+                      {props?.stateValue?.StatusId ===
+                        StatusId.PendingwithLMcreateDisqualificationQuestion && (
+                        <Box sx={{ mb: 2 }}>
+                          <CustomRadioGroup
+                            label="Disqualification Question?"
+                            value={InterviewQuesData?.Disqualification ?? ""}
+                            options={isDisqualificationOption}
+                            error={ValidationError.Disqualification}
+                            mandatory={true}
+                            onChange={(value) =>
+                              handleIsDisqualificationChange(
+                                "Disqualification",
+                                value
+                              )
+                            }
+                          />
+                        </Box>
+                      )}
+                    </>
+
+                    <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+                      <Button
+                        variant="contained"
+                        // startIcon={<AddIcon />}
+                        onClick={handleSaveQuestion}
+                        sx={{
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          color: "white",
+                          "&:hover": {
+                            backgroundColor:
+                              ColorCode.ButtonColorCode.ButtonColor,
+                          },
+                          textTransform: "none",
+                          borderRadius: "4px",
+                          px: 3,
+                        }}
+                      >
+                        {editingQuestionIndex !== null
+                          ? ButtonAction.Update
+                          : ButtonAction.Save}
+                      </Button>
+                      <Button
+                        variant="contained"
+                        // startIcon={<AddIcon />}
+                        onClick={() => setShowCreateQuestionBox(false)}
+                        sx={{
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          color: "white",
+                          "&:hover": {
+                            backgroundColor:
+                              ColorCode.ButtonColorCode.ButtonColor,
+                          },
+                          textTransform: "none",
+                          borderRadius: "4px",
+                          px: 3,
+                          marginLeft: "2%",
+                        }}
+                      >
+                        {ButtonAction.close}
+                      </Button>
+                    </Box>
                   </Box>
-                </Box>
+                )}
               </Box>
             </Box>
           </CardContent>
@@ -1532,7 +1933,22 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   async function Submit_fn() {
     setIsLoading(true);
-    let QuestionValue: UpsertQuestions[] = questions.map((item) => {
+    const lastResueId =
+      resuequestionnaire.length > 0
+        ? Math.max(...resuequestionnaire.map((item) => item.id))
+        : 0;
+
+    const adjustedQuestions = questions.map((item, idx) => ({
+      ...item,
+      id: lastResueId + idx + 1,
+      questionNumber: {
+        key: lastResueId + idx + 1,
+        text: `Question ${lastResueId + idx + 1}`,
+      },
+    }));
+
+    const QuestionairesData = [...resuequestionnaire, ...adjustedQuestions];
+    let QuestionValue: UpsertQuestions[] = QuestionairesData.map((item) => {
       const category = getMasterData.category.find(
         (cat) => cat.text === InterviewQuesData.Catogry
       );
@@ -1543,10 +1959,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
       if (category?.text === CatogryOptionCode.CareerPortalCandidate) {
         OptionsValue =
-          item.options?.map((opt) => ({
+          item.options?.map((opt, index) => ({
             optionEn: opt.text,
             optionFr: opt.text,
-            sequence: opt.key,
+            sequence: index + 1,
           })) || [];
 
         answerValue =
@@ -1577,21 +1993,22 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           },
         ];
       }
+      const scopeId =
+        item?.Type === DataType.Existing
+          ? String(item.discipline)
+          : String(item.discipline.key);
+      const questionTypeId =
+        item?.Type === DataType.Existing
+          ? String(item.questionType)
+          : String(item.questionType.key);
 
       return {
         questionEn: item.question,
         questionFr: item.question,
-        scopeId: String(item.discipline.key),
+        scopeId: scopeId,
         categoryId: String(category?.key),
         // questionTypeId: String(item.questionType.key),
-        questionTypeId:
-          InterviewQuesData.Catogry ===
-            CatogryOptionCode.CareerPortalCandidate ||
-          (InterviewQuesData.Catogry === CatogryOptionCode.InterviewPanel &&
-            item.questionType?.text === "Custom Answer")
-            ? String(item.questionType.key)
-            : "",
-
+        questionTypeId: questionTypeId,
         isQualifier:
           InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
             ? 1
@@ -1663,6 +2080,65 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     setIsLoading(false);
   }
 
+  const handleCheckbox = (id: number, value: boolean) => {
+    setQuestionnaire((prevState) =>
+      questionnaire.map((q) => (q.id === id ? { ...q, Checked: value } : q))
+    );
+  };
+
+  function Reusequestion_fn() {
+    console.log("Reusequestion_fn called", questionnaire);
+    setViewQA(false);
+    const SelectedQuestions = questionnaire.filter((item) => item.Checked);
+    const ExistingQuestion = SelectedQuestions.map((item) => ({
+      ...item,
+      Type: DataType.Existing,
+    }));
+    const lastResueId =
+      resuequestionnaire.length > 0
+        ? Math.max(...resuequestionnaire.map((item) => item.id))
+        : 0;
+
+    const adjustedQuestions = ExistingQuestion.map((item, idx) => ({
+      ...item,
+      id: lastResueId + idx + 1,
+      questionNumber: {
+        key: lastResueId + idx + 1,
+        text: `Question ${lastResueId + idx + 1}`,
+      },
+    }));
+    const filteredResueQuestionnaire = resuequestionnaire.filter(
+      (item) => item.Type !== DataType.Existing
+    );
+
+    const QuestionairesData = [
+      ...filteredResueQuestionnaire,
+      ...adjustedQuestions,
+    ];
+    const sortedQuestionList = QuestionairesData.sort((a, b) => {
+      if (a.Type === DataType.Existing && b.Type !== DataType.Existing)
+        return -1;
+      if (a.Type !== DataType.Existing && b.Type === DataType.Existing)
+        return 1;
+      return 0;
+    });
+    const questionList: ViewQuestion[] = sortedQuestionList.map(
+      (item, index) => {
+        const incrementedIndex = index + 1;
+        return {
+          ...item,
+          id: index,
+          Checked: item.Checked,
+          header: "Q" + incrementedIndex,
+          HeaderLabel: `Question ${incrementedIndex}`,
+          Type: item.Type,
+        };
+      }
+    );
+
+    setresuequestionnaire(questionList);
+  }
+
   return (
     <>
       <CustomLoader isLoading={isLoading}>
@@ -1683,7 +2159,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                     });
                   },
                 },
-                ...(questions.length > 0
+                ...(resuequestionnaire.length > 0
                   ? [
                       {
                         label: "Submit",
@@ -1704,6 +2180,62 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           {...alertProps}
           onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
         />
+      )}
+
+      {viewQA && (
+        <>
+          <CustomDialogbox
+            Style={{ width: "40vw", height: "28vw" }}
+            visible={viewQA}
+            children={
+              <ViewQuestionCheckbox
+                questionnaire={questionnaire}
+                handleCheckbox={(id, value) => handleCheckbox(id, value)}
+              />
+            }
+            onClose={() => setViewQA(false)}
+            header={
+              <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+                <LabelHeaderComponents
+                  value={"Mining" + InterviewQuesData?.Disciplines.text}
+                />
+              </div>
+            }
+            footer={
+              <div
+                className="ms-Grid-row"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: "10px 0",
+                  gap: "33px",
+                }}
+              >
+                <ReuseButton
+                  label="Close"
+                  onClick={() => setViewQA(false)}
+                  Style={{
+                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                    color: "white",
+                    width: "50%",
+                  }}
+                />
+
+                <ReuseButton
+                  label="Reuse"
+                  onClick={async () => {
+                    Reusequestion_fn();
+                  }}
+                  Style={{
+                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                    color: "white",
+                    width: "50%",
+                  }}
+                />
+              </div>
+            }
+          />
+        </>
       )}
     </>
   );
