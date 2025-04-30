@@ -1,56 +1,42 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
-import { getVRRDetails, InterviewServices } from "../../Services/ServiceExport";
+import { GetPortalJobsService, InterviewServices } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
   HRMSAlertOptions,
   ListNames,
   RecuritmentHRMsg,
+  // ListNames,
   RoleID,
   StatusId,
   TabName,
+  WorkflowAction,
+  workflowStatusApi,
+  // WorkflowAction,
+  // workflowStatusApi,
 } from "../../utilities/Config";
-
 import BreadcrumbsComponent, {
   type TabNameData,
 } from "../../components/CustomBreadcrumps";
-import { AssignPositionDialog } from "./AssignPositionDialog";
-import { AssignPositionID } from "../../Services/InterviewProcess/IInterviewProcessService";
-import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import {
   alertPropsData,
   AutoCompleteItem,
-  SelectedCandidateData,
 } from "../../Models/Screens";
-import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
-import SPServices from "../../Services/SPService/SPServices";
-
+import CandidateDataTable from "../../components/CandidateDataTable";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
 const CandidateList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
-  const [showAssignModal, setShowAssignModal] = React.useState(false);
-
-  const [selectedCandidate, setSelectedCandidate] =
-    React.useState<SelectedCandidateData>({
-      FullName: "",
-      PositionTitle: "",
-      JobCode: "",
-      Comments: "",
-    });
-
-  const [candidateID, setCandidateID] = React.useState<number>(0);
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
-
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
     Message: "",
     Type: "",
     ButtonAction: null,
     visible: false,
   });
-
   const [positionData, setPositionData] = React.useState<AutoCompleteItem[]>(
     []
   );
@@ -81,8 +67,10 @@ const CandidateList = (props: any) => {
 
     InterviewServices.GetHRMSPositionDetails(filterConditions, Conditions)
       .then((response) => {
+        console.log("Fetched position data:", response.data); 
         if (response && response.data) {
           setPositionData(response.data);
+          console.log("Fetched position data:", positionData); 
         } else {
           setPositionData([]);
         }
@@ -92,7 +80,11 @@ const CandidateList = (props: any) => {
         setPositionData([]);
       });
   };
-
+  React.useEffect(() => {
+    if (props.stateValue.JobCodeId && props.stateValue.Department) {
+      fetchPositionData();
+    }
+  }, [props.stateValue.JobCodeId, props.stateValue.Department]);
   const fetchCandidateData = async () => {
     setIsLoading(true);
     try {
@@ -110,6 +102,9 @@ const CandidateList = (props: any) => {
         FilterValue: [
           StatusId.PendingwithHODtoselectthecandidate,
           StatusId.Selected,
+          StatusId.OnHoldbyHOD,
+          StatusId.RejectedbyHOD,
+          StatusId.PendingwithHODtoAssignPositionID,
         ],
       });
       filterConditions.push({
@@ -123,7 +118,7 @@ const CandidateList = (props: any) => {
           Conditions,
           props.EmployeeList
         );
-
+        console.log(response);
       if (response?.status === 200 && Array.isArray(response.data)) {
         setCandidateData(response.data);
       } else {
@@ -157,6 +152,8 @@ const CandidateList = (props: any) => {
                 PreviousTabName: previousTabName,
                 TabName: TabName,
                 ButtonAction,
+                positionData,
+                InterviewLevel: rowData?.InterviewLevel,
               },
             });
           }
@@ -164,21 +161,6 @@ const CandidateList = (props: any) => {
         break;
     }
   }
-
-  const handleAssignClick = async (rowData: any) => {
-    setIsLoading(true);
-    try {
-      await fetchPositionData();
-      setCandidateID(rowData.ID);
-      setSelectedCandidate({ ...rowData });
-      setShowAssignModal(true);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   React.useEffect(() => {
     if (props.stateValue.StatusId === StatusId.Selected) {
       void fetchPositionData();
@@ -201,6 +183,7 @@ const CandidateList = (props: any) => {
     { field: "PositionTitle", header: "Position Title", sortable: true },
     { field: "JobGrade", header: "Job Grade", sortable: true },
     { field: "GPA", header: "GPA", sortable: true },
+    { field: "InterviewLevel", header: "InterviewLevels", sortable: true },
     {
       field: "Status",
       header: "Status",
@@ -224,38 +207,50 @@ const CandidateList = (props: any) => {
               gap: "5px",
             }}
           >
-            {rowData.Status === "Selected" ? (
+            {(
+              rowData.StatusId === StatusId.Selected ||
+              rowData.StatusId === StatusId.OnHoldbyHOD ||
+              rowData.StatusId === StatusId.PendingwithHODtoselectthecandidate||
+              rowData.StatusId === StatusId.PendingwithHODtoAssignPositionID
+            ) && (
               <img
-                src={require("../../assets/AssignPositionID.svg")}
-                alt="Stamp Icon"
-                onClick={() => {
-                  void handleAssignClick(rowData);
-                }}
+                src={require("../../assets/Editbutton.svg")}
+                alt="Edit Icon"
+                onClick={() =>
+                  handleRedirectView(
+                    rowData,
+                    tab,
+                    TabName,
+                    ButtonAction,
+                    previousTabName
+                  )
+                }
                 style={{
                   width: "70%",
                   height: "60%",
+                  cursor: "pointer",
                 }}
               />
-            ) : (
-              <>
-                <img
-                  src={require("../../assets/Editbutton.svg")}
-                  alt="Stamp Icon"
-                  onClick={() =>
-                    handleRedirectView(
-                      rowData,
-                      tab,
-                      TabName,
-                      ButtonAction,
-                      previousTabName
-                    )
-                  }
-                  style={{
-                    width: "70%",
-                    height: "60%",
-                  }}
-                />
-              </>
+            )}
+            {rowData.StatusId === StatusId.RejectedbyHOD&& (
+              <img
+                src={require("../../assets/Viewicon.svg")}
+                alt="View Icon"
+                onClick={() =>
+                  handleRedirectView(
+                    rowData,
+                    tab,
+                    TabName,
+                    ButtonAction,
+                    previousTabName
+                  )
+                }
+                style={{
+                  width: "70%",
+                  height: "60%",
+                  cursor: "pointer",
+                }}
+              />
             )}
           </div>
         );
@@ -280,7 +275,60 @@ const CandidateList = (props: any) => {
   const onPageChange = (event: any) => {
     setRows(event.rows);
   };
-
+  
+  const handleStatusChange = async (selectedCandidates: any[]) => {
+    let updateSuccess = false;
+  
+    for (const candidate of selectedCandidates) {
+      const rejectionPayload = {
+        workflowStatus: workflowStatusApi.CandidateRejectedIPanel,
+        jobRequestId: Number(candidate.JobRequestID),
+        comments: candidate.Comments || "", // Include comments here
+        actionBy: props.CurrentUserRole,
+      };
+  
+      const actionPayload = {
+        ActionId: WorkflowAction.Reject,
+        Id: candidate.ID,
+        ItemCreated: "Yes",
+        Comments: candidate.Comments || "", // Include comments in the action payload
+      };
+  
+      try {
+        // Update the candidate status with comments
+        await GetPortalJobsService.UpdateCandidateStatus(rejectionPayload);
+  
+        // Update the list item in HRMSRecruitmentCandidatePersonalDetails
+        const response = await InterviewServices.CandidateSeletionApi(
+          actionPayload,
+          ListNames.HRMSRecruitmentCandidatePersonalDetails
+        );
+  
+        if (response.status === 200) {
+          updateSuccess = true;
+        }
+      } catch (err) {
+        console.error(`Error rejecting candidate ID: ${candidate.ID}`, err);
+      }
+    }
+  
+    if (updateSuccess) {
+      setalertProps({
+        Message: RecuritmentHRMsg.PositionIDassigned,
+        Type: HRMSAlertOptions.Success,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+            await fetchCandidateData();
+          }
+        },
+      });
+      setAlertPopupOpen(true);
+    } else {
+      await fetchCandidateData();
+    }
+  };
   const tabs = [
     {
       label: TabName.ViewCandidateList,
@@ -291,7 +339,7 @@ const CandidateList = (props: any) => {
           sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
         >
           <CardContent>
-            <ReviewProfileDatatable
+            <CandidateDataTable
               data={CandidateData}
               columns={columnConfig(
                 "tab1",
@@ -302,7 +350,10 @@ const CandidateList = (props: any) => {
               rows={rows}
               onPageChange={onPageChange}
               handleRefresh={fetchCandidateData}
+              onStatusChange={handleStatusChange} 
             />
+
+
           </CardContent>
         </Card>
       ),
@@ -328,84 +379,6 @@ const CandidateList = (props: any) => {
       }
     }
   }, [activeTab, tabs, props.stateValue, TabNameData]);
-
-  const handleAssignPosition = async (data: {
-    positionId: AutoCompleteItem | null;
-    Reasons: string;
-  }) => {
-    if (!data.positionId) {
-      return;
-    }
-    const positionIdString =
-      typeof data.positionId === "string"
-        ? data.positionId
-        : (data.positionId as any).key || (data.positionId as any).text;
-    if (!positionIdString) {
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const filterConditions = [
-        {
-          FilterKey: "PositionID",
-          Operator: "eq",
-          FilterValue: data.positionId.text,
-        },
-      ];
-
-      const GetPositionID = await getVRRDetails.GetDataInList(
-        ListNames.HRMSPositionIDMaster,
-        filterConditions,
-        "",
-        "*,JobCode/JobCode",
-        "JobCode"
-      );
-      if (!GetPositionID.data || GetPositionID.data.length === 0) {
-        setIsLoading(false);
-        return;
-      }
-      const selectedPosition = GetPositionID.data[0];
-
-      let assignPositionPayload: AssignPositionID = {
-        PositionIDId: selectedPosition.ID,
-        CandidateIDId: candidateID,
-        RecruitmentIDId: props.stateValue.ID,
-      };
-
-      const res = await InterviewServices.AssignPositionID(
-        assignPositionPayload,
-        ListNames.HRMSSelectedCandidateDetailsByHOD
-      );
-
-      if (res.status === 200) {
-        await SPServices.SPUpdateItem({
-          Listname: ListNames.HRMSPositionIDMaster,
-          RequestJSON: { PositionIDStatus: "Recruitment InProgress" },
-          ID: selectedPosition.ID,
-        });
-
-        setalertProps({
-          Message: RecuritmentHRMsg.PositionIDassigned,
-          Type: HRMSAlertOptions.Success,
-          visible: true,
-          ButtonAction: async (userClickedOK: boolean) => {
-            if (userClickedOK) {
-              setShowAssignModal(false);
-              setAlertPopupOpen(false);
-              await fetchCandidateData();
-            }
-          },
-        });
-
-        setAlertPopupOpen(true);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <CustomLoader isLoading={isLoading}>
       <div className="menu-card">
@@ -416,17 +389,12 @@ const CandidateList = (props: any) => {
           onBreadcrumbChange={handleBreadcrumbChange}
         />
       </div>
-      <AssignPositionDialog
-        visible={showAssignModal}
-        onHide={() => setShowAssignModal(false)}
-        candidateData={selectedCandidate}
-        AssignOption={positionData}
-        onAssign={handleAssignPosition}
-      />
+    
       {AlertPopupOpen ? (
         <CustomAlert {...alertProps} onClose={() => setAlertPopupOpen(false)} />
       ) : null}
     </CustomLoader>
+    
   );
 };
 

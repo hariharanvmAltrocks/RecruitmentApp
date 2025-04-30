@@ -18,16 +18,18 @@ export interface CommentsDatas {
   Role: string;
 }
 
-export type ActionUpdate = {
+export interface ActionUpdate {
   ActionId: number;
   Id: number;
-  ItemCreated: string;
-};
+  ItemCreated?: string; // optional if needed
+  ScoreCardLevelItemCreated?: string; // ✅ Add this line
+}
 
 export type AssignPositionID = {
   PositionIDId: number;
   CandidateIDId: number;
   RecruitmentIDId: number;
+  Coomments?: string;
 };
 export type ApiResponse<T> = {
   data: T;
@@ -105,6 +107,60 @@ export type InterviewPanelItem = {
   PanelEmail: string;
 };
 
+export type CandidateDetails = {
+  Position: any;
+  ID: number;
+  BusinessUnitCode: string;
+  DateRequried: string;
+  AreaofWork: string;
+  PositionID: string;
+  Status: string;
+  FirstName: string;
+  LastName: string;
+  MiddleName: string;
+  ExpatriatePosition: string;
+  Location: string;
+  LineManager: string;
+  LineManagerEmail: string;
+  PassportNumber: string;
+  RecuritmentHR: string;
+  LineManagerAction: string;
+  JobCode: string;
+  AssignBy: string;
+  AssignByEmail: string;
+  CandidateID: number;
+  RecruitmentID: number;
+};
+export type CommentsData = {
+  Id: number;
+  Comments?: string;
+};
+
+export type InterviewPanelDetails = {
+  ID?: number;
+  CandidateIDId?: number;
+  Level: string;
+  RoleId: number;
+  Comments: string;
+};
+export interface CandidateLevel2ScoreCard {
+  ID: number;
+  CandidateID: number;
+  CandidateName: string;
+  RoleId: number;
+  RoleTitle: string;
+  Comments: string;
+  Level: string;
+}
+export interface CandidateComment {
+  ID: number;
+  CandidateID: number;
+  CandidateName: string;
+  RoleId: number;
+  RoleTitle: string;
+  Comments: string;
+  Level: string;
+}
 export type IInterviewProcessService = {
   GetInterviewPanelDetails(
     filterConditions: any[]
@@ -137,4 +193,24 @@ export type IInterviewProcessService = {
     filterParam: any,
     filterConditions: any
   ): Promise<ApiResponse<AutoCompleteItem[]>>;
+
+  GetSelectedCandidateDetailsByHOD(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<CandidateDetails[]>>;
+  CandidateSeletionApiData(
+    obj: CommentsData,
+    ListName: string
+  ): Promise<ApiResponse<null>>;
+
+  SubmitCandidateCommentsApi(
+    obj: InterviewPanelDetails,
+    ListName: string
+  ): Promise<ApiResponse<null>>;
+   getCandidateLevel2ScoreCard(
+    filterConditions: any
+  ): Promise<ApiResponse<InterviewPanelDetails[]>>
+ getCandidateLevel1ScoreCard(
+    filterConditions: any,
+  ): Promise<ApiResponse<CandidateComment[]>>
 };

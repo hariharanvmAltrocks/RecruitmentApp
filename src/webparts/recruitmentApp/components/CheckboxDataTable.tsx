@@ -51,21 +51,20 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   MasterData,
 }) => {
   const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
-  // const [first, setFirst] = React.useState<number>(0);
-  // const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  // const [assignbtnVisible, setAssignbtnVisible] = React.useState<boolean>(false);
   const [dashboardSearch, setDashboardSearch] = React.useState<any>({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
   const [FilterData, setFilterData] = React.useState<FilterData>({
     Department: { key: 0, text: "" },
     BusinessUnitCode: { key: 0, text: "" },
-    BusinessUnitName: { key: 0, text: "" },
+    JobCode: { key: 0, text: "" },
     DepartmentOption: [],
     BusinessUnitCodeOption: [],
-    BusinessUnitNameOption: [],
+    JobCodeOption: [],
+    BusinessUnitNameOption: [], // Can be removed if not used elsewhere
+    BusinessUnitName: { key: 0, text: "" }, // Can be removed if not used elsewhere
   });
-
+ const [pagination, setPagination] = React.useState({ first: 0, rows: rows });
   React.useEffect(() => {
     setFilteredItems(data);
   }, [data]);
@@ -79,16 +78,11 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     });
   };
 
-  // const onSelectionChange = (event: any) => {
-  //   const value = event.value;
-  //   console.log(value);
-  // };
-
   const search_fn = (field: string, item: AutoCompleteItem) => {
     let filtered = data.filter((i) => {
       if (field === "Department") return i.Department === item.text;
       if (field === "BusinessUnitCode") return i.BusinessUnitCode === item.text;
-      if (field === "BusinessUnitName") return i.BusinessUnitCode === item.key;
+      if (field === "JobCode") return i.JobCode === item.text;
       return false;
     });
 
@@ -101,49 +95,93 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   ) => {
     setFilterData((prev) => ({
       ...prev,
-      [field]: item,
+      [field]: item ?? { key: 0, text: "" },
     }));
-
-    if (item) {
-      search_fn(field, item);
+    if (!item) {
+      if (field === "JobCode") {
+        setFilterData((prev) => ({
+          ...prev,
+          JobCode: { key: 0, text: "" },
+        }));
+        setFilteredItems(data.filter((row) => {
+          return (
+            (!FilterData.Department.text || row.Department === FilterData.Department.text) &&
+            (!FilterData.BusinessUnitCode.text || row.BusinessUnitCode === FilterData.BusinessUnitCode.text)
+          );
+        }));
+      } else if (field === "BusinessUnitCode") {
+        setFilterData((prev) => ({
+          ...prev,
+          BusinessUnitCode: { key: 0, text: "" },
+          JobCodeOption: [], 
+          JobCode: { key: 0, text: "" },
+        }));
+        setFilteredItems(data.filter((row) => {
+          return (
+            (!FilterData.Department.text || row.Department === FilterData.Department.text)
+          );
+        }));
+      } else if (field === "Department") {
+        setFilterData((prev) => ({
+          ...prev,
+          Department: { key: 0, text: "" },
+          BusinessUnitCodeOption: [],
+          JobCodeOption: [],
+          BusinessUnitCode: { key: 0, text: "" },
+          JobCode: { key: 0, text: "" },
+        }));
+        setFilteredItems(data); 
+      }
+      return;
     }
+    search_fn(field, item);
+  
     if (field === "Department") {
-      const DepatmentToBu = MasterData?.BuCodeToDepartmentMappingList.filter(
-        (data: any) => data.DepartmentName === item?.text
-      );
-
-      const DepatrmentOption: AutoCompleteItem[] = DepatmentToBu.map(
-        (item: { key: any; text: any }) => ({
-          key: item.key,
-          text: item.text,
-        })
-      );
+      const departmentToBU = data.filter((row) => row.Department === item?.text);
+      const businessUnitOptions: AutoCompleteItem[] = Array.from(
+        new Set(departmentToBU.map((row) => row.BusinessUnitCode))
+      ).map((buCode) => ({
+        key: buCode,
+        text: buCode,
+      }));
+  
+      const jobCodeOptions: AutoCompleteItem[] = Array.from(
+        new Set(departmentToBU.map((row) => row.JobCode))
+      ).map((jobCode) => ({
+        key: jobCode,
+        text: jobCode,
+      }));
+  
       setFilterData((prev) => ({
         ...prev,
-        BusinessUnitCodeOption: DepatrmentOption,
+        BusinessUnitCodeOption: businessUnitOptions,
+        JobCodeOption: jobCodeOptions,
+        BusinessUnitCode: { key: 0, text: "" },
+        JobCode: { key: 0, text: "" },
       }));
     }
+  
     if (field === "BusinessUnitCode") {
-      const BUCodeTOBUName = MasterData?.BusinessUnitCodeAllColumn.filter(
-        (data: any) => data.text === item?.text
+      const buToJobCode = filteredItems.filter(
+        (row) => row.BusinessUnitCode === item?.text
       );
-
-      const BUNameOption: AutoCompleteItem[] = BUCodeTOBUName.map(
-        (item: { Name: any; key: any; text: any }) => ({
-          key: item.text,
-          text: item.Name,
-        })
-      );
+  
+      const jobCodeOptions: AutoCompleteItem[] = Array.from(
+        new Set(buToJobCode.map((row) => row.JobCode))
+      ).map((jobCode) => ({
+        key: jobCode,
+        text: jobCode,
+      }));
+  
       setFilterData((prev) => ({
         ...prev,
-        BusinessUnitNameOption: BUNameOption,
+        JobCodeOption: jobCodeOptions,
+        JobCode: { key: 0, text: "" },
       }));
     }
   };
-
   return (
     <>
-      {/* <CustomLoader isLoading={isLoading}> */}
       <div>
         <div className="ms-Grid-row">
           <div
@@ -213,37 +251,38 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           className="ms_Grid-row"
           style={{ marginLeft: "5px", marginRight: "-12%" }}
         >
-          <div className="ms-Grid-col ms-lg3">
-            <CustomAutoComplete
-              label="Department"
-              options={MasterData?.Department ?? []}
-              value={FilterData.Department}
-              disabled={false}
-              // mandatory={true}
-              onChange={(item) => handleAutoComplete("Department", item)}
-            />
-          </div>
+           <div className="ms-Grid-col ms-lg3">
+          <CustomAutoComplete
+            label="Department"
+            options={Array.from(
+              new Set(data.map((row) => row.Department))
+            ).map((department) => ({
+              key: department,
+              text: department,
+            }))}
+            value={FilterData.Department}
+            disabled={false}
+            onChange={(item) => handleAutoComplete("Department", item)}
+          />
+        </div>
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
               label="Business Unit Code"
               options={FilterData.BusinessUnitCodeOption ?? []}
               value={FilterData.BusinessUnitCode}
               disabled={false}
-              // mandatory={true}
               onChange={(item) => handleAutoComplete("BusinessUnitCode", item)}
             />
           </div>
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
-              label="Business Unit Name"
-              options={FilterData.BusinessUnitNameOption ?? []}
-              value={FilterData.BusinessUnitName}
+              label="Job Code"
+              options={MasterData?.JobCode ?? []}
+              value={FilterData.JobCode}
               disabled={false}
-              // mandatory={true}
-              onChange={(item) => handleAutoComplete("BusinessUnitName", item)}
+              onChange={(item) => handleAutoComplete("JobCode", item)}
             />
           </div>
-
           <div className="ms-Grid-col ms-lg2" style={{ marginTop: "43px" }}>
             <ReuseButton
               label={assignLabel}
@@ -265,18 +304,19 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
         <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
           <div className="ms-Grid-col ms-lg12">
             <DataTable
-             value={filteredItems}
-             // first={first}
-             rows={rows}
-             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-             currentPageReportTemplate="{first} to {last} of {totalRecords}"
-             scrollable
-             // scrollHeight="300px"
-             rowsPerPageOptions={[5, 10, 20]}
-             paginator
-             // onPage={onPageChange}
-             stripedRows
-             filters={dashboardSearch}
+              value={filteredItems}
+                  rows={pagination.rows}
+            first={pagination.first}
+              onPage={(e) => {
+                setPagination({ first: e.first, rows: e.rows });
+                onPageChange(e);
+              }}
+              paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+              currentPageReportTemplate="{first} to {last} of {totalRecords}"
+              scrollable
+              rowsPerPageOptions={[5, 10, 20]}
+              paginator
+              filters={dashboardSearch}
             >
               {columns.map((col) => {
                 if (col.field === "Checkbox") {
@@ -287,34 +327,19 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                         <SignatureCheckbox
                           label={""}
                           checked={selectAll}
-                          // error={validationErrors.Checkboxalidation}
-                          onChange={(value: boolean) =>
-                            onSelectAllChange(value)
-                          }
+                          onChange={(value: boolean) => onSelectAllChange(value)}
                         />
                       )}
                       sortable={false}
-                      body={(rowData: any) => {
-                        return (
-                          <div>
-                            <SignatureCheckbox
-                              label={""}
-                              checked={rowData?.Checked === true}
-                              // error={validationErrors.Checkboxalidation}
-                              onChange={(value: boolean) =>
-                                handleCheckbox(value, rowData)
-                              }
-                            />
-                            {/* <CustomCheckBox
-                              label=""
-                              value={rowData?.Checked === true}
-                              onChange={(e, value: boolean) =>
-                                handleCheckbox(value, rowData)
-                              }
-                            /> */}
-                          </div>
-                        );
-                      }}
+                      body={(rowData: any) => (
+                        <SignatureCheckbox
+                          label={""}
+                          checked={rowData?.Checked === true}
+                          onChange={(value: boolean) =>
+                            handleCheckbox(value, rowData)
+                          }
+                        />
+                      )}
                     />
                   );
                 }
@@ -324,19 +349,15 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                       key={col.field}
                       header={col.header}
                       sortable={false}
-                      body={(rowData: any) => {
-                        return (
-                          <div>
-                            <CustomCheckBox
-                              label=""
-                              value={rowData?.Checked === true}
-                              onChange={(e, value: boolean) =>
-                                handleCheckbox(value, rowData)
-                              }
-                            />
-                          </div>
-                        );
-                      }}
+                      body={(rowData: any) => (
+                        <CustomCheckBox
+                          label=""
+                          value={rowData?.Checked === true}
+                          onChange={(e, value: boolean) =>
+                            handleCheckbox(value, rowData)
+                          }
+                        />
+                      )}
                     />
                   );
                 }
@@ -355,7 +376,6 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           </div>
         </div>
       </div>
-      {/* </CustomLoader> */}
     </>
   );
 };

@@ -55,6 +55,8 @@ export const ListNames = {
   //New Position
   HRMSNewPositionRequest: "HRMSNewPositionRequest",
   HRMSNewPositionRequestPositionDetails: "HRMSNewPositionRequestPositionDetails",
+  HRMSRecruitmentCandidateComments:"HRMSRecruitmentCandidateComments",
+  HRMSCandidateLevel2ScoreCard: "HRMSCandidateLevel2ScoreCard",
 };
 
 export const DocumentLibraray = {
@@ -81,7 +83,13 @@ export const StatusId = {
   Completed: 13,
   PendingwithHRandLMtocreateinterviewQuestion: 124,
   PendingwithLineManagereviewAdv: 125,
-  PendingwithLMcreateDisqualificationQuestion: 126
+  PendingwithLMcreateDisqualificationQuestion: 126,
+  OnHoldbyHOD:123,
+  RejectedbyHOD: 15,
+  PendingwithHODtoselectthecandidateLevel2: 127,
+  PendingwithRecruitmentHRtoassignLevel2InterviewPanel:128,
+  InterviewScheduledforLevel2:129,
+  PendingwithHODtoAssignPositionID:130
 };
 
 export const RoleID = {
@@ -166,6 +174,7 @@ export const WorkflowAction = {
   Submitted: 5,
   Closed: 6,
   ReSubmitted: 7,
+  OnHold: 10,
 };
 
 export const viewLabelcolor = {
@@ -205,7 +214,7 @@ export const RecuritmentHRMsg = {
 
   CandidateSelected: "Candidate Selected",
   CandidateRejected: "Candidate Rejected",
-
+  CandidateOnHold: "Candidate On Hold",
   RecuritmentSubmitMsg: "Submitted Successfully.",
   ApprovedMsg:
     "Advertisement Reviewed Sucessfully. Ready for ONEM Process (Offline).",
@@ -216,7 +225,7 @@ export const RecuritmentHRMsg = {
     "One or more mandatory field are missing.Please do the needful and submit again.",
   RecruitmentErrorMsg: "Please choose the Job Code to assign Recruitment HR.",
   AgenciesErrorMsg: "Please choose the Job Code to Assign Agencies.",
-  PositionIDassigned: "Position ID Assigned Successfully in Selected Candidated.",
+  PositionIDassigned: "Action Performed Sucessfully.",
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
   APIErrorMsg: "Server is temporarily unavailable.",

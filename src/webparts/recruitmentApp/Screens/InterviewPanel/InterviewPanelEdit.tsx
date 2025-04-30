@@ -120,6 +120,7 @@ const InterviewPanelEdit = (props: any) => {
     Comments: "",
     JobGrade: "",
     PanelFullNames: [],
+    InterviewLevels: [],
   });
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -447,8 +448,15 @@ const InterviewPanelEdit = (props: any) => {
         const op = data.data[0];
         const scoreCardData = op.HRMSCandidateScoreCard;
         let panelFullNames: string[] = [];
-
-        if (scoreCardData && scoreCardData.length > 0) {
+  
+        const interviewLevels = Array.from(
+          new Set(
+            (op?.HRMSCandidateScoreCard as { InterviewLevel: any }[])?.map(
+              (item) => item.InterviewLevel
+            )
+          )
+        );
+        if (scoreCardData  && scoreCardData.length > 0) {
           panelFullNames = scoreCardData
             .map((item: { PanelFullName: any }) => item?.PanelFullName)
             .filter((name: string) => name !== null && name !== undefined);
@@ -515,6 +523,7 @@ const InterviewPanelEdit = (props: any) => {
           JobRequestID: op?.JobRequestID,
           JobGrade: op?.JobGrade,
           PanelFullNames: panelFullNames,
+          InterviewLevels: interviewLevels,
         }));
         await fetchRoleProfileData(op.JobCodeId);
         if (questionnaire.length === 0) {
@@ -1063,7 +1072,20 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
-
+                <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Interview Levels"
+                      value={CandidateData.InterviewLevels}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setCandidateData((prevState) => ({
+                          ...prevState,
+                          InterviewLevels: value,
+                        }))
+                      }
+                    />
+                  </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Grade"
