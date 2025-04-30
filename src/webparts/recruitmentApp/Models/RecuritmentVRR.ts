@@ -123,6 +123,7 @@ export type CandidateData = {
 };
 
 export type ScoreCardData = {
+  InterviewLevels?: any;
   CandidateID: number;
   RecruitmentID: number;
   JobCode: string;
@@ -168,6 +169,7 @@ export type ScoreCardData = {
   ExternalAgentName?: string; 
   JobGrade:string;
   PanelFullNames?: string[]; 
+  
 };
 
 export type QualificationValue = {

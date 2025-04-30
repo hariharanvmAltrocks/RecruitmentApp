@@ -117,6 +117,7 @@ const InterviewPanelEdit = (props: any) => {
     Comments: "",
     JobGrade: "",
     PanelFullNames: [],
+    InterviewLevels: [],
   });
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -420,6 +421,13 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
         const scoreCardData = op.HRMSCandidateScoreCard;
         let panelFullNames: string[] = [];
   
+        const interviewLevels = Array.from(
+          new Set(
+            (op?.HRMSCandidateScoreCard as { InterviewLevel: any }[])?.map(
+              (item) => item.InterviewLevel
+            )
+          )
+        );
         if (scoreCardData  && scoreCardData.length > 0) {
           panelFullNames = scoreCardData
             .map((item: { PanelFullName: any; }) => item?.PanelFullName)
@@ -487,6 +495,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
           JobRequestID: op?.JobRequestID,
           JobGrade:   op?.JobGrade,
           PanelFullNames: panelFullNames,
+          InterviewLevels: interviewLevels,
         }));
         await fetchRoleProfileData(op.JobCodeId);
         if (questionnaire.length === 0) {
@@ -1036,7 +1045,20 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
                     }
                   />
                 </div>
-                
+                <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Interview Levels"
+                      value={CandidateData.InterviewLevels}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setCandidateData((prevState) => ({
+                          ...prevState,
+                          InterviewLevels: value,
+                        }))
+                      }
+                    />
+                  </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Grade"
