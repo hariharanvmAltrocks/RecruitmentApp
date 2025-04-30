@@ -172,7 +172,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   const selectedCategory =
     InterviewQuesData.Catogry || CatogryOptionCode.InterviewPanel;
-
   const handleCategoryChange = (val: string) => {
     setInterviewQuesData((prev) => ({
       ...prev,
@@ -2197,7 +2196,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             header={
               <div className="ms-Grid-row" style={{ textAlign: "center" }}>
                 <LabelHeaderComponents
-                  value={"Mining" + InterviewQuesData?.Disciplines.text}
+                  value={"Disciplines" + InterviewQuesData?.Disciplines.text}
                 />
               </div>
             }

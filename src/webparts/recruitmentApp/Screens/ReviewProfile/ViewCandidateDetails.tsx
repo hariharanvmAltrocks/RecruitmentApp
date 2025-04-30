@@ -396,7 +396,7 @@ const ViewCandidateDetails = (props: any) => {
     setLevel2Date(
       props.stateValue?.initialTab === TabName.AssignInterviewPanel &&
         (props.stateValue?.StatusId ===
-          StatusId.PendingwithRecruitmentHRassignLevelInterviewPanel ||
+          StatusId.PendingwithHODtoselectthecandidateLevel2 ||
           props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2)
         ? true
         : false
@@ -1301,7 +1301,7 @@ const ViewCandidateDetails = (props: any) => {
           if (
             props.stateValue?.initialTab === TabName.AssignInterviewPanel &&
             props.stateValue?.StatusId ===
-              StatusId.PendingwithRecruitmentHRassignLevelInterviewPanel
+              StatusId.PendingwithHODtoselectthecandidateLevel2
           ) {
             obj.ActionId = WorkflowAction.Approved;
           }

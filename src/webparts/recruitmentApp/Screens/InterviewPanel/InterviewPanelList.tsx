@@ -20,6 +20,7 @@ import { alertPropsData } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 
 const InterviewPanelList = (props: any) => {
+  console.log("props", props);
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
 
@@ -32,71 +33,124 @@ const InterviewPanelList = (props: any) => {
     visible: false,
   });
 
+  // function handleRedirectView(
+  //   rowData: any,
+  //   tab: string,
+  //   TabName: string,
+  //   ButtonAction: string
+  // ) {
+  //   if (tab === "tab1") {
+  //     if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+  //       props.navigation(
+  //         "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit",
+  //         {
+  //           state: {
+  //             ID: rowData?.ID,
+  //             tab,
+  //             StatusId: rowData?.StatusId,
+  //             Status: rowData?.Status,
+  //             TabName: TabName,
+  //             ButtonAction,
+  //           },
+  //         }
+  //       );
+  //     } else if (props.CurrentRoleID === RoleID.HOD) {
+  //       props.navigation(
+  //         "/RecurimentProcess/InterviewPanelList/InterviewPanelEdit",
+  //         {
+  //           state: {
+  //             ID: rowData?.ID,
+  //             tab,
+  //             StatusId: rowData?.StatusId,
+  //             Status: rowData?.Status,
+  //             TabName: TabName,
+  //             ButtonAction,
+  //           },
+  //         }
+  //       );
+  //     } else if (props.CurrentRoleID === RoleID.LineManager) {
+  //       props.navigation(
+  //         "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit",
+  //         {
+  //           state: {
+  //             ID: rowData?.ID,
+  //             tab,
+  //             StatusId: rowData?.StatusId,
+  //             Status: rowData?.Status,
+  //             TabName: TabName,
+  //             ButtonAction,
+  //           },
+  //         }
+  //       );
+  //     } else {
+  //       props.navigation("InterviewPanelList/InterviewPanelEdit", {
+  //         state: {
+  //           ID: rowData?.ID,
+  //           tab,
+  //           StatusId: rowData?.StatusId,
+  //           Status: rowData?.Status,
+  //           TabName: TabName,
+  //           ButtonAction,
+  //         },
+  //       });
+  //       props.navigation("/InterviewPanelList");
+  //     }
+  //   }
+  // }
+
   function handleRedirectView(
     rowData: any,
     tab: string,
     TabName: string,
     ButtonAction: string
   ) {
-    if (tab === "tab1") {
-      if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-        props.navigation(
-          "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit",
-          {
-            state: {
-              ID: rowData?.ID,
-              tab,
-              StatusId: rowData?.StatusId,
-              Status: rowData?.Status,
-              TabName: TabName,
-              ButtonAction,
-            },
-          }
-        );
-      } else if (props.CurrentRoleID === RoleID.HOD) {
-        props.navigation(
-          "/RecurimentProcess/InterviewPanelList/InterviewPanelEdit",
-          {
-            state: {
-              ID: rowData?.ID,
-              tab,
-              StatusId: rowData?.StatusId,
-              Status: rowData?.Status,
-              TabName: TabName,
-              ButtonAction,
-            },
-          }
-        );
-      } else if (props.CurrentRoleID === RoleID.LineManager) {
-        props.navigation(
-          "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit",
-          {
-            state: {
-              ID: rowData?.ID,
-              tab,
-              StatusId: rowData?.StatusId,
-              Status: rowData?.Status,
-              TabName: TabName,
-              ButtonAction,
-            },
-          }
-        );
-      } else {
-        props.navigation("InterviewPanelList/InterviewPanelEdit", {
-          state: {
-            ID: rowData?.ID,
-            tab,
-            StatusId: rowData?.StatusId,
-            Status: rowData?.Status,
-            TabName: TabName,
-            ButtonAction,
-          },
-        });
-        props.navigation("/InterviewPanelList");
-      }
+    console.log("rowData", rowData);
+    console.log("tab", tab);
+    console.log("TabName", TabName);
+    console.log("ButtonAction", ButtonAction);
+
+    debugger
+    if (tab !== "tab1") return;
+  
+    const statusId = rowData?.StatusId;
+    const { CurrentRoleID } = props;
+  
+    let navigationPath = "";
+  
+    if (
+      (statusId === StatusId.InterviewScheduled ||
+       statusId === StatusId.InterviewScheduledforLevel2) &&
+      (CurrentRoleID === RoleID.RecruitmentHR ||
+       CurrentRoleID === RoleID.LineManager ||
+       CurrentRoleID === RoleID.HOD)
+    ) {
+      navigationPath = "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit";
+    }else if (
+      statusId === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel &&
+      (CurrentRoleID === RoleID.HOD ||
+       CurrentRoleID === RoleID.LineManager ||
+       CurrentRoleID === RoleID.RecruitmentHR)
+    ) {
+      navigationPath = "/RecurimentProcess/HodViewScorecard";
+    }
+  
+    if (navigationPath) {
+      props.navigation(navigationPath, {
+        state: {
+          ID: rowData?.ID,
+          tab,
+          StatusId: statusId,
+          Status: rowData?.Status,
+          TabName,
+          ButtonAction,
+        },
+      });
+    } else {
+      // fallback (optional)
+      console.warn("No matching navigation rule for role & status.");
     }
   }
-
+  
   function handleAlert() {
     let CancelAlert = {
       Message: RecuritmentHRMsg.InterviewScoredAlready,
@@ -134,7 +188,7 @@ const InterviewPanelList = (props: any) => {
       header: "JobGrade",
       sortable: true,
     },
-
+    { field: "InterviewLevel", header: "InterviewLevels", sortable: true },
     {
       field: "Status",
       header: "Status",
@@ -229,7 +283,6 @@ const InterviewPanelList = (props: any) => {
 
   const fetchCandidateData = async (CurrentUserID: any) => {
     setIsLoading(true);
-
     try {
       const interviewPanelResponse =
         await InterviewServices.GetInterviewPanelDetails([
@@ -262,8 +315,12 @@ const InterviewPanelList = (props: any) => {
       let RecuritmentConditions = "and";
       filterConditionsRecuritment.push({
         FilterKey: "StatusId",
-        Operator: "eq",
-        FilterValue: StatusId.InterviewScheduled,
+        Operator: "in", 
+        FilterValue: [
+          StatusId.InterviewScheduled,
+          StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel, 
+          StatusId.InterviewScheduledforLevel2
+        ],
       });
       filterConditionsRecuritment.push({
         FilterKey: "ItemCreated",
@@ -277,9 +334,10 @@ const InterviewPanelList = (props: any) => {
       });
 
       const statusResponse =
-        await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
+        await InterviewServices.GetCombinedCandidatePositionDetails(
           filterConditionsRecuritment,
-          RecuritmentConditions
+          RecuritmentConditions,
+          props.EmployeeList
         );
 
       const candidateNames = statusResponse.data.map((candidate: any) => ({
@@ -292,6 +350,8 @@ const InterviewPanelList = (props: any) => {
         PositionTitle: candidate.PositionTitle || "",
         JobGrade: candidate.JobGrade || "",
         Status: candidate.Status || "",
+        StatusId: candidate.StatusId || "",
+        InterviewLevel: candidate.InterviewLevel || "",
       }));
 
       setCandidateData(candidateNames);
@@ -300,7 +360,8 @@ const InterviewPanelList = (props: any) => {
     } finally {
       setIsLoading(false);
     }
-  };
+};
+
 
   const fetchData = async () => {
     try {

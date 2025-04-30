@@ -302,8 +302,7 @@ const ReviewCandidateList = (props: any) => {
           filterConditionsRecuritment.push({
             FilterKey: "StatusId",
             Operator: "eq",
-            FilterValue:
-              StatusId.PendingwithRecruitmentHRassignLevelInterviewPanel,
+            FilterValue: StatusId.PendingwithHODtoselectthecandidateLevel2,
           });
           filterConditionsRecuritment.push({
             FilterKey: "ItemCreated",

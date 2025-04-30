@@ -66,11 +66,15 @@ function ViewQuestionCheckbox({ questionnaire, handleCheckbox }: FormFields) {
                             display: "inline-block",
                           }}
                           dangerouslySetInnerHTML={{
-                            __html: `${q.question
-                              .replace(/<p>/gi, "")
-                              .replace(/<\/p>/gi, "")
-                              .replace(/<br\s*\/?>/gi, "")
-                              .trim()}`,
+                            __html: `${
+                              q.question
+                                ? q.question
+                                    .replace(/<p>/gi, "")
+                                    .replace(/<\/p>/gi, "")
+                                    .replace(/<br\s*\/?>/gi, "")
+                                    .trim()
+                                : ""
+                            }`,
                           }}
                         />
                       </div>
