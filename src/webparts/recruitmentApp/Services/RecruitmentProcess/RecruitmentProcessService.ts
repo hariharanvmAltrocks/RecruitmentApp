@@ -189,7 +189,7 @@ export default class RecruitmentService implements IRecruitmentService {
               item.DRCGrade = filtered.DRCGrade?.DRCGrade || "";
               item.PatersonGradeId = filtered.PatersonGradeId ?? 0;
               item.PatersonGrade = filtered.PatersonGrade?.PatersonGrade || "";
-              item.JobCodeId = filtered.ApprovedHeadCountInLP;
+              // item.JobCodeId = filtered.ApprovedHeadCountInLP;
               item.NumberOfPersonNeeded = ISBudgetOrUnBudgeted === "Budgeted Position" ? filtered?.ActualPosition : filtered?.AdditionalHeadCountRequried;
             }
           }

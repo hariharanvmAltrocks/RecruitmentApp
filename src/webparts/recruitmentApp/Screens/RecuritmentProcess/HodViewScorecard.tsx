@@ -188,12 +188,10 @@ const HodViewScorecard = (props: any) => {
 
       if (response.status === 200) {
         const data = response.data;
-     
 
         if (data && data.length > 0) {
           const rawData = data[0];
 
-      
           const roleSpecificKnowledge = Array.isArray(
             rawData.RoleSpecificKnowledge
           )
@@ -207,7 +205,6 @@ const HodViewScorecard = (props: any) => {
             (item: { RequiredLevel: any }) => item.RequiredLevel
           );
 
-         
           const technicalSkillsKnowledge = Array.isArray(
             rawData.TechnicalSkillsKnowledge
           )
@@ -228,7 +225,6 @@ const HodViewScorecard = (props: any) => {
             })
           );
 
-        
           const MinQualificationOption = rawData.Qualification
             ? [{ key: 0, text: rawData.Qualification }]
             : [];
@@ -256,7 +252,6 @@ const HodViewScorecard = (props: any) => {
               FullDataResponse: rawData,
             };
 
-       
             return updatedDetails;
           });
         } else {
@@ -264,9 +259,8 @@ const HodViewScorecard = (props: any) => {
             ...prev,
             JobcodeChecked: false,
           }));
-       
         }
-      } 
+      }
     } catch (error) {
       console.error("Error fetching role profile data:", error);
     }
@@ -472,12 +466,10 @@ const HodViewScorecard = (props: any) => {
     )
       .then((CommentsList) => {
         if (CommentsList?.status === 200) {
-        
           const candidateData = CommentsList?.data.filter(
             (candidate: any) => candidate.CandidateID === candidateID
           );
           setCommentsData(candidateData);
-        
         } else {
           setCommentsData([]);
         }
@@ -721,8 +713,6 @@ const HodViewScorecard = (props: any) => {
                     />
                   </div> */}
 
-                
-
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Grade"
@@ -761,7 +751,7 @@ const HodViewScorecard = (props: any) => {
                         padding: "8px",
                         borderRadius: "6px",
                         border: "rgb(243, 242, 241)",
-                        boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px"
+                        boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px",
                       }}
                     >
                       {interviewPanelTitles && interviewPanelTitles.length > 0
@@ -811,7 +801,7 @@ const HodViewScorecard = (props: any) => {
                   >
                     <div>
                       <CustomLabel
-                        value="View Role Purpose"
+                        value="View Job Advertisement"
                         // mandatory={true}
                       />
                       <ReuseButton
@@ -1470,8 +1460,6 @@ const HodViewScorecard = (props: any) => {
         );
         SuccessMessage = RecuritmentHRMsg.CandidateRejected;
         break;
-
-      
 
       default:
         console.error(Action);

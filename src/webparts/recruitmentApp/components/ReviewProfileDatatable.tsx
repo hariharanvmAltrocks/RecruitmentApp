@@ -125,11 +125,18 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
             rows={rows}
             paginator
             rowsPerPageOptions={[5, 10, 20]}
-            paginatorTemplate=" RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+            onPage={(event) => {
+              setFilteredItems(
+                data.slice(event.first, event.first + event.rows)
+              );
+              onPageChange(event);
+            }}
+            paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             stripedRows
             scrollable
             filters={dashboardSearch}
+            onFilter={(e) => setFilteredItems(e.filteredValue || data)}
             style={{ overflow: "hidden" }}
           >
             {columns.map((col) => {

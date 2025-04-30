@@ -1,3 +1,4 @@
+import * as moment from "moment";
 import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, profileJobsComments, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { QuestionItem } from "../../Models/RecuritmentVRR";
 import { DocumentLibraray, ListNames, RoleProfileMaster } from "../../utilities/Config";
@@ -5,7 +6,7 @@ import { getProfileData, postAdveDetails, QuestionnaireApi } from "../ReviewProf
 import { CommonServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
-import { IGetPortalJobs } from "./IGetPortalJobs";
+import { CandidateDetails, IGetPortalJobs } from "./IGetPortalJobs";
 
 export default class GetPortalJobs implements IGetPortalJobs {
   async UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>> {
@@ -77,9 +78,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
       let GetProfileByJobCodeData: GetProfileByJobCode[] = []
       await getProfileData.GetProfileByJobCode(FilterValue).then((res) => {
         GetProfileByJobCodeData = res.data.data.map((item: any) => {
-          // let Createdon = item?.createdOn ? new Date(item.createdOn) : null;
-          // const formattedDate = Createdon ? Createdon.toLocaleDateString() : null;
-          // Createdon = formattedDate ? new Date(formattedDate) : null;
+          let createdon = item?.createdOn ? new Date(item.createdOn) : null
           return {
             CandidateID: item?.jobRequestId,
             ApplicantName: item?.applicantName,
@@ -87,7 +86,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
             JobGrade: item?.jobCode,
             Status: item?.workflowStatus?.displayText,
             workflowStatusId: item?.workflowStatusId,
-            createdOn: item.createdOn,
+            createdOn: moment(createdon).format("DD/MM/YYYY HH:mm:ss")
           }
         })
       }
@@ -243,7 +242,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
   }
 
   async InsertCandidateDetailsInList(
-    CandidateDetails: any,
+    CandidateDetails: CandidateDetails,
     InterviewPanel: any
   ): Promise<ApiResponse<any | null>> {
     try {
@@ -416,13 +415,16 @@ export default class GetPortalJobs implements IGetPortalJobs {
   async getQuestionnaire(jobCode: string): Promise<ApiResponse<QuestionItem[] | null>> {
     try {
       const response = await QuestionnaireApi.GetQuestionnaire(jobCode);
-      const GetQuestionnaire: QuestionItem[] = response.data.data.map((item: any) => ({
-        id: item.sequence,
-        question: item?.question?.quesContent?.contentEn,
-        answer: item?.question?.questionXAnswers?.[0]?.optContent?.contentEn ?? "",
-        rating: 0,
-        header: "Q" + item.sequence,
-      }));
+      const GetQuestionnaire: QuestionItem[] = response.data.data.map((item: any, index: number) => {
+        const incrementedIndex = index + 1;
+        return {
+          id: incrementedIndex,
+          question: item?.question?.quesContent?.contentEn,
+          answer: item?.question?.questionXAnswers?.[0]?.optContent?.contentEn ?? "",
+          rating: 0,
+          header: "Q" + incrementedIndex,
+        };
+      });
       console.log(response, "GetAllMasterData");
       return {
         data: GetQuestionnaire,

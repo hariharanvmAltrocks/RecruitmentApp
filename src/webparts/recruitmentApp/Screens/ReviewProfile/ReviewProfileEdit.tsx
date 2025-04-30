@@ -12,6 +12,7 @@ import {
   ColorCode,
   DocumentLibraray,
   HRMSAlertOptions,
+  labelName,
   ListNames,
   Notes,
   RecuritmentHRMsg,
@@ -427,7 +428,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
             resetForm();
 
             let approveAlert = {
-              Message: RecuritmentHRMsg.ApprovedMsg,
+              Message: RecuritmentHRMsg.AdvertisementReveiwMsg,
               Type: HRMSAlertOptions.Success,
               visible: true,
               ButtonAction: async (userClickedOK: boolean) => {
@@ -727,7 +728,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
 
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="No of Position Assigned"
+                    label="No of Personnel Required"
                     value={formState.NoofPositionAssigned}
                     disabled={true}
                     error={false}
@@ -821,7 +822,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                   className="ms-Grid-col ms-lg3"
                   style={{ position: "relative", right: "1px" }}
                 >
-                  <CustomLabel value="View Role Purpose" />
+                  <CustomLabel value={labelName.ViewJobAdvetisement} />
                   <ReuseButton
                     Style={{
                       minWidth: "117px",
@@ -876,7 +877,6 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                   />
                 </div>
               </div>
-
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg12">
                   <CustomTextArea
@@ -890,31 +890,30 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                   />
                 </div>
               </div>
-               <div
-                                  className="ms-Grid-row"
-                                  style={{
-                                    margin: "0%",
-                                    marginTop: "1%",
-                                    marginBottom: "-1%",
-                                  }}
-                                >
-                                  <p>
-                                    <span
-                                      style={{
-                                        color: "red",
-                                        marginTop: "8px",
-                                        display: "block",
-                                        fontFamily: "sans-serif",
-              
-                                        fontSize: "13px",
-                                      }}
-                                    >
-                                      Note:- {Notes.ReviewRolePurpose}
-                                    </span>
-                                  </p>
-                                </div>
               <div
-                className="ms-Grid-row">
+                className="ms-Grid-row"
+                style={{
+                  margin: "0%",
+                  marginTop: "1%",
+                  marginBottom: "-1%",
+                }}
+              >
+                <p>
+                  <span
+                    style={{
+                      color: "red",
+                      marginTop: "8px",
+                      display: "block",
+                      fontFamily: "sans-serif",
+
+                      fontSize: "13px",
+                    }}
+                  >
+                    Note:- {Notes.ReviewRolePurpose}
+                  </span>
+                </p>
+              </div>
+              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg12">
                   <SignatureCheckbox
                     label={TabName.ApprovalCheckbox}
@@ -1036,7 +1035,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                   props.CurrentRoleID === RoleID.LineManager && isViewed
                     ? [
                         {
-                          label: "Review",
+                          label: "Reviewed",
                           onClick: async () => {
                             await SaveRecruitment();
                           },

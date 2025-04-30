@@ -28,7 +28,11 @@ import {
   ResponeStatus,
   ColorCode,
 } from "../../utilities/Config";
-import { AdvDetails, QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
+import {
+  AdvDetails,
+  QuestionItem,
+  ScoreCardData,
+} from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
@@ -65,7 +69,6 @@ type ValidationError = {
 };
 
 const InterviewPanelEdit = (props: any) => {
-
   const todaydate = new Date();
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
@@ -161,7 +164,7 @@ const InterviewPanelEdit = (props: any) => {
       IsScoreSheetUploaded: "",
     },
   ]);
- const [advDetails, setAdvDetails] = React.useState<AdvDetails>({
+  const [advDetails, setAdvDetails] = React.useState<AdvDetails>({
     MinQualificationOption: [],
     PrefeQualificationOption: [],
     RoleSpeKnowledgeoption: [],
@@ -186,20 +189,26 @@ const InterviewPanelEdit = (props: any) => {
     AdvertisementAttachement: [],
     JobcodeChecked: false,
   });
-    const [MainComponent, setMainComponent] = React.useState<boolean>(true);
-    const [Preview, setPreview] = React.useState<boolean>(false);
-   
-    
+  const [MainComponent, setMainComponent] = React.useState<boolean>(true);
+  const [Preview, setPreview] = React.useState<boolean>(false);
+
   //Questionaires
   const [questionnaire, setQuestionnaire] = React.useState<QuestionItem[]>([]);
   const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
+  const [ratingErrors, setRatingErrors] = React.useState<
+    Record<number, boolean>
+  >({});
 
   const handleRatingChange = (id: number, value: AutoCompleteItem | null) => {
     setQuestionnaire((prevState) =>
-      prevState.map((q) =>
+      questionnaire.map((q) =>
         q.id === id ? { ...q, rating: value?.key ?? 0 } : q
       )
     );
+    setRatingErrors((prev) => ({
+      ...prev,
+      [id]: false,
+    }));
   };
 
   const ScoreRating = [
@@ -207,195 +216,215 @@ const InterviewPanelEdit = (props: any) => {
     { key: 2, text: "2 - Acceptable" },
     { key: 1, text: "1 - Not Acceptable" },
   ];
-// const fetchRoleProfileData = async (JobCodeID: number) => {
-//     try {
-//       let filterConditions = [
-//         {
-//           FilterKey: "JobCode",
-//           Operator: "eq",
-//           FilterValue: JobCodeID,
-//         },
-//       ];
-//       const response = await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
-//         filterConditions,
-//         ""
-//       );
+  // const fetchRoleProfileData = async (JobCodeID: number) => {
+  //     try {
+  //       let filterConditions = [
+  //         {
+  //           FilterKey: "JobCode",
+  //           Operator: "eq",
+  //           FilterValue: JobCodeID,
+  //         },
+  //       ];
+  //       const response = await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+  //         filterConditions,
+  //         ""
+  //       );
 
-//       if (response.status === 200) {
-//         const data = response.data;
-// console.log("data",data)
-//         if (data && data.length > 0) {
-//           const rawData = data[0];
-//           const roleSpecificKnowledge = Array.isArray(
-//             rawData.RoleSpecificKnowledge
-//           )
-//             ? rawData.RoleSpecificKnowledge
-//             : [];
+  //       if (response.status === 200) {
+  //         const data = response.data;
+  // console.log("data",data)
+  //         if (data && data.length > 0) {
+  //           const rawData = data[0];
+  //           const roleSpecificKnowledge = Array.isArray(
+  //             rawData.RoleSpecificKnowledge
+  //           )
+  //             ? rawData.RoleSpecificKnowledge
+  //             : [];
 
-//           const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
-//             (item: any) => item.RoleSpecificKnowledge
-//           );
-//           const RequiredLevelValues = roleSpecificKnowledge.map(
-//             (item: any) => item.RequiredLevel
-//           );
-//           const technicalSkillsKnowledge = Array.isArray(
-//             rawData.TechnicalSkillsKnowledge
-//           )
-//             ? rawData.TechnicalSkillsKnowledge
-//             : [];
+  //           const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+  //             (item: any) => item.RoleSpecificKnowledge
+  //           );
+  //           const RequiredLevelValues = roleSpecificKnowledge.map(
+  //             (item: any) => item.RequiredLevel
+  //           );
+  //           const technicalSkillsKnowledge = Array.isArray(
+  //             rawData.TechnicalSkillsKnowledge
+  //           )
+  //             ? rawData.TechnicalSkillsKnowledge
+  //             : [];
 
-//           const TechnicalSkillsOption = technicalSkillsKnowledge.map(
-//             (item: any, index: number) => ({
-//               key: index,
-//               text: item.TechnicalSkills,
-//             })
-//           );
+  //           const TechnicalSkillsOption = technicalSkillsKnowledge.map(
+  //             (item: any, index: number) => ({
+  //               key: index,
+  //               text: item.TechnicalSkills,
+  //             })
+  //           );
 
-//           const LevelProficiencyOption = technicalSkillsKnowledge.map(
-//             (item: any, index: number) => ({
-//               key: index,
-//               text: item.LevelProficiency,
-//             })
-//           );
-//           const MinQualificationOption = rawData.Qualification
-//             ? [{ key: 0, text: rawData.Qualification }]
-//             : [];
+  //           const LevelProficiencyOption = technicalSkillsKnowledge.map(
+  //             (item: any, index: number) => ({
+  //               key: index,
+  //               text: item.LevelProficiency,
+  //             })
+  //           );
+  //           const MinQualificationOption = rawData.Qualification
+  //             ? [{ key: 0, text: rawData.Qualification }]
+  //             : [];
 
-//           // Set Preferred Qualification as comma-separated values
-//           const PrefeQualificationOption = rawData.PreferredQualification
-//             ? [{ key: 0, text: rawData.PreferredQualification }]
-//             : [];
+  //           // Set Preferred Qualification as comma-separated values
+  //           const PrefeQualificationOption = rawData.PreferredQualification
+  //             ? [{ key: 0, text: rawData.PreferredQualification }]
+  //             : [];
 
-//           setAdvDetails((prevState) => ({
-//             ...prevState,
-//             RolePurpose: rawData.RoleProfile || "",
-//             JobDescription: rawData.JobDescription || "",
-//             MinQualificationOption: MinQualificationOption,
-//             PrefeQualificationOption: PrefeQualificationOption,
-//             TechnicalSkillsOption: TechnicalSkillsOption,
-//             LevelProficiencyOption: LevelProficiencyOption,
-//             RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
-//             RequiredLeveloption: RequiredLevelValues,
-//             TotalExperience: rawData.YearofExperience || "",
-//             ExperienceinMiningIndustry: rawData.PreferredExperience || "",
-//             YearofExperience: rawData.YearofExperience || "",
-//             PreferredExperience: rawData.PreferredExperience || "",
-//             FunctionType: rawData.FunctionType,
-//             JobcodeChecked: true,
-//           }));
-//           console.log("advDetails",advDetails);
-//         } else {
-//           setAdvDetails((prev) => ({
-//             ...prev,
-//             JobcodeChecked: false,
-//           }));
-//           console.warn("data Not found");
-//         }
-//       } else {
-//         console.error("Error fetching data:", response.message);
-//       }
-//     } catch (error) {
-//       console.error("Error fetching data:", error);
-//     }
-//   };
- 
+  //           setAdvDetails((prevState) => ({
+  //             ...prevState,
+  //             RolePurpose: rawData.RoleProfile || "",
+  //             JobDescription: rawData.JobDescription || "",
+  //             MinQualificationOption: MinQualificationOption,
+  //             PrefeQualificationOption: PrefeQualificationOption,
+  //             TechnicalSkillsOption: TechnicalSkillsOption,
+  //             LevelProficiencyOption: LevelProficiencyOption,
+  //             RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+  //             RequiredLeveloption: RequiredLevelValues,
+  //             TotalExperience: rawData.YearofExperience || "",
+  //             ExperienceinMiningIndustry: rawData.PreferredExperience || "",
+  //             YearofExperience: rawData.YearofExperience || "",
+  //             PreferredExperience: rawData.PreferredExperience || "",
+  //             FunctionType: rawData.FunctionType,
+  //             JobcodeChecked: true,
+  //           }));
+  //           console.log("advDetails",advDetails);
+  //         } else {
+  //           setAdvDetails((prev) => ({
+  //             ...prev,
+  //             JobcodeChecked: false,
+  //           }));
+  //           console.warn("data Not found");
+  //         }
+  //       } else {
+  //         console.error("Error fetching data:", response.message);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
 
-
-const fetchRoleProfileData = async (JobCodeID: number) => {
-  try {
-    const filterConditions = [
-      {
-        FilterKey: "JobCode",
-        Operator: "eq",
-        FilterValue: JobCodeID,
-      },
-    ];
-
-    const response = await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
-      filterConditions,
-      ""
-    );
-
-    if (response.status === 200) {
-      const data = response.data;
-      console.log("data", data);
-
-      if (data && data.length > 0) {
-        const rawData = data[0];
-
-        // Role Specific Knowledge
-        const roleSpecificKnowledge = Array.isArray(rawData.RoleSpecificKnowledge)
-          ? rawData.RoleSpecificKnowledge
-          : [];
-
-        const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
-          (item: { RoleSpecificKnowledge: any; }) => item.RoleSpecificKnowledge
-        );
-        const RequiredLevelValues = roleSpecificKnowledge.map(
-          (item: { RequiredLevel: any; }) => item.RequiredLevel
-        );
-
-        // Technical Skills Knowledge
-        const technicalSkillsKnowledge = Array.isArray(rawData.TechnicalSkillsKnowledge)
-          ? rawData.TechnicalSkillsKnowledge
-          : [];
-
-        const TechnicalSkillsOption = technicalSkillsKnowledge.map((item: { TechnicalSkills: any; }, index: any) => ({
-          key: index,
-          text: item.TechnicalSkills,
-        }));
-
-        const LevelProficiencyOption = technicalSkillsKnowledge.map((item: { LevelProficiency: any; }, index: any) => ({
-          key: index,
-          text: item.LevelProficiency,
-        }));
-
-        // Qualifications
-        const MinQualificationOption = rawData.Qualification
-          ? [{ key: 0, text: rawData.Qualification }]
-          : [];
-
-        const PrefeQualificationOption = rawData.PreferredQualification
-          ? [{ key: 0, text: rawData.PreferredQualification }]
-          : [];
-
-       setAdvDetails((prev) => {
-  const updatedDetails = {
-    ...prev,
-    RolePurpose: rawData.RoleProfile || "",
-    JobDescription: rawData.JobDescription || "",
-    RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
-    RequiredLeveloption: RequiredLevelValues,
-    TechnicalSkillsOption,
-    LevelProficiencyOption,
-    MinQualificationOption,
-    PrefeQualificationOption,
-    YearofExperience: rawData.YearofExperience || "",
-    PreferredExperience: rawData.PreferredExperience || "",
-    TotalExperience: rawData.TotalPreferredExperience || "",
-    FunctionType: rawData.FunctionType || "",
-    JobcodeChecked: true,
-    FullDataResponse: rawData,
+  const validateRatings = (tab: string) => {
+    if (tab === "tab2") {
+      const errors: { [key: number]: boolean } = {};
+      questionnaire.forEach((q) => {
+        if (!q.rating) {
+          errors[q.id] = !IsValid(q.rating);
+        }
+      });
+      setRatingErrors(errors);
+      return Object.values(errors).some((error) => error);
+    } else {
+      return false;
+    }
   };
 
-  console.log("Setting advDetails to:", updatedDetails);
-  return updatedDetails;
-});
-      } else {
-        setAdvDetails((prev) => ({
-          ...prev,
-          JobcodeChecked: false,
-        }));
-        console.warn("No data found for JobCodeID", JobCodeID);
-      }
-    } else {
-      console.error("Failed to fetch role profile data:", response.message);
-    }
-  } catch (error) {
-    console.error("Error fetching role profile data:", error);
-  }
-};
+  const fetchRoleProfileData = async (JobCodeID: number) => {
+    try {
+      const filterConditions = [
+        {
+          FilterKey: "JobCode",
+          Operator: "eq",
+          FilterValue: JobCodeID,
+        },
+      ];
 
+      const response = await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+        filterConditions,
+        ""
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+        console.log("data", data);
+
+        if (data && data.length > 0) {
+          const rawData = data[0];
+
+          // Role Specific Knowledge
+          const roleSpecificKnowledge = Array.isArray(
+            rawData.RoleSpecificKnowledge
+          )
+            ? rawData.RoleSpecificKnowledge
+            : [];
+
+          const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
+            (item: { RoleSpecificKnowledge: any }) => item.RoleSpecificKnowledge
+          );
+          const RequiredLevelValues = roleSpecificKnowledge.map(
+            (item: { RequiredLevel: any }) => item.RequiredLevel
+          );
+
+          // Technical Skills Knowledge
+          const technicalSkillsKnowledge = Array.isArray(
+            rawData.TechnicalSkillsKnowledge
+          )
+            ? rawData.TechnicalSkillsKnowledge
+            : [];
+
+          const TechnicalSkillsOption = technicalSkillsKnowledge.map(
+            (item: { TechnicalSkills: any }, index: any) => ({
+              key: index,
+              text: item.TechnicalSkills,
+            })
+          );
+
+          const LevelProficiencyOption = technicalSkillsKnowledge.map(
+            (item: { LevelProficiency: any }, index: any) => ({
+              key: index,
+              text: item.LevelProficiency,
+            })
+          );
+
+          // Qualifications
+          const MinQualificationOption = rawData.Qualification
+            ? [{ key: 0, text: rawData.Qualification }]
+            : [];
+
+          const PrefeQualificationOption = rawData.PreferredQualification
+            ? [{ key: 0, text: rawData.PreferredQualification }]
+            : [];
+
+          setAdvDetails((prev) => {
+            const updatedDetails = {
+              ...prev,
+              RolePurpose: rawData.RoleProfile || "",
+              JobDescription: rawData.JobDescription || "",
+              RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+              RequiredLeveloption: RequiredLevelValues,
+              TechnicalSkillsOption,
+              LevelProficiencyOption,
+              MinQualificationOption,
+              PrefeQualificationOption,
+              YearofExperience: rawData.YearofExperience || "",
+              PreferredExperience: rawData.PreferredExperience || "",
+              TotalExperience: rawData.TotalPreferredExperience || "",
+              FunctionType: rawData.FunctionType || "",
+              JobcodeChecked: true,
+              FullDataResponse: rawData,
+            };
+
+            console.log("Setting advDetails to:", updatedDetails);
+            return updatedDetails;
+          });
+        } else {
+          setAdvDetails((prev) => ({
+            ...prev,
+            JobcodeChecked: false,
+          }));
+          console.warn("No data found for JobCodeID", JobCodeID);
+        }
+      } else {
+        console.error("Failed to fetch role profile data:", response.message);
+      }
+    } catch (error) {
+      console.error("Error fetching role profile data:", error);
+    }
+  };
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
@@ -408,8 +437,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
         FilterValue: ID,
       });
 
-      const data = await 
-            InterviewServices.GetCombinedCandidatePositionDetails(
+      const data = await InterviewServices.GetCombinedCandidatePositionDetails(
         filterConditions,
         Conditions,
         props.EmployeeList
@@ -419,10 +447,10 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
         const op = data.data[0];
         const scoreCardData = op.HRMSCandidateScoreCard;
         let panelFullNames: string[] = [];
-  
-        if (scoreCardData  && scoreCardData.length > 0) {
+
+        if (scoreCardData && scoreCardData.length > 0) {
           panelFullNames = scoreCardData
-            .map((item: { PanelFullName: any; }) => item?.PanelFullName)
+            .map((item: { PanelFullName: any }) => item?.PanelFullName)
             .filter((name: string) => name !== null && name !== undefined);
         }
         const response = await CommonServices.GetAttachmentToLibrary(
@@ -485,7 +513,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
           PositionTitle: op?.PositionTitle,
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
-          JobGrade:   op?.JobGrade,
+          JobGrade: op?.JobGrade,
           PanelFullNames: panelFullNames,
         }));
         await fetchRoleProfileData(op.JobCodeId);
@@ -653,11 +681,10 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
   };
 
   const Submit_fn = async () => {
-    setIsLoading(true);
     try {
       let isValid = !Validation();
       if (!isValid) return;
-
+      setIsLoading(true);
       const CurrentUserResponse = await CommonServices.getUserGuidByEmail(
         props.CurrentUserEmailId
       );
@@ -1036,7 +1063,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
                     }
                   />
                 </div>
-                
+
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Grade"
@@ -1051,48 +1078,49 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
                   />
                 </div>
                 <div
-                    className="ms-Grid-col ms-lg4"
-                    style={{ position: "relative", top: "14px" }}
+                  className="ms-Grid-col ms-lg4"
+                  style={{ position: "relative", top: "14px" }}
+                >
+                  <label
+                    style={{
+                      fontWeight: 600,
+                      marginBottom: "4px",
+                      display: "block",
+                    }}
                   >
-                    <label
-                      style={{
-                        fontWeight: 600,
-                        marginBottom: "4px",
-                        display: "block",
-                      }}
-                    >
-                      Interview Panel
-                    </label>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: "8px",
-                        minHeight: "38px",
-                        // border: "none",
-                        background: "none",
-                        backgroundColor: "rgb(243, 242, 241)",
-                        padding: "8px",
-                        borderRadius: "6px",
-                        border: "rgb(243, 242, 241)",
-                        boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px"
-                      }}
-                    >
-                      {CandidateData.PanelFullNames &&CandidateData.PanelFullNames.length > 0
-                        ? CandidateData.PanelFullNames.map((title, index) => (
-                            <Chip
-                              key={index}
-                              label={title}
-                              size="small"
-                              sx={{
-                                backgroundColor: "rgb(243, 242, 241)",
-                                fontWeight: 500,
-                              }}
-                            />
-                          ))
-                        : null}
-                    </div>
+                    Interview Panel
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "8px",
+                      minHeight: "38px",
+                      // border: "none",
+                      background: "none",
+                      backgroundColor: "rgb(243, 242, 241)",
+                      padding: "8px",
+                      borderRadius: "6px",
+                      border: "rgb(243, 242, 241)",
+                      boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px",
+                    }}
+                  >
+                    {CandidateData.PanelFullNames &&
+                    CandidateData.PanelFullNames.length > 0
+                      ? CandidateData.PanelFullNames.map((title, index) => (
+                          <Chip
+                            key={index}
+                            label={title}
+                            size="small"
+                            sx={{
+                              backgroundColor: "rgb(243, 242, 241)",
+                              fontWeight: 500,
+                            }}
+                          />
+                        ))
+                      : null}
                   </div>
+                </div>
               </div>
 
               <div className="ms-Grid-row" style={{ marginTop: "10px" }}>
@@ -1109,7 +1137,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
                   />
                 </div>
                 <div className="ms-Grid-col ms-lg4">
-                <CustomLabel value={"Advertisement Documents (French)"} />
+                  <CustomLabel value={"Advertisement Documents (French)"} />
                   <CustomViewDocument
                     Attachment={CandidateData.AdvertisementDocument}
                   />
@@ -1332,45 +1360,44 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
                 </div>
               </div> */}
 
-                 <div className="ms-Grid-row">
-                  <div
-                    className="ms-Grid-col ms-lg2"
-                    style={{ position: "relative", right: "1px" }}
-                  >
-                    <div>
-                      <CustomLabel
-                        value="View Role Purpose"
-                        // mandatory={true}
-                      />
-                      <ReuseButton
-                        Style={{
-                          minWidth: "117px",
-                          fontSize: "13px",
-                          paddingBottom: "24px",
-                          display: "flex",
-                          flexDirection: "column",
-                          height: "41px",
-                          paddingTop: "23px",
-                          backgroundColor:
-                            ColorCode.ButtonColorCode.ButtonColor,
-                          color: "white",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                        label="VIEW"
-                        imgSrc={require("../../assets/viewSubmision-white.svg")}
-                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                        imgAlt="View"
-                        imgAltHover="Hovered View"
-                        onClick={async () => {
-                          setPreview(true);
-                          setMainComponent(false);
-                        }}
-                        spacing={4}
-                      />
-                    </div>
+              <div className="ms-Grid-row">
+                <div
+                  className="ms-Grid-col ms-lg2"
+                  style={{ position: "relative", right: "1px" }}
+                >
+                  <div>
+                    <CustomLabel
+                      value="View Job Advertisement"
+                      // mandatory={true}
+                    />
+                    <ReuseButton
+                      Style={{
+                        minWidth: "117px",
+                        fontSize: "13px",
+                        paddingBottom: "24px",
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "41px",
+                        paddingTop: "23px",
+                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                        color: "white",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      label="VIEW"
+                      imgSrc={require("../../assets/viewSubmision-white.svg")}
+                      imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                      imgAlt="View"
+                      imgAltHover="Hovered View"
+                      onClick={async () => {
+                        setPreview(true);
+                        setMainComponent(false);
+                      }}
+                      spacing={4}
+                    />
                   </div>
                 </div>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -1453,7 +1480,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
                           }
                           options={ScoreRating}
                           onChange={(value) => handleRatingChange(q.id, value)}
-                          error={false}
+                          error={ratingErrors[q.id]}
                           mandatory={true}
                           disabled={false}
                         />
@@ -1664,7 +1691,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
                 >
                   <div className="ms-Grid-col ms-lg12">
                     <SignatureCheckbox
-                      label= {TabName.CheckboxContent}
+                      label={TabName.CheckboxContent}
                       checked={Checkbox}
                       error={ValidationError.CheckboxValidation}
                       onChange={handleCheckbox}
@@ -1892,7 +1919,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
     <>
       {MainComponent ? (
         <>
-             <CustomLoader isLoading={isLoading}>
+          <CustomLoader isLoading={isLoading}>
             <div className="menu-card">
               <BreadcrumbsComponent
                 items={tabs}
@@ -1900,23 +1927,20 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
                 TabName={TabNameData}
                 onBreadcrumbChange={handleBreadcrumbChange}
                 handleCancel={handleCancel}
+                ValidationError={() => validateRatings(activeTab)}
                 additionalButtons={[
-                
-                   
-                        {
-                          label: "Submit",
-                          onClick: async () => {
-                            await Submit_fn();
-                          },
-                        },
-                      
-                    
+                  {
+                    label: "Submit",
+                    onClick: async () => {
+                      await Submit_fn();
+                    },
+                  },
                 ]}
               />
             </div>
           </CustomLoader>
         </>
-      )  : Preview ? (
+      ) : Preview ? (
         <CustomPreviewScreen
           data={advDetails}
           onclose={() => {
@@ -1930,9 +1954,7 @@ const fetchRoleProfileData = async (JobCodeID: number) => {
           JobTitle={CandidateData.PositionTitle || ""}
         />
       ) : (
-        <>
-        
-        </>
+        <></>
       )}
       {AlertPopupOpen ? (
         <>
