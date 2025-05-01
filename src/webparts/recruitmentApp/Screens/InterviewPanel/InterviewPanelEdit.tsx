@@ -327,17 +327,12 @@ const InterviewPanelEdit = (props: any) => {
         const scoreCardData = op.HRMSCandidateScoreCard;
         let panelFullNames: string[] = [];
 
-        const interviewLevels = Array.from(
-          new Set(
-            (op?.HRMSCandidateScoreCard as { InterviewLevel: any }[])?.map(
-              (item) => item.InterviewLevel
-            )
-          )
-        );
         if (scoreCardData && scoreCardData.length > 0) {
-          panelFullNames = scoreCardData
+          const names = scoreCardData
             .map((item: { PanelFullName: any }) => item?.PanelFullName)
-            .filter((name: string) => name !== null && name !== undefined);
+            .filter((name: any) => name !== null && name !== undefined);
+        
+          panelFullNames = Array.from(new Set(names));
         }
         const response = await CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.RecruitmentAdvertisementDocument,
@@ -401,7 +396,6 @@ const InterviewPanelEdit = (props: any) => {
           JobRequestID: op?.JobRequestID,
           JobGrade: op?.JobGrade,
           PanelFullNames: panelFullNames,
-          InterviewLevels: interviewLevels,
         }));
         await fetchRoleProfileData(op.JobCodeId);
         if (questionnaire.length === 0) {

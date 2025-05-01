@@ -342,9 +342,10 @@ const HodViewScorecard = (props: any) => {
           const candidatePanels = scoreResponse?.data.filter(
             (candidate: any) => candidate.CandidateID === candidateID
           );
-          setInterviewPanelTitles(
-            candidatePanels.map((panel: any) => panel.PanelFullName)
+          const uniquePanelNames = Array.from(
+            new Set(candidatePanels.map((panel) => panel.PanelFullName))
           );
+          setInterviewPanelTitles(uniquePanelNames);
           const filteredScores = candidatePanels
             .map((candidate: any) => {
               const score = candidate.ScoreCard;
@@ -641,6 +642,7 @@ const HodViewScorecard = (props: any) => {
         Grade: grade,
         Levels: gradeLevelResponse.data[0]?.Level,
       }));
+      console.log("Grade Level Response", gradeLevelResponse.data[0]?.Level);
     };
 
     void getRecruitmentGradeLevel();
@@ -685,7 +687,7 @@ const HodViewScorecard = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Job Code"
+                      label="Job Grade"
                       value={CandidateData.JobCode}
                       disabled={true}
                       mandatory={false}
@@ -1023,43 +1025,6 @@ const HodViewScorecard = (props: any) => {
                   </span>
                 </div>
               </div>
-
-              {/* <div
-                style={{
-                  // backgroundColor: "#f8f8f8",
-                  padding: "15px",
-                  marginBottom: "0px",
-                  fontSize: "14px",
-                  color: "-moz-initial",
-                  fontWeight: "600",
-                }}
-              >
-                <span style={{ marginRight: "20px" }}>
-                  Interview Panel member: {interviewPanelTitles.length}
-                </span>
-                {interviewPanelTitles.map((interviewer, index) => (
-                  <span key={index} style={{ marginRight: "20px" }}>
-                    Interviewer {index + 1} - {interviewer}
-                  </span>
-                ))}
-              </div> */}
-
-              {/* <div style={{ overflowX: "auto" }}>
-                <DataTable
-                  value={transformedData}
-                  responsiveLayout="scroll"
-                  stripedRows
-                >
-                  <Column field="criteria" header="Criteria" />
-                  {Array.from({ length: interviewerCount }).map((_, index) => (
-                    <Column
-                      key={index}
-                      field={`interviewer_${index + 1}`}
-                      header={`Interviewer ${index + 1}`}
-                    />
-                  ))}
-                </DataTable>
-              </div> */}
 
               <div>
                 <Accordion
