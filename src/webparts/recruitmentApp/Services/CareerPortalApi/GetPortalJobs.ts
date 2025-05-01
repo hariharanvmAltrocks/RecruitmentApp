@@ -1,12 +1,13 @@
 import * as moment from "moment";
-import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, profileJobsComments, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, getQuestionById, profileJobsComments, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { QuestionItem } from "../../Models/RecuritmentVRR";
-import { DocumentLibraray, ListNames, RoleProfileMaster } from "../../utilities/Config";
+import { DataType, DocumentLibraray, ListNames, RoleProfileMaster } from "../../utilities/Config";
 import { getProfileData, postAdveDetails, QuestionnaireApi } from "../ReviewProfileService/ReviewCandidateService";
 import { CommonServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
-import { CandidateDetails, IGetPortalJobs } from "./IGetPortalJobs";
+import { CandidateDetails, IGetPortalJobs, RescheduledCandidate } from "./IGetPortalJobs";
+import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
 
 export default class GetPortalJobs implements IGetPortalJobs {
   async UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>> {
@@ -423,6 +424,85 @@ export default class GetPortalJobs implements IGetPortalJobs {
           answer: item?.question?.questionXAnswers?.[0]?.optContent?.contentEn ?? "",
           rating: 0,
           header: "Q" + incrementedIndex,
+        };
+      });
+      console.log(response, "GetAllMasterData");
+      return {
+        data: GetQuestionnaire,
+        status: response.status,
+        message: "Get Candidate details",
+      };
+    } catch (error) {
+      console.error(
+        "Error Get Candidate details:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error Get Candidate details",
+      };
+    }
+  }
+
+  async RescheduledInterview(
+    obj: RescheduledCandidate,
+    ListName: string
+  ): Promise<ApiResponse<null>> {
+    try {
+      await SPServices.SPUpdateItem({
+        Listname: ListName,
+        RequestJSON: obj,
+        ID: obj.ID,
+      });
+
+      return {
+        data: null,
+        status: 200,
+        message: "Data Submitted successfully",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        data: null,
+        status: 400,
+        message: "Error On Posting Data",
+      };
+    }
+  }
+
+  async GetQuestionaireByScope(GetExistingQuestion: getQuestionById): Promise<ApiResponse<ViewQuestion[] | null>> {
+    try {
+      const response = await QuestionnaireApi.GetQuestionaireByScope(GetExistingQuestion);
+      const GetQuestionnaire: ViewQuestion[] = response.data.data.map((item: any, index: number) => {
+        const incrementedIndex = index + 1;
+        let options = item?.question?.questionXAnswers?.map((item: any) => {
+          return {
+            key: item?.sequence,
+            text: item?.optContent?.contentEn,
+            isCorrect: false,
+          };
+        });
+        let CareerportalAnswer = item?.question?.questionXAnswers?.map((item: any, index: number) => {
+          return {
+            key: index,
+            text: item?.optContent?.contentEn,
+            isCorrect: false,
+          };
+        });
+        return {
+          id: incrementedIndex,
+          Checked: false,
+          header: "Q" + incrementedIndex,
+          HeaderLabel: "Question" + incrementedIndex,
+          discipline: item?.question?.scopeId,
+          questionType: item?.question?.questionTypeId,
+          question: item?.question?.quesContent?.contentEn,
+          expectedAnswer: item?.question?.questionXAnswers?.[0]?.optContent?.contentEn ?? "",
+          CareerportalAnswer: CareerportalAnswer,
+          options: options,
+          Disqualification: item?.question?.isQualifier,
+          Type: DataType.Existing,
         };
       });
       console.log(response, "GetAllMasterData");

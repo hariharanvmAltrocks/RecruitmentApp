@@ -155,3 +155,8 @@ export type GetAllMaster = {
     displayText: string;
     displayTextFr: string;
 }
+
+export type getQuestionById = {
+    discipline: string,
+    category?: string
+}

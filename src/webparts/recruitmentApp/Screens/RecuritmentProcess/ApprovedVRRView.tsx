@@ -660,7 +660,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
 
                   <div className="ms-Grid-col ms-lg3">
-                    <CustomLabel value={"Advertisement Document"} />
+                    <CustomLabel value={"View Job Advertisement"} />
                     <CustomViewDocument
                       Attachment={data.AdvertisementDocument}
                     />
@@ -681,7 +681,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     >
                       <div>
                         <CustomLabel
-                          value={"View Job Advertisement"}
+                          value={"View Advertisement"}
                           // mandatory={true}
                         />
                         <ReuseButton

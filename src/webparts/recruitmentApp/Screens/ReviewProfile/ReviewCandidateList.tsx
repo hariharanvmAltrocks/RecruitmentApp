@@ -3,10 +3,13 @@ import { Card, CardContent } from "@mui/material";
 import {
   GetPortalJobsService,
   getVRRDetails,
+  InterviewServices,
 } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
+  HRMSAlertOptions,
   RoleID,
+  StatusId,
   TabName,
   tabType,
   workflowStatusApi,
@@ -22,6 +25,9 @@ import {
   GetProfileByJobCode,
 } from "../../Models/ApIInterface";
 import TabsComponent from "../../components/TabsComponent ";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
+import { alertPropsData } from "../../Models/Screens";
+import * as moment from "moment";
 
 const ReviewCandidateList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<
@@ -36,6 +42,112 @@ const ReviewCandidateList = (props: any) => {
   const [breadcrumbTab, setBreadcrumbTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
+  // const [JobVaildDate, setJobVaildDate] = React.useState<boolean>(false);
+  const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
+  const [alertProps, setalertProps] = React.useState<alertPropsData>({
+    Message: "",
+    Type: "",
+    ButtonAction: null,
+    visible: false,
+  });
+
+  function handleRedirectView(
+    rowData: any,
+    tab: string,
+    TabNamed: string,
+    ButtonAction: string,
+    ActionBtn: string
+  ): void {
+    console.log("RecruitmentDetails", RecruitmentDetails);
+
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    const todayDateStr = today.toDateString();
+
+    const {
+      JobPostingEndDate,
+      JobPostingFirstExtensionEndDate,
+      JobPostingSecondExtensionEndDate,
+      ID: RecruitmentID,
+    } = RecruitmentDetails[0] || {};
+
+    let JobValidation = false;
+
+    if (JobPostingSecondExtensionEndDate) {
+      JobValidation =
+        new Date(JobPostingSecondExtensionEndDate).toDateString() ===
+        todayDateStr;
+    } else if (JobPostingFirstExtensionEndDate) {
+      JobValidation =
+        new Date(JobPostingFirstExtensionEndDate).toDateString() ===
+        todayDateStr;
+    } else if (JobPostingEndDate) {
+      JobValidation =
+        new Date(JobPostingEndDate).toDateString() === todayDateStr;
+    }
+
+    if (tab === "tab2 - Level 2") {
+      if (JobValidation) {
+        props.navigation(
+          "/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails",
+          {
+            state: {
+              ID: rowData?.CandidateID,
+              StatusId: rowData?.workflowStatusId,
+              RecruitmentID,
+              tab,
+              ButtonAction,
+              TabNamed,
+              initialTab: props.stateValue?.TabName,
+              ActionBtn,
+            },
+          }
+        );
+      } else {
+        const Dateformat = JobPostingSecondExtensionEndDate
+          ? moment(JobPostingSecondExtensionEndDate).format("DD/MM/YYYY")
+          : JobPostingFirstExtensionEndDate
+          ? moment(JobPostingFirstExtensionEndDate).format("DD/MM/YYYY")
+          : moment(JobPostingEndDate).format("DD/MM/YYYY");
+        const JobExpiredMsg = `
+          <div style="text-align: center;">
+            <h3>⚠️ Action cannot be performed.</h3>
+            <p>This job advert is still active and open for recruitment.</p>
+            <p><strong>Expiry Date:</strong> ${Dateformat}</p>
+            <p>Please try again after it expires.</p>
+          </div>`;
+        const SuccessAlert = {
+          Message: JobExpiredMsg,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+
+        setAlertPopupOpen(true);
+        setalertProps(SuccessAlert);
+      }
+    } else {
+      props.navigation(
+        "/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails",
+        {
+          state: {
+            ID: rowData?.CandidateID,
+            StatusId: rowData?.workflowStatusId,
+            RecruitmentID,
+            tab,
+            ButtonAction,
+            TabNamed,
+            initialTab: props.stateValue?.TabName,
+            ActionBtn,
+          },
+        }
+      );
+    }
+  }
 
   const columnConfig = (
     tab: string,
@@ -62,11 +174,15 @@ const ReviewCandidateList = (props: any) => {
       header: "Job Code",
       sortable: true,
     },
-    {
-      field: "createdOn",
-      header: "Profile Received Date",
-      sortable: true,
-    },
+    ...(tab === "tab1"
+      ? [
+          {
+            field: "createdOn",
+            header: "Profile Received Date",
+            sortable: true,
+          },
+        ]
+      : []),
     {
       field: "Status",
       header: "Status",
@@ -82,30 +198,6 @@ const ReviewCandidateList = (props: any) => {
       sortable: false,
       style: { width: "7%" },
       body: (rowData: any) => {
-        function handleRedirectView(
-          rowData: any,
-          tab: string,
-          TabNamed: string,
-          ButtonAction: string,
-          ActionBtn: string
-        ): void {
-          props.navigation(
-            "/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails",
-            {
-              state: {
-                ID: rowData?.CandidateID,
-                StatusId: rowData?.workflowStatusId,
-                RecruitmentID: RecruitmentDetails[0].ID,
-                tab: tab,
-                ButtonAction: ButtonAction,
-                TabNamed: TabNamed,
-                initialTab: props.stateValue?.TabName,
-                ActionBtn: ActionBtn,
-              },
-            }
-          );
-        }
-
         return (
           <div>
             <span>
@@ -122,9 +214,7 @@ const ReviewCandidateList = (props: any) => {
                   workflowStatusApi.LineManagerL2Pending) ||
               (props.CurrentRoleID === RoleID.LineManager &&
                 rowData.workflowStatusId ===
-                  workflowStatusApi.PendingRecruitmentHRscheduleInterview) ||
-              (props.CurrentRoleID === RoleID.RecruitmentHR &&
-                tab === "tab2") ? (
+                  workflowStatusApi.PendingRecruitmentHRscheduleInterview) ? (
                 <>
                   <img
                     src={require("../../assets/Viewicon.svg")}
@@ -188,107 +278,159 @@ const ReviewCandidateList = (props: any) => {
   const fetchCandidateData = async (tabs: string) => {
     setIsLoading(true);
     try {
-      let FilterValueData: GetProfileByFilter = {
-        filterValue: "",
-        sortBy: "",
-        sortOrder: 0,
-        pageSize: rows,
-        currentPage: 0,
-        totalItems: 0,
-      };
-      let createFilter = (workflowStausId: string[]): FilterItem => ({
-        jobCode: props.stateValue?.JobCode, //"JC0005",
-        workflowStausId: workflowStausId,
-        pagination: FilterValueData,
-      });
-
-      let FilterValue: FilterItem = {
-        jobCode: "",
-        workflowStausId: [],
-        pagination: {
+      if (
+        (tabs === "tab2" || tabs === "tab3") &&
+        props.stateValue?.TabName === TabName.AssignInterviewPanel
+      ) {
+        let filterConditionsRecuritment = [];
+        let RecuritmentConditions = "and";
+        if (tabs === "tab3") {
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "in",
+            FilterValue: [
+              StatusId.InterviewScheduledforLevel2,
+              StatusId.InterviewScheduled,
+            ],
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: "No",
+          });
+        } else {
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.PendingwithHODtoselectthecandidateLevel2,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: "No",
+          });
+        }
+        const ReschedulData =
+          await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
+            filterConditionsRecuritment,
+            RecuritmentConditions
+          );
+        if (ReschedulData.status === 200 && ReschedulData.data !== null) {
+          let ReschedulDataFilter = ReschedulData.data.map((item: any) => {
+            return {
+              CandidateID: item?.ID,
+              ApplicantName: `${item?.FristName || ""} ${item?.LastName || ""}`,
+              PositionTitle: item?.PositionTitle,
+              JobGrade: item?.JobGrade,
+              Status: item?.Status,
+              workflowStatusId: item?.StatusId,
+            };
+          });
+          setCandidateData(ReschedulDataFilter);
+        }
+      } else {
+        let FilterValueData: GetProfileByFilter = {
           filterValue: "",
           sortBy: "",
           sortOrder: 0,
-          pageSize: 0,
+          pageSize: rows,
           currentPage: 0,
           totalItems: 0,
-        },
-      };
-
-      switch (tabs) {
-        case "tab1":
-          if (props.stateValue?.TabName === TabName.AssignInterviewPanel) {
-            FilterValue = createFilter([
-              workflowStatusApi.PendingRecruitmentHRscheduleInterview,
-            ]);
-          } else if (props.CurrentRoleID === RoleID.LineManager) {
-            FilterValue = createFilter([
-              workflowStatusApi.LineManagerL1Pending,
-            ]);
-          } else {
-            FilterValue = createFilter([workflowStatusApi.HRPending]);
-          }
-          break;
-
-        case "tab2":
-          if (props.CurrentRoleID === RoleID.LineManager) {
-            FilterValue = createFilter([
-              workflowStatusApi.PendingRecruitmentHRscheduleInterview,
-            ]);
-          } else {
-            FilterValue = createFilter([
-              workflowStatusApi.LineManagerL1Pending,
-              workflowStatusApi.LineManagerL2Pending,
-              workflowStatusApi.LineManagerLevel1OnHold,
-              workflowStatusApi.LineManagerLevel2OnHold,
-              workflowStatusApi.LineManagerLevel1Rejected,
-              workflowStatusApi.LineManagerLevel2Rejected,
-              workflowStatusApi.pendingHODSelection,
-              workflowStatusApi.CandidateSelectedIPanel,
-              workflowStatusApi.CandidateRejectedIPanel,
-            ]);
-          }
-          break;
-
-        case "tab2 - Level 2":
-          if (props.CurrentRoleID === RoleID.LineManager) {
-            FilterValue = createFilter([
-              workflowStatusApi.LineManagerL2Pending,
-            ]);
-          }
-          break;
-
-        case "tab3":
-          if (props.CurrentRoleID === RoleID.LineManager) {
-            FilterValue = createFilter([
-              workflowStatusApi.LineManagerLevel1OnHold,
-              workflowStatusApi.LineManagerLevel2OnHold,
-              workflowStatusApi.LineManagerLevel1Rejected,
-              workflowStatusApi.LineManagerLevel2Rejected,
-            ]);
-          } else {
-            FilterValue = createFilter([
-              workflowStatusApi.HROnHold,
-              workflowStatusApi.HRRejected,
-            ]);
-          }
-          break;
-
-        case "tab4":
-          //   FilterValue = createFilter(workflowStatusApi.Rejected);
-          break;
-
-        default:
-          FilterValue = createFilter([]);
-      }
-
-      await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
-        .then((res) => {
-          setCandidateData(res.data);
-        })
-        .catch((error) => {
-          console.log("Candidate details doesn't fetch the data", error);
+        };
+        let createFilter = (workflowStausId: string[]): FilterItem => ({
+          jobCode: props.stateValue?.JobCode, //"JC0005",
+          workflowStausId: workflowStausId,
+          pagination: FilterValueData,
         });
+
+        let FilterValue: FilterItem = {
+          jobCode: "",
+          workflowStausId: [],
+          pagination: {
+            filterValue: "",
+            sortBy: "",
+            sortOrder: 0,
+            pageSize: 0,
+            currentPage: 0,
+            totalItems: 0,
+          },
+        };
+
+        switch (tabs) {
+          case "tab1":
+            if (props.stateValue?.TabName === TabName.AssignInterviewPanel) {
+              FilterValue = createFilter([
+                workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+              ]);
+            } else if (props.CurrentRoleID === RoleID.LineManager) {
+              FilterValue = createFilter([
+                workflowStatusApi.LineManagerL1Pending,
+              ]);
+            } else {
+              FilterValue = createFilter([workflowStatusApi.HRPending]);
+            }
+            break;
+
+          case "tab2":
+            if (props.CurrentRoleID === RoleID.LineManager) {
+              FilterValue = createFilter([
+                workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+              ]);
+            } else {
+              FilterValue = createFilter([
+                workflowStatusApi.LineManagerL1Pending,
+                workflowStatusApi.LineManagerL2Pending,
+                workflowStatusApi.LineManagerLevel1OnHold,
+                workflowStatusApi.LineManagerLevel2OnHold,
+                workflowStatusApi.LineManagerLevel1Rejected,
+                workflowStatusApi.LineManagerLevel2Rejected,
+                workflowStatusApi.pendingHODSelection,
+                workflowStatusApi.CandidateSelectedIPanel,
+                workflowStatusApi.CandidateRejectedIPanel,
+              ]);
+            }
+            break;
+
+          case "tab2 - Level 2":
+            if (props.CurrentRoleID === RoleID.LineManager) {
+              FilterValue = createFilter([
+                workflowStatusApi.LineManagerL2Pending,
+              ]);
+            }
+            break;
+
+          case "tab3":
+            if (props.CurrentRoleID === RoleID.LineManager) {
+              FilterValue = createFilter([
+                workflowStatusApi.LineManagerLevel1OnHold,
+                workflowStatusApi.LineManagerLevel2OnHold,
+                workflowStatusApi.LineManagerLevel1Rejected,
+                workflowStatusApi.LineManagerLevel2Rejected,
+              ]);
+            } else {
+              FilterValue = createFilter([
+                workflowStatusApi.HROnHold,
+                workflowStatusApi.HRRejected,
+              ]);
+            }
+            break;
+
+          case "tab4":
+            //   FilterValue = createFilter(workflowStatusApi.Rejected);
+            break;
+
+          default:
+            FilterValue = createFilter([]);
+        }
+
+        await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
+          .then(async (res) => {
+            setCandidateData(res.data);
+          })
+          .catch((error) => {
+            console.log("Candidate details doesn't fetch the data", error);
+          });
+      }
     } catch (error) {
       console.log("Candidate Api failed", error);
     }
@@ -516,6 +658,67 @@ const ReviewCandidateList = (props: any) => {
           },
         ]),
   ];
+
+  const AssignInterviewPanel = [
+    {
+      label: TabName.AssignInterviewPanel,
+      value: "tab1",
+      content: (
+        <Card
+          variant="outlined"
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+        >
+          <CardContent>
+            <BreadcrumbsComponent
+              items={tabs("tab1")}
+              initialItem={activeTab}
+              TabName={TabNameData}
+              onBreadcrumbChange={handleBreadcrumbChange}
+            />
+          </CardContent>
+        </Card>
+      ),
+    },
+    {
+      label: TabName.Level2Interview,
+      value: "tab2",
+      content: (
+        <Card
+          variant="outlined"
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+        >
+          <CardContent>
+            <BreadcrumbsComponent
+              items={tabs("tab2")}
+              initialItem={activeTab}
+              TabName={TabNameData}
+              onBreadcrumbChange={handleBreadcrumbChange}
+            />
+          </CardContent>
+        </Card>
+      ),
+    },
+    {
+      label: TabName.ReschedulInterview,
+      value: "tab3",
+      content: (
+        <Card
+          variant="outlined"
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+        >
+          <CardContent>
+            <BreadcrumbsComponent
+              items={tabs("tab3")}
+              initialItem={activeTab}
+              TabName={TabNameData}
+              onBreadcrumbChange={handleBreadcrumbChange}
+            />
+          </CardContent>
+        </Card>
+      ),
+    },
+  ];
+
   const handleTabChange = (newTab: string) => {
     setBreadcrumbTab(newTab);
   };
@@ -527,11 +730,12 @@ const ReviewCandidateList = (props: any) => {
             <React.Fragment>
               {props.stateValue?.TabName === TabName.AssignInterviewPanel ? (
                 <>
-                  <BreadcrumbsComponent
-                    items={tabs("tab1")}
-                    initialItem={activeTab}
-                    TabName={TabNameData}
-                    onBreadcrumbChange={handleBreadcrumbChange}
+                  <TabsComponent
+                    tabs={AssignInterviewPanel}
+                    initialTab={breadcrumbTab}
+                    // tabClassName={"Tab"}
+                    tabtype={tabType.Dashboard}
+                    onTabChange={handleTabChange}
                   />
                 </>
               ) : (
@@ -549,6 +753,17 @@ const ReviewCandidateList = (props: any) => {
           </div>
         </CustomLoader>
       </>
+
+      {AlertPopupOpen ? (
+        <>
+          <CustomAlert
+            {...alertProps}
+            onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
+          />
+        </>
+      ) : (
+        <></>
+      )}
 
       {CommentsPopups ? (
         <>
