@@ -8,9 +8,7 @@ import {
   AssignPositionID,
   CandidateComment,
   CandidateDetails,
-
   CandidateLevel2ScoreCard,
-
   CommentsData,
   CommentsDatas,
   Employee,
@@ -218,9 +216,6 @@ export default class InterviewProcessService
           const lastCandidateGPA = positionResult?.data?.length
             ? positionResult.data[positionResult.data.length - 1].GPA
             : null;
-          const lastInterviewLevel = positionResult?.data?.length
-            ? positionResult.data[positionResult.data.length - 1]?.InterviewLevel
-            : null;
           return {
             ID: item.ID,
             RecruitmentID: item?.RecruitmentID?.ID,
@@ -265,7 +260,6 @@ export default class InterviewProcessService
             InterviewDateLevel2: item?.InterviewDateLevel2,
             InterviewTimeLevel2: item?.InterviewTimeLevel2,
             InterviewLinkLevel2: item?.InterviewLinkLevel2,
-            InterviewLevel: lastInterviewLevel,
             CandidateComments: candidateComments,
 
           };
@@ -825,7 +819,6 @@ export default class InterviewProcessService
     ListName: string
   ): Promise<ApiResponse<null>> {
     try {
-      debugger
       const response = await SPServices.SPAddItem({
         Listname: ListName,
         RequestJSON: obj,
