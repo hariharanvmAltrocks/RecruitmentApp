@@ -211,6 +211,7 @@ const CandidateList = (props: any) => {
               rowData.StatusId === StatusId.Selected ||
               rowData.StatusId === StatusId.OnHoldbyHOD ||
               rowData.StatusId === StatusId.PendingwithHODtoselectthecandidate||
+              rowData.StatusId === StatusId.PendingwithHODtoselectthecandidateLevel2||
               rowData.StatusId === StatusId.PendingwithHODtoAssignPositionID
             ) && (
               <img

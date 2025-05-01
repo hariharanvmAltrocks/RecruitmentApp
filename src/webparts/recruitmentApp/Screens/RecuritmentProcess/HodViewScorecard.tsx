@@ -1769,307 +1769,201 @@ const HodViewScorecard = (props: any) => {
       return false;
     }
   };
-
- const Submit_fn = async (Action: string) => {
-  const isValid = !Validation();
-  if (!isValid) {
-    console.error("Validation failed");
-    return;
-  }
-
-  const createFilter = (workflowStatus: string): WorkflowJson => ({
-    workflowStatus,
-    jobRequestId: Number(CandidateData.JobRequestID),
-    comments: CandidateData.Comments,
-    actionBy: props.CurrentUserRole,
-  });
-
-  const isLevel1 = props.stateValue?.InterviewLevel === "Level 1";
-
-  let obj: ActionUpdate = {
-    ActionId: 0,
-    Id: 0,
-    ItemCreated: "", // default empty
-  };
-
-  let CandidateDatas: WorkflowJson = {
-    workflowStatus: "",
-    jobRequestId: 0,
-    comments: "",
-    actionBy: "",
-  };
-
-  let SuccessMessage: string = "";
-
-  switch (Action) {
-    case "Selected":
-      obj = {
-        ActionId: WorkflowAction.Approved,
-        Id: props.stateValue.ID,
-        ItemCreated: isLevel1 ? "Yes" : "",
-      };
-      CandidateDatas = createFilter(workflowStatusApi.CandidateSelectedIPanel);
-      SuccessMessage = RecuritmentHRMsg.CandidateSelected;
-      break;
-
-    case "Rejected":
-      obj = {
-        ActionId: WorkflowAction.Reject,
-        Id: props.stateValue.ID,
-        ItemCreated: isLevel1 ? "Yes" : "",
-      };
-      CandidateDatas = createFilter(workflowStatusApi.CandidateRejectedIPanel);
-      SuccessMessage = RecuritmentHRMsg.CandidateRejected;
-
-      if (selectedPosition) {
-        await SPServices.SPUpdateItem({
-          Listname: ListNames.HRMSPositionIDMaster,
-          RequestJSON: { PositionIDStatus: "Vacant" },
-          ID: selectedPosition.key,
-        });
-      }
-      break;
-
-    case "OnHold":
-      obj = {
-        ActionId: WorkflowAction.OnHold,
-        Id: props.stateValue.ID,
-        ItemCreated: isLevel1 ? "Yes" : "",
-      };
-      CandidateDatas = createFilter(workflowStatusApi.CandidateOnHoldIPanel);
-      SuccessMessage = RecuritmentHRMsg.CandidateOnHold;
-      break;
-
-    default:
-      console.error("Invalid Action:", Action);
-      return;
-  }
-
-  try {
-    setIsLoading(true);
-    console.log("Selected Position:", selectedPosition);
-
-    if (Action === "Selected" && selectedPosition) {
-      await handleAssignPosition({
-        positionId: selectedPosition,
-        Reasons: CandidateData.Comments,
-      });
-    }
-
-    if (isLevel1) {
-      await insertOrUpdateCandidateCommentLevel1();
-    }
-
-    if (props.stateValue?.InterviewLevel === "Level 2") {
-      await insertOrUpdateLevel2ScorecardComment();
-
-      const hasThreeComments = await hasMinimumComments(CandidateData.CandidateID);
-      if (hasThreeComments) {
-        await SPServices.SPUpdateItem({
-          Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-          RequestJSON: {
-            ScoreCardLevelItemCreated: "Yes",
-          },
-          ID: CandidateData.CandidateID,
-        });
-      }
-    }
-
-    console.log("CandidateDatas Payload:", CandidateDatas);
-
-    const selectionResponse = await InterviewServices.CandidateSeletionApi(
-      obj,
-      ListNames.HRMSRecruitmentCandidatePersonalDetails
-    );
-
-    if (selectionResponse.status === 200) {
-      console.log("Candidate action submitted successfully");
-
-      setAlertPopupOpen(true);
-      setalertProps({
-        Message: SuccessMessage,
-        Type: HRMSAlertOptions.Success,
-        visible: true,
-        ButtonAction: async (userClickedOK: boolean) => {
-          if (userClickedOK) {
-            props.navigation("/RecurimentProcess/HodScoreCard/CandidateList", {
-              state: {
-                ID: CandidateData?.RecruitmentID,
-                Status: props.stateValue?.Status,
-                TabName: props.stateValue?.TabName,
-                ButtonAction: props.stateValue?.PreviousTabName,
-                JobCode: CandidateData?.JobCode,
-                StatusId: props.stateValue?.StatusId,
-              },
-            });
-          }
-          setAlertPopupOpen(false);
-        },
-      });
-    } else {
-      console.error("Failed to submit candidate action");
-    }
-  } catch (error) {
-    console.error("Error in Submit_fn:", error);
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-
-
-
-  // const Submit_fn = async (Action: string) => {
+  
+  const Submit_fn = async (Action: string) => {
     
-  //   const isValid = !Validation();
-  //   if (!isValid) {
-  //     console.error("Validation failed");
-  //     return;
-  //   }
+    const isValid = !Validation();
+    if (!isValid) {
+      console.error("Validation failed");
+      return;
+    }
 
-  //   const createFilter = (workflowStatus: string): WorkflowJson => ({
-  //     workflowStatus,
-  //     jobRequestId: Number(CandidateData.JobRequestID),
-  //     comments: CandidateData.Comments,
-  //     actionBy: props.CurrentUserRole,
-  //   });
+    const createFilter = (workflowStatus: string): WorkflowJson => ({
+      workflowStatus,
+      jobRequestId: Number(CandidateData.JobRequestID),
+      comments: CandidateData.Comments,
+      actionBy: props.CurrentUserRole,
+    });
 
-  //   let obj: ActionUpdate = {
-  //     ActionId: 0,
-  //     Id: 0,
-  //     ItemCreated: "",
-  //   };
+    let obj: ActionUpdate = {
+      ActionId: 0,
+      Id: 0,
+      ItemCreated: "",
+    };
 
-  //   let CandidateDatas: WorkflowJson = {
-  //     workflowStatus: "",
-  //     jobRequestId: 0,
-  //     comments: "",
-  //     actionBy: "",
-  //   };
+    let CandidateDatas: WorkflowJson = {
+      workflowStatus: "",
+      jobRequestId: 0,
+      comments: "",
+      actionBy: "",
+    };
 
-  //   let SuccessMessage: string = "";
-
-  //   switch (Action) {
-  //     case "Selected":
-  //       obj = {
-  //         ActionId: WorkflowAction.Approved,
-  //         Id: props.stateValue.ID,
-  //         ItemCreated: "Yes",
-  //       };
-  //       CandidateDatas = createFilter(
-  //         workflowStatusApi.CandidateSelectedIPanel
-  //       );
-  //       SuccessMessage = RecuritmentHRMsg.CandidateSelected;
-  //       break;
-
-  //     case "Rejected":
-  //       obj = {
-  //         ActionId: WorkflowAction.Reject,
-  //         Id: props.stateValue.ID,
-  //         ItemCreated: "Yes",
-  //       };
-  //       CandidateDatas = createFilter(
-  //         workflowStatusApi.CandidateRejectedIPanel
-  //       );
-  //       SuccessMessage = RecuritmentHRMsg.CandidateRejected;
-  //       if (selectedPosition) {
-  //         await SPServices.SPUpdateItem({
-  //           Listname: ListNames.HRMSPositionIDMaster,
-  //           RequestJSON: { PositionIDStatus: "Vacant" },
-  //           ID: selectedPosition.key,
-  //         });
-  //       }
-  //       break;
-
-  //     case "OnHold":
-  //       obj = {
-  //         ActionId: WorkflowAction.OnHold,
-  //         Id: props.stateValue.ID,
-  //         ItemCreated: "Yes",
-  //       };
-  //       CandidateDatas = createFilter(workflowStatusApi.CandidateOnHoldIPanel);
-  //       SuccessMessage = RecuritmentHRMsg.CandidateOnHold;
-  //       break;
-
-  //     default:
-  //       console.error("Invalid Action:", Action);
-  //       return;
-  //   }
-
-  //   try {
-  //     setIsLoading(true);
-
-  //     console.log("Selected Position:", selectedPosition);
-
-  //     // Assign PositionID if Selected
-  //     if (Action === "Selected" && selectedPosition) {
-  //       await handleAssignPosition({
-  //         positionId: selectedPosition,
-  //         Reasons: CandidateData.Comments,
-  //       });
-  //     }
-
-  //    if(props.stateValue?.InterviewLevel === "Level 1"){
-  //     await insertOrUpdateCandidateCommentLevel1();
-  //    }
-  //     console.log("CandidateDatas Payload:", CandidateDatas);
-
-  //     if (props.stateValue?.InterviewLevel === "Level 2") {
-  //       await insertOrUpdateLevel2ScorecardComment();
+    let SuccessMessage: string = "";
+    const isNotEvaluationTab = props.stateValue?.TabName !== "Evaluation";
+    switch (Action) {
+      case "Selected":
+        obj = {
+          ActionId: WorkflowAction.Approved,
+          Id: props.stateValue.ID,
+          ItemCreated: isNotEvaluationTab ? "Yes" : "",
+        };
+        CandidateDatas = createFilter(workflowStatusApi.CandidateSelectedIPanel);
+        SuccessMessage = RecuritmentHRMsg.CandidateSelected;
+        break;
   
-  //       const hasThreeComments = await hasMinimumComments(CandidateData.CandidateID);
-  //       if (hasThreeComments) {
-  //         await SPServices.SPUpdateItem({
-  //           Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-  //           RequestJSON: {
-  //             ScoreCardLevelItemCreated: "Yes",
-  //           },
-  //           ID: CandidateData.CandidateID,
-  //         });
-  //       }
-  //     }
+      case "Rejected":
+        obj = {
+          ActionId: WorkflowAction.Reject,
+          Id: props.stateValue.ID,
+          ItemCreated: isNotEvaluationTab ? "Yes" : "",
+        };
+        CandidateDatas = createFilter(workflowStatusApi.CandidateRejectedIPanel);
+        SuccessMessage = RecuritmentHRMsg.CandidateRejected;
   
-  //     const selectionResponse = await InterviewServices.CandidateSeletionApi(
-  //       obj,
-  //       ListNames.HRMSRecruitmentCandidatePersonalDetails
-  //     );
+        if (selectedPosition) {
+          await SPServices.SPUpdateItem({
+            Listname: ListNames.HRMSPositionIDMaster,
+            RequestJSON: { PositionIDStatus: "Vacant" },
+            ID: selectedPosition.key,
+          });
+        }
+        break;
+  
+      case "OnHold":
+        obj = {
+          ActionId: WorkflowAction.OnHold,
+          Id: props.stateValue.ID,
+          ItemCreated: isNotEvaluationTab ? "Yes" : "",
+        };
+        CandidateDatas = createFilter(workflowStatusApi.CandidateOnHoldIPanel);
+        SuccessMessage = RecuritmentHRMsg.CandidateOnHold;
+        break;
+  
+      default:
+        console.error("Invalid Action:", Action);
+        return;
+    }
+    // switch (Action) {
+    //   case "Selected":
+    //     obj = {
+    //       ActionId: WorkflowAction.Approved,
+    //       Id: props.stateValue.ID,
+    //       ItemCreated: "Yes",
+    //     };
+    //     CandidateDatas = createFilter(
+    //       workflowStatusApi.CandidateSelectedIPanel
+    //     );
+    //     SuccessMessage = RecuritmentHRMsg.CandidateSelected;
+    //     break;
 
-  //     if (selectionResponse.status === 200) {
-  //       console.log("Candidate action submitted successfully");
+    //   case "Rejected":
+    //     obj = {
+    //       ActionId: WorkflowAction.Reject,
+    //       Id: props.stateValue.ID,
+    //       ItemCreated: "Yes",
+    //     };
+    //     CandidateDatas = createFilter(
+    //       workflowStatusApi.CandidateRejectedIPanel
+    //     );
+    //     SuccessMessage = RecuritmentHRMsg.CandidateRejected;
+    //     if (selectedPosition) {
+    //       await SPServices.SPUpdateItem({
+    //         Listname: ListNames.HRMSPositionIDMaster,
+    //         RequestJSON: { PositionIDStatus: "Vacant" },
+    //         ID: selectedPosition.key,
+    //       });
+    //     }
+    //     break;
 
-  //       setAlertPopupOpen(true);
-  //       setalertProps({
-  //         Message: SuccessMessage,
-  //         Type: HRMSAlertOptions.Success,
-  //         visible: true,
-  //         ButtonAction: async (userClickedOK: boolean) => {
-  //           if (userClickedOK) {
-  //             props.navigation(
-  //               "/RecurimentProcess/HodScoreCard/CandidateList",
-  //               {
-  //                 state: {
-  //                   ID: CandidateData?.RecruitmentID,
-  //                   Status: props.stateValue?.Status,
-  //                   TabName: props.stateValue?.TabName,
-  //                   ButtonAction: props.stateValue?.PreviousTabName,
-  //                   JobCode: CandidateData?.JobCode,
-  //                   StatusId: props.stateValue?.StatusId,
-  //                 },
-  //               }
-  //             );
-  //           }
-  //           setAlertPopupOpen(false);
-  //         },
-  //       });
-  //     } else {
-  //       console.error("Failed to submit candidate action");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error in Submit_fn:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+    //   case "OnHold":
+    //     obj = {
+    //       ActionId: WorkflowAction.OnHold,
+    //       Id: props.stateValue.ID,
+    //       ItemCreated: "Yes",
+    //     };
+    //     CandidateDatas = createFilter(workflowStatusApi.CandidateOnHoldIPanel);
+    //     SuccessMessage = RecuritmentHRMsg.CandidateOnHold;
+    //     break;
+
+    //   default:
+    //     console.error("Invalid Action:", Action);
+    //     return;
+    // }
+
+    try {
+      setIsLoading(true);
+
+      console.log("Selected Position:", selectedPosition);
+
+      // Assign PositionID if Selected
+      if (Action === "Selected" && selectedPosition) {
+        await handleAssignPosition({
+          positionId: selectedPosition,
+          Reasons: CandidateData.Comments,
+        });
+      }
+
+     if(props.stateValue?.InterviewLevel === "Level 1"){
+      await insertOrUpdateCandidateCommentLevel1();
+     }
+      console.log("CandidateDatas Payload:", CandidateDatas);
+
+      if (props.stateValue?.InterviewLevel === "Level 2") {
+        await insertOrUpdateLevel2ScorecardComment();
+  
+        const hasThreeComments = await hasMinimumComments(CandidateData.CandidateID);
+        if (hasThreeComments) {
+          await SPServices.SPUpdateItem({
+            Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+            RequestJSON: {
+              ScoreCardLevelItemCreated: "Yes",
+            },
+            ID: CandidateData.CandidateID,
+          });
+        }
+      }
+  
+      const selectionResponse = await InterviewServices.CandidateSeletionApi(
+        obj,
+        ListNames.HRMSRecruitmentCandidatePersonalDetails
+      );
+
+      if (selectionResponse.status === 200) {
+        console.log("Candidate action submitted successfully");
+
+        setAlertPopupOpen(true);
+        setalertProps({
+          Message: SuccessMessage,
+          Type: HRMSAlertOptions.Success,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              props.navigation(
+                "/RecurimentProcess/HodScoreCard/CandidateList",
+                {
+                  state: {
+                    ID: CandidateData?.RecruitmentID,
+                    Status: props.stateValue?.Status,
+                    TabName: props.stateValue?.TabName,
+                    ButtonAction: props.stateValue?.PreviousTabName,
+                    JobCode: CandidateData?.JobCode,
+                    StatusId: props.stateValue?.StatusId,
+                  },
+                }
+              );
+            }
+            setAlertPopupOpen(false);
+          },
+        });
+      } else {
+        console.error("Failed to submit candidate action");
+      }
+    } catch (error) {
+      console.error("Error in Submit_fn:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <>
       {MainComponent ? (
