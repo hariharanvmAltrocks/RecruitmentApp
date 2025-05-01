@@ -105,6 +105,7 @@ const CandidateList = (props: any) => {
           StatusId.OnHoldbyHOD,
           StatusId.RejectedbyHOD,
           StatusId.PendingwithHODtoAssignPositionID,
+          StatusId.PendingwithHODtoselectthecandidateLevel2,
         ],
       });
       filterConditions.push({

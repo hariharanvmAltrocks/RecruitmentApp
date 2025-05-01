@@ -1332,7 +1332,7 @@ const HodViewScorecard = (props: any) => {
                 )
               )
             );
-
+            console.log("Interview levels:", interviewLevels);
             try {
               const response = await CommonServices.GetAttachmentToLibrary(
                 DocumentLibraray.RecruitmentAdvertisementDocument,
@@ -1801,6 +1801,7 @@ const HodViewScorecard = (props: any) => {
 
     let SuccessMessage: string = "";
     const isNotEvaluationTab = props.stateValue?.TabName !== "Evaluation";
+    console.log("isNotEvaluationTab:", isNotEvaluationTab);
     switch (Action) {
       case "Selected":
         obj = {
