@@ -1,4 +1,4 @@
-import { AdvertisementDetails, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, getQuestionById, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
 export const getProfileData = {
@@ -59,4 +59,11 @@ export const QuestionnaireApi = {
             `/GetInterviewPanelQuestionsByJobCode?jobCode=${JobCode}`
         );
     },
+    GetQuestionaireByScope: async function (params: getQuestionById) {
+        return AxiosInstance.post(
+            `/GetQuestionsBank`, params
+            ,
+        );
+    }
+
 }

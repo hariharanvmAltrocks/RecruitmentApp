@@ -1,5 +1,6 @@
-import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, getQuestionById, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { QuestionItem } from "../../Models/RecuritmentVRR";
+import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
 
 export type CandidateDetails = {
     RecruitmentIDId: number,
@@ -25,6 +26,12 @@ export type CandidateDetails = {
     InterviewLink: string,
     ActionId: number,
 }
+export type RescheduledCandidate = {
+    ID: number
+    InterviewDate: Date | undefined,
+    InterviewTime: string,
+    InterviewLink: string
+}
 
 export type IGetPortalJobs = {
     UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>>;
@@ -37,4 +44,7 @@ export type IGetPortalJobs = {
     UpsertQuestions(data: UpsertQuestions[]): Promise<ApiResponse<any | null>>;
     GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>>;
     getQuestionnaire(JobCode: string): Promise<ApiResponse<QuestionItem[] | null>>;
+    RescheduledInterview(obj: RescheduledCandidate, ListName: string): Promise<ApiResponse<null>>;
+    GetQuestionaireByScope(GetExistingQuestion: getQuestionById): Promise<ApiResponse<ViewQuestion[] | null>>;
+    InsertInterviewPanel(InterviewPanel: any[], CandidateId: number): Promise<ApiResponse<any | null>>;
 }

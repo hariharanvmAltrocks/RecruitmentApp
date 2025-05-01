@@ -12,6 +12,7 @@ import {
   ColorCode,
   DocumentLibraray,
   HRMSAlertOptions,
+  labelName,
   ListNames,
   RecuritmentHRMsg,
   ResponeStatus,
@@ -911,7 +912,7 @@ const HodViewScorecard = (props: any) => {
                   >
                     <div>
                       <CustomLabel
-                        value="View Job Advertisement"
+                        value={labelName.ViewJobAdvetisement}
                         // mandatory={true}
                       />
                       <ReuseButton

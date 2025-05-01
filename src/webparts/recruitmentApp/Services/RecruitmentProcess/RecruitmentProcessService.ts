@@ -8,7 +8,7 @@ import {
   JobCodeData,
   PostRecuritmentData,
 } from "./IRecruitmentProcessService";
-import { AdvDetails, CandidateData, RecuritmentData } from "../../Models/RecuritmentVRR";
+import { CandidateData } from "../../Models/RecuritmentVRR";
 import { sp } from "@pnp/sp/presets/all";
 import { CommonServices, GetPortalJobsService } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
@@ -1512,8 +1512,8 @@ export default class RecruitmentService implements IRecruitmentService {
   async UploadAdvertisementInPortal(
     Filter: any[],
     Condition: string,
-    RecuritmentDetails: RecuritmentData,
-    AdvertisementValue: AdvDetails,
+    RecuritmentDetails: any,
+    AdvertisementValue: any,
     MasterData: any,
     IsActive: number,
   ): Promise<ApiResponse<null>> {
@@ -1579,7 +1579,7 @@ export default class RecruitmentService implements IRecruitmentService {
       ];
 
       const Description: Descriptions = {
-        jobTitle: RecuritmentDetails.JobNameInEnglish,
+        jobTitle: RecuritmentDetails.JobNameInEnglish === undefined ? RecuritmentDetails.JobTitleEnglish : RecuritmentDetails.JobNameInEnglish,
         jobShortSummary: String(data.RoleProfile || ""),
         jobSummary: String(data.JobDescription || ""),
       };
@@ -1604,7 +1604,7 @@ export default class RecruitmentService implements IRecruitmentService {
       const AdvertisementDetails: AdvertisementDetails = {
         jobCode: RecuritmentDetails.JobCode,
         IsActive: IsActive,
-        noOfPositions: String(RecuritmentDetails.NoofPositionAssigned),
+        noOfPositions: String(RecuritmentDetails?.NoofPositionAssigned === undefined ? RecuritmentDetails?.NumberOfPersonNeeded : RecuritmentDetails?.NoofPositionAssigned),
         validFrom: AdvertisementValue.ValidFrom ?? null,
         validTo: AdvertisementValue.ValidTo ?? null,
         employmentType: "Full Time",

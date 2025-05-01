@@ -213,14 +213,14 @@ export default class InterviewProcessService
             .catch((error) => {
               console.error("Error fetching candidate scorecard:", error);
             });
-const candidateComments = await this.getCandidateComments(item.ID);
+          const candidateComments = await this.getCandidateComments(item.ID);
 
           const lastCandidateGPA = positionResult?.data?.length
             ? positionResult.data[positionResult.data.length - 1].GPA
             : null;
-            const lastInterviewLevel = positionResult?.data?.length
-  ? positionResult.data[positionResult.data.length - 1]?.InterviewLevel
-  : null;
+          const lastInterviewLevel = positionResult?.data?.length
+            ? positionResult.data[positionResult.data.length - 1]?.InterviewLevel
+            : null;
           return {
             ID: item.ID,
             RecruitmentID: item?.RecruitmentID?.ID,
@@ -262,14 +262,18 @@ const candidateComments = await this.getCandidateComments(item.ID);
             InterviewDate: item?.InterviewDate,
             InterviewTime: item?.InterviewTime,
             InterviewLink: item?.InterviewLink,
-             InterviewLevel: lastInterviewLevel,
+            InterviewDateLevel2: item?.InterviewDateLevel2,
+            InterviewTimeLevel2: item?.InterviewTimeLevel2,
+            InterviewLinkLevel2: item?.InterviewLinkLevel2,
+            InterviewLevel: lastInterviewLevel,
             CandidateComments: candidateComments,
+
           };
         })
       );
 
-    CandidateDetails.push(...formattedItems);
-console.log("Combined Candidate Details:", CandidateDetails);
+      CandidateDetails.push(...formattedItems);
+      console.log("Combined Candidate Details:", CandidateDetails);
       return {
         data: CandidateDetails,
         status: 200,
@@ -495,119 +499,119 @@ console.log("Combined Candidate Details:", CandidateDetails);
       });
   }
 
-async getCandidateComments(candidateID: number) {
-  try {
-    const comments = await SPServices.SPReadItems({
-      Listname: ListNames.HRMSRecruitmentCandidateComments,
-      Select: "*,CandidateID/ID,Role/RoleTitle,Level,Comments",
-      Expand: "CandidateID,Role",
-      FilterCondition: [
-        {
-          FilterKey: "CandidateID/ID",
-          Operator: "eq",
-          FilterValue: candidateID,
-        },
-      ],
-    });
-
-    const groupedCommentsByCandidate: Record<number, any[]> = {};
-
-    comments.forEach((comment: any) => {
-      const id = comment?.CandidateID?.ID;
-      if (!id) return;
-
-      if (!groupedCommentsByCandidate[id]) {
-        groupedCommentsByCandidate[id] = [];
-      }
-
-      groupedCommentsByCandidate[id].push({
-        Level: comment.Level ?? "",
-        Comments: comment.Comments ?? "",
-        Role: comment.Role?.RoleTitle ?? "",
+  async getCandidateComments(candidateID: number) {
+    try {
+      const comments = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidateComments,
+        Select: "*,CandidateID/ID,Role/RoleTitle,Level,Comments",
+        Expand: "CandidateID,Role",
+        FilterCondition: [
+          {
+            FilterKey: "CandidateID/ID",
+            Operator: "eq",
+            FilterValue: candidateID,
+          },
+        ],
       });
-    });
 
-    console.log("Grouped Comments1:", groupedCommentsByCandidate);
-    return groupedCommentsByCandidate;
-  } catch (error) {
-    console.error(`Error fetching comments for candidate ID ${candidateID}:`, error);
-    return {};
+      const groupedCommentsByCandidate: Record<number, any[]> = {};
+
+      comments.forEach((comment: any) => {
+        const id = comment?.CandidateID?.ID;
+        if (!id) return;
+
+        if (!groupedCommentsByCandidate[id]) {
+          groupedCommentsByCandidate[id] = [];
+        }
+
+        groupedCommentsByCandidate[id].push({
+          Level: comment.Level ?? "",
+          Comments: comment.Comments ?? "",
+          Role: comment.Role?.RoleTitle ?? "",
+        });
+      });
+
+      console.log("Grouped Comments1:", groupedCommentsByCandidate);
+      return groupedCommentsByCandidate;
+    } catch (error) {
+      console.error(`Error fetching comments for candidate ID ${candidateID}:`, error);
+      return {};
+    }
   }
-}
 
-async getCandidateLevel2ScoreCard(
-  filterConditions: any[] = []
-): Promise<ApiResponse<CandidateLevel2ScoreCard[]>> {
-  try {
-    const items = await SPServices.SPReadItems({
-      Listname: ListNames.HRMSCandidateLevel2ScoreCard,
-      Select: "ID,CandidateID/ID,CandidateID/Title,Comments,Role/ID,Role/RoleTitle,Level",
-      Expand: "CandidateID,Role",
-      Filter: filterConditions,
-      Topcount: count.Topcount,
-    });
+  async getCandidateLevel2ScoreCard(
+    filterConditions: any[] = []
+  ): Promise<ApiResponse<CandidateLevel2ScoreCard[]>> {
+    try {
+      const items = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSCandidateLevel2ScoreCard,
+        Select: "ID,CandidateID/ID,CandidateID/Title,Comments,Role/ID,Role/RoleTitle,Level",
+        Expand: "CandidateID,Role",
+        Filter: filterConditions,
+        Topcount: count.Topcount,
+      });
 
-    const scoreCardData: CandidateLevel2ScoreCard[] = items.map((item: any) => ({
-      ID: item.ID,
-      CandidateID: item.CandidateID?.ID || 0,
-      CandidateName: item.CandidateID?.Title || "",
-      RoleId: item.Role?.ID || 0,
-      RoleTitle: item.Role?.RoleTitle || "",
-      Comments: item.Comments || "",
-      Level: item.Level || "",
-    }));
+      const scoreCardData: CandidateLevel2ScoreCard[] = items.map((item: any) => ({
+        ID: item.ID,
+        CandidateID: item.CandidateID?.ID || 0,
+        CandidateName: item.CandidateID?.Title || "",
+        RoleId: item.Role?.ID || 0,
+        RoleTitle: item.Role?.RoleTitle || "",
+        Comments: item.Comments || "",
+        Level: item.Level || "",
+      }));
 
-    return {
-      data: scoreCardData,
-      status: 200,
-      message: "Level 2 ScoreCard data fetched successfully",
-    };
-  } catch (error) {
-    console.error("Error fetching Level 2 scorecard:", error);
-    return {
-      data: [],
-      status: 500,
-      message: "Error fetching Level 2 scorecard",
-    };
+      return {
+        data: scoreCardData,
+        status: 200,
+        message: "Level 2 ScoreCard data fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching Level 2 scorecard:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching Level 2 scorecard",
+      };
+    }
   }
-}
 
-async getCandidateLevel1ScoreCard(
-  filterConditions: any[] = []
-): Promise<ApiResponse<CandidateComment[]>> {
-  try {
-    const items = await SPServices.SPReadItems({
-      Listname: ListNames.HRMSRecruitmentCandidateComments,
-      Select: "ID,CandidateID/ID,CandidateID/Title,Comments,Role/ID,Role/RoleTitle,Level",
-      Expand: "CandidateID,Role",
-      Filter: filterConditions,
-      Topcount: count.Topcount,
-    });
+  async getCandidateLevel1ScoreCard(
+    filterConditions: any[] = []
+  ): Promise<ApiResponse<CandidateComment[]>> {
+    try {
+      const items = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidateComments,
+        Select: "ID,CandidateID/ID,CandidateID/Title,Comments,Role/ID,Role/RoleTitle,Level",
+        Expand: "CandidateID,Role",
+        Filter: filterConditions,
+        Topcount: count.Topcount,
+      });
 
-    const result = items.map((item: any) => ({
-      ID: item.ID,
-      CandidateID: item.CandidateID?.ID ?? 0,
-      CandidateName: item.CandidateID?.Title ?? "",
-      RoleId: item.Role?.ID ?? 0,
-      RoleTitle: item.Role?.RoleTitle ?? "",
-      Comments: item.Comments ?? "",
-      Level: item.Level ?? "",
-    }));
+      const result = items.map((item: any) => ({
+        ID: item.ID,
+        CandidateID: item.CandidateID?.ID ?? 0,
+        CandidateName: item.CandidateID?.Title ?? "",
+        RoleId: item.Role?.ID ?? 0,
+        RoleTitle: item.Role?.RoleTitle ?? "",
+        Comments: item.Comments ?? "",
+        Level: item.Level ?? "",
+      }));
 
-    return {
-      data: result,
-      status: 200,
-      message: "Level 1 comments fetched successfully",
-    };
-  } catch (error) {
-    console.error("Error fetching Level 1 comments:", error);
-    return {
-      data: [],
-      status: 500,
-      message: "Error fetching Level 1 comments",
-    };
+      return {
+        data: result,
+        status: 200,
+        message: "Level 1 comments fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching Level 1 comments:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching Level 1 comments",
+      };
+    }
   }
-}
   async GetHRMSPositionDetails(
     filterParam: any,
     filterConditions: any
@@ -641,7 +645,7 @@ async getCandidateLevel1ScoreCard(
           key: pos.ID,
           text: pos.PositionID,
         }));
-        
+
         return {
           data: positionOptions,
           status: 200,
@@ -672,13 +676,13 @@ async getCandidateLevel1ScoreCard(
         ItemCreated: obj.ItemCreated,
         Comments: obj.Comments, // Include Comments in the payload
       };
-  
+
       await SPServices.SPUpdateItem({
         Listname: ListName,
         RequestJSON: payload,
         ID: obj.Id,
       });
-  
+
       return {
         data: null,
         status: 200,
@@ -719,14 +723,14 @@ async getCandidateLevel1ScoreCard(
     }
   }
 
-async GetSelectedCandidateDetailsByHOD(
-  filterParam: any,
-  filterConditions: any
-): Promise<ApiResponse<CandidateDetails[]>> {
-  try {
-    const selectedCandidateItems: any[] = await SPServices.SPReadItems({
-      Listname: "HRMSSelectedCandidateDetailsByHOD",
-      Select: `
+  async GetSelectedCandidateDetailsByHOD(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<CandidateDetails[]>> {
+    try {
+      const selectedCandidateItems: any[] = await SPServices.SPReadItems({
+        Listname: "HRMSSelectedCandidateDetailsByHOD",
+        Select: `
         *,BusinessUnitCode/ID,BusinessUnitCode/Title,
         PositionID/ID,PositionID/PositionID,
         Status/ID,Status/StatusDescription,
@@ -736,7 +740,7 @@ async GetSelectedCandidateDetailsByHOD(
         CandidateID/ID,CandidateID/Title,
         RecruitmentID/ID
       `,
-      Expand: `
+        Expand: `
         BusinessUnitCode,
         PositionID,
         Status,
@@ -746,101 +750,101 @@ async GetSelectedCandidateDetailsByHOD(
         CandidateID,
         RecruitmentID
       `,
-      Filter: filterParam,
-      FilterCondition: filterConditions,
-      Topcount: count.Topcount,
-    });
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Topcount: count.Topcount,
+      });
 
-    const selectedCandidateDetails: CandidateDetails[] = selectedCandidateItems.map(item => ({
-      ID: item.ID,
-      BusinessUnitCode: item?.BusinessUnitCode?.Title || "",
-      DateRequried: item?.DateRequried || "",
-      AreaofWork: item?.AreaofWork || "",
-      PositionID: item?.PositionID?.PositionID || "",
-      Position: item?.PositionID?.ID || "",
-      Status: item?.Status?.StatusDescription || "",
-      FirstName: item?.FirstName || "",
-      LastName: item?.LastName || "",
-      MiddleName: item?.MiddleName || "",
-      ExpatriatePosition: item?.ExpatriatePosition || "",
-      Location: item?.Location || "",
-      LineManager: item?.LineManager?.Title || "",
-      LineManagerEmail: item?.LineManager?.EMail || "",
-      PassportNumber: item?.PassportNumber || "",
-      RecuritmentHR: item?.RecuritmentHR || "",
-      LineManagerAction: item?.LineManagerAction || "",
-      JobCode: item?.JobCode?.JobCode || "",
-      AssignBy: item?.AssignBy?.Title || "",
-      AssignByEmail: item?.AssignBy?.EMail || "",
-      CandidateID: item?.CandidateID?.ID || 0,
-      RecruitmentID: item?.RecruitmentID?.ID || 0,
-    }));
-console.log("Selected Candidate Details:", selectedCandidateDetails);
-    return {
-      data: selectedCandidateDetails,
-      status: 200,
-      message: "Selected candidate details fetched successfully",
-    };
-  } catch (error) {
-    console.error("Error fetching selected candidate details:", error);
-    return {
-      data: [],
-      status: 500,
-      message: "Error fetching selected candidate details",
-    };
+      const selectedCandidateDetails: CandidateDetails[] = selectedCandidateItems.map(item => ({
+        ID: item.ID,
+        BusinessUnitCode: item?.BusinessUnitCode?.Title || "",
+        DateRequried: item?.DateRequried || "",
+        AreaofWork: item?.AreaofWork || "",
+        PositionID: item?.PositionID?.PositionID || "",
+        Position: item?.PositionID?.ID || "",
+        Status: item?.Status?.StatusDescription || "",
+        FirstName: item?.FirstName || "",
+        LastName: item?.LastName || "",
+        MiddleName: item?.MiddleName || "",
+        ExpatriatePosition: item?.ExpatriatePosition || "",
+        Location: item?.Location || "",
+        LineManager: item?.LineManager?.Title || "",
+        LineManagerEmail: item?.LineManager?.EMail || "",
+        PassportNumber: item?.PassportNumber || "",
+        RecuritmentHR: item?.RecuritmentHR || "",
+        LineManagerAction: item?.LineManagerAction || "",
+        JobCode: item?.JobCode?.JobCode || "",
+        AssignBy: item?.AssignBy?.Title || "",
+        AssignByEmail: item?.AssignBy?.EMail || "",
+        CandidateID: item?.CandidateID?.ID || 0,
+        RecruitmentID: item?.RecruitmentID?.ID || 0,
+      }));
+      console.log("Selected Candidate Details:", selectedCandidateDetails);
+      return {
+        data: selectedCandidateDetails,
+        status: 200,
+        message: "Selected candidate details fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching selected candidate details:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching selected candidate details",
+      };
+    }
   }
+  async CandidateSeletionApiData(
+    obj: CommentsData,
+    ListName: string
+  ): Promise<ApiResponse<null>> {
+    try {
+      await SPServices.SPUpdateItem({
+        Listname: ListName,
+        RequestJSON: obj,
+        ID: obj.Id,
+      });
+
+      return {
+        data: null,
+        status: 200,
+        message: "Data Submitted successfully",
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        data: null,
+        status: 400,
+        message: "Error On Posting Data",
+      };
+    }
+  }
+
+  async SubmitCandidateCommentsApi(
+    obj: InterviewPanelDetails,
+    ListName: string
+  ): Promise<ApiResponse<null>> {
+    try {
+      debugger
+      const response = await SPServices.SPAddItem({
+        Listname: ListName,
+        RequestJSON: obj,
+      });
+      console.log("Response from SubmitCandidateCommentsApi:", response);
+      return {
+        data: response.data,
+        status: 200,
+        message: "Data Submitted successfully",
+      };
+    } catch (error) {
+      console.error("Error posting user data:", error);
+      return {
+        data: null,
+        status: 400,
+        message: "Error On Posting Data",
+      };
+    }
+  }
+
+
 }
-async CandidateSeletionApiData(
-  obj: CommentsData,
-  ListName: string
-): Promise<ApiResponse<null>> {
-  try {
-    await SPServices.SPUpdateItem({
-      Listname: ListName,
-      RequestJSON: obj,
-      ID: obj.Id,
-    });
-
-    return {
-      data: null,
-      status: 200,
-      message: "Data Submitted successfully",
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      data: null,
-      status: 400,
-      message: "Error On Posting Data",
-    };
-  }
-}
-
-async SubmitCandidateCommentsApi(
-  obj:InterviewPanelDetails,
-  ListName: string
-): Promise<ApiResponse<null>> {
-  try {
-    debugger
-    const response = await SPServices.SPAddItem({
-      Listname: ListName,
-      RequestJSON: obj,
-    });
-console.log("Response from SubmitCandidateCommentsApi:", response);
-    return {
-      data: response.data,
-      status: 200,
-      message: "Data Submitted successfully",
-    };
-  } catch (error) {
-    console.error("Error posting user data:", error);
-    return {
-      data: null,
-      status: 400,
-      message: "Error On Posting Data",
-    };
-  }
-}
-
-
-  }
