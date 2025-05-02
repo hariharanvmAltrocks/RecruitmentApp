@@ -26,7 +26,16 @@ export default class RecruitmentAppWebPart extends BaseClientSideWebPart<IRecrui
   }
 
   public render(): void {
-    const element: React.ReactElement<any> = React.createElement(App);
+
+    const element: React.ReactElement<any> = React.createElement(
+      App,
+      {
+        description: this.properties.description,
+        webURL: this.context.pageContext.web.absoluteUrl,
+        context: this.context,
+        id: "",
+      }
+    );
 
     ReactDom.render(element, this.domElement);
   }

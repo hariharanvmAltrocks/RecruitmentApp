@@ -34,13 +34,33 @@ function CustomTextArea({
       <Textarea
         value={value}
         placeholder={placeholder}
+        // style={{
+        //   color: "#808080",
+        //   borderRadius: "5px",
+        //   borderWidth: "1px",
+        //   marginLeft: "0rem",
+        //   width: "100%",
+        //   border: "groove",
+        // }}
         style={{
-          color: "#808080",
-          borderRadius: "5px",
+          //color: "#808080",
+          // color: value ? "#000000" : "#D7D3D3",
+          color: value ? "#000000" : "#C9C9C9",
+          borderRadius: "4px",
           borderWidth: "1px",
+          borderColor: "#5f5f5f",
+          boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+          border: "1px solid rgb(191, 182, 182)",
           marginLeft: "0rem",
           width: "100%",
-          border: "groove",
+          // border: "groove",
+          //border: "1px solid #5f5f5f",
+
+          fontSize: value ? "13px" : "11px",
+
+          fontFamily: "sans-serif",
+          paddingTop: value ? "5px" : "7px",
+          paddingLeft: value ? "7px" : "11px",
         }}
         onChange={
           onChange ? (event, value) => onChange(value?.value || "") : undefined
@@ -49,7 +69,7 @@ function CustomTextArea({
       />
       {error && (
         <p style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}>
-          Field Is Required
+          Field is Required
         </p>
       )}
     </>

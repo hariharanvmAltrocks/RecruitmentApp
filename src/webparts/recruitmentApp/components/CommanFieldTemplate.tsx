@@ -164,7 +164,9 @@ const CommanFieldTemplate = (props: any) => {
                             throw new Error("Function not implemented.");
                         }} onSelectAllChange={function (value: any): void {
                             throw new Error("Function not implemented.");
-                        }} selectAll={false} />
+                        }} selectAll={false} MasterData={undefined} handleRefresh={function (): void {
+                            throw new Error("Function not implemented.");
+                        }} />
                     {/* <ReviewProfileDatatable
                         data={data}
                         columns={columnConfig}
@@ -183,7 +185,10 @@ const CommanFieldTemplate = (props: any) => {
             <CustomLoader isLoading={isLoading}>
                 <Card variant="outlined" sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3" }}>
                     <React.Fragment>
-                        <TabsComponent tabs={tabs} initialTab="tab1" tabClassName={"Tab"} />
+                        <TabsComponent
+                         tabs={tabs} initialTab="tab1"
+                        //  tabClassName={"Tab"} 
+                         />
                     </React.Fragment>
                 </Card>
             </CustomLoader>

@@ -8,15 +8,17 @@ import ApprovedVRREdit from "../Screens/RecuritmentProcess/ApprovedVRREdit";
 import { userInfo } from "../utilities/RoleContext";
 import CommanFieldTemplate from "../components/CommanFieldTemplate";
 import CommanTemplate from "../components/CommanTemplate";
-// import ReviewProfile from "../Screens/RecuritmentProcess/ReviewProfile";
-import ReviewProfile from "../Screens/ReviewProfile/ReviewProfile";
 import AssignInterviewPanel from "../Screens/RecuritmentProcess/AssignInterviewPanel";
 import InterviewPanelList from "../Screens/InterviewPanel/InterviewPanelList";
 import InterviewPanelEdit from "../Screens/InterviewPanel/InterviewPanelEdit";
 import Emptypage from "../Screens/EmptyPage/EmptyPage";
-import HodScoreCard from "../Screens/RecuritmentProcess/HodScoreCard";
 import CandidateList from "../Screens/RecuritmentProcess/CandidateList";
-// import HodScoreCard from "../Screens/RecuritmentProcess/HodScoreCard";
+import ReviewProfileList from "../Screens/ReviewProfile/ReviewProfileList";
+import ReviewCandidateList from "../Screens/ReviewProfile/ReviewCandidateList";
+import ViewCandidateDetails from "../Screens/ReviewProfile/ViewCandidateDetails";
+import HodViewScorecard from "../Screens/RecuritmentProcess/HodViewScorecard";
+import InterviewQuesEdit from "../Screens/ReviewProfile/InterviewQuesEdit";
+import ReviewProfileEdit from "../Screens/ReviewProfile/ReviewProfileEdit";
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
 
@@ -30,12 +32,8 @@ export default function MainPage(props: any) {
     <div style={{ display: "flex", flexDirection: "row" }} className=" ms-Grid">
       <div
         style={{ width: isExpanded ? "15%" : "6%" }}
-        onMouseEnter={() => {
-          setIsExpanded(true);
-        }}
-        onMouseLeave={() => {
-          setIsExpanded(false);
-        }}
+        // onMouseEnter={() => { setIsExpanded(true) }}
+        // onMouseLeave={() => { setIsExpanded(false) }}
       >
         <SideNavComponent roleID={roleID} IsExpanded={isExpanded} />
       </div>
@@ -86,8 +84,16 @@ export default function MainPage(props: any) {
                   element={<CommanTemplate {...props} {...masterData} />}
                 />
                 <Route
-                  path="/RecurimentProcess/ReviewProfile"
-                  element={<ReviewProfile {...props} {...masterData} />}
+                  path="/ReviewProfileList"
+                  element={<ReviewProfileList {...props} {...masterData} />}
+                />
+                <Route
+                  path="/ReviewProfileList/ReviewCandidateList"
+                  element={<ReviewCandidateList {...props} {...masterData} />}
+                />
+                <Route
+                  path="/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails"
+                  element={<ViewCandidateDetails {...props} {...masterData} />}
                 />
                 <Route
                   path="/RecurimentProcess/AssignInterviewPanel"
@@ -108,9 +114,14 @@ export default function MainPage(props: any) {
                   element={<InterviewPanelEdit {...props} {...masterData} />}
                 />
                 <Route
-                  path="/RecurimentProcess/HodScoreCard"
-                  element={<HodScoreCard {...props} {...masterData} />}
+                  path="/RecurimentProcess/InterviewPanelList/InterviewPanelEdit"
+                  element={<InterviewPanelEdit {...props} {...masterData} />}
                 />
+                <Route
+                  path="/ReviewProfileList/InterviewPanelList/InterviewPanelEdit"
+                  element={<InterviewPanelEdit {...props} {...masterData} />}
+                />
+
                 <Route
                   path="/RecurimentProcess/HodScoreCard/CandidateList"
                   element={
@@ -120,6 +131,19 @@ export default function MainPage(props: any) {
                       {...ADGroupData}
                     />
                   }
+                />
+                <Route
+                  path="/RecurimentProcess/HodViewScorecard"
+                  element={<HodViewScorecard {...props} {...masterData} />}
+                />
+                {/* sneka */}
+                <Route
+                  path="/ReviewProfileList/InterviewQuesEdit"
+                  element={<InterviewQuesEdit {...props} {...masterData} />}
+                />
+                <Route
+                  path="/ReviewProfileList/ReviewProfileEdit"
+                  element={<ReviewProfileEdit {...props} {...masterData} />}
                 />
               </Routes>
             </>

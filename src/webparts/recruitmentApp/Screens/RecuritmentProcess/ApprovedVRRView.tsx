@@ -2,451 +2,814 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import TabsComponent from "../../components/TabsComponent ";
 import "../../App.css";
 import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
-import { DocumentLibraray, RoleProfileMaster } from "../../utilities/Config";
+import {
+  ColorCode,
+  DocumentLibraray,
+  RoleProfileMaster,
+} from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import TitleHeader from "../../components/TitleHeader";
-import Labelheader from "../../components/LabelHeader";
-import LabelValue from "../../components/LabelValue";
-import { RecuritmentData } from "../../Models/RecuritmentVRR";
-import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
+import { AdvDetails, RecuritmentData } from "../../Models/RecuritmentVRR";
 import CustomLabel from "../../components/CustomLabel";
 import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 import CommanComments from "../../components/CommanComments";
 import ReuseButton from "../../components/ReuseButton";
 import CustomViewDocument from "../../components/CustomViewDocument";
+import CustomInput from "../../components/CustomInput";
+import LabelHeaderComponents from "../../components/TitleHeader";
+import BreadcrumbsComponent, {
+  TabNameData,
+} from "../../components/CustomBreadcrumps";
+
+import CustomPreviewScreen from "./CustomPreviewScreen";
+import * as moment from "moment";
 
 const ApprovedVRRView: React.FC = (props: any) => {
-    const [tabVisibility, setTabVisibility] = useState({
-        tab1: true,
+  const [tabVisibility, setTabVisibility] = useState({
+    tab1: true,
+    tab2: false,
+    tab3: false,
+  });
+
+  const [data, setData] = useState<RecuritmentData>({
+    VRRID: 0,
+    BusinessUnitCodeID: 0,
+    DepartmentID: 0,
+    SubDepartmentID: 0,
+    SectionID: 0,
+    DepartmentCodeID: 0,
+    JobNameInEnglishID: 0,
+    JobNameInFrenchID: 0,
+    PatersonGradeID: 0,
+    DRCGradeID: 0,
+    JobCodeID: 0,
+    BusinessUnitCode: "",
+    BusinessUnitName: "",
+    BusinessUnitDescription: "",
+    Department: "",
+    SubDepartment: "",
+    Section: "",
+    DepartmentCode: "",
+    Nationality: "",
+    JobNameInEnglish: "",
+    JobNameInFrench: "",
+    NoofPositionAssigned: "",
+    PatersonGrade: "",
+    DRCGrade: "",
+    EmployementCategory: "",
+    ContractType: "",
+    JobCode: "",
+    AreaOfWork: "",
+    ReasonForVacancy: "",
+    RecruitmentAuthorised: "",
+    IsPayrollEmailed: "",
+    EnterNumberOfMonths: 0,
+    DateRequried: "",
+    IsRevert: "",
+    VacancyConfirmed: "",
+    // AdvertisementAttachement: [],
+    RoleProfileDocument: [],
+    GradingDocument: [],
+    AdvertisementDocument: [],
+    AssignRecruitmentHR: { key: 0, text: "" },
+    AssignRecruitmentHROption: [],
+    OnamSignedStampsAttchment: [],
+    OnamSignedStampsDocument: [],
+    AssignAgencies: { key: 0, text: "" },
+    AssignAgenciesOption: [],
+    CandidateCVAttachment: [],
+    Comments: "",
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [MainComponent, setMainComponent] = useState<boolean>(true);
+  const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
+  const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
+  const [activeTab, setactiveTab] = useState<string>("tab1");
+  const [Preview, setPreview] = useState<boolean>(false);
+  //const [isViewed, setIsViewed] = useState(false);
+  // const [RoleSpeKnowledgeValue, setRoleSpeKnowledgeValue] = useState<
+  //     RoleSpecKnowledge[]
+  //   >([
+  //     {
+  //       RoleSpeKnowledge: { key: 0, text: "" },
+  //       RequiredLevel: { key: 0, text: "" },
+  //     },
+  //   ]);
+  //    const [qualificationValue, setQualificationValue] =
+  //       useState<QualificationValue>({
+  //         MinQualification: [],
+  //         PrefeQualification: [],
+  //       });
+  //     const [TechnicalSkillValue, setTechnicalSkillValue] = useState<
+  //       TechnicalSkills[]
+  //     >([
+  //       {
+  //         TechnicalSkills: { key: 0, text: "" },
+  //         LevelProficiency: { key: 0, text: "" },
+  //       },
+  //     ]);
+  const [advDetails, setAdvDetails] = useState<AdvDetails>({
+    MinQualificationOption: [],
+    PrefeQualificationOption: [],
+    RoleSpeKnowledgeoption: [],
+    RequiredLeveloption: [],
+    TechnicalSkillsOption: [],
+    LevelProficiencyOption: [],
+    RolePurpose: "",
+    JobDescription: "",
+    addMasterQualification: "",
+    TotalExperience: { key: 0, text: "" },
+    ExperienceinMiningIndustry: { key: 0, text: "" },
+    TotalExperienceOption: [],
+    ExperienceinMiningIndustryOption: [],
+    YearofExperience: " ",
+    PreferredExperience: "",
+    ValidFrom: undefined,
+    ValidTo: undefined,
+    FunctionType: "",
+    JobFunctionalType: { key: 0, text: "" },
+    JobFunctionalTypeOption: [],
+    addMasterMinimumQualification: "",
+    AdvertisementAttachement: [],
+    JobcodeChecked: false,
+  });
+
+  const fetchData = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+
+    try {
+      const filterConditionsVRR = [
+        {
+          FilterKey: "ID",
+          Operator: "eq",
+          FilterValue: props.stateValue?.ID,
+        },
+      ];
+      const Conditions = "";
+
+      const response = await getVRRDetails.GetRecruitmentDetails(
+        filterConditionsVRR,
+        Conditions
+      );
+
+      if (response.data.length > 0) {
+        const op = response.data[0];
+
+        const BUName =
+          props?.BusinessUnitCodeAllColumn.find(
+            (item: any) => item.key === op.BusinessUnitCodeId
+          ) || {};
+        const JobtitleFrench =
+          props?.JobInFrenchList.find(
+            (item: any) => item.key === op.JobTitleFrenchId
+          ) || {};
+
+        const [
+          RoleProfileDocment,
+          GradingDocument,
+          AdvertismentDocment,
+          OnamSignedStampsDocment,
+        ] = await Promise.all([
+          CommonServices.GetAttachmentToLibrary(
+            DocumentLibraray.RoleProfileMaster,
+            op.JobCode,
+            RoleProfileMaster.RoleProfile
+          ),
+          CommonServices.GetAttachmentToLibrary(
+            DocumentLibraray.RoleProfileMaster,
+            op.JobCode,
+            RoleProfileMaster.Grading
+          ),
+          CommonServices.GetAttachmentToLibrary(
+            DocumentLibraray.RecruitmentAdvertisementDocument,
+            op.JobCode
+          ),
+          CommonServices.GetAttachmentToLibrary(
+            DocumentLibraray.ONAMSignedStampDocuments,
+            op.JobCode
+          ),
+        ]);
+
+        if (
+          RoleProfileDocment.status === 200 ||
+          AdvertismentDocment.status === 200
+        ) {
+          setData((prevState) => ({
+            ...prevState,
+            ID: op.ID,
+            BusinessUnitCodeID: op.BusinessUnitCodeId,
+            DepartmentID: op.DepartmentId,
+            SubDepartmentID: op.SubDepartmentId,
+            SectionID: op.SectionId,
+            DepartmentCodeID: op.DepartmentCodeId,
+            JobNameInEnglishID: op.JobTitleEnglishId,
+            JobNameInFrenchID: op.JobTitleFrenchId,
+            PatersonGradeID: op.PatersonGradeId,
+            DRCGradeID: op.DRCGradeId,
+            JobCodeID: op.JobCodeId,
+            BusinessUnitCode: op.BusinessUnitCode || "",
+            BusinessUnitName: BUName.Name || "",
+            BusinessUnitDescription: BUName.Description || "",
+            Department: op.Department || "",
+            SubDepartment: op.SubDepartment || "",
+            Section: op.Section || "",
+            DepartmentCode: op.DepartmentCode || "",
+            Nationality: op.Nationality || "",
+            JobNameInEnglish: op.JobTitleEnglish || "",
+            JobNameInFrench: JobtitleFrench.text || "",
+            PatersonGrade: op.PatersonGrade || "",
+            DRCGrade: op.DRCGrade || "",
+            EmployementCategory: op.EmploymentCategory || "",
+            ContractType: op.TypeOfContract || "",
+            JobCode: op.JobCode || "",
+            AreaOfWork: op.AreaofWork || "",
+            NoofPositionAssigned: op.NumberOfPersonNeeded
+              ? op.NumberOfPersonNeeded.toString()
+              : "0",
+            ReasonForVacancy: op.ReasonForVacancy || "",
+            RecruitmentAuthorised: op.RecruitmentAuthorised || "",
+            IsPayrollEmailed: op.IsPayrollEmailed || "",
+            EnterNumberOfMonths: Number(op.EnterNumberOfMonths) ?? 0,
+            DateRequried: moment.utc(op.DateRequried).format("DD/MM/YYYY"),
+            VacancyConfirmed: op.VacancyConfirmed || "",
+            RoleProfileDocument: RoleProfileDocment.data || [],
+            GradingDocument: GradingDocument.data || [],
+            AdvertisementDocument: AdvertismentDocment.data || [],
+            OnamSignedStampsDocument: OnamSignedStampsDocment.data || [],
+          }));
+        }
+        const filterConditions = [
+          {
+            FilterKey: "JobCode",
+            Operator: "eq",
+            FilterValue: op.JobCodeId,
+          },
+        ];
+
+        const Advresponse =
+          await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+            filterConditions,
+            ""
+          );
+
+        if (Advresponse.status === 200) {
+          const data = Advresponse.data;
+
+          if (data && data.length > 0) {
+            const rawData = data[0];
+
+            const RoleSpeKnowledgeValues =
+              rawData.RoleSpecificKnowledge?.map(
+                (item: any) => item.RoleSpecificKnowledge
+              ) || [];
+            const RequiredLevelValues =
+              rawData.RoleSpecificKnowledge?.map(
+                (item: any) => item.RequiredLevel
+              ) || [];
+
+            const TechnicalSkillsOption =
+              rawData.TechnicalSkillsKnowledge?.map(
+                (item: any, index: number) => ({
+                  key: index,
+                  text: item.TechnicalSkills,
+                })
+              ) || [];
+
+            const LevelProficiencyOption =
+              rawData.TechnicalSkillsKnowledge?.map(
+                (item: any, index: number) => ({
+                  key: index,
+                  text: item.LevelProficiency,
+                })
+              ) || [];
+
+            const MinQualificationOption = rawData.Qualification
+              ? [{ key: 0, text: rawData.Qualification }]
+              : [];
+            const PrefeQualificationOption = rawData.PreferredQualification
+              ? [{ key: 0, text: rawData.PreferredQualification }]
+              : [];
+
+            setAdvDetails((prevState) => ({
+              ...prevState,
+              RolePurpose: rawData.RoleProfile || "",
+              JobDescription: rawData.JobDescription || "",
+              MinQualificationOption: MinQualificationOption,
+              PrefeQualificationOption: PrefeQualificationOption,
+              TechnicalSkillsOption: TechnicalSkillsOption,
+              LevelProficiencyOption: LevelProficiencyOption,
+              RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
+              RequiredLeveloption: RequiredLevelValues,
+              TotalExperience: rawData.YearofExperience || "",
+              ExperienceinMiningIndustry: rawData.PreferredExperience || "",
+              YearofExperience: rawData.YearofExperience || "",
+              PreferredExperience: rawData.PreferredExperience || "",
+              FunctionType: rawData.FunctionType,
+              JobcodeChecked: true,
+            }));
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      setTabVisibility({
+        tab1: true, // Activate the first tab initially
         tab2: false,
         tab3: false,
-    });
-
-    const [data, setData] = useState<RecuritmentData>({
-        VRRID: 0,
-        BusinessUnitCodeID: 0,
-        DepartmentID: 0,
-        SubDepartmentID: 0,
-        SectionID: 0,
-        DepartmentCodeID: 0,
-        JobNameInEnglishID: 0,
-        JobNameInFrenchID: 0,
-        PatersonGradeID: 0,
-        DRCGradeID: 0,
-        JobCodeID: 0,
-        BusinessUnitCode: "",
-        BusinessUnitName: "",
-        BusinessUnitDescription: "",
-        Department: "",
-        SubDepartment: "",
-        Section: "",
-        DepartmentCode: "",
-        Nationality: "",
-        JobNameInEnglish: "",
-        JobNameInFrench: "",
-        NoofPositionAssigned: "",
-        PatersonGrade: "",
-        DRCGrade: "",
-        EmployementCategory: "",
-        ContractType: "",
-        JobCode: "",
-        AreaOfWork: "",
-        ReasonForVacancy: "",
-        RecruitmentAuthorised: "",
-        IsPayrollEmailed: "",
-        EnterNumberOfMonths: 0,
-        DateRequried: "",
-        IsRevert: "",
-        VacancyConfirmed: "",
-        AdvertisementAttachement: [],
-        PositionDetails: [],
-        RoleProfileDocument: [],
-        GradingDocument: [],
-        AdvertisementDocument: [],
-        AssignRecruitmentHR: { key: 0, text: "" },
-        AssignRecruitmentHROption: [],
-        OnamSignedStampsAttchment: [],
-        OnamSignedStampsDocument: [],
-        AssignAgencies: { key: 0, text: "" },
-        AssignAgenciesOption: [],
-        CandidateCVAttachment: [],
-        Comments: "",
-    });
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [MainComponent, setMainComponent] = useState<boolean>(true);
-    const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
-
-    const fetchData = async () => {
-        if (isLoading) return; // Prevent re-execution if already loading
-        setIsLoading(true);
-        try {
-            const filterConditionsVRR = [
-                {
-                    FilterKey: "ID",
-                    Operator: "eq",
-                    FilterValue: props.stateValue?.ID,
-                },
-            ];
-            const Conditions = "";
-            const response = await getVRRDetails.GetRecruitmentDetails(filterConditionsVRR, Conditions);
-            // console.log("Fetched GetVacancyDetails: response", response);
-            // const documentsPromises = getRoleProfile("POS001", DocumentLibraray.HRMSRoleProfile);
-            // const documents: any = await documentsPromises;
-
-            if (response.status === 200 && response.data !== null) {
-                const op = response.data[0];
-                const NoofPositionAssigned = response.data[1];
-                const BUName: any = props?.BusinessUnitCodeAllColumn.filter(
-                    (item: any) => (item.key === op.BusinessUnitCodeId)
-                );
-                const JobtitleFrench: any = props?.JobInFrenchList.filter(
-                    (item: any) => (item.key === op.JobTitleInFrenchId)
-                );
-                const RoleProfileDocment = await CommonServices.GetAttachmentToLibrary(
-                    DocumentLibraray.RoleProfileMaster,
-                    op.JobCode,
-                    RoleProfileMaster.RoleProfile
-                );
-                const GradingDocument = await CommonServices.GetAttachmentToLibrary(
-                    DocumentLibraray.RoleProfileMaster,
-                    op.JobCode,
-                    RoleProfileMaster.Grading
-                );
-                const AdvertismentDocment = await CommonServices.GetAttachmentToLibrary(
-                    DocumentLibraray.RecruitmentAdvertisementDocument,
-                    props.stateValue?.ID,
-                    op.JobCode,
-                );
-                const OnamSignedStampsDocment = await CommonServices.GetAttachmentToLibrary(
-                    DocumentLibraray.ONAMSignedStampDocuments,
-                    props.stateValue?.ID,
-                    op.JobCode,
-                );
-                let RoleProfileDoc: IDocFiles[] = [];
-                let AdvertismentDocPromises: IDocFiles[] = [];
-                let ONAMSignedStampDoc: IDocFiles[] = [];
-                let GradingDoc: IDocFiles[] = [];
-                if (RoleProfileDocment.status === 200 && RoleProfileDocment.data || AdvertismentDocment.status === 200 && AdvertismentDocment.data) {
-                    RoleProfileDoc = RoleProfileDocment.data;
-                    AdvertismentDocPromises = AdvertismentDocment.data;
-                    ONAMSignedStampDoc = OnamSignedStampsDocment.data;
-                    GradingDoc = GradingDocument.data;
-                    console.log(RoleProfileDoc, "candidateCV");
-                } else {
-                    console.error("Error retrieving attachments:", response.message);
-                }
-
-                setData((prevState) => ({
-                    ...prevState,
-                    VRRID: op.VRRID,
-                    BusinessUnitCodeID: op.BusinessUnitCodeId,
-                    DepartmentID: op.DepartmentId,
-                    SubDepartmentID: op.SubDepartmentId,
-                    SectionID: op.SectionId,
-                    DepartmentCodeID: op.DepartmentCodeId,
-                    JobNameInEnglishID: op.JobTitleInEnglishId,
-                    JobNameInFrenchID: op.JobTitleInFrenchId,
-                    PatersonGradeID: op.PayrollGradeId,
-                    DRCGradeID: op.DRCGradeId,
-                    JobCodeID: op.JobCodeId,
-                    BusinessUnitCode: op.BusinessUnitCode || "",
-                    BusinessUnitName: BUName[0]?.Name || "",
-                    BusinessUnitDescription: BUName[0]?.Description || "",
-                    Department: op.Department || "",
-                    SubDepartment: op.SubDepartment || "",
-                    Section: op.Section || "",
-                    DepartmentCode: op.DepartmentCode || "",
-                    Nationality: op.Nationality || "",
-                    JobNameInEnglish: op.JobTitleInEnglish || "",
-                    JobNameInFrench: JobtitleFrench[0]?.text || "",
-                    PatersonGrade: op.PayrollGrade || "",
-                    DRCGrade: op.DRCGrade || "",
-                    EmployementCategory: op.EmploymentCategory || "",
-                    ContractType: op.TypeOfContract || "",
-                    JobCode: op.JobCode || "",
-                    AreaOfWork: op.AreaofWork || "",
-                    NoofPositionAssigned: NoofPositionAssigned?.length || 0,
-                    ReasonForVacancy: op.ReasonForVacancy || "",
-                    RecruitmentAuthorised: op.RecruitmentAuthorised || "",
-                    EnterNumberOfMonths: op.EnterNumberOfMonths || 0,
-                    DateRequried: op.DateRequried || null,
-                    IsRevert: op.IsRevert || "",
-                    VacancyConfirmed: op.VacancyConfirmed || "",
-                    RoleProfileDocument: RoleProfileDoc,
-                    GradingDocument: GradingDoc,
-                    AdvertisementDocument: AdvertismentDocPromises,
-                    OnamSignedStampsDocument: ONAMSignedStampDoc
-                }));
-                if (response.data[1]?.length > 0 && response.data[1] !== null) {
-                    const updatedPositions = response.data[1].map((position: any) => ({
-                        ...position,
-                        PatersonGradeID: op.PayrollGradeId,
-                        DRCGradeID: op.DRCGradeId,
-                    }));
-                    console.log("updatedPositions", updatedPositions);
-                    setData((prevState) => ({
-                        ...prevState,
-                        PositionDetails: updatedPositions,
-                    }));
-                }
-            }
-
-        } catch (error) {
-            console.error("Failed to fetch Vacancy Details:", error);
-        } finally {
-            setIsLoading(false);
-        }
+      });
+      setTabNameData((prevTabNames) => {
+        const newTabNames = [{ tabName: props.stateValue?.TabName }];
+        return newTabNames;
+      });
+      try {
+        await fetchData();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
-    useEffect(() => {
-        const initialize = async () => {
-            setTabVisibility({
-                tab1: true, // Activate the first tab initially
-                tab2: false,
-                tab3: false,
-            });
+    void initialize();
+  }, []);
 
-            try {
-                await fetchData(); // Await the asynchronous fetchData
-            } catch (error) {
-                console.error("Error fetching data:", error); // Handle errors
-            }
-        };
+  const OpenComments = async () => {
+    setMainComponent(false);
+    let filterConditions = [];
+    let Conditions = "";
 
-        void initialize(); // Mark the call as intentionally unawaited
-    }, []);
-
-    const OpenComments = async () => {
-        setMainComponent(false);
-        let filterConditions = []
-        let Conditions = "";
-
-        filterConditions.push({
-            FilterKey: "RecruitmentID",
-            Operator: "eq",
-            FilterValue: props.stateValue.ID,
-        })
-        const CommentsList =
-            await getVRRDetails.GetCommentsData(props.EmployeeList, Conditions, filterConditions)
-        if (CommentsList.status === 200) {
-            console.log(CommentsList.data);
-            setCommentsData(CommentsList.data)
-        }
-    }
-
-    const tabs = [
-        {
-            label: "My Submission",
-            value: "tab1",
-            content: (
-                <Card
-                    variant="outlined"
-                    sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-                >
-                    <CardContent>
-                        {tabVisibility.tab1 && (
-                            <div>
-                                <div className="ms-Grid-row">
-                                    <div className="ms-Grid-col ms-lg6">
-                                        <TitleHeader value="Position Details" />
-                                    </div>
-                                </div>
-                                <div className="ms-Grid-row">
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Job Code" />
-                                        <LabelValue value={data.JobCode} />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Business Unit Code" />
-                                        <LabelValue value={data.BusinessUnitCode} />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Business Unit Name" />
-                                        <LabelValue value={data.BusinessUnitName} />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Business Unit Description" />
-                                        <LabelValue value={data.BusinessUnitDescription} />
-                                    </div>
-                                </div>
-
-                                <div className="ms-Grid-row">
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Department" />
-                                        <LabelValue value={data.Department} />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Sub-Department" />
-                                        <LabelValue value={data.SubDepartment} />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Section" />
-                                        <LabelValue value={data.Section} />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Department Code" />
-                                        <LabelValue value={data.DepartmentCode} />
-                                    </div>
-
-                                </div>
-
-                                <div className="ms-Grid-row">
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Nationality" />
-                                        <LabelValue value={data.Nationality} />
-                                    </div>
-                                    {/* <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Position Name (English)" />
-                                        <LabelValue value={data.JobNameInEnglish} />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Position Name (French)" />
-                                        <LabelValue value={data.JobNameInFrench} />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Proposed Paterson Grade" />
-                                        <LabelValue value={data.PatersonGrade} />
-                                    </div> */}
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Employment Category" />
-                                        <LabelValue value={data.EmployementCategory} />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Type of Contract" />
-                                        <LabelValue value={data.ContractType} />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Area of Work" />
-                                        <LabelValue value={data.AreaOfWork} />
-                                    </div>
-                                </div>
-
-                                {/* <div className="ms-Grid-row"> */}
-                                {/* <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Proposed DRC Grade" />
-                                        <LabelValue value={data.DRCGrade} />
-                                    </div> */}
-
-                                {/* </div> */}
-
-                                <div className="ms-Grid-row">
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="No of Position Assigned" />
-                                        <LabelValue value={data.NoofPositionAssigned} />
-                                    </div>
-
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomViewDocument
-                                            Attachment={data.RoleProfileDocument}
-                                            Label={"Role Profile Documents"}
-                                        />
-                                    </div>
-
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomViewDocument
-                                            Attachment={data.GradingDocument}
-                                            Label={"Grading Documents"}
-                                        />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <Labelheader value="Assign RecruitmentHR" />
-                                        <LabelValue value={props.stateValue?.AssignedHR} />
-                                    </div>
-                                </div>
-                                {data.AdvertisementDocument && (
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg6">
-                                            <CustomViewDocument
-                                                Attachment={data.AdvertisementDocument}
-                                                Label={"Advertisement Documents"}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-
-
-                                {data.OnamSignedStampsDocument && (
-                                    <div className="ms-Grid-row">
-                                        <div className="ms-Grid-col ms-lg6">
-                                            <CustomViewDocument
-                                                Attachment={data.OnamSignedStampsDocument}
-                                                Label={"ONEM Signed&Stamps Documents"}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className="ms-Grid-row">
-                                    <div className="ms-Grid-col ms-lg12">
-                                        <div className="ms-Grid-col ms-lg4">
-                                            <CustomLabel value={" View Justifications"} />
-                                            <ReuseButton
-                                                Style={{
-                                                    minWidth: "117px",
-                                                    fontSize: "13px",
-                                                    paddingBottom: "24px",
-                                                    display: "flex",
-                                                    flexDirection: "column",
-                                                    height: "41px",
-                                                    paddingTop: "22px",
-                                                }}
-                                                label="VIEW"
-                                                onClick={OpenComments}
-                                                spacing={4}
-                                                imgSrc={require("../../assets/Viewicon.svg")}
-                                                imgAlt="ssss"
-                                                imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                                                imgAltHover="Image"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            ),
-        },
-    ];
-    const back_fn = () => {
-        props.navigation("/RecurimentProcess");
-    }
-
-    return (
-        <>
-            {MainComponent ? (
-                <>
-
-                    <CustomLoader isLoading={isLoading}>
-                        <div className="menu-card">
-                            <TabsComponent tabs={tabs}
-                                initialTab="tab1"
-                                additionalButtons={[
-                                    {
-                                        label: "Back",
-                                        onClick: () => {
-                                            back_fn();
-                                        }
-                                    }
-                                ]}
-                            />
-                        </div>
-                    </CustomLoader>
-                </>
-            ) : (<>
-                <CommanComments
-                    onClose={() => setMainComponent(true)}
-                    Comments={CommentData} />
-            </>)}
-        </>
-
-
+    filterConditions.push({
+      FilterKey: "RecruitmentID",
+      Operator: "eq",
+      FilterValue: props.stateValue.ID,
+    });
+    const CommentsList = await getVRRDetails.GetCommentsData(
+      props.EmployeeList,
+      Conditions,
+      filterConditions
     );
+    if (CommentsList.status === 200) {
+      setCommentsData(CommentsList.data);
+    }
+  };
+
+  const tabs = [
+    {
+      label: "My Submission",
+      value: "tab1",
+      content: (
+        <Card
+          variant="outlined"
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+        >
+          <CardContent>
+            {tabVisibility.tab1 && (
+              <div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg6">
+                    <LabelHeaderComponents
+                      value={`Job Title - ${data.JobNameInEnglish} (${data.JobCode})`}
+                    >
+                      {" "}
+                    </LabelHeaderComponents>
+                  </div>
+                  <div className="ms-Grid-col ms-lg6">
+                    <LabelHeaderComponents
+                      value={`Status - ${props.stateValue?.Status}`}
+                    >
+                      {" "}
+                    </LabelHeaderComponents>
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Business Unit Code"
+                      value={data.BusinessUnitCode}
+                      error={false}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          BusinessUnitCode: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Business Unit Name"
+                      value={data.BusinessUnitName}
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          BusinessUnitName: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Business Unit Description"
+                      value={data.BusinessUnitDescription}
+                      error={false}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          BusinessUnitDescription: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Department"
+                      value={data.Department}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          Department: value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Sub-Department"
+                      value={data.SubDepartment}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          SubDepartment: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Section"
+                      value={data.Section}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          Section: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Department Code"
+                      value={data.DepartmentCode}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          DepartmentCode: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Nationality"
+                      value={data.Nationality}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          Nationality: value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  {/*                                    
+                                    <div className="ms-Grid-col ms-lg3">
+                                        <CustomInput
+                                            label="Position Name (English)"
+                                            value={formState.JobNameInEnglish}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setFormState((prevState) => ({ ...prevState, JobNameInEnglish: value }))
+                                            }
+                                        />
+                                    </div>
+                                    <div className="ms-Grid-col ms-lg3">
+                                        <CustomInput
+                                            label="Position Name (French)"
+                                            value={formState.JobNameInFrench}
+                                            disabled={true}
+                                            mandatory={false}
+                                            onChange={(value) =>
+                                                setFormState((prevState) => ({ ...prevState, JobNameInFrench: value }))
+                                            }
+                                        />
+                                    </div> */}
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Paterson Grade"
+                      value={data.PatersonGrade}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          PatersonGrade: value,
+                        }))
+                      }
+                    />
+                  </div>
+
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="DRC Grade"
+                      value={data.DRCGrade}
+                      disabled={true}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          DRCGrade: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Employment Category"
+                      value={data.EmployementCategory}
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          EmployementCategory: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Type of Contract"
+                      value={data.ContractType}
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          ContractType: value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Area of Work"
+                      value={data.AreaOfWork}
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          AreaOfWork: value,
+                        }))
+                      }
+                    />
+                  </div>
+
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="No of Position Assigned"
+                      value={data.NoofPositionAssigned}
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          NoofPositionAssigned: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label="Date When Position Is Required"
+                      value={
+                        data.DateRequried
+                          ? new Date(data.DateRequried)
+                              .toLocaleDateString("en-GB")
+                              .replace(/\//g, "-")
+                          : ""
+                      }
+                      disabled={true}
+                      error={false}
+                      mandatory={false}
+                      onChange={(value) =>
+                        setData((prevState) => ({
+                          ...prevState,
+                          DateRequried: value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
+                  <LabelHeaderComponents value={"Attachments"} />
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomLabel value={"RoleProfile Documents"} />
+                    <CustomViewDocument Attachment={data.RoleProfileDocument} />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomLabel value={"Grading Documents"} />
+                    <CustomViewDocument Attachment={data.GradingDocument} />
+                  </div>
+
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomLabel value={"Advertisement Document"} />
+                    <CustomViewDocument
+                      Attachment={data.AdvertisementDocument}
+                    />
+                  </div>
+
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomLabel value={"ONEM Signed&Stamps Documents"} />
+                    <CustomViewDocument
+                      Attachment={data.OnamSignedStampsDocument}
+                    />
+                  </div>
+                </div>
+                {advDetails.RolePurpose != "" ? (
+                  <div className="ms-Grid-row">
+                    <div
+                      className="ms-Grid-col ms-lg2"
+                      style={{ position: "relative", right: "1px" }}
+                    >
+                      <div>
+                        <CustomLabel
+                          value={"View Job Advertisement"}
+                          // mandatory={true}
+                        />
+                        <ReuseButton
+                          Style={{
+                            minWidth: "117px",
+                            fontSize: "13px",
+                            paddingBottom: "24px",
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "41px",
+                            paddingTop: "23px",
+                            backgroundColor:
+                              ColorCode.ButtonColorCode.ButtonColor,
+                            color: "white",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                          label="VIEW"
+                          imgSrc={require("../../assets/viewSubmision-white.svg")}
+                          imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                          imgAlt="View"
+                          imgAltHover="Hovered View"
+                          onClick={async () => {
+                            setPreview(true);
+                            setMainComponent(false);
+                          }}
+                          spacing={4}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
+
+                <div className="ms-Grid-row">
+                  <div
+                    className="ms-Grid-col ms-lg2"
+                    style={{ position: "relative", right: "1px" }}
+                  >
+                    {/* <div className="ms-Grid-col ms-lg4"> */}
+                    <CustomLabel value={" View Justifications"} />
+                    <ReuseButton
+                      Style={{
+                        minWidth: "117px",
+                        fontSize: "13px",
+                        paddingBottom: "24px",
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "41px",
+                        paddingTop: "23px",
+                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                        color: "white",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      label="VIEW"
+                      imgSrc={require("../../assets/viewSubmision-white.svg")}
+                      imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                      imgAlt="View"
+                      imgAltHover="Hovered View"
+                      onClick={OpenComments}
+                      spacing={4}
+                    />
+                  </div>
+                </div>
+              </div>
+              // </div>
+            )}
+          </CardContent>
+        </Card>
+      ),
+    },
+  ];
+  const back_fn = () => {
+    props.navigation("/RecurimentProcess");
+  };
+
+  const handleBreadcrumbChange = (newItem: string) => {
+    setactiveTab(newItem);
+  };
+
+  return (
+    <>
+      {Preview ? (
+        <CustomPreviewScreen
+          data={advDetails}
+          onclose={() => {
+            setPreview(false);
+            setMainComponent(true);
+          }}
+          Ok_btnfn={() => {
+            setPreview(false);
+            setMainComponent(true);
+          }}
+          JobTitle={data.JobNameInEnglish}
+        />
+      ) : MainComponent ? (
+        <>
+          <CustomLoader isLoading={isLoading}>
+            <div className="menu-card">
+              <BreadcrumbsComponent
+                items={tabs}
+                initialItem={activeTab}
+                TabName={TabNameData}
+                onBreadcrumbChange={handleBreadcrumbChange}
+                additionalButtons={[
+                  {
+                    label: "Back",
+                    onClick: () => {
+                      back_fn();
+                    },
+                  },
+                ]}
+              />
+            </div>
+          </CustomLoader>
+        </>
+      ) : (
+        <>
+          <CommanComments
+            onClose={() => setMainComponent(true)}
+            Comments={CommentData}
+          />
+        </>
+      )}
+    </>
+  );
 };
 
 export default ApprovedVRRView;
-

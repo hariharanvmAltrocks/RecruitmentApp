@@ -41,13 +41,17 @@ function CustomInput({
             borderRadius: "4px",
             boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
             borderColor: "rgb(15, 15, 15)",
+            ...(disabled && {
+              border: "1px soild rgb(210 200 200)"
+            })
           },
           field: {
-            backgroundColor: "rgb(244, 242, 240)",
-            color: "rgb(85, 82, 79)",
-            "::placeholder": {
-              color: "rgba(85, 82, 79, 0.7)",
-            },
+            ...(disabled && {
+              color: "rgb(85, 82, 79)",
+              "::placeholder": {
+                color: "rgba(85, 82, 79, 0.7)",
+              },
+            }),
           },
         }}
         readOnly={readOnly}
@@ -62,7 +66,7 @@ function CustomInput({
         <p
           style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}
         >
-          Field Is Required
+          Field is Required
         </p>
       )}
     </>

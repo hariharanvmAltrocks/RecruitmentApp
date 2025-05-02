@@ -62,9 +62,13 @@ p:hover .tooltip {
 }
 
 .MuiButtonBase-root.Mui-selected {
-  color: black !important;
-  background-color: white !important;
+  color: white !important;
+  background-color:#0D547B !important;
   border-radius: 4px 4px 4px 4px !important;
+  text-decoration: underline;
+  text-underline-position: under;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
 }
 
 .MuiTabs-flexContainer button {
@@ -116,7 +120,7 @@ p:hover .tooltip {
   border-width: 0 0 1px 0;
   padding: 1rem 1rem;
   font-size: 15px;
-  background: #ff8d8d40;
+  /* background: #ff8d8d40; */
   /* font-weight: 300; */
   font-family: "Roboto", sans-serif;
   /* color: #495057; */
@@ -176,7 +180,7 @@ p:hover .tooltip {
 .p-paginator .p-dropdown {
   background: #ffffff;
   /* border: 1px solid #d1d5db; */
-  border: 1px solid #ef3340;
+  border: 1px solid #EEEEEE ;
   /* transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s; */
   border-radius: 6px;
   align-items: center;
@@ -332,7 +336,7 @@ p:hover .tooltip {
 
 .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
   /* color: #0e7490; */
-  background: #ff8d8d40;
+  background: #EEEEEE ;
   color: #ecfeff;
 }
 
@@ -382,16 +386,16 @@ p:hover .tooltip {
 }
 
 /* rows */
-/* .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd {
-  background: #ff8d8d40;
-} */
+.p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd {
+  background: #EEEEEE ;
+}
 
 /* --------------------------------------------------DataTable--------------------------------------------- */
 
 /* --------------------------------------------------Menu Css--------------------------------------------- */
 
 .menu-card {
-  background-color: white;
+  background-color:#EEEEEE;
   /* Set the background color */
   padding: 20px;
   /* Add some padding for spacing */
@@ -1115,7 +1119,7 @@ html {
 /* --------------------------------------------------Menu Css--------------------------------------------- */
 
 .title {
-  color: #ef3340;
+  color: #597b98;
   font-family: "Roboto", sans-serif !important;
   font-size: 22px;
   font-style: normal;
@@ -1224,13 +1228,38 @@ html {
   transition-property: background-color;
 }
 
-.p-dialog-header {
+/* .p-dialog-header {
   padding-left: 1%;
+   padding-top: 1%; 
+} */
+
+ 
+.p-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 1px;
   padding-top: 1%;
 }
+ 
+.p-dialog-title {
+  margin-top: -24px;
+  font-size: 1rem;
+}
+.p-dialog-header-icon {
+  transform: scale(1.5);
+  padding: 3px;
+  cursor: pointer;
+}
+.p-dialog-header-icons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+ 
 
 .p-dialog-footer {
-  padding-bottom: 3%;
+  padding-bottom: 0%;
 }
 
 /* .p-dialog {
@@ -1239,7 +1268,8 @@ html {
 
 .p-dialog-content {
   scroll-behavior: auto;
-  scrollbar-width: none;
+  overflow-x: hidden;
+  /* scrollbar-width: none; */
 }
 
 /* App.css or any other style file */
@@ -1380,7 +1410,7 @@ footer {
 @media screen and (min-width: 1024px) {
   .a_a_50a7110f:not(.e_a_50a7110f) .h_a_50a7110f {
     display: flex;
-    max-width: none;
+    /* max-width: none; */
   }
 }
 
@@ -1447,4 +1477,38 @@ footer {
   color: #ef3340 !important;
   border-color: #ef3340 !important;
   background-color: white !important;
+}
+
+.agencies_card {
+  position: "relative";
+  background-color: white;
+  padding: 7px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px 3px lightgray;
+  margin-left: 67%;
+  margin-top: -5%;
+  width: 31%;
+  text-align: center;
+  left: "6px";
+}
+
+/* sneka */
+.custom-document-column {
+  width: 100%;
+  position: relative;
+}
+
+.document-wrapper {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-block;
+  max-width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+  .CanvasZoneSectionContainer{
+    display: flex !important;
+    max-width: none !important;
+  }
 }

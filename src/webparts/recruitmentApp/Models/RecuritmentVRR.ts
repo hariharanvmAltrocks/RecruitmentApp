@@ -1,3 +1,4 @@
+import { OptionRow } from "../Screens/ReviewProfile/InterviewQuesEdit";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 import { AutoCompleteItem } from "./Screens";
 
@@ -55,18 +56,16 @@ export type RecuritmentData = {
   DateRequried: string;
   IsRevert: string;
   VacancyConfirmed: string;
-  AdvertisementAttachement: IAttachmentExampleState[];
-  PositionDetails: any[];
   RoleProfileDocument: any[];
   GradingDocument: any[];
   AdvertisementDocument: any[];
   AssignRecruitmentHR: AutoCompleteItem;
   AssignRecruitmentHROption: AutoCompleteItem[];
-  OnamSignedStampsAttchment: IAttachmentExampleState[];
+  OnamSignedStampsAttchment: IDocFiles[] | null;
   OnamSignedStampsDocument: any[];
   AssignAgencies: AutoCompleteItem;
   AssignAgenciesOption: AutoCompleteItem[];
-  CandidateCVAttachment: IAttachmentExampleState[];
+  CandidateCVAttachment: IDocFiles[] | null;
   Comments: string;
   SignDate?: Date | any;
 };
@@ -81,10 +80,20 @@ export type AdvDetails = {
   RolePurpose: string;
   JobDescription: string;
   addMasterQualification: string;
-  TotalExperience: string;
-  ExperienceinMiningIndustry: string;
+  TotalExperience: AutoCompleteItem;
+  ExperienceinMiningIndustry: AutoCompleteItem;
+  TotalExperienceOption: AutoCompleteItem[];
+  ExperienceinMiningIndustryOption: AutoCompleteItem[];
   YearofExperience: any;
   PreferredExperience: any;
+  ValidFrom: Date | undefined;
+  ValidTo: Date | undefined;
+  FunctionType: any;
+  JobFunctionalType: AutoCompleteItem;
+  JobFunctionalTypeOption: AutoCompleteItem[];
+  addMasterMinimumQualification: string;
+  AdvertisementAttachement: IDocFiles[] | null;
+  JobcodeChecked: boolean;
 };
 
 export type CandidateData = {
@@ -107,8 +116,10 @@ export type CandidateData = {
   ReleventExperience: string;
   Qualification: string;
   CandidateCVDoc: any[];
-  //RoleProfileDocument: any[];
-  //AdvertisementDocument: any[];
+  RoleProfileDocument: any[];
+  AdvertisementDocument: any[];
+  ShortlistedValue: string;
+  // LevelofInterviewed: string;
 };
 
 export type ScoreCardData = {
@@ -145,11 +156,23 @@ export type ScoreCardData = {
   EvaluationFeedback: string;
   OverAllEvaluationFeedback: string;
   SignDate?: Date | any;
+  AdvertisementDocument: any[];
+  RoleProfileDocument: any[];
+  PositionTitle?: string;
+  //InterviewPanalNames?: string[];
+  // InterviewPanelNames: string[]; // Array of names (e.g. ["Fathima John N"])
+  interviewPanelTitles: string[];
+  InterviewDate?: string;
+  JobRequestID: string;
+  Comments: string;
+  ExternalAgentName?: string; 
+  JobGrade:string;
+  PanelFullNames?: string[]; 
 };
 
 export type QualificationValue = {
-  MinQualification: AutoCompleteItem;
-  PrefeQualification: AutoCompleteItem;
+  MinQualification: AutoCompleteItem[];
+  PrefeQualification: AutoCompleteItem[];
 };
 
 export type RoleSpecKnowledge = {
@@ -163,13 +186,9 @@ export type TechnicalSkills = {
 };
 
 export type JobCodeTilte = {
-  id: string;
-  // name: string;
-  VRRId: number;
   JobTitle: string;
   JobCode: string;
-  ID?: number;
-  RecruitmentID?: number;
+  ID?: number | undefined;
 };
 
 // export type RecruitementPositionDetails = {
@@ -193,4 +212,35 @@ export type RecruitementPositionDetails = {
   PatersonGradeID: number;
   DRCGradeID: number;
   Comments: string;
+};
+
+export type ScoreData = {
+  SignDate?: Date | any;
+};
+
+//QuestionnairesforInterviewerLogin
+export type QuestionItem = {
+  id: number;
+  question: string;
+  answer: string;
+  rating: number | null;
+  header?: string;
+};
+
+export type AssignHod = {
+  Comments: string;
+};
+// sneka
+export type InterviewQues = {
+  Disciplines: AutoCompleteItem;
+  QuestionType: AutoCompleteItem;
+  QuestionNumber: AutoCompleteItem;
+  Question: string;
+  ExpectedAnswer: string;
+  CareerportalAnswer: OptionRow[]
+  Catogry: string;
+  PositionTitle?: string;
+  // OptionsType?: { text: string }[];
+  OptionsType?: AutoCompleteItem;
+  Disqualification?: any;
 };

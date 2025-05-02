@@ -3,6 +3,7 @@ import * as React from "react";
 import { Button } from "primereact/button";
 import { Icon } from "@fluentui/react/lib/Icon";
 import { Label } from "@fluentui/react";
+import { ColorCode } from "../utilities/Config";
 
 interface AttachmentButtonProps {
   iconName?: string;
@@ -18,6 +19,7 @@ interface AttachmentButtonProps {
   Style?: React.CSSProperties;
   iconNameHover?: string;
   AttachState?: (value: Item[]) => void;
+  fileformat?: string;
 }
 
 interface Item {
@@ -39,6 +41,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
   iconNameHover,
   backgroundColor,
   AttachState,
+  fileformat,
 }: AttachmentButtonProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -80,17 +83,23 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
       }
     }
   };
+  const buttonStyle: React.CSSProperties = {
+    minWidth: "117px",
+    fontSize: "13px",
+    paddingBottom: "24px",
+    display: "flex",
+    flexDirection: "column",
+    height: "55px",
 
-  const buttonStyle = {
-    backgroundColor: isHovered ? "#EF3340" : backgroundColor || "white",
-    border: "1px solid rgb(205, 45, 45)",
-    padding: "6px",
+    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+    color: "white",
+    border: ColorCode.ButtonColorCode.ButtonbordeColor,
+
     borderRadius: "5px",
     ...Style,
   };
-
   const LabelStyle = {
-    color: "rgb(205, 45, 45)",
+    color: ColorCode.ButtonColorCode.ButtonColor,
     marginBottom: "0",
     ...Style,
   };
@@ -99,16 +108,16 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
     marginRight: "8px",
     marginLeft: "6px",
     fontSize: "20px",
-    color: "rgb(205, 45, 45)",
+    color: ColorCode.ButtonColorCode.color,
   };
 
   const LabelStyleHover = {
-    color: "#FFFF",
+    color: ColorCode.ButtonColorCode.color,
   };
 
   const IconStyleHover = {
-    color: "#FFFF",
-    backgroundColor: "#EF3340",
+    color: ColorCode.ButtonColorCode.color,
+    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
     marginRight: "8px",
     marginLeft: "6px",
     fontSize: "20px",
@@ -148,7 +157,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
           ref={fileInputRef}
           onChange={handleFileChange}
           style={{ display: "none" }}
-          accept=".pdf, .doc, .docx"
+          accept={fileformat} //".pdf" //.doc, .docx"
         />
       </Button>
       {error && (

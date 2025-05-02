@@ -1,3 +1,5 @@
+import { AdvDetails, RecuritmentData } from "../../Models/RecuritmentVRR";
+
 export interface IAttachmentExampleState {
   file: File | any;
   fileName: string;
@@ -20,19 +22,171 @@ export type CommentsData = {
 
 export type InsertComments = {
   RoleId: number | null;
-  RecruitmentIDId: string;
+  RecruitmentIDId: number;
   Comments: string;
 };
 
+export type IAdditionalHeadCountResponse = {
+  Id: number;
+  Sl: number;
+  Activity: string;
+  HeadCountId: number;
+  ISBudgetOrUnBudgeted: string;
+  PositionType: string;
+  ReasonForAdditionalPosition: string;
+  BusinessUnitCodeId: number;
+  Businessunitcode: string;
+  BusinessUnitName: string;
+  BusinessUnitDescription: string;
+  DepartmentId: number;
+  Department: string;
+  SubDepartmentId: number;
+  SubDepartment: string;
+  SectionId: number;
+  Section: string;
+  DepartmentCodeId: number;
+  DepartmentCode: string;
+  Nationality: string;
+  JobTitleEnglishId: number;
+  JobTitleEnglish: string;
+  JobTitleFrenchId: number;
+  JobTitleFrench: string;
+  PatersonGradeId: number;
+  PatersonGrade: string;
+  DRCGradeId: number;
+  DRCGrade: string;
+  DatePositionIsRequired: Date | any;
+  ApprovedHeadCountInLP: number;
+  ActualPosition: number;
+  VacantPosition: number;
+  AdditionalHeadCountRequried: number;
+  FinalPositionCount: number;
+  ActualVacantPosition: number;
+  IsHRBudgetPlan: any;
+  IsHRConformBudgetPlan: any;
+  IsCEORequried: any;
+  AreaofWork: string;
+  EmployementCategory: string;
+  NoOfMonth: string;
+  TypeOfContract: string;
+  Location: string;
+  StatusOrder: number;
+  StatusId: number;
+  Status: string;
+  CreatedBy: string;
+}
+
+export type DataSyncToRecruitmentResponse = {
+  ID: number,
+  BusinessUnitCode: string,
+  BusinessUnitCodeId: number,
+  BusinessUnitName: string;
+  BusinessUnitDescription: string;
+  Nationality: string,
+  DepartmentId: number;
+  Department: string,
+  SubDepartment: string,
+  SubDepartmentId: number,
+  Section: string,
+  SectionId: number,
+  DepartmentCodeId: number,
+  DepartmentCode: string,
+  EmploymentCategory: string,
+  TypeOfContract: string,
+  NumberOfPersonNeeded: string,
+  EnterNumberOfMonths: string,
+  AreaofWork: string,
+  DateRequried: Date | undefined,
+  Type: string,
+  Status: string,
+  StatusId: number,
+  Action: string,
+  ActionTypeId: number,
+
+  JobCodeId: number,
+  JobCode: string,
+  JobTitleEnglish: string,
+  JobTitleFrench: string,
+  PatersonGrade: string,
+  DRCGrade: string,
+  JobTitleEnglishId: number,
+  JobTitleFrenchId: number,
+  PatersonGradeId: number,
+  DRCGradeId: number,
+
+  Checked: boolean,
+
+  VacancyConfirmed: string;
+  RecruitmentAuthorised: string;
+  IsPayrollEmailed: string;
+  AssignedHR: string;
+  AssignedHRId: number;
+  AssignLineManager: string;
+  AssignLineManagerId: number;
+  ReasonForVacancy: string;
+
+  JobPostingStartDate: Date | undefined,
+  JobPostingEndDate: Date | undefined,
+  JobPostingFirstExtensionEndDate: Date | undefined,
+  JobPostingSecondExtensionEndDate: Date | undefined
+}
+
+export type JobCodeData = {
+  JobCode: string;
+  JobCodeID: number;
+}
+
+export type PostRecuritmentData = {
+  Data: {
+    BusinessUnitCodeId: number,
+    Nationality: string,
+    DepartmentId: number;
+    SubDepartmentId: number,
+    SectionId: number,
+    DepartmentCodeId: number,
+    EmploymentCategory: string,
+    TypeOfContract: string,
+    NumberOfPersonNeeded: number,
+    EnterNumberOfMonths: string,
+    AreaofWork: string,
+    DateRequried: Date | null,
+    DataFrom: string,
+    StatusId: number,
+    ActionId: number,
+    JobCodeId: number,
+    AssignedHRId: number
+  },
+  PositionData: {
+    JobTitleEnglishId: number,
+    JobTitleFrenchId: number,
+    PatersonGradeId: number,
+    DRCGradeId: number,
+  },
+  CommentsList: InsertComments,
+  updatePreList: {
+    ID: number
+    ActionId: number,
+    ItemCreated: string,
+    IsDataSyncToRecruitment: string,
+  }
+}
 export type IRecruitmentService = {
+  GetJobTitleInNPEP(
+    Filter: any[],
+    Conditions: any,
+    ModalDropDown: any
+  ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
+  GetAdditionalExistingPositionEditView(
+    Filter: any[],
+    Conditions: any,
+    ModalDropDown: any
+  ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
+  fetchNewPositionRequest(filterParam: any, filterConditions: any, ModalDropDown: any): Promise<ApiResponse<DataSyncToRecruitmentResponse[] | null>>;
   GetVacancyDetails(
     filterParam: any,
     filterConditions: any
   ): Promise<ApiResponse<any | null>>;
-  InsertRecruitmentDpt(
-    Tabl1: any,
-    Table2: any
-  ): Promise<ApiResponse<any | null>>;
+  InsertRecruitmentDpt(RecruitmentValue: PostRecuritmentData): Promise<ApiResponse<any | null>>;
   GetPositionDetails(
     filterParam: any,
     filterConditions: any
@@ -40,7 +194,7 @@ export type IRecruitmentService = {
   GetRecruitmentDetails(
     filterParam: any,
     filterConditions: any
-  ): Promise<ApiResponse<any | null>>;
+  ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
   GetCandidateDetails(
     filterParam: any,
     filterConditions: any
@@ -76,4 +230,26 @@ export type IRecruitmentService = {
     selectedAgencies: { key: number; text: string }[],
     RecruitmentId: number
   ): Promise<ApiResponse<any>>;
+  HRMSCandidateScoreCard(
+    filterParam: any,
+    filterConditions: any,
+    candidateID: number
+  ): Promise<ApiResponse<any | null>>;
+  GetDataInList(
+    ListName: string,
+    filterParam: any[],
+    filterConditions: any,
+    Select: string,
+    Expand: string,
+  ): Promise<ApiResponse<any | null>>;
+  GetFilterInCategory(filterConditions: any): Promise<ApiResponse<any[]>>;
+  UploadAdvertisementInPortal(
+    Filter: any[],
+    Condition: string,
+    RecuritmentDetails: RecuritmentData,
+    AdvertisementValue: AdvDetails,
+    MasterData: any,
+    IsActive: number
+  ): Promise<ApiResponse<null>>;
+
 };

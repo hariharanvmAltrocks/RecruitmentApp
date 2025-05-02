@@ -31,25 +31,40 @@ export const ListNames = {
   HRMSCandidateScoreCard: "HRMSCandidateScoreCard",
 
   HRMSRecruitmentRoleProfileDetails: "HRMSRecruitmentRoleProfileDetails",
+  HRMSSelectedCandidateDetailsByHOD: "HRMSSelectedCandidateDetailsByHOD",
 
   //Master List
   HRMSQualification: "HRMSQualification",
   HRMSRoleSpecificKnowlegeMaster: "HRMSRoleSpecificKnowlegeMaster",
   HRMSTechnicalSkills: "HRMSTechnicalSkills",
   HRMSLevelOfProficiency: "HRMSLevelOfProficiency",
+  HRMSExperienceMaster: "HRMSExperienceMaster",
+  HRMSJobTitleFunctionType: "HRMSJobTitleFunctionType",
   HRMSExternalAgents: "HRMSExternalAgents",
   HRMSExternalAgentsDetailsForRecruitment:
     "HRMSExternalAgentsDetailsForRecruitment",
   HRMSInterviewPanelDetails: "HRMSInterviewPanelDetails",
+  HRMSRecruitmentWorkFlowMasterStatus: "HRMSRecruitmentWorkFlowMasterStatus",
+  HRMSPositionIDMaster: "HRMSPositionIDMaster",
+  HRMSCategoryMaster: "HRMSCategoryMaster",
+
+  //Additional Exisiting
+  HRMSAdditionalHeadCountForExisitingPosition: "HRMSAdditionalHeadCountForExisitingPosition",
+  HRMSAdditionalHCForExisitingPositionWithHeadCountDetails: "HRMSAdditionalHCForExisitingPositionWithHeadCountDetails",
+
+  //New Position
+  HRMSNewPositionRequest: "HRMSNewPositionRequest",
+  HRMSNewPositionRequestPositionDetails: "HRMSNewPositionRequestPositionDetails",
 };
 
 export const DocumentLibraray = {
-  InterviewPanelCandidateCV: "InterviewPanelCandidateCV",
+  InterviewPanelCandidateCV: "HRMSRecruitmentCandidateCV",
   HRMSRecruitment: "HRMSRecruitment",
   HRMSRoleProfile: "HRMS_Role_Profile",
-  RecruitmentAdvertisementDocument: "RecruitmentAdvertisementDocument",
-  ONAMSignedStampDocuments: "ONAMSignedStampDocuments",
+  RecruitmentAdvertisementDocument: "HRMSRecruitmentAdvertDocument",
+  ONAMSignedStampDocuments: "HRMSRecruitmentOnamStampedDocuments",
   RoleProfileMaster: "RoleProfileMaster",
+  HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV",
 };
 
 export const StatusId = {
@@ -58,6 +73,15 @@ export const StatusId = {
   PendingwithHODtoreviewAdv: 26,
   PendingwithHRLeadtouploadONEMsigneddoc: 118,
   PendingwithRecruitmentHRtoAssignExternalAgency: 119,
+  RecruitmentInProgress: 28,
+  PendingwithHODtoselectthecandidate: 121,
+  Selected: 122,
+  PendingInterviewQuestionwithLineManagerandHR: 39,
+  InterviewScheduled: 40,
+  Completed: 13,
+  PendingwithHRandLMtocreateinterviewQuestion: 124,
+  PendingwithLineManagereviewAdv: 125,
+  PendingwithLMcreateDisqualificationQuestion: 126
 };
 
 export const RoleID = {
@@ -93,6 +117,7 @@ export const RoleID = {
   RecruitmentAppExternalAgency: 34,
   InterviewPanel: 35,
   EXCOMD: 31,
+  TitleforProfile: 24,
 };
 
 export const GridStatusBackgroundcolor = {
@@ -103,6 +128,8 @@ export const GridStatusBackgroundcolor = {
   Reverted: "#afb4b6",
   ReSubmitted: "#87caff",
   Initiated: "#e6eef2",
+  Selected: "90ee90",
+  InterviewScheduled: "D7FDD7",
 };
 
 export const HRMSAlertOptions = {
@@ -146,18 +173,57 @@ export const viewLabelcolor = {
 };
 
 export const RecuritmentHRMsg = {
-  AdvertisementSubmitMsg: "Advertisement Uploaded Successfully",
-  ScoreCardSubmitMsg: "ScoreCard Uploaded Successfully",
-  ONEMDocumentMsg: "ONEM Document Uploaded Successfully",
-  RecuritmentSubmitMsg: "Submitted Successfully",
-  ApprovedMsg: "Approved Successfully",
+  HRSuccess: "Recruitment HR Assigned for the Selected Job Titles.",
+  SingleHRSuccessMsg: "Recruitment HR Assigned for the Selected Job Title.",
+
+  ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Sucessfully.",
+
+  AdvertisementSubmitMsg:
+    "Advertisement Document Uploaded Successfully.",
+  AdvertisementReveiwMsg: "Advertisement Reviewed Sucessfully",
+
+  AgencySucess: "Agencies Assigned for the Selected Job Titles.",
+  SingleAgencyMsg: "Agencies Assigned for the Selected Job Title.",
+
+  InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
+  RescheduleSuccessMsg: "Interview Rescheduled Successfully.",
+  AdvertExtendsionSuccessMsg: "Advertisement Extension Submitted Successfully.",
+
+  ScoreCardSubmitMsg:
+    "The Candidate has been Interviewed and Scorecard Submitted for Final Selection.",
+
+  InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully",
+  CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully",
+
+  ProfileReviewed:
+    "Candidate Profile for the Job Title Reviewed and Shortlisted.",
+  ProfileReviewedNo:
+    "Candidate Profile for the Job Title Reviewed and Rejected.",
+  ProfileReviewedWaitingList:
+    "Candidate Profile for the Job Title Reviewed and On - Hold.",
+  HRReviewCandidate: "Candidate Profile Reviewed Successfully",
+
+  CandidateSelected: "Candidate Selected",
+  CandidateRejected: "Candidate Rejected",
+
+  RecuritmentSubmitMsg: "Submitted Successfully.",
+  ApprovedMsg:
+    "Advertisement Reviewed Sucessfully. Ready for ONEM Process (Offline).",
   RecuritmentHRMsgCancel:
-    "Are you sure you want to cancel? Any unsaved changes will be lost.",
-  BackMsg: "Are you sure you want go to Home Page ?",
-  ValidationErrorMsg: "One or more required actions are missing",
-  RecruitmentErrorMsg: "Please select the Job Code",
-  AgencySucess: "Agencies Assigned Successfully",
-  HRSuccess: "HR Assigned Successfully",
+    "Are you sure want to cancel? Any unsaved changes will be lost.",
+  BackMsg: "Are you sure want go back to Home Page ?",
+  ValidationErrorMsg:
+    "One or more mandatory field are missing.Please do the needful and submit again.",
+  RecruitmentErrorMsg: "Please choose the Job Code to assign Recruitment HR.",
+  AgenciesErrorMsg: "Please choose the Job Code to Assign Agencies.",
+  PositionIDassigned: "Position ID Assigned Successfully in Selected Candidated.",
+  InterviewScoredAlready:
+    "The scorecard for the candidate has already been submitted.",
+  APIErrorMsg: "Server is temporarily unavailable.",
+  InterviewQues:
+    "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
+  AddedMsg: "Added Successfully",
+  deleteMsg: "Are you sure you want to delete this? Any unsaved changes will be lost"
 };
 
 export const ADGroupID: IADGroupID = {
@@ -191,7 +257,7 @@ export const RoleDescription = {
 export const RoleDescriptionData = {
   RoleSpeKnowledge: "Role Specific Knowledge",
   Qualification: "Qualification",
-  TechnicalSkill: "Technical Skills",
+  TechnicalSkill: "Technical Skill",
 };
 
 export const ScoreRanking: AutoCompleteItem[] = [
@@ -207,23 +273,191 @@ export const ScoreRanking: AutoCompleteItem[] = [
   { key: 5, text: "5" },
 ];
 
+export const ReviewProfileScore: AutoCompleteItem[] = [
+  { key: 1, text: "Excellent" },
+  { key: 2, text: "Good" },
+  { key: 3, text: "Average" },
+  { key: 4, text: "Below Average" },
+  { key: 5, text: "Poor" },
+];
+
 export const EmploymentOption = ["Yes", "No"];
 
 export const TabName = {
   AssignRecuritmentHR: "Assign Recuritment HR",
   UploadONEMDoc: "Upload ONEM Doc",
   MySubmission: "My Submission",
-  UploadAdvertisement: "Upload Advertisement",
+  UploadAdvertisement: "Job Advertisement",
   AssignAgencies: "Assign Agencies",
   ReviewProfile: "Review Profile",
   AssignInterviewPanel: "Assign Interview Panel",
   ReviewAdvertisement: "Review Advertisement",
   ReviewScorecard: "Review Scorecard",
   Evaluation: "Evaluation",
-  CandidateDetails: "Candidate Details",
+  CandidateDetails: "Applicants Details",
   PositionDetails: "Position Details",
   AdvertisementDetails: "Advertisement Details",
   AdvertisementViewDetails: "View Advertisement ",
-  ScorecardDetails: "Scorecard Details",
+  ScorecardDetails: " Review Scorecard ",
+  ViewCandidateDetails: "View Applicants Details",
+  Scorecard: "Scorecard",
   ReviewONEMAdvertisement: "Review ONEM Advertisement",
+  ViewPositionDetails: "View Position Details",
+  ViewCandidateList: "View Applicants List",
+  ViewJustification: "View Justification",
+  EvaluationTab: "Candidate Details",
+  InterviewQuestion: "Interview Questions",
+  AdvertExtension: "Advert Extension",
+  CheckboxContent: "I hereby agree for submitting this request for further approvals.",
+  ApprovalCheckbox: "I hereby acknowledge that I have read the submission request and confirm the accuracy of the content shared.",
+
+  ReviewLevel1: "Review Profile - Level 1",
+  ReviewLevel2: "Review Profile - Level 2",
+  Shortlisted: "Shortlisted",
+  onHold: "On Hold",
+  Rejected: "Rejected",
+  OnHoldRejected: "On Hold & Rejected",
+
+  InterviewQuestions: "Interview Questions",
+  CareerPortal: "Career Portal",
+  InterviewPanel: "Interview Panel",
+
+  ViewScoreDetails: " View ScoreCard Details",
+  ReschedulInterview: "Reschedule Interview",
 };
+
+export const ProfileStatus = {
+  HR: "Pending with HR - Review Profile",
+  LM: "Pending with LM - Review Profile",
+};
+
+export const Nationality = {
+  Nationals: "Nationals (Congolese)",
+  Expatriate: "Expatriate",
+};
+
+export const CandidateStatus = {
+  Yes: "Yes",
+  No: "No",
+  OnHold: "On Hold",
+};
+
+export const InterviewLevels = {
+  Level1: "Level 1",
+  Level2: "Level 2",
+  Level3: "Level 3",
+};
+
+export const DataFrom = {
+  NewPosition: "New Position Request",
+  ExistingPosition: "Additional Headcount for Existing Position"
+}
+
+export const workflowStatusApi = {
+  HRPending: "WS01",
+  LineManagerL1Pending: "WS02",
+  LineManagerL2Pending: "WS03",
+  InterviewScheduled: "WS04",
+  pendingHODSelection: "WS05",
+  CandidateSelectedIPanel: "WS06",
+  CandidateOnHoldIPanel: "WS07",
+  CandidateRejectedIPanel: "WS08",
+  PendingRecruitmentHRscheduleInterview: "WS09",
+  HRRejected: "WS10",
+  HROnHold: "WS11",
+  LineManagerLevel1OnHold: "WS12",
+  LineManagerLevel2OnHold: "WS13",
+  LineManagerLevel1Rejected: "WS14",
+  LineManagerLevel2Rejected: "WS15",
+};
+export const Notes = {
+  Roleprofile: "Role Profile is not available for the Job Title.",
+  Grding: "Grading Report is not available for the Job Title.",
+  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving or reverting this submission."
+}
+// sneka
+export const CatogryOption = [
+  "Interview Panel",
+  "Recruitment Process (Portal)",
+];
+export const DisciplinesOption = [
+  { key: 0, text: "Scope" },
+  { key: 1, text: "Technical" },
+  { key: 2, text: "Behavioral" },
+];
+export const Choices = {
+  Yes: "Yes",
+  No: "No"
+}
+export const isDisqualificationOption = ["Yes", "No"];
+export const CategoryID = {
+  Department: 1,
+  Function: 2,
+  Level: 3,
+  RoleSpecificKnowledge: 4,
+  TechnicalSkill: 5,
+  Qualification: 6,
+  Nationality: 7,
+  Experience: 8,
+  WorkflowStatus: 9,
+  ApplicationStatus: 10,
+  LanguageProficiency: 11,
+  EducationLevels: 12,
+  QuestionScopes: 13,
+  QuestionCategory: 14,
+  QuestionType: 15,
+  Empty: 16,
+  IvanhoeZijinExperience: 17,
+  ReferralSource: 18,
+  RaceEthicity: 19,
+  CitizenshipStatus: 20,
+  GenderIndentity: 21,
+  Disciplines: 22,
+  ProofofIdentity: 23,
+  TitleforProfile: 24,
+}
+
+export const CatogryOptionCode = {
+  CareerPortalCandidate: "Career Portal - Candidate",
+  InterviewPanel: "Interview Panel",
+};
+export const displayTextOptionCode = {
+  SingleAnswer: "Single Choice",
+  MultiAnswer: "Multi Choice",
+  CustomAnswer: "Custom Answer",
+};
+export const categoryOption = [
+  "Career Portal - Candidate",
+  "Interview Panel"
+];
+
+export const labelName = {
+  Level1CandidateLabel: "Does the candidate fit for the vacant position ? (Level 1)",
+  Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)",
+  ViewJobAdvetisement: "View Job Advertisement"
+};
+
+export const ColorCode = {
+  TabColorCode: {
+    Tabcolor: "#a8b8c6",
+    TabboxShadow: "#93a6b7",
+  },
+  SideNavColorCode: {
+    SideNavColor: "#f5f5f5",
+  },
+  LabelStyleColorCode: {
+    LabelStyleColor: "#597b98",
+    boxShadow: "rgba(239, 51, 64, 0.2)",
+  },
+  ButtonColorCode: {
+    ButtonColor: "#0D547B",
+    boxShadowRed: "rgba(239, 51, 64, 0.2)",
+    color: "white !important",
+    backgroundColor: "white",
+    ButtonbordeColor: "rgba(239, 51, 64)",
+    ButtonHoverColor: "white !important",
+  },
+  ProfileColorCode: {
+    colorCode: "#597b98"
+  }
+}

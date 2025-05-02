@@ -47,7 +47,7 @@ function CustomRatingStar({
             />
             {error && (
                 <p style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}>
-                    Field Is Required
+                    Field is Required
                 </p>
             )}
         </>
