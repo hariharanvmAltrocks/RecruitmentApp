@@ -437,6 +437,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     const shouldValidateQuestionType =
       props?.stateValue?.StatusId ===
       StatusId.PendingwithLMcreateDisqualificationQuestion;
+
     if (!Disciplines.text) errors.Disciplines = true;
     if (shouldValidateQuestionType && !QuestionType.text)
       errors.QuestionType = true;
@@ -471,14 +472,33 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           delete errors.OptionsType;
         }
       }
-      if (!Disqualification) errors.Disqualification = true;
     } else {
       if (!ExpectedAnswer) errors.ExpectedAnswer = true;
     }
-
+    if (shouldValidateQuestionType && !Disqualification) {
+      errors.Disqualification = true;
+    }
     setValidationError((prev) => ({ ...prev, ...errors }));
 
     return Object.keys(errors).length === 0;
+  };
+  const handleCloseCreateQuestion = () => {
+    setShowCreateQuestionBox(false); // or setViewQA(false) if you're using that
+    setValidationError({} as InterviewQuesValidationError); // clear validation errors
+    setEditingQuestionIndex(null); // reset editing state
+
+    setInterviewQuesData((prev) => ({
+      Disciplines: { key: 0, text: "" },
+      QuestionNumber: { key: 0, text: "" },
+      QuestionType: { key: 0, text: "" },
+      Question: "",
+      ExpectedAnswer: "",
+      Disqualification: "",
+      Catogry: prev.Catogry,
+      CareerportalAnswer: [],
+    }));
+
+    setOptionsType([{ key: 0, text: "", isCorrect: false }]); // reset options
   };
 
   const handleSaveQuestion = () => {
@@ -1060,9 +1080,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   </>
                 )}
               </Box>
-
-              {/*  right side Card and box  */}
-
               <Box sx={{ width: "70%" }}>
                 <Box sx={{ mb: 2 }}>
                   <div className="ms-Grid-row">
@@ -1094,12 +1111,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           fontSize: "14px",
                           fontWeight: "500",
                         }}
-                        onClick={() => getFetchQuestion()} // Toggle visibility
+                        onClick={() => getFetchQuestion()} 
                       >
                         View Questions
                       </Button>
                     </div>
-                    <div className="ms-Grid-col ms-lg2.5 ">
+                    <div className="ms-Grid-col ms-lg2.5">
                       <Button
                         variant="contained"
                         style={{
@@ -1114,9 +1131,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           fontSize: "14px",
                           fontWeight: "500",
                         }}
-                        onClick={() =>
-                          setShowCreateQuestionBox(!showCreateQuestionBox)
-                        } // Toggle visibility
+                        onClick={() => {
+                          if (showCreateQuestionBox) {
+                            handleCloseCreateQuestion(); 
+                          } else {
+                            setShowCreateQuestionBox(true); 
+                          }
+                        }}
                       >
                         New Question
                       </Button>
@@ -1876,10 +1897,29 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           ? ButtonAction.Update
                           : ButtonAction.Save}
                       </Button>
-                      <Button
+                      {/* <Button
                         variant="contained"
                         // startIcon={<AddIcon />}
                         onClick={() => setShowCreateQuestionBox(false)}
+                        sx={{
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          color: "white",
+                          "&:hover": {
+                            backgroundColor:
+                              ColorCode.ButtonColorCode.ButtonColor,
+                          },
+                          textTransform: "none",
+                          borderRadius: "4px",
+                          px: 3,
+                          marginLeft: "2%",
+                        }}
+                      >
+                        {ButtonAction.close}
+                      </Button> */}
+                      <Button
+                        variant="contained"
+                        onClick={handleCloseCreateQuestion}
                         sx={{
                           backgroundColor:
                             ColorCode.ButtonColorCode.ButtonColor,
@@ -2150,14 +2190,60 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               onBreadcrumbChange={handleBreadcrumbChange}
               handleCancel={handleCancel}
               additionalButtons={[
-                {
-                  label: "Close",
-                  onClick: async () => {
-                    props.navigation("/ReviewProfileList", {
-                      state: { activeTab: "tab2" },
-                    });
-                  },
-                },
+                // // {
+                // //   label: "Close",
+                // //   onClick: async () => {
+                // //     props.navigation("/ReviewProfileList", {
+                // //       state: { activeTab: "tab2" },
+                // //     });
+                // //   },
+                // // },/
+                // // {
+                // //   label: "Cancel",
+                // //   onClick: () => {
+                // //     const ClearWarning = {
+                // //       Message: RecuritmentHRMsg.ClearWarning,
+                // //       Type: HRMSAlertOptions.Confirmation,
+                // //       visible: true,
+                // //       ButtonAction: async (userClickedOK: boolean) => {
+                // //         if (userClickedOK) {
+                // //           setAlertPopupOpen(false);
+                // //           props.navigation("/ReviewProfileList", {
+                // //             state: { activeTab: "tab2" },
+                // //           });
+                // //         } else {
+                // //           setAlertPopupOpen(false);
+                // //         }
+                // //       },
+                // //     };
+
+                // //     setalertProps(ClearWarning);
+                // //     setAlertPopupOpen(true);
+                // //   },
+                // // },
+                //  {
+                //   label: "Cancel",
+                //   onClick: () => {
+                //     const ClearWarning = {
+                //       Message: RecuritmentHRMsg.ClearWarning,
+                //       Type: HRMSAlertOptions.Confirmation,
+                //       visible: true,
+                //       ButtonAction: async (userClickedOK: boolean) => {
+                //         if (userClickedOK) {
+                //           setAlertPopupOpen(false);
+                //           props.navigation("/ReviewProfileList", {
+                //             state: { activeTab: "tab2" },
+                //           });
+                //         } else {
+                //           setAlertPopupOpen(false);
+                //         }
+                //       },
+                //     };
+
+                //     setalertProps(ClearWarning);
+                //     setAlertPopupOpen(true);
+                //   },
+                // },
                 ...(resuequestionnaire.length > 0
                   ? [
                       {

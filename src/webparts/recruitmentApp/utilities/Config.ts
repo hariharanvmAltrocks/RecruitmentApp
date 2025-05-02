@@ -237,7 +237,8 @@ export const RecuritmentHRMsg = {
   deleteMsg: "Are you sure you want to delete this? Any unsaved changes will be lost",
 
   SelectedErrorMsg: "Please Choose the Disciplines.",
-  WarningMsg: "Are you sure want to Change the Disciolines? Any unsaved changes will be lost"
+  WarningMsg: "Are you sure want to Change the Disciolines? Any unsaved changes will be lost",
+  ClearWarning:"Are you sure you want to close? Unsaved changes will be lost.",
 };
 
 export const ADGroupID: IADGroupID = {

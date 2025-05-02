@@ -296,12 +296,13 @@ return (
       </div>
       <div className="ms-Grid-row" style={{ marginTop: "2%" }}>
         <div className="ms-Grid-col ms-lg12">
-          <DataTable
+          {/* <DataTable
             value={filteredItems}
             rows={rows}
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
-            scrollable
+             scrollable
+             scrollHeight="300px"
             rowsPerPageOptions={[5, 10, 20]}
             paginator
             stripedRows
@@ -314,10 +315,35 @@ return (
                 header={col.header}
                 sortable={col.sortable}
                 body={col.body}
-                style={col.style}
               />
             ))}
-          </DataTable>
+          </DataTable> */}
+
+<DataTable
+  value={filteredItems}
+  rows={rows}
+  paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+  currentPageReportTemplate="{first} to {last} of {totalRecords}"
+  scrollable
+  scrollHeight="400px"  
+  rowsPerPageOptions={[5, 10, 20]}
+  paginator
+  stripedRows
+  filters={dashboardSearch}
+  style={{ height: 'auto', overflow: 'auto' }}
+>
+  {columns.map((col) => (
+    <Column
+      key={col.field}
+      field={col.field}
+      header={col.header}
+      sortable={col.sortable}
+      body={col.body}
+    />
+  ))}
+</DataTable>
+
+
         </div>
       </div>
     </div>
@@ -325,3 +351,4 @@ return (
 };
 
 export default SearchableDataTable;
+
