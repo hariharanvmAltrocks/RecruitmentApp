@@ -85,100 +85,109 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
     setFilteredItems(filtered);
   };
 
-const handleAutoComplete = (
-  field: keyof FilterData,
-  item: AutoCompleteItem | null
-) => {
-  setFilterData((prev) => ({
-    ...prev,
-    [field]: item ?? { key: 0, text: "" },
-  }));
-  if (!item) {
-    if (field === "JobCode") {
-      setFilterData((prev) => ({
-        ...prev,
-        JobCode: { key: 0, text: "" },
-      }));
-      setFilteredItems(data.filter((row) => {
-        return (
-          (!FilterData.Department.text || row.Department === FilterData.Department.text) &&
-          (!FilterData.BusinessUnitCode.text || row.BusinessUnitCode === FilterData.BusinessUnitCode.text)
+  const handleAutoComplete = (
+    field: keyof FilterData,
+    item: AutoCompleteItem | null
+  ) => {
+    setFilterData((prev) => ({
+      ...prev,
+      [field]: item ?? { key: 0, text: "" },
+    }));
+    if (!item) {
+      if (field === "JobCode") {
+        setFilterData((prev) => ({
+          ...prev,
+          JobCode: { key: 0, text: "" },
+        }));
+        setFilteredItems(
+          data.filter((row) => {
+            return (
+              (!FilterData.Department.text ||
+                row.Department === FilterData.Department.text) &&
+              (!FilterData.BusinessUnitCode.text ||
+                row.BusinessUnitCode === FilterData.BusinessUnitCode.text)
+            );
+          })
         );
-      }));
-    } else if (field === "BusinessUnitCode") {
-      setFilterData((prev) => ({
-        ...prev,
-        BusinessUnitCode: { key: 0, text: "" },
-        JobCodeOption: [], 
-        JobCode: { key: 0, text: "" },
-      }));
-      setFilteredItems(data.filter((row) => {
-        return (
-          (!FilterData.Department.text || row.Department === FilterData.Department.text)
+      } else if (field === "BusinessUnitCode") {
+        setFilterData((prev) => ({
+          ...prev,
+          BusinessUnitCode: { key: 0, text: "" },
+          JobCodeOption: [],
+          JobCode: { key: 0, text: "" },
+        }));
+        setFilteredItems(
+          data.filter((row) => {
+            return (
+              !FilterData.Department.text ||
+              row.Department === FilterData.Department.text
+            );
+          })
         );
-      }));
-    } else if (field === "Department") {
-      setFilterData((prev) => ({
-        ...prev,
-        Department: { key: 0, text: "" },
-        BusinessUnitCodeOption: [],
-        JobCodeOption: [],
-        BusinessUnitCode: { key: 0, text: "" },
-        JobCode: { key: 0, text: "" },
-      }));
-      setFilteredItems(data);
+      } else if (field === "Department") {
+        setFilterData((prev) => ({
+          ...prev,
+          Department: { key: 0, text: "" },
+          BusinessUnitCodeOption: [],
+          JobCodeOption: [],
+          BusinessUnitCode: { key: 0, text: "" },
+          JobCode: { key: 0, text: "" },
+        }));
+        setFilteredItems(data);
+      }
+      return;
     }
-    return;
-  }
 
-  // Continue with filtering logic if there's a selected item
-  search_fn(field, item);
+    // Continue with filtering logic if there's a selected item
+    search_fn(field, item);
 
-  if (field === "Department") {
-    const departmentToBU = data.filter((row) => row.Department === item?.text);
-    const businessUnitOptions: AutoCompleteItem[] = Array.from(
-      new Set(departmentToBU.map((row) => row.BusinessUnitCode))
-    ).map((buCode) => ({
-      key: buCode,
-      text: buCode,
-    }));
+    if (field === "Department") {
+      const departmentToBU = data.filter(
+        (row) => row.Department === item?.text
+      );
+      const businessUnitOptions: AutoCompleteItem[] = Array.from(
+        new Set(departmentToBU.map((row) => row.BusinessUnitCode))
+      ).map((buCode) => ({
+        key: buCode,
+        text: buCode,
+      }));
 
-    const jobCodeOptions: AutoCompleteItem[] = Array.from(
-      new Set(departmentToBU.map((row) => row.JobCode))
-    ).map((jobCode) => ({
-      key: jobCode,
-      text: jobCode,
-    }));
+      const jobCodeOptions: AutoCompleteItem[] = Array.from(
+        new Set(departmentToBU.map((row) => row.JobCode))
+      ).map((jobCode) => ({
+        key: jobCode,
+        text: jobCode,
+      }));
 
-    setFilterData((prev) => ({
-      ...prev,
-      BusinessUnitCodeOption: businessUnitOptions,
-      JobCodeOption: jobCodeOptions,
-      BusinessUnitCode: { key: 0, text: "" },
-      JobCode: { key: 0, text: "" },
-    }));
-  }
+      setFilterData((prev) => ({
+        ...prev,
+        BusinessUnitCodeOption: businessUnitOptions,
+        JobCodeOption: jobCodeOptions,
+        BusinessUnitCode: { key: 0, text: "" },
+        JobCode: { key: 0, text: "" },
+      }));
+    }
 
-  if (field === "BusinessUnitCode") {
-    const buToJobCode = filteredItems.filter(
-      (row) => row.BusinessUnitCode === item?.text
-    );
+    if (field === "BusinessUnitCode") {
+      const buToJobCode = filteredItems.filter(
+        (row) => row.BusinessUnitCode === item?.text
+      );
 
-    const jobCodeOptions: AutoCompleteItem[] = Array.from(
-      new Set(buToJobCode.map((row) => row.JobCode))
-    ).map((jobCode) => ({
-      key: jobCode,
-      text: jobCode,
-    }));
+      const jobCodeOptions: AutoCompleteItem[] = Array.from(
+        new Set(buToJobCode.map((row) => row.JobCode))
+      ).map((jobCode) => ({
+        key: jobCode,
+        text: jobCode,
+      }));
 
-    setFilterData((prev) => ({
-      ...prev,
-      JobCodeOption: jobCodeOptions,
-      JobCode: { key: 0, text: "" },
-    }));
-  }
-};
-return (
+      setFilterData((prev) => ({
+        ...prev,
+        JobCodeOption: jobCodeOptions,
+        JobCode: { key: 0, text: "" },
+      }));
+    }
+  };
+  return (
     <div>
       <div className="ms-Grid-row">
         <div
@@ -264,12 +273,12 @@ return (
         <div className="ms-Grid-col ms-lg3">
           <CustomAutoComplete
             label="Department"
-            options={Array.from(
-              new Set(data.map((row) => row.Department))
-            ).map((department) => ({
-              key: department,
-              text: department,
-            }))}
+            options={Array.from(new Set(data.map((row) => row.Department))).map(
+              (department) => ({
+                key: department,
+                text: department,
+              })
+            )}
             value={FilterData.Department}
             disabled={false}
             onChange={(item) => handleAutoComplete("Department", item)}
@@ -285,24 +294,25 @@ return (
           />
         </div>
         <div className="ms-Grid-col ms-lg3">
-        <CustomAutoComplete
-  label="Job Code"
-  options={FilterData.JobCodeOption ?? []}
-  value={FilterData.JobCode}
-  disabled={false}
-  onChange={(item) => handleAutoComplete("JobCode", item)}
-/>
+          <CustomAutoComplete
+            label="Job Code"
+            options={FilterData.JobCodeOption ?? []}
+            value={FilterData.JobCode}
+            disabled={false}
+            onChange={(item) => handleAutoComplete("JobCode", item)}
+          />
         </div>
       </div>
       <div className="ms-Grid-row" style={{ marginTop: "2%" }}>
         <div className="ms-Grid-col ms-lg12">
-          {/* <DataTable
+          <DataTable
             value={filteredItems}
             rows={rows}
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
-             scrollable
-             scrollHeight="300px"
+            scrollable
+            scrollHeight="400px"
+            paginatorDropdownAppendTo="self"
             rowsPerPageOptions={[5, 10, 20]}
             paginator
             stripedRows
@@ -317,33 +327,7 @@ return (
                 body={col.body}
               />
             ))}
-          </DataTable> */}
-
-<DataTable
-  value={filteredItems}
-  rows={rows}
-  paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-  currentPageReportTemplate="{first} to {last} of {totalRecords}"
-  scrollable
-  scrollHeight="400px"  
-  rowsPerPageOptions={[5, 10, 20]}
-  paginator
-  stripedRows
-  filters={dashboardSearch}
-  style={{ height: 'auto', overflow: 'auto' }}
->
-  {columns.map((col) => (
-    <Column
-      key={col.field}
-      field={col.field}
-      header={col.header}
-      sortable={col.sortable}
-      body={col.body}
-    />
-  ))}
-</DataTable>
-
-
+          </DataTable>
         </div>
       </div>
     </div>
@@ -351,4 +335,3 @@ return (
 };
 
 export default SearchableDataTable;
-
