@@ -1205,7 +1205,7 @@ const HodViewScorecard = (props: any) => {
                         }
                         error={validationErrors.PositionID}
                         disabled={true}
-                        mandatory={true}
+                        mandatory={false}
                         placeholder="Select a position"
                       />
                     </div>
@@ -1232,7 +1232,7 @@ const HodViewScorecard = (props: any) => {
                           }
                           error={validationErrors.PositionID}
                           disabled={false}
-                          mandatory={true}
+                          mandatory={false}
                           placeholder="Select a position"
                         />
                       </div>
