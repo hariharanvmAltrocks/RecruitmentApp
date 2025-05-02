@@ -75,10 +75,12 @@ type FieldsEditableType = {
   comments: boolean;
   visibleButtons: string[];
 };
-
+type InterviewedLevelValue = {
+  Levels: string;
+  Grade: string;
+};
 const HodViewScorecard = (props: any) => {
   const todaydate = new Date();
-
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
     RecruitmentID: 0,
@@ -190,6 +192,12 @@ const HodViewScorecard = (props: any) => {
     AdvertisementAttachement: [],
     JobcodeChecked: false,
   });
+
+  const [InterviewedLevel, setInterviewedLevel] =
+    React.useState<InterviewedLevelValue>({
+      Levels: "",
+      Grade: "",
+    });
   const [Preview, setPreview] = React.useState<boolean>(false);
   const [actionValue, setActionValue] = React.useState<ActionValue>({
     CandidateStatus: "",
@@ -334,9 +342,10 @@ const HodViewScorecard = (props: any) => {
           const candidatePanels = scoreResponse?.data.filter(
             (candidate: any) => candidate.CandidateID === candidateID
           );
-          setInterviewPanelTitles(
-            candidatePanels.map((panel: any) => panel.PanelFullName)
+          const uniquePanelNames = Array.from(
+            new Set(candidatePanels.map((panel) => panel.PanelFullName))
           );
+          setInterviewPanelTitles(uniquePanelNames);
           const filteredScores = candidatePanels
             .map((candidate: any) => {
               const score = candidate.ScoreCard;
@@ -347,7 +356,6 @@ const HodViewScorecard = (props: any) => {
             .reduce((acc: any[], val: any[]) => acc.concat(val), []);
           setScoreData(filteredScores);
           let questionScores: any = {};
-          // let interviewerCount = 0;
           filteredScores.forEach((score: any, interviewerIndex: number) => {
             if (score.QuestionJson) {
               score.QuestionJson.forEach((q: any) => {
@@ -359,16 +367,12 @@ const HodViewScorecard = (props: any) => {
                   q[key];
               });
             }
-            // interviewerCount++;
           });
 
           setTransformedDataforQuestions(Object.values(questionScores));
-          // setInterviewerCount(interviewerCount);
         } else {
           setScoreData([]);
           setInterviewPanelTitles([]);
-          // setTransformedDataforQuestions([]);
-          // setInterviewerCount(0);
         }
       })
       .catch((error) => {
@@ -376,7 +380,6 @@ const HodViewScorecard = (props: any) => {
         setScoreData([]);
         setInterviewPanelTitles([]);
         setTransformedDataforQuestions([]);
-        // setInterviewerCount(0);
       });
   };
 
@@ -616,7 +619,34 @@ const HodViewScorecard = (props: any) => {
       setIsLoading(false);
     }
   };
+  React.useEffect(() => {
+    const getRecruitmentGradeLevel = async () => {
+      const filterConditions = [
+        {
+          FilterKey: "ID",
+          Operator: "eq",
+          FilterValue: props.stateValue?.RecruitmentID,
+        },
+      ];
 
+      const response = await getVRRDetails.GetRecruitmentDetails(
+        filterConditions,
+        ""
+      );
+
+      const grade = response.data[0]?.PatersonGrade;
+      const gradeLevelResponse = await CommonServices.GetGradeLevel(grade);
+
+      setInterviewedLevel((prevState: any) => ({
+        ...prevState,
+        Grade: grade,
+        Levels: gradeLevelResponse.data[0]?.Level,
+      }));
+      console.log("Grade Level Response", gradeLevelResponse.data[0]?.Level);
+    };
+
+    void getRecruitmentGradeLevel();
+  }, []);
   const tabs = [
     {
       label: TabName.ViewCandidateDetails,
@@ -810,29 +840,18 @@ const HodViewScorecard = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Interview Levels"
-                      value={CandidateData.InterviewLevels}
+                      label="Level of Interview"
+                      value={InterviewedLevel.Levels}
                       disabled={true}
                       mandatory={false}
-                      onChange={(value) =>
-                        setCandidateData((prevState) => ({
-                          ...prevState,
-                          InterviewLevels: value,
-                        }))
-                      }
                     />
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Grade"
-                      value={CandidateData.JobGrade}
+                      value={InterviewedLevel.Grade}
                       disabled={true}
                       mandatory={false}
-                      onChange={(value) =>
-                        setCandidateData((prevState) => ({
-                          ...prevState,
-                        }))
-                      }
                     />
                   </div>
                 </div>
@@ -1006,43 +1025,6 @@ const HodViewScorecard = (props: any) => {
                   </span>
                 </div>
               </div>
-
-              {/* <div
-                style={{
-                  // backgroundColor: "#f8f8f8",
-                  padding: "15px",
-                  marginBottom: "0px",
-                  fontSize: "14px",
-                  color: "-moz-initial",
-                  fontWeight: "600",
-                }}
-              >
-                <span style={{ marginRight: "20px" }}>
-                  Interview Panel member: {interviewPanelTitles.length}
-                </span>
-                {interviewPanelTitles.map((interviewer, index) => (
-                  <span key={index} style={{ marginRight: "20px" }}>
-                    Interviewer {index + 1} - {interviewer}
-                  </span>
-                ))}
-              </div> */}
-
-              {/* <div style={{ overflowX: "auto" }}>
-                <DataTable
-                  value={transformedData}
-                  responsiveLayout="scroll"
-                  stripedRows
-                >
-                  <Column field="criteria" header="Criteria" />
-                  {Array.from({ length: interviewerCount }).map((_, index) => (
-                    <Column
-                      key={index}
-                      field={`interviewer_${index + 1}`}
-                      header={`Interviewer ${index + 1}`}
-                    />
-                  ))}
-                </DataTable>
-              </div> */}
 
               <div>
                 <Accordion
@@ -1223,33 +1205,40 @@ const HodViewScorecard = (props: any) => {
                         }
                         error={validationErrors.PositionID}
                         disabled={true}
-                        mandatory={true}
+                        mandatory={false}
                         placeholder="Select a position"
                       />
                     </div>
                   </div>
                 </div>
               )}
-            {(props?.stateValue?.StatusId === StatusId.PendingwithHODtoselectthecandidate ||
-  props?.stateValue?.StatusId === StatusId.PendingwithHODtoAssignPositionID) &&
-  actionValue.CandidateStatus === "Yes" && (
-    <div className="ms-Grid-row">
-      <div className="ms-Grid-col ms-lg12">
-        <div className="ms-Grid-col ms-lg4" style={{ marginLeft: "-5px" }}>
-          <CustomAutoComplete
-            label="Assign PositionID"
-            options={positionOptions}
-            value={selectedPosition}
-            onChange={(item: AutoCompleteItem | null) => handleAutoComplete(item)}
-            error={validationErrors.PositionID}
-            disabled={false}
-            mandatory={true}
-            placeholder="Select a position"
-          />
-        </div>
-      </div>
-    </div>
-)}
+              {(props?.stateValue?.StatusId ===
+                StatusId.PendingwithHODtoselectthecandidate ||
+                props?.stateValue?.StatusId ===
+                  StatusId.PendingwithHODtoAssignPositionID) &&
+                actionValue.CandidateStatus === "Yes" && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg12">
+                      <div
+                        className="ms-Grid-col ms-lg4"
+                        style={{ marginLeft: "-5px" }}
+                      >
+                        <CustomAutoComplete
+                          label="Assign PositionID"
+                          options={positionOptions}
+                          value={selectedPosition}
+                          onChange={(item: AutoCompleteItem | null) =>
+                            handleAutoComplete(item)
+                          }
+                          error={validationErrors.PositionID}
+                          disabled={false}
+                          mandatory={false}
+                          placeholder="Select a position"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg12">
                   <CustomTextArea
@@ -1332,7 +1321,7 @@ const HodViewScorecard = (props: any) => {
                 )
               )
             );
-
+            console.log("interviewLevels", interviewLevels);
             try {
               const response = await CommonServices.GetAttachmentToLibrary(
                 DocumentLibraray.RecruitmentAdvertisementDocument,
@@ -1436,7 +1425,7 @@ const HodViewScorecard = (props: any) => {
       if (response.status === 200) {
         const candidateDetails = response.data[0];
 
-        if (props.stateValue.StatusId === StatusId.Selected) {
+        if (props.stateValue?.StatusId === StatusId?.Selected) {
           const positionId = candidateDetails.PositionID;
           const positionValue = candidateDetails.Position; // 6
           setSelectedPosition({
@@ -1450,7 +1439,7 @@ const HodViewScorecard = (props: any) => {
     }
   };
   React.useEffect(() => {
-    if (candidateID && props.stateValue.StatusId === StatusId.Selected) {
+    if (candidateID && props.stateValue?.StatusId === StatusId?.Selected) {
       void fetchSelectedCandidateDetails();
     }
   }, [candidateID, props?.stateValue?.Status]);
@@ -1554,10 +1543,7 @@ const HodViewScorecard = (props: any) => {
     }
 
     setIsLoading(true);
-
     try {
-      console.log("Fetching Position ID details for:", positionIdString);
-
       const filterConditions = [
         {
           FilterKey: "PositionID",
@@ -1581,23 +1567,17 @@ const HodViewScorecard = (props: any) => {
       }
 
       const selectedPosition = GetPositionID.data[0];
-      console.log("Selected Position Details:", selectedPosition);
-
       const assignPositionPayload: AssignPositionID = {
         PositionIDId: selectedPosition.ID,
         CandidateIDId: candidateID,
         RecruitmentIDId: props.stateValue.ID,
       };
-
-      console.log("Assign Position Payload:", assignPositionPayload);
-
       const res = await InterviewServices.AssignPositionID(
         assignPositionPayload,
         ListNames.HRMSSelectedCandidateDetailsByHOD
       );
 
       if (res.status === 200) {
-        console.log("Position assigned successfully");
         await SPServices.SPUpdateItem({
           Listname: ListNames.HRMSPositionIDMaster,
           RequestJSON: { PositionIDStatus: "Recruitment InProgress" },
@@ -1612,8 +1592,6 @@ const HodViewScorecard = (props: any) => {
       setIsLoading(false);
     }
   };
-
-
   const insertOrUpdateCandidateCommentLevel1 = async () => {
     try {
       const filterConditions = [
@@ -1623,33 +1601,34 @@ const HodViewScorecard = (props: any) => {
           FilterValue: CandidateData.CandidateID,
         },
       ];
- 
+
       const response = await InterviewServices.getCandidateLevel1ScoreCard(
         filterConditions
       );
+
       if (response?.status === 200 && response.data?.length > 0) {
-        console.log("Fetched Level 1 comments data:", response.data);
- 
         const matchingComment = response.data.find(
-          (comment: any) =>
-            comment.CandidateID?.ID === CandidateData.CandidateID &&
+          (comment) =>
+            comment.CandidateID === CandidateData.CandidateID &&
             comment.RoleId === props.CurrentRoleID
         );
- 
+
         if (matchingComment) {
-          await SPServices.SPUpdateItem({
+          const updatePayload = {
+            Comments: CandidateData.Comments,
+            Level: CandidateData.InterviewLevels.join(","),
+          };
+
+          const updateResponse = await SPServices.SPUpdateItem({
             Listname: ListNames.HRMSRecruitmentCandidateComments,
-            RequestJSON: {
-              Comments: CandidateData.Comments,
-              Level: CandidateData.InterviewLevels.join(","),
-            },
+            RequestJSON: updatePayload,
             ID: matchingComment.ID || 0,
           });
- 
-          console.log(
-            "Level 1 comment updated for CandidateID:",
-            CandidateData.CandidateID
-          );
+          if (updateResponse?.data?.ID) {
+            console.log("", CandidateData.CandidateID);
+          } else {
+            console.error("Failed to update comment");
+          }
         } else {
           await SPServices.SPAddItem({
             Listname: ListNames.HRMSRecruitmentCandidateComments,
@@ -1660,14 +1639,8 @@ const HodViewScorecard = (props: any) => {
               Level: CandidateData.InterviewLevels.join(","),
             },
           });
- 
-          console.log(
-            "Level 1 comment inserted for CandidateID:",
-            CandidateData.CandidateID
-          );
         }
       } else {
-        // Insert if no previous comment found
         await SPServices.SPAddItem({
           Listname: ListNames.HRMSRecruitmentCandidateComments,
           RequestJSON: {
@@ -1677,49 +1650,42 @@ const HodViewScorecard = (props: any) => {
             Level: CandidateData.InterviewLevels.join(","),
           },
         });
- 
-        console.log(
-          "Level 1 comment inserted (no existing data):",
-          CandidateData.CandidateID
-        );
       }
     } catch (error) {
       console.error("Error in insertOrUpdateCandidateCommentLevel1:", error);
     }
   };
- 
+
   const insertOrUpdateLevel2ScorecardComment = async () => {
     try {
       const filterConditions = [
         {
           FilterKey: "CandidateIDId",
           Operator: "eq",
-          FilterValue: CandidateData.CandidateID, // Assuming CandidateID is a number
+          FilterValue: CandidateData.CandidateID,
         },
       ];
-  
-      const response = await InterviewServices.getCandidateLevel2ScoreCard(filterConditions);
-  
+
+      const response = await InterviewServices.getCandidateLevel2ScoreCard(
+        filterConditions
+      );
+
       if (response?.status === 200 && response.data?.length > 0) {
-        console.log("Fetched Level 2 ScoreCard data:", response.data);
-  
         const matchingComment = response.data.find(
           (comment: any) =>
             comment.CandidateID?.ID === CandidateData.CandidateID &&
             comment.RoleId === props.CurrentRoleID
         );
-  
+
         if (matchingComment) {
           await SPServices.SPUpdateItem({
             Listname: ListNames.HRMSCandidateLevel2ScoreCard,
             RequestJSON: {
               Comments: CandidateData.Comments,
-              Level: "Level 2",
+              Level: CandidateData.InterviewLevels.join(","),
             },
-            ID: matchingComment.ID||0,
+            ID: matchingComment.ID || 0,
           });
-  
-          console.log("Level 2 comment updated for CandidateID:", CandidateData.CandidateID);
         } else {
           await SPServices.SPAddItem({
             Listname: ListNames.HRMSCandidateLevel2ScoreCard,
@@ -1727,30 +1693,26 @@ const HodViewScorecard = (props: any) => {
               CandidateIDId: CandidateData.CandidateID,
               Comments: CandidateData.Comments,
               RoleId: props.CurrentRoleID,
-              Level: "Level 2",
+              Level: CandidateData.InterviewLevels.join(","),
             },
           });
-  
-          console.log("Level 2 comment inserted for CandidateID:", CandidateData.CandidateID);
         }
       } else {
-        // No previous comments, so just insert
         await SPServices.SPAddItem({
           Listname: ListNames.HRMSCandidateLevel2ScoreCard,
           RequestJSON: {
             CandidateIDId: CandidateData.CandidateID,
             Comments: CandidateData.Comments,
             RoleId: props.CurrentRoleID,
-            Level: "Level 2",
+            Level: CandidateData.InterviewLevels.join(","),
           },
         });
-  
-        console.log("Level 2 comment inserted for CandidateID (no existing data):", CandidateData.CandidateID);
       }
     } catch (error) {
       console.error("Error in insertOrUpdateLevel2ScorecardComment:", error);
     }
   };
+
   const hasMinimumComments = async (candidateID: number): Promise<boolean> => {
     try {
       const filterConditions = [
@@ -1760,10 +1722,12 @@ const HodViewScorecard = (props: any) => {
           FilterValue: candidateID,
         },
       ];
-  
-      const response = await InterviewServices.getCandidateLevel2ScoreCard(filterConditions);
-      const uniqueRoles = new Set(response.data.map(item => item.RoleId));
-  
+
+      const response = await InterviewServices.getCandidateLevel2ScoreCard(
+        filterConditions
+      );
+      const uniqueRoles = new Set(response.data.map((item) => item.RoleId));
+
       return uniqueRoles.size >= 3;
     } catch (error) {
       console.error("Error checking minimum comments:", error);
@@ -1771,306 +1735,149 @@ const HodViewScorecard = (props: any) => {
     }
   };
 
- const Submit_fn = async (Action: string) => {
-  const isValid = !Validation();
-  if (!isValid) {
-    console.error("Validation failed");
-    return;
-  }
-
-  const createFilter = (workflowStatus: string): WorkflowJson => ({
-    workflowStatus,
-    jobRequestId: Number(CandidateData.JobRequestID),
-    comments: CandidateData.Comments,
-    actionBy: props.CurrentUserRole,
-  });
-
-  const isLevel1 = props.stateValue?.InterviewLevel === "Level 1";
-
-  let obj: ActionUpdate = {
-    ActionId: 0,
-    Id: 0,
-    ItemCreated: "", // default empty
-  };
-
-  let CandidateDatas: WorkflowJson = {
-    workflowStatus: "",
-    jobRequestId: 0,
-    comments: "",
-    actionBy: "",
-  };
-
-  let SuccessMessage: string = "";
-
-  switch (Action) {
-    case "Selected":
-      obj = {
-        ActionId: WorkflowAction.Approved,
-        Id: props.stateValue.ID,
-        ItemCreated: isLevel1 ? "Yes" : "",
-      };
-      CandidateDatas = createFilter(workflowStatusApi.CandidateSelectedIPanel);
-      SuccessMessage = RecuritmentHRMsg.CandidateSelected;
-      break;
-
-    case "Rejected":
-      obj = {
-        ActionId: WorkflowAction.Reject,
-        Id: props.stateValue.ID,
-        ItemCreated: isLevel1 ? "Yes" : "",
-      };
-      CandidateDatas = createFilter(workflowStatusApi.CandidateRejectedIPanel);
-      SuccessMessage = RecuritmentHRMsg.CandidateRejected;
-
-      if (selectedPosition) {
-        await SPServices.SPUpdateItem({
-          Listname: ListNames.HRMSPositionIDMaster,
-          RequestJSON: { PositionIDStatus: "Vacant" },
-          ID: selectedPosition.key,
-        });
-      }
-      break;
-
-    case "OnHold":
-      obj = {
-        ActionId: WorkflowAction.OnHold,
-        Id: props.stateValue.ID,
-        ItemCreated: isLevel1 ? "Yes" : "",
-      };
-      CandidateDatas = createFilter(workflowStatusApi.CandidateOnHoldIPanel);
-      SuccessMessage = RecuritmentHRMsg.CandidateOnHold;
-      break;
-
-    default:
-      console.error("Invalid Action:", Action);
+  const Submit_fn = async (Action: string) => {
+    const isValid = !Validation();
+    if (!isValid) {
+      console.error("Validation failed");
       return;
-  }
-
-  try {
-    setIsLoading(true);
-    console.log("Selected Position:", selectedPosition);
-
-    if (Action === "Selected" && selectedPosition) {
-      await handleAssignPosition({
-        positionId: selectedPosition,
-        Reasons: CandidateData.Comments,
-      });
     }
 
-    if (isLevel1) {
-      await insertOrUpdateCandidateCommentLevel1();
+    const createFilter = (workflowStatus: string): WorkflowJson => ({
+      workflowStatus,
+      jobRequestId: Number(CandidateData.JobRequestID),
+      comments: CandidateData.Comments,
+      actionBy: props.CurrentUserRole,
+    });
+
+    let obj: ActionUpdate = {
+      ActionId: 0,
+      Id: 0,
+      ItemCreated: "",
+    };
+
+    let CandidateDatas: WorkflowJson = {
+      workflowStatus: "",
+      jobRequestId: 0,
+      comments: "",
+      actionBy: "",
+    };
+
+    let SuccessMessage: string = "";
+    const isNotEvaluationTab = props.stateValue?.TabName !== "Evaluation";
+    switch (Action) {
+      case "Selected":
+        obj = {
+          ActionId: WorkflowAction.Approved,
+          Id: props.stateValue.ID,
+          ItemCreated: isNotEvaluationTab ? "Yes" : "No",
+        };
+        CandidateDatas = createFilter(
+          workflowStatusApi.CandidateSelectedIPanel
+        );
+        SuccessMessage = RecuritmentHRMsg.CandidateSelected;
+        break;
+
+      case "Rejected":
+        obj = {
+          ActionId: WorkflowAction.Reject,
+          Id: props.stateValue.ID,
+          ItemCreated: isNotEvaluationTab ? "Yes" : "No",
+        };
+        CandidateDatas = createFilter(
+          workflowStatusApi.CandidateRejectedIPanel
+        );
+        SuccessMessage = RecuritmentHRMsg.CandidateRejected;
+
+        if (selectedPosition) {
+          await SPServices.SPUpdateItem({
+            Listname: ListNames.HRMSPositionIDMaster,
+            RequestJSON: { PositionIDStatus: "Vacant" },
+            ID: selectedPosition.key,
+          });
+        }
+        break;
+
+      case "OnHold":
+        obj = {
+          ActionId: WorkflowAction.OnHold,
+          Id: props.stateValue.ID,
+          ItemCreated: isNotEvaluationTab ? "Yes" : "No",
+        };
+        CandidateDatas = createFilter(workflowStatusApi.CandidateOnHoldIPanel);
+        SuccessMessage = RecuritmentHRMsg.CandidateOnHold;
+        break;
+
+      default:
+        return;
     }
-
-    if (props.stateValue?.InterviewLevel === "Level 2") {
-      await insertOrUpdateLevel2ScorecardComment();
-
-      const hasThreeComments = await hasMinimumComments(CandidateData.CandidateID);
-      if (hasThreeComments) {
-        await SPServices.SPUpdateItem({
-          Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-          RequestJSON: {
-            ScoreCardLevelItemCreated: "Yes",
-          },
-          ID: CandidateData.CandidateID,
+    try {
+      setIsLoading(true);
+      if (Action === "Selected" && selectedPosition) {
+        await handleAssignPosition({
+          positionId: selectedPosition,
+          Reasons: CandidateData.Comments,
         });
       }
+      if (props.stateValue?.PreviousTabName === TabName.ViewCandidateList) {
+        await insertOrUpdateCandidateCommentLevel1();
+      }
+      console.log("", CandidateDatas);
+      if (props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2) {
+        await insertOrUpdateLevel2ScorecardComment();
+
+        const hasThreeComments = await hasMinimumComments(
+          CandidateData.CandidateID
+        );
+        if (hasThreeComments) {
+          await SPServices.SPUpdateItem({
+            Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+            RequestJSON: {
+              ScoreCardLevelItemCreated: "Yes",
+            },
+            ID: CandidateData.CandidateID,
+          });
+        }
+      }
+
+      const selectionResponse = await InterviewServices.CandidateSeletionApi(
+        obj,
+        ListNames.HRMSRecruitmentCandidatePersonalDetails
+      );
+
+      if (selectionResponse.status === 200) {
+        setAlertPopupOpen(true);
+        setalertProps({
+          Message: SuccessMessage,
+          Type: HRMSAlertOptions.Success,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              props.navigation(
+                "/RecurimentProcess/HodScoreCard/CandidateList",
+                {
+                  state: {
+                    ID: CandidateData?.RecruitmentID,
+                    Status: props.stateValue?.Status,
+                    TabName: props.stateValue?.TabName,
+                    ButtonAction: props.stateValue?.PreviousTabName,
+                    JobCode: CandidateData?.JobCode,
+                    StatusId: props.stateValue?.StatusId,
+                  },
+                }
+              );
+            }
+            setAlertPopupOpen(false);
+          },
+        });
+      } else {
+        console.error("Failed to submit candidate action");
+      }
+    } catch (error) {
+      console.error("Error in Submit_fn:", error);
+    } finally {
+      setIsLoading(false);
     }
-
-    console.log("CandidateDatas Payload:", CandidateDatas);
-
-    const selectionResponse = await InterviewServices.CandidateSeletionApi(
-      obj,
-      ListNames.HRMSRecruitmentCandidatePersonalDetails
-    );
-
-    if (selectionResponse.status === 200) {
-      console.log("Candidate action submitted successfully");
-
-      setAlertPopupOpen(true);
-      setalertProps({
-        Message: SuccessMessage,
-        Type: HRMSAlertOptions.Success,
-        visible: true,
-        ButtonAction: async (userClickedOK: boolean) => {
-          if (userClickedOK) {
-            props.navigation("/RecurimentProcess/HodScoreCard/CandidateList", {
-              state: {
-                ID: CandidateData?.RecruitmentID,
-                Status: props.stateValue?.Status,
-                TabName: props.stateValue?.TabName,
-                ButtonAction: props.stateValue?.PreviousTabName,
-                JobCode: CandidateData?.JobCode,
-                StatusId: props.stateValue?.StatusId,
-              },
-            });
-          }
-          setAlertPopupOpen(false);
-        },
-      });
-    } else {
-      console.error("Failed to submit candidate action");
-    }
-  } catch (error) {
-    console.error("Error in Submit_fn:", error);
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-
-
-
-  // const Submit_fn = async (Action: string) => {
-    
-  //   const isValid = !Validation();
-  //   if (!isValid) {
-  //     console.error("Validation failed");
-  //     return;
-  //   }
-
-  //   const createFilter = (workflowStatus: string): WorkflowJson => ({
-  //     workflowStatus,
-  //     jobRequestId: Number(CandidateData.JobRequestID),
-  //     comments: CandidateData.Comments,
-  //     actionBy: props.CurrentUserRole,
-  //   });
-
-  //   let obj: ActionUpdate = {
-  //     ActionId: 0,
-  //     Id: 0,
-  //     ItemCreated: "",
-  //   };
-
-  //   let CandidateDatas: WorkflowJson = {
-  //     workflowStatus: "",
-  //     jobRequestId: 0,
-  //     comments: "",
-  //     actionBy: "",
-  //   };
-
-  //   let SuccessMessage: string = "";
-
-  //   switch (Action) {
-  //     case "Selected":
-  //       obj = {
-  //         ActionId: WorkflowAction.Approved,
-  //         Id: props.stateValue.ID,
-  //         ItemCreated: "Yes",
-  //       };
-  //       CandidateDatas = createFilter(
-  //         workflowStatusApi.CandidateSelectedIPanel
-  //       );
-  //       SuccessMessage = RecuritmentHRMsg.CandidateSelected;
-  //       break;
-
-  //     case "Rejected":
-  //       obj = {
-  //         ActionId: WorkflowAction.Reject,
-  //         Id: props.stateValue.ID,
-  //         ItemCreated: "Yes",
-  //       };
-  //       CandidateDatas = createFilter(
-  //         workflowStatusApi.CandidateRejectedIPanel
-  //       );
-  //       SuccessMessage = RecuritmentHRMsg.CandidateRejected;
-  //       if (selectedPosition) {
-  //         await SPServices.SPUpdateItem({
-  //           Listname: ListNames.HRMSPositionIDMaster,
-  //           RequestJSON: { PositionIDStatus: "Vacant" },
-  //           ID: selectedPosition.key,
-  //         });
-  //       }
-  //       break;
-
-  //     case "OnHold":
-  //       obj = {
-  //         ActionId: WorkflowAction.OnHold,
-  //         Id: props.stateValue.ID,
-  //         ItemCreated: "Yes",
-  //       };
-  //       CandidateDatas = createFilter(workflowStatusApi.CandidateOnHoldIPanel);
-  //       SuccessMessage = RecuritmentHRMsg.CandidateOnHold;
-  //       break;
-
-  //     default:
-  //       console.error("Invalid Action:", Action);
-  //       return;
-  //   }
-
-  //   try {
-  //     setIsLoading(true);
-
-  //     console.log("Selected Position:", selectedPosition);
-
-  //     // Assign PositionID if Selected
-  //     if (Action === "Selected" && selectedPosition) {
-  //       await handleAssignPosition({
-  //         positionId: selectedPosition,
-  //         Reasons: CandidateData.Comments,
-  //       });
-  //     }
-
-  //    if(props.stateValue?.InterviewLevel === "Level 1"){
-  //     await insertOrUpdateCandidateCommentLevel1();
-  //    }
-  //     console.log("CandidateDatas Payload:", CandidateDatas);
-
-  //     if (props.stateValue?.InterviewLevel === "Level 2") {
-  //       await insertOrUpdateLevel2ScorecardComment();
-  
-  //       const hasThreeComments = await hasMinimumComments(CandidateData.CandidateID);
-  //       if (hasThreeComments) {
-  //         await SPServices.SPUpdateItem({
-  //           Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-  //           RequestJSON: {
-  //             ScoreCardLevelItemCreated: "Yes",
-  //           },
-  //           ID: CandidateData.CandidateID,
-  //         });
-  //       }
-  //     }
-  
-  //     const selectionResponse = await InterviewServices.CandidateSeletionApi(
-  //       obj,
-  //       ListNames.HRMSRecruitmentCandidatePersonalDetails
-  //     );
-
-  //     if (selectionResponse.status === 200) {
-  //       console.log("Candidate action submitted successfully");
-
-  //       setAlertPopupOpen(true);
-  //       setalertProps({
-  //         Message: SuccessMessage,
-  //         Type: HRMSAlertOptions.Success,
-  //         visible: true,
-  //         ButtonAction: async (userClickedOK: boolean) => {
-  //           if (userClickedOK) {
-  //             props.navigation(
-  //               "/RecurimentProcess/HodScoreCard/CandidateList",
-  //               {
-  //                 state: {
-  //                   ID: CandidateData?.RecruitmentID,
-  //                   Status: props.stateValue?.Status,
-  //                   TabName: props.stateValue?.TabName,
-  //                   ButtonAction: props.stateValue?.PreviousTabName,
-  //                   JobCode: CandidateData?.JobCode,
-  //                   StatusId: props.stateValue?.StatusId,
-  //                 },
-  //               }
-  //             );
-  //           }
-  //           setAlertPopupOpen(false);
-  //         },
-  //       });
-  //     } else {
-  //       console.error("Failed to submit candidate action");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error in Submit_fn:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  };
   return (
     <>
       {MainComponent ? (
