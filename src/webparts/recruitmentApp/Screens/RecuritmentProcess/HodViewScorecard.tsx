@@ -57,7 +57,10 @@ type ValidationError = {
   Comments: boolean;
   Checkboxalidation: boolean;
 };
-
+type InterviewedLevelValue = {
+  Levels: string;
+  Grade: string;
+};
 const HodViewScorecard = (props: any) => {
   const todaydate = new Date();
 
@@ -170,7 +173,11 @@ const HodViewScorecard = (props: any) => {
     JobcodeChecked: false,
   });
   const [Preview, setPreview] = React.useState<boolean>(false);
-
+  const [InterviewedLevel, setInterviewedLevel] =
+  React.useState<InterviewedLevelValue>({
+    Levels: "",
+    Grade: "",
+  });
   const fetchRoleProfileData = async (JobCodeID: number) => {
     try {
       const filterConditions = [
@@ -286,9 +293,10 @@ const HodViewScorecard = (props: any) => {
           const candidatePanels = scoreResponse?.data.filter(
             (candidate: any) => candidate.CandidateID === candidateID
           );
-          setInterviewPanelTitles(
-            candidatePanels.map((panel: any) => panel.PanelFullName)
+          const uniquePanelNames = Array.from(
+            new Set(candidatePanels.map((panel) => panel.PanelFullName))
           );
+          setInterviewPanelTitles(uniquePanelNames);
           const filteredScores = candidatePanels
             .map((candidate: any) => {
               const score = candidate.ScoreCard;
@@ -507,7 +515,33 @@ const HodViewScorecard = (props: any) => {
       setIsLoading(false);
     }
   };
+  React.useEffect(() => {
+    const getRecruitmentGradeLevel = async () => {
+      const filterConditions = [
+        {
+          FilterKey: "ID",
+          Operator: "eq",
+          FilterValue: props.stateValue?.RecruitmentID,
+        },
+      ];
 
+      const response = await getVRRDetails.GetRecruitmentDetails(
+        filterConditions,
+        ""
+      );
+
+      const grade = response.data[0]?.PatersonGrade;
+      const gradeLevelResponse = await CommonServices.GetGradeLevel(grade);
+
+      setInterviewedLevel((prevState: any) => ({
+        ...prevState,
+        Grade: grade,
+        Levels: gradeLevelResponse.data[0]?.Level,
+      }));
+    };
+
+    void getRecruitmentGradeLevel();
+  }, []);
   const tabs = [
     {
       label: TabName.ViewCandidateDetails,
@@ -591,7 +625,7 @@ const HodViewScorecard = (props: any) => {
                 </div>
 
                 <div className="ms-Grid-row">
-                  <div className="ms-Grid-col ms-lg4">
+                  {/* <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Applicant Surname"
                       value={CandidateData.LastName}
@@ -604,7 +638,7 @@ const HodViewScorecard = (props: any) => {
                         }))
                       }
                     />
-                  </div>
+                  </div> */}
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Nationality"
@@ -633,8 +667,6 @@ const HodViewScorecard = (props: any) => {
                       }
                     />
                   </div>
-                </div>
-                <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Highest Relevant Qualification"
@@ -649,6 +681,9 @@ const HodViewScorecard = (props: any) => {
                       }
                     />
                   </div>
+                </div>
+                <div className="ms-Grid-row">
+               
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Experiance in Mining Industry (Years)"
@@ -677,8 +712,6 @@ const HodViewScorecard = (props: any) => {
                       }
                     />
                   </div>
-                </div>
-                <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Date of Interview"
@@ -699,6 +732,9 @@ const HodViewScorecard = (props: any) => {
                       }
                     />
                   </div>
+                </div>
+                <div className="ms-Grid-row">
+                 
                   {/* <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Interview Panel"
@@ -713,19 +749,24 @@ const HodViewScorecard = (props: any) => {
                     />
                   </div> */}
 
+                 
+<div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Level of Interview"
+                      value={InterviewedLevel.Levels}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Grade"
-                      value={CandidateData.JobGrade}
+                      value={InterviewedLevel.Grade}
                       disabled={true}
                       mandatory={false}
-                      onChange={(value) =>
-                        setCandidateData((prevState) => ({
-                          ...prevState,
-                        }))
-                      }
                     />
                   </div>
+
                   <div
                     className="ms-Grid-col ms-lg4"
                     style={{ position: "relative", top: "14px" }}
@@ -775,7 +816,7 @@ const HodViewScorecard = (props: any) => {
                 </div>
 
                 <div className="ms-Grid-row">
-                  <div className="ms-Grid-col ms-lg4">
+                  {/* <div className="ms-Grid-col ms-lg4">
                     <CustomLabel value={"RoleProfile Documents"} />
                     <CustomViewDocument
                       Attachment={CandidateData.RoleProfileDocument}
@@ -786,7 +827,7 @@ const HodViewScorecard = (props: any) => {
                     <CustomViewDocument
                       Attachment={CandidateData.AdvertisementDocument}
                     />
-                  </div>
+                  </div> */}
                   <div className="ms-Grid-col ms-lg4">
                     <CustomLabel value={"Candidate Resume"} />
                     <CustomViewDocument
@@ -794,7 +835,7 @@ const HodViewScorecard = (props: any) => {
                     />
                   </div>
                 </div>
-                <div className="ms-Grid-row">
+                {/* <div className="ms-Grid-row">
                   <div
                     className="ms-Grid-col ms-lg2"
                     style={{ position: "relative", right: "1px" }}
@@ -832,7 +873,7 @@ const HodViewScorecard = (props: any) => {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </CardContent>
           </Card>

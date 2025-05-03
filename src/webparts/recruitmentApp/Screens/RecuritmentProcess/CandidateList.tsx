@@ -157,6 +157,7 @@ const CandidateList = (props: any) => {
                 PreviousTabName: previousTabName,
                 TabName: TabName,
                 ButtonAction,
+                RecruitmentID: rowData?.RecruitmentID,
               },
             });
           }

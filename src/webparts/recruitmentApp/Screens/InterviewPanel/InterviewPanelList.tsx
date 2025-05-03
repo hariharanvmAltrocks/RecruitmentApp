@@ -38,6 +38,7 @@ const InterviewPanelList = (props: any) => {
     TabName: string,
     ButtonAction: string
   ) {
+    console.log("Row",rowData)
     if (tab === "tab1") {
       if (props.CurrentRoleID === RoleID.RecruitmentHR) {
         props.navigation(
@@ -50,6 +51,7 @@ const InterviewPanelList = (props: any) => {
               Status: rowData?.Status,
               TabName: TabName,
               ButtonAction,
+              RecruitmentID: rowData?.RecruitmentID,
             },
           }
         );
@@ -64,6 +66,8 @@ const InterviewPanelList = (props: any) => {
               Status: rowData?.Status,
               TabName: TabName,
               ButtonAction,
+              RecruitmentID: rowData?.RecruitmentID,
+              
             },
           }
         );
@@ -78,6 +82,8 @@ const InterviewPanelList = (props: any) => {
               Status: rowData?.Status,
               TabName: TabName,
               ButtonAction,
+              RecruitmentID: rowData?.RecruitmentID,
+
             },
           }
         );
@@ -90,6 +96,8 @@ const InterviewPanelList = (props: any) => {
             Status: rowData?.Status,
             TabName: TabName,
             ButtonAction,
+            RecruitmentID: rowData?.RecruitmentID,
+
           },
         });
         props.navigation("/InterviewPanelList");
@@ -196,7 +204,16 @@ const InterviewPanelList = (props: any) => {
             if (isScoreSheetUploaded) {
               handleAlert();
             } else {
-              handleRedirectView(rowData, "tab1", "Evaluation", "View");
+              handleRedirectView(
+                {
+                  ...rowData,
+                  InterviewLevel: rowData?.InterviewLevel,
+                  RecruitmentID: rowData?.RecruitmentID,
+                },
+                "tab1",
+                "Evaluation",
+                "View"
+              );
             }
           } catch (error) {}
         };
@@ -285,13 +302,13 @@ const InterviewPanelList = (props: any) => {
       const candidateNames = statusResponse.data.map((candidate: any) => ({
         ID: candidate.ID,
         FristName: candidate.FristName || "",
-        LastName: candidate.LastName || "",
-        ApplicantName: `${candidate.FristName || ""} ${
-          candidate.LastName || ""
-        }`.trim(),
+  MiddleName: candidate.MiddleName || "",
+  LastName: candidate.LastName || "",
+  ApplicantName: `${candidate.FristName || ""} ${candidate.MiddleName || ""} ${candidate.LastName || ""}`.trim(),
         PositionTitle: candidate.PositionTitle || "",
         JobGrade: candidate.JobGrade || "",
         Status: candidate.Status || "",
+        RecruitmentID: candidate.RecruitmentID || "",
       }));
 
       setCandidateData(candidateNames);
