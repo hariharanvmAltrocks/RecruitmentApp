@@ -119,7 +119,13 @@ export const UploadAdvertisement = ({
         .map((item) => ({
           key: item.QualificationCode,
           text: item.Qualification,
-        }));
+        }))
+        .sort((a, b) => {
+          const textA = typeof a.text === "string" ? a.text : "";
+          const textB = typeof b.text === "string" ? b.text : "";
+          return textA.localeCompare(textB);
+        });
+
       const PrefeQualificationOption: AutoCompleteItem[] = Qualification.data
         .filter(
           (Qualitem) =>
@@ -131,27 +137,43 @@ export const UploadAdvertisement = ({
         .map((item: any) => ({
           key: item.QualificationCode,
           text: item.Qualification,
-        }));
+        }))
+        .sort((a, b) => {
+          const textA = typeof a.text === "string" ? a.text : "";
+          const textB = typeof b.text === "string" ? b.text : "";
+          return textA.localeCompare(textB);
+        });
 
       // Fetch RoleSpecificKnowledge data
       const RoleSpecificKnowlege = await CommonServices.GetMasterData(
         ListNames.HRMSRoleSpecificKnowlegeMaster
       );
       const RoleSpecificKnowlegeOption: AutoCompleteItem[] =
-        RoleSpecificKnowlege.data.map((item: any) => ({
-          key: item.Code,
-          text: item.RoleSpecificKnowledge,
-        }));
+        RoleSpecificKnowlege.data
+          .map((item: any) => ({
+            key: item.Code,
+            text: item.RoleSpecificKnowledge,
+          }))
+          .sort((a, b) => {
+            const textA = typeof a.text === "string" ? a.text : "";
+            const textB = typeof b.text === "string" ? b.text : "";
+            return textA.localeCompare(textB);
+          });
 
       // Fetch TechnicalSkills data
       const TechnicalSkills = await CommonServices.GetMasterData(
         ListNames.HRMSTechnicalSkills
       );
-      const TechnicalSkillsOption: AutoCompleteItem[] =
-        TechnicalSkills.data.map((item: any) => ({
+      const TechnicalSkillsOption: AutoCompleteItem[] = TechnicalSkills.data
+        .map((item: any) => ({
           key: item.Code,
           text: item.TechnicalSkills,
-        }));
+        }))
+        .sort((a, b) => {
+          const textA = typeof a.text === "string" ? a.text : "";
+          const textB = typeof b.text === "string" ? b.text : "";
+          return textA.localeCompare(textB);
+        });
 
       // Fetch LevelOfProficiency data
       const LevelOfProficiency = await CommonServices.GetMasterData(

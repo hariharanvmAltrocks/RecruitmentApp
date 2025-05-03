@@ -68,7 +68,7 @@ function ViewQuestionCheckbox({ questionnaire, handleCheckbox }: FormFields) {
                           dangerouslySetInnerHTML={{
                             __html: `${
                               q.question
-                                ? q.question
+                                ? q?.question
                                     .replace(/<p>/gi, "")
                                     .replace(/<\/p>/gi, "")
                                     .replace(/<br\s*\/?>/gi, "")
@@ -83,7 +83,7 @@ function ViewQuestionCheckbox({ questionnaire, handleCheckbox }: FormFields) {
                       <strong>Expected Answer:</strong>{" "}
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: q.expectedAnswer,
+                          __html: q?.expectedAnswer,
                         }}
                       />
                     </p>

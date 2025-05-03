@@ -369,18 +369,22 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       [StateValue]: false,
     }));
     if (StateValue === "ExperienceinMiningIndustry") {
-      const experienceRange = item?.text.match(/\d+/g)?.map(Number) ?? [];
-      const totalRange =
-        advDetails.TotalExperience.text.match(/\d+/g)?.map(Number) ?? [];
-      if (
-        (totalRange[1] ?? 0) <
-        (experienceRange[1] === undefined
-          ? experienceRange[0]
-          : experienceRange[1])
-      ) {
-        console.log(
-          "Invalid selection: Mining Experience cannot exceed Total Experience."
-        );
+      const parseRange = (text: string): [number, number] => {
+        const numbers = text.match(/\d+/g)?.map(Number) ?? [];
+        if (text.includes("+")) {
+          return [numbers[0], Infinity];
+        } else if (numbers.length === 2) {
+          return [numbers[0], numbers[1]];
+        } else if (numbers.length === 1) {
+          return [numbers[0], numbers[0]];
+        }
+        return [0, 0];
+      };
+
+      const experienceRange = parseRange(item?.text || "");
+      const totalRange = parseRange(advDetails.TotalExperience.text || "");
+
+      if (experienceRange[1] > totalRange[1]) {
         setExperValidation(true);
         setAdvDetails((prevState) => ({
           ...prevState,
@@ -2573,6 +2577,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           },
                         ]
                       : []
+                    : props.stateValue?.TabName === TabName.AssignAgencies
+                    ? [
+                        {
+                          label: "Close",
+                          onClick: async () => {
+                            props.navigation("/RecurimentProcess");
+                          },
+                        },
+                      ]
                     : []
                 }
               />

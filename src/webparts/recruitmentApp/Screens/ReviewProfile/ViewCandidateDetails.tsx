@@ -74,6 +74,7 @@ type ValidationError = {
   InterviewMeetingInviteLink: boolean;
   InterviewTime: boolean;
   CandidateScoreValue: boolean;
+  ReviewFeedback: boolean;
 };
 
 type ActionValue = {
@@ -152,6 +153,7 @@ const ViewCandidateDetails = (props: any) => {
       InterviewMeetingInviteLink: false,
       InterviewTime: false,
       CandidateScoreValue: false,
+      ReviewFeedback: false,
     });
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -396,7 +398,7 @@ const ViewCandidateDetails = (props: any) => {
     setLevel2Date(
       props.stateValue?.initialTab === TabName.AssignInterviewPanel &&
         (props.stateValue?.StatusId ===
-          StatusId.PendingwithHODtoselectthecandidateLevel2 ||
+          StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel ||
           props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2)
         ? true
         : false
@@ -591,7 +593,7 @@ const ViewCandidateDetails = (props: any) => {
     }));
     setValidationErrors((prevState) => ({
       ...prevState,
-      CandidateScoreValue: false,
+      ReviewFeedback: false,
     }));
   };
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -909,7 +911,7 @@ const ViewCandidateDetails = (props: any) => {
                       // Label={"Candidate Resume"}
                     />
                   </div>
-                  <div className="ms-Grid-col ms-lg4">
+                  {/* <div className="ms-Grid-col ms-lg4">
                     <CustomLabel value={"Role Profile Document"} />
                     <CustomViewDocument
                       Attachment={CandidateProfile.RoleProfile}
@@ -922,7 +924,7 @@ const ViewCandidateDetails = (props: any) => {
                       Attachment={CandidateProfile.Advertisement}
                       // Label={"Advertisement Documents"}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 {props.stateValue?.initialTab === TabName.ReviewProfile &&
                   props.stateValue?.ActionBtn === "Edit" &&
@@ -939,7 +941,7 @@ const ViewCandidateDetails = (props: any) => {
                             }
                             value={actionValue.CandidateStatus}
                             options={["Yes", "No", "On Hold"]}
-                            error={false}
+                            error={validationErrors.CandidateStatus}
                             mandatory={false}
                             onChange={(item) => handleRadioChange(item)}
                             disabled={
@@ -966,7 +968,7 @@ const ViewCandidateDetails = (props: any) => {
                             disabled={props.stateValue?.ActionBtn === "View"}
                             mandatory={true}
                             onChange={(item) => handleAutoComplete(item)}
-                            error={validationErrors.CandidateScoreValue}
+                            error={validationErrors.ReviewFeedback}
                           />
                         </div>
                       </div>
@@ -1154,6 +1156,7 @@ const ViewCandidateDetails = (props: any) => {
       CandidateScoreValue: false,
       InterviewMeetingInviteLink: false,
       InterviewTime: false,
+      ReviewFeedback: false,
     };
     switch (props.CurrentRoleID) {
       case RoleID.RecruitmentHR:
@@ -1171,8 +1174,8 @@ const ViewCandidateDetails = (props: any) => {
         } else {
           errors.Comments = !IsValid(actionValue.Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
-          errors.CandidateScoreValue = !IsValid(
-            InterviewedLevel.CandidateScoreValue.text
+          errors.ReviewFeedback = !IsValid(
+            InterviewedLevel?.CandidateScoreValue?.text
           );
         }
         break;
@@ -1290,7 +1293,10 @@ const ViewCandidateDetails = (props: any) => {
         props.stateValue?.initialTab === TabName.AssignInterviewPanel
       ) {
         let obj: any = {};
-        if (level2Date) {
+        if (
+          props.stateValue?.StatusId ===
+          StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+        ) {
           obj = {
             ID: Number(CandidateProfile.CandidateID),
             InterviewDateLevel2: level2Data?.InterviewedDate,
@@ -1301,17 +1307,26 @@ const ViewCandidateDetails = (props: any) => {
           if (
             props.stateValue?.initialTab === TabName.AssignInterviewPanel &&
             props.stateValue?.StatusId ===
-              StatusId.PendingwithHODtoselectthecandidateLevel2
+              StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
           ) {
             obj.ActionId = WorkflowAction.Approved;
           }
         } else {
-          obj = {
-            ID: Number(CandidateProfile.CandidateID),
-            InterviewDate: InterviewedLevel?.InterviewedDate,
-            InterviewTime: InterviewedLevel?.InterviewTime,
-            InterviewLink: InterviewedLevel?.InterviewMeetingInviteLink,
-          };
+          if (props.stateValue?.StatusId === StatusId.InterviewScheduled) {
+            obj = {
+              ID: Number(CandidateProfile.CandidateID),
+              InterviewDate: InterviewedLevel?.InterviewedDate,
+              InterviewTime: InterviewedLevel?.InterviewTime,
+              InterviewLink: InterviewedLevel?.InterviewMeetingInviteLink,
+            };
+          } else {
+            obj = {
+              ID: Number(CandidateProfile.CandidateID),
+              InterviewDateLevel2: level2Data?.InterviewedDate,
+              InterviewTimeLevel2: level2Data?.InterviewTime,
+              InterviewLinkLevel2: level2Data?.InterviewMeetingInviteLink,
+            };
+          }
         }
         const UpdateInterviewData =
           await GetPortalJobsService.RescheduledInterview(
@@ -1319,29 +1334,35 @@ const ViewCandidateDetails = (props: any) => {
             ListNames.HRMSRecruitmentCandidatePersonalDetails
           );
         if (UpdateInterviewData.status === 200) {
-          let selectedinterviewpanal: any[] = [];
-
-          for (
-            let i = 0;
-            i < InterviewedLevel.AssignInterviewedLevel2.length;
-            i++
+          if (
+            props.stateValue?.StatusId ===
+            StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
           ) {
-            const currentItem = InterviewedLevel.AssignInterviewLevel1[i];
+            let selectedinterviewpanal: any[] = [];
 
-            let selectedinterview = {
-              RecruitmentIDId: 0,
-              InterviewLevel: InterviewLevels.Level2, //InterviewedLevel.Levels,
-              InterviewPanel: currentItem.key,
-              CandidateID: Number(CandidateProfile.CandidateID),
-            };
+            for (
+              let i = 0;
+              i < InterviewedLevel.AssignInterviewedLevel2.length;
+              i++
+            ) {
+              const currentItem = InterviewedLevel.AssignInterviewedLevel2[i];
 
-            selectedinterviewpanal.push(selectedinterview);
+              let selectedinterview = {
+                RecruitmentIDId: 0,
+                InterviewLevel: InterviewLevels.Level2, //InterviewedLevel.Levels,
+                InterviewPanel: currentItem.key,
+                CandidateID: Number(CandidateProfile.CandidateID),
+              };
+
+              selectedinterviewpanal.push(selectedinterview);
+            }
+
+            await GetPortalJobsService.InsertInterviewPanel(
+              selectedinterviewpanal,
+              Number(CandidateProfile.CandidateID)
+            );
           }
 
-          await GetPortalJobsService.InsertInterviewPanel(
-            selectedinterviewpanal,
-            Number(CandidateProfile.CandidateID)
-          );
           const SuccessAlert = {
             Message: RecuritmentHRMsg.RescheduleSuccessMsg,
             Type: HRMSAlertOptions.Success,

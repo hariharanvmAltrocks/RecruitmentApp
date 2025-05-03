@@ -344,8 +344,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     if (field === "Disciplines") {
       try {
         if (
-          InterviewQuesData.Disciplines.text !== value?.text &&
-          InterviewQuesData.Disciplines.text !== ""
+          InterviewQuesData?.Disciplines?.text !== value?.text &&
+          InterviewQuesData?.Disciplines?.text !== ""
         ) {
           const WarningMsg = {
             Message: RecuritmentHRMsg.WarningMsg,
@@ -370,7 +370,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           setalertProps(WarningMsg);
           setIsLoading(false);
         }
-        const category = getMasterData.category.find(
+        const category = getMasterData?.category.find(
           (cat) => cat.text === InterviewQuesData.Catogry
         );
         const obj: getQuestionById = {
@@ -865,7 +865,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   }, [resuequestionnaire]);
   // tabs
   const getFetchQuestion = () => {
-    if (InterviewQuesData.Disciplines.text) {
+    if (InterviewQuesData?.Disciplines?.text) {
       setViewQA(true);
     } else {
       const SelectedMag = {
@@ -1971,10 +1971,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           })) || [];
       } else {
         OptionsValue =
-          item.options?.map((opt) => ({
+          item.options?.map((opt, index) => ({
             optionEn: opt.text,
             optionFr: opt.text,
-            sequence: opt.key,
+            sequence: index + 1,
           })) || [];
 
         OptionsValue = [

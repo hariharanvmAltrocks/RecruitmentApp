@@ -198,12 +198,35 @@ const InterviewPanelEdit = (props: any) => {
   const [questionnaire, setQuestionnaire] = React.useState<QuestionItem[]>([]);
   const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
 
+  const [ratingErrors, setRatingErrors] = React.useState<
+    Record<number, boolean>
+  >({});
+
   const handleRatingChange = (id: number, value: AutoCompleteItem | null) => {
     setQuestionnaire((prevState) =>
       questionnaire.map((q) =>
         q.id === id ? { ...q, rating: value?.key ?? 0 } : q
       )
     );
+    setRatingErrors((prev) => ({
+      ...prev,
+      [id]: false,
+    }));
+  };
+
+  const validateRatings = (tab: string) => {
+    if (tab === "tab2") {
+      const errors: { [key: number]: boolean } = {};
+      questionnaire.forEach((q) => {
+        if (!q.rating) {
+          errors[q.id] = !IsValid(q.rating);
+        }
+      });
+      setRatingErrors(errors);
+      return Object.values(errors).some((error) => error);
+    } else {
+      return false;
+    }
   };
 
   const ScoreRating = [
@@ -427,7 +450,7 @@ const InterviewPanelEdit = (props: any) => {
         const op = data.data[0];
         const scoreCardData = op.HRMSCandidateScoreCard;
         let panelFullNames: string[] = [];
-  
+
         const interviewLevels = Array.from(
           new Set(
             (op?.HRMSCandidateScoreCard as { InterviewLevel: any }[])?.map(
@@ -435,7 +458,7 @@ const InterviewPanelEdit = (props: any) => {
             )
           )
         );
-        if (scoreCardData  && scoreCardData.length > 0) {
+        if (scoreCardData && scoreCardData.length > 0) {
           panelFullNames = scoreCardData
             .map((item: { PanelFullName: any }) => item?.PanelFullName)
             .filter((name: string) => name !== null && name !== undefined);
@@ -1052,19 +1075,19 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
                 <div className="ms-Grid-col ms-lg4">
-                    <CustomInput
-                      label="Interview Levels"
-                      value={CandidateData.InterviewLevels}
-                      disabled={true}
-                      mandatory={false}
-                      onChange={(value) =>
-                        setCandidateData((prevState) => ({
-                          ...prevState,
-                          InterviewLevels: value,
-                        }))
-                      }
-                    />
-                  </div>
+                  <CustomInput
+                    label="Interview Levels"
+                    value={CandidateData.InterviewLevels}
+                    disabled={true}
+                    mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                        InterviewLevels: value,
+                      }))
+                    }
+                  />
+                </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Grade"
@@ -1458,7 +1481,7 @@ const InterviewPanelEdit = (props: any) => {
                       <strong>Expected Answer:</strong>
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: q.answer,
+                          __html: q?.answer,
                         }}
                       />
                       {/* {q.answer} */}
@@ -1481,7 +1504,7 @@ const InterviewPanelEdit = (props: any) => {
                           }
                           options={ScoreRating}
                           onChange={(value) => handleRatingChange(q.id, value)}
-                          error={false}
+                          error={ratingErrors[q.id]}
                           mandatory={true}
                           disabled={false}
                         />
@@ -1928,6 +1951,7 @@ const InterviewPanelEdit = (props: any) => {
                 TabName={TabNameData}
                 onBreadcrumbChange={handleBreadcrumbChange}
                 handleCancel={handleCancel}
+                ValidationError={() => validateRatings(activeTab)}
                 additionalButtons={[
                   {
                     label: "Submit",
