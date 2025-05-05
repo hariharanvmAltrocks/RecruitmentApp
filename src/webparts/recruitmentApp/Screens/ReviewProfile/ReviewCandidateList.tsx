@@ -302,7 +302,8 @@ const ReviewCandidateList = (props: any) => {
           filterConditionsRecuritment.push({
             FilterKey: "StatusId",
             Operator: "eq",
-            FilterValue: StatusId.PendingwithHODtoselectthecandidateLevel2,
+            FilterValue:
+              StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
           });
           filterConditionsRecuritment.push({
             FilterKey: "ItemCreated",
@@ -554,6 +555,14 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    additionalButtons={[
+                      {
+                        label: "Back",
+                        onClick: async () => {
+                          back_fn();
+                        },
+                      },
+                    ]}
                   />
                 </CardContent>
               </Card>
@@ -573,6 +582,14 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    additionalButtons={[
+                      {
+                        label: "Back",
+                        onClick: async () => {
+                          back_fn();
+                        },
+                      },
+                    ]}
                   />
                 </CardContent>
               </Card>
@@ -722,6 +739,11 @@ const ReviewCandidateList = (props: any) => {
   const handleTabChange = (newTab: string) => {
     setBreadcrumbTab(newTab);
   };
+
+  function back_fn() {
+    props.navigation("/ReviewProfileList");
+  }
+
   return (
     <>
       <>
