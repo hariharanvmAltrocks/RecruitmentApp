@@ -1120,7 +1120,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 });
                 resetForm();
                 let UpdateAlert = {
-                  Message: RecuritmentHRMsg.AdvertisementSubmitMsg,
+                  Message:
+                    formState?.AdvertisementDocument?.length === 0
+                      ? RecuritmentHRMsg.AdvertisementSubmitMsg
+                      : RecuritmentHRMsg.AdvertisementReveiwMsg,
                   Type: HRMSAlertOptions.Success,
                   visible: true,
                   ButtonAction: async (userClickedOK: boolean) => {

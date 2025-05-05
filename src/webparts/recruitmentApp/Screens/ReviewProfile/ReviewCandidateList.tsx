@@ -412,6 +412,14 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    additionalButtons={[
+                      {
+                        label: "Back",
+                        onClick: async () => {
+                          back_fn();
+                        },
+                      },
+                    ]}
                   />
                 </CardContent>
               </Card>
@@ -431,6 +439,14 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    additionalButtons={[
+                      {
+                        label: "Back",
+                        onClick: async () => {
+                          back_fn();
+                        },
+                      },
+                    ]}
                   />
                 </CardContent>
               </Card>
@@ -519,6 +535,11 @@ const ReviewCandidateList = (props: any) => {
   const handleTabChange = (newTab: string) => {
     setBreadcrumbTab(newTab);
   };
+
+  function back_fn() {
+    props.navigation("/ReviewProfileList");
+  }
+
   return (
     <>
       <>
@@ -532,6 +553,14 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    additionalButtons={[
+                      {
+                        label: "Back",
+                        onClick: async () => {
+                          back_fn();
+                        },
+                      },
+                    ]}
                   />
                 </>
               ) : (
