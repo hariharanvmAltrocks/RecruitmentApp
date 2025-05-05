@@ -77,6 +77,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
     try {
       let GetProfileByJobCodeData: GetProfileByJobCode[] = []
       await getProfileData.GetProfileByJobCode(FilterValue).then((res) => {
+        let TotalItems = res?.data?.pagination?.totalItems;
         GetProfileByJobCodeData = res.data.data.map((item: any) => {
           let createdon = item?.createdOn ? new Date(item.createdOn) : null
           return {
@@ -86,7 +87,8 @@ export default class GetPortalJobs implements IGetPortalJobs {
             JobGrade: item?.jobCode,
             Status: item?.workflowStatus?.displayText,
             workflowStatusId: item?.workflowStatusId,
-            createdOn: moment(createdon).format("DD/MM/YYYY HH:mm:ss")
+            createdOn: moment(createdon).format("DD/MM/YYYY HH:mm:ss"),
+            TotalItems: TotalItems,
           }
         })
       }

@@ -70,6 +70,7 @@ type ValidationError = {
   InterviewMeetingInviteLink: boolean;
   InterviewTime: boolean;
   CandidateScoreValue: boolean;
+  Reviewfeedback: boolean;
 };
 
 type ActionValue = {
@@ -142,6 +143,7 @@ const ViewCandidateDetails = (props: any) => {
       InterviewMeetingInviteLink: false,
       InterviewTime: false,
       CandidateScoreValue: false,
+      Reviewfeedback: false,
     });
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -426,7 +428,7 @@ const ViewCandidateDetails = (props: any) => {
     }));
     setValidationErrors((prevState) => ({
       ...prevState,
-      CandidateScoreValue: false,
+      Reviewfeedback: false,
     }));
   };
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -709,7 +711,7 @@ const ViewCandidateDetails = (props: any) => {
                       // Label={"Candidate Resume"}
                     />
                   </div>
-                  <div className="ms-Grid-col ms-lg4">
+                  {/* <div className="ms-Grid-col ms-lg4">
                     <CustomLabel value={"Role Profile Document"} />
                     <CustomViewDocument
                       Attachment={CandidateProfile.RoleProfile}
@@ -722,7 +724,7 @@ const ViewCandidateDetails = (props: any) => {
                       Attachment={CandidateProfile.Advertisement}
                       // Label={"Advertisement Documents"}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 {props.stateValue?.initialTab === TabName.ReviewProfile &&
                   props.stateValue?.ActionBtn === "Edit" &&
@@ -739,7 +741,7 @@ const ViewCandidateDetails = (props: any) => {
                             }
                             value={actionValue.CandidateStatus}
                             options={["Yes", "No", "On Hold"]}
-                            error={false}
+                            error={validationErrors.CandidateStatus}
                             mandatory={false}
                             onChange={(item) => handleRadioChange(item)}
                             disabled={
@@ -766,7 +768,7 @@ const ViewCandidateDetails = (props: any) => {
                             disabled={props.stateValue?.ActionBtn === "View"}
                             mandatory={true}
                             onChange={(item) => handleAutoComplete(item)}
-                            error={validationErrors.CandidateScoreValue}
+                            error={validationErrors.Reviewfeedback}
                           />
                         </div>
                       </div>
@@ -954,6 +956,7 @@ const ViewCandidateDetails = (props: any) => {
       CandidateScoreValue: false,
       InterviewMeetingInviteLink: false,
       InterviewTime: false,
+      Reviewfeedback: false,
     };
     switch (props.CurrentRoleID) {
       case RoleID.RecruitmentHR:
@@ -971,8 +974,8 @@ const ViewCandidateDetails = (props: any) => {
         } else {
           errors.Comments = !IsValid(actionValue.Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
-          errors.CandidateScoreValue = !IsValid(
-            InterviewedLevel.CandidateScoreValue.text
+          errors.Reviewfeedback = !IsValid(
+            InterviewedLevel.CandidateScoreValue?.text
           );
         }
         break;

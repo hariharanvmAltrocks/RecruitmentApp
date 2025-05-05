@@ -72,13 +72,13 @@ type ValidationError = {
 };
 
 const InterviewPanelEdit = (props: any) => {
-  console.log("Props",props)
+  console.log("Props", props);
   const todaydate = new Date();
   const [InterviewedLevel, setInterviewedLevel] =
-  React.useState<InterviewedLevelValue>({
-    Levels: "",
-    Grade: "",
-  });
+    React.useState<InterviewedLevelValue>({
+      Levels: "",
+      Grade: "",
+    });
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
     RecruitmentID: 0,
@@ -486,7 +486,7 @@ const InterviewPanelEdit = (props: any) => {
           const names = scoreCardData
             .map((item: { PanelFullName: any }) => item?.PanelFullName)
             .filter((name: any) => name !== null && name !== undefined);
-        
+
           panelFullNames = Array.from(new Set(names));
         }
         const response = await CommonServices.GetAttachmentToLibrary(
@@ -1049,7 +1049,6 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
               </div>
               <div className="ms-Grid-row">
-                
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Experiance in Mining Industry (Years)"
@@ -1100,9 +1099,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
               </div>
               <div className="ms-Grid-row">
-               
-
-              <div className="ms-Grid-col ms-lg4">
+                <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Level of Interview"
                     value={InterviewedLevel.Levels}
@@ -1171,6 +1168,12 @@ const InterviewPanelEdit = (props: any) => {
               </div>
 
               <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"Candidate Resume"} />
+                  <CustomViewDocument
+                    Attachment={CandidateData.CandidateCVDoc}
+                  />
+                </div>
                 {/* <div className="ms-Grid-col ms-lg4">
                   <CustomLabel value={"RoleProfile Documents"} />
                   <CustomViewDocument
@@ -1183,12 +1186,6 @@ const InterviewPanelEdit = (props: any) => {
                     Attachment={CandidateData.AdvertisementDocument}
                   />
                 </div> */}
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomLabel value={"Candidate Resume"} />
-                  <CustomViewDocument
-                    Attachment={CandidateData.CandidateCVDoc}
-                  />
-                </div>
               </div>
 
               {/* <div
