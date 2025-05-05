@@ -1,5 +1,5 @@
-export const ApiUrl = "https://hrmscp.tmicloud.net:9192/hrms/api/hrms";
-// export const ApiUrl = "https://hrmscp.tmicloud.net:9141/hrms/api/hrms";  // SIT
+// export const ApiUrl = "https://hrmscp.tmicloud.net:9192/hrms/api/hrms";
+export const ApiUrl = "https://hrmscp.tmicloud.net:9141/hrms/api/hrms";  // SIT
 // export const ApiUrl = "https://localhost:7019/api/hrms";
 
 export const AuthorizationHeader = {

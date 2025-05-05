@@ -95,28 +95,32 @@ export const AssignRecuritmentHR = ({
     <>
       <div style={{ marginLeft: "4%" }}>
         <div>
-          <JobCodeSelector
-            jobCodes={jobCodes}
-            selectedJobCodes={selectedJobCodes}
-            //onSelectionChange={onSelectionChange}
-            onSelectAllChange={onSelectAllChange}
-            onRowChange={onRowChange}
-          />
+          <div className="ms-Grid-row">
+            <div className="ms-Grid-col ms-lg10">
+              <JobCodeSelector
+                jobCodes={jobCodes}
+                selectedJobCodes={selectedJobCodes}
+                //onSelectionChange={onSelectionChange}
+                onSelectAllChange={onSelectAllChange}
+                onRowChange={onRowChange}
+              />
 
-          <span
-            style={{
-              color: "red",
-              marginTop: "8px",
-              display: "block",
-              fontFamily: "sans-serif",
-              //           fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
-              // -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-              fontSize: "13px",
-            }}
-          >
-            Note:- To remove a selected Job Title, click ' Cancel ' and return
-            to the Dashboard.
-          </span>
+              <span
+                style={{
+                  color: "red",
+                  marginTop: "8px",
+                  display: "block",
+                  fontFamily: "sans-serif",
+                  //           fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
+                  // -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                  fontSize: "13px",
+                }}
+              >
+                Note:- To remove a selected Job Title, click ' Cancel ' and
+                return to the Dashboard.
+              </span>
+            </div>
+          </div>
           <div className="ms-Grid-row" style={{ textAlign: "left" }}>
             <div className="ms-Grid-col ms-lg6">
               {CurrentRole === RoleID.RecruitmentHRLead ? (
@@ -164,7 +168,7 @@ export const AssignRecuritmentHR = ({
             </div>
           </div>
           <div className="ms-Grid-row" style={{ paddingRight: "16px" }}>
-            <div className="ms-Grid-col ms-lg11">
+            <div className="ms-Grid-col ms-lg10">
               <CustomTextArea
                 label={
                   CurrentRole === RoleID.RecruitmentHR

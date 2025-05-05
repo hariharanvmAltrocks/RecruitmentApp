@@ -56,33 +56,42 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
     const fileInput = event.target;
 
     if (fileInput.files && fileInput.files.length > 0) {
-      const files = fileInput.files;
+      const acceptedFormats = (fileformat || "")
+        .split(",")
+        .map((f) => f.trim().toLowerCase());
+      const files = Array.from(fileInput.files);
       const newAttachments: Item[] = [];
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileReader = new FileReader();
+      files.forEach((file) => {
+        const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
 
-        fileReader.onload = (event) => {
-          const fileContent = event.target?.result as ArrayBuffer;
+        if (acceptedFormats.includes(fileExtension)) {
+          const fileReader = new FileReader();
+          fileReader.onload = (event) => {
+            const fileContent = event.target?.result as ArrayBuffer;
 
-          newAttachments.push({
-            name: file.name,
-            fileContent,
-            file,
-          });
+            newAttachments.push({
+              name: file.name,
+              fileContent,
+              file,
+            });
 
-          if (newAttachments.length === files.length) {
-            if (AttachState) {
-              AttachState(newAttachments);
+            if (
+              newAttachments.length ===
+              files.filter((f) => {
+                const ext = "." + f.name.split(".").pop()?.toLowerCase();
+                return acceptedFormats.includes(ext);
+              }).length
+            ) {
+              AttachState?.(newAttachments);
             }
-          }
-        };
-
-        fileReader.readAsArrayBuffer(file);
-      }
+          };
+          fileReader.readAsArrayBuffer(file);
+        }
+      });
     }
   };
+
   const buttonStyle: React.CSSProperties = {
     minWidth: "117px",
     fontSize: "13px",
