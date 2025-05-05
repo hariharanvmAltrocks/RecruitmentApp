@@ -228,6 +228,8 @@ export const RecuritmentHRMsg = {
   PositionIDassigned: "Action Performed Sucessfully.",
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
+    InterviewScoreCommentsAlready:
+    "The scorecard for the candidate comments has already been submitted.",
   APIErrorMsg: "Server is temporarily unavailable.",
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
@@ -310,7 +312,7 @@ export const TabName = {
   PositionDetails: "Position Details",
   AdvertisementDetails: "Advertisement Details",
   AdvertisementViewDetails: "View Advertisement ",
-  ScorecardDetails: " Review Scorecard ",
+  ScorecardDetails: "Review Scorecard",
   ViewCandidateDetails: "View Applicants Details",
   Scorecard: "Scorecard",
   ReviewONEMAdvertisement: "Review ONEM Advertisement",

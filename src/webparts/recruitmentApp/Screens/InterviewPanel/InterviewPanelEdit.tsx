@@ -26,6 +26,8 @@ import {
   workflowStatusApi,
   RoleID,
   ResponeStatus,
+  ColorCode,
+  labelName,
 } from "../../utilities/Config";
 import {
   AdvDetails,
@@ -48,12 +50,9 @@ import BreadcrumbsComponent, {
 import CustomLabel from "../../components/CustomLabel";
 import SPServices from "../../Services/SPService/SPServices";
 import { WorkflowJson } from "../../Models/ApIInterface";
-// import ReuseButton from "../../components/ReuseButton";
+import ReuseButton from "../../components/ReuseButton";
 import CustomPreviewScreen from "../RecuritmentProcess/CustomPreviewScreen";
-type InterviewedLevelValue = {
-  Levels: string;
-  Grade: string;
-};
+
 type ValidationError = {
   Qualifications: boolean;
   Experience: boolean;
@@ -71,13 +70,8 @@ type ValidationError = {
 };
 
 const InterviewPanelEdit = (props: any) => {
-  console.log("Props", props);
+  console.log("props", props);
   const todaydate = new Date();
-  const [InterviewedLevel, setInterviewedLevel] =
-    React.useState<InterviewedLevelValue>({
-      Levels: "",
-      Grade: "",
-    });
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
     RecruitmentID: 0,
@@ -204,7 +198,6 @@ const InterviewPanelEdit = (props: any) => {
   //Questionaires
   const [questionnaire, setQuestionnaire] = React.useState<QuestionItem[]>([]);
   const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
-
   const [ratingErrors, setRatingErrors] = React.useState<
     Record<number, boolean>
   >({});
@@ -219,21 +212,6 @@ const InterviewPanelEdit = (props: any) => {
       ...prev,
       [id]: false,
     }));
-  };
-
-  const validateRatings = (tab: string) => {
-    if (tab === "tab2") {
-      const errors: { [key: number]: boolean } = {};
-      questionnaire.forEach((q) => {
-        if (!q.rating) {
-          errors[q.id] = !IsValid(q.rating);
-        }
-      });
-      setRatingErrors(errors);
-      return Object.values(errors).some((error) => error);
-    } else {
-      return false;
-    }
   };
 
   const ScoreRating = [
@@ -332,32 +310,6 @@ const InterviewPanelEdit = (props: any) => {
   //       console.error("Error fetching data:", error);
   //     }
   //   };
-  React.useEffect(() => {
-    const getRecruitmentGradeLevel = async () => {
-      const filterConditions = [
-        {
-          FilterKey: "ID",
-          Operator: "eq",
-          FilterValue: props.stateValue?.RecruitmentID,
-        },
-      ];
-
-      const response = await getVRRDetails.GetRecruitmentDetails(
-        filterConditions,
-        ""
-      );
-
-      const grade = response.data[0]?.PatersonGrade;
-      const gradeLevelResponse = await CommonServices.GetGradeLevel(grade);
-
-      setInterviewedLevel((prevState: any) => ({
-        ...prevState,
-        Grade: grade,
-        Levels: gradeLevelResponse.data[0]?.Level,
-      }));
-    };
-    void getRecruitmentGradeLevel();
-  }, []);
 
   const fetchRoleProfileData = async (JobCodeID: number) => {
     try {
@@ -492,11 +444,9 @@ const InterviewPanelEdit = (props: any) => {
           )
         );
         if (scoreCardData && scoreCardData.length > 0) {
-          const names = scoreCardData
+          panelFullNames = scoreCardData
             .map((item: { PanelFullName: any }) => item?.PanelFullName)
-            .filter((name: any) => name !== null && name !== undefined);
-
-          panelFullNames = Array.from(new Set(names));
+            .filter((name: string) => name !== null && name !== undefined);
         }
         const response = await CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.RecruitmentAdvertisementDocument,
@@ -1111,18 +1061,29 @@ const InterviewPanelEdit = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Level of Interview"
-                    value={InterviewedLevel.Levels}
+                    label="Interview Levels"
+                    value={CandidateData.InterviewLevels}
                     disabled={true}
                     mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                        InterviewLevels: value,
+                      }))
+                    }
                   />
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Grade"
-                    value={InterviewedLevel.Grade}
+                    value={CandidateData.JobGrade}
                     disabled={true}
                     mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                      }))
+                    }
                   />
                 </div>
                 <div
@@ -1179,21 +1140,21 @@ const InterviewPanelEdit = (props: any) => {
 
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
-                  <CustomLabel value={"Candidate Resume"} />
-                  <CustomViewDocument
-                    Attachment={CandidateData.CandidateCVDoc}
-                  />
-                </div>
-                {/* <div className="ms-Grid-col ms-lg4">
                   <CustomLabel value={"RoleProfile Documents"} />
                   <CustomViewDocument
                     Attachment={CandidateData.RoleProfileDocument}
                   />
-                </div> */}
+                </div>
                 {/* <div className="ms-Grid-col ms-lg4">
                   <CustomLabel value={"Advertisement Documents (French)"} />
                   <CustomViewDocument
                     Attachment={CandidateData.AdvertisementDocument}
+                  />
+                </div>
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"Candidate Resume"} />
+                  <CustomViewDocument
+                    Attachment={CandidateData.CandidateCVDoc}
                   />
                 </div> */}
               </div>
@@ -1408,7 +1369,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
               </div> */}
 
-              {/* <div className="ms-Grid-row">
+              <div className="ms-Grid-row">
                 <div
                   className="ms-Grid-col ms-lg2"
                   style={{ position: "relative", right: "1px" }}
@@ -1445,7 +1406,7 @@ const InterviewPanelEdit = (props: any) => {
                     />
                   </div>
                 </div>
-              </div> */}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -1505,7 +1466,7 @@ const InterviewPanelEdit = (props: any) => {
                       <strong>Expected Answer:</strong>
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: q?.answer,
+                          __html: q.answer,
                         }}
                       />
                       {/* {q.answer} */}
@@ -1961,6 +1922,21 @@ const InterviewPanelEdit = (props: any) => {
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
     // console.log("", newItem);
+  };
+
+  const validateRatings = (tab: string) => {
+    if (tab === "tab2") {
+      const errors: { [key: number]: boolean } = {};
+      questionnaire.forEach((q) => {
+        if (!q.rating) {
+          errors[q.id] = !IsValid(q.rating);
+        }
+      });
+      setRatingErrors(errors);
+      return Object.values(errors).some((error) => error);
+    } else {
+      return false;
+    }
   };
 
   return (

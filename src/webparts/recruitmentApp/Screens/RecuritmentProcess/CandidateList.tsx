@@ -25,6 +25,7 @@ import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CandidateDataTable from "../../components/CandidateDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 const CandidateList = (props: any) => {
+  console.log("CandidateList props:", props);
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -105,6 +106,7 @@ const CandidateList = (props: any) => {
           StatusId.OnHoldbyHOD,
           StatusId.RejectedbyHOD,
           StatusId.PendingwithHODtoAssignPositionID,
+          StatusId.PendingwithHODtoselectthecandidateLevel2,
         ],
       });
       filterConditions.push({
@@ -152,7 +154,6 @@ const CandidateList = (props: any) => {
                 PreviousTabName: previousTabName,
                 TabName: TabName,
                 ButtonAction,
-                RecruitmentID: rowData?.RecruitmentID,
                 positionData,
                 InterviewLevel: rowData?.InterviewLevel,
               },
@@ -212,6 +213,8 @@ const CandidateList = (props: any) => {
               rowData.StatusId === StatusId.OnHoldbyHOD ||
               rowData.StatusId ===
                 StatusId.PendingwithHODtoselectthecandidate ||
+              rowData.StatusId ===
+                StatusId.PendingwithHODtoselectthecandidateLevel2 ||
               rowData.StatusId ===
                 StatusId.PendingwithHODtoAssignPositionID) && (
               <img
