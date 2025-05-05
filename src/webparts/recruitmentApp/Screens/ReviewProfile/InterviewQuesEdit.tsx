@@ -414,9 +414,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           delete errors.OptionsType;
         }
       }
-      if (!Disqualification) errors.Disqualification = true;
     } else {
       if (!ExpectedAnswer) errors.ExpectedAnswer = true;
+    }
+    if (
+      props?.stateValue?.StatusId ===
+      StatusId.PendingwithLMcreateDisqualificationQuestion
+    ) {
+      if (!Disqualification) errors.Disqualification = true;
     }
 
     setValidationError((prev) => ({ ...prev, ...errors }));
@@ -1675,14 +1680,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               onBreadcrumbChange={handleBreadcrumbChange}
               handleCancel={handleCancel}
               additionalButtons={[
-                {
-                  label: "Close",
-                  onClick: async () => {
-                    props.navigation("/ReviewProfileList", {
-                      state: { activeTab: "tab2" },
-                    });
-                  },
-                },
+                // {
+                //   label: "Close",
+                //   onClick: async () => {
+                //     props.navigation("/ReviewProfileList", {
+                //       state: { activeTab: "tab2" },
+                //     });
+                //   },
+                // },
                 ...(questions.length > 0
                   ? [
                       {
