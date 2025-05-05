@@ -34,9 +34,12 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
   const [dashboardSearch, setDashboardSearch] = React.useState<any>({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
+  const [totalItem, setTotalItem] = React.useState<number>(0);
 
   React.useEffect(() => {
     setFilteredItems(data);
+    const totalItem = data.length > 0 ? data[0].TotalItems : 0;
+    setTotalItem(totalItem);
   }, [data]);
 
   const handleSearch = (event: any) => {
@@ -123,6 +126,7 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
           <DataTable
             value={filteredItems}
             rows={rows}
+            totalRecords={totalItem}
             paginator
             rowsPerPageOptions={[5, 10, 20]}
             onPage={(event) => {

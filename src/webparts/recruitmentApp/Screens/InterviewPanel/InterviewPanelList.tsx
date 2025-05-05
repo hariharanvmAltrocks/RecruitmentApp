@@ -109,31 +109,33 @@ const InterviewPanelList = (props: any) => {
     console.log("TabName", TabName);
     console.log("ButtonAction", ButtonAction);
 
-    debugger
+    debugger;
     if (tab !== "tab1") return;
-  
+
     const statusId = rowData?.StatusId;
     const { CurrentRoleID } = props;
-  
+
     let navigationPath = "";
-  
+
     if (
       (statusId === StatusId.InterviewScheduled ||
-       statusId === StatusId.InterviewScheduledforLevel2) &&
+        statusId === StatusId.InterviewScheduledforLevel2) &&
       (CurrentRoleID === RoleID.RecruitmentHR ||
-       CurrentRoleID === RoleID.LineManager ||
-       CurrentRoleID === RoleID.HOD)
+        CurrentRoleID === RoleID.LineManager ||
+        CurrentRoleID === RoleID.HOD)
     ) {
-      navigationPath = "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit";
-    }else if (
-      statusId === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel &&
+      navigationPath =
+        "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit";
+    } else if (
+      statusId ===
+        StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel &&
       (CurrentRoleID === RoleID.HOD ||
-       CurrentRoleID === RoleID.LineManager ||
-       CurrentRoleID === RoleID.RecruitmentHR)
+        CurrentRoleID === RoleID.LineManager ||
+        CurrentRoleID === RoleID.RecruitmentHR)
     ) {
       navigationPath = "/RecurimentProcess/HodViewScorecard";
     }
-  
+
     if (navigationPath) {
       props.navigation(navigationPath, {
         state: {
@@ -150,7 +152,7 @@ const InterviewPanelList = (props: any) => {
       console.warn("No matching navigation rule for role & status.");
     }
   }
-  
+
   function handleAlert() {
     let CancelAlert = {
       Message: RecuritmentHRMsg.InterviewScoredAlready,
@@ -250,7 +252,16 @@ const InterviewPanelList = (props: any) => {
             if (isScoreSheetUploaded) {
               handleAlert();
             } else {
-              handleRedirectView(rowData, "tab1", "Evaluation", "View");
+              handleRedirectView(
+                {
+                  ...rowData,
+                  InterviewLevel: rowData?.InterviewLevel,
+                  RecruitmentID: rowData?.RecruitmentID,
+                },
+                "tab1",
+                "Evaluation",
+                "View"
+              );
             }
           } catch (error) {}
         };
@@ -315,11 +326,11 @@ const InterviewPanelList = (props: any) => {
       let RecuritmentConditions = "and";
       filterConditionsRecuritment.push({
         FilterKey: "StatusId",
-        Operator: "in", 
+        Operator: "in",
         FilterValue: [
           StatusId.InterviewScheduled,
-          StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel, 
-          StatusId.InterviewScheduledforLevel2
+          StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+          StatusId.InterviewScheduledforLevel2,
         ],
       });
       filterConditionsRecuritment.push({
@@ -343,13 +354,15 @@ const InterviewPanelList = (props: any) => {
       const candidateNames = statusResponse.data.map((candidate: any) => ({
         ID: candidate.ID,
         FristName: candidate.FristName || "",
+        MiddleName: candidate.MiddleName || "",
         LastName: candidate.LastName || "",
         ApplicantName: `${candidate.FristName || ""} ${
-          candidate.LastName || ""
-        }`.trim(),
+          candidate.MiddleName || ""
+        } ${candidate.LastName || ""}`.trim(),
         PositionTitle: candidate.PositionTitle || "",
         JobGrade: candidate.JobGrade || "",
         Status: candidate.Status || "",
+        RecruitmentID: candidate.RecruitmentID || "",
         StatusId: candidate.StatusId || "",
         InterviewLevel: candidate.InterviewLevel || "",
       }));
@@ -360,8 +373,7 @@ const InterviewPanelList = (props: any) => {
     } finally {
       setIsLoading(false);
     }
-};
-
+  };
 
   const fetchData = async () => {
     try {

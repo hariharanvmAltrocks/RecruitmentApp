@@ -26,8 +26,6 @@ import {
   workflowStatusApi,
   RoleID,
   ResponeStatus,
-  ColorCode,
-  labelName,
 } from "../../utilities/Config";
 import {
   AdvDetails,
@@ -50,9 +48,12 @@ import BreadcrumbsComponent, {
 import CustomLabel from "../../components/CustomLabel";
 import SPServices from "../../Services/SPService/SPServices";
 import { WorkflowJson } from "../../Models/ApIInterface";
-import ReuseButton from "../../components/ReuseButton";
+// import ReuseButton from "../../components/ReuseButton";
 import CustomPreviewScreen from "../RecuritmentProcess/CustomPreviewScreen";
-
+type InterviewedLevelValue = {
+  Levels: string;
+  Grade: string;
+};
 type ValidationError = {
   Qualifications: boolean;
   Experience: boolean;
@@ -70,7 +71,13 @@ type ValidationError = {
 };
 
 const InterviewPanelEdit = (props: any) => {
+  console.log("Props", props);
   const todaydate = new Date();
+  const [InterviewedLevel, setInterviewedLevel] =
+    React.useState<InterviewedLevelValue>({
+      Levels: "",
+      Grade: "",
+    });
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
     RecruitmentID: 0,
@@ -325,6 +332,32 @@ const InterviewPanelEdit = (props: any) => {
   //       console.error("Error fetching data:", error);
   //     }
   //   };
+  React.useEffect(() => {
+    const getRecruitmentGradeLevel = async () => {
+      const filterConditions = [
+        {
+          FilterKey: "ID",
+          Operator: "eq",
+          FilterValue: props.stateValue?.RecruitmentID,
+        },
+      ];
+
+      const response = await getVRRDetails.GetRecruitmentDetails(
+        filterConditions,
+        ""
+      );
+
+      const grade = response.data[0]?.PatersonGrade;
+      const gradeLevelResponse = await CommonServices.GetGradeLevel(grade);
+
+      setInterviewedLevel((prevState: any) => ({
+        ...prevState,
+        Grade: grade,
+        Levels: gradeLevelResponse.data[0]?.Level,
+      }));
+    };
+    void getRecruitmentGradeLevel();
+  }, []);
 
   const fetchRoleProfileData = async (JobCodeID: number) => {
     try {
@@ -459,9 +492,11 @@ const InterviewPanelEdit = (props: any) => {
           )
         );
         if (scoreCardData && scoreCardData.length > 0) {
-          panelFullNames = scoreCardData
+          const names = scoreCardData
             .map((item: { PanelFullName: any }) => item?.PanelFullName)
-            .filter((name: string) => name !== null && name !== undefined);
+            .filter((name: any) => name !== null && name !== undefined);
+
+          panelFullNames = Array.from(new Set(names));
         }
         const response = await CommonServices.GetAttachmentToLibrary(
           DocumentLibraray.RecruitmentAdvertisementDocument,
@@ -966,7 +1001,7 @@ const InterviewPanelEdit = (props: any) => {
               </div>
 
               <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg4">
+                {/* <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Applicant Surname"
                     value={CandidateData.LastName}
@@ -979,7 +1014,7 @@ const InterviewPanelEdit = (props: any) => {
                       }))
                     }
                   />
-                </div>
+                </div> */}
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Nationality"
@@ -1008,8 +1043,6 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
-              </div>
-              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Highest Relevant Qualification"
@@ -1024,6 +1057,8 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
+              </div>
+              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Experiance in Mining Industry (Years)"
@@ -1052,8 +1087,6 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
-              </div>
-              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Date of Interview"
@@ -1074,31 +1107,22 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
+              </div>
+              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Interview Levels"
-                    value={CandidateData.InterviewLevels}
+                    label="Level of Interview"
+                    value={InterviewedLevel.Levels}
                     disabled={true}
                     mandatory={false}
-                    onChange={(value) =>
-                      setCandidateData((prevState) => ({
-                        ...prevState,
-                        InterviewLevels: value,
-                      }))
-                    }
                   />
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Grade"
-                    value={CandidateData.JobGrade}
+                    value={InterviewedLevel.Grade}
                     disabled={true}
                     mandatory={false}
-                    onChange={(value) =>
-                      setCandidateData((prevState) => ({
-                        ...prevState,
-                      }))
-                    }
                   />
                 </div>
                 <div
@@ -1155,23 +1179,23 @@ const InterviewPanelEdit = (props: any) => {
 
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
-                  <CustomLabel value={"RoleProfile Documents"} />
-                  <CustomViewDocument
-                    Attachment={CandidateData.RoleProfileDocument}
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomLabel value={"Advertisement Documents (French)"} />
-                  <CustomViewDocument
-                    Attachment={CandidateData.AdvertisementDocument}
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
                   <CustomLabel value={"Candidate Resume"} />
                   <CustomViewDocument
                     Attachment={CandidateData.CandidateCVDoc}
                   />
                 </div>
+                {/* <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"RoleProfile Documents"} />
+                  <CustomViewDocument
+                    Attachment={CandidateData.RoleProfileDocument}
+                  />
+                </div> */}
+                {/* <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"Advertisement Documents (French)"} />
+                  <CustomViewDocument
+                    Attachment={CandidateData.AdvertisementDocument}
+                  />
+                </div> */}
               </div>
 
               {/* <div
@@ -1384,7 +1408,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
               </div> */}
 
-              <div className="ms-Grid-row">
+              {/* <div className="ms-Grid-row">
                 <div
                   className="ms-Grid-col ms-lg2"
                   style={{ position: "relative", right: "1px" }}
@@ -1421,7 +1445,7 @@ const InterviewPanelEdit = (props: any) => {
                     />
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>

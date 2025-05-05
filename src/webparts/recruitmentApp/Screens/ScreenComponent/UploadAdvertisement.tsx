@@ -365,7 +365,7 @@ export const UploadAdvertisement = ({
               {
                 FilterKey: "Category",
                 Operator: "eq",
-                FilterValue: RoleDescriptionData.Qualification,
+                FilterValue: RoleDescriptionData.RoleSpeKnowledge,
               },
             ];
             const CategoryData = await getVRRDetails.GetFilterInCategory(
@@ -440,7 +440,7 @@ export const UploadAdvertisement = ({
               {
                 FilterKey: "Category",
                 Operator: "eq",
-                FilterValue: RoleDescriptionData.Qualification,
+                FilterValue: RoleDescriptionData.TechnicalSkill,
               },
             ];
             const CategoryData = await getVRRDetails.GetFilterInCategory(

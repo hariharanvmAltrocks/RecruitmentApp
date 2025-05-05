@@ -471,9 +471,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           delete errors.OptionsType;
         }
       }
-      if (!Disqualification) errors.Disqualification = true;
     } else {
       if (!ExpectedAnswer) errors.ExpectedAnswer = true;
+    }
+    if (
+      props?.stateValue?.StatusId ===
+      StatusId.PendingwithLMcreateDisqualificationQuestion
+    ) {
+      if (!Disqualification) errors.Disqualification = true;
     }
 
     setValidationError((prev) => ({ ...prev, ...errors }));

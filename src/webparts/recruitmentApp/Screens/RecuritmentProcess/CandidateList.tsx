@@ -1,6 +1,9 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
-import { GetPortalJobsService, InterviewServices } from "../../Services/ServiceExport";
+import {
+  GetPortalJobsService,
+  InterviewServices,
+} from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
   HRMSAlertOptions,
@@ -18,10 +21,7 @@ import {
 import BreadcrumbsComponent, {
   type TabNameData,
 } from "../../components/CustomBreadcrumps";
-import {
-  alertPropsData,
-  AutoCompleteItem,
-} from "../../Models/Screens";
+import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CandidateDataTable from "../../components/CandidateDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 const CandidateList = (props: any) => {
@@ -67,10 +67,10 @@ const CandidateList = (props: any) => {
 
     InterviewServices.GetHRMSPositionDetails(filterConditions, Conditions)
       .then((response) => {
-        console.log("Fetched position data:", response.data); 
+        console.log("Fetched position data:", response.data);
         if (response && response.data) {
           setPositionData(response.data);
-          console.log("Fetched position data:", positionData); 
+          console.log("Fetched position data:", positionData);
         } else {
           setPositionData([]);
         }
@@ -118,7 +118,7 @@ const CandidateList = (props: any) => {
           Conditions,
           props.EmployeeList
         );
-        console.log(response);
+      console.log(response);
       if (response?.status === 200 && Array.isArray(response.data)) {
         setCandidateData(response.data);
       } else {
@@ -152,6 +152,7 @@ const CandidateList = (props: any) => {
                 PreviousTabName: previousTabName,
                 TabName: TabName,
                 ButtonAction,
+                RecruitmentID: rowData?.RecruitmentID,
                 positionData,
                 InterviewLevel: rowData?.InterviewLevel,
               },
@@ -207,12 +208,12 @@ const CandidateList = (props: any) => {
               gap: "5px",
             }}
           >
-            {(
-              rowData.StatusId === StatusId.Selected ||
+            {(rowData.StatusId === StatusId.Selected ||
               rowData.StatusId === StatusId.OnHoldbyHOD ||
-              rowData.StatusId === StatusId.PendingwithHODtoselectthecandidate||
-              rowData.StatusId === StatusId.PendingwithHODtoAssignPositionID
-            ) && (
+              rowData.StatusId ===
+                StatusId.PendingwithHODtoselectthecandidate ||
+              rowData.StatusId ===
+                StatusId.PendingwithHODtoAssignPositionID) && (
               <img
                 src={require("../../assets/Editbutton.svg")}
                 alt="Edit Icon"
@@ -232,7 +233,7 @@ const CandidateList = (props: any) => {
                 }}
               />
             )}
-            {rowData.StatusId === StatusId.RejectedbyHOD&& (
+            {rowData.StatusId === StatusId.RejectedbyHOD && (
               <img
                 src={require("../../assets/Viewicon.svg")}
                 alt="View Icon"
@@ -275,10 +276,10 @@ const CandidateList = (props: any) => {
   const onPageChange = (event: any) => {
     setRows(event.rows);
   };
-  
+
   const handleStatusChange = async (selectedCandidates: any[]) => {
     let updateSuccess = false;
-  
+
     for (const candidate of selectedCandidates) {
       const rejectionPayload = {
         workflowStatus: workflowStatusApi.CandidateRejectedIPanel,
@@ -286,24 +287,24 @@ const CandidateList = (props: any) => {
         comments: candidate.Comments || "", // Include comments here
         actionBy: props.CurrentUserRole,
       };
-  
+
       const actionPayload = {
         ActionId: WorkflowAction.Reject,
         Id: candidate.ID,
         ItemCreated: "Yes",
         Comments: candidate.Comments || "", // Include comments in the action payload
       };
-  
+
       try {
         // Update the candidate status with comments
         await GetPortalJobsService.UpdateCandidateStatus(rejectionPayload);
-  
+
         // Update the list item in HRMSRecruitmentCandidatePersonalDetails
         const response = await InterviewServices.CandidateSeletionApi(
           actionPayload,
           ListNames.HRMSRecruitmentCandidatePersonalDetails
         );
-  
+
         if (response.status === 200) {
           updateSuccess = true;
         }
@@ -311,7 +312,7 @@ const CandidateList = (props: any) => {
         console.error(`Error rejecting candidate ID: ${candidate.ID}`, err);
       }
     }
-  
+
     if (updateSuccess) {
       setalertProps({
         Message: RecuritmentHRMsg.PositionIDassigned,
@@ -350,10 +351,8 @@ const CandidateList = (props: any) => {
               rows={rows}
               onPageChange={onPageChange}
               handleRefresh={fetchCandidateData}
-              onStatusChange={handleStatusChange} 
+              onStatusChange={handleStatusChange}
             />
-
-
           </CardContent>
         </Card>
       ),
@@ -389,12 +388,11 @@ const CandidateList = (props: any) => {
           onBreadcrumbChange={handleBreadcrumbChange}
         />
       </div>
-    
+
       {AlertPopupOpen ? (
         <CustomAlert {...alertProps} onClose={() => setAlertPopupOpen(false)} />
       ) : null}
     </CustomLoader>
-    
   );
 };
 

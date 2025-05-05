@@ -230,7 +230,7 @@ export default class InterviewProcessService
             FristName: item?.FristName,
             MiddleName: item?.MiddleName,
             LastName: item?.LastName,
-            FullName: `${item?.FristName ?? ""} `.trim(),
+            FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""}`.trim(),
             ResidentialAddress: item?.ResidentialAddress,
             DOB: item?.DOB,
             ContactNumber: item?.ContactNumber,
@@ -271,7 +271,7 @@ export default class InterviewProcessService
           };
         })
       );
-
+      console.log("CandidateDetails", CandidateDetails)
       CandidateDetails.push(...formattedItems);
       console.log("Combined Candidate Details:", CandidateDetails);
       return {
