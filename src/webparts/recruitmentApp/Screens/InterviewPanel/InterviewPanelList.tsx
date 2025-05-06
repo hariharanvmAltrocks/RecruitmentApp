@@ -2,6 +2,7 @@ import * as React from "react";
 import { Card, CardContent } from "@mui/material";
 import {
   CommonServices,
+  getVRRDetails,
   InterviewServices,
 } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
@@ -20,9 +21,6 @@ import { alertPropsData } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 
 const InterviewPanelList = (props: any) => {
-  console.log("props", props);
-  console.log("props", props.CurrentRoleID);
-  console.log("props", props.CurrentUserRole);
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
 
@@ -146,6 +144,7 @@ const InterviewPanelList = (props: any) => {
           TabName,
           ButtonAction,
           InterviewLevel: rowData?.InterviewLevel,
+          RecruitmentID: rowData?.RecruitmentID,
         },
       });
     } else {
@@ -229,12 +228,8 @@ const InterviewPanelList = (props: any) => {
       header: "Position Title",
       sortable: true,
     },
-    {
-      field: "JobGrade",
-      header: "JobGrade",
-      sortable: true,
-    },
-    { field: "InterviewLevel", header: "InterviewLevels", sortable: true },
+    { field: "InterviewLevel", header: "Interview Levels", sortable: true },
+    { field: "Grade", header: "Grade", sortable: true },
     {
       field: "Status",
       header: "Status",
@@ -293,48 +288,29 @@ const InterviewPanelList = (props: any) => {
               (panel) => panel.IsScoreSheetUploaded === "Yes"
             );
 
-            // if (isScoreSheetUploaded) {
-            //   handleAlert();
-            // } else {
-            //   handleRedirectView(rowData, "tab1", "Evaluation", "View");
-            // }
-
             if (rowData.StatusId === StatusId.InterviewScheduled) {
               if (isScoreSheetUploaded) {
                 handleAlert();
                 return;
               }
               handleRedirectView(
-                { ...rowData, InterviewLevel: rowData?.InterviewLevel },
+                { ...rowData, InterviewLevel: rowData?.InterviewLevel, RecruitmentID:  rowData?.RecruitmentID},
                 "tab1",
                 "Evaluation",
                 "View"
               );
               return;
             }
-
-            // if (rowData.StatusId === StatusId.InterviewScheduledforLevel2) {
-            //   handleRedirectView(
-            //     { ...rowData, InterviewLevel: rowData?.InterviewLevel },
-            //     "tab1",
-            //     "Evaluation",
-            //     "View"
-            //   );
-            //   return;
-            // }
-
             if (rowData.StatusId === StatusId.InterviewScheduledforLevel2) {
               const alreadyCommented = await hasCurrentRoleCommented(
                 rowData.ID
               );
               if (alreadyCommented) {
-                handleAlertComments(); // Alert and prevent navigation
+                handleAlertComments();
                 return;
               }
-
-              // Proceed if not commented yet
               handleRedirectView(
-                { ...rowData, InterviewLevel: rowData?.InterviewLevel },
+                { ...rowData, InterviewLevel: rowData?.InterviewLevel,RecruitmentID:  rowData?.RecruitmentID },
                 "tab1",
                 "Evaluation",
                 "View"
@@ -429,21 +405,47 @@ const InterviewPanelList = (props: any) => {
           props.EmployeeList
         );
 
-      const candidateNames = statusResponse.data.map((candidate: any) => ({
-        ID: candidate.ID,
-        FristName: candidate.FristName || "",
-        LastName: candidate.LastName || "",
-        ApplicantName: `${candidate.FristName || ""} ${
-          candidate.LastName || ""
-        }`.trim(),
-        PositionTitle: candidate.PositionTitle || "",
-        JobGrade: candidate.JobGrade || "",
-        Status: candidate.Status || "",
-        StatusId: candidate.StatusId || "",
-        InterviewLevel: candidate.InterviewLevel || "",
-      }));
+        const enrichedCandidates = await Promise.all(
+          statusResponse.data.map(async (candidate: any) => {
+            let grade = "";
+            let level = "";
+    
+            try {
+              const vrrResponse = await getVRRDetails.GetRecruitmentDetails([
+                {
+                  FilterKey: "ID",
+                  Operator: "eq",
+                  FilterValue: candidate.RecruitmentID,
+                },
+              ], "");
+    
+              grade = vrrResponse?.data?.[0]?.PatersonGrade || "";
+    
+              if (grade) {
+                const gradeLevelResponse = await CommonServices.GetGradeLevel(grade);
+                level = gradeLevelResponse?.data?.[0]?.Level || "";
+              }
+            } catch (err) {
+              console.warn("Failed to fetch grade or level for candidate:", candidate.ID, err);
+            }
+    
+            return {
+              ID: candidate.ID,
+              FristName: candidate.FristName || "",
+              LastName: candidate.LastName || "",
+              ApplicantName: `${candidate.FristName || ""} ${candidate.LastName || ""}`.trim(),
+              PositionTitle: candidate.PositionTitle || "",
+              JobGrade: candidate.JobGrade || "",
+              Grade: grade,
+              InterviewLevel: level,
+              Status: candidate.Status || "",
+              StatusId: candidate.StatusId || "",
+              RecruitmentID: candidate.RecruitmentID || "",
+            };
+          })
+        );
 
-      setCandidateData(candidateNames);
+      setCandidateData(enrichedCandidates);
     } catch (error) {
       console.error("Error fetching candidate data:", error);
     } finally {
