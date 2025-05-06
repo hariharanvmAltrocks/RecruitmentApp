@@ -1838,36 +1838,6 @@ const InterviewPanelEdit = (props: any) => {
     void fetchData();
   }, [props.stateValue?.ID, activeTab]);
 
-  // React.useEffect(() => {
-  //   const fetchQuestion = async () => {
-  //     const getQuestion = await GetPortalJobsService.getQuestionnaire(
-  //       CandidateData.JobCode
-  //     );
-  //     console.log(getQuestion, "getQuestion");
-
-  //     if (getQuestion.status === ResponeStatus.SUCCESS) {
-  //       setQuestionnaire(getQuestion?.data ?? []);
-  //     } else {
-  //       let APIErrorMsg = {
-  //         Message: RecuritmentHRMsg.APIErrorMsg,
-  //         Type: HRMSAlertOptions.Error,
-  //         visible: true,
-  //         ButtonAction: async (userClickedOK: boolean) => {
-  //           if (userClickedOK) {
-  //             setAlertPopupOpen(false);
-  //           } else {
-  //             setAlertPopupOpen(false);
-  //           }
-  //         },
-  //       };
-
-  //       setAlertPopupOpen(true);
-  //       setalertProps(APIErrorMsg);
-  //       setIsLoading(false);
-  //     }
-  //   };
-  //   void fetchQuestion();
-  // }, [activeTab]);
 
   const handleCancel = () => {
     setIsLoading(true);
