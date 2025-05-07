@@ -26,6 +26,7 @@ import {
   workflowStatusApi,
   RoleID,
   ResponeStatus,
+  CheckboxContent,
 } from "../../utilities/Config";
 import {
   AdvDetails,
@@ -1695,7 +1696,7 @@ const InterviewPanelEdit = (props: any) => {
                 >
                   <div className="ms-Grid-col ms-lg12">
                     <SignatureCheckbox
-                      label={TabName.CheckboxContent}
+                      label={CheckboxContent.ScorecardEntry}
                       checked={Checkbox}
                       error={ValidationError.CheckboxValidation}
                       onChange={handleCheckbox}

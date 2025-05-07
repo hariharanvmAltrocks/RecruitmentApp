@@ -20,6 +20,7 @@ import BreadcrumbsComponent, {
 import {
   ADGroupID,
   CandidateStatus,
+  CheckboxContent,
   ColorCode,
   DocumentLibraray,
   HRMSAlertOptions,
@@ -1104,7 +1105,17 @@ const ViewCandidateDetails = (props: any) => {
                     >
                       <div className="ms-Grid-col ms-lg12">
                         <SignatureCheckbox
-                          label={TabName.CheckboxContent}
+                          label={
+                            props.stateValue?.initialTab ===
+                            TabName.ReviewProfile
+                              ? CheckboxContent.ReviewedCandidate
+                              : props.StateValue?.StatusId ===
+                                  StatusId.InterviewScheduledforLevel2 ||
+                                props.StateValue?.StatusId ===
+                                  StatusId.InterviewScheduledforLevel2
+                              ? CheckboxContent.RescheduleInterview
+                              : CheckboxContent.InterviewPanel
+                          }
                           checked={Checkbox}
                           error={validationErrors.Checkboxalidation}
                           onChange={(value: boolean) => {

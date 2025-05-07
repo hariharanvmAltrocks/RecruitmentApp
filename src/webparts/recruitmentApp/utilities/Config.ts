@@ -308,6 +308,8 @@ export const TabName = {
   AssignAgencies: "Assign Agencies",
   ReviewProfile: "Review Profile",
   AssignInterviewPanel: "Assign Interview Panel",
+  InterviewpanelL1: "Interview Panel Level-1",
+  InterviewpanelL2: "Interview Panel Level-2",
   ReviewAdvertisement: "Review Advertisement",
   ReviewScorecard: "Review Scorecard",
   Evaluation: "Evaluation",
@@ -325,8 +327,6 @@ export const TabName = {
   EvaluationTab: "Candidate Details",
   InterviewQuestion: "Interview Questions",
   AdvertExtension: "Advert Extension",
-  CheckboxContent: "I hereby agree for submitting this request for further approvals.",
-  ApprovalCheckbox: "I hereby acknowledge that I have read the submission request and confirm the accuracy of the content shared.",
 
   ReviewLevel1: "Review Profile - Level 1",
   ReviewLevel2: "Review Profile - Level 2",
@@ -341,8 +341,21 @@ export const TabName = {
 
   ViewScoreDetails: " View ScoreCard Details",
   ReschedulInterview: "Reschedule Interview",
-  Level2Interview: "Level 2 Interview",
 };
+
+export const CheckboxContent = {
+  CheckboxContent: "I hereby agree to submit this request for approval.",
+  ApprovalCheckbox: "I hereby acknowledge that I have reviewed the job advertisement.",
+
+  UploadOnemDocument: "I hereby agree to post the advert on the portal.",
+
+  ReviewedCandidate: "I hereby acknowledge that I have reviewed the candidate details.",
+  InterviewPanel: "I hereby reviewed candidate details and assigning interview panel.",
+  RescheduleInterview: "I hereby acknowledge that I have reschedule the interview.",
+
+  ScorecardEntry: "I hereby acknowledge completion of the scorecard entry.",
+  HODscorecarddetails: "I hereby acknowledge that I have reviewed the candidate scorecard details."
+}
 
 export const ProfileStatus = {
   HR: "Pending with HR - Review Profile",
@@ -391,7 +404,7 @@ export const workflowStatusApi = {
 export const Notes = {
   Roleprofile: "Role Profile is not available for the Job Title.",
   Grding: "Grading Report is not available for the Job Title.",
-  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving or reverting this submission."
+  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving this submission."
 }
 // sneka
 export const CatogryOption = [

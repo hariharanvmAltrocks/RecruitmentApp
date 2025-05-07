@@ -723,7 +723,7 @@ const ReviewCandidateList = (props: any) => {
 
   const AssignInterviewPanel = [
     {
-      label: TabName.AssignInterviewPanel,
+      label: TabName.InterviewpanelL1,
       value: "tab1",
       content: (
         <Card
@@ -750,7 +750,7 @@ const ReviewCandidateList = (props: any) => {
       ),
     },
     {
-      label: TabName.Level2Interview,
+      label: TabName.InterviewpanelL2,
       value: "tab2",
       content: (
         <Card
