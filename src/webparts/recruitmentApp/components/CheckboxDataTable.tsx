@@ -64,7 +64,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     BusinessUnitNameOption: [], // Can be removed if not used elsewhere
     BusinessUnitName: { key: 0, text: "" }, // Can be removed if not used elsewhere
   });
- const [pagination, setPagination] = React.useState({ first: 0, rows: rows });
+  const [pagination, setPagination] = React.useState({ first: 0, rows: rows });
   React.useEffect(() => {
     setFilteredItems(data);
   }, [data]);
@@ -103,24 +103,31 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           ...prev,
           JobCode: { key: 0, text: "" },
         }));
-        setFilteredItems(data.filter((row) => {
-          return (
-            (!FilterData.Department.text || row.Department === FilterData.Department.text) &&
-            (!FilterData.BusinessUnitCode.text || row.BusinessUnitCode === FilterData.BusinessUnitCode.text)
-          );
-        }));
+        setFilteredItems(
+          data.filter((row) => {
+            return (
+              (!FilterData.Department.text ||
+                row.Department === FilterData.Department.text) &&
+              (!FilterData.BusinessUnitCode.text ||
+                row.BusinessUnitCode === FilterData.BusinessUnitCode.text)
+            );
+          })
+        );
       } else if (field === "BusinessUnitCode") {
         setFilterData((prev) => ({
           ...prev,
           BusinessUnitCode: { key: 0, text: "" },
-          JobCodeOption: [], 
+          JobCodeOption: [],
           JobCode: { key: 0, text: "" },
         }));
-        setFilteredItems(data.filter((row) => {
-          return (
-            (!FilterData.Department.text || row.Department === FilterData.Department.text)
-          );
-        }));
+        setFilteredItems(
+          data.filter((row) => {
+            return (
+              !FilterData.Department.text ||
+              row.Department === FilterData.Department.text
+            );
+          })
+        );
       } else if (field === "Department") {
         setFilterData((prev) => ({
           ...prev,
@@ -130,28 +137,30 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           BusinessUnitCode: { key: 0, text: "" },
           JobCode: { key: 0, text: "" },
         }));
-        setFilteredItems(data); 
+        setFilteredItems(data);
       }
       return;
     }
     search_fn(field, item);
-  
+
     if (field === "Department") {
-      const departmentToBU = data.filter((row) => row.Department === item?.text);
+      const departmentToBU = data.filter(
+        (row) => row.Department === item?.text
+      );
       const businessUnitOptions: AutoCompleteItem[] = Array.from(
         new Set(departmentToBU.map((row) => row.BusinessUnitCode))
       ).map((buCode) => ({
         key: buCode,
         text: buCode,
       }));
-  
+
       const jobCodeOptions: AutoCompleteItem[] = Array.from(
         new Set(departmentToBU.map((row) => row.JobCode))
       ).map((jobCode) => ({
         key: jobCode,
         text: jobCode,
       }));
-  
+
       setFilterData((prev) => ({
         ...prev,
         BusinessUnitCodeOption: businessUnitOptions,
@@ -160,19 +169,19 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
         JobCode: { key: 0, text: "" },
       }));
     }
-  
+
     if (field === "BusinessUnitCode") {
       const buToJobCode = filteredItems.filter(
         (row) => row.BusinessUnitCode === item?.text
       );
-  
+
       const jobCodeOptions: AutoCompleteItem[] = Array.from(
         new Set(buToJobCode.map((row) => row.JobCode))
       ).map((jobCode) => ({
         key: jobCode,
         text: jobCode,
       }));
-  
+
       setFilterData((prev) => ({
         ...prev,
         JobCodeOption: jobCodeOptions,
@@ -251,20 +260,20 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           className="ms_Grid-row"
           style={{ marginLeft: "5px", marginRight: "-12%" }}
         >
-           <div className="ms-Grid-col ms-lg3">
-          <CustomAutoComplete
-            label="Department"
-            options={Array.from(
-              new Set(data.map((row) => row.Department))
-            ).map((department) => ({
-              key: department,
-              text: department,
-            }))}
-            value={FilterData.Department}
-            disabled={false}
-            onChange={(item) => handleAutoComplete("Department", item)}
-          />
-        </div>
+          <div className="ms-Grid-col ms-lg3">
+            <CustomAutoComplete
+              label="Department"
+              options={Array.from(
+                new Set(data.map((row) => row.Department))
+              ).map((department) => ({
+                key: department,
+                text: department,
+              }))}
+              value={FilterData.Department}
+              disabled={false}
+              onChange={(item) => handleAutoComplete("Department", item)}
+            />
+          </div>
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
               label="Business Unit Code"
@@ -277,7 +286,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
               label="Job Code"
-              options={MasterData?.JobCode ?? []}
+              options={FilterData.JobCodeOption ?? []}
               value={FilterData.JobCode}
               disabled={false}
               onChange={(item) => handleAutoComplete("JobCode", item)}
@@ -305,8 +314,8 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           <div className="ms-Grid-col ms-lg12">
             <DataTable
               value={filteredItems}
-                  rows={pagination.rows}
-            first={pagination.first}
+              rows={pagination.rows}
+              first={pagination.first}
               onPage={(e) => {
                 setPagination({ first: e.first, rows: e.rows });
                 onPageChange(e);
@@ -327,7 +336,9 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                         <SignatureCheckbox
                           label={""}
                           checked={selectAll}
-                          onChange={(value: boolean) => onSelectAllChange(value)}
+                          onChange={(value: boolean) =>
+                            onSelectAllChange(value)
+                          }
                         />
                       )}
                       sortable={false}

@@ -185,24 +185,26 @@ export const RecuritmentHRMsg = {
   HRSuccess: "Recruitment HR Assigned for the Selected Job Titles.",
   SingleHRSuccessMsg: "Recruitment HR Assigned for the Selected Job Title.",
 
-  ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Sucessfully.",
+  ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Successfully.",
 
   AdvertisementSubmitMsg:
     "Advertisement Document Uploaded Successfully.",
-  AdvertisementReveiwMsg: "Advertisement Reviewed Sucessfully",
+  AdvertisementReveiwMsg: "Advertisement Reviewed Successfully",
 
   AgencySucess: "Agencies Assigned for the Selected Job Titles.",
   SingleAgencyMsg: "Agencies Assigned for the Selected Job Title.",
 
   InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
+  InterviewPanalLevel2: "Interview Panel  Level 2 Assigned Successfully.",
+
   RescheduleSuccessMsg: "Interview Rescheduled Successfully.",
   AdvertExtendsionSuccessMsg: "Advertisement Extension Submitted Successfully.",
 
   ScoreCardSubmitMsg:
     "The Candidate has been Interviewed and Scorecard Submitted for Final Selection.",
 
-  InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully",
-  CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully",
+  InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully.",
+  CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully.",
 
   ProfileReviewed:
     "Candidate Profile for the Job Title Reviewed and Shortlisted.",
@@ -210,14 +212,15 @@ export const RecuritmentHRMsg = {
     "Candidate Profile for the Job Title Reviewed and Rejected.",
   ProfileReviewedWaitingList:
     "Candidate Profile for the Job Title Reviewed and On - Hold.",
-  HRReviewCandidate: "Candidate Profile Reviewed Successfully",
+  HRReviewCandidate: "Candidate Profile Reviewed Successfully.",
 
-  CandidateSelected: "Candidate Selected",
-  CandidateRejected: "Candidate Rejected",
-  CandidateOnHold: "Candidate On Hold",
+  CandidateSelected: "Candidate Selected.",
+  CandidateSelectedLevel2: "Candidate Move to Level 2",
+  CandidateRejected: "Candidate Rejected.",
+  CandidateOnHold: "Candidate On Hold.",
   RecuritmentSubmitMsg: "Submitted Successfully.",
   ApprovedMsg:
-    "Advertisement Reviewed Sucessfully. Ready for ONEM Process (Offline).",
+    "Advertisement Reviewed Successfully. Ready for ONEM Process (Offline).",
   RecuritmentHRMsgCancel:
     "Are you sure want to cancel? Any unsaved changes will be lost.",
   BackMsg: "Are you sure want go back to Home Page ?",
@@ -225,10 +228,10 @@ export const RecuritmentHRMsg = {
     "One or more mandatory field are missing.Please do the needful and submit again.",
   RecruitmentErrorMsg: "Please choose the Job Code to assign Recruitment HR.",
   AgenciesErrorMsg: "Please choose the Job Code to Assign Agencies.",
-  PositionIDassigned: "Action Performed Sucessfully.",
+  PositionIDassigned: "Action Performed Successfully.",
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
-    InterviewScoreCommentsAlready:
+  InterviewScoreCommentsAlready:
     "The scorecard for the candidate comments has already been submitted.",
   APIErrorMsg: "Server is temporarily unavailable.",
   InterviewQues:

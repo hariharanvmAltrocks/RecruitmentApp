@@ -119,6 +119,7 @@ const ViewCandidateDetails = (props: any) => {
     hrComments: "",
     JobVaildFromDate: "",
     JobVaildToDate: "",
+    CandidateResumeLink: "",
   });
   const todaydate = new Date();
 
@@ -170,6 +171,7 @@ const ViewCandidateDetails = (props: any) => {
     InterviewMeetingInviteLink: "",
     InterviewTime: "",
   });
+  const [recruitmentID, setRecruitmentID] = useState<number>(0);
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
@@ -323,6 +325,7 @@ const ViewCandidateDetails = (props: any) => {
               hrComments: response?.hrComments,
               JobVaildFromDate: response?.JobVaildFromDate,
               JobVaildToDate: response?.JobVaildToDate,
+              CandidateResumeLink: response?.CandidateResumeLink,
             }));
           }
           if (
@@ -773,11 +776,12 @@ const ViewCandidateDetails = (props: any) => {
                             selectedDate={InterviewedLevel.InterviewedDate}
                             label="Interviewed Date"
                             error={validationErrors.InterviewedDate}
-                            minDate={
-                              CandidateProfile.JobVaildToDate
-                                ? new Date(CandidateProfile.JobVaildToDate + 1)
-                                : undefined
-                            }
+                            // minDate={
+                            //   CandidateProfile.JobVaildToDate
+                            //     ? new Date(CandidateProfile.JobVaildToDate + 1)
+                            //     : undefined
+                            // }
+                            minDate={todaydate}
                             mandatory={true}
                             onChange={(date) =>
                               handleDateChange(date ?? undefined)
@@ -1238,11 +1242,9 @@ const ViewCandidateDetails = (props: any) => {
       DOB: DOBValue,
       ContactNumber: CandidateProfile.ContactNumber,
       Email: CandidateProfile.Email,
-      // Nationality: CandidateProfile.Nationality,
+      Nationality: CandidateProfile.Nationality,
       Gender: CandidateProfile.Gender,
       TotalYearOfExperiance: String(CandidateProfile.ExperRelatedfield),
-      // Skills: ,
-      // LanguageKnown: ,
       ReleventExperience: CandidateProfile.ExperienceMining,
       Qualification: CandidateProfile.HighestQualification,
       JobRequestID: String(CandidateProfile.CandidateID),
@@ -1253,15 +1255,19 @@ const ViewCandidateDetails = (props: any) => {
       InterviewDate: InterviewedLevel?.InterviewedDate,
       InterviewTime: InterviewedLevel?.InterviewTime,
       InterviewLink: InterviewedLevel?.InterviewMeetingInviteLink,
+      CandidateResumeLink:
+        CandidateProfile?.CandidateResumeLink === undefined
+          ? ""
+          : CandidateProfile?.CandidateResumeLink,
       ActionId: WorkflowAction.Approved,
     };
     let selectedinterviewpanal: any[] = [];
 
     for (let i = 0; i < InterviewedLevel.AssignInterviewLevel1.length; i++) {
       const currentItem = InterviewedLevel.AssignInterviewLevel1[i];
-
+      setRecruitmentID(RecruitmentDetails.data[0]?.ID);
       let selectedinterview = {
-        RecruitmentIDId: RecruitmentDetails.data[0].ID,
+        RecruitmentIDId: RecruitmentDetails.data[0]?.ID,
         InterviewLevel: InterviewLevels.Level1, //InterviewedLevel.Levels,
         InterviewPanel: currentItem.key,
         CandidateID: 0,
@@ -1348,7 +1354,7 @@ const ViewCandidateDetails = (props: any) => {
               const currentItem = InterviewedLevel.AssignInterviewedLevel2[i];
 
               let selectedinterview = {
-                RecruitmentIDId: 0,
+                RecruitmentIDId: recruitmentID,
                 InterviewLevel: InterviewLevels.Level2, //InterviewedLevel.Levels,
                 InterviewPanel: currentItem.key,
                 CandidateID: Number(CandidateProfile.CandidateID),
@@ -1364,7 +1370,11 @@ const ViewCandidateDetails = (props: any) => {
           }
 
           const SuccessAlert = {
-            Message: RecuritmentHRMsg.RescheduleSuccessMsg,
+            Message:
+              props.stateValue?.StatusId ===
+              StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+                ? RecuritmentHRMsg.InterviewPanalLevel2
+                : RecuritmentHRMsg.RescheduleSuccessMsg,
             Type: HRMSAlertOptions.Success,
             visible: true,
             ButtonAction: async (userClickedOK: boolean) => {

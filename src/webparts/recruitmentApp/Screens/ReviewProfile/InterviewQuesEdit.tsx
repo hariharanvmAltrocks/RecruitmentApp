@@ -2155,14 +2155,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               onBreadcrumbChange={handleBreadcrumbChange}
               handleCancel={handleCancel}
               additionalButtons={[
-                {
-                  label: "Close",
-                  onClick: async () => {
-                    props.navigation("/ReviewProfileList", {
-                      state: { activeTab: "tab2" },
-                    });
-                  },
-                },
+                // {
+                //   label: "Close",
+                //   onClick: async () => {
+                //     props.navigation("/ReviewProfileList", {
+                //       state: { activeTab: "tab2" },
+                //     });
+                //   },
+                // },
                 ...(resuequestionnaire.length > 0
                   ? [
                       {
@@ -2201,7 +2201,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             header={
               <div className="ms-Grid-row" style={{ textAlign: "center" }}>
                 <LabelHeaderComponents
-                  value={"Disciplines" + InterviewQuesData?.Disciplines.text}
+                  value={
+                    "Disciplines  - " + InterviewQuesData?.Disciplines.text
+                  }
                 />
               </div>
             }
