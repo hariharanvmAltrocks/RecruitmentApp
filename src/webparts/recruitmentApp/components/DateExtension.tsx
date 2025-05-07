@@ -1,7 +1,12 @@
 import * as React from "react";
 import Labelheader from "./LabelHeader";
 import CustomDatePicker from "./CustomDatePicker";
-import { ColorCode, HRMSAlertOptions, ListNames } from "../utilities/Config";
+import {
+  ColorCode,
+  HRMSAlertOptions,
+  ListNames,
+  ResponeStatus,
+} from "../utilities/Config";
 import ReuseButton from "./ReuseButton";
 import { DataSyncToRecruitmentResponse } from "../Services/RecruitmentProcess/IRecruitmentProcessService";
 import CustomLabel from "./CustomLabel";
@@ -143,7 +148,7 @@ export const DateExtension = ({
       1
     );
 
-    if (result?.status === 200) {
+    if (result?.status === ResponeStatus.SUCCESS) {
       let DateObj;
       if (AdvertDuration3) {
         DateObj = {

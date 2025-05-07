@@ -85,7 +85,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
             CandidateID: item?.jobRequestId,
             ApplicantName: item?.applicantName,
             PositionTitle: item?.jobTitle?.displayText,
-            JobGrade: item?.jobCode,
+            JobCode: item?.jobCode,
             Status: item?.workflowStatus?.displayText,
             workflowStatusId: item?.workflowStatusId,
             createdOn: moment(createdon).format("DD/MM/YYYY HH:mm:ss"),
@@ -198,6 +198,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           hrComments: op?.hrComments,
           JobVaildFromDate: op?.jobDetail?.validFrom,
           JobVaildToDate: op?.jobDetail?.validTo,
+          CandidateResumeLink: op?.document?.filePath
         };
 
         GetProfileByJobCodeData.push(GetProfileDahboard);

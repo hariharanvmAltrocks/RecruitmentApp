@@ -26,8 +26,7 @@ import {
   workflowStatusApi,
   RoleID,
   ResponeStatus,
-  ColorCode,
-  labelName,
+  CheckboxContent,
 } from "../../utilities/Config";
 import {
   AdvDetails,
@@ -50,7 +49,6 @@ import BreadcrumbsComponent, {
 import CustomLabel from "../../components/CustomLabel";
 import SPServices from "../../Services/SPService/SPServices";
 import { WorkflowJson } from "../../Models/ApIInterface";
-import ReuseButton from "../../components/ReuseButton";
 import CustomPreviewScreen from "../RecuritmentProcess/CustomPreviewScreen";
 
 type ValidationError = {
@@ -68,9 +66,13 @@ type ValidationError = {
   OverAllEvaluationFeedback: boolean;
   AdvertisementDocument: boolean;
 };
-
+type InterviewedLevelValue = {
+  Levels: string;
+  Grade: string;
+};
 const InterviewPanelEdit = (props: any) => {
-  console.log("props", props);
+  console.log("props", props.stateValue);
+  console.log("RecruitmentID", props.stateValue?.RecruitmentID);
   const todaydate = new Date();
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
@@ -192,6 +194,11 @@ const InterviewPanelEdit = (props: any) => {
     AdvertisementAttachement: [],
     JobcodeChecked: false,
   });
+  const [InterviewedLevel, setInterviewedLevel] =
+    React.useState<InterviewedLevelValue>({
+      Levels: "",
+      Grade: "",
+    });
   const [MainComponent, setMainComponent] = React.useState<boolean>(true);
   const [Preview, setPreview] = React.useState<boolean>(false);
 
@@ -876,7 +883,33 @@ const InterviewPanelEdit = (props: any) => {
       throw new Error("Failed to submit data. Please try again later.");
     }
   };
+  React.useEffect(() => {
+    const getRecruitmentGradeLevel = async () => {
+      const filterConditions = [
+        {
+          FilterKey: "ID",
+          Operator: "eq",
+          FilterValue: props.stateValue?.RecruitmentID,
+        },
+      ];
 
+      const response = await getVRRDetails.GetRecruitmentDetails(
+        filterConditions,
+        ""
+      );
+
+      const grade = response.data[0]?.PatersonGrade;
+      const gradeLevelResponse = await CommonServices.GetGradeLevel(grade);
+
+      setInterviewedLevel((prevState: any) => ({
+        ...prevState,
+        Grade: grade,
+        Levels: gradeLevelResponse.data[0]?.Level,
+      }));
+    };
+
+    void getRecruitmentGradeLevel();
+  }, []);
   const tabs = [
     {
       label: TabName.ViewCandidateDetails,
@@ -887,39 +920,26 @@ const InterviewPanelEdit = (props: any) => {
           sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
         >
           <CardContent>
-            <div>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg8">
-                  <LabelHeaderComponents
-                    value={`Job Title - ${CandidateData.PositionTitle}`}
-                  >
-                    {" "}
-                  </LabelHeaderComponents>
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <LabelHeaderComponents
-                    value={`Status - ${props.stateValue?.Status}`}
-                  >
-                    {" "}
-                  </LabelHeaderComponents>
-                </div>
+            <div className="ms-Grid-row">
+              <div className="ms-Grid-col ms-lg6">
+                <LabelHeaderComponents
+                  value={`Job Title - ${CandidateData.PositionTitle} (${CandidateData.JobCode})`}
+                >
+                  {" "}
+                </LabelHeaderComponents>
+              </div>
+              <div
+                className="ms-Grid-col ms-lg6"
+                style={{ display: "flex", justifyContent: "flex-end" }}
+              >
+                <LabelHeaderComponents
+                  value={`Status - ${props.stateValue?.Status}`}
+                >
+                  {" "}
+                </LabelHeaderComponents>
               </div>
 
               <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Job Grade"
-                    value={CandidateData.JobCode}
-                    disabled={true}
-                    mandatory={false}
-                    onChange={(value) =>
-                      setCandidateData((prevState) => ({
-                        ...prevState,
-                        ContactNumber: value,
-                      }))
-                    }
-                  />
-                </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Candidate ID"
@@ -948,23 +968,6 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
-              </div>
-
-              <div className="ms-Grid-row">
-                {/* <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
-                    label="Applicant Surname"
-                    value={CandidateData.LastName}
-                    disabled={true}
-                    mandatory={false}
-                    onChange={(value) =>
-                      setCandidateData((prevState) => ({
-                        ...prevState,
-                        ContactNumber: value,
-                      }))
-                    }
-                  />
-                </div> */}
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Nationality"
@@ -979,6 +982,9 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
+              </div>
+
+              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Gender"
@@ -1007,8 +1013,6 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
-              </div>
-              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Experiance in Mining Industry (Years)"
@@ -1023,6 +1027,8 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
+              </div>
+              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Experiance in Related Field (Years)"
@@ -1057,33 +1063,22 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomInput
+                    label="Level of Interview"
+                    value={InterviewedLevel.Levels}
+                    disabled={true}
+                    mandatory={false}
+                  />
+                </div>
               </div>
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Interview Levels"
-                    value={CandidateData.InterviewLevels}
-                    disabled={true}
-                    mandatory={false}
-                    onChange={(value) =>
-                      setCandidateData((prevState) => ({
-                        ...prevState,
-                        InterviewLevels: value,
-                      }))
-                    }
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
                     label="Grade"
-                    value={CandidateData.JobGrade}
+                    value={InterviewedLevel.Grade}
                     disabled={true}
                     mandatory={false}
-                    onChange={(value) =>
-                      setCandidateData((prevState) => ({
-                        ...prevState,
-                      }))
-                    }
                   />
                 </div>
                 <div
@@ -1140,21 +1135,22 @@ const InterviewPanelEdit = (props: any) => {
 
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"Candidate Resume"} />
+                  <CustomViewDocument
+                    Attachment={CandidateData.CandidateCVDoc}
+                  />
+                </div>
+
+                {/* <div className="ms-Grid-col ms-lg4">
                   <CustomLabel value={"RoleProfile Documents"} />
                   <CustomViewDocument
                     Attachment={CandidateData.RoleProfileDocument}
                   />
                 </div>
-                {/* <div className="ms-Grid-col ms-lg4">
+                <div className="ms-Grid-col ms-lg4">
                   <CustomLabel value={"Advertisement Documents (French)"} />
                   <CustomViewDocument
                     Attachment={CandidateData.AdvertisementDocument}
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomLabel value={"Candidate Resume"} />
-                  <CustomViewDocument
-                    Attachment={CandidateData.CandidateCVDoc}
                   />
                 </div> */}
               </div>
@@ -1368,7 +1364,7 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div> */}
-
+              {/* 
               <div className="ms-Grid-row">
                 <div
                   className="ms-Grid-col ms-lg2"
@@ -1406,7 +1402,7 @@ const InterviewPanelEdit = (props: any) => {
                     />
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>
@@ -1700,7 +1696,7 @@ const InterviewPanelEdit = (props: any) => {
                 >
                   <div className="ms-Grid-col ms-lg12">
                     <SignatureCheckbox
-                      label={TabName.CheckboxContent}
+                      label={CheckboxContent.ScorecardEntry}
                       checked={Checkbox}
                       error={ValidationError.CheckboxValidation}
                       onChange={handleCheckbox}

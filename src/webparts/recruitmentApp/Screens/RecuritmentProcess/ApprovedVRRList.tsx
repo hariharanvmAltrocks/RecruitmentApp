@@ -982,6 +982,7 @@ const RecruitmentProcess = (props: any) => {
         setAssignHR(false);
         setIsLoading(true);
         if (selectedJobCodes.length > 0) {
+          let ResponseStatusCode;
           for (const selectedJob of selectedJobCodes) {
             const correspondingJob = data.find(
               (item) => item.ID === selectedJob.ID
@@ -1011,7 +1012,8 @@ const RecruitmentProcess = (props: any) => {
             };
             await GetPortalJobsService.UpsertAgenciesJobs(AgentDetails)
               .then(async (res) => {
-                if (res.status === 200) {
+                if (res.status === ResponeStatus.SUCCESS) {
+                  ResponseStatusCode = res.status;
                   if (correspondingJob) {
                     const recruitmentID: number = correspondingJob.ID;
 
@@ -1038,7 +1040,7 @@ const RecruitmentProcess = (props: any) => {
                         recruitmentID
                       );
 
-                    if (response.status === 200) {
+                    if (response.status === ResponeStatus.SUCCESS) {
                       const commentsData: InsertComments = {
                         RoleId: props.CurrentRoleID,
                         RecruitmentIDId: recruitmentID,
@@ -1046,7 +1048,7 @@ const RecruitmentProcess = (props: any) => {
                       };
 
                       await getVRRDetails.InsertCommentsList(commentsData);
-
+                      ResponseStatusCode = response.status;
                       try {
                         // await SPServices.SPUpdateItem({
                         //   Listname: ListNames.HRMSRecruitmentDptDetails,
@@ -1056,24 +1058,7 @@ const RecruitmentProcess = (props: any) => {
                       } catch (updateError) {
                         console.error(updateError);
                       }
-                      let CancelAlert = {
-                        Message:
-                          selectedJobCodes.length === 1
-                            ? RecuritmentHRMsg.SingleAgencyMsg
-                            : RecuritmentHRMsg.AgencySucess,
-                        Type: HRMSAlertOptions.Success,
-                        visible: true,
-                        ButtonAction: async (userClickedOK: boolean) => {
-                          if (userClickedOK) {
-                            setAlertPopupOpen(false);
-                            setIsLoading(false);
-                            await fetchData();
-                          }
-                        },
-                      };
-                      setIsLoading(true);
-                      setAlertPopupOpen(true);
-                      setalertProps(CancelAlert);
+
                       setAssignHRData((prevState) => ({
                         ...prevState,
                         AssignRecruitmentAgencies: [],
@@ -1113,6 +1098,27 @@ const RecruitmentProcess = (props: any) => {
               .catch((error) => {
                 console.log("Candidate details doesn't fetch the data", error);
               });
+          }
+          if (ResponseStatusCode === ResponeStatus.SUCCESS) {
+            let CancelAlert = {
+              Message:
+                selectedJobCodes.length === 1
+                  ? RecuritmentHRMsg.SingleAgencyMsg
+                  : RecuritmentHRMsg.AgencySucess,
+              Type: HRMSAlertOptions.Success,
+              visible: true,
+              ButtonAction: async (userClickedOK: boolean) => {
+                if (userClickedOK) {
+                  setAlertPopupOpen(false);
+                  setIsLoading(false);
+                  await fetchData();
+                }
+              },
+            };
+            setIsLoading(true);
+            setAlertPopupOpen(true);
+            setalertProps(CancelAlert);
+          } else {
           }
         }
       }
