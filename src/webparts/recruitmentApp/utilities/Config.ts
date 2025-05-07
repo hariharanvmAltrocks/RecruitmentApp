@@ -185,24 +185,26 @@ export const RecuritmentHRMsg = {
   HRSuccess: "Recruitment HR Assigned for the Selected Job Titles.",
   SingleHRSuccessMsg: "Recruitment HR Assigned for the Selected Job Title.",
 
-  ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Sucessfully.",
+  ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Successfully.",
 
   AdvertisementSubmitMsg:
     "Advertisement Document Uploaded Successfully.",
-  AdvertisementReveiwMsg: "Advertisement Reviewed Sucessfully",
+  AdvertisementReveiwMsg: "Advertisement Reviewed Successfully",
 
   AgencySucess: "Agencies Assigned for the Selected Job Titles.",
   SingleAgencyMsg: "Agencies Assigned for the Selected Job Title.",
 
   InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
+  InterviewPanalLevel2: "Interview Panel  Level 2 Assigned Successfully.",
+
   RescheduleSuccessMsg: "Interview Rescheduled Successfully.",
   AdvertExtendsionSuccessMsg: "Advertisement Extension Submitted Successfully.",
 
   ScoreCardSubmitMsg:
     "The Candidate has been Interviewed and Scorecard Submitted for Final Selection.",
 
-  InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully",
-  CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully",
+  InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully.",
+  CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully.",
 
   ProfileReviewed:
     "Candidate Profile for the Job Title Reviewed and Shortlisted.",
@@ -210,14 +212,15 @@ export const RecuritmentHRMsg = {
     "Candidate Profile for the Job Title Reviewed and Rejected.",
   ProfileReviewedWaitingList:
     "Candidate Profile for the Job Title Reviewed and On - Hold.",
-  HRReviewCandidate: "Candidate Profile Reviewed Successfully",
+  HRReviewCandidate: "Candidate Profile Reviewed Successfully.",
 
-  CandidateSelected: "Candidate Selected",
-  CandidateRejected: "Candidate Rejected",
-  CandidateOnHold: "Candidate On Hold",
+  CandidateSelected: "Candidate Selected.",
+  CandidateSelectedLevel2: "Candidate Move to Level 2",
+  CandidateRejected: "Candidate Rejected.",
+  CandidateOnHold: "Candidate On Hold.",
   RecuritmentSubmitMsg: "Submitted Successfully.",
   ApprovedMsg:
-    "Advertisement Reviewed Sucessfully. Ready for ONEM Process (Offline).",
+    "Advertisement Reviewed Successfully. Ready for ONEM Process (Offline).",
   RecuritmentHRMsgCancel:
     "Are you sure want to cancel? Any unsaved changes will be lost.",
   BackMsg: "Are you sure want go back to Home Page ?",
@@ -225,10 +228,10 @@ export const RecuritmentHRMsg = {
     "One or more mandatory field are missing.Please do the needful and submit again.",
   RecruitmentErrorMsg: "Please choose the Job Code to assign Recruitment HR.",
   AgenciesErrorMsg: "Please choose the Job Code to Assign Agencies.",
-  PositionIDassigned: "Action Performed Sucessfully.",
+  PositionIDassigned: "Action Performed Successfully.",
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
-    InterviewScoreCommentsAlready:
+  InterviewScoreCommentsAlready:
     "The scorecard for the candidate comments has already been submitted.",
   APIErrorMsg: "Server is temporarily unavailable.",
   InterviewQues:
@@ -306,6 +309,8 @@ export const TabName = {
   AssignAgencies: "Assign Agencies",
   ReviewProfile: "Review Profile",
   AssignInterviewPanel: "Assign Interview Panel",
+  InterviewpanelL1: "Interview Panel Level-1",
+  InterviewpanelL2: "Interview Panel Level-2",
   ReviewAdvertisement: "Review Advertisement",
   ReviewScorecard: "Review Scorecard",
   Evaluation: "Evaluation",
@@ -323,8 +328,6 @@ export const TabName = {
   EvaluationTab: "Candidate Details",
   InterviewQuestion: "Interview Questions",
   AdvertExtension: "Advert Extension",
-  CheckboxContent: "I hereby agree for submitting this request for further approvals.",
-  ApprovalCheckbox: "I hereby acknowledge that I have read the submission request and confirm the accuracy of the content shared.",
 
   ReviewLevel1: "Review Profile - Level 1",
   ReviewLevel2: "Review Profile - Level 2",
@@ -339,8 +342,21 @@ export const TabName = {
 
   ViewScoreDetails: " View ScoreCard Details",
   ReschedulInterview: "Reschedule Interview",
-  Level2Interview: "Level 2 Interview",
 };
+
+export const CheckboxContent = {
+  CheckboxContent: "I hereby agree to submit this request for approval.",
+  ApprovalCheckbox: "I hereby acknowledge that I have reviewed the job advertisement.",
+
+  UploadOnemDocument: "I hereby agree to post the advert on the portal.",
+
+  ReviewedCandidate: "I hereby acknowledge that I have reviewed the candidate details.",
+  InterviewPanel: "I hereby reviewed candidate details and assigning interview panel.",
+  RescheduleInterview: "I hereby acknowledge that I have reschedule the interview.",
+
+  ScorecardEntry: "I hereby acknowledge completion of the scorecard entry.",
+  HODscorecarddetails: "I hereby acknowledge that I have reviewed the candidate scorecard details."
+}
 
 export const ProfileStatus = {
   HR: "Pending with HR - Review Profile",
@@ -389,7 +405,7 @@ export const workflowStatusApi = {
 export const Notes = {
   Roleprofile: "Role Profile is not available for the Job Title.",
   Grding: "Grading Report is not available for the Job Title.",
-  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving or reverting this submission."
+  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving this submission."
 }
 // sneka
 export const CatogryOption = [

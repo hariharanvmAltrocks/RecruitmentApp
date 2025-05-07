@@ -70,15 +70,16 @@ interface fieldItems {
 }
 
 function CustomViewDocument({ Attachment, Label }: fieldItems) {
-  // function handleFileDownload(documentUrl: string) {
-  //   const link = document.createElement("a");
-  //   link.href = `${documentUrl}?web=1`;
-  //   link.target = "_blank";
-  //   link.rel = "noopener noreferrer";
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  // }
+  function handleFileDownload(documentUrl: string) {
+    const link = document.createElement("a");
+    link.href = `${documentUrl}?web=1`;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.open(documentUrl, "_blank");
+  }
 
   return (
     <>
@@ -98,27 +99,11 @@ function CustomViewDocument({ Attachment, Label }: fieldItems) {
                     style={{ marginRight: "1rem" }}
                   >
                     <Tooltip title={fileName} arrow>
-                      {/* <Link
-                      component="button"
-                      variant="body2"
-                      underline="hover"
-                      onClick={() => handleFileDownload(file.content)}
-                      style={{
-                        color: "blue",
-                        fontWeight: "bold",
-                        display: "inline-block",
-                        maxWidth: "100%",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {truncatedFileName}
-                    </Link> */}
                       <Link
                         href={`${file.content}?web=1`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => handleFileDownload(file.content)}
                         style={{
                           color: "blue",
                           fontWeight: "bold",

@@ -32,46 +32,71 @@ const InterviewPanelList = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
+
   function handleRedirectView(
     rowData: any,
     tab: string,
     TabName: string,
     ButtonAction: string
   ) {
-    if (tab !== "tab1") return;
+    let navigationPath =
+      rowData?.StatusId === StatusId.InterviewScheduled
+        ? props.CurrentRoleID === RoleID.HOD
+          ? "/RecurimentProcess/InterviewPanelList/InterviewPanelEdit"
+          : "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit"
+        : rowData.StatusId === StatusId.InterviewScheduledforLevel2
+        ? props.CurrentRoleID === RoleID.HOD
+          ? "/RecurimentProcess/HodViewScorecard"
+          : props.CurrentRoleID === RoleID.InterviewPanel
+          ? "/InterviewPanelList/HodViewScorecard"
+          : "/ReviewProfileList/HodViewScorecard"
+        : "";
 
-    const statusId = rowData?.StatusId;
-    const { CurrentRoleID } = props;
-
-    let navigationPath = "";
-
-    if (
-      statusId === StatusId.InterviewScheduled &&
-      (CurrentRoleID === RoleID.RecruitmentHR ||
-        CurrentRoleID === RoleID.LineManager ||
-        CurrentRoleID === RoleID.HOD)
-    ) {
-      navigationPath =
-        "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit";
-    } else if (
-      statusId === StatusId.InterviewScheduledforLevel2 &&
-      (CurrentRoleID === RoleID.HOD ||
-        CurrentRoleID === RoleID.LineManager ||
-        CurrentRoleID === RoleID.RecruitmentHR)
-    ) {
-      navigationPath = "/RecurimentProcess/HodViewScorecard";
-    }
-
-    if (navigationPath) {
+    if (props.CurrentRoleID === RoleID.RecruitmentHR) {
       props.navigation(navigationPath, {
         state: {
           ID: rowData?.ID,
           tab,
-          StatusId: statusId,
+          StatusId: rowData?.StatusId,
           Status: rowData?.Status,
-          TabName,
+          TabName: TabName,
           ButtonAction,
-          InterviewLevel: rowData?.InterviewLevel,
+          RecruitmentID: rowData?.RecruitmentID,
+        },
+      });
+    } else if (props.CurrentRoleID === RoleID.HOD) {
+      props.navigation(navigationPath, {
+        state: {
+          ID: rowData?.ID,
+          tab,
+          StatusId: rowData?.StatusId,
+          Status: rowData?.Status,
+          TabName: TabName,
+          ButtonAction,
+          RecruitmentID: rowData?.RecruitmentID,
+        },
+      });
+    } else if (props.CurrentRoleID === RoleID.LineManager) {
+      props.navigation(navigationPath, {
+        state: {
+          ID: rowData?.ID,
+          tab,
+          StatusId: rowData?.StatusId,
+          Status: rowData?.Status,
+          TabName: TabName,
+          ButtonAction,
+          RecruitmentID: rowData?.RecruitmentID,
+        },
+      });
+    } else {
+      props.navigation(navigationPath, {
+        state: {
+          ID: rowData?.ID,
+          tab,
+          StatusId: rowData?.StatusId,
+          Status: rowData?.Status,
+          TabName: TabName,
+          ButtonAction,
           RecruitmentID: rowData?.RecruitmentID,
         },
       });
@@ -153,11 +178,11 @@ const InterviewPanelList = (props: any) => {
       header: "Position Title",
       sortable: true,
     },
-    {
-      field: "JobGrade",
-      header: "JobGrade",
-      sortable: true,
-    },
+    // {
+    //   field: "JobGrade",
+    //   header: "JobGrade",
+    //   sortable: true,
+    // },
     { field: "InterviewLevel", header: "Interview Levels", sortable: true },
     { field: "Grade", header: "Grade", sortable: true },
     {
@@ -189,6 +214,7 @@ const InterviewPanelList = (props: any) => {
             if (!currentUserKey) {
               return;
             }
+            console.log("currentUserKey", currentUserKey);
             if (
               !interviewPanelResponse?.data ||
               interviewPanelResponse.data.length === 0
@@ -315,14 +341,27 @@ const InterviewPanelList = (props: any) => {
 
       let filterConditionsRecuritment = [];
       let RecuritmentConditions = "and";
+
+      let statusIdsToFilter: number[] = [];
+
+      if (props.CurrentRoleID === RoleID.InterviewPanel) {
+        statusIdsToFilter = [StatusId.InterviewScheduledforLevel2];
+      } else if (
+        props.CurrentRoleID === RoleID.HOD ||
+        props.CurrentRoleID === RoleID.RecruitmentHR
+      ) {
+        statusIdsToFilter = [
+          StatusId.InterviewScheduled,
+          StatusId.InterviewScheduledforLevel2,
+        ];
+      } else {
+        statusIdsToFilter = [StatusId.InterviewScheduled];
+      }
+
       filterConditionsRecuritment.push({
         FilterKey: "StatusId",
         Operator: "in",
-        FilterValue: [
-          StatusId.InterviewScheduled,
-          // StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
-          StatusId.InterviewScheduledforLevel2,
-        ],
+        FilterValue: statusIdsToFilter,
       });
       filterConditionsRecuritment.push({
         FilterKey: "ItemCreated",
@@ -430,7 +469,7 @@ const InterviewPanelList = (props: any) => {
 
   const tabs = [
     {
-      label: "Evaluation",
+      label: TabName.Evaluation,
       value: "tab1",
       content: (
         <Card

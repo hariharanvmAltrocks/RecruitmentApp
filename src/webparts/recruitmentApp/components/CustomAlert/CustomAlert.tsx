@@ -19,9 +19,13 @@ export default function CustomAlert(props: CustomAlert) {
   const footerContent = (
     <>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <p className="alertextstyle" style={SuccessPadding}>
-          {props.Message}
-        </p>
+        <p
+          className="alertextstyle"
+          style={SuccessPadding}
+          dangerouslySetInnerHTML={{
+            __html: props.Message,
+          }}
+        />
       </div>
 
       <div

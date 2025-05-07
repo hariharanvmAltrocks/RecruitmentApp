@@ -20,7 +20,7 @@ import {
 import BreadcrumbsComponent, {
   type TabNameData,
 } from "../../components/CustomBreadcrumps";
-import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
+import { alertPropsData } from "../../Models/Screens";
 import CandidateDataTable from "../../components/CandidateDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 
@@ -37,42 +37,6 @@ const CandidateList = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
-  const [positionData, setPositionData] = React.useState<AutoCompleteItem[]>(
-    []
-  );
-
-  const fetchPositionData = async () => {
-    setIsLoading(true);
-    const filterConditions = [
-      {
-        FilterKey: "JobCode",
-        Operator: "eq",
-        FilterValue: props.stateValue.JobCodeId,
-      },
-      {
-        FilterKey: "Department",
-        Operator: "eq",
-        FilterValue: props.stateValue.Department,
-      },
-      {
-        FilterKey: "PositionIDStatus",
-        Operator: "eq",
-        FilterValue: "Vacant",
-      },
-    ];
-    try {
-      const response = await InterviewServices.GetHRMSPositionDetails(
-        filterConditions,
-        "and"
-      );
-      setPositionData(response?.data || []);
-    } catch {
-      setPositionData([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
@@ -142,14 +106,11 @@ const CandidateList = (props: any) => {
       setIsLoading(false);
     }
   };
-
   React.useEffect(() => {
-    void fetchAllData();
-    if (props.stateValue.StatusId === StatusId.Selected) {
-      void fetchPositionData();
+    if (props?.stateValue?.JobCode && props?.stateValue?.ID) {
+      void fetchAllData();
     }
   }, [props?.stateValue?.JobCode, props?.stateValue?.ID]);
-
   const handleRedirectView = (
     rowData: any,
     tab: string,
@@ -167,9 +128,10 @@ const CandidateList = (props: any) => {
           PreviousTabName: previousTabName,
           TabName,
           ButtonAction,
-          positionData,
           InterviewLevel: rowData?.InterviewLevel,
           RecruitmentID: rowData?.RecruitmentID,
+          JobCodeId: props.stateValue.JobCodeId,
+          Department: props.stateValue.Department,
         },
       });
     }
@@ -185,10 +147,9 @@ const CandidateList = (props: any) => {
     { field: "ID", header: "Candidate ID", sortable: true },
     { field: "FullName", header: "Applicant Name", sortable: true },
     { field: "PositionTitle", header: "Position Title", sortable: true },
-    { field: "JobGrade", header: "Job Grade", sortable: true },
-    { field: "GPA", header: "GPA", sortable: true },
     { field: "InterviewLevel", header: "Interview Levels", sortable: true },
     { field: "Grade", header: "Grade", sortable: true },
+    { field: "GPA", header: "GPA", sortable: true },
     {
       field: "Status",
       header: "Status",
@@ -257,6 +218,7 @@ const CandidateList = (props: any) => {
   };
 
   const handleStatusChange = async (selectedCandidates: any[]) => {
+    setIsLoading(true);
     let updateSuccess = false;
 
     for (const candidate of selectedCandidates) {
@@ -304,6 +266,8 @@ const CandidateList = (props: any) => {
     } else {
       await fetchAllData();
     }
+
+    setIsLoading(false); // Stop loader
   };
 
   const tabs = [

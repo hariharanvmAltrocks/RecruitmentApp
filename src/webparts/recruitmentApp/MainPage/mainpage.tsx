@@ -136,6 +136,14 @@ export default function MainPage(props: any) {
                   path="/RecurimentProcess/HodViewScorecard"
                   element={<HodViewScorecard {...props} {...masterData} />}
                 />
+                <Route
+                  path="/ReviewProfileList/HodViewScorecard"
+                  element={<HodViewScorecard {...props} {...masterData} />}
+                />
+                <Route
+                  path="/InterviewPanelList/HodViewScorecard"
+                  element={<HodViewScorecard {...props} {...masterData} />}
+                />
                 {/* sneka */}
                 <Route
                   path="/ReviewProfileList/InterviewQuesEdit"

@@ -344,8 +344,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     if (field === "Disciplines") {
       try {
         if (
-          InterviewQuesData.Disciplines.text !== value?.text &&
-          InterviewQuesData.Disciplines.text !== ""
+          InterviewQuesData?.Disciplines?.text !== value?.text &&
+          InterviewQuesData?.Disciplines?.text !== ""
         ) {
           const WarningMsg = {
             Message: RecuritmentHRMsg.WarningMsg,
@@ -370,7 +370,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           setalertProps(WarningMsg);
           setIsLoading(false);
         }
-        const category = getMasterData.category.find(
+        const category = getMasterData?.category.find(
           (cat) => cat.text === InterviewQuesData.Catogry
         );
         const obj: getQuestionById = {
@@ -475,9 +475,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     } else {
       if (!ExpectedAnswer) errors.ExpectedAnswer = true;
     }
-    if (shouldValidateQuestionType && !Disqualification) {
-      errors.Disqualification = true;
+    if (
+      props?.stateValue?.StatusId ===
+      StatusId.PendingwithLMcreateDisqualificationQuestion
+    ) {
+      if (!Disqualification) errors.Disqualification = true;
     }
+
     setValidationError((prev) => ({ ...prev, ...errors }));
 
     return Object.keys(errors).length === 0;
@@ -885,7 +889,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   }, [resuequestionnaire]);
   // tabs
   const getFetchQuestion = () => {
-    if (InterviewQuesData.Disciplines.text) {
+    if (InterviewQuesData?.Disciplines?.text) {
       setViewQA(true);
     } else {
       const SelectedMag = {
@@ -2011,10 +2015,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           })) || [];
       } else {
         OptionsValue =
-          item.options?.map((opt) => ({
+          item.options?.map((opt, index) => ({
             optionEn: opt.text,
             optionFr: opt.text,
-            sequence: opt.key,
+            sequence: index + 1,
           })) || [];
 
         OptionsValue = [
@@ -2190,58 +2194,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               onBreadcrumbChange={handleBreadcrumbChange}
               handleCancel={handleCancel}
               additionalButtons={[
-                // // {
-                // //   label: "Close",
-                // //   onClick: async () => {
-                // //     props.navigation("/ReviewProfileList", {
-                // //       state: { activeTab: "tab2" },
-                // //     });
-                // //   },
-                // // },/
-                // // {
-                // //   label: "Cancel",
-                // //   onClick: () => {
-                // //     const ClearWarning = {
-                // //       Message: RecuritmentHRMsg.ClearWarning,
-                // //       Type: HRMSAlertOptions.Confirmation,
-                // //       visible: true,
-                // //       ButtonAction: async (userClickedOK: boolean) => {
-                // //         if (userClickedOK) {
-                // //           setAlertPopupOpen(false);
-                // //           props.navigation("/ReviewProfileList", {
-                // //             state: { activeTab: "tab2" },
-                // //           });
-                // //         } else {
-                // //           setAlertPopupOpen(false);
-                // //         }
-                // //       },
-                // //     };
-
-                // //     setalertProps(ClearWarning);
-                // //     setAlertPopupOpen(true);
-                // //   },
-                // // },
-                //  {
-                //   label: "Cancel",
-                //   onClick: () => {
-                //     const ClearWarning = {
-                //       Message: RecuritmentHRMsg.ClearWarning,
-                //       Type: HRMSAlertOptions.Confirmation,
-                //       visible: true,
-                //       ButtonAction: async (userClickedOK: boolean) => {
-                //         if (userClickedOK) {
-                //           setAlertPopupOpen(false);
-                //           props.navigation("/ReviewProfileList", {
-                //             state: { activeTab: "tab2" },
-                //           });
-                //         } else {
-                //           setAlertPopupOpen(false);
-                //         }
-                //       },
-                //     };
-
-                //     setalertProps(ClearWarning);
-                //     setAlertPopupOpen(true);
+                // {
+                //   label: "Close",
+                //   onClick: async () => {
+                //     props.navigation("/ReviewProfileList", {
+                //       state: { activeTab: "tab2" },
+                //     });
                 //   },
                 // },
                 ...(resuequestionnaire.length > 0
@@ -2282,7 +2240,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             header={
               <div className="ms-Grid-row" style={{ textAlign: "center" }}>
                 <LabelHeaderComponents
-                  value={"Disciplines" + InterviewQuesData?.Disciplines.text}
+                  value={
+                    "Disciplines  - " + InterviewQuesData?.Disciplines.text
+                  }
                 />
               </div>
             }
