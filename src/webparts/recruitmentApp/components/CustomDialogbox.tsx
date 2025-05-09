@@ -5,7 +5,7 @@ interface DynamicFormDialogProps {
   onClose: () => void;
   children?: React.ReactNode;
   visible: boolean;
-  header: React.ReactNode;
+  header?: React.ReactNode;
   footer?: React.ReactNode;
   width?: string;
   Style?: React.CSSProperties;

@@ -13,12 +13,14 @@ import CustomLabel from "./CustomLabel";
 import { getVRRDetails } from "../Services/ServiceExport";
 import SPServices from "../Services/SPService/SPServices";
 import CustomLoader from "../Services/Loader/CustomLoader";
+import LabelHeaderComponents from "./TitleHeader";
 
 interface AssignPositionDialogProps {
   RecuritmentData: DataSyncToRecruitmentResponse;
   onClose: () => void;
   ModelDropDown: any;
   AlertpopupSuccess: (message: string) => void;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export type DateState = {
   StartDate: Date | undefined;
@@ -29,6 +31,7 @@ export const DateExtension = ({
   onClose,
   ModelDropDown,
   AlertpopupSuccess,
+  setIsLoading,
 }: AssignPositionDialogProps) => {
   const todaydate = new Date();
   const [Level1Date, setLevel1Date] = React.useState<DateState>({
@@ -88,12 +91,12 @@ export const DateExtension = ({
       if (RecuritmentData?.JobPostingFirstExtensionEndDate) {
         setAdvertDuration3(true);
         let ThiredEndDate: Date = calculateValidTo(
-          RecuritmentData?.JobPostingSecondExtensionEndDate,
+          RecuritmentData?.JobPostingFirstExtensionEndDate,
           14
         );
         setLevel3Date((prevState) => ({
           ...prevState,
-          StartDate: RecuritmentData?.JobPostingSecondExtensionEndDate,
+          StartDate: RecuritmentData?.JobPostingStartDate,
           EndDate: ThiredEndDate,
         }));
       } else {
@@ -119,6 +122,8 @@ export const DateExtension = ({
   };
 
   async function DataExtension() {
+    onClose();
+    setIsLoading(true);
     const filterConditions = [
       {
         FilterKey: "JobCode",
@@ -168,142 +173,150 @@ export const DateExtension = ({
     } else {
       AlertpopupSuccess(HRMSAlertOptions.Error);
     }
+    setIsLoading(false);
   }
 
   return (
     <>
       <CustomLoader isLoading={false}>
         <React.Fragment>
-          <div className="ms-Grid-col ms-lg12" style={{ marginLeft: "4%" }}>
-            <div
-              className="ms-Grid-row"
-              style={{ display: "flex", marginTop: "8px" }}
-            >
+          <div>
+            <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+              <LabelHeaderComponents value={"Advertisement Extension"} />
+            </div>
+            <div className="ms-Grid-col ms-lg12">
               <div
-                className="ms-Grid-col ms-lg12"
-                style={{ textAlign: "center" }}
+                className="ms-Grid-row"
+                style={{ display: "flex", marginTop: "8px" }}
               >
-                <CustomLabel
-                  value={`JobTitle - ${RecuritmentData?.JobTitleEnglish}`}
-                  style={{ fontSize: "17px", fontWeight: "bold" }}
-                />
-              </div>
-            </div>
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg4">
-                <Labelheader value={"Advert Duration -1"} />
-              </div>
-            </div>
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg4">
-                <CustomDatePicker
-                  selectedDate={Level1Date.StartDate}
-                  label="Start Date"
-                  error={false}
-                  minDate={todaydate}
-                  disabled={true}
-                  onChange={(date) => handleDateChange(date, "ValidFrom")}
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg4">
-                <CustomDatePicker
-                  selectedDate={Level1Date.EndDate}
-                  label="End Date"
-                  error={false}
-                  disabled={true}
-                  mandatory={false}
-                  onChange={(date) => handleDateChange(date, "ValidTo")}
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg4"></div>
-            </div>
-            <div className="ms-Grid-row">
-              <Labelheader value={"Advert Duration -2"} />
-            </div>
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg4">
-                <CustomDatePicker
-                  selectedDate={Level1Date.StartDate}
-                  label="Start Date"
-                  error={false}
-                  minDate={todaydate}
-                  disabled={true}
-                  onChange={(date) => handleDateChange(date, "ValidFrom")}
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg4">
-                <CustomDatePicker
-                  selectedDate={Level2Date.EndDate}
-                  label="End Date"
-                  error={false}
-                  disabled={true}
-                  mandatory={false}
-                  onChange={(date) => handleDateChange(date, "ValidTo")}
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg4"></div>
-            </div>
-            {AdvertDuration3 && (
-              <>
-                <div className="ms-Grid-row">
-                  <Labelheader value={"Advert Duration -3"} />
+                <div
+                  className="ms-Grid-col ms-lg12"
+                  style={{ textAlign: "center" }}
+                >
+                  <CustomLabel
+                    value={`JobTitle - ${RecuritmentData?.JobTitleEnglish}`}
+                    style={{ fontSize: "17px", fontWeight: "bold" }}
+                  />
                 </div>
-                <div className="ms-Grid-row">
-                  <div className="ms-Grid-col ms-lg4">
-                    <CustomDatePicker
-                      selectedDate={Level1Date.StartDate}
-                      label="Start Date"
-                      error={false}
-                      minDate={todaydate}
-                      disabled={true}
-                      onChange={(date) => handleDateChange(date, "ValidFrom")}
-                    />
+              </div>
+              <div>
+                <div className="ms-Grid-row" style={{ marginLeft: "9%" }}>
+                  <Labelheader value={"Advert Duration -1"} />
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomDatePicker
+                        selectedDate={Level1Date.StartDate}
+                        label="Start Date"
+                        error={false}
+                        minDate={todaydate}
+                        disabled={true}
+                        onChange={(date) => handleDateChange(date, "ValidFrom")}
+                      />
+                    </div>
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomDatePicker
+                        selectedDate={Level1Date.EndDate}
+                        label="End Date"
+                        error={false}
+                        disabled={true}
+                        mandatory={false}
+                        onChange={(date) => handleDateChange(date, "ValidTo")}
+                      />
+                    </div>
                   </div>
-                  <div className="ms-Grid-col ms-lg4">
-                    <CustomDatePicker
-                      selectedDate={Level3Date.EndDate}
-                      label="End Date"
-                      error={false}
-                      disabled={true}
-                      mandatory={false}
-                      onChange={(date) => handleDateChange(date, "ValidTo")}
-                    />
-                  </div>
-                  <div className="ms-Grid-col ms-lg4"></div>
                 </div>
-              </>
-            )}
+                <div className="ms-Grid-row" style={{ marginLeft: "9%" }}>
+                  <Labelheader value={"Advert Duration -2"} />
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomDatePicker
+                        selectedDate={Level1Date.StartDate}
+                        label="Start Date"
+                        error={false}
+                        minDate={todaydate}
+                        disabled={true}
+                        onChange={(date) => handleDateChange(date, "ValidFrom")}
+                      />
+                    </div>
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomDatePicker
+                        selectedDate={Level2Date.EndDate}
+                        label="End Date"
+                        error={false}
+                        disabled={true}
+                        mandatory={false}
+                        onChange={(date) => handleDateChange(date, "ValidTo")}
+                      />
+                    </div>
+                  </div>
+                </div>
 
-            <div
-              className="ms-Grid-row"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                padding: "10px 0",
-                gap: "33px",
-              }}
-            >
-              <ReuseButton
-                label="Close"
-                onClick={() => onClose()}
-                Style={{
-                  backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                  color: "white",
-                  width: "50%",
-                }}
-              />
+                {AdvertDuration3 && (
+                  <>
+                    <div className="ms-Grid-row" style={{ marginLeft: "9%" }}>
+                      <Labelheader value={"Advert Duration -3"} />
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomDatePicker
+                            selectedDate={Level1Date.StartDate}
+                            label="Start Date"
+                            error={false}
+                            minDate={todaydate}
+                            disabled={true}
+                            onChange={(date) =>
+                              handleDateChange(date, "ValidFrom")
+                            }
+                          />
+                        </div>
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomDatePicker
+                            selectedDate={Level3Date.EndDate}
+                            label="End Date"
+                            error={false}
+                            disabled={true}
+                            mandatory={false}
+                            onChange={(date) =>
+                              handleDateChange(date, "ValidTo")
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
 
-              <ReuseButton
-                label="Submit"
-                onClick={async () => {
-                  await DataExtension();
+              <div
+                className="ms-Grid-row"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: "10px 0",
+                  gap: "33px",
                 }}
-                Style={{
-                  backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                  color: "white",
-                  width: "50%",
-                }}
-              />
+              >
+                <ReuseButton
+                  label="Close"
+                  onClick={() => onClose()}
+                  Style={{
+                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                    color: "white",
+                    width: "50%",
+                  }}
+                />
+
+                <ReuseButton
+                  label="Submit"
+                  onClick={async () => {
+                    await DataExtension();
+                  }}
+                  Style={{
+                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                    color: "white",
+                    width: "50%",
+                  }}
+                />
+              </div>
             </div>
           </div>
         </React.Fragment>

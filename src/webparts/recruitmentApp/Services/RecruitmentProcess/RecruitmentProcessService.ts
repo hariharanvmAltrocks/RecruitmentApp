@@ -133,7 +133,9 @@ export default class RecruitmentService implements IRecruitmentService {
               JobPostingStartDate: undefined,
               JobPostingEndDate: undefined,
               JobPostingFirstExtensionEndDate: undefined,
-              JobPostingSecondExtensionEndDate: undefined
+              JobPostingSecondExtensionEndDate: undefined,
+
+              AssignEMail: ""
             };
             return item;
           })
@@ -275,7 +277,9 @@ export default class RecruitmentService implements IRecruitmentService {
               JobPostingStartDate: undefined,
               JobPostingEndDate: undefined,
               JobPostingFirstExtensionEndDate: undefined,
-              JobPostingSecondExtensionEndDate: undefined
+              JobPostingSecondExtensionEndDate: undefined,
+
+              AssignEMail: ""
             };
             return NPData;
           })
@@ -551,7 +555,7 @@ export default class RecruitmentService implements IRecruitmentService {
     try {
       const res = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentDptDetails,
-        Select: `*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,BusinessUnitCode/BusineesUnitCode,AssignedHR/Title`,
+        Select: `*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,BusinessUnitCode/BusineesUnitCode,AssignedHR/Title,AssignedHR/EMail`,
         Filter: filterParam,
         FilterCondition: filterConditions,
         Expand: `Department,SubDepartment,Section,DepartmentCode,Status,Action,JobCode,BusinessUnitCode, AssignedHR`,
@@ -615,9 +619,12 @@ export default class RecruitmentService implements IRecruitmentService {
               JobPostingStartDate: item?.JobPostingStartDate || undefined,
               JobPostingEndDate: item?.JobPostingEndDate || undefined,
               JobPostingFirstExtensionEndDate: item?.JobPostingFirstExtensionEndDate || undefined,
-              JobPostingSecondExtensionEndDate: item?.JobPostingSecondExtensionEndDate || undefined
+              JobPostingSecondExtensionEndDate: item?.JobPostingSecondExtensionEndDate || undefined,
+
+              AssignEMail: item?.AssignedHR?.EMail
             };
             return Recruitment;
+
           })
         );
         const ids = GridResult.map((item) => item.ID).filter((id => id));

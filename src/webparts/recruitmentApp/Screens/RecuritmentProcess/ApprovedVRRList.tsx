@@ -35,7 +35,6 @@ import { alertPropsData } from "../../Models/Screens";
 import { jobsXAgents, profileXagent } from "../../Models/ApIInterface";
 import CustomDialogbox from "../../components/CustomDialogbox";
 import { DateExtension } from "../../components/DateExtension";
-import LabelHeaderComponents from "../../components/TitleHeader";
 import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
 import {
   AssignHRData,
@@ -551,7 +550,7 @@ const RecruitmentProcess = (props: any) => {
               Operator: "eq",
               FilterValue: Choices.No,
             });
-          } else if (activeTab === "tab2") {
+          } else if (activeTab === "tab2" || activeTab === "tab3") {
             filterConditionsRecuritment.push({
               FilterKey: "StatusId",
               Operator: "eq",
@@ -617,6 +616,8 @@ const RecruitmentProcess = (props: any) => {
 
     void fetchDataAndGetADGroupsOption();
   }, [activeTab]);
+
+  React.useEffect(() => {}, [isLoading]);
 
   const onPageChange = (event: any, Type: string) => {
     // setFirst(event.first);
@@ -1540,14 +1541,10 @@ const RecruitmentProcess = (props: any) => {
                 onClose={() => setDatePopup(false)}
                 ModelDropDown={props}
                 AlertpopupSuccess={() => AlertpopupSuccess()}
+                setIsLoading={setIsLoading}
               />
             }
             onClose={() => setDatePopup(false)}
-            header={
-              <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                <LabelHeaderComponents value={"Advertisement Extension"} />
-              </div>
-            }
           />
         </>
       )}

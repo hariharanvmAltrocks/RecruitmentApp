@@ -195,7 +195,8 @@ export const RecuritmentHRMsg = {
   SingleAgencyMsg: "Agencies Assigned for the Selected Job Title.",
 
   InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
-  InterviewPanalLevel2: "Interview Panel  Level 2 Assigned Successfully.",
+  InterviewPanalLevel1: "Interview Panel members for Level 1 have been Assigned Successfully.",
+  InterviewPanalLevel2: "Interview Panel members for Level 2 have been Assigned Successfully.",
 
   RescheduleSuccessMsg: "Interview Rescheduled Successfully.",
   AdvertExtendsionSuccessMsg: "Advertisement Extension Submitted Successfully.",

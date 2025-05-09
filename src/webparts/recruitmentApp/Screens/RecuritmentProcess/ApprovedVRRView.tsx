@@ -681,7 +681,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     >
                       <div>
                         <CustomLabel
-                          value={"View Advertisement"}
+                          value={"View Job Advertisement"}
                           // mandatory={true}
                         />
                         <ReuseButton

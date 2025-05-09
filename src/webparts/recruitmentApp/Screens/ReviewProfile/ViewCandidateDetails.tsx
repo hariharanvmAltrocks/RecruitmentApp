@@ -18,7 +18,6 @@ import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
 import {
-  ADGroupID,
   CandidateStatus,
   CheckboxContent,
   ColorCode,
@@ -388,7 +387,10 @@ const ViewCandidateDetails = (props: any) => {
 
     setSubmitBtn(
       props.stateValue?.initialTab === TabName.AssignInterviewPanel
-        ? "Schedule for Interview "
+        ? props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2 ||
+          props.stateValue?.StatusId === StatusId.InterviewScheduled
+          ? "Reschedule"
+          : "Schedule for Interview "
         : "Submit"
     );
     const newTabNames = [
@@ -408,6 +410,23 @@ const ViewCandidateDetails = (props: any) => {
         : false
     );
   }, []);
+
+  const Get_InterviewPanelName = (Email: string) => {
+    const employee = props.EmployeeList.find((emp: any) => {
+      return emp.Email?.toLowerCase() === Email?.toLowerCase();
+    });
+
+    if (employee) {
+      return {
+        key: employee.key, // or whatever the unique ID is
+        text: `${employee.FirstName || ""} ${employee.MiddleName || ""} ${
+          employee.LastName || ""
+        }`, // or employee.DisplayName
+      };
+    }
+
+    return null;
+  };
 
   React.useEffect(() => {
     const getRecurtimentList = async () => {
@@ -442,22 +461,43 @@ const ViewCandidateDetails = (props: any) => {
         "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
         "BUC,LineManager,HOD,HR,EXCO"
       );
-      const interviewpanelOption = await CommonServices.GetADgruopsEmailIDs(
-        ADGroupID.HRMSInterviewPanel
+      // const interviewpanelOption = await CommonServices.GetADgruopsEmailIDs(
+      //   ADGroupID.HRMSInterviewPanel
+      // );
+      const LineManager = Get_InterviewPanelName(
+        AssignInterviewPanel.data[0]?.LineManager?.EMail
       );
-      const Level1Value = interviewpanelOption.data.filter((item: any) =>
+      const HOD = Get_InterviewPanelName(
+        AssignInterviewPanel.data[0]?.HOD?.EMail
+      );
+      const AssignHR = Get_InterviewPanelName(response.data[0]?.AssignEMail);
+      const EXCO = Get_InterviewPanelName(
+        AssignInterviewPanel.data[0]?.EXCO?.EMail
+      );
+
+      const validPanelKeys: AutoCompleteItem[] = [
+        LineManager,
+        HOD,
+        AssignHR,
+        EXCO,
+      ].filter(Boolean) as AutoCompleteItem[];
+
+      // const Level1Value = validPanelKeys.filter((item: any) =>
+      //   validPanelKeys.includes(item.key)
+      // );
+      const Level1Value = validPanelKeys.filter((item: any) =>
         [
-          AssignInterviewPanel.data[0]?.LineManagerId,
-          response.data[0]?.AssignedHRId,
-          AssignInterviewPanel.data[0]?.HODId,
+          LineManager?.key, //AssignInterviewPanel.data[0]?.LineManagerId,
+          AssignHR?.key, //response.data[0]?.AssignedHRId,
+          HOD?.key, //AssignInterviewPanel.data[0]?.HODId,
         ].includes(item.key)
       );
 
-      const Level2Value = interviewpanelOption.data.filter((item: any) =>
+      const Level2Value = validPanelKeys.filter((item: any) =>
         [
-          response.data[0]?.AssignedHRId,
-          AssignInterviewPanel.data[0]?.HODId,
-          AssignInterviewPanel.data[0]?.EXCOId,
+          EXCO?.key, //AssignInterviewPanel.data[0]?.LineManagerId,
+          AssignHR?.key, //response.data[0]?.AssignedHRId,
+          HOD?.key, //AssignInterviewPanel.data[0]?.HODId,
         ].includes(item.key)
       );
 
@@ -465,7 +505,7 @@ const ViewCandidateDetails = (props: any) => {
         ...prevState,
         Grade: response.data[0]?.PatersonGrade,
         Levels: Gradelevel.data[0]?.Level,
-        AssignInterviewedLevel1Option: interviewpanelOption.data,
+        AssignInterviewedLevel1Option: validPanelKeys,
         AssignInterviewLevel1: Level1Value,
         AssignInterviewedLevel2: Level2Value,
       }));
@@ -1483,7 +1523,10 @@ const ViewCandidateDetails = (props: any) => {
         } else {
           if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
             CandidateData = createFilter(workflowStatusApi.InterviewScheduled);
-            PopupMessage = RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
+            PopupMessage =
+              InterviewedLevel.Levels === InterviewLevels.Level2
+                ? RecuritmentHRMsg.InterviewPanalLevel1
+                : RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
           } else {
             CandidateData = createFilter(
               workflowStatusApi.LineManagerL1Pending

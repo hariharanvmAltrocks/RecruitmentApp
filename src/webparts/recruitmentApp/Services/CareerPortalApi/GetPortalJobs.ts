@@ -479,13 +479,22 @@ export default class GetPortalJobs implements IGetPortalJobs {
       const response = await QuestionnaireApi.GetQuestionaireByScope(GetExistingQuestion);
       const GetQuestionnaire: ViewQuestion[] = response.data.data.map((item: any, index: number) => {
         const incrementedIndex = index + 1;
-        let options = item?.question?.questionXAnswers?.map((item: any) => {
+
+        const question = item?.question?.quesContent?.contentEn;
+        const expectedAnswer = item?.question?.questionXAnswers?.[0]?.optContent?.contentEn ?? "";
+
+        if (!question || !expectedAnswer) {
+          return null;
+        }
+
+        let options = item?.question?.questionXOptions.map((item: any) => {
           return {
-            key: item?.sequence,
+            key: item?.questionId,
             text: item?.optContent?.contentEn,
             isCorrect: false,
           };
         });
+
         let CareerportalAnswer = item?.question?.questionXAnswers?.map((item: any, index: number) => {
           return {
             key: index,
@@ -493,6 +502,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
             isCorrect: false,
           };
         });
+
         return {
           id: incrementedIndex,
           Checked: false,
@@ -500,14 +510,16 @@ export default class GetPortalJobs implements IGetPortalJobs {
           HeaderLabel: "Question" + incrementedIndex,
           discipline: item?.question?.scopeId,
           questionType: item?.question?.questionTypeId,
-          question: item?.question?.quesContent?.contentEn,
-          expectedAnswer: item?.question?.questionXAnswers?.[0]?.optContent?.contentEn ?? "",
+          question: question,
+          expectedAnswer: expectedAnswer,
           CareerportalAnswer: CareerportalAnswer,
           options: options,
           Disqualification: item?.question?.isQualifier,
           Type: DataType.Existing,
         };
-      });
+      }).filter((item: null) => item !== null);
+
+
       console.log(response, "GetAllMasterData");
       return {
         data: GetQuestionnaire,
