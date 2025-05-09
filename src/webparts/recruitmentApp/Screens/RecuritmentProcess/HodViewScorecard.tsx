@@ -42,6 +42,7 @@ import CommentView from "./CommentView";
 import {
   ActionUpdate,
   AssignPositionID,
+  CandidateLevel2ScoreCardComments,
   CommentsDatas,
 } from "../../Services/InterviewProcess/IInterviewProcessService";
 import "../../App.css";
@@ -76,6 +77,7 @@ type InterviewedLevelValue = {
   Levels: string;
   Grade: string;
 };
+
 const HodViewScorecard = (props: any) => {
   const todaydate = new Date();
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
@@ -133,9 +135,10 @@ const HodViewScorecard = (props: any) => {
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
   const [MainComponent, setMainComponent] = React.useState<boolean>(true);
-  const [CommentData, setCommentsData] = React.useState<
-    CommentsDatas[] | undefined
-  >();
+  const [CommentData, setCommentsData] = React.useState({
+    level1: [] as CommentsDatas[],
+    level2: [] as CandidateLevel2ScoreCardComments[],
+  });
   const [validationErrors, setValidationError] =
     React.useState<ValidationError>({
       Comments: false,
@@ -258,7 +261,7 @@ const HodViewScorecard = (props: any) => {
       });
   };
 
-  const transformScoreData = (rawData: any[]) => {
+  const transformScoreData = (rawData: any[], GPA?: number | string) => {
     const criteria = [
       { field: "RelevantQualification", label: "Qualification (Relevant)" },
       { field: "ReleventExperience", label: "Experience (Relevant)" },
@@ -316,11 +319,22 @@ const HodViewScorecard = (props: any) => {
     });
 
     transformed.push(totalRow);
+    if (GPA !== undefined && GPA !== null) {
+      const gpaRow: any = { criteria: "GPA", total: "" };
+      const totalCols = rawData.length;
+      for (let i = 1; i <= totalCols; i++) {
+        gpaRow[`interviewer_${i}`] = "";
+      }
 
+      const centerIndex = Math.ceil(totalCols / 2);
+      gpaRow[`interviewer_${centerIndex}`] = GPA;
+
+      transformed.push(gpaRow);
+    }
     return transformed;
   };
-
-  const transformedData = transformScoreData(scoreData);
+  const GPA: any = props?.stateValue?.GPA;
+  const transformedData = transformScoreData(scoreData, GPA);
 
   const handleInputChangeTextArea = (
     value: string | any,
@@ -396,37 +410,78 @@ const HodViewScorecard = (props: any) => {
     setIsLoading(false);
   };
 
-  const OpenComments = () => {
-    setMainComponent(false);
-    let filterConditions = [
-      {
-        FilterKey: "CandidateID/Id",
-        Operator: "eq",
-        FilterValue: candidateID,
-      },
-    ];
-    let Conditions = "";
+  const OpenComments = async () => {
+    try {
+      setMainComponent(false);
 
-    InterviewServices.getInterviewPanelDetails(
-      filterConditions,
-      Conditions,
-      candidateID,
-      props.EmployeeList
-    )
-      .then((CommentsList) => {
-        if (CommentsList?.status === 200) {
-          const candidateData = CommentsList?.data.filter(
-            (candidate: any) => candidate.CandidateID === candidateID
-          );
-          setCommentsData(candidateData);
-        } else {
-          setCommentsData([]);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        setCommentsData([]);
+      // Define the filter conditions for fetching Level 1 Comments
+      let filterConditions = [
+        {
+          FilterKey: "CandidateID/Id",
+          Operator: "eq",
+          FilterValue: candidateID,
+        },
+      ];
+      let Conditions = "";
+
+      // Fetch Level 1 Comments
+      const level1Response = await InterviewServices.getInterviewPanelDetails(
+        filterConditions,
+        Conditions,
+        candidateID,
+        props.EmployeeList
+      );
+      let level1Comments: any[] = [];
+      if (level1Response?.status === 200) {
+        level1Comments = level1Response.data.filter(
+          (item: any) => item.CandidateID === candidateID
+        );
+      }
+
+      // Fetch Level 2 Comments
+      const level2Response =
+        await InterviewServices.getCandidateLevel2ScoreCarddata(
+          Conditions,
+          filterConditions,
+          candidateID,
+          props.EmployeeList
+        );
+
+      let level2Comments: any[] = [];
+      if (level2Response?.status === 200) {
+        level2Comments = level2Response.data
+          .filter((item: any) => item.CandidateID === candidateID)
+          .map((item: any) => ({
+            candidateID: item.CandidateID,
+            Role: item.RoleTitle,
+            Name: item.CandidateName,
+            Comments: item.Comments,
+            Level: item.Level,
+            PanelEmail: item.PanelEmail,
+            PanelFullName: item.PanelFullName,
+            JobTitle: item.JobTitle,
+            JobTitleInFrench: item.JobTitleInFrench, // Ensure this field is included
+            JobTitleInEnglish: item.JobTitleInEnglish, // Ensure this field is included
+            Department: item.Department,
+            CreatedDate: item.CreatedDate ? new Date(item.CreatedDate) : null,
+            Date: item.CreatedDate ? new Date(item.CreatedDate) : null, // If `Date` needs to be mapped as well
+          }));
+      }
+
+      console.log("Level 2 Comments:", level2Comments);
+
+      // Set the comments data state
+      setCommentsData({
+        level1: level1Comments,
+        level2: level2Comments,
       });
+    } catch (error) {
+      console.error("Error in OpenComments:", error);
+      setCommentsData({
+        level1: [],
+        level2: [],
+      });
+    }
   };
 
   const handleRadioChange = (value: string) => {
@@ -623,20 +678,7 @@ const HodViewScorecard = (props: any) => {
                       </LabelHeaderComponents>
                     </div>
                   </div>
-                  <div className="ms-Grid-col ms-lg4">
-                    <CustomInput
-                      label="Candidate ID"
-                      value={CandidateData.CandidateID}
-                      disabled={true}
-                      mandatory={false}
-                      onChange={(value) =>
-                        setCandidateData((prevState) => ({
-                          ...prevState,
-                          TotalYearOfExperiance: value,
-                        }))
-                      }
-                    />
-                  </div>
+
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Applicant Name"
@@ -665,10 +707,6 @@ const HodViewScorecard = (props: any) => {
                       }
                     />
                   </div>
-                </div>
-
-                <div className="ms-Grid-row">
-                  {" "}
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Gender"
@@ -682,7 +720,10 @@ const HodViewScorecard = (props: any) => {
                         }))
                       }
                     />
-                  </div>{" "}
+                  </div>
+                </div>
+
+                <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Highest Relevant Qualification"
@@ -725,6 +766,8 @@ const HodViewScorecard = (props: any) => {
                       }
                     />
                   </div>
+                </div>
+                <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Date of Interview"
@@ -753,8 +796,6 @@ const HodViewScorecard = (props: any) => {
                       mandatory={false}
                     />
                   </div>
-                </div>
-                <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
                       label="Grade"
@@ -763,6 +804,9 @@ const HodViewScorecard = (props: any) => {
                       mandatory={false}
                     />
                   </div>
+                </div>
+
+                <div className="ms-Grid-row">
                   <div
                     className="ms-Grid-col ms-lg4"
                     style={{ position: "relative", top: "14px" }}
@@ -782,7 +826,6 @@ const HodViewScorecard = (props: any) => {
                         flexWrap: "wrap",
                         gap: "8px",
                         minHeight: "38px",
-                        // border: "none",
                         background: "none",
                         backgroundColor: "rgb(243, 242, 241)",
                         padding: "8px",
@@ -795,11 +838,14 @@ const HodViewScorecard = (props: any) => {
                         ? interviewPanelTitles.map((title, index) => (
                             <Chip
                               key={index}
-                              label={title}
+                              label={`${index + 1}. ${title}`}
                               size="small"
                               sx={{
                                 backgroundColor: "rgb(243, 242, 241)",
                                 fontWeight: 500,
+                                color: "rgb(85, 82, 79)",
+                                cursor: "not-allowed",
+                                // opacity: 0.6,
                               }}
                             />
                           ))
@@ -1216,10 +1262,18 @@ const HodViewScorecard = (props: any) => {
                       </div>
                     </div>
                   )}
+
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg12">
                     <CustomTextArea
-                      label="Feedback"
+                      label={
+                        props?.stateValue?.StatusId ===
+                          StatusId.PendingwithHODtoselectthecandidateLevel2 ||
+                        props?.stateValue?.StatusId ===
+                          StatusId.PendingwithHODtoAssignPositionID
+                          ? "Feedback - Level 2"
+                          : "Feedback - Level 1"
+                      }
                       value={CandidateData.Comments}
                       error={validationErrors.Comments}
                       onChange={(value) =>
@@ -1600,8 +1654,6 @@ const HodViewScorecard = (props: any) => {
           RequestJSON: { PositionIDStatus: "Recruitment InProgress" },
           ID: selectedPosition.ID,
         });
-      } else {
-        console.error("Failed to assign position");
       }
     } catch (error) {
       console.error("Error in handleAssignPosition:", error);
@@ -1753,7 +1805,6 @@ const HodViewScorecard = (props: any) => {
   };
 
   const Submit_fn = async (Action: string) => {
-    // debugger
     const isValid = !Validation();
     if (!isValid) {
       console.error("Validation failed");
@@ -1915,8 +1966,6 @@ const HodViewScorecard = (props: any) => {
             }
           },
         });
-      } else {
-        console.error("Failed to submit candidate action");
       }
     } catch (error) {
       console.error("Error in Submit_fn:", error);
@@ -1994,7 +2043,8 @@ const HodViewScorecard = (props: any) => {
               setMainComponent(true);
               setactiveTab(activeTab);
             }}
-            comments={CommentData}
+            level1={CommentData.level1}
+            level2={CommentData.level2}
           />
         </>
       )}

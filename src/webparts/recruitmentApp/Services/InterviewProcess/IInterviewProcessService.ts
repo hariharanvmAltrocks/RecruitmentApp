@@ -67,6 +67,7 @@ export type ScoreCard = {
 };
 
 export type Employee = {
+  JobTitleInEnglish: string;
   FirstName: string;
   MiddleName?: string;
   LastName: string;
@@ -161,6 +162,20 @@ export interface CandidateComment {
   Comments: string;
   Level: string;
 }
+export interface CandidateLevel2ScoreCardComments{
+  ID: number;
+  CandidateID: number;
+  CandidateName: string;
+  RoleId: number;
+  RoleTitle: string;
+  Comments: string;
+  Level: string;
+  JobTitleInEnglish: string;
+  JobTitleInFrench: string;
+  Department: string;
+  Date: Date | null;
+  PanelFullName:string
+}
 export type IInterviewProcessService = {
   GetInterviewPanelDetails(
     filterConditions: any[]
@@ -213,4 +228,11 @@ export type IInterviewProcessService = {
  getCandidateLevel1ScoreCard(
     filterConditions: any,
   ): Promise<ApiResponse<CandidateComment[]>>
+
+   getCandidateLevel2ScoreCarddata(
+      filterParam: any,
+      filterConditions: any,
+      candidateID: number,
+      EmployeeList: any[]
+    ): Promise<ApiResponse<CandidateLevel2ScoreCardComments[]>> 
 };

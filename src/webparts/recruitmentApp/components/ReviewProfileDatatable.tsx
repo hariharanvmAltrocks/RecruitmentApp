@@ -139,6 +139,8 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             stripedRows
             scrollable
+            scrollHeight="400px"
+            paginatorDropdownAppendTo="self"
             filters={dashboardSearch}
             onFilter={(e) => setFilteredItems(e.filteredValue || data)}
             style={{ overflow: "hidden" }}

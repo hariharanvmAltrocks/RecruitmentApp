@@ -942,20 +942,6 @@ const InterviewPanelEdit = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Candidate ID"
-                    value={CandidateData.CandidateID}
-                    disabled={true}
-                    mandatory={false}
-                    onChange={(value) =>
-                      setCandidateData((prevState) => ({
-                        ...prevState,
-                        TotalYearOfExperiance: value,
-                      }))
-                    }
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg4">
-                  <CustomInput
                     label="Applicant Name"
                     value={CandidateData.FullName}
                     disabled={true}
@@ -982,9 +968,6 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
-              </div>
-
-              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Gender"
@@ -999,6 +982,9 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
+              </div>
+
+              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Highest Relevant Qualification"
@@ -1027,8 +1013,6 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
-              </div>
-              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Experiance in Related Field (Years)"
@@ -1043,6 +1027,8 @@ const InterviewPanelEdit = (props: any) => {
                     }
                   />
                 </div>
+              </div>
+              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Date of Interview"
@@ -1071,8 +1057,6 @@ const InterviewPanelEdit = (props: any) => {
                     mandatory={false}
                   />
                 </div>
-              </div>
-              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
                     label="Grade"
@@ -1081,6 +1065,8 @@ const InterviewPanelEdit = (props: any) => {
                     mandatory={false}
                   />
                 </div>
+              </div>
+              <div className="ms-Grid-row">
                 <div
                   className="ms-Grid-col ms-lg4"
                   style={{ position: "relative", top: "14px" }}
@@ -1100,7 +1086,6 @@ const InterviewPanelEdit = (props: any) => {
                       flexWrap: "wrap",
                       gap: "8px",
                       minHeight: "38px",
-                      // border: "none",
                       background: "none",
                       backgroundColor: "rgb(243, 242, 241)",
                       padding: "8px",
@@ -1114,11 +1099,13 @@ const InterviewPanelEdit = (props: any) => {
                       ? CandidateData.PanelFullNames.map((title, index) => (
                           <Chip
                             key={index}
-                            label={title}
+                            label={`${index + 1}. ${title}`}
                             size="small"
                             sx={{
                               backgroundColor: "rgb(243, 242, 241)",
                               fontWeight: 500,
+                              color: "rgb(85, 82, 79)",
+                              cursor: "not-allowed",
                             }}
                           />
                         ))
