@@ -201,7 +201,7 @@ export const RecuritmentHRMsg = {
   AdvertExtendsionSuccessMsg: "Advertisement Extension Submitted Successfully.",
 
   ScoreCardSubmitMsg:
-    "The Candidate has been Interviewed and Scorecard Submitted for Final Selection.",
+    "The Candidate has been Interviewed and Scorecard Submitted for successfully ",
 
   InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully.",
   CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully.",
@@ -228,7 +228,7 @@ export const RecuritmentHRMsg = {
     "One or more mandatory field are missing.Please do the needful and submit again.",
   RecruitmentErrorMsg: "Please choose the Job Code to assign Recruitment HR.",
   AgenciesErrorMsg: "Please choose the Job Code to Assign Agencies.",
-  PositionIDassigned: "Action Performed Successfully.",
+  PositionIDassigned: "Selected candidate has been rejected successfully.",
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
   InterviewScoreCommentsAlready:
@@ -240,7 +240,13 @@ export const RecuritmentHRMsg = {
   deleteMsg: "Are you sure you want to delete this? Any unsaved changes will be lost",
 
   SelectedErrorMsg: "Please Choose the Disciplines.",
-  WarningMsg: "Are you sure want to Change the Disciolines? Any unsaved changes will be lost"
+  WarningMsg: "Are you sure want to Change the Disciolines? Any unsaved changes will be lost",
+  ClearWarning:"Are you sure you want to close? Unsaved changes will be lost.",
+};
+// In your validation messages config file
+export const validationMsg = {
+  MaxOptions: "You must fill at least 2 options.",
+  CorrectAns: "Please select a correct answer.",
 };
 
 export const ADGroupID: IADGroupID = {

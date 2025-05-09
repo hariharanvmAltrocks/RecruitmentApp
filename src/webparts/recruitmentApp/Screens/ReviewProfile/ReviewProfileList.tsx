@@ -234,6 +234,7 @@ const ReviewProfileList = (props: any) => {
                     Status: rowData?.Status,
                     TabName,
                     ButtonAction,
+                    JobTitleInEnglish: rowData.JobTitleEnglish,
                   },
                 });
                 break;

@@ -57,7 +57,7 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
   });
   const [selectedCandidates, setSelectedCandidates] = React.useState<any[]>([]);
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
-  const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false); // State for alert popup
+  const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false); 
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
     Message: "",
     Type: "",
@@ -154,23 +154,17 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
     if (!CommentsData.trim()) {
       setValidationErrors((prevState) => ({
         ...prevState,
-        Comments: true, // Show validation error if comments are empty
+        Comments: true, 
       }));
       return;
     }
-
-    // Add comments to each selected candidate
     const updatedCandidates = selectedCandidates.map((candidate) => ({
       ...candidate,
-      Comments: CommentsData, // Attach the comments to each candidate
+      Comments: CommentsData, 
     }));
-
-    console.log("Selected Candidates for Rejection:", updatedCandidates);
-    console.log("Comments:", CommentsData);
-
     setIsPopupOpen(false);
-    setComments(""); // Reset comment field
-    onStatusChange(updatedCandidates); // Pass updated candidates with comments
+    setComments(""); 
+    onStatusChange(updatedCandidates); 
   };
 
   const isSelected = (row: any) => selectedCandidates.includes(row);
@@ -213,8 +207,6 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
             }}
           />
         </div>
-
-        {/* Refresh Button */}
         <ReuseButton
           icon={
             <RefreshIcon
@@ -241,8 +233,6 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
           width="120px"
           Style={{ minWidth: "120px", height: "42px" }}
         />
-
-        {/* Reject All Button */}
         <ReuseButton
           label="Reject All"
           onClick={handleRejectAllClick}
@@ -269,6 +259,8 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             stripedRows
             scrollable
+            scrollHeight="400px"
+            paginatorDropdownAppendTo="self"
             filters={dashboardSearch}
             rowClassName={(rowData: Candidate) =>
               isCheckboxDisabled(rowData) ? "disabled-row" : ""

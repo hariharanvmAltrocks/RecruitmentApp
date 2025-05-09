@@ -9,6 +9,7 @@ import {
   CandidateComment,
   CandidateDetails,
   CandidateLevel2ScoreCard,
+  CandidateLevel2ScoreCardComments,
   CommentsData,
   CommentsDatas,
   Employee,
@@ -19,7 +20,8 @@ import {
 } from "./IInterviewProcessService";
 
 export default class InterviewProcessService
-  implements IInterviewProcessService {
+  implements IInterviewProcessService
+{
   async GetInterviewPanelDetails(
     filterConditions: any[] = []
   ): Promise<ApiResponse<InterviewPanaldata[]>> {
@@ -52,8 +54,9 @@ export default class InterviewProcessService
           ],
         });
         emailToAuthorMap = sageListItems.reduce((acc, item) => {
-          acc[item.EmailId] = `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
-            }`.trim();
+          acc[item.EmailId] = `${item?.FristName ?? ""} ${
+            item?.MiddleName ?? ""
+          } ${item?.LastName ?? ""}`.trim();
           return acc;
         }, {} as Record<string, string>);
       }
@@ -96,48 +99,53 @@ export default class InterviewProcessService
     try {
       const candidateItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Select: "*,Status/ID,Status/StatusDescription,RecruitmentID/ID,JobCode/JobCode",
+        Select:
+          "*,Status/ID,Status/StatusDescription,RecruitmentID/ID,JobCode/JobCode",
         Expand: "Status,RecruitmentID,JobCode",
         Filter: filterConditions,
         Topcount: count.Topcount,
       });
 
-      const CandidateDetails: CandidateData[] = candidateItems.map((item) => ({
-        ID: item.ID,
-        JobCode: item?.JobCode?.JobCode || "",
-        JobCodeId: item?.JobCodeId || "",
-        PassportID: item?.PassportID || "",
-        FristName: item?.FristName || "",
-        MiddleName: item?.MiddleName || "",
-        LastName: item?.LastName || "",
-        FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
+      const CandidateDetails: CandidateData[] = candidateItems.map(
+        (item, index) => ({
+          SNO: index + 1,
+          ID: item.ID,
+          JobCode: item?.JobCode?.JobCode || "",
+          JobCodeId: item?.JobCodeId || "",
+          PassportID: item?.PassportID || "",
+          FristName: item?.FristName || "",
+          MiddleName: item?.MiddleName || "",
+          LastName: item?.LastName || "",
+          FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${
+            item?.LastName ?? ""
           }`.trim(),
-        PositionTitle: item?.PositionTitle || "",
-        JobGrade: item?.JobGrade || "",
-        Status: item?.Status?.StatusDescription || "",
-        StatusId: item?.StatusId || 0,
-        ContactNumber: item?.ContactNumber || "",
-        Email: item?.Email || "",
-        ResidentialAddress: item?.ResidentialAddress || "",
-        DOB: item?.DOB || "",
-        Nationality: item?.Nationality || "",
-        Gender: item?.Gender || "",
-        TotalYearOfExperiance: item?.TotalYearOfExperiance || "",
-        Skills: item?.Skills || "",
-        LanguageKnown: item?.LanguageKnown || "",
-        ReleventExperience: item?.ReleventExperience || "",
-        Qualification: item?.Qualification || "",
-        RecuritmentHR: item?.RecuritmentHR || "",
-        AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail || "",
-        CandidateCVDoc: [],
-        RoleProfileDocument: [],
-        AdvertisementDocument: [],
-        ShortlistedValue: "",
-        ExternalAgentDetails: item?.ExternalAgentDetails
-          ? { AgentName: item?.ExternalAgentDetails?.AgentName }
-          : null,
-        RecruitmentID: item?.RecruitmentID?.ID || 0,
-      }));
+          PositionTitle: item?.PositionTitle || "",
+          JobGrade: item?.JobGrade || "",
+          Status: item?.Status?.StatusDescription || "",
+          StatusId: item?.StatusId || 0,
+          ContactNumber: item?.ContactNumber || "",
+          Email: item?.Email || "",
+          ResidentialAddress: item?.ResidentialAddress || "",
+          DOB: item?.DOB || "",
+          Nationality: item?.Nationality || "",
+          Gender: item?.Gender || "",
+          TotalYearOfExperiance: item?.TotalYearOfExperiance || "",
+          Skills: item?.Skills || "",
+          LanguageKnown: item?.LanguageKnown || "",
+          ReleventExperience: item?.ReleventExperience || "",
+          Qualification: item?.Qualification || "",
+          RecuritmentHR: item?.RecuritmentHR || "",
+          AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail || "",
+          CandidateCVDoc: [],
+          RoleProfileDocument: [],
+          AdvertisementDocument: [],
+          ShortlistedValue: "",
+          ExternalAgentDetails: item?.ExternalAgentDetails
+            ? { AgentName: item?.ExternalAgentDetails?.AgentName }
+            : null,
+          RecruitmentID: item?.RecruitmentID?.ID || 0,
+        })
+      );
 
       return {
         data: CandidateDetails,
@@ -160,25 +168,24 @@ export default class InterviewProcessService
     EmployeeList: any[]
   ) {
     try {
-      console.log("Fetching candidate personal details...");
+   
       const CandidateDetails: CandidateData[] = [];
-      let candidateItems: any[] = [];
-
-      await SPServices.SPReadItems({
+  
+      const candidateItems = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Select: "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName,Status/ID,Status/StatusDescription,ID",
-        Expand: "JobCode,AssignByInterviewPanel,RecruitmentID,ExternalAgentDetails,Status",
+        Select:
+          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName,Status/ID,Status/StatusDescription,ID",
+        Expand:
+          "JobCode,AssignByInterviewPanel,RecruitmentID,ExternalAgentDetails,Status",
         Filter: filterParam,
         FilterCondition: filterConditions,
         Topcount: count.Topcount,
-      }).then((data) => {
-        candidateItems = data;
       });
-
-      const formattedItems: any[] = await Promise.all(
+  
+      const formattedItems = await Promise.all(
         candidateItems.map(async (item, index) => {
           let candidateCV: IDocFiles[] = [];
-
+  
           const resumeLink = item?.CandidateResumeLink || "";
           if (resumeLink) {
             try {
@@ -186,52 +193,58 @@ export default class InterviewProcessService
               if (extractedPath) {
                 const folderPath = extractedPath.substring(0, extractedPath.lastIndexOf("/"));
                 const fileName = extractedPath.split("/").pop();
+  
                 if (folderPath && fileName) {
                   const response = (await SPServices.getDocLibFiles({
                     FilePath: `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${folderPath}`,
                   })) as IDocFiles[];
-
+  
                   candidateCV = response.filter((file) => file.name === fileName);
-
-                  if (candidateCV.length > 0) {
-                    console.log("Matching CV file(s) found:", candidateCV.map(f => f.name));
-                  } else {
-                    console.warn(`CV not found at CandidateResumeLink: ${resumeLink}`);
-                  }
+                 
                 }
               }
             } catch (error) {
               console.error("Error while extracting CV from CandidateResumeLink:", error);
             }
-          } else {
-            console.log("CandidateResumeLink not available.");
-          }
-
+          } 
+      
+          
+  
           const filter = [{ FilterKey: "CandidateID", Operator: "eq", FilterValue: item.ID }];
           let positionResult: any = { data: [] };
-
-          console.log("Fetching interview panel details...");
-          await this.getInterviewPanelDetails(filter, filterConditions, item.ID, EmployeeList)
-            .then((data) => {
-              positionResult = data;
-              console.log("Interview panel data fetched:", positionResult);
-            })
-            .catch((error) => {
-              console.error("Error fetching candidate scorecard:", error);
-            });
-
-          console.log("Fetching candidate comments...");
-          const candidateComments = await this.getCandidateComments(item.ID);
-          console.log("Candidate comments:", candidateComments);
-
+          let level2ScoreCardResponse: any = { data: [] };
+          let CommentResult: any = [];
+  
+       
+          try {
+            positionResult = await this.getInterviewPanelDetails(filter, filterConditions, item.ID, EmployeeList);
+     
+          } catch (error) {
+            console.error("Error fetching candidate scorecard:", error);
+          }
+  
+         
+          try {
+            CommentResult = await this.getCandidateComments(item.ID);
+          } catch (error) {
+            console.error("Error fetching candidate comments:", error);
+          }
+  
+          try {
+            level2ScoreCardResponse = await this.getCandidateLevel2ScoreCarddata(filter, filterConditions, item.ID,EmployeeList);
+       
+          } catch (error) {
+            console.error("Error fetching candidate level2 scorecard:", error);
+          }
+  
           const lastCandidateGPA = positionResult?.data?.length
             ? positionResult.data[positionResult.data.length - 1].GPA
             : null;
-
+  
           const fullName = `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""}`.trim();
-          console.log("Constructed full name:", fullName);
-
+  
           return {
+            SNO: index + 1,
             ID: item.ID,
             RecruitmentID: item?.RecruitmentID?.ID,
             JobCode: item?.JobCode?.JobCode,
@@ -275,16 +288,16 @@ export default class InterviewProcessService
             InterviewDateLevel2: item?.InterviewDateLevel2,
             InterviewTimeLevel2: item?.InterviewTimeLevel2,
             InterviewLinkLevel2: item?.InterviewLinkLevel2,
-            CandidateComments: candidateComments,
+            CandidateComments: CommentResult,
             CandidateResumeLink: resumeLink,
+            Level2ScoreCard: level2ScoreCardResponse?.data || [],
           };
         })
       );
-
+  
       CandidateDetails.push(...formattedItems);
-
-      console.log("\nFinal Combined Candidate Details:", CandidateDetails);
-
+      console.log("Final Combined Candidate Details:", CandidateDetails);
+  
       return {
         data: CandidateDetails,
         status: 200,
@@ -299,6 +312,7 @@ export default class InterviewProcessService
       };
     }
   }
+  
 
   async getInterviewPanelDetails(
     filterParam: any,
@@ -306,6 +320,7 @@ export default class InterviewProcessService
     candidateID: number,
     EmployeeList: Employee[]
   ): Promise<ApiResponse<(InterviewPanelItem & CommentsDatas)[]>> {
+
     return SPServices.SPReadItems({
       Listname: ListNames.HRMSInterviewPanelDetails,
       Select:
@@ -317,129 +332,153 @@ export default class InterviewProcessService
       FilterCondition: filterConditions,
     })
       .then((interviewPanelItems: any[]) => {
+    
         return this.getCandidateScoreCard(candidateID).then(
           (scoreCardResponse) => {
+         
+  
             const scoreCardMap = new Map<number, ScoreCard>();
-
             if (
               scoreCardResponse.status === 200 &&
               scoreCardResponse.data.length > 0
             ) {
               scoreCardResponse.data.forEach((score: ScoreCard) => {
+           
                 scoreCardMap.set(score.InterviewPanelID, score);
               });
             }
-
+  
             const employeeMap = new Map<string, Employee>(
               EmployeeList.map((emp: Employee) => [
                 emp.Email?.toLowerCase(),
                 emp,
               ])
             );
-
+         
             let sumOverallScores = 0;
             let sumQuestionScores = 0;
             let maxQuestionScore = 0;
-            let maxOverallScore = 0;
-            const combinedItems: (InterviewPanelItem & CommentsDatas)[] =
-              interviewPanelItems.map((interview: any) => {
+           
+  
+            const emailSet = new Set<string>();
+            interviewPanelItems.forEach((interview) => {
+              if (interview?.RecruitmentID?.ID && interview?.InterviewPanel?.EMail) {
+                emailSet.add(interview.InterviewPanel.EMail.toLowerCase());
+              }
+            });
+  
+            const validPanelEmails: string[] = Array.from(emailSet);
+           
+  
+            const combinedItems: (InterviewPanelItem & CommentsDatas)[] = interviewPanelItems.map(
+              (interview: any) => {
                 const scoreCard = scoreCardMap.get(interview.ID) || null;
-                const panelEmail =
-                  interview?.InterviewPanel?.EMail?.toLowerCase() || "";
-                const employee =
-                  employeeMap.get(panelEmail) || ({} as Employee);
+  
+                const panelEmail = interview?.InterviewPanel?.EMail?.toLowerCase();
+       
+  
+                if (validPanelEmails.includes(panelEmail)) {
+                  const employee = employeeMap.get(panelEmail) || ({} as Employee);
+                  
+  
+                  const relevantQualification = Number(scoreCard?.RelevantQualification) || 0;
+                  const relevantExperience = Number(scoreCard?.ReleventExperience) || 0;
+                  const knowledge = Number(scoreCard?.Knowledge) || 0;
+                  const energyLevel = Number(scoreCard?.EnergyLevel) || 0;
+                  const jobRequirement = Number(scoreCard?.MeetJobRequirement) || 0;
+                  const cultureFit = Number(scoreCard?.ContributeTowardsCultureRequried) || 0;
+                  const experience = Number(scoreCard?.Experience) || 0;
+                  const otherCriteria = Number(scoreCard?.OtherCriteriaScore) || 0;
+  
+                  const totalScore =
+                    relevantQualification +
+                    relevantExperience +
+                    knowledge +
+                    energyLevel +
+                    jobRequirement +
+                    cultureFit +
+                    experience +
+                    otherCriteria;
+  
+                  const questionData: any[] = scoreCard?.QuestionJson || [];
+                  const questionScore = questionData.reduce((sum, q) => {
+                    const score = Object.values(q)[0];
+                    return sum + (Number(score) || 0);
+                  }, 0);
+                
+ 
+                  const maxQuestionScoreForPanel = questionData.length * 3;
+                
+                  
+                  const level1Count = interviewPanelItems.filter(
+                    (item) =>
+                      item.InterviewLevel === "Level 1" &&
+                      item.CandidateID?.ID === candidateID
+                  ).length;
+                  
+                  const maxOverallScore = level1Count * 40;
+            
+                  sumOverallScores += totalScore;
+                  sumQuestionScores += questionScore;
+                  maxQuestionScore += maxQuestionScoreForPanel;
+                  
 
-                const relevantQualification =
-                  Number(scoreCard?.RelevantQualification) || 0;
-                const relevantExperience =
-                  Number(scoreCard?.ReleventExperience) || 0;
-                const knowledge = Number(scoreCard?.Knowledge) || 0;
-                const energyLevel = Number(scoreCard?.EnergyLevel) || 0;
-                const jobRequirement =
-                  Number(scoreCard?.MeetJobRequirement) || 0;
-                const cultureFit =
-                  Number(scoreCard?.ContributeTowardsCultureRequried) || 0;
-                const experience = Number(scoreCard?.Experience) || 0;
-                const otherCriteria =
-                  Number(scoreCard?.OtherCriteriaScore) || 0;
+                  const combinedScore = sumOverallScores + sumQuestionScores;
+                  const maxPossibleScore = maxQuestionScore + maxOverallScore;
+               
+                  const rawGpa = maxPossibleScore > 0 ? (combinedScore / maxPossibleScore) * 5 : 0;
+                  const gpa = Math.floor(rawGpa * 100) / 100;
+  
+                  const fullName = `${employee.FirstName ?? ""} ${employee.MiddleName ?? ""} ${employee.LastName ?? ""}`.trim();
+                  const jobTitleInEnglish = employee?.JobTitle || "";
+                  const jobTitleInFrench = employee?.JobTitleInFrench || "";
 
-                const totalScore =
-                  relevantQualification +
-                  relevantExperience +
-                  knowledge +
-                  energyLevel +
-                  jobRequirement +
-                  cultureFit +
-                  experience +
-                  otherCriteria;
-
-                const questionData: any[] = scoreCard?.QuestionJson || [];
-                const questionScore = questionData.reduce((sum, q) => {
-                  const score = Object.values(q)[0];
-                  return sum + (Number(score) || 0);
-                }, 0);
-
-                const maxQuestionScoreForPanel = questionData.length * 3;
-                const maxOverallScoreCard = 40;
-                sumOverallScores += totalScore;
-                sumQuestionScores += questionScore;
-                maxQuestionScore += maxQuestionScoreForPanel;
-                maxOverallScore += maxOverallScoreCard;
-
-                const combinedScore = sumOverallScores + sumQuestionScores;
-                const maxPossibleScore = maxQuestionScore + maxOverallScore;
-
-                const rawGpa =
-                  maxPossibleScore > 0
-                    ? (combinedScore / maxPossibleScore) * 5
-                    : 0;
-                const gpa = Math.floor(rawGpa * 100) / 100;
-                const fullName = `${employee.FirstName ?? ""} ${employee.MiddleName ?? ""} ${employee.LastName ?? ""}`.trim();
-                const jobTitleInEnglish = employee?.JobTitle || "";
-                const jobTitleInFrench = employee?.JobTitleInFrench || "";
-
-                return {
-                  ID: interview.ID,
-                  RecruitmentID: interview?.RecruitmentID?.ID || 0,
-                  InterviewLevel: interview.InterviewLevel || "",
-                  InterviewPanelTitle: [interview.InterviewPanel?.Title || ""],
-                  CandidateID: interview.CandidateID?.ID || 0,
-                  ScoreCard: scoreCard,
-                  SumOverallScores: totalScore,
-                  SumQuestionScores: questionScore,
-                  MaxOverallScore: maxOverallScore,
-                  MaxQuestionScore: maxQuestionScoreForPanel,
-                  GPA: gpa,
-                  TotalScore: totalScore,
-                  QuestionScore: questionScore,
-                  RelevantQualification: scoreCard?.RelevantQualification || "",
-                  ReleventExperience: scoreCard?.ReleventExperience || "",
-                  Knowledge: scoreCard?.Knowledge || "",
-                  EnergyLevel: scoreCard?.EnergyLevel || "",
-                  MeetJobRequirement: scoreCard?.MeetJobRequirement || "",
-                  ContributeTowardsCultureRequried:
-                    scoreCard?.ContributeTowardsCultureRequried || "",
-                  Experience: scoreCard?.Experience || "",
-                  OtherCriteriaScore: scoreCard?.OtherCriteriaScore || "",
-                  PanelFullName: fullName,
-                  Department: employee?.Department || "",
-                  JobTitleInEnglish: jobTitleInEnglish,
-                  JobTitleInFrench: jobTitleInFrench,
-                  PanelEmail: panelEmail,
-                  Id: String(interview.ID),
-                  comments: scoreCard?.Feedback || "",
-                  Date: scoreCard?.CreatedDate
-                    ? new Date(scoreCard.CreatedDate)
-                    : null,
-                  JobTitle: jobTitleInEnglish,
-                  Name: fullName,
-                  CandidateScoreCard: scoreCard ? [scoreCard] : [],
-                  Role: scoreCard?.Role || "",
-                  QuestionBasedScore: questionScore,
-                  MaxPossibleScore: maxPossibleScore,
-                  CombinedScore: combinedScore,
-                };
-              });
+                  return {
+                    ID: interview.ID,
+                    RecruitmentID: interview?.RecruitmentID?.ID || 0,
+                    InterviewLevel: interview.InterviewLevel || "",
+                    InterviewPanelTitle: [interview.InterviewPanel?.Title || ""],
+                    CandidateID: interview.CandidateID?.ID || 0,
+                    ScoreCard: scoreCard,
+                    SumOverallScores: totalScore,
+                    SumQuestionScores: questionScore,
+                    MaxOverallScore: maxOverallScore,
+                    MaxQuestionScore: maxQuestionScoreForPanel,
+                    GPA: gpa,
+                    TotalScore: totalScore,
+                    QuestionScore: questionScore,
+                    RelevantQualification: scoreCard?.RelevantQualification || "",
+                    ReleventExperience: scoreCard?.ReleventExperience || "",
+                    Knowledge: scoreCard?.Knowledge || "",
+                    EnergyLevel: scoreCard?.EnergyLevel || "",
+                    MeetJobRequirement: scoreCard?.MeetJobRequirement || "",
+                    ContributeTowardsCultureRequried: scoreCard?.ContributeTowardsCultureRequried || "",
+                    Experience: scoreCard?.Experience || "",
+                    OtherCriteriaScore: scoreCard?.OtherCriteriaScore || "",
+                    PanelFullName: fullName,
+                    Department: employee?.Department || "",
+                    JobTitleInEnglish: jobTitleInEnglish,
+                    JobTitleInFrench: jobTitleInFrench,
+                    PanelEmail: panelEmail,
+                    Id: String(interview.ID),
+                    comments: scoreCard?.Feedback || "",
+                    Date: scoreCard?.CreatedDate ? new Date(scoreCard.CreatedDate) : null,
+                    JobTitle: jobTitleInEnglish,
+                    Name: fullName,
+                    CandidateScoreCard: scoreCard ? [scoreCard] : [],
+                    Role: scoreCard?.Role || "",
+                    QuestionBasedScore: questionScore,
+                    MaxPossibleScore: maxPossibleScore,
+                    CombinedScore: combinedScore,
+                  };
+                } else {
+                  console.log("Invalid panel email, skipping...");
+                  return {} as any;
+                }
+              }
+            );
+  
+            console.log("Combined interview panel items:", combinedItems);
             return {
               data: combinedItems,
               status: 200,
@@ -457,8 +496,11 @@ export default class InterviewProcessService
         };
       });
   }
+  
 
-  async getCandidateScoreCard(candidateID: number): Promise<ApiResponse<ScoreCard[]>> {
+  async getCandidateScoreCard(
+    candidateID: number
+  ): Promise<ApiResponse<ScoreCard[]>> {
     return SPServices.SPReadItems({
       Listname: ListNames.HRMSCandidateScoreCard,
       Select:
@@ -475,25 +517,32 @@ export default class InterviewProcessService
       ],
     })
       .then((candidateScoreCardItems: any[]) => {
-        const formattedItems: ScoreCard[] = candidateScoreCardItems.map((score: any) => ({
-          InterviewPanelID: score.InterviewPanelID?.ID || 0,
-          RelevantQualification: score.RelevantQualification || "",
-          ReleventExperience: score.ReleventExperience || "",
-          Knowledge: score.Knowledge || "",
-          EnergyLevel: score.EnergyLevel || "",
-          MeetJobRequirement: score.MeetJobRequirement || "",
-          ContributeTowardsCultureRequried: score.ContributeTowardsCultureRequried || "",
-          Experience: score.Experience || "",
-          OtherCriteriaScore: score.OtherCriteriaScore || "",
-          ConsiderForEmployment: score.ConsiderForEmployment || "",
-          Feedback: score.Feedback || "",
-          RecruitmentID: score.RecruitmentID?.ID || 0,
-          Role: score.Role?.RoleTitle || "",
-          InterviewPersonName: score.InterviewPersonName?.Title || "",
-          OverAllEvaluationFeedback: score.OverAllEvaluationFeedback || "",
-          CreatedDate: score.Created ? new Date(score.Created).toLocaleString() : "",
-          QuestionJson: score.QuestionJson ? JSON.parse(score.QuestionJson) : [],
-        }));
+        const formattedItems: ScoreCard[] = candidateScoreCardItems.map(
+          (score: any) => ({
+            InterviewPanelID: score.InterviewPanelID?.ID || 0,
+            RelevantQualification: score.RelevantQualification || "",
+            ReleventExperience: score.ReleventExperience || "",
+            Knowledge: score.Knowledge || "",
+            EnergyLevel: score.EnergyLevel || "",
+            MeetJobRequirement: score.MeetJobRequirement || "",
+            ContributeTowardsCultureRequried:
+              score.ContributeTowardsCultureRequried || "",
+            Experience: score.Experience || "",
+            OtherCriteriaScore: score.OtherCriteriaScore || "",
+            ConsiderForEmployment: score.ConsiderForEmployment || "",
+            Feedback: score.Feedback || "",
+            RecruitmentID: score.RecruitmentID?.ID || 0,
+            Role: score.Role?.RoleTitle || "",
+            InterviewPersonName: score.InterviewPersonName?.Title || "",
+            OverAllEvaluationFeedback: score.OverAllEvaluationFeedback || "",
+            CreatedDate: score.Created
+              ? new Date(score.Created).toLocaleString()
+              : "",
+            QuestionJson: score.QuestionJson
+              ? JSON.parse(score.QuestionJson)
+              : [],
+          })
+        );
         return {
           data: formattedItems,
           status: 200,
@@ -541,28 +590,41 @@ export default class InterviewProcessService
           Role: comment.Role?.RoleTitle ?? "",
         });
       });
-
-      console.log("Grouped Comments1:", groupedCommentsByCandidate);
       return groupedCommentsByCandidate;
     } catch (error) {
-      console.error(`Error fetching comments for candidate ID ${candidateID}:`, error);
+      console.error(
+        `Error fetching comments for candidate ID ${candidateID}:`,
+        error
+      );
       return {};
     }
   }
-
-  async getCandidateLevel2ScoreCard(
-    filterConditions: any[] = []
-  ): Promise<ApiResponse<CandidateLevel2ScoreCard[]>> {
+  async getCandidateLevel2ScoreCarddata(
+    filterParam: any,
+    filterConditions: any,
+    candidateID: number,
+    EmployeeList: Employee[]
+  ): Promise<ApiResponse<CandidateLevel2ScoreCardComments[]>> {
     try {
       const items = await SPServices.SPReadItems({
         Listname: ListNames.HRMSCandidateLevel2ScoreCard,
-        Select: "ID,CandidateID/ID,CandidateID/Title,Comments,Role/ID,Role/RoleTitle,Level",
+        Select:
+          "ID,CandidateID/ID,CandidateID/Title,Comments,Role/ID,Role/RoleTitle,Level",
         Expand: "CandidateID,Role",
-        Filter: filterConditions,
-        Topcount: count.Topcount,
+        Orderby: "ID",
+        Orderbydecorasc: false,
+        Filter: filterParam,
+        FilterCondition: filterConditions,
       });
-
-      const scoreCardData: CandidateLevel2ScoreCard[] = items.map((item: any) => ({
+  
+      const targetEmail = "altkamoa10@altrockstech.com";
+      const employeeMap = new Map(
+        EmployeeList.map((emp: Employee) => [emp.Email?.toLowerCase(), emp])
+      );
+      const employee = employeeMap.get(targetEmail) || ({} as Employee);
+      const fullName = `${employee.FirstName ?? ""} ${employee.MiddleName ?? ""} ${employee.LastName ?? ""}`.trim();
+  
+      const mappedItems: CandidateLevel2ScoreCardComments[] = items.map((item: any) => ({
         ID: item.ID,
         CandidateID: item.CandidateID?.ID || 0,
         CandidateName: item.CandidateID?.Title || "",
@@ -570,7 +632,59 @@ export default class InterviewProcessService
         RoleTitle: item.Role?.RoleTitle || "",
         Comments: item.Comments || "",
         Level: item.Level || "",
+        PanelEmail: targetEmail,
+        PanelFullName: fullName,
+        JobTitle: employee?.JobTitle || "",
+        JobTitleInFrench: employee?.JobTitleInFrench || "",
+        JobTitleInEnglish: employee?.JobTitleInEnglish || "",  // Added this line
+        Department: employee?.Department || "",
+        CreatedDate: item.CreatedDate ? new Date(item.CreatedDate) : null,
+        Date: item.CreatedDate ? new Date(item.CreatedDate) : null, 
       }));
+  
+      console.log("Mapped items:", mappedItems);
+  
+      return {
+        data: mappedItems,
+        status: 200,
+        message: "Candidate Level 2 scorecard details fetched and formatted",
+      };
+    } catch (error) {
+      console.error(
+        `Error fetching Level 2 scorecard for candidate ${candidateID}:`,
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching Level 2 scorecard details",
+      };
+    }
+  }
+  async getCandidateLevel2ScoreCard(
+    filterConditions: any[] = []
+  ): Promise<ApiResponse<CandidateLevel2ScoreCard[]>> {
+    try {
+      const items = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSCandidateLevel2ScoreCard,
+        Select:
+          "ID,CandidateID/ID,CandidateID/Title,Comments,Role/ID,Role/RoleTitle,Level",
+        Expand: "CandidateID,Role",
+        Filter: filterConditions,
+        Topcount: count.Topcount,
+      });
+
+      const scoreCardData: CandidateLevel2ScoreCard[] = items.map(
+        (item: any) => ({
+          ID: item.ID,
+          CandidateID: item.CandidateID?.ID || 0,
+          CandidateName: item.CandidateID?.Title || "",
+          RoleId: item.Role?.ID || 0,
+          RoleTitle: item.Role?.RoleTitle || "",
+          Comments: item.Comments || "",
+          Level: item.Level || "",
+        })
+      );
 
       return {
         data: scoreCardData,
@@ -593,7 +707,8 @@ export default class InterviewProcessService
     try {
       const items = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidateComments,
-        Select: "ID,CandidateID/ID,CandidateID/Title,Comments,Role/ID,Role/RoleTitle,Level",
+        Select:
+          "ID,CandidateID/ID,CandidateID/Title,Comments,Role/ID,Role/RoleTitle,Level",
         Expand: "CandidateID,Role",
         Filter: filterConditions,
         Topcount: count.Topcount,
@@ -740,7 +855,7 @@ export default class InterviewProcessService
   ): Promise<ApiResponse<CandidateDetails[]>> {
     try {
       const selectedCandidateItems: any[] = await SPServices.SPReadItems({
-        Listname: "HRMSSelectedCandidateDetailsByHOD",
+        Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
         Select: `
         *,BusinessUnitCode/ID,BusinessUnitCode/Title,
         PositionID/ID,PositionID/PositionID,
@@ -766,30 +881,31 @@ export default class InterviewProcessService
         Topcount: count.Topcount,
       });
 
-      const selectedCandidateDetails: CandidateDetails[] = selectedCandidateItems.map(item => ({
-        ID: item.ID,
-        BusinessUnitCode: item?.BusinessUnitCode?.Title || "",
-        DateRequried: item?.DateRequried || "",
-        AreaofWork: item?.AreaofWork || "",
-        PositionID: item?.PositionID?.PositionID || "",
-        Position: item?.PositionID?.ID || "",
-        Status: item?.Status?.StatusDescription || "",
-        FirstName: item?.FirstName || "",
-        LastName: item?.LastName || "",
-        MiddleName: item?.MiddleName || "",
-        ExpatriatePosition: item?.ExpatriatePosition || "",
-        Location: item?.Location || "",
-        LineManager: item?.LineManager?.Title || "",
-        LineManagerEmail: item?.LineManager?.EMail || "",
-        PassportNumber: item?.PassportNumber || "",
-        RecuritmentHR: item?.RecuritmentHR || "",
-        LineManagerAction: item?.LineManagerAction || "",
-        JobCode: item?.JobCode?.JobCode || "",
-        AssignBy: item?.AssignBy?.Title || "",
-        AssignByEmail: item?.AssignBy?.EMail || "",
-        CandidateID: item?.CandidateID?.ID || 0,
-        RecruitmentID: item?.RecruitmentID?.ID || 0,
-      }));
+      const selectedCandidateDetails: CandidateDetails[] =
+        selectedCandidateItems.map((item) => ({
+          ID: item.ID,
+          BusinessUnitCode: item?.BusinessUnitCode?.Title || "",
+          DateRequried: item?.DateRequried || "",
+          AreaofWork: item?.AreaofWork || "",
+          PositionID: item?.PositionID?.PositionID || "",
+          Position: item?.PositionID?.ID || "",
+          Status: item?.Status?.StatusDescription || "",
+          FirstName: item?.FirstName || "",
+          LastName: item?.LastName || "",
+          MiddleName: item?.MiddleName || "",
+          ExpatriatePosition: item?.ExpatriatePosition || "",
+          Location: item?.Location || "",
+          LineManager: item?.LineManager?.Title || "",
+          LineManagerEmail: item?.LineManager?.EMail || "",
+          PassportNumber: item?.PassportNumber || "",
+          RecuritmentHR: item?.RecuritmentHR || "",
+          LineManagerAction: item?.LineManagerAction || "",
+          JobCode: item?.JobCode?.JobCode || "",
+          AssignBy: item?.AssignBy?.Title || "",
+          AssignByEmail: item?.AssignBy?.EMail || "",
+          CandidateID: item?.CandidateID?.ID || 0,
+          RecruitmentID: item?.RecruitmentID?.ID || 0,
+        }));
       console.log("Selected Candidate Details:", selectedCandidateDetails);
       return {
         data: selectedCandidateDetails,
@@ -855,6 +971,4 @@ export default class InterviewProcessService
       };
     }
   }
-
-
 }

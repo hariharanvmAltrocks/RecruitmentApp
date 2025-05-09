@@ -132,6 +132,7 @@ const CandidateList = (props: any) => {
           RecruitmentID: rowData?.RecruitmentID,
           JobCodeId: props.stateValue.JobCodeId,
           Department: props.stateValue.Department,
+          GPA:rowData.GPA,
         },
       });
     }
@@ -144,7 +145,7 @@ const CandidateList = (props: any) => {
     previousTabName: string
   ) => [
     { field: "Checkbox", header: "", sortable: false },
-    { field: "ID", header: "Candidate ID", sortable: true },
+    { field: "SNO", header: "S.NO", sortable: true },
     { field: "FullName", header: "Applicant Name", sortable: true },
     { field: "PositionTitle", header: "Position Title", sortable: true },
     { field: "InterviewLevel", header: "Interview Levels", sortable: true },
