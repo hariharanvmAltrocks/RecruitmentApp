@@ -164,9 +164,9 @@ const InterviewPanelList = (props: any) => {
 
   const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
     {
-      field: "ID",
-      header: "Candidate ID",
-      sortable: true,
+      field: "SNO",
+      header: "S.No",
+      sortable: false,
     },
     {
       field: "ApplicantName",
@@ -415,6 +415,7 @@ const InterviewPanelList = (props: any) => {
           }
 
           return {
+            SNO: candidate.SNO, 
             ID: candidate.ID,
             FristName: candidate.FristName || "",
             LastName: candidate.LastName || "",

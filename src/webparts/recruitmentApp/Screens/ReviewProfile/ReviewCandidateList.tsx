@@ -155,8 +155,8 @@ const ReviewCandidateList = (props: any) => {
     TabNamed: string
   ) => [
     {
-      field: "CandidateID",
-      header: "Applicant ID",
+      field: "SNO",
+      header: "S.No",
       sortable: true,
     },
     {
@@ -331,6 +331,7 @@ const ReviewCandidateList = (props: any) => {
         if (ReschedulData.status === 200 && ReschedulData.data !== null) {
           let ReschedulDataFilter = ReschedulData.data.map((item: any) => {
             return {
+              SNO: item.SNO, 
               CandidateID: item?.ID,
               ApplicantName: `${item?.FristName || ""} ${item?.LastName || ""}`,
               PositionTitle: item?.PositionTitle,
