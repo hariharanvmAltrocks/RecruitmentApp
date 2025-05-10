@@ -42,8 +42,6 @@ import CommentView from "./CommentView";
 import {
   ActionUpdate,
   AssignPositionID,
-  CandidateLevel2ScoreCardComments,
-  CommentsDatas,
 } from "../../Services/InterviewProcess/IInterviewProcessService";
 import "../../App.css";
 import ReuseButton from "../../components/ReuseButton";
@@ -57,6 +55,7 @@ import CustomRadioGroup from "../../components/CustomRadioGroup";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import SPServices from "../../Services/SPService/SPServices";
 import { useMediaQuery } from "@mui/material";
+import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 type ValidationError = {
   Comments: boolean;
   Checkboxalidation: boolean;
@@ -136,8 +135,8 @@ const HodViewScorecard = (props: any) => {
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
   const [MainComponent, setMainComponent] = React.useState<boolean>(true);
   const [CommentData, setCommentsData] = React.useState({
-    level1: [] as CommentsDatas[],
-    level2: [] as CandidateLevel2ScoreCardComments[],
+    level1: [] as CommentsData[],
+    level2: [] as CommentsData[],
   });
   const [validationErrors, setValidationError] =
     React.useState<ValidationError>({
@@ -221,9 +220,14 @@ const HodViewScorecard = (props: any) => {
           );
           setInterviewPanelTitles(
             Array.from(
-              new Set(candidatePanels.map((panel: any) => panel.PanelFullName))
+              new Set(
+                candidatePanels
+                  .map((panel: any) => panel.Name?.trim())
+                  .filter((name: string | undefined) => name && name.length > 0)
+              )
             )
           );
+
           const filteredScores = candidatePanels
             .map((candidate: any) => {
               const score = candidate.ScoreCard;
@@ -413,8 +417,6 @@ const HodViewScorecard = (props: any) => {
   const OpenComments = async () => {
     try {
       setMainComponent(false);
-
-      // Define the filter conditions for fetching Level 1 Comments
       let filterConditions = [
         {
           FilterKey: "CandidateID/Id",
@@ -423,8 +425,6 @@ const HodViewScorecard = (props: any) => {
         },
       ];
       let Conditions = "";
-
-      // Fetch Level 1 Comments
       const level1Response = await InterviewServices.getInterviewPanelDetails(
         filterConditions,
         Conditions,
@@ -437,10 +437,8 @@ const HodViewScorecard = (props: any) => {
           (item: any) => item.CandidateID === candidateID
         );
       }
-
-      // Fetch Level 2 Comments
       const level2Response =
-        await InterviewServices.getCandidateLevel2ScoreCarddata(
+        await InterviewServices.getCandidateLevel2ScoreCardData(
           Conditions,
           filterConditions,
           candidateID,
@@ -449,28 +447,10 @@ const HodViewScorecard = (props: any) => {
 
       let level2Comments: any[] = [];
       if (level2Response?.status === 200) {
-        level2Comments = level2Response.data
-          .filter((item: any) => item.CandidateID === candidateID)
-          .map((item: any) => ({
-            candidateID: item.CandidateID,
-            Role: item.RoleTitle,
-            Name: item.CandidateName,
-            Comments: item.Comments,
-            Level: item.Level,
-            PanelEmail: item.PanelEmail,
-            PanelFullName: item.PanelFullName,
-            JobTitle: item.JobTitle,
-            JobTitleInFrench: item.JobTitleInFrench, // Ensure this field is included
-            JobTitleInEnglish: item.JobTitleInEnglish, // Ensure this field is included
-            Department: item.Department,
-            CreatedDate: item.CreatedDate ? new Date(item.CreatedDate) : null,
-            Date: item.CreatedDate ? new Date(item.CreatedDate) : null, // If `Date` needs to be mapped as well
-          }));
+        level2Comments = level2Response.data.filter(
+          (item: any) => item.CandidateID === candidateID
+        );
       }
-
-      console.log("Level 2 Comments:", level2Comments);
-
-      // Set the comments data state
       setCommentsData({
         level1: level1Comments,
         level2: level2Comments,
@@ -1343,7 +1323,6 @@ const HodViewScorecard = (props: any) => {
 
       if (data?.status === 200) {
         const op = data?.data[0];
-        console.log("Candidate details (op):", op);
         const agentName = op.ExternalAgentDetails?.AgentName;
 
         const interviewLevels = Array.from(

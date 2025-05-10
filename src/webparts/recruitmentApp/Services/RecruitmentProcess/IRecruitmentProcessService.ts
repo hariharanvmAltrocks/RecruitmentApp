@@ -15,9 +15,15 @@ export type CommentsData = {
   JobTitleInFrench: string;
   comments: string;
   Department: string;
-  Date: Date | null;
-  JobTitle: string;
+  Date: any | null;
+  JobTitle: string;  
   RoleName: string;
+  CandidateID?: any;
+  RoleId?: number;
+  RoleTitle?: string;
+  Level?: string;
+  OverAllEvaluationFeedback?: string;
+ 
 };
 
 export type InsertComments = {
