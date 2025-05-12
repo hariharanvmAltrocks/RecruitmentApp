@@ -499,7 +499,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         ...prev,
         { key: prev.length, text: "", isCorrect: false },
       ];
-      Validation();
+      // Validation();
       return newOptions;
     });
   };
@@ -1091,7 +1091,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         borderColor: "#5f5f5f",
                         boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                         height:
-                          expandedExistingQuestion !== null ? "auto" : "300px",
+                          expandedExistingQuestion !== null ? "auto" : "auto",
                         transition: "height 0.3s ease-in-out",
                         overflow: "hidden",
                       }}
@@ -1254,7 +1254,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         borderColor: "#5f5f5f",
                         boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                         height:
-                          expandedQuestionIndex !== null ? "auto" : "300px",
+                          expandedQuestionIndex !== null ? "auto" : "auto",
                         transition: "height 0.3s ease-in-out",
                         overflow: "hidden",
                       }}
@@ -2281,15 +2281,20 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     const response = await GetPortalJobsService.UpsertQuestions(QuestionValue);
 
     if (response.status === ResponeStatus.SUCCESS) {
-      const obj: any = {
-        ActionId: WorkflowAction.Approved,
-        ItemCreated: "Yes",
-      };
-      await SPServices.SPUpdateItem({
-        Listname: ListNames.HRMSRecruitmentDptDetails,
-        RequestJSON: obj,
-        ID: props.stateValue?.ID,
-      });
+      if (
+        InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
+      ) {
+        const obj: any = {
+          ActionId: WorkflowAction.Approved,
+          ItemCreated: "Yes",
+        };
+        await SPServices.SPUpdateItem({
+          Listname: ListNames.HRMSRecruitmentDptDetails,
+          RequestJSON: obj,
+          ID: props.stateValue?.ID,
+        });
+      }
+
       const SuccessAlert = {
         Message:
           InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate

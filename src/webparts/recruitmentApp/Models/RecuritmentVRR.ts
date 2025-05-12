@@ -166,10 +166,10 @@ export type ScoreCardData = {
   InterviewDate?: string;
   JobRequestID: string;
   Comments: string;
-  ExternalAgentName?: string; 
-  JobGrade:string;
-  PanelFullNames?: string[]; 
-  
+  ExternalAgentName?: string;
+  JobGrade: string;
+  PanelFullNames?: string[];
+  GPA: string
 };
 
 export type QualificationValue = {

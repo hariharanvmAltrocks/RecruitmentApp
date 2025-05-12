@@ -203,6 +203,7 @@ export const RecuritmentHRMsg = {
 
   ScoreCardSubmitMsg:
     "The Candidate has been Interviewed and Scorecard Submitted for successfully ",
+  ScoreCardMsgLevel2: "The candidate has successfully completed the Level 2 interview.",
 
   InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully.",
   CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully.",
@@ -216,7 +217,7 @@ export const RecuritmentHRMsg = {
   HRReviewCandidate: "Candidate Profile Reviewed Successfully.",
 
   CandidateSelected: "Candidate Selected.",
-  CandidateSelectedLevel2: "Candidate Move to Level 2",
+  CandidateSelectedLevel2: "Candidate Level 1 Selected Successfully",
   CandidateRejected: "Candidate Rejected.",
   CandidateOnHold: "Candidate On Hold.",
   RecuritmentSubmitMsg: "Submitted Successfully.",
@@ -242,7 +243,7 @@ export const RecuritmentHRMsg = {
 
   SelectedErrorMsg: "Please Choose the Disciplines.",
   WarningMsg: "Are you sure want to Change the Disciolines? Any unsaved changes will be lost",
-  ClearWarning:"Are you sure you want to close? Unsaved changes will be lost.",
+  ClearWarning: "Are you sure you want to close? Unsaved changes will be lost.",
 };
 // In your validation messages config file
 export const validationMsg = {

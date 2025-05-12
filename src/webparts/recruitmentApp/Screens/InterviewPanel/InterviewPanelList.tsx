@@ -63,7 +63,7 @@ const InterviewPanelList = (props: any) => {
     // const InterviewDate = new Date(rowData.InterviewDateTime)
     //   .toISOString()
     //   .split("T")[0];
-    if (todayDateStr === interviewDateStr) {
+    if (todayDateStr >= interviewDateStr) {
       if (props.CurrentRoleID === RoleID.RecruitmentHR) {
         props.navigation(navigationPath, {
           state: {
@@ -122,9 +122,8 @@ const InterviewPanelList = (props: any) => {
       const ValidationMsg = `
       <div style="text-align: center;">
         <h3>⚠️ Action cannot be performed.</h3>
-        <p>This interview date has not been activated yet.</p>
         <p><strong>Interview Open Date:</strong> ${formattedDate}</p>
-        <p>Please try again after InterviewDate comes.</p>
+        <p>Please try again on the Interview Date.</p>
       </div>`;
       let ValidationError = {
         Message: ValidationMsg,
@@ -480,7 +479,7 @@ const InterviewPanelList = (props: any) => {
             JobGrade: candidate.JobGrade || "",
             Grade: grade,
             InterviewLevel:
-              level === InterviewLevels.Level2 ? "Level 1 & Level 2" : level,
+              level === InterviewLevels.Level2 ? "Level 1 & 2" : level,
             Status: candidate.Status || "",
             StatusId: candidate.StatusId || "",
             RecruitmentID: candidate.RecruitmentID || "",

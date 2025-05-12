@@ -129,6 +129,7 @@ const HodViewScorecard = (props: any) => {
     ExternalAgentName: "",
     JobGrade: "",
     InterviewLevels: [],
+    GPA: "",
   });
 
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
@@ -337,7 +338,9 @@ const HodViewScorecard = (props: any) => {
     }
     return transformed;
   };
-  const GPA: any = props?.stateValue?.GPA;
+  const GPA: any = props?.stateValue?.GPA
+    ? props?.stateValue?.GPA
+    : CandidateData?.GPA;
   const transformedData = transformScoreData(scoreData, GPA);
 
   const handleInputChangeTextArea = (
@@ -1250,7 +1253,9 @@ const HodViewScorecard = (props: any) => {
                         props?.stateValue?.StatusId ===
                           StatusId.PendingwithHODtoselectthecandidateLevel2 ||
                         props?.stateValue?.StatusId ===
-                          StatusId.PendingwithHODtoAssignPositionID
+                          StatusId.PendingwithHODtoAssignPositionID ||
+                        props?.stateValue?.StatusId ===
+                          StatusId.InterviewScheduledforLevel2
                           ? "Feedback - Level 2"
                           : "Feedback - Level 1"
                       }
@@ -1389,6 +1394,7 @@ const HodViewScorecard = (props: any) => {
           JobGrade: op?.JobGrade,
           InterviewLevels: interviewLevels,
           HRMSCandidateScoreCard: op?.HRMSCandidateScoreCard || [],
+          GPA: op?.GPA,
           // Comments:
           //   props.stateValue?.TabName !== "Evaluation" &&
           //   Array.isArray(op?.CandidateComments?.[op.ID]) &&
@@ -1824,8 +1830,10 @@ const HodViewScorecard = (props: any) => {
         );
         SuccessMessage =
           props?.stateValue?.StatusId ===
-          StatusId.PendingwithHODtoselectthecandidate
+          StatusId.PendingwithHODtoselectthecandidateLevel2
             ? RecuritmentHRMsg.CandidateSelectedLevel2
+            : props.stateValue?.TabName === TabName.Evaluation
+            ? RecuritmentHRMsg.ScoreCardMsgLevel2
             : RecuritmentHRMsg.CandidateSelected;
         break;
 
