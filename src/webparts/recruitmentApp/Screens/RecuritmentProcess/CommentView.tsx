@@ -7,23 +7,13 @@ import Labelheader from "../../components/LabelHeader";
 import LabelValue from "../../components/LabelValue";
 import ReuseButton from "../../components/ReuseButton";
 import { TabName } from "../../utilities/Config";
-import {
-  CandidateLevel2ScoreCardComments,
-  CommentsDatas,
-} from "../../Services/InterviewProcess/IInterviewProcessService";
+import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
+import * as moment from "moment";
 import TabsComponent from "../../components/TabsComponent ";
 
-
-// Define a type for the feedback for each role
-interface CombinedFeedback {
-  feedbackLevel1: string;
-  overallFeedbackLevel1: string;
-  feedbackLevel2: string;
-}
-
 interface CommentViewProps {
-  level1: CommentsDatas[];
-  level2: CandidateLevel2ScoreCardComments[];
+  level1: CommentsData[];
+  level2: CommentsData[];
   onClose: () => void;
 }
 
@@ -39,38 +29,17 @@ const boldLabelStyles: React.CSSProperties = {
   marginBottom: "8px",
 };
 
-const CommentView: React.FC<CommentViewProps> = ({ level1, level2, onClose }) => {
-console.log("level1",level1)
-console.log("level2",level2)
-  const combinedComments: { [role: string]: CombinedFeedback } = {};
-
-  // Combine Level 1 comments with their roles
-  level1.forEach((comment: any) => {
-    comment.CandidateScoreCard?.forEach((score: any) => {
-      if (score.Feedback) {
-        if (!combinedComments[comment.Role]) {
-          combinedComments[comment.Role] = { feedbackLevel1: "", overallFeedbackLevel1: "", feedbackLevel2: "" };
-        }
-        combinedComments[comment.Role].feedbackLevel1 = score.Feedback;
-      }
-      if (score.OverAllEvaluationFeedback) {
-        if (!combinedComments[comment.Role]) {
-          combinedComments[comment.Role] = { feedbackLevel1: "", overallFeedbackLevel1: "", feedbackLevel2: "" };
-        }
-        combinedComments[comment.Role].overallFeedbackLevel1 = score.OverAllEvaluationFeedback;
-      }
-    });
-  });
-
-  // Combine Level 2 comments with their roles
-  level2.forEach((comment: any) => {
-    if (comment.Comments) {
-      if (!combinedComments[comment.Role]) {
-        combinedComments[comment.Role] = { feedbackLevel1: "", overallFeedbackLevel1: "", feedbackLevel2: "" };
-      }
-      combinedComments[comment.Role].feedbackLevel2 = comment.Comments;
-    }
-  });
+const CommentView: React.FC<CommentViewProps> = ({
+  level1,
+  level2,
+  onClose,
+}) => {
+  const roles = Array.from(
+    new Set([
+      ...level1.map((c) => c.RoleName),
+      ...level2.map((c) => c.RoleName),
+    ])
+  );
 
   const tabs = [
     {
@@ -82,88 +51,116 @@ console.log("level2",level2)
           sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
         >
           <CardContent>
-            {/* Display comments grouped by Role */}
-            {Object.keys(combinedComments).length > 0 ? (
-              Object.keys(combinedComments).map((role: string, index: number) => {
-                const { feedbackLevel1, overallFeedbackLevel1, feedbackLevel2 } = combinedComments[role];
-                const comment = level1.find((c: any) => c.Role === role); // Get the original comment by role
+            {roles.length > 0 ? (
+              roles.map((role, index) => {
+                const c1 = level1.find((c) => c.RoleName === role);
+      
+                const c2 = level2.find((c) => c.RoleName === role);
+
+                const fb2 = c2?.comments || "";
+
+                const date1 = c1?.Date
+                  ? moment(c1.Date).format("M/D/YYYY, h:mm:ss A")
+                  : "";
+                const date2 = c2?.Date
+                  ? moment(c2.Date).format("M/D/YYYY, h:mm:ss A")
+                  : "";
+
+                const meta = c1 || c2;
 
                 return (
-                  <div key={index} className="sub-menu-card comment" style={{ marginTop: "20px" }}>
+                  <div
+                    key={index}
+                    className="sub-menu-card comment"
+                    style={{ marginTop: "20px" }}
+                  >
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg12">
-                        <LabelHeaderComponents value={`Submitted by ${role}`} />
+                        {role ? (
+                          <LabelHeaderComponents
+                            value={`Submitted by ${role}`}
+                          />
+                        ) : (
+                          <LabelHeaderComponents value=" " />
+                        )}
                       </div>
                     </div>
 
-                    {feedbackLevel1 && (
-                      <div>
-                        <Labelheader value="Feedback Ratings Below 2 - Level 1" />
-                        <LabelValue value={feedbackLevel1} />
-                      </div>
+                    {(c1?.comments || c1?.OverAllEvaluationFeedback) && (
+                      <>
+                        {c1?.comments && (
+                          <>
+                            <Labelheader value="Feedback Level 1" />
+                            <LabelValue value={c1.comments} />
+                          </>
+                        )}
+
+                        {c1?.OverAllEvaluationFeedback && (
+                          <>
+                            <Labelheader value="Overall Feedback Level 1" />
+                            <LabelValue value={c1.OverAllEvaluationFeedback} />
+                          </>
+                        )}
+                      </>
+                    )}
+                    {fb2 && (
+                      <>
+                        <Labelheader value="Feedback Level 2" />
+                        <LabelValue value={fb2} />
+                      </>
                     )}
 
-            
-                    {overallFeedbackLevel1 && (
-                      <div>
-                        <Labelheader value="Overall Evaluation - Level 1" />
-                        <LabelValue value={overallFeedbackLevel1} />
-                      </div>
+                    {meta?.Name && (
+                      <Label style={boldLabelStyles}>{meta.Name}</Label>
                     )}
-
-          
-                    {feedbackLevel2 && (
-                      <div>
-                        <Labelheader value="Feedback - Level 2 " />
-                        <LabelValue value={feedbackLevel2} />
-                      </div>
+                    {meta?.JobTitleInEnglish && (
+                      <Label style={labelStyles}>
+                        {meta.JobTitleInEnglish}
+                      </Label>
                     )}
-
-                    {comment?.Name && (
-                      <div>
-                        <Label style={boldLabelStyles}>{comment?.Name}</Label>
-                      </div>
-                    )}
-
-                    {comment?.JobTitleInEnglish && (
+                    {meta?.JobTitleInFrench && (
                       <Label className="title" style={labelStyles}>
-                        {comment.JobTitleInEnglish}
+                        {meta.JobTitleInFrench}
+                      </Label>
+                    )}
+                    {meta?.Department && (
+                      <Label className="title" style={labelStyles}>
+                        {meta.Department}
                       </Label>
                     )}
 
-                    {comment?.JobTitleInFrench && (
-                      <Label className="title" style={labelStyles}>
-                        {comment.JobTitleInFrench}
-                      </Label>
+                    {date1 && (
+                      <Label style={labelStyles}>Level 1 Date: {date1}</Label>
                     )}
-                    {comment?.Department && (
-                      <div>
-                        <Label style={labelStyles}>{comment.Department}</Label>
-                      </div>
+                    {date2 && (
+                      <Label style={labelStyles}>Level 2 Date: {date2}</Label>
                     )}
-
-                    {comment?.CandidateScoreCard &&
-                      comment.CandidateScoreCard.length > 0 &&
-                      comment.CandidateScoreCard.map((score: any, scoreIndex: number) => (
-                        <div key={scoreIndex}>
-                          {score.CreatedDate && score.CreatedDate !== "N/A" && (
-                            <Label style={labelStyles}>{score.CreatedDate}</Label>
-                          )}
-                        </div>
-                      ))}
-                    
                   </div>
                 );
               })
             ) : (
-              <p style={{ display: "flex", justifyContent: "center", padding: "1.2%", fontSize: "1.3em", marginTop: "16%", marginBottom: "18%" }}>
+              <p
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: "1.2%",
+                  fontSize: "1.3em",
+                  marginTop: "16%",
+                  marginBottom: "18%",
+                }}
+              >
                 No Comments Found
               </p>
             )}
 
-            {/* Close Button */}
             <div className="ms-Grid-row">
-              <div style={{ marginRight: "10px", display: "flex", justifyContent: "flex-end" }}>
+              <div
+                style={{
+                  marginRight: "10px",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
                 <ReuseButton label="Close" onClick={onClose} spacing={4} />
               </div>
             </div>
