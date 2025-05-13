@@ -19,31 +19,33 @@ import {
 } from "./IInterviewProcessService";
 
 export default class InterviewProcessService
-  implements IInterviewProcessService
-{
+  implements IInterviewProcessService {
   async GetInterviewPanelDetails(
     filterConditions: any[] = []
   ): Promise<ApiResponse<InterviewPanaldata[]>> {
     let InterviewPanelDetails: InterviewPanaldata[] = [];
 
     try {
-      let listItems: any[] = await SPServices.SPReadItems({
+
+      const listItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSInterviewPanelDetails,
         Select:
           "ID, CandidateID/ID, RecruitmentID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail,IsScoreSheetUploaded",
         Expand: "InterviewPanel,RecruitmentID,CandidateID",
         Filter: filterConditions,
       });
+
       const panelEmails = listItems
         .map((interview) => interview.InterviewPanel?.EMail)
-        .filter((email) => email);
+        .filter((email) => !!email);
 
       let emailToAuthorMap: Record<string, string> = {};
 
       if (panelEmails.length > 0) {
+
         const sageListItems: any[] = await SPServices.SPReadItems({
           Listname: ListNames.HRMSSageList,
-          Select: "EmailId, FirstName, LastName,MiddleName",
+          Select: "EmailId, FirstName, LastName, MiddleName",
           FilterCondition: [
             {
               FilterKey: "EmailId",
@@ -52,23 +54,24 @@ export default class InterviewProcessService
             },
           ],
         });
+
+
         emailToAuthorMap = sageListItems.reduce((acc, item) => {
-          acc[item.EmailId] = `${item?.FristName ?? ""} ${
-            item?.MiddleName ?? ""
-          } ${item?.LastName ?? ""}`.trim();
+          const fullName = `${item?.FirstName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""}`.trim();
+          acc[item.EmailId] = fullName || "";
           return acc;
         }, {} as Record<string, string>);
       }
 
       InterviewPanelDetails = listItems.map((objresult: any) => {
-        const panelEmail = objresult.InterviewPanel?.EMail || "N/A";
-        const authorName = emailToAuthorMap[panelEmail] || "Unknown";
+        const panelEmail = objresult.InterviewPanel?.EMail || "";
+        const authorName = emailToAuthorMap[panelEmail] || "";
 
         return {
           ID: objresult.ID,
           CandidateID: objresult.CandidateID?.ID || 0,
           RecruitmentID: objresult.RecruitmentID?.ID || 0,
-          InterviewLevel: objresult.InterviewLevel || "N/A",
+          InterviewLevel: objresult.InterviewLevel || "",
           InterviewPanel: objresult.InterviewPanel?.Id || 0,
           InterviewPanelTitle: authorName,
           InterviewPanalNames: objresult.InterviewPanel?.Title
@@ -77,6 +80,7 @@ export default class InterviewProcessService
           IsScoreSheetUploaded: objresult.IsScoreSheetUploaded || "",
         };
       });
+
       return {
         data: InterviewPanelDetails,
         status: 200,
@@ -115,9 +119,8 @@ export default class InterviewProcessService
           FristName: item?.FristName || "",
           MiddleName: item?.MiddleName || "",
           LastName: item?.LastName || "",
-          FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${
-            item?.LastName ?? ""
-          }`.trim(),
+          FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
+            }`.trim(),
           PositionTitle: item?.PositionTitle || "",
           JobGrade: item?.JobGrade || "",
           Status: item?.Status?.StatusDescription || "",
@@ -242,9 +245,8 @@ export default class InterviewProcessService
             ? positionResult.data[positionResult.data.length - 1].GPA
             : null;
 
-          const fullName = `${item?.FristName ?? ""} ${
-            item?.MiddleName ?? ""
-          } ${item?.LastName ?? ""}`.trim();
+          const fullName = `${item?.FristName ?? ""} ${item?.MiddleName ?? ""
+            } ${item?.LastName ?? ""}`.trim();
 
           return {
             SNO: index + 1,
@@ -413,8 +415,7 @@ export default class InterviewProcessService
                 );
 
                 const fullName = employee
-                  ? `${employee.FirstName ?? ""} ${employee.MiddleName ?? ""} ${
-                      employee.LastName ?? ""
+                  ? `${employee.FirstName ?? ""} ${employee.MiddleName ?? ""} ${employee.LastName ?? ""
                     }`.trim()
                   : scoreCard?.Author?.Title || "";
 
@@ -630,8 +631,7 @@ export default class InterviewProcessService
           JobTitle: objresult.JobTitle || "",
           RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
           Name: Employee
-            ? `${Employee.FirstName ?? ""} ${Employee.MiddleName ?? ""} ${
-                Employee.LastName ?? ""
+            ? `${Employee.FirstName ?? ""} ${Employee.MiddleName ?? ""} ${Employee.LastName ?? ""
               }`.trim()
             : objresult.Author?.Title || "",
         };

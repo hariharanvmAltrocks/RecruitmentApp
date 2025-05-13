@@ -39,7 +39,7 @@ const CommentView: React.FC<CommentViewProps> = ({
       ...level1.map((c) => c.RoleName),
       ...level2.map((c) => c.RoleName),
     ])
-  );
+  ).filter((role) => role);
 
   const tabs = [
     {
@@ -54,7 +54,7 @@ const CommentView: React.FC<CommentViewProps> = ({
             {roles.length > 0 ? (
               roles.map((role, index) => {
                 const c1 = level1.find((c) => c.RoleName === role);
-      
+
                 const c2 = level2.find((c) => c.RoleName === role);
 
                 const fb2 = c2?.comments || "";

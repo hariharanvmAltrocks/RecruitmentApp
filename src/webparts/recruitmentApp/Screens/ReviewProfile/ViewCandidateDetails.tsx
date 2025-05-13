@@ -18,7 +18,6 @@ import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
 import {
-  ADGroupID,
   CandidateStatus,
   CheckboxContent,
   ColorCode,
@@ -76,6 +75,9 @@ type ValidationError = {
   InterviewTime: boolean;
   CandidateScoreValue: boolean;
   ReviewFeedback: boolean;
+  InterviewMeetingInviteLinkLevel2: boolean;
+  InterviewTimeLevel2: boolean;
+  InterviewedDateLevel2: boolean;
 };
 
 type ActionValue = {
@@ -156,6 +158,9 @@ const ViewCandidateDetails = (props: any) => {
       InterviewTime: false,
       CandidateScoreValue: false,
       ReviewFeedback: false,
+      InterviewMeetingInviteLinkLevel2: false,
+      InterviewTimeLevel2: false,
+      InterviewedDateLevel2: false,
     });
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -388,7 +393,10 @@ const ViewCandidateDetails = (props: any) => {
 
     setSubmitBtn(
       props.stateValue?.initialTab === TabName.AssignInterviewPanel
-        ? "Schedule for Interview "
+        ? props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2 ||
+          props.stateValue?.StatusId === StatusId.InterviewScheduled
+          ? "Reschedule"
+          : "Schedule for Interview "
         : "Submit"
     );
     const newTabNames = [
@@ -408,6 +416,23 @@ const ViewCandidateDetails = (props: any) => {
         : false
     );
   }, []);
+
+  const Get_InterviewPanelName = (Email: string, Id: number) => {
+    const employee = props.EmployeeList.find((emp: any) => {
+      return emp.Email?.toLowerCase() === Email?.toLowerCase();
+    });
+
+    if (employee) {
+      return {
+        key: Id,
+        text: `${employee.FirstName || ""} ${employee.MiddleName || ""} ${
+          employee.LastName || ""
+        }`,
+      };
+    }
+
+    return null;
+  };
 
   React.useEffect(() => {
     const getRecurtimentList = async () => {
@@ -442,22 +467,49 @@ const ViewCandidateDetails = (props: any) => {
         "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
         "BUC,LineManager,HOD,HR,EXCO"
       );
-      const interviewpanelOption = await CommonServices.GetADgruopsEmailIDs(
-        ADGroupID.HRMSInterviewPanel
+      // const interviewpanelOption = await CommonServices.GetADgruopsEmailIDs(
+      //   ADGroupID.HRMSInterviewPanel
+      // );
+      const LineManager = Get_InterviewPanelName(
+        AssignInterviewPanel.data[0]?.LineManager?.EMail,
+        AssignInterviewPanel.data[0]?.LineManagerId
       );
-      const Level1Value = interviewpanelOption.data.filter((item: any) =>
+      const HOD = Get_InterviewPanelName(
+        AssignInterviewPanel.data[0]?.HOD?.EMail,
+        AssignInterviewPanel.data[0]?.HODId
+      );
+      const AssignHR = Get_InterviewPanelName(
+        response.data[0]?.AssignEMail,
+        response.data[0]?.AssignedHRId
+      );
+      const EXCO = Get_InterviewPanelName(
+        AssignInterviewPanel.data[0]?.EXCO?.EMail,
+        AssignInterviewPanel.data[0]?.EXCOId
+      );
+
+      const validPanelKeys: AutoCompleteItem[] = [
+        LineManager,
+        HOD,
+        AssignHR,
+        EXCO,
+      ].filter(Boolean) as AutoCompleteItem[];
+
+      // const Level1Value = validPanelKeys.filter((item: any) =>
+      //   validPanelKeys.includes(item.key)
+      // );
+      const Level1Value = validPanelKeys.filter((item: any) =>
         [
-          AssignInterviewPanel.data[0]?.LineManagerId,
-          response.data[0]?.AssignedHRId,
-          AssignInterviewPanel.data[0]?.HODId,
+          LineManager?.key, //AssignInterviewPanel.data[0]?.LineManagerId,
+          AssignHR?.key, //response.data[0]?.AssignedHRId,
+          HOD?.key, //AssignInterviewPanel.data[0]?.HODId,
         ].includes(item.key)
       );
 
-      const Level2Value = interviewpanelOption.data.filter((item: any) =>
+      const Level2Value = validPanelKeys.filter((item: any) =>
         [
-          response.data[0]?.AssignedHRId,
-          AssignInterviewPanel.data[0]?.HODId,
-          AssignInterviewPanel.data[0]?.EXCOId,
+          EXCO?.key, //AssignInterviewPanel.data[0]?.LineManagerId,
+          AssignHR?.key, //response.data[0]?.AssignedHRId,
+          HOD?.key, //AssignInterviewPanel.data[0]?.HODId,
         ].includes(item.key)
       );
 
@@ -465,7 +517,7 @@ const ViewCandidateDetails = (props: any) => {
         ...prevState,
         Grade: response.data[0]?.PatersonGrade,
         Levels: Gradelevel.data[0]?.Level,
-        AssignInterviewedLevel1Option: interviewpanelOption.data,
+        AssignInterviewedLevel1Option: validPanelKeys,
         AssignInterviewLevel1: Level1Value,
         AssignInterviewedLevel2: Level2Value,
       }));
@@ -527,17 +579,20 @@ const ViewCandidateDetails = (props: any) => {
         ...prevState,
         InterviewedDate: updatedDate,
       }));
+      setValidationErrors((prevState) => ({
+        ...prevState,
+        InterviewedDateLevel2: false,
+      }));
     } else {
       setInterviewedLevel((prevState: any) => ({
         ...prevState,
         InterviewedDate: updatedDate,
       }));
+      setValidationErrors((prevState) => ({
+        ...prevState,
+        InterviewedDate: false,
+      }));
     }
-
-    setValidationErrors((prevState) => ({
-      ...prevState,
-      InterviewedDate: false,
-    }));
   };
 
   const handleMulitiSelect = (value: AutoCompleteItem[]) => {
@@ -558,17 +613,20 @@ const ViewCandidateDetails = (props: any) => {
         ...prevState,
         InterviewTime: value,
       }));
+      setValidationErrors((prevState) => ({
+        ...prevState,
+        InterviewTimeLevel2: false,
+      }));
     } else {
       setInterviewedLevel((prevState: any) => ({
         ...prevState,
         InterviewTime: value,
       }));
+      setValidationErrors((prevState) => ({
+        ...prevState,
+        InterviewTime: false,
+      }));
     }
-
-    setValidationErrors((prevState) => ({
-      ...prevState,
-      InterviewTime: false,
-    }));
   };
 
   const handleInputChange = (value: string) => {
@@ -577,17 +635,20 @@ const ViewCandidateDetails = (props: any) => {
         ...prevState,
         InterviewMeetingInviteLink: value,
       }));
+      setValidationErrors((prevState) => ({
+        ...prevState,
+        InterviewMeetingInviteLinkLevel2: false,
+      }));
     } else {
       setInterviewedLevel((prevState: any) => ({
         ...prevState,
         InterviewMeetingInviteLink: value,
       }));
+      setValidationErrors((prevState) => ({
+        ...prevState,
+        InterviewMeetingInviteLink: false,
+      }));
     }
-
-    setValidationErrors((prevState) => ({
-      ...prevState,
-      InterviewMeetingInviteLink: false,
-    }));
   };
 
   const handleAutoComplete = async (value: AutoCompleteItem | null) => {
@@ -821,7 +882,7 @@ const ViewCandidateDetails = (props: any) => {
                               <CustomDatePicker
                                 selectedDate={level2Data.InterviewedDate}
                                 label="Interviewed Date-Level 2"
-                                error={validationErrors.InterviewedDate}
+                                error={validationErrors.InterviewedDateLevel2}
                                 minDate={todaydate}
                                 mandatory={true}
                                 onChange={(date) =>
@@ -833,7 +894,7 @@ const ViewCandidateDetails = (props: any) => {
                               <CustomTimePicker
                                 selectedTime={level2Data.InterviewTime}
                                 label="Interview Time-Level 2"
-                                error={validationErrors.InterviewTime}
+                                error={validationErrors.InterviewTimeLevel2}
                                 mandatory={true}
                                 onChange={handleInterviewTimeChange}
                               />
@@ -845,7 +906,7 @@ const ViewCandidateDetails = (props: any) => {
                                 mandatory={true}
                                 onChange={handleInputChange}
                                 error={
-                                  validationErrors.InterviewMeetingInviteLink
+                                  validationErrors.InterviewMeetingInviteLinkLevel2
                                 }
                               />
                             </div>
@@ -1172,6 +1233,9 @@ const ViewCandidateDetails = (props: any) => {
       InterviewMeetingInviteLink: false,
       InterviewTime: false,
       ReviewFeedback: false,
+      InterviewMeetingInviteLinkLevel2: false,
+      InterviewTimeLevel2: false,
+      InterviewedDateLevel2: false,
     };
     switch (props.CurrentRoleID) {
       case RoleID.RecruitmentHR:
@@ -1186,6 +1250,16 @@ const ViewCandidateDetails = (props: any) => {
           errors.InterviewMeetingInviteLink = !IsValid(
             InterviewedLevel.InterviewMeetingInviteLink
           );
+          if (
+            props.stateValue?.StatusId ===
+            StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+          ) {
+            errors.InterviewTimeLevel2 = !IsValid(level2Data.InterviewTime);
+            errors.InterviewMeetingInviteLinkLevel2 = !IsValid(
+              level2Data.InterviewMeetingInviteLink
+            );
+            errors.InterviewedDateLevel2 = !IsValid(level2Data.InterviewedDate);
+          }
         } else {
           errors.Comments = !IsValid(actionValue.Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
@@ -1483,7 +1557,10 @@ const ViewCandidateDetails = (props: any) => {
         } else {
           if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
             CandidateData = createFilter(workflowStatusApi.InterviewScheduled);
-            PopupMessage = RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
+            PopupMessage =
+              InterviewedLevel.Levels === InterviewLevels.Level2
+                ? RecuritmentHRMsg.InterviewPanalLevel1
+                : RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
           } else {
             CandidateData = createFilter(
               workflowStatusApi.LineManagerL1Pending

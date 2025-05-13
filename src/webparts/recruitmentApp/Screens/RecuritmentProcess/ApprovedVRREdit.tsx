@@ -777,6 +777,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             if (formState.GradingDocument.length === 0) {
               errors.Grading = !IsValid(masterLibrary.Grading);
             }
+            if (formState.AdvertisementDocument.length === 0) {
+              errors.AdvertisementAttachement = !IsValid(
+                advDetails.AdvertisementAttachement
+              );
+            }
           } else {
             if (formState.RoleProfileDocument.length === 0) {
               errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);

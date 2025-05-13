@@ -134,7 +134,9 @@ export type DataSyncToRecruitmentResponse = {
   JobPostingStartDate: Date | undefined,
   JobPostingEndDate: Date | undefined,
   JobPostingFirstExtensionEndDate: Date | undefined,
-  JobPostingSecondExtensionEndDate: Date | undefined
+  JobPostingSecondExtensionEndDate: Date | undefined,
+
+  AssignEMail: string
 }
 
 export type JobCodeData = {

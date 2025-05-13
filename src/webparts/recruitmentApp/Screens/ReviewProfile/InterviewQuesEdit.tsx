@@ -51,11 +51,9 @@ import {
 } from "../../Models/ApIInterface";
 import { GetPortalJobsService } from "../../Services/ServiceExport";
 import SPServices from "../../Services/SPService/SPServices";
-import CustomDialogbox from "../../components/CustomDialogbox";
 import ViewQuestionCheckbox, {
   ViewQuestion,
 } from "../ScreenComponent/ViewQuestionCheckbox";
-import ReuseButton from "../../components/ReuseButton";
 import CustomLabel from "../../components/CustomLabel";
 
 type InterviewQuesValidationError = {
@@ -96,10 +94,7 @@ interface QuestionItem {
   Disqualification: string;
   Type?: string;
 }
-type OptionValidationError = {
-  ExpectedAnswer: boolean;
-  OptionsType: string[];
-};
+
 const InterviewQuesEdit: React.FC = (props: any) => {
   const [InterviewQuesData, setInterviewQuesData] = useState<InterviewQues>({
     Disciplines: { key: 0, text: "" },
@@ -173,12 +168,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const [existingquestionnaire, setExistingquestionnaire] = React.useState<
     ViewQuestion[]
   >([]);
-
-  const [OptionValidationError, setOptionValidationError] =
-    useState<OptionValidationError>({
-      ExpectedAnswer: false,
-      OptionsType: [],
-    });
 
   const handleCategoryChange = (val: string) => {
     setInterviewQuesData((prev) => ({
@@ -274,46 +263,26 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
       let updatedOptions = [...question.options];
 
-      // Handle SingleAnswer Question type
       if (question.questionType.text === displayTextOptionCode.SingleAnswer) {
         updatedOptions = updatedOptions.map((opt, index) => ({
           ...opt,
-          isCorrect: index === optIndex, // Only one option can be correct in SingleAnswer
+          isCorrect: index === optIndex,
         }));
-      } else if (question.questionType.text === displayTextOptionCode.MultiAnswer) {
-        updatedOptions[optIndex] = {
-          ...updatedOptions[optIndex],
-          isCorrect: !updatedOptions[optIndex].isCorrect, // Toggle correct answer for MultiAnswer
-        };
-      }
-
-      // Update the question's options
-      question.options = updatedOptions;
-      question.CareerportalAnswer = updatedOptions.filter((opt) => opt.isCorrect);
-
-      // Check if at least one correct option is selected
-      const correctAnswersCount = updatedOptions.filter((opt) => opt.isCorrect).length;
-
-      if (correctAnswersCount === 0) {
-        // Set validation error for this question in the OptionsType array
-        setOptionValidationError((prevErrors) => ({
-          ...prevErrors,
-          OptionsType: {
-            ...prevErrors.OptionsType,
-            [qIndex]: `Question ${qIndex + 1} must have at least one correct option.`,
-          },
-        }));
-        return prev; // Don't update the state if validation fails
       } else {
-        // Clear the validation error for this question
-        setOptionValidationError((prevErrors) => ({
-          ...prevErrors,
-          OptionsType: {
-            ...prevErrors.OptionsType,
-            [qIndex]: '',
-          },
-        }));
+        if (updatedOptions[optIndex]) {
+          updatedOptions[optIndex] = {
+            ...updatedOptions[optIndex],
+            isCorrect: !updatedOptions[optIndex].isCorrect,
+          };
+        } else {
+          console.warn(`Option at index ${optIndex} is undefined.`);
+        }
       }
+
+      question.options = updatedOptions;
+      question.CareerportalAnswer = updatedOptions.filter(
+        (opt) => opt.isCorrect
+      );
 
       updated[qIndex] = question;
       return updated;
@@ -460,7 +429,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     setEditingQuestionIndex(null);
 
     setInterviewQuesData((prev) => ({
-      Disciplines: { key: 0, text: "" },
+      ...prev,
       QuestionNumber: { key: 0, text: "" },
       QuestionType: { key: 0, text: "" },
       Question: "",
@@ -530,12 +499,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         ...prev,
         { key: prev.length, text: "", isCorrect: false },
       ];
-      Validation();
+      // Validation();
       return newOptions;
     });
   };
 
-  const handleSaveQuestion = () => {
+  const handleSaveQuestion = (index: number) => {
     const shouldValidateQuestionType =
       props?.stateValue?.StatusId ===
       StatusId.PendingwithLMcreateDisqualificationQuestion;
@@ -554,17 +523,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     const correctAnswers = OptionsType.filter((opt) => opt.isCorrect).map(
       (opt, i) => ({ key: i, text: opt.text })
     );
-    const lastResueQuestionId =
-      resuequestionnaire.length > 0
-        ? Math.max(...resuequestionnaire.map((item) => item.id))
-        : 0;
-
-    const nextQuestionId = lastResueQuestionId + 1;
     const questionData: ViewQuestion = {
       id:
         editingQuestionIndex !== null
           ? questions[editingQuestionIndex].id
-          : nextQuestionId,
+          : index,
       discipline: InterviewQuesData.Disciplines,
       questionType: questionType,
       question: InterviewQuesData.Question,
@@ -581,7 +544,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       HeaderLabel:
         editingQuestionIndex !== null
           ? `Question ${editingQuestionIndex + 1}`
-          : `Question ${nextQuestionId + 1}`,
+          : `Question ${index}`,
     };
     if (editingQuestionIndex !== null) {
       setresuequestionnaire((prev) => {
@@ -1128,7 +1091,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         borderColor: "#5f5f5f",
                         boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                         height:
-                          expandedExistingQuestion !== null ? "auto" : "300px",
+                          expandedExistingQuestion !== null ? "auto" : "auto",
                         transition: "height 0.3s ease-in-out",
                         overflow: "hidden",
                       }}
@@ -1291,7 +1254,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         borderColor: "#5f5f5f",
                         boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                         height:
-                          expandedQuestionIndex !== null ? "auto" : "300px",
+                          expandedQuestionIndex !== null ? "auto" : "auto",
                         transition: "height 0.3s ease-in-out",
                         overflow: "hidden",
                       }}
@@ -1307,6 +1270,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       >
                         {newquestionnaire.map((q, index) => {
                           const isExpanded = expandedQuestionIndex === index;
+                          // const IsIndex =
+                          //   existingquestionnaire.length + (index + 1);
+                          const str = q.HeaderLabel || "";
+                          const number = str.split(" ")[1]; // returns "6"
+                          const Totalindex = parseInt(number);
                           return (
                             <>
                               <Box
@@ -1366,7 +1334,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                   value={q.questionType}
                                                   onChange={(val) =>
                                                     handleQuestionFieldChange(
-                                                      index,
+                                                      Totalindex - 1,
                                                       "questionType",
                                                       val
                                                     )
@@ -1393,6 +1361,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                             mandatory={true}
                                           />
                                         </Box>
+
                                         {q?.questionType?.text ===
                                           displayTextOptionCode.MultiAnswer ||
                                         q?.questionType?.text ===
@@ -1428,13 +1397,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       value={option.text}
                                                       onChange={(val) =>
                                                         handleQuestionOptionChange(
-                                                          index,
+                                                          Totalindex - 1,
                                                           optIndex,
                                                           val
                                                         )
                                                       }
                                                     />
-
                                                     <Box
                                                       sx={{
                                                         backgroundColor:
@@ -1457,7 +1425,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       }}
                                                       onClick={() =>
                                                         handleAnswerSelection(
-                                                          index,
+                                                          Totalindex - 1,
                                                           optIndex
                                                         )
                                                       }
@@ -1498,7 +1466,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                           }}
                                                           onClick={() =>
                                                             handleQuestionDeleteRow(
-                                                              index,
+                                                              Totalindex - 1,
                                                               optIndex
                                                             )
                                                           }
@@ -1531,7 +1499,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                           }}
                                                           onClick={() =>
                                                             handleQuestionAddRow(
-                                                              index
+                                                              Totalindex - 1
                                                             )
                                                           }
                                                         >
@@ -1539,35 +1507,28 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                         </Button>
                                                       )}
                                                     </Box>
-
-                                                    {/* Validation error message */}
-                                                    {OptionValidationError
-                                                      .OptionsType[
-                                                      optIndex
-                                                    ] && (
-                                                      <Typography
-                                                        color="error"
-                                                        sx={{
-                                                          fontSize: 13,
-                                                          mt: -1,
-                                                          mb: 2,
-                                                        }}
-                                                      >
-                                                        {
-                                                          OptionValidationError
-                                                            .OptionsType[
-                                                            optIndex
-                                                          ]
-                                                        }
-                                                      </Typography>
-                                                    )}
                                                   </Box>
                                                 );
                                               }
                                             )}
                                           </Box>
+                                        ) : props?.stateValue?.StatusId ===
+                                          StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
+                                          <Box sx={{ mb: 2 }}>
+                                            <RichTextEditor
+                                              label="Expected Answer"
+                                              value={q.expectedAnswer || ""}
+                                              onChange={(val) =>
+                                                handleQuestionFieldChange(
+                                                  index,
+                                                  "expectedAnswer",
+                                                  val
+                                                )
+                                              }
+                                              mandatory={true}
+                                            />
+                                          </Box>
                                         ) : null}
-
 
                                         {props?.stateValue?.StatusId ===
                                           StatusId.PendingwithLMcreateDisqualificationQuestion && (
@@ -1577,7 +1538,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                               value={q.Disqualification ?? "NO"}
                                               onChange={(val) =>
                                                 handleCommonRadioChange(
-                                                  index,
+                                                  Totalindex - 1,
                                                   "Disqualification",
                                                   val
                                                 )
@@ -2007,7 +1968,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       <Button
                         variant="contained"
                         // startIcon={<AddIcon />}
-                        onClick={handleSaveQuestion}
+                        onClick={() =>
+                          handleSaveQuestion(resuequestionnaire.length + 1)
+                        }
                         sx={{
                           backgroundColor:
                             ColorCode.ButtonColorCode.ButtonColor,
@@ -2227,40 +2190,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   // }
   async function Submit_fn() {
     setIsLoading(true);
-    const validationErrors: { OptionsType: string[] } = { OptionsType: [] };
-    let hasValidationError = false;
-  
-    questions.forEach((q, index) => {
-      const type = q.questionType?.text;
-      if (
-        type === displayTextOptionCode.MultiAnswer ||
-        type === displayTextOptionCode.SingleAnswer
-      ) {
-        if (!q.options || q.options.length < 2) {
-          validationErrors.OptionsType[index] = `Question ${index + 1} must have at least 2 options.`;
-          hasValidationError = true;
-        } else if (!q.options.some((opt) => opt.isCorrect)) {
-          validationErrors.OptionsType[index] = `Question ${index + 1} must have at least one correct option.`;
-          hasValidationError = true;
-        }
-      }
-    });
-  
-    // If validation fails, stop the submit process and show errors
-    if (hasValidationError) {
-      // Update your validation error state to display errors in the UI
-      setOptionValidationError({ ...OptionValidationError });
-  
-      // Set loading to false as submission won't continue
-      setIsLoading(false);
-      return; // Stop the function execution
-    }
-  
     const lastResueId =
       resuequestionnaire.length > 0
         ? Math.max(...resuequestionnaire.map((item) => item.id))
         : 0;
-  
+
     const adjustedQuestions = questions.map((item, idx) => ({
       ...item,
       id: lastResueId + idx + 1,
@@ -2269,17 +2203,17 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         text: `Question ${lastResueId + idx + 1}`,
       },
     }));
-  
+
     const QuestionairesData = [...resuequestionnaire, ...adjustedQuestions];
     let QuestionValue: UpsertQuestions[] = QuestionairesData.map((item) => {
       const category = getMasterData.category.find(
         (cat) => cat.text === InterviewQuesData.Catogry
       );
-  
+
       // Initialize variables
       let OptionsValue: optionsValue[] = [];
       let answerValue: answersValue[] = [];
-  
+
       if (category?.text === CatogryOptionCode.CareerPortalCandidate) {
         OptionsValue =
           item.options?.map((opt, index) => ({
@@ -2287,7 +2221,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             optionFr: opt.text,
             sequence: index + 1,
           })) || [];
-  
+
         answerValue =
           item.CareerportalAnswer?.map((ans) => ({
             optionEn: ans.text,
@@ -2300,7 +2234,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             optionFr: opt.text,
             sequence: index + 1,
           })) || [];
-  
+
         OptionsValue = [
           {
             optionEn: item.expectedAnswer,
@@ -2308,7 +2242,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             sequence: 1,
           },
         ];
-  
+
         answerValue = [
           {
             optionEn: item.expectedAnswer,
@@ -2324,7 +2258,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         item?.Type === DataType.Existing
           ? String(item.questionType)
           : String(item.questionType.key);
-  
+
       return {
         questionEn: item.question,
         questionFr: item.question,
@@ -2343,19 +2277,24 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         answers: answerValue,
       };
     });
-  
+
     const response = await GetPortalJobsService.UpsertQuestions(QuestionValue);
-  
+
     if (response.status === ResponeStatus.SUCCESS) {
-      const obj: any = {
-        ActionId: WorkflowAction.Approved,
-        ItemCreated: "Yes",
-      };
-      await SPServices.SPUpdateItem({
-        Listname: ListNames.HRMSRecruitmentDptDetails,
-        RequestJSON: obj,
-        ID: props.stateValue?.ID,
-      });
+      if (
+        InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
+      ) {
+        const obj: any = {
+          ActionId: WorkflowAction.Approved,
+          ItemCreated: "Yes",
+        };
+        await SPServices.SPUpdateItem({
+          Listname: ListNames.HRMSRecruitmentDptDetails,
+          RequestJSON: obj,
+          ID: props.stateValue?.ID,
+        });
+      }
+
       const SuccessAlert = {
         Message:
           InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
@@ -2374,7 +2313,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           }
         },
       };
-  
+
       setAlertPopupOpen(true);
       setalertProps(SuccessAlert);
       setIsLoading(false);
@@ -2395,14 +2334,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           }
         },
       };
-  
+
       setAlertPopupOpen(true);
       setalertProps(APIError);
       setIsLoading(false);
     }
     setIsLoading(false);
   }
-  
+
   const handleCheckbox = (id: number, value: boolean) => {
     setQuestionnaire((prevState) =>
       questionnaire.map((q) => (q.id === id ? { ...q, Checked: value } : q))
@@ -2463,112 +2402,66 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   return (
     <>
-      <CustomLoader isLoading={isLoading}>
-        <div
-          style={{
-            backgroundColor: "#EEEEEE",
-            padding: "20px",
-            borderRadius: "5px",
-            boxShadow: "0px 2px 4px 3px lightgray",
+      {viewQA ? (
+        <ViewQuestionCheckbox
+          questionnaire={questionnaire}
+          handleCheckbox={(id, value) => handleCheckbox(id, value)}
+          Disciplines={InterviewQuesData?.Disciplines.text}
+          Reusequestion_fn={() => Reusequestion_fn()}
+          onClose={() => setViewQA(false)}
+        />
+      ) : (
+        <>
+          <CustomLoader isLoading={isLoading}>
+            <div
+              style={{
+                backgroundColor: "#EEEEEE",
+                padding: "20px",
+                borderRadius: "5px",
+                boxShadow: "0px 2px 4px 3px lightgray",
 
-            margin: "10px",
-          }}
-        >
-          <React.Fragment>
-            <BreadcrumbsComponent
-              items={tabs}
-              initialItem={activeTab}
-              TabName={TabNameData}
-              onBreadcrumbChange={handleBreadcrumbChange}
-              handleCancel={handleCancel}
-              additionalButtons={[
-                // {
-                //   label: "Close",
-                //   onClick: async () => {
-                //     props.navigation("/ReviewProfileList", {
-                //       state: { activeTab: "tab2" },
-                //     });
-                //   },
-                // },
-                ...(resuequestionnaire.length > 0
-                  ? [
-                      {
-                        label: "Submit",
-                        onClick: async () => {
-                          await Submit_fn();
-                        },
-                      },
-                    ]
-                  : []),
-              ]}
-            />
-          </React.Fragment>
-        </div>
-      </CustomLoader>
+                margin: "10px",
+              }}
+            >
+              <React.Fragment>
+                <BreadcrumbsComponent
+                  items={tabs}
+                  initialItem={activeTab}
+                  TabName={TabNameData}
+                  onBreadcrumbChange={handleBreadcrumbChange}
+                  handleCancel={handleCancel}
+                  additionalButtons={[
+                    // {
+                    //   label: "Close",
+                    //   onClick: async () => {
+                    //     props.navigation("/ReviewProfileList", {
+                    //       state: { activeTab: "tab2" },
+                    //     });
+                    //   },
+                    // },
+                    ...(resuequestionnaire.length > 0
+                      ? [
+                          {
+                            label: "Submit",
+                            onClick: async () => {
+                              await Submit_fn();
+                            },
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
+              </React.Fragment>
+            </div>
+          </CustomLoader>
+        </>
+      )}
 
       {AlertPopupOpen && (
         <CustomAlert
           {...alertProps}
           onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
         />
-      )}
-
-      {viewQA && (
-        <>
-          <CustomDialogbox
-            Style={{ width: "40vw", height: "28vw" }}
-            visible={viewQA}
-            children={
-              <ViewQuestionCheckbox
-                questionnaire={questionnaire}
-                handleCheckbox={(id, value) => handleCheckbox(id, value)}
-              />
-            }
-            onClose={() => setViewQA(false)}
-            header={
-              <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                <LabelHeaderComponents
-                  value={
-                    "Disciplines  - " + InterviewQuesData?.Disciplines.text
-                  }
-                />
-              </div>
-            }
-            footer={
-              <div
-                className="ms-Grid-row"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  padding: "10px 0",
-                  gap: "33px",
-                }}
-              >
-                <ReuseButton
-                  label="Close"
-                  onClick={() => setViewQA(false)}
-                  Style={{
-                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                    color: "white",
-                    width: "50%",
-                  }}
-                />
-
-                <ReuseButton
-                  label="Reuse"
-                  onClick={async () => {
-                    Reusequestion_fn();
-                  }}
-                  Style={{
-                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                    color: "white",
-                    width: "50%",
-                  }}
-                />
-              </div>
-            }
-          />
-        </>
       )}
     </>
   );
