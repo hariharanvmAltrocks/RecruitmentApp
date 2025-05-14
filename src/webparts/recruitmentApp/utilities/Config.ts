@@ -189,7 +189,7 @@ export const RecuritmentHRMsg = {
 
   AdvertisementSubmitMsg:
     "Advertisement Document Uploaded Successfully.",
-  AdvertisementReveiwMsg: "Advertisement Reviewed Successfully",
+  AdvertisementReveiwMsg: "Advertisement Reviewed Successfully.",
 
   AgencySucess: "Agencies Assigned for the Selected Job Titles.",
   SingleAgencyMsg: "Agencies Assigned for the Selected Job Title.",
@@ -251,12 +251,48 @@ export const validationMsg = {
   CorrectAns: "Please select a correct answer.",
 };
 
+// export const ADGroupID: IADGroupID = {
+//   HRMSHOD: "86374c2a-511d-4c6d-9eb8-f6b64a44eb97",
+//   HRMSRecruitmentLineManager: "e46c5079-6a7d-40bf-a8cb-c7fbfa10f220",
+//   HRMSRecruitmentHR: "fe43382e-002e-4879-8710-a4ac546d48e7",
+//   HRMSRecruitmentHRLead: "df686473-5454-4afe-ad60-1ba93037c772",
+//   HRMSInterviewPanel: "60c676c0-692d-4c48-b101-a6398fc99493",
+// };
+
 export const ADGroupID: IADGroupID = {
   HRMSHOD: "86374c2a-511d-4c6d-9eb8-f6b64a44eb97",
   HRMSRecruitmentLineManager: "e46c5079-6a7d-40bf-a8cb-c7fbfa10f220",
   HRMSRecruitmentHR: "fe43382e-002e-4879-8710-a4ac546d48e7",
   HRMSRecruitmentHRLead: "df686473-5454-4afe-ad60-1ba93037c772",
   HRMSInterviewPanel: "60c676c0-692d-4c48-b101-a6398fc99493",
+  BudgetHolder: "68e84692-cc82-4871-926a-010e4d4715da",
+  LineManager: "2dec2073-031c-4505-a2a2-6720e513da0a",
+  HR: "b20259ec-7f60-49d6-ba0f-c48d8c8d44ea",
+  EXCO_REMCO: "23c6870c-1986-4f19-81ec-6b72e199f6e6",
+  EXCOServiceDepartmentExecutive: "172bc793-eba9-4418-873e-d05b20b9a476",
+  EXCOOperationsDepartmentED: "53f5a070-238a-4e33-ac7d-f0395d2aa2d1",
+  EXCOServiceDepartmentCEC: "cacacafc-8c6d-4b9b-95c5-0f8f851d31c4",
+  EXCOServiceDepartmentMD: "327cc015-8239-407c-be8f-0b8b8f9142ad",
+  EXCOOperationsDepartmentExecutive: "a1810fd6-7f04-43b3-a36e-a0a610f897a0",
+  EXCOOperationsDepartmentMD: "afd77c38-918a-4bc6-8d3f-19fe5a84aefa",
+  EXCOServiceDepartmentCEF: "7ddd3f09-5bb7-47c7-b05b-c9d6b32e502e",
+  Payroll: "1784bc0a-23f7-441f-a415-4a257618e04b",
+  SeniorSuperintendentII_HREffectiveness: "b5dc635a-90b3-4ba0-a029-4a5d03841e62",
+  GradingCommittee: "47078d89-ab24-446d-a210-9367c9dac599",
+  BIOS: "70547f09-b044-431b-bdcd-edad94b23a87",
+  Superintendent: "7e62e9bb-a18a-49be-8d16-9220eb9cd003",
+  Legal: "91f43caf-1943-46f3-8610-ab2c99ff0143",
+  Transformation: "f064729a-9770-48fc-9ddd-0820785698bf",
+  MAD: "926decfd-1390-4158-b760-e4a4c14d1950",
+  EXCOCEO: "3271e934-c70e-47fa-b1f2-29a64ddd6455",
+  EXCOCFOFinance: "74a577bd-976e-48fc-ab6b-967df315a396",
+  EXCOCFOCommerical: "82fd7f93-24e3-4879-a88f-c09bc86f8067",
+  EXCOExecutive: "6372d5b0-b610-4399-962c-99cf7ff3a10f",
+  HeadofDivision: "6c791d7a-ac5d-4da0-9dcb-d6a49c744cff",
+  SeniorHRManager: "91eac229-45d1-402c-beb7-cd06bc1d024c",
+  EXCOED: "e09e27e4-4d93-4979-848f-a5ce13cf76ac",
+  EXCOMD: "f436a318-89eb-45bb-b68f-0f6905379032",
+  RecruitmentAppExternalAgency: "d59a35bf-524e-4951-9eb1-aeca407d73d0",
 };
 
 export const tabType = {
@@ -328,7 +364,7 @@ export const TabName = {
   ScorecardDetails: "Review Scorecard",
   ViewCandidateDetails: "View Applicants Details",
   Scorecard: "Scorecard",
-  ReviewONEMAdvertisement: "Review ONEM Advertisement",
+  ReviewONEMAdvertisement: "Review Job Advertisement",
   ViewPositionDetails: "View Position Details",
   ViewCandidateList: "View Applicants List",
   ViewJustification: "View Justification",
