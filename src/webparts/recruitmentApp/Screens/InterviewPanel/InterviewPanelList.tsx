@@ -74,6 +74,7 @@ const InterviewPanelList = (props: any) => {
             TabName: TabName,
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
+            InterviewLevel: rowData?.InterviewLevel,
           },
         });
       } else if (props.CurrentRoleID === RoleID.HOD) {
@@ -86,6 +87,7 @@ const InterviewPanelList = (props: any) => {
             TabName: TabName,
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
+            InterviewLevel: rowData?.InterviewLevel,
           },
         });
       } else if (props.CurrentRoleID === RoleID.LineManager) {
@@ -98,6 +100,7 @@ const InterviewPanelList = (props: any) => {
             TabName: TabName,
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
+            InterviewLevel: rowData?.InterviewLevel,
           },
         });
       } else {
@@ -110,6 +113,7 @@ const InterviewPanelList = (props: any) => {
             TabName: TabName,
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
+            InterviewLevel: rowData?.InterviewLevel,
           },
         });
       }
@@ -479,7 +483,9 @@ const InterviewPanelList = (props: any) => {
             JobGrade: candidate.JobGrade || "",
             Grade: grade,
             InterviewLevel:
-              level === InterviewLevels.Level2 ? "Level 1 & 2" : level,
+              level === InterviewLevels.Level2
+                ? InterviewLevels.Levels2
+                : level,
             Status: candidate.Status || "",
             StatusId: candidate.StatusId || "",
             RecruitmentID: candidate.RecruitmentID || "",

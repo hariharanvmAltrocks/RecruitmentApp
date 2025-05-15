@@ -21,7 +21,7 @@ const MainPageHeader: React.FC<MainPageHeaderProps> = ({
   return (
     <div className="contentGrid">
       <div className="ContentHeader">
-        <div className="ms-Grid-col ms-lg6">
+        <div className="ms-Grid-col ms-lg9">
           <Stack
             horizontal
             tokens={{ childrenGap: 15 }}
@@ -44,7 +44,7 @@ const MainPageHeader: React.FC<MainPageHeaderProps> = ({
           </Stack>
         </div>
         <div
-          className="ms-Grid-col ms-lg6"
+          className="ms-Grid-col ms-lg3"
           style={{ display: "flex", justifyContent: "end", marginTop: "-2%" }}
         >
           <CustomProfileComponent

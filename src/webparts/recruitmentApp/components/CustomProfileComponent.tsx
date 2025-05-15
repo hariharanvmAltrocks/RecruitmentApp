@@ -2,6 +2,7 @@ import * as React from "react";
 import { useMediaQuery } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { ColorCode } from "../utilities/Config";
+import { userInfo } from "../utilities/RoleContext";
 
 interface FormFields {
   userName?: string;
@@ -15,6 +16,8 @@ function CustomProfileComponent({
   Department,
 }: FormFields) {
   const isMobile = useMediaQuery("(max-width:600px)");
+  const { ADGroupData, setShowRoleSelector } = userInfo();
+  console.log(ADGroupData, "ADGroupData");
 
   return (
     <div
@@ -38,30 +41,71 @@ function CustomProfileComponent({
           marginRight: "10px",
         }}
       />
-      <div>
-        <p
-          style={{
-            margin: 0,
-            color: ColorCode.ProfileColorCode.colorCode,
-            fontWeight: "400",
-            fontSize: isMobile ? "12px" : "14px",
-          }}
-        >
-          Welcome,&nbsp;
-          <span style={{ fontWeight: "bold" }}>{userName}</span>
-        </p>
-        <p
-          style={{
-            margin: 0,
-            fontWeight: "400",
-            fontSize: isMobile ? "11px" : "12px",
-            color: ColorCode.ProfileColorCode.colorCode,
-            marginTop: "4px",
-          }}
-        >
-          ({userRole} - {Department?.split("-")[1] ?? ""})
-        </p>
-      </div>
+      {ADGroupData?.RoleDetails.length > 1 ? (
+        <div className="ms-Grid-row">
+          <div className="ms-Grid-col ms-lg8">
+            <p
+              style={{
+                margin: 0,
+                color: ColorCode.ProfileColorCode.colorCode,
+                fontWeight: "400",
+                fontSize: isMobile ? "12px" : "14px",
+              }}
+            >
+              Welcome,&nbsp;
+              <span style={{ fontWeight: "bold" }}>{userName}</span>
+            </p>
+          </div>
+          <div className="ms-Grid-col ms-lg4">
+            <img
+              src={require("../assets/logout.png")}
+              alt="Logout"
+              style={{
+                width: isMobile ? "40px" : "40px",
+                marginLeft: isMobile ? "10px" : "20%",
+                cursor: "pointer",
+              }}
+              onClick={() => setShowRoleSelector(true)}
+            />
+          </div>
+          <p
+            style={{
+              margin: 0,
+              fontWeight: "400",
+              fontSize: isMobile ? "11px" : "12px",
+              color: ColorCode.ProfileColorCode.colorCode,
+              marginTop: "4px",
+            }}
+          >
+            ({userRole} - {Department?.split("-")[1] ?? ""})
+          </p>
+        </div>
+      ) : (
+        <div>
+          <p
+            style={{
+              margin: 0,
+              color: ColorCode.ProfileColorCode.colorCode,
+              fontWeight: "400",
+              fontSize: isMobile ? "12px" : "14px",
+            }}
+          >
+            Welcome,&nbsp;
+            <span style={{ fontWeight: "bold" }}>{userName}</span>
+          </p>
+          <p
+            style={{
+              margin: 0,
+              fontWeight: "400",
+              fontSize: isMobile ? "11px" : "12px",
+              color: ColorCode.ProfileColorCode.colorCode,
+              marginTop: "4px",
+            }}
+          >
+            ({userRole} - {Department?.split("-")[1] ?? ""})
+          </p>
+        </div>
+      )}
     </div>
   );
 }

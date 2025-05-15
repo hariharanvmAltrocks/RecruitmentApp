@@ -176,9 +176,10 @@ const InterviewPanelEdit = (props: any) => {
   const [ratingErrors, setRatingErrors] = React.useState<
     Record<number, boolean>
   >({});
-  const [interviewPanelTitles, setInterviewPanelTitles] = React.useState<
-    string[]
-  >([]);
+  const [interviewPanelTitlesLevel1, setInterviewPanelTitlesLevel1] =
+    React.useState<string[]>([]);
+  const [interviewPanelTitlesLevel2, setInterviewPanelTitlesLevel2] =
+    React.useState<string[]>([]);
 
   const handleRatingChange = (id: number, value: AutoCompleteItem | null) => {
     setQuestionnaire((prevState) =>
@@ -210,32 +211,26 @@ const InterviewPanelEdit = (props: any) => {
       },
     ];
 
-    InterviewServices.GetInterviewPanelDetails(filterConditions)
+    InterviewServices.GetPanelLeveldata(filterConditions, props.EmployeeList)
       .then((scoreResponse) => {
         if (scoreResponse?.status === 200) {
-          const candidatePanels = (scoreResponse.data as any[]).filter(
-            (candidate) => candidate.CandidateID === candidateID
-          );
+          const groupedPanelData = scoreResponse.data as Record<
+            string,
+            string[]
+          >;
 
-          const panelTitles = Array.from(
-            new Set(
-              candidatePanels
-                .map((panel) => panel.InterviewPanelTitle?.trim())
-                .filter(
-                  (title: string | undefined): title is string =>
-                    !!title && title.length > 0
-                )
-            )
-          );
-
-          setInterviewPanelTitles(panelTitles);
+          // Set titles by level
+          setInterviewPanelTitlesLevel1(groupedPanelData["Level 1"] || []);
+          setInterviewPanelTitlesLevel2(groupedPanelData["Level 2"] || []);
         } else {
-          setInterviewPanelTitles([]);
+          setInterviewPanelTitlesLevel1([]);
+          setInterviewPanelTitlesLevel2([]);
         }
       })
       .catch((error) => {
-        console.error("Error fetching panel/score data:", error);
-        setInterviewPanelTitles([]);
+        console.error("Error fetching panel data:", error);
+        setInterviewPanelTitlesLevel1([]);
+        setInterviewPanelTitlesLevel2([]);
       });
   };
 
@@ -879,7 +874,7 @@ const InterviewPanelEdit = (props: any) => {
                       display: "block",
                     }}
                   >
-                    Interview Panel
+                    Interview Panel Level 1
                   </label>
                   <div
                     style={{
@@ -895,8 +890,9 @@ const InterviewPanelEdit = (props: any) => {
                       boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px",
                     }}
                   >
-                    {interviewPanelTitles && interviewPanelTitles.length > 0
-                      ? interviewPanelTitles.map((title, index) => (
+                    {interviewPanelTitlesLevel1 &&
+                    interviewPanelTitlesLevel1.length > 0
+                      ? interviewPanelTitlesLevel1.map((title, index) => (
                           <Chip
                             key={index}
                             label={`${index + 1}. ${title}`}
@@ -913,6 +909,57 @@ const InterviewPanelEdit = (props: any) => {
                       : null}
                   </div>
                 </div>
+                {props.stateValue?.InterviewLevel === InterviewLevels.Levels2 &&
+                interviewPanelTitlesLevel2.length > 0 ? (
+                  <div
+                    className="ms-Grid-col ms-lg4"
+                    style={{ position: "relative", top: "14px" }}
+                  >
+                    <label
+                      style={{
+                        fontWeight: 600,
+                        marginBottom: "4px",
+                        display: "block",
+                      }}
+                    >
+                      Interview Panel Level 2
+                    </label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "8px",
+                        minHeight: "38px",
+                        background: "none",
+                        backgroundColor: "rgb(243, 242, 241)",
+                        padding: "8px",
+                        borderRadius: "6px",
+                        border: "rgb(243, 242, 241)",
+                        boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px",
+                      }}
+                    >
+                      {interviewPanelTitlesLevel2 &&
+                      interviewPanelTitlesLevel2.length > 0
+                        ? interviewPanelTitlesLevel2.map((title, index) => (
+                            <Chip
+                              key={index}
+                              label={`${index + 1}. ${title}`}
+                              size="small"
+                              sx={{
+                                backgroundColor: "rgb(243, 242, 241)",
+                                fontWeight: 500,
+                                color: "rgb(85, 82, 79)",
+                                cursor: "not-allowed",
+                                // opacity: 0.6,
+                              }}
+                            />
+                          ))
+                        : null}
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
 
               <div className="ms-Grid-row" style={{ marginTop: "10px" }}>

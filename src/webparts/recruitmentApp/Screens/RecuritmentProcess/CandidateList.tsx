@@ -9,6 +9,7 @@ import {
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
   HRMSAlertOptions,
+  InterviewLevels,
   ListNames,
   RecuritmentHRMsg,
   RoleID,
@@ -55,7 +56,10 @@ const CandidateList = (props: any) => {
 
       const grade = vrrResponse.data[0]?.PatersonGrade;
       const gradeLevelResponse = await CommonServices.GetGradeLevel(grade);
-      const level = gradeLevelResponse.data[0]?.Level;
+      const level =
+        gradeLevelResponse.data[0]?.Level === InterviewLevels.Level2
+          ? InterviewLevels.Levels2
+          : gradeLevelResponse.data[0]?.Level;
 
       const candidateFilter = [
         {
@@ -132,7 +136,7 @@ const CandidateList = (props: any) => {
           RecruitmentID: rowData?.RecruitmentID,
           JobCodeId: props.stateValue.JobCodeId,
           Department: props.stateValue.Department,
-          GPA:rowData.GPA,
+          GPA: rowData.GPA,
         },
       });
     }

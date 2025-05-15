@@ -13,6 +13,7 @@ import {
   ColorCode,
   DocumentLibraray,
   HRMSAlertOptions,
+  InterviewLevels,
   // labelName,
   ListNames,
   RecuritmentHRMsg,
@@ -147,9 +148,7 @@ const HodViewScorecard = (props: any) => {
       PositionID: false,
     });
   const [scoreData, setScoreData] = React.useState<any[]>([]);
-  const [interviewPanelTitles, setInterviewPanelTitles] = React.useState<
-    string[]
-  >([]);
+
   const candidateID: number = props.stateValue?.ID;
   const [Checkbox, setCheckbox] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -189,6 +188,10 @@ const HodViewScorecard = (props: any) => {
       comments: true,
       visibleButtons: [],
     });
+  const [interviewPanelTitlesLevel1, setInterviewPanelTitlesLevel1] =
+    React.useState<string[]>([]);
+  const [interviewPanelTitlesLevel2, setInterviewPanelTitlesLevel2] =
+    React.useState<string[]>([]);
 
   const handleAutoComplete = (item: AutoCompleteItem | null) => {
     setSelectedPosition(item);
@@ -219,15 +222,15 @@ const HodViewScorecard = (props: any) => {
           const candidatePanels = scoreResponse?.data.filter(
             (candidate: any) => candidate.CandidateID === candidateID
           );
-          setInterviewPanelTitles(
-            Array.from(
-              new Set(
-                candidatePanels
-                  .map((panel: any) => panel.Name?.trim())
-                  .filter((name: string | undefined) => name && name.length > 0)
-              )
-            )
-          );
+          // setInterviewPanelTitles(
+          //   Array.from(
+          //     new Set(
+          //       candidatePanels
+          //         .map((panel: any) => panel.Name?.trim())
+          //         .filter((name: string | undefined) => name && name.length > 0)
+          //     )
+          //   )
+          // );
 
           const filteredScores = candidatePanels
             .map((candidate: any) => {
@@ -255,18 +258,53 @@ const HodViewScorecard = (props: any) => {
           setTransformedDataforQuestions(Object.values(questionScores));
         } else {
           setScoreData([]);
-          setInterviewPanelTitles([]);
+          // setInterviewPanelTitles([]);
         }
       })
       .catch((error) => {
         console.error("Error fetching panel/score data:", error);
         setScoreData([]);
-        setInterviewPanelTitles([]);
+        // setInterviewPanelTitles([]);
         setTransformedDataforQuestions([]);
       });
   };
 
-  const transformScoreData = (rawData: any[], GPA?: number | string) => {
+  const fetchInterviewPanel = () => {
+    const candidateID: number = props.stateValue?.ID;
+    setIsLoading(true);
+
+    const filterConditions = [
+      {
+        FilterKey: "CandidateID/Id",
+        Operator: "eq",
+        FilterValue: candidateID,
+      },
+    ];
+
+    InterviewServices.GetPanelLeveldata(filterConditions, props.EmployeeList)
+      .then((scoreResponse) => {
+        if (scoreResponse?.status === 200) {
+          const groupedPanelData = scoreResponse.data as Record<
+            string,
+            string[]
+          >;
+
+          // Set titles by level
+          setInterviewPanelTitlesLevel1(groupedPanelData["Level 1"] || []);
+          setInterviewPanelTitlesLevel2(groupedPanelData["Level 2"] || []);
+        } else {
+          setInterviewPanelTitlesLevel1([]);
+          setInterviewPanelTitlesLevel2([]);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching panel data:", error);
+        setInterviewPanelTitlesLevel1([]);
+        setInterviewPanelTitlesLevel2([]);
+      });
+  };
+
+  const transformScoreData = (rawData: any[]) => {
     const criteria = [
       { field: "RelevantQualification", label: "Qualification (Relevant)" },
       { field: "ReleventExperience", label: "Experience (Relevant)" },
@@ -324,24 +362,13 @@ const HodViewScorecard = (props: any) => {
     });
 
     transformed.push(totalRow);
-    if (GPA !== undefined && GPA !== null) {
-      const gpaRow: any = { criteria: "GPA", total: "" };
-      const totalCols = rawData.length;
-      for (let i = 1; i <= totalCols; i++) {
-        gpaRow[`interviewer_${i}`] = "";
-      }
 
-      const centerIndex = Math.ceil(totalCols / 2);
-      gpaRow[`interviewer_${centerIndex}`] = GPA;
-
-      transformed.push(gpaRow);
-    }
     return transformed;
   };
-  const GPA: any = props?.stateValue?.GPA
-    ? props?.stateValue?.GPA
-    : CandidateData?.GPA;
-  const transformedData = transformScoreData(scoreData, GPA);
+  // const GPA: any = props?.stateValue?.GPA
+  //   ? props?.stateValue?.GPA
+  //   : CandidateData?.GPA;
+  const transformedData = transformScoreData(scoreData);
 
   const handleInputChangeTextArea = (
     value: string | any,
@@ -801,7 +828,7 @@ const HodViewScorecard = (props: any) => {
                         display: "block",
                       }}
                     >
-                      Interview Panel
+                      Interview Panel Level 1
                     </label>
                     <div
                       style={{
@@ -817,8 +844,9 @@ const HodViewScorecard = (props: any) => {
                         boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px",
                       }}
                     >
-                      {interviewPanelTitles && interviewPanelTitles.length > 0
-                        ? interviewPanelTitles.map((title, index) => (
+                      {interviewPanelTitlesLevel1 &&
+                      interviewPanelTitlesLevel1.length > 0
+                        ? interviewPanelTitlesLevel1.map((title, index) => (
                             <Chip
                               key={index}
                               label={`${index + 1}. ${title}`}
@@ -835,6 +863,58 @@ const HodViewScorecard = (props: any) => {
                         : null}
                     </div>
                   </div>
+                  {props.stateValue?.InterviewLevel ===
+                    InterviewLevels.Levels2 &&
+                  interviewPanelTitlesLevel2.length > 0 ? (
+                    <div
+                      className="ms-Grid-col ms-lg4"
+                      style={{ position: "relative", top: "14px" }}
+                    >
+                      <label
+                        style={{
+                          fontWeight: 600,
+                          marginBottom: "4px",
+                          display: "block",
+                        }}
+                      >
+                        Interview Panel Level 2
+                      </label>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "8px",
+                          minHeight: "38px",
+                          background: "none",
+                          backgroundColor: "rgb(243, 242, 241)",
+                          padding: "8px",
+                          borderRadius: "6px",
+                          border: "rgb(243, 242, 241)",
+                          boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px",
+                        }}
+                      >
+                        {interviewPanelTitlesLevel2 &&
+                        interviewPanelTitlesLevel2.length > 0
+                          ? interviewPanelTitlesLevel2.map((title, index) => (
+                              <Chip
+                                key={index}
+                                label={`${index + 1}. ${title}`}
+                                size="small"
+                                sx={{
+                                  backgroundColor: "rgb(243, 242, 241)",
+                                  fontWeight: 500,
+                                  color: "rgb(85, 82, 79)",
+                                  cursor: "not-allowed",
+                                  // opacity: 0.6,
+                                }}
+                              />
+                            ))
+                          : null}
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <div className="ms-Grid-row" style={{ marginTop: "10px" }}>
                   <div className="ms-Grid-col ms-lg6">
@@ -1023,7 +1103,11 @@ const HodViewScorecard = (props: any) => {
                   ))}
                 </DataTable>
               </div> */}
-
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <LabelHeaderComponents
+                    value={`OVERALL GRADE POINT AVERAGE (GPA) - ${CandidateData.GPA} /5.0`}
+                  />
+                </div>
                 <div>
                   <Accordion
                     sx={{
@@ -1084,7 +1168,7 @@ const HodViewScorecard = (props: any) => {
                             />
                           )
                         )} */}
-                          {interviewPanelTitles.map((name, index) => (
+                          {interviewPanelTitlesLevel1.map((name, index) => (
                             <Column
                               key={index}
                               field={`interviewer_${index + 1}`}
@@ -1124,7 +1208,7 @@ const HodViewScorecard = (props: any) => {
                           stripedRows
                         >
                           <Column field="criteria" header="Criteria" />
-                          {interviewPanelTitles.map((name, index) => (
+                          {interviewPanelTitlesLevel1.map((name, index) => (
                             <Column
                               key={index}
                               field={`interviewer_${index + 1}`}
@@ -1220,6 +1304,7 @@ const HodViewScorecard = (props: any) => {
                 )}
                 {(props?.stateValue?.StatusId ===
                   StatusId.PendingwithHODtoselectthecandidate ||
+                  props?.stateValue?.StatusId === StatusId.OnHoldbyHOD ||
                   props?.stateValue?.StatusId ===
                     StatusId.PendingwithHODtoAssignPositionID) &&
                   actionValue.CandidateStatus === "Yes" && (
@@ -1250,8 +1335,6 @@ const HodViewScorecard = (props: any) => {
                   <div className="ms-Grid-col ms-lg12">
                     <CustomTextArea
                       label={
-                        props?.stateValue?.StatusId ===
-                          StatusId.PendingwithHODtoselectthecandidateLevel2 ||
                         props?.stateValue?.StatusId ===
                           StatusId.PendingwithHODtoAssignPositionID ||
                         props?.stateValue?.StatusId ===
@@ -1477,8 +1560,12 @@ const HodViewScorecard = (props: any) => {
     if (
       props.stateValue?.StatusId ===
         StatusId.PendingwithHODtoAssignPositionID ||
-      props.stateValue?.StatusId === StatusId.PendingwithHODtoselectthecandidate
+      props.stateValue?.StatusId ===
+        StatusId.PendingwithHODtoselectthecandidate ||
+      props.stateValue?.StatusId === StatusId.Selected ||
+      props.stateValue?.StatusId === StatusId.OnHoldbyHOD
     ) {
+      void PositionData();
     }
   }, []);
   React.useEffect(() => {
@@ -1535,7 +1622,8 @@ const HodViewScorecard = (props: any) => {
 
     void fetchAllData();
     void fetchInterviewPanelDetails();
-    void PositionData();
+    void fetchInterviewPanel();
+    // void PositionData();
   }, [props.stateValue?.ID, activeTab]);
 
   const handleBreadcrumbChange = (newItem: string) => {

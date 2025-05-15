@@ -965,4 +965,70 @@ export default class InterviewProcessService
       };
     }
   }
+
+  async GetPanelLeveldata(
+    filterConditions: any[] = [],
+    EmployeeList: any[]
+  ): Promise<ApiResponse<Record<string, string[]>>> {
+    try {
+      const listItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSInterviewPanelDetails,
+        Select:
+          "ID, CandidateID/ID, RecruitmentID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail,IsScoreSheetUploaded",
+        Expand: "InterviewPanel,RecruitmentID,CandidateID",
+        Filter: filterConditions,
+      });
+
+      console.log("Fetched listItems:", listItems);
+
+      // Group by InterviewLevel
+      const groupedByLevel: Record<string, Set<string>> = {};
+
+      listItems.forEach((item) => {
+        const level = item.InterviewLevel || "Unknown";
+        const email = item.InterviewPanel?.EMail?.toLowerCase() || "";
+
+        const matchedEmployee = EmployeeList.find(
+          (emp: any) => emp.Email?.toLowerCase() === email
+        );
+
+        console.log(`Matching employee for email ${email}:`, matchedEmployee);
+
+        const fullName = matchedEmployee
+          ? `${matchedEmployee.FirstName ?? ""} ${matchedEmployee.MiddleName ?? ""} ${matchedEmployee.LastName ?? ""}`.trim()
+          : item.InterviewPanel?.Title || "Unknown";
+
+        console.log(`Level: ${level}, Full Name: ${fullName}`);
+
+        if (!groupedByLevel[level]) {
+          groupedByLevel[level] = new Set();
+        }
+
+        groupedByLevel[level].add(fullName);
+      });
+
+      // Convert Sets to Arrays with guard
+      const result: Record<string, string[]> = {};
+      for (const level in groupedByLevel) {
+        if (Object.prototype.hasOwnProperty.call(groupedByLevel, level)) {
+          result[level] = Array.from(groupedByLevel[level]);
+        }
+      }
+
+      console.log("Grouped result:", result);
+
+      return {
+        data: result,
+        status: 200,
+        message: "Interview Panel grouped by level successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching interview panel details:", error);
+      return {
+        data: {},
+        status: 400,
+        message: "Error fetching data",
+      };
+    }
+  }
 }

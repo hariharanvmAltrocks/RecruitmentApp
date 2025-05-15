@@ -8,6 +8,7 @@ export type UserRoleData = {
     ID: number;
     RoleTitle: string;
     ADGroupID: string;
+    EmailId: string;
 };
 
 export type MasterDataResponseDetails = {

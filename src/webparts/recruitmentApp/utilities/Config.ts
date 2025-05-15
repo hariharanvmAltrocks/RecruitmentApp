@@ -421,6 +421,7 @@ export const InterviewLevels = {
   Level1: "Level 1",
   Level2: "Level 2",
   Level3: "Level 3",
+  Levels2: "Level 1 & 2"
 };
 
 export const DataFrom = {

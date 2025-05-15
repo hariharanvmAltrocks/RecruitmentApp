@@ -1116,6 +1116,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                 boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                                 borderRadius: "4px",
                                 borderColor: "#5f5f5f",
+                                marginTop: "1%",
                               }}
                             >
                               <Accordion
@@ -1282,6 +1283,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                   boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                                   borderRadius: "4px",
                                   borderColor: "#5f5f5f",
+                                  marginTop: "1%",
                                 }}
                               >
                                 <Accordion
@@ -1532,7 +1534,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
                                         {props?.stateValue?.StatusId ===
                                           StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                                          <Box sx={{ mb: 2 }}>
+                                          <Box sx={{ mb: 2, width: "50%" }}>
                                             <CustomRadioGroup
                                               label="Disqualification Question?"
                                               value={q.Disqualification ?? "NO"}
@@ -1946,7 +1948,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
                       {props?.stateValue?.StatusId ===
                         StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                        <Box sx={{ mb: 2 }}>
+                        <Box sx={{ mb: 2, width: "50%" }}>
                           <CustomRadioGroup
                             label="Disqualification Question?"
                             value={InterviewQuesData?.Disqualification ?? ""}
