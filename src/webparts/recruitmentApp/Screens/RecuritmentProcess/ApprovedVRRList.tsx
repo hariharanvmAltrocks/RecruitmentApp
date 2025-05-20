@@ -370,6 +370,7 @@ const RecruitmentProcess = (props: any) => {
                 JobCode: rowData?.JobCode?.toString().trim(),
                 JobCodeId: rowData?.JobCodeId,
                 Department: rowData?.DepartmentId,
+                NoOfPosition: rowData?.NumberOfPersonNeeded,
               },
             });
           } else if (tab === "tab3") {
@@ -626,28 +627,45 @@ const RecruitmentProcess = (props: any) => {
 
   const handleCancel = () => {
     setIsLoading(false);
-    setAssignHR(false);
-    setAssignHRData((prevState) => ({
-      ...prevState,
-      AssignRecruitmentHR: { key: 0, text: "" },
-      Comments: "",
-    }));
-    setData((prevData) =>
-      prevData.map((item) => ({
-        ...item,
-        Checked: false,
-      }))
-    );
+    let CancelAlert = {
+      Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
+      Type: HRMSAlertOptions.Confirmation,
+      visible: true,
+      ButtonAction: async (userClickedOK: boolean) => {
+        if (userClickedOK) {
+          setAssignHR(false);
+          setAssignHRData((prevState) => ({
+            ...prevState,
+            AssignRecruitmentHR: { key: 0, text: "" },
+            AssignRecruitmentAgencies: [],
+            Comments: "",
+          }));
+          setData((prevData) =>
+            prevData.map((item) => ({
+              ...item,
+              Checked: false,
+            }))
+          );
 
-    setSelectedJobCodes([]);
-    setSelectAll(false);
+          setSelectedJobCodes([]);
+          setSelectAll(false);
 
-    setValidationErrors((prevErrors) => ({
-      ...prevErrors,
-      AssignRecruitmentHR: false,
-      AssignRecruitmentAgencies: false,
-      Comments: false,
-    }));
+          setValidationErrors((prevErrors) => ({
+            ...prevErrors,
+            AssignRecruitmentHR: false,
+            AssignRecruitmentAgencies: false,
+            Comments: false,
+          }));
+          setAlertPopupOpen(false);
+        } else {
+          setAlertPopupOpen(false);
+        }
+      },
+    };
+
+    setAlertPopupOpen(true);
+    setalertProps(CancelAlert);
+    setIsLoading(false);
   };
 
   const handleRefresh = (tab: string) => {
@@ -740,11 +758,15 @@ const RecruitmentProcess = (props: any) => {
     );
   };
 
-  const onSelectAllChange = (value: boolean) => {
-    const updatedDataset = data.map((item) => ({
-      ...item,
-      Checked: value,
-    }));
+  const onSelectAllChange = (value: boolean, pagination?: any) => {
+    const updatedDataset = data.map((item, index) => {
+      const isCurrentPageItem =
+        index >= pagination.first && index < pagination.first + pagination.rows;
+      return {
+        ...item,
+        Checked: isCurrentPageItem ? value : item.Checked,
+      };
+    });
 
     const selectedJobCodes = updatedDataset
       .filter((item) => item.Checked)
@@ -765,10 +787,13 @@ const RecruitmentProcess = (props: any) => {
     setData(updatedDataset);
 
     setSelectedJobCodes(selectedJobCodes);
-
+    const currentPageItems = selectedJobCodes.slice(
+      pagination.first,
+      pagination.first + pagination.rows
+    );
+    const isSelected = (row: any) => selectedJobCodes.includes(row);
     setSelectAll(
-      selectedJobCodes.length > 0 &&
-        selectedJobCodes.length === updatedDataset.length
+      currentPageItems.length > 0 && currentPageItems.every(isSelected)
     );
   };
 

@@ -29,7 +29,7 @@ interface SearchableDataTableProps {
   handleAssignBtn: () => void;
   AssignBtnValidation: boolean;
   handleCheckbox: (value: any, rowData: any) => void;
-  onSelectAllChange: (value: any) => void;
+  onSelectAllChange: (value: any, pagination: any) => void;
   selectAll: boolean;
   handleRefresh: () => void;
   assignLabel?: string;
@@ -339,7 +339,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                           label={""}
                           checked={selectAll}
                           onChange={(value: boolean) =>
-                            onSelectAllChange(value)
+                            onSelectAllChange(value, pagination)
                           }
                         />
                       )}

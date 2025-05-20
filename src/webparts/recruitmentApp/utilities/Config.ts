@@ -244,6 +244,7 @@ export const RecuritmentHRMsg = {
   SelectedErrorMsg: "Please Choose the Disciplines.",
   WarningMsg: "Are you sure want to Change the Disciolines? Any unsaved changes will be lost",
   ClearWarning: "Are you sure you want to close? Unsaved changes will be lost.",
+  SelectedCandidateValidation: "The requested headcount for the position has already been selected."
 };
 // In your validation messages config file
 export const validationMsg = {

@@ -428,6 +428,9 @@ const HodViewScorecard = (props: any) => {
                 ButtonAction: props.stateValue?.PreviousTabName,
                 JobCode: CandidateData?.JobCode,
                 StatusId: props.stateValue?.StatusId,
+                NoOfPosition: props.stateValue.NoOfPosition,
+                JobCodeId: props.stateValue.JobCodeId,
+                Department: props.stateValue.Department,
               },
             });
           }
@@ -1953,6 +1956,13 @@ const HodViewScorecard = (props: any) => {
         };
         CandidateDatas = createFilter(workflowStatusApi.CandidateOnHoldIPanel);
         SuccessMessage = RecuritmentHRMsg.CandidateOnHold;
+        if (selectedPosition) {
+          await SPServices.SPUpdateItem({
+            Listname: ListNames.HRMSPositionIDMaster,
+            RequestJSON: { PositionIDStatus: "Vacant" },
+            ID: selectedPosition.key,
+          });
+        }
         break;
 
       default:
@@ -2031,6 +2041,9 @@ const HodViewScorecard = (props: any) => {
                       ButtonAction: props.stateValue?.PreviousTabName,
                       JobCode: CandidateData?.JobCode,
                       StatusId: props.stateValue?.StatusId,
+                      JobCodeId: props.stateValue.JobCodeId,
+                      Department: props.stateValue.Department,
+                      NoOfPosition: props.stateValue.NoOfPosition,
                     },
                   }
                 );

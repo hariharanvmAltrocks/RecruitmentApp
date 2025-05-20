@@ -115,6 +115,7 @@ const CandidateList = (props: any) => {
       void fetchAllData();
     }
   }, [props?.stateValue?.JobCode, props?.stateValue?.ID]);
+
   const handleRedirectView = (
     rowData: any,
     tab: string,
@@ -122,23 +123,50 @@ const CandidateList = (props: any) => {
     ButtonAction: string,
     previousTabName: string
   ) => {
-    if (props.CurrentRoleID === RoleID.HOD && tab === "tab1") {
-      props.navigation("/RecurimentProcess/HodViewScorecard", {
-        state: {
-          ID: rowData?.ID,
-          tab,
-          StatusId: rowData?.StatusId,
-          Status: rowData?.Status,
-          PreviousTabName: previousTabName,
-          TabName,
-          ButtonAction,
-          InterviewLevel: rowData?.InterviewLevel,
-          RecruitmentID: rowData?.RecruitmentID,
-          JobCodeId: props.stateValue.JobCodeId,
-          Department: props.stateValue.Department,
-          GPA: rowData.GPA,
+    let SelectedCandidate = CandidateData.filter(
+      (item) => item.StatusId === StatusId.Selected
+    );
+    const canView = rowData.StatusId === StatusId.RejectedbyHOD;
+    if (
+      props.stateValue.NoOfPosition === SelectedCandidate?.length &&
+      rowData.StatusId != StatusId.Selected &&
+      !canView
+    ) {
+      let ErrorMsg = {
+        Message: RecuritmentHRMsg.SelectedCandidateValidation,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            // props.navigation("/RecurimentProcess");
+            setAlertPopupOpen(false);
+          }
         },
-      });
+      };
+
+      setAlertPopupOpen(true);
+      setalertProps(ErrorMsg);
+      setIsLoading(false);
+    } else {
+      if (props.CurrentRoleID === RoleID.HOD && tab === "tab1") {
+        props.navigation("/RecurimentProcess/HodViewScorecard", {
+          state: {
+            ID: rowData?.ID,
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            PreviousTabName: previousTabName,
+            TabName,
+            ButtonAction,
+            InterviewLevel: rowData?.InterviewLevel,
+            RecruitmentID: rowData?.RecruitmentID,
+            JobCodeId: props.stateValue.JobCodeId,
+            Department: props.stateValue.Department,
+            GPA: rowData.GPA,
+            NoOfPosition: props.stateValue.NoOfPosition,
+          },
+        });
+      }
     }
   };
 

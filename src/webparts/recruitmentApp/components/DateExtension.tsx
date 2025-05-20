@@ -85,7 +85,7 @@ export const DateExtension = ({
       );
       setLevel2Date((prevState) => ({
         ...prevState,
-        StartDate: RecuritmentData?.JobPostingEndDate,
+        StartDate: RecuritmentData?.JobPostingStartDate,
         EndDate: SecondEndDate,
       }));
       if (RecuritmentData?.JobPostingFirstExtensionEndDate) {

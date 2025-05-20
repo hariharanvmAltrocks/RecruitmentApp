@@ -16,7 +16,7 @@ export type AdvertisementDetails = {
     Descriptions_fr: Descriptions,
     RoleAndTechSkills: RoleAndTechSkills[],
     MinAndPreferedQualifications: MinAndPreferedQualifications[];
-    IsActive: number;
+    isActive: number;
     // profileXAgent: profileXagent;
 }
 

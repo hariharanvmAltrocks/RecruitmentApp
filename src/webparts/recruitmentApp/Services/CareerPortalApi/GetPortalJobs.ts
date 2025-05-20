@@ -28,7 +28,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         Descriptions_fr: data?.Descriptions_fr,
         RoleAndTechSkills: data?.RoleAndTechSkills,
         MinAndPreferedQualifications: data?.MinAndPreferedQualifications,
-        IsActive: data?.IsActive
+        isActive: data?.isActive
       }
       const response = await postAdveDetails.postUpsertJobs(AdvertisementDetails);
       return {
@@ -482,7 +482,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         const incrementedIndex = index + 1;
 
         const question = item?.question?.quesContent?.contentEn;
-        const expectedAnswer = item?.question?.questionXAnswers?.[0]?.optContent?.contentEn ?? "";
+        const expectedAnswer = item?.question?.questionXAnswers.map((item: any) => item?.optContent?.contentEn);
 
         if (!question || !expectedAnswer) {
           return null;

@@ -1610,7 +1610,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
       const AdvertisementDetails: AdvertisementDetails = {
         jobCode: RecuritmentDetails.JobCode,
-        IsActive: IsActive,
+        isActive: IsActive,
         noOfPositions: String(RecuritmentDetails?.NoofPositionAssigned === undefined ? RecuritmentDetails?.NumberOfPersonNeeded : RecuritmentDetails?.NoofPositionAssigned),
         validFrom: AdvertisementValue.ValidFrom ?? null,
         validTo: AdvertisementValue.ValidTo ?? null,

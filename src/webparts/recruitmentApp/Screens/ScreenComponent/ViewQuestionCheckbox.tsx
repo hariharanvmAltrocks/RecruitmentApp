@@ -16,7 +16,7 @@ export type ViewQuestion = {
   discipline: AutoCompleteItem;
   questionType: AutoCompleteItem;
   question: string;
-  expectedAnswer: string;
+  expectedAnswer: any;
   options?: OptionRow[];
   Disqualification: string;
   CareerportalAnswer: OptionRow[];
@@ -113,19 +113,26 @@ function ViewQuestionCheckbox({
                         </h3>
                         <p>
                           <strong>Expected Answer:</strong>
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html: `${
-                                q.expectedAnswer
-                                  ? q?.expectedAnswer
-                                      .replace(/<p>/gi, "")
-                                      .replace(/<\/p>/gi, "")
-                                      .replace(/<br\s*\/?>/gi, "")
-                                      .trim()
-                                  : ""
-                              }`,
-                            }}
-                          />
+                          {q.expectedAnswer
+                            .map((item: any, index: number) => (
+                              <span
+                                key={index}
+                                dangerouslySetInnerHTML={{
+                                  __html: item
+                                    ? item
+                                        .replace(/<p>/gi, "")
+                                        .replace(/<\/p>/gi, "")
+                                        .replace(/<br\s*\/?>/gi, "")
+                                        .trim()
+                                    : "",
+                                }}
+                              />
+                            ))
+                            .reduce((prev: any, curr: any) => [
+                              prev,
+                              " , ",
+                              curr,
+                            ])}
                         </p>
                       </div>
                     ))
