@@ -199,7 +199,10 @@ export default class GetPortalJobs implements IGetPortalJobs {
           hrComments: op?.hrComments,
           JobVaildFromDate: op?.jobDetail?.validFrom,
           JobVaildToDate: op?.jobDetail?.validTo,
-          CandidateResumeLink: op?.document?.filePath
+          CandidateResumeLink: op?.document?.filePath,
+          ConflictsOfInterest: op?.profile?.profileXOptAnswers[0]?.answerContent?.contentEn,
+          disability: op?.profile?.profileDetailDisclosure?.hasDisability === 1 ? "Yes" : "No",
+          disabilityReason: op?.profile?.profileDetailDisclosure?.disabilityDetails
         };
 
         GetProfileByJobCodeData.push(GetProfileDahboard);

@@ -145,9 +145,12 @@ const InterviewPanelList = (props: any) => {
     }
   }
 
-  function handleAlert() {
+  function handleAlert(Level: string) {
     let CancelAlert = {
-      Message: RecuritmentHRMsg.InterviewScoredAlready,
+      Message:
+        Level === InterviewLevels.Level1
+          ? RecuritmentHRMsg.InterviewScoredAlready
+          : RecuritmentHRMsg.InterviewScoreCommentsAlready,
       Type: HRMSAlertOptions.Error,
       visible: true,
       ButtonAction: async (userClickedOK: boolean) => {
@@ -160,49 +163,6 @@ const InterviewPanelList = (props: any) => {
     setalertProps(CancelAlert);
     setIsLoading(false);
   }
-
-  function handleAlertComments() {
-    let CancelAlert = {
-      Message: RecuritmentHRMsg.InterviewScoreCommentsAlready,
-      Type: HRMSAlertOptions.Error,
-      visible: true,
-      ButtonAction: async (userClickedOK: boolean) => {
-        if (userClickedOK) {
-          setAlertPopupOpen(false);
-        }
-      },
-    };
-    setAlertPopupOpen(true);
-    setalertProps(CancelAlert);
-    setIsLoading(false);
-  }
-
-  const hasCurrentRoleCommented = async (
-    candidateID: number
-  ): Promise<boolean> => {
-    try {
-      const filterConditions = [
-        {
-          FilterKey: "CandidateIDId",
-          Operator: "eq",
-          FilterValue: candidateID,
-        },
-      ];
-
-      const response = await InterviewServices.getCandidateLevel2ScoreCard(
-        filterConditions
-      );
-
-      const commentsByCurrentRole = response?.data?.filter(
-        (item) => item.RoleId === props.CurrentRoleID && item.Comments
-      );
-
-      return commentsByCurrentRole?.length > 0;
-    } catch (error) {
-      console.error("Error checking if current role commented:", error);
-      return false;
-    }
-  };
 
   const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
     {
@@ -285,14 +245,16 @@ const InterviewPanelList = (props: any) => {
             if (userPanels.length === 0) {
               return;
             }
-
-            const isScoreSheetUploaded = userPanels.some(
-              (panel) => panel.IsScoreSheetUploaded === "Yes"
-            );
-
             if (rowData.StatusId === StatusId.InterviewScheduled) {
+              const isLevelbasedFiltered = userPanels.filter(
+                (item) => item.InterviewLevel === InterviewLevels.Level1
+              );
+
+              const isScoreSheetUploaded = isLevelbasedFiltered.some(
+                (panel) => panel.IsScoreSheetUploaded === "Yes"
+              );
               if (isScoreSheetUploaded) {
-                handleAlert();
+                handleAlert(InterviewLevels.Level1);
                 return;
               }
               handleRedirectView(
@@ -306,13 +268,18 @@ const InterviewPanelList = (props: any) => {
                 "View"
               );
               return;
-            }
-            if (rowData.StatusId === StatusId.InterviewScheduledforLevel2) {
-              const alreadyCommented = await hasCurrentRoleCommented(
-                rowData.ID
+            } else if (
+              rowData.StatusId === StatusId.InterviewScheduledforLevel2
+            ) {
+              const isLevelbasedFiltered = userPanels.filter(
+                (item) => item.InterviewLevel === InterviewLevels.Level2
               );
-              if (alreadyCommented) {
-                handleAlertComments();
+
+              const isScoreSheetUploaded = isLevelbasedFiltered.some(
+                (panel) => panel.IsScoreSheetUploaded === "Yes"
+              );
+              if (isScoreSheetUploaded) {
+                handleAlert(InterviewLevels.Level2);
                 return;
               }
               handleRedirectView(

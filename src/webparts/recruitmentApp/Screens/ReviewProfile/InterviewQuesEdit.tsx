@@ -55,6 +55,7 @@ import ViewQuestionCheckbox, {
   ViewQuestion,
 } from "../ScreenComponent/ViewQuestionCheckbox";
 import CustomLabel from "../../components/CustomLabel";
+import { Label } from "@fluentui/react";
 
 type InterviewQuesValidationError = {
   QuestionType: boolean;
@@ -169,23 +170,23 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     ViewQuestion[]
   >([]);
 
-  const handleCategoryChange = (val: string) => {
-    setInterviewQuesData((prev) => ({
-      ...prev,
-      Catogry: val,
-      Disciplines: { key: 0, text: "" },
-      QuestionNumber: { key: 0, text: "" },
-      QuestionType: { key: 0, text: "" },
-      Question: "",
-      ExpectedAnswer: "",
-      Disqualification: "",
-    }));
+  // const handleCategoryChange = (val: string) => {
+  //   setInterviewQuesData((prev) => ({
+  //     ...prev,
+  //     Catogry: val,
+  //     Disciplines: { key: 0, text: "" },
+  //     QuestionNumber: { key: 0, text: "" },
+  //     QuestionType: { key: 0, text: "" },
+  //     Question: "",
+  //     ExpectedAnswer: "",
+  //     Disqualification: "",
+  //   }));
 
-    setValidationError((prev) => ({
-      ...prev,
-      Catogry: false,
-    }));
-  };
+  //   setValidationError((prev) => ({
+  //     ...prev,
+  //     Catogry: false,
+  //   }));
+  // };
 
   const handleOptionChange = (index: number, newVal: string) => {
     setOptionsType((prev) => {
@@ -886,6 +887,31 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     }
   };
 
+  const handleNewQuestion = () => {
+    if (InterviewQuesData?.Disciplines?.text) {
+      if (showCreateQuestionBox) {
+        handleCloseCreateQuestion();
+      } else {
+        setShowCreateQuestionBox(true);
+      }
+    } else {
+      const SelectedMag = {
+        Message: RecuritmentHRMsg.SelectedErrorMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+
+      setAlertPopupOpen(true);
+      setalertProps(SelectedMag);
+      setIsLoading(false);
+    }
+  };
+
   const handleRemoveQuestionnaire = (id: number, Type: string) => {
     const DeleteConfirmationMsg = {
       Message: RecuritmentHRMsg.deleteMsg,
@@ -944,18 +970,35 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       content: (
         <Card
           variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+          sx={{
+            boxShadow: "0px 2px 4px 3px #d3d3d3",
+            marginTop: "2%",
+            position: "relative", // Ensure z-index works
+            overflow: "visible", // Allow dropdown to escape
+            zIndex: 1, // Raise above background
+          }}
         >
           <CardContent>
             <div className="ms-Grid-row" style={{ marginBottom: "2px" }}>
-              <div className="ms-Grid-col ms-lg6">
+              <div className="ms-Grid-col ms-lg7">
                 <LabelHeaderComponents
                   value={`Job Title - ${props?.stateValue?.JobTitleInEnglish} (${props?.stateValue?.JobCode})`}
                 >
                   {" "}
                 </LabelHeaderComponents>
               </div>
-              {props.stateValue?.Status ===
+              <div
+                className="ms-Grid-col ms-lg5"
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <LabelHeaderComponents
+                  value={`Status - ${props.stateValue?.Status}`}
+                />
+              </div>
+              {/* {props.stateValue?.Status ===
               "Pending with Line Manager to create a Disqualification Question" ? (
                 <div
                   className="ms-Grid-col ms-lg6"
@@ -971,21 +1014,28 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   />
                 </div>
               ) : (
-                <div
-                  className="ms-Grid-col ms-lg6"
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <LabelHeaderComponents
-                    value={`Status - ${props.stateValue?.Status}`}
-                  />
-                </div>
-              )}
+                
+              )} */}
             </div>
 
-            <Card
+            <div style={{ display: "flex", justifyContent: "flex-start" }}>
+              <Label
+                style={{
+                  fontSize: "18px",
+                  color: "black",
+                  fontFamily: "Roboto,sans-serif",
+                  fontStyle: "normal",
+                  fontWeight: "600",
+                  marginTop: "1%",
+                }}
+              >
+                {props?.stateValue?.StatusId ===
+                StatusId.PendingwithLMcreateDisqualificationQuestion
+                  ? `Career Portal Candidate Questionnaires `
+                  : `Interview Questionnaires `}
+              </Label>
+            </div>
+            {/* <Card
               sx={{
                 mb: 2,
                 borderRadius: "10px",
@@ -1013,10 +1063,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   )}
                 </>
               </CardContent>
-            </Card>
+            </Card> */}
             {/* Left side  Image */}
-            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-              <Box sx={{ width: "100%" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                overflow: "visible",
+              }}
+            >
+              <Box sx={{ width: "100%", overflow: "visible" }}>
                 <Box sx={{ mb: 2 }}>
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg5">
@@ -1067,13 +1123,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           fontSize: "14px",
                           fontWeight: "500",
                         }}
-                        onClick={() => {
-                          if (showCreateQuestionBox) {
-                            handleCloseCreateQuestion();
-                          } else {
-                            setShowCreateQuestionBox(true);
-                          }
-                        }}
+                        onClick={() => handleNewQuestion()}
                       >
                         New Question
                       </Button>
@@ -2230,25 +2280,30 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             optionFr: ans.text,
           })) || [];
       } else {
-        OptionsValue =
-          item.options?.map((opt, index) => ({
-            optionEn: opt.text,
-            optionFr: opt.text,
-            sequence: index + 1,
-          })) || [];
-
         OptionsValue = [
           {
-            optionEn: item.expectedAnswer,
-            optionFr: item.expectedAnswer,
+            optionEn:
+              item?.Type === DataType.Existing
+                ? item.expectedAnswer[0]
+                : item.expectedAnswer,
+            optionFr:
+              item?.Type === DataType.Existing
+                ? item.expectedAnswer[0]
+                : item.expectedAnswer,
             sequence: 1,
           },
         ];
 
         answerValue = [
           {
-            optionEn: item.expectedAnswer,
-            optionFr: item.expectedAnswer,
+            optionEn:
+              item?.Type === DataType.Existing
+                ? item.expectedAnswer[0]
+                : item.expectedAnswer,
+            optionFr:
+              item?.Type === DataType.Existing
+                ? item.expectedAnswer[0]
+                : item.expectedAnswer,
           },
         ];
       }

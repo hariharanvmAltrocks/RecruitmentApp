@@ -75,7 +75,6 @@ const RecruitmentProcess = (props: any) => {
   const [selectedJobCodes, setSelectedJobCodes] = React.useState<
     JobCodeTilte[]
   >([]);
-  const [selectAll, setSelectAll] = React.useState<boolean>(false);
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
     Message: "",
@@ -648,7 +647,6 @@ const RecruitmentProcess = (props: any) => {
           );
 
           setSelectedJobCodes([]);
-          setSelectAll(false);
 
           setValidationErrors((prevErrors) => ({
             ...prevErrors,
@@ -670,7 +668,6 @@ const RecruitmentProcess = (props: any) => {
 
   const handleRefresh = (tab: string) => {
     void fetchData();
-    // setActiveTab(tab);
   };
 
   const handleAutoComplete = async (value: AutoCompleteItem | null) => {
@@ -719,20 +716,8 @@ const RecruitmentProcess = (props: any) => {
     }
   };
 
-  const handleCheckbox = (value: boolean, item: any) => {
-    const itemIdentifier = item.ID;
-    console.log("Checkbox Clicked | Value:", value, "| Item:", item);
-
-    const updatedDataset = data.map((currentItem) => {
-      const currentItemIdentifier = currentItem.ID;
-      if (currentItemIdentifier === itemIdentifier) {
-        return { ...currentItem, Checked: value };
-      }
-
-      return currentItem;
-    });
-
-    const selectedJobCodes = updatedDataset
+  const handleCheckbox = (item: any[]) => {
+    const selectedJobCodes = item
       .filter((currentItem) => currentItem.Checked)
       .map((currentItem) => {
         const JobTitle = props.JobInEnglishList.find(
@@ -747,28 +732,11 @@ const RecruitmentProcess = (props: any) => {
           JobTitle: JobTitle ? JobTitle.text : "",
         };
       });
-
-    setData(updatedDataset);
-
     setSelectedJobCodes(selectedJobCodes);
-
-    setSelectAll(
-      selectedJobCodes.length > 0 &&
-        selectedJobCodes.length === updatedDataset.length
-    );
   };
 
-  const onSelectAllChange = (value: boolean, pagination?: any) => {
-    const updatedDataset = data.map((item, index) => {
-      const isCurrentPageItem =
-        index >= pagination.first && index < pagination.first + pagination.rows;
-      return {
-        ...item,
-        Checked: isCurrentPageItem ? value : item.Checked,
-      };
-    });
-
-    const selectedJobCodes = updatedDataset
+  const onSelectAllChange = (item: any[]) => {
+    const selectedJobCodes = item
       .filter((item) => item.Checked)
       .map((item) => {
         const JobTitle = props.JobInEnglishList.find(
@@ -783,18 +751,7 @@ const RecruitmentProcess = (props: any) => {
           JobTitle: JobTitle ? JobTitle.text : "",
         };
       });
-
-    setData(updatedDataset);
-
     setSelectedJobCodes(selectedJobCodes);
-    const currentPageItems = selectedJobCodes.slice(
-      pagination.first,
-      pagination.first + pagination.rows
-    );
-    const isSelected = (row: any) => selectedJobCodes.includes(row);
-    setSelectAll(
-      currentPageItems.length > 0 && currentPageItems.every(isSelected)
-    );
   };
 
   const handleInputChangeTextArea = (value: string) => {
@@ -839,7 +796,7 @@ const RecruitmentProcess = (props: any) => {
     let errors = {
       AssignRecruitmentHR: false,
       Comments: false,
-      // AssignRecruitmentAgencies: false,
+      AssignRecruitmentAgencies: false,
     };
     switch (props.CurrentRoleID) {
       case RoleID.RecruitmentHRLead: {
@@ -851,9 +808,9 @@ const RecruitmentProcess = (props: any) => {
       }
 
       case RoleID.RecruitmentHR: {
-        // errors.AssignRecruitmentAgencies = !IsValid(
-        //   AssignHRData.AssignRecruitmentAgencies[0]?.text
-        // );
+        errors.AssignRecruitmentAgencies = !IsValid(
+          AssignHRData.AssignRecruitmentAgencies[0]?.text
+        );
         errors.Comments = !IsValid(AssignHRData.Comments);
         break;
       }
@@ -940,7 +897,6 @@ const RecruitmentProcess = (props: any) => {
                   }))
                 );
                 setSelectedJobCodes([]);
-                setSelectAll(false);
                 let SuccessAlert = {
                   Message:
                     selectedJobCodes.length === 1
@@ -971,7 +927,6 @@ const RecruitmentProcess = (props: any) => {
                   }))
                 );
                 setSelectedJobCodes([]);
-                setSelectAll(false);
               } else {
                 let APIErrorAlert = {
                   Message: RecuritmentHRMsg.APIErrorMsg,
@@ -1097,7 +1052,6 @@ const RecruitmentProcess = (props: any) => {
                         }))
                       );
                       setSelectedJobCodes([]);
-                      setSelectAll(false);
                     }
                   } else {
                     console.log(
@@ -1211,16 +1165,15 @@ const RecruitmentProcess = (props: any) => {
                     handleRefresh={() => handleRefresh("tab1")}
                     handleAssignBtn={AssignBtn_fn}
                     AssignBtnValidation={false}
-                    handleCheckbox={handleCheckbox}
-                    selectAll={selectAll}
-                    onSelectAllChange={onSelectAllChange}
+                    handleSelectedRow={handleCheckbox}
+                    // selectAll={selectAll}
+                    onSelectAllRow={onSelectAllChange}
                     assignLabel={
                       props.CurrentRoleID === RoleID.RecruitmentHR
                         ? "Assign Agencies"
                         : "Assign HR"
                     }
                     MasterData={props || {}}
-                    //checkedValue={}
                   />
                 </CardContent>
               </Card>
@@ -1316,13 +1269,6 @@ const RecruitmentProcess = (props: any) => {
                       }}
                     >
                       <CardContent>
-                        {/* <SearchableDataTable
-                                    data={RecruitmentDetails}
-                                    columns={columnConfig("tab2", "view", TabName.AssignAgencies)}
-                                    rows={rows}
-                                    onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={() => handleRefresh("tab2")}
-                                /> */}
                         <CheckboxDataTable //AssignAgency
                           data={data}
                           columns={columnConfig(
@@ -1335,9 +1281,9 @@ const RecruitmentProcess = (props: any) => {
                           handleRefresh={() => handleRefresh("tab2")}
                           handleAssignBtn={AssignBtn_fn}
                           AssignBtnValidation={false}
-                          handleCheckbox={handleCheckbox}
-                          selectAll={selectAll}
-                          onSelectAllChange={onSelectAllChange}
+                          handleSelectedRow={handleCheckbox}
+                          // selectAll={selectAll}
+                          onSelectAllRow={onSelectAllChange}
                           assignLabel={
                             props.CurrentRoleID === RoleID.RecruitmentHR
                               ? "Assign Agencies"
@@ -1582,8 +1528,8 @@ const RecruitmentProcess = (props: any) => {
               <AssignRecuritmentHR
                 jobCodes={allJobData}
                 selectedJobCodes={selectedJobCodes}
-                onSelectAllChange={onSelectAllChange}
-                onRowChange={handleCheckbox}
+                onSelectAllChange={() => onSelectAllChange}
+                onRowChange={() => handleCheckbox}
                 CurrentRole={props.CurrentRoleID}
                 onClose={handleCancel}
                 AssignedHRId={props.stateValue?.AssignedHRId}

@@ -27,6 +27,7 @@ import {
   RoleID,
   ResponeStatus,
   CheckboxContent,
+  Choices,
 } from "../../utilities/Config";
 import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
@@ -121,6 +122,9 @@ const InterviewPanelEdit = (props: any) => {
     PanelFullNames: [],
     InterviewLevels: [],
     GPA: "",
+    ConflictsOfInterest: "",
+    disability: "",
+    disabilityReason: "",
   });
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -314,6 +318,9 @@ const InterviewPanelEdit = (props: any) => {
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
           JobGrade: op?.JobGrade,
+          ConflictsOfInterest: op?.ConflictsOfInterest,
+          disability: op?.disability,
+          disabilityReason: op?.disabilityReason,
         }));
         // await fetchRoleProfileData(op.JobCodeId);
         if (questionnaire.length === 0) {
@@ -321,7 +328,35 @@ const InterviewPanelEdit = (props: any) => {
             op?.JobCode
           );
           if (getQuestion.status === ResponeStatus.SUCCESS) {
-            setQuestionnaire(getQuestion?.data ?? []);
+            if (getQuestion?.data?.length === 0) {
+              let QuestionAlertMsg = {
+                Message: RecuritmentHRMsg.QuestionAlertMsg,
+                Type: HRMSAlertOptions.Error,
+                visible: true,
+                ButtonAction: async (userClickedOK: boolean) => {
+                  if (userClickedOK) {
+                    if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+                      props.navigation("/ReviewProfileList", {});
+                    } else if (props.CurrentRoleID === RoleID.HOD) {
+                      props.navigation("/RecurimentProcess", {});
+                    } else if (props.CurrentRoleID === RoleID.LineManager) {
+                      props.navigation("/ReviewProfileList", {});
+                    } else {
+                      props.navigation("/InterviewPanelList");
+                    }
+                    setAlertPopupOpen(false);
+                  } else {
+                    setAlertPopupOpen(false);
+                  }
+                },
+              };
+
+              setAlertPopupOpen(true);
+              setalertProps(QuestionAlertMsg);
+              setIsLoading(false);
+            } else {
+              setQuestionnaire(getQuestion?.data ?? []);
+            }
           } else {
             let APIErrorMsg = {
               Message: RecuritmentHRMsg.APIErrorMsg,
@@ -601,8 +636,7 @@ const InterviewPanelEdit = (props: any) => {
       }
 
       const level1Panels = updatedInterviewPanelResponse.data.filter(
-        (p) =>
-          p.InterviewLevel === InterviewLevels.Level1 || InterviewLevels.Level2
+        (p) => p.InterviewLevel === InterviewLevels.Level1
       );
 
       const uploadedCount = level1Panels.filter(
@@ -847,7 +881,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Level of Interview"
+                    label="No of Interview Level's"
                     value={InterviewedLevel.Levels}
                     disabled={true}
                     mandatory={false}
@@ -863,8 +897,44 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
               </div>
               <div className="ms-Grid-row">
+                {CandidateData?.ConflictsOfInterest && (
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Conflicts Of Interest"
+                      value={CandidateData?.ConflictsOfInterest}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                )}
+                {CandidateData?.ConflictsOfInterest && (
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Disability"
+                      value={CandidateData?.disability}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                )}
+              </div>
+              {CandidateData?.disabilityReason &&
+                CandidateData?.disability === Choices.Yes && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg12">
+                      <CustomTextArea
+                        label="Disability Details"
+                        value={CandidateData?.disabilityReason}
+                        disabled={true}
+                        mandatory={false}
+                        error={false}
+                      />
+                    </div>
+                  </div>
+                )}
+              <div className="ms-Grid-row">
                 <div
-                  className="ms-Grid-col ms-lg4"
+                  className="ms-Grid-col ms-lg12"
                   style={{ position: "relative", top: "14px" }}
                 >
                   <label
@@ -912,8 +982,12 @@ const InterviewPanelEdit = (props: any) => {
                 {props.stateValue?.InterviewLevel === InterviewLevels.Levels2 &&
                 interviewPanelTitlesLevel2.length > 0 ? (
                   <div
-                    className="ms-Grid-col ms-lg4"
-                    style={{ position: "relative", top: "14px" }}
+                    className="ms-Grid-col ms-lg12"
+                    style={{
+                      position: "relative",
+                      top: "14px",
+                      marginTop: "2%",
+                    }}
                   >
                     <label
                       style={{
@@ -962,7 +1036,7 @@ const InterviewPanelEdit = (props: any) => {
                 )}
               </div>
 
-              <div className="ms-Grid-row" style={{ marginTop: "10px" }}>
+              <div className="ms-Grid-row" style={{ marginTop: "22px" }}>
                 <div className="ms-Grid-col ms-lg6">
                   <LabelHeaderComponents value={"Attachments"} />
                 </div>
@@ -1297,7 +1371,11 @@ const InterviewPanelEdit = (props: any) => {
                       <strong>Expected Answer:</strong>
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: q.answer,
+                          __html: `${q.answer
+                            .replace(/<p>/gi, "")
+                            .replace(/<\/p>/gi, "")
+                            .replace(/<br\s*\/?>/gi, "")
+                            .trim()}`,
                         }}
                       />
                       {/* {q.answer} */}

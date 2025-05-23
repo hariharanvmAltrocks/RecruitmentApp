@@ -96,6 +96,9 @@ export type CandidateProfile = {
     JobVaildFromDate: string;
     JobVaildToDate: string;
     CandidateResumeLink: string;
+    ConflictsOfInterest: string;
+    disability: string;
+    disabilityReason: string;
 }
 
 export type WorkflowJson = {

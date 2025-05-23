@@ -169,7 +169,10 @@ export type ScoreCardData = {
   ExternalAgentName?: string;
   JobGrade: string;
   PanelFullNames?: string[];
-  GPA: string
+  GPA: string;
+  ConflictsOfInterest: string;
+  disability: string;
+  disabilityReason: string;
 };
 
 export type QualificationValue = {

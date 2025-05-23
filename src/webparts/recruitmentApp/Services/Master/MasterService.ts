@@ -11,7 +11,7 @@ export default class MasterService implements IMasterService {
     async userRole(): Promise<UserRoleResponseDetails> {
         try {
             const getjsonUserRole = {
-                Listname: ListNames.HRMSUserRole,
+                Listname: ListNames.HRMSRecruitmentUserRole,
                 Select: "*",
             };
             const items = await SPServices.SPReadItems(getjsonUserRole)

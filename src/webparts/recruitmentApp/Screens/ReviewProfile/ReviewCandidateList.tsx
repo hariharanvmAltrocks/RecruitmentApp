@@ -201,32 +201,20 @@ const ReviewCandidateList = (props: any) => {
         return (
           <div>
             <span>
-              {rowData.workflowStatusId === workflowStatusApi.HRRejected ||
-              rowData.workflowStatusId ===
-                workflowStatusApi.LineManagerLevel1Rejected ||
-              rowData.workflowStatusId ===
-                workflowStatusApi.LineManagerLevel2Rejected ||
-              (props.CurrentRoleID === RoleID.RecruitmentHR &&
-                rowData.workflowStatusId ===
-                  workflowStatusApi.LineManagerL1Pending) ||
-              (props.CurrentRoleID === RoleID.RecruitmentHR &&
-                rowData.workflowStatusId ===
-                  workflowStatusApi.LineManagerL2Pending) ||
+              {(props.CurrentRoleID === RoleID.RecruitmentHR &&
+                tab === "tab2" &&
+                rowData.workflowStatusId !=
+                  StatusId?.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) ||
+              rowData?.StatusID === TabName.ReviewProfile ||
               (props.CurrentRoleID === RoleID.LineManager &&
                 rowData.workflowStatusId ===
-                  workflowStatusApi.PendingRecruitmentHRscheduleInterview) ||
-              (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                  workflowStatusApi.LineManagerLevel1Rejected) ||
+              (props.CurrentRoleID === RoleID.LineManager &&
                 rowData.workflowStatusId ===
-                  workflowStatusApi.CandidateSelectedIPanel) ||
-              (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                  workflowStatusApi.LineManagerLevel2Rejected) ||
+              (props.CurrentRoleID === RoleID.LineManager &&
                 rowData.workflowStatusId ===
-                  workflowStatusApi.CandidateRejectedIPanel) ||
-              (props.CurrentRoleID === RoleID.RecruitmentHR &&
-                rowData.workflowStatusId ===
-                  workflowStatusApi.CandidateOnHoldIPanel) ? (
-                // (props.stateValue?.TabName === TabName.ReviewProfile &&
-                //   props.CurrentRoleID === RoleID.RecruitmentHR &&
-                //   workflowStatusApi.PendingRecruitmentHRscheduleInterview)
+                  workflowStatusApi.PendingRecruitmentHRscheduleInterview) ? (
                 <>
                   <img
                     src={require("../../assets/Viewicon.svg")}
@@ -331,7 +319,7 @@ const ReviewCandidateList = (props: any) => {
         if (ReschedulData.status === 200 && ReschedulData.data !== null) {
           let ReschedulDataFilter = ReschedulData.data.map((item: any) => {
             return {
-              SNO: item.SNO, 
+              SNO: item.SNO,
               CandidateID: item?.ID,
               ApplicantName: `${item?.FristName || ""} ${item?.LastName || ""}`,
               PositionTitle: item?.PositionTitle,
@@ -485,6 +473,7 @@ const ReviewCandidateList = (props: any) => {
   const handleRefresh = (tab: string) => {
     setBreadcrumbTab(tab);
     void fetchCandidateData(tab);
+    void fetchRecuritmentData();
   };
 
   const tabs = (tab: string) => [

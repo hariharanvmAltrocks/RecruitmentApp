@@ -5,7 +5,8 @@ export const APIURL = "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
 export const ListNames = {
   HRMSSageList: "HRMS_Sage_List",
   HRMSGradeMaster: "HRMS_Grade_Master",
-  HRMSUserRole: "HRMS_User_Role",
+  HRMSRecruitmentUserRole: "HRMSRecruitmentUserRole",
+  // HRMSUserRole: "HRMS_User_Role",
   HRMSStatus: "HRMS-Master-Status",
   BusinessUnitMaster: "BusinessUnitMaster",
   HRMSDepartment: "HRMS-Department",
@@ -93,39 +94,13 @@ export const StatusId = {
 };
 
 export const RoleID = {
-  HOD: 1,
-  User: 2,
-  BudgetHolder: 4,
-  LineManager: 5,
-  HR: 6,
-  EXCO: 7,
-  EXCO_Service_Department_Executive: 8,
-  EXCO_Operations_Department_ED: 9,
-  EXCO_Service_Department_CEC: 10,
-  EXCO_Service_Department_MD: 11,
-  EXCO_Operations_Department_Executive: 12,
-  EXCO_Operations_Department_MD: 13,
-  EXCO_Service_Department_CEF: 14,
-  Payroll: 15,
-  HR_SeniorSuperintendentII_Effectiveness: 16,
-  Emergence: 17,
-  BIOS: 18,
-  Superintendent: 19,
-  Legal: 20,
-  Transformation: 21,
-  MAD: 22,
-  EXCOCEO: 23,
-  EXCOCFOFinance: 24,
-  EXCOCFOCommerical: 25,
-  EXCOExecutive: 26,
-  HeadOfDivision: 27,
-  RecruitmentHRLead: 28,
-  RecruitmentHR: 32,
-  RecruitmentLineManager: 33,
-  RecruitmentAppExternalAgency: 34,
-  InterviewPanel: 35,
-  EXCOMD: 31,
-  TitleforProfile: 24,
+  RecruitmentHRLead: 1,
+  RecruitmentHR: 2,
+  HOD: 3,
+  LineManager: 4,
+  InterviewPanel: 5,
+  RecruitmentAppExternalAgency: 6,
+  RecruitmentLineManager: 7,
 };
 
 export const GridStatusBackgroundcolor = {
@@ -242,9 +217,10 @@ export const RecuritmentHRMsg = {
   deleteMsg: "Are you sure you want to delete this? Any unsaved changes will be lost",
 
   SelectedErrorMsg: "Please Choose the Disciplines.",
-  WarningMsg: "Are you sure want to Change the Disciolines? Any unsaved changes will be lost",
+  WarningMsg: "Are you sure want to Change the Disciplines? Any unsaved changes will be lost",
   ClearWarning: "Are you sure you want to close? Unsaved changes will be lost.",
-  SelectedCandidateValidation: "The requested headcount for the position has already been selected."
+  SelectedCandidateValidation: "The requested headcount for the position has already been selected.",
+  QuestionAlertMsg: "Interview questions are not available. Kindly reschedule the interview date.",
 };
 // In your validation messages config file
 export const validationMsg = {

@@ -153,7 +153,7 @@ function ViewQuestionCheckbox({
           >
             <div className="ms-Grid-col ms-lg1" style={{ marginRight: "10px" }}>
               <ReuseButton
-                label="Close"
+                label="Back"
                 onClick={onClose}
                 Style={{
                   backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
@@ -162,19 +162,28 @@ function ViewQuestionCheckbox({
                 }}
               />
             </div>
-            <div className="ms-Grid-col ms-lg1" style={{ marginRight: "10px" }}>
-              <ReuseButton
-                label="Reuse"
-                onClick={async () => {
-                  Reusequestion_fn();
-                }}
-                Style={{
-                  backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                  color: "white",
-                  width: "50%",
-                }}
-              />
-            </div>
+            {questionnaire.length === 0 ? (
+              <></>
+            ) : (
+              <>
+                <div
+                  className="ms-Grid-col ms-lg1"
+                  style={{ marginRight: "10px" }}
+                >
+                  <ReuseButton
+                    label="Reuse"
+                    onClick={async () => {
+                      Reusequestion_fn();
+                    }}
+                    Style={{
+                      backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                      color: "white",
+                      width: "50%",
+                    }}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

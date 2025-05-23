@@ -12,6 +12,7 @@ import { FilterData } from "./CustomDataTable";
 import { AutoCompleteItem } from "../Models/Screens";
 import SignatureCheckbox from "./SignatureCheckbox";
 import { ColorCode } from "../utilities/Config";
+import { SelectAll } from "@mui/icons-material";
 
 interface ColumnConfig {
   field: string;
@@ -28,9 +29,9 @@ interface SearchableDataTableProps {
   onPageChange: (event: any) => void;
   handleAssignBtn: () => void;
   AssignBtnValidation: boolean;
-  handleCheckbox: (value: any, rowData: any) => void;
-  onSelectAllChange: (value: any, pagination: any) => void;
-  selectAll: boolean;
+  handleSelectedRow: (item?: any[]) => void;
+  onSelectAllRow: (item?: any[]) => void;
+  // selectAll: boolean;
   handleRefresh: () => void;
   assignLabel?: string;
   MasterData: any;
@@ -43,10 +44,10 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   onPageChange,
   handleAssignBtn,
   AssignBtnValidation,
-  handleCheckbox,
-  onSelectAllChange,
+  handleSelectedRow,
+  onSelectAllRow,
   handleRefresh,
-  selectAll,
+  // selectAll,
   assignLabel,
   MasterData,
 }) => {
@@ -65,8 +66,12 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     BusinessUnitName: { key: 0, text: "" }, // Can be removed if not used elsewhere
   });
   const [pagination, setPagination] = React.useState({ first: 0, rows: rows });
+  const [selectAll, setSelectAll] = React.useState<boolean>(false);
+  const [checkedData, setCheckedData] = React.useState<any[]>(data);
+
   React.useEffect(() => {
     setFilteredItems(data);
+    setSelectAll(!SelectAll);
   }, [data]);
 
   const handleSearch = (event: any) => {
@@ -79,7 +84,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   };
 
   const search_fn = (field: string, item: AutoCompleteItem) => {
-    let filtered = data.filter((i) => {
+    let filtered = checkedData.filter((i) => {
       if (field === "Department") return i.Department === item.text;
       if (field === "BusinessUnitCode") return i.BusinessUnitCode === item.text;
       if (field === "JobCode") return i.JobCode === item.text;
@@ -104,7 +109,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           JobCode: { key: 0, text: "" },
         }));
         setFilteredItems(
-          data.filter((row) => {
+          checkedData.filter((row) => {
             return (
               (!FilterData.Department.text ||
                 row.Department === FilterData.Department.text) &&
@@ -121,7 +126,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           JobCode: { key: 0, text: "" },
         }));
         setFilteredItems(
-          data.filter((row) => {
+          checkedData.filter((row) => {
             return (
               !FilterData.Department.text ||
               row.Department === FilterData.Department.text
@@ -137,14 +142,14 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           BusinessUnitCode: { key: 0, text: "" },
           JobCode: { key: 0, text: "" },
         }));
-        setFilteredItems(data);
+        setFilteredItems(checkedData);
       }
       return;
     }
     search_fn(field, item);
 
     if (field === "Department") {
-      const departmentToBU = data.filter(
+      const departmentToBU = checkedData.filter(
         (row) => row.Department === item?.text
       );
       const businessUnitOptions: AutoCompleteItem[] = Array.from(
@@ -171,7 +176,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     }
 
     if (field === "BusinessUnitCode") {
-      const buToJobCode = filteredItems.filter(
+      const buToJobCode = checkedData.filter(
         (row) => row.BusinessUnitCode === item?.text
       );
 
@@ -188,6 +193,66 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
         JobCode: { key: 0, text: "" },
       }));
     }
+  };
+
+  const handleCheckbox = (value: boolean, item: any) => {
+    const itemIdentifier = item.ID;
+    console.log("Checkbox Clicked | Value:", value, "| Item:", item);
+    const updatedDataset = filteredItems.map((currentItem) => {
+      const currentItemIdentifier = currentItem.ID;
+      if (currentItemIdentifier === itemIdentifier) {
+        return { ...currentItem, Checked: value };
+      }
+
+      return currentItem;
+    });
+    let IsChecked = checkedData.some((item) => item.Checked === true);
+    let currentdata = IsChecked ? checkedData : data;
+    const updatedData = currentdata.map((currentItem) => {
+      const currentItemIdentifier = currentItem.ID;
+
+      if (currentItemIdentifier === itemIdentifier) {
+        return { ...currentItem, Checked: value };
+      }
+
+      return currentItem;
+    });
+    setCheckedData(updatedData);
+    setFilteredItems(updatedDataset);
+
+    const allChecked = updatedDataset.every((item) => item.Checked === true);
+    setSelectAll(allChecked);
+    handleSelectedRow(updatedDataset);
+  };
+
+  const onSelectAllChange = (value: boolean, pagination?: any) => {
+    const updatedDataset = filteredItems.map((item, index) => {
+      const isCurrentPageItem =
+        index >= pagination.first && index < pagination.first + pagination.rows;
+      return {
+        ...item,
+        Checked: isCurrentPageItem ? value : item.Checked,
+      };
+    });
+    setFilteredItems(updatedDataset);
+    let IsChecked = checkedData.some((item) => item.Checked === true);
+    let currentdata = IsChecked ? checkedData : data;
+    const updatedData = currentdata.map((item, index) => {
+      const isCurrentPageItem =
+        index >= pagination.first && index < pagination.first + pagination.rows;
+      return {
+        ...item,
+        Checked: isCurrentPageItem ? value : item.Checked,
+      };
+    });
+    setCheckedData(updatedData);
+    const currentPageItems = updatedData.slice(
+      pagination.first,
+      pagination.first + pagination.rows
+    );
+    const allChecked = currentPageItems.every((item) => item.Checked === true);
+    setSelectAll(allChecked);
+    onSelectAllRow(updatedDataset);
   };
   return (
     <>

@@ -295,6 +295,9 @@ export default class InterviewProcessService
             InterviewLinkLevel2: item?.InterviewLinkLevel2,
             CandidateComments: CommentResult,
             CandidateResumeLink: resumeLink,
+            ConflictsOfInterest: item?.ConflictsOfInterest,
+            disability: item?.Disability,
+            disabilityReason: item?.DisabilityDetails
           };
         })
       );

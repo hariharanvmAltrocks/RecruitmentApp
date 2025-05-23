@@ -27,6 +27,9 @@ export type CandidateDetails = {
     CandidateResumeLink: string,
     ActionId: number,
     Nationality: string,
+    DisabilityDetails: string,
+    Disability: string,
+    ConflictsOfInterest: string,
 }
 export type RescheduledCandidate = {
     ID: number

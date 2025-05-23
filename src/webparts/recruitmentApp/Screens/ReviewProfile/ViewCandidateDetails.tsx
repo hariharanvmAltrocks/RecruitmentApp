@@ -20,6 +20,7 @@ import BreadcrumbsComponent, {
 import {
   CandidateStatus,
   CheckboxContent,
+  Choices,
   ColorCode,
   DocumentLibraray,
   HRMSAlertOptions,
@@ -123,6 +124,9 @@ const ViewCandidateDetails = (props: any) => {
     JobVaildFromDate: "",
     JobVaildToDate: "",
     CandidateResumeLink: "",
+    ConflictsOfInterest: "",
+    disability: "",
+    disabilityReason: "",
   });
   const todaydate = new Date();
 
@@ -177,7 +181,8 @@ const ViewCandidateDetails = (props: any) => {
     InterviewMeetingInviteLink: "",
     InterviewTime: "",
   });
-  const [recruitmentID, setRecruitmentID] = useState<number>(0);
+  const [rescheduleValidation, setRescheduleValidation] =
+    useState<boolean>(false);
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
@@ -261,6 +266,9 @@ const ViewCandidateDetails = (props: any) => {
           hrComments: "",
           JobVaildFromDate: "",
           JobVaildToDate: "",
+          ConflictsOfInterest: op?.ConflictsOfInterest,
+          disability: op?.disability,
+          disabilityReason: op?.disabilityReason,
         }));
         let InterviewDate = new Date(op?.InterviewDate);
         setInterviewedLevel((prevState: any) => ({
@@ -332,6 +340,9 @@ const ViewCandidateDetails = (props: any) => {
               JobVaildFromDate: response?.JobVaildFromDate,
               JobVaildToDate: response?.JobVaildToDate,
               CandidateResumeLink: response?.CandidateResumeLink,
+              ConflictsOfInterest: response?.ConflictsOfInterest,
+              disability: response?.disability,
+              disabilityReason: response?.disabilityReason,
             }));
           }
           if (
@@ -556,6 +567,8 @@ const ViewCandidateDetails = (props: any) => {
           ...prevState,
           InterviewedDate: undefined,
         }));
+
+        setRescheduleValidation(false);
       } else {
         setInterviewedLevel((prevState: any) => ({
           ...prevState,
@@ -592,6 +605,11 @@ const ViewCandidateDetails = (props: any) => {
         ...prevState,
         InterviewedDate: false,
       }));
+    }
+    if (!!updatedDate && updatedDate <= todaydate) {
+      setRescheduleValidation(true);
+    } else {
+      setRescheduleValidation(false);
     }
   };
 
@@ -796,7 +814,7 @@ const ViewCandidateDetails = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Experience in Mining Industry(Years)"
+                      label="Experience In Mining Industry(Years)"
                       value={CandidateProfile?.ExperienceMining}
                       disabled={true}
                       mandatory={false}
@@ -807,18 +825,42 @@ const ViewCandidateDetails = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Experience in related field(Years)"
+                      label="Experience In Related Field(Years)"
                       value={CandidateProfile?.ExperRelatedfield}
                       disabled={true}
                       mandatory={false}
                     />
                   </div>
+                  {!CandidateProfile?.Agencies && (
+                    <>
+                      {CandidateProfile?.ConflictsOfInterest && (
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomInput
+                            label="Conflicts Of Interest"
+                            value={CandidateProfile?.ConflictsOfInterest}
+                            disabled={true}
+                            mandatory={false}
+                          />
+                        </div>
+                      )}
+                      {CandidateProfile?.disability && (
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomInput
+                            label="Disability"
+                            value={CandidateProfile?.disability}
+                            disabled={true}
+                            mandatory={false}
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
                   {props.stateValue?.initialTab ===
-                  TabName.AssignInterviewPanel ? (
+                    TabName.AssignInterviewPanel && (
                     <>
                       <div className="ms-Grid-col ms-lg4">
                         <CustomInput
-                          label="Level of Interview"
+                          label="No Of Interview Level's"
                           value={InterviewedLevel.Levels}
                           disabled={true}
                           mandatory={false}
@@ -832,103 +874,68 @@ const ViewCandidateDetails = (props: any) => {
                           mandatory={false}
                         />
                       </div>
-                      <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
-                        <div className="ms-Grid-col ms-lg4">
-                          <CustomDatePicker
-                            selectedDate={InterviewedLevel.InterviewedDate}
-                            label="Interviewed Date"
-                            error={validationErrors.InterviewedDate}
-                            // minDate={
-                            //   CandidateProfile.JobVaildToDate
-                            //     ? new Date(CandidateProfile.JobVaildToDate + 1)
-                            //     : undefined
-                            // }
-                            minDate={todaydate}
-                            mandatory={true}
-                            onChange={(date) =>
-                              handleDateChange(date ?? undefined)
-                            }
-                            disabled={level2Date}
-                          />
-                        </div>
-                        <div className="ms-Grid-col ms-lg4">
-                          <CustomTimePicker
-                            selectedTime={InterviewedLevel.InterviewTime}
-                            label="Interview Time"
-                            error={validationErrors.InterviewTime}
-                            mandatory={true}
-                            disabled={level2Date}
-                            onChange={handleInterviewTimeChange}
-                          />
-                        </div>
-                        <div className="ms-Grid-col ms-lg4">
-                          <CustomInput
-                            label="Interview Meeting Invite Link"
-                            value={InterviewedLevel.InterviewMeetingInviteLink}
-                            disabled={level2Date}
-                            mandatory={true}
-                            onChange={handleInputChange}
-                            error={validationErrors.InterviewMeetingInviteLink}
-                          />
-                        </div>
+                    </>
+                  )}
+                </div>
+
+                {props.stateValue?.initialTab ===
+                TabName.AssignInterviewPanel ? (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomDatePicker
+                          selectedDate={InterviewedLevel.InterviewedDate}
+                          label="Interview Date -  level 1"
+                          error={validationErrors.InterviewedDate}
+                          minDate={todaydate}
+                          mandatory={!level2Date}
+                          onChange={(date) =>
+                            handleDateChange(date ?? undefined)
+                          }
+                          disabled={level2Date}
+                        />
                       </div>
-                      {level2Date && (
-                        <>
-                          <div
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomTimePicker
+                          selectedTime={InterviewedLevel.InterviewTime}
+                          label="Interview Time - Level 1"
+                          error={validationErrors.InterviewTime}
+                          mandatory={!level2Date}
+                          disabled={level2Date}
+                          onChange={handleInterviewTimeChange}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomInput
+                          label="Meeting Link for Interview  - Level  1"
+                          value={InterviewedLevel.InterviewMeetingInviteLink}
+                          disabled={level2Date}
+                          mandatory={!level2Date}
+                          onChange={handleInputChange}
+                          error={validationErrors.InterviewMeetingInviteLink}
+                        />
+                      </div>
+                    </div>
+
+                    {level2Date && (
+                      <>
+                        {/* <div
                             className="ms-Grid-row"
                             style={{ marginLeft: "0%" }}
-                          >
-                            <div className="ms-Grid-col ms-lg4">
-                              <CustomDatePicker
-                                selectedDate={level2Data.InterviewedDate}
-                                label="Interviewed Date-Level 2"
-                                error={validationErrors.InterviewedDateLevel2}
-                                minDate={todaydate}
-                                mandatory={true}
-                                onChange={(date) =>
-                                  handleDateChange(date ?? undefined)
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg4">
-                              <CustomTimePicker
-                                selectedTime={level2Data.InterviewTime}
-                                label="Interview Time-Level 2"
-                                error={validationErrors.InterviewTimeLevel2}
-                                mandatory={true}
-                                onChange={handleInterviewTimeChange}
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg4">
-                              <CustomInput
-                                label="Interview Meeting Invite Link-Level 2"
-                                value={level2Data.InterviewMeetingInviteLink}
-                                mandatory={true}
-                                onChange={handleInputChange}
-                                error={
-                                  validationErrors.InterviewMeetingInviteLinkLevel2
-                                }
-                              />
-                            </div>
-                          </div>
-                        </>
-                      )}
-                      <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
-                        <div className="ms-Grid-col ms-lg4">
-                          <CustomMultiSelect
-                            label="Assign Interview Panel - Level 1"
-                            value={InterviewedLevel.AssignInterviewLevel1}
-                            options={
-                              InterviewedLevel.AssignInterviewedLevel1Option
-                            }
-                            onChange={(value) => handleMulitiSelect(value)}
-                            disabled={true}
-                            mandatory={true}
-                            error={validationErrors.AssignInterviewLevel1}
-                          />
-                          {InterviewedLevel.AssignInterviewLevel1.length > 0 &&
-                            InterviewedLevel.AssignInterviewLevel1.length <
-                              3 && (
+                          > */}
+                        <div className="ms-Grid-row">
+                          <div className="ms-Grid-col ms-lg4">
+                            <CustomDatePicker
+                              selectedDate={level2Data.InterviewedDate}
+                              label="Interviewed Date-Level 2"
+                              error={validationErrors.InterviewedDateLevel2}
+                              minDate={todaydate}
+                              mandatory={true}
+                              onChange={(date) =>
+                                handleDateChange(date ?? undefined)
+                              }
+                            />
+                            {rescheduleValidation && (
                               <p
                                 style={{
                                   marginTop: 5,
@@ -937,18 +944,74 @@ const ViewCandidateDetails = (props: any) => {
                                   marginLeft: 0,
                                 }}
                               >
-                                Minimum of three is required
+                                Invaild Date
                               </p>
                             )}
+                          </div>
+                          <div className="ms-Grid-col ms-lg4">
+                            <CustomTimePicker
+                              selectedTime={level2Data.InterviewTime}
+                              label="Interview Time-Level 2"
+                              error={validationErrors.InterviewTimeLevel2}
+                              mandatory={true}
+                              onChange={handleInterviewTimeChange}
+                            />
+                          </div>
+                          <div className="ms-Grid-col ms-lg4">
+                            <CustomInput
+                              label="Meeting Link for Interview - Level  2"
+                              value={level2Data.InterviewMeetingInviteLink}
+                              mandatory={true}
+                              onChange={handleInputChange}
+                              error={
+                                validationErrors.InterviewMeetingInviteLinkLevel2
+                              }
+                            />
+                          </div>
                         </div>
-                        {InterviewedLevel.Levels === InterviewLevels.Level2 && (
+                        {/* </div> */}
+                      </>
+                    )}
+
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg12">
+                        <CustomMultiSelect
+                          label="Interview Panel Members - Level 1"
+                          value={InterviewedLevel.AssignInterviewLevel1}
+                          options={
+                            InterviewedLevel.AssignInterviewedLevel1Option
+                          }
+                          onChange={(value) => handleMulitiSelect(value)}
+                          disabled={true}
+                          mandatory={true}
+                          error={validationErrors.AssignInterviewLevel1}
+                        />
+                        {InterviewedLevel.AssignInterviewLevel1.length > 0 &&
+                          InterviewedLevel.AssignInterviewLevel1.length < 3 && (
+                            <p
+                              style={{
+                                marginTop: 5,
+                                color: "red",
+                                fontSize: 12,
+                                marginLeft: 0,
+                              }}
+                            >
+                              Minimum of three is required
+                            </p>
+                          )}
+                      </div>
+                      {InterviewedLevel.Levels === InterviewLevels.Level2 &&
+                        (props.stateValue?.StatusId ===
+                          StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel ||
+                          props.stateValue?.StatusId ===
+                            StatusId.InterviewScheduledforLevel2) && (
                           <>
                             <div
-                              className="ms-Grid-col ms-lg4"
-                              style={{ marginLeft: "7px" }}
+                              className="ms-Grid-col ms-lg12"
+                              style={{ marginTop: "2%" }}
                             >
                               <CustomMultiSelect
-                                label="Interview Panel - Level 2"
+                                label="Interview Panel Members - Level 2"
                                 value={InterviewedLevel.AssignInterviewedLevel2}
                                 options={
                                   InterviewedLevel.AssignInterviewedLevel1Option
@@ -959,13 +1022,25 @@ const ViewCandidateDetails = (props: any) => {
                             </div>
                           </>
                         )}
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
+                {CandidateProfile?.disabilityReason &&
+                  CandidateProfile?.disability === Choices.Yes && (
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg12">
+                        <CustomTextArea
+                          label="Disability Details"
+                          value={CandidateProfile?.disabilityReason}
+                          disabled={true}
+                          mandatory={false}
+                          error={false}
+                        />
                       </div>
-                    </>
-                  ) : (
-                    <></>
+                    </div>
                   )}
-                </div>
-
                 <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
                   <LabelHeaderComponents value={"Attachments"} />
                 </div>
@@ -1008,7 +1083,7 @@ const ViewCandidateDetails = (props: any) => {
                             value={actionValue.CandidateStatus}
                             options={["Yes", "No", "On Hold"]}
                             error={validationErrors.CandidateStatus}
-                            mandatory={false}
+                            mandatory={true}
                             onChange={(item) => handleRadioChange(item)}
                             disabled={
                               props.stateValue?.ActionBtn === "View"
@@ -1106,37 +1181,7 @@ const ViewCandidateDetails = (props: any) => {
                     </div>
                   </div>
                 )}
-                {props.stateValue?.initialTab ===
-                  TabName.AssignInterviewPanel && (
-                  <div className="ms-Grid-row">
-                    <div className="ms-Grid-col ms-lg4">
-                      <CustomLabel value={"View Justifications"} />
-                      <ReuseButton
-                        Style={{
-                          minWidth: "117px",
-                          fontSize: "13px",
-                          paddingBottom: "24px",
-                          display: "flex",
-                          flexDirection: "column",
-                          height: "41px",
-                          paddingTop: "23px",
-                          backgroundColor:
-                            ColorCode.ButtonColorCode.ButtonColor,
-                          color: "white",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                        label="VIEW"
-                        imgSrc={require("../../assets/viewSubmision-white.svg")}
-                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                        imgAlt="View"
-                        imgAltHover="Hovered View"
-                        onClick={() => setOpenComments(true)}
-                        spacing={4}
-                      />
-                    </div>
-                  </div>
-                )}
+
                 {props.stateValue?.ActionBtn === "View" ? (
                   <></>
                 ) : (
@@ -1276,6 +1321,18 @@ const ViewCandidateDetails = (props: any) => {
         }
         break;
     }
+    if (props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2) {
+      const RescheduleValue =
+        !!level2Data?.InterviewedDate &&
+        level2Data.InterviewedDate <= todaydate;
+      setRescheduleValidation(RescheduleValue);
+    }
+    if (props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2) {
+      const RescheduleValue =
+        !!InterviewedLevel?.InterviewedDate &&
+        InterviewedLevel.InterviewedDate <= todaydate;
+      setRescheduleValidation(RescheduleValue);
+    }
 
     setValidationErrors((prevState) => ({
       ...prevState,
@@ -1345,12 +1402,14 @@ const ViewCandidateDetails = (props: any) => {
           ? ""
           : CandidateProfile?.CandidateResumeLink,
       ActionId: WorkflowAction.Approved,
+      ConflictsOfInterest: CandidateProfile.ConflictsOfInterest,
+      Disability: CandidateProfile.disability,
+      DisabilityDetails: CandidateProfile.disabilityReason,
     };
     let selectedinterviewpanal: any[] = [];
 
     for (let i = 0; i < InterviewedLevel.AssignInterviewLevel1.length; i++) {
       const currentItem = InterviewedLevel.AssignInterviewLevel1[i];
-      setRecruitmentID(RecruitmentDetails.data[0]?.ID);
       let selectedinterview = {
         RecruitmentIDId: RecruitmentDetails.data[0]?.ID,
         InterviewLevel: InterviewLevels.Level1, //InterviewedLevel.Levels,
@@ -1401,6 +1460,7 @@ const ViewCandidateDetails = (props: any) => {
               StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
           ) {
             obj.ActionId = WorkflowAction.Approved;
+            obj.ItemCreated = Choices.Yes;
           }
         } else {
           if (props.stateValue?.StatusId === StatusId.InterviewScheduled) {
@@ -1439,7 +1499,7 @@ const ViewCandidateDetails = (props: any) => {
               const currentItem = InterviewedLevel.AssignInterviewedLevel2[i];
 
               let selectedinterview = {
-                RecruitmentIDId: recruitmentID,
+                RecruitmentIDId: props.stateValue?.RecruitmentID,
                 InterviewLevel: InterviewLevels.Level2, //InterviewedLevel.Levels,
                 InterviewPanel: currentItem.key,
                 CandidateID: Number(CandidateProfile.CandidateID),
