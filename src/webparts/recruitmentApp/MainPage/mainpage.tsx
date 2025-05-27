@@ -27,7 +27,7 @@ export default function MainPage(props: any) {
   const toggleSideNav = () => {
     setIsExpanded((prevState: any) => !prevState);
   };
-  console.log("Recruitment-App(20-May-2025) V-1.16");
+  console.log("Recruitment-App(23-May-2025) V-1.16");
 
   return (
     <div style={{ display: "flex", flexDirection: "row" }} className=" ms-Grid">
