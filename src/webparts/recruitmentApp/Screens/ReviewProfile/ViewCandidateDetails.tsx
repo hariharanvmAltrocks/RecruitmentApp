@@ -983,7 +983,7 @@ const ViewCandidateDetails = (props: any) => {
                           }
                           onChange={(value) => handleMulitiSelect(value)}
                           disabled={true}
-                          mandatory={true}
+                          // mandatory={true}
                           error={validationErrors.AssignInterviewLevel1}
                         />
                         {InterviewedLevel.AssignInterviewLevel1.length > 0 &&
@@ -1017,7 +1017,7 @@ const ViewCandidateDetails = (props: any) => {
                                   InterviewedLevel.AssignInterviewedLevel1Option
                                 }
                                 disabled={true}
-                                mandatory={true}
+                                // mandatory={true}
                               />
                             </div>
                           </>
@@ -1686,6 +1686,35 @@ const ViewCandidateDetails = (props: any) => {
     }
   }
 
+  const handleCancel = () => {
+    setIsLoading(true);
+
+    const CancelAlert = {
+      Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
+      Type: HRMSAlertOptions.Confirmation,
+      visible: true,
+      ButtonAction: async (userClickedOK: boolean) => {
+        if (userClickedOK) {
+          props.navigation("/ReviewProfileList/ReviewCandidateList", {
+            state: {
+              ID: props.stateValue?.RecruitmentID,
+              TabName: props.stateValue?.initialTab,
+              ButtonAction: "View",
+              JobCode: CandidateProfile?.JobCode,
+            },
+          });
+          setAlertPopupOpen(false);
+        } else {
+          setAlertPopupOpen(false);
+        }
+      },
+    };
+
+    setAlertPopupOpen(true);
+    setalertProps(CancelAlert);
+    setIsLoading(false);
+  };
+
   return (
     <>
       <CustomLoader isLoading={isLoading}>
@@ -1695,23 +1724,18 @@ const ViewCandidateDetails = (props: any) => {
             initialItem={activeTab}
             TabName={TabNameData}
             onBreadcrumbChange={handleBreadcrumbChange}
+            handleCancel={handleCancel}
             additionalButtons={
               props.stateValue?.ActionBtn === "View"
                 ? [
                     {
-                      label: "Back",
+                      label: "Close",
                       onClick: async () => {
                         back_fn();
                       },
                     },
                   ]
                 : [
-                    {
-                      label: "Back",
-                      onClick: async () => {
-                        back_fn();
-                      },
-                    },
                     {
                       label: submitBtn,
                       onClick: async () => {

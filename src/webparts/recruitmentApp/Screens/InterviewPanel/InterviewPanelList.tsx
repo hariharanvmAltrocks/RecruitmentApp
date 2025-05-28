@@ -17,10 +17,10 @@ import {
   StatusId,
 } from "../../utilities/Config";
 import { TabName } from "../../utilities/Config";
-import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
 import { alertPropsData } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import * as moment from "moment";
+import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
 
 const InterviewPanelList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
@@ -495,6 +495,7 @@ const InterviewPanelList = (props: any) => {
 
   const onPageChange = (event: any) => {
     setRows(event.rows);
+    // void fetchData();
   };
 
   const tabs = [
@@ -507,7 +508,7 @@ const InterviewPanelList = (props: any) => {
           sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
         >
           <CardContent>
-            <ReviewProfileDatatable
+            <InterviewPanelDataTable
               data={CandidateData}
               columns={columnConfig("tab1", "View", TabName.Evaluation)}
               rows={rows}
@@ -531,13 +532,12 @@ const InterviewPanelList = (props: any) => {
               //  tabClassName={"Tab"}
             />
           ) : (
-            <ReviewProfileDatatable
+            <InterviewPanelDataTable
               data={CandidateData}
               columns={columnConfig("tab1", "View", TabName.Evaluation)}
               rows={rows}
               onPageChange={onPageChange}
               handleRefresh={() => handleRefresh("tab1")}
-              // MasterData={props}
             />
           )}
         </div>

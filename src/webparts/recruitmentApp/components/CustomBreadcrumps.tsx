@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Breadcrumbs, Typography } from "@mui/material";
 import ReuseButton from "./ReuseButton";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 type BreadcrumbData = {
   label: string;
@@ -63,17 +64,28 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
 
   return (
     <div>
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        separator={separator}
-        sx={{ marginBottom: "16px", marginLeft: "2%" }}
-      >
-        {TabName.map((item, index) => (
-          <Typography key={index} color="text.primary" fontWeight="Bold">
-            {item.tabName}
-          </Typography>
-        ))}
-      </Breadcrumbs>
+      <div className="ms-Grid-row">
+        <div className="ms-Grid-col ms-lg0.3">
+          {additionalButtons.some((button) => button.label === "Back") &&
+            additionalButtons.map((button, index) => {
+              return <ArrowBackIcon key={index} onClick={button.onClick} />;
+            })}
+        </div>
+        <div className="ms-Grid-col ms-lg10">
+          <Breadcrumbs
+            aria-label="breadcrumb"
+            separator={separator}
+            sx={{ marginBottom: "16px", marginLeft: "2%" }}
+          >
+            {TabName.map((item, index) => (
+              <Typography key={index} color="text.primary" fontWeight="Bold">
+                {item.tabName}
+              </Typography>
+            ))}
+          </Breadcrumbs>
+        </div>
+      </div>
+
       {items.find((item) => item.value === currentValue)?.content}
 
       <div
@@ -102,12 +114,14 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
         )}
 
         {additionalButtons.map((button, index) => {
-          if (
+          if (button.label === "Back") {
+            return null;
+          } else if (
             button.label === "Submit" ||
             button.label === "Preview" ||
             button.label === "Approve" ||
             button.label === "Selected" ||
-            button.label === "Rejected"||
+            button.label === "Rejected" ||
             button.label === "OnHold"
           ) {
             return currentValue === items[items.length - 1].value ? (

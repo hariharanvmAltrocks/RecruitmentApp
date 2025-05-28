@@ -50,6 +50,11 @@ const ReviewCandidateList = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
+  const [pagination, setPagination] = React.useState({
+    first: 0,
+    rows: rows,
+    totalPages: 1,
+  });
 
   function handleRedirectView(
     rowData: any,
@@ -275,7 +280,7 @@ const ReviewCandidateList = (props: any) => {
   //   void getMasterData();
   // }, [activeTab]);
 
-  const fetchCandidateData = async (tabs: string) => {
+  const fetchCandidateData = async (tabs: string, row?: number) => {
     setIsLoading(true);
     try {
       if (
@@ -335,7 +340,7 @@ const ReviewCandidateList = (props: any) => {
           filterValue: "",
           sortBy: "",
           sortOrder: 0,
-          pageSize: rows,
+          pageSize: row ? row : rows,
           currentPage: 0,
           totalItems: 0,
         };
@@ -467,9 +472,15 @@ const ReviewCandidateList = (props: any) => {
 
   const onPageChange = (event: any) => {
     // setFirst(event.first);
+    setPagination({
+      first: event.first,
+      rows: event.rows,
+      totalPages: event.totalPages,
+    });
     setRows(event.rows);
+    let PageItem = event.rows * event.totalPages;
+    void fetchCandidateData(breadcrumbTab, PageItem);
   };
-
   const handleRefresh = (tab: string) => {
     setBreadcrumbTab(tab);
     void fetchCandidateData(tab);
@@ -483,7 +494,13 @@ const ReviewCandidateList = (props: any) => {
       content: (
         <Card
           variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+          sx={{
+            boxShadow: "0px 2px 4px 3px #d3d3d3",
+            marginTop: "2%",
+            "& .MuiPaper-root-MuiCard-root": {
+              overflow: "visible",
+            },
+          }}
         >
           <CardContent>
             <ReviewProfileDatatable
@@ -492,6 +509,7 @@ const ReviewCandidateList = (props: any) => {
               rows={rows}
               onPageChange={onPageChange}
               handleRefresh={() => handleRefresh(tab)}
+              pagination={pagination}
             />
           </CardContent>
         </Card>
@@ -550,7 +568,13 @@ const ReviewCandidateList = (props: any) => {
             content: (
               <Card
                 variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                sx={{
+                  boxShadow: "0px 2px 4px 3px #d3d3d3",
+                  marginTop: "2%",
+                  "& .MuiPaper-root-MuiCard-root": {
+                    overflow: "visible", // make card content allow overflow
+                  },
+                }}
               >
                 <CardContent>
                   <BreadcrumbsComponent
@@ -577,7 +601,13 @@ const ReviewCandidateList = (props: any) => {
             content: (
               <Card
                 variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                sx={{
+                  boxShadow: "0px 2px 4px 3px #d3d3d3",
+                  marginTop: "2%",
+                  "& .MuiPaper-root-MuiCard-root": {
+                    overflow: "visible", // make card content allow overflow
+                  },
+                }}
               >
                 <CardContent>
                   <BreadcrumbsComponent
@@ -604,7 +634,13 @@ const ReviewCandidateList = (props: any) => {
             content: (
               <Card
                 variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                sx={{
+                  boxShadow: "0px 2px 4px 3px #d3d3d3",
+                  marginTop: "2%",
+                  "& .MuiPaper-root-MuiCard-root": {
+                    overflow: "visible", // make card content allow overflow
+                  },
+                }}
               >
                 <CardContent>
                   <BreadcrumbsComponent
@@ -631,7 +667,13 @@ const ReviewCandidateList = (props: any) => {
             content: (
               <Card
                 variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                sx={{
+                  boxShadow: "0px 2px 4px 3px #d3d3d3",
+                  marginTop: "2%",
+                  "& .MuiPaper-root-MuiCard-root": {
+                    overflow: "visible", // make card content allow overflow
+                  },
+                }}
               >
                 <CardContent>
                   <BreadcrumbsComponent
@@ -660,7 +702,13 @@ const ReviewCandidateList = (props: any) => {
             content: (
               <Card
                 variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                sx={{
+                  boxShadow: "0px 2px 4px 3px #d3d3d3",
+                  marginTop: "2%",
+                  "& .MuiPaper-root-MuiCard-root": {
+                    overflow: "visible", // make card content allow overflow
+                  },
+                }}
               >
                 <CardContent>
                   <BreadcrumbsComponent
@@ -687,7 +735,13 @@ const ReviewCandidateList = (props: any) => {
             content: (
               <Card
                 variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+                sx={{
+                  boxShadow: "0px 2px 4px 3px #d3d3d3",
+                  marginTop: "2%",
+                  "& .MuiPaper-root-MuiCard-root": {
+                    overflow: "visible", // make card content allow overflow
+                  },
+                }}
               >
                 <CardContent>
                   <BreadcrumbsComponent
@@ -718,7 +772,13 @@ const ReviewCandidateList = (props: any) => {
       content: (
         <Card
           variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+          sx={{
+            boxShadow: "0px 2px 4px 3px #d3d3d3",
+            marginTop: "2%",
+            "& .MuiPaper-root-MuiCard-root": {
+              overflow: "visible", // make card content allow overflow
+            },
+          }}
         >
           <CardContent>
             <BreadcrumbsComponent
@@ -745,7 +805,13 @@ const ReviewCandidateList = (props: any) => {
       content: (
         <Card
           variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+          sx={{
+            boxShadow: "0px 2px 4px 3px #d3d3d3",
+            marginTop: "2%",
+            "& .MuiPaper-root-MuiCard-root": {
+              overflow: "visible", // make card content allow overflow
+            },
+          }}
         >
           <CardContent>
             <BreadcrumbsComponent
@@ -772,7 +838,13 @@ const ReviewCandidateList = (props: any) => {
       content: (
         <Card
           variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+          sx={{
+            boxShadow: "0px 2px 4px 3px #d3d3d3",
+            marginTop: "2%",
+            "& .MuiPaper-root-MuiCard-root": {
+              overflow: "visible", // make card content allow overflow
+            },
+          }}
         >
           <CardContent>
             <BreadcrumbsComponent
