@@ -185,24 +185,28 @@ export const RecuritmentHRMsg = {
   HRSuccess: "Recruitment HR Assigned for the Selected Job Titles.",
   SingleHRSuccessMsg: "Recruitment HR Assigned for the Selected Job Title.",
 
-  ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Sucessfully.",
+  ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Successfully.",
 
   AdvertisementSubmitMsg:
     "Advertisement Document Uploaded Successfully.",
-  AdvertisementReveiwMsg: "Advertisement Reviewed Sucessfully",
+  AdvertisementReveiwMsg: "Advertisement Reviewed Successfully.",
 
   AgencySucess: "Agencies Assigned for the Selected Job Titles.",
   SingleAgencyMsg: "Agencies Assigned for the Selected Job Title.",
 
   InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
+  InterviewPanalLevel1: "Interview Panel members for Level 1 have been Assigned Successfully.",
+  InterviewPanalLevel2: "Interview Panel members for Level 2 have been Assigned Successfully.",
+
   RescheduleSuccessMsg: "Interview Rescheduled Successfully.",
   AdvertExtendsionSuccessMsg: "Advertisement Extension Submitted Successfully.",
 
   ScoreCardSubmitMsg:
-    "The Candidate has been Interviewed and Scorecard Submitted for Final Selection.",
+    "The Candidate has been Interviewed and Scorecard Submitted for successfully ",
+  ScoreCardMsgLevel2: "The candidate has successfully completed the Level 2 interview.",
 
-  InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully",
-  CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully",
+  InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully.",
+  CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully.",
 
   ProfileReviewed:
     "Candidate Profile for the Job Title Reviewed and Shortlisted.",
@@ -210,14 +214,15 @@ export const RecuritmentHRMsg = {
     "Candidate Profile for the Job Title Reviewed and Rejected.",
   ProfileReviewedWaitingList:
     "Candidate Profile for the Job Title Reviewed and On - Hold.",
-  HRReviewCandidate: "Candidate Profile Reviewed Successfully",
+  HRReviewCandidate: "Candidate Profile Reviewed Successfully.",
 
-  CandidateSelected: "Candidate Selected",
-  CandidateRejected: "Candidate Rejected",
-  CandidateOnHold: "Candidate On Hold",
+  CandidateSelected: "Candidate Selected.",
+  CandidateSelectedLevel2: "Candidate Level 1 Selected Successfully",
+  CandidateRejected: "Candidate Rejected.",
+  CandidateOnHold: "Candidate On Hold.",
   RecuritmentSubmitMsg: "Submitted Successfully.",
   ApprovedMsg:
-    "Advertisement Reviewed Sucessfully. Ready for ONEM Process (Offline).",
+    "Advertisement Reviewed Successfully. Ready for ONEM Process (Offline).",
   RecuritmentHRMsgCancel:
     "Are you sure want to cancel? Any unsaved changes will be lost.",
   BackMsg: "Are you sure want go back to Home Page ?",
@@ -225,10 +230,10 @@ export const RecuritmentHRMsg = {
     "One or more mandatory field are missing.Please do the needful and submit again.",
   RecruitmentErrorMsg: "Please choose the Job Code to assign Recruitment HR.",
   AgenciesErrorMsg: "Please choose the Job Code to Assign Agencies.",
-  PositionIDassigned: "Action Performed Sucessfully.",
+  PositionIDassigned: "Selected candidate has been rejected successfully.",
   InterviewScoredAlready:
     "The scorecard for the candidate has already been submitted.",
-    InterviewScoreCommentsAlready:
+  InterviewScoreCommentsAlready:
     "The scorecard for the candidate comments has already been submitted.",
   APIErrorMsg: "Server is temporarily unavailable.",
   InterviewQues:
@@ -238,8 +243,21 @@ export const RecuritmentHRMsg = {
 
   SelectedErrorMsg: "Please Choose the Disciplines.",
   WarningMsg: "Are you sure want to Change the Disciolines? Any unsaved changes will be lost",
-  ClearWarning:"Are you sure you want to close? Unsaved changes will be lost.",
+  ClearWarning: "Are you sure you want to close? Unsaved changes will be lost.",
 };
+// In your validation messages config file
+export const validationMsg = {
+  MaxOptions: "You must fill at least 2 options.",
+  CorrectAns: "Please select a correct answer.",
+};
+
+// export const ADGroupID: IADGroupID = {
+//   HRMSHOD: "86374c2a-511d-4c6d-9eb8-f6b64a44eb97",
+//   HRMSRecruitmentLineManager: "e46c5079-6a7d-40bf-a8cb-c7fbfa10f220",
+//   HRMSRecruitmentHR: "fe43382e-002e-4879-8710-a4ac546d48e7",
+//   HRMSRecruitmentHRLead: "df686473-5454-4afe-ad60-1ba93037c772",
+//   HRMSInterviewPanel: "60c676c0-692d-4c48-b101-a6398fc99493",
+// };
 
 export const ADGroupID: IADGroupID = {
   HRMSHOD: "86374c2a-511d-4c6d-9eb8-f6b64a44eb97",
@@ -247,6 +265,34 @@ export const ADGroupID: IADGroupID = {
   HRMSRecruitmentHR: "fe43382e-002e-4879-8710-a4ac546d48e7",
   HRMSRecruitmentHRLead: "df686473-5454-4afe-ad60-1ba93037c772",
   HRMSInterviewPanel: "60c676c0-692d-4c48-b101-a6398fc99493",
+  BudgetHolder: "68e84692-cc82-4871-926a-010e4d4715da",
+  LineManager: "2dec2073-031c-4505-a2a2-6720e513da0a",
+  HR: "b20259ec-7f60-49d6-ba0f-c48d8c8d44ea",
+  EXCO_REMCO: "23c6870c-1986-4f19-81ec-6b72e199f6e6",
+  EXCOServiceDepartmentExecutive: "172bc793-eba9-4418-873e-d05b20b9a476",
+  EXCOOperationsDepartmentED: "53f5a070-238a-4e33-ac7d-f0395d2aa2d1",
+  EXCOServiceDepartmentCEC: "cacacafc-8c6d-4b9b-95c5-0f8f851d31c4",
+  EXCOServiceDepartmentMD: "327cc015-8239-407c-be8f-0b8b8f9142ad",
+  EXCOOperationsDepartmentExecutive: "a1810fd6-7f04-43b3-a36e-a0a610f897a0",
+  EXCOOperationsDepartmentMD: "afd77c38-918a-4bc6-8d3f-19fe5a84aefa",
+  EXCOServiceDepartmentCEF: "7ddd3f09-5bb7-47c7-b05b-c9d6b32e502e",
+  Payroll: "1784bc0a-23f7-441f-a415-4a257618e04b",
+  SeniorSuperintendentII_HREffectiveness: "b5dc635a-90b3-4ba0-a029-4a5d03841e62",
+  GradingCommittee: "47078d89-ab24-446d-a210-9367c9dac599",
+  BIOS: "70547f09-b044-431b-bdcd-edad94b23a87",
+  Superintendent: "7e62e9bb-a18a-49be-8d16-9220eb9cd003",
+  Legal: "91f43caf-1943-46f3-8610-ab2c99ff0143",
+  Transformation: "f064729a-9770-48fc-9ddd-0820785698bf",
+  MAD: "926decfd-1390-4158-b760-e4a4c14d1950",
+  EXCOCEO: "3271e934-c70e-47fa-b1f2-29a64ddd6455",
+  EXCOCFOFinance: "74a577bd-976e-48fc-ab6b-967df315a396",
+  EXCOCFOCommerical: "82fd7f93-24e3-4879-a88f-c09bc86f8067",
+  EXCOExecutive: "6372d5b0-b610-4399-962c-99cf7ff3a10f",
+  HeadofDivision: "6c791d7a-ac5d-4da0-9dcb-d6a49c744cff",
+  SeniorHRManager: "91eac229-45d1-402c-beb7-cd06bc1d024c",
+  EXCOED: "e09e27e4-4d93-4979-848f-a5ce13cf76ac",
+  EXCOMD: "f436a318-89eb-45bb-b68f-0f6905379032",
+  RecruitmentAppExternalAgency: "d59a35bf-524e-4951-9eb1-aeca407d73d0",
 };
 
 export const tabType = {
@@ -306,6 +352,8 @@ export const TabName = {
   AssignAgencies: "Assign Agencies",
   ReviewProfile: "Review Profile",
   AssignInterviewPanel: "Assign Interview Panel",
+  InterviewpanelL1: "Interview Panel Level-1",
+  InterviewpanelL2: "Interview Panel Level-2",
   ReviewAdvertisement: "Review Advertisement",
   ReviewScorecard: "Review Scorecard",
   Evaluation: "Evaluation",
@@ -316,15 +364,13 @@ export const TabName = {
   ScorecardDetails: "Review Scorecard",
   ViewCandidateDetails: "View Applicants Details",
   Scorecard: "Scorecard",
-  ReviewONEMAdvertisement: "Review ONEM Advertisement",
+  ReviewONEMAdvertisement: "Review Job Advertisement",
   ViewPositionDetails: "View Position Details",
   ViewCandidateList: "View Applicants List",
   ViewJustification: "View Justification",
   EvaluationTab: "Candidate Details",
   InterviewQuestion: "Interview Questions",
   AdvertExtension: "Advert Extension",
-  CheckboxContent: "I hereby agree for submitting this request for further approvals.",
-  ApprovalCheckbox: "I hereby acknowledge that I have read the submission request and confirm the accuracy of the content shared.",
 
   ReviewLevel1: "Review Profile - Level 1",
   ReviewLevel2: "Review Profile - Level 2",
@@ -339,8 +385,21 @@ export const TabName = {
 
   ViewScoreDetails: " View ScoreCard Details",
   ReschedulInterview: "Reschedule Interview",
-  Level2Interview: "Level 2 Interview",
 };
+
+export const CheckboxContent = {
+  CheckboxContent: "I hereby agree to submit this request for approval.",
+  ApprovalCheckbox: "I hereby acknowledge that I have reviewed the job advertisement.",
+
+  UploadOnemDocument: "I hereby agree to post the advert on the portal.",
+
+  ReviewedCandidate: "I hereby acknowledge that I have reviewed the candidate details.",
+  InterviewPanel: "I hereby reviewed candidate details and assigning interview panel.",
+  RescheduleInterview: "I hereby acknowledge that I have reschedule the interview.",
+
+  ScorecardEntry: "I hereby acknowledge completion of the scorecard entry.",
+  HODscorecarddetails: "I hereby acknowledge that I have reviewed the candidate scorecard details."
+}
 
 export const ProfileStatus = {
   HR: "Pending with HR - Review Profile",
@@ -389,7 +448,7 @@ export const workflowStatusApi = {
 export const Notes = {
   Roleprofile: "Role Profile is not available for the Job Title.",
   Grding: "Grading Report is not available for the Job Title.",
-  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving or reverting this submission."
+  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving this submission."
 }
 // sneka
 export const CatogryOption = [

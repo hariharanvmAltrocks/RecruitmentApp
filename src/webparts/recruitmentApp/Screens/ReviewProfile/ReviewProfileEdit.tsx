@@ -9,6 +9,7 @@ import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 
 import {
+  CheckboxContent,
   ColorCode,
   DocumentLibraray,
   HRMSAlertOptions,
@@ -916,7 +917,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg12">
                   <SignatureCheckbox
-                    label={TabName.ApprovalCheckbox}
+                    label={CheckboxContent.ApprovalCheckbox}
                     checked={Checkbox}
                     error={validationErrors.Checkboxalidation}
                     onChange={(value: boolean) => {

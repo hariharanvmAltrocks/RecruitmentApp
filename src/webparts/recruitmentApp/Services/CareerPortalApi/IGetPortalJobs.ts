@@ -24,7 +24,9 @@ export type CandidateDetails = {
     InterviewDate: Date | undefined,
     InterviewTime: string,
     InterviewLink: string,
+    CandidateResumeLink: string,
     ActionId: number,
+    Nationality: string,
 }
 export type RescheduledCandidate = {
     ID: number

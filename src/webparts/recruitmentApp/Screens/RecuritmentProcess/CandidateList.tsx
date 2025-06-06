@@ -20,10 +20,7 @@ import {
 import BreadcrumbsComponent, {
   type TabNameData,
 } from "../../components/CustomBreadcrumps";
-import {
-  alertPropsData,
-  AutoCompleteItem,
-} from "../../Models/Screens";
+import { alertPropsData } from "../../Models/Screens";
 import CandidateDataTable from "../../components/CandidateDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 
@@ -40,49 +37,21 @@ const CandidateList = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
-  const [positionData, setPositionData] = React.useState<AutoCompleteItem[]>([]);
-
-  const fetchPositionData = async () => {
-    setIsLoading(true);
-    const filterConditions = [
-      {
-        FilterKey: "JobCode",
-        Operator: "eq",
-        FilterValue: props.stateValue.JobCodeId,
-      },
-      {
-        FilterKey: "Department",
-        Operator: "eq",
-        FilterValue: props.stateValue.Department,
-      },
-      {
-        FilterKey: "PositionIDStatus",
-        Operator: "eq",
-        FilterValue: "Vacant",
-      },
-    ];
-    try {
-      const response = await InterviewServices.GetHRMSPositionDetails(filterConditions, "and");
-      setPositionData(response?.data || []);
-    } catch {
-      setPositionData([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
       if (!props?.stateValue?.JobCode || !props?.stateValue?.ID) return;
 
-      const vrrResponse = await getVRRDetails.GetRecruitmentDetails([
-        {
-          FilterKey: "ID",
-          Operator: "eq",
-          FilterValue: props.stateValue?.ID,
-        },
-      ], "");
+      const vrrResponse = await getVRRDetails.GetRecruitmentDetails(
+        [
+          {
+            FilterKey: "ID",
+            Operator: "eq",
+            FilterValue: props.stateValue?.ID,
+          },
+        ],
+        ""
+      );
 
       const grade = vrrResponse.data[0]?.PatersonGrade;
       const gradeLevelResponse = await CommonServices.GetGradeLevel(grade);
@@ -113,11 +82,12 @@ const CandidateList = (props: any) => {
         },
       ];
 
-      const response = await InterviewServices.GetCombinedCandidatePositionDetails(
-        candidateFilter,
-        "and",
-        props.EmployeeList
-      );
+      const response =
+        await InterviewServices.GetCombinedCandidatePositionDetails(
+          candidateFilter,
+          "and",
+          props.EmployeeList
+        );
 
       if (response?.status === 200) {
         const enrichedData = response.data.map((item: any) => ({
@@ -136,14 +106,11 @@ const CandidateList = (props: any) => {
       setIsLoading(false);
     }
   };
-
   React.useEffect(() => {
-    void fetchAllData();
-    if (props.stateValue.StatusId === StatusId.Selected) {
-      void fetchPositionData();
+    if (props?.stateValue?.JobCode && props?.stateValue?.ID) {
+      void fetchAllData();
     }
   }, [props?.stateValue?.JobCode, props?.stateValue?.ID]);
-
   const handleRedirectView = (
     rowData: any,
     tab: string,
@@ -161,9 +128,11 @@ const CandidateList = (props: any) => {
           PreviousTabName: previousTabName,
           TabName,
           ButtonAction,
-          positionData,
           InterviewLevel: rowData?.InterviewLevel,
           RecruitmentID: rowData?.RecruitmentID,
+          JobCodeId: props.stateValue.JobCodeId,
+          Department: props.stateValue.Department,
+          GPA:rowData.GPA,
         },
       });
     }
@@ -176,7 +145,7 @@ const CandidateList = (props: any) => {
     previousTabName: string
   ) => [
     { field: "Checkbox", header: "", sortable: false },
-    { field: "ID", header: "Candidate ID", sortable: true },
+    { field: "SNO", header: "S.NO", sortable: true },
     { field: "FullName", header: "Applicant Name", sortable: true },
     { field: "PositionTitle", header: "Position Title", sortable: true },
     { field: "InterviewLevel", header: "Interview Levels", sortable: true },
@@ -204,7 +173,9 @@ const CandidateList = (props: any) => {
         const canView = rowData.StatusId === StatusId.RejectedbyHOD;
 
         return (
-          <div style={{ display: "flex", gap: "5px", justifyContent: "center" }}>
+          <div
+            style={{ display: "flex", gap: "5px", justifyContent: "center" }}
+          >
             {canEdit && (
               <img
                 src={require("../../assets/Editbutton.svg")}
@@ -236,6 +207,7 @@ const CandidateList = (props: any) => {
   };
 
   const handleStatusChange = async (selectedCandidates: any[]) => {
+    setIsLoading(true);
     let updateSuccess = false;
 
     for (const candidate of selectedCandidates) {
@@ -283,6 +255,8 @@ const CandidateList = (props: any) => {
     } else {
       await fetchAllData();
     }
+
+    setIsLoading(false); // Stop loader
   };
 
   const tabs = [
@@ -290,7 +264,10 @@ const CandidateList = (props: any) => {
       label: TabName.ViewCandidateList,
       value: "tab1",
       content: (
-        <Card variant="outlined" sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", mt: 2 }}>
+        <Card
+          variant="outlined"
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", mt: 2 }}
+        >
           <CardContent>
             <CandidateDataTable
               data={CandidateData}

@@ -325,6 +325,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                 header={col.header}
                 sortable={col.sortable}
                 body={col.body}
+                style={col.style}
               />
             ))}
           </DataTable>

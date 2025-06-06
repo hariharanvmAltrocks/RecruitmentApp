@@ -15,9 +15,15 @@ export type CommentsData = {
   JobTitleInFrench: string;
   comments: string;
   Department: string;
-  Date: Date | null;
-  JobTitle: string;
+  Date: any | null;
+  JobTitle: string;  
   RoleName: string;
+  CandidateID?: any;
+  RoleId?: number;
+  RoleTitle?: string;
+  Level?: string;
+  OverAllEvaluationFeedback?: string;
+ 
 };
 
 export type InsertComments = {
@@ -128,7 +134,9 @@ export type DataSyncToRecruitmentResponse = {
   JobPostingStartDate: Date | undefined,
   JobPostingEndDate: Date | undefined,
   JobPostingFirstExtensionEndDate: Date | undefined,
-  JobPostingSecondExtensionEndDate: Date | undefined
+  JobPostingSecondExtensionEndDate: Date | undefined,
+
+  AssignEMail: string
 }
 
 export type JobCodeData = {

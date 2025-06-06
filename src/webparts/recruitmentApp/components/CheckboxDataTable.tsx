@@ -286,7 +286,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           <div className="ms-Grid-col ms-lg3">
             <CustomAutoComplete
               label="Job Code"
-              options={MasterData?.JobCode ?? []}
+              options={FilterData.JobCodeOption ?? []}
               value={FilterData.JobCode}
               disabled={false}
               onChange={(item) => handleAutoComplete("JobCode", item)}

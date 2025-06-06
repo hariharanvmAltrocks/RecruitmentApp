@@ -1,27 +1,21 @@
 import * as React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-
 import { Label } from "@fluentui/react";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import Labelheader from "../../components/LabelHeader";
 import LabelValue from "../../components/LabelValue";
-import TabsComponent from "../../components/TabsComponent ";
 import ReuseButton from "../../components/ReuseButton";
 import { TabName } from "../../utilities/Config";
-import { CommentsDatas } from "../../Services/InterviewProcess/IInterviewProcessService";
+import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
+import * as moment from "moment";
+import TabsComponent from "../../components/TabsComponent ";
 
 interface CommentViewProps {
-  comments: CommentsDatas[] | undefined;
+  level1: CommentsData[];
+  level2: CommentsData[];
   onClose: () => void;
 }
-
-const boldLabelStyles: React.CSSProperties = {
-  fontWeight: "bold",
-  fontSize: "18px",
-  margin: 0,
-  padding: 0,
-};
 
 const labelStyles: React.CSSProperties = {
   fontSize: "15px",
@@ -29,7 +23,23 @@ const labelStyles: React.CSSProperties = {
   padding: 0,
 };
 
-const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
+const boldLabelStyles: React.CSSProperties = {
+  fontSize: "16px",
+  fontWeight: "bold",
+  marginBottom: "8px",
+};
+
+const CommentView: React.FC<CommentViewProps> = ({
+  level1,
+  level2,
+  onClose,
+}) => {
+  const roles = Array.from(
+    new Set([
+      ...level1.map((c) => c.RoleName),
+      ...level2.map((c) => c.RoleName),
+    ])
+  ).filter((role) => role);
 
   const tabs = [
     {
@@ -41,9 +51,24 @@ const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
           sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
         >
           <CardContent>
-            {comments && comments.length > 0 ? (
-              <>
-                {comments.map((comment: any, index: number) => (
+            {roles.length > 0 ? (
+              roles.map((role, index) => {
+                const c1 = level1.find((c) => c.RoleName === role);
+
+                const c2 = level2.find((c) => c.RoleName === role);
+
+                const fb2 = c2?.comments || "";
+
+                const date1 = c1?.Date
+                  ? moment(c1.Date).format("M/D/YYYY, h:mm:ss A")
+                  : "";
+                const date2 = c2?.Date
+                  ? moment(c2.Date).format("M/D/YYYY, h:mm:ss A")
+                  : "";
+
+                const meta = c1 || c2;
+
+                return (
                   <div
                     key={index}
                     className="sub-menu-card comment"
@@ -51,85 +76,68 @@ const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
                   >
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg12">
-                        <LabelHeaderComponents
-                          value={`Submitted by ${comment?.Role ?? ""}`}
-                        />
+                        {role ? (
+                          <LabelHeaderComponents
+                            value={`Submitted by ${role}`}
+                          />
+                        ) : (
+                          <LabelHeaderComponents value=" " />
+                        )}
                       </div>
                     </div>
-                    {comment.CandidateScoreCard &&
-                      comment.CandidateScoreCard.length > 0 &&
-                      comment.CandidateScoreCard.map(
-                        (score: any, scoreIndex: number) =>
-                          score.Feedback || score.OverAllEvaluationFeedback ? (
-                            <div key={scoreIndex}>
-                              {score.Feedback && (
-                                <>
-                                  <Labelheader value="Feedback Ratings Below 2" />
-                                  <LabelValue value={score.Feedback} />
-                                </>
-                              )}
-                              {score.OverAllEvaluationFeedback && (
-                                <>
-                                  <Labelheader value="Overall Evaluation" />
-                                  <LabelValue
-                                    value={score.OverAllEvaluationFeedback}
-                                  />
-                                </>
-                              )}
-                            </div>
-                          ) : null
-                      )}
 
-                    <div
-                      className="ms-Grid-row"
-                      style={{ marginBottom: "2%" }}
-                    ></div>
-                    {comment?.Name && (
-                      <div>
-                        <Label style={boldLabelStyles}>{comment?.Name}</Label>
-                      </div>
+                    {(c1?.comments || c1?.OverAllEvaluationFeedback) && (
+                      <>
+                        {c1?.comments && (
+                          <>
+                            <Labelheader value="Feedback Level 1" />
+                            <LabelValue value={c1.comments} />
+                          </>
+                        )}
+
+                        {c1?.OverAllEvaluationFeedback && (
+                          <>
+                            <Labelheader value="Overall Feedback Level 1" />
+                            <LabelValue value={c1.OverAllEvaluationFeedback} />
+                          </>
+                        )}
+                      </>
                     )}
-                    {comment?.JobTitleInEnglish && (
+                    {fb2 && (
+                      <>
+                        <Labelheader value="Feedback Level 2" />
+                        <LabelValue value={fb2} />
+                      </>
+                    )}
+
+                    {meta?.Name && (
+                      <Label style={boldLabelStyles}>{meta.Name}</Label>
+                    )}
+                    {meta?.JobTitleInEnglish && (
+                      <Label style={labelStyles}>
+                        {meta.JobTitleInEnglish}
+                      </Label>
+                    )}
+                    {meta?.JobTitleInFrench && (
                       <Label className="title" style={labelStyles}>
-                        {comment.JobTitleInEnglish}
+                        {meta.JobTitleInFrench}
+                      </Label>
+                    )}
+                    {meta?.Department && (
+                      <Label className="title" style={labelStyles}>
+                        {meta.Department}
                       </Label>
                     )}
 
-                    {comment?.JobTitleInFrench && (
-                      <Label className="title" style={labelStyles}>
-                        {comment.JobTitleInFrench}
-                      </Label>
+                    {date1 && (
+                      <Label style={labelStyles}>Level 1 Date: {date1}</Label>
                     )}
-
-                    {comment.UserRoleName && (
-                      <div>
-                        <Label style={labelStyles}>
-                          {comment.UserRoleName}
-                        </Label>
-                      </div>
+                    {date2 && (
+                      <Label style={labelStyles}>Level 2 Date: {date2}</Label>
                     )}
-                    {comment.Department && (
-                      <div>
-                        <Label style={labelStyles}>{comment.Department}</Label>
-                      </div>
-                    )}
-                    {comment.CandidateScoreCard &&
-                      comment.CandidateScoreCard.length > 0 &&
-                      comment.CandidateScoreCard.map(
-                        (score: any, scoreIndex: number) => (
-                          <div key={scoreIndex}>
-                            {score.CreatedDate &&
-                              score.CreatedDate !== "N/A" && (
-                                <Label style={labelStyles}>
-                                  {score.CreatedDate}
-                                </Label>
-                              )}
-                          </div>
-                        )
-                      )}
                   </div>
-                ))}
-              </>
+                );
+              })
             ) : (
               <p
                 style={{
@@ -144,6 +152,7 @@ const CommentView: React.FC<CommentViewProps> = ({ comments, onClose }) => {
                 No Comments Found
               </p>
             )}
+
             <div className="ms-Grid-row">
               <div
                 style={{

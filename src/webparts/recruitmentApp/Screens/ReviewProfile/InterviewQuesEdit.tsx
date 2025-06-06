@@ -39,6 +39,7 @@ import {
   RoleID,
   StatusId,
   TabName,
+  validationMsg,
   WorkflowAction,
 } from "../../utilities/Config";
 import LabelHeaderComponents from "../../components/TitleHeader";
@@ -50,11 +51,9 @@ import {
 } from "../../Models/ApIInterface";
 import { GetPortalJobsService } from "../../Services/ServiceExport";
 import SPServices from "../../Services/SPService/SPServices";
-import CustomDialogbox from "../../components/CustomDialogbox";
 import ViewQuestionCheckbox, {
   ViewQuestion,
 } from "../ScreenComponent/ViewQuestionCheckbox";
-import ReuseButton from "../../components/ReuseButton";
 import CustomLabel from "../../components/CustomLabel";
 
 type InterviewQuesValidationError = {
@@ -63,7 +62,7 @@ type InterviewQuesValidationError = {
   Disciplines: boolean;
   Question: boolean;
   ExpectedAnswer: boolean;
-  OptionsType: boolean;
+  OptionsType: string | boolean;
   Catogry: boolean;
   Disqualification: boolean;
 };
@@ -170,8 +169,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     ViewQuestion[]
   >([]);
 
-  const selectedCategory =
-    InterviewQuesData.Catogry || CatogryOptionCode.InterviewPanel;
   const handleCategoryChange = (val: string) => {
     setInterviewQuesData((prev) => ({
       ...prev,
@@ -258,7 +255,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   };
 
   const handleAnswerSelection = (qIndex: number, optIndex: number) => {
-    setQuestions((prev) => {
+    setresuequestionnaire((prev) => {
       const updated = [...prev];
       const question = { ...updated[qIndex] };
 
@@ -272,10 +269,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           isCorrect: index === optIndex,
         }));
       } else {
-        updatedOptions[optIndex] = {
-          ...updatedOptions[optIndex],
-          isCorrect: !updatedOptions[optIndex].isCorrect,
-        };
+        if (updatedOptions[optIndex]) {
+          updatedOptions[optIndex] = {
+            ...updatedOptions[optIndex],
+            isCorrect: !updatedOptions[optIndex].isCorrect,
+          };
+        } else {
+          console.warn(`Option at index ${optIndex} is undefined.`);
+        }
       }
 
       question.options = updatedOptions;
@@ -288,12 +289,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     });
   };
 
-  const handleAddRow = () => {
-    setOptionsType((prev) => [
-      ...prev,
-      { key: prev.length, text: "", isCorrect: false },
-    ]);
-  };
+  // const handleAddRow = () => {
+  //   setOptionsType((prev) => [
+  //     ...prev,
+  //     { key: prev.length, text: "", isCorrect: false },
+  //   ]);
+  // };
 
   const handleDeleteRow = (index: number) => {
     setOptionsType((prev) => {
@@ -422,6 +423,24 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const handleExpand = (index: number) => {
     setExpandedExistingQuestion((prev) => (prev === index ? null : index));
   };
+  const handleCloseCreateQuestion = () => {
+    setShowCreateQuestionBox(false);
+    setValidationError({} as InterviewQuesValidationError);
+    setEditingQuestionIndex(null);
+
+    setInterviewQuesData((prev) => ({
+      ...prev,
+      QuestionNumber: { key: 0, text: "" },
+      QuestionType: { key: 0, text: "" },
+      Question: "",
+      ExpectedAnswer: "",
+      Disqualification: "",
+      Catogry: prev.Catogry,
+      CareerportalAnswer: [],
+    }));
+
+    setOptionsType([{ key: 0, text: "", isCorrect: false }]); // reset options
+  };
 
   const Validation = (): boolean => {
     const {
@@ -438,77 +457,58 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       props?.stateValue?.StatusId ===
       StatusId.PendingwithLMcreateDisqualificationQuestion;
 
-    if (!Disciplines.text) errors.Disciplines = true;
-    if (shouldValidateQuestionType && !QuestionType.text)
+    if (!Disciplines?.text) errors.Disciplines = true;
+    if (shouldValidateQuestionType && !QuestionType?.text)
       errors.QuestionType = true;
     if (!Question) errors.Question = true;
     if (!Catogry) errors.Catogry = true;
 
-    if (
-      [
-        displayTextOptionCode.MultiAnswer,
-        displayTextOptionCode.SingleAnswer,
-      ].includes(QuestionType.text)
-    ) {
-      const selectedOptions = OptionsType.filter(
-        (opt) => opt.isCorrect && opt.text.trim() !== ""
-      );
-      const anyOptionFilled = OptionsType.some((opt) => opt.text.trim() !== "");
+    const isMCQ =
+      QuestionType?.text === displayTextOptionCode.MultiAnswer ||
+      QuestionType?.text === displayTextOptionCode.SingleAnswer;
 
-      if (!anyOptionFilled) {
-        errors.OptionsType = true;
-      }
+    if (isMCQ) {
+      const filledOptions = OptionsType.filter((opt) => opt.text.trim() !== "");
+      const selectedOptions = filledOptions.filter((opt) => opt.isCorrect);
 
-      if (QuestionType.text === displayTextOptionCode.MultiAnswer) {
-        if (selectedOptions.length === 0) {
-          errors.OptionsType = true;
-        } else {
-          delete errors.OptionsType;
-        }
-      } else if (QuestionType.text === displayTextOptionCode.SingleAnswer) {
-        if (selectedOptions.length !== 1) {
-          errors.OptionsType = true;
-        } else {
-          delete errors.OptionsType;
-        }
+      if (filledOptions.length < 2) {
+        errors.OptionsType = validationMsg.MaxOptions;
+      } else if (
+        (QuestionType.text === displayTextOptionCode.MultiAnswer &&
+          selectedOptions.length === 0) ||
+        (QuestionType.text === displayTextOptionCode.SingleAnswer &&
+          selectedOptions.length !== 1)
+      ) {
+        errors.OptionsType = validationMsg.CorrectAns;
       }
     } else {
       if (!ExpectedAnswer) errors.ExpectedAnswer = true;
     }
-    if (
-      props?.stateValue?.StatusId ===
-      StatusId.PendingwithLMcreateDisqualificationQuestion
-    ) {
-      if (!Disqualification) errors.Disqualification = true;
-    }
 
+    if (shouldValidateQuestionType && !Disqualification) {
+      errors.Disqualification = true;
+    }
     setValidationError((prev) => ({ ...prev, ...errors }));
 
     return Object.keys(errors).length === 0;
   };
-  const handleCloseCreateQuestion = () => {
-    setShowCreateQuestionBox(false); // or setViewQA(false) if you're using that
-    setValidationError({} as InterviewQuesValidationError); // clear validation errors
-    setEditingQuestionIndex(null); // reset editing state
 
-    setInterviewQuesData((prev) => ({
-      Disciplines: { key: 0, text: "" },
-      QuestionNumber: { key: 0, text: "" },
-      QuestionType: { key: 0, text: "" },
-      Question: "",
-      ExpectedAnswer: "",
-      Disqualification: "",
-      Catogry: prev.Catogry,
-      CareerportalAnswer: [],
-    }));
-
-    setOptionsType([{ key: 0, text: "", isCorrect: false }]); // reset options
+  const handleAddRow = () => {
+    setOptionsType((prev) => {
+      const newOptions = [
+        ...prev,
+        { key: prev.length, text: "", isCorrect: false },
+      ];
+      // Validation();
+      return newOptions;
+    });
   };
 
-  const handleSaveQuestion = () => {
+  const handleSaveQuestion = (index: number) => {
     const shouldValidateQuestionType =
       props?.stateValue?.StatusId ===
       StatusId.PendingwithLMcreateDisqualificationQuestion;
+
     const customAnswerType = getMasterData.QueType.find(
       (q) => q.text === displayTextOptionCode.CustomAnswer
     );
@@ -516,61 +516,40 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       ? InterviewQuesData.QuestionType
       : customAnswerType || { key: 0, text: "" };
     if (!Validation()) {
+      console.warn("Validation failed. Exiting save function.");
       return;
     }
+
     const correctAnswers = OptionsType.filter((opt) => opt.isCorrect).map(
       (opt, i) => ({ key: i, text: opt.text })
     );
-    const lastResueQuestionId =
-      resuequestionnaire.length > 0
-        ? Math.max(...resuequestionnaire.map((item) => item.id))
-        : 0;
-
-    const nextQuestionId = lastResueQuestionId + 1;
     const questionData: ViewQuestion = {
       id:
         editingQuestionIndex !== null
           ? questions[editingQuestionIndex].id
-          : nextQuestionId,
+          : index,
       discipline: InterviewQuesData.Disciplines,
-      // questionNumber: {
-      //   key: questions.length + 1,
-      //   text:
-      //     editingQuestionIndex !== null
-      //       ? `Question ${editingQuestionIndex + 1}`
-      //       : `Question ${nextQuestionId}`,
-      // },
       questionType: questionType,
-      // questionType: InterviewQuesData.QuestionType,
-      // questionType: shouldValidateQuestionType
-      //   ? InterviewQuesData.QuestionType
-      //   : { key: 0, text: "Custom Answer" },
       question: InterviewQuesData.Question,
       expectedAnswer: InterviewQuesData.ExpectedAnswer,
       CareerportalAnswer: correctAnswers,
       options:
-        InterviewQuesData.QuestionType.text ===
-          displayTextOptionCode.MultiAnswer ||
-        InterviewQuesData.QuestionType.text ===
-          displayTextOptionCode.SingleAnswer
+        questionType.text === displayTextOptionCode.MultiAnswer ||
+        questionType.text === displayTextOptionCode.SingleAnswer
           ? [...OptionsType]
           : undefined,
       Disqualification: InterviewQuesData.Disqualification || "",
       Type: DataType.New,
       Checked: false,
-      // header: "Q" + incrementedIndex,
       HeaderLabel:
         editingQuestionIndex !== null
           ? `Question ${editingQuestionIndex + 1}`
-          : `Question ${nextQuestionId + 1}`,
+          : `Question ${index}`,
     };
-
     if (editingQuestionIndex !== null) {
       setresuequestionnaire((prev) => {
         const updated = [...prev];
-        updated[editingQuestionIndex] = {
-          ...questionData,
-        };
+        updated[editingQuestionIndex] = { ...questionData };
         return updated;
       });
       setEditingQuestionIndex(null);
@@ -591,18 +570,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       Catogry: prev.Catogry,
       CareerportalAnswer: [],
     }));
-
     setOptionsType([{ key: 0, text: "", isCorrect: false }]);
     setValidationError({} as InterviewQuesValidationError);
   };
 
-  // Display the Accordion
   const handleQuestionFieldChange = (
     qIndex: number,
     field: string,
     value: any
   ) => {
-    setQuestions((prev) =>
+    setresuequestionnaire((prev) =>
       prev.map((q, i) =>
         i === qIndex
           ? {
@@ -627,7 +604,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     optIndex: number,
     newVal: string
   ) => {
-    setQuestions((prev) => {
+    setresuequestionnaire((prev) => {
       const updated = [...prev];
       const question = { ...updated[qIndex] };
       if (!question.options) question.options = [];
@@ -644,7 +621,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   };
 
   const handleQuestionAddRow = (qIndex: number) => {
-    setQuestions((prev) => {
+    setresuequestionnaire((prev) => {
       const updated = [...prev];
       const question = { ...updated[qIndex] };
 
@@ -665,7 +642,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   };
 
   const handleQuestionDeleteRow = (qIndex: number, optIndex: number) => {
-    setQuestions((prev) => {
+    setresuequestionnaire((prev) => {
       const updated = [...prev];
       const question = { ...updated[qIndex] };
       if (!question.options) {
@@ -689,7 +666,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     field: string,
     value: string
   ) => {
-    setQuestions((prevQuestions) => {
+    setresuequestionnaire((prevQuestions) => {
       const updatedQuestions = prevQuestions.map((q, i) =>
         i === index ? { ...q, [field]: value } : q
       );
@@ -967,11 +944,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       content: (
         <Card
           variant="outlined"
-          sx={{
-            boxShadow: "0px 7px 4px 3px #d3d3d3",
-            borderRadius: "10px",
-            marginTop: "2%",
-          }}
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
         >
           <CardContent>
             <div className="ms-Grid-row" style={{ marginBottom: "2px" }}>
@@ -982,13 +955,34 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   {" "}
                 </LabelHeaderComponents>
               </div>
-              <div className="ms-Grid-col ms-lg6">
-                <LabelHeaderComponents
-                  value={`Status - ${props.stateValue?.Status}`}
+              {props.stateValue?.Status ===
+              "Pending with Line Manager to create a Disqualification Question" ? (
+                <div
+                  className="ms-Grid-col ms-lg6"
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    position: "relative",
+                    left: "12%",
+                  }}
                 >
-                  {" "}
-                </LabelHeaderComponents>
-              </div>
+                  <LabelHeaderComponents
+                    value={`Status - ${props.stateValue?.Status}`}
+                  />
+                </div>
+              ) : (
+                <div
+                  className="ms-Grid-col ms-lg6"
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <LabelHeaderComponents
+                    value={`Status - ${props.stateValue?.Status}`}
+                  />
+                </div>
+              )}
             </div>
 
             <Card
@@ -1022,69 +1016,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             </Card>
             {/* Left side  Image */}
             <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-              <Box
-                sx={{
-                  position: "relative",
-                  top: "262px",
-                  width: "30%",
-                  pr: 3,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                {selectedCategory === CatogryOptionCode.InterviewPanel && (
-                  <>
-                    <Box sx={{ textAlign: "center", mt: 2 }}>
-                      <img
-                        src={require("../../assets/interview.svg")}
-                        alt="Interview Panel"
-                        style={{ maxWidth: "100%", height: "auto" }}
-                      />
-                    </Box>
-                    <Box sx={{ textAlign: "center", mb: 2 }}>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          color: "#597b98",
-                          fontWeight: "bold",
-                          fontSize: "1.1rem",
-                          mt: 1,
-                        }}
-                      >
-                        Interview Panel Questions
-                      </Typography>
-                    </Box>
-                  </>
-                )}
-
-                {selectedCategory ===
-                  CatogryOptionCode.CareerPortalCandidate && (
-                  <>
-                    <Box sx={{ textAlign: "center", mt: 2 }}>
-                      <img
-                        src={require("../../assets/online-test.svg")}
-                        alt="Recruitment Process"
-                        style={{ maxWidth: "100%", height: "auto" }}
-                      />
-                    </Box>
-                    <Box sx={{ textAlign: "center", mb: 2 }}>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          color: "#597b98",
-                          fontWeight: "bold",
-                          fontSize: "1.1rem",
-                          mt: 1,
-                        }}
-                      >
-                        Recruitment Process (Portal) Questions
-                      </Typography>
-                    </Box>
-                  </>
-                )}
-              </Box>
-              <Box sx={{ width: "70%" }}>
+              <Box sx={{ width: "100%" }}>
                 <Box sx={{ mb: 2 }}>
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg5">
@@ -1115,7 +1047,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           fontSize: "14px",
                           fontWeight: "500",
                         }}
-                        onClick={() => getFetchQuestion()} 
+                        onClick={() => getFetchQuestion()}
                       >
                         View Questions
                       </Button>
@@ -1137,9 +1069,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         }}
                         onClick={() => {
                           if (showCreateQuestionBox) {
-                            handleCloseCreateQuestion(); 
+                            handleCloseCreateQuestion();
                           } else {
-                            setShowCreateQuestionBox(true); 
+                            setShowCreateQuestionBox(true);
                           }
                         }}
                       >
@@ -1159,7 +1091,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         borderColor: "#5f5f5f",
                         boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                         height:
-                          expandedExistingQuestion !== null ? "auto" : "150px",
+                          expandedExistingQuestion !== null ? "auto" : "auto",
                         transition: "height 0.3s ease-in-out",
                         overflow: "hidden",
                       }}
@@ -1167,7 +1099,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       <CardContent
                         sx={{
                           maxHeight:
-                            expandedExistingQuestion !== null ? "none" : 100,
+                            expandedExistingQuestion !== null ? "none" : 250,
                           overflowY:
                             expandedExistingQuestion !== null
                               ? "visible"
@@ -1176,7 +1108,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         }}
                       >
                         {existingquestionnaire.map((q, index) => {
-                          const isExpanded = expandedExistingQuestion === index; // Determine if the question is expanded
+                          const isExpanded = expandedExistingQuestion === index;
                           return (
                             <Box
                               key={q.id}
@@ -1238,11 +1170,18 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                               display: "inline-block",
                                             }}
                                             dangerouslySetInnerHTML={{
-                                              __html: `${q.question
-                                                .replace(/<p>/gi, "")
-                                                .replace(/<\/p>/gi, "")
-                                                .replace(/<br\s*\/?>/gi, "")
-                                                .trim()}`,
+                                              __html: `${
+                                                q.question
+                                                  ? q?.question
+                                                      .replace(/<p>/gi, "")
+                                                      .replace(/<\/p>/gi, "")
+                                                      .replace(
+                                                        /<br\s*\/?>/gi,
+                                                        ""
+                                                      )
+                                                      .trim()
+                                                  : ""
+                                              }`,
                                             }}
                                           />
                                         </div>
@@ -1315,7 +1254,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         borderColor: "#5f5f5f",
                         boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                         height:
-                          expandedQuestionIndex !== null ? "auto" : "150px",
+                          expandedQuestionIndex !== null ? "auto" : "auto",
                         transition: "height 0.3s ease-in-out",
                         overflow: "hidden",
                       }}
@@ -1323,7 +1262,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       <CardContent
                         sx={{
                           maxHeight:
-                            expandedQuestionIndex !== null ? "none" : 100,
+                            expandedQuestionIndex !== null ? "none" : 250,
                           overflowY:
                             expandedQuestionIndex !== null ? "visible" : "auto",
                           pr: 1,
@@ -1331,6 +1270,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       >
                         {newquestionnaire.map((q, index) => {
                           const isExpanded = expandedQuestionIndex === index;
+                          // const IsIndex =
+                          //   existingquestionnaire.length + (index + 1);
+                          const str = q.HeaderLabel || "";
+                          const number = str.split(" ")[1]; // returns "6"
+                          const Totalindex = parseInt(number);
                           return (
                             <>
                               <Box
@@ -1390,7 +1334,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                   value={q.questionType}
                                                   onChange={(val) =>
                                                     handleQuestionFieldChange(
-                                                      index,
+                                                      Totalindex - 1,
                                                       "questionType",
                                                       val
                                                     )
@@ -1453,13 +1397,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       value={option.text}
                                                       onChange={(val) =>
                                                         handleQuestionOptionChange(
-                                                          index,
+                                                          Totalindex - 1,
                                                           optIndex,
                                                           val
                                                         )
                                                       }
                                                     />
-
                                                     <Box
                                                       sx={{
                                                         backgroundColor:
@@ -1482,7 +1425,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       }}
                                                       onClick={() =>
                                                         handleAnswerSelection(
-                                                          index,
+                                                          Totalindex - 1,
                                                           optIndex
                                                         )
                                                       }
@@ -1523,7 +1466,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                           }}
                                                           onClick={() =>
                                                             handleQuestionDeleteRow(
-                                                              index,
+                                                              Totalindex - 1,
                                                               optIndex
                                                             )
                                                           }
@@ -1556,7 +1499,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                           }}
                                                           onClick={() =>
                                                             handleQuestionAddRow(
-                                                              index
+                                                              Totalindex - 1
                                                             )
                                                           }
                                                         >
@@ -1595,7 +1538,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                               value={q.Disqualification ?? "NO"}
                                               onChange={(val) =>
                                                 handleCommonRadioChange(
-                                                  index,
+                                                  Totalindex - 1,
                                                   "Disqualification",
                                                   val
                                                 )
@@ -1718,7 +1661,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         />
                       </Box>
 
-                      {[
+                      {/* {[
                         displayTextOptionCode.MultiAnswer,
                         displayTextOptionCode.SingleAnswer,
                       ].includes(
@@ -1857,6 +1800,148 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                             error={ValidationError.ExpectedAnswer}
                           />
                         </Box>
+                      ) : null} */}
+
+                      {[
+                        displayTextOptionCode.MultiAnswer,
+                        displayTextOptionCode.SingleAnswer,
+                      ].includes(
+                        InterviewQuesData.QuestionType?.text?.trim() || ""
+                      ) ? (
+                        <Box sx={{ mb: 2 }}>
+                          {OptionsType && OptionsType.length > 0 ? (
+                            OptionsType.map((option, index) => {
+                              const isSelected = option.isCorrect;
+                              return (
+                                <Box
+                                  key={index}
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    mb: 2,
+                                    gap: 1,
+                                  }}
+                                >
+                                  <Typography
+                                    variant="body1"
+                                    sx={{ width: "80px" }}
+                                  >
+                                    Option {index + 1} *
+                                  </Typography>
+
+                                  <CustomInput
+                                    label=""
+                                    value={option.text}
+                                    onChange={(val) =>
+                                      handleOptionChange(index, val)
+                                    }
+                                  />
+
+                                  <Box
+                                    sx={{
+                                      backgroundColor: isSelected
+                                        ? "#4CAF50"
+                                        : "#D3D3D3",
+                                      borderRadius: "50%",
+                                      width: 30,
+                                      height: 30,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      cursor: "pointer",
+                                      boxShadow: isSelected
+                                        ? "0px 0px 5px rgba(0, 128, 0, 0.5)"
+                                        : "0px 0px 5px rgba(0, 0, 0, 0.2)",
+                                      transition: "all 0.3s ease-in-out",
+                                    }}
+                                    onClick={() =>
+                                      handleAnswerSelections(index)
+                                    }
+                                  >
+                                    <CheckCircleOutlineIcon
+                                      sx={{
+                                        color: isSelected ? "white" : "black",
+                                        fontSize: 24,
+                                      }}
+                                    />
+                                  </Box>
+
+                                  <Box sx={{ display: "flex", gap: 1 }}>
+                                    {OptionsType.length > 1 && (
+                                      <Button
+                                        variant="contained"
+                                        sx={{
+                                          backgroundColor:
+                                            ColorCode.ButtonColorCode
+                                              .ButtonColor,
+                                          color:
+                                            ColorCode.ButtonColorCode.color,
+                                          minWidth: 40,
+                                          "&:hover": {
+                                            backgroundColor:
+                                              ColorCode.ButtonColorCode
+                                                .ButtonColor,
+                                          },
+                                        }}
+                                        onClick={() => handleDeleteRow(index)}
+                                      >
+                                        <DeleteOutlineIcon
+                                          sx={{ fontSize: 20 }}
+                                        />
+                                      </Button>
+                                    )}
+
+                                    {index === OptionsType.length - 1 && (
+                                      <Button
+                                        variant="contained"
+                                        sx={{
+                                          backgroundColor:
+                                            ColorCode.ButtonColorCode
+                                              .ButtonColor,
+                                          color:
+                                            ColorCode.ButtonColorCode.color,
+                                          minWidth: 40,
+                                          "&:hover": {
+                                            backgroundColor:
+                                              ColorCode.ButtonColorCode
+                                                .ButtonColor,
+                                          },
+                                        }}
+                                        onClick={handleAddRow}
+                                      >
+                                        <AddIcon />
+                                      </Button>
+                                    )}
+                                  </Box>
+                                </Box>
+                              );
+                            })
+                          ) : (
+                            <Typography color="error">
+                              No options available.
+                            </Typography>
+                          )}
+
+                          {/* Display validation error messages */}
+                          {ValidationError.OptionsType && (
+                            <Typography color="error">
+                              {ValidationError.OptionsType}
+                            </Typography>
+                          )}
+                        </Box>
+                      ) : props?.stateValue?.StatusId ===
+                        StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
+                        <Box sx={{ mb: 2 }}>
+                          <RichTextEditor
+                            label="Expected Answer"
+                            value={InterviewQuesData.ExpectedAnswer}
+                            onChange={(val) =>
+                              handleRichTextEditor(val, "ExpectedAnswer")
+                            }
+                            mandatory={true}
+                            error={ValidationError.ExpectedAnswer}
+                          />
+                        </Box>
                       ) : null}
 
                       {props?.stateValue?.StatusId ===
@@ -1883,7 +1968,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       <Button
                         variant="contained"
                         // startIcon={<AddIcon />}
-                        onClick={handleSaveQuestion}
+                        onClick={() =>
+                          handleSaveQuestion(resuequestionnaire.length + 1)
+                        }
                         sx={{
                           backgroundColor:
                             ColorCode.ButtonColorCode.ButtonColor,
@@ -1901,26 +1988,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           ? ButtonAction.Update
                           : ButtonAction.Save}
                       </Button>
-                      {/* <Button
-                        variant="contained"
-                        // startIcon={<AddIcon />}
-                        onClick={() => setShowCreateQuestionBox(false)}
-                        sx={{
-                          backgroundColor:
-                            ColorCode.ButtonColorCode.ButtonColor,
-                          color: "white",
-                          "&:hover": {
-                            backgroundColor:
-                              ColorCode.ButtonColorCode.ButtonColor,
-                          },
-                          textTransform: "none",
-                          borderRadius: "4px",
-                          px: 3,
-                          marginLeft: "2%",
-                        }}
-                      >
-                        {ButtonAction.close}
-                      </Button> */}
                       <Button
                         variant="contained"
                         onClick={handleCloseCreateQuestion}
@@ -1951,7 +2018,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     },
   ];
   useEffect(() => {
-    // const activeTabObj = tabs.find((item) => item.value === activeTab);
     if (activeTab === "tab1") {
       setTabNameData(() => {
         return [
@@ -1974,6 +2040,154 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     props.stateValue?.ButtonAction,
   ]);
 
+  // async function Submit_fn() {
+  //   setIsLoading(true);
+  //   const lastResueId =
+  //     resuequestionnaire.length > 0
+  //       ? Math.max(...resuequestionnaire.map((item) => item.id))
+  //       : 0;
+
+  //   const adjustedQuestions = questions.map((item, idx) => ({
+  //     ...item,
+  //     id: lastResueId + idx + 1,
+  //     questionNumber: {
+  //       key: lastResueId + idx + 1,
+  //       text: `Question ${lastResueId + idx + 1}`,
+  //     },
+  //   }));
+
+  //   const QuestionairesData = [...resuequestionnaire, ...adjustedQuestions];
+  //   let QuestionValue: UpsertQuestions[] = QuestionairesData.map((item) => {
+  //     const category = getMasterData.category.find(
+  //       (cat) => cat.text === InterviewQuesData.Catogry
+  //     );
+
+  //     // Initialize variables
+  //     let OptionsValue: optionsValue[] = [];
+  //     let answerValue: answersValue[] = [];
+
+  //     if (category?.text === CatogryOptionCode.CareerPortalCandidate) {
+  //       OptionsValue =
+  //         item.options?.map((opt, index) => ({
+  //           optionEn: opt.text,
+  //           optionFr: opt.text,
+  //           sequence: index + 1,
+  //         })) || [];
+
+  //       answerValue =
+  //         item.CareerportalAnswer?.map((ans) => ({
+  //           optionEn: ans.text,
+  //           optionFr: ans.text,
+  //         })) || [];
+  //     } else {
+  //       OptionsValue =
+  //         item.options?.map((opt, index) => ({
+  //           optionEn: opt.text,
+  //           optionFr: opt.text,
+  //           sequence: index + 1,
+  //         })) || [];
+
+  //       OptionsValue = [
+  //         {
+  //           optionEn: item.expectedAnswer,
+  //           optionFr: item.expectedAnswer,
+  //           sequence: 1,
+  //         },
+  //       ];
+
+  //       answerValue = [
+  //         {
+  //           optionEn: item.expectedAnswer,
+  //           optionFr: item.expectedAnswer,
+  //         },
+  //       ];
+  //     }
+  //     const scopeId =
+  //       item?.Type === DataType.Existing
+  //         ? String(item.discipline)
+  //         : String(item.discipline.key);
+  //     const questionTypeId =
+  //       item?.Type === DataType.Existing
+  //         ? String(item.questionType)
+  //         : String(item.questionType.key);
+
+  //     return {
+  //       questionEn: item.question,
+  //       questionFr: item.question,
+  //       scopeId: scopeId,
+  //       categoryId: String(category?.key),
+  //       // questionTypeId: String(item.questionType.key),
+  //       questionTypeId: questionTypeId,
+  //       isQualifier:
+  //         InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
+  //           ? 1
+  //           : 0,
+  //       isAnswerValidate: item.Disqualification === "No" ? 0 : 1,
+  //       sequence: item.id,
+  //       jobCode: props.stateValue.JobCode,
+  //       options: OptionsValue,
+  //       answers: answerValue,
+  //     };
+  //   });
+
+  //   const response = await GetPortalJobsService.UpsertQuestions(QuestionValue);
+
+  //   if (response.status === ResponeStatus.SUCCESS) {
+  //     const obj: any = {
+  //       ActionId: WorkflowAction.Approved,
+  //       ItemCreated: "Yes",
+  //     };
+  //     await SPServices.SPUpdateItem({
+  //       Listname: ListNames.HRMSRecruitmentDptDetails,
+  //       RequestJSON: obj,
+  //       ID: props.stateValue?.ID,
+  //     });
+  //     const SuccessAlert = {
+  //       Message:
+  //         InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
+  //           ? RecuritmentHRMsg.CareerportalSuccessMsg
+  //           : RecuritmentHRMsg.InterviewQuestionSuccessMsg,
+  //       Type: HRMSAlertOptions.Success,
+  //       visible: true,
+  //       ButtonAction: async (userClickedOK: boolean) => {
+  //         if (userClickedOK) {
+  //           props.navigation("/ReviewProfileList", {
+  //             state: { activeTab: "tab2" },
+  //           });
+  //           setAlertPopupOpen(false);
+  //         } else {
+  //           setAlertPopupOpen(false);
+  //         }
+  //       },
+  //     };
+
+  //     setAlertPopupOpen(true);
+  //     setalertProps(SuccessAlert);
+  //     setIsLoading(false);
+  //     setInterviewQuesData((prev) => ({
+  //       ...prev,
+  //       Catogry: "",
+  //     }));
+  //   } else {
+  //     const APIError = {
+  //       Message: RecuritmentHRMsg.APIErrorMsg,
+  //       Type: HRMSAlertOptions.Error,
+  //       visible: true,
+  //       ButtonAction: async (userClickedOK: boolean) => {
+  //         if (userClickedOK) {
+  //           setAlertPopupOpen(false);
+  //         } else {
+  //           setAlertPopupOpen(false);
+  //         }
+  //       },
+  //     };
+
+  //     setAlertPopupOpen(true);
+  //     setalertProps(APIError);
+  //     setIsLoading(false);
+  //   }
+  //   setIsLoading(false);
+  // }
   async function Submit_fn() {
     setIsLoading(true);
     const lastResueId =
@@ -2067,15 +2281,20 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     const response = await GetPortalJobsService.UpsertQuestions(QuestionValue);
 
     if (response.status === ResponeStatus.SUCCESS) {
-      const obj: any = {
-        ActionId: WorkflowAction.Approved,
-        ItemCreated: "Yes",
-      };
-      await SPServices.SPUpdateItem({
-        Listname: ListNames.HRMSRecruitmentDptDetails,
-        RequestJSON: obj,
-        ID: props.stateValue?.ID,
-      });
+      if (
+        InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
+      ) {
+        const obj: any = {
+          ActionId: WorkflowAction.Approved,
+          ItemCreated: "Yes",
+        };
+        await SPServices.SPUpdateItem({
+          Listname: ListNames.HRMSRecruitmentDptDetails,
+          RequestJSON: obj,
+          ID: props.stateValue?.ID,
+        });
+      }
+
       const SuccessAlert = {
         Message:
           InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
@@ -2130,7 +2349,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   };
 
   function Reusequestion_fn() {
-    console.log("Reusequestion_fn called", questionnaire);
     setViewQA(false);
     const SelectedQuestions = questionnaire.filter((item) => item.Checked);
     const ExistingQuestion = SelectedQuestions.map((item) => ({
@@ -2184,147 +2402,66 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   return (
     <>
-      <CustomLoader isLoading={isLoading}>
-        <div className="menu-card">
-          <React.Fragment>
-            <BreadcrumbsComponent
-              items={tabs}
-              initialItem={activeTab}
-              TabName={TabNameData}
-              onBreadcrumbChange={handleBreadcrumbChange}
-              handleCancel={handleCancel}
-              additionalButtons={[
-                // // {
-                // //   label: "Close",
-                // //   onClick: async () => {
-                // //     props.navigation("/ReviewProfileList", {
-                // //       state: { activeTab: "tab2" },
-                // //     });
-                // //   },
-                // // },/
-                // // {
-                // //   label: "Cancel",
-                // //   onClick: () => {
-                // //     const ClearWarning = {
-                // //       Message: RecuritmentHRMsg.ClearWarning,
-                // //       Type: HRMSAlertOptions.Confirmation,
-                // //       visible: true,
-                // //       ButtonAction: async (userClickedOK: boolean) => {
-                // //         if (userClickedOK) {
-                // //           setAlertPopupOpen(false);
-                // //           props.navigation("/ReviewProfileList", {
-                // //             state: { activeTab: "tab2" },
-                // //           });
-                // //         } else {
-                // //           setAlertPopupOpen(false);
-                // //         }
-                // //       },
-                // //     };
+      {viewQA ? (
+        <ViewQuestionCheckbox
+          questionnaire={questionnaire}
+          handleCheckbox={(id, value) => handleCheckbox(id, value)}
+          Disciplines={InterviewQuesData?.Disciplines.text}
+          Reusequestion_fn={() => Reusequestion_fn()}
+          onClose={() => setViewQA(false)}
+        />
+      ) : (
+        <>
+          <CustomLoader isLoading={isLoading}>
+            <div
+              style={{
+                backgroundColor: "#EEEEEE",
+                padding: "20px",
+                borderRadius: "5px",
+                boxShadow: "0px 2px 4px 3px lightgray",
 
-                // //     setalertProps(ClearWarning);
-                // //     setAlertPopupOpen(true);
-                // //   },
-                // // },
-                //  {
-                //   label: "Cancel",
-                //   onClick: () => {
-                //     const ClearWarning = {
-                //       Message: RecuritmentHRMsg.ClearWarning,
-                //       Type: HRMSAlertOptions.Confirmation,
-                //       visible: true,
-                //       ButtonAction: async (userClickedOK: boolean) => {
-                //         if (userClickedOK) {
-                //           setAlertPopupOpen(false);
-                //           props.navigation("/ReviewProfileList", {
-                //             state: { activeTab: "tab2" },
-                //           });
-                //         } else {
-                //           setAlertPopupOpen(false);
-                //         }
-                //       },
-                //     };
-
-                //     setalertProps(ClearWarning);
-                //     setAlertPopupOpen(true);
-                //   },
-                // },
-                ...(resuequestionnaire.length > 0
-                  ? [
-                      {
-                        label: "Submit",
-                        onClick: async () => {
-                          await Submit_fn();
-                        },
-                      },
-                    ]
-                  : []),
-              ]}
-            />
-          </React.Fragment>
-        </div>
-      </CustomLoader>
+                margin: "10px",
+              }}
+            >
+              <React.Fragment>
+                <BreadcrumbsComponent
+                  items={tabs}
+                  initialItem={activeTab}
+                  TabName={TabNameData}
+                  onBreadcrumbChange={handleBreadcrumbChange}
+                  handleCancel={handleCancel}
+                  additionalButtons={[
+                    // {
+                    //   label: "Close",
+                    //   onClick: async () => {
+                    //     props.navigation("/ReviewProfileList", {
+                    //       state: { activeTab: "tab2" },
+                    //     });
+                    //   },
+                    // },
+                    ...(resuequestionnaire.length > 0
+                      ? [
+                          {
+                            label: "Submit",
+                            onClick: async () => {
+                              await Submit_fn();
+                            },
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
+              </React.Fragment>
+            </div>
+          </CustomLoader>
+        </>
+      )}
 
       {AlertPopupOpen && (
         <CustomAlert
           {...alertProps}
           onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
         />
-      )}
-
-      {viewQA && (
-        <>
-          <CustomDialogbox
-            Style={{ width: "40vw", height: "28vw" }}
-            visible={viewQA}
-            children={
-              <ViewQuestionCheckbox
-                questionnaire={questionnaire}
-                handleCheckbox={(id, value) => handleCheckbox(id, value)}
-              />
-            }
-            onClose={() => setViewQA(false)}
-            header={
-              <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                <LabelHeaderComponents
-                  value={"Disciplines" + InterviewQuesData?.Disciplines.text}
-                />
-              </div>
-            }
-            footer={
-              <div
-                className="ms-Grid-row"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  padding: "10px 0",
-                  gap: "33px",
-                }}
-              >
-                <ReuseButton
-                  label="Close"
-                  onClick={() => setViewQA(false)}
-                  Style={{
-                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                    color: "white",
-                    width: "50%",
-                  }}
-                />
-
-                <ReuseButton
-                  label="Reuse"
-                  onClick={async () => {
-                    Reusequestion_fn();
-                  }}
-                  Style={{
-                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                    color: "white",
-                    width: "50%",
-                  }}
-                />
-              </div>
-            }
-          />
-        </>
       )}
     </>
   );

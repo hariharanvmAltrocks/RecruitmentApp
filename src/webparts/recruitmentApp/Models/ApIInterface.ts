@@ -61,7 +61,7 @@ export type GetProfileByJobCode = {
     CandidateID: string,
     ApplicantName: string,
     PositionTitle: string,
-    JobGrade: string,
+    JobCode: string,
     Status: string,
     workflowStatusId: string,
     createdOn: Date | undefined,
@@ -95,6 +95,7 @@ export type CandidateProfile = {
     hrComments: string;
     JobVaildFromDate: string;
     JobVaildToDate: string;
+    CandidateResumeLink: string;
 }
 
 export type WorkflowJson = {

@@ -155,8 +155,8 @@ const ReviewCandidateList = (props: any) => {
     TabNamed: string
   ) => [
     {
-      field: "CandidateID",
-      header: "Applicant ID",
+      field: "SNO",
+      header: "S.No",
       sortable: true,
     },
     {
@@ -170,7 +170,7 @@ const ReviewCandidateList = (props: any) => {
       sortable: true,
     },
     {
-      field: "JobGrade",
+      field: "JobCode",
       header: "Job Code",
       sortable: true,
     },
@@ -214,7 +214,19 @@ const ReviewCandidateList = (props: any) => {
                   workflowStatusApi.LineManagerL2Pending) ||
               (props.CurrentRoleID === RoleID.LineManager &&
                 rowData.workflowStatusId ===
-                  workflowStatusApi.PendingRecruitmentHRscheduleInterview) ? (
+                  workflowStatusApi.PendingRecruitmentHRscheduleInterview) ||
+              (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                rowData.workflowStatusId ===
+                  workflowStatusApi.CandidateSelectedIPanel) ||
+              (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                rowData.workflowStatusId ===
+                  workflowStatusApi.CandidateRejectedIPanel) ||
+              (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                rowData.workflowStatusId ===
+                  workflowStatusApi.CandidateOnHoldIPanel) ? (
+                // (props.stateValue?.TabName === TabName.ReviewProfile &&
+                //   props.CurrentRoleID === RoleID.RecruitmentHR &&
+                //   workflowStatusApi.PendingRecruitmentHRscheduleInterview)
                 <>
                   <img
                     src={require("../../assets/Viewicon.svg")}
@@ -319,10 +331,11 @@ const ReviewCandidateList = (props: any) => {
         if (ReschedulData.status === 200 && ReschedulData.data !== null) {
           let ReschedulDataFilter = ReschedulData.data.map((item: any) => {
             return {
+              SNO: item.SNO, 
               CandidateID: item?.ID,
               ApplicantName: `${item?.FristName || ""} ${item?.LastName || ""}`,
               PositionTitle: item?.PositionTitle,
-              JobGrade: item?.JobGrade,
+              JobCode: item?.JobCode,
               Status: item?.Status,
               workflowStatusId: item?.StatusId,
             };
@@ -388,6 +401,7 @@ const ReviewCandidateList = (props: any) => {
                 workflowStatusApi.pendingHODSelection,
                 workflowStatusApi.CandidateSelectedIPanel,
                 workflowStatusApi.CandidateRejectedIPanel,
+                workflowStatusApi.PendingRecruitmentHRscheduleInterview,
               ]);
             }
             break;
@@ -609,6 +623,14 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    additionalButtons={[
+                      {
+                        label: "Back",
+                        onClick: async () => {
+                          back_fn();
+                        },
+                      },
+                    ]}
                   />
                 </CardContent>
               </Card>
@@ -628,6 +650,14 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    additionalButtons={[
+                      {
+                        label: "Back",
+                        onClick: async () => {
+                          back_fn();
+                        },
+                      },
+                    ]}
                   />
                 </CardContent>
               </Card>
@@ -649,6 +679,14 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    additionalButtons={[
+                      {
+                        label: "Back",
+                        onClick: async () => {
+                          back_fn();
+                        },
+                      },
+                    ]}
                   />
                 </CardContent>
               </Card>
@@ -668,6 +706,14 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    additionalButtons={[
+                      {
+                        label: "Back",
+                        onClick: async () => {
+                          back_fn();
+                        },
+                      },
+                    ]}
                   />
                 </CardContent>
               </Card>
@@ -678,7 +724,7 @@ const ReviewCandidateList = (props: any) => {
 
   const AssignInterviewPanel = [
     {
-      label: TabName.AssignInterviewPanel,
+      label: TabName.InterviewpanelL1,
       value: "tab1",
       content: (
         <Card
@@ -691,13 +737,21 @@ const ReviewCandidateList = (props: any) => {
               initialItem={activeTab}
               TabName={TabNameData}
               onBreadcrumbChange={handleBreadcrumbChange}
+              additionalButtons={[
+                {
+                  label: "Back",
+                  onClick: async () => {
+                    back_fn();
+                  },
+                },
+              ]}
             />
           </CardContent>
         </Card>
       ),
     },
     {
-      label: TabName.Level2Interview,
+      label: TabName.InterviewpanelL2,
       value: "tab2",
       content: (
         <Card
@@ -710,6 +764,14 @@ const ReviewCandidateList = (props: any) => {
               initialItem={activeTab}
               TabName={TabNameData}
               onBreadcrumbChange={handleBreadcrumbChange}
+              additionalButtons={[
+                {
+                  label: "Back",
+                  onClick: async () => {
+                    back_fn();
+                  },
+                },
+              ]}
             />
           </CardContent>
         </Card>
@@ -729,6 +791,14 @@ const ReviewCandidateList = (props: any) => {
               initialItem={activeTab}
               TabName={TabNameData}
               onBreadcrumbChange={handleBreadcrumbChange}
+              additionalButtons={[
+                {
+                  label: "Back",
+                  onClick: async () => {
+                    back_fn();
+                  },
+                },
+              ]}
             />
           </CardContent>
         </Card>

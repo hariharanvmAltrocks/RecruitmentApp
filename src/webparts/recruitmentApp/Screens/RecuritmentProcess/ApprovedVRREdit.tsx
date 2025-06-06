@@ -9,6 +9,7 @@ import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import AttachmentButton from "../../components/AttachmentButton";
 import {
+  CheckboxContent,
   Choices,
   ColorCode,
   DataFrom,
@@ -775,6 +776,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             }
             if (formState.GradingDocument.length === 0) {
               errors.Grading = !IsValid(masterLibrary.Grading);
+            }
+            if (formState.AdvertisementDocument.length === 0) {
+              errors.AdvertisementAttachement = !IsValid(
+                advDetails.AdvertisementAttachement
+              );
             }
           } else {
             if (formState.RoleProfileDocument.length === 0) {
@@ -2219,11 +2225,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     <div className="ms-Grid-col ms-lg12">
                       <SignatureCheckbox
                         label={
-                          (props.CurrentRoleID === RoleID.RecruitmentHR &&
-                            advDetails.JobcodeChecked === true) ||
-                          props.CurrentRoleID === RoleID.HOD
-                            ? TabName.ApprovalCheckbox
-                            : TabName.CheckboxContent
+                          props.stateValue?.StatusId ===
+                          StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+                            ? CheckboxContent.UploadOnemDocument
+                            : CheckboxContent.ApprovalCheckbox
                         }
                         checked={Checkbox}
                         error={validationErrors.Checkboxalidation}
@@ -2392,7 +2397,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       >
                         <div className="ms-Grid-col ms-lg12">
                           <SignatureCheckbox
-                            label={TabName.CheckboxContent}
+                            label={CheckboxContent.CheckboxContent}
                             checked={Checkbox}
                             error={validationErrors.Checkboxalidation}
                             onChange={(value: boolean) => handleCheckbox(value)}

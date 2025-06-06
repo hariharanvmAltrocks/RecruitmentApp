@@ -1,4 +1,5 @@
 import { AutoCompleteItem, InterviewPanaldata } from "../../Models/Screens";
+import { CommentsData } from "../RecruitmentProcess/IRecruitmentProcessService";
 
 export interface CommentsDatas {
   Id: string;
@@ -21,8 +22,8 @@ export interface CommentsDatas {
 export interface ActionUpdate {
   ActionId: number;
   Id: number;
-  ItemCreated?: string; // optional if needed
-  ScoreCardLevelItemCreated?: string; // ✅ Add this line
+  ItemCreated?: string; 
+  ScoreCardLevelItemCreated?: string; 
 }
 
 export type AssignPositionID = {
@@ -64,9 +65,13 @@ export type ScoreCard = {
   RelatedScores?: {
     QuestionJson: string;
   }[];
-};
+  Author?: {
+    Title: string; 
+    EMail: string; 
+  };}
 
 export type Employee = {
+  JobTitleInEnglish: string;
   FirstName: string;
   MiddleName?: string;
   LastName: string;
@@ -90,7 +95,6 @@ export type InterviewPanelItem = {
   GPA: number;
   TotalScore: number;
   QuestionScore: number;
-
   RelevantQualification: string;
   ReleventExperience: string;
   Knowledge: string;
@@ -99,13 +103,8 @@ export type InterviewPanelItem = {
   ContributeTowardsCultureRequried: string;
   Experience: string;
   OtherCriteriaScore: string;
-
-  PanelFullName: string;
-  Department: string;
-  JobTitleInEnglish: string;
-  JobTitleInFrench: string;
-  PanelEmail: string;
 };
+
 
 export type CandidateDetails = {
   Position: any;
@@ -131,7 +130,7 @@ export type CandidateDetails = {
   CandidateID: number;
   RecruitmentID: number;
 };
-export type CommentsData = {
+export type PostCommentsData = {
   Id: number;
   Comments?: string;
 };
@@ -199,7 +198,7 @@ export type IInterviewProcessService = {
     filterConditions: any
   ): Promise<ApiResponse<CandidateDetails[]>>;
   CandidateSeletionApiData(
-    obj: CommentsData,
+    obj: PostCommentsData,
     ListName: string
   ): Promise<ApiResponse<null>>;
 
@@ -213,4 +212,11 @@ export type IInterviewProcessService = {
  getCandidateLevel1ScoreCard(
     filterConditions: any,
   ): Promise<ApiResponse<CandidateComment[]>>
+
+  getCandidateLevel2ScoreCardData(
+     filterParam: any,
+     filterConditions: any,
+     candidateID: number,
+     EmployeeList: any[]
+   ): Promise<ApiResponse<CommentsData[]>>
 };
