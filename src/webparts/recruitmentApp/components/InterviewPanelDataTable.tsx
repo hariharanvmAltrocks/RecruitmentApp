@@ -123,7 +123,7 @@ const InterviewPanelDataTable: React.FC<SearchableDataTableProps> = ({
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             scrollable
-            scrollHeight="400px"
+            // scrollHeight="400px"
             paginatorDropdownAppendTo="self"
             rowsPerPageOptions={[5, 10, 20]}
             paginator

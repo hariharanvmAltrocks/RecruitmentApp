@@ -25,7 +25,7 @@ interface AssignPositionDialogProps {
   selectedJobCodes: JobCodeTilte[];
   onSelectAllChange: (value: boolean) => void;
   onRowChange?: (value: boolean, rowIndex: number) => void;
-  CurrentRole: number;
+  CurrentRole: number[];
   onClose: () => void;
   AssignedHRId: number; //props.stateValue?.AssignedHRId
   validationErrors: formValidation;
@@ -123,7 +123,7 @@ export const AssignRecuritmentHR = ({
           </div>
           <div className="ms-Grid-row" style={{ textAlign: "left" }}>
             <div className="ms-Grid-col ms-lg6">
-              {CurrentRole === RoleID.RecruitmentHRLead ? (
+              {CurrentRole.includes(RoleID.RecruitmentHRLead) ? (
                 <CustomAutoComplete
                   label="Assign Recruitment HR"
                   options={AssignRecruitmentHROption}
@@ -148,7 +148,7 @@ export const AssignRecuritmentHR = ({
                     onChange={(item) => handleAgencyChange(item)}
                     error={validationErrors.AssignRecruitmentAgencies}
                   />
-                  {CurrentRole === RoleID.RecruitmentHR && (
+                  {CurrentRole.includes(RoleID.RecruitmentHR) && (
                     <span
                       style={{
                         color: "red",
@@ -171,7 +171,7 @@ export const AssignRecuritmentHR = ({
             <div className="ms-Grid-col ms-lg10">
               <CustomTextArea
                 label={
-                  CurrentRole === RoleID.RecruitmentHR
+                  CurrentRole.includes(RoleID.RecruitmentHR)
                     ? "Notes for Agencies"
                     : "Notes for Recruitment HR"
                 }
@@ -180,7 +180,7 @@ export const AssignRecuritmentHR = ({
                 onChange={(value) => handleInputChangeTextArea(value)}
                 mandatory={true}
                 placeholder={
-                  CurrentRole === RoleID.RecruitmentHRLead
+                  CurrentRole.includes(RoleID.RecruitmentHRLead)
                     ? "You may provide Hiring Line Manager and Hiring HOD name and number here to RecruitmentHR...."
                     : ""
                 }

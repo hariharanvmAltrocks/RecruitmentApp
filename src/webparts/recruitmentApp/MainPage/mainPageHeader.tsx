@@ -7,7 +7,7 @@ interface MainPageHeaderProps {
   children?: React.ReactNode;
   toggleSideNav: () => void;
   userName: string | undefined;
-  userRole: string | undefined;
+  userRole: string[] | undefined;
   Department: string | undefined;
 }
 

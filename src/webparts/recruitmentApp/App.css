@@ -1401,6 +1401,11 @@ footer {
   scrollbar-width: none;
 }
 
+.l_f_8474018e {
+overflow: hidden;
+padding: 0%;
+}
+
 /* *::-webkit-scrollbar {
     scrollbar-width: none !important;
   } */
@@ -1462,6 +1467,7 @@ footer {
 .MainContent {
   flex: 1;
   margin-left: 30px;
+  min-height: 80vh;
 }
 
 /* Custom CSS for increasing the size of stars */
@@ -1510,5 +1516,31 @@ footer {
   .CanvasZoneSectionContainer{
     display: flex !important;
     max-width: none !important;
+  }
+}
+
+/* Default styles for the ms-Grid class */
+.mainPage {
+  display: flex;
+  flex-direction: row; /* Align items in a row */
+  justify-content: space-between; /* Distribute space between child elements */
+  width: 100%; /* Ensure the grid takes full width */
+  /* padding: 10px; Add some padding around */
+  box-sizing: border-box; /* Ensure padding does not overflow the grid */
+}
+
+/* Responsive for screens less than 1024px (Tablets and below) */
+@media screen and (max-width: 1024px) {
+  .mainPage {
+    flex-direction: column; /* Stack the items vertically */
+    padding: 15px; /* Add extra padding for smaller screens */
+  }
+}
+
+/* Responsive for screens less than 768px (Mobile devices) */
+@media screen and (max-width: 768px) {
+  .mainPage {
+    flex-direction: column; /* Stack the items vertically */
+    padding: 20px; /* Add extra padding */
   }
 }

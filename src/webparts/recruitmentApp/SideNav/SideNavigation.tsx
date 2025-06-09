@@ -2,17 +2,18 @@ import * as React from "react";
 import styles from "./SideNavigation.module.scss";
 import { MenuResponse } from "../Models/Menu";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IMenuService } from "../Services/MenuService/IMenu";
-import MenuService from "../Services/MenuService/MenuService";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { userInfo } from "../utilities/RoleContext";
 
 type sideNavProps = {
-  roleID: number | undefined;
+  roleID: number[] | undefined;
   IsExpanded: boolean;
 };
 
 const SideNavComponent = (props: sideNavProps) => {
+  const { masterData } = userInfo();
+
   const [sideNavArr, setSideNavArr] = React.useState<MenuResponse[]>([]);
   const [expandedMenuId, setExpandedMenuId] = React.useState<number | null>(
     null
@@ -20,50 +21,66 @@ const SideNavComponent = (props: sideNavProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const MenuItemsService: IMenuService = new MenuService();
+  // const MenuItemsService: IMenuService = new MenuService();
 
   React.useEffect(() => {
     if (props.roleID) {
-      void fetchRoleAccessData(props.roleID);
+      setSideNavArr(masterData?.menuMartixData ?? []);
+      // void fetchRoleAccessData(props.roleID);
+      // props.menuID(
+      //   props.SideMenuData[0]?.Children
+      //     ? props.SideMenuData[0]?.Children[0]?.Id
+      //     : props.SideMenuData[0]?.Id
+      // ); // Set initial menu ID to the first item
     }
   }, [props.roleID]);
 
-  async function fetchRoleAccessData(RoleID: number) {
-    const dynamicMenu = await MenuItemsService.getMenuDetails(RoleID);
-
-    if (dynamicMenu.status === 200) {
-      const defaultMenu = dynamicMenu.data[0];
-      if (defaultMenu.Children?.length && defaultMenu.Children[0]) {
-        const child = defaultMenu.Children[0];
-        navigate(child.Path);
-      } else {
-        navigate(defaultMenu.Path);
+  React.useEffect(() => {
+    if (sideNavArr.length > 0 && sideNavArr[0]) {
+      const firstItem = sideNavArr[0];
+      if (
+        Array.isArray(firstItem.Children) &&
+        firstItem.Children.length > 0 &&
+        firstItem.Children[0]
+      ) {
+        navigate(firstItem.Children[0].Path);
+      } else if (firstItem.Path) {
+        navigate(firstItem.Path);
       }
-      setSideNavArr(dynamicMenu.data);
-    } else {
-      console.log("Role Access Message", dynamicMenu.message);
     }
-  }
+  }, [sideNavArr]);
 
-  const handleNavigation = (path: string) => {
+  const handleNavigation = (path: string, Id: number) => {
     navigate(path);
+    if (masterData) {
+      masterData.CurrentMenuID = Id;
+    }
   };
 
   const isActiveMenu = (item: MenuResponse) => {
-    if (location.pathname.startsWith(item.Path)) {
-      return true;
-    }
     if (item.Children && item.Children.length > 0) {
-      return item.Children.some((subItem) =>
+      const activeChild = item.Children.find((subItem) =>
         location.pathname.startsWith(subItem.Path)
       );
+      if (activeChild) {
+        if (masterData) {
+          masterData.CurrentMenuID = activeChild.Id;
+        }
+        return true;
+      }
+    }
+    if (location.pathname.startsWith(item.Path)) {
+      if (masterData) {
+        masterData.CurrentMenuID = item.Id;
+      }
+      return true;
     }
     return false;
   };
 
   const toggleExpand = (menuId: number, path: string) => {
     setExpandedMenuId((prev) => (prev === menuId ? null : menuId));
-    handleNavigation(path);
+    handleNavigation(path, menuId);
   };
 
   const renderMenu = (
@@ -98,7 +115,7 @@ const SideNavComponent = (props: sideNavProps) => {
                         if (item.Children && item.Children.length > 0) {
                           toggleExpand(item.Id, item.Path);
                         } else {
-                          handleNavigation(item.Path);
+                          handleNavigation(item.Path, item.Id);
                         }
                       }}
                       style={{ cursor: "pointer", marginLeft: "20%" }}

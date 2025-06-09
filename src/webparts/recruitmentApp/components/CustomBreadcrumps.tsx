@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Breadcrumbs, Typography } from "@mui/material";
+import { Breadcrumbs, Typography, useMediaQuery } from "@mui/material";
 import ReuseButton from "./ReuseButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import LabelHeaderComponents from "./TitleHeader";
 
 type BreadcrumbData = {
   label: string;
@@ -21,6 +22,7 @@ interface BreadcrumbsComponentProps {
   handleCancel?: () => void;
   ValidationError?: () => boolean;
   onBreadcrumbChange?: (newItem: string) => void;
+  Agencies?: string;
   additionalButtons?: {
     label: string;
     onClick?: () => void;
@@ -37,6 +39,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
   TabName = [],
   handleCancel,
   ValidationError,
+  Agencies,
 }) => {
   const [currentValue, setCurrentValue] = React.useState(initialItem);
 
@@ -61,7 +64,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
       if (onBreadcrumbChange) onBreadcrumbChange(prevValue);
     }
   };
-
+  const isMobile = useMediaQuery("(max-width:600px)");
   return (
     <div>
       <div className="ms-Grid-row">
@@ -71,7 +74,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
               return <ArrowBackIcon key={index} onClick={button.onClick} />;
             })}
         </div>
-        <div className="ms-Grid-col ms-lg10">
+        <div className="ms-Grid-col ms-lg8">
           <Breadcrumbs
             aria-label="breadcrumb"
             separator={separator}
@@ -84,6 +87,50 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
             ))}
           </Breadcrumbs>
         </div>
+        {Agencies && (
+          <div className="ms-Grid-col ms-lg3">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end", // This aligns the entire wrapper to the right
+                marginTop: "-4%",
+                width: "100%", // Ensure the container spans the full width
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: isMobile ? "flex-start" : "center", // Flex-start for mobile, center for larger screens
+                  backgroundColor: "white",
+                  borderRadius: "20px",
+                  padding: isMobile ? "10px" : "5px 10px", // Dynamic padding based on screen size
+                  boxShadow: "0px 5px 10px 0px #0F4B8426",
+                  margin: isMobile ? "10px auto" : "0", // Margin adjustment for mobile
+                  width: isMobile ? "90%" : "100%", // Flexible width for mobile (90%) and larger screens (47%)
+                }}
+              >
+                <div>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#EF3340",
+                      fontWeight: "400",
+                      fontSize: isMobile ? "12px" : "14px", // Font size adjustment
+                    }}
+                  >
+                    <span style={{ fontWeight: "bold" }}>
+                      <LabelHeaderComponents
+                        value={`Profile from ${Agencies} `}
+                      />
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {items.find((item) => item.value === currentValue)?.content}

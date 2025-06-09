@@ -56,6 +56,7 @@ import ViewQuestionCheckbox, {
 } from "../ScreenComponent/ViewQuestionCheckbox";
 import CustomLabel from "../../components/CustomLabel";
 import { Label } from "@fluentui/react";
+import { GetStatusIdRoles } from "../../components/TabMerge";
 
 type InterviewQuesValidationError = {
   QuestionType: boolean;
@@ -169,6 +170,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const [existingquestionnaire, setExistingquestionnaire] = React.useState<
     ViewQuestion[]
   >([]);
+
+  const [currentRoleID, setCurrentRoleID] = useState<number>(0);
 
   // const handleCategoryChange = (val: string) => {
   //   setInterviewQuesData((prev) => ({
@@ -693,24 +696,24 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       visible: true,
       ButtonAction: async (userClickedOK: boolean) => {
         if (userClickedOK) {
-          switch (props.CurrentRoleID) {
+          switch (currentRoleID) {
             case RoleID.RecruitmentHR:
               props.navigation("/ReviewProfileList", {
-                state: { activeTab: "tab3" },
-              });
-              break;
-            case RoleID.HOD:
-              props.navigation("/RecurimentProcess", {
-                state: { activeTab: "tab3" },
+                state: {
+                  TabName: props.stateValue?.TabName,
+                  tab: props.stateValue?.tab,
+                },
               });
               break;
             case RoleID.LineManager:
-              props.navigation("/ReviewProfileList", {
-                state: { activeTab: "tab2" },
+              props.navigation("/RecurimentProcess", {
+                state: {
+                  TabName: props.stateValue?.TabNames,
+                  tab: props.stateValue?.tab,
+                },
               });
               break;
             default:
-              props.navigation("/InterviewPanelList");
           }
           setAlertPopupOpen(false);
         } else {
@@ -751,6 +754,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             : CatogryOptionCode.CareerPortalCandidate,
       }));
     }
+    let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
+    setCurrentRoleID(userRole ?? 0);
   }, [props?.stateValue?.StatusId]);
 
   useEffect(() => {
@@ -838,9 +843,25 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           visible: true,
           ButtonAction: async (userClickedOK: boolean) => {
             if (userClickedOK) {
-              props.navigation("/ReviewProfileList", {
-                state: { activeTab: "tab2" },
-              });
+              switch (currentRoleID) {
+                case RoleID.RecruitmentHR:
+                  props.navigation("/ReviewProfileList", {
+                    state: {
+                      TabName: props.stateValue?.TabName,
+                      tab: props.stateValue?.tab,
+                    },
+                  });
+                  break;
+                case RoleID.LineManager:
+                  props.navigation("/RecurimentProcess", {
+                    state: {
+                      TabName: props.stateValue?.TabNames,
+                      tab: props.stateValue?.tab,
+                    },
+                  });
+                  break;
+                default:
+              }
               setAlertPopupOpen(false);
             } else {
               setAlertPopupOpen(false);
@@ -2073,7 +2094,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     if (activeTab === "tab1") {
       setTabNameData(() => {
         return [
-          { tabName: props.stateValue?.TabName },
+          { tabName: props.stateValue?.TabNames },
           { tabName: props.stateValue?.ButtonAction },
           {
             tabName:
@@ -2088,7 +2109,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   }, [
     props.stateValue?.ID,
     activeTab,
-    props.stateValue?.TabName,
+    props.stateValue?.TabNames,
     props.stateValue?.ButtonAction,
   ]);
 
@@ -2361,9 +2382,25 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
           if (userClickedOK) {
-            props.navigation("/ReviewProfileList", {
-              state: { activeTab: "tab2" },
-            });
+            switch (currentRoleID) {
+              case RoleID.RecruitmentHR:
+                props.navigation("/ReviewProfileList", {
+                  state: {
+                    TabName: props.stateValue?.TabName,
+                    tab: props.stateValue?.tab,
+                  },
+                });
+                break;
+              case RoleID.LineManager:
+                props.navigation("/RecurimentProcess", {
+                  state: {
+                    TabName: props.stateValue?.TabNames,
+                    tab: props.stateValue?.tab,
+                  },
+                });
+                break;
+              default:
+            }
             setAlertPopupOpen(false);
           } else {
             setAlertPopupOpen(false);
@@ -2476,8 +2513,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                 padding: "20px",
                 borderRadius: "5px",
                 boxShadow: "0px 2px 4px 3px lightgray",
-
                 margin: "10px",
+                minHeight: "80vh",
               }}
             >
               <React.Fragment>
@@ -2488,14 +2525,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   onBreadcrumbChange={handleBreadcrumbChange}
                   handleCancel={handleCancel}
                   additionalButtons={[
-                    // {
-                    //   label: "Close",
-                    //   onClick: async () => {
-                    //     props.navigation("/ReviewProfileList", {
-                    //       state: { activeTab: "tab2" },
-                    //     });
-                    //   },
-                    // },
                     ...(resuequestionnaire.length > 0
                       ? [
                           {

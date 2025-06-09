@@ -48,6 +48,7 @@ function ViewQuestionCheckbox({
             marginTop: "2%",
             width: "97%",
             marginLeft: "2%",
+            minHeight: "80vh",
           }}
         >
           <CardContent>

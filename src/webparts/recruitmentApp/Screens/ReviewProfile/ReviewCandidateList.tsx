@@ -7,6 +7,7 @@ import {
 } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
+  ButtonAction,
   HRMSAlertOptions,
   RoleID,
   StatusId,
@@ -61,7 +62,7 @@ const ReviewCandidateList = (props: any) => {
     tab: string,
     TabNamed: string,
     ButtonAction: string,
-    ActionBtn: string
+    PreActionBtn: string
   ): void {
     console.log("RecruitmentDetails", RecruitmentDetails);
 
@@ -90,24 +91,24 @@ const ReviewCandidateList = (props: any) => {
       JobValidation =
         new Date(JobPostingEndDate).toDateString() === todayDateStr;
     }
-
+    let ScreenNavigation = props.CurrentRoleID.includes(RoleID.LineManager)
+      ? "/RecurimentProcess/ReviewCandidateList/ViewCandidateDetails"
+      : "/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails";
     if (tab === "tab2 - Level 2") {
       if (JobValidation) {
-        props.navigation(
-          "/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails",
-          {
-            state: {
-              ID: rowData?.CandidateID,
-              StatusId: rowData?.workflowStatusId,
-              RecruitmentID,
-              tab,
-              ButtonAction,
-              TabNamed,
-              initialTab: props.stateValue?.TabName,
-              ActionBtn,
-            },
-          }
-        );
+        props.navigation(ScreenNavigation, {
+          state: {
+            ID: rowData?.CandidateID,
+            StatusId: rowData?.workflowStatusId,
+            RecruitmentID,
+            tab,
+            ButtonAction,
+            TabNamed,
+            JobCodeID: props.stateValue?.JobCodeID,
+            initialTab: props.stateValue?.TabNames,
+            PreActionBtn,
+          },
+        });
       } else {
         const Dateformat = JobPostingSecondExtensionEndDate
           ? moment(JobPostingSecondExtensionEndDate).format("DD/MM/YYYY")
@@ -136,28 +137,26 @@ const ReviewCandidateList = (props: any) => {
         setalertProps(SuccessAlert);
       }
     } else {
-      props.navigation(
-        "/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails",
-        {
-          state: {
-            ID: rowData?.CandidateID,
-            StatusId: rowData?.workflowStatusId,
-            RecruitmentID,
-            tab,
-            ButtonAction,
-            TabNamed,
-            initialTab: props.stateValue?.TabName,
-            ActionBtn,
-          },
-        }
-      );
+      props.navigation(ScreenNavigation, {
+        state: {
+          ID: rowData?.CandidateID,
+          StatusId: rowData?.workflowStatusId,
+          RecruitmentID,
+          tab,
+          JobCodeID: props.stateValue?.JobCodeID,
+          ButtonAction,
+          TabNamed,
+          initialTab: props.stateValue?.TabNames,
+          PreActionBtn,
+        },
+      });
     }
   }
 
   const columnConfig = (
     tab: string,
-    ButtonAction: string,
-    TabNamed: string
+    ButtonActions: string,
+    TabNames: string
   ) => [
     {
       field: "SNO",
@@ -204,20 +203,28 @@ const ReviewCandidateList = (props: any) => {
       style: { width: "7%" },
       body: (rowData: any) => {
         return (
-          <div>
-            <span>
-              {(props.CurrentRoleID === RoleID.RecruitmentHR &&
+          <>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px", // slightly more space for small screens
+                flexWrap: "wrap", // allow wrapping on smaller screens
+              }}
+            >
+              {(props.CurrentRoleID.includes(RoleID.RecruitmentHR) &&
                 tab === "tab2" &&
                 rowData.workflowStatusId !=
                   StatusId?.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) ||
-              rowData?.StatusID === TabName.ReviewProfile ||
-              (props.CurrentRoleID === RoleID.LineManager &&
+              (props.CurrentRoleID.includes(RoleID.LineManager) &&
                 rowData.workflowStatusId ===
                   workflowStatusApi.LineManagerLevel1Rejected) ||
-              (props.CurrentRoleID === RoleID.LineManager &&
+              (props.CurrentRoleID.includes(RoleID.LineManager) &&
                 rowData.workflowStatusId ===
                   workflowStatusApi.LineManagerLevel2Rejected) ||
-              (props.CurrentRoleID === RoleID.LineManager &&
+              (props.CurrentRoleID.includes(RoleID.LineManager) &&
                 rowData.workflowStatusId ===
                   workflowStatusApi.PendingRecruitmentHRscheduleInterview) ? (
                 <>
@@ -228,14 +235,16 @@ const ReviewCandidateList = (props: any) => {
                       handleRedirectView(
                         rowData,
                         tab,
-                        TabNamed,
-                        ButtonAction,
-                        "View"
+                        TabNames,
+                        ButtonAction.View,
+                        ButtonAction.View
                       )
                     }
                     style={{
-                      width: "60%",
-                      height: "60%",
+                      width: "2rem", // scales with font size
+                      height: "auto",
+                      maxWidth: "40px", // limit maximum size
+                      cursor: "pointer",
                     }}
                   />
                 </>
@@ -244,24 +253,26 @@ const ReviewCandidateList = (props: any) => {
                   <img
                     src={require("../../assets/Editbutton.svg")}
                     alt="Stamp Icon"
+                    style={{
+                      width: "2rem", // scales with font size
+                      height: "auto",
+                      maxWidth: "40px", // limit maximum size
+                      cursor: "pointer",
+                    }}
                     onClick={() =>
                       handleRedirectView(
                         rowData,
                         tab,
-                        TabNamed,
-                        ButtonAction,
-                        "Edit"
+                        TabNames,
+                        ButtonAction.Edit,
+                        ButtonAction.Edit
                       )
                     }
-                    style={{
-                      width: "60%",
-                      height: "60%",
-                    }}
                   />
                 </>
               )}
-            </span>
-          </div>
+            </div>
+          </>
         );
       },
     },
@@ -285,7 +296,7 @@ const ReviewCandidateList = (props: any) => {
     try {
       if (
         (tabs === "tab2" || tabs === "tab3") &&
-        props.stateValue?.TabName === TabName.AssignInterviewPanel
+        props.stateValue?.TabNames === TabName.AssignInterviewPanel
       ) {
         let filterConditionsRecuritment = [];
         let RecuritmentConditions = "and";
@@ -297,6 +308,11 @@ const ReviewCandidateList = (props: any) => {
               StatusId.InterviewScheduledforLevel2,
               StatusId.InterviewScheduled,
             ],
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "JobCode",
+            Operator: "eq",
+            FilterValue: props?.stateValue?.JobCodeID,
           });
           filterConditionsRecuritment.push({
             FilterKey: "ItemCreated",
@@ -314,6 +330,11 @@ const ReviewCandidateList = (props: any) => {
             FilterKey: "ItemCreated",
             Operator: "eq",
             FilterValue: "No",
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "JobCode",
+            Operator: "eq",
+            FilterValue: props?.stateValue?.JobCodeID,
           });
         }
         const ReschedulData =
@@ -365,11 +386,11 @@ const ReviewCandidateList = (props: any) => {
 
         switch (tabs) {
           case "tab1":
-            if (props.stateValue?.TabName === TabName.AssignInterviewPanel) {
+            if (props.stateValue?.TabNames === TabName.AssignInterviewPanel) {
               FilterValue = createFilter([
                 workflowStatusApi.PendingRecruitmentHRscheduleInterview,
               ]);
-            } else if (props.CurrentRoleID === RoleID.LineManager) {
+            } else if (props.CurrentRoleID.includes(RoleID.LineManager)) {
               FilterValue = createFilter([
                 workflowStatusApi.LineManagerL1Pending,
               ]);
@@ -379,7 +400,7 @@ const ReviewCandidateList = (props: any) => {
             break;
 
           case "tab2":
-            if (props.CurrentRoleID === RoleID.LineManager) {
+            if (props.CurrentRoleID.includes(RoleID.LineManager)) {
               FilterValue = createFilter([
                 workflowStatusApi.PendingRecruitmentHRscheduleInterview,
               ]);
@@ -400,7 +421,7 @@ const ReviewCandidateList = (props: any) => {
             break;
 
           case "tab2 - Level 2":
-            if (props.CurrentRoleID === RoleID.LineManager) {
+            if (props.CurrentRoleID.includes(RoleID.LineManager)) {
               FilterValue = createFilter([
                 workflowStatusApi.LineManagerL2Pending,
               ]);
@@ -408,7 +429,7 @@ const ReviewCandidateList = (props: any) => {
             break;
 
           case "tab3":
-            if (props.CurrentRoleID === RoleID.LineManager) {
+            if (props.CurrentRoleID.includes(RoleID.LineManager)) {
               FilterValue = createFilter([
                 workflowStatusApi.LineManagerLevel1OnHold,
                 workflowStatusApi.LineManagerLevel2OnHold,
@@ -464,11 +485,12 @@ const ReviewCandidateList = (props: any) => {
 
   React.useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       await fetchRecuritmentData();
       await fetchCandidateData(breadcrumbTab);
     };
     void fetchData();
-  }, [rows, breadcrumbTab]);
+  }, []);
 
   const onPageChange = (event: any) => {
     // setFirst(event.first);
@@ -505,7 +527,11 @@ const ReviewCandidateList = (props: any) => {
           <CardContent>
             <ReviewProfileDatatable
               data={CandidateData ?? []}
-              columns={columnConfig(tab, "Edit", TabName.ReviewProfile)}
+              columns={columnConfig(
+                tab,
+                ButtonAction.Edit,
+                TabName.ReviewProfile
+              )}
               rows={rows}
               onPageChange={onPageChange}
               handleRefresh={() => handleRefresh(tab)}
@@ -529,7 +555,7 @@ const ReviewCandidateList = (props: any) => {
     if (activeTab === "tab1") {
       setTabNameData(() => {
         const newTabNames = [
-          { tabName: props.stateValue?.TabName },
+          { tabName: props.stateValue?.TabNames },
           { tabName: props.stateValue?.ButtonAction },
           { tabName: activeTabObj?.label },
         ];
@@ -538,7 +564,7 @@ const ReviewCandidateList = (props: any) => {
     } else {
       setTabNameData(() => {
         const newTabNames = [
-          { tabName: props.stateValue?.TabName },
+          { tabName: props.stateValue?.TabNames },
           { tabName: props.stateValue?.ButtonAction },
           { tabName: prevTabObj?.label },
           { tabName: activeTabObj?.label },
@@ -560,7 +586,7 @@ const ReviewCandidateList = (props: any) => {
   }, [activeTab]);
 
   const breadcrumbs = [
-    ...(props.CurrentRoleID === RoleID.LineManager
+    ...(props.CurrentRoleID.includes(RoleID.LineManager)
       ? [
           {
             label: TabName.ReviewLevel1,
@@ -867,12 +893,27 @@ const ReviewCandidateList = (props: any) => {
     },
   ];
 
-  const handleTabChange = (newTab: string) => {
+  const handleTabChange = async (newTab: string) => {
     setBreadcrumbTab(newTab);
+    await fetchCandidateData(newTab);
   };
 
   function back_fn() {
-    props.navigation("/ReviewProfileList");
+    if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+      props.navigation("/RecurimentProcess", {
+        state: {
+          TabName: props.stateValue?.TabNames,
+          tab: props.stateValue?.tab,
+        },
+      });
+    } else {
+      props.navigation("/ReviewProfileList", {
+        state: {
+          TabName: props.stateValue?.TabNames,
+          tab: props.stateValue?.tab,
+        },
+      });
+    }
   }
 
   return (
@@ -881,7 +922,7 @@ const ReviewCandidateList = (props: any) => {
         <CustomLoader isLoading={isLoading}>
           <div className="menu-card">
             <React.Fragment>
-              {props.stateValue?.TabName === TabName.AssignInterviewPanel ? (
+              {props.stateValue?.TabNames === TabName.AssignInterviewPanel ? (
                 <>
                   <TabsComponent
                     tabs={AssignInterviewPanel}

@@ -335,14 +335,21 @@ const InterviewPanelEdit = (props: any) => {
                 visible: true,
                 ButtonAction: async (userClickedOK: boolean) => {
                   if (userClickedOK) {
-                    if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-                      props.navigation("/ReviewProfileList", {});
-                    } else if (props.CurrentRoleID === RoleID.HOD) {
-                      props.navigation("/RecurimentProcess", {});
-                    } else if (props.CurrentRoleID === RoleID.LineManager) {
-                      props.navigation("/ReviewProfileList", {});
+                    if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+                      props.navigation("/ReviewProfileList", {
+                        tab: props.stateValue?.tab,
+                      });
+                    } else if (
+                      props.CurrentRoleID.includes(RoleID.HOD) ||
+                      props.CurrentRoleID.includes(RoleID.LineManager)
+                    ) {
+                      props.navigation("/RecurimentProcess", {
+                        tab: props.stateValue?.tab,
+                      });
                     } else {
-                      props.navigation("/InterviewPanelList");
+                      props.navigation("/InterviewPanelList", {
+                        tab: props.stateValue?.tab,
+                      });
                     }
                     setAlertPopupOpen(false);
                   } else {
@@ -364,23 +371,20 @@ const InterviewPanelEdit = (props: any) => {
               visible: true,
               ButtonAction: async (userClickedOK: boolean) => {
                 if (userClickedOK) {
-                  if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+                  if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
                     props.navigation("/ReviewProfileList", {
-                      // state: {
-                      //   activeTab: "tab3",
-                      // },
+                      state: {
+                        tab: props.stateValue?.tab,
+                      },
                     });
-                  } else if (props.CurrentRoleID === RoleID.HOD) {
+                  } else if (
+                    props.CurrentRoleID.includes(RoleID.HOD) ||
+                    props.CurrentRoleID.includes(RoleID.LineManager)
+                  ) {
                     props.navigation("/RecurimentProcess", {
-                      // state: {
-                      //   activeTab: "tab3",
-                      // },
-                    });
-                  } else if (props.CurrentRoleID === RoleID.LineManager) {
-                    props.navigation("/ReviewProfileList", {
-                      // state: {
-                      //   activeTab: "tab3",
-                      // },
+                      state: {
+                        tab: props.stateValue?.tab,
+                      },
                     });
                   } else {
                     props.navigation("/InterviewPanelList");
@@ -601,7 +605,7 @@ const InterviewPanelEdit = (props: any) => {
           }),
           OverAllEvaluationFeedback: CandidateData?.OverAllEvaluationFeedback,
           RecruitmentIDId: CandidateData?.RecruitmentID,
-          RoleId: props.CurrentRoleID,
+          RoleId: props.CurrentRoleID[0],
           InterviewPersonNameId: currentUserKey,
           InterviewPanelIDId: InterviewPanelID,
           QuestionJson: JSON.stringify(QuestionScore),
@@ -679,23 +683,20 @@ const InterviewPanelEdit = (props: any) => {
         visible: true,
         ButtonAction: (userClickedOK: any) => {
           if (userClickedOK) {
-            if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+            if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
               props.navigation("/ReviewProfileList", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
+                state: {
+                  tab: props.stateValue?.tab,
+                },
               });
-            } else if (props.CurrentRoleID === RoleID.HOD) {
+            } else if (
+              props.CurrentRoleID.includes(RoleID.HOD) ||
+              props.CurrentRoleID.includes(RoleID.LineManager)
+            ) {
               props.navigation("/RecurimentProcess", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
-              });
-            } else if (props.CurrentRoleID === RoleID.LineManager) {
-              props.navigation("/ReviewProfileList", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
+                state: {
+                  tab: props.stateValue?.tab,
+                },
               });
             } else {
               props.navigation("/InterviewPanelList");
@@ -1745,30 +1746,26 @@ const InterviewPanelEdit = (props: any) => {
 
   const handleCancel = () => {
     setIsLoading(true);
-
     let CancelAlert = {
       Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
       Type: HRMSAlertOptions.Confirmation,
       visible: true,
       ButtonAction: async (userClickedOK: boolean) => {
         if (userClickedOK) {
-          if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+          if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
             props.navigation("/ReviewProfileList", {
-              // state: {
-              //   activeTab: "tab3",
-              // },
+              state: {
+                tab: props.stateValue?.tab,
+              },
             });
-          } else if (props.CurrentRoleID === RoleID.HOD) {
+          } else if (
+            props.CurrentRoleID.includes(RoleID.HOD) ||
+            props.CurrentRoleID.includes(RoleID.LineManager)
+          ) {
             props.navigation("/RecurimentProcess", {
-              // state: {
-              //   activeTab: "tab3",
-              // },
-            });
-          } else if (props.CurrentRoleID === RoleID.LineManager) {
-            props.navigation("/ReviewProfileList", {
-              // state: {
-              //   activeTab: "tab3",
-              // },
+              state: {
+                tab: props.stateValue?.tab,
+              },
             });
           } else {
             props.navigation("/InterviewPanelList");

@@ -1,3 +1,4 @@
+import { AutoCompleteItem, InterviewPanelMember } from "../../Models/Screens";
 
 
 export interface IAttachmentExampleState {
@@ -16,14 +17,14 @@ export type CommentsData = {
   comments: string;
   Department: string;
   Date: any | null;
-  JobTitle: string;  
+  JobTitle: string;
   RoleName: string;
   CandidateID?: any;
   RoleId?: number;
   RoleTitle?: string;
   Level?: string;
   OverAllEvaluationFeedback?: string;
- 
+
 };
 
 export type InsertComments = {
@@ -162,7 +163,7 @@ export type PostRecuritmentData = {
     StatusId: number,
     ActionId: number,
     JobCodeId: number,
-    AssignedHRId: number
+    AssignedHR: number
   },
   PositionData: {
     JobTitleEnglishId: number,
@@ -259,5 +260,12 @@ export type IRecruitmentService = {
     MasterData: any,
     IsActive: number
   ): Promise<ApiResponse<null>>;
-
+  GetInterviewPanelDetails(
+    filterParam: any[],
+    filterConditions: any,
+    AssignHR: AutoCompleteItem,
+    CandidateID: number,
+    levels: string[],
+    StatusID: number,
+  ): Promise<ApiResponse<InterviewPanelMember | null>>
 };

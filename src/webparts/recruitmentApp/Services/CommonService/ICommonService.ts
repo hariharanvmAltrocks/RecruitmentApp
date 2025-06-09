@@ -16,6 +16,9 @@ export type ICommonService = {
   getUserGuidByEmail(
     email: string
   ): Promise<ApiResponse<AutoCompleteItem | null>>;
+  getUserIDByEmail(
+    userId: number
+  ): Promise<ApiResponse<any | null>>;
   GetMasterData(ListName: string): Promise<ApiResponse<any[]>>;
   GetGradeLevel(PatersonGrade: string): Promise<ApiResponse<any | null>>;
   GetAttachmentLink(

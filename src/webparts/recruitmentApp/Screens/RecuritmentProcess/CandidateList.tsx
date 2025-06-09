@@ -148,7 +148,7 @@ const CandidateList = (props: any) => {
       setalertProps(ErrorMsg);
       setIsLoading(false);
     } else {
-      if (props.CurrentRoleID === RoleID.HOD && tab === "tab1") {
+      if (props.CurrentRoleID.includes(RoleID.HOD) && tab === "tab1") {
         props.navigation("/RecurimentProcess/HodViewScorecard", {
           state: {
             ID: rowData?.ID,

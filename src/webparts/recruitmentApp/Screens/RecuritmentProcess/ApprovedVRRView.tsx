@@ -757,7 +757,12 @@ const ApprovedVRRView: React.FC = (props: any) => {
     },
   ];
   const back_fn = () => {
-    props.navigation("/RecurimentProcess");
+    props.navigation("/RecurimentProcess", {
+      state: {
+        TabName: props.stateValue?.TabName,
+        tab: props.stateValue?.tab,
+      },
+    });
   };
 
   const handleBreadcrumbChange = (newItem: string) => {

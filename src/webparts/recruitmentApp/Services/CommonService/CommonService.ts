@@ -6,6 +6,7 @@ import GraphService from "../GraphService/GraphService";
 import { AutoCompleteItem } from "../../Models/Screens";
 import { ListNames } from "../../utilities/Config";
 
+
 export default class CommonService implements ICommonService {
   uploadAttachmentToLibrary = async (
     PositionCode: string,
@@ -210,8 +211,30 @@ export default class CommonService implements ICommonService {
       const user = await sp.web.siteUsers.getByEmail(email)();
       const UserID = {
         key: user.Id,
-        text: user.Title,
+        text: user.Title    //`${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || "" }`,
       };
+      return {
+        data: UserID,
+        status: 200,
+        message: "ADGroups retrieved successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching user ID by email: ", error);
+      // Return null in case of an error
+      return {
+        data: null,
+        status: 500,
+        message: "Error getting ADGroups",
+      };
+    }
+  };
+
+  getUserIDByEmail = async (
+    userId: number
+  ): Promise<ApiResponse<any | null>> => {
+    try {
+      const user = await sp.web.siteUsers.getById(userId)();
+      const UserID = user.Email
       return {
         data: UserID,
         status: 200,
@@ -289,9 +312,23 @@ export default class CommonService implements ICommonService {
 async function getUserGuidByEmail(email: string) {
   try {
     const user = await sp.web.siteUsers.getByEmail(email)();
+    const listItems: any[] = await SPServices.SPReadItems({
+      Listname: ListNames.HRMSSageList,
+      Select: "*",
+      Filter: [{
+        FilterKey: "EmailId",
+        FilterValue: "eq",
+        Operator: email
+      }]
+    });
+    let UserName = listItems.find((emp: any) => {
+      return emp.EmailId?.toLowerCase() === email?.toLowerCase();
+    });
+    console.log(UserName, "UserName");
+
     return {
       key: user.Id,
-      text: user.Title,
+      text: `${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || ""}`,
     };
   } catch (error) {
     console.error("Error fetching user ID by email: ", error);

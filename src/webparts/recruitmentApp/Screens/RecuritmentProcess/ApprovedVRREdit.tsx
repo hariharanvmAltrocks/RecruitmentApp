@@ -61,6 +61,7 @@ import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
 //import * as moment from "moment";
 import { UploadAdvertisement } from "../ScreenComponent/UploadAdvertisement";
 import CustomViewAttachment from "../../components/CustomViewAttachment";
+import { GetStatusIdRoles } from "../../components/TabMerge";
 // import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 
 export type roleSpeKnowledgeValidationErrors = {
@@ -251,6 +252,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     RoleProfile: [],
     Grading: [],
   });
+
+  const [currentRoleID, setCurrentRoleID] = useState<number>(0);
+
+  useEffect(() => {
+    let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
+    setCurrentRoleID(userRole ?? 0);
+  }, [props.stateValue?.StatusId]);
 
   const handleAddRow = (stateValue: string, index: number) => {
     switch (stateValue) {
@@ -586,9 +594,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         Operator: "eq",
         FilterValue: Choices.No,
       });
-
+      // filterConditions.push({
+      //   FilterKey: "Id",
+      //   Operator: "eq",
+      //   FilterValue: props.stateValue?.ID,
+      // });
+      let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
       const response =
-        props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+        userRole === RoleID.RecruitmentHRLead &&
         props.stateValue?.StatusId === StatusId.Completed
           ? props.stateValue?.type === DataFrom.NewPosition
             ? await getVRRDetails.fetchNewPositionRequest(
@@ -613,7 +626,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
         // Ensure `op` is always a single object
         const op: DataSyncToRecruitmentResponse =
-          props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+          userRole === RoleID.RecruitmentHRLead &&
           props.stateValue?.StatusId === StatusId.Completed
             ? NewpositionData.length > 0
               ? NewpositionData[0]
@@ -745,7 +758,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       Grading: false,
     };
 
-    switch (props.CurrentRoleID) {
+    switch (currentRoleID) {
       case RoleID.RecruitmentHRLead: {
         if (props.stateValue?.tab === "tab1") {
           errors.AssignRecruitmentHR = !IsValid(AssignRecruitmentHR.text);
@@ -831,7 +844,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         break;
       }
 
-      case RoleID.HOD: {
+      case RoleID.HOD:
+      case RoleID.LineManager: {
         if (props.stateValue?.tab === "tab1") {
           errors.Comments = !IsValid(Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
@@ -923,7 +937,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
         if (formState.Comments) {
           const commentsData: InsertComments = {
-            RoleId: props.CurrentRoleID,
+            RoleId: currentRoleID,
             RecruitmentIDId: props.stateValue?.ID,
             Comments: formState.Comments,
           };
@@ -931,7 +945,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           await getVRRDetails.InsertCommentsList(commentsData);
         }
 
-        switch (props.CurrentRoleID) {
+        switch (currentRoleID) {
           case RoleID.RecruitmentHRLead: {
             if (
               props.stateValue?.StatusId ===
@@ -978,7 +992,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   visible: true,
                   ButtonAction: async (userClickedOK: boolean) => {
                     if (userClickedOK) {
-                      props.navigation("/RecurimentProcess");
+                      props.navigation("/RecurimentProcess", {
+                        state: {
+                          TabName: props.stateValue?.TabName,
+                          tab: props.stateValue?.tab,
+                        },
+                      });
                       setAlertPopupOpen(false);
                     }
                   },
@@ -993,7 +1012,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   visible: true,
                   ButtonAction: async (userClickedOK: boolean) => {
                     if (userClickedOK) {
-                      props.navigation("/RecurimentProcess");
+                      props.navigation("/RecurimentProcess", {
+                        state: {
+                          TabName: props.stateValue?.TabName,
+                          tab: props.stateValue?.tab,
+                        },
+                      });
                       setAlertPopupOpen(false);
                     }
                   },
@@ -1134,7 +1158,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   visible: true,
                   ButtonAction: async (userClickedOK: boolean) => {
                     if (userClickedOK) {
-                      props.navigation("/RecurimentProcess");
+                      props.navigation("/RecurimentProcess", {
+                        state: {
+                          TabName: props.stateValue?.TabName,
+                          tab: props.stateValue?.tab,
+                        },
+                      });
                       setAlertPopupOpen(false);
                     }
                   },
@@ -1163,7 +1192,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             }
             break;
           }
-          case RoleID.HOD: {
+          case RoleID.HOD:
+          case RoleID.LineManager: {
             await SPServices.SPUpdateItem({
               Listname: ListNames.HRMSRecruitmentDptDetails,
               RequestJSON: obj,
@@ -1172,12 +1202,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             resetForm();
 
             let approveAlert = {
-              Message: RecuritmentHRMsg.ApprovedMsg,
+              Message:
+                currentRoleID === RoleID.HOD
+                  ? RecuritmentHRMsg.ApprovedMsg
+                  : RecuritmentHRMsg.AdvertisementReveiwMsg,
               Type: HRMSAlertOptions.Success,
               visible: true,
               ButtonAction: async (userClickedOK: boolean) => {
                 if (userClickedOK) {
-                  props.navigation("/RecurimentProcess");
+                  props.navigation("/RecurimentProcess", {
+                    state: {
+                      TabName: props.stateValue?.TabName,
+                      tab: props.stateValue?.tab,
+                    },
+                  });
                   setAlertPopupOpen(false);
                 }
               },
@@ -1412,7 +1450,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   const tabs = [
     {
       label:
-        props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+        currentRoleID === RoleID.RecruitmentHRLead &&
         props.stateValue?.StatusId ===
           StatusId.PendingwithHRLeadtouploadONEMsigneddoc
           ? TabName.AdvertisementDetails
@@ -1437,7 +1475,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     {" "}
                   </LabelHeaderComponents>
                 </div>
-                {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                {currentRoleID === RoleID.RecruitmentHRLead &&
                 props.stateValue?.StatusId === StatusId.Completed ? (
                   <></>
                 ) : (
@@ -1573,29 +1611,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
               </div>
               <div className="ms-Grid-row">
-                {/*                                    
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Position Name (English)"
-                                            value={formState.JobNameInEnglish}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, JobNameInEnglish: value }))
-                                            }
-                                        />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Position Name (French)"
-                                            value={formState.JobNameInFrench}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, JobNameInFrench: value }))
-                                            }
-                                        />
-                                    </div> */}
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
                     label="Paterson Grade"
@@ -1712,7 +1727,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
               </div>
 
-              {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+              {currentRoleID === RoleID.RecruitmentHRLead &&
                 props.stateValue?.StatusId ===
                   StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
                   <>
@@ -1801,7 +1816,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
               {formState.RoleProfileDocument.length === 0 &&
               formState.GradingDocument.length === 0 &&
-              props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+              currentRoleID === RoleID.RecruitmentHRLead &&
               props.stateValue?.StatusId === StatusId.Completed ? (
                 <></>
               ) : (
@@ -1826,7 +1841,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         </div>
                       ) : (
                         <>
-                          {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                          {currentRoleID === RoleID.RecruitmentHRLead &&
                           props.stateValue?.StatusId === StatusId.Completed ? (
                             <></>
                           ) : (
@@ -1897,7 +1912,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         </div>
                       ) : (
                         <>
-                          {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                          {currentRoleID === RoleID.RecruitmentHRLead &&
                           props.stateValue?.StatusId === StatusId.Completed ? (
                             <></>
                           ) : (
@@ -1950,7 +1965,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       )}
                     </div>
 
-                    {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                    {currentRoleID === RoleID.RecruitmentHRLead &&
                     props.stateValue?.StatusId === StatusId.Completed ? (
                       <></>
                     ) : (
@@ -2046,7 +2061,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               )} */}
 
               <div className="ms-Grid-row">
-                {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                {currentRoleID === RoleID.RecruitmentHRLead &&
                 props.stateValue?.StatusId === StatusId.Completed ? (
                   <></>
                 ) : (
@@ -2174,12 +2189,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 )}
               </div>
 
-              {((props.CurrentRoleID === RoleID.HOD &&
+              {((currentRoleID === RoleID.HOD &&
                 props.stateValue?.StatusId ===
                   StatusId.PendingwithHODtoreviewAdv) ||
+                (currentRoleID === RoleID.LineManager &&
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithLineManagereviewAdv) ||
                 props.stateValue?.StatusId ===
                   StatusId.PendingwithHRLeadtouploadONEMsigneddoc ||
-                (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                (currentRoleID === RoleID.RecruitmentHR &&
                   props.stateValue?.StatusId ===
                     StatusId.PendingwithRecruitmentHRtouploadAdv &&
                   advDetails.JobcodeChecked === true)) && (
@@ -2267,7 +2285,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         </Card>
       ),
     },
-    ...(props.CurrentRoleID === RoleID.RecruitmentHR &&
+    ...(currentRoleID === RoleID.RecruitmentHR &&
     props.stateValue?.StatusId ===
       StatusId.PendingwithRecruitmentHRtouploadAdv &&
     advDetails.JobcodeChecked === false
@@ -2467,7 +2485,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       });
     }
     if (
-      props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+      currentRoleID === RoleID.RecruitmentHRLead &&
       props.stateValue?.StatusId ===
         StatusId.PendingwithHRLeadtouploadONEMsigneddoc
     ) {
@@ -2490,7 +2508,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       visible: true,
       ButtonAction: async (userClickedOK: boolean) => {
         if (userClickedOK) {
-          props.navigation("/RecurimentProcess");
+          props.navigation("/RecurimentProcess", {
+            state: {
+              TabName: props.stateValue?.TabName,
+              tab: props.stateValue?.tab,
+            },
+          });
           setAlertPopupOpen(false);
         } else {
           setAlertPopupOpen(false);
@@ -2521,20 +2544,25 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 handleCancel={handleCancel}
                 onBreadcrumbChange={handleBreadcrumbChange}
                 additionalButtons={
-                  (props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                  (currentRoleID === RoleID.RecruitmentHRLead &&
                     props.stateValue?.StatusId === StatusId.Completed) ||
-                  (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                  (currentRoleID === RoleID.RecruitmentHR &&
                     props.stateValue?.StatusId ===
                       StatusId.PendingwithRecruitmentHRtoAssignExternalAgency)
                     ? [
                         {
                           label: "Close",
                           onClick: async () => {
-                            props.navigation("/RecurimentProcess");
+                            props.navigation("/RecurimentProcess", {
+                              state: {
+                                TabName: props.stateValue?.TabName,
+                                tab: props.stateValue?.tab,
+                              },
+                            });
                           },
                         },
                       ]
-                    : props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                    : currentRoleID === RoleID.RecruitmentHRLead &&
                       props.stateValue?.StatusId ===
                         StatusId.PendingwithHRLeadtouploadONEMsigneddoc
                     ? [
@@ -2545,7 +2573,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           },
                         },
                       ]
-                    : props.CurrentRoleID === RoleID.RecruitmentHR &&
+                    : currentRoleID === RoleID.RecruitmentHR &&
                       props.stateValue?.StatusId ===
                         StatusId.PendingwithRecruitmentHRtouploadAdv
                     ? [
@@ -2571,9 +2599,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             ]
                           : []),
                       ]
-                    : props.CurrentRoleID === RoleID.HOD &&
-                      props.stateValue?.StatusId ===
-                        StatusId.PendingwithHODtoreviewAdv
+                    : (currentRoleID === RoleID.HOD &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithHODtoreviewAdv) ||
+                      (currentRoleID === RoleID.LineManager &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithLineManagereviewAdv)
                     ? isViewed
                       ? [
                           {
@@ -2589,7 +2620,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         {
                           label: "Close",
                           onClick: async () => {
-                            props.navigation("/RecurimentProcess");
+                            props.navigation("/RecurimentProcess", {
+                              state: {
+                                TabName: props.stateValue?.TabName,
+                                tab: props.stateValue?.tab,
+                              },
+                            });
                           },
                         },
                       ]

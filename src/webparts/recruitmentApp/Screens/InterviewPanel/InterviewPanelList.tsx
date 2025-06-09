@@ -8,6 +8,7 @@ import {
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import {
+  ButtonAction,
   // GridStatusBackgroundcolor,
   HRMSAlertOptions,
   InterviewLevels,
@@ -21,8 +22,11 @@ import { alertPropsData } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import * as moment from "moment";
 import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
+import { StatusDetails, TabDetails } from "../../Models/Master";
 
 const InterviewPanelList = (props: any) => {
+  console.log(props, "InterviewPanelList");
+
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
 
@@ -34,6 +38,11 @@ const InterviewPanelList = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
+  const [TabNameData, setTabNameData] = React.useState<TabDetails[]>(
+    props.TabDetails
+  );
+  const [activeTab, setActiveTab] = React.useState<string>("tab1");
+  const storedStringRef = React.useRef("");
 
   function handleRedirectView(
     rowData: any,
@@ -43,13 +52,17 @@ const InterviewPanelList = (props: any) => {
   ) {
     let navigationPath =
       rowData?.StatusId === StatusId.InterviewScheduled
-        ? props.CurrentRoleID === RoleID.HOD
+        ? props.CurrentRoleID.includes(RoleID.HOD) ||
+          props.CurrentRoleID.includes(RoleID.LineManager)
           ? "/RecurimentProcess/InterviewPanelList/InterviewPanelEdit"
+          : props.CurrentRoleID.includes(RoleID.InterviewPanel)
+          ? "InterviewPanelList/InterviewPanelEdit"
           : "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit"
         : rowData.StatusId === StatusId.InterviewScheduledforLevel2
-        ? props.CurrentRoleID === RoleID.HOD
+        ? props.CurrentRoleID.includes(RoleID.HOD) ||
+          props.CurrentRoleID.includes(RoleID.LineManager)
           ? "/RecurimentProcess/HodViewScorecard"
-          : props.CurrentRoleID === RoleID.InterviewPanel
+          : props.CurrentRoleID.includes(RoleID.InterviewPanel)
           ? "/InterviewPanelList/HodViewScorecard"
           : "/ReviewProfileList/HodViewScorecard"
         : "";
@@ -64,11 +77,11 @@ const InterviewPanelList = (props: any) => {
     //   .toISOString()
     //   .split("T")[0];
     if (todayDateStr >= interviewDateStr) {
-      if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+      if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
         props.navigation(navigationPath, {
           state: {
             ID: rowData?.ID,
-            tab,
+            tab: props?.TabValue,
             StatusId: rowData?.StatusId,
             Status: rowData?.Status,
             TabName: TabName,
@@ -77,11 +90,11 @@ const InterviewPanelList = (props: any) => {
             InterviewLevel: rowData?.InterviewLevel,
           },
         });
-      } else if (props.CurrentRoleID === RoleID.HOD) {
+      } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
         props.navigation(navigationPath, {
           state: {
             ID: rowData?.ID,
-            tab,
+            tab: props?.TabValue,
             StatusId: rowData?.StatusId,
             Status: rowData?.Status,
             TabName: TabName,
@@ -90,11 +103,11 @@ const InterviewPanelList = (props: any) => {
             InterviewLevel: rowData?.InterviewLevel,
           },
         });
-      } else if (props.CurrentRoleID === RoleID.LineManager) {
+      } else if (props.CurrentRoleID.includes(RoleID.LineManager)) {
         props.navigation(navigationPath, {
           state: {
             ID: rowData?.ID,
-            tab,
+            tab: props?.TabValue,
             StatusId: rowData?.StatusId,
             Status: rowData?.Status,
             TabName: TabName,
@@ -107,7 +120,7 @@ const InterviewPanelList = (props: any) => {
         props.navigation(navigationPath, {
           state: {
             ID: rowData?.ID,
-            tab,
+            tab: props?.TabValue,
             StatusId: rowData?.StatusId,
             Status: rowData?.Status,
             TabName: TabName,
@@ -164,7 +177,11 @@ const InterviewPanelList = (props: any) => {
     setIsLoading(false);
   }
 
-  const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
+  const columnConfig = (
+    tab: string,
+    ButtonActions: number,
+    TabName: string
+  ) => [
     {
       field: "SNO",
       header: "S.No",
@@ -263,9 +280,9 @@ const InterviewPanelList = (props: any) => {
                   InterviewLevel: rowData?.InterviewLevel,
                   RecruitmentID: rowData?.RecruitmentID,
                 },
-                "tab1",
-                "Evaluation",
-                "View"
+                tab,
+                TabName,
+                ButtonAction.View
               );
               return;
             } else if (
@@ -288,9 +305,9 @@ const InterviewPanelList = (props: any) => {
                   InterviewLevel: rowData?.InterviewLevel,
                   RecruitmentID: rowData?.RecruitmentID,
                 },
-                "tab1",
-                "Evaluation",
-                "View"
+                tab,
+                TabName,
+                ButtonAction.View
               );
               return;
             }
@@ -356,26 +373,29 @@ const InterviewPanelList = (props: any) => {
       let filterConditionsRecuritment = [];
       let RecuritmentConditions = "and";
 
-      let statusIdsToFilter: number[] = [];
+      // let statusIdsToFilter: number[] = [];
 
-      if (props.CurrentRoleID === RoleID.InterviewPanel) {
-        statusIdsToFilter = [StatusId.InterviewScheduledforLevel2];
-      } else if (
-        props.CurrentRoleID === RoleID.HOD ||
-        props.CurrentRoleID === RoleID.RecruitmentHR
-      ) {
-        statusIdsToFilter = [
-          StatusId.InterviewScheduled,
-          StatusId.InterviewScheduledforLevel2,
-        ];
-      } else {
-        statusIdsToFilter = [StatusId.InterviewScheduled];
-      }
+      // if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
+      //   statusIdsToFilter = [StatusId.InterviewScheduledforLevel2];
+      // } else if (
+      //   props.CurrentRoleID.includes(RoleID.HOD) ||
+      //   props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+      // ) {
+      //   statusIdsToFilter = [
+      //     StatusId.InterviewScheduled,
+      //     StatusId.InterviewScheduledforLevel2,
+      //   ];
+      // } else {
+      //   statusIdsToFilter = [StatusId.InterviewScheduled];
+      // }
 
       filterConditionsRecuritment.push({
         FilterKey: "StatusId",
         Operator: "in",
-        FilterValue: statusIdsToFilter,
+        FilterValue: [
+          StatusId.InterviewScheduled,
+          StatusId.InterviewScheduledforLevel2,
+        ],
       });
       filterConditionsRecuritment.push({
         FilterKey: "ItemCreated",
@@ -490,54 +510,87 @@ const InterviewPanelList = (props: any) => {
   };
 
   React.useEffect(() => {
+    setTabNameData(props?.TabDetails[0] ?? []);
     void fetchData();
-  }, []);
+  }, [activeTab, TabNameData]);
 
   const onPageChange = (event: any) => {
     setRows(event.rows);
     // void fetchData();
   };
 
-  const tabs = [
-    {
-      label: TabName.Evaluation,
-      value: "tab1",
-      content: (
-        <Card
-          variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-        >
-          <CardContent>
-            <InterviewPanelDataTable
-              data={CandidateData}
-              columns={columnConfig("tab1", "View", TabName.Evaluation)}
-              rows={rows}
-              onPageChange={onPageChange}
-              handleRefresh={() => handleRefresh("tab1")}
-            />
-          </CardContent>
-        </Card>
-      ),
-    },
-  ];
+  const renderTable = (
+    TabNames: string,
+    TabValue: string,
+    StatusData: StatusDetails[]
+  ) => {
+    if (TabValue === activeTab) {
+      storedStringRef.current = TabNames;
+    }
+    let Action: any;
+    let StatusID: any;
+    if (StatusData) {
+      Action = StatusData.filter((item) => item.Action);
+      StatusID = StatusData.filter((item) => item.StatusId);
+      console.log(StatusID, "StatusID");
+    }
+
+    switch (TabNames) {
+      case TabName.Evaluation:
+        return (
+          <InterviewPanelDataTable
+            data={CandidateData}
+            columns={columnConfig(
+              TabValue,
+              Number(Action[0]?.Action?.[0]),
+              TabNames
+            )}
+            rows={rows}
+            onPageChange={onPageChange}
+            handleRefresh={() => handleRefresh(TabValue)}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  const tabs = TabNameData.map((tab: TabDetails) => ({
+    label: tab.TabName,
+    value: tab.Value,
+    content: (
+      <Card
+        variant="outlined"
+        sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+      >
+        <CardContent>
+          <div>{renderTable(tab.TabName, tab.Value, tab.StatusDetails)}</div>
+        </CardContent>
+      </Card>
+    ),
+  }));
 
   return (
     <>
       <CustomLoader isLoading={isLoading}>
         <div className="sub-menu-card ">
-          {props.CurrentRoleID === RoleID.InterviewPanel ? (
+          {props.CurrentRoleID.includes(RoleID.InterviewPanel) ? (
             <TabsComponent
               tabs={tabs}
-              initialTab="tab1"
-              //  tabClassName={"Tab"}
+              initialTab={activeTab}
+              onTabChange={(newTab) => setActiveTab(newTab)}
             />
           ) : (
             <InterviewPanelDataTable
               data={CandidateData}
-              columns={columnConfig("tab1", "View", TabName.Evaluation)}
+              columns={columnConfig(
+                props.TabValue,
+                props?.Action,
+                TabName.Evaluation
+              )}
               rows={rows}
               onPageChange={onPageChange}
-              handleRefresh={() => handleRefresh("tab1")}
+              handleRefresh={() => handleRefresh(props.TabValue)}
             />
           )}
         </div>

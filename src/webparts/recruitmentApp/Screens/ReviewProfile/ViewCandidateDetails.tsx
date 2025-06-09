@@ -18,6 +18,7 @@ import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
 import {
+  ButtonAction,
   CandidateStatus,
   CheckboxContent,
   Choices,
@@ -50,8 +51,8 @@ import CustomJsonComments from "../../components/CustomJsonComments";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomTimePicker from "../../components/CustomTimePicker";
-import { useMediaQuery } from "@mui/material";
 import { CandidateDetails } from "../../Services/CareerPortalApi/IGetPortalJobs";
+import { GetWorkflowStatusByID } from "../../components/TabMerge";
 
 type InterviewedLevelValue = {
   Levels: string;
@@ -93,6 +94,8 @@ type Level2Data = {
 };
 
 const ViewCandidateDetails = (props: any) => {
+  console.log(props, "ViewCandidateDetails");
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [CandidateProfile, setCandidateProfile] = useState<CandidateProfile>({
     CandidateID: "",
@@ -183,6 +186,8 @@ const ViewCandidateDetails = (props: any) => {
   });
   const [rescheduleValidation, setRescheduleValidation] =
     useState<boolean>(false);
+
+  const storedNoOfInterviewpanel = React.useRef<boolean>(false);
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
@@ -333,7 +338,9 @@ const ViewCandidateDetails = (props: any) => {
               RoleProfile: response?.RoleProfile,
               Advertisement: response?.Advertisement,
               Status: response?.Status,
-              Agencies: response?.Agencies,
+              Agencies: response?.Agencies
+                ? response?.Agencies
+                : labelName.Candidate,
               Comments: response?.Comments,
               workflowStatusId: response?.workflowStatusId,
               hrComments: response?.hrComments,
@@ -359,7 +366,7 @@ const ViewCandidateDetails = (props: any) => {
             }));
           }
           if (
-            (props.stateValue?.ActionBtn === "View" &&
+            (props.stateValue?.ButtonAction === ButtonAction.View &&
               response?.workflowStatusId === workflowStatusApi.HRRejected) ||
             response?.workflowStatusId ===
               workflowStatusApi.LineManagerLevel1Rejected ||
@@ -412,7 +419,7 @@ const ViewCandidateDetails = (props: any) => {
     );
     const newTabNames = [
       { tabName: props.stateValue?.initialTab },
-      { tabName: "View" },
+      { tabName: props.stateValue?.PreActionBtn },
       { tabName: TabName.ViewCandidateList },
       { tabName: props.stateValue?.ButtonAction },
       { tabName: TabName.ViewCandidateDetails },
@@ -428,22 +435,22 @@ const ViewCandidateDetails = (props: any) => {
     );
   }, []);
 
-  const Get_InterviewPanelName = (Email: string, Id: number) => {
-    const employee = props.EmployeeList.find((emp: any) => {
-      return emp.Email?.toLowerCase() === Email?.toLowerCase();
-    });
+  // const Get_InterviewPanelName = (Email: string, Id: number) => {
+  //   const employee = props.EmployeeList.find((emp: any) => {
+  //     return emp.Email?.toLowerCase() === Email?.toLowerCase();
+  //   });
 
-    if (employee) {
-      return {
-        key: Id,
-        text: `${employee.FirstName || ""} ${employee.MiddleName || ""} ${
-          employee.LastName || ""
-        }`,
-      };
-    }
+  //   if (employee) {
+  //     return {
+  //       key: Id,
+  //       text: `${employee.FirstName || ""} ${employee.MiddleName || ""} ${
+  //         employee.LastName || ""
+  //       }`,
+  //     };
+  //   }
 
-    return null;
-  };
+  //   return null;
+  // };
 
   React.useEffect(() => {
     const getRecurtimentList = async () => {
@@ -471,66 +478,63 @@ const ViewCandidateDetails = (props: any) => {
           FilterValue: response.data[0]?.BusinessUnitCodeId,
         },
       ];
-      const AssignInterviewPanel = await getVRRDetails.GetDataInList(
-        ListNames.JDEDataMapping,
+      const AssignHRID = await CommonServices.getUserGuidByEmail(
+        response.data[0]?.AssignEMail
+      );
+      let AssignHR = {
+        key: Number(AssignHRID.data?.key),
+        text: response.data[0]?.AssignEMail,
+      };
+      let Levels: string[] =
+        Gradelevel.data[0]?.Level === InterviewLevels.Level1
+          ? [InterviewLevels.Level1]
+          : [InterviewLevels.Level1, InterviewLevels.Level2];
+      // let InterviewPanel =
+      //   props.stateValue?.StatusId ===
+      //   StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+      //     ? false
+      //     : true;
+      const AssignInterviewPanel = await getVRRDetails.GetInterviewPanelDetails(
         filterJDEMapping,
         Conditions,
-        "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
-        "BUC,LineManager,HOD,HR,EXCO"
-      );
-      // const interviewpanelOption = await CommonServices.GetADgruopsEmailIDs(
-      //   ADGroupID.HRMSInterviewPanel
-      // );
-      const LineManager = Get_InterviewPanelName(
-        AssignInterviewPanel.data[0]?.LineManager?.EMail,
-        AssignInterviewPanel.data[0]?.LineManagerId
-      );
-      const HOD = Get_InterviewPanelName(
-        AssignInterviewPanel.data[0]?.HOD?.EMail,
-        AssignInterviewPanel.data[0]?.HODId
-      );
-      const AssignHR = Get_InterviewPanelName(
-        response.data[0]?.AssignEMail,
-        response.data[0]?.AssignedHRId
-      );
-      const EXCO = Get_InterviewPanelName(
-        AssignInterviewPanel.data[0]?.EXCO?.EMail,
-        AssignInterviewPanel.data[0]?.EXCOId
-      );
-
-      const validPanelKeys: AutoCompleteItem[] = [
-        LineManager,
-        HOD,
         AssignHR,
-        EXCO,
-      ].filter(Boolean) as AutoCompleteItem[];
-
-      // const Level1Value = validPanelKeys.filter((item: any) =>
-      //   validPanelKeys.includes(item.key)
-      // );
-      const Level1Value = validPanelKeys.filter((item: any) =>
-        [
-          LineManager?.key, //AssignInterviewPanel.data[0]?.LineManagerId,
-          AssignHR?.key, //response.data[0]?.AssignedHRId,
-          HOD?.key, //AssignInterviewPanel.data[0]?.HODId,
-        ].includes(item.key)
+        props.stateValue?.ID,
+        Levels,
+        props.stateValue?.StatusId
       );
 
-      const Level2Value = validPanelKeys.filter((item: any) =>
-        [
-          EXCO?.key, //AssignInterviewPanel.data[0]?.LineManagerId,
-          AssignHR?.key, //response.data[0]?.AssignedHRId,
-          HOD?.key, //AssignInterviewPanel.data[0]?.HODId,
-        ].includes(item.key)
-      );
-
+      if (
+        props.stateValue?.StatusId ===
+        StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+      ) {
+        storedNoOfInterviewpanel.current =
+          AssignInterviewPanel.data &&
+          AssignInterviewPanel.data?.Level2Panel.length < 3
+            ? false
+            : true;
+      } else {
+        storedNoOfInterviewpanel.current =
+          AssignInterviewPanel.data &&
+          AssignInterviewPanel.data?.Level1Panel.length < 3
+            ? false
+            : true;
+      }
       setInterviewedLevel((prevState) => ({
         ...prevState,
         Grade: response.data[0]?.PatersonGrade,
         Levels: Gradelevel.data[0]?.Level,
-        AssignInterviewedLevel1Option: validPanelKeys,
-        AssignInterviewLevel1: Level1Value,
-        AssignInterviewedLevel2: Level2Value,
+        AssignInterviewedLevel1Option:
+          AssignInterviewPanel.data && AssignInterviewPanel.data?.InterviewPanel
+            ? AssignInterviewPanel.data?.InterviewPanel
+            : [],
+        AssignInterviewLevel1:
+          AssignInterviewPanel.data && AssignInterviewPanel.data?.Level1Panel
+            ? AssignInterviewPanel.data?.Level1Panel
+            : [],
+        AssignInterviewedLevel2:
+          AssignInterviewPanel.data && AssignInterviewPanel.data?.Level2Panel
+            ? AssignInterviewPanel.data?.Level2Panel
+            : [],
       }));
     };
     if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
@@ -679,7 +683,6 @@ const ViewCandidateDetails = (props: any) => {
       ReviewFeedback: false,
     }));
   };
-  const isMobile = useMediaQuery("(max-width:600px)");
 
   const tabs = [
     {
@@ -687,56 +690,6 @@ const ViewCandidateDetails = (props: any) => {
       value: "tab1",
       content: (
         <>
-          {props.stateValue?.initialTab === TabName.AssignInterviewPanel ? (
-            <></>
-          ) : (
-            <>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "end",
-                  marginTop: "-4%",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    // width: isMobile ? "90%" : "47%",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: isMobile ? "flex-start" : "center",
-                    backgroundColor: "white",
-                    borderRadius: "20px",
-                    padding: isMobile ? "10px" : "5px 10px",
-                    boxShadow: "0px 5px 10px 0px #0F4B8426",
-                    margin: isMobile ? "10px auto" : "0",
-                  }}
-                >
-                  <div>
-                    <p
-                      style={{
-                        margin: 0,
-                        color: "#EF3340",
-                        fontWeight: "400",
-                        fontSize: isMobile ? "12px" : "14px",
-                      }}
-                    >
-                      <span style={{ fontWeight: "bold" }}>
-                        <LabelHeaderComponents
-                          value={
-                            CandidateProfile.Agencies === undefined
-                              ? `Profile from Candidate `
-                              : `Profile from ${CandidateProfile.Agencies} Agencies`
-                          }
-                        />
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
           <Card
             variant="outlined"
             sx={{
@@ -831,7 +784,7 @@ const ViewCandidateDetails = (props: any) => {
                       mandatory={false}
                     />
                   </div>
-                  {!CandidateProfile?.Agencies && (
+                  {CandidateProfile?.Agencies === labelName.Candidate && (
                     <>
                       {CandidateProfile?.ConflictsOfInterest && (
                         <div className="ms-Grid-col ms-lg4">
@@ -982,7 +935,7 @@ const ViewCandidateDetails = (props: any) => {
                             InterviewedLevel.AssignInterviewedLevel1Option
                           }
                           onChange={(value) => handleMulitiSelect(value)}
-                          disabled={true}
+                          disabled={storedNoOfInterviewpanel.current} // !(InterviewedLevel.AssignInterviewLevel1.length < 4)
                           // mandatory={true}
                           error={validationErrors.AssignInterviewLevel1}
                         />
@@ -1016,7 +969,7 @@ const ViewCandidateDetails = (props: any) => {
                                 options={
                                   InterviewedLevel.AssignInterviewedLevel1Option
                                 }
-                                disabled={true}
+                                disabled={storedNoOfInterviewpanel.current}
                                 // mandatory={true}
                               />
                             </div>
@@ -1068,8 +1021,8 @@ const ViewCandidateDetails = (props: any) => {
                   </div> */}
                 </div>
                 {props.stateValue?.initialTab === TabName.ReviewProfile &&
-                  props.stateValue?.ActionBtn === "Edit" &&
-                  props.CurrentRoleID === RoleID.LineManager && (
+                  props.stateValue?.ButtonAction === ButtonAction.Edit &&
+                  props.CurrentRoleID.includes(RoleID.LineManager) && (
                     <>
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg5">
@@ -1086,7 +1039,8 @@ const ViewCandidateDetails = (props: any) => {
                             mandatory={true}
                             onChange={(item) => handleRadioChange(item)}
                             disabled={
-                              props.stateValue?.ActionBtn === "View"
+                              props.stateValue?.ButtonAction ===
+                              ButtonAction.View
                                 ? true
                                 : false
                             }
@@ -1097,8 +1051,8 @@ const ViewCandidateDetails = (props: any) => {
                   )}
 
                 {props.stateValue?.initialTab === TabName.ReviewProfile &&
-                  props.CurrentRoleID === RoleID.RecruitmentHR &&
-                  props.stateValue?.ActionBtn != "View" && (
+                  props.CurrentRoleID.includes(RoleID.RecruitmentHR) &&
+                  props.stateValue?.ButtonAction != ButtonAction.View && (
                     <>
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
@@ -1106,7 +1060,10 @@ const ViewCandidateDetails = (props: any) => {
                             label="Review Profile Feedback - HR"
                             options={InterviewedLevel.CandidateScoreOption}
                             value={InterviewedLevel.CandidateScoreValue}
-                            disabled={props.stateValue?.ActionBtn === "View"}
+                            disabled={
+                              props.stateValue?.ButtonAction ===
+                              ButtonAction.View
+                            }
                             mandatory={true}
                             onChange={(item) => handleAutoComplete(item)}
                             error={validationErrors.ReviewFeedback}
@@ -1117,8 +1074,8 @@ const ViewCandidateDetails = (props: any) => {
                   )}
 
                 {props.stateValue?.initialTab === TabName.ReviewProfile &&
-                  props.CurrentRoleID === RoleID.RecruitmentHR &&
-                  props.stateValue?.ActionBtn === "View" && (
+                  props.CurrentRoleID.includes(RoleID.RecruitmentHR) &&
+                  props.stateValue?.ButtonAction === ButtonAction.View && (
                     <>
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
@@ -1135,7 +1092,7 @@ const ViewCandidateDetails = (props: any) => {
                   )}
 
                 {props.stateValue?.initialTab === TabName.ReviewProfile &&
-                  props.CurrentRoleID === RoleID.LineManager && (
+                  props.CurrentRoleID.includes(RoleID.LineManager) && (
                     <>
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
@@ -1151,7 +1108,7 @@ const ViewCandidateDetails = (props: any) => {
                     </>
                   )}
 
-                {props.CurrentRoleID === RoleID.LineManager && (
+                {props.CurrentRoleID.includes(RoleID.LineManager) && (
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
                       <CustomLabel value={"View Justifications"} />
@@ -1182,7 +1139,7 @@ const ViewCandidateDetails = (props: any) => {
                   </div>
                 )}
 
-                {props.stateValue?.ActionBtn === "View" ? (
+                {props.stateValue?.ButtonAction === ButtonAction.View ? (
                   <></>
                 ) : (
                   <>
@@ -1282,55 +1239,57 @@ const ViewCandidateDetails = (props: any) => {
       InterviewTimeLevel2: false,
       InterviewedDateLevel2: false,
     };
-    switch (props.CurrentRoleID) {
-      case RoleID.RecruitmentHR:
-        if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
-          errors.Comments = !IsValid(actionValue.Comments);
-          errors.Checkboxalidation = !IsValid(Checkbox);
-          errors.InterviewedDate = !IsValid(InterviewedLevel.InterviewedDate);
-          errors.AssignInterviewLevel1 = !IsValid(
-            InterviewedLevel.AssignInterviewLevel1?.[0]?.text ?? ""
+
+    if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+      if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
+        errors.Comments = !IsValid(actionValue.Comments);
+        errors.Checkboxalidation = !IsValid(Checkbox);
+        errors.InterviewedDate = !IsValid(InterviewedLevel.InterviewedDate);
+        errors.AssignInterviewLevel1 = !IsValid(
+          InterviewedLevel.AssignInterviewLevel1?.[2]?.text ?? ""
+        );
+        errors.InterviewTime = !IsValid(InterviewedLevel.InterviewTime);
+        errors.InterviewMeetingInviteLink = !IsValid(
+          InterviewedLevel.InterviewMeetingInviteLink
+        );
+        if (
+          props.stateValue?.StatusId ===
+          StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+        ) {
+          errors.InterviewTimeLevel2 = !IsValid(level2Data.InterviewTime);
+          errors.InterviewMeetingInviteLinkLevel2 = !IsValid(
+            level2Data.InterviewMeetingInviteLink
           );
-          errors.InterviewTime = !IsValid(InterviewedLevel.InterviewTime);
-          errors.InterviewMeetingInviteLink = !IsValid(
-            InterviewedLevel.InterviewMeetingInviteLink
-          );
-          if (
-            props.stateValue?.StatusId ===
-            StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
-          ) {
-            errors.InterviewTimeLevel2 = !IsValid(level2Data.InterviewTime);
-            errors.InterviewMeetingInviteLinkLevel2 = !IsValid(
-              level2Data.InterviewMeetingInviteLink
-            );
-            errors.InterviewedDateLevel2 = !IsValid(level2Data.InterviewedDate);
-          }
-        } else {
-          errors.Comments = !IsValid(actionValue.Comments);
-          errors.Checkboxalidation = !IsValid(Checkbox);
-          errors.ReviewFeedback = !IsValid(
-            InterviewedLevel?.CandidateScoreValue?.text
-          );
+          errors.InterviewedDateLevel2 = !IsValid(level2Data.InterviewedDate);
         }
-        break;
-      case RoleID.LineManager:
-        {
-          errors.Comments = !IsValid(actionValue.Comments);
-          errors.Checkboxalidation = !IsValid(Checkbox);
-          errors.CandidateStatus = !IsValid(actionValue.CandidateStatus);
-        }
-        break;
+      } else {
+        errors.Comments = !IsValid(actionValue.Comments);
+        errors.Checkboxalidation = !IsValid(Checkbox);
+        errors.ReviewFeedback = !IsValid(
+          InterviewedLevel?.CandidateScoreValue?.text
+        );
+      }
+    } else if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+      errors.Comments = !IsValid(actionValue.Comments);
+      errors.Checkboxalidation = !IsValid(Checkbox);
+      errors.CandidateStatus = !IsValid(actionValue.CandidateStatus);
     }
+
     if (props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2) {
-      const RescheduleValue =
-        !!level2Data?.InterviewedDate &&
-        level2Data.InterviewedDate <= todaydate;
+      const interviewDate = level2Data?.InterviewedDate
+        ? new Date(level2Data.InterviewedDate)
+        : null;
+
+      const RescheduleValue = !!interviewDate && interviewDate <= todaydate;
       setRescheduleValidation(RescheduleValue);
     }
-    if (props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2) {
-      const RescheduleValue =
-        !!InterviewedLevel?.InterviewedDate &&
-        InterviewedLevel.InterviewedDate <= todaydate;
+
+    if (props.stateValue?.StatusId === StatusId.InterviewScheduled) {
+      const interviewDate = InterviewedLevel?.InterviewedDate
+        ? new Date(InterviewedLevel.InterviewedDate)
+        : null;
+
+      const RescheduleValue = !!interviewDate && interviewDate <= todaydate;
       setRescheduleValidation(RescheduleValue);
     }
 
@@ -1343,14 +1302,25 @@ const ViewCandidateDetails = (props: any) => {
   };
 
   function back_fn() {
-    props.navigation("/ReviewProfileList/ReviewCandidateList", {
-      state: {
-        ID: props.stateValue?.RecruitmentID,
-        TabName: props.stateValue?.initialTab,
-        ButtonAction: "View",
-        JobCode: CandidateProfile?.JobCode,
-      },
-    });
+    if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+      props.navigation("/ReviewProfileList/ReviewCandidateList", {
+        state: {
+          ID: props.stateValue?.RecruitmentID,
+          TabNames: props.stateValue?.initialTab,
+          ButtonAction: ButtonAction.View,
+          JobCode: CandidateProfile?.JobCode,
+        },
+      });
+    } else {
+      props.navigation("/RecurimentProcess/ReviewCandidateList", {
+        state: {
+          ID: props.stateValue?.RecruitmentID,
+          TabNames: props.stateValue?.initialTab,
+          ButtonAction: ButtonAction.View,
+          JobCode: CandidateProfile?.JobCode,
+        },
+      });
+    }
   }
 
   const UploadCandidateDetails = async () => {
@@ -1524,14 +1494,27 @@ const ViewCandidateDetails = (props: any) => {
             visible: true,
             ButtonAction: async (userClickedOK: boolean) => {
               if (userClickedOK) {
-                props.navigation("/ReviewProfileList/ReviewCandidateList", {
-                  state: {
-                    ID: props.stateValue?.RecruitmentID,
-                    TabName: props.stateValue?.initialTab,
-                    ButtonAction: "View",
-                    JobCode: CandidateProfile?.JobCode,
-                  },
-                });
+                if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+                  props.navigation("/ReviewProfileList/ReviewCandidateList", {
+                    state: {
+                      ID: props.stateValue?.RecruitmentID,
+                      TabNames: props.stateValue?.initialTab,
+                      ButtonAction: ButtonAction.View,
+                      JobCode: CandidateProfile?.JobCode,
+                      JobCodeID: props.stateValue?.JobCodeID,
+                    },
+                  });
+                } else {
+                  props.navigation("/RecurimentProcess/ReviewCandidateList", {
+                    state: {
+                      ID: props.stateValue?.RecruitmentID,
+                      TabNames: props.stateValue?.initialTab,
+                      ButtonAction: ButtonAction.View,
+                      JobCode: CandidateProfile?.JobCode,
+                      JobCodeID: props.stateValue?.JobCodeID,
+                    },
+                  });
+                }
                 setAlertPopupOpen(false);
               }
             },
@@ -1540,13 +1523,14 @@ const ViewCandidateDetails = (props: any) => {
           setalertProps(SuccessAlert);
         }
       } else {
+        let CurrentUserRole = GetWorkflowStatusByID(props.stateValue?.StatusId);
         const createFilter = (workflowStatus: string): WorkflowJson => ({
           workflowStatus: workflowStatus,
           jobRequestId: props.stateValue?.ID,
           comments: actionValue.Comments,
-          actionBy: props.CurrentUserRole,
+          actionBy: CurrentUserRole,
           hrComments:
-            props.CurrentRoleID === RoleID.RecruitmentHR &&
+            props.CurrentRoleID.includes(RoleID.RecruitmentHR) &&
             props.stateValue?.initialTab === TabName.ReviewProfile
               ? InterviewedLevel.CandidateScoreValue.text ?? ""
               : CandidateProfile?.hrComments,
@@ -1559,7 +1543,7 @@ const ViewCandidateDetails = (props: any) => {
           hrComments: "",
         };
         let PopupMessage: string = "";
-        if (props.CurrentRoleID === RoleID.LineManager) {
+        if (props.CurrentRoleID.includes(RoleID.LineManager)) {
           switch (actionValue.CandidateStatus) {
             case CandidateStatus.Yes:
               if (
@@ -1642,14 +1626,26 @@ const ViewCandidateDetails = (props: any) => {
             visible: true,
             ButtonAction: async (userClickedOK: boolean) => {
               if (userClickedOK) {
-                props.navigation("/ReviewProfileList/ReviewCandidateList", {
-                  state: {
-                    ID: props.stateValue?.RecruitmentID,
-                    TabName: props.stateValue?.initialTab,
-                    ButtonAction: "View",
-                    JobCode: CandidateProfile?.JobCode,
-                  },
-                });
+                if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+                  props.navigation("/ReviewProfileList/ReviewCandidateList", {
+                    state: {
+                      ID: props.stateValue?.RecruitmentID,
+                      TabNames: props.stateValue?.initialTab,
+                      ButtonAction: ButtonAction.View,
+                      JobCode: CandidateProfile?.JobCode,
+                      JobCodeID: props.stateValue?.JobCodeID,
+                    },
+                  });
+                } else {
+                  props.navigation("/RecurimentProcess/ReviewCandidateList", {
+                    state: {
+                      ID: props.stateValue?.RecruitmentID,
+                      TabNames: props.stateValue?.initialTab,
+                      ButtonAction: ButtonAction.View,
+                      JobCode: CandidateProfile?.JobCode,
+                    },
+                  });
+                }
                 setAlertPopupOpen(false);
               }
             },
@@ -1663,14 +1659,27 @@ const ViewCandidateDetails = (props: any) => {
             visible: true,
             ButtonAction: async (userClickedOK: boolean) => {
               if (userClickedOK) {
-                props.navigation("/ReviewProfileList/ReviewCandidateList", {
-                  state: {
-                    ID: props.stateValue?.RecruitmentID,
-                    TabName: props.stateValue?.initialTab,
-                    ButtonAction: props.stateValue?.ButtonAction,
-                    JobCode: CandidateProfile?.JobCode,
-                  },
-                });
+                if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+                  props.navigation("/ReviewProfileList/ReviewCandidateList", {
+                    state: {
+                      ID: props.stateValue?.RecruitmentID,
+                      TabNames: props.stateValue?.initialTab,
+                      ButtonAction: ButtonAction.View,
+                      JobCode: CandidateProfile?.JobCode,
+                      JobCodeID: props.stateValue?.JobCodeID,
+                    },
+                  });
+                } else {
+                  props.navigation("/RecurimentProcess/ReviewCandidateList", {
+                    state: {
+                      ID: props.stateValue?.RecruitmentID,
+                      TabNames: props.stateValue?.initialTab,
+                      ButtonAction: ButtonAction.View,
+                      JobCode: CandidateProfile?.JobCode,
+                      JobCodeID: props.stateValue?.JobCodeID,
+                    },
+                  });
+                }
                 setAlertPopupOpen(false);
               }
             },
@@ -1695,14 +1704,30 @@ const ViewCandidateDetails = (props: any) => {
       visible: true,
       ButtonAction: async (userClickedOK: boolean) => {
         if (userClickedOK) {
-          props.navigation("/ReviewProfileList/ReviewCandidateList", {
-            state: {
-              ID: props.stateValue?.RecruitmentID,
-              TabName: props.stateValue?.initialTab,
-              ButtonAction: "View",
-              JobCode: CandidateProfile?.JobCode,
-            },
-          });
+          if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+            props.navigation("/ReviewProfileList/ReviewCandidateList", {
+              state: {
+                ID: props.stateValue?.RecruitmentID,
+                TabNames: props.stateValue?.initialTab,
+                ButtonAction: ButtonAction.View,
+                JobCode: CandidateProfile?.JobCode,
+                tab: props.stateValue?.tab,
+                JobCodeID: props.stateValue?.JobCodeID,
+              },
+            });
+          } else {
+            props.navigation("/RecurimentProcess/ReviewCandidateList", {
+              state: {
+                ID: props.stateValue?.RecruitmentID,
+                TabNames: props.stateValue?.initialTab,
+                ButtonAction: ButtonAction.View,
+                JobCode: CandidateProfile?.JobCode,
+                tab: props.stateValue?.tab,
+                JobCodeID: props.stateValue?.JobCodeID,
+              },
+            });
+          }
+
           setAlertPopupOpen(false);
         } else {
           setAlertPopupOpen(false);
@@ -1725,8 +1750,13 @@ const ViewCandidateDetails = (props: any) => {
             TabName={TabNameData}
             onBreadcrumbChange={handleBreadcrumbChange}
             handleCancel={handleCancel}
+            Agencies={
+              props.stateValue?.initialTab === TabName.ReviewProfile
+                ? CandidateProfile.Agencies
+                : ""
+            }
             additionalButtons={
-              props.stateValue?.ActionBtn === "View"
+              props.stateValue?.ButtonAction === ButtonAction.View
                 ? [
                     {
                       label: "Close",
