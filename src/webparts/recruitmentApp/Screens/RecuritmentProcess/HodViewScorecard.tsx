@@ -1795,7 +1795,7 @@ const HodViewScorecard = (props: any) => {
       const assignPositionPayload: AssignPositionID = {
         PositionIDId: selectedPosition.ID,
         CandidateIDId: candidateID,
-        RecruitmentIDId: props.stateValue.ID,
+        RecruitmentIDId: props.stateValue.RecruitmentID,
       };
       const res = await InterviewServices.AssignPositionID(
         assignPositionPayload,

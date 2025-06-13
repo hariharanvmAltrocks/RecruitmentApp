@@ -416,14 +416,20 @@ const RecruitmentProcess = (props: any) => {
           });
           break;
         case TabName.ReviewJobAdvertisement:
-          filterConditionsRecuritment.push({
-            FilterKey: "StatusId",
-            Operator: "in",
-            FilterValue: [
-              StatusId.PendingwithHODtoreviewAdv,
-              StatusId.PendingwithLineManagereviewAdv,
-            ],
-          });
+          if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+            filterConditionsRecuritment.push({
+              FilterKey: "StatusId",
+              Operator: "eq",
+              FilterValue: StatusId.PendingwithLineManagereviewAdv,
+            });
+          } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
+            filterConditionsRecuritment.push({
+              FilterKey: "StatusId",
+              Operator: "eq",
+              FilterValue: StatusId.PendingwithHODtoreviewAdv,
+            });
+          }
+
           filterConditionsRecuritment.push({
             FilterKey: "ItemCreated",
             Operator: "eq",
@@ -450,65 +456,50 @@ const RecruitmentProcess = (props: any) => {
           RecuritmentConditions = "and";
           break;
       }
-      if (props.CurrentRoleID.includes(RoleID.LineManager)) {
-        if (props.CurrentRoleID.includes(RoleID.HOD)) {
-          switch (TabValue) {
-            case TabName.ReviewScorecard:
-            case TabName.ReviewJobAdvertisement:
-            case TabName.AdvertExtension:
-              filterConditionsRecuritment.push({
-                FilterKey: "HOD",
-                Operator: "eq",
-                FilterValue: props.userDetails[0]?.EmailId,
-              });
-              break;
-            default:
-              filterConditionsRecuritment.push({
-                FilterKey: "LineManager",
-                Operator: "eq",
-                FilterValue: props.userDetails[0]?.EmailId,
-              });
-          }
-        } else {
-          filterConditionsRecuritment.push({
-            FilterKey: "LineManager",
-            Operator: "eq",
-            FilterValue: props.userDetails[0]?.EmailId,
-          });
+      if (
+        props.CurrentRoleID.includes(RoleID.LineManager) &&
+        props.CurrentRoleID.includes(RoleID.HOD)
+      ) {
+        // Both LineManager and HOD are present
+        switch (TabValue) {
+          case TabName.ReviewScorecard:
+          case TabName.AdvertExtension:
+            filterConditionsRecuritment.push({
+              FilterKey: "HOD",
+              Operator: "eq",
+              FilterValue: props.userDetails[0]?.EmailId,
+            });
+            break;
+          default:
+            filterConditionsRecuritment.push({
+              FilterKey: "LineManager",
+              Operator: "eq",
+              FilterValue: props.userDetails[0]?.EmailId,
+            });
         }
+      } else if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+        // Only LineManager role is present
+        filterConditionsRecuritment.push({
+          FilterKey: "LineManager",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
       } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
-        if (props.CurrentRoleID.includes(RoleID.LineManager)) {
-          switch (TabValue) {
-            case TabName.ReviewProfile:
-            case TabName.InterviewQuestion:
-            case TabName.ReviewJobAdvertisement:
-              filterConditionsRecuritment.push({
-                FilterKey: "LineManager",
-                Operator: "eq",
-                FilterValue: props.userDetails[0]?.EmailId,
-              });
-              break;
-            default:
-              filterConditionsRecuritment.push({
-                FilterKey: "HOD",
-                Operator: "eq",
-                FilterValue: props.userDetails[0]?.EmailId,
-              });
-          }
-        } else {
-          filterConditionsRecuritment.push({
-            FilterKey: "HOD",
-            Operator: "eq",
-            FilterValue: props.userDetails[0]?.EmailId,
-          });
-        }
+        // Only HOD role is present
+        filterConditionsRecuritment.push({
+          FilterKey: "HOD",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
       } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+        // If the user has the RecruitmentHR role
         filterConditionsRecuritment.push({
           FilterKey: "AssignedHR",
           Operator: "eq",
           FilterValue: props.userDetails[0]?.EmailId,
         });
       }
+
       const response =
         props.CurrentRoleID.includes(RoleID.RecruitmentHRLead) &&
         activeTab === "tab1"
