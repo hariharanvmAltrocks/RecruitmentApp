@@ -19,60 +19,16 @@ import ViewCandidateDetails from "../Screens/ReviewProfile/ViewCandidateDetails"
 import HodViewScorecard from "../Screens/RecuritmentProcess/HodViewScorecard";
 import InterviewQuesEdit from "../Screens/ReviewProfile/InterviewQuesEdit";
 import ReviewProfileEdit from "../Screens/ReviewProfile/ReviewProfileEdit";
-import { TabDetails } from "../Models/Master";
 
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
 
   const [isExpanded, setIsExpanded] = React.useState(true);
 
-  React.useEffect(() => {
-    if (masterData?.CurrentMenuID) {
-      const selectedTabDetails: TabDetails[] =
-        masterData?.menuMartixData?.reduce((acc: TabDetails[], menu: any) => {
-          if (!menu.SubMenu) {
-            const match = menu.TabDetails?.find(
-              (tab: { Id: number }) => tab?.Id === masterData?.CurrentMenuID
-            );
-            let TabDetails = match?.TabDetails.map(
-              (item: any, index: number) => {
-                return {
-                  ...item,
-                  Value: "tab" + (index + 1),
-                };
-              }
-            );
-            if (match) acc.push(TabDetails);
-          } else {
-            const childMatches = menu.Children?.find(
-              (child: any) => child?.Id === masterData?.CurrentMenuID
-            );
-            let TabDetails = childMatches?.TabDetails.map(
-              (item: any, index: number) => {
-                return {
-                  ...item,
-                  Value: "tab" + (index + 1),
-                };
-              }
-            );
-            if (childMatches) acc.push(TabDetails);
-          }
-          return acc;
-        }, []) ?? [];
-
-      if (masterData) {
-        // Empty TabDetails before adding new data
-        masterData.TabDetails.length = 0; // Reset the array to empty
-        masterData.TabDetails.push(...selectedTabDetails);
-        // masterData.CurrentMenuID = menuID; // Push the new data
-      }
-    }
-  }, [masterData?.CurrentMenuID]);
-
   const toggleSideNav = () => {
     setIsExpanded((prevState: any) => !prevState);
   };
-  console.log("Recruitment-App(23-May-2025) V-1.17.01");
+  console.log("Recruitment-App(19-May-2025) V-1.18");
   console.log("masterData", masterData);
 
   return (

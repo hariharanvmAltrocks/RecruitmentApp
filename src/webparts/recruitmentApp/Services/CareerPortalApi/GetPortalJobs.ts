@@ -91,6 +91,8 @@ export default class GetPortalJobs implements IGetPortalJobs {
             workflowStatusId: item?.workflowStatusId,
             createdOn: moment(createdon).format("DD/MM/YYYY HH:mm:ss"),
             TotalItems: TotalItems,
+            applicationStatusId: item?.applicationStatusId,
+            applicationStatus: item?.applicationStatus?.displayText
           }
         })
       }

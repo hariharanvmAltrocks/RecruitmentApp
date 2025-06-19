@@ -5,10 +5,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { userInfo } from "../utilities/RoleContext";
+import { TabDetails } from "../Models/Master";
 
 type sideNavProps = {
   roleID: number[] | undefined;
   IsExpanded: boolean;
+  // setMenuID: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const SideNavComponent = (props: sideNavProps) => {
@@ -57,6 +59,44 @@ const SideNavComponent = (props: sideNavProps) => {
     }
   };
 
+  const TabDetailsData = (menuID: number) => {
+    const selectedTabDetails: TabDetails[] =
+      masterData?.menuMartixData?.reduce((acc: TabDetails[], menu: any) => {
+        if (!menu.SubMenu) {
+          const match = menu.TabDetails?.find(
+            (tab: { Id: number }) => tab?.Id === menuID
+          );
+          let TabDetails = match?.TabDetails.map((item: any, index: number) => {
+            return {
+              ...item,
+              Value: "tab" + (index + 1),
+            };
+          });
+          if (match) acc.push(TabDetails);
+        } else {
+          const childMatches = menu.Children?.find(
+            (child: any) => child?.Id === menuID
+          );
+          let TabDetails = childMatches?.TabDetails.map(
+            (item: any, index: number) => {
+              return {
+                ...item,
+                Value: "tab" + (index + 1),
+              };
+            }
+          );
+          if (childMatches) acc.push(TabDetails);
+        }
+        return acc;
+      }, []) ?? [];
+
+    if (masterData) {
+      // Empty TabDetails before adding new data
+      masterData.TabDetails.length = 0; // Reset the array to empty
+      masterData.TabDetails.push(...selectedTabDetails);
+      // masterData.CurrentMenuID = menuID; // Push the new data
+    }
+  };
   const isActiveMenu = (item: MenuResponse) => {
     if (item.Children && item.Children.length > 0) {
       const activeChild = item.Children.find((subItem) =>
@@ -65,6 +105,7 @@ const SideNavComponent = (props: sideNavProps) => {
       if (activeChild) {
         if (masterData) {
           masterData.CurrentMenuID = activeChild.Id;
+          TabDetailsData(activeChild.Id);
         }
         return true;
       }
@@ -72,6 +113,7 @@ const SideNavComponent = (props: sideNavProps) => {
     if (location.pathname.startsWith(item.Path)) {
       if (masterData) {
         masterData.CurrentMenuID = item.Id;
+        TabDetailsData(item.Id);
       }
       return true;
     }
@@ -92,7 +134,17 @@ const SideNavComponent = (props: sideNavProps) => {
         {items?.map((item: MenuResponse) => {
           const isActive = isActiveMenu(item);
           // const isActive = item.Children?.[0]?.Path && isActiveMenu(item.Children[0].Path);
+          let expandID = expandedMenuId
+            ? expandedMenuId
+            : masterData?.menuMartixData[0].Id;
+          let selectedmenuID = sideNavArr.filter(
+            (items) => items.Id === expandID
+          );
+          let menuIDExpend = selectedmenuID[0]?.Children ? true : false;
           const isExpanded = expandedMenuId === item.Id;
+          console.log(menuIDExpend, "item.Id");
+          console.log(isExpanded, "isExpanded");
+
           const isChildIshere = item.Children?.[0]?.Path;
           const isMainMenu = menuType === "menu";
           return (
@@ -155,7 +207,7 @@ const SideNavComponent = (props: sideNavProps) => {
                                 marginTop: "6%",
                               }}
                             >
-                              {isExpanded ? (
+                              {isActive ? (
                                 <KeyboardArrowDownIcon />
                               ) : (
                                 <ExpandLessIcon />
@@ -167,7 +219,7 @@ const SideNavComponent = (props: sideNavProps) => {
                     </div>
                   </div>
 
-                  {isExpanded && item.Children && item.Children.length > 0 && (
+                  {isActive && item.Children && item.Children.length > 0 && (
                     <div style={{ marginLeft: "30px", marginTop: "5%" }}>
                       {renderMenu(item.Children, "submenu")}
                     </div>
@@ -241,7 +293,7 @@ const SideNavComponent = (props: sideNavProps) => {
               marginBottom: "10px",
             }}
           >
-            Version-1.17
+            Version-1.18
           </div>
         </>
       ) : (
@@ -255,7 +307,7 @@ const SideNavComponent = (props: sideNavProps) => {
               marginBottom: "10px",
             }}
           >
-            V-1.17
+            V-1.18
           </div>
         </>
       )}

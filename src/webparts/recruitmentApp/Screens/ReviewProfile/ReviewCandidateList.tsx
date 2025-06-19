@@ -7,6 +7,7 @@ import {
 } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
+  ApplicationStatusId,
   ButtonAction,
   HRMSAlertOptions,
   RoleID,
@@ -193,7 +194,16 @@ const ReviewCandidateList = (props: any) => {
       fieldName: "Status",
       sortable: false,
       body: (rowData: any) => {
-        return <span>{rowData.Status}</span>;
+        return (
+          <span>
+            {rowData.applicationStatusId ===
+            ApplicationStatusId.ApplicationSuspended ? (
+              <span style={{ color: "red" }}>{rowData.applicationStatus}</span>
+            ) : (
+              <span> {rowData.Status}</span>
+            )}
+          </span>
+        );
       },
     },
     {
@@ -226,7 +236,9 @@ const ReviewCandidateList = (props: any) => {
                   workflowStatusApi.LineManagerLevel2Rejected) ||
               (props.CurrentRoleID.includes(RoleID.LineManager) &&
                 rowData.workflowStatusId ===
-                  workflowStatusApi.PendingRecruitmentHRscheduleInterview) ? (
+                  workflowStatusApi.PendingRecruitmentHRscheduleInterview) ||
+              rowData.applicationStatusId ===
+                ApplicationStatusId.ApplicationSuspended ? (
                 <>
                   <img
                     src={require("../../assets/Viewicon.svg")}

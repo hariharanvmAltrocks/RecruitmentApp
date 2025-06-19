@@ -61,7 +61,7 @@ const RecruitmentProcess = (props: any) => {
   // const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [activeTab, setActiveTab] = React.useState<string>("");
+  const [activeTab, setActiveTab] = React.useState<string>("tab1");
   const [AssignHR, setAssignHR] = React.useState<boolean>(false);
   const [AssignHRData, setAssignHRData] = React.useState<AssignHRData>({
     AssignRecruitmentHR: { key: 0, text: "" },
@@ -688,7 +688,7 @@ const RecruitmentProcess = (props: any) => {
         );
 
         return {
-          ID: item.JobCodeId,
+          ID: item.ID,
           JobCode: item.JobCode,
           JobCodeId: item.JobCodeId,
           JobTitle: JobTitle ? JobTitle.text : "",

@@ -1544,3 +1544,7 @@ padding: 0%;
     padding: 20px; /* Add extra padding */
   }
 }
+
+.a_b_cb6f7c2e:not(.e_b_cb6f7c2e){
+  padding-left: 1%;
+}

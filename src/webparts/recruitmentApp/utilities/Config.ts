@@ -395,6 +395,16 @@ export const workflowStatusApi = {
   LineManagerLevel2Rejected: "WS15",
 };
 
+export const ApplicationStatusId = {
+  ApplicationSubmitted: "AS01",
+  ApplicationInProgress: "AS02",
+  InterviewScheduled: "AS03",
+  InterviewCompleted: "AS04",
+  Selected: "AS05",
+  ApplicationRejected: "AS06",
+  ApplicationSuspended: "AS00"
+}
+
 export const Notes = {
   Roleprofile: "Role Profile is not available for the Job Title.",
   Grding: "Grading Report is not available for the Job Title.",
