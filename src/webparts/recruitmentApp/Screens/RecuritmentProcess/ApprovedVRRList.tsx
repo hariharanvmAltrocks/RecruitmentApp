@@ -68,9 +68,7 @@ const RecruitmentProcess = (props: any) => {
     AssignRecruitmentAgencies: [],
     Comments: "",
   });
-  const [TabNameData, setTabNameData] = React.useState<TabDetails[]>(
-    props.TabDetails
-  );
+  const [TabNameData, setTabNameData] = React.useState<TabDetails[]>([]);
   // const [isCurrectTab, setIsCurrectTab] = React.useState<string>("");
   const [allJobData, setJobCodeTitle] = React.useState<JobCodeTilte[]>([
     {
@@ -456,43 +454,19 @@ const RecruitmentProcess = (props: any) => {
           RecuritmentConditions = "and";
           break;
       }
-      if (
-        props.CurrentRoleID.includes(RoleID.LineManager) &&
-        props.CurrentRoleID.includes(RoleID.HOD)
-      ) {
-        // Both LineManager and HOD are present
-        switch (TabValue) {
-          case TabName.ReviewScorecard:
-          case TabName.AdvertExtension:
-            filterConditionsRecuritment.push({
-              FilterKey: "HOD",
-              Operator: "eq",
-              FilterValue: props.userDetails[0]?.EmailId,
-            });
-            break;
-          default:
-            filterConditionsRecuritment.push({
-              FilterKey: "LineManager",
-              Operator: "eq",
-              FilterValue: props.userDetails[0]?.EmailId,
-            });
-        }
-      } else if (props.CurrentRoleID.includes(RoleID.LineManager)) {
-        // Only LineManager role is present
+      if (props.CurrentRoleID.includes(RoleID.LineManager)) {
         filterConditionsRecuritment.push({
           FilterKey: "LineManager",
           Operator: "eq",
           FilterValue: props.userDetails[0]?.EmailId,
         });
       } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
-        // Only HOD role is present
         filterConditionsRecuritment.push({
           FilterKey: "HOD",
           Operator: "eq",
           FilterValue: props.userDetails[0]?.EmailId,
         });
       } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-        // If the user has the RecruitmentHR role
         filterConditionsRecuritment.push({
           FilterKey: "AssignedHR",
           Operator: "eq",
@@ -538,7 +512,15 @@ const RecruitmentProcess = (props: any) => {
         // if (props.stateValue?.activeTab) {
         //   setActiveTab(props.stateValue.activeTab);
         // }
-        setTabNameData(props.TabDetails[0] ?? []);
+        let TabDetails: any;
+        if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
+          TabDetails = (props.TabDetails[0] ?? []).filter(
+            (tab: any) => tab.TabName !== TabName.Evaluation
+          );
+        } else {
+          TabDetails = props.TabDetails[0] ?? [];
+        }
+        setTabNameData(TabDetails);
       } catch (error) {
         console.error(error);
       }
@@ -1121,7 +1103,11 @@ const RecruitmentProcess = (props: any) => {
           />
         );
       case TabName.Evaluation:
-        return <InterviewPanelList {...props} TabValue={activeTab} />;
+        if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
+        } else {
+          return <InterviewPanelList {...props} TabValue={activeTab} />;
+        }
+        break;
       default:
         return null;
     }

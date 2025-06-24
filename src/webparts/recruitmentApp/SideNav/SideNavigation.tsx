@@ -20,6 +20,7 @@ const SideNavComponent = (props: sideNavProps) => {
   const [expandedMenuId, setExpandedMenuId] = React.useState<number | null>(
     null
   );
+  const [isHovered, setIsHovered] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -159,6 +160,8 @@ const SideNavComponent = (props: sideNavProps) => {
                           : styles.active
                         : ""
                     }`}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
                     style={{ marginTop: "5%" }}
                   >
                     <div
@@ -189,7 +192,7 @@ const SideNavComponent = (props: sideNavProps) => {
                         <p
                           style={{
                             fontWeight: isActive ? "bold" : "normal",
-                            color: isActive ? "black" : "none",
+                            color: isHovered || isActive ? "black" : "white",
                             marginBottom: "20px",
                             display: "flex",
                             alignItems: "center",
@@ -293,7 +296,7 @@ const SideNavComponent = (props: sideNavProps) => {
               marginBottom: "10px",
             }}
           >
-            Version-1.18
+            Version-1.19
           </div>
         </>
       ) : (
@@ -307,7 +310,7 @@ const SideNavComponent = (props: sideNavProps) => {
               marginBottom: "10px",
             }}
           >
-            V-1.18
+            V-1.19
           </div>
         </>
       )}

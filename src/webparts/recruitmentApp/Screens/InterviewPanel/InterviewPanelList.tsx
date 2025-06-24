@@ -313,7 +313,6 @@ const InterviewPanelList = (props: any) => {
             }
           } catch (error) {}
         };
-
         return (
           <div
             style={{
@@ -321,18 +320,20 @@ const InterviewPanelList = (props: any) => {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              gap: "5px",
+              gap: "10px", // slightly more space for small screens
+              flexWrap: "wrap", // allow wrapping on smaller screens
             }}
           >
             <img
               src={require("../../assets/Viewicon.svg")}
-              alt="Edit Icon"
-              onClick={checkIsScoreSheetUploaded}
+              alt="Stamp Icon"
               style={{
-                width: "70%",
-                height: "60%",
+                width: "2rem", // scales with font size
+                height: "auto",
+                maxWidth: "40px", // limit maximum size
                 cursor: "pointer",
               }}
+              onClick={checkIsScoreSheetUploaded}
             />
           </div>
         );

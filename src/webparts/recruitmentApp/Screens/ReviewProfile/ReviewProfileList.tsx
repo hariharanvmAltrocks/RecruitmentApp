@@ -7,6 +7,7 @@ import TabsComponent from "../../components/TabsComponent ";
 import {
   ActionIcon,
   ButtonAction,
+  RoleID,
   StatusId,
   TabName,
   tabType,
@@ -206,16 +207,33 @@ const ReviewProfileList = (props: any) => {
           });
           break;
       }
+      if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+        filterConditionsRecuritment.push({
+          FilterKey: "LineManager",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
+      } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
+        filterConditionsRecuritment.push({
+          FilterKey: "HOD",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
+      } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+        filterConditionsRecuritment.push({
+          FilterKey: "AssignedHR",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
+      }
 
-      if (filterConditionsRecuritment.length > 0) {
-        const data = await getVRRDetails.GetRecruitmentDetails(
-          filterConditionsRecuritment,
-          RecuritmentConditions
-        );
+      const data = await getVRRDetails.GetRecruitmentDetails(
+        filterConditionsRecuritment,
+        RecuritmentConditions
+      );
 
-        if (data.status === 200 && data.data !== null) {
-          setRecuritmentData(data.data);
-        }
+      if (data.status === 200 && data.data !== null) {
+        setRecuritmentData(data.data);
       }
     } catch (error) {
       console.error("Error fetching recruitment data:", error);
@@ -229,7 +247,15 @@ const ReviewProfileList = (props: any) => {
       setIsLoading(true);
       try {
         await fetchRecuritmentData(props.TabDetails[0]);
-        setTabNameData(props.TabDetails[0] ?? []);
+        let TabDetails: any;
+        if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
+          TabDetails = (props.TabDetails[0] ?? []).filter(
+            (tab: any) => tab.TabName !== TabName.Evaluation
+          );
+        } else {
+          TabDetails = props.TabDetails[0] ?? [];
+        }
+        setTabNameData(TabDetails);
       } catch (error) {
         console.error(error);
       }
@@ -303,7 +329,11 @@ const ReviewProfileList = (props: any) => {
           />
         );
       case TabName.Evaluation:
-        return <InterviewPanelList {...props} />;
+        if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
+        } else {
+          return <InterviewPanelList {...props} />;
+        }
+        break;
       default:
         return null;
     }

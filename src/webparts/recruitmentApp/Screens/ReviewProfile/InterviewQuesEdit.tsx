@@ -798,12 +798,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           (item) => item.text
         );
 
-        const ScopeOption: AutoCompleteItem[] = (ScopeData.data ?? []).map(
-          (opt: any) => ({
+        const ScopeOption: AutoCompleteItem[] = (ScopeData.data ?? [])
+          .filter((item: any) => item.value !== "S6")
+          .map((opt: any) => ({
             key: opt.value,
             text: opt.displayText,
-          })
-        );
+          }));
 
         const QuestionTypeOption: AutoCompleteItem[] = (QuestionType.data ?? [])
           .filter((opt: any) => {
@@ -826,7 +826,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             key: opt.value,
             text: opt.displayText,
           }));
-
         setGetMasterData((prevState) => ({
           ...prevState,
           category: CategoryOption,

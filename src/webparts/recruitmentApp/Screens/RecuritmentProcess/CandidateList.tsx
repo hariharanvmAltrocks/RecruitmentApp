@@ -350,6 +350,17 @@ const CandidateList = (props: any) => {
     }
   }, [activeTab, tabs, props.stateValue, TabNameData]);
 
+  function back_fn() {
+    if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+      props.navigation("/RecurimentProcess", {
+        state: {
+          TabName: props.stateValue?.TabName,
+          tab: props.stateValue?.tab,
+        },
+      });
+    }
+  }
+
   return (
     <CustomLoader isLoading={isLoading}>
       <div className="menu-card">
@@ -358,6 +369,14 @@ const CandidateList = (props: any) => {
           initialItem={activeTab}
           TabName={TabNameData}
           onBreadcrumbChange={handleBreadcrumbChange}
+          additionalButtons={[
+            {
+              label: "Back",
+              onClick: async () => {
+                back_fn();
+              },
+            },
+          ]}
         />
       </div>
       {AlertPopupOpen && (
