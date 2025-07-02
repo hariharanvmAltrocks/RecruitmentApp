@@ -109,6 +109,7 @@ export type DataSyncToRecruitmentResponse = {
   StatusId: number,
   Action: string,
   ActionTypeId: number,
+  Location: string,
 
   JobCodeId: number,
   JobCode: string,
@@ -163,7 +164,9 @@ export type PostRecuritmentData = {
     StatusId: number,
     ActionId: number,
     JobCodeId: number,
-    AssignedHR: number
+    AssignedHR: string,
+    RecruitmentHRLead: string
+    Location: string;
   },
   PositionData: {
     JobTitleEnglishId: number,

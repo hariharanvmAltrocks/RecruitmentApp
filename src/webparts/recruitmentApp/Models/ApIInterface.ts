@@ -1,4 +1,5 @@
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
+import { AutoCompleteItem } from "./Screens";
 
 export type AdvertisementDetails = {
     jobCode: string;
@@ -65,6 +66,8 @@ export type GetProfileByJobCode = {
     Status: string,
     workflowStatusId: string,
     createdOn: Date | undefined,
+    applicationStatusId: string,
+    applicationStatus: string
 }
 export type CandidateProfile = {
     CandidateID: string,
@@ -99,6 +102,25 @@ export type CandidateProfile = {
     ConflictsOfInterest: string;
     disability: string;
     disabilityReason: string;
+    identityValue: string;
+    identityType: string;
+
+    Age: string;
+    NumberOftax: string;
+    CurrentEmployer: string;
+    CurrentPosition: string;
+    WillingToRelocate: string;
+    previouslyworkedMine: string;
+    familylinks: string;
+    businesslinks: string;
+    familyDocuments: IDocFiles[];
+    businessDocuments: IDocFiles[];
+    CountryofOrgin: string;
+    Citizenship: string;
+
+    FamilyLink: string;
+    BusinessLink: string;
+    GPA: number;
 }
 
 export type WorkflowJson = {
@@ -106,7 +128,9 @@ export type WorkflowJson = {
     jobRequestId: number,
     comments: string,
     actionBy: string,
-    hrComments?: string
+    hrComments?: string,
+    OfferLatterPath?: string,
+    EmpContractLatterPath?: string,
 }
 
 export type profileJobsComments = {
@@ -152,7 +176,6 @@ export type answersValue = {
     optionFr: string
 }
 
-
 export type GetAllMaster = {
     id: number;
     value: string;
@@ -164,3 +187,169 @@ export type getQuestionById = {
     discipline: string,
     category?: string
 }
+
+export type GetMasterByCountry = {
+    id: number;
+    code: string;
+    text: string;
+}
+
+export type CheckMyCandidate = {
+    Email: string,
+    JobCode?: string
+}
+
+export type UpsertProfile = {
+    contactNumber1: string;
+    contactNumber2: string;
+    dob: string;
+    documentId: string | null;
+    educationId: string;
+    email: string;
+    firstName: string;
+    genderId: string;
+    identityTypeId: string;
+    identityValue: string;
+    jobsApplied: jobsApplied[];
+    lastName: string;
+    middleName: string;
+    nationalityId: string;
+    profileAddress: ProfileAddress;
+    profileDetailDisciplines: [];
+    profileDetailDisclosure: null,
+    profileDetailEducations: [],
+    profileDetailEmploymentHistory: profileDetailEmploymentHistory | null,
+    profileDetailExperiences: ProfileDetailsExperience[],
+    profileDetailLanguages: [],
+    profileDetailSkills: [],
+    profileId: number,
+    profileXAgent: null,
+    profileXOptAnswers: profileXOptAnswers[],
+    profileXTxtAnswers: [],
+    releventExperience: number,
+    title: string,
+    totalYearOfExperiance: string,
+    profileDetailAttachments: profileDetailAttachments[];
+    hasBusinessLinks: string
+    hasEmployeeRelation: string
+}
+
+export type profileDetailAttachments = {
+    AttachmentTypeCoe: string;
+    DocumentId: number;
+    ProfileId: number;
+}
+
+export type profileXOptAnswers = {
+    profileId: string,
+    questionId: number,
+    answerContentId: string,
+}
+
+export type profileDetailEmploymentHistory = {
+    referralSourceId: string,
+    previousExpatStatus: number,
+    previousEmployer: string,
+    expatWorkDuration: string,
+    hasIvanhoeZijinExperienceId: string,
+    workedOperation: string,
+    workRole: string,
+    territory: string,
+}
+
+export type ProfileDetailsExperience = {
+    profileId: number,
+    title: string;
+    roleDescription: string;
+    company: string;
+    location: string;
+    startFrom: string;
+    endTo: string;
+}
+
+export type ProfileAddress = {
+    address1: string,
+    address2: string,
+    cityId: string,
+    stateId: string,
+    countryId: string,
+    postalZipCode: string
+
+}
+
+export type jobsApplied = {
+    applicationStatusId: string;
+    jobRequestId: number,
+    jobCode: string;
+    workflowStatusId: string;
+    isSuspended: number,
+    documentId: number
+}
+
+export type UploadDocument = {
+    CandidateID: number;
+    ApplicantName: string;
+    ApplicantSurName: string;
+    positionID: string;
+    BusinessUnitCode: string;
+    Department: string;
+    SubDepartment: string;
+    Section: string;
+    DepartmentCode: string;
+    EmploymentCategory: string;
+    TypeOfCOntract: string;
+    Nationalty: string;
+    AreaOfWork: string;
+    Location: string;
+    Email: string;
+    ProofOfIdentity: string;
+    IdentityNumber: string,
+
+    comments: string;
+    Checkbox: boolean;
+    SignDate: Date | any;
+    OfferLetterDoc: IDocFiles[];
+    jobRequestID: string;
+    EmployementDoc: IDocFiles[];
+    PersonalDocs: DocumentName[];
+    MedicalDocs: IDocFiles[];
+
+    RadioAction: string;
+    CheckboxContent: string;
+
+    TrainingSystem: TrainingSystem;
+    TASystem: TASystem;
+    ITSystem: ITSystem;
+}
+
+export type DocumentName = {
+    [category: string]: IDocFiles[];
+}
+
+export type TrainingSystem = {
+    Inductiontype: AutoCompleteItem;
+    StartDate: Date | any;
+    EndDate: Date | any;
+    Region: AutoCompleteItem;
+    Zone: AutoCompleteItem;
+    Comments: string;
+}
+
+export type TASystem = {
+    StartDate: Date | any;
+    EndDate: Date | any;
+    Region: AutoCompleteItem;
+    Zone: AutoCompleteItem;
+    Comments: string;
+}
+
+export type ITSystem = {
+    StartDate: Date | any;
+    Hardware: AutoCompleteItem[];
+    Region: AutoCompleteItem;
+    Zone: AutoCompleteItem;
+    Comments: string;
+    ITStatus: string;
+}
+
+

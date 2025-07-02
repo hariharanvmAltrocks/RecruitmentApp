@@ -62,32 +62,42 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
       const files = Array.from(fileInput.files);
       const newAttachments: Item[] = [];
 
+      const MAX_SIZE_MB = 15;
+      const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
       files.forEach((file) => {
         const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
 
-        if (acceptedFormats.includes(fileExtension)) {
-          const fileReader = new FileReader();
-          fileReader.onload = (event) => {
-            const fileContent = event.target?.result as ArrayBuffer;
-
-            newAttachments.push({
-              name: file.name,
-              fileContent,
-              file,
-            });
-
-            if (
-              newAttachments.length ===
-              files.filter((f) => {
-                const ext = "." + f.name.split(".").pop()?.toLowerCase();
-                return acceptedFormats.includes(ext);
-              }).length
-            ) {
-              AttachState?.(newAttachments);
-            }
-          };
-          fileReader.readAsArrayBuffer(file);
+        if (!acceptedFormats.includes(fileExtension)) {
+          return;
         }
+
+        if (file.size > MAX_SIZE_BYTES) {
+          alert(`"${file.name}" exceeds the 15MB limit.`);
+          return;
+        }
+
+        const fileReader = new FileReader();
+        fileReader.onload = (event) => {
+          const fileContent = event.target?.result as ArrayBuffer;
+
+          newAttachments.push({
+            name: file.name,
+            fileContent,
+            file,
+          });
+
+          const validFilesCount = files.filter((f) => {
+            const ext = "." + f.name.split(".").pop()?.toLowerCase();
+            return acceptedFormats.includes(ext) && f.size <= MAX_SIZE_BYTES;
+          }).length;
+
+          if (newAttachments.length === validFilesCount) {
+            AttachState?.(newAttachments);
+            fileInput.value = "";
+          }
+        };
+        fileReader.readAsArrayBuffer(file);
       });
     }
   };

@@ -1,4 +1,5 @@
-import { MasterData, TabDetails } from "../Models/Master";
+import { TabDetails } from "../Models/Master";
+import { MenuResponse } from "../Models/Menu";
 import {
   ActionIcon,
   RoleID,
@@ -19,7 +20,7 @@ export function GetStatusIds(array: any[]): string[] {
     .filter((item) => item.StatusId !== undefined && item.StatusId !== "")
     .map((item) => String(item.StatusId));
 }
-export function GetTabDetailsById(menuID: number, items: MasterData[]) {
+export async function GetTabDetailsById(menuID: number, items: MenuResponse[]) {
   const search = (items: any[]) => {
     return (
       items?.reduce((acc: TabDetails[], menu: any) => {
@@ -52,7 +53,7 @@ export function GetTabDetailsById(menuID: number, items: MasterData[]) {
       }, []) ?? []
     );
   };
-  search(items);
+  await search(items);
 }
 
 export function GetRoleKeysArray(array: any[]): number[] {

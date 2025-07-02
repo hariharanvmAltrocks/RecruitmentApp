@@ -31,6 +31,7 @@ import {
   RecuritmentHRMsg,
   ReviewProfileScore,
   RoleID,
+  RoleName,
   RoleProfileMaster,
   StatusId,
   TabName,
@@ -53,6 +54,7 @@ import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomTimePicker from "../../components/CustomTimePicker";
 import { CandidateDetails } from "../../Services/CareerPortalApi/IGetPortalJobs";
 import { GetWorkflowStatusByID } from "../../components/TabMerge";
+import { Label } from "@fluentui/react";
 
 type InterviewedLevelValue = {
   Levels: string;
@@ -130,6 +132,24 @@ const ViewCandidateDetails = (props: any) => {
     ConflictsOfInterest: "",
     disability: "",
     disabilityReason: "",
+    identityValue: "",
+    identityType: "",
+    Age: "",
+    NumberOftax: "",
+    CurrentEmployer: "",
+    CurrentPosition: "",
+    WillingToRelocate: "",
+    previouslyworkedMine: "",
+    familylinks: "",
+    businesslinks: "",
+    familyDocuments: [],
+    businessDocuments: [],
+    CountryofOrgin: "",
+    Citizenship: "",
+
+    FamilyLink: "",
+    BusinessLink: "",
+    GPA: 0,
   });
   const todaydate = new Date();
 
@@ -274,6 +294,10 @@ const ViewCandidateDetails = (props: any) => {
           ConflictsOfInterest: op?.ConflictsOfInterest,
           disability: op?.disability,
           disabilityReason: op?.disabilityReason,
+
+          FamilyLink: op?.FamilyLink,
+          BusinessLink: op?.BusinessLink,
+          GPA: op?.GPA,
         }));
         let InterviewDate = new Date(op?.InterviewDate);
         setInterviewedLevel((prevState: any) => ({
@@ -315,42 +339,110 @@ const ViewCandidateDetails = (props: any) => {
           ) {
             await fetchCandidateData(props.stateValue?.ID);
           } else {
-            setCandidateProfile((prevState: any) => ({
-              ...prevState,
-              CandidateID: response?.CandidateID,
-              profileID: response?.profileID,
-              JobCode: response?.JobCode,
-              JobTitle: response?.JobTitle,
-              ApplicantName: response?.ApplicantName,
-              ApplicantSurName: response?.ApplicantSurName,
-              Nationality: response?.Nationality,
-              FristName: response?.FristName,
-              MiddleName: response?.MiddleName,
-              ResidentialAddress: response?.ResidentialAddress,
-              DOB: response?.DOB,
-              ContactNumber: response?.ContactNumber,
-              Email: response?.Email,
-              Gender: response?.Gender,
-              HighestQualification: response?.HighestQualification,
-              ExperienceMining: response?.ExperienceMining,
-              ExperRelatedfield: response?.ExperRelatedfield,
-              CandidateResume: response?.CandidateResume,
-              RoleProfile: response?.RoleProfile,
-              Advertisement: response?.Advertisement,
-              Status: response?.Status,
-              Agencies: response?.Agencies
-                ? response?.Agencies
-                : labelName.Candidate,
-              Comments: response?.Comments,
-              workflowStatusId: response?.workflowStatusId,
-              hrComments: response?.hrComments,
-              JobVaildFromDate: response?.JobVaildFromDate,
-              JobVaildToDate: response?.JobVaildToDate,
-              CandidateResumeLink: response?.CandidateResumeLink,
-              ConflictsOfInterest: response?.ConflictsOfInterest,
-              disability: response?.disability,
-              disabilityReason: response?.disabilityReason,
-            }));
+            if ((res.data?.length ?? 0) > 0) {
+              setCandidateProfile((prevState: any) => ({
+                ...prevState,
+                CandidateID: response?.CandidateID,
+                profileID: response?.profileID,
+                JobCode: response?.JobCode,
+                JobTitle: response?.JobTitle,
+                ApplicantName: response?.ApplicantName,
+                ApplicantSurName: response?.ApplicantSurName,
+                Nationality: response?.Nationality,
+                FristName: response?.FristName,
+                MiddleName: response?.MiddleName,
+                ResidentialAddress: response?.ResidentialAddress,
+                DOB: response?.DOB,
+                ContactNumber: response?.ContactNumber,
+                Email: response?.Email,
+                Gender: response?.Gender,
+                HighestQualification: response?.HighestQualification,
+                ExperienceMining: response?.ExperienceMining,
+                ExperRelatedfield: response?.ExperRelatedfield,
+                CandidateResume: response?.CandidateResume,
+                RoleProfile: response?.RoleProfile,
+                Advertisement: response?.Advertisement,
+                Status: response?.Status,
+                Agencies: response?.Agencies
+                  ? response?.Agencies
+                  : labelName.Candidate,
+                Comments: response?.Comments,
+                workflowStatusId: response?.workflowStatusId,
+                hrComments: response?.hrComments,
+                JobVaildFromDate: response?.JobVaildFromDate,
+                JobVaildToDate: response?.JobVaildToDate,
+                CandidateResumeLink: response?.CandidateResumeLink,
+                ConflictsOfInterest: response?.ConflictsOfInterest,
+                disability: response?.disability,
+                disabilityReason: response?.disabilityReason,
+                identityType: response?.identityType,
+                identityValue: response?.identityValue,
+                NumberOftax: response?.NumberOftax,
+                CurrentEmployer: response?.CurrentEmployer,
+                CurrentPosition: response?.CurrentPosition,
+                WillingToRelocate: response?.WillingToRelocate,
+                previouslyworkedMine: response?.previouslyworkedMine,
+                familylinks: response?.familylinks,
+                businesslinks: response?.businesslinks,
+                familyDocuments: response?.familyDocuments,
+                businessDocuments: response?.businessDocuments,
+
+                Age: response?.Age,
+                CountryofOrgin: response?.CountryofOrgin,
+                Citizenship: response?.Citizenship,
+
+                FamilyLink: response?.FamilyLink,
+                BusinessLink: response?.BusinessLink,
+                GPA: response?.GPA,
+              }));
+            } else {
+              const APIErrorMsg = {
+                Message: RecuritmentHRMsg.APIErrorMsg,
+                Type: HRMSAlertOptions.Error,
+                visible: true,
+                ButtonAction: async (userClickedOK: boolean) => {
+                  if (userClickedOK) {
+                    if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+                      props.navigation(
+                        "/ReviewProfileList/ReviewCandidateList",
+                        {
+                          state: {
+                            ID: props.stateValue?.RecruitmentID,
+                            TabNames: props.stateValue?.initialTab,
+                            ButtonAction: ButtonAction.View,
+                            JobCode: CandidateProfile?.JobCode,
+                            tab: props.stateValue?.tab,
+                            JobCodeID: props.stateValue?.JobCodeID,
+                          },
+                        }
+                      );
+                    } else {
+                      props.navigation(
+                        "/RecurimentProcess/ReviewCandidateList",
+                        {
+                          state: {
+                            ID: props.stateValue?.RecruitmentID,
+                            TabNames: props.stateValue?.initialTab,
+                            ButtonAction: ButtonAction.View,
+                            JobCode: CandidateProfile?.JobCode,
+                            tab: props.stateValue?.tab,
+                            JobCodeID: props.stateValue?.JobCodeID,
+                          },
+                        }
+                      );
+                    }
+
+                    setAlertPopupOpen(false);
+                  } else {
+                    setAlertPopupOpen(false);
+                  }
+                },
+              };
+
+              setAlertPopupOpen(true);
+              setalertProps(APIErrorMsg);
+              setIsLoading(false);
+            }
           }
           if (
             response?.workflowStatusId === workflowStatusApi.HROnHold ||
@@ -775,6 +867,37 @@ const ViewCandidateDetails = (props: any) => {
                   </div>
                 </div>
 
+                {props.stateValue?.initialTab === TabName.ReviewProfile && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomInput
+                        label="Number of tax dependents "
+                        value={CandidateProfile.NumberOftax}
+                        disabled={true}
+                        mandatory={false}
+                      />
+                    </div>
+
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomInput
+                        label="Last/Current position"
+                        value={CandidateProfile?.CurrentPosition}
+                        disabled={true}
+                        mandatory={false}
+                      />
+                    </div>
+
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomInput
+                        label="Last/Current employer"
+                        value={CandidateProfile?.CurrentEmployer}
+                        disabled={true}
+                        mandatory={false}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
@@ -830,6 +953,73 @@ const ViewCandidateDetails = (props: any) => {
                     </>
                   )}
                 </div>
+
+                {props.stateValue?.initialTab === TabName.ReviewProfile && (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg6">
+                        <CustomRadioGroup
+                          label="Willing to relocate if not currently living close to the relevant project site/office?"
+                          value={CandidateProfile?.WillingToRelocate}
+                          options={["Yes", "No"]}
+                          mandatory={false}
+                          error={false}
+                          disabled={true}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg6">
+                        <CustomRadioGroup
+                          label="Has the person previously worked within the Ivanhoe Mines Group?"
+                          value={CandidateProfile?.previouslyworkedMine}
+                          options={["Yes", "No"]}
+                          mandatory={false}
+                          error={false}
+                          disabled={true}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg6">
+                        <CustomRadioGroup
+                          label="Any family or other links with existing employees to declare? (If so, who? Attach detail)"
+                          value={CandidateProfile?.familylinks}
+                          options={["Yes", "No"]}
+                          mandatory={false}
+                          error={false}
+                          disabled={true}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg6">
+                        <CustomRadioGroup
+                          label="Any business links to declare? (If so, who? Attach detail)"
+                          value={CandidateProfile?.businesslinks}
+                          options={["Yes", "No"]}
+                          mandatory={false}
+                          error={false}
+                          disabled={true}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg6">
+                        <Label>Attachment</Label>
+                        <CustomViewDocument
+                          Attachment={CandidateProfile.familyDocuments}
+                        />
+                      </div>
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg4">
+                          <Label>Attachment</Label>
+                          <CustomViewDocument
+                            Attachment={CandidateProfile.businessDocuments}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {props.stateValue?.initialTab ===
                 TabName.AssignInterviewPanel ? (
@@ -1092,7 +1282,8 @@ const ViewCandidateDetails = (props: any) => {
                   )}
 
                 {props.stateValue?.initialTab === TabName.ReviewProfile &&
-                  props.CurrentRoleID.includes(RoleID.LineManager) && (
+                  props.CurrentRoleID.includes(RoleID.LineManager) &&
+                  CandidateProfile.Agencies != RoleName.RecruitmentHR && (
                     <>
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
@@ -1375,6 +1566,25 @@ const ViewCandidateDetails = (props: any) => {
       ConflictsOfInterest: CandidateProfile.ConflictsOfInterest,
       Disability: CandidateProfile.disability,
       DisabilityDetails: CandidateProfile.disabilityReason,
+      IdentityNumber: CandidateProfile.identityValue,
+      ProofOfIdentity: CandidateProfile.identityType,
+
+      LastOrCurrentPosition: CandidateProfile.CurrentPosition,
+      LastOrCurrentEmployer: CandidateProfile.CurrentEmployer,
+      PreviouslyWorkedInIvanhoeMines: CandidateProfile.previouslyworkedMine,
+      NumberOfTaxDependents: Number(CandidateProfile.NumberOftax),
+      Age: Number(CandidateProfile.Age),
+      AnyFamilyorOtherLinks: CandidateProfile.familylinks,
+      AnyBusinessLinksToDeclare: CandidateProfile.businesslinks,
+      WillingToRelocate: CandidateProfile.WillingToRelocate,
+      CountryofOrgin: CandidateProfile.CountryofOrgin,
+      Citizenship: CandidateProfile.Citizenship,
+
+      FamilyLink: CandidateProfile.FamilyLink,
+      BusinessLink: CandidateProfile.BusinessLink,
+      GPA: CandidateProfile.GPA,
+
+      OthersInterviewed: "Yes",
     };
     let selectedinterviewpanal: any[] = [];
 

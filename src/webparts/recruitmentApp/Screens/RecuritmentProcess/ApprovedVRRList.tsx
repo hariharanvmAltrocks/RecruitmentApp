@@ -327,6 +327,21 @@ const RecruitmentProcess = (props: any) => {
           },
         });
         break;
+      case TabName.UploadCV:
+        props.navigation("/RecurimentProcess/UploadCandidateList", {
+          state: {
+            ID: rowData?.ID,
+            JobCode: rowData?.JobCode,
+            JobCodeId: rowData?.JobCodeId,
+            JobTitle: rowData?.JobTitleEnglish,
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            TabNames,
+            ButtonAction,
+          },
+        });
+        break;
 
       default:
         // optional: handle unknown TabName
@@ -402,6 +417,7 @@ const RecruitmentProcess = (props: any) => {
         case TabName.ReviewProfile:
         case TabName.ReviewScorecard:
         case TabName.AdvertExtension:
+        case TabName.UploadCV:
           filterConditionsRecuritment.push({
             FilterKey: "StatusId",
             Operator: "eq",
@@ -783,7 +799,9 @@ const RecruitmentProcess = (props: any) => {
                   JobCodeId: correspondingJob.JobCodeId,
                   AreaofWork: correspondingJob.AreaofWork,
                   AssignedHR: UserIDbyEmail.data,
+                  RecruitmentHRLead: props.CurrentUserEmailId,
                   DataFrom: correspondingJob.Type ?? "",
+                  Location: correspondingJob.Location ?? "",
                 },
                 PositionData: {
                   PatersonGradeId: correspondingJob.PatersonGradeId ?? 0,
@@ -862,6 +880,18 @@ const RecruitmentProcess = (props: any) => {
                     if (userClickedOK) {
                       setAlertPopupOpen(false);
                       setIsLoading(false);
+                      setAssignHRData((prevState) => ({
+                        ...prevState,
+                        AssignRecruitmentAgencies: [],
+                        Comments: "",
+                      }));
+                      setData((prevData) =>
+                        prevData.map((item) => ({
+                          ...item,
+                          Checked: false,
+                        }))
+                      );
+                      setSelectedJobCodes([]);
                     }
                   },
                 };
@@ -997,6 +1027,18 @@ const RecruitmentProcess = (props: any) => {
                       if (userClickedOK) {
                         setAlertPopupOpen(false);
                         setIsLoading(false);
+                        setAssignHRData((prevState) => ({
+                          ...prevState,
+                          AssignRecruitmentAgencies: [],
+                          Comments: "",
+                        }));
+                        setData((prevData) =>
+                          prevData.map((item) => ({
+                            ...item,
+                            Checked: false,
+                          }))
+                        );
+                        setSelectedJobCodes([]);
                       }
                     },
                   };
@@ -1092,6 +1134,7 @@ const RecruitmentProcess = (props: any) => {
       case TabName.InterviewQuestion:
       case TabName.ReviewProfile:
       case TabName.AdvertExtension:
+      case TabName.UploadCV:
         return (
           <SearchableDataTable
             data={data}
@@ -1103,11 +1146,7 @@ const RecruitmentProcess = (props: any) => {
           />
         );
       case TabName.Evaluation:
-        if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
-        } else {
-          return <InterviewPanelList {...props} TabValue={activeTab} />;
-        }
-        break;
+        return <InterviewPanelList {...props} TabValue={activeTab} />;
       default:
         return null;
     }

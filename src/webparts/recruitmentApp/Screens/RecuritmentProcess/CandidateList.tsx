@@ -128,8 +128,8 @@ const CandidateList = (props: any) => {
     );
     const canView = rowData.StatusId === StatusId.RejectedbyHOD;
     if (
-      props.stateValue.NoOfPosition === SelectedCandidate?.length &&
-      rowData.StatusId != StatusId.Selected &&
+      props.stateValue.NoOfPosition <= SelectedCandidate?.length &&
+      rowData.StatusId !== StatusId.Selected &&
       !canView
     ) {
       let ErrorMsg = {
@@ -206,7 +206,14 @@ const CandidateList = (props: any) => {
 
         return (
           <div
-            style={{ display: "flex", gap: "5px", justifyContent: "center" }}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px", // slightly more space for small screens
+              flexWrap: "wrap", // allow wrapping on smaller screens
+            }}
           >
             {canEdit && (
               <img
@@ -221,7 +228,12 @@ const CandidateList = (props: any) => {
                     previousTabName
                   )
                 }
-                style={{ width: "70%", height: "60%", cursor: "pointer" }}
+                style={{
+                  width: "2rem",
+                  height: "auto",
+                  maxWidth: "40px",
+                  cursor: "pointer",
+                }}
               />
             )}
             {canView && (
@@ -237,7 +249,12 @@ const CandidateList = (props: any) => {
                     previousTabName
                   )
                 }
-                style={{ width: "70%", height: "60%", cursor: "pointer" }}
+                style={{
+                  width: "2rem",
+                  height: "auto",
+                  maxWidth: "40px",
+                  cursor: "pointer",
+                }}
               />
             )}
           </div>
@@ -267,6 +284,7 @@ const CandidateList = (props: any) => {
         Id: candidate.ID,
         ItemCreated: "Yes",
         Comments: candidate.Comments || "",
+        GPA: "",
       };
 
       try {

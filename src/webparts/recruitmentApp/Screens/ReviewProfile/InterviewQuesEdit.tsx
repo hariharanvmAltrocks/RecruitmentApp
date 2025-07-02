@@ -56,7 +56,6 @@ import ViewQuestionCheckbox, {
 } from "../ScreenComponent/ViewQuestionCheckbox";
 import CustomLabel from "../../components/CustomLabel";
 import { Label } from "@fluentui/react";
-import { GetStatusIdRoles } from "../../components/TabMerge";
 
 type InterviewQuesValidationError = {
   QuestionType: boolean;
@@ -171,7 +170,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     ViewQuestion[]
   >([]);
 
-  const [currentRoleID, setCurrentRoleID] = useState<number>(0);
+  // const [currentRoleID, setCurrentRoleID] = useState<number>(0);
 
   // const handleCategoryChange = (val: string) => {
   //   setInterviewQuesData((prev) => ({
@@ -696,24 +695,28 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       visible: true,
       ButtonAction: async (userClickedOK: boolean) => {
         if (userClickedOK) {
-          switch (currentRoleID) {
-            case RoleID.RecruitmentHR:
-              props.navigation("/ReviewProfileList", {
-                state: {
-                  TabName: props.stateValue?.TabName,
-                  tab: props.stateValue?.tab,
-                },
-              });
-              break;
-            case RoleID.LineManager:
-              props.navigation("/RecurimentProcess", {
-                state: {
-                  TabName: props.stateValue?.TabNames,
-                  tab: props.stateValue?.tab,
-                },
-              });
-              break;
-            default:
+          if (
+            props.CurrentRoleID &&
+            props.CurrentRoleID.includes &&
+            props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+          ) {
+            props.navigation("/ReviewProfileList", {
+              state: {
+                TabName: props.stateValue?.TabName,
+                tab: props.stateValue?.tab,
+              },
+            });
+          } else if (
+            props.CurrentRoleID &&
+            props.CurrentRoleID.includes &&
+            props.CurrentRoleID.includes(RoleID.LineManager)
+          ) {
+            props.navigation("/RecurimentProcess", {
+              state: {
+                TabName: props.stateValue?.TabNames,
+                tab: props.stateValue?.tab,
+              },
+            });
           }
           setAlertPopupOpen(false);
         } else {
@@ -754,8 +757,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             : CatogryOptionCode.CareerPortalCandidate,
       }));
     }
-    let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
-    setCurrentRoleID(userRole ?? 0);
+    // let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
+    // setCurrentRoleID(userRole ?? 0);
   }, [props?.stateValue?.StatusId]);
 
   useEffect(() => {
@@ -799,7 +802,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         );
 
         const ScopeOption: AutoCompleteItem[] = (ScopeData.data ?? [])
-          .filter((item: any) => item.value !== "S6")
+          .filter((item: any) => item.value !== "S6" && item.value !== "S7")
           .map((opt: any) => ({
             key: opt.value,
             text: opt.displayText,
@@ -842,24 +845,28 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           visible: true,
           ButtonAction: async (userClickedOK: boolean) => {
             if (userClickedOK) {
-              switch (currentRoleID) {
-                case RoleID.RecruitmentHR:
-                  props.navigation("/ReviewProfileList", {
-                    state: {
-                      TabName: props.stateValue?.TabName,
-                      tab: props.stateValue?.tab,
-                    },
-                  });
-                  break;
-                case RoleID.LineManager:
-                  props.navigation("/RecurimentProcess", {
-                    state: {
-                      TabName: props.stateValue?.TabNames,
-                      tab: props.stateValue?.tab,
-                    },
-                  });
-                  break;
-                default:
+              if (
+                props.CurrentRoleID &&
+                props.CurrentRoleID.includes &&
+                props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+              ) {
+                props.navigation("/ReviewProfileList", {
+                  state: {
+                    TabName: props.stateValue?.TabName,
+                    tab: props.stateValue?.tab,
+                  },
+                });
+              } else if (
+                props.CurrentRoleID &&
+                props.CurrentRoleID.includes &&
+                props.CurrentRoleID.includes(RoleID.LineManager)
+              ) {
+                props.navigation("/RecurimentProcess", {
+                  state: {
+                    TabName: props.stateValue?.TabNames,
+                    tab: props.stateValue?.tab,
+                  },
+                });
               }
               setAlertPopupOpen(false);
             } else {
@@ -2381,24 +2388,28 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
           if (userClickedOK) {
-            switch (currentRoleID) {
-              case RoleID.RecruitmentHR:
-                props.navigation("/ReviewProfileList", {
-                  state: {
-                    TabName: props.stateValue?.TabName,
-                    tab: props.stateValue?.tab,
-                  },
-                });
-                break;
-              case RoleID.LineManager:
-                props.navigation("/RecurimentProcess", {
-                  state: {
-                    TabName: props.stateValue?.TabNames,
-                    tab: props.stateValue?.tab,
-                  },
-                });
-                break;
-              default:
+            if (
+              props.CurrentRoleID &&
+              props.CurrentRoleID.includes &&
+              props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+            ) {
+              props.navigation("/ReviewProfileList", {
+                state: {
+                  TabName: props.stateValue?.TabName,
+                  tab: props.stateValue?.tab,
+                },
+              });
+            } else if (
+              props.CurrentRoleID &&
+              props.CurrentRoleID.includes &&
+              props.CurrentRoleID.includes(RoleID.LineManager)
+            ) {
+              props.navigation("/RecurimentProcess", {
+                state: {
+                  TabName: props.stateValue?.TabNames,
+                  tab: props.stateValue?.tab,
+                },
+              });
             }
             setAlertPopupOpen(false);
           } else {

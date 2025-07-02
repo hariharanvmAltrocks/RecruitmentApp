@@ -19,6 +19,10 @@ import ViewCandidateDetails from "../Screens/ReviewProfile/ViewCandidateDetails"
 import HodViewScorecard from "../Screens/RecuritmentProcess/HodViewScorecard";
 import InterviewQuesEdit from "../Screens/ReviewProfile/InterviewQuesEdit";
 import ReviewProfileEdit from "../Screens/ReviewProfile/ReviewProfileEdit";
+import UploadCandidateCV from "../Screens/UploadCandidateCV/UploadCandidateCV";
+import UploadCandidateList from "../Screens/UploadCandidateCV/UploadCandidateList";
+import UploadOfferDocumentList from "../Screens/OfferMedicalProcess/UploadOfferDocumentList";
+import UploadCandidateDocument from "../Screens/OfferMedicalProcess/UploadCandidateDocument";
 
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
@@ -28,7 +32,7 @@ export default function MainPage(props: any) {
   const toggleSideNav = () => {
     setIsExpanded((prevState: any) => !prevState);
   };
-  console.log("Recruitment-App(19-May-2025) V-1.18");
+  console.log("Recruitment-App(23-May-2025) V-1.19.01");
   console.log("masterData", masterData);
 
   return (
@@ -167,6 +171,30 @@ export default function MainPage(props: any) {
                 <Route
                   path="/ReviewProfileList/ReviewProfileEdit"
                   element={<ReviewProfileEdit {...props} {...masterData} />}
+                />
+
+                {/* Upload CV */}
+                <Route
+                  path="/RecurimentProcess/UploadCandidateList/UploadCandidateCV"
+                  element={<UploadCandidateCV {...props} {...masterData} />}
+                />
+                <Route
+                  path="/RecurimentProcess/UploadCandidateList"
+                  element={<UploadCandidateList {...props} {...masterData} />}
+                />
+
+                {/* Offer Letter */}
+                <Route
+                  path="/UploadOfferDocumentList"
+                  element={
+                    <UploadOfferDocumentList {...props} {...masterData} />
+                  }
+                />
+                <Route
+                  path="/UploadOfferDocumentList/UploadDocument"
+                  element={
+                    <UploadCandidateDocument {...props} {...masterData} />
+                  }
                 />
               </Routes>
             </>

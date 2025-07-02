@@ -798,7 +798,8 @@ export default class InterviewProcessService
       const payload = {
         ActionId: obj.ActionId,
         ItemCreated: obj.ItemCreated,
-        Comments: obj.Comments, // Include Comments in the payload
+        Comments: obj.Comments,
+        GPA: obj.GPA // Include Comments in the payload
       };
 
       await SPServices.SPUpdateItem({

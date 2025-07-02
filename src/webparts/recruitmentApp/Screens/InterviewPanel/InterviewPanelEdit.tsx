@@ -338,6 +338,7 @@ const InterviewPanelEdit = (props: any) => {
                     if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
                       props.navigation("/ReviewProfileList", {
                         tab: props.stateValue?.tab,
+                        TabName: TabName.Evaluation,
                       });
                     } else if (
                       props.CurrentRoleID.includes(RoleID.HOD) ||
@@ -345,10 +346,12 @@ const InterviewPanelEdit = (props: any) => {
                     ) {
                       props.navigation("/RecurimentProcess", {
                         tab: props.stateValue?.tab,
+                        TabName: TabName.Evaluation,
                       });
                     } else {
                       props.navigation("/InterviewPanelList", {
                         tab: props.stateValue?.tab,
+                        TabName: TabName.Evaluation,
                       });
                     }
                     setAlertPopupOpen(false);
@@ -375,6 +378,7 @@ const InterviewPanelEdit = (props: any) => {
                     props.navigation("/ReviewProfileList", {
                       state: {
                         tab: props.stateValue?.tab,
+                        TabName: TabName.Evaluation,
                       },
                     });
                   } else if (
@@ -384,6 +388,7 @@ const InterviewPanelEdit = (props: any) => {
                     props.navigation("/RecurimentProcess", {
                       state: {
                         tab: props.stateValue?.tab,
+                        TabName: TabName.Evaluation,
                       },
                     });
                   } else {
@@ -687,6 +692,7 @@ const InterviewPanelEdit = (props: any) => {
               props.navigation("/ReviewProfileList", {
                 state: {
                   tab: props.stateValue?.tab,
+                  TabName: TabName.Evaluation,
                 },
               });
             } else if (
@@ -696,6 +702,7 @@ const InterviewPanelEdit = (props: any) => {
               props.navigation("/RecurimentProcess", {
                 state: {
                   tab: props.stateValue?.tab,
+                  TabName: TabName.Evaluation,
                 },
               });
             } else {
@@ -769,226 +776,174 @@ const InterviewPanelEdit = (props: any) => {
                   {" "}
                 </LabelHeaderComponents>
               </div>
-            </div>
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg4">
-                <CustomInput
-                  label="Applicant Name"
-                  value={CandidateData.FullName}
-                  disabled={true}
-                  mandatory={false}
-                  onChange={(value) =>
-                    setCandidateData((prevState) => ({
-                      ...prevState,
-                      ContactNumber: value,
-                    }))
-                  }
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg4">
-                <CustomInput
-                  label="Nationality"
-                  value={CandidateData.Nationality}
-                  disabled={true}
-                  mandatory={false}
-                  onChange={(value) =>
-                    setCandidateData((prevState) => ({
-                      ...prevState,
-                      TotalYearOfExperiance: value,
-                    }))
-                  }
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg4">
-                <CustomInput
-                  label="Gender"
-                  value={CandidateData.Gender}
-                  disabled={true}
-                  mandatory={false}
-                  onChange={(value) =>
-                    setCandidateData((prevState) => ({
-                      ...prevState,
-                      ContactNumber: value,
-                    }))
-                  }
-                />
-              </div>
-            </div>
 
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg4">
-                <CustomInput
-                  label="Highest Relevant Qualification"
-                  value={CandidateData.Qualification}
-                  disabled={true}
-                  mandatory={false}
-                  onChange={(value) =>
-                    setCandidateData((prevState) => ({
-                      ...prevState,
-                      ContactNumber: value,
-                    }))
-                  }
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg4">
-                <CustomInput
-                  label="Experiance in Mining Industry (Years)"
-                  value={CandidateData.TotalYearOfExperiance}
-                  disabled={true}
-                  mandatory={false}
-                  onChange={(value) =>
-                    setCandidateData((prevState) => ({
-                      ...prevState,
-                      TotalYearOfExperiance: value,
-                    }))
-                  }
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg4">
-                <CustomInput
-                  label="Experiance in Related Field (Years)"
-                  value={CandidateData.ReleventExperience}
-                  disabled={true}
-                  mandatory={false}
-                  onChange={(value) =>
-                    setCandidateData((prevState) => ({
-                      ...prevState,
-                      ContactNumber: value,
-                    }))
-                  }
-                />
-              </div>
-            </div>
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg4">
-                <CustomInput
-                  label="Date of Interview"
-                  value={
-                    CandidateData.InterviewDate
-                      ? new Date(CandidateData.InterviewDate)
-                          .toLocaleDateString("en-GB")
-                          .replace(/\//g, "-")
-                      : ""
-                  }
-                  disabled={true}
-                  mandatory={false}
-                  onChange={(value) =>
-                    setCandidateData((prevState) => ({
-                      ...prevState,
-                      InterviewDate: value,
-                    }))
-                  }
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg4">
-                <CustomInput
-                  label="No of Interview Level's"
-                  value={InterviewedLevel.Levels}
-                  disabled={true}
-                  mandatory={false}
-                />
-              </div>
-              <div className="ms-Grid-col ms-lg4">
-                <CustomInput
-                  label="Grade"
-                  value={InterviewedLevel.Grade}
-                  disabled={true}
-                  mandatory={false}
-                />
-              </div>
-            </div>
-            <div className="ms-Grid-row">
-              {CandidateData?.ConflictsOfInterest && (
+              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Conflicts Of Interest"
-                    value={CandidateData?.ConflictsOfInterest}
+                    label="Applicant Name"
+                    value={CandidateData.FullName}
+                    disabled={true}
+                    mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                        ContactNumber: value,
+                      }))
+                    }
+                  />
+                </div>
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomInput
+                    label="Nationality"
+                    value={CandidateData.Nationality}
+                    disabled={true}
+                    mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                        TotalYearOfExperiance: value,
+                      }))
+                    }
+                  />
+                </div>
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomInput
+                    label="Gender"
+                    value={CandidateData.Gender}
+                    disabled={true}
+                    mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                        ContactNumber: value,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomInput
+                    label="Highest Relevant Qualification"
+                    value={CandidateData.Qualification}
+                    disabled={true}
+                    mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                        ContactNumber: value,
+                      }))
+                    }
+                  />
+                </div>
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomInput
+                    label="Experiance in Mining Industry (Years)"
+                    value={CandidateData.TotalYearOfExperiance}
+                    disabled={true}
+                    mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                        TotalYearOfExperiance: value,
+                      }))
+                    }
+                  />
+                </div>
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomInput
+                    label="Experiance in Related Field (Years)"
+                    value={CandidateData.ReleventExperience}
+                    disabled={true}
+                    mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                        ContactNumber: value,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomInput
+                    label="Date of Interview"
+                    value={
+                      CandidateData.InterviewDate
+                        ? new Date(CandidateData.InterviewDate)
+                            .toLocaleDateString("en-GB")
+                            .replace(/\//g, "-")
+                        : ""
+                    }
+                    disabled={true}
+                    mandatory={false}
+                    onChange={(value) =>
+                      setCandidateData((prevState) => ({
+                        ...prevState,
+                        InterviewDate: value,
+                      }))
+                    }
+                  />
+                </div>
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomInput
+                    label="No of Interview Level's"
+                    value={InterviewedLevel.Levels}
                     disabled={true}
                     mandatory={false}
                   />
                 </div>
-              )}
-              {CandidateData?.ConflictsOfInterest && (
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Disability"
-                    value={CandidateData?.disability}
+                    label="Grade"
+                    value={InterviewedLevel.Grade}
                     disabled={true}
                     mandatory={false}
                   />
                 </div>
-              )}
-            </div>
-            {CandidateData?.disabilityReason &&
-              CandidateData?.disability === Choices.Yes && (
-                <div className="ms-Grid-row">
-                  <div className="ms-Grid-col ms-lg12">
-                    <CustomTextArea
-                      label="Disability Details"
-                      value={CandidateData?.disabilityReason}
+              </div>
+              <div className="ms-Grid-row">
+                {CandidateData?.ConflictsOfInterest && (
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Conflicts Of Interest"
+                      value={CandidateData?.ConflictsOfInterest}
                       disabled={true}
                       mandatory={false}
-                      error={false}
                     />
                   </div>
-                </div>
-              )}
-            <div className="ms-Grid-row">
-              <div
-                className="ms-Grid-col ms-lg12"
-                style={{ position: "relative", top: "14px" }}
-              >
-                <label
-                  style={{
-                    fontWeight: 600,
-                    marginBottom: "4px",
-                    display: "block",
-                  }}
-                >
-                  Interview Panel Level 1
-                </label>
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "8px",
-                    minHeight: "38px",
-                    background: "none",
-                    backgroundColor: "rgb(243, 242, 241)",
-                    padding: "8px",
-                    borderRadius: "6px",
-                    border: "rgb(243, 242, 241)",
-                    boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px",
-                  }}
-                >
-                  {interviewPanelTitlesLevel1 &&
-                  interviewPanelTitlesLevel1.length > 0
-                    ? interviewPanelTitlesLevel1.map((title, index) => (
-                        <Chip
-                          key={index}
-                          label={`${index + 1}. ${title}`}
-                          size="small"
-                          sx={{
-                            backgroundColor: "rgb(243, 242, 241)",
-                            fontWeight: 500,
-                            color: "rgb(85, 82, 79)",
-                            cursor: "not-allowed",
-                            // opacity: 0.6,
-                          }}
-                        />
-                      ))
-                    : null}
-                </div>
+                )}
+                {CandidateData?.ConflictsOfInterest && (
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Disability"
+                      value={CandidateData?.disability}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                )}
               </div>
-              {props.stateValue?.InterviewLevel === InterviewLevels.Levels2 &&
-              interviewPanelTitlesLevel2.length > 0 ? (
+              {CandidateData?.disabilityReason &&
+                CandidateData?.disability === Choices.Yes && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg12">
+                      <CustomTextArea
+                        label="Disability Details"
+                        value={CandidateData?.disabilityReason}
+                        disabled={true}
+                        mandatory={false}
+                        error={false}
+                      />
+                    </div>
+                  </div>
+                )}
+              <div className="ms-Grid-row">
                 <div
                   className="ms-Grid-col ms-lg12"
-                  style={{
-                    position: "relative",
-                    top: "14px",
-                    marginTop: "2%",
-                  }}
+                  style={{ position: "relative", top: "14px" }}
                 >
                   <label
                     style={{
@@ -997,7 +952,7 @@ const InterviewPanelEdit = (props: any) => {
                       display: "block",
                     }}
                   >
-                    Interview Panel Level 2
+                    Interview Panel Level 1
                   </label>
                   <div
                     style={{
@@ -1013,9 +968,9 @@ const InterviewPanelEdit = (props: any) => {
                       boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px",
                     }}
                   >
-                    {interviewPanelTitlesLevel2 &&
-                    interviewPanelTitlesLevel2.length > 0
-                      ? interviewPanelTitlesLevel2.map((title, index) => (
+                    {interviewPanelTitlesLevel1 &&
+                    interviewPanelTitlesLevel1.length > 0
+                      ? interviewPanelTitlesLevel1.map((title, index) => (
                           <Chip
                             key={index}
                             label={`${index + 1}. ${title}`}
@@ -1032,24 +987,78 @@ const InterviewPanelEdit = (props: any) => {
                       : null}
                   </div>
                 </div>
-              ) : (
-                <></>
-              )}
-            </div>
-
-            <div className="ms-Grid-row" style={{ marginTop: "22px" }}>
-              <div className="ms-Grid-col ms-lg6">
-                <LabelHeaderComponents value={"Attachments"} />
+                {props.stateValue?.InterviewLevel === InterviewLevels.Levels2 &&
+                interviewPanelTitlesLevel2.length > 0 ? (
+                  <div
+                    className="ms-Grid-col ms-lg12"
+                    style={{
+                      position: "relative",
+                      top: "14px",
+                      marginTop: "2%",
+                    }}
+                  >
+                    <label
+                      style={{
+                        fontWeight: 600,
+                        marginBottom: "4px",
+                        display: "block",
+                      }}
+                    >
+                      Interview Panel Level 2
+                    </label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "8px",
+                        minHeight: "38px",
+                        background: "none",
+                        backgroundColor: "rgb(243, 242, 241)",
+                        padding: "8px",
+                        borderRadius: "6px",
+                        border: "rgb(243, 242, 241)",
+                        boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px",
+                      }}
+                    >
+                      {interviewPanelTitlesLevel2 &&
+                      interviewPanelTitlesLevel2.length > 0
+                        ? interviewPanelTitlesLevel2.map((title, index) => (
+                            <Chip
+                              key={index}
+                              label={`${index + 1}. ${title}`}
+                              size="small"
+                              sx={{
+                                backgroundColor: "rgb(243, 242, 241)",
+                                fontWeight: 500,
+                                color: "rgb(85, 82, 79)",
+                                cursor: "not-allowed",
+                                // opacity: 0.6,
+                              }}
+                            />
+                          ))
+                        : null}
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
-            </div>
 
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg4">
-                <CustomLabel value={"Candidate Resume"} />
-                <CustomViewDocument Attachment={CandidateData.CandidateCVDoc} />
+              <div className="ms-Grid-row" style={{ marginTop: "22px" }}>
+                <div className="ms-Grid-col ms-lg6">
+                  <LabelHeaderComponents value={"Attachments"} />
+                </div>
               </div>
 
-              {/* <div className="ms-Grid-col ms-lg4">
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-lg4">
+                  <CustomLabel value={"Candidate Resume"} />
+                  <CustomViewDocument
+                    Attachment={CandidateData.CandidateCVDoc}
+                  />
+                </div>
+
+                {/* <div className="ms-Grid-col ms-lg4">
                   <CustomLabel value={"RoleProfile Documents"} />
                   <CustomViewDocument
                     Attachment={CandidateData.RoleProfileDocument}
@@ -1061,9 +1070,9 @@ const InterviewPanelEdit = (props: any) => {
                     Attachment={CandidateData.AdvertisementDocument}
                   />
                 </div> */}
-            </div>
+              </div>
 
-            {/* <div
+              {/* <div
                 className="ms-Grid-row"
                 style={{ marginTop: "21px", marginBottom: "21px" }}
               >
@@ -1075,7 +1084,7 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div> */}
-            {/* 
+              {/* 
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomAutoComplete
@@ -1232,7 +1241,7 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div> */}
-            {/* <div
+              {/* <div
                 className="ms-Grid-row"
                 style={{
                   padding: "3px",
@@ -1249,7 +1258,7 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div> */}
-            {/* <div
+              {/* <div
                 className="ms-Grid-row"
                 style={{
                   marginLeft: "-13px",
@@ -1272,7 +1281,7 @@ const InterviewPanelEdit = (props: any) => {
                   />
                 </div>
               </div> */}
-            {/* 
+              {/* 
               <div className="ms-Grid-row">
                 <div
                   className="ms-Grid-col ms-lg2"
@@ -1311,6 +1320,7 @@ const InterviewPanelEdit = (props: any) => {
                   </div>
                 </div>
               </div> */}
+            </div>
           </CardContent>
         </Card>
       ),
@@ -1753,6 +1763,7 @@ const InterviewPanelEdit = (props: any) => {
             props.navigation("/ReviewProfileList", {
               state: {
                 tab: props.stateValue?.tab,
+                TabName: TabName.Evaluation,
               },
             });
           } else if (
@@ -1762,6 +1773,7 @@ const InterviewPanelEdit = (props: any) => {
             props.navigation("/RecurimentProcess", {
               state: {
                 tab: props.stateValue?.tab,
+                TabName: TabName.Evaluation,
               },
             });
           } else {

@@ -61,6 +61,10 @@ export const ListNames = {
 
   //Menu Merge
   HRMSRecruitmentSwitchUserMatrix: "HRMSRecruitmentSwitchUserMatrix",
+
+  //Region Zone
+  HRMSRegion: "HRMSRegion", //Region
+  HRMSZone: "HRMSZone",
 };
 
 export const DocumentLibraray = {
@@ -71,6 +75,7 @@ export const DocumentLibraray = {
   ONAMSignedStampDocuments: "HRMSRecruitmentOnamStampedDocuments",
   RoleProfileMaster: "RoleProfileMaster",
   HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV",
+  HRMSCandidateDocs: "HRMSCandidateDocs"
 };
 
 export const StatusId = {
@@ -93,7 +98,28 @@ export const StatusId = {
   PendingwithHODtoselectthecandidateLevel2: 127,
   PendingwithRecruitmentHRtoassignLevel2InterviewPanel: 128,
   InterviewScheduledforLevel2: 129,
-  PendingwithHODtoAssignPositionID: 130
+  PendingwithHODtoAssignPositionID: 130,
+
+  // Post Recruitment
+  PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,
+  PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter: 142,
+  PendingwithCandidatetoSignOfferLetter: 133,
+  PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments: 134,
+  PendingwithCandidatetoUploadOtherDocuments: 135,
+  PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs: 136,
+  PendingwithRecruitmentHRtoUploadtheEmploymentContract: 137,
+  PendingwithCandidatetoSignEmploymentContract: 138,
+  pendingwithRecruitmentHRtoReviewtheEmploymentContractForm: 139,
+  OnboardingProcessinitiatedforDRC: 23,
+  OnboardingProcessinitiatedforExpat: 24,
+
+  //Revert Post Recrutiment
+  RevertedBacktoCandidateforReuploadOfferLetter: 149,
+  RevertedBacktoCandidateforReuploadDocs: 150,
+  RevertedBacktoCandidateforReuploadEmploymentContract: 151,
+
+  Pending: 89,
+  PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract: 152
 };
 
 export const RoleID = {
@@ -213,7 +239,7 @@ export const RecuritmentHRMsg = {
     "The scorecard for the candidate has already been submitted.",
   InterviewScoreCommentsAlready:
     "The scorecard for the candidate comments has already been submitted.",
-  APIErrorMsg: "Server is temporarily unavailable.",
+  APIErrorMsg: "Server is temporarily unavailable. Please try again later.",
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
   AddedMsg: "Added Successfully",
@@ -224,8 +250,22 @@ export const RecuritmentHRMsg = {
   ClearWarning: "Are you sure you want to close? Unsaved changes will be lost.",
   SelectedCandidateValidation: "The requested headcount for the position has already been selected.",
   QuestionAlertMsg: "Interview questions are not available. Kindly reschedule the interview date.",
+
+  UploadMsg: "Candidate CV Upload Successfully",
+  ValidationMsg: "This Candidate Already Exists",
+
+  OfferLetterMsg: "The offer letter has been uploaded successfully.",
+  ReviewOfferLetterMsg: "The offer letter has been reviewed successfully",
+  RevertedOfferLetter: "The offer letter has been reverted to candidate successfully..",
+
+  ReviewOtherDocsMsg: "Candidate documents has been reviewed successfully",
+  RevertOtherDocsMsg: "Candidate documents have been reverted successfully.",
+
+  EmploymentContractMsg: "The employment contract has been uploaded successfully.",
+  ReviewEmploymentContractMsg: "The employment contract has been reviewed successful, Please proceed with onboarding process",
+  RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
 };
-// In your validation messages config file
+
 export const validationMsg = {
   MaxOptions: "You must fill at least 2 options.",
   CorrectAns: "Please select a correct answer.",
@@ -299,12 +339,17 @@ export const TabName = {
   // Recruitment HR(PreSelection)
   UploadAdvertisement: "Job Advertisement",
   AssignAgencies: "Assign Agencies",
+  UploadCV: "Upload CV",
   // Recruitment HR(PostSelection)
   ReviewProfile: "Review Profile",
   AssignInterviewPanel: "Assign Interview Panel",
   InterviewpanelL1: "Interview Panel Level-1",
   InterviewpanelL2: "Interview Panel Level-2",
   InterviewQuestion: "Interview Questions",
+  // Candidate Articles
+  // UploadDocuments: "Upload Documents",
+  // ViewDocuments: "View Documents",
+  CandidateDocuments: "Candidate Documents",
   // HOD
   ReviewJobAdvertisement: "Review Job Advertistment",
   ReviewScorecard: "Review Score card",
@@ -333,6 +378,7 @@ export const TabName = {
   InterviewPanel: "Interview Panel",
   ViewScoreDetails: " View ScoreCard Details",
   ReschedulInterview: "Reschedule Interview",
+
 };
 
 export const CheckboxContent = {
@@ -393,6 +439,18 @@ export const workflowStatusApi = {
   LineManagerLevel2OnHold: "WS13",
   LineManagerLevel1Rejected: "WS14",
   LineManagerLevel2Rejected: "WS15",
+
+  // post Recrutiment
+  Pendingwithcandidatetosignofferletter: "WS16",
+  CandidateuploadedtheSignedOfferLetter: "WS17",
+  PendingwithCandidatetouploadotherDocuments: "WS18",
+  CandidateUploadedcandidatepersonalDocs: "WS19",
+  PendingwithCandidatetosignEmployementContract: "WS20",
+  UploadedthesignedEmployementcontractform: "WS21",
+
+  RevertedBacktoCandidateforreuploadofferLetter: "WS22",
+  RevertedBacktoCandidateforreuploadDocs: "WS23",
+  RevertedBacktoCandidateforreuploadEmploymentContract: "WS24"
 };
 
 export const ApplicationStatusId = {
@@ -474,7 +532,53 @@ export const labelName = {
   Level1CandidateLabel: "Does the candidate fit for the vacant position ? (Level 1)",
   Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)",
   ViewJobAdvetisement: "View Job Advertisement",
-  Candidate: "Candidate"
+  Candidate: "Candidate",
+
+  //IT
+  TrainingCenterSystem: "Training Center System",
+  TASystem: "T&A System",
+  ITSystem: "IT System",
+
+  //Upload CV 
+  Title: "Title",
+  FirstName: "First Name ",
+  MiddleName: " Middle Name",
+  LastName: " Last Name",
+  DOB: "DOB ",
+  PhoneNumber: "Phone Number ",
+  AlternativePhoneNumber: "Alternative Phone Number",
+  Nationality: "Nationality ",
+  ProofofIdentity: "Proof of Identity ",
+  IdentityNumber: "Identity Number",
+  Gender: "Gender",
+  Email: "Email ",
+  HighestEducation: "Highest Education ",
+  WorkExperience: "Work Experience",
+  RelevantExperience: "Relevant Experience",
+
+  AddressLine1: "Address Line 1 ",
+  Country: "Country ",
+  State: "State ",
+  City: "City ",
+  PostalCode: "Postal Code ",
+  ResumeCV: "Resume/CV and Cover Letter",
+
+  OfferLetter: "Upload Offer Letter",
+  EmployementDoc: "Upload Employement Contract",
+
+  Attachment: "Attachment",
+  UploadAttachment: "Upload Attachment",
+  CurrentEmployer: "Current Employer",
+  CurrentPosition: "Current Position",
+  NumberOftax: "Number of tax dependents (specify number)",
+  WillingToRelocate: "Willing to relocate if not currently living close to the relevant project site/office?",
+  previouslyworkedMine: "Have you previously worked at Ivanhoe Mines and its subsidiaries or Zijin Mines and its subsidiaries?",
+  familylinks: "Any family or other links with existing employees to declare? (If so, who? Attach detail)",
+  businesslinks: "Any business links to declare? (If so, who? Attach detail)",
+
+  whichOperation: "For which Operation?",
+  YourRole: "What was your role?",
+  RegionProvince: "Region / Province"
 };
 export const ButtonAction = {
   Update: "Update",
@@ -495,6 +599,7 @@ export const ButtonAction = {
   Assign: "Assign",
   Remove: "Remove",
   close: "Close",
+  Review: "Reviewed",
 }
 
 export const ActionIcon = {
@@ -514,6 +619,46 @@ export const RoleName = {
   EXCO: "EXCO",
   InterviewPanel: "InterviewPanel"
 };
+
+export const DocumentFolderName = {
+  Offerletter: "OfferLetter",
+  EmploymentContractForm: "EmploymentContractForm",
+  UnsignedDoc: "UnsignedDoc",
+  PersonalDocs: "PersonalDocs",
+  Medical: "Medical"
+}
+
+export const PostRecrutimentCheckboxContent = {
+  OfferLetterDRC: "I hereby confirm that I have reviewed and verified the medical document, and I consent to the release of the offer letter.",
+  OfferLetterExpat: "I hereby confirm  I consent to the release of the offer letter.",
+  ReviewOfferLetter: "I hereby confirm that I have reviewed the signed offer letter and request the candidate to provide the necessary supporting documents.",
+
+}
+
+export const agentCode = {
+  RecruitmentHR: "HRMS001",
+}
+
+export const Inductiontype = [
+  { key: 1, text: "General Surface Induction" },
+  { key: 2, text: "Underground Induction" },
+  { key: 3, text: "Concentrator Induction" },
+  { key: 4, text: "Smelter Induction" },
+];
+
+export const HardwareoptValue = [
+  { key: 1, text: "Laptop" },
+  { key: 2, text: "Cellular Phone" },
+  // { key: 3, text: "Mouse" },
+  // { key: 4, text: "Keyboard" },
+  // { key: 5, text: "Speaker" },
+  // { key: 6, text: "Mobile Phone" },
+];
+
+export const ITSystemReq = {
+  NotRequired: "Not Required",
+  Required: "Required"
+}
 
 export const ColorCode = {
   TabColorCode: {

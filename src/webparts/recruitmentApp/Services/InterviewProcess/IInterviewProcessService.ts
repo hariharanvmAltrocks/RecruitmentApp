@@ -24,6 +24,7 @@ export interface ActionUpdate {
   Id: number;
   ItemCreated?: string;
   ScoreCardLevelItemCreated?: string;
+  GPA: string;
 }
 
 export type AssignPositionID = {
@@ -31,6 +32,9 @@ export type AssignPositionID = {
   CandidateIDId: number;
   RecruitmentIDId: number;
   Coomments?: string;
+  ItemCreated: string;
+  ActionId: number;
+  StatusId: number;
 };
 export type ApiResponse<T> = {
   data: T;

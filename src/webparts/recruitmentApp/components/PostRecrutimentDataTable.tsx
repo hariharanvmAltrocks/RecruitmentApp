@@ -9,7 +9,6 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import { FilterMatchMode } from "primereact/api";
 import { AutoCompleteItem } from "../Models/Screens";
 import CustomAutoComplete from "./CustomAutoComplete";
-import { ColorCode, TabName } from "../utilities/Config";
 
 interface ColumnConfig {
   field: string;
@@ -25,9 +24,9 @@ interface SearchableDataTableProps {
   rows: number;
   onPageChange: (event: any) => void;
   handleRefresh: () => void;
-  MasterData: any;
-  handleAssignBtn?: () => void;
   UploadCV?: string;
+  totalItem?: number;
+  pagination: { first: number; rows: number; totalPages: number };
 }
 export type FilterData = {
   Department: AutoCompleteItem;
@@ -36,17 +35,19 @@ export type FilterData = {
   BusinessUnitCodeOption: AutoCompleteItem[];
   BusinessUnitName: AutoCompleteItem;
   BusinessUnitNameOption: AutoCompleteItem[];
-  JobCode: AutoCompleteItem;
-  JobCodeOption: AutoCompleteItem[];
+  JobTitle: AutoCompleteItem;
+  JobTitleOption: AutoCompleteItem[];
+  WorkflowStatus: AutoCompleteItem;
+  WorkflowStatusOption: AutoCompleteItem[];
 };
 
-const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
+const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
   data,
   columns,
   rows,
   onPageChange,
   handleRefresh,
-  handleAssignBtn,
+  pagination,
   UploadCV,
 }) => {
   const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
@@ -56,16 +57,35 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
   const [FilterData, setFilterData] = React.useState<FilterData>({
     Department: { key: 0, text: "" },
     BusinessUnitCode: { key: 0, text: "" },
-    JobCode: { key: 0, text: "" },
+    JobTitle: { key: 0, text: "" },
     BusinessUnitName: { key: 0, text: "" },
     DepartmentOption: [],
     BusinessUnitCodeOption: [],
-    JobCodeOption: [],
+    JobTitleOption: [],
     BusinessUnitNameOption: [],
+    WorkflowStatus: { key: 0, text: "" },
+    WorkflowStatusOption: [],
   });
+  const [totalItem, setTotalItem] = React.useState<number>(0);
 
   React.useEffect(() => {
-    setFilteredItems(data);
+    const PagewiseData =
+      pagination.totalPages === 0
+        ? data
+        : data.slice(pagination.first, pagination.first + pagination.rows);
+    setFilteredItems(PagewiseData);
+    setTotalItem(data[0]?.TotalItems ?? data.length);
+    const workflowStatusoption: AutoCompleteItem[] = Array.from(
+      data.map((sta) => ({
+        key: sta.StatusID,
+        text: sta.Status,
+      }))
+    );
+
+    setFilterData((prev) => ({
+      ...prev,
+      WorkflowStatusOption: workflowStatusoption,
+    }));
   }, [data]);
 
   const handleSearch = (event: any) => {
@@ -76,12 +96,16 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
       },
     });
   };
+  React.useEffect(() => {
+    setTotalItem(filteredItems[0]?.TotalItems ?? filteredItems.length);
+  }, [filteredItems]);
 
   const search_fn = (field: string, item: AutoCompleteItem) => {
     let filtered = data.filter((i) => {
       if (field === "Department") return i.Department === item.text;
       if (field === "BusinessUnitCode") return i.BusinessUnitCode === item.text;
-      if (field === "JobCode") return i.JobCode === item.text;
+      if (field === "JobTitle") return i.JobTitle === item.text;
+      if (field === "WorkflowStatus") return i.Status === item.text;
       return false;
     });
 
@@ -97,10 +121,10 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
       [field]: item ?? { key: 0, text: "" },
     }));
     if (!item) {
-      if (field === "JobCode") {
+      if (field === "JobTitle") {
         setFilterData((prev) => ({
           ...prev,
-          JobCode: { key: 0, text: "" },
+          JobTitle: { key: 0, text: "" },
         }));
         setFilteredItems(
           data.filter((row) => {
@@ -116,8 +140,8 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
         setFilterData((prev) => ({
           ...prev,
           BusinessUnitCode: { key: 0, text: "" },
-          JobCodeOption: [],
-          JobCode: { key: 0, text: "" },
+          JobTitleOption: [],
+          JobTitle: { key: 0, text: "" },
         }));
         setFilteredItems(
           data.filter((row) => {
@@ -134,14 +158,15 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
           BusinessUnitCodeOption: [],
           JobCodeOption: [],
           BusinessUnitCode: { key: 0, text: "" },
-          JobCode: { key: 0, text: "" },
+          JobTitle: { key: 0, text: "" },
         }));
+        setFilteredItems(data);
+      } else if (field === "WorkflowStatus") {
         setFilteredItems(data);
       }
       return;
     }
 
-    // Continue with filtering logic if there's a selected item
     search_fn(field, item);
 
     if (field === "Department") {
@@ -156,10 +181,10 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
       }));
 
       const jobCodeOptions: AutoCompleteItem[] = Array.from(
-        new Set(departmentToBU.map((row) => row.JobCode))
-      ).map((jobCode) => ({
-        key: jobCode,
-        text: jobCode,
+        new Set(departmentToBU.map((row) => row.JobTitle))
+      ).map((JobTitle) => ({
+        key: JobTitle,
+        text: JobTitle,
       }));
 
       setFilterData((prev) => ({
@@ -167,26 +192,24 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
         BusinessUnitCodeOption: businessUnitOptions,
         JobCodeOption: jobCodeOptions,
         BusinessUnitCode: { key: 0, text: "" },
-        JobCode: { key: 0, text: "" },
+        JobTitle: { key: 0, text: "" },
       }));
     }
 
     if (field === "BusinessUnitCode") {
-      const buToJobCode = filteredItems.filter(
+      const buToJobCode = data.filter(
         (row) => row.BusinessUnitCode === item?.text
       );
-
-      const jobCodeOptions: AutoCompleteItem[] = Array.from(
-        new Set(buToJobCode.map((row) => row.JobCode))
-      ).map((jobCode) => ({
-        key: jobCode,
-        text: jobCode,
+      debugger;
+      const jobCodeOptions: AutoCompleteItem[] = buToJobCode.map((item) => ({
+        key: item.ID,
+        text: item?.JobTitle,
       }));
 
       setFilterData((prev) => ({
         ...prev,
-        JobCodeOption: jobCodeOptions,
-        JobCode: { key: 0, text: "" },
+        JobTitleOption: jobCodeOptions,
+        JobTitle: { key: 0, text: "" },
       }));
     }
   };
@@ -256,10 +279,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
           />
         </div>
       </div>
-      <div
-        className="ms_Grid-row"
-        style={{ marginRight: "-12%", marginLeft: "5px" }}
-      >
+      <div className="ms_Grid-row">
         <div className="ms-Grid-col ms-lg3">
           <CustomAutoComplete
             label="Department"
@@ -285,37 +305,34 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
         </div>
         <div className="ms-Grid-col ms-lg3">
           <CustomAutoComplete
-            label="Job Code"
-            options={FilterData.JobCodeOption ?? []}
-            value={FilterData.JobCode}
+            label="Job Title"
+            options={FilterData.JobTitleOption ?? []}
+            value={FilterData.JobTitle}
             disabled={false}
-            onChange={(item) => handleAutoComplete("JobCode", item)}
+            onChange={(item) => handleAutoComplete("JobTitle", item)}
           />
         </div>
-        {UploadCV === TabName.UploadCV && (
-          <div className="ms-Grid-col ms-lg2" style={{ marginTop: "43px" }}>
-            <ReuseButton
-              label={UploadCV === TabName.UploadCV ? "Upload" : ""}
-              onClick={handleAssignBtn}
-              spacing={4}
-              // error={AssignBtnValidation}
-              Style={{
-                width: "80%",
-                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                color: "white",
-                height: "42px",
-                lineHeight: "normal",
-                marginTop: "1px",
-              }}
-            />
-          </div>
-        )}
+        <div className="ms-Grid-col ms-lg3">
+          <CustomAutoComplete
+            label="Workflow Status"
+            options={FilterData.WorkflowStatusOption ?? []}
+            value={FilterData.WorkflowStatus}
+            disabled={false}
+            onChange={(item) => handleAutoComplete("WorkflowStatus", item)}
+          />
+        </div>
       </div>
       <div className="ms-Grid-row" style={{ marginTop: "2%" }}>
         <div className="ms-Grid-col ms-lg12">
           <DataTable
             value={filteredItems}
-            rows={rows}
+            lazy
+            rows={pagination.rows}
+            first={pagination.first}
+            totalRecords={totalItem}
+            onPage={(event) => {
+              onPageChange(event);
+            }}
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             scrollable
@@ -325,6 +342,8 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
             paginator
             stripedRows
             filters={dashboardSearch}
+            onFilter={(e) => setFilteredItems(e.filteredValue || data)}
+            style={{ overflow: "visible" }}
           >
             {columns.map((col) => (
               <Column
@@ -343,4 +362,4 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
   );
 };
 
-export default SearchableDataTable;
+export default PostRecrutimentDataTable;

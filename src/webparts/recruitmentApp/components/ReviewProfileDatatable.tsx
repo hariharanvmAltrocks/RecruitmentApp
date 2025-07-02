@@ -2,10 +2,11 @@ import * as React from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { TextField } from "office-ui-fabric-react";
-import { Icon } from "@fluentui/react";
 import ReuseButton from "./ReuseButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { FilterMatchMode } from "primereact/api";
+import { TabName } from "../utilities/Config";
+import { Icon } from "@fluentui/react";
 
 interface ColumnConfig {
   field: string;
@@ -23,6 +24,8 @@ interface SearchableDataTableProps {
   handleRefresh: () => void;
   totalItem?: number;
   pagination: { first: number; rows: number; totalPages: number };
+  handleUploadCV?: () => void;
+  UploadCV?: string;
 }
 
 const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
@@ -32,6 +35,8 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
   onPageChange,
   handleRefresh,
   pagination,
+  handleUploadCV,
+  UploadCV,
 }) => {
   const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
   const [dashboardSearch, setDashboardSearch] = React.useState<any>({
@@ -62,7 +67,7 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
     <div>
       <div className="ms-Grid-row">
         <div
-          className="ms-Grid-col ms-lg10 search_div"
+          className="ms-Grid-col ms-lg9 search_div"
           style={{
             paddingLeft: "2%",
             position: "relative",
@@ -76,8 +81,6 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
             styles={{
               fieldGroup: {
                 borderRadius: "4px",
-                // boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-                // borderColor: "red",
                 boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                 borderColor: "#c9bdbd",
                 height: "42px",
@@ -93,12 +96,12 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
               position: "absolute",
               top: "5%",
               right: "11px",
-              // padding: '3px',
               color: "black",
             }}
           />
         </div>
-        <div className="ms-Grid-col ms-lg2">
+
+        <div className="ms-Grid-col ms-lg1">
           <ReuseButton
             icon={
               <RefreshIcon
@@ -126,6 +129,19 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
             Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
           />
         </div>
+
+        {UploadCV === TabName.UploadCV && (
+          <div className="ms-Grid-col ms-lg1" style={{ marginLeft: "4%" }}>
+            <ReuseButton
+              label={UploadCV === TabName.UploadCV ? "Upload" : ""}
+              onClick={handleUploadCV}
+              spacing={4}
+              height="33px"
+              width="32%"
+              Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
+            />
+          </div>
+        )}
       </div>
       <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
         <div className="ms-Grid-col ms-lg12">

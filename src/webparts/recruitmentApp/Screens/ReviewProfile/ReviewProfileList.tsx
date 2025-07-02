@@ -175,10 +175,9 @@ const ReviewProfileList = (props: any) => {
     try {
       let filterConditionsRecuritment = [];
       let RecuritmentConditions = "and";
-
       let TabValue = storedStringRef.current
         ? storedStringRef.current
-        : TabName.ReviewProfile;
+        : props.stateValue?.TabName;
       switch (TabValue) {
         case TabName.ReviewProfile:
         case TabName.AssignInterviewPanel:
@@ -329,11 +328,7 @@ const ReviewProfileList = (props: any) => {
           />
         );
       case TabName.Evaluation:
-        if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
-        } else {
-          return <InterviewPanelList {...props} />;
-        }
-        break;
+        return <InterviewPanelList {...props} />;
       default:
         return null;
     }

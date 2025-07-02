@@ -68,21 +68,31 @@ function CustomAutoComplete({
           "& input": {
             height: "10px",
           },
-          "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-            {
-              borderColor: "#5f5f5f",
-            },
-          // "& .MuiAutocomplete-popupIndicator, & .MuiAutocomplete-clearIndicator":
-          //   {
-          //     color: "black",
-          //   },
+          "& .MuiOutlinedInput-root": {
+            minWidth: "50px",
+            ...(disabled && {
+              background: "none rgb(243, 242, 241)",
+            }),
+          },
+          field: {
+            ...(disabled && {
+              background: "none rgb(243, 242, 241);",
+              "::placeholder": {
+                background: "none rgb(243, 242, 241)",
+              },
+            }),
+          },
         }}
         disabled={disabled}
         autoSelect={true}
         autoComplete={true}
         onChange={onChange ? (event, value) => onChange(value) : undefined}
         renderInput={(params) => (
-          <TextField placeholder={placeholder} {...params} />
+          <TextField
+            placeholder={placeholder}
+            {...params}
+            sx={{ minWidth: "50px" }}
+          />
         )}
       />
       {error && (

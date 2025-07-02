@@ -143,7 +143,9 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
         }}
       >
         {handleCancel &&
-          !additionalButtons.some((button) => button.label === "Close") && (
+          !additionalButtons.some(
+            (button) => button.label === "Close" || button.label === "Back"
+          ) && (
             <div style={{ marginRight: "10px" }}>
               <ReuseButton label="Cancel" onClick={handleCancel} spacing={4} />
             </div>

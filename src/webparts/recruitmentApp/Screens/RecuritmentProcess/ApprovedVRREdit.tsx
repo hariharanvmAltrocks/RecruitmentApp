@@ -934,17 +934,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           ActionId: WorkflowAction.Approved,
           ItemCreated: "Yes",
         };
-
-        if (formState.Comments) {
-          const commentsData: InsertComments = {
-            RoleId: currentRoleID,
-            RecruitmentIDId: props.stateValue?.ID,
-            Comments: formState.Comments,
-          };
-
-          await getVRRDetails.InsertCommentsList(commentsData);
-        }
-
         switch (currentRoleID) {
           case RoleID.RecruitmentHRLead: {
             if (
@@ -969,6 +958,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               );
 
               if (result?.status === 200) {
+                if (formState.Comments) {
+                  const commentsData: InsertComments = {
+                    RoleId: currentRoleID,
+                    RecruitmentIDId: props.stateValue?.ID,
+                    Comments: formState.Comments,
+                  };
+
+                  await getVRRDetails.InsertCommentsList(commentsData);
+                }
                 await CommonServices.uploadAttachmentToLibrary(
                   formState.JobCode,
                   formState.OnamSignedStampsAttchment ?? [],
@@ -1126,6 +1124,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               );
               resetForm();
               if (result.status === ResponeStatus.SUCCESS) {
+                if (formState.Comments) {
+                  const commentsData: InsertComments = {
+                    RoleId: currentRoleID,
+                    RecruitmentIDId: props.stateValue?.ID,
+                    Comments: formState.Comments,
+                  };
+
+                  await getVRRDetails.InsertCommentsList(commentsData);
+                }
                 await CommonServices.uploadAttachmentToLibrary(
                   formState.JobCode,
                   advDetails?.AdvertisementAttachement ?? [],
@@ -1200,7 +1207,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               ID: props.stateValue?.ID,
             });
             resetForm();
+            if (formState.Comments) {
+              const commentsData: InsertComments = {
+                RoleId: currentRoleID,
+                RecruitmentIDId: props.stateValue?.ID,
+                Comments: formState.Comments,
+              };
 
+              await getVRRDetails.InsertCommentsList(commentsData);
+            }
             let approveAlert = {
               Message:
                 currentRoleID === RoleID.HOD
@@ -1358,22 +1373,32 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   };
 
   const OpenComments = async () => {
-    setMainComponent(false);
-    let filterConditions = [];
-    let Conditions = "";
+    setIsLoading(true);
+    try {
+      setMainComponent(false);
+      let filterConditions = [];
+      let Conditions = "";
 
-    filterConditions.push({
-      FilterKey: "RecruitmentID",
-      Operator: "eq",
-      FilterValue: props.stateValue.ID,
-    });
-    const CommentsList = await getVRRDetails.GetCommentsData(
-      props.EmployeeList,
-      Conditions,
-      filterConditions
-    );
-    if (CommentsList.status === 200) {
-      setCommentsData(CommentsList.data);
+      filterConditions.push({
+        FilterKey: "RecruitmentID",
+        Operator: "eq",
+        FilterValue: props.stateValue.ID,
+      });
+      const CommentsList = await getVRRDetails.GetCommentsData(
+        props.EmployeeList,
+        Conditions,
+        filterConditions
+      );
+      if (CommentsList.status === 200) {
+        setCommentsData(CommentsList.data);
+      }
+      setMainComponent(false);
+    } catch (error) {
+      console.error("Error in OpenComments:", error);
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
     }
   };
 

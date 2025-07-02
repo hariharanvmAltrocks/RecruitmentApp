@@ -110,6 +110,13 @@ const CommentView: React.FC<CommentViewProps> = ({
                       </>
                     )}
 
+                    {date1 && (
+                      <Label style={labelStyles}>Level 1 Date: {date1}</Label>
+                    )}
+                    {date2 && (
+                      <Label style={labelStyles}>Level 2 Date: {date2}</Label>
+                    )}
+
                     {meta?.Name && (
                       <Label style={boldLabelStyles}>{meta.Name}</Label>
                     )}
@@ -127,13 +134,6 @@ const CommentView: React.FC<CommentViewProps> = ({
                       <Label className="title" style={labelStyles}>
                         {meta.Department}
                       </Label>
-                    )}
-
-                    {date1 && (
-                      <Label style={labelStyles}>Level 1 Date: {date1}</Label>
-                    )}
-                    {date2 && (
-                      <Label style={labelStyles}>Level 2 Date: {date2}</Label>
                     )}
                   </div>
                 );

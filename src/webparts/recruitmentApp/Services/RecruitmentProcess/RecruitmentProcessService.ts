@@ -168,6 +168,7 @@ export default class RecruitmentService implements IRecruitmentService {
               StatusId: objresult?.StatusId,
               Action: objresult.Action?.Action ? objresult.Action?.Action : "",
               ActionTypeId: objresult.ActionId ? objresult.ActionId : "",
+              Location: objresult?.Location || "",
 
               JobCodeId: 0,
               JobCode: "",
@@ -312,6 +313,7 @@ export default class RecruitmentService implements IRecruitmentService {
               StatusId: item?.StatusId,
               Action: item.Action?.Action ? item.Action?.Action : "",
               ActionTypeId: item.ActionId ? item.ActionId : "",
+              Location: item?.Location || "",
 
               JobCodeId: 0,
               JobCode: "",
@@ -654,6 +656,7 @@ export default class RecruitmentService implements IRecruitmentService {
               StatusId: item?.StatusId,
               Action: item?.Action?.Action ? item?.Action?.Action : "",
               ActionTypeId: item?.ActionId ? item?.ActionId : "",
+              Location: item?.Location || "",
 
               JobCodeId: item?.JobCodeId ? item?.JobCodeId : 0,
               JobCode: item?.JobCode?.JobCode ? item?.JobCode?.JobCode : "",

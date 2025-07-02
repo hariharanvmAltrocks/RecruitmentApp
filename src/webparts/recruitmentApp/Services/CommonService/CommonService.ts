@@ -4,7 +4,7 @@ import SPServices from "../SPService/SPServices";
 import { ICommonService } from "./ICommonService";
 import GraphService from "../GraphService/GraphService";
 import { AutoCompleteItem } from "../../Models/Screens";
-import { ListNames } from "../../utilities/Config";
+import { DocumentLibraray, ListNames } from "../../utilities/Config";
 
 
 export default class CommonService implements ICommonService {
@@ -275,6 +275,51 @@ export default class CommonService implements ICommonService {
     }
   };
 
+  GetDocumentinUrl = async (url: string): Promise<ApiResponse<any[]>> => {
+    try {
+      let filteredFiles: IDocFiles[] = [];
+      if (url) {
+        const extractedPath =
+          url.split("/root:/")[1]?.split(":/content")[0] || "";
+
+        if (extractedPath) {
+          const folderPath =
+            extractedPath.substring(0, extractedPath.lastIndexOf("/")) || "";
+
+          try {
+            let FileData = (await SPServices.getDocLibFiles({
+              FilePath: `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${folderPath}`,
+            })) as IDocFiles[];
+
+            if (FileData && FileData.length > 0) {
+              const fileName = extractedPath.split("/").pop();
+              filteredFiles = FileData.filter((file) => file.name === fileName);
+            } else {
+              console.warn("Warning: No files found in the directory");
+            }
+          } catch (error) {
+            console.error("Error fetching document library files:", error);
+          }
+        }
+      }
+      return {
+        data: filteredFiles,
+        status: 200,
+        message: "HRMSRecruitmentCandidateDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data HRMSRecruitmentCandidateDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data from HRMSRecruitmentCandidateDetails",
+      };
+    }
+  };
+
   async GetGradeLevel(PatersonGrade: string): Promise<ApiResponse<any | null>> {
     try {
       let op: AutoCompleteItem[] = [];
@@ -307,6 +352,8 @@ export default class CommonService implements ICommonService {
       throw error;
     }
   }
+
+
 }
 
 async function getUserGuidByEmail(email: string) {

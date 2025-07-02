@@ -232,6 +232,23 @@ export type QuestionItem = {
   header?: string;
 };
 
+export type CommanQuestion = {
+  id: number;
+  question: string;
+  questionId: string;
+  questionXOptions: optContent[];
+  answerContentId: string,
+};
+export type answerContent = {
+  optContentId: string;
+  contentEn: string,
+  contentFr: string,
+}
+
+export type optContent = {
+  optContentId: string;
+  optContent: string;
+}
 export type AssignHod = {
   Comments: string;
 };
@@ -248,4 +265,98 @@ export type InterviewQues = {
   // OptionsType?: { text: string }[];
   OptionsType?: AutoCompleteItem;
   Disqualification?: any;
+};
+
+export type CandidatedCVDetails = {
+  Title: AutoCompleteItem;
+  FirstName: string;
+  MiddleName: string;
+  LastName: string;
+  DOB: Date | undefined;
+  PhoneNumber: number;
+  AlternativePhoneNumber: number;
+  Nationality: AutoCompleteItem;
+  ProofOfIdentity: AutoCompleteItem;
+  IdentityNumber: string;
+  Gender: string;
+  Email: string;
+  HighestEducation: AutoCompleteItem;
+  WorkExperience: AutoCompleteItem;
+  RelevantExperience: string;
+  AddressLine: string;
+  Country: AutoCompleteItem;
+  State: AutoCompleteItem;
+  City: AutoCompleteItem;
+  PostalCode: string;
+  CandidateCV: IDocFiles[] | null;
+
+  CountryCode: string | number;
+
+  NumberOftax: string;
+  CurrentEmployer: string;
+  CurrentPosition: string;
+  WillingToRelocate: string;
+  previouslyworkedMine: string;
+  familylinks: string;
+  businesslinks: string;
+  familyDocuments: IDocFiles[];
+  businessDocuments: IDocFiles[];
+
+  whichOperation: string;
+  YourRole: string;
+  RegionProvince: string;
+
+  // CountryofOrgin: string;
+  // Citizenship: string;
+};
+
+export type stateOption = {
+  TitleOption: AutoCompleteItem[];
+  NationalityOption: AutoCompleteItem[];
+  ProofOfIdentityOption: AutoCompleteItem[];
+  HighestEducationOption: AutoCompleteItem[];
+  WorkExperienceOption: AutoCompleteItem[];
+  CountryOption: AutoCompleteItem[];
+  StateOption: AutoCompleteItem[];
+  CityOption: AutoCompleteItem[];
+  CountryCodeOption: AutoCompleteItem[];
+};
+
+export type ValidationErrors = {
+  Title: boolean;
+  FirstName: boolean;
+  MiddleName: boolean;
+  LastName: boolean;
+  DOB: boolean;
+  PhoneNumber: boolean;
+  AlternativePhoneNumber: boolean;
+  Nationality: boolean;
+  ProofOfIdentity: boolean;
+  IdentityNumber: boolean;
+  Gender: boolean;
+  Email: boolean;
+  HighestEducation: boolean;
+  WorkExperience: boolean;
+  RelevantExperience: boolean;
+  AddressLine: boolean;
+  Country: boolean;
+  State: boolean;
+  City: boolean;
+  PostalCode: boolean;
+  CandidateCV: boolean;
+
+  NumberOftax: boolean;
+  CurrentEmployer: boolean;
+  CurrentPosition: boolean;
+  WillingToRelocate: boolean;
+  previouslyworkedMine: boolean;
+  familylinks: boolean;
+  businesslinks: boolean;
+
+  familyDocuments: boolean;
+  businessDocuments: boolean;
+
+  whichOperation: boolean;
+  YourRole: boolean;
+  RegionProvince: boolean;
 };

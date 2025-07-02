@@ -466,8 +466,8 @@ const HodViewScorecard = (props: any) => {
   };
 
   const OpenComments = async () => {
+    setIsLoading(true);
     try {
-      setMainComponent(false);
       let filterConditions = [
         {
           FilterKey: "CandidateID/Id",
@@ -506,12 +506,15 @@ const HodViewScorecard = (props: any) => {
         level1: level1Comments,
         level2: level2Comments,
       });
+      setMainComponent(false);
     } catch (error) {
       console.error("Error in OpenComments:", error);
       setCommentsData({
         level1: [],
         level2: [],
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -1193,7 +1196,14 @@ const HodViewScorecard = (props: any) => {
                     expanded={expanded === "accordion1"}
                     onChange={handleAccordionChange("accordion1")}
                   >
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      style={{
+                        color: "rgb(13, 84, 123)",
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                      }}
+                    >
                       Question Evaluation Scorecard
                     </AccordionSummary>
                     <AccordionDetails>
@@ -1249,7 +1259,7 @@ const HodViewScorecard = (props: any) => {
                               field={`interviewer_${index + 1}`}
                               header={
                                 <>
-                                  <div style={{ fontSize: "12px" }}>
+                                  <div style={{ fontSize: "14px" }}>
                                     Interviewer {index + 1}
                                   </div>
                                   <div style={{ fontSize: "14px" }}>
@@ -1272,7 +1282,14 @@ const HodViewScorecard = (props: any) => {
                     expanded={expanded === "accordion2"}
                     onChange={handleAccordionChange("accordion2")}
                   >
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      style={{
+                        color: "rgb(13, 84, 123)",
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                      }}
+                    >
                       Overall Evaluation Scorecard
                     </AccordionSummary>
                     <AccordionDetails>
@@ -1289,7 +1306,7 @@ const HodViewScorecard = (props: any) => {
                               field={`interviewer_${index + 1}`}
                               header={
                                 <>
-                                  <div style={{ fontSize: "12px" }}>
+                                  <div style={{ fontSize: "14px" }}>
                                     Interviewer {index + 1}
                                   </div>
                                   <div style={{ fontSize: "14px" }}>
@@ -1796,6 +1813,9 @@ const HodViewScorecard = (props: any) => {
         PositionIDId: selectedPosition.ID,
         CandidateIDId: candidateID,
         RecruitmentIDId: props.stateValue.RecruitmentID,
+        ItemCreated: "Yes",
+        ActionId: WorkflowAction.Submitted,
+        StatusId: StatusId.Pending,
       };
       const res = await InterviewServices.AssignPositionID(
         assignPositionPayload,
@@ -1964,201 +1984,204 @@ const HodViewScorecard = (props: any) => {
       console.error("Validation failed");
       return;
     }
-    setIsLoading(true);
-    if (props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2) {
-      await insertOrUpdateLevel2ScorecardComment();
-      const CurrentUserResponse = await CommonServices.getUserGuidByEmail(
-        props.CurrentUserEmailId
-      );
-      const currentUserKey = CurrentUserResponse.data?.key?.toString();
-
-      const InterviewPanelResponse =
-        await InterviewServices.GetInterviewPanelDetails([
-          {
-            FilterKey: "CandidateIDId",
-            Operator: "eq",
-            FilterValue: props.stateValue?.ID,
-          },
-        ]);
-
-      if (!InterviewPanelResponse.data) {
-        return;
-      }
-
-      const matchingPanels = InterviewPanelResponse.data.filter(
-        (panel: any) => props.stateValue?.ID === panel.CandidateID
-      );
-
-      if (matchingPanels.length === 0) {
-        return;
-      }
-      const userPanels = matchingPanels.filter(
-        (panel: any) => panel.InterviewPanel === Number(currentUserKey)
-      );
-      if (userPanels.length === 0) {
-        return;
-      }
-      for (const panel of userPanels) {
-        const InterviewPanelID = panel.ID;
-        await SPServices.SPUpdateItem({
-          Listname: ListNames.HRMSInterviewPanelDetails,
-          RequestJSON: { IsScoreSheetUploaded: "Yes" },
-          ID: InterviewPanelID,
-        });
-      }
-      let filterConditions = [
-        {
-          FilterKey: "CandidateID/Id",
-          Operator: "eq",
-          FilterValue: candidateID,
-        },
-      ];
-      const level1Response = await InterviewServices.GetInterviewPanelDetails(
-        filterConditions
-      );
-      let InterviewCandidate: any[] = [];
-      if (level1Response?.status === 200) {
-        InterviewCandidate = level1Response.data.filter(
-          (item: any) => item.CandidateID === candidateID
+    try {
+      setIsLoading(true);
+      if (props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2) {
+        await insertOrUpdateLevel2ScorecardComment();
+        const CurrentUserResponse = await CommonServices.getUserGuidByEmail(
+          props.CurrentUserEmailId
         );
-        const level1Panels = InterviewCandidate.filter(
-          (p) => p.InterviewLevel === InterviewLevels.Level2
-        );
-        const uploadedCount = level1Panels.filter(
-          (p: { IsScoreSheetUploaded: string }) =>
-            p.IsScoreSheetUploaded === "Yes"
-        ).length;
+        const currentUserKey = CurrentUserResponse.data?.key?.toString();
 
-        if (uploadedCount === level1Panels.length) {
-          await SPServices.SPUpdateItem({
-            Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-            RequestJSON: {
-              ScoreCardLevelItemCreated: "Yes",
-              ActionId: WorkflowAction.Approved,
-              ItemCreated: "Yes",
+        const InterviewPanelResponse =
+          await InterviewServices.GetInterviewPanelDetails([
+            {
+              FilterKey: "CandidateIDId",
+              Operator: "eq",
+              FilterValue: props.stateValue?.ID,
             },
-            ID: CandidateData.CandidateID,
+          ]);
+
+        if (!InterviewPanelResponse.data) {
+          return;
+        }
+
+        const matchingPanels = InterviewPanelResponse.data.filter(
+          (panel: any) => props.stateValue?.ID === panel.CandidateID
+        );
+
+        if (matchingPanels.length === 0) {
+          return;
+        }
+        const userPanels = matchingPanels.filter(
+          (panel: any) => panel.InterviewPanel === Number(currentUserKey)
+        );
+        if (userPanels.length === 0) {
+          return;
+        }
+        for (const panel of userPanels) {
+          const InterviewPanelID = panel.ID;
+          await SPServices.SPUpdateItem({
+            Listname: ListNames.HRMSInterviewPanelDetails,
+            RequestJSON: { IsScoreSheetUploaded: "Yes" },
+            ID: InterviewPanelID,
           });
         }
-      }
-      setAlertPopupOpen(true);
-      setalertProps({
-        Message: RecuritmentHRMsg.ScoreCardMsgLevel2,
-        Type: HRMSAlertOptions.Success,
-        visible: true,
-        ButtonAction: async (userClickedOK: boolean) => {
-          if (userClickedOK) {
-            if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-              props.navigation("/ReviewProfileList", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
-              });
-            } else if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
-              props.navigation("/InterviewPanelList", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
-              });
-            } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
-              props.navigation("/RecurimentProcess", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
+        let filterConditions = [
+          {
+            FilterKey: "CandidateID/Id",
+            Operator: "eq",
+            FilterValue: candidateID,
+          },
+        ];
+        const level1Response = await InterviewServices.GetInterviewPanelDetails(
+          filterConditions
+        );
+        let InterviewCandidate: any[] = [];
+        if (level1Response?.status === 200) {
+          InterviewCandidate = level1Response.data.filter(
+            (item: any) => item.CandidateID === candidateID
+          );
+          const level1Panels = InterviewCandidate.filter(
+            (p) => p.InterviewLevel === InterviewLevels.Level2
+          );
+          const uploadedCount = level1Panels.filter(
+            (p: { IsScoreSheetUploaded: string }) =>
+              p.IsScoreSheetUploaded === "Yes"
+          ).length;
+
+          if (uploadedCount === level1Panels.length) {
+            await SPServices.SPUpdateItem({
+              Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+              RequestJSON: {
+                ScoreCardLevelItemCreated: "Yes",
+                ActionId: WorkflowAction.Approved,
+                ItemCreated: "Yes",
+              },
+              ID: CandidateData.CandidateID,
+            });
+          }
+        }
+        setAlertPopupOpen(true);
+        setalertProps({
+          Message: RecuritmentHRMsg.ScoreCardMsgLevel2,
+          Type: HRMSAlertOptions.Success,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+                props.navigation("/ReviewProfileList", {
+                  // state: {
+                  //   activeTab: "tab3",
+                  // },
+                });
+              } else if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
+                props.navigation("/InterviewPanelList", {
+                  // state: {
+                  //   activeTab: "tab3",
+                  // },
+                });
+              } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
+                props.navigation("/RecurimentProcess", {
+                  // state: {
+                  //   activeTab: "tab3",
+                  // },
+                });
+              }
+              setAlertPopupOpen(false);
+            } else {
+              setAlertPopupOpen(false);
+            }
+          },
+        });
+      } else {
+        const createFilter = (workflowStatus: string): WorkflowJson => ({
+          workflowStatus,
+          jobRequestId: Number(CandidateData.JobRequestID),
+          comments: CandidateData.Comments,
+          actionBy: props.CurrentUserRole,
+        });
+
+        let obj: ActionUpdate = {
+          ActionId: 0,
+          Id: candidateID,
+          ItemCreated: "",
+          GPA: CandidateData.GPA,
+        };
+
+        let CandidateDatas: WorkflowJson = {
+          workflowStatus: "",
+          jobRequestId: 0,
+          comments: "",
+          actionBy: "",
+        };
+
+        let SuccessMessage: string = "";
+        const isNotEvaluationTab = props.stateValue?.TabName !== "Evaluation";
+        switch (Action) {
+          case "Selected":
+            obj = {
+              ActionId: WorkflowAction.Approved,
+              Id: props.stateValue.ID,
+              ItemCreated: isNotEvaluationTab ? "Yes" : "No",
+              GPA: CandidateData.GPA,
+            };
+            CandidateDatas = createFilter(
+              workflowStatusApi.CandidateSelectedIPanel
+            );
+            SuccessMessage =
+              props?.stateValue?.StatusId ===
+              StatusId.PendingwithHODtoselectthecandidateLevel2
+                ? RecuritmentHRMsg.CandidateSelectedLevel2
+                : props.stateValue?.TabName === TabName.Evaluation
+                ? RecuritmentHRMsg.ScoreCardMsgLevel2
+                : RecuritmentHRMsg.CandidateSelected;
+            break;
+
+          case "Rejected":
+            obj = {
+              ActionId: WorkflowAction.Reject,
+              Id: props.stateValue.ID,
+              ItemCreated: isNotEvaluationTab ? "Yes" : "No",
+              GPA: CandidateData.GPA,
+            };
+            CandidateDatas = createFilter(
+              workflowStatusApi.CandidateRejectedIPanel
+            );
+            SuccessMessage = RecuritmentHRMsg.CandidateRejected;
+
+            if (selectedPosition) {
+              await SPServices.SPUpdateItem({
+                Listname: ListNames.HRMSPositionIDMaster,
+                RequestJSON: { PositionIDStatus: "Vacant" },
+                ID: selectedPosition.key,
               });
             }
-            setAlertPopupOpen(false);
-          } else {
-            setAlertPopupOpen(false);
-          }
-        },
-      });
-    } else {
-      const createFilter = (workflowStatus: string): WorkflowJson => ({
-        workflowStatus,
-        jobRequestId: Number(CandidateData.JobRequestID),
-        comments: CandidateData.Comments,
-        actionBy: props.CurrentUserRole,
-      });
+            break;
 
-      let obj: ActionUpdate = {
-        ActionId: 0,
-        Id: 0,
-        ItemCreated: "",
-      };
+          case "OnHold":
+            obj = {
+              ActionId: WorkflowAction.OnHold,
+              Id: props.stateValue.ID,
+              ItemCreated: isNotEvaluationTab ? "Yes" : "No",
+              GPA: CandidateData.GPA,
+            };
+            CandidateDatas = createFilter(
+              workflowStatusApi.CandidateOnHoldIPanel
+            );
+            SuccessMessage = RecuritmentHRMsg.CandidateOnHold;
+            if (selectedPosition) {
+              await SPServices.SPUpdateItem({
+                Listname: ListNames.HRMSPositionIDMaster,
+                RequestJSON: { PositionIDStatus: "Vacant" },
+                ID: selectedPosition.key,
+              });
+            }
+            break;
 
-      let CandidateDatas: WorkflowJson = {
-        workflowStatus: "",
-        jobRequestId: 0,
-        comments: "",
-        actionBy: "",
-      };
-
-      let SuccessMessage: string = "";
-      const isNotEvaluationTab = props.stateValue?.TabName !== "Evaluation";
-      switch (Action) {
-        case "Selected":
-          obj = {
-            ActionId: WorkflowAction.Approved,
-            Id: props.stateValue.ID,
-            ItemCreated: isNotEvaluationTab ? "Yes" : "No",
-          };
-          CandidateDatas = createFilter(
-            workflowStatusApi.CandidateSelectedIPanel
-          );
-          SuccessMessage =
-            props?.stateValue?.StatusId ===
-            StatusId.PendingwithHODtoselectthecandidateLevel2
-              ? RecuritmentHRMsg.CandidateSelectedLevel2
-              : props.stateValue?.TabName === TabName.Evaluation
-              ? RecuritmentHRMsg.ScoreCardMsgLevel2
-              : RecuritmentHRMsg.CandidateSelected;
-          break;
-
-        case "Rejected":
-          obj = {
-            ActionId: WorkflowAction.Reject,
-            Id: props.stateValue.ID,
-            ItemCreated: isNotEvaluationTab ? "Yes" : "No",
-          };
-          CandidateDatas = createFilter(
-            workflowStatusApi.CandidateRejectedIPanel
-          );
-          SuccessMessage = RecuritmentHRMsg.CandidateRejected;
-
-          if (selectedPosition) {
-            await SPServices.SPUpdateItem({
-              Listname: ListNames.HRMSPositionIDMaster,
-              RequestJSON: { PositionIDStatus: "Vacant" },
-              ID: selectedPosition.key,
-            });
-          }
-          break;
-
-        case "OnHold":
-          obj = {
-            ActionId: WorkflowAction.OnHold,
-            Id: props.stateValue.ID,
-            ItemCreated: isNotEvaluationTab ? "Yes" : "No",
-          };
-          CandidateDatas = createFilter(
-            workflowStatusApi.CandidateOnHoldIPanel
-          );
-          SuccessMessage = RecuritmentHRMsg.CandidateOnHold;
-          if (selectedPosition) {
-            await SPServices.SPUpdateItem({
-              Listname: ListNames.HRMSPositionIDMaster,
-              RequestJSON: { PositionIDStatus: "Vacant" },
-              ID: selectedPosition.key,
-            });
-          }
-          break;
-
-        default:
-          return;
-      }
-      try {
-        setIsLoading(true);
+          default:
+            return;
+        }
         if (Action === "Selected" && selectedPosition) {
           await handleAssignPosition({
             positionId: selectedPosition,
@@ -2230,13 +2253,13 @@ const HodViewScorecard = (props: any) => {
             },
           });
         }
-      } catch (error) {
-        console.error("Error in Submit_fn:", error);
-      } finally {
         setIsLoading(false);
       }
+    } catch (error) {
+      console.error("Error in Submit_fn:", error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
   return (
     <>

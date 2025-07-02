@@ -1,6 +1,7 @@
-import { AdvertisementDetails, CandidateProfile, FilterItem, GetAllMaster, GetProfileByJobCode, getQuestionById, profileXagent, UpsertMasters, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
-import { QuestionItem } from "../../Models/RecuritmentVRR";
+import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, profileXagent, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { CommanQuestion, QuestionItem } from "../../Models/RecuritmentVRR";
 import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
+import { IDocFiles } from "../SPService/ISPServicesProps";
 
 export type CandidateDetails = {
     RecruitmentIDId: number,
@@ -30,12 +31,49 @@ export type CandidateDetails = {
     DisabilityDetails: string,
     Disability: string,
     ConflictsOfInterest: string,
+    IdentityNumber: string,
+    ProofOfIdentity: string,
+
+    LastOrCurrentPosition: string,
+    LastOrCurrentEmployer: string,
+    PreviouslyWorkedInIvanhoeMines: string;
+    NumberOfTaxDependents: number;
+    Age: number;
+    Citizenship: string;
+    AnyFamilyorOtherLinks: string;
+    AnyBusinessLinksToDeclare: string;
+    WillingToRelocate: string;
+    CountryofOrgin: string;
+    OthersInterviewed: string;
+
+    FamilyLink: string;
+    BusinessLink: string;
+    GPA: number;
+
+
+    // CandidateOnboardingDate: string;
+    // EngagementDate: string;
 }
 export type RescheduledCandidate = {
     ID: number
     InterviewDate: Date | undefined,
     InterviewTime: string,
     InterviewLink: string
+}
+
+export type UpsertDocument = {
+    CandidateCV: IDocFiles[];
+    familyLink: IDocFiles[];
+    businessLink: IDocFiles[];
+}
+
+export type DocumentValue = {
+    DocumentTypeEnum: string;
+    DocumentTypeName: string;
+    JobCode: string;
+    File: any;
+    FileName: string;
+    ProfileId: string;
 }
 
 export type IGetPortalJobs = {
@@ -52,4 +90,13 @@ export type IGetPortalJobs = {
     RescheduledInterview(obj: RescheduledCandidate, ListName: string): Promise<ApiResponse<null>>;
     GetQuestionaireByScope(GetExistingQuestion: getQuestionById): Promise<ApiResponse<ViewQuestion[] | null>>;
     InsertInterviewPanel(InterviewPanel: any[], CandidateId: number): Promise<ApiResponse<any | null>>;
+    GetCountryMaster(): Promise<ApiResponse<GetMasterByCountry[] | null>>;
+    GetStateByCountry(code: string): Promise<ApiResponse<GetMasterByCountry[] | null>>;
+    GetCitiesByState(code: string): Promise<ApiResponse<GetMasterByCountry[] | null>>;
+    UpsertProfile(data: UpsertProfile, Document: UpsertDocument, jobCode: string): Promise<ApiResponse<any | null>>;
+    CheckMyCandidateAppliedJobs(data: CheckMyCandidate): Promise<ApiResponse<any | null>>;
+    GetCandiateForJobs(JobCode: string, FilterValue: GetProfileByFilter): Promise<ApiResponse<GetProfileByJobCode[] | null>>;
+    GetJobRequestData(data: any[]): Promise<ApiResponse<any | null>>;
+    GetQuestionByJobCode(jobCode: string): Promise<ApiResponse<CommanQuestion[] | null>>;
+    UpsertDocumentUpload(DocumentDetails: DocumentValue): Promise<ApiResponse<any | null>>;
 }
