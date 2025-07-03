@@ -1253,7 +1253,8 @@ const UploadCandidateDocument = (props: any) => {
                                           : "#0e0f0f",
                                       background:
                                         requiredBtn === ITSystemReq.Required
-                                          ? "#1976d2"
+                                          ? ColorCode.ButtonColorCode
+                                              ?.ButtonColor
                                           : "#d2c6c6",
                                       fontWeight:
                                         requiredBtn === ITSystemReq.Required
@@ -1287,7 +1288,8 @@ const UploadCandidateDocument = (props: any) => {
                                           : "#0e0f0f",
                                       background:
                                         requiredBtn === ITSystemReq.NotRequired
-                                          ? "#1976d2"
+                                          ? ColorCode.ButtonColorCode
+                                              ?.ButtonColor
                                           : "#d2c6c6",
                                       fontWeight:
                                         requiredBtn === ITSystemReq.NotRequired

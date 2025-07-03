@@ -32,7 +32,7 @@ export default function MainPage(props: any) {
   const toggleSideNav = () => {
     setIsExpanded((prevState: any) => !prevState);
   };
-  console.log("Recruitment-App(23-May-2025) V-1.19.01");
+  console.log("Recruitment-App(23-May-2025) V-1.20");
   console.log("masterData", masterData);
 
   return (
