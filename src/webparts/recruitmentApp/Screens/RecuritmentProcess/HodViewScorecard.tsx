@@ -201,14 +201,20 @@ const HodViewScorecard = (props: any) => {
   const [currentRoleID, setCurrentRoleID] = React.useState<number>(0);
 
   React.useEffect(() => {
-    let userRole = props.CurrentRoleID.filter(
-      (role: number) =>
-        role === RoleID.RecruitmentHR ||
-        role === RoleID.LineManager ||
-        role === RoleID.HOD ||
-        role === RoleID.InterviewPanel
+    // let userRole = props.CurrentRoleID.filter(
+    //   (role: number) =>
+    //     role === RoleID.RecruitmentHR ||
+    //     role === RoleID.LineManager ||
+    //     role === RoleID.HOD ||
+    //     role === RoleID.InterviewPanel
+    // );
+    setCurrentRoleID(
+      props.stateValue?.TabName !== TabName.Evaluation
+        ? RoleID.HOD
+        : props.CurrentRoleID.includes(RoleID.LineManager)
+        ? RoleID.LineManager
+        : props.CurrentRoleID[0]
     );
-    setCurrentRoleID(userRole[0] ?? 0);
   }, [props.stateValue?.StatusId]);
 
   const handleAutoComplete = (item: AutoCompleteItem | null) => {

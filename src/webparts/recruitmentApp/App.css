@@ -732,10 +732,6 @@ html {
   padding: 0px;
 }
 
-.l_e_8474018e {
-  margin: 0px;
-  padding: 0px;
-}
 
 /* .css-1rwt2y5-MuiButtonBase-root-MuiButton-root{
   
@@ -1083,6 +1079,7 @@ html {
 .l_e_8474018e {
   margin: 0px;
   padding: 0px;
+  overflow: hidden;
 }
 
 /* .css-1rwt2y5-MuiButtonBase-root-MuiButton-root{

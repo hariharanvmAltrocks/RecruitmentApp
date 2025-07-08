@@ -564,6 +564,7 @@ export const labelName = {
   ResumeCV: "Resume/CV and Cover Letter",
 
   OfferLetter: "Upload Offer Letter",
+  ConsentDoc: "Upload Consent Form ",
   EmployementDoc: "Upload Employement Contract",
 
   Attachment: "Attachment",

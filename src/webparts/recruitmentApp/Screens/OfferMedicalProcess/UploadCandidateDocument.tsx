@@ -16,7 +16,6 @@ import {
   HardwareoptValue,
   HRMSAlertOptions,
   Inductiontype,
-  ITSystemReq,
   labelName,
   ListNames,
   PostRecrutimentCheckboxContent,
@@ -54,15 +53,16 @@ import { Link, Tooltip } from "@mui/material";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomDatePicker from "../../components/CustomDatePicker";
-import ReuseButton from "../../components/ReuseButton";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
+  ConsentDocs: boolean;
   EmployementDoc: boolean;
   MedicalDocs: boolean;
   RadioAction: boolean;
   comments: boolean;
   checkbox: boolean;
+  ITRequired: boolean;
 };
 
 type viewDocument = {
@@ -109,6 +109,7 @@ const UploadCandidateDocument = (props: any) => {
     MedicalDocs: [],
     RadioAction: "",
     CheckboxContent: "",
+    ConsentDocs: [],
 
     TrainingSystem: {
       Inductiontype: { key: 0, text: "" },
@@ -133,6 +134,7 @@ const UploadCandidateDocument = (props: any) => {
       Comments: "",
       ITStatus: "",
     },
+    ITRequired: "",
   });
   const [viewDocument, setViewDocument] = React.useState<viewDocument>({
     ReviewOfferDoc: [],
@@ -144,11 +146,13 @@ const UploadCandidateDocument = (props: any) => {
   const [validationErrors, setValidationErrors] =
     React.useState<ValidationError>({
       OfferLetterDoc: false,
+      ConsentDocs: false,
       EmployementDoc: false,
       MedicalDocs: false,
       RadioAction: false,
       comments: false,
       checkbox: false,
+      ITRequired: false,
     });
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -163,9 +167,7 @@ const UploadCandidateDocument = (props: any) => {
     ZoneOption: [],
     HarewareOption: [],
   });
-  const [requiredBtn, setRequiredBtn] = React.useState<string>(
-    ITSystemReq.Required
-  );
+  // const [requiredBtn, setRequiredBtn] = React.useState<string>("");
 
   const fetchData = async () => {
     if (isLoading) return;
@@ -267,14 +269,13 @@ const UploadCandidateDocument = (props: any) => {
           TrainingSystem: item?.CandidateDetails?.TrainingSystem,
           TASystem: item?.CandidateDetails?.TASystem,
           ITSystem: item?.CandidateDetails?.ITSystem,
+          ITRequired:
+            item?.CandidateDetails?.ITSystem.ITStatus === "Not Applicable"
+              ? "No"
+              : item?.CandidateDetails?.ITSystem.ITStatus === "Pending"
+              ? "Yes"
+              : "Yes",
         }));
-        setRequiredBtn(
-          item?.CandidateDetails?.ITSystem.ITStatus === "Not Applicable"
-            ? ITSystemReq.NotRequired
-            : item?.CandidateDetails?.ITSystem.ITStatus === "Pending"
-            ? ITSystemReq.Required
-            : ITSystemReq.Required
-        );
       }
     } catch (error) {
       console.error("Failed to fetch Vacancy Details:", error);
@@ -558,6 +559,7 @@ const UploadCandidateDocument = (props: any) => {
       value: "tab1",
       content: (
         <>
+          {/* <div className="sub-menu-card"> */}
           <Card
             variant="outlined"
             sx={{
@@ -782,45 +784,96 @@ const UploadCandidateDocument = (props: any) => {
                 props.stateValue?.StatusId ===
                   StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ? (
                   <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
-                    <CustomLabel
-                      value={labelName.OfferLetter}
-                      mandatory={true}
-                    />
-                    <AttachmentButton
-                      label="Upload"
-                      iconName="CloudUpload"
-                      iconNameHover="CloudUpload"
-                      AttachState={(newAttachment: any) => {
-                        let attachment: IDocFiles[] = newAttachment.map(
-                          (item: any) => {
-                            return {
-                              name: item.name,
-                              content: item.file,
-                              type: "New",
-                            };
+                    <div className="ms-Grid-col ms-lg3">
+                      <>
+                        <CustomLabel
+                          value={labelName.OfferLetter}
+                          mandatory={true}
+                        />
+                        <AttachmentButton
+                          label="Upload"
+                          iconName="CloudUpload"
+                          iconNameHover="CloudUpload"
+                          allowMultiple={false}
+                          AttachState={(newAttachment: any) => {
+                            let attachment: IDocFiles[] = newAttachment.map(
+                              (item: any) => {
+                                return {
+                                  name: "OfferLetter-" + item.name,
+                                  content: item.file,
+                                  type: "New",
+                                };
+                              }
+                            );
+                            const attachments = [
+                              ...(data.OfferLetterDoc || []),
+                              ...attachment,
+                            ];
+                            handleDocument("OfferLetterDoc", attachments);
+                          }}
+                          mandatory={true}
+                          error={validationErrors.OfferLetterDoc}
+                          Style={{
+                            backgroundColor:
+                              ColorCode.ButtonColorCode.ButtonColor,
+                            color: "white",
+                          }}
+                          fileformat=".doc,.pdf,.docx"
+                        />
+                        <CustomViewAttachment
+                          Attachment={data.OfferLetterDoc ?? []}
+                          StateValue={"OfferLetterDoc"}
+                          handleDelete={(index, fileState) =>
+                            handleDelete(index, fileState)
                           }
-                        );
-                        const attachments = [
-                          ...(data.OfferLetterDoc || []),
-                          ...attachment,
-                        ];
-                        handleDocument("OfferLetterDoc", attachments);
-                      }}
-                      mandatory={true}
-                      error={validationErrors.OfferLetterDoc}
-                      Style={{
-                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                        color: "white",
-                      }}
-                      fileformat=".doc,.pdf,.docx"
-                    />
-                    <CustomViewAttachment
-                      Attachment={data.OfferLetterDoc ?? []}
-                      StateValue={"OfferLetterDoc"}
-                      handleDelete={(index, fileState) =>
-                        handleDelete(index, fileState)
-                      }
-                    />
+                        />
+                      </>
+                    </div>
+                    <div className="ms-Grid-col ms-lg3">
+                      <>
+                        <CustomLabel
+                          value={labelName.ConsentDoc}
+                          mandatory={true}
+                        />
+                        <AttachmentButton
+                          label="Upload"
+                          iconName="CloudUpload"
+                          iconNameHover="CloudUpload"
+                          allowMultiple={false}
+                          AttachState={(newAttachment: any) => {
+                            let attachment: IDocFiles[] = newAttachment.map(
+                              (item: any) => {
+                                return {
+                                  name: "ConsentForm- " + item.name,
+                                  content: item.file,
+                                  type: "New",
+                                };
+                              }
+                            );
+                            const attachments = [
+                              ...(data.ConsentDocs || []),
+                              ...attachment,
+                            ];
+                            handleDocument("ConsentDocs", attachments);
+                          }}
+                          mandatory={true}
+                          error={validationErrors.ConsentDocs}
+                          Style={{
+                            backgroundColor:
+                              ColorCode.ButtonColorCode.ButtonColor,
+                            color: "white",
+                          }}
+                          fileformat=".doc,.pdf,.docx"
+                        />
+                        <CustomViewAttachment
+                          Attachment={data.ConsentDocs ?? []}
+                          StateValue={"ConsentDocs"}
+                          handleDelete={(index, fileState) =>
+                            handleDelete(index, fileState)
+                          }
+                        />
+                      </>
+                    </div>
                   </div>
                 ) : (
                   <></>
@@ -855,6 +908,7 @@ const UploadCandidateDocument = (props: any) => {
                         label="Upload"
                         iconName="CloudUpload"
                         iconNameHover="CloudUpload"
+                        allowMultiple={false}
                         AttachState={(newAttachment: any) => {
                           let attachment: IDocFiles[] = newAttachment.map(
                             (item: any) => {
@@ -1207,110 +1261,129 @@ const UploadCandidateDocument = (props: any) => {
                       </CardContent>
                     </Card>
 
-                    <Card
-                      variant="outlined"
-                      sx={{
-                        boxShadow: "0px 7px 4px 3px #d3d3d3",
-                        borderRadius: "10px",
-                        marginTop: "2%",
-                      }}
-                    >
-                      <CardContent>
-                        <div>
-                          <div
-                            className="ms-Grid-row"
-                            style={{ marginLeft: "0%" }}
-                          >
-                            <div className="ms-Grid-col ms-lg6">
-                              <LabelHeaderComponents
-                                value={labelName.ITSystem}
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg6">
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg5">
+                        <CustomRadioGroup
+                          label={
+                            "Do we need to initiate IT setup (hardware/software) for the candidate?"
+                          }
+                          value={data.ITRequired}
+                          options={["Yes", "No"]}
+                          error={validationErrors.ITRequired}
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleRadioChange("ITRequired", item)
+                          }
+                          disabled={
+                            props.stateValue?.StatusId ===
+                              StatusId.OnboardingProcessinitiatedforDRC ||
+                            props.stateValue?.StatusId ===
+                              StatusId.OnboardingProcessinitiatedforExpat
+                          }
+                        />
+                      </div>
+                    </div>
+                    {data.ITRequired === "Yes" ? (
+                      <>
+                        <Card
+                          variant="outlined"
+                          sx={{
+                            boxShadow: "0px 7px 4px 3px #d3d3d3",
+                            borderRadius: "10px",
+                            marginTop: "2%",
+                          }}
+                        >
+                          <CardContent>
+                            <div>
                               <div
                                 className="ms-Grid-row"
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "flex-end",
-                                  gap: "7%",
-                                }}
+                                style={{ marginLeft: "0%" }}
                               >
-                                <div className="ms-Grid-col ms-lg3">
-                                  <ReuseButton
-                                    label={ITSystemReq.Required}
-                                    onClick={() => {
-                                      setRequiredBtn(ITSystemReq.Required);
-                                    }}
-                                    spacing={4}
-                                    height="42px"
-                                    width="120px"
-                                    Style={{
-                                      minWidth: "150px",
-                                      height: "42px",
-                                      color:
-                                        requiredBtn === ITSystemReq.Required
-                                          ? "white"
-                                          : "#0e0f0f",
-                                      background:
-                                        requiredBtn === ITSystemReq.Required
-                                          ? ColorCode.ButtonColorCode
-                                              ?.ButtonColor
-                                          : "#d2c6c6",
-                                      fontWeight:
-                                        requiredBtn === ITSystemReq.Required
-                                          ? "bold"
-                                          : "800",
-                                    }}
-                                    disabled={
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforDRC ||
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforExpat
-                                    }
+                                <div className="ms-Grid-col ms-lg6">
+                                  <LabelHeaderComponents
+                                    value={labelName.ITSystem}
                                   />
                                 </div>
+                                <div className="ms-Grid-col ms-lg6">
+                                  <div
+                                    className="ms-Grid-row"
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "flex-end",
+                                      gap: "7%",
+                                    }}
+                                  >
+                                    {/* <div className="ms-Grid-col ms-lg3">
+                                <ReuseButton
+                                  label={ITSystemReq.Required}
+                                  onClick={() => {
+                                    setRequiredBtn(ITSystemReq.Required);
+                                  }}
+                                  spacing={4}
+                                  height="42px"
+                                  width="120px"
+                                  Style={{
+                                    minWidth: "150px",
+                                    height: "42px",
+                                    color:
+                                      requiredBtn === ITSystemReq.Required
+                                        ? "white"
+                                        : "#0e0f0f",
+                                    background:
+                                      requiredBtn === ITSystemReq.Required
+                                        ? ColorCode.ButtonColorCode?.ButtonColor
+                                        : "#d2c6c6",
+                                    fontWeight:
+                                      requiredBtn === ITSystemReq.Required
+                                        ? "bold"
+                                        : "800",
+                                  }}
+                                  disabled={
+                                    props.stateValue?.StatusId ===
+                                      StatusId.OnboardingProcessinitiatedforDRC ||
+                                    props.stateValue?.StatusId ===
+                                      StatusId.OnboardingProcessinitiatedforExpat
+                                  }
+                                />
+                              </div>
 
-                                <div className="ms-Grid-col ms-lg3">
-                                  <ReuseButton
-                                    label={ITSystemReq.NotRequired}
-                                    onClick={() => {
-                                      setRequiredBtn(ITSystemReq.NotRequired);
-                                    }}
-                                    spacing={4}
-                                    height="42px"
-                                    width="120px"
-                                    Style={{
-                                      minWidth: "150px",
-                                      height: "42px",
-                                      color:
-                                        requiredBtn === ITSystemReq.NotRequired
-                                          ? "white"
-                                          : "#0e0f0f",
-                                      background:
-                                        requiredBtn === ITSystemReq.NotRequired
-                                          ? ColorCode.ButtonColorCode
-                                              ?.ButtonColor
-                                          : "#d2c6c6",
-                                      fontWeight:
-                                        requiredBtn === ITSystemReq.NotRequired
-                                          ? "bold"
-                                          : "800",
-                                    }}
-                                    disabled={
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforDRC ||
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforExpat
-                                    }
-                                  />
+                              <div className="ms-Grid-col ms-lg3">
+                                <ReuseButton
+                                  label={ITSystemReq.NotRequired}
+                                  onClick={() => {
+                                    setRequiredBtn(ITSystemReq.NotRequired);
+                                  }}
+                                  spacing={4}
+                                  height="42px"
+                                  width="120px"
+                                  Style={{
+                                    minWidth: "150px",
+                                    height: "42px",
+                                    color:
+                                      requiredBtn === ITSystemReq.NotRequired
+                                        ? "white"
+                                        : "#0e0f0f",
+                                    background:
+                                      requiredBtn === ITSystemReq.NotRequired
+                                        ? ColorCode.ButtonColorCode?.ButtonColor
+                                        : "#d2c6c6",
+                                    fontWeight:
+                                      requiredBtn === ITSystemReq.NotRequired
+                                        ? "bold"
+                                        : "800",
+                                  }}
+                                  disabled={
+                                    props.stateValue?.StatusId ===
+                                      StatusId.OnboardingProcessinitiatedforDRC ||
+                                    props.stateValue?.StatusId ===
+                                      StatusId.OnboardingProcessinitiatedforExpat
+                                  }
+                                />
+                              </div> */}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </div>
-                          {requiredBtn === ITSystemReq.NotRequired ? (
-                            <></>
-                          ) : (
-                            <>
+
                               <div className="ms-Grid-row">
                                 <div className="ms-Grid-col ms-lg3">
                                   <CustomDatePicker
@@ -1425,11 +1498,13 @@ const UploadCandidateDocument = (props: any) => {
                                   />
                                 </div>
                               </div>
-                            </>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </>
+                    ) : (
+                      <> </>
+                    )}
                   </>
                 ) : (
                   <></>
@@ -1516,10 +1591,12 @@ const UploadCandidateDocument = (props: any) => {
   const Validation = (): boolean => {
     let errors = {
       OfferLetterDoc: false,
+      ConsentDocs: false,
       EmployementDoc: false,
       comments: false,
       checkbox: false,
       RadioAction: false,
+      ITRequired: false,
     };
     if (
       props.stateValue?.StatusId ===
@@ -1528,6 +1605,7 @@ const UploadCandidateDocument = (props: any) => {
         StatusId.PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter
     ) {
       errors.OfferLetterDoc = !IsValid(data.OfferLetterDoc);
+      errors.ConsentDocs = !IsValid(data.ConsentDocs);
     } else if (
       props.stateValue?.StatusId ===
         StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract &&
@@ -1538,10 +1616,14 @@ const UploadCandidateDocument = (props: any) => {
       props.stateValue?.StatusId ===
         StatusId.PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments ||
       props.stateValue?.StatusId ===
-        StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
-      props.stateValue?.StatusId ===
-        StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm
+        StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract
     ) {
+      errors.RadioAction = !IsValid(data.RadioAction);
+    } else if (
+      props.stateValue?.StatusId ===
+      StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm
+    ) {
+      errors.ITRequired = !IsValid(data.ITRequired);
       errors.RadioAction = !IsValid(data.RadioAction);
     }
 
@@ -1577,10 +1659,11 @@ const UploadCandidateDocument = (props: any) => {
               DocumentName: DocumentFolderName.Offerletter,
               UnsignedDoc: DocumentFolderName.UnsignedDoc,
             };
+            let offerLetterDocs = [...data.OfferLetterDoc, ...data.ConsentDocs];
             DocumentResponse =
               await OfferLetterServices.UploadCandidateDocument(
                 DocumentData,
-                data.OfferLetterDoc
+                offerLetterDocs
               );
 
             workflowStatusValue =
@@ -1673,6 +1756,8 @@ const UploadCandidateDocument = (props: any) => {
             StatusId.PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter
         ) {
           CandidateDatas.OfferLatterPath = DocumentResponse.data[0]?.content;
+          CandidateDatas.ConsentLetterPath =
+            DocumentResponse.data[1]?.content ?? "";
         } else if (
           props.stateValue?.StatusId ===
             StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract &&
@@ -1704,9 +1789,10 @@ const UploadCandidateDocument = (props: any) => {
                 StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm &&
               data.RadioAction === "Yes"
             ) {
-              let HardwareChiose = data.ITSystem?.Hardware.map(
-                (item) => item.text
-              );
+              let HardwareChiose =
+                data.ITRequired === "No"
+                  ? []
+                  : data.ITSystem?.Hardware.map((item) => item.text);
               let Hardwaredata: string[] = HardwareChiose;
               let Hardwarevalue = {
                 results: Hardwaredata,
@@ -1740,15 +1826,17 @@ const UploadCandidateDocument = (props: any) => {
                 PermanentBadgeRegion: data.TASystem?.Region.text,
                 PermanentBadgeZone: data.TASystem?.Zone.text,
                 PermanentBadgeComments: data.TASystem?.Comments,
-                ITStartDate: data.ITSystem?.StartDate,
+                ITStartDate:
+                  data.ITRequired === "No" ? null : data.ITSystem?.StartDate,
                 Hardware: Hardwarevalue,
-                ITZone: data.ITSystem?.Zone.text,
-                ITRegion: data.ITSystem?.Region.text,
-                ITComments: data.ITSystem?.Comments,
+                ITZone:
+                  data.ITRequired === "No" ? "" : data.ITSystem?.Zone.text,
+                ITRegion:
+                  data.ITRequired === "No" ? "" : data.ITSystem?.Region.text,
+                ITComments:
+                  data.ITRequired === "No" ? "" : data.ITSystem?.Comments,
                 ITStatus:
-                  requiredBtn === ITSystemReq.NotRequired
-                    ? "Not Applicable"
-                    : "Pending",
+                  data.ITRequired === "Yes" ? "Pending" : "Not Applicable",
                 IsIntegratedPowerAutomatrTrigger:
                   hasTrainingSystem || hasTASystem || hasITSystem
                     ? "Yes"
@@ -1905,6 +1993,11 @@ const UploadCandidateDocument = (props: any) => {
             TabName={TabNameData}
             onBreadcrumbChange={handleBreadcrumbChange}
             handleCancel={handleCancel}
+            // JobValue={{
+            //   JobTitle: props.stateValue.JobTitle,
+            //   JobCode: props.stateValue.JobCode,
+            //   Status: props.stateValue.Status,
+            // }}
             additionalButtons={
               props.stateValue?.ButtonAction === ButtonAction.View
                 ? [

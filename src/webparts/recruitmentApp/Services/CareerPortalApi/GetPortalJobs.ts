@@ -703,7 +703,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         title: data.title,
         totalYearOfExperiance: data.totalYearOfExperiance,
         hasBusinessLinks: String(data.hasBusinessLinks),
-        hasEmployeeRelation: String(data.hasBusinessLinks),
+        hasEmployeeRelation: String(data.hasEmployeeRelation),
         profileDetailAttachments: []
       }]
       const UpsertData = await UploadCandidateCVData.UpsertProfile(UpsertProfile);
@@ -766,19 +766,24 @@ export default class GetPortalJobs implements IGetPortalJobs {
             })
           })
           let profileAttachment: profileDetailAttachments[] = []
-          if (Document.familyLink.length > 0 || Document.businessLink.length > 0) {
+          if (Document.businessLink.length > 0) {
             profileAttachment = [
               {
                 AttachmentTypeCoe: "PA01",
                 DocumentId: BusinessLink.data.data.documentId,
                 ProfileId: UpsertData.data.data[0].profileId
               },
+            ]
+          }
+
+          if (Document.familyLink.length > 0) {
+            profileAttachment.push(
               {
                 AttachmentTypeCoe: "PA02",
                 DocumentId: FamilyLink.data.data.documentId,
                 ProfileId: UpsertData.data.data[0].profileId
               }
-            ]
+            )
           }
 
           UpsertProfile[0].profileId = UpsertData.data.data[0].profileId

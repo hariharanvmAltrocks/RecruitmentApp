@@ -347,12 +347,32 @@ const UploadCandidateCV: React.FC = (props: any) => {
         TitleForProfile.status === ResponeStatus.SUCCESS &&
         GetQuestionByJobCode.status === ResponeStatus.SUCCESS
       ) {
-        const Nationality: AutoCompleteItem[] = (
+        // Prepare Nationality options, always put "Congolese (DRC)" at the top
+        let Nationality: AutoCompleteItem[] = (
           NationalityOption.data ?? []
         ).map((opt: any) => ({
           key: opt.value,
           text: opt.displayText,
         }));
+
+        const congoIndex = Nationality.findIndex(
+          (item) =>
+            typeof item.text === "string" &&
+            item.text.trim().toLowerCase() === "congolese (drc)"
+        );
+        let congoItem: AutoCompleteItem[] = [];
+        if (congoIndex !== -1) {
+          congoItem = [Nationality[congoIndex]];
+          Nationality.splice(congoIndex, 1);
+        }
+
+        Nationality = Nationality.sort((a, b) => {
+          const textA = typeof a.text === "string" ? a.text : "";
+          const textB = typeof b.text === "string" ? b.text : "";
+          return textA.localeCompare(textB);
+        });
+
+        Nationality = [...congoItem, ...Nationality];
 
         const EducationLevles: AutoCompleteItem[] = (
           EducationLevels.data ?? []
@@ -535,7 +555,31 @@ const UploadCandidateCV: React.FC = (props: any) => {
       key === "RelevantExperience" ||
       key === "NumberOftax"
     ) {
-      let value = String(item).replace(/[^0-9]/g, "");
+      let value: string;
+
+      if (key === "RelevantExperience") {
+        let maxExperience = null;
+
+        if (data.WorkExperience && data.WorkExperience.text) {
+          const text = data.WorkExperience.text.trim();
+          if (text.includes("-")) {
+            const experienceRange = text
+              .split("-")
+              .map((v) => parseInt(v.trim(), 10));
+            maxExperience = experienceRange[1] || null;
+          } else if (text.includes("+")) {
+            maxExperience = 20;
+          }
+        }
+        const inputValue = parseInt(item, 10);
+        if (maxExperience === null || inputValue <= maxExperience) {
+          value = String(inputValue);
+        } else {
+          value = "";
+        }
+      } else {
+        value = String(item).replace(/[^0-9]/g, "");
+      }
       setData((prevState) => ({
         ...prevState,
         [key]: value,
@@ -1156,6 +1200,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                                       label="Upload"
                                       iconName="CloudUpload"
                                       iconNameHover="CloudUpload"
+                                      allowMultiple={false}
                                       AttachState={(newAttachment: any) => {
                                         let attachment: IDocFiles[] =
                                           newAttachment.map((item: any) => {
@@ -1254,6 +1299,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                                       label="Upload"
                                       iconName="CloudUpload"
                                       iconNameHover="CloudUpload"
+                                      allowMultiple={false}
                                       AttachState={(newAttachment: any) => {
                                         let attachment: IDocFiles[] =
                                           newAttachment.map((item: any) => {
@@ -1454,6 +1500,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                                     label="Upload"
                                     iconName="CloudUpload"
                                     iconNameHover="CloudUpload"
+                                    allowMultiple={false}
                                     AttachState={(newAttachment: any) => {
                                       let attachment: IDocFiles[] =
                                         newAttachment.map((item: any) => {
@@ -1805,14 +1852,14 @@ const UploadCandidateCV: React.FC = (props: any) => {
                 visible: true,
                 ButtonAction: async (userClickedOK: boolean) => {
                   if (userClickedOK) {
-                    props.navigation("/RecurimentProcess/UploadCandidateList", {
-                      state: {
-                        tab: props.stateValue?.tab,
-                        JobCode: props.stateValue?.JobCode,
-                        JobCodeId: props.stateValue?.JobCodeId,
-                        JobTitle: props.stateValue?.JobTitle,
-                      },
-                    });
+                    // props.navigation("/RecurimentProcess/UploadCandidateList", {
+                    //   state: {
+                    //     tab: props.stateValue?.tab,
+                    //     JobCode: props.stateValue?.JobCode,
+                    //     JobCodeId: props.stateValue?.JobCodeId,
+                    //     JobTitle: props.stateValue?.JobTitle,
+                    //   },
+                    // });
                     setAlertPopupOpen(false);
                   }
                 },
@@ -1829,14 +1876,14 @@ const UploadCandidateCV: React.FC = (props: any) => {
             visible: true,
             ButtonAction: async (userClickedOK: boolean) => {
               if (userClickedOK) {
-                props.navigation("/RecurimentProcess/UploadCandidateList", {
-                  state: {
-                    tab: props.stateValue?.tab,
-                    JobCode: props.stateValue?.JobCode,
-                    JobCodeId: props.stateValue?.JobCodeId,
-                    JobTitle: props.stateValue?.JobTitle,
-                  },
-                });
+                // props.navigation("/RecurimentProcess/UploadCandidateList", {
+                //   state: {
+                //     tab: props.stateValue?.tab,
+                //     JobCode: props.stateValue?.JobCode,
+                //     JobCodeId: props.stateValue?.JobCodeId,
+                //     JobTitle: props.stateValue?.JobTitle,
+                //   },
+                // });
                 setAlertPopupOpen(false);
               }
             },

@@ -131,6 +131,7 @@ export type WorkflowJson = {
     hrComments?: string,
     OfferLatterPath?: string,
     EmpContractLatterPath?: string,
+    ConsentLetterPath?: string,
 }
 
 export type profileJobsComments = {
@@ -313,6 +314,7 @@ export type UploadDocument = {
     EmployementDoc: IDocFiles[];
     PersonalDocs: DocumentName[];
     MedicalDocs: IDocFiles[];
+    ConsentDocs: IDocFiles[];
 
     RadioAction: string;
     CheckboxContent: string;
@@ -320,6 +322,8 @@ export type UploadDocument = {
     TrainingSystem: TrainingSystem;
     TASystem: TASystem;
     ITSystem: ITSystem;
+
+    ITRequired: string;
 }
 
 export type DocumentName = {

@@ -1879,6 +1879,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 label="Upload"
                                 iconName="CloudUpload"
                                 iconNameHover="CloudUpload"
+                                allowMultiple={true}
                                 AttachState={(newAttachment: any) => {
                                   let attachment: IDocFiles[] =
                                     newAttachment.map((item: any) => {
@@ -1950,6 +1951,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 label="Upload"
                                 iconName="CloudUpload"
                                 iconNameHover="CloudUpload"
+                                allowMultiple={true}
                                 AttachState={(newAttachment: any) => {
                                   let attachment: IDocFiles[] =
                                     newAttachment.map((item: any) => {
@@ -2014,6 +2016,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               label="Upload"
                               iconName="CloudUpload"
                               iconNameHover="CloudUpload"
+                              allowMultiple={true}
                               AttachState={(newAttachment: any) => {
                                 let attachment: IDocFiles[] = newAttachment.map(
                                   (item: any) => {
@@ -2176,6 +2179,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       label="Upload"
                       iconName="CloudUpload"
                       iconNameHover="CloudUpload"
+                      allowMultiple={true}
                       AttachState={(newAttachment: any) => {
                         let attachment: IDocFiles[] = newAttachment.map(
                           (item: any) => {

@@ -296,7 +296,7 @@ const SideNavComponent = (props: sideNavProps) => {
               marginBottom: "10px",
             }}
           >
-            Version-1.20
+            Version-1.21
           </div>
         </>
       ) : (
@@ -310,7 +310,7 @@ const SideNavComponent = (props: sideNavProps) => {
               marginBottom: "10px",
             }}
           >
-            V-1.20
+            V-1.21
           </div>
         </>
       )}

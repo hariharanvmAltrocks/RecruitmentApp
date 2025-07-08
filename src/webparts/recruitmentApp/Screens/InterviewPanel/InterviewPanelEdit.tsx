@@ -28,6 +28,7 @@ import {
   ResponeStatus,
   CheckboxContent,
   Choices,
+  RoleName,
 } from "../../utilities/Config";
 import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
@@ -184,6 +185,24 @@ const InterviewPanelEdit = (props: any) => {
     React.useState<string[]>([]);
   const [interviewPanelTitlesLevel2, setInterviewPanelTitlesLevel2] =
     React.useState<string[]>([]);
+  const [currentRoleID, setCurrentRoleID] = React.useState<number>(0);
+
+  React.useEffect(() => {
+    // let userRole = props.CurrentRoleID.filter(
+    //   (role: number) =>
+    //     role === RoleID.RecruitmentHR ||
+    //     role === RoleID.LineManager ||
+    //     role === RoleID.HOD ||
+    //     role === RoleID.InterviewPanel
+    // );
+    setCurrentRoleID(
+      props.stateValue?.TabName !== TabName.Evaluation
+        ? RoleID.HOD
+        : props.CurrentRoleID.includes(RoleID.LineManager)
+        ? RoleID.LineManager
+        : props.CurrentRoleID[0]
+    );
+  }, []);
 
   const handleRatingChange = (id: number, value: AutoCompleteItem | null) => {
     setQuestionnaire((prevState) =>
@@ -610,7 +629,7 @@ const InterviewPanelEdit = (props: any) => {
           }),
           OverAllEvaluationFeedback: CandidateData?.OverAllEvaluationFeedback,
           RecruitmentIDId: CandidateData?.RecruitmentID,
-          RoleId: props.CurrentRoleID[0],
+          RoleId: currentRoleID,
           InterviewPersonNameId: currentUserKey,
           InterviewPanelIDId: InterviewPanelID,
           QuestionJson: JSON.stringify(QuestionScore),
@@ -658,7 +677,7 @@ const InterviewPanelEdit = (props: any) => {
             workflowStatus: workflowStatusApi.pendingHODSelection,
             jobRequestId: Number(CandidateData.JobRequestID),
             comments: "",
-            actionBy: props.CurrentUserRole,
+            actionBy: RoleName.HOD,
           };
 
           await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);

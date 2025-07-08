@@ -369,14 +369,12 @@ const CandidateList = (props: any) => {
   }, [activeTab, tabs, props.stateValue, TabNameData]);
 
   function back_fn() {
-    if (props.CurrentRoleID.includes(RoleID.LineManager)) {
-      props.navigation("/RecurimentProcess", {
-        state: {
-          TabName: props.stateValue?.TabName,
-          tab: props.stateValue?.tab,
-        },
-      });
-    }
+    props.navigation("/RecurimentProcess", {
+      state: {
+        TabName: props.stateValue?.TabName,
+        tab: props.stateValue?.tab,
+      },
+    });
   }
 
   return (

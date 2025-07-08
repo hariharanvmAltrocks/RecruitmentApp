@@ -20,6 +20,7 @@ interface AttachmentButtonProps {
   iconNameHover?: string;
   AttachState?: (value: Item[]) => void;
   fileformat?: string;
+  allowMultiple?: boolean;
 }
 
 interface Item {
@@ -42,6 +43,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
   backgroundColor,
   AttachState,
   fileformat,
+  allowMultiple,
 }: AttachmentButtonProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -59,24 +61,23 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
       const acceptedFormats = (fileformat || "")
         .split(",")
         .map((f) => f.trim().toLowerCase());
+
       const files = Array.from(fileInput.files);
+      const filteredFiles = files.filter((file) => {
+        const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
+        return (
+          acceptedFormats.includes(fileExtension) &&
+          file.size <= 15 * 1024 * 1024
+        );
+      });
+
+      const finalFiles = allowMultiple
+        ? filteredFiles
+        : filteredFiles.slice(0, 1);
+
       const newAttachments: Item[] = [];
 
-      const MAX_SIZE_MB = 15;
-      const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
-
-      files.forEach((file) => {
-        const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
-
-        if (!acceptedFormats.includes(fileExtension)) {
-          return;
-        }
-
-        if (file.size > MAX_SIZE_BYTES) {
-          alert(`"${file.name}" exceeds the 15MB limit.`);
-          return;
-        }
-
+      finalFiles.forEach((file) => {
         const fileReader = new FileReader();
         fileReader.onload = (event) => {
           const fileContent = event.target?.result as ArrayBuffer;
@@ -87,12 +88,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
             file,
           });
 
-          const validFilesCount = files.filter((f) => {
-            const ext = "." + f.name.split(".").pop()?.toLowerCase();
-            return acceptedFormats.includes(ext) && f.size <= MAX_SIZE_BYTES;
-          }).length;
-
-          if (newAttachments.length === validFilesCount) {
+          if (newAttachments.length === finalFiles.length) {
             AttachState?.(newAttachments);
             fileInput.value = "";
           }
@@ -172,7 +168,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
         )}
         <input
           type="file"
-          multiple={true}
+          multiple={allowMultiple}
           ref={fileInputRef}
           onChange={handleFileChange}
           style={{ display: "none" }}
