@@ -1755,9 +1755,15 @@ const UploadCandidateDocument = (props: any) => {
           props.stateValue?.StatusId ===
             StatusId.PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter
         ) {
-          CandidateDatas.OfferLatterPath = DocumentResponse.data[0]?.content;
-          CandidateDatas.ConsentLetterPath =
-            DocumentResponse.data[1]?.content ?? "";
+          let getOfferLetterPath = DocumentResponse.data.filter((item: any) =>
+            item.name.includes("OfferLetter")
+          );
+          let getConsentFormPath = DocumentResponse.data.filter((item: any) =>
+            item.name.includes("ConsentForm")
+          );
+          CandidateDatas.OfferLatterPath = getOfferLetterPath?.[0]?.content;
+          CandidateDatas.ConsentFormPath =
+            getConsentFormPath?.[0]?.content ?? "";
         } else if (
           props.stateValue?.StatusId ===
             StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract &&
