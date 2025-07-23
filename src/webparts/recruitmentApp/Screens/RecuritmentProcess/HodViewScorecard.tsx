@@ -56,7 +56,6 @@ import { Chip } from "@mui/material";
 import CustomRadioGroup from "../../components/CustomRadioGroup";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import SPServices from "../../Services/SPService/SPServices";
-import { useMediaQuery } from "@mui/material";
 import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 
 type ValidationError = {
@@ -644,56 +643,12 @@ const HodViewScorecard = (props: any) => {
     void getRecruitmentGradeLevel();
   }, []);
 
-  const isMobile = useMediaQuery("(max-width:600px)");
   const tabs = [
     {
       label: TabName.ViewCandidateDetails,
       value: "tab1",
       content: (
         <>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              marginTop: "-4%",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: isMobile ? "flex-start" : "center",
-                backgroundColor: "white",
-                borderRadius: "20px",
-                padding: isMobile ? "10px" : "5px 10px",
-                boxShadow: "0px 5px 10px 0px #0F4B8426",
-                margin: isMobile ? "10px auto" : "0",
-              }}
-            >
-              <div>
-                <p
-                  style={{
-                    margin: 0,
-                    color: "#EF3340",
-                    fontWeight: "400",
-                    fontSize: isMobile ? "12px" : "14px",
-                  }}
-                >
-                  <span style={{ fontWeight: "bold" }}>
-                    <LabelHeaderComponents
-                      value={`Profile from ${
-                        CandidateData.ExternalAgentName
-                          ? CandidateData.ExternalAgentName + " Agencies"
-                          : "Candidate"
-                      }`}
-                    />
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
-
           <Card
             variant="outlined"
             sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
@@ -701,7 +656,7 @@ const HodViewScorecard = (props: any) => {
             <CardContent>
               <div>
                 <div className="ms-Grid-row">
-                  <div className="ms-Grid-row">
+                  {/* <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg6">
                       <LabelHeaderComponents
                         value={`Job Title - ${CandidateData.PositionTitle} (${CandidateData.JobCode})`}
@@ -719,7 +674,7 @@ const HodViewScorecard = (props: any) => {
                         {" "}
                       </LabelHeaderComponents>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
@@ -1073,49 +1028,6 @@ const HodViewScorecard = (props: any) => {
           }}
         >
           <>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "end",
-                marginTop: "-4%",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: isMobile ? "flex-start" : "center",
-                  backgroundColor: "white",
-                  borderRadius: "20px",
-                  padding: isMobile ? "10px" : "5px 10px",
-                  boxShadow: "0px 5px 10px 0px #0F4B8426",
-                  margin: isMobile ? "10px auto" : "0",
-                }}
-              >
-                <div>
-                  <p
-                    style={{
-                      margin: 0,
-                      color: "#EF3340",
-                      fontWeight: "400",
-                      fontSize: isMobile ? "12px" : "14px",
-                    }}
-                  >
-                    <span style={{ fontWeight: "bold" }}>
-                      <LabelHeaderComponents
-                        value={`Profile from ${
-                          CandidateData.ExternalAgentName
-                            ? CandidateData.ExternalAgentName + " Agencies"
-                            : "Candidate"
-                        }`}
-                      />
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-
             <Card
               variant="outlined"
               sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
@@ -1874,7 +1786,7 @@ const HodViewScorecard = (props: any) => {
             ID: matchingComment.ID || 0,
           });
           if (updateResponse?.data?.ID) {
-            console.log("", CandidateData.CandidateID);
+            // console.log("", CandidateData.CandidateID);
           } else {
             console.error("Failed to update comment");
           }
@@ -2278,6 +2190,13 @@ const HodViewScorecard = (props: any) => {
               TabName={TabNameData}
               onBreadcrumbChange={handleBreadcrumbChange}
               handleCancel={handleCancel}
+              ISExpended={true}
+              JobValue={{
+                JobTitle: CandidateData.PositionTitle ?? "",
+                JobCode: CandidateData.JobCode,
+                Status: props.stateValue?.Status,
+              }}
+              Agencies={CandidateData.ExternalAgentName}
               additionalButtons={[
                 ...(fieldsEditable.visibleButtons.includes("Selected")
                   ? [

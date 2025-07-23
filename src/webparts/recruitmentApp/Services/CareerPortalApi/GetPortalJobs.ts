@@ -122,7 +122,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
       let GetProfileByJobCodeData: CandidateProfile[] = [];
       await getProfileData.getCandidateProfile(CandidateID).then(async (res) => {
         const op = res.data.data;
-        console.log(op, "OP");
+        // console.log(op, "OP");
         const [
           RoleProfileDocment,
           AdvertismentDocment,
@@ -167,7 +167,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         let profileExperiance = Array.isArray(op?.profile?.profileDetailExperiences) && op.profile.profileDetailExperiences.length > 0
           ? op.profile.profileDetailExperiences[op.profile.profileDetailExperiences.length - 1]
           : undefined;
-        console.log(profileExperiance, "profileExperiance");
+        // console.log(profileExperiance, "profileExperiance");
 
         const dob = new Date(new Date(op?.profile?.dob));
         const today = new Date();
@@ -184,7 +184,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           const textB = typeof b.text === "string" ? b.text : "";
           return textA.localeCompare(textB);
         });
-        console.log(getOptAnswers, "getOptAnswers");
+        // console.log(getOptAnswers, "getOptAnswers");
         let AgenName = op?.profile?.profileXAgent?.agentCode === agentCode.RecruitmentHR ? RoleName.RecruitmentHR : op?.profile?.profileXAgent?.agent?.name;
         let IdentityID = ProofIdentity.data?.filter((item) => item?.value === op?.profile?.identityTypeId)
         let GetProfileDahboard: CandidateProfile = {
@@ -435,7 +435,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         displayTextFr: item.displayText_fr,
       }));
 
-      console.log(GetAllMasterData, "GetAllMasterData");
+      // console.log(GetAllMasterData, "GetAllMasterData");
 
       return {
         data: GetAllMasterData,
@@ -469,7 +469,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           header: "Q" + incrementedIndex,
         };
       });
-      console.log(response, "GetAllMasterData");
+      // console.log(response, "GetAllMasterData");
       return {
         data: GetQuestionnaire,
         status: response.status,
@@ -560,7 +560,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
       }).filter((item: null) => item !== null);
 
 
-      console.log(response, "GetAllMasterData");
+      // console.log(response, "GetAllMasterData");
       return {
         data: GetQuestionnaire,
         status: response.status,
@@ -588,7 +588,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         text: item.countryName,
       }));
 
-      console.log(GetAllMasterData, "GetCountryMaster");
+      // console.log(GetAllMasterData, "GetCountryMaster");
 
       return {
         data: GetAllMasterData,
@@ -618,8 +618,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         text: item.state,
       }));
 
-      console.log(GetAllMasterData, "GetCountryMaster");
-
+      // console.log(GetAllMasterData, "GetCountryMaster");
       return {
         data: GetAllMasterData,
         status: response.status,
@@ -648,7 +647,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         text: item.city,
       }));
 
-      console.log(GetAllMasterData, "GetCountryMaster");
+      // console.log(GetAllMasterData, "GetCountryMaster");
 
       return {
         data: GetAllMasterData,
@@ -822,7 +821,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
       formData.append("FileName", DocumentDetails.FileName);
       formData.append("ProfileId", DocumentDetails.ProfileId);
       const response = await UploadCandidateCVData.UploadDocument(formData);
-      console.log(response, "UploadDocument");
+      // console.log(response, "UploadDocument");
 
       return {
         data: response.data,
@@ -948,9 +947,13 @@ export default class GetPortalJobs implements IGetPortalJobs {
             optContent: items?.optContent?.contentEn
           }
         });
+        const htmlString = item.quesContent?.contentEn || '';
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = htmlString;
+        const plainText = tempElement.innerText.trim();
         return {
           id: incrementedIndex,
-          question: item.quesContent?.contentEn,
+          question: plainText,
           questionId: item?.questionId,
           questionXOptions: OptionContent,
           answerContentId: ""

@@ -57,7 +57,7 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
   });
   const [selectedCandidates, setSelectedCandidates] = React.useState<any[]>([]);
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
-  const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false); 
+  const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
     Message: "",
     Type: "",
@@ -154,33 +154,32 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
     if (!CommentsData.trim()) {
       setValidationErrors((prevState) => ({
         ...prevState,
-        Comments: true, 
+        Comments: true,
       }));
       return;
     }
     const updatedCandidates = selectedCandidates.map((candidate) => ({
       ...candidate,
-      Comments: CommentsData, 
+      Comments: CommentsData,
     }));
     setIsPopupOpen(false);
-    setComments(""); 
-    onStatusChange(updatedCandidates); 
+    setComments("");
+    onStatusChange(updatedCandidates);
   };
 
   const isSelected = (row: any) => selectedCandidates.includes(row);
 
   return (
     <div>
-      <div
-        className="ms-Grid-row"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          padding: "10px",
-        }}
-      >
-        <div style={{ flex: 1, position: "relative" }}>
+      <div className="ms-Grid-row">
+        <div
+          className="ms-Grid-col ms-lg9 search_div"
+          style={{
+            paddingLeft: "2%",
+            position: "relative",
+            display: "inline-block",
+          }}
+        >
           <TextField
             type="text"
             placeholder="Search..."
@@ -189,7 +188,7 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
                 borderRadius: "4px",
                 boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                 borderColor: "#c9bdbd",
-                height: "42px",
+                height: "33px",
               },
             }}
             value={dashboardSearch.global.value}
@@ -200,47 +199,46 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
             style={{
               fontSize: "20px",
               position: "absolute",
-              top: "50%",
-              right: "10px",
-              transform: "translateY(-50%)",
+              top: "20%",
+              right: "14px",
               color: "black",
             }}
           />
         </div>
-        <ReuseButton
-          icon={
-            <RefreshIcon
-              style={{
-                fontSize: "38px",
-                marginTop: "1%",
-                marginLeft: "6%",
-                minWidth: "119px",
-                height: "43px",
-              }}
-            />
-          }
-          onClick={() => {
-            setDashboardSearch({
-              global: {
-                value: "",
-                matchMode: FilterMatchMode.CONTAINS,
-              },
-            });
-            handleRefresh();
-          }}
-          spacing={4}
-          height="42px"
-          width="120px"
-          Style={{ minWidth: "120px", height: "42px" }}
-        />
-        <ReuseButton
-          label="Reject All"
-          onClick={handleRejectAllClick}
-          spacing={4}
-          height="42px"
-          width="120px"
-          Style={{ minWidth: "120px", height: "42px" }}
-        />
+        <div className="ms-Grid-col ms-lg1">
+          <ReuseButton
+            icon={
+              <RefreshIcon
+                style={{
+                  fontSize: "38px",
+                  marginTop: "1%",
+                  marginLeft: "6%",
+                  minWidth: "119px",
+                  height: "30px",
+                }}
+              />
+            }
+            onClick={() => {
+              setDashboardSearch({
+                global: {
+                  value: "",
+                  matchMode: FilterMatchMode.CONTAINS,
+                },
+              });
+              handleRefresh();
+            }}
+            spacing={4}
+            Style={{ width: "100%", height: "31px" }}
+          />
+        </div>
+        <div className="ms-Grid-col ms-lg2">
+          <ReuseButton
+            label="Reject All"
+            onClick={handleRejectAllClick}
+            spacing={4}
+            Style={{ width: "72%", height: "31px" }}
+          />
+        </div>
       </div>
 
       <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
@@ -259,7 +257,7 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             stripedRows
             scrollable
-            scrollHeight="400px"
+            scrollHeight="40vh"
             paginatorDropdownAppendTo="self"
             filters={dashboardSearch}
             rowClassName={(rowData: Candidate) =>
@@ -447,5 +445,3 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
 };
 
 export default CandidateDataTable;
-
-

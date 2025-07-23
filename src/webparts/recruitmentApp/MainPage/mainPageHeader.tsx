@@ -45,7 +45,7 @@ const MainPageHeader: React.FC<MainPageHeaderProps> = ({
         </div>
         <div
           className="ms-Grid-col ms-lg3"
-          style={{ display: "flex", justifyContent: "end", marginTop: "-2%" }}
+          style={{ display: "flex", justifyContent: "end", marginTop: "-4%" }}
         >
           <CustomProfileComponent
             userName={userName}

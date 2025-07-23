@@ -96,7 +96,7 @@ type Level2Data = {
 };
 
 const ViewCandidateDetails = (props: any) => {
-  console.log(props, "ViewCandidateDetails");
+  // console.log(props, "ViewCandidateDetails");
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [CandidateProfile, setCandidateProfile] = useState<CandidateProfile>({
@@ -561,7 +561,7 @@ const ViewCandidateDetails = (props: any) => {
       const Gradelevel = await CommonServices.GetGradeLevel(
         response.data[0]?.PatersonGrade
       );
-      console.log(Gradelevel);
+      // console.log(Gradelevel);
 
       const filterJDEMapping = [
         {
@@ -675,18 +675,17 @@ const ViewCandidateDetails = (props: any) => {
       return;
     }
 
-    const now = new Date(); // current time
     const updatedDate = new Date(value); // selected date
 
     // Set time to current time
-    updatedDate.setHours(now.getHours());
-    updatedDate.setMinutes(now.getMinutes());
-    updatedDate.setSeconds(now.getSeconds());
-    updatedDate.setMilliseconds(now.getMilliseconds());
+    // updatedDate.setHours(now.getHours());
+    // updatedDate.setMinutes(now.getMinutes());
+    // updatedDate.setSeconds(now.getSeconds());
+    // updatedDate.setMilliseconds(now.getMilliseconds());
     if (level2Date) {
       setLevel2Data((prevState: any) => ({
         ...prevState,
-        InterviewedDate: updatedDate,
+        InterviewedDate: value,
       }));
       setValidationErrors((prevState) => ({
         ...prevState,
@@ -695,7 +694,7 @@ const ViewCandidateDetails = (props: any) => {
     } else {
       setInterviewedLevel((prevState: any) => ({
         ...prevState,
-        InterviewedDate: updatedDate,
+        InterviewedDate: value,
       }));
       setValidationErrors((prevState) => ({
         ...prevState,
@@ -792,7 +791,7 @@ const ViewCandidateDetails = (props: any) => {
           >
             <CardContent>
               <div>
-                <div className="ms-Grid-row">
+                {/* <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg6">
                     <LabelHeaderComponents
                       value={`Job Title - ${CandidateProfile.JobTitle} (${CandidateProfile.JobCode})`}
@@ -810,7 +809,7 @@ const ViewCandidateDetails = (props: any) => {
                       {" "}
                     </LabelHeaderComponents>
                   </div>
-                </div>
+                </div> */}
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
@@ -1003,20 +1002,26 @@ const ViewCandidateDetails = (props: any) => {
                     </div>
 
                     <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg6">
-                        <Label>Attachment</Label>
-                        <CustomViewDocument
-                          Attachment={CandidateProfile.familyDocuments}
-                        />
-                      </div>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg4">
+                      {CandidateProfile?.familylinks === "Yes" ? (
+                        <div className="ms-Grid-col ms-lg6">
+                          <Label>Attachment</Label>
+                          <CustomViewDocument
+                            Attachment={CandidateProfile.familyDocuments}
+                          />
+                        </div>
+                      ) : (
+                        <></>
+                      )}
+                      {CandidateProfile?.businesslinks === "Yes" ? (
+                        <div className="ms-Grid-col ms-lg6">
                           <Label>Attachment</Label>
                           <CustomViewDocument
                             Attachment={CandidateProfile.businessDocuments}
                           />
                         </div>
-                      </div>
+                      ) : (
+                        <></>
+                      )}
                     </div>
                   </>
                 )}
@@ -1514,6 +1519,16 @@ const ViewCandidateDetails = (props: any) => {
     }
   }
 
+  const SpiltDateOnly = (Date: Date) => {
+    const updatedDate = Date;
+    const year = updatedDate?.getFullYear();
+    const month = String(updatedDate?.getMonth() + 1).padStart(2, "0");
+    const day = String(updatedDate?.getDate()).padStart(2, "0");
+
+    const dateOnly = `${year}-${month}-${day}`;
+    return dateOnly;
+  };
+
   const UploadCandidateDetails = async () => {
     const filterConditions = [];
     const Conditions = "";
@@ -1526,15 +1541,19 @@ const ViewCandidateDetails = (props: any) => {
       filterConditions,
       Conditions
     );
-    const HRMSExternalAgents = await CommonServices.GetMasterData(
-      ListNames.HRMSExternalAgents
-    );
-    let matchedAgents = HRMSExternalAgents.data.filter(
-      (item) => item.AgentName === CandidateProfile.Agencies
-    );
+    // const HRMSExternalAgents = await CommonServices.GetMasterData(
+    //   ListNames.HRMSExternalAgents
+    // );
+    // let matchedAgents = HRMSExternalAgents.data.filter(
+    //   (item) => item.AgentName === CandidateProfile.Agencies
+    // );
     let DOBValue = CandidateProfile.DOB
       ? new Date(CandidateProfile.DOB)
       : undefined;
+    let InterviewDate = SpiltDateOnly(
+      InterviewedLevel?.InterviewedDate ?? new Date()
+    );
+    let DOBData = SpiltDateOnly(DOBValue ?? new Date());
     const CandidateDetails: CandidateDetails = {
       RecruitmentIDId: props.stateValue.RecruitmentID,
       JobCodeId: RecruitmentDetails.data[0].JobCodeId,
@@ -1542,7 +1561,7 @@ const ViewCandidateDetails = (props: any) => {
       MiddleName: CandidateProfile.MiddleName,
       LastName: CandidateProfile.ApplicantSurName,
       ResidentialAddress: CandidateProfile.ResidentialAddress,
-      DOB: DOBValue,
+      DOB: DOBData,
       ContactNumber: CandidateProfile.ContactNumber,
       Email: CandidateProfile.Email,
       Nationality: CandidateProfile.Nationality,
@@ -1554,8 +1573,8 @@ const ViewCandidateDetails = (props: any) => {
       ProfileID: String(CandidateProfile.profileID),
       PositionTitle: RecruitmentDetails?.data[0]?.JobTitleEnglish,
       JobGrade: RecruitmentDetails?.data[0]?.DRCGrade,
-      ExternalAgentDetailsId: matchedAgents[0]?.ID,
-      InterviewDate: InterviewedLevel?.InterviewedDate,
+      ExternalAgentDetails: CandidateProfile.Agencies,
+      InterviewDate: InterviewDate,
       InterviewTime: InterviewedLevel?.InterviewTime,
       InterviewLink: InterviewedLevel?.InterviewMeetingInviteLink,
       CandidateResumeLink:
@@ -1604,7 +1623,7 @@ const ViewCandidateDetails = (props: any) => {
       selectedinterviewpanal
     )
       .then((res) => {
-        console.log(res, "res");
+        // console.log(res, "res");
       })
       .catch((error) => {
         console.log(error, "Candidate upload failed");
@@ -1627,9 +1646,13 @@ const ViewCandidateDetails = (props: any) => {
           props.stateValue?.StatusId ===
           StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
         ) {
+          let InterviewDate2 = SpiltDateOnly(
+            level2Data?.InterviewedDate ?? new Date()
+          );
+
           obj = {
             ID: Number(CandidateProfile.CandidateID),
-            InterviewDateLevel2: level2Data?.InterviewedDate,
+            InterviewDateLevel2: InterviewDate2,
             InterviewTimeLevel2: level2Data?.InterviewTime,
             InterviewLinkLevel2: level2Data?.InterviewMeetingInviteLink,
           };
@@ -1644,16 +1667,22 @@ const ViewCandidateDetails = (props: any) => {
           }
         } else {
           if (props.stateValue?.StatusId === StatusId.InterviewScheduled) {
+            let InterviewDate = SpiltDateOnly(
+              InterviewedLevel?.InterviewedDate ?? new Date()
+            );
             obj = {
               ID: Number(CandidateProfile.CandidateID),
-              InterviewDate: InterviewedLevel?.InterviewedDate,
+              InterviewDate: InterviewDate,
               InterviewTime: InterviewedLevel?.InterviewTime,
               InterviewLink: InterviewedLevel?.InterviewMeetingInviteLink,
             };
           } else {
+            let InterviewDate2 = SpiltDateOnly(
+              level2Data?.InterviewedDate ?? new Date()
+            );
             obj = {
               ID: Number(CandidateProfile.CandidateID),
-              InterviewDateLevel2: level2Data?.InterviewedDate,
+              InterviewDateLevel2: InterviewDate2,
               InterviewTimeLevel2: level2Data?.InterviewTime,
               InterviewLinkLevel2: level2Data?.InterviewMeetingInviteLink,
             };
@@ -1960,6 +1989,11 @@ const ViewCandidateDetails = (props: any) => {
             TabName={TabNameData}
             onBreadcrumbChange={handleBreadcrumbChange}
             handleCancel={handleCancel}
+            JobValue={{
+              JobTitle: CandidateProfile.JobTitle ?? "",
+              JobCode: CandidateProfile.JobCode,
+              Status: CandidateProfile.Status,
+            }}
             Agencies={
               props.stateValue?.initialTab === TabName.ReviewProfile
                 ? CandidateProfile.Agencies
@@ -1969,7 +2003,7 @@ const ViewCandidateDetails = (props: any) => {
               props.stateValue?.ButtonAction === ButtonAction.View
                 ? [
                     {
-                      label: "Close",
+                      label: "Back",
                       onClick: async () => {
                         back_fn();
                       },

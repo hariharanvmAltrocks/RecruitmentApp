@@ -51,7 +51,7 @@ export const RoleProvider = ({ children }: any) => {
   const MenuItemsService: IMenuService = new MenuService();
 
   useEffect(() => {
-    console.log(showRoleSelector, "showRoleSelector");
+    // console.log(showRoleSelector, "showRoleSelector");
   }, [showRoleSelector]);
 
   async function getUserRole() {

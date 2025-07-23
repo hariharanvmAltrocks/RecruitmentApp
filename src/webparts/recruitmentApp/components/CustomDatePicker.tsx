@@ -85,7 +85,7 @@ function CustomDatePicker({
           minDate={minDate}
           disabled={disabled}
           maxDate={maxDate}
-          initialPickerDate={minDate}
+          initialPickerDate={maxDate}
         />
         {error && (
           <p

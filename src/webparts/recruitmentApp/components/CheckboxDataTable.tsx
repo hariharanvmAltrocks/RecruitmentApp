@@ -197,7 +197,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
 
   const handleCheckbox = (value: boolean, item: any) => {
     const itemIdentifier = item.ID;
-    console.log("Checkbox Clicked | Value:", value, "| Item:", item);
+    // console.log("Checkbox Clicked | Value:", value, "| Item:", item);
     const updatedDataset = filteredItems.map((currentItem) => {
       const currentItemIdentifier = currentItem.ID;
       if (currentItemIdentifier === itemIdentifier) {
@@ -274,7 +274,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                   borderRadius: "4px",
                   boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                   borderColor: "#c9bdbd",
-                  height: "42px",
+                  height: "33px",
                 },
               }}
               value={dashboardSearch.global.value}
@@ -283,10 +283,10 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
             <Icon
               iconName="Search"
               style={{
-                fontSize: "28px",
+                fontSize: "20px",
                 position: "absolute",
-                top: "5%",
-                right: "11px",
+                top: "20%",
+                right: "14px",
                 color: "black",
               }}
             />
@@ -300,7 +300,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                     marginTop: "1%",
                     marginLeft: "6%",
                     minWidth: "119px",
-                    height: "43px",
+                    height: "30px",
                   }}
                 />
               }
@@ -316,7 +316,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               spacing={4}
               height="33px"
               width="32%"
-              Style={{ marginRight: "11px", minWidth: "121px", height: "42px" }}
+              Style={{ marginRight: "11px", minWidth: "54%", height: "31px" }}
             />
           </div>
         </div>
@@ -337,6 +337,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               value={FilterData.Department}
               disabled={false}
               onChange={(item) => handleAutoComplete("Department", item)}
+              MinHeight={"1px"}
             />
           </div>
           <div className="ms-Grid-col ms-lg3">
@@ -346,6 +347,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               value={FilterData.BusinessUnitCode}
               disabled={false}
               onChange={(item) => handleAutoComplete("BusinessUnitCode", item)}
+              MinHeight={"1px"}
             />
           </div>
           <div className="ms-Grid-col ms-lg3">
@@ -355,6 +357,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               value={FilterData.JobCode}
               disabled={false}
               onChange={(item) => handleAutoComplete("JobCode", item)}
+              MinHeight={"1px"}
             />
           </div>
           <div className="ms-Grid-col ms-lg2" style={{ marginTop: "43px" }}>
@@ -364,12 +367,12 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               spacing={4}
               error={AssignBtnValidation}
               Style={{
-                width: "80%",
+                width: assignLabel === "Assign Agencies" ? "84%" : "64%",
                 backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                 color: "white",
-                height: "42px",
+                height: "30px",
                 lineHeight: "normal",
-                marginTop: "1px",
+                marginTop: "-4px",
               }}
             />
           </div>
@@ -388,11 +391,12 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
               paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
               currentPageReportTemplate="{first} to {last} of {totalRecords}"
               scrollable
-              scrollHeight="400px"
+              scrollHeight="35vh"
               paginatorDropdownAppendTo="self"
               rowsPerPageOptions={[5, 10, 20]}
               paginator
               filters={dashboardSearch}
+              emptyMessage="No Record Found"
             >
               {columns.map((col) => {
                 if (col.field === "Checkbox") {

@@ -94,6 +94,10 @@ export type formValidationEdit = {
   addMasterMinimumQualification: boolean;
   RoleProfile: boolean;
   Grading: boolean;
+  JobTitleofFunctionalManager: boolean;
+  FunctionalManagerName: boolean;
+  JobTitleofLineManagerSupervisor: boolean;
+  LineManagerSupervisorName: boolean;
 };
 
 export type masterLibrary = {
@@ -136,6 +140,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     addMasterMinimumQualification: "",
     AdvertisementAttachement: [],
     JobcodeChecked: false,
+
+    JobTitleofFunctionalManager: { key: 0, text: "" },
+    FunctionalManagerName: "",
+    JobTitleofLineManagerSupervisor: { key: 0, text: "" },
+    LineManagerSupervisorName: "",
   });
   const [formState, setFormState] = useState<RecuritmentData>({
     VRRID: 0,
@@ -216,6 +225,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       addMasterMinimumQualification: false,
       RoleProfile: false,
       Grading: false,
+      JobTitleofFunctionalManager: false,
+      FunctionalManagerName: false,
+      JobTitleofLineManagerSupervisor: false,
+      LineManagerSupervisorName: false,
     });
   const [MainComponent, setMainComponent] = useState<boolean>(true);
   const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
@@ -756,6 +769,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       JobFunctionalType: false,
       RoleProfile: false,
       Grading: false,
+      JobTitleofFunctionalManager: false,
+      FunctionalManagerName: false,
+      JobTitleofLineManagerSupervisor: false,
+      LineManagerSupervisorName: false,
     };
 
     switch (currentRoleID) {
@@ -837,6 +854,18 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             // errors.ValidTo = !IsValid(advDetails.ValidTo);
             errors.JobFunctionalType = !IsValid(
               advDetails.JobFunctionalType.text
+            );
+            errors.JobTitleofFunctionalManager = !IsValid(
+              advDetails.JobTitleofFunctionalManager.text
+            );
+            errors.FunctionalManagerName = !IsValid(
+              advDetails.FunctionalManagerName
+            );
+            errors.JobTitleofLineManagerSupervisor = !IsValid(
+              advDetails.JobTitleofLineManagerSupervisor.text
+            );
+            errors.LineManagerSupervisorName = !IsValid(
+              advDetails.LineManagerSupervisorName
             );
           }
         }
@@ -1092,6 +1121,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 advDetails.ExperienceinMiningIndustry.key
               ),
               FunctionTypeId: advDetails.JobFunctionalType.key,
+              JobTitleofFunctionalManagerId:
+                advDetails.JobTitleofFunctionalManager.key,
+              JobTitleofLMorSupervisorId:
+                advDetails.JobTitleofLineManagerSupervisor.key,
+              FunctionalManagerName: advDetails.FunctionalManagerName,
+              LineManagerorSupervisorName: advDetails.LineManagerSupervisorName,
             };
             let AdvDetailsResponse;
             if (advDetails.JobcodeChecked === false) {
@@ -1372,6 +1407,17 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }));
   };
 
+  const handleInputChange = (value: string, StateValue: string) => {
+    setAdvDetails((prevState: any) => ({
+      ...prevState,
+      [StateValue]: value,
+    }));
+    setValidationError((prevState) => ({
+      ...prevState,
+      [StateValue]: false,
+    }));
+  };
+
   const OpenComments = async () => {
     setIsLoading(true);
     try {
@@ -1492,7 +1538,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         >
           <CardContent>
             <div>
-              <div className="ms-Grid-row">
+              {/* <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg6">
                   <LabelHeaderComponents
                     value={`Job Title - ${formState.JobNameInEnglish} (${formState.JobCode})`}
@@ -1515,7 +1561,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     </LabelHeaderComponents>
                   </div>
                 )}
-              </div>
+              </div> */}
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
@@ -1879,7 +1925,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 label="Upload"
                                 iconName="CloudUpload"
                                 iconNameHover="CloudUpload"
-                                allowMultiple={true}
+                                allowMultiple={false}
                                 AttachState={(newAttachment: any) => {
                                   let attachment: IDocFiles[] =
                                     newAttachment.map((item: any) => {
@@ -1889,13 +1935,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         type: "New",
                                       };
                                     });
-                                  const attachments = [
-                                    ...(masterLibrary.RoleProfile || []),
-                                    ...attachment,
-                                  ];
+                                  // const attachments = [
+                                  //   ...(masterLibrary.RoleProfile || []),
+                                  //   ...attachment,
+                                  // ];
                                   handleRoleprofileDocument(
                                     "RoleProfile",
-                                    attachments
+                                    attachment
                                   );
                                 }}
                                 mandatory={true}
@@ -1951,7 +1997,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 label="Upload"
                                 iconName="CloudUpload"
                                 iconNameHover="CloudUpload"
-                                allowMultiple={true}
+                                allowMultiple={false}
                                 AttachState={(newAttachment: any) => {
                                   let attachment: IDocFiles[] =
                                     newAttachment.map((item: any) => {
@@ -1961,13 +2007,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         type: "New",
                                       };
                                     });
-                                  const attachments = [
-                                    ...(masterLibrary.Grading || []),
-                                    ...attachment,
-                                  ];
+                                  // const attachments = [
+                                  //   ...(masterLibrary.Grading || []),
+                                  //   ...attachment,
+                                  // ];
                                   handleRoleprofileDocument(
                                     "Grading",
-                                    attachments
+                                    attachment
                                   );
                                 }}
                                 mandatory={true}
@@ -2016,7 +2062,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               label="Upload"
                               iconName="CloudUpload"
                               iconNameHover="CloudUpload"
-                              allowMultiple={true}
+                              allowMultiple={false}
                               AttachState={(newAttachment: any) => {
                                 let attachment: IDocFiles[] = newAttachment.map(
                                   (item: any) => {
@@ -2027,14 +2073,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     };
                                   }
                                 );
-                                const attachments = [
-                                  ...(advDetails.AdvertisementAttachement ||
-                                    []),
-                                  ...attachment,
-                                ];
+                                // const attachments = [
+                                //   ...(advDetails.AdvertisementAttachement ||
+                                //     []),
+                                //   ...attachment,
+                                // ];
                                 handleFileAttachment(
                                   "AdvertisementAttachement",
-                                  attachments
+                                  attachment
                                 );
                               }}
                               mandatory={true}
@@ -2179,7 +2225,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       label="Upload"
                       iconName="CloudUpload"
                       iconNameHover="CloudUpload"
-                      allowMultiple={true}
+                      allowMultiple={false}
                       AttachState={(newAttachment: any) => {
                         let attachment: IDocFiles[] = newAttachment.map(
                           (item: any) => {
@@ -2190,13 +2236,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             };
                           }
                         );
-                        const attachments = [
-                          ...(formState.OnamSignedStampsAttchment || []),
-                          ...attachment,
-                        ];
+                        // const attachments = [
+                        //   ...(formState.OnamSignedStampsAttchment || []),
+                        //   ...attachment,
+                        // ];
                         handleFileAttachment(
                           "OnamSignedStampsAttchment",
-                          attachments
+                          attachment
                         );
                       }}
                       mandatory={true}
@@ -2383,6 +2429,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           handleRichTextEditor={handleRichTextEditor}
                           handleAutoComplete={handleAutoComplete}
                           handleMulitiSelect={handleMulitiSelect}
+                          handleInputChange={handleInputChange}
                           handleDelete={handleDelete}
                           handleAutoCompleterow={handleAutoCompleterow}
                           handleAddRow={handleAddRow}
@@ -2392,6 +2439,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           TechnicalSkillValue={TechnicalSkillValue}
                           RoleSpeKnowledgeValue={RoleSpeKnowledgeValue}
                           setAdvDetails={setAdvDetails}
+                          MasterData={props}
                         />
                       )}
 
@@ -2572,6 +2620,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 ValidationError={() => NextValidation(activeTab)}
                 handleCancel={handleCancel}
                 onBreadcrumbChange={handleBreadcrumbChange}
+                JobValue={{
+                  JobTitle: formState.JobNameInEnglish,
+                  JobCode: formState.JobCode,
+                  Status:
+                    props.stateValue?.StatusId === StatusId.Completed
+                      ? ""
+                      : props.stateValue?.Status,
+                }}
                 additionalButtons={
                   (currentRoleID === RoleID.RecruitmentHRLead &&
                     props.stateValue?.StatusId === StatusId.Completed) ||
@@ -2580,7 +2636,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       StatusId.PendingwithRecruitmentHRtoAssignExternalAgency)
                     ? [
                         {
-                          label: "Close",
+                          label: "Back",
                           onClick: async () => {
                             props.navigation("/RecurimentProcess", {
                               state: {
@@ -2647,7 +2703,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     : props.stateValue?.TabName === TabName.AssignAgencies
                     ? [
                         {
-                          label: "Close",
+                          label: "Back",
                           onClick: async () => {
                             props.navigation("/RecurimentProcess", {
                               state: {

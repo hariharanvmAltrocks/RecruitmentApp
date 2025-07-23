@@ -7,7 +7,6 @@ import CustomLoader from "../../Services/Loader/CustomLoader";
 import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
-import { Box } from "@mui/material";
 import { Label } from "@fluentui/react";
 import CustomInput from "../../components/CustomInput";
 import {
@@ -172,144 +171,178 @@ const UploadCandidateCV: React.FC = (props: any) => {
       let response = await getProfileData.getCandidateProfile(
         props.stateValue?.ID
       );
-      console.log(response, "response");
-      let item = response.data.data;
-      let Title = Titles.filter((items) => items.key === item?.profile?.title);
-      let Nationality = {
-        key: item?.profile?.nationality?.value,
-        text: item?.profile?.nationality?.displayText,
-      };
-      // StateOption.NationalityOption.filter(
-      //   (items) => items.key === item?.profile?.nationality?.value
-      // );
-      let HighestEducation = {
-        key: item?.profile?.education?.value,
-        text: item?.profile?.education?.displayText,
-      };
-      // StateOption.HighestEducationOption.filter(
-      //   (items) => items.key === item?.profile?.educationId
-      // );
-      let ProofOfIdentity = {
-        key: item?.profile?.identityType?.value,
-        text: item?.profile?.identityType?.displayText,
-      };
-      // StateOption.ProofOfIdentityOption.filter(
-      //   (items) => items.key === item?.profile?.identityType?.value
-      // );
-      let WorkExperience = {
-        key: 0,
-        text: item?.profile?.totalYearOfExperiance,
-      };
-      // StateOption.WorkExperienceOption.filter(
-      //   (items) => items.text === item?.profile?.totalYearOfExperiance
-      // );
-      let Country = {
-        key: item?.profile?.profileAddress?.country?.countryCode,
-        text: item?.profile?.profileAddress?.country?.countryName,
-      };
-      // StateOption.CountryOption.filter(
-      //   (items) => items.key === item?.profile?.profileAddress?.countryId
-      // );
-      let State = {
-        key: item?.profile?.profileAddress?.state?.stateId,
-        text: item?.profile?.profileAddress?.state?.state,
-      };
-      // StateOption.StateOption.filter(
-      //   (items) => items.key === item?.profile?.profileAddress?.stateId
-      // );
-      let City = {
-        key: item?.profile?.profileAddress?.city?.cityId,
-        text: item?.profile?.profileAddress?.city?.city,
-      };
-      // StateOption.CityOption.filter(
-      //   (items) => items.key === item?.profile?.profileAddress?.cityId
-      // );
+      // console.log(response, "response");
+      if (response.status === ResponeStatus.SUCCESS) {
+        let item = response.data.data;
+        let Title = Titles.filter(
+          (items) => items.key === item?.profile?.title
+        );
+        let Nationality = {
+          key: item?.profile?.nationality?.value,
+          text: item?.profile?.nationality?.displayText,
+        };
+        // StateOption.NationalityOption.filter(
+        //   (items) => items.key === item?.profile?.nationality?.value
+        // );
+        let HighestEducation = {
+          key: item?.profile?.education?.value,
+          text: item?.profile?.education?.displayText,
+        };
+        // StateOption.HighestEducationOption.filter(
+        //   (items) => items.key === item?.profile?.educationId
+        // );
+        let ProofOfIdentity = {
+          key: item?.profile?.identityType?.value,
+          text: item?.profile?.identityType?.displayText,
+        };
+        // StateOption.ProofOfIdentityOption.filter(
+        //   (items) => items.key === item?.profile?.identityType?.value
+        // );
+        let WorkExperience = {
+          key: 0,
+          text: item?.profile?.totalYearOfExperiance,
+        };
+        // StateOption.WorkExperienceOption.filter(
+        //   (items) => items.text === item?.profile?.totalYearOfExperiance
+        // );
+        let Country = {
+          key: item?.profile?.profileAddress?.country?.countryCode,
+          text: item?.profile?.profileAddress?.country?.countryName,
+        };
+        // StateOption.CountryOption.filter(
+        //   (items) => items.key === item?.profile?.profileAddress?.countryId
+        // );
+        let State = {
+          key: item?.profile?.profileAddress?.state?.stateId,
+          text: item?.profile?.profileAddress?.state?.state,
+        };
+        // StateOption.StateOption.filter(
+        //   (items) => items.key === item?.profile?.profileAddress?.stateId
+        // );
+        let City = {
+          key: item?.profile?.profileAddress?.city?.cityId,
+          text: item?.profile?.profileAddress?.city?.city,
+        };
+        // StateOption.CityOption.filter(
+        //   (items) => items.key === item?.profile?.profileAddress?.cityId
+        // );
 
-      let CandidateCV = await CommonServices.GetDocumentinUrl(
-        item?.document?.filePath
-      );
-      let BusinessLinkPath = item?.profile?.profileDetailAttachments.filter(
-        (item: any) => item.attachmentTypeCoe === "PA01"
-      );
-      let BusinessDocument = await CommonServices.GetDocumentinUrl(
-        BusinessLinkPath[0]?.document?.filePath
-      );
-      let FamilyLinkPath = item?.profile?.profileDetailAttachments.filter(
-        (item: any) => item.attachmentTypeCoe === "PA02"
-      );
-      let FamilyDocument = await CommonServices.GetDocumentinUrl(
-        FamilyLinkPath[0]?.document?.filePath
-      );
+        let CandidateCV = await CommonServices.GetDocumentinUrl(
+          item?.document?.filePath
+        );
+        let BusinessLinkPath = item?.profile?.profileDetailAttachments.filter(
+          (item: any) => item.attachmentTypeCoe === "PA01"
+        );
+        let BusinessDocument = await CommonServices.GetDocumentinUrl(
+          BusinessLinkPath[0]?.document?.filePath
+        );
+        let FamilyLinkPath = item?.profile?.profileDetailAttachments.filter(
+          (item: any) => item.attachmentTypeCoe === "PA02"
+        );
+        let FamilyDocument = await CommonServices.GetDocumentinUrl(
+          FamilyLinkPath[0]?.document?.filePath
+        );
 
-      const GetQuestionnaire: CommanQuestion[] =
-        item?.profile?.profileXOptAnswers.map((item: any, index: number) => {
-          const incrementedIndex = index + 1;
-          let OptionContent = item.question?.questionXOptions.map(
-            (items: any) => {
-              return {
-                optContentId: items.optContentId,
-                optContent: items?.optContent?.contentEn,
-              };
+        const GetQuestionnaire: CommanQuestion[] =
+          item?.profile?.profileXOptAnswers.map((item: any, index: number) => {
+            const incrementedIndex = index + 1;
+            let OptionContent = item.question?.questionXOptions.map(
+              (items: any) => {
+                return {
+                  optContentId: items.optContentId,
+                  optContent: items?.optContent?.contentEn,
+                };
+              }
+            );
+            const htmlString = item.question?.quesContent?.contentEn || "";
+            const tempElement = document.createElement("div");
+            tempElement.innerHTML = htmlString;
+            const plainText = tempElement.innerText.trim();
+            return {
+              id: incrementedIndex,
+              question: plainText,
+              questionId: item?.questionId,
+              questionXOptions: OptionContent,
+              answerContentId: item?.answerContentId,
+            };
+          });
+        setQuestion(GetQuestionnaire ?? []);
+        setData((prev) => ({
+          ...prev,
+          Title: Title[0],
+          FirstName: item?.profile?.firstName,
+          MiddleName: item?.profile?.middleName,
+          LastName: item?.profile?.lastName,
+          DOB: item?.profile?.dob
+            ? moment(item?.profile?.dob, "YYYY-MM-DD").toDate()
+            : undefined,
+          PhoneNumber: item?.profile?.contactNumber1,
+          CountryCode: item?.profile?.contactNumber1.substring(0, 3),
+          // CountryCode: item?.profile?.contactNumber1.substring(0, 3),
+          AlternativePhoneNumber: item?.profile?.contactNumber2,
+          Nationality: Nationality,
+          ProofOfIdentity: ProofOfIdentity,
+          IdentityNumber: item?.profile?.identityValue,
+          Gender: item?.profile?.genderId,
+          Email: item?.profile?.email,
+          HighestEducation: HighestEducation,
+          WorkExperience: WorkExperience,
+          RelevantExperience: item?.profile?.releventExperience,
+          AddressLine: item?.profile?.profileAddress?.address1,
+          Country: Country,
+          State: State,
+          City: City,
+          PostalCode: item?.profile?.profileAddress?.postalZipCode,
+          CandidateCV: CandidateCV.data,
+          CurrentEmployer: item?.profile?.profileDetailExperiences[0]?.company,
+          CurrentPosition:
+            item?.profile?.profileDetailExperiences[0]?.roleDescription,
+          businesslinks: item?.profile?.hasBusinessLinks === "1" ? "Yes" : "No",
+          familylinks:
+            item?.profile?.hasEmployeeRelation === "1" ? "Yes" : "No",
+          familyDocuments: FamilyDocument.data,
+          businessDocuments: BusinessDocument.data,
+          previouslyworkedMine:
+            item?.profile?.profileDetailEmploymentHistory
+              ?.hasIvanhoeZijinExperienceId === "3"
+              ? "None of the above"
+              : item?.profile?.profileDetailEmploymentHistory
+                  ?.hasIvanhoeZijinExperienceId === "2"
+              ? "Zijin"
+              : "Ivanhoe",
+
+          whichOperation:
+            item?.profile?.profileDetailEmploymentHistory?.workedOperation,
+          YourRole: item?.profile?.profileDetailEmploymentHistory?.workRole,
+          RegionProvince:
+            item?.profile?.profileDetailEmploymentHistory?.territory,
+        }));
+      } else {
+        let APIError = {
+          Message: RecuritmentHRMsg.APIErrorMsg,
+          Type: HRMSAlertOptions.Confirmation,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              props.navigation("/RecurimentProcess/UploadCandidateList", {
+                state: {
+                  tab: props.stateValue?.tab,
+                  JobCode: props.stateValue?.JobCode,
+                  JobCodeId: props.stateValue?.JobCodeId,
+                  JobTitle: props.stateValue?.JobTitle,
+                },
+              });
+              setAlertPopupOpen(false);
+            } else {
+              setAlertPopupOpen(false);
             }
-          );
-          return {
-            id: incrementedIndex,
-            question: item.question?.quesContent?.contentEn,
-            questionId: item?.questionId,
-            questionXOptions: OptionContent,
-            answerContentId: item?.answerContentId,
-          };
-        });
-      setQuestion(GetQuestionnaire ?? []);
-      setData((prev) => ({
-        ...prev,
-        Title: Title[0],
-        FirstName: item?.profile?.firstName,
-        MiddleName: item?.profile?.middleName,
-        LastName: item?.profile?.lastName,
-        DOB: item?.profile?.dob
-          ? moment(item?.profile?.dob, "YYYY-MM-DD").toDate()
-          : undefined,
-        PhoneNumber: item?.profile?.contactNumber1,
-        CountryCode: item?.profile?.contactNumber1.substring(0, 3),
-        // CountryCode: item?.profile?.contactNumber1.substring(0, 3),
-        AlternativePhoneNumber: item?.profile?.contactNumber2,
-        Nationality: Nationality,
-        ProofOfIdentity: ProofOfIdentity,
-        IdentityNumber: item?.profile?.identityValue,
-        Gender: item?.profile?.genderId,
-        Email: item?.profile?.email,
-        HighestEducation: HighestEducation,
-        WorkExperience: WorkExperience,
-        RelevantExperience: item?.profile?.releventExperience,
-        AddressLine: item?.profile?.profileAddress?.address1,
-        Country: Country,
-        State: State,
-        City: City,
-        PostalCode: item?.profile?.profileAddress?.postalZipCode,
-        CandidateCV: CandidateCV.data,
-        CurrentEmployer: item?.profile?.profileDetailExperiences[0]?.company,
-        CurrentPosition:
-          item?.profile?.profileDetailExperiences[0]?.roleDescription,
-        businesslinks: item?.profile?.hasBusinessLinks === "1" ? "Yes" : "No",
-        familylinks: item?.profile?.hasEmployeeRelation === "1" ? "Yes" : "No",
-        familyDocuments: FamilyDocument.data,
-        businessDocuments: BusinessDocument.data,
-        previouslyworkedMine:
-          item?.profile?.profileDetailEmploymentHistory
-            ?.hasIvanhoeZijinExperienceId === "3"
-            ? "None of the above"
-            : item?.profile?.profileDetailEmploymentHistory
-                ?.hasIvanhoeZijinExperienceId === "2"
-            ? "Zijin"
-            : "Ivanhoe",
+          },
+        };
 
-        whichOperation:
-          item?.profile?.profileDetailEmploymentHistory?.workedOperation,
-        YourRole: item?.profile?.profileDetailEmploymentHistory?.workRole,
-        RegionProvince:
-          item?.profile?.profileDetailEmploymentHistory?.territory,
-      }));
+        setAlertPopupOpen(true);
+        setalertProps(APIError);
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
     } finally {
@@ -336,7 +369,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
         await GetPortalJobsService.GetQuestionByJobCode(
           props.stateValue?.JobCode
         );
-      console.log(GetQuestionByJobCode, "GetQuestionByJobCode");
+      // console.log(GetQuestionByJobCode, "GetQuestionByJobCode");
 
       const CountryCode = await GetPortalJobsService.GetCountryMaster();
       if (
@@ -544,6 +577,40 @@ const UploadCandidateCV: React.FC = (props: any) => {
         CityOption: CitiesOptionData,
       }));
     }
+
+    if (key === "Nationality") {
+      if (item && String(item.key) != "N0") {
+        const ProofOFIden = StateOption.ProofOfIdentityOption.filter(
+          (Iden) => Iden && String(Iden.key) === "PI01"
+        );
+        setStateOption((prevState) => ({
+          ...prevState,
+          ProofOfIdentityOption: ProofOFIden,
+        }));
+        setData((prevState) => ({
+          ...prevState,
+          ProofOfIdentity: { key: 0, text: "" },
+        }));
+      } else {
+        const ProofIdentity = await GetPortalJobsService.GetAllMaster(
+          CategoryID.ProofofIdentity
+        );
+        const ProofIdentityOption: AutoCompleteItem[] = (
+          ProofIdentity.data ?? []
+        ).map((opt: any) => ({
+          key: opt.value,
+          text: opt.displayText,
+        }));
+        setStateOption((prevState) => ({
+          ...prevState,
+          ProofOfIdentityOption: ProofIdentityOption,
+        }));
+        setData((prevState) => ({
+          ...prevState,
+          ProofOfIdentity: { key: 0, text: "" },
+        }));
+      }
+    }
   };
 
   const handleInputChange = (
@@ -690,7 +757,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
             {tabVisibility.tab1 && (
               <div>
                 <div className="ms-Grid-row">
-                  <Box
+                  {/* <Box
                     sx={{
                       display: "flex",
                       alignItems: "flex-start",
@@ -698,8 +765,8 @@ const UploadCandidateCV: React.FC = (props: any) => {
                     }}
                   >
                     <Box sx={{ width: "100%", overflow: "visible" }}>
-                      <Box sx={{ mb: 2 }}>
-                        <div
+                      <Box sx={{ mb: 2 }}> */}
+                  {/* <div
                           className="ms-Grid-row"
                           style={{ marginLeft: "1%" }}
                         >
@@ -708,18 +775,16 @@ const UploadCandidateCV: React.FC = (props: any) => {
                           >
                             {" "}
                           </LabelHeaderComponents>
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            marginLeft: "13px",
-                          }}
-                        >
-                          <LabelHeaderComponents
-                            value={" Personal Information"}
-                          />
-                          {/* <Label
+                        </div> */}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      marginLeft: "13px",
+                    }}
+                  >
+                    <LabelHeaderComponents value={" Personal Information"} />
+                    {/* <Label
                             style={{
                               fontSize: "18px",
                               color: "black",
@@ -731,628 +796,580 @@ const UploadCandidateCV: React.FC = (props: any) => {
                           >
                            
                           </Label> */}
+                  </div>
+                  <div style={{ padding: "1%" }}>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomAutoComplete
+                          label={labelName.Title}
+                          options={StateOption.TitleOption}
+                          value={data.Title}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          mandatory={true}
+                          onChange={(item) => handleAutoComplete("Title", item)}
+                          error={validationError.Title}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelName.FirstName}
+                          value={data.FirstName}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          error={validationError.FirstName}
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleInputChange("FirstName", item)
+                          }
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelName.MiddleName}
+                          value={data.MiddleName}
+                          error={false}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          mandatory={false}
+                          onChange={(item) =>
+                            handleInputChange("MiddleName", item)
+                          }
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelName.LastName}
+                          value={data.LastName}
+                          error={validationError.LastName}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleInputChange("LastName", item)
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomDatePicker
+                          selectedDate={data.DOB}
+                          label={labelName.DOB}
+                          mandatory={true}
+                          onChange={(date) => handleDateChange("DOB", date)}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          maxDate={
+                            new Date(
+                              new Date().setFullYear(
+                                new Date().getFullYear() - 18
+                              )
+                            )
+                          }
+                          error={validationError.DOB}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <PhoneNumberComponent
+                          label={labelName.PhoneNumber}
+                          countries={StateOption.CountryCodeOption}
+                          value={data.PhoneNumber}
+                          countryKey={data.CountryCode}
+                          onChange={(countryKey, phoneNumber) =>
+                            handlePhoneNumberChange(
+                              "PhoneNumber",
+                              phoneNumber,
+                              countryKey
+                            )
+                          }
+                          mandatory={true}
+                          error={validationError.PhoneNumber}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <PhoneNumberComponent
+                          label={labelName.AlternativePhoneNumber}
+                          countries={StateOption.CountryCodeOption}
+                          value={data.AlternativePhoneNumber}
+                          countryKey={data.CountryCode}
+                          onChange={(countryKey, phoneNumber) =>
+                            handlePhoneNumberChange(
+                              "AlternativePhoneNumber",
+                              phoneNumber,
+                              countryKey
+                            )
+                          }
+                          mandatory={false}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          // error={validationError.AlternativePhoneNumber}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomAutoComplete
+                          label={labelName.Nationality}
+                          options={StateOption.NationalityOption}
+                          value={data.Nationality}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleAutoComplete("Nationality", item)
+                          }
+                          error={validationError.Nationality}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomAutoComplete
+                          label={labelName.ProofofIdentity}
+                          options={StateOption.ProofOfIdentityOption}
+                          value={data.ProofOfIdentity}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleAutoComplete("ProofOfIdentity", item)
+                          }
+                          error={validationError.ProofOfIdentity}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelName.IdentityNumber}
+                          value={data.IdentityNumber}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          error={validationError.IdentityNumber}
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleInputChange("IdentityNumber", item)
+                          }
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelName.Email}
+                          value={data.Email}
+                          error={validationError.Email}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          mandatory={true}
+                          onChange={(item) => handleInputChange("Email", item)}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomAutoComplete
+                          label={labelName.HighestEducation}
+                          options={StateOption.HighestEducationOption}
+                          value={data.HighestEducation}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleAutoComplete("HighestEducation", item)
+                          }
+                          error={validationError.HighestEducation}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomAutoComplete
+                          label={labelName.WorkExperience}
+                          options={StateOption.WorkExperienceOption}
+                          value={data.WorkExperience}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleAutoComplete("WorkExperience", item)
+                          }
+                          error={validationError.WorkExperience}
+                        />
+                      </div>
+
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelName.RelevantExperience}
+                          value={data.RelevantExperience}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          error={validationError.RelevantExperience}
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleInputChange("RelevantExperience", item)
+                          }
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelName.CurrentEmployer}
+                          value={data.CurrentEmployer}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          error={validationError.CurrentEmployer}
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleInputChange("CurrentEmployer", item)
+                          }
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelName.CurrentPosition}
+                          value={data.CurrentPosition}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                          error={validationError.CurrentPosition}
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleInputChange("CurrentPosition", item)
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="ms-Grid-row">
+                      {question.map((q) => (
+                        <div key={q.id}>
+                          <div className="ms-Grid-col ms-lg3">
+                            <CustomAutoComplete
+                              label={q.question}
+                              value={
+                                q.questionXOptions.find(
+                                  (option: any) =>
+                                    option.optContentId === q.answerContentId
+                                )
+                                  ? {
+                                      key: Number(q.answerContentId),
+                                      text:
+                                        q.questionXOptions.find(
+                                          (option: any) =>
+                                            option.optContentId ===
+                                            q.answerContentId
+                                        )?.optContent || "",
+                                    }
+                                  : null
+                              }
+                              options={q.questionXOptions.map((item: any) => ({
+                                key: item.optContentId,
+                                text: item.optContent,
+                              }))}
+                              onChange={(value) =>
+                                handleQuestionChange(q.id, value)
+                              }
+                              error={questionErrors[q.id]}
+                              mandatory={true}
+                              disabled={
+                                props.stateValue?.ButtonAction ===
+                                ButtonAction.View
+                              }
+                            />
+                          </div>
                         </div>
-                        <div style={{ padding: "1%" }}>
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={labelName.Title}
-                                options={StateOption.TitleOption}
-                                value={data.Title}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleAutoComplete("Title", item)
-                                }
-                                error={validationError.Title}
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomInput
-                                label={labelName.FirstName}
-                                value={data.FirstName}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                error={validationError.FirstName}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleInputChange("FirstName", item)
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomInput
-                                label={labelName.MiddleName}
-                                value={data.MiddleName}
-                                error={false}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                mandatory={false}
-                                onChange={(item) =>
-                                  handleInputChange("MiddleName", item)
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomInput
-                                label={labelName.LastName}
-                                value={data.LastName}
-                                error={validationError.LastName}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleInputChange("LastName", item)
-                                }
-                              />
-                            </div>
+                      ))}
+                    </div>
+
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomRadioGroup
+                          label={labelName.Gender}
+                          value={data?.Gender}
+                          options={["Male", "Female"]}
+                          error={validationError.Gender}
+                          mandatory={true}
+                          onChange={(item) => handleRadioChange("Gender", item)}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg6">
+                        <CustomRadioGroup
+                          label={labelName.previouslyworkedMine}
+                          value={data?.previouslyworkedMine}
+                          options={["Ivanhoe", "Zijin", "None of the above"]}
+                          error={validationError.previouslyworkedMine}
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleRadioChange("previouslyworkedMine", item)
+                          }
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {data.previouslyworkedMine != "None of the above" &&
+                    data.previouslyworkedMine != "" ? (
+                      <>
+                        <div className="ms-Grid-row">
+                          <div className="ms-Grid-col ms-lg3">
+                            <CustomInput
+                              label={labelName.whichOperation}
+                              value={data.whichOperation}
+                              disabled={
+                                props.stateValue?.ButtonAction ===
+                                ButtonAction.View
+                              }
+                              error={validationError.whichOperation}
+                              mandatory={true}
+                              onChange={(item) =>
+                                handleInputChange("whichOperation", item)
+                              }
+                            />
                           </div>
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomDatePicker
-                                selectedDate={data.DOB}
-                                label={labelName.DOB}
-                                mandatory={true}
-                                onChange={(date) =>
-                                  handleDateChange("DOB", date)
-                                }
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                error={validationError.DOB}
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <PhoneNumberComponent
-                                label={labelName.PhoneNumber}
-                                countries={StateOption.CountryCodeOption}
-                                value={data.PhoneNumber}
-                                countryKey={data.CountryCode}
-                                onChange={(countryKey, phoneNumber) =>
-                                  handlePhoneNumberChange(
-                                    "PhoneNumber",
-                                    phoneNumber,
-                                    countryKey
-                                  )
-                                }
-                                mandatory={true}
-                                error={validationError.PhoneNumber}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <PhoneNumberComponent
-                                label={labelName.AlternativePhoneNumber}
-                                countries={StateOption.CountryCodeOption}
-                                value={data.AlternativePhoneNumber}
-                                countryKey={data.CountryCode}
-                                onChange={(countryKey, phoneNumber) =>
-                                  handlePhoneNumberChange(
-                                    "AlternativePhoneNumber",
-                                    phoneNumber,
-                                    countryKey
-                                  )
-                                }
-                                mandatory={true}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                error={validationError.AlternativePhoneNumber}
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={labelName.Nationality}
-                                options={StateOption.NationalityOption}
-                                value={data.Nationality}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleAutoComplete("Nationality", item)
-                                }
-                                error={validationError.Nationality}
-                              />
-                            </div>
+                          <div className="ms-Grid-col ms-lg3">
+                            <CustomInput
+                              label={labelName.YourRole}
+                              value={data.YourRole}
+                              disabled={
+                                props.stateValue?.ButtonAction ===
+                                ButtonAction.View
+                              }
+                              error={validationError.YourRole}
+                              mandatory={true}
+                              onChange={(item) =>
+                                handleInputChange("YourRole", item)
+                              }
+                            />
                           </div>
-
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={labelName.ProofofIdentity}
-                                options={StateOption.ProofOfIdentityOption}
-                                value={data.ProofOfIdentity}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleAutoComplete("ProofOfIdentity", item)
-                                }
-                                error={validationError.ProofOfIdentity}
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomInput
-                                label={labelName.IdentityNumber}
-                                value={data.IdentityNumber}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                error={validationError.IdentityNumber}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleInputChange("IdentityNumber", item)
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomInput
-                                label={labelName.Email}
-                                value={data.Email}
-                                error={validationError.Email}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleInputChange("Email", item)
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={labelName.HighestEducation}
-                                options={StateOption.HighestEducationOption}
-                                value={data.HighestEducation}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleAutoComplete("HighestEducation", item)
-                                }
-                                error={validationError.HighestEducation}
-                              />
-                            </div>
+                          <div className="ms-Grid-col ms-lg3">
+                            <CustomInput
+                              label={labelName.RegionProvince}
+                              value={data.RegionProvince}
+                              disabled={
+                                props.stateValue?.ButtonAction ===
+                                ButtonAction.View
+                              }
+                              error={validationError.RegionProvince}
+                              mandatory={true}
+                              onChange={(item) =>
+                                handleInputChange("RegionProvince", item)
+                              }
+                            />
                           </div>
-
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={labelName.WorkExperience}
-                                options={StateOption.WorkExperienceOption}
-                                value={data.WorkExperience}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleAutoComplete("WorkExperience", item)
-                                }
-                                error={validationError.WorkExperience}
-                              />
-                            </div>
-
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomInput
-                                label={labelName.RelevantExperience}
-                                value={data.RelevantExperience}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                error={validationError.RelevantExperience}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleInputChange("RelevantExperience", item)
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomInput
-                                label={labelName.CurrentEmployer}
-                                value={data.CurrentEmployer}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                error={validationError.CurrentEmployer}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleInputChange("CurrentEmployer", item)
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomInput
-                                label={labelName.CurrentPosition}
-                                value={data.CurrentPosition}
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                                error={validationError.CurrentPosition}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleInputChange("CurrentPosition", item)
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          <div className="ms-Grid-row">
-                            {question.map((q) => (
-                              <div key={q.id}>
-                                <div className="ms-Grid-col ms-lg3">
-                                  <CustomAutoComplete
-                                    label={q.question}
-                                    value={
-                                      q.questionXOptions.find(
-                                        (option: any) =>
-                                          option.optContentId ===
-                                          q.answerContentId
-                                      )
-                                        ? {
-                                            key: Number(q.answerContentId),
-                                            text:
-                                              q.questionXOptions.find(
-                                                (option: any) =>
-                                                  option.optContentId ===
-                                                  q.answerContentId
-                                              )?.optContent || "",
-                                          }
-                                        : null
-                                    }
-                                    options={q.questionXOptions.map(
-                                      (item: any) => ({
-                                        key: item.optContentId,
-                                        text: item.optContent,
-                                      })
-                                    )}
-                                    onChange={(value) =>
-                                      handleQuestionChange(q.id, value)
-                                    }
-                                    error={questionErrors[q.id]}
-                                    mandatory={true}
-                                    disabled={
-                                      props.stateValue?.ButtonAction ===
-                                      ButtonAction.View
-                                    }
-                                  />
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomRadioGroup
-                                label={labelName.Gender}
-                                value={data?.Gender}
-                                options={["Male", "Female"]}
-                                error={validationError.Gender}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleRadioChange("Gender", item)
-                                }
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg6">
-                              <CustomRadioGroup
-                                label={labelName.previouslyworkedMine}
-                                value={data?.previouslyworkedMine}
-                                options={[
-                                  "Ivanhoe",
-                                  "Zijin",
-                                  "None of the above",
-                                ]}
-                                error={validationError.previouslyworkedMine}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleRadioChange(
-                                    "previouslyworkedMine",
-                                    item
-                                  )
-                                }
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          {data.previouslyworkedMine != "None of the above" &&
-                          data.previouslyworkedMine != "" ? (
-                            <>
-                              <div className="ms-Grid-row">
-                                <div className="ms-Grid-col ms-lg3">
-                                  <CustomInput
-                                    label={labelName.whichOperation}
-                                    value={data.whichOperation}
-                                    disabled={
-                                      props.stateValue?.ButtonAction ===
-                                      ButtonAction.View
-                                    }
-                                    error={validationError.whichOperation}
-                                    mandatory={true}
-                                    onChange={(item) =>
-                                      handleInputChange("whichOperation", item)
-                                    }
-                                  />
-                                </div>
-                                <div className="ms-Grid-col ms-lg3">
-                                  <CustomInput
-                                    label={labelName.YourRole}
-                                    value={data.YourRole}
-                                    disabled={
-                                      props.stateValue?.ButtonAction ===
-                                      ButtonAction.View
-                                    }
-                                    error={validationError.YourRole}
-                                    mandatory={true}
-                                    onChange={(item) =>
-                                      handleInputChange("YourRole", item)
-                                    }
-                                  />
-                                </div>
-                                <div className="ms-Grid-col ms-lg3">
-                                  <CustomInput
-                                    label={labelName.RegionProvince}
-                                    value={data.RegionProvince}
-                                    disabled={
-                                      props.stateValue?.ButtonAction ===
-                                      ButtonAction.View
-                                    }
-                                    error={validationError.RegionProvince}
-                                    mandatory={true}
-                                    onChange={(item) =>
-                                      handleInputChange("RegionProvince", item)
-                                    }
-                                  />
-                                </div>
-                              </div>
-                            </>
-                          ) : (
-                            <></>
-                          )}
-
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg6">
-                              <CustomRadioGroup
-                                label={labelName.familylinks}
-                                value={data?.familylinks}
-                                options={["Yes", "No"]}
-                                error={validationError.familylinks}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleRadioChange("familylinks", item)
-                                }
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          {data.familylinks === "Yes" ? (
-                            <div>
-                              {props.stateValue?.ButtonAction ===
-                              ButtonAction.View ? (
-                                <>
-                                  <div className="custom-document-column">
-                                    <CustomLabel value={labelName.Attachment} />
-                                    <div
-                                      className="document-wrapper"
-                                      title={
-                                        Array.isArray(data.familyDocuments)
-                                          ? data.familyDocuments.join(", ")
-                                          : data.familyDocuments ?? undefined
-                                      }
-                                    >
-                                      <CustomViewDocument
-                                        Attachment={data.familyDocuments ?? []}
-                                      />
-                                    </div>
-                                  </div>
-                                </>
-                              ) : (
-                                <>
-                                  <div
-                                    className="ms-Grid-row"
-                                    style={{ marginLeft: "2px" }}
-                                  >
-                                    <CustomLabel
-                                      value={labelName.UploadAttachment}
-                                      mandatory={true}
-                                    />
-                                    <AttachmentButton
-                                      label="Upload"
-                                      iconName="CloudUpload"
-                                      iconNameHover="CloudUpload"
-                                      allowMultiple={false}
-                                      AttachState={(newAttachment: any) => {
-                                        let attachment: IDocFiles[] =
-                                          newAttachment.map((item: any) => {
-                                            return {
-                                              name: item.name,
-                                              content: item.file,
-                                              type: "New",
-                                            };
-                                          });
-                                        const attachments = [
-                                          ...(data.familyDocuments || []),
-                                          ...attachment,
-                                        ];
-                                        handleDocument(
-                                          "familyDocuments",
-                                          attachments
-                                        );
-                                      }}
-                                      mandatory={true}
-                                      error={validationError.familyDocuments}
-                                      Style={{
-                                        backgroundColor:
-                                          ColorCode.ButtonColorCode.ButtonColor,
-                                        color: "white",
-                                      }}
-                                      fileformat=".doc,.pdf,.docx"
-                                    />
-                                    <CustomViewAttachment
-                                      Attachment={data.familyDocuments ?? []}
-                                      StateValue={"familyDocuments"}
-                                      handleDelete={(index, fileState) =>
-                                        handleDelete(index, fileState)
-                                      }
-                                    />
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          ) : (
-                            <></>
-                          )}
-
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg6">
-                              <CustomRadioGroup
-                                label={labelName.businesslinks}
-                                value={data?.businesslinks}
-                                options={["Yes", "No"]}
-                                error={validationError.businesslinks}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleRadioChange("businesslinks", item)
-                                }
-                                disabled={
-                                  props.stateValue?.ButtonAction ===
-                                  ButtonAction.View
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          {data.businesslinks === "Yes" ? (
-                            <div>
-                              {props.stateValue?.ButtonAction ===
-                              ButtonAction.View ? (
-                                <>
-                                  <div className="custom-document-column">
-                                    <CustomLabel value={labelName.Attachment} />
-                                    <div
-                                      className="document-wrapper"
-                                      title={
-                                        Array.isArray(data.businessDocuments)
-                                          ? data.businessDocuments.join(", ")
-                                          : data.businessDocuments ?? undefined
-                                      }
-                                    >
-                                      <CustomViewDocument
-                                        Attachment={
-                                          data.businessDocuments ?? []
-                                        }
-                                      />
-                                    </div>
-                                  </div>
-                                </>
-                              ) : (
-                                <>
-                                  <div
-                                    className="ms-Grid-row"
-                                    style={{ marginLeft: "2px" }}
-                                  >
-                                    <CustomLabel
-                                      value={labelName.UploadAttachment}
-                                      mandatory={true}
-                                    />
-                                    <AttachmentButton
-                                      label="Upload"
-                                      iconName="CloudUpload"
-                                      iconNameHover="CloudUpload"
-                                      allowMultiple={false}
-                                      AttachState={(newAttachment: any) => {
-                                        let attachment: IDocFiles[] =
-                                          newAttachment.map((item: any) => {
-                                            return {
-                                              name: item.name,
-                                              content: item.file,
-                                              type: "New",
-                                            };
-                                          });
-                                        const attachments = [
-                                          ...(data.businessDocuments || []),
-                                          ...attachment,
-                                        ];
-                                        handleDocument(
-                                          "businessDocuments",
-                                          attachments
-                                        );
-                                      }}
-                                      mandatory={true}
-                                      error={validationError.businessDocuments}
-                                      Style={{
-                                        backgroundColor:
-                                          ColorCode.ButtonColorCode.ButtonColor,
-                                        color: "white",
-                                      }}
-                                      fileformat=".doc,.pdf,.docx"
-                                    />
-                                    <CustomViewAttachment
-                                      Attachment={data.businessDocuments ?? []}
-                                      StateValue={"businessDocuments"}
-                                      handleDelete={(index, fileState) =>
-                                        handleDelete(index, fileState)
-                                      }
-                                    />
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          ) : (
-                            <></>
-                          )}
                         </div>
-                      </Box>
-                      <Box sx={{ mb: 2 }}>
-                        <div style={{ padding: "1%" }}>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "flex-start",
-                            }}
-                          >
-                            <LabelHeaderComponents value={"Address"} />
-                            {/* <Label
+                      </>
+                    ) : (
+                      <></>
+                    )}
+
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg7">
+                        <CustomRadioGroup
+                          label={labelName.familylinks}
+                          value={data?.familylinks}
+                          options={["Yes", "No"]}
+                          error={validationError.familylinks}
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleRadioChange("familylinks", item)
+                          }
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {data.familylinks === "Yes" ? (
+                      <div>
+                        {props.stateValue?.ButtonAction ===
+                        ButtonAction.View ? (
+                          <>
+                            <div className="custom-document-column">
+                              <CustomLabel value={labelName.Attachment} />
+                              <div
+                                className="document-wrapper"
+                                title={
+                                  Array.isArray(data.familyDocuments)
+                                    ? data.familyDocuments.join(", ")
+                                    : data.familyDocuments ?? undefined
+                                }
+                              >
+                                <CustomViewDocument
+                                  Attachment={data.familyDocuments ?? []}
+                                />
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div
+                              className="ms-Grid-row"
+                              style={{ marginLeft: "2px" }}
+                            >
+                              <CustomLabel
+                                value={labelName.UploadAttachment}
+                                mandatory={true}
+                              />
+                              <AttachmentButton
+                                label="Upload"
+                                iconName="CloudUpload"
+                                iconNameHover="CloudUpload"
+                                allowMultiple={false}
+                                AttachState={(newAttachment: any) => {
+                                  let attachment: IDocFiles[] =
+                                    newAttachment.map((item: any) => ({
+                                      name: item.name,
+                                      content: item.file,
+                                      type: "New",
+                                    }));
+                                  handleDocument("familyDocuments", attachment);
+                                }}
+                                mandatory={true}
+                                error={validationError.familyDocuments}
+                                Style={{
+                                  backgroundColor:
+                                    ColorCode.ButtonColorCode.ButtonColor,
+                                  color: "white",
+                                }}
+                                fileformat=".doc,.pdf,.docx"
+                              />
+                              <CustomViewAttachment
+                                Attachment={data.familyDocuments ?? []}
+                                StateValue={"familyDocuments"}
+                                handleDelete={(index, fileState) =>
+                                  handleDelete(index, fileState)
+                                }
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg7">
+                        <CustomRadioGroup
+                          label={labelName.businesslinks}
+                          value={data?.businesslinks}
+                          options={["Yes", "No"]}
+                          error={validationError.businesslinks}
+                          mandatory={true}
+                          onChange={(item) =>
+                            handleRadioChange("businesslinks", item)
+                          }
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {data.businesslinks === "Yes" ? (
+                      <div>
+                        {props.stateValue?.ButtonAction ===
+                        ButtonAction.View ? (
+                          <>
+                            <div className="custom-document-column">
+                              <CustomLabel value={labelName.Attachment} />
+                              <div
+                                className="document-wrapper"
+                                title={
+                                  Array.isArray(data.businessDocuments)
+                                    ? data.businessDocuments.join(", ")
+                                    : data.businessDocuments ?? undefined
+                                }
+                              >
+                                <CustomViewDocument
+                                  Attachment={data.businessDocuments ?? []}
+                                />
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div
+                              className="ms-Grid-row"
+                              style={{ marginLeft: "2px" }}
+                            >
+                              <CustomLabel
+                                value={labelName.UploadAttachment}
+                                mandatory={true}
+                              />
+                              <AttachmentButton
+                                label="Upload"
+                                iconName="CloudUpload"
+                                iconNameHover="CloudUpload"
+                                allowMultiple={false}
+                                AttachState={(newAttachment: any) => {
+                                  let attachment: IDocFiles[] =
+                                    newAttachment.map((item: any) => ({
+                                      name: item.name,
+                                      content: item.file,
+                                      type: "New",
+                                    }));
+                                  handleDocument(
+                                    "businessDocuments",
+                                    attachment
+                                  );
+                                }}
+                                mandatory={true}
+                                error={validationError.businessDocuments}
+                                Style={{
+                                  backgroundColor:
+                                    ColorCode.ButtonColorCode.ButtonColor,
+                                  color: "white",
+                                }}
+                                fileformat=".doc,.pdf,.docx"
+                              />
+                              <CustomViewAttachment
+                                Attachment={data.businessDocuments ?? []}
+                                StateValue={"businessDocuments"}
+                                handleDelete={(index, fileState) =>
+                                  handleDelete(index, fileState)
+                                }
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  {/* </Box> */}
+                  {/* <Box sx={{ mb: 2 }}> */}
+                  <div style={{ padding: "1%" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                      }}
+                    >
+                      <LabelHeaderComponents value={"Address"} />
+                      {/* <Label
                               style={{
                                 fontSize: "18px",
                                 color: "black",
@@ -1364,185 +1381,176 @@ const UploadCandidateCV: React.FC = (props: any) => {
                             >
                              
                             </Label> */}
-                          </div>
-                          <div>
-                            <div className="ms-Grid-row">
-                              <div className="ms-Grid-col ms-lg3">
-                                <CustomInput
-                                  label={labelName.AddressLine1}
-                                  value={data.AddressLine}
-                                  error={validationError.AddressLine}
-                                  disabled={
-                                    props.stateValue?.ButtonAction ===
-                                    ButtonAction.View
-                                  }
-                                  mandatory={true}
-                                  onChange={(item) =>
-                                    handleInputChange("AddressLine", item)
-                                  }
-                                />
-                              </div>
-                              <div className="ms-Grid-col ms-lg3">
-                                <CustomAutoComplete
-                                  label={labelName.Country}
-                                  options={StateOption.CountryOption}
-                                  value={data.Country}
-                                  disabled={
-                                    props.stateValue?.ButtonAction ===
-                                    ButtonAction.View
-                                  }
-                                  mandatory={true}
-                                  onChange={(item) =>
-                                    handleAutoComplete("Country", item)
-                                  }
-                                  error={validationError.Country}
-                                />
-                              </div>
-                              <div className="ms-Grid-col ms-lg3">
-                                <CustomAutoComplete
-                                  label={labelName.State}
-                                  options={StateOption.StateOption}
-                                  value={data.State}
-                                  disabled={
-                                    props.stateValue?.ButtonAction ===
-                                    ButtonAction.View
-                                  }
-                                  mandatory={true}
-                                  onChange={(item) =>
-                                    handleAutoComplete("State", item)
-                                  }
-                                  error={validationError.State}
-                                />
-                              </div>
-                              <div className="ms-Grid-col ms-lg3">
-                                <CustomAutoComplete
-                                  label={labelName.City}
-                                  options={StateOption.CityOption}
-                                  value={data.City}
-                                  disabled={
-                                    props.stateValue?.ButtonAction ===
-                                    ButtonAction.View
-                                  }
-                                  mandatory={true}
-                                  onChange={(item) =>
-                                    handleAutoComplete("City", item)
-                                  }
-                                  error={validationError.City}
-                                />
-                              </div>
-                            </div>
-                            <div className="ms-Grid-row">
-                              <div className="ms-Grid-col ms-lg3">
-                                <CustomInput
-                                  label={labelName.PostalCode}
-                                  value={data.PostalCode}
-                                  error={validationError.PostalCode}
-                                  disabled={
-                                    props.stateValue?.ButtonAction ===
-                                    ButtonAction.View
-                                  }
-                                  mandatory={true}
-                                  onChange={(item) =>
-                                    handleInputChange("PostalCode", item)
-                                  }
-                                />
-                              </div>
-                            </div>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "flex-start",
-                              }}
-                            >
-                              <Label
-                                style={{
-                                  fontSize: "18px",
-                                  color: "black",
-                                  fontFamily: "Roboto,sans-serif",
-                                  fontStyle: "normal",
-                                  fontWeight: "600",
-                                  marginTop: "1%",
-                                }}
-                              >
-                                Resume/CV and Cover Letter
-                              </Label>
-                            </div>
-                            {props.stateValue?.ButtonAction ===
-                            ButtonAction.View ? (
-                              <>
-                                <div className="custom-document-column">
-                                  <CustomLabel value={labelName.ResumeCV} />
-                                  <div
-                                    className="document-wrapper"
-                                    title={
-                                      Array.isArray(data.CandidateCV)
-                                        ? data.CandidateCV.join(", ")
-                                        : data.CandidateCV ?? undefined
-                                    }
-                                  >
-                                    <CustomViewDocument
-                                      Attachment={data.CandidateCV ?? []}
-                                    />
-                                  </div>
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                <div
-                                  className="ms-Grid-row"
-                                  style={{ marginLeft: "2px" }}
-                                >
-                                  <CustomLabel
-                                    value={labelName.ResumeCV}
-                                    mandatory={true}
-                                  />
-                                  <AttachmentButton
-                                    label="Upload"
-                                    iconName="CloudUpload"
-                                    iconNameHover="CloudUpload"
-                                    allowMultiple={false}
-                                    AttachState={(newAttachment: any) => {
-                                      let attachment: IDocFiles[] =
-                                        newAttachment.map((item: any) => {
-                                          return {
-                                            name: item.name,
-                                            content: item.file,
-                                            type: "New",
-                                          };
-                                        });
-                                      const attachments = [
-                                        ...(data.CandidateCV || []),
-                                        ...attachment,
-                                      ];
-                                      handleDocument(
-                                        "CandidateCV",
-                                        attachments
-                                      );
-                                    }}
-                                    mandatory={true}
-                                    error={validationError.CandidateCV}
-                                    Style={{
-                                      backgroundColor:
-                                        ColorCode.ButtonColorCode.ButtonColor,
-                                      color: "white",
-                                    }}
-                                    fileformat=".doc,.pdf,.docx"
-                                  />
-                                  <CustomViewAttachment
-                                    Attachment={data.CandidateCV ?? []}
-                                    StateValue={"CandidateCV"}
-                                    handleDelete={(index, fileState) =>
-                                      handleDelete(index, fileState)
-                                    }
-                                  />
-                                </div>
-                              </>
-                            )}
-                          </div>
+                    </div>
+                    <div>
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg3">
+                          <CustomInput
+                            label={labelName.AddressLine1}
+                            value={data.AddressLine}
+                            error={validationError.AddressLine}
+                            disabled={
+                              props.stateValue?.ButtonAction ===
+                              ButtonAction.View
+                            }
+                            mandatory={true}
+                            onChange={(item) =>
+                              handleInputChange("AddressLine", item)
+                            }
+                          />
                         </div>
-                      </Box>
+                        <div className="ms-Grid-col ms-lg3">
+                          <CustomAutoComplete
+                            label={labelName.Country}
+                            options={StateOption.CountryOption}
+                            value={data.Country}
+                            disabled={
+                              props.stateValue?.ButtonAction ===
+                              ButtonAction.View
+                            }
+                            mandatory={true}
+                            onChange={(item) =>
+                              handleAutoComplete("Country", item)
+                            }
+                            error={validationError.Country}
+                          />
+                        </div>
+                        <div className="ms-Grid-col ms-lg3">
+                          <CustomAutoComplete
+                            label={labelName.State}
+                            options={StateOption.StateOption}
+                            value={data.State}
+                            disabled={
+                              props.stateValue?.ButtonAction ===
+                              ButtonAction.View
+                            }
+                            mandatory={true}
+                            onChange={(item) =>
+                              handleAutoComplete("State", item)
+                            }
+                            error={validationError.State}
+                          />
+                        </div>
+                        <div className="ms-Grid-col ms-lg3">
+                          <CustomAutoComplete
+                            label={labelName.City}
+                            options={StateOption.CityOption}
+                            value={data.City}
+                            disabled={
+                              props.stateValue?.ButtonAction ===
+                              ButtonAction.View
+                            }
+                            mandatory={true}
+                            onChange={(item) =>
+                              handleAutoComplete("City", item)
+                            }
+                            error={validationError.City}
+                          />
+                        </div>
+                      </div>
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg3">
+                          <CustomInput
+                            label={labelName.PostalCode}
+                            value={data.PostalCode}
+                            error={validationError.PostalCode}
+                            disabled={
+                              props.stateValue?.ButtonAction ===
+                              ButtonAction.View
+                            }
+                            mandatory={true}
+                            onChange={(item) =>
+                              handleInputChange("PostalCode", item)
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-start",
+                        }}
+                      >
+                        <Label
+                          style={{
+                            fontSize: "18px",
+                            color: "black",
+                            fontFamily: "Roboto,sans-serif",
+                            fontStyle: "normal",
+                            fontWeight: "600",
+                            marginTop: "1%",
+                          }}
+                        >
+                          Resume/CV and Cover Letter
+                        </Label>
+                      </div>
+                      {props.stateValue?.ButtonAction === ButtonAction.View ? (
+                        <>
+                          <div className="custom-document-column">
+                            <CustomLabel value={labelName.ResumeCV} />
+                            <div
+                              className="document-wrapper"
+                              title={
+                                Array.isArray(data.CandidateCV)
+                                  ? data.CandidateCV.join(", ")
+                                  : data.CandidateCV ?? undefined
+                              }
+                            >
+                              <CustomViewDocument
+                                Attachment={data.CandidateCV ?? []}
+                              />
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div
+                            className="ms-Grid-row"
+                            style={{ marginLeft: "2px" }}
+                          >
+                            <CustomLabel
+                              value={labelName.ResumeCV}
+                              mandatory={true}
+                            />
+                            <AttachmentButton
+                              label="Upload"
+                              iconName="CloudUpload"
+                              iconNameHover="CloudUpload"
+                              allowMultiple={false}
+                              AttachState={(newAttachment: any) => {
+                                let attachment: IDocFiles[] = newAttachment.map(
+                                  (item: any) => ({
+                                    name: item.name,
+                                    content: item.file,
+                                    type: "New",
+                                  })
+                                );
+                                handleDocument("CandidateCV", attachment);
+                              }}
+                              mandatory={true}
+                              error={validationError.CandidateCV}
+                              Style={{
+                                backgroundColor:
+                                  ColorCode.ButtonColorCode.ButtonColor,
+                                color: "white",
+                              }}
+                              fileformat=".doc,.pdf,.docx"
+                            />
+                            <CustomViewAttachment
+                              Attachment={data.CandidateCV ?? []}
+                              StateValue={"CandidateCV"}
+                              handleDelete={(index, fileState) =>
+                                handleDelete(index, fileState)
+                              }
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  {/* </Box>
                     </Box>
-                  </Box>
+                  </Box> */}
                 </div>
               </div>
             )}
@@ -1640,7 +1648,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
     errors.LastName = !IsValid(data.LastName);
     errors.DOB = !IsValid(data.DOB);
     errors.PhoneNumber = !IsValid(data.PhoneNumber);
-    errors.AlternativePhoneNumber = !IsValid(data.AlternativePhoneNumber);
+    // errors.AlternativePhoneNumber = !IsValid(data.AlternativePhoneNumber);
     errors.Nationality = !IsValid(data.Nationality.text);
     errors.ProofOfIdentity = !IsValid(data.ProofOfIdentity.text);
     errors.IdentityNumber = !IsValid(data.IdentityNumber);
@@ -1693,7 +1701,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
 
   async function submit_fn() {
     try {
-      console.log(data.CountryCode, "CountryCode");
+      // console.log(data.CountryCode, "CountryCode");
 
       setIsLoading(true);
       const isValid = !Validation();
@@ -1788,10 +1796,10 @@ const UploadCandidateCV: React.FC = (props: any) => {
         const CheckMyCandidateAppliedJobs =
           await GetPortalJobsService.CheckMyCandidateAppliedJobs(CheckJobs);
         if (CheckMyCandidateAppliedJobs.status === ResponeStatus.SUCCESS) {
-          console.log(
-            CheckMyCandidateAppliedJobs,
-            "CheckMyCandidateAppliedJobs"
-          );
+          // console.log(
+          //   CheckMyCandidateAppliedJobs,
+          //   "CheckMyCandidateAppliedJobs"
+          // );
 
           if (CheckMyCandidateAppliedJobs.data.pending) {
             const ValidationMsg = {
@@ -1910,6 +1918,11 @@ const UploadCandidateCV: React.FC = (props: any) => {
             TabName={TabNameData}
             onBreadcrumbChange={handleBreadcrumbChange}
             handleCancel={handleCancel}
+            JobValue={{
+              JobTitle: props.stateValue?.JobTitle ?? "",
+              JobCode: props.stateValue?.JobCode,
+              Status: "",
+            }}
             additionalButtons={
               props.stateValue?.ButtonAction === ButtonAction.View
                 ? [

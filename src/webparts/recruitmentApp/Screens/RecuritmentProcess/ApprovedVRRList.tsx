@@ -44,6 +44,8 @@ import IsValid from "../../components/Validation";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 import CheckboxDataTable from "../../components/CheckboxDataTable";
 import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
+import * as moment from "moment";
+import ReuseButton from "../../components/ReuseButton";
 
 export type formValidation = {
   Comments: boolean;
@@ -52,7 +54,7 @@ export type formValidation = {
 };
 
 const RecruitmentProcess = (props: any) => {
-  console.log(props, "ApprovedVRR");
+  console.log(props, "PROPSvALUE");
 
   const [data, setData] = React.useState<DataSyncToRecruitmentResponse[]>([]);
   const [selectedrowdata, setSelectedrowdata] = React.useState<
@@ -61,7 +63,7 @@ const RecruitmentProcess = (props: any) => {
   // const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [activeTab, setActiveTab] = React.useState<string>("tab1");
+  const [activeTab, setActiveTab] = React.useState<string>();
   const [AssignHR, setAssignHR] = React.useState<boolean>(false);
   const [AssignHRData, setAssignHRData] = React.useState<AssignHRData>({
     AssignRecruitmentHR: { key: 0, text: "" },
@@ -165,7 +167,7 @@ const RecruitmentProcess = (props: any) => {
                     )
                   }
                   style={{
-                    width: "2rem", // scales with font size
+                    width: "50%", // scales with font size
                     height: "auto",
                     maxWidth: "40px", // limit maximum size
                     cursor: "pointer",
@@ -178,7 +180,7 @@ const RecruitmentProcess = (props: any) => {
                   src={require("../../assets/UploadIcon.svg")}
                   alt="Stamp Icon"
                   style={{
-                    width: "2rem", // scales with font size
+                    width: "50%", // scales with font size
                     height: "auto",
                     maxWidth: "40px", // limit maximum size
                     cursor: "pointer",
@@ -199,7 +201,7 @@ const RecruitmentProcess = (props: any) => {
                   src={require("../../assets/Viewicon.svg")}
                   alt="Stamp Icon"
                   style={{
-                    width: "2rem", // scales with font size
+                    width: "50%", // scales with font size
                     height: "auto",
                     maxWidth: "40px", // limit maximum size
                     cursor: "pointer",
@@ -221,7 +223,7 @@ const RecruitmentProcess = (props: any) => {
                   src={require("../../assets/AddDate.svg")}
                   alt="Stamp Icon"
                   style={{
-                    width: "2rem", // scales with font size
+                    width: "50%", // scales with font size
                     height: "auto",
                     maxWidth: "40px", // limit maximum size
                     cursor: "pointer",
@@ -337,7 +339,7 @@ const RecruitmentProcess = (props: any) => {
             tab,
             StatusId: rowData?.StatusId,
             Status: rowData?.Status,
-            TabNames,
+            TabName: TabNames,
             ButtonAction,
           },
         });
@@ -382,7 +384,7 @@ const RecruitmentProcess = (props: any) => {
       ) {
         CurrentTab = TabName.ReviewJobAdvertisement;
       } else {
-        CurrentTab = storedStringRef.current;
+        CurrentTab = props.stateValue?.TabName;
       }
       let TabValue = storedStringRef.current
         ? storedStringRef.current
@@ -470,6 +472,7 @@ const RecruitmentProcess = (props: any) => {
           RecuritmentConditions = "and";
           break;
       }
+
       if (props.CurrentRoleID.includes(RoleID.LineManager)) {
         filterConditionsRecuritment.push({
           FilterKey: "LineManager",
@@ -503,7 +506,23 @@ const RecruitmentProcess = (props: any) => {
               RecuritmentConditions
             );
       if (response.status === 200) {
-        setData(response.data);
+        let responseData;
+        if (TabValue === TabName.UploadCV) {
+          const todayl = new Date();
+          const today = moment(todayl).format("YYYY-MM-DD");
+          responseData = response.data.filter((item) => {
+            let endDateStr =
+              item.JobPostingSecondExtensionEndDate ||
+              item.JobPostingFirstExtensionEndDate ||
+              item.JobPostingEndDate;
+            if (!endDateStr) return false;
+            const endDate = moment(endDateStr).format("YYYY-MM-DD");
+            return endDate >= today;
+          });
+        } else {
+          responseData = response.data;
+        }
+        setData(responseData);
         const JobCode = response.data.map((item) => ({
           ID: item.ID,
           JobCode: item.JobCode,
@@ -556,7 +575,7 @@ const RecruitmentProcess = (props: any) => {
     } else {
       if (!storedStringRef.current) {
         if (props.TabDetails[0]) {
-          storedStringRef.current = props.TabDetails[0]?.[0]?.Value ?? "";
+          // storedStringRef.current = props.TabDetails[0]?.[0]?.Value ?? "";
         }
       }
       setActiveTab("tab1");
@@ -765,18 +784,18 @@ const RecruitmentProcess = (props: any) => {
       if (IsVaild) {
         setAssignHR(false);
         setIsLoading(true);
-        console.log("selectedJobCodes", selectedJobCodes);
+        // console.log("selectedJobCodes", selectedJobCodes);
         if (selectedJobCodes.length > 0) {
           for (const selectedJob of selectedJobCodes) {
             const correspondingJob = data.find(
               (item: any) => item.ID === selectedJob.ID
             );
-            console.log("Corresponding Job:", correspondingJob);
+            // console.log("Corresponding Job:", correspondingJob);
             if (correspondingJob) {
               let UserIDbyEmail = await CommonServices.getUserIDByEmail(
                 AssignHRData.AssignRecruitmentHR.key
               );
-              console.log(UserIDbyEmail.data, "UserIDbyEmail");
+              // console.log(UserIDbyEmail.data, "UserIDbyEmail");
 
               const RecruitmentValue: PostRecuritmentData = {
                 Data: {
@@ -1260,6 +1279,7 @@ const RecruitmentProcess = (props: any) => {
                 AssignedHRId={props.stateValue?.AssignedHRId}
                 validationErrors={validationErrors}
                 ValueData={AssignHRData}
+                Nationality={data[0]?.Nationality ?? ""}
                 handleAutoComplete={(item) => handleAutoComplete(item)}
                 handleAgencyChange={(item: AutoCompleteItem[]) =>
                   handleAgencyChange(item)
@@ -1288,6 +1308,45 @@ const RecruitmentProcess = (props: any) => {
                     ? "Assign Agencies"
                     : "Assign Recruitment HR"}
                 </h2>
+              </div>
+            }
+            footer={
+              <div
+                className="ms-Grid-row"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: "10px 0",
+                  gap: "33px",
+                }}
+              >
+                <ReuseButton
+                  label="Cancel"
+                  onClick={() => handleCancel()}
+                  Style={{
+                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                    color: "white",
+                    width: "50%",
+                  }}
+                />
+
+                <ReuseButton
+                  label="Assign"
+                  onClick={async () => {
+                    if (
+                      props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)
+                    ) {
+                      await handleSubmit();
+                    } else {
+                      await handleAgencySubmit();
+                    }
+                  }}
+                  Style={{
+                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                    color: "white",
+                    width: "50%",
+                  }}
+                />
               </div>
             }
           />

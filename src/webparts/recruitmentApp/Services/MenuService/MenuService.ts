@@ -171,7 +171,7 @@ export default class MenuService implements IMenuService {
 
     async GetNav(ITEMS: MenuResponse[], ParentId: number): Promise<MenuResponse[]> {
         const TempArray: MenuResponse[] = [];
-        console.log(ITEMS, "ITEMS in GetNav");
+        // console.log(ITEMS, "ITEMS in GetNav");
 
         const uniqueReturnData = Array.from(
             new Map(ITEMS.map((menu) => [menu.Id, menu])).values()
@@ -180,7 +180,7 @@ export default class MenuService implements IMenuService {
         const filterItem = uniqueReturnData.filter((item) => item?.ParentId === ParentId);
         for (const element of filterItem) {
             if (element.SubMenu) {
-                console.log("Processing submenu for:", element.Id);
+                // console.log("Processing submenu for:", element.Id);
                 element.Children = await this.getsubmenu(ITEMS, element.Id); // Recursive submenu
             } else {
                 element.TabDetails = await this.getsubmenu(ITEMS, element.Id);

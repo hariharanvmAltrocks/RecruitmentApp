@@ -1,15 +1,9 @@
 import * as React from "react";
 import JobCodeSelector from "../../components/CustomMultiselectwithswipe";
-import {
-  ADGroupID,
-  ColorCode,
-  ListNames,
-  RoleID,
-} from "../../utilities/Config";
+import { ADGroupID, ListNames, RoleID } from "../../utilities/Config";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import { JobCodeTilte } from "../../Models/RecuritmentVRR";
-import ReuseButton from "../../components/ReuseButton";
 import CustomTextArea from "../../components/CustomTextArea";
 import { AutoCompleteItem } from "../../Models/Screens";
 import { CommonServices } from "../../Services/ServiceExport";
@@ -34,6 +28,7 @@ interface AssignPositionDialogProps {
   handleAgencyChange: (value: AutoCompleteItem[] | null) => void;
   handleInputChangeTextArea: (value: string | null) => void;
   AssignHRSubmit: () => void;
+  Nationality: string;
 }
 
 export const AssignRecuritmentHR = ({
@@ -50,6 +45,7 @@ export const AssignRecuritmentHR = ({
   handleAgencyChange,
   handleInputChangeTextArea,
   AssignHRSubmit,
+  Nationality,
 }: AssignPositionDialogProps) => {
   const [AssignRecruitmentHROption, setAssignRecruitmentHROption] =
     React.useState<AutoCompleteItem[]>([]);
@@ -64,9 +60,11 @@ export const AssignRecuritmentHR = ({
             CommonServices.GetMasterData(ListNames.HRMSExternalAgents),
             CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSRecruitmentHR),
           ]);
-
+        let ExternalAgent = HRMSExternalAgents.data?.filter(
+          (nat) => nat.Nationality === Nationality
+        );
         const agentsOptions: AutoCompleteItem[] =
-          HRMSExternalAgents.data?.map((item: any) => ({
+          ExternalAgent?.map((item: any) => ({
             key: item.Id,
             text: item.AgentName,
           })) ?? [];
@@ -189,7 +187,7 @@ export const AssignRecuritmentHR = ({
           </div>
           <div className="ms-Grid-row" style={{ marginTop: "20px" }}></div>
         </div>
-        <div
+        {/* <div
           className="ms-Grid-row"
           style={{
             display: "flex",
@@ -219,7 +217,7 @@ export const AssignRecuritmentHR = ({
               width: "50%",
             }}
           />
-        </div>
+        </div> */}
       </div>
     </>
   );

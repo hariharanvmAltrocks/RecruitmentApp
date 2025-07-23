@@ -13,6 +13,7 @@ import {
   ListNames,
   RecuritmentHRMsg,
   RoleID,
+  RoleName,
   StatusId,
   TabName,
   WorkflowAction,
@@ -229,7 +230,7 @@ const CandidateList = (props: any) => {
                   )
                 }
                 style={{
-                  width: "2rem",
+                  width: "50%",
                   height: "auto",
                   maxWidth: "40px",
                   cursor: "pointer",
@@ -250,7 +251,7 @@ const CandidateList = (props: any) => {
                   )
                 }
                 style={{
-                  width: "2rem",
+                  width: "50%",
                   height: "auto",
                   maxWidth: "40px",
                   cursor: "pointer",
@@ -276,7 +277,7 @@ const CandidateList = (props: any) => {
         workflowStatus: workflowStatusApi.CandidateRejectedIPanel,
         jobRequestId: Number(candidate.JobRequestID),
         comments: candidate.Comments || "",
-        actionBy: props.CurrentUserRole,
+        actionBy: RoleName.HOD,
       };
 
       const actionPayload = {
@@ -284,7 +285,7 @@ const CandidateList = (props: any) => {
         Id: candidate.ID,
         ItemCreated: "Yes",
         Comments: candidate.Comments || "",
-        GPA: "",
+        GPA: candidate.GPA,
       };
 
       try {

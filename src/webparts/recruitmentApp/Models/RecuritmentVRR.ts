@@ -94,6 +94,11 @@ export type AdvDetails = {
   addMasterMinimumQualification: string;
   AdvertisementAttachement: IDocFiles[] | null;
   JobcodeChecked: boolean;
+
+  JobTitleofFunctionalManager: AutoCompleteItem;
+  FunctionalManagerName: string;
+  JobTitleofLineManagerSupervisor: AutoCompleteItem;
+  LineManagerSupervisorName: string;
 };
 
 export type CandidateData = {

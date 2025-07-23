@@ -14,6 +14,12 @@ export type TabNameData = {
   tabName: string;
 };
 
+export type JobTitleData = {
+  JobTitle: string;
+  JobCode: string;
+  Status: string;
+};
+
 interface BreadcrumbsComponentProps {
   items: BreadcrumbData[];
   TabName?: TabNameData[]; // Made optional with ?
@@ -23,6 +29,9 @@ interface BreadcrumbsComponentProps {
   ValidationError?: () => boolean;
   onBreadcrumbChange?: (newItem: string) => void;
   Agencies?: string;
+  JobValue?: JobTitleData;
+  MainTable?: boolean;
+  ISExpended?: boolean;
   additionalButtons?: {
     label: string;
     onClick?: () => void;
@@ -40,6 +49,9 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
   handleCancel,
   ValidationError,
   Agencies,
+  JobValue,
+  MainTable,
+  ISExpended,
 }) => {
   const [currentValue, setCurrentValue] = React.useState(initialItem);
 
@@ -132,8 +144,76 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
           </div>
         )}
       </div>
+      {JobValue?.JobTitle && (
+        <div
+          className="ms-Grid-row"
+          style={{ marginLeft: "1%", marginRight: "1%" }}
+        >
+          <div className="ms-Grid-col ms-lg6">
+            <LabelHeaderComponents
+              value={`Job Title - ${JobValue?.JobTitle ?? ""} (${
+                JobValue?.JobCode ?? ""
+              })`}
+            >
+              {" "}
+            </LabelHeaderComponents>
+          </div>
+          {JobValue?.Status && (
+            <div
+              className="ms-Grid-col ms-lg6"
+              style={{ display: "flex", justifyContent: "end" }}
+            >
+              <LabelHeaderComponents
+                value={`Status - ${JobValue?.Status ?? ""}`}
+              >
+                {" "}
+              </LabelHeaderComponents>
+            </div>
+          )}
+        </div>
+      )}
+      {/* <div
+        className="no-scrollbar"
+        style={{
+          height: ISExpended ? "calc(-158px + 88vh)" : "calc(-158px + 91vh)",
+          // boxSizing: "border-box",
+          // width: "105%",
+          margin: "-1% -17px 10px 0%",
+          // background: "white",
+          padding: "0%",
+          // borderRadius: "5px",
+          // boxShadow: "0px 2px 4px 3px lightgray",
+          width: "100%",
+        }}
+      >
+        */}
 
-      {items.find((item) => item.value === currentValue)?.content}
+      <div
+        className={MainTable ? "no-scrollbar" : ""}
+        style={{
+          height: ISExpended
+            ? "calc(-158px + 85vh) "
+            : MainTable
+            ? "calc(-158px + 73vh)"
+            : additionalButtons.length > 0 &&
+              additionalButtons.some(
+                (button) => button.label === "Close" || button.label === "Back"
+              )
+            ? " calc(-158px + 88vh)"
+            : "calc(-158px + 85vh) ",
+          // height: "calc(-230px + 86vh)",
+          overflowY: MainTable ? "clip" : "auto",
+          // padding: "10px",
+          boxSizing: "border-box",
+          width: "100%",
+          willChange: "transform",
+          // width: "105%",
+          marginTop: "-2%",
+          // marginLeft: "-27px",
+        }}
+      >
+        {items.find((item) => item.value === currentValue)?.content}
+      </div>
 
       <div
         style={{
@@ -200,6 +280,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
         })}
       </div>
     </div>
+    // </div>
   );
 };
 

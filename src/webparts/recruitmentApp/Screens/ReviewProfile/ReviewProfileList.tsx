@@ -18,7 +18,7 @@ import SearchableDataTable from "../../components/CustomDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 
 const ReviewProfileList = (props: any) => {
-  console.log(props, "props in ReviewProfileList");
+  // console.log(props, "props in ReviewProfileList");
 
   const [RecuritmentData, setRecuritmentData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
@@ -140,7 +140,7 @@ const ReviewProfileList = (props: any) => {
                     handleRedirectView(rowData, tab, TabName, ButtonAction.Edit)
                   }
                   style={{
-                    width: "2rem", // scales with font size
+                    width: "50%", // scales with font size
                     height: "auto",
                     maxWidth: "40px", // limit maximum size
                     cursor: "pointer",
@@ -153,7 +153,7 @@ const ReviewProfileList = (props: any) => {
                   src={require("../../assets/Viewicon.svg")}
                   alt="Stamp Icon"
                   style={{
-                    width: "2rem", // scales with font size
+                    width: "50%", // scales with font size
                     height: "auto",
                     maxWidth: "40px", // limit maximum size
                     cursor: "pointer",

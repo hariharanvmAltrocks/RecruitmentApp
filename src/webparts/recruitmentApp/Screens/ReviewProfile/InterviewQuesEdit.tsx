@@ -42,7 +42,6 @@ import {
   validationMsg,
   WorkflowAction,
 } from "../../utilities/Config";
-import LabelHeaderComponents from "../../components/TitleHeader";
 import {
   answersValue,
   getQuestionById,
@@ -1007,7 +1006,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         >
           <CardContent>
             <div className="ms-Grid-row" style={{ marginBottom: "2px" }}>
-              <div className="ms-Grid-col ms-lg7">
+              {/* <div className="ms-Grid-col ms-lg7">
                 <LabelHeaderComponents
                   value={`Job Title - ${props?.stateValue?.JobTitleInEnglish} (${props?.stateValue?.JobCode})`}
                 >
@@ -1024,25 +1023,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                 <LabelHeaderComponents
                   value={`Status - ${props.stateValue?.Status}`}
                 />
-              </div>
-              {/* {props.stateValue?.Status ===
-              "Pending with Line Manager to create a Disqualification Question" ? (
-                <div
-                  className="ms-Grid-col ms-lg6"
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    position: "relative",
-                    left: "12%",
-                  }}
-                >
-                  <LabelHeaderComponents
-                    value={`Status - ${props.stateValue?.Status}`}
-                  />
-                </div>
-              ) : (
-                
-              )} */}
+              </div> */}
             </div>
 
             <div style={{ display: "flex", justifyContent: "flex-start" }}>
@@ -2517,16 +2498,18 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       ) : (
         <>
           <CustomLoader isLoading={isLoading}>
-            <div
+            {/* <div
               style={{
                 backgroundColor: "#EEEEEE",
                 padding: "20px",
                 borderRadius: "5px",
                 boxShadow: "0px 2px 4px 3px lightgray",
                 margin: "10px",
-                minHeight: "80vh",
+                height: " calc(-158px + 97vh)",
+                width: "93%",
               }}
-            >
+            > */}
+            <div className="menu-card">
               <React.Fragment>
                 <BreadcrumbsComponent
                   items={tabs}
@@ -2534,6 +2517,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   TabName={TabNameData}
                   onBreadcrumbChange={handleBreadcrumbChange}
                   handleCancel={handleCancel}
+                  JobValue={{
+                    JobTitle: props?.stateValue?.JobTitleInEnglish ?? "",
+                    JobCode: props?.stateValue?.JobCode,
+                    Status: props.stateValue?.Status,
+                  }}
                   additionalButtons={[
                     ...(resuequestionnaire.length > 0
                       ? [

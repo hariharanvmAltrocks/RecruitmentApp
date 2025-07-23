@@ -133,6 +133,10 @@ const ApprovedVRRView: React.FC = (props: any) => {
     addMasterMinimumQualification: "",
     AdvertisementAttachement: [],
     JobcodeChecked: false,
+    JobTitleofFunctionalManager: { key: 0, text: "" },
+    FunctionalManagerName: "",
+    JobTitleofLineManagerSupervisor: { key: 0, text: "" },
+    LineManagerSupervisorName: "",
   });
 
   const fetchData = async () => {
@@ -372,7 +376,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
           <CardContent>
             {tabVisibility.tab1 && (
               <div>
-                <div className="ms-Grid-row">
+                {/* <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg6">
                     <LabelHeaderComponents
                       value={`Job Title - ${data.JobNameInEnglish} (${data.JobCode})`}
@@ -387,7 +391,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                       {" "}
                     </LabelHeaderComponents>
                   </div>
-                </div>
+                </div> */}
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
@@ -793,6 +797,11 @@ const ApprovedVRRView: React.FC = (props: any) => {
                 initialItem={activeTab}
                 TabName={TabNameData}
                 onBreadcrumbChange={handleBreadcrumbChange}
+                JobValue={{
+                  JobTitle: data.JobNameInEnglish,
+                  JobCode: data.JobCode,
+                  Status: props.stateValue?.Status,
+                }}
                 additionalButtons={[
                   {
                     label: "Back",

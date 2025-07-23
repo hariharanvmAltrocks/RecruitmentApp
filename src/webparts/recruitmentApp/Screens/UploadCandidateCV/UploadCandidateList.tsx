@@ -122,7 +122,7 @@ const UploadCandidateList = (props: any) => {
                   handleRedirectView(rowData, tab, TabNames, ButtonAction.View)
                 }
                 style={{
-                  width: "2rem", // scales with font size
+                  width: "50%", // scales with font size
                   height: "auto",
                   maxWidth: "40px", // limit maximum size
                   cursor: "pointer",
@@ -271,6 +271,7 @@ const UploadCandidateList = (props: any) => {
               initialItem={activeTab}
               TabName={TabNameData}
               onBreadcrumbChange={handleBreadcrumbChange}
+              MainTable={true}
               additionalButtons={[
                 {
                   label: "Back",
@@ -294,6 +295,7 @@ const UploadCandidateList = (props: any) => {
   function back_fn() {
     props.navigation("/RecurimentProcess", {
       state: {
+        TabName: props.stateValue?.TabName,
         tab: props.stateValue?.tab,
       },
     });
@@ -311,6 +313,7 @@ const UploadCandidateList = (props: any) => {
                 // tabClassName={"Tab"}
                 tabtype={tabType.Dashboard}
                 onTabChange={handleTabChange}
+                IsNotscroll={true}
               />
             </React.Fragment>
           </div>

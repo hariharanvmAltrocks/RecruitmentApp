@@ -32,8 +32,8 @@ export default function MainPage(props: any) {
   const toggleSideNav = () => {
     setIsExpanded((prevState: any) => !prevState);
   };
-  console.log("Recruitment-App(9-July-2025) V-1.21.1");
-  console.log("masterData", masterData);
+  console.log("Recruitment-App(9-July-2025) V-1.22.2");
+  // console.log("masterData", masterData);
 
   return (
     <div className="mainPage">
@@ -51,25 +51,28 @@ export default function MainPage(props: any) {
           flexDirection: "column",
         }}
       >
-        <MainPageHeader
-          toggleSideNav={toggleSideNav}
-          userName={
-            (masterData?.userDetails[0]?.FirstName ?? "") +
-            " " +
-            (masterData?.userDetails[0]?.MiddleName ?? "") +
-            " " +
-            (masterData?.userDetails[0]?.LastName ?? "")
-          }
-          userRole={userRole}
-          Department={masterData?.userDetails[0]?.DepartmentName}
-        >
+        <div style={{ position: "fixed", width: "84%" }}>
+          <MainPageHeader
+            toggleSideNav={toggleSideNav}
+            userName={
+              (masterData?.userDetails[0]?.FirstName ?? "") +
+              " " +
+              (masterData?.userDetails[0]?.MiddleName ?? "") +
+              " " +
+              (masterData?.userDetails[0]?.LastName ?? "")
+            }
+            userRole={userRole}
+            Department={masterData?.userDetails[0]?.DepartmentName}
+          />
+        </div>
+        <div style={{ marginTop: "7%" }}>
           {ADGroupData?.ADGroupIDs ? (
             <>
               <Routes>
                 {/* <Route
-                  path="/"
-                  element={<Emptypage {...props} {...masterData} />}
-                /> */}
+                        path="/"
+                        element={<Emptypage {...props} {...masterData} />}
+                      /> */}
                 <Route
                   path="/RecurimentProcess"
                   element={<RecruitmentProcess {...props} {...masterData} />}
@@ -214,7 +217,7 @@ export default function MainPage(props: any) {
               </div>
             </>
           )}
-        </MainPageHeader>
+        </div>
       </div>
     </div>
   );

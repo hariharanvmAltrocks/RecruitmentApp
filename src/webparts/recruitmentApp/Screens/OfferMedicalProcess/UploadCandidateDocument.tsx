@@ -184,7 +184,6 @@ const UploadCandidateDocument = (props: any) => {
         filterConditions,
         Conditions
       );
-      console.log(response.data, "ResiProcess Data");
       let item = response.data[0];
       let OfferDocument: GetCandidateDocument = {
         ListName: DocumentLibraray.HRMSCandidateDocs,
@@ -570,7 +569,7 @@ const UploadCandidateDocument = (props: any) => {
           >
             <CardContent>
               <div>
-                <div className="ms-Grid-row">
+                {/* <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg6">
                     <LabelHeaderComponents
                       value={`Job Title - ${props.stateValue.JobTitle} (${props.stateValue.JobCode})`}
@@ -588,7 +587,7 @@ const UploadCandidateDocument = (props: any) => {
                       {" "}
                     </LabelHeaderComponents>
                   </div>
-                </div>
+                </div> */}
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
@@ -794,7 +793,7 @@ const UploadCandidateDocument = (props: any) => {
                           label="Upload"
                           iconName="CloudUpload"
                           iconNameHover="CloudUpload"
-                          allowMultiple={false}
+                          allowMultiple={true}
                           AttachState={(newAttachment: any) => {
                             let attachment: IDocFiles[] = newAttachment.map(
                               (item: any) => {
@@ -805,11 +804,11 @@ const UploadCandidateDocument = (props: any) => {
                                 };
                               }
                             );
-                            const attachments = [
-                              ...(data.OfferLetterDoc || []),
-                              ...attachment,
-                            ];
-                            handleDocument("OfferLetterDoc", attachments);
+                            // const attachments = [
+                            //   ...(data.OfferLetterDoc || []),
+                            //   ...attachment,
+                            // ];
+                            handleDocument("OfferLetterDoc", attachment);
                           }}
                           mandatory={true}
                           error={validationErrors.OfferLetterDoc}
@@ -850,11 +849,11 @@ const UploadCandidateDocument = (props: any) => {
                                 };
                               }
                             );
-                            const attachments = [
-                              ...(data.ConsentDocs || []),
-                              ...attachment,
-                            ];
-                            handleDocument("ConsentDocs", attachments);
+                            // const attachments = [
+                            //   ...(data.ConsentDocs || []),
+                            //   ...attachment,
+                            // ];
+                            handleDocument("ConsentDocs", attachment);
                           }}
                           mandatory={true}
                           error={validationErrors.ConsentDocs}
@@ -919,11 +918,11 @@ const UploadCandidateDocument = (props: any) => {
                               };
                             }
                           );
-                          const attachments = [
-                            ...(data.EmployementDoc || []),
-                            ...attachment,
-                          ];
-                          handleDocument("EmployementDoc", attachments);
+                          // const attachments = [
+                          //   ...(data.EmployementDoc || []),
+                          //   ...attachment,
+                          // ];
+                          handleDocument("EmployementDoc", attachment);
                         }}
                         mandatory={true}
                         error={validationErrors.EmployementDoc}
@@ -1999,11 +1998,11 @@ const UploadCandidateDocument = (props: any) => {
             TabName={TabNameData}
             onBreadcrumbChange={handleBreadcrumbChange}
             handleCancel={handleCancel}
-            // JobValue={{
-            //   JobTitle: props.stateValue.JobTitle,
-            //   JobCode: props.stateValue.JobCode,
-            //   Status: props.stateValue.Status,
-            // }}
+            JobValue={{
+              JobTitle: props.stateValue.JobTitle,
+              JobCode: props.stateValue.JobCode,
+              Status: props.stateValue.Status,
+            }}
             additionalButtons={
               props.stateValue?.ButtonAction === ButtonAction.View
                 ? [

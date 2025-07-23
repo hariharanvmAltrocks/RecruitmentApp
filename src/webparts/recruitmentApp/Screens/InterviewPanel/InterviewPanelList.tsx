@@ -25,8 +25,6 @@ import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 
 const InterviewPanelList = (props: any) => {
-  console.log(props, "InterviewPanelList");
-
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
 
@@ -238,7 +236,6 @@ const InterviewPanelList = (props: any) => {
             if (!currentUserKey) {
               return;
             }
-            console.log("currentUserKey", currentUserKey);
             if (
               !interviewPanelResponse?.data ||
               interviewPanelResponse.data.length === 0
@@ -328,7 +325,7 @@ const InterviewPanelList = (props: any) => {
               src={require("../../assets/Viewicon.svg")}
               alt="Stamp Icon"
               style={{
-                width: "2rem", // scales with font size
+                width: "50%", // scales with font size
                 height: "auto",
                 maxWidth: "40px", // limit maximum size
                 cursor: "pointer",
@@ -533,8 +530,8 @@ const InterviewPanelList = (props: any) => {
     if (StatusData) {
       Action = StatusData.filter((item) => item.Action);
       StatusID = StatusData.filter((item) => item.StatusId);
-      console.log(StatusID, "StatusID");
     }
+    console.log(StatusID);
 
     switch (TabNames) {
       case TabName.Evaluation:

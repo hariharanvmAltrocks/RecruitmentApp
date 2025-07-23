@@ -97,6 +97,14 @@ const formatFilterValue = (
                         " '" +
                         params[i].FilterValue +
                         "'";
+                } else if (operator == "lt") {
+                    strFilter +=
+                        params[i].FilterKey +
+                        " " +
+                        params[i].Operator +
+                        " datetime'" +
+                        params[i].FilterValue +
+                        "'";
                 } else if (operator == "substringof") {
                     strFilter +=
                         params[i].Operator +

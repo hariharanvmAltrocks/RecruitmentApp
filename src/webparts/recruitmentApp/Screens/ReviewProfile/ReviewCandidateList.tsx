@@ -65,7 +65,7 @@ const ReviewCandidateList = (props: any) => {
     ButtonAction: string,
     PreActionBtn: string
   ): void {
-    console.log("RecruitmentDetails", RecruitmentDetails);
+    // console.log("RecruitmentDetails", RecruitmentDetails);
 
     const today = new Date();
     today.setDate(today.getDate() + 1);
@@ -253,7 +253,7 @@ const ReviewCandidateList = (props: any) => {
                       )
                     }
                     style={{
-                      width: "2rem", // scales with font size
+                      width: "50%", // scales with font size
                       height: "auto",
                       maxWidth: "40px", // limit maximum size
                       cursor: "pointer",
@@ -266,7 +266,7 @@ const ReviewCandidateList = (props: any) => {
                     src={require("../../assets/Editbutton.svg")}
                     alt="Stamp Icon"
                     style={{
-                      width: "2rem", // scales with font size
+                      width: "50%", // scales with font size
                       height: "auto",
                       maxWidth: "40px", // limit maximum size
                       cursor: "pointer",
@@ -620,6 +620,7 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    MainTable={true}
                     additionalButtons={[
                       {
                         label: "Back",
@@ -653,6 +654,7 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    MainTable={true}
                     additionalButtons={[
                       {
                         label: "Back",
@@ -686,6 +688,7 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    MainTable={true}
                     additionalButtons={[
                       {
                         label: "Back",
@@ -719,6 +722,7 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    MainTable={true}
                     additionalButtons={[
                       {
                         label: "Back",
@@ -754,6 +758,7 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    MainTable={true}
                     additionalButtons={[
                       {
                         label: "Back",
@@ -787,6 +792,7 @@ const ReviewCandidateList = (props: any) => {
                     initialItem={activeTab}
                     TabName={TabNameData}
                     onBreadcrumbChange={handleBreadcrumbChange}
+                    MainTable={true}
                     additionalButtons={[
                       {
                         label: "Back",
@@ -824,6 +830,7 @@ const ReviewCandidateList = (props: any) => {
               initialItem={activeTab}
               TabName={TabNameData}
               onBreadcrumbChange={handleBreadcrumbChange}
+              MainTable={true}
               additionalButtons={[
                 {
                   label: "Back",
@@ -857,6 +864,7 @@ const ReviewCandidateList = (props: any) => {
               initialItem={activeTab}
               TabName={TabNameData}
               onBreadcrumbChange={handleBreadcrumbChange}
+              MainTable={true}
               additionalButtons={[
                 {
                   label: "Back",
@@ -890,6 +898,7 @@ const ReviewCandidateList = (props: any) => {
               initialItem={activeTab}
               TabName={TabNameData}
               onBreadcrumbChange={handleBreadcrumbChange}
+              MainTable={true}
               additionalButtons={[
                 {
                   label: "Back",
@@ -942,6 +951,7 @@ const ReviewCandidateList = (props: any) => {
                     // tabClassName={"Tab"}
                     tabtype={tabType.Dashboard}
                     onTabChange={handleTabChange}
+                    IsNotscroll={true}
                   />
                 </>
               ) : (
@@ -952,6 +962,7 @@ const ReviewCandidateList = (props: any) => {
                     // tabClassName={"Tab"}
                     tabtype={tabType.Dashboard}
                     onTabChange={handleTabChange}
+                    IsNotscroll={true}
                   />
                 </>
               )}

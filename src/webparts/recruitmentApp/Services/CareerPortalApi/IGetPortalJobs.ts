@@ -10,7 +10,7 @@ export type CandidateDetails = {
     MiddleName: string,
     LastName: string,
     ResidentialAddress: string,
-    DOB: Date | undefined
+    DOB: string,
     ContactNumber: number
     Email: string,
     Gender: string,
@@ -21,8 +21,8 @@ export type CandidateDetails = {
     ProfileID: string,
     PositionTitle: string,
     JobGrade: string,
-    ExternalAgentDetailsId: number,
-    InterviewDate: Date | undefined,
+    ExternalAgentDetails: string,
+    InterviewDate: string,
     InterviewTime: string,
     InterviewLink: string,
     CandidateResumeLink: string,

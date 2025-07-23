@@ -2,7 +2,7 @@ import * as React from "react";
 import "./CustomAlert.modules.css";
 import { HRMSAlertOptions } from "../../utilities/Config";
 import ReuseButton from "../ReuseButton";
-import CustomPopup from "../CustomPopup/CustomPopup";
+import CustomDialogbox from "../CustomDialogbox";
 
 export type CustomAlert = {
   ButtonAction: (confirmed: boolean) => void;
@@ -18,7 +18,9 @@ export default function CustomAlert(props: CustomAlert) {
   };
   const footerContent = (
     <>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div
+        style={{ display: "flex", justifyContent: "center", marginTop: "5%" }}
+      >
         <p
           className="alertextstyle"
           style={SuccessPadding}
@@ -34,7 +36,7 @@ export default function CustomAlert(props: CustomAlert) {
           display: "flex",
           justifyContent: "center",
           marginTop: "6%",
-          marginBottom: "3%",
+          marginBottom: "2%",
           marginLeft: "4%",
         }}
       >
@@ -130,12 +132,12 @@ export default function CustomAlert(props: CustomAlert) {
       className="ms-Grid-row"
       style={{ display: "flex", justifyContent: "center" }}
     >
-      <CustomPopup
-        visible={props.visible}
-        onClose={props.onClose}
-        width="31%"
+      <CustomDialogbox
+        Style={{ padding: "7px", minHeight: "10%", maxWidth: "28%" }}
         header={headerContent}
+        visible={props.visible}
         children={footerContent}
+        onClose={props.onClose}
       />
     </div>
   );

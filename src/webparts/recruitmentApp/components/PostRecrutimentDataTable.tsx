@@ -200,7 +200,6 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
       const buToJobCode = data.filter(
         (row) => row.BusinessUnitCode === item?.text
       );
-      debugger;
       const jobCodeOptions: AutoCompleteItem[] = buToJobCode.map((item) => ({
         key: item.ID,
         text: item?.JobTitle,
@@ -233,7 +232,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
                 borderRadius: "4px",
                 boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                 borderColor: "#c9bdbd",
-                height: "42px",
+                height: "33px",
               },
             }}
             value={dashboardSearch.global.value}
@@ -242,10 +241,10 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
           <Icon
             iconName="Search"
             style={{
-              fontSize: "28px",
+              fontSize: "20px",
               position: "absolute",
-              top: "5%",
-              right: "11px",
+              top: "20%",
+              right: "14px",
               color: "black",
             }}
           />
@@ -259,7 +258,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
                   marginTop: "1%",
                   marginLeft: "6%",
                   minWidth: "119px",
-                  height: "43px",
+                  height: "30px",
                 }}
               />
             }
@@ -273,9 +272,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
               handleRefresh();
             }}
             spacing={4}
-            height="33px"
-            width="32%"
-            Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
+            Style={{ marginRight: "11px", minWidth: "54%", height: "31px" }}
           />
         </div>
       </div>
@@ -292,6 +289,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
             value={FilterData.Department}
             disabled={false}
             onChange={(item) => handleAutoComplete("Department", item)}
+            MinHeight={"1px"}
           />
         </div>
         <div className="ms-Grid-col ms-lg3">
@@ -301,6 +299,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
             value={FilterData.BusinessUnitCode}
             disabled={false}
             onChange={(item) => handleAutoComplete("BusinessUnitCode", item)}
+            MinHeight={"1px"}
           />
         </div>
         <div className="ms-Grid-col ms-lg3">
@@ -310,6 +309,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
             value={FilterData.JobTitle}
             disabled={false}
             onChange={(item) => handleAutoComplete("JobTitle", item)}
+            MinHeight={"1px"}
           />
         </div>
         <div className="ms-Grid-col ms-lg3">
@@ -319,12 +319,14 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
             value={FilterData.WorkflowStatus}
             disabled={false}
             onChange={(item) => handleAutoComplete("WorkflowStatus", item)}
+            MinHeight={"1px"}
           />
         </div>
       </div>
       <div className="ms-Grid-row" style={{ marginTop: "2%" }}>
         <div className="ms-Grid-col ms-lg12">
           <DataTable
+            className="normalTable"
             value={filteredItems}
             lazy
             rows={pagination.rows}
@@ -336,7 +338,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             scrollable
-            scrollHeight="400px"
+            // scrollHeight="400px"
             paginatorDropdownAppendTo="self"
             rowsPerPageOptions={[5, 10, 20]}
             paginator
@@ -344,6 +346,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
             filters={dashboardSearch}
             onFilter={(e) => setFilteredItems(e.filteredValue || data)}
             style={{ overflow: "visible" }}
+            emptyMessage="No Record Found"
           >
             {columns.map((col) => (
               <Column

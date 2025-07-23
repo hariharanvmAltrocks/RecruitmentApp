@@ -32,6 +32,7 @@ import CustomLoader from "../../Services/Loader/CustomLoader";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import CustomDialogbox from "../../components/CustomDialogbox";
 import IsValid from "../../components/Validation";
+import { MasterData } from "../../Models/Master";
 
 type ValidationErrors = {
   QualificationValue: boolean;
@@ -44,6 +45,7 @@ interface AssignPositionDialogProps {
   handleRichTextEditor: (item: string, type: string) => void;
   handleAutoComplete: (item: AutoCompleteItem | null, type: string) => void;
   handleMulitiSelect: (item: AutoCompleteItem[], type: string) => void;
+  handleInputChange: (item: string, type: string) => void;
   handleDelete: (index: number, type: string) => void;
   handleAutoCompleterow: (
     item: AutoCompleteItem | null,
@@ -58,6 +60,7 @@ interface AssignPositionDialogProps {
   TechnicalSkillValue: TechnicalSkills[];
   RoleSpeKnowledgeValue: RoleSpecKnowledge[];
   setAdvDetails: React.Dispatch<React.SetStateAction<AdvDetails>>;
+  MasterData: MasterData;
 }
 
 export const UploadAdvertisement = ({
@@ -67,6 +70,7 @@ export const UploadAdvertisement = ({
   handleRichTextEditor,
   handleAutoComplete,
   handleMulitiSelect,
+  handleInputChange,
   InvaildSelection,
   handleDelete,
   handleAutoCompleterow,
@@ -76,7 +80,10 @@ export const UploadAdvertisement = ({
   RoleSpeKnowledgeValue,
   handleDeleteRow,
   setAdvDetails,
+  MasterData,
 }: AssignPositionDialogProps) => {
+  console.log(MasterData, "MasterData");
+
   const [showQualificationInput, setShowQualificationInput] =
     React.useState(false);
   //   const todaydate = new Date();
@@ -307,11 +314,11 @@ export const UploadAdvertisement = ({
               },
             ];
 
-            console.log(AgentDetailsList, "AgentDetailsList");
+            // console.log(AgentDetailsList, "AgentDetailsList");
 
             await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
               async (res) => {
-                console.log(res, "res");
+                // console.log(res, "res");
                 if (res.status === 200) {
                   MasterData = {
                     Qualification: res.data.data[0].displayText,
@@ -383,11 +390,11 @@ export const UploadAdvertisement = ({
               },
             ];
 
-            console.log(AgentDetailsList, "AgentDetailsList");
+            // console.log(AgentDetailsList, "AgentDetailsList");
 
             await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
               async (res) => {
-                console.log(res, "res");
+                // console.log(res, "res");
                 if (res.status === 200) {
                   MasterData = {
                     RoleSpecificKnowledge: res.data.data[0].displayText,
@@ -458,11 +465,11 @@ export const UploadAdvertisement = ({
               },
             ];
 
-            console.log(AgentDetailsList, "AgentDetailsList");
+            // console.log(AgentDetailsList, "AgentDetailsList");
 
             await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
               async (res) => {
-                console.log(res, "res");
+                // console.log(res, "res");
                 if (res.status === 200) {
                   MasterData = {
                     TechnicalSkills: res.data.data[0].displayText,
@@ -937,6 +944,68 @@ export const UploadAdvertisement = ({
                 // style={{
                 //   borderRadius: "10px",
                 // }}
+              />
+            </div>
+          </div>
+
+          <div className="ms-Grid-row">
+            <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
+              <CustomAutoComplete
+                label="Job Title of Functional Manager"
+                options={MasterData.JobInEnglishList.map((item) => ({
+                  key: item.key,
+                  text: item.text,
+                }))}
+                value={advDetails.JobTitleofFunctionalManager}
+                disabled={false}
+                mandatory={true}
+                onChange={(item) =>
+                  handleAutoComplete(item, "JobTitleofFunctionalManager")
+                }
+                error={validationErrors.JobTitleofFunctionalManager}
+              />
+            </div>
+            <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
+              <CustomInput
+                label="Functional Manager Name"
+                value={advDetails.FunctionalManagerName}
+                disabled={false}
+                mandatory={true}
+                error={validationErrors.FunctionalManagerName}
+                onChange={(item) =>
+                  handleInputChange(item, "FunctionalManagerName")
+                }
+              />
+            </div>
+          </div>
+
+          <div className="ms-Grid-row">
+            <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
+              <CustomAutoComplete
+                label="Job Title of Line Manager/Supervisor"
+                options={MasterData.JobInEnglishList.map((item) => ({
+                  key: item.key,
+                  text: item.text,
+                }))}
+                value={advDetails.JobTitleofLineManagerSupervisor}
+                disabled={false}
+                mandatory={true}
+                onChange={(item) =>
+                  handleAutoComplete(item, "JobTitleofLineManagerSupervisor")
+                }
+                error={validationErrors.JobTitleofLineManagerSupervisor}
+              />
+            </div>
+            <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
+              <CustomInput
+                label="Line Manager/Supervisor Name"
+                value={advDetails.LineManagerSupervisorName}
+                disabled={false}
+                mandatory={true}
+                error={validationErrors.LineManagerSupervisorName}
+                onChange={(item) =>
+                  handleInputChange(item, "LineManagerSupervisorName")
+                }
               />
             </div>
           </div>

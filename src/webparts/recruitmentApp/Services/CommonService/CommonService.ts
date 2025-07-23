@@ -28,7 +28,7 @@ export default class CommonService implements ICommonService {
             await sp.web
               .getFileByServerRelativeUrl(file.ServerRelativeUrl)
               .delete();
-            console.log(`Deleted existing file: ${file.Name}`);
+            // console.log(`Deleted existing file: ${file.Name}`);
           } catch (error) {
             console.warn(` Error deleting file: ${file.Name}`, error);
           }
@@ -40,9 +40,6 @@ export default class CommonService implements ICommonService {
           Datas: AttachFile,
         });
 
-        console.log(
-          "All existing files deleted, and new files added successfully"
-        );
 
         return {
           data: "Successfully Replaced Document",
@@ -339,7 +336,7 @@ export default class CommonService implements ICommonService {
           op = data.map((item: any) => ({
             Level: item.Levels,
           }));
-          console.log("data HRMSGradeMaster", op);
+          // console.log("data HRMSGradeMaster", op);
         });
       }
       return {
@@ -371,7 +368,7 @@ async function getUserGuidByEmail(email: string) {
     let UserName = listItems.find((emp: any) => {
       return emp.EmailId?.toLowerCase() === email?.toLowerCase();
     });
-    console.log(UserName, "UserName");
+    // console.log(UserName, "UserName");
 
     return {
       key: user.Id,

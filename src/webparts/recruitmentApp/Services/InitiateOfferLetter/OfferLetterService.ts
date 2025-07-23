@@ -194,10 +194,6 @@ export default class OfferLetterService implements IOfferLetterService {
                     Datas: AttachFile,
                 });
 
-                console.log(
-                    "All existing files deleted, and new files added successfully"
-                );
-
                 return {
                     data: response,
                     status: 200,
@@ -257,7 +253,7 @@ export default class OfferLetterService implements IOfferLetterService {
                             targetFolder.map(async (item) => {
                                 const folderUrl = item?.ServerRelativeUrl;
                                 const files = folderUrl ? await sp.web.getFolderByServerRelativeUrl(folderUrl).files() : [];
-                                console.log("Files in the filtered folder:", files);
+                                // console.log("Files in the filtered folder:", files);
                                 return files;
                             })
                         );
@@ -289,7 +285,7 @@ export default class OfferLetterService implements IOfferLetterService {
                             category: key,
                             documents: personalDocs[key]
                         }));
-                        console.log(response, " response.....");
+                        // console.log(response, " response.....");
 
                     }
                     break;

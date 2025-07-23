@@ -175,9 +175,9 @@ export default class InterviewProcessService
       const candidateItems = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Select:
-          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName,Status/ID,Status/StatusDescription,ID",
+          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,Status/ID,Status/StatusDescription,ID",
         Expand:
-          "JobCode,AssignByInterviewPanel,RecruitmentID,ExternalAgentDetails,Status",
+          "JobCode,AssignByInterviewPanel,RecruitmentID,Status",
         Filter: filterParam,
         FilterCondition: filterConditions,
         Topcount: count.Topcount,
@@ -280,9 +280,7 @@ export default class InterviewProcessService
             ShortlistedValue: "",
             PositionTitle: item.PositionTitle,
             JobGrade: item.JobGrade,
-            ExternalAgentDetails: item?.ExternalAgentDetails
-              ? { AgentName: item?.ExternalAgentDetails?.AgentName }
-              : null,
+            ExternalAgentDetails: { AgentName: item?.ExternalAgentDetails },
             HRMSCandidateScoreCard: positionResult?.data || [],
             GPA: lastCandidateGPA,
             JobRequestID: item?.JobRequestID,
@@ -303,7 +301,7 @@ export default class InterviewProcessService
       );
 
       CandidateDetails.push(...formattedItems);
-      console.log("Final Combined Candidate Details:", CandidateDetails);
+      // console.log("Final Combined Candidate Details:", CandidateDetails);
 
       return {
         data: CandidateDetails,
@@ -327,7 +325,7 @@ export default class InterviewProcessService
     candidateID: number,
     EmployeeList: Employee[]
   ): Promise<ApiResponse<(InterviewPanelItem & CommentsData)[]>> {
-    console.log("Fetching interview panel details...");
+    // console.log("Fetching interview panel details...");
 
     return SPServices.SPReadItems({
       Listname: ListNames.HRMSInterviewPanelDetails,
@@ -905,7 +903,7 @@ export default class InterviewProcessService
           CandidateID: item?.CandidateID?.ID || 0,
           RecruitmentID: item?.RecruitmentID?.ID || 0,
         }));
-      console.log("Selected Candidate Details:", selectedCandidateDetails);
+      // console.log("Selected Candidate Details:", selectedCandidateDetails);
       return {
         data: selectedCandidateDetails,
         status: 200,
@@ -983,7 +981,7 @@ export default class InterviewProcessService
         Filter: filterConditions,
       });
 
-      console.log("Fetched listItems:", listItems);
+      // console.log("Fetched listItems:", listItems);
 
       // Group by InterviewLevel
       const groupedByLevel: Record<string, Set<string>> = {};
@@ -996,13 +994,13 @@ export default class InterviewProcessService
           (emp: any) => emp.Email?.toLowerCase() === email
         );
 
-        console.log(`Matching employee for email ${email}:`, matchedEmployee);
+        // console.log(`Matching employee for email ${email}:`, matchedEmployee);
 
         const fullName = matchedEmployee
           ? `${matchedEmployee.FirstName ?? ""} ${matchedEmployee.MiddleName ?? ""} ${matchedEmployee.LastName ?? ""}`.trim()
           : item.InterviewPanel?.Title || "Unknown";
 
-        console.log(`Level: ${level}, Full Name: ${fullName}`);
+        // console.log(`Level: ${level}, Full Name: ${fullName}`);
 
         if (!groupedByLevel[level]) {
           groupedByLevel[level] = new Set();
@@ -1019,7 +1017,7 @@ export default class InterviewProcessService
         }
       }
 
-      console.log("Grouped result:", result);
+      // console.log("Grouped result:", result);
 
       return {
         data: result,

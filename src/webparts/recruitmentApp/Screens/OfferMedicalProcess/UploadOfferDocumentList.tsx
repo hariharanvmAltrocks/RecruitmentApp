@@ -104,7 +104,7 @@ const UploadOfferDocumentList = (props: any) => {
                   src={require("../../assets/UploadIcon.svg")}
                   alt="Stamp Icon"
                   style={{
-                    width: "2rem",
+                    width: "50%",
                     height: "auto",
                     maxWidth: "40px",
                     cursor: "pointer",
@@ -140,7 +140,7 @@ const UploadOfferDocumentList = (props: any) => {
                   src={require("../../assets/Viewicon.svg")}
                   alt="Stamp Icon"
                   style={{
-                    width: "2rem",
+                    width: "50%",
                     height: "auto",
                     maxWidth: "40px",
                     cursor: "pointer",
@@ -160,7 +160,7 @@ const UploadOfferDocumentList = (props: any) => {
                 src={require("../../assets/Review.svg")}
                 alt="Stamp Icon"
                 style={{
-                  width: "2rem",
+                  width: "50%",
                   height: "auto",
                   maxWidth: "40px",
                   cursor: "pointer",
@@ -243,12 +243,17 @@ const UploadOfferDocumentList = (props: any) => {
         Operator: "eq",
         FilterValue: Choices.No,
       });
+      filterConditions.push({
+        FilterKey: "RecruitmentHR",
+        Operator: "eq",
+        FilterValue: props.userDetails[0]?.EmailId,
+      });
+
       const respons = await OfferLetterServices.fetchResiCandidateDetails(
         filterConditions,
         Conditions
       );
       response = respons.data;
-      console.log(response, "response");
       let FilterDataCareerportal = respons.data.filter(
         (item) =>
           item.StatusID === StatusId.PendingwithCandidatetoSignOfferLetter ||
@@ -265,11 +270,10 @@ const UploadOfferDocumentList = (props: any) => {
       let FilterData = FilterDataCareerportal.map(
         (item) => item.CandidateDetails?.JobRequestID
       );
-      console.log(FilterData, "FilterData");
       let UpdatedStatus = await GetPortalJobsService.GetJobRequestData(
         FilterData
       );
-      console.log(UpdatedStatus, "DemoData");
+      // console.log(UpdatedStatus, "DemoData");
       const getStatusById = (UpdatedStatus?.data?.data ?? []).map(
         (item: { jobRequestId: any; workflowStatusId: any }) => {
           const matchedRes = response.find(
@@ -293,11 +297,11 @@ const UploadOfferDocumentList = (props: any) => {
           }
         }
       );
-      console.log(getStatusById, "getStatusById");
+      // console.log(getStatusById, "getStatusById");
       let nullChecked = getStatusById.filter(
         (item: any) => item !== null && item !== undefined
       );
-      console.log(nullChecked, "nullChecked");
+      // console.log(nullChecked, "nullChecked");
       if (nullChecked.length > 0) {
         await OfferLetterServices.UpdateStatusInSpfxlist(nullChecked);
       }
