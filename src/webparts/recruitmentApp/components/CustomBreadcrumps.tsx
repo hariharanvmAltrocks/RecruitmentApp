@@ -80,24 +80,27 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
   return (
     <div>
       <div className="ms-Grid-row">
-        <div className="ms-Grid-col ms-lg0.3">
-          {additionalButtons.some((button) => button.label === "Back") &&
-            additionalButtons.map((button, index) => {
-              return <ArrowBackIcon key={index} onClick={button.onClick} />;
-            })}
-        </div>
-        <div className="ms-Grid-col ms-lg8">
-          <Breadcrumbs
-            aria-label="breadcrumb"
-            separator={separator}
-            sx={{ marginBottom: "16px", marginLeft: "2%" }}
-          >
-            {TabName.map((item, index) => (
-              <Typography key={index} color="text.primary" fontWeight="Bold">
-                {item.tabName}
-              </Typography>
-            ))}
-          </Breadcrumbs>
+        {/* <div className="ms-Grid-col ms-lg0.3">
+         
+        </div> */}
+        <div className="ms-Grid-col ms-lg9">
+          <span style={{ display: "flex" }}>
+            {additionalButtons.some((button) => button.label === "Back") &&
+              additionalButtons.map((button, index) => {
+                return <ArrowBackIcon key={index} onClick={button.onClick} />;
+              })}
+            <Breadcrumbs
+              aria-label="breadcrumb"
+              separator={separator}
+              sx={{ marginBottom: "16px", marginLeft: "2%" }}
+            >
+              {TabName.map((item, index) => (
+                <Typography key={index} color="text.primary" fontWeight="Bold">
+                  {item.tabName}
+                </Typography>
+              ))}
+            </Breadcrumbs>
+          </span>
         </div>
         {Agencies && (
           <div className="ms-Grid-col ms-lg3">
@@ -105,7 +108,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
               style={{
                 display: "flex",
                 justifyContent: "flex-end", // This aligns the entire wrapper to the right
-                marginTop: "-4%",
+                marginTop: "0%",
                 width: "100%", // Ensure the container spans the full width
               }}
             >

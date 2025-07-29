@@ -1438,7 +1438,7 @@ padding: 0%;
   }
 
   .menu-card {
-    min-height:  fit-content;
+    min-height: calc(-196px + 103vh);
     max-height: 100%;
   }
 }
@@ -1581,4 +1581,9 @@ padding: 0%;
     margin-left: 6%;
     min-width: 119px;
     height: 30px;
+  }
+  
+  .CanvasSection{
+    padding-left: 0% !important;
+    padding-right: 0% !important;
   }

@@ -1622,10 +1622,11 @@ const UploadCandidateDocument = (props: any) => {
       props.stateValue?.StatusId ===
       StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm
     ) {
-      errors.ITRequired = !IsValid(data.ITRequired);
       errors.RadioAction = !IsValid(data.RadioAction);
+      if (data.RadioAction === "Yes") {
+        errors.ITRequired = !IsValid(data.ITRequired);
+      }
     }
-
     errors.comments = !IsValid(data.comments);
     errors.checkbox = !IsValid(data.Checkbox);
 

@@ -480,7 +480,29 @@ const InterviewPanelList = (props: any) => {
           };
         })
       );
-      setCandidateData(enrichedCandidates);
+      const finalValue = enrichedCandidates.filter((candidate) => {
+        const matchingPanel = interviewPanelResponse.data.find((item) => {
+          if (candidate.ID !== item.CandidateID) return false;
+          if (
+            candidate.StatusId === StatusId.InterviewScheduled &&
+            item.InterviewLevel === InterviewLevels.Level1
+          ) {
+            return true;
+          }
+
+          if (
+            candidate.StatusId === StatusId.InterviewScheduledforLevel2 &&
+            item.InterviewLevel === InterviewLevels.Level2
+          ) {
+            return true;
+          }
+
+          return false;
+        });
+
+        return !!matchingPanel;
+      });
+      setCandidateData(finalValue);
     } catch (error) {
       console.error("Error fetching candidate data:", error);
     } finally {

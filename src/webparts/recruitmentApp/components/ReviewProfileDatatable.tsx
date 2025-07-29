@@ -161,7 +161,7 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
             stripedRows
             scrollable
             scrollHeight="35vh"
-            // paginatorDropdownAppendTo="self"
+            paginatorDropdownAppendTo="self"
             filters={dashboardSearch}
             onFilter={(e) => setFilteredItems(e.filteredValue || data)}
             style={{ overflow: "visible" }}

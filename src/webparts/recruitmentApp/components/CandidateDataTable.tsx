@@ -258,7 +258,7 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
             stripedRows
             scrollable
             scrollHeight="40vh"
-            paginatorDropdownAppendTo="self"
+            // paginatorDropdownAppendTo="self"
             filters={dashboardSearch}
             rowClassName={(rowData: Candidate) =>
               isCheckboxDisabled(rowData) ? "disabled-row" : ""

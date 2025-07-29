@@ -950,7 +950,9 @@ export default class GetPortalJobs implements IGetPortalJobs {
         const htmlString = item.quesContent?.contentEn || '';
         const tempElement = document.createElement('div');
         tempElement.innerHTML = htmlString;
-        const plainText = tempElement.innerText.trim();
+        const plainText = tempElement.innerText
+          .replace(/\s*\*$/, "")
+          .trim();
         return {
           id: incrementedIndex,
           question: plainText,

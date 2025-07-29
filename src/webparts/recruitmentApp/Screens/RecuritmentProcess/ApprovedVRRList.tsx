@@ -125,6 +125,16 @@ const RecruitmentProcess = (props: any) => {
       sortable: true,
     },
     {
+      field: "Type",
+      header: "Position Request",
+      sortable: true,
+    },
+    {
+      field: "Nationality",
+      header: "Nationality",
+      sortable: true,
+    },
+    {
       field: "Status",
       header: "Status",
       fieldName: "Status",
@@ -147,8 +157,10 @@ const RecruitmentProcess = (props: any) => {
             style={{
               display: "flex",
               flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
+              alignItems:
+                TabNames === TabName.AdvertExtension ? "left" : "center",
+              justifyContent:
+                TabNames === TabName.AdvertExtension ? "left" : "center",
               gap: "10px", // slightly more space for small screens
               flexWrap: "wrap", // allow wrapping on smaller screens
             }}
@@ -203,7 +215,8 @@ const RecruitmentProcess = (props: any) => {
                   style={{
                     width: "50%", // scales with font size
                     height: "auto",
-                    maxWidth: "40px", // limit maximum size
+                    maxWidth:
+                      TabNames === TabName.AdvertExtension ? "29px" : "40px", // limit maximum size
                     cursor: "pointer",
                   }}
                   onClick={() =>
@@ -223,9 +236,9 @@ const RecruitmentProcess = (props: any) => {
                   src={require("../../assets/AddDate.svg")}
                   alt="Stamp Icon"
                   style={{
-                    width: "50%", // scales with font size
+                    width: "50%",
                     height: "auto",
-                    maxWidth: "40px", // limit maximum size
+                    maxWidth: "29px",
                     cursor: "pointer",
                   }}
                   onClick={() => {
@@ -383,6 +396,8 @@ const RecruitmentProcess = (props: any) => {
         props.CurrentRoleID.includes(RoleID.LineManager)
       ) {
         CurrentTab = TabName.ReviewJobAdvertisement;
+      } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)) {
+        CurrentTab = TabName.AssignRecuritmentHR;
       } else {
         CurrentTab = props.stateValue?.TabName;
       }
@@ -495,7 +510,7 @@ const RecruitmentProcess = (props: any) => {
 
       const response =
         props.CurrentRoleID.includes(RoleID.RecruitmentHRLead) &&
-        activeTab === "tab1"
+        TabValue === TabName.AssignRecuritmentHR
           ? await getVRRDetails.GetJobTitleInNPEP(
               filterConditions,
               Conditions,
@@ -541,6 +556,21 @@ const RecruitmentProcess = (props: any) => {
   };
 
   React.useEffect(() => {
+    if (props.stateValue) {
+      storedStringRef.current = props.stateValue?.TabName;
+      setActiveTab(props.stateValue?.tab);
+    } else {
+      if (!storedStringRef.current) {
+        if (props.TabDetails[0]) {
+          // storedStringRef.current = props.TabDetails[0]?.[0]?.Value ?? "";
+        }
+      }
+      setActiveTab("tab1");
+    }
+    // handleRefresh(props.TabDetails[0]?.[0]?.Value);
+  }, []);
+
+  React.useEffect(() => {
     const fetchDataAndGetADGroupsOption = async () => {
       try {
         await fetchData(props.TabDetails[0]);
@@ -567,21 +597,6 @@ const RecruitmentProcess = (props: any) => {
   const handleRefresh = (tab: string) => {
     void fetchData(props.TabDetails[0]?.[0]?.Value);
   };
-
-  React.useEffect(() => {
-    if (props.stateValue) {
-      storedStringRef.current = props.stateValue?.TabName;
-      setActiveTab(props.stateValue?.tab);
-    } else {
-      if (!storedStringRef.current) {
-        if (props.TabDetails[0]) {
-          // storedStringRef.current = props.TabDetails[0]?.[0]?.Value ?? "";
-        }
-      }
-      setActiveTab("tab1");
-    }
-    // handleRefresh(props.TabDetails[0]?.[0]?.Value);
-  }, []);
 
   const onPageChange = (event: any) => {
     // setFirst(event.first);

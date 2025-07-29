@@ -1,6 +1,7 @@
-// export const ApiUrl = "https://hrmscp.tmicloud.net:9192/hrms/api";
-export const ApiUrl = "https://hrmscp.tmicloud.net:9141/hrms/api";  // SIT
-// export const ApiUrl = "https://localhost:7019/api/hrms";
+// export const ApiUrl = "https://hrmscp.tmicloud.net:9192/hrms/api"; // Dev
+// export const ApiUrl = "https://hrmscp.tmicloud.net:9141/hrms/api";  // SIT
+export const ApiUrl = "https://careeruat.kamoacopper.com/hrms/api";  // UAT
+
 
 export const AuthorizationHeader = {
     headers: {

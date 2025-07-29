@@ -264,6 +264,8 @@ export const RecuritmentHRMsg = {
   EmploymentContractMsg: "The employment contract has been uploaded successfully.",
   ReviewEmploymentContractMsg: "The employment contract has been reviewed successful, Please proceed with onboarding process",
   RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
+
+  NationalityErrorMsg: "Please select the Nationality filter before proceeding.",
 };
 
 export const validationMsg = {
@@ -271,14 +273,26 @@ export const validationMsg = {
   CorrectAns: "Please select a correct answer.",
 };
 
+// DEV/SIT
+// export const ADGroupID: IADGroupID = {
+//   HRMSHOD: "86374c2a-511d-4c6d-9eb8-f6b64a44eb97",
+//   HRMSRecruitmentLineManager: "e46c5079-6a7d-40bf-a8cb-c7fbfa10f220",
+//   HRMSRecruitmentHR: "fe43382e-002e-4879-8710-a4ac546d48e7",
+//   HRMSRecruitmentHRLead: "df686473-5454-4afe-ad60-1ba93037c772",
+//   HRMSInterviewPanel: "60c676c0-692d-4c48-b101-a6398fc99493",
+//   LineManager: "2dec2073-031c-4505-a2a2-6720e513da0a",
+//   RecruitmentAppExternalAgency: "d59a35bf-524e-4951-9eb1-aeca407d73d0",
+// };
+
+//UAT
 export const ADGroupID: IADGroupID = {
-  HRMSHOD: "86374c2a-511d-4c6d-9eb8-f6b64a44eb97",
+  HRMSHOD: "166e7062-6d48-4eeb-b8b9-5d4c1c24d245",
   HRMSRecruitmentLineManager: "e46c5079-6a7d-40bf-a8cb-c7fbfa10f220",
-  HRMSRecruitmentHR: "fe43382e-002e-4879-8710-a4ac546d48e7",
-  HRMSRecruitmentHRLead: "df686473-5454-4afe-ad60-1ba93037c772",
-  HRMSInterviewPanel: "60c676c0-692d-4c48-b101-a6398fc99493",
-  LineManager: "2dec2073-031c-4505-a2a2-6720e513da0a",
-  RecruitmentAppExternalAgency: "d59a35bf-524e-4951-9eb1-aeca407d73d0",
+  HRMSRecruitmentHR: "f5017ec6-5c87-4461-8e42-e1316909f2c5",
+  HRMSRecruitmentHRLead: "35d68e0f-b77e-47a4-b504-1ca65f71b070",
+  HRMSInterviewPanel: "b6562870-0b24-49ad-9ada-2dc40774e9ce",
+  LineManager: "79c343ae-666f-42a0-bf27-0f58adcb1fee",
+  RecruitmentAppExternalAgency: "2d03b531-d87e-4a9e-907d-fb6db73bdb38",
 };
 
 
@@ -660,6 +674,11 @@ export const ITSystemReq = {
   NotRequired: "Not Required",
   Required: "Required"
 }
+
+export const NationalityOption = [
+  { key: 1, text: "Nationals (Congolese)" },
+  { key: 2, text: "Expatriate" },
+];
 
 export const ColorCode = {
   TabColorCode: {

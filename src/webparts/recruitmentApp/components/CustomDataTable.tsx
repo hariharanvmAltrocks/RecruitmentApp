@@ -38,6 +38,7 @@ export type FilterData = {
   BusinessUnitNameOption: AutoCompleteItem[];
   JobCode: AutoCompleteItem;
   JobCodeOption: AutoCompleteItem[];
+  Nationality: AutoCompleteItem;
 };
 
 const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
@@ -62,6 +63,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
     BusinessUnitCodeOption: [],
     JobCodeOption: [],
     BusinessUnitNameOption: [],
+    Nationality: { key: 0, text: "" },
   });
 
   React.useEffect(() => {
@@ -322,7 +324,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             scrollable
             scrollHeight="40vh"
-            paginatorDropdownAppendTo="self"
+            // paginatorDropdownAppendTo="self"
             rowsPerPageOptions={[5, 10, 20]}
             paginator
             stripedRows

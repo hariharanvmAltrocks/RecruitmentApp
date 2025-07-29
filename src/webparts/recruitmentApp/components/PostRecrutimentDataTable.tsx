@@ -338,8 +338,8 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             scrollable
-            // scrollHeight="400px"
-            paginatorDropdownAppendTo="self"
+            scrollHeight="40vh"
+            // paginatorDropdownAppendTo="self"
             rowsPerPageOptions={[5, 10, 20]}
             paginator
             stripedRows

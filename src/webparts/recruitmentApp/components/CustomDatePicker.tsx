@@ -28,7 +28,7 @@ const getDatePickerStyle = (
 
     ".ms-TextField-fieldGroup": {
       height: "42px",
-      border: "1px solid rgb(255 249 249)",
+      // border: "1px solid rgb(255 249 249)",
     },
     ".icon-153": {
       padding: "9px 9px 9px",
@@ -37,7 +37,7 @@ const getDatePickerStyle = (
       height: 42,
       borderRadius: "4px",
       boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-      borderColor: "rgb(15, 15, 15)",
+      border: "rgb(15, 15, 15)",
       ...(disabled && {
         border: "1px solid rgb(210 200 200)",
       }),
@@ -52,7 +52,7 @@ const getDatePickerStyle = (
     },
   },
   textField: {
-    borderColor: "rgb(4, 4, 4)",
+    border: "rgb(4, 4, 4)",
     height: "42px",
   },
 });

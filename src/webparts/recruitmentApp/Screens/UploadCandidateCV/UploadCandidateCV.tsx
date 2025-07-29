@@ -257,7 +257,9 @@ const UploadCandidateCV: React.FC = (props: any) => {
             const htmlString = item.question?.quesContent?.contentEn || "";
             const tempElement = document.createElement("div");
             tempElement.innerHTML = htmlString;
-            const plainText = tempElement.innerText.trim();
+            const plainText = tempElement.innerText
+              .replace(/\s*\*$/, "")
+              .trim();
             return {
               id: incrementedIndex,
               question: plainText,
@@ -267,6 +269,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
             };
           });
         setQuestion(GetQuestionnaire ?? []);
+        //  let PhoneNum = item?.profile?.contactNumber1?.substring(3) ?? "";
         setData((prev) => ({
           ...prev,
           Title: Title[0],
@@ -276,10 +279,11 @@ const UploadCandidateCV: React.FC = (props: any) => {
           DOB: item?.profile?.dob
             ? moment(item?.profile?.dob, "YYYY-MM-DD").toDate()
             : undefined,
-          PhoneNumber: item?.profile?.contactNumber1,
+          PhoneNumber: item?.profile?.contactNumber1?.substring(3) ?? "",
           CountryCode: item?.profile?.contactNumber1.substring(0, 3),
           // CountryCode: item?.profile?.contactNumber1.substring(0, 3),
-          AlternativePhoneNumber: item?.profile?.contactNumber2,
+          AlternativePhoneNumber:
+            item?.profile?.contactNumber2?.substring(3) ?? "",
           Nationality: Nationality,
           ProofOfIdentity: ProofOfIdentity,
           IdentityNumber: item?.profile?.identityValue,

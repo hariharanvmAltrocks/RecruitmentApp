@@ -285,7 +285,7 @@ const ViewCandidateDetails = (props: any) => {
           RoleProfile: roleProfileDocuments,
           Advertisement: advertisementDocuments,
           Status: op?.Status,
-          Agencies: op?.ExternalAgentDetails,
+          Agencies: op?.ExternalAgentDetails?.AgentName,
           Comments: "",
           workflowStatusId: 0,
           hrComments: "",
@@ -1042,6 +1042,18 @@ const ViewCandidateDetails = (props: any) => {
                           }
                           disabled={level2Date}
                         />
+                        {rescheduleValidation && (
+                          <p
+                            style={{
+                              marginTop: 5,
+                              color: "red",
+                              fontSize: 12,
+                              marginLeft: 0,
+                            }}
+                          >
+                            Invaild Date
+                          </p>
+                        )}
                       </div>
                       <div className="ms-Grid-col ms-lg4">
                         <CustomTimePicker
@@ -1304,36 +1316,37 @@ const ViewCandidateDetails = (props: any) => {
                     </>
                   )}
 
-                {props.CurrentRoleID.includes(RoleID.LineManager) && (
-                  <div className="ms-Grid-row">
-                    <div className="ms-Grid-col ms-lg4">
-                      <CustomLabel value={"View Justifications"} />
-                      <ReuseButton
-                        Style={{
-                          minWidth: "117px",
-                          fontSize: "13px",
-                          paddingBottom: "24px",
-                          display: "flex",
-                          flexDirection: "column",
-                          height: "41px",
-                          paddingTop: "23px",
-                          backgroundColor:
-                            ColorCode.ButtonColorCode.ButtonColor,
-                          color: "white",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                        label="VIEW"
-                        imgSrc={require("../../assets/viewSubmision-white.svg")}
-                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                        imgAlt="View"
-                        imgAltHover="Hovered View"
-                        onClick={() => setOpenComments(true)}
-                        spacing={4}
-                      />
+                {props.CurrentRoleID.includes(RoleID.LineManager) &&
+                  CandidateProfile.Comments.length > 0 && (
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomLabel value={"View Justifications"} />
+                        <ReuseButton
+                          Style={{
+                            minWidth: "117px",
+                            fontSize: "13px",
+                            paddingBottom: "24px",
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "41px",
+                            paddingTop: "23px",
+                            backgroundColor:
+                              ColorCode.ButtonColorCode.ButtonColor,
+                            color: "white",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                          label="VIEW"
+                          imgSrc={require("../../assets/viewSubmision-white.svg")}
+                          imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                          imgAlt="View"
+                          imgAltHover="Hovered View"
+                          onClick={() => setOpenComments(true)}
+                          spacing={4}
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                 {props.stateValue?.ButtonAction === ButtonAction.View ? (
                   <></>
@@ -1740,6 +1753,7 @@ const ViewCandidateDetails = (props: any) => {
                       TabNames: props.stateValue?.initialTab,
                       ButtonAction: ButtonAction.View,
                       JobCode: CandidateProfile?.JobCode,
+                      tab: props.stateValue?.tab,
                       JobCodeID: props.stateValue?.JobCodeID,
                     },
                   });
@@ -1750,10 +1764,12 @@ const ViewCandidateDetails = (props: any) => {
                       TabNames: props.stateValue?.initialTab,
                       ButtonAction: ButtonAction.View,
                       JobCode: CandidateProfile?.JobCode,
+                      tab: props.stateValue?.tab,
                       JobCodeID: props.stateValue?.JobCodeID,
                     },
                   });
                 }
+
                 setAlertPopupOpen(false);
               }
             },
@@ -1872,6 +1888,7 @@ const ViewCandidateDetails = (props: any) => {
                       TabNames: props.stateValue?.initialTab,
                       ButtonAction: ButtonAction.View,
                       JobCode: CandidateProfile?.JobCode,
+                      tab: props.stateValue?.tab,
                       JobCodeID: props.stateValue?.JobCodeID,
                     },
                   });
@@ -1882,9 +1899,12 @@ const ViewCandidateDetails = (props: any) => {
                       TabNames: props.stateValue?.initialTab,
                       ButtonAction: ButtonAction.View,
                       JobCode: CandidateProfile?.JobCode,
+                      tab: props.stateValue?.tab,
+                      JobCodeID: props.stateValue?.JobCodeID,
                     },
                   });
                 }
+
                 setAlertPopupOpen(false);
               }
             },
@@ -1905,6 +1925,7 @@ const ViewCandidateDetails = (props: any) => {
                       TabNames: props.stateValue?.initialTab,
                       ButtonAction: ButtonAction.View,
                       JobCode: CandidateProfile?.JobCode,
+                      tab: props.stateValue?.tab,
                       JobCodeID: props.stateValue?.JobCodeID,
                     },
                   });
@@ -1915,10 +1936,12 @@ const ViewCandidateDetails = (props: any) => {
                       TabNames: props.stateValue?.initialTab,
                       ButtonAction: ButtonAction.View,
                       JobCode: CandidateProfile?.JobCode,
+                      tab: props.stateValue?.tab,
                       JobCodeID: props.stateValue?.JobCodeID,
                     },
                   });
                 }
+
                 setAlertPopupOpen(false);
               }
             },
@@ -1994,11 +2017,7 @@ const ViewCandidateDetails = (props: any) => {
               JobCode: CandidateProfile.JobCode,
               Status: CandidateProfile.Status,
             }}
-            Agencies={
-              props.stateValue?.initialTab === TabName.ReviewProfile
-                ? CandidateProfile.Agencies
-                : ""
-            }
+            Agencies={CandidateProfile.Agencies}
             additionalButtons={
               props.stateValue?.ButtonAction === ButtonAction.View
                 ? [
