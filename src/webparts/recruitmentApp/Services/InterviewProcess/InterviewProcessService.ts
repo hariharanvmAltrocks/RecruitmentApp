@@ -248,6 +248,11 @@ export default class InterviewProcessService
           const fullName = `${item?.FristName ?? ""} ${item?.MiddleName ?? ""
             } ${item?.LastName ?? ""}`.trim();
 
+          const originalDateStr = item?.InterviewDate;
+          const originalDate = new Date(originalDateStr);
+          const nextDate = new Date(originalDate.getTime() + 24 * 60 * 60 * 1000);
+          const nextDateStr = nextDate.toISOString();
+
           return {
             SNO: index + 1,
             ID: item.ID,
@@ -285,7 +290,7 @@ export default class InterviewProcessService
             GPA: lastCandidateGPA,
             JobRequestID: item?.JobRequestID,
             ProfileID: item?.ProfileID,
-            InterviewDate: item?.InterviewDate,
+            InterviewDate: nextDateStr,
             InterviewTime: item?.InterviewTime,
             InterviewLink: item?.InterviewLink,
             InterviewDateLevel2: item?.InterviewDateLevel2,

@@ -2274,6 +2274,18 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       let OptionsValue: optionsValue[] = [];
       let answerValue: answersValue[] = [];
 
+      const decodeBase64 = (str: string): string => {
+        const utf8Bytes: any = new TextEncoder().encode(str);
+        const binary = String.fromCharCode(...utf8Bytes);
+        return btoa(binary);
+      };
+      //  const stripHtml = (html: string) => {
+      //         if (!html) return "";
+      //         const tmp = document.createElement("DIV");
+      //         tmp.innerHTML = html;
+      //         return tmp.textContent || tmp.innerText || "";
+      //       };
+
       if (category?.text === CatogryOptionCode.CareerPortalCandidate) {
         OptionsValue =
           item.options?.map((opt, index) => ({
@@ -2292,12 +2304,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           {
             optionEn:
               item?.Type === DataType.Existing
-                ? item.expectedAnswer[0]
-                : item.expectedAnswer,
+                ? decodeBase64(item.expectedAnswer[0])
+                : decodeBase64(item.expectedAnswer),
             optionFr:
               item?.Type === DataType.Existing
-                ? item.expectedAnswer[0]
-                : item.expectedAnswer,
+                ? decodeBase64(item.expectedAnswer[0])
+                : decodeBase64(item.expectedAnswer),
             sequence: 1,
           },
         ];
@@ -2306,12 +2318,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           {
             optionEn:
               item?.Type === DataType.Existing
-                ? item.expectedAnswer[0]
-                : item.expectedAnswer,
+                ? decodeBase64(item.expectedAnswer[0])
+                : decodeBase64(item.expectedAnswer),
             optionFr:
               item?.Type === DataType.Existing
-                ? item.expectedAnswer[0]
-                : item.expectedAnswer,
+                ? decodeBase64(item.expectedAnswer[0])
+                : decodeBase64(item.expectedAnswer),
           },
         ];
       }
@@ -2325,8 +2337,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           : String(item.questionType.key);
 
       return {
-        questionEn: item.question,
-        questionFr: item.question,
+        questionEn: decodeBase64(item.question),
+        questionFr: decodeBase64(item.question),
         scopeId: scopeId,
         categoryId: String(category?.key),
         // questionTypeId: String(item.questionType.key),

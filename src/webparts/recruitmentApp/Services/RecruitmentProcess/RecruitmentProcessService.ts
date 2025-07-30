@@ -1648,11 +1648,16 @@ export default class RecruitmentService implements IRecruitmentService {
         ...minQualifications,
         ...preferredQualifications,
       ];
+      const decodeBase64 = (str: string): string => {
+        const utf8Bytes: any = new TextEncoder().encode(str);
+        const binary = String.fromCharCode(...utf8Bytes);
+        return btoa(binary);
+      };
 
       const Description: Descriptions = {
         jobTitle: RecuritmentDetails.JobNameInEnglish === undefined ? RecuritmentDetails.JobTitleEnglish : RecuritmentDetails.JobNameInEnglish,
-        jobShortSummary: String(data.RoleProfile || ""),
-        jobSummary: String(data.JobDescription || ""),
+        jobShortSummary: decodeBase64(data.RoleProfile || ""),
+        jobSummary: decodeBase64(data.JobDescription || ""),
       };
 
       const onamdocpathfile = await CommonServices.GetAttachmentLink(

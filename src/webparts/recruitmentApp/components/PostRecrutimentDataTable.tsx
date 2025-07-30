@@ -88,14 +88,25 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
     }));
   }, [data]);
 
-  const handleSearch = (event: any) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchValue = event.target.value;
+
     setDashboardSearch({
       global: {
-        value: event.target.value,
+        value: searchValue,
         matchMode: FilterMatchMode.CONTAINS,
       },
     });
+
+    const filtered = data.filter((item: any) =>
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(searchValue.toLowerCase())
+      )
+    );
+
+    setFilteredItems(filtered);
   };
+
   React.useEffect(() => {
     setTotalItem(filteredItems[0]?.TotalItems ?? filteredItems.length);
   }, [filteredItems]);

@@ -1042,7 +1042,7 @@ const ViewCandidateDetails = (props: any) => {
                           }
                           disabled={level2Date}
                         />
-                        {rescheduleValidation && (
+                        {/* {rescheduleValidation && (
                           <p
                             style={{
                               marginTop: 5,
@@ -1053,7 +1053,7 @@ const ViewCandidateDetails = (props: any) => {
                           >
                             Invaild Date
                           </p>
-                        )}
+                        )} */}
                       </div>
                       <div className="ms-Grid-col ms-lg4">
                         <CustomTimePicker

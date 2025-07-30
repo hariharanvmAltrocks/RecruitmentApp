@@ -53,13 +53,23 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
     setTotalItem(data[0]?.TotalItems ?? data.length);
   }, [data]);
 
-  const handleSearch = (event: any) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchValue = event.target.value;
+
     setDashboardSearch({
       global: {
-        value: event.target.value,
+        value: searchValue,
         matchMode: FilterMatchMode.CONTAINS,
       },
     });
+
+    const filtered = data.filter((item: any) =>
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(searchValue.toLowerCase())
+      )
+    );
+
+    setFilteredItems(filtered);
   };
 
   return (
@@ -162,7 +172,7 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
             scrollable
             scrollHeight="35vh"
             paginatorDropdownAppendTo="self"
-            filters={dashboardSearch}
+            // filters={dashboardSearch}
             onFilter={(e) => setFilteredItems(e.filteredValue || data)}
             style={{ overflow: "visible" }}
             emptyMessage="No Record Found"

@@ -55,6 +55,21 @@ export const AssignRecuritmentHR = ({
   React.useEffect(() => {
     const initialize = async () => {
       try {
+        // let filterConditions = [];
+        // filterConditions.push({
+        //   FilterKey: "ID",
+        //   FilterValue: "eq",
+        //   Operator: RoleID.RecruitmentHR,
+        // });
+        // const GetADGruopUserID = await CommonServices.GetMasterData(
+        //   ListNames.HRMSRecruitmentUserRole
+        // );
+        // console.log(GetADGruopUserID, "GetADGruopUserID");
+        // let ADGroupIDs = GetADGruopUserID.data?.filter(
+        //   (item: any) => item.ID === RoleID.RecruitmentHR
+        // );
+        // console.log(ADGroupIDs, "ADGroupID");
+
         const [HRMSExternalAgents, AssignRecurtimentHROption] =
           await Promise.all([
             CommonServices.GetMasterData(ListNames.HRMSExternalAgents),
