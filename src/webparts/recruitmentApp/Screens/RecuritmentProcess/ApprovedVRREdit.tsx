@@ -953,6 +953,18 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }
   }
 
+  const SpiltDateOnly = (date: Date) => {
+    const updatedDate = date;
+    const year = updatedDate?.getFullYear();
+    const month = String(updatedDate?.getMonth() + 1).padStart(2, "0");
+    const day = String(updatedDate?.getDate()).padStart(2, "0");
+
+    const dateOnly = new Date(
+      Date.UTC(Number(year), Number(month) - 1, Number(day))
+    ); //`${year}-${month}-${day}`;
+    return dateOnly.toISOString();
+  };
+
   const SaveRecruitment = async () => {
     try {
       setIsLoading(true);
@@ -1004,8 +1016,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 const obj: any = {
                   ActionId: WorkflowAction.Approved,
                   ItemCreated: "Yes",
-                  JobPostingStartDate: advDetails.ValidFrom,
-                  JobPostingEndDate: advDetails.ValidTo,
+                  JobPostingStartDate: advDetails.ValidFrom
+                    ? SpiltDateOnly(advDetails.ValidFrom)
+                    : "",
+                  JobPostingEndDate: advDetails.ValidTo
+                    ? SpiltDateOnly(advDetails.ValidTo)
+                    : "",
                 };
                 await SPServices.SPUpdateItem({
                   Listname: ListNames.HRMSRecruitmentDptDetails,

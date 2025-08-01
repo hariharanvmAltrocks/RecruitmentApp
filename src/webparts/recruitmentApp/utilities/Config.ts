@@ -65,6 +65,10 @@ export const ListNames = {
   //Region Zone
   HRMSRegion: "HRMSRegion", //Region
   HRMSZone: "HRMSZone",
+
+  //TCS Integration
+  TCSInductionMeetings: "TCSInductionMeetings",
+  TrainerAndFacilityDetails: "TrainerAndFacilityDetails",
 };
 
 export const DocumentLibraray = {
@@ -294,6 +298,17 @@ export const ADGroupID: IADGroupID = {
   LineManager: "79c343ae-666f-42a0-bf27-0f58adcb1fee",
   RecruitmentAppExternalAgency: "2d03b531-d87e-4a9e-907d-fb6db73bdb38",
 };
+
+//Production
+// export const ADGroupID: IADGroupID = {
+//   HRMSHOD: "fe3dfeea-5423-4272-85fa-27bfa0c0378d",
+//   HRMSRecruitmentLineManager: "d9115164-acf9-4224-90af-a6aa2d6e87d5",
+//   HRMSRecruitmentHR: "2c2fd526-ed9a-4106-9047-ea85e5d6a65c",
+//   HRMSRecruitmentHRLead: "47513cdf-0b60-45f5-8a0e-f94bdae73769",
+//   HRMSInterviewPanel: "1331ae84-4c88-40f6-b7b5-dcc71faaa378",
+//   LineManager: "d9115164-acf9-4224-90af-a6aa2d6e87d5",
+//   RecruitmentAppExternalAgency: "a7c1bac2-faf3-41b3-adb8-6b80dc0fbae7",
+// };
 
 
 export const tabType = {
@@ -552,6 +567,7 @@ export const labelName = {
   TrainingCenterSystem: "Training Center System",
   TASystem: "T&A System",
   ITSystem: "IT System",
+  TrainingDetails: "Training Details",
 
   //Upload CV 
   Title: "Title",

@@ -975,7 +975,7 @@ const UploadCandidateDocument = (props: any) => {
                 props.stateValue?.StatusId ===
                   StatusId.OnboardingProcessinitiatedforExpat ? (
                   <>
-                    <Card
+                    {/* <Card
                       variant="outlined"
                       sx={{
                         boxShadow: "0px 7px 4px 3px #d3d3d3",
@@ -1132,7 +1132,7 @@ const UploadCandidateDocument = (props: any) => {
                           </div>
                         </div>
                       </CardContent>
-                    </Card>
+                    </Card> */}
 
                     <Card
                       variant="outlined"
@@ -1637,6 +1637,17 @@ const UploadCandidateDocument = (props: any) => {
 
     return Object.values(errors).some((error) => error);
   };
+  const SpiltDateOnly = (date: Date) => {
+    const updatedDate = date;
+    const year = updatedDate?.getFullYear();
+    const month = String(updatedDate?.getMonth() + 1).padStart(2, "0");
+    const day = String(updatedDate?.getDate()).padStart(2, "0");
+
+    const dateOnly = new Date(
+      Date.UTC(Number(year), Number(month) - 1, Number(day))
+    ); //`${year}-${month}-${day}`;
+    return dateOnly.toISOString();
+  };
 
   const Submit_fn = async (btnAction: string) => {
     setIsLoading(true);
@@ -1822,18 +1833,22 @@ const UploadCandidateDocument = (props: any) => {
 
               let obj: UpdateCandidateData = {
                 InductionType: data.TrainingSystem?.Inductiontype.text,
-                TCSStartDate: data.TrainingSystem?.StartDate,
-                TCSEndDate: data.TrainingSystem?.EndDate,
+                TCSStartDate: SpiltDateOnly(data.TrainingSystem?.StartDate),
+                TCSEndDate: SpiltDateOnly(data.TrainingSystem?.EndDate),
                 TCSZone: data.TrainingSystem?.Zone.text,
                 TCSRegion: data.TrainingSystem?.Region.text,
                 TCSComments: data.TrainingSystem?.Comments,
-                PermanentBadgeStartDate: data.TASystem?.StartDate,
-                PermanentBadgeEndDate: data.TASystem?.EndDate,
+                PermanentBadgeStartDate: SpiltDateOnly(
+                  data.TASystem?.StartDate
+                ),
+                PermanentBadgeEndDate: SpiltDateOnly(data.TASystem?.EndDate),
                 PermanentBadgeRegion: data.TASystem?.Region.text,
                 PermanentBadgeZone: data.TASystem?.Zone.text,
                 PermanentBadgeComments: data.TASystem?.Comments,
                 ITStartDate:
-                  data.ITRequired === "No" ? null : data.ITSystem?.StartDate,
+                  data.ITRequired === "No"
+                    ? null
+                    : SpiltDateOnly(data.ITSystem?.StartDate),
                 Hardware: Hardwarevalue,
                 ITZone:
                   data.ITRequired === "No" ? "" : data.ITSystem?.Zone.text,
