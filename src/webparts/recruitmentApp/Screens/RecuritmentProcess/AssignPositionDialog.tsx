@@ -41,7 +41,7 @@ export const AssignPositionDialog = ({
   onAssign,
   AssignOption,
 }: AssignPositionDialogProps) => {
-  console.log("AssignOption", AssignOption);
+  // console.log("AssignOption", AssignOption);
   const [selectedPosition, setSelectedPosition] =
     React.useState<AutoCompleteItem | null>(null);
   const positionOptions = AssignOption || [];
@@ -229,14 +229,14 @@ export const AssignPositionDialog = ({
             onClick={handleClose}
             variant="outlined"
             sx={{
-              borderColor:  ColorCode.ButtonColorCode.ButtonColor,
-              color:  ColorCode.ButtonColorCode.color,
-              backgroundColor:  ColorCode.ButtonColorCode.ButtonColor,
+              borderColor: ColorCode.ButtonColorCode.ButtonColor,
+              color: ColorCode.ButtonColorCode.color,
+              backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
               textTransform: "capitalize",
               mr: 2.5,
               "&:hover": {
-                borderColor:  ColorCode.ButtonColorCode.ButtonColor,
-                backgroundColor:  ColorCode.ButtonColorCode.ButtonColor,
+                borderColor: ColorCode.ButtonColorCode.ButtonColor,
+                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                 color: ColorCode.ButtonColorCode.color,
               },
             }}
@@ -248,14 +248,14 @@ export const AssignPositionDialog = ({
             type="submit"
             variant="outlined"
             sx={{
-              borderColor:  ColorCode.ButtonColorCode.ButtonColor,
-              color:  ColorCode.ButtonColorCode.color,
-              backgroundColor:  ColorCode.ButtonColorCode.ButtonColor,
+              borderColor: ColorCode.ButtonColorCode.ButtonColor,
+              color: ColorCode.ButtonColorCode.color,
+              backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
               textTransform: "capitalize",
               mr: 2.5,
               "&:hover": {
-                borderColor:  ColorCode.ButtonColorCode.ButtonColor,
-                backgroundColor:  ColorCode.ButtonColorCode.ButtonColor,
+                borderColor: ColorCode.ButtonColorCode.ButtonColor,
+                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                 color: ColorCode.ButtonColorCode.color,
               },
             }}

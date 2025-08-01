@@ -1,11 +1,12 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
 //import { Link } from "@mui/material";
-import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
+import { getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import {
-  ListNames,
+  ActionIcon,
+  ButtonAction,
   RoleID,
   StatusId,
   TabName,
@@ -14,17 +15,81 @@ import {
 
 import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
 import SearchableDataTable from "../../components/CustomDataTable";
+import { StatusDetails, TabDetails } from "../../Models/Master";
 
 const ReviewProfileList = (props: any) => {
+  // console.log(props, "props in ReviewProfileList");
+
   const [RecuritmentData, setRecuritmentData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   // const [first, setFirst] = React.useState<number>(0);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [assignedCandidates, setAssignedCandidates] =
-    React.useState<boolean>(false);
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
+  const [TabNameData, setTabNameData] = React.useState<TabDetails[]>(
+    props.TabDetails[0]
+  );
+  const storedStringRef = React.useRef("");
 
-  const columnConfig = (tab: string, ButtonAction: string, TabName: string) => [
+  const handleRedirectView = (
+    rowData: any,
+    tab: string,
+    TabNames: string,
+    ButtonAction: string
+  ): void => {
+    switch (TabNames) {
+      case TabName.ReviewProfile:
+      case TabName.AssignInterviewPanel:
+        props.navigation("/ReviewProfileList/ReviewCandidateList", {
+          state: {
+            ID: rowData?.ID,
+            JobCode: rowData?.JobCode,
+            JobCodeID: rowData?.JobCodeId,
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            TabNames,
+            ButtonAction,
+          },
+        });
+        break;
+      case TabName.InterviewQuestion:
+        props.navigation("/ReviewProfileList/InterviewQuesEdit", {
+          state: {
+            ID: rowData?.ID,
+            AssignedHRId: rowData?.AssignedHRId,
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            JobTitleInEnglish: rowData.JobTitleEnglish,
+            JobCode: rowData.JobCode,
+            JobCodeID: rowData?.JobCodeId,
+            TabNames,
+            ButtonAction,
+          },
+        });
+        break;
+      default:
+        props.navigation("/ReviewProfileList/ReviewCandidateList", {
+          state: {
+            ID: rowData?.ID,
+            JobCode: rowData?.JobCode,
+            JobCodeID: rowData?.JobCodeId,
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            TabNames,
+            ButtonAction,
+          },
+        });
+        break;
+    }
+  };
+
+  const columnConfig = (
+    tab: string,
+    ButtonActions: number,
+    TabName: string
+  ) => [
     {
       field: "JobCode",
       header: "Job Code",
@@ -55,218 +120,30 @@ const ReviewProfileList = (props: any) => {
       style: { width: "8%" },
       sortable: false,
       body: (rowData: any) => {
-        // const handleRedirectView = (
-        //   rowData: any,
-        //   tab: string,
-        //   TabName: string,
-        //   ButtonAction: string
-        // ): void => {
-        //   switch (tab) {
-        //     case "tab1":
-        //       {
-        //         if (props.CurrentRoleID === RoleID.LineManager) {
-        //           props.navigation("/ReviewProfileList/ReviewProfileEdit", {
-        //             state: {
-        //               ID: rowData?.ID,
-        //               AssignedHRId: rowData?.AssignedHRId,
-        //               tab: "tab1",
-        //               StatusId: rowData?.StatusId,
-        //               Status: rowData?.Status,
-        //               JobTitleInEnglish: rowData.JobTitleEnglish,
-        //               JobCode: rowData.JobCode,
-        //               TabName,
-        //               ButtonAction,
-        //             },
-        //           });
-        //         } else {
-        //           props.navigation("/ReviewProfileList/ReviewCandidateList", {
-        //             state: {
-        //               ID: rowData?.ID,
-        //               JobCode: rowData?.JobCode,
-        //               tab: "tab1",
-        //               StatusId: rowData?.StatusId,
-        //               Status: rowData?.Status,
-        //               TabName,
-        //               ButtonAction,
-        //             },
-        //           });
-        //         }
-        //       }
-        //       break;
-        //     case "tab2":
-        //       {
-        //         if (props.CurrentRoleID === RoleID.LineManager) {
-        //           props.navigation("/ReviewProfileList/InterviewQuesEdit", {
-        //             state: {
-        //               ID: rowData?.ID,
-        //               AssignedHRId: rowData?.AssignedHRId,
-        //               tab: "tab2",
-        //               StatusId: rowData?.StatusId,
-        //               Status: rowData?.Status,
-        //               JobTitleInEnglish: rowData.JobTitleEnglish,
-        //               JobCode: rowData.JobCode,
-        //               TabName,
-        //               ButtonAction,
-        //             },
-        //           });
-        //         } else {
-        //           props.navigation("/ReviewProfileList/ReviewCandidateList", {
-        //             state: {
-        //               ID: rowData?.ID,
-        //               JobCode: rowData?.JobCode,
-        //               tab: "tab2",
-        //               StatusId: rowData?.StatusId,
-        //               Status: rowData?.Status,
-        //               TabName,
-        //               ButtonAction,
-        //             },
-        //           });
-        //         }
-        //       }
-        //       break;
-        //     case "tab3":
-        //       {
-        //         props.navigation("/ReviewProfileList/ReviewCandidateList", {
-        //           state: {
-        //             ID: rowData?.ID,
-        //             JobCode: rowData?.JobCode,
-        //             tab: "tab3",
-        //             StatusId: rowData?.StatusId,
-        //             Status: rowData?.Status,
-        //             TabName,
-        //             ButtonAction,
-        //           },
-        //         });
-        //       }
-        //       break;
-
-        //     default: {
-        //     }
-        //   }
-        // };
-        const handleRedirectView = (
-          rowData: any,
-          tab: string,
-          TabName: string,
-          ButtonAction: string
-        ): void => {
-          if (props.CurrentRoleID === RoleID.LineManager) {
-            switch (tab) {
-              case "tab1":
-                props.navigation("/ReviewProfileList/ReviewProfileEdit", {
-                  state: {
-                    ID: rowData?.ID,
-                    AssignedHRId: rowData?.AssignedHRId,
-                    tab: "tab1",
-                    StatusId: rowData?.StatusId,
-                    Status: rowData?.Status,
-                    JobTitleInEnglish: rowData.JobTitleEnglish,
-                    JobCode: rowData.JobCode,
-                    TabName,
-                    ButtonAction,
-                  },
-                });
-                break;
-              case "tab2":
-                props.navigation("/ReviewProfileList/InterviewQuesEdit", {
-                  state: {
-                    ID: rowData?.ID,
-                    AssignedHRId: rowData?.AssignedHRId,
-                    tab: "tab2",
-                    StatusId: rowData?.StatusId,
-                    Status: rowData?.Status,
-                    JobTitleInEnglish: rowData.JobTitleEnglish,
-                    JobCode: rowData.JobCode,
-                    TabName,
-                    ButtonAction,
-                  },
-                });
-                break;
-              default:
-                props.navigation("/ReviewProfileList/ReviewCandidateList", {
-                  state: {
-                    ID: rowData?.ID,
-                    JobCode: rowData?.JobCode,
-                    tab,
-                    StatusId: rowData?.StatusId,
-                    Status: rowData?.Status,
-                    TabName,
-                    ButtonAction,
-                  },
-                });
-                break;
-            }
-          } else if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-            switch (tab) {
-              case "tab1":
-                props.navigation("/ReviewProfileList/ReviewCandidateList", {
-                  state: {
-                    ID: rowData?.ID,
-                    JobCode: rowData?.JobCode,
-                    tab: "tab1",
-                    StatusId: rowData?.StatusId,
-                    Status: rowData?.Status,
-                    TabName,
-                    ButtonAction,
-                  },
-                });
-                break;
-              case "tab2":
-                props.navigation("/ReviewProfileList/ReviewCandidateList", {
-                  state: {
-                    ID: rowData?.ID,
-                    JobCode: rowData?.JobCode,
-                    tab: "tab2",
-                    StatusId: rowData?.StatusId,
-                    Status: rowData?.Status,
-                    TabName,
-                    ButtonAction,
-                  },
-                });
-                break;
-              case "tab3":
-                props.navigation("/ReviewProfileList/InterviewQuesEdit", {
-                  state: {
-                    ID: rowData?.ID,
-                    JobCode: rowData?.JobCode,
-                    tab: "tab3",
-                    StatusId: rowData?.StatusId,
-                    Status: rowData?.Status,
-                    TabName,
-                    ButtonAction,
-                    JobTitleInEnglish: rowData.JobTitleEnglish,
-                  },
-                });
-                break;
-              default:
-                props.navigation("/ReviewProfileList/ReviewCandidateList", {
-                  state: {
-                    ID: rowData?.ID,
-                    JobCode: rowData?.JobCode,
-                    tab,
-                    StatusId: rowData?.StatusId,
-                    Status: rowData?.Status,
-                    TabName,
-                    ButtonAction,
-                  },
-                });
-                break;
-            }
-          }
-        };
         return (
-          <div style={{ display: "flex", gap: "10px" }}>
-            {ButtonAction === "Edit" ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px", // slightly more space for small screens
+              flexWrap: "wrap", // allow wrapping on smaller screens
+            }}
+          >
+            {ButtonActions === ActionIcon.Edit ? (
               <>
                 <img
                   src={require("../../assets/Editbutton.svg")}
                   alt="Stamp Icon"
                   onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction)
+                    handleRedirectView(rowData, tab, TabName, ButtonAction.Edit)
                   }
                   style={{
-                    width: "70%",
-                    height: "60%",
+                    width: "50%", // scales with font size
+                    height: "auto",
+                    maxWidth: "40px", // limit maximum size
+                    cursor: "pointer",
                   }}
                 />
               </>
@@ -276,216 +153,86 @@ const ReviewProfileList = (props: any) => {
                   src={require("../../assets/Viewicon.svg")}
                   alt="Stamp Icon"
                   style={{
-                    width: "70%",
-                    height: "60%",
+                    width: "50%", // scales with font size
+                    height: "auto",
+                    maxWidth: "40px", // limit maximum size
+                    cursor: "pointer",
                   }}
                   onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction)
+                    handleRedirectView(rowData, tab, TabName, ButtonAction.View)
                   }
                 />
               </>
             )}
-            {/* {tab === "tab2" || tab === "tab1" ? (
-              <img
-                src={require("../../assets/Editbutton.svg")}
-                alt="Edit Icon"
-                style={{ width: "70%", height: "60%", cursor: "pointer" }}
-                onClick={() => {
-                  if (tab === "tab1") {
-                    handleRedirectView(rowData, "tab1", TabName, ButtonAction);
-                  } else {
-                    handleRedirectView(rowData, "tab2", TabName, ButtonAction);
-                  }
-                }}
-              />
-            ) : (
-              <img
-                src={require("../../assets/Viewicon.svg")}
-                alt="View Icon"
-                style={{ width: "70%", height: "60%", cursor: "pointer" }}
-                onClick={() =>
-                  handleRedirectView(rowData, "tab3", TabName, ButtonAction)
-                }
-              />
-            )} */}
           </div>
         );
       },
     },
   ];
-  const fetchCandidateData = async () => {
-    setIsLoading(true);
-    try {
-      const interviewPanelResponse = await CommonServices.GetMasterData(
-        ListNames.HRMSInterviewPanelDetails
-      );
 
-      if (
-        !interviewPanelResponse.data ||
-        interviewPanelResponse.data.length === 0
-      ) {
-        setIsLoading(false);
-        return;
-      }
-
-      const userResponse = await CommonServices.getUserGuidByEmail(
-        props.CurrentUserEmailId
-      );
-
-      if (userResponse.status !== 200 || !userResponse.data) {
-        setIsLoading(false);
-        return;
-      }
-
-      const userGUID = userResponse.data.key;
-
-      const filteredPanels = interviewPanelResponse.data.filter(
-        (panel) => panel.InterviewPanelId === userGUID
-      );
-
-      if (filteredPanels.length === 0) {
-        setAssignedCandidates(false);
-        setIsLoading(false);
-        return;
-      }
-
-      const candidateIDs = filteredPanels.map((panel) => panel.CandidateIDId);
-
-      const candidateDetailsResponse = await CommonServices.GetMasterData(
-        ListNames.HRMSRecruitmentCandidatePersonalDetails
-      );
-
-      if (
-        !candidateDetailsResponse.data ||
-        candidateDetailsResponse.data.length === 0
-      ) {
-        setIsLoading(false);
-        return;
-      }
-
-      const matchedCandidates = candidateDetailsResponse.data.filter(
-        (candidate) => candidateIDs.includes(candidate.ID)
-      );
-
-      setAssignedCandidates(matchedCandidates.length > 0);
-    } catch (error) {
-      console.error("Error fetching candidate data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchRecuritmentData = async () => {
+  const fetchRecuritmentData = async (tabName: any[]) => {
     setIsLoading(true);
     try {
       let filterConditionsRecuritment = [];
       let RecuritmentConditions = "and";
-  
-      if (props.CurrentRoleID === RoleID.LineManager) {
-        switch (activeTab) {
-          case "tab1":
-            filterConditionsRecuritment.push({
-              FilterKey: "StatusId",
-              Operator: "eq",
-              FilterValue: StatusId.PendingwithLineManagereviewAdv,
-            });
-            filterConditionsRecuritment.push({
-              FilterKey: "ItemCreated",
-              Operator: "eq",
-              FilterValue: "No",
-            });
-            break;
-  
-          case "tab2":
-            filterConditionsRecuritment.push({
-              FilterKey: "StatusId",
-              Operator: "in",
-              FilterValue: [
-                StatusId.PendingwithHRandLMtocreateinterviewQuestion,
-                StatusId.PendingwithLMcreateDisqualificationQuestion,
-              ],
-            });
-            filterConditionsRecuritment.push({
-              FilterKey: "ItemCreated",
-              Operator: "eq",
-              FilterValue: "No",
-            });
-            break;
-  
-          case "tab3":
-            filterConditionsRecuritment.push({
-              FilterKey: "StatusId",
-              Operator: "eq",
-              FilterValue: StatusId.RecruitmentInProgress,
-            });
-            filterConditionsRecuritment.push({
-              FilterKey: "ItemCreated",
-              Operator: "eq",
-              FilterValue: "No",
-            });
-            break;
-        }
-      } else if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-        switch (activeTab) {
-          case "tab1":
-            filterConditionsRecuritment.push({
-              FilterKey: "StatusId",
-              Operator: "eq",
-              FilterValue: StatusId.RecruitmentInProgress,
-            });
-            filterConditionsRecuritment.push({
-              FilterKey: "ItemCreated",
-              Operator: "eq",
-              FilterValue: "No",
-            });
-            break;
-  
-            case "tab2":
-              filterConditionsRecuritment.push({
-                FilterKey: "StatusId",
-                Operator: "eq",
-                FilterValue: StatusId.RecruitmentInProgress,
-              });
-              filterConditionsRecuritment.push({
-                FilterKey: "ItemCreated",
-                Operator: "eq",
-                FilterValue: "No",
-              });
-              break;
-  
-          case "tab3":
-            filterConditionsRecuritment.push({
-              FilterKey: "StatusId",
-              Operator: "in",
-              FilterValue: [
-                StatusId.PendingwithHRandLMtocreateinterviewQuestion,
-              ],
-            });
-            filterConditionsRecuritment.push({
-              FilterKey: "ItemCreated",
-              Operator: "eq",
-              FilterValue: "No",
-            });
-            break;
-        }
+      let TabValue = storedStringRef.current
+        ? storedStringRef.current
+        : props.stateValue?.TabName;
+      switch (TabValue) {
+        case TabName.ReviewProfile:
+        case TabName.AssignInterviewPanel:
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.RecruitmentInProgress,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: "No",
+          });
+          break;
+
+        case TabName.InterviewQuestion:
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.PendingwithHRandLMtocreateinterviewQuestion,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: "No",
+          });
+          break;
       }
-  
-      if (filterConditionsRecuritment.length > 0) {
-        const data = await getVRRDetails.GetRecruitmentDetails(
-          filterConditionsRecuritment,
-          RecuritmentConditions
-        );
-  
-        if (data.status === 200 && data.data !== null) {
-          setRecuritmentData(data.data);
-        }
+      if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+        filterConditionsRecuritment.push({
+          FilterKey: "LineManager",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
+      } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
+        filterConditionsRecuritment.push({
+          FilterKey: "HOD",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
+      } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+        filterConditionsRecuritment.push({
+          FilterKey: "AssignedHR",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
       }
-  
-      if (
-        props.CurrentRoleID === RoleID.LineManager ||
-        props.CurrentRoleID === RoleID.RecruitmentHR
-      ) {
-        void fetchCandidateData();
+
+      const data = await getVRRDetails.GetRecruitmentDetails(
+        filterConditionsRecuritment,
+        RecuritmentConditions
+      );
+
+      if (data.status === 200 && data.data !== null) {
+        setRecuritmentData(data.data);
       }
     } catch (error) {
       console.error("Error fetching recruitment data:", error);
@@ -498,7 +245,16 @@ const ReviewProfileList = (props: any) => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        await fetchRecuritmentData();
+        await fetchRecuritmentData(props.TabDetails[0]);
+        let TabDetails: any;
+        if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
+          TabDetails = (props.TabDetails[0] ?? []).filter(
+            (tab: any) => tab.TabName !== TabName.Evaluation
+          );
+        } else {
+          TabDetails = props.TabDetails[0] ?? [];
+        }
+        setTabNameData(TabDetails);
       } catch (error) {
         console.error(error);
       }
@@ -507,12 +263,25 @@ const ReviewProfileList = (props: any) => {
     void fetchData();
   }, [activeTab]);
 
+  React.useEffect(() => {
+    if (props.stateValue) {
+      storedStringRef.current = props.stateValue?.TabName;
+      setActiveTab(props.stateValue?.tab);
+    } else {
+      if (!storedStringRef.current) {
+        if (props.TabDetails[0]) {
+          storedStringRef.current = props.TabDetails[0]?.[0]?.Value ?? "";
+        }
+      }
+    }
+  }, []);
+
   const onPageChange = (event: any) => {
     setRows(event.rows);
   };
 
   const handleRefresh = (tab: string) => {
-    void fetchRecuritmentData();
+    void fetchRecuritmentData(props.TabDetails[0]);
     setActiveTab(tab);
   };
 
@@ -520,182 +289,65 @@ const ReviewProfileList = (props: any) => {
     setActiveTab(newTab);
   };
 
-  const tabs = [
-    ...(props.CurrentRoleID === RoleID.RecruitmentHR
-      ? [
-          {
-            label: TabName.ReviewProfile,
-            value: "tab1",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  <SearchableDataTable
-                    data={RecuritmentData}
-                    columns={columnConfig(
-                      "tab1",
-                      "View",
-                      TabName.ReviewProfile
-                    )}
-                    rows={rows}
-                    onPageChange={onPageChange}
-                    handleRefresh={() => handleRefresh("tab1")}
-                    MasterData={props}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-          {
-            label: TabName.AssignInterviewPanel,
-            value: "tab2",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  <SearchableDataTable
-                    data={RecuritmentData}
-                    columns={columnConfig(
-                      "tab1",
-                      "View",
-                      TabName.AssignInterviewPanel
-                    )}
-                    rows={rows}
-                    onPageChange={onPageChange}
-                    handleRefresh={() => handleRefresh("tab2")}
-                    MasterData={props}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-          {
-            label: TabName.InterviewQuestion,
-            value: "tab3", 
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  <SearchableDataTable
-                    data={RecuritmentData}
-                    columns={columnConfig(
-                      "tab3",
-                      "Edit",
-                      TabName.InterviewQuestion
-                    )}
-                    rows={rows}
-                    onPageChange={onPageChange}
-                    handleRefresh={() => handleRefresh("tab3")}
-                    MasterData={props}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-          ...(assignedCandidates
-            ? [
-                {
-                  label: TabName.Evaluation,
-                  value: "tab4",
-                  content: <InterviewPanelList {...props} />,
-                },
-              ]
-            : []),
-        ]
-      : [
-          {
-            label: TabName.ReviewONEMAdvertisement,
-            value: "tab1",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  <SearchableDataTable
-                    data={RecuritmentData}
-                    columns={columnConfig(
-                      "tab1",
-                      "View",
-                      TabName.ReviewONEMAdvertisement
-                    )}
-                    rows={rows}
-                    onPageChange={onPageChange}
-                    handleRefresh={() => handleRefresh("tab1")}
-                    MasterData={props}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-          {
-            label: TabName.InterviewQuestion,
-            value: "tab2",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  <SearchableDataTable
-                    data={RecuritmentData}
-                    columns={columnConfig(
-                      "tab2",
-                      "Edit",
-                      TabName.InterviewQuestion
-                    )}
-                    rows={rows}
-                    onPageChange={onPageChange}
-                    handleRefresh={() => handleRefresh("tab2")}
-                    MasterData={props}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-          {
-            label: TabName.ReviewProfile,
-            value: "tab3",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  <SearchableDataTable
-                    data={RecuritmentData}
-                    columns={columnConfig(
-                      "tab3",
-                      "View",
-                      TabName.ReviewProfile
-                    )}
-                    rows={rows}
-                    onPageChange={onPageChange}
-                    handleRefresh={() => handleRefresh("tab3")}
-                    MasterData={props}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
+  const renderTable = (
+    TabNames: string,
+    TabValue: string,
+    StatusData: StatusDetails[]
+  ) => {
+    // storedStringRef.current = "";
+    if (TabValue === activeTab) {
+      if (
+        TabNames !== TabName.UploadAdvertisement &&
+        TabNames !== TabName.AssignAgencies
+      ) {
+        storedStringRef.current = TabNames;
+      } else {
+        storedStringRef.current = "";
+      }
+    }
+    let Action: any;
+    let StatusID: any;
+    if (StatusData) {
+      Action = StatusData.filter((item) => item.Action);
+      StatusID = StatusData.filter((item) => item.StatusId);
+      console.log(StatusID, "StatusID");
+    }
 
-          ...(assignedCandidates
-            ? [
-                {
-                  label: TabName.Evaluation,
-                  value: "tab4",
-                  content: <InterviewPanelList {...props} />,
-                },
-              ]
-            : []),
-        ]),
-  ];
+    switch (TabNames) {
+      case TabName.ReviewProfile:
+      case TabName.AssignInterviewPanel:
+      case TabName.InterviewQuestion:
+        return (
+          <SearchableDataTable
+            data={RecuritmentData}
+            columns={columnConfig(TabValue, Action[0]?.ActionId?.[0], TabNames)}
+            rows={rows}
+            onPageChange={onPageChange}
+            handleRefresh={() => handleRefresh(TabValue)}
+            MasterData={props}
+          />
+        );
+      case TabName.Evaluation:
+        return <InterviewPanelList {...props} />;
+      default:
+        return null;
+    }
+  };
+
+  const tabs = TabNameData.map((tab: TabDetails) => ({
+    label: tab.TabName,
+    value: tab.Value,
+    content: (
+      <Card
+        variant="outlined"
+        sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+      >
+        <CardContent>
+          <div>{renderTable(tab.TabName, tab.Value, tab.StatusDetails)}</div>
+        </CardContent>
+      </Card>
+    ),
+  }));
 
   return (
     <>

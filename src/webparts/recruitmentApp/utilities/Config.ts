@@ -5,7 +5,8 @@ export const APIURL = "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
 export const ListNames = {
   HRMSSageList: "HRMS_Sage_List",
   HRMSGradeMaster: "HRMS_Grade_Master",
-  HRMSUserRole: "HRMS_User_Role",
+  HRMSRecruitmentUserRole: "HRMSRecruitmentUserRole",
+  // HRMSUserRole: "HRMS_User_Role",
   HRMSStatus: "HRMS-Master-Status",
   BusinessUnitMaster: "BusinessUnitMaster",
   HRMSDepartment: "HRMS-Department",
@@ -57,6 +58,17 @@ export const ListNames = {
   HRMSNewPositionRequestPositionDetails: "HRMSNewPositionRequestPositionDetails",
   HRMSRecruitmentCandidateComments: "HRMSRecruitmentCandidateComments",
   HRMSCandidateLevel2ScoreCard: "HRMSCandidateLevel2ScoreCard",
+
+  //Menu Merge
+  HRMSRecruitmentSwitchUserMatrix: "HRMSRecruitmentSwitchUserMatrix",
+
+  //Region Zone
+  HRMSRegion: "HRMSRegion", //Region
+  HRMSZone: "HRMSZone",
+
+  //TCS Integration
+  TCSInductionMeetings: "TCSInductionMeetings",
+  TrainerAndFacilityDetails: "TrainerAndFacilityDetails",
 };
 
 export const DocumentLibraray = {
@@ -67,6 +79,7 @@ export const DocumentLibraray = {
   ONAMSignedStampDocuments: "HRMSRecruitmentOnamStampedDocuments",
   RoleProfileMaster: "RoleProfileMaster",
   HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV",
+  HRMSCandidateDocs: "HRMSCandidateDocs"
 };
 
 export const StatusId = {
@@ -89,43 +102,38 @@ export const StatusId = {
   PendingwithHODtoselectthecandidateLevel2: 127,
   PendingwithRecruitmentHRtoassignLevel2InterviewPanel: 128,
   InterviewScheduledforLevel2: 129,
-  PendingwithHODtoAssignPositionID: 130
+  PendingwithHODtoAssignPositionID: 130,
+
+  // Post Recruitment
+  PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,
+  PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter: 142,
+  PendingwithCandidatetoSignOfferLetter: 133,
+  PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments: 134,
+  PendingwithCandidatetoUploadOtherDocuments: 135,
+  PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs: 136,
+  PendingwithRecruitmentHRtoUploadtheEmploymentContract: 137,
+  PendingwithCandidatetoSignEmploymentContract: 138,
+  pendingwithRecruitmentHRtoReviewtheEmploymentContractForm: 139,
+  OnboardingProcessinitiatedforDRC: 23,
+  OnboardingProcessinitiatedforExpat: 24,
+
+  //Revert Post Recrutiment
+  RevertedBacktoCandidateforReuploadOfferLetter: 149,
+  RevertedBacktoCandidateforReuploadDocs: 150,
+  RevertedBacktoCandidateforReuploadEmploymentContract: 151,
+
+  Pending: 89,
+  PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract: 152
 };
 
 export const RoleID = {
-  HOD: 1,
-  User: 2,
-  BudgetHolder: 4,
-  LineManager: 5,
-  HR: 6,
-  EXCO: 7,
-  EXCO_Service_Department_Executive: 8,
-  EXCO_Operations_Department_ED: 9,
-  EXCO_Service_Department_CEC: 10,
-  EXCO_Service_Department_MD: 11,
-  EXCO_Operations_Department_Executive: 12,
-  EXCO_Operations_Department_MD: 13,
-  EXCO_Service_Department_CEF: 14,
-  Payroll: 15,
-  HR_SeniorSuperintendentII_Effectiveness: 16,
-  Emergence: 17,
-  BIOS: 18,
-  Superintendent: 19,
-  Legal: 20,
-  Transformation: 21,
-  MAD: 22,
-  EXCOCEO: 23,
-  EXCOCFOFinance: 24,
-  EXCOCFOCommerical: 25,
-  EXCOExecutive: 26,
-  HeadOfDivision: 27,
-  RecruitmentHRLead: 28,
-  RecruitmentHR: 32,
-  RecruitmentLineManager: 33,
-  RecruitmentAppExternalAgency: 34,
-  InterviewPanel: 35,
-  EXCOMD: 31,
-  TitleforProfile: 24,
+  RecruitmentHRLead: 1,
+  RecruitmentHR: 2,
+  HOD: 3,
+  LineManager: 4,
+  InterviewPanel: 5,
+  RecruitmentAppExternalAgency: 6,
+  RecruitmentLineManager: 7,
 };
 
 export const GridStatusBackgroundcolor = {
@@ -235,65 +243,73 @@ export const RecuritmentHRMsg = {
     "The scorecard for the candidate has already been submitted.",
   InterviewScoreCommentsAlready:
     "The scorecard for the candidate comments has already been submitted.",
-  APIErrorMsg: "Server is temporarily unavailable.",
+  APIErrorMsg: "Server is temporarily unavailable. Please try again later.",
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
   AddedMsg: "Added Successfully",
   deleteMsg: "Are you sure you want to delete this? Any unsaved changes will be lost",
 
   SelectedErrorMsg: "Please Choose the Disciplines.",
-  WarningMsg: "Are you sure want to Change the Disciolines? Any unsaved changes will be lost",
+  WarningMsg: "Are you sure want to Change the Disciplines? Any unsaved changes will be lost",
   ClearWarning: "Are you sure you want to close? Unsaved changes will be lost.",
+  SelectedCandidateValidation: "The requested headcount for the position has already been selected.",
+  QuestionAlertMsg: "Interview questions are not available. Kindly reschedule the interview date.",
+
+  UploadMsg: "Candidate CV Upload Successfully",
+  ValidationMsg: "This Candidate Already Exists",
+
+  OfferLetterMsg: "The offer letter has been uploaded successfully.",
+  ReviewOfferLetterMsg: "The offer letter has been reviewed successfully",
+  RevertedOfferLetter: "The offer letter has been reverted to candidate successfully..",
+
+  ReviewOtherDocsMsg: "Candidate documents has been reviewed successfully",
+  RevertOtherDocsMsg: "Candidate documents have been reverted successfully.",
+
+  EmploymentContractMsg: "The employment contract has been uploaded successfully.",
+  ReviewEmploymentContractMsg: "The employment contract has been reviewed successful, Please proceed with onboarding process",
+  RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
+
+  NationalityErrorMsg: "Please select the Nationality filter before proceeding.",
 };
-// In your validation messages config file
+
 export const validationMsg = {
   MaxOptions: "You must fill at least 2 options.",
   CorrectAns: "Please select a correct answer.",
 };
 
+// DEV/SIT
 // export const ADGroupID: IADGroupID = {
 //   HRMSHOD: "86374c2a-511d-4c6d-9eb8-f6b64a44eb97",
 //   HRMSRecruitmentLineManager: "e46c5079-6a7d-40bf-a8cb-c7fbfa10f220",
 //   HRMSRecruitmentHR: "fe43382e-002e-4879-8710-a4ac546d48e7",
 //   HRMSRecruitmentHRLead: "df686473-5454-4afe-ad60-1ba93037c772",
 //   HRMSInterviewPanel: "60c676c0-692d-4c48-b101-a6398fc99493",
+//   LineManager: "2dec2073-031c-4505-a2a2-6720e513da0a",
+//   RecruitmentAppExternalAgency: "d59a35bf-524e-4951-9eb1-aeca407d73d0",
 // };
 
+//UAT
 export const ADGroupID: IADGroupID = {
-  HRMSHOD: "86374c2a-511d-4c6d-9eb8-f6b64a44eb97",
+  HRMSHOD: "166e7062-6d48-4eeb-b8b9-5d4c1c24d245",
   HRMSRecruitmentLineManager: "e46c5079-6a7d-40bf-a8cb-c7fbfa10f220",
-  HRMSRecruitmentHR: "fe43382e-002e-4879-8710-a4ac546d48e7",
-  HRMSRecruitmentHRLead: "df686473-5454-4afe-ad60-1ba93037c772",
-  HRMSInterviewPanel: "60c676c0-692d-4c48-b101-a6398fc99493",
-  BudgetHolder: "68e84692-cc82-4871-926a-010e4d4715da",
-  LineManager: "2dec2073-031c-4505-a2a2-6720e513da0a",
-  HR: "b20259ec-7f60-49d6-ba0f-c48d8c8d44ea",
-  EXCO_REMCO: "23c6870c-1986-4f19-81ec-6b72e199f6e6",
-  EXCOServiceDepartmentExecutive: "172bc793-eba9-4418-873e-d05b20b9a476",
-  EXCOOperationsDepartmentED: "53f5a070-238a-4e33-ac7d-f0395d2aa2d1",
-  EXCOServiceDepartmentCEC: "cacacafc-8c6d-4b9b-95c5-0f8f851d31c4",
-  EXCOServiceDepartmentMD: "327cc015-8239-407c-be8f-0b8b8f9142ad",
-  EXCOOperationsDepartmentExecutive: "a1810fd6-7f04-43b3-a36e-a0a610f897a0",
-  EXCOOperationsDepartmentMD: "afd77c38-918a-4bc6-8d3f-19fe5a84aefa",
-  EXCOServiceDepartmentCEF: "7ddd3f09-5bb7-47c7-b05b-c9d6b32e502e",
-  Payroll: "1784bc0a-23f7-441f-a415-4a257618e04b",
-  SeniorSuperintendentII_HREffectiveness: "b5dc635a-90b3-4ba0-a029-4a5d03841e62",
-  GradingCommittee: "47078d89-ab24-446d-a210-9367c9dac599",
-  BIOS: "70547f09-b044-431b-bdcd-edad94b23a87",
-  Superintendent: "7e62e9bb-a18a-49be-8d16-9220eb9cd003",
-  Legal: "91f43caf-1943-46f3-8610-ab2c99ff0143",
-  Transformation: "f064729a-9770-48fc-9ddd-0820785698bf",
-  MAD: "926decfd-1390-4158-b760-e4a4c14d1950",
-  EXCOCEO: "3271e934-c70e-47fa-b1f2-29a64ddd6455",
-  EXCOCFOFinance: "74a577bd-976e-48fc-ab6b-967df315a396",
-  EXCOCFOCommerical: "82fd7f93-24e3-4879-a88f-c09bc86f8067",
-  EXCOExecutive: "6372d5b0-b610-4399-962c-99cf7ff3a10f",
-  HeadofDivision: "6c791d7a-ac5d-4da0-9dcb-d6a49c744cff",
-  SeniorHRManager: "91eac229-45d1-402c-beb7-cd06bc1d024c",
-  EXCOED: "e09e27e4-4d93-4979-848f-a5ce13cf76ac",
-  EXCOMD: "f436a318-89eb-45bb-b68f-0f6905379032",
-  RecruitmentAppExternalAgency: "d59a35bf-524e-4951-9eb1-aeca407d73d0",
+  HRMSRecruitmentHR: "f5017ec6-5c87-4461-8e42-e1316909f2c5",
+  HRMSRecruitmentHRLead: "35d68e0f-b77e-47a4-b504-1ca65f71b070",
+  HRMSInterviewPanel: "b6562870-0b24-49ad-9ada-2dc40774e9ce",
+  LineManager: "79c343ae-666f-42a0-bf27-0f58adcb1fee",
+  RecruitmentAppExternalAgency: "2d03b531-d87e-4a9e-907d-fb6db73bdb38",
 };
+
+//Production
+// export const ADGroupID: IADGroupID = {
+//   HRMSHOD: "fe3dfeea-5423-4272-85fa-27bfa0c0378d",
+//   HRMSRecruitmentLineManager: "d9115164-acf9-4224-90af-a6aa2d6e87d5",
+//   HRMSRecruitmentHR: "2c2fd526-ed9a-4106-9047-ea85e5d6a65c",
+//   HRMSRecruitmentHRLead: "47513cdf-0b60-45f5-8a0e-f94bdae73769",
+//   HRMSInterviewPanel: "1331ae84-4c88-40f6-b7b5-dcc71faaa378",
+//   LineManager: "d9115164-acf9-4224-90af-a6aa2d6e87d5",
+//   RecruitmentAppExternalAgency: "a7c1bac2-faf3-41b3-adb8-6b80dc0fbae7",
+// };
+
 
 export const tabType = {
   Dashboard: "Dashboard",
@@ -345,46 +361,53 @@ export const ReviewProfileScore: AutoCompleteItem[] = [
 export const EmploymentOption = ["Yes", "No"];
 
 export const TabName = {
-  AssignRecuritmentHR: "Assign Recuritment HR",
+  //HR Lead
+  AssignRecuritmentHR: "Assign Recruitment HR",
   UploadONEMDoc: "Upload ONEM Doc",
   MySubmission: "My Submission",
+  // Recruitment HR(PreSelection)
   UploadAdvertisement: "Job Advertisement",
   AssignAgencies: "Assign Agencies",
+  UploadCV: "Upload CV",
+  // Recruitment HR(PostSelection)
   ReviewProfile: "Review Profile",
   AssignInterviewPanel: "Assign Interview Panel",
   InterviewpanelL1: "Interview Panel Level-1",
   InterviewpanelL2: "Interview Panel Level-2",
-  ReviewAdvertisement: "Review Advertisement",
-  ReviewScorecard: "Review Scorecard",
+  InterviewQuestion: "Interview Questions",
+  // Candidate Articles
+  // UploadDocuments: "Upload Documents",
+  // ViewDocuments: "View Documents",
+  CandidateDocuments: "Candidate Documents",
+  // HOD
+  ReviewJobAdvertisement: "Review Job Advertistment",
+  ReviewScorecard: "Review Score card",
   Evaluation: "Evaluation",
+  // line Manager
+  InterviewQuestions: "Interview Questions",
+
   CandidateDetails: "Applicants Details",
   PositionDetails: "Position Details",
   AdvertisementDetails: "Advertisement Details",
   AdvertisementViewDetails: "View Advertisement ",
-  ScorecardDetails: "Review Scorecard",
   ViewCandidateDetails: "View Applicants Details",
   Scorecard: "Scorecard",
-  ReviewONEMAdvertisement: "Review Job Advertisement",
   ViewPositionDetails: "View Position Details",
   ViewCandidateList: "View Applicants List",
   ViewJustification: "View Justification",
   EvaluationTab: "Candidate Details",
-  InterviewQuestion: "Interview Questions",
   AdvertExtension: "Advert Extension",
-
   ReviewLevel1: "Review Profile - Level 1",
   ReviewLevel2: "Review Profile - Level 2",
   Shortlisted: "Shortlisted",
   onHold: "On Hold",
   Rejected: "Rejected",
   OnHoldRejected: "On Hold & Rejected",
-
-  InterviewQuestions: "Interview Questions",
   CareerPortal: "Career Portal",
   InterviewPanel: "Interview Panel",
-
   ViewScoreDetails: " View ScoreCard Details",
   ReschedulInterview: "Reschedule Interview",
+
 };
 
 export const CheckboxContent = {
@@ -421,6 +444,7 @@ export const InterviewLevels = {
   Level1: "Level 1",
   Level2: "Level 2",
   Level3: "Level 3",
+  Levels2: "Level 1 & 2"
 };
 
 export const DataFrom = {
@@ -444,7 +468,30 @@ export const workflowStatusApi = {
   LineManagerLevel2OnHold: "WS13",
   LineManagerLevel1Rejected: "WS14",
   LineManagerLevel2Rejected: "WS15",
+
+  // post Recrutiment
+  Pendingwithcandidatetosignofferletter: "WS16",
+  CandidateuploadedtheSignedOfferLetter: "WS17",
+  PendingwithCandidatetouploadotherDocuments: "WS18",
+  CandidateUploadedcandidatepersonalDocs: "WS19",
+  PendingwithCandidatetosignEmployementContract: "WS20",
+  UploadedthesignedEmployementcontractform: "WS21",
+
+  RevertedBacktoCandidateforreuploadofferLetter: "WS22",
+  RevertedBacktoCandidateforreuploadDocs: "WS23",
+  RevertedBacktoCandidateforreuploadEmploymentContract: "WS24"
 };
+
+export const ApplicationStatusId = {
+  ApplicationSubmitted: "AS01",
+  ApplicationInProgress: "AS02",
+  InterviewScheduled: "AS03",
+  InterviewCompleted: "AS04",
+  Selected: "AS05",
+  ApplicationRejected: "AS06",
+  ApplicationSuspended: "AS00"
+}
+
 export const Notes = {
   Roleprofile: "Role Profile is not available for the Job Title.",
   Grding: "Grading Report is not available for the Job Title.",
@@ -513,7 +560,56 @@ export const categoryOption = [
 export const labelName = {
   Level1CandidateLabel: "Does the candidate fit for the vacant position ? (Level 1)",
   Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)",
-  ViewJobAdvetisement: "View Job Advertisement"
+  ViewJobAdvetisement: "View Job Advertisement",
+  Candidate: "Candidate",
+
+  //IT
+  TrainingCenterSystem: "Training Center System",
+  TASystem: "T&A System",
+  ITSystem: "IT System",
+  TrainingDetails: "Training Details",
+
+  //Upload CV 
+  Title: "Title",
+  FirstName: "First Name ",
+  MiddleName: " Middle Name",
+  LastName: " Last Name",
+  DOB: "DOB ",
+  PhoneNumber: "Phone Number ",
+  AlternativePhoneNumber: "Alternative Phone Number",
+  Nationality: "Nationality ",
+  ProofofIdentity: "Proof of Identity ",
+  IdentityNumber: "Identity Number",
+  Gender: "Gender",
+  Email: "Email ",
+  HighestEducation: "Highest Education ",
+  WorkExperience: "Work Experience",
+  RelevantExperience: "Relevant Experience",
+
+  AddressLine1: "Address Line 1 ",
+  Country: "Country ",
+  State: "State ",
+  City: "City ",
+  PostalCode: "Postal Code ",
+  ResumeCV: "Resume/CV and Cover Letter",
+
+  OfferLetter: "Upload Offer Letter",
+  ConsentDoc: "Upload Consent Form ",
+  EmployementDoc: "Upload Employement Contract",
+
+  Attachment: "Attachment",
+  UploadAttachment: "Upload Attachment",
+  CurrentEmployer: "Current Employer",
+  CurrentPosition: "Current Position",
+  NumberOftax: "Number of tax dependents (specify number)",
+  WillingToRelocate: "Willing to relocate if not currently living close to the relevant project site/office?",
+  previouslyworkedMine: "Have you previously worked at Ivanhoe Mines and its subsidiaries or Zijin Mines and its subsidiaries?",
+  familylinks: "Any family or other links with existing employees to declare? (If so, who? Attach detail)",
+  businesslinks: "Any business links to declare? (If so, who? Attach detail)",
+
+  whichOperation: "For which Operation?",
+  YourRole: "What was your role?",
+  RegionProvince: "Region / Province"
 };
 export const ButtonAction = {
   Update: "Update",
@@ -534,7 +630,71 @@ export const ButtonAction = {
   Assign: "Assign",
   Remove: "Remove",
   close: "Close",
+  Review: "Reviewed",
 }
+
+export const ActionIcon = {
+  Add: 1,
+  View: 2,
+  ViewSubmission: 3,
+  Edit: 4,
+  Delete: 5,
+  Stamp: 6,
+  Upload: 7
+};
+
+export const RoleName = {
+  LineManager: "Line Manager",
+  RecruitmentHR: "RecruitmentHR",
+  HOD: "HOD",
+  EXCO: "EXCO",
+  InterviewPanel: "InterviewPanel"
+};
+
+export const DocumentFolderName = {
+  Offerletter: "OfferLetter",
+  EmploymentContractForm: "EmploymentContractForm",
+  UnsignedDoc: "UnsignedDoc",
+  PersonalDocs: "PersonalDocs",
+  Medical: "Medical"
+}
+
+export const PostRecrutimentCheckboxContent = {
+  OfferLetterDRC: "I hereby confirm that I have reviewed and verified the medical document, and I consent to the release of the offer letter.",
+  OfferLetterExpat: "I hereby confirm  I consent to the release of the offer letter.",
+  ReviewOfferLetter: "I hereby confirm that I have reviewed the signed offer letter and request the candidate to provide the necessary supporting documents.",
+
+}
+
+export const agentCode = {
+  RecruitmentHR: "HRMS001",
+}
+
+export const Inductiontype = [
+  { key: 1, text: "General Surface Induction" },
+  { key: 2, text: "Underground Induction" },
+  { key: 3, text: "Concentrator Induction" },
+  { key: 4, text: "Smelter Induction" },
+];
+
+export const HardwareoptValue = [
+  { key: 1, text: "Laptop" },
+  { key: 2, text: "Cellular Phone" },
+  // { key: 3, text: "Mouse" },
+  // { key: 4, text: "Keyboard" },
+  // { key: 5, text: "Speaker" },
+  // { key: 6, text: "Mobile Phone" },
+];
+
+export const ITSystemReq = {
+  NotRequired: "Not Required",
+  Required: "Required"
+}
+
+export const NationalityOption = [
+  { key: 1, text: "Nationals (Congolese)" },
+  { key: 2, text: "Expatriate" },
+];
 
 export const ColorCode = {
   TabColorCode: {

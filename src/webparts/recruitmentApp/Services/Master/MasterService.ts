@@ -11,7 +11,7 @@ export default class MasterService implements IMasterService {
     async userRole(): Promise<UserRoleResponseDetails> {
         try {
             const getjsonUserRole = {
-                Listname: ListNames.HRMSUserRole,
+                Listname: ListNames.HRMSRecruitmentUserRole,
                 Select: "*",
             };
             const items = await SPServices.SPReadItems(getjsonUserRole)
@@ -30,7 +30,7 @@ export default class MasterService implements IMasterService {
         }
     }
 
-    async MasterData(EmailId: string, RoleID: number, UserName: string, UserRole: string): Promise<MasterDataResponseDetails> {
+    async MasterData(EmailId: string, RoleID: number[], UserName: string, UserRole: string[]): Promise<MasterDataResponseDetails> {
         try {
             const masterData: MasterData = {
                 EmployeeList: [],
@@ -52,8 +52,10 @@ export default class MasterService implements IMasterService {
                 CurrentUserEmailId: EmailId,
                 CurrentRoleID: RoleID,
                 CurrentUserName: UserName,
-                CurrentUserRole: UserRole
-
+                CurrentUserRole: UserRole,
+                menuMartixData: [],
+                TabDetails: [],
+                CurrentMenuID: 0,
             };
             await SPServices.SPReadItems({
                 Listname: ListNames.HRMSSageList,

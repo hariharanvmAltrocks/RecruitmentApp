@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { sp } from "@pnp/sp";
 import { createContext, useContext, useState, useEffect } from "react";
@@ -7,32 +6,41 @@ import GraphService from "../Services/GraphService/GraphService";
 import { masterService } from "../Services/ServiceExport";
 import { MasterData, UserRoleData } from "../Models/Master";
 import { ResponeStatus } from "./Config";
-import RoleSelectionPage from "./RoleSelectionPage";
+import { IMenuService } from "../Services/MenuService/IMenu";
+import MenuService from "../Services/MenuService/MenuService";
 
 export type RoleContextType = {
-  roleID: number | undefined;
+  roleID: number[] | undefined;
   userName: string | undefined;
-  userRole: string | undefined;
+  userRole: string[] | undefined;
   masterData: MasterData | undefined;
   ADGroupData: ADGroupData | undefined;
+  showRoleSelector: boolean;
+  setShowRoleSelector: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type ADGroupData = {
-  roleID: number | undefined;
+  roleIDs: number[] | undefined;
   userName: string | undefined;
-  userRole: string | undefined;
+  userRole: string[] | undefined;
   ADGroupIDs: any;
+  RoleDetails: any;
 };
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 export const RoleProvider = ({ children }: any) => {
-  const [roleID, setRoleID] = useState<number | undefined>(undefined);
+  const [roleID, setRoleID] = useState<number[] | undefined>(undefined);
   const [userName, setUserName] = useState<string | undefined>(undefined);
-  const [userRole, setUserRole] = useState<string | undefined>(undefined);
+  // const [userEmail, setuserEmail] = useState<string | undefined>(undefined);
+  const [userRole, setUserRole] = useState<string[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [masterData, setMasterData] = useState<MasterData | undefined>(undefined);
-  const [ADGroupData, setADGroupData] = useState<ADGroupData | undefined>(undefined);
+  const [masterData, setMasterData] = useState<MasterData | undefined>(
+    undefined
+  );
+  const [ADGroupData, setADGroupData] = useState<ADGroupData | undefined>(
+    undefined
+  );
   const [availableRoles, setAvailableRoles] = useState<UserRoleData[]>([]);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
 
@@ -40,13 +48,19 @@ export const RoleProvider = ({ children }: any) => {
     void getUserRole();
   }, []);
 
+  const MenuItemsService: IMenuService = new MenuService();
+
+  useEffect(() => {
+    // console.log(showRoleSelector, "showRoleSelector");
+  }, [showRoleSelector]);
+
   async function getUserRole() {
     setIsLoading(true);
     try {
       const currentUser = await sp.web.currentUser();
       const userEmail = currentUser.Email;
       setUserName(currentUser.Title);
-
+      // setuserEmail(userEmail);
       const userDetails = await masterService.userRole();
       if (userDetails.status === ResponeStatus.SUCCESS && userDetails.data) {
         const azureGroupIdsArray = userDetails.data.map(
@@ -60,12 +74,7 @@ export const RoleProvider = ({ children }: any) => {
         );
 
         setAvailableRoles(matchedRoles);
-
-        if (matchedRoles.length === 1) {
-          await finalizeRoleSelection(matchedRoles[0]);
-        } else if (matchedRoles.length > 1) {
-          setShowRoleSelector(true);
-        }
+        await finalizeRoleSelection(matchedRoles, userEmail);
       }
     } catch (error) {
       console.error("Error fetching user role:", error);
@@ -78,94 +87,90 @@ export const RoleProvider = ({ children }: any) => {
     azureGroupIds: string[],
     userEmail: string,
     userDetails: UserRoleData[]
-  ): Promise<{
-    roleId: number | null;
-    userRole: string | null;
-    matchedRoles: UserRoleData[];
-  }> {
+  ): Promise<{ matchedRoles: UserRoleData[] }> {
     try {
       const graphClient = GraphService.getGraphClient();
-      let matchedRoleId: number | null = null;
-      let matchedRoleTitle: string | null = null;
-      const matchedRoles: UserRoleData[] = [];
 
-      for (const groupId of azureGroupIds) {
-        if (!groupId || groupId === "0" || groupId === "23c6870c-1986-4f19-81ec-6b72e199f6e6") continue;
+      const groupChecks = azureGroupIds
+        .filter((groupId) => groupId && groupId !== "0")
+        .map(async (groupId) => {
+          try {
+            const response = await graphClient
+              .api(`/groups/${groupId}/members`)
+              .get();
+            const members = response.value || [];
 
-        const response = await graphClient.api(`/groups/${groupId}/members`).get();
-        const members = response.value || [];
+            const isMember = members.some(
+              (member: any) =>
+                member.userPrincipalName?.toLowerCase() ===
+                userEmail.toLowerCase()
+            );
 
-        const isMember = members.some(
-          (member: any) =>
-            member.userPrincipalName?.toLowerCase() === userEmail.toLowerCase()
-        );
-
-        if (isMember) {
-          const matchedRole = userDetails.find((item) => item.ADGroupID === groupId);
-          if (matchedRole) {
-            matchedRoles.push(matchedRole);
-            console.log(`Matched Role: ${matchedRole.RoleTitle} (Group ID: ${groupId})`);
-
-            if (!matchedRoleId) {
-              matchedRoleId = matchedRole.ID;
-              matchedRoleTitle = matchedRole.RoleTitle;
-
-              const ADGroupData: ADGroupData = {
-                roleID: matchedRole.ID,
-                userName: matchedRole.RoleTitle,
-                ADGroupIDs: matchedRole.ADGroupID,
-                userRole: userName ?? undefined,
-              };
-              setADGroupData(ADGroupData);
+            if (isMember) {
+              const matchedRole = userDetails.find(
+                (item) => item.ADGroupID === groupId
+              );
+              return matchedRole || null;
             }
-          }
-        }
-      }
 
-      return { roleId: matchedRoleId, userRole: matchedRoleTitle, matchedRoles };
+            return null;
+          } catch (err) {
+            console.error(`Error checking group ${groupId}:`, err);
+            return null;
+          }
+        });
+
+      const results = await Promise.all(groupChecks);
+      const matchedRoles = results
+        .filter((role): role is UserRoleData => role !== null)
+        .map((item) => ({
+          ID: item.ID,
+          RoleTitle: item.RoleTitle,
+          ADGroupID: item.ADGroupID,
+          EmailId: userEmail,
+        }));
+
+      return { matchedRoles };
     } catch (error) {
       console.error("Error checking user in Azure AD groups:", error);
-      return { roleId: null, userRole: null, matchedRoles: [] };
+      return { matchedRoles: [] };
     }
   }
 
-  async function finalizeRoleSelection(role: UserRoleData) {
+  async function finalizeRoleSelection(
+    matchedRoles: UserRoleData[],
+    EmailId: string
+  ) {
     setIsLoading(true);
     try {
-      const currentUser = await sp.web.currentUser();
-      const userEmail = currentUser.Email;
-      const groupId = role.ADGroupID;
-      const graphClient = GraphService.getGraphClient();
-      const response = await graphClient.api(`/groups/${groupId}/members`).get();
-      const members = response.value || [];
-
-      const isMember = members.some(
-        (member: any) =>
-          member.userPrincipalName?.toLowerCase() === userEmail.toLowerCase()
-      );
-
-      if (!isMember) {
-        alert("You are not authorized for this role.");
-        return;
-      }
-
-      setRoleID(role.ID);
-      setUserRole(role.RoleTitle);
+      let RoleIDs = matchedRoles.map((role: any) => Number(role.ID));
+      let RoleTitles = matchedRoles.map((role: any) => role.RoleTitle);
+      setRoleID(RoleIDs);
+      setUserRole(RoleTitles);
 
       const MasterDataDetails = await masterService.MasterData(
-        userEmail,
-        role.ID,
-        currentUser.Title,
-        role.RoleTitle
+        EmailId ?? "",
+        RoleIDs,
+        userName ?? "",
+        RoleTitles
       );
 
-      if (MasterDataDetails.status === ResponeStatus.SUCCESS && MasterDataDetails.data) {
+      if (
+        MasterDataDetails.status === ResponeStatus.SUCCESS &&
+        MasterDataDetails.data
+      ) {
+        // let RoleIDs = availableRoles.map((item) => item.ID);
+        const dynamicMenu = await MenuItemsService.getSwitchUserMatrix(
+          matchedRoles
+        );
+        MasterDataDetails.data.menuMartixData = dynamicMenu.data;
         setMasterData(MasterDataDetails.data);
         setADGroupData({
-          roleID: role.ID,
-          userName: role.RoleTitle,
-          ADGroupIDs: role.ADGroupID,
-          userRole: currentUser.Title,
+          roleIDs: RoleIDs,
+          userName: matchedRoles[0].RoleTitle,
+          ADGroupIDs: matchedRoles[0].ADGroupID,
+          userRole: RoleTitles,
+          RoleDetails: availableRoles,
         });
         setShowRoleSelector(false);
       }
@@ -177,15 +182,25 @@ export const RoleProvider = ({ children }: any) => {
   }
 
   return (
-    <RoleContext.Provider value={{ roleID, userName, userRole, masterData, ADGroupData }}>
-      {showRoleSelector ? (
-        <RoleSelectionPage roles={availableRoles} onRoleSelect={finalizeRoleSelection} />
-      ) : roleID && userName && userRole && masterData && ADGroupData ? (
-        children
-      ) : (
-        <CustomLoader isLoading={isLoading} />
-      )}
-    </RoleContext.Provider>
+    <CustomLoader isLoading={isLoading}>
+      <RoleContext.Provider
+        value={{
+          roleID,
+          userName,
+          userRole,
+          masterData,
+          ADGroupData,
+          showRoleSelector,
+          setShowRoleSelector,
+        }}
+      >
+        {roleID && userName && userRole && masterData && ADGroupData ? (
+          children
+        ) : (
+          <CustomLoader isLoading={isLoading} />
+        )}
+      </RoleContext.Provider>
+    </CustomLoader>
   );
 };
 

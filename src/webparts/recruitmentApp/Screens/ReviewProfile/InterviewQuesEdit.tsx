@@ -42,7 +42,6 @@ import {
   validationMsg,
   WorkflowAction,
 } from "../../utilities/Config";
-import LabelHeaderComponents from "../../components/TitleHeader";
 import {
   answersValue,
   getQuestionById,
@@ -55,6 +54,7 @@ import ViewQuestionCheckbox, {
   ViewQuestion,
 } from "../ScreenComponent/ViewQuestionCheckbox";
 import CustomLabel from "../../components/CustomLabel";
+import { Label } from "@fluentui/react";
 
 type InterviewQuesValidationError = {
   QuestionType: boolean;
@@ -169,23 +169,25 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     ViewQuestion[]
   >([]);
 
-  const handleCategoryChange = (val: string) => {
-    setInterviewQuesData((prev) => ({
-      ...prev,
-      Catogry: val,
-      Disciplines: { key: 0, text: "" },
-      QuestionNumber: { key: 0, text: "" },
-      QuestionType: { key: 0, text: "" },
-      Question: "",
-      ExpectedAnswer: "",
-      Disqualification: "",
-    }));
+  // const [currentRoleID, setCurrentRoleID] = useState<number>(0);
 
-    setValidationError((prev) => ({
-      ...prev,
-      Catogry: false,
-    }));
-  };
+  // const handleCategoryChange = (val: string) => {
+  //   setInterviewQuesData((prev) => ({
+  //     ...prev,
+  //     Catogry: val,
+  //     Disciplines: { key: 0, text: "" },
+  //     QuestionNumber: { key: 0, text: "" },
+  //     QuestionType: { key: 0, text: "" },
+  //     Question: "",
+  //     ExpectedAnswer: "",
+  //     Disqualification: "",
+  //   }));
+
+  //   setValidationError((prev) => ({
+  //     ...prev,
+  //     Catogry: false,
+  //   }));
+  // };
 
   const handleOptionChange = (index: number, newVal: string) => {
     setOptionsType((prev) => {
@@ -692,24 +694,28 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       visible: true,
       ButtonAction: async (userClickedOK: boolean) => {
         if (userClickedOK) {
-          switch (props.CurrentRoleID) {
-            case RoleID.RecruitmentHR:
-              props.navigation("/ReviewProfileList", {
-                state: { activeTab: "tab3" },
-              });
-              break;
-            case RoleID.HOD:
-              props.navigation("/RecurimentProcess", {
-                state: { activeTab: "tab3" },
-              });
-              break;
-            case RoleID.LineManager:
-              props.navigation("/ReviewProfileList", {
-                state: { activeTab: "tab2" },
-              });
-              break;
-            default:
-              props.navigation("/InterviewPanelList");
+          if (
+            props.CurrentRoleID &&
+            props.CurrentRoleID.includes &&
+            props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+          ) {
+            props.navigation("/ReviewProfileList", {
+              state: {
+                TabName: props.stateValue?.TabName,
+                tab: props.stateValue?.tab,
+              },
+            });
+          } else if (
+            props.CurrentRoleID &&
+            props.CurrentRoleID.includes &&
+            props.CurrentRoleID.includes(RoleID.LineManager)
+          ) {
+            props.navigation("/RecurimentProcess", {
+              state: {
+                TabName: props.stateValue?.TabNames,
+                tab: props.stateValue?.tab,
+              },
+            });
           }
           setAlertPopupOpen(false);
         } else {
@@ -750,6 +756,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             : CatogryOptionCode.CareerPortalCandidate,
       }));
     }
+    // let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
+    // setCurrentRoleID(userRole ?? 0);
   }, [props?.stateValue?.StatusId]);
 
   useEffect(() => {
@@ -792,12 +800,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           (item) => item.text
         );
 
-        const ScopeOption: AutoCompleteItem[] = (ScopeData.data ?? []).map(
-          (opt: any) => ({
+        const ScopeOption: AutoCompleteItem[] = (ScopeData.data ?? [])
+          .filter((item: any) => item.value !== "S6" && item.value !== "S7")
+          .map((opt: any) => ({
             key: opt.value,
             text: opt.displayText,
-          })
-        );
+          }));
 
         const QuestionTypeOption: AutoCompleteItem[] = (QuestionType.data ?? [])
           .filter((opt: any) => {
@@ -820,7 +828,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             key: opt.value,
             text: opt.displayText,
           }));
-
         setGetMasterData((prevState) => ({
           ...prevState,
           category: CategoryOption,
@@ -837,9 +844,29 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           visible: true,
           ButtonAction: async (userClickedOK: boolean) => {
             if (userClickedOK) {
-              props.navigation("/ReviewProfileList", {
-                state: { activeTab: "tab2" },
-              });
+              if (
+                props.CurrentRoleID &&
+                props.CurrentRoleID.includes &&
+                props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+              ) {
+                props.navigation("/ReviewProfileList", {
+                  state: {
+                    TabName: props.stateValue?.TabName,
+                    tab: props.stateValue?.tab,
+                  },
+                });
+              } else if (
+                props.CurrentRoleID &&
+                props.CurrentRoleID.includes &&
+                props.CurrentRoleID.includes(RoleID.LineManager)
+              ) {
+                props.navigation("/RecurimentProcess", {
+                  state: {
+                    TabName: props.stateValue?.TabNames,
+                    tab: props.stateValue?.tab,
+                  },
+                });
+              }
               setAlertPopupOpen(false);
             } else {
               setAlertPopupOpen(false);
@@ -868,6 +895,31 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const getFetchQuestion = () => {
     if (InterviewQuesData?.Disciplines?.text) {
       setViewQA(true);
+    } else {
+      const SelectedMag = {
+        Message: RecuritmentHRMsg.SelectedErrorMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+
+      setAlertPopupOpen(true);
+      setalertProps(SelectedMag);
+      setIsLoading(false);
+    }
+  };
+
+  const handleNewQuestion = () => {
+    if (InterviewQuesData?.Disciplines?.text) {
+      if (showCreateQuestionBox) {
+        handleCloseCreateQuestion();
+      } else {
+        setShowCreateQuestionBox(true);
+      }
     } else {
       const SelectedMag = {
         Message: RecuritmentHRMsg.SelectedErrorMsg,
@@ -944,48 +996,54 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       content: (
         <Card
           variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+          sx={{
+            boxShadow: "0px 2px 4px 3px #d3d3d3",
+            marginTop: "2%",
+            position: "relative", // Ensure z-index works
+            overflow: "visible", // Allow dropdown to escape
+            zIndex: 1, // Raise above background
+          }}
         >
           <CardContent>
             <div className="ms-Grid-row" style={{ marginBottom: "2px" }}>
-              <div className="ms-Grid-col ms-lg6">
+              {/* <div className="ms-Grid-col ms-lg7">
                 <LabelHeaderComponents
                   value={`Job Title - ${props?.stateValue?.JobTitleInEnglish} (${props?.stateValue?.JobCode})`}
                 >
                   {" "}
                 </LabelHeaderComponents>
               </div>
-              {props.stateValue?.Status ===
-              "Pending with Line Manager to create a Disqualification Question" ? (
-                <div
-                  className="ms-Grid-col ms-lg6"
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    position: "relative",
-                    left: "12%",
-                  }}
-                >
-                  <LabelHeaderComponents
-                    value={`Status - ${props.stateValue?.Status}`}
-                  />
-                </div>
-              ) : (
-                <div
-                  className="ms-Grid-col ms-lg6"
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <LabelHeaderComponents
-                    value={`Status - ${props.stateValue?.Status}`}
-                  />
-                </div>
-              )}
+              <div
+                className="ms-Grid-col ms-lg5"
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <LabelHeaderComponents
+                  value={`Status - ${props.stateValue?.Status}`}
+                />
+              </div> */}
             </div>
 
-            <Card
+            <div style={{ display: "flex", justifyContent: "flex-start" }}>
+              <Label
+                style={{
+                  fontSize: "18px",
+                  color: "black",
+                  fontFamily: "Roboto,sans-serif",
+                  fontStyle: "normal",
+                  fontWeight: "600",
+                  marginTop: "1%",
+                }}
+              >
+                {props?.stateValue?.StatusId ===
+                StatusId.PendingwithLMcreateDisqualificationQuestion
+                  ? `Career Portal Candidate Questionnaires `
+                  : `Interview Questionnaires `}
+              </Label>
+            </div>
+            {/* <Card
               sx={{
                 mb: 2,
                 borderRadius: "10px",
@@ -1013,10 +1071,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   )}
                 </>
               </CardContent>
-            </Card>
+            </Card> */}
             {/* Left side  Image */}
-            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-              <Box sx={{ width: "100%" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                overflow: "visible",
+              }}
+            >
+              <Box sx={{ width: "100%", overflow: "visible" }}>
                 <Box sx={{ mb: 2 }}>
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg5">
@@ -1067,13 +1131,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           fontSize: "14px",
                           fontWeight: "500",
                         }}
-                        onClick={() => {
-                          if (showCreateQuestionBox) {
-                            handleCloseCreateQuestion();
-                          } else {
-                            setShowCreateQuestionBox(true);
-                          }
-                        }}
+                        onClick={() => handleNewQuestion()}
                       >
                         New Question
                       </Button>
@@ -1116,6 +1174,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                 boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                                 borderRadius: "4px",
                                 borderColor: "#5f5f5f",
+                                marginTop: "1%",
                               }}
                             >
                               <Accordion
@@ -1282,6 +1341,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                   boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                                   borderRadius: "4px",
                                   borderColor: "#5f5f5f",
+                                  marginTop: "1%",
                                 }}
                               >
                                 <Accordion
@@ -1532,7 +1592,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
                                         {props?.stateValue?.StatusId ===
                                           StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                                          <Box sx={{ mb: 2 }}>
+                                          <Box sx={{ mb: 2, width: "50%" }}>
                                             <CustomRadioGroup
                                               label="Disqualification Question?"
                                               value={q.Disqualification ?? "NO"}
@@ -1946,7 +2006,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
                       {props?.stateValue?.StatusId ===
                         StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                        <Box sx={{ mb: 2 }}>
+                        <Box sx={{ mb: 2, width: "50%" }}>
                           <CustomRadioGroup
                             label="Disqualification Question?"
                             value={InterviewQuesData?.Disqualification ?? ""}
@@ -2021,7 +2081,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     if (activeTab === "tab1") {
       setTabNameData(() => {
         return [
-          { tabName: props.stateValue?.TabName },
+          { tabName: props.stateValue?.TabNames },
           { tabName: props.stateValue?.ButtonAction },
           {
             tabName:
@@ -2036,7 +2096,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   }, [
     props.stateValue?.ID,
     activeTab,
-    props.stateValue?.TabName,
+    props.stateValue?.TabNames,
     props.stateValue?.ButtonAction,
   ]);
 
@@ -2214,6 +2274,18 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       let OptionsValue: optionsValue[] = [];
       let answerValue: answersValue[] = [];
 
+      const decodeBase64 = (str: string): string => {
+        const utf8Bytes: any = new TextEncoder().encode(str);
+        const binary = String.fromCharCode(...utf8Bytes);
+        return btoa(binary);
+      };
+      //  const stripHtml = (html: string) => {
+      //         if (!html) return "";
+      //         const tmp = document.createElement("DIV");
+      //         tmp.innerHTML = html;
+      //         return tmp.textContent || tmp.innerText || "";
+      //       };
+
       if (category?.text === CatogryOptionCode.CareerPortalCandidate) {
         OptionsValue =
           item.options?.map((opt, index) => ({
@@ -2228,25 +2300,30 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             optionFr: ans.text,
           })) || [];
       } else {
-        OptionsValue =
-          item.options?.map((opt, index) => ({
-            optionEn: opt.text,
-            optionFr: opt.text,
-            sequence: index + 1,
-          })) || [];
-
         OptionsValue = [
           {
-            optionEn: item.expectedAnswer,
-            optionFr: item.expectedAnswer,
+            optionEn:
+              item?.Type === DataType.Existing
+                ? decodeBase64(item.expectedAnswer[0])
+                : decodeBase64(item.expectedAnswer),
+            optionFr:
+              item?.Type === DataType.Existing
+                ? decodeBase64(item.expectedAnswer[0])
+                : decodeBase64(item.expectedAnswer),
             sequence: 1,
           },
         ];
 
         answerValue = [
           {
-            optionEn: item.expectedAnswer,
-            optionFr: item.expectedAnswer,
+            optionEn:
+              item?.Type === DataType.Existing
+                ? decodeBase64(item.expectedAnswer[0])
+                : decodeBase64(item.expectedAnswer),
+            optionFr:
+              item?.Type === DataType.Existing
+                ? decodeBase64(item.expectedAnswer[0])
+                : decodeBase64(item.expectedAnswer),
           },
         ];
       }
@@ -2260,8 +2337,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           : String(item.questionType.key);
 
       return {
-        questionEn: item.question,
-        questionFr: item.question,
+        questionEn: decodeBase64(item.question),
+        questionFr: decodeBase64(item.question),
         scopeId: scopeId,
         categoryId: String(category?.key),
         // questionTypeId: String(item.questionType.key),
@@ -2304,9 +2381,29 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
           if (userClickedOK) {
-            props.navigation("/ReviewProfileList", {
-              state: { activeTab: "tab2" },
-            });
+            if (
+              props.CurrentRoleID &&
+              props.CurrentRoleID.includes &&
+              props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+            ) {
+              props.navigation("/ReviewProfileList", {
+                state: {
+                  TabName: props.stateValue?.TabName,
+                  tab: props.stateValue?.tab,
+                },
+              });
+            } else if (
+              props.CurrentRoleID &&
+              props.CurrentRoleID.includes &&
+              props.CurrentRoleID.includes(RoleID.LineManager)
+            ) {
+              props.navigation("/RecurimentProcess", {
+                state: {
+                  TabName: props.stateValue?.TabNames,
+                  tab: props.stateValue?.tab,
+                },
+              });
+            }
             setAlertPopupOpen(false);
           } else {
             setAlertPopupOpen(false);
@@ -2413,16 +2510,18 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       ) : (
         <>
           <CustomLoader isLoading={isLoading}>
-            <div
+            {/* <div
               style={{
                 backgroundColor: "#EEEEEE",
                 padding: "20px",
                 borderRadius: "5px",
                 boxShadow: "0px 2px 4px 3px lightgray",
-
                 margin: "10px",
+                height: " calc(-158px + 97vh)",
+                width: "93%",
               }}
-            >
+            > */}
+            <div className="menu-card">
               <React.Fragment>
                 <BreadcrumbsComponent
                   items={tabs}
@@ -2430,15 +2529,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   TabName={TabNameData}
                   onBreadcrumbChange={handleBreadcrumbChange}
                   handleCancel={handleCancel}
+                  JobValue={{
+                    JobTitle: props?.stateValue?.JobTitleInEnglish ?? "",
+                    JobCode: props?.stateValue?.JobCode,
+                    Status: props.stateValue?.Status,
+                  }}
                   additionalButtons={[
-                    // {
-                    //   label: "Close",
-                    //   onClick: async () => {
-                    //     props.navigation("/ReviewProfileList", {
-                    //       state: { activeTab: "tab2" },
-                    //     });
-                    //   },
-                    // },
                     ...(resuequestionnaire.length > 0
                       ? [
                           {

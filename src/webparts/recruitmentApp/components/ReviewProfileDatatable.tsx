@@ -2,10 +2,11 @@ import * as React from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { TextField } from "office-ui-fabric-react";
-import { Icon } from "@fluentui/react";
 import ReuseButton from "./ReuseButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { FilterMatchMode } from "primereact/api";
+import { TabName } from "../utilities/Config";
+import { Icon } from "@fluentui/react";
 
 interface ColumnConfig {
   field: string;
@@ -21,6 +22,10 @@ interface SearchableDataTableProps {
   rows: number;
   onPageChange: (event: any) => void;
   handleRefresh: () => void;
+  totalItem?: number;
+  pagination: { first: number; rows: number; totalPages: number };
+  handleUploadCV?: () => void;
+  UploadCV?: string;
 }
 
 const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
@@ -29,6 +34,9 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
   rows,
   onPageChange,
   handleRefresh,
+  pagination,
+  handleUploadCV,
+  UploadCV,
 }) => {
   const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
   const [dashboardSearch, setDashboardSearch] = React.useState<any>({
@@ -37,18 +45,31 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
   const [totalItem, setTotalItem] = React.useState<number>(0);
 
   React.useEffect(() => {
-    setFilteredItems(data);
-    const totalItem = data.length > 0 ? data[0].TotalItems : 0;
-    setTotalItem(totalItem);
+    const PagewiseData =
+      pagination.totalPages === 0
+        ? data
+        : data.slice(pagination.first, pagination.first + pagination.rows);
+    setFilteredItems(PagewiseData);
+    setTotalItem(data[0]?.TotalItems ?? data.length);
   }, [data]);
 
-  const handleSearch = (event: any) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchValue = event.target.value;
+
     setDashboardSearch({
       global: {
-        value: event.target.value,
+        value: searchValue,
         matchMode: FilterMatchMode.CONTAINS,
       },
     });
+
+    const filtered = data.filter((item: any) =>
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(searchValue.toLowerCase())
+      )
+    );
+
+    setFilteredItems(filtered);
   };
 
   return (
@@ -56,7 +77,7 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
     <div>
       <div className="ms-Grid-row">
         <div
-          className="ms-Grid-col ms-lg10 search_div"
+          className="ms-Grid-col ms-lg9 search_div"
           style={{
             paddingLeft: "2%",
             position: "relative",
@@ -70,11 +91,9 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
             styles={{
               fieldGroup: {
                 borderRadius: "4px",
-                // boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-                // borderColor: "red",
                 boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                 borderColor: "#c9bdbd",
-                height: "42px",
+                height: "33px",
               },
             }}
             value={dashboardSearch.global.value}
@@ -83,16 +102,16 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
           <Icon
             iconName="Search"
             style={{
-              fontSize: "28px",
+              fontSize: "20px",
               position: "absolute",
-              top: "5%",
-              right: "11px",
-              // padding: '3px',
+              top: "20%",
+              right: "14px",
               color: "black",
             }}
           />
         </div>
-        <div className="ms-Grid-col ms-lg2">
+
+        <div className="ms-Grid-col ms-lg1">
           <ReuseButton
             icon={
               <RefreshIcon
@@ -101,7 +120,7 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
                   marginTop: "1%",
                   marginLeft: "6%",
                   minWidth: "119px",
-                  height: "43px",
+                  height: "30px",
                 }}
               />
             }
@@ -115,35 +134,48 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
               handleRefresh();
             }}
             spacing={4}
-            height="33px"
-            width="32%"
-            Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
+            Style={{ marginRight: "11px", minWidth: "100%", height: "31px" }}
           />
         </div>
+
+        {UploadCV === TabName.UploadCV && (
+          <div className="ms-Grid-col ms-lg1" style={{ marginLeft: "4%" }}>
+            <ReuseButton
+              label={UploadCV === TabName.UploadCV ? "Upload" : ""}
+              onClick={handleUploadCV}
+              spacing={4}
+              // height="33px"
+              // width="32%"
+              Style={{ marginLeft: "-42px", minWidth: "100%", height: "31px" }}
+            />
+          </div>
+        )}
       </div>
       <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
         <div className="ms-Grid-col ms-lg12">
           <DataTable
+            className="normalTable"
             value={filteredItems}
-            rows={rows}
+            lazy
+            // rows={rows}
+            rows={pagination.rows}
+            first={pagination.first}
             totalRecords={totalItem}
             paginator
             rowsPerPageOptions={[5, 10, 20]}
             onPage={(event) => {
-              setFilteredItems(
-                data.slice(event.first, event.first + event.rows)
-              );
               onPageChange(event);
             }}
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             stripedRows
             scrollable
-            scrollHeight="400px"
+            scrollHeight="35vh"
             paginatorDropdownAppendTo="self"
-            filters={dashboardSearch}
+            // filters={dashboardSearch}
             onFilter={(e) => setFilteredItems(e.filteredValue || data)}
-            style={{ overflow: "hidden" }}
+            style={{ overflow: "visible" }}
+            emptyMessage="No Record Found"
           >
             {columns.map((col) => {
               return (

@@ -1,4 +1,4 @@
-import { DataFrom, DocumentLibraray, InOperator, ListNames, Nationality, ResponeStatus, count } from "../../utilities/Config";
+import { ADGroupID, DataFrom, DocumentLibraray, InOperator, InterviewLevels, ListNames, Nationality, ResponeStatus, RoleName, StatusId, count, workflowStatusApi } from "../../utilities/Config";
 import SPServices from "../SPService/SPServices";
 import {
   CommentsData,
@@ -14,6 +14,7 @@ import { CommonServices, GetPortalJobsService } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import * as moment from "moment";
 import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
+import { AutoCompleteItem, InterviewPanelItem, InterviewPanelMember } from "../../Models/Screens";
 
 interface IAttachmentExampleState {
   file: File | any;
@@ -22,6 +23,66 @@ interface IAttachmentExampleState {
   serverRelativeUrl: string;
   ID: string;
 }
+
+const GetUserName = async (
+  email: string
+): Promise<ApiResponse<any | null>> => {
+  try {
+    const listItems: any[] = await SPServices.SPReadItems({
+      Listname: ListNames.HRMSSageList,
+      Select: "*",
+      Filter: [{
+        FilterKey: "EmailId",
+        FilterValue: "eq",
+        Operator: email
+      }]
+    });
+    let UserName = listItems.find((emp: any) => {
+      return emp.EmailId?.toLowerCase() === email?.toLowerCase();
+    });
+    let UserRoleName = `${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || ""}`
+    return {
+      data: UserRoleName,
+      status: 200,
+      message: "ADGroups retrieved successfully",
+    };
+  } catch (error) {
+    console.error("Error fetching user ID by email: ", error);
+    // Return null in case of an error
+    return {
+      data: null,
+      status: 500,
+      message: "Error getting ADGroups",
+    };
+  }
+};
+
+const GetInterviewPanel = async (
+  filterConditions: any[] = []
+): Promise<ApiResponse<any | null>> => {
+  try {
+    const listItems: any[] = await SPServices.SPReadItems({
+      Listname: ListNames.HRMSInterviewPanelDetails,
+      Select: "ID, CandidateID/ID, RecruitmentID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail,IsScoreSheetUploaded",
+      Expand: "InterviewPanel,RecruitmentID,CandidateID",
+      Filter: filterConditions,
+    });
+
+    return {
+      data: listItems,
+      status: 200,
+      message: "ADGroups retrieved successfully",
+    };
+  } catch (error) {
+    console.error("Error fetching user ID by email: ", error);
+    // Return null in case of an error
+    return {
+      data: null,
+      status: 500,
+      message: "Error getting ADGroups",
+    };
+  }
+};
 
 export default class RecruitmentService implements IRecruitmentService {
 
@@ -107,6 +168,7 @@ export default class RecruitmentService implements IRecruitmentService {
               StatusId: objresult?.StatusId,
               Action: objresult.Action?.Action ? objresult.Action?.Action : "",
               ActionTypeId: objresult.ActionId ? objresult.ActionId : "",
+              Location: objresult?.Location || "",
 
               JobCodeId: 0,
               JobCode: "",
@@ -180,7 +242,7 @@ export default class RecruitmentService implements IRecruitmentService {
                 },
               ];
               const JobCode = await this.fetchJobCodeDetails(filterConditions, "");
-              console.log(JobCode.data, "JobCode");
+              // console.log(JobCode.data, "JobCode");
               item.JobCodeId = JobCode.data?.JobCodeID ? JobCode.data?.JobCodeID : 0;
               item.JobCode = JobCode.data?.JobCode ? JobCode.data?.JobCode : "";
               item.JobTitleEnglishId = filtered.JobTitleEnglishId ?? 0;
@@ -251,6 +313,7 @@ export default class RecruitmentService implements IRecruitmentService {
               StatusId: item?.StatusId,
               Action: item.Action?.Action ? item.Action?.Action : "",
               ActionTypeId: item.ActionId ? item.ActionId : "",
+              Location: item?.Location || "",
 
               JobCodeId: 0,
               JobCode: "",
@@ -321,7 +384,7 @@ export default class RecruitmentService implements IRecruitmentService {
                 },
               ];
               const JobCode = await this.fetchJobCodeDetails(filterConditions, "");
-              console.log(JobCode.data, "JobCode");
+              // console.log(JobCode.data, "JobCode");
               item.JobCodeId = JobCode.data?.JobCodeID ? JobCode.data?.JobCodeID : 0;
               item.JobCode = JobCode.data?.JobCode ? JobCode.data?.JobCode : "";
               item.JobTitleEnglish = filtered.JobTitleEnglish?.JobTitleInEnglish ? filtered.JobTitleEnglish?.JobTitleInEnglish : "";
@@ -336,7 +399,7 @@ export default class RecruitmentService implements IRecruitmentService {
           }
         }
       }
-      console.log(" fetchNewPositionRequest response op", GridResult);
+      // console.log(" fetchNewPositionRequest response op", GridResult);
       return {
         data: GridResult,
         status: 200,
@@ -398,7 +461,7 @@ export default class RecruitmentService implements IRecruitmentService {
       const formattedItems: any[] = [];
 
       for (const item of listItems) {
-        console.log("item", item);
+        // console.log("item", item);
         let VRR: any = {
           VRRID: item.Id,
           Nationality: item.Nationality || "",
@@ -555,10 +618,10 @@ export default class RecruitmentService implements IRecruitmentService {
     try {
       const res = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentDptDetails,
-        Select: `*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,BusinessUnitCode/BusineesUnitCode,AssignedHR/Title,AssignedHR/EMail`,
+        Select: `*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,BusinessUnitCode/BusineesUnitCode,AssignedHR/Title`,
         Filter: filterParam,
         FilterCondition: filterConditions,
-        Expand: `Department,SubDepartment,Section,DepartmentCode,Status,Action,JobCode,BusinessUnitCode, AssignedHR`,
+        Expand: `Department,SubDepartment,Section,DepartmentCode,Status,Action,JobCode,BusinessUnitCode`,
         Topcount: count.Topcount,
         Orderby: "ID",
         Orderbydecorasc: true,
@@ -593,6 +656,7 @@ export default class RecruitmentService implements IRecruitmentService {
               StatusId: item?.StatusId,
               Action: item?.Action?.Action ? item?.Action?.Action : "",
               ActionTypeId: item?.ActionId ? item?.ActionId : "",
+              Location: item?.Location || "",
 
               JobCodeId: item?.JobCodeId ? item?.JobCodeId : 0,
               JobCode: item?.JobCode?.JobCode ? item?.JobCode?.JobCode : "",
@@ -610,8 +674,8 @@ export default class RecruitmentService implements IRecruitmentService {
               VacancyConfirmed: item?.VacancyConfirmed || "",
               RecruitmentAuthorised: item?.RecruitmentAuthorised || "",
               IsPayrollEmailed: item?.IsPayrollEmailed || "",
-              AssignedHR: item?.AssignedHR?.Title || "",
-              AssignedHRId: item?.AssignedHRId || 0,
+              AssignedHR: " ",// item?.AssignedHR?.Title || "",
+              AssignedHRId: 0, //item?.AssignedHRId || 0,
               AssignLineManager: item?.AssignLineManager?.Title || "",
               AssignLineManagerId: item?.AssignLineManagerId || 0,
               ReasonForVacancy: item?.ReasonForVacancy || "",
@@ -621,7 +685,7 @@ export default class RecruitmentService implements IRecruitmentService {
               JobPostingFirstExtensionEndDate: item?.JobPostingFirstExtensionEndDate || undefined,
               JobPostingSecondExtensionEndDate: item?.JobPostingSecondExtensionEndDate || undefined,
 
-              AssignEMail: item?.AssignedHR?.EMail
+              AssignEMail: item?.AssignedHR
             };
             return Recruitment;
 
@@ -787,9 +851,9 @@ export default class RecruitmentService implements IRecruitmentService {
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         RequestJSON: param,
       });
-      console.log(response);
+      // console.log(response);
       return {
-        data: [],
+        data: response,
         status: 200,
         message: "insert RecruitmentCandidateDetails",
       };
@@ -979,7 +1043,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
       CandidateDetails.push(...resolvedItems);
 
-      console.log("Fetched Candidate Details:", CandidateDetails);
+      // console.log("Fetched Candidate Details:", CandidateDetails);
 
       return {
         data: CandidateDetails,
@@ -1161,7 +1225,7 @@ export default class RecruitmentService implements IRecruitmentService {
         Listname: ListNames.HRMSQualification,
         Select: "Qualification, QualificationCode",
       });
-      console.log("Qualification", qualificationMaster);
+      // console.log("Qualification", qualificationMaster);
       const functionTypeMaster: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSJobTitleFunctionType,
         Select: "ID,FunctionType",
@@ -1195,9 +1259,9 @@ export default class RecruitmentService implements IRecruitmentService {
         functionTypeMaster.map((exp) => [exp.ID, exp.FunctionType])
       );
 
-      console.log("qualificationMap", qualificationMap);
+      // console.log("qualificationMap", qualificationMap);
       console.log("functionTypeMap", functionTypeMap);
-      console.log("experienceMap", experienceMap);
+      // console.log("experienceMap", experienceMap);
 
       const listItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentRoleProfileDetails,
@@ -1209,7 +1273,7 @@ export default class RecruitmentService implements IRecruitmentService {
         Orderby: "ID",
         Orderbydecorasc: false,
       });
-      console.log("listItems", listItems);
+      // console.log("listItems", listItems);
       const formattedItems = listItems.map((item) => {
         const roleKnowledgeArray = JSON.parse(
           item.RoleSpecificKnowledgeJson || "[]"
@@ -1228,7 +1292,7 @@ export default class RecruitmentService implements IRecruitmentService {
             console.error("Error parsing Qualification:", error);
           }
         }
-        console.log("item.Qualification", item.Qualification);
+        // console.log("item.Qualification", item.Qualification);
         if (item.PreferredQualification) {
           try {
             const parsedPQ = JSON.parse(item.PreferredQualification);
@@ -1239,8 +1303,8 @@ export default class RecruitmentService implements IRecruitmentService {
             console.error("Error parsing Preferred Qualification:", error);
           }
         }
-        console.log("item.Qualification", item.Qualification);
-        console.log("listItems", listItems);
+        // console.log("item.Qualification", item.Qualification);
+        // console.log("listItems", listItems);
         const functionType = item.FunctionType;
 
         return {
@@ -1304,7 +1368,7 @@ export default class RecruitmentService implements IRecruitmentService {
         };
       });
 
-      console.log("Formatted Items:", formattedItems);
+      // console.log("Formatted Items:", formattedItems);
       return {
         data: formattedItems,
         status: 200,
@@ -1390,8 +1454,8 @@ export default class RecruitmentService implements IRecruitmentService {
           },
         ],
       });
-      console.log("candidateScoreCardItems", candidateScoreCardItems);
-      console.log("interviewPanelItems", interviewPanelItems);
+      // console.log("candidateScoreCardItems", candidateScoreCardItems);
+      // console.log("interviewPanelItems", interviewPanelItems);
       const formattedItems = interviewPanelItems.map((interview) => {
         const relatedScores = candidateScoreCardItems.filter(
           (score) => score?.InterviewPanelID?.ID === interview?.ID
@@ -1427,7 +1491,7 @@ export default class RecruitmentService implements IRecruitmentService {
           })),
         };
       });
-      console.log("formattedItems", formattedItems);
+      // console.log("formattedItems", formattedItems);
       return {
         data: formattedItems,
         status: 200,
@@ -1464,7 +1528,7 @@ export default class RecruitmentService implements IRecruitmentService {
         Orderbydecorasc: true,
       })
         .then((res) => {
-          console.log(res, "res");
+          // console.log(res, "res");
           GetItem = res;
         })
         .catch((error) => {
@@ -1534,7 +1598,7 @@ export default class RecruitmentService implements IRecruitmentService {
       });
 
       if (!res || res.length === 0) {
-        console.log("No data found in GetHRMSRecruitmentRoleProfileDetails");
+        // console.log("No data found in GetHRMSRecruitmentRoleProfileDetails");
         return { data: null, status: 400, message: "No data found" };
       }
 
@@ -1584,11 +1648,16 @@ export default class RecruitmentService implements IRecruitmentService {
         ...minQualifications,
         ...preferredQualifications,
       ];
+      const decodeBase64 = (str: string): string => {
+        const utf8Bytes: any = new TextEncoder().encode(str);
+        const binary = String.fromCharCode(...utf8Bytes);
+        return btoa(binary);
+      };
 
       const Description: Descriptions = {
         jobTitle: RecuritmentDetails.JobNameInEnglish === undefined ? RecuritmentDetails.JobTitleEnglish : RecuritmentDetails.JobNameInEnglish,
-        jobShortSummary: String(data.RoleProfile || ""),
-        jobSummary: String(data.JobDescription || ""),
+        jobShortSummary: decodeBase64(data.RoleProfile || ""),
+        jobSummary: decodeBase64(data.JobDescription || ""),
       };
 
       const onamdocpathfile = await CommonServices.GetAttachmentLink(
@@ -1610,7 +1679,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
       const AdvertisementDetails: AdvertisementDetails = {
         jobCode: RecuritmentDetails.JobCode,
-        IsActive: IsActive,
+        isActive: IsActive,
         noOfPositions: String(RecuritmentDetails?.NoofPositionAssigned === undefined ? RecuritmentDetails?.NumberOfPersonNeeded : RecuritmentDetails?.NoofPositionAssigned),
         validFrom: AdvertisementValue.ValidFrom ?? null,
         validTo: AdvertisementValue.ValidTo ?? null,
@@ -1656,4 +1725,176 @@ export default class RecruitmentService implements IRecruitmentService {
     }
   }
 
+  async GetInterviewPanelDetails(
+    filterParam: any[],
+    filterConditions: any,
+    AssignHR: AutoCompleteItem,
+    CandidateID: number,
+    levels: string[],
+    StatusID: number,
+  ): Promise<ApiResponse<InterviewPanelMember | null>> {
+    let GetItem: InterviewPanelMember | null = null;
+    try {
+      await SPServices.SPReadItems({
+        Listname: ListNames.JDEDataMapping,
+        Select: "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Expand: "BUC,LineManager,HOD,HR,EXCO",
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      })
+        .then(async (res) => {
+          // console.log(res, "res");
+          const interviewpanelOption = await CommonServices.GetADgruopsEmailIDs(
+            ADGroupID.HRMSInterviewPanel
+          );
+          let panelMembers: InterviewPanelItem[] = [];
+          let Filter = [
+            {
+              FilterKey: "CandidateID",
+              Operator: "eq",
+              FilterValue: CandidateID
+            },
+            {
+              FilterKey: "InterviewLevel",
+              Operator: "in",
+              FilterValue: levels
+            }
+          ]
+          let InterviewPanelDetails = await GetInterviewPanel(Filter)
+          // console.log((InterviewPanelDetails).data, "InterviewPanelDetails");
+
+          for (const item of res) {
+            if (item?.LineManagerId && item?.LineManager?.EMail) {
+              let UserName = await GetUserName(item.LineManager.EMail);
+              panelMembers.push({
+                key: item.LineManagerId,
+                Role: RoleName.LineManager,
+                text: String(UserName.data),
+              });
+            }
+            if (item?.HODId && item?.HOD?.EMail) {
+              let UserName = await GetUserName(item?.HOD?.EMail);
+              panelMembers.push({
+                key: item.HODId,
+                Role: RoleName.HOD,
+                text: String(UserName.data),
+              });
+            }
+            if (item?.EXCOId && item?.EXCO?.EMail) {
+              let UserName = await GetUserName(item?.EXCO?.EMail);
+              panelMembers.push({
+                key: item.EXCOId,
+                Role: RoleName.EXCO,
+                text: String(UserName.data),
+              });
+            }
+            if (AssignHR) {
+              let UserName = await GetUserName(AssignHR.text);
+              panelMembers.push({
+                key: AssignHR.key,
+                Role: RoleName.RecruitmentHR,
+                text: String(UserName.data),
+              });
+            }
+          }
+          let Get_InterviewPanel = await Promise.all(
+            InterviewPanelDetails.data.map(async (item: any) => {
+              let UserName = await GetUserName(item.InterviewPanel?.EMail);
+              return {
+                key: item?.InterviewPanel?.Id,
+                Role: RoleName.InterviewPanel,
+                text: String(UserName.data),
+                Levels: item?.InterviewLevel
+              }
+            }));
+
+          if (Array.isArray(interviewpanelOption?.data)) {
+            panelMembers.push(...interviewpanelOption.data);
+          }
+          let MembersLevel1: AutoCompleteItem[] = [];
+          let MemberLevel2: AutoCompleteItem[] = [];
+          let OptionMember: AutoCompleteItem[] = []
+          if (String(StatusID) === workflowStatusApi.PendingRecruitmentHRscheduleInterview) {
+            MembersLevel1 = panelMembers.filter(
+              (item) =>
+                item.Role === RoleName.LineManager ||
+                item.Role === RoleName.HOD ||
+                item.Role === RoleName.RecruitmentHR
+            );
+            OptionMember = panelMembers.map((item) => {
+              return {
+                key: item?.key,
+                text: item?.text,
+              };
+            });
+          } else if (StatusID === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
+            MembersLevel1 = Get_InterviewPanel.filter(
+              (item) => item.Levels === InterviewLevels.Level1
+            );
+            MemberLevel2 = panelMembers.filter(
+              (item) =>
+                item.Role === RoleName.EXCO ||
+                item.Role === RoleName.HOD ||
+                item.Role === RoleName.RecruitmentHR
+            );
+            OptionMember = panelMembers.map((item) => {
+              return {
+                key: item?.key,
+                text: item?.text,
+              };
+            });
+          } else if (StatusID === StatusId.InterviewScheduled || StatusID === StatusId.InterviewScheduledforLevel2) {
+            MembersLevel1 = Get_InterviewPanel.filter(
+              (item) => item.Levels === InterviewLevels.Level1
+            );
+            MemberLevel2 = Get_InterviewPanel.filter(
+              (item) => item.Levels === InterviewLevels.Level2
+            );
+          }
+          function removeDuplicatesByKey<T extends { key: any }>(arr: T[]): T[] {
+            const seen = new Set();
+            return arr.filter(item => {
+              if (seen.has(item.key)) return false;
+              seen.add(item.key);
+              return true;
+            });
+          }
+
+          MembersLevel1 = removeDuplicatesByKey(MembersLevel1);
+          MemberLevel2 = removeDuplicatesByKey(MemberLevel2);
+          OptionMember = removeDuplicatesByKey(OptionMember);
+
+          const InterviewPanelData: InterviewPanelMember = {
+            Level1Panel: MembersLevel1,
+            Level2Panel: MemberLevel2,
+            InterviewPanel: OptionMember
+          };
+          GetItem = InterviewPanelData
+        })
+        .catch((error) => {
+          console.log(
+            "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+            error
+          );
+        });
+      return {
+        data: GetItem,
+        status: 200,
+        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+        error
+      );
+      return {
+        data: GetItem,
+        status: 500,
+        message:
+          "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+      };
+    }
+  }
 }

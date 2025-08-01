@@ -85,6 +85,10 @@ const ReviewProfileEdit: React.FC = (props: any) => {
     addMasterMinimumQualification: "",
     AdvertisementAttachement: [],
     JobcodeChecked: false,
+    JobTitleofFunctionalManager: { key: 0, text: "" },
+    FunctionalManagerName: "",
+    JobTitleofLineManagerSupervisor: { key: 0, text: "" },
+    LineManagerSupervisorName: "",
   });
   const [formState, setFormState] = useState<RecuritmentData>({
     VRRID: 0,
@@ -511,7 +515,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
         >
           <CardContent>
             <div>
-              <div className="ms-Grid-row">
+              {/* <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg6">
                   <LabelHeaderComponents
                     value={`Job Title - ${formState.JobNameInEnglish} (${formState.JobCode})`}
@@ -529,7 +533,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                     {" "}
                   </LabelHeaderComponents>
                 </div>
-              </div>
+              </div> */}
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
@@ -1032,6 +1036,11 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                 TabName={TabNameData}
                 handleCancel={handleCancel}
                 onBreadcrumbChange={handleBreadcrumbChange}
+                JobValue={{
+                  JobTitle: formState.JobNameInEnglish ?? "",
+                  JobCode: formState.JobCode,
+                  Status: props.stateValue?.Status,
+                }}
                 additionalButtons={
                   props.CurrentRoleID === RoleID.LineManager && isViewed
                     ? [

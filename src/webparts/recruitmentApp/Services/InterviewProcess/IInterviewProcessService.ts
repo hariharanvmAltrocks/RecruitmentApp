@@ -22,8 +22,9 @@ export interface CommentsDatas {
 export interface ActionUpdate {
   ActionId: number;
   Id: number;
-  ItemCreated?: string; 
-  ScoreCardLevelItemCreated?: string; 
+  ItemCreated?: string;
+  ScoreCardLevelItemCreated?: string;
+  GPA: string;
 }
 
 export type AssignPositionID = {
@@ -31,6 +32,9 @@ export type AssignPositionID = {
   CandidateIDId: number;
   RecruitmentIDId: number;
   Coomments?: string;
+  ItemCreated: string;
+  ActionId: number;
+  StatusId: number;
 };
 export type ApiResponse<T> = {
   data: T;
@@ -66,9 +70,10 @@ export type ScoreCard = {
     QuestionJson: string;
   }[];
   Author?: {
-    Title: string; 
-    EMail: string; 
-  };}
+    Title: string;
+    EMail: string;
+  };
+}
 
 export type Employee = {
   JobTitleInEnglish: string;
@@ -206,17 +211,22 @@ export type IInterviewProcessService = {
     obj: InterviewPanelDetails,
     ListName: string
   ): Promise<ApiResponse<null>>;
-   getCandidateLevel2ScoreCard(
+  getCandidateLevel2ScoreCard(
     filterConditions: any
   ): Promise<ApiResponse<InterviewPanelDetails[]>>
- getCandidateLevel1ScoreCard(
+  getCandidateLevel1ScoreCard(
     filterConditions: any,
   ): Promise<ApiResponse<CandidateComment[]>>
 
   getCandidateLevel2ScoreCardData(
-     filterParam: any,
-     filterConditions: any,
-     candidateID: number,
-     EmployeeList: any[]
-   ): Promise<ApiResponse<CommentsData[]>>
+    filterParam: any,
+    filterConditions: any,
+    candidateID: number,
+    EmployeeList: any[]
+  ): Promise<ApiResponse<CommentsData[]>>;
+
+  GetPanelLeveldata(
+    filterConditions: any[],
+    EmployeeList: any[]
+  ): Promise<ApiResponse<Record<string, string[]>>>
 };

@@ -85,7 +85,7 @@ export const DateExtension = ({
       );
       setLevel2Date((prevState) => ({
         ...prevState,
-        StartDate: RecuritmentData?.JobPostingEndDate,
+        StartDate: RecuritmentData?.JobPostingStartDate,
         EndDate: SecondEndDate,
       }));
       if (RecuritmentData?.JobPostingFirstExtensionEndDate) {
@@ -119,6 +119,18 @@ export const DateExtension = ({
 
       return updatedState;
     });
+  };
+
+  const SpiltDateOnly = (date: Date) => {
+    const updatedDate = date;
+    const year = updatedDate?.getFullYear();
+    const month = String(updatedDate?.getMonth() + 1).padStart(2, "0");
+    const day = String(updatedDate?.getDate()).padStart(2, "0");
+
+    const dateOnly = new Date(
+      Date.UTC(Number(year), Number(month) - 1, Number(day))
+    ); //`${year}-${month}-${day}`;
+    return dateOnly.toISOString();
   };
 
   async function DataExtension() {
@@ -157,11 +169,15 @@ export const DateExtension = ({
       let DateObj;
       if (AdvertDuration3) {
         DateObj = {
-          JobPostingSecondExtensionEndDate: Level3Date.EndDate,
+          JobPostingSecondExtensionEndDate: Level3Date?.EndDate
+            ? SpiltDateOnly(Level3Date.EndDate)
+            : undefined,
         };
       } else {
         DateObj = {
-          JobPostingFirstExtensionEndDate: Level2Date.EndDate,
+          JobPostingFirstExtensionEndDate: Level2Date.EndDate
+            ? SpiltDateOnly(Level2Date.EndDate)
+            : undefined,
         };
       }
       await SPServices.SPUpdateItem({
@@ -304,18 +320,21 @@ export const DateExtension = ({
                     width: "50%",
                   }}
                 />
-
-                <ReuseButton
-                  label="Submit"
-                  onClick={async () => {
-                    await DataExtension();
-                  }}
-                  Style={{
-                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                    color: "white",
-                    width: "50%",
-                  }}
-                />
+                {RecuritmentData?.JobPostingSecondExtensionEndDate ? (
+                  <></>
+                ) : (
+                  <ReuseButton
+                    label="Submit"
+                    onClick={async () => {
+                      await DataExtension();
+                    }}
+                    Style={{
+                      backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                      color: "white",
+                      width: "50%",
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>

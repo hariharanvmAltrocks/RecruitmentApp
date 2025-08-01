@@ -87,7 +87,7 @@ p:hover .tooltip {
 
 .p-datatable .p-datatable-thead > tr > th {
   text-align: left;
-  padding: 1rem 1rem;
+  padding: 0rem 1rem;
   border: 1px solid #dee2e6;
   border-width: 0 0 1px 0;
   background: #f8f9fa;
@@ -108,6 +108,7 @@ p:hover .tooltip {
 
 /* verify */
 
+
 .p-datatable .p-datatable-tbody > tr {
   background: #ffffff;
 
@@ -118,7 +119,7 @@ p:hover .tooltip {
   text-align: left;
   border: 1px solid #dee2e6;
   border-width: 0 0 1px 0;
-  padding: 1rem 1rem;
+  padding: 0rem 1rem;
   font-size: 15px;
   /* background: #ff8d8d40; */
   /* font-weight: 300; */
@@ -127,27 +128,37 @@ p:hover .tooltip {
   /* color: black; */
 }
 
-.LabourPlanMainGrid .p-datatable-thead > tr > th {
-  text-align: center;
-  padding: 1rem 13px;
+.normalTable .p-datatable-thead > tr > th {
+ text-align: left;
+  padding: 1% 1rem;
   border: 1px solid #dee2e6;
   border-width: 0 0 1px 0;
   background: #f8f9fa;
   transition: box-shadow 0.2s;
   font-family: "Roboto", sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
 }
 
-.LabourPlanMainGrid .p-datatable-tbody > tr > td {
-  text-align: left;
-  border: 1px solid #edf1f4;
-  border-width: 0 0 1px 0;
-  padding: 1rem 9px;
-  font-size: 13px;
-  font-weight: 300;
-  font-family: "Roboto", sans-serif;
+.normalTable .p-datatable-thead > tr > th { 
+  z-index: 1 !important;
 }
+
+.normalTable .p-datatable-tbody > tr > td {
+    text-align: left;
+  border: 1px solid #dee2e6;
+  border-width: 0 0 1px 0;
+  padding: 5px 1rem;
+  font-size: 15px;
+  background: #ffffff;
+  transition: box-shadow 0.2s;
+  /* background: #ff8d8d40; */
+  /* font-weight: 300; */
+  font-family: "Roboto", sans-serif;
+  /* color: #495057; */
+  /* color: black; */
+}
+
 
 .p-datatable .p-paginator-bottom {
   border-width: 0 0 2px 0;
@@ -222,31 +233,17 @@ p:hover .tooltip {
   z-index: 1 !important;
 }
 
-.ui-datatable .LabourPlanMainGrid .p-datatable-tbody > tr > td {
+/* .ui-datatable .normalTable .p-datatable-tbody > tr > td {
   padding: 1rem 4px !important;
 }
 
-/* .LabourPlanMainGrid .p-datatable-scrollable-table > .p-datatable-thead {
-    z-index: 1 !important;
-    /* position: relative; } */
-
-/* .LabourPlanMainGrid {
-    width: 100%; 
-    max-width: 1037px; 
-    height: 500px; 
-    /* max-width: 772px; */
-/* overflow-x: auto; } */
 
 @media (max-width: 668px) {
-  .LabourPlanMainGrid {
+  .normalTable {
     max-width: 100%;
     overflow-x: scroll;
   }
-
-  .ui-datatable .LabourPlanMainGrid .p-datatable-tbody > tr > td {
-    padding: 0.5rem 2px !important;
-  }
-}
+} */
 
 /* .actionwrapper .p-datatable-scrollable-table > .p-datatable-thead{
     z-index: 1000;
@@ -397,7 +394,7 @@ p:hover .tooltip {
 .menu-card {
   background-color:#EEEEEE;
   /* Set the background color */
-  padding: 20px;
+  padding: 10px;
   /* Add some padding for spacing */
   border-radius: 5px;
   /* Add rounded corners for a card-like appearance */
@@ -405,7 +402,9 @@ p:hover .tooltip {
   /* Add a subtle shadow */
   margin: 10px;
   /* Adjust the margin as needed */
-  /* height: calc(100vh - 309px); */
+   /* height: calc(-196px + 103vh);  */
+   /* width: 93%; */
+   margin-bottom: 0%;
 }
 
 .sub-menu-card {
@@ -732,10 +731,6 @@ html {
   padding: 0px;
 }
 
-.l_e_8474018e {
-  margin: 0px;
-  padding: 0px;
-}
 
 /* .css-1rwt2y5-MuiButtonBase-root-MuiButton-root{
   
@@ -1083,6 +1078,7 @@ html {
 .l_e_8474018e {
   margin: 0px;
   padding: 0px;
+  overflow: hidden;
 }
 
 /* .css-1rwt2y5-MuiButtonBase-root-MuiButton-root{
@@ -1268,8 +1264,8 @@ html {
 
 .p-dialog-content {
   scroll-behavior: auto;
-  overflow-x: hidden;
-  /* scrollbar-width: none; */
+  overflow-x: auto;
+   scrollbar-width: none; 
 }
 
 /* App.css or any other style file */
@@ -1401,6 +1397,15 @@ footer {
   scrollbar-width: none;
 }
 
+.l_f_8474018e {
+overflow: hidden;
+padding: 0%;
+}
+
+.n_b_d71df89c { 
+  overflow: hidden;
+}
+
 /* *::-webkit-scrollbar {
     scrollbar-width: none !important;
   } */
@@ -1433,7 +1438,7 @@ footer {
   }
 
   .menu-card {
-    min-height: calc(80vh - 73px) !important;
+    min-height: calc(-196px + 103vh);
     max-height: 100%;
   }
 }
@@ -1462,6 +1467,7 @@ footer {
 .MainContent {
   flex: 1;
   margin-left: 30px;
+  min-height: 80vh;
 }
 
 /* Custom CSS for increasing the size of stars */
@@ -1512,3 +1518,72 @@ footer {
     max-width: none !important;
   }
 }
+
+/* Default styles for the ms-Grid class */
+.mainPage {
+  display: flex;
+  flex-direction: row; /* Align items in a row */
+  justify-content: space-between; /* Distribute space between child elements */
+  width: 100%; /* Ensure the grid takes full width */
+  /* padding: 10px; Add some padding around */
+  box-sizing: border-box; /* Ensure padding does not overflow the grid */
+  height: 100vh;
+}
+
+/* Responsive for screens less than 1024px (Tablets and below) */
+@media screen and (max-width: 1024px) {
+  .mainPage {
+    flex-direction: column; /* Stack the items vertically */
+    padding: 15px; /* Add extra padding for smaller screens */
+  }
+}
+
+/* Responsive for screens less than 768px (Mobile devices) */
+@media screen and (max-width: 768px) {
+  .mainPage {
+    flex-direction: column; /* Stack the items vertically */
+    padding: 20px; /* Add extra padding */
+  }
+}
+.a_b_cb6f7c2e:not(.e_b_cb6f7c2e){
+  padding-left: 0%;
+}
+
+.CanvasComponent.LCS .CanvasSection-col {
+  position: fixed;
+  width: 94%;
+  padding-left: 0%;
+  padding-right: 0%;
+}
+
+.BreadCrumbScroll {
+  height: calc(-257px + 100vh);
+  overflow-y: auto;
+  width: 106%;
+  margin-top: -2%;
+  margin-left: -27px;
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+ 
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .disabledBold textarea{
+    color: black;
+  }
+
+  .TableButton {
+    font-size: 38px;
+    margin-top: 1%;
+    margin-left: 6%;
+    min-width: 119px;
+    height: 30px;
+  }
+  
+  .CanvasSection{
+    padding-left: 0% !important;
+    padding-right: 0% !important;
+  }

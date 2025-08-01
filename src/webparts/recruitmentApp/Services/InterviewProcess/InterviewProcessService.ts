@@ -175,9 +175,9 @@ export default class InterviewProcessService
       const candidateItems = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Select:
-          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName,Status/ID,Status/StatusDescription,ID",
+          "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,Status/ID,Status/StatusDescription,ID",
         Expand:
-          "JobCode,AssignByInterviewPanel,RecruitmentID,ExternalAgentDetails,Status",
+          "JobCode,AssignByInterviewPanel,RecruitmentID,Status",
         Filter: filterParam,
         FilterCondition: filterConditions,
         Topcount: count.Topcount,
@@ -248,6 +248,11 @@ export default class InterviewProcessService
           const fullName = `${item?.FristName ?? ""} ${item?.MiddleName ?? ""
             } ${item?.LastName ?? ""}`.trim();
 
+          // const originalDateStr = item?.InterviewDate;
+          // const originalDate = new Date(originalDateStr);
+          // const nextDate = new Date(originalDate.getTime() + 24 * 60 * 60 * 1000);
+          // const nextDateStr = nextDate.toISOString();
+
           return {
             SNO: index + 1,
             ID: item.ID,
@@ -280,9 +285,7 @@ export default class InterviewProcessService
             ShortlistedValue: "",
             PositionTitle: item.PositionTitle,
             JobGrade: item.JobGrade,
-            ExternalAgentDetails: item?.ExternalAgentDetails
-              ? { AgentName: item?.ExternalAgentDetails?.AgentName }
-              : null,
+            ExternalAgentDetails: { AgentName: item?.ExternalAgentDetails },
             HRMSCandidateScoreCard: positionResult?.data || [],
             GPA: lastCandidateGPA,
             JobRequestID: item?.JobRequestID,
@@ -295,12 +298,15 @@ export default class InterviewProcessService
             InterviewLinkLevel2: item?.InterviewLinkLevel2,
             CandidateComments: CommentResult,
             CandidateResumeLink: resumeLink,
+            ConflictsOfInterest: item?.ConflictsOfInterest,
+            disability: item?.Disability,
+            disabilityReason: item?.DisabilityDetails
           };
         })
       );
 
       CandidateDetails.push(...formattedItems);
-      console.log("Final Combined Candidate Details:", CandidateDetails);
+      // console.log("Final Combined Candidate Details:", CandidateDetails);
 
       return {
         data: CandidateDetails,
@@ -324,7 +330,7 @@ export default class InterviewProcessService
     candidateID: number,
     EmployeeList: Employee[]
   ): Promise<ApiResponse<(InterviewPanelItem & CommentsData)[]>> {
-    console.log("Fetching interview panel details...");
+    // console.log("Fetching interview panel details...");
 
     return SPServices.SPReadItems({
       Listname: ListNames.HRMSInterviewPanelDetails,
@@ -795,7 +801,8 @@ export default class InterviewProcessService
       const payload = {
         ActionId: obj.ActionId,
         ItemCreated: obj.ItemCreated,
-        Comments: obj.Comments, // Include Comments in the payload
+        Comments: obj.Comments,
+        GPA: obj.GPA // Include Comments in the payload
       };
 
       await SPServices.SPUpdateItem({
@@ -901,7 +908,7 @@ export default class InterviewProcessService
           CandidateID: item?.CandidateID?.ID || 0,
           RecruitmentID: item?.RecruitmentID?.ID || 0,
         }));
-      console.log("Selected Candidate Details:", selectedCandidateDetails);
+      // console.log("Selected Candidate Details:", selectedCandidateDetails);
       return {
         data: selectedCandidateDetails,
         status: 200,
@@ -962,6 +969,72 @@ export default class InterviewProcessService
         data: null,
         status: 400,
         message: "Error On Posting Data",
+      };
+    }
+  }
+
+  async GetPanelLeveldata(
+    filterConditions: any[] = [],
+    EmployeeList: any[]
+  ): Promise<ApiResponse<Record<string, string[]>>> {
+    try {
+      const listItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSInterviewPanelDetails,
+        Select:
+          "ID, CandidateID/ID, RecruitmentID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail,IsScoreSheetUploaded",
+        Expand: "InterviewPanel,RecruitmentID,CandidateID",
+        Filter: filterConditions,
+      });
+
+      // console.log("Fetched listItems:", listItems);
+
+      // Group by InterviewLevel
+      const groupedByLevel: Record<string, Set<string>> = {};
+
+      listItems.forEach((item) => {
+        const level = item.InterviewLevel || "Unknown";
+        const email = item.InterviewPanel?.EMail?.toLowerCase() || "";
+
+        const matchedEmployee = EmployeeList.find(
+          (emp: any) => emp.Email?.toLowerCase() === email
+        );
+
+        // console.log(`Matching employee for email ${email}:`, matchedEmployee);
+
+        const fullName = matchedEmployee
+          ? `${matchedEmployee.FirstName ?? ""} ${matchedEmployee.MiddleName ?? ""} ${matchedEmployee.LastName ?? ""}`.trim()
+          : item.InterviewPanel?.Title || "Unknown";
+
+        // console.log(`Level: ${level}, Full Name: ${fullName}`);
+
+        if (!groupedByLevel[level]) {
+          groupedByLevel[level] = new Set();
+        }
+
+        groupedByLevel[level].add(fullName);
+      });
+
+      // Convert Sets to Arrays with guard
+      const result: Record<string, string[]> = {};
+      for (const level in groupedByLevel) {
+        if (Object.prototype.hasOwnProperty.call(groupedByLevel, level)) {
+          result[level] = Array.from(groupedByLevel[level]);
+        }
+      }
+
+      // console.log("Grouped result:", result);
+
+      return {
+        data: result,
+        status: 200,
+        message: "Interview Panel grouped by level successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching interview panel details:", error);
+      return {
+        data: {},
+        status: 400,
+        message: "Error fetching data",
       };
     }
   }

@@ -9,9 +9,11 @@ import {
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
   HRMSAlertOptions,
+  InterviewLevels,
   ListNames,
   RecuritmentHRMsg,
   RoleID,
+  RoleName,
   StatusId,
   TabName,
   WorkflowAction,
@@ -55,7 +57,10 @@ const CandidateList = (props: any) => {
 
       const grade = vrrResponse.data[0]?.PatersonGrade;
       const gradeLevelResponse = await CommonServices.GetGradeLevel(grade);
-      const level = gradeLevelResponse.data[0]?.Level;
+      const level =
+        gradeLevelResponse.data[0]?.Level === InterviewLevels.Level2
+          ? InterviewLevels.Levels2
+          : gradeLevelResponse.data[0]?.Level;
 
       const candidateFilter = [
         {
@@ -111,6 +116,7 @@ const CandidateList = (props: any) => {
       void fetchAllData();
     }
   }, [props?.stateValue?.JobCode, props?.stateValue?.ID]);
+
   const handleRedirectView = (
     rowData: any,
     tab: string,
@@ -118,23 +124,50 @@ const CandidateList = (props: any) => {
     ButtonAction: string,
     previousTabName: string
   ) => {
-    if (props.CurrentRoleID === RoleID.HOD && tab === "tab1") {
-      props.navigation("/RecurimentProcess/HodViewScorecard", {
-        state: {
-          ID: rowData?.ID,
-          tab,
-          StatusId: rowData?.StatusId,
-          Status: rowData?.Status,
-          PreviousTabName: previousTabName,
-          TabName,
-          ButtonAction,
-          InterviewLevel: rowData?.InterviewLevel,
-          RecruitmentID: rowData?.RecruitmentID,
-          JobCodeId: props.stateValue.JobCodeId,
-          Department: props.stateValue.Department,
-          GPA:rowData.GPA,
+    let SelectedCandidate = CandidateData.filter(
+      (item) => item.StatusId === StatusId.Selected
+    );
+    const canView = rowData.StatusId === StatusId.RejectedbyHOD;
+    if (
+      props.stateValue.NoOfPosition <= SelectedCandidate?.length &&
+      rowData.StatusId !== StatusId.Selected &&
+      !canView
+    ) {
+      let ErrorMsg = {
+        Message: RecuritmentHRMsg.SelectedCandidateValidation,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            // props.navigation("/RecurimentProcess");
+            setAlertPopupOpen(false);
+          }
         },
-      });
+      };
+
+      setAlertPopupOpen(true);
+      setalertProps(ErrorMsg);
+      setIsLoading(false);
+    } else {
+      if (props.CurrentRoleID.includes(RoleID.HOD) && tab === "tab1") {
+        props.navigation("/RecurimentProcess/HodViewScorecard", {
+          state: {
+            ID: rowData?.ID,
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            PreviousTabName: previousTabName,
+            TabName,
+            ButtonAction,
+            InterviewLevel: rowData?.InterviewLevel,
+            RecruitmentID: rowData?.RecruitmentID,
+            JobCodeId: props.stateValue.JobCodeId,
+            Department: props.stateValue.Department,
+            GPA: rowData.GPA,
+            NoOfPosition: props.stateValue.NoOfPosition,
+          },
+        });
+      }
     }
   };
 
@@ -174,7 +207,14 @@ const CandidateList = (props: any) => {
 
         return (
           <div
-            style={{ display: "flex", gap: "5px", justifyContent: "center" }}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px", // slightly more space for small screens
+              flexWrap: "wrap", // allow wrapping on smaller screens
+            }}
           >
             {canEdit && (
               <img
@@ -189,7 +229,12 @@ const CandidateList = (props: any) => {
                     previousTabName
                   )
                 }
-                style={{ width: "70%", height: "60%", cursor: "pointer" }}
+                style={{
+                  width: "50%",
+                  height: "auto",
+                  maxWidth: "40px",
+                  cursor: "pointer",
+                }}
               />
             )}
             {canView && (
@@ -205,7 +250,12 @@ const CandidateList = (props: any) => {
                     previousTabName
                   )
                 }
-                style={{ width: "70%", height: "60%", cursor: "pointer" }}
+                style={{
+                  width: "50%",
+                  height: "auto",
+                  maxWidth: "40px",
+                  cursor: "pointer",
+                }}
               />
             )}
           </div>
@@ -227,7 +277,7 @@ const CandidateList = (props: any) => {
         workflowStatus: workflowStatusApi.CandidateRejectedIPanel,
         jobRequestId: Number(candidate.JobRequestID),
         comments: candidate.Comments || "",
-        actionBy: props.CurrentUserRole,
+        actionBy: RoleName.HOD,
       };
 
       const actionPayload = {
@@ -235,6 +285,7 @@ const CandidateList = (props: any) => {
         Id: candidate.ID,
         ItemCreated: "Yes",
         Comments: candidate.Comments || "",
+        GPA: candidate.GPA,
       };
 
       try {
@@ -318,6 +369,15 @@ const CandidateList = (props: any) => {
     }
   }, [activeTab, tabs, props.stateValue, TabNameData]);
 
+  function back_fn() {
+    props.navigation("/RecurimentProcess", {
+      state: {
+        TabName: props.stateValue?.TabName,
+        tab: props.stateValue?.tab,
+      },
+    });
+  }
+
   return (
     <CustomLoader isLoading={isLoading}>
       <div className="menu-card">
@@ -326,6 +386,14 @@ const CandidateList = (props: any) => {
           initialItem={activeTab}
           TabName={TabNameData}
           onBreadcrumbChange={handleBreadcrumbChange}
+          additionalButtons={[
+            {
+              label: "Back",
+              onClick: async () => {
+                back_fn();
+              },
+            },
+          ]}
         />
       </div>
       {AlertPopupOpen && (

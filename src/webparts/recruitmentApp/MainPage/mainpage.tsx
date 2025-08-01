@@ -11,7 +11,7 @@ import CommanTemplate from "../components/CommanTemplate";
 import AssignInterviewPanel from "../Screens/RecuritmentProcess/AssignInterviewPanel";
 import InterviewPanelList from "../Screens/InterviewPanel/InterviewPanelList";
 import InterviewPanelEdit from "../Screens/InterviewPanel/InterviewPanelEdit";
-import Emptypage from "../Screens/EmptyPage/EmptyPage";
+// import Emptypage from "../Screens/EmptyPage/EmptyPage";
 import CandidateList from "../Screens/RecuritmentProcess/CandidateList";
 import ReviewProfileList from "../Screens/ReviewProfile/ReviewProfileList";
 import ReviewCandidateList from "../Screens/ReviewProfile/ReviewCandidateList";
@@ -19,6 +19,11 @@ import ViewCandidateDetails from "../Screens/ReviewProfile/ViewCandidateDetails"
 import HodViewScorecard from "../Screens/RecuritmentProcess/HodViewScorecard";
 import InterviewQuesEdit from "../Screens/ReviewProfile/InterviewQuesEdit";
 import ReviewProfileEdit from "../Screens/ReviewProfile/ReviewProfileEdit";
+import UploadCandidateCV from "../Screens/UploadCandidateCV/UploadCandidateCV";
+import UploadCandidateList from "../Screens/UploadCandidateCV/UploadCandidateList";
+import UploadOfferDocumentList from "../Screens/OfferMedicalProcess/UploadOfferDocumentList";
+import UploadCandidateDocument from "../Screens/OfferMedicalProcess/UploadCandidateDocument";
+
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
 
@@ -27,9 +32,11 @@ export default function MainPage(props: any) {
   const toggleSideNav = () => {
     setIsExpanded((prevState: any) => !prevState);
   };
+  console.log("Recruitment-App(30-July-2025) V-1.0 UAT");
+  // console.log("masterData", masterData);
 
   return (
-    <div style={{ display: "flex", flexDirection: "row" }} className=" ms-Grid">
+    <div className="mainPage">
       <div
         style={{ width: isExpanded ? "15%" : "6%" }}
         // onMouseEnter={() => { setIsExpanded(true) }}
@@ -44,25 +51,28 @@ export default function MainPage(props: any) {
           flexDirection: "column",
         }}
       >
-        <MainPageHeader
-          toggleSideNav={toggleSideNav}
-          userName={
-            (masterData?.userDetails[0]?.FirstName ?? "") +
-            " " +
-            (masterData?.userDetails[0]?.MiddleName ?? "") +
-            " " +
-            (masterData?.userDetails[0]?.LastName ?? "")
-          }
-          userRole={userRole}
-          Department={masterData?.userDetails[0]?.DepartmentName}
-        >
+        <div style={{ position: "fixed", width: "84%" }}>
+          <MainPageHeader
+            toggleSideNav={toggleSideNav}
+            userName={
+              (masterData?.userDetails[0]?.FirstName ?? "") +
+              " " +
+              (masterData?.userDetails[0]?.MiddleName ?? "") +
+              " " +
+              (masterData?.userDetails[0]?.LastName ?? "")
+            }
+            userRole={userRole}
+            Department={masterData?.userDetails[0]?.DepartmentName}
+          />
+        </div>
+        <div style={{ marginTop: "7%" }}>
           {ADGroupData?.ADGroupIDs ? (
             <>
               <Routes>
-                <Route
-                  path="/"
-                  element={<Emptypage {...props} {...masterData} />}
-                />
+                {/* <Route
+                        path="/"
+                        element={<Emptypage {...props} {...masterData} />}
+                      /> */}
                 <Route
                   path="/RecurimentProcess"
                   element={<RecruitmentProcess {...props} {...masterData} />}
@@ -82,6 +92,14 @@ export default function MainPage(props: any) {
                 <Route
                   path="/CommanTemplate/CommanTemplate"
                   element={<CommanTemplate {...props} {...masterData} />}
+                />
+                <Route
+                  path="/RecurimentProcess/ReviewCandidateList"
+                  element={<ReviewCandidateList {...props} {...masterData} />}
+                />
+                <Route
+                  path="/RecurimentProcess/ReviewCandidateList/ViewCandidateDetails"
+                  element={<ViewCandidateDetails {...props} {...masterData} />}
                 />
                 <Route
                   path="/ReviewProfileList"
@@ -146,12 +164,40 @@ export default function MainPage(props: any) {
                 />
                 {/* sneka */}
                 <Route
+                  path="/RecurimentProcess/InterviewQuesEdit"
+                  element={<InterviewQuesEdit {...props} {...masterData} />}
+                />
+                <Route
                   path="/ReviewProfileList/InterviewQuesEdit"
                   element={<InterviewQuesEdit {...props} {...masterData} />}
                 />
                 <Route
                   path="/ReviewProfileList/ReviewProfileEdit"
                   element={<ReviewProfileEdit {...props} {...masterData} />}
+                />
+
+                {/* Upload CV */}
+                <Route
+                  path="/RecurimentProcess/UploadCandidateList/UploadCandidateCV"
+                  element={<UploadCandidateCV {...props} {...masterData} />}
+                />
+                <Route
+                  path="/RecurimentProcess/UploadCandidateList"
+                  element={<UploadCandidateList {...props} {...masterData} />}
+                />
+
+                {/* Offer Letter */}
+                <Route
+                  path="/UploadOfferDocumentList"
+                  element={
+                    <UploadOfferDocumentList {...props} {...masterData} />
+                  }
+                />
+                <Route
+                  path="/UploadOfferDocumentList/UploadDocument"
+                  element={
+                    <UploadCandidateDocument {...props} {...masterData} />
+                  }
                 />
               </Routes>
             </>
@@ -171,7 +217,7 @@ export default function MainPage(props: any) {
               </div>
             </>
           )}
-        </MainPageHeader>
+        </div>
       </div>
     </div>
   );
