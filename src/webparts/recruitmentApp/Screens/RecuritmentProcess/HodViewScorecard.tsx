@@ -20,6 +20,7 @@ import {
   RecuritmentHRMsg,
   ResponeStatus,
   RoleID,
+  RoleName,
   RoleProfileMaster,
   StatusId,
   TabName,
@@ -2017,7 +2018,7 @@ const HodViewScorecard = (props: any) => {
           workflowStatus,
           jobRequestId: Number(CandidateData.JobRequestID),
           comments: CandidateData.Comments,
-          actionBy: props.CurrentUserRole,
+          actionBy: RoleName.HOD,
         });
 
         let obj: ActionUpdate = {
@@ -2115,6 +2116,7 @@ const HodViewScorecard = (props: any) => {
           obj,
           ListNames.HRMSRecruitmentCandidatePersonalDetails
         );
+        await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
 
         if (selectionResponse.status === 200) {
           setAlertPopupOpen(true);
