@@ -197,7 +197,8 @@ export default class RecruitmentService implements IRecruitmentService {
               JobPostingFirstExtensionEndDate: undefined,
               JobPostingSecondExtensionEndDate: undefined,
 
-              AssignEMail: ""
+              AssignEMail: "",
+              AssignHOD: "",
             };
             return item;
           })
@@ -342,7 +343,8 @@ export default class RecruitmentService implements IRecruitmentService {
               JobPostingFirstExtensionEndDate: undefined,
               JobPostingSecondExtensionEndDate: undefined,
 
-              AssignEMail: ""
+              AssignEMail: "",
+              AssignHOD: " "
             };
             return NPData;
           })
@@ -676,7 +678,7 @@ export default class RecruitmentService implements IRecruitmentService {
               IsPayrollEmailed: item?.IsPayrollEmailed || "",
               AssignedHR: " ",// item?.AssignedHR?.Title || "",
               AssignedHRId: 0, //item?.AssignedHRId || 0,
-              AssignLineManager: item?.AssignLineManager?.Title || "",
+              AssignLineManager: item?.LineManager || "",
               AssignLineManagerId: item?.AssignLineManagerId || 0,
               ReasonForVacancy: item?.ReasonForVacancy || "",
 
@@ -685,7 +687,8 @@ export default class RecruitmentService implements IRecruitmentService {
               JobPostingFirstExtensionEndDate: item?.JobPostingFirstExtensionEndDate || undefined,
               JobPostingSecondExtensionEndDate: item?.JobPostingSecondExtensionEndDate || undefined,
 
-              AssignEMail: item?.AssignedHR
+              AssignEMail: item?.AssignedHR,
+              AssignHOD: item?.HOD
             };
             return Recruitment;
 
@@ -1879,6 +1882,73 @@ export default class RecruitmentService implements IRecruitmentService {
             error
           );
         });
+      return {
+        data: GetItem,
+        status: 200,
+        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+        error
+      );
+      return {
+        data: GetItem,
+        status: 500,
+        message:
+          "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+      };
+    }
+  }
+
+  async GetcountInEvalution(
+    CurrentUser: string,
+  ): Promise<ApiResponse<any>> {
+    let GetItem: any = [];
+    try {
+      const getCurrentUserEmailID = await CommonServices.getUserGuidByEmail(
+        CurrentUser
+      );
+      const listItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSInterviewPanelDetails,
+        Select:
+          "ID, CandidateID/ID, RecruitmentID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail,IsScoreSheetUploaded",
+        Expand: "InterviewPanel,RecruitmentID,CandidateID",
+        Filter: [{
+          FilterKey: "InterviewPanelId",
+          Operator: "eq",
+          FilterValue: getCurrentUserEmailID.data?.key,
+        },],
+      });
+      const candidateIDs = listItems.map(
+        (panel: any) => panel?.CandidateID?.ID
+      );
+      const candidateItems = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Filter: [
+          {
+            FilterKey: "StatusId",
+            Operator: "in",
+            FilterValue: [
+              StatusId.InterviewScheduled,
+              StatusId.InterviewScheduledforLevel2,
+            ],
+          },
+          {
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: "No",
+          },
+          {
+            FilterKey: "ID",
+            Operator: "in",
+            FilterValue: candidateIDs,
+          }
+        ],
+        FilterCondition: "and",
+        Topcount: count.Topcount,
+      });
+      GetItem.push(candidateItems)
       return {
         data: GetItem,
         status: 200,

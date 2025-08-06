@@ -25,7 +25,7 @@ import {
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Card, CardContent } from "@mui/material";
 import { AutoCompleteItem } from "../../Models/Screens";
-import { JobCodeTilte } from "../../Models/RecuritmentVRR";
+import { JobCodeTilte, tabCount } from "../../Models/RecuritmentVRR";
 import {
   DataSyncToRecruitmentResponse,
   InsertComments,
@@ -96,6 +96,19 @@ const RecruitmentProcess = (props: any) => {
       AssignRecruitmentHR: false,
       AssignRecruitmentAgencies: false,
     });
+
+  const [pendingcount, setPendingCount] = React.useState<tabCount>({
+    AssignHRCount: 0,
+    UploadONEMCount: 0,
+    UploadAdvertisementCount: 0,
+    AssignAgencyCount: 0,
+    ReviewLineManagerCount: 0,
+    ReviewHODCount: 0,
+    lineManagerInterviewCount: 0,
+    HODReviewScoreCount: 0,
+    EvaluationCount: 0,
+    advertExtensionCount: 0,
+  });
 
   const storedStringRef = React.useRef("");
 
@@ -555,6 +568,101 @@ const RecruitmentProcess = (props: any) => {
     setIsLoading(false);
   };
 
+  const pendingcountTabs = async () => {
+    setIsLoading(true);
+    try {
+      const recrutimentData = await getVRRDetails.GetRecruitmentDetails(
+        [
+          {
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          },
+        ],
+        ""
+      );
+      if (recrutimentData.status === ResponeStatus.SUCCESS) {
+        const AssignHRCount = await getVRRDetails.GetJobTitleInNPEP(
+          [
+            {
+              FilterKey: "StatusId",
+              Operator: "eq",
+              FilterValue: StatusId.Completed,
+            },
+            {
+              FilterKey: "IsDataSyncToRecruitment",
+              Operator: "eq",
+              FilterValue: Choices.Yes,
+            },
+            {
+              FilterKey: "ItemCreated",
+              Operator: "eq",
+              FilterValue: Choices.No,
+            },
+          ],
+          "and",
+          props
+        );
+
+        const UploadONEMCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+        );
+
+        const UploadAdvertismentCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv &&
+            item.AssignEMail === props.userDetails[0]?.EmailId
+        );
+        const InterviewQuestionCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId ===
+              StatusId.PendingwithHRandLMtocreateinterviewQuestion ||
+            (item.StatusId ===
+              StatusId.PendingwithLMcreateDisqualificationQuestion &&
+              item.AssignLineManager === props.userDetails[0]?.EmailId)
+          // (item.AssignEMail === props.userDetails[0]?.EmailId ||
+        );
+
+        const ReviewLinemanagerCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.PendingwithLineManagereviewAdv &&
+            item.AssignLineManager === props.userDetails[0]?.EmailId
+        );
+
+        const ReviewHODCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.PendingwithHODtoreviewAdv &&
+            item.AssignHOD === props.userDetails[0]?.EmailId
+        );
+        // const AssignAgenciesCount = recrutimentData.data.filter(
+        //   (item) =>
+        //     item.StatusId === StatusId.RecruitmentInProgress &&
+        //     item.AssignEMail === props.userDetails[0]?.EmailId
+        // );
+
+        const Evalution = await getVRRDetails.GetcountInEvalution(
+          props.CurrentUserEmailId
+        );
+
+        setPendingCount((prevState) => ({
+          ...prevState,
+          AssignHRCount: AssignHRCount.data.length,
+          UploadONEMCount: UploadONEMCount.length,
+          UploadAdvertisementCount: UploadAdvertismentCount.length,
+          lineManagerInterviewCount: InterviewQuestionCount.length,
+          ReviewLineManagerCount: ReviewLinemanagerCount.length,
+          ReviewHODCount: ReviewHODCount.length,
+          // AssignAgencyCount: AssignAgenciesCount.length,
+          EvaluationCount: Evalution.data[0].length,
+        }));
+      }
+    } catch (error) {
+      console.log("Error in pendingcountTabs", error);
+    }
+    setIsLoading(false);
+  };
+
   React.useEffect(() => {
     if (props.stateValue) {
       storedStringRef.current = props.stateValue?.TabName;
@@ -574,6 +682,7 @@ const RecruitmentProcess = (props: any) => {
     const fetchDataAndGetADGroupsOption = async () => {
       try {
         await fetchData(props.TabDetails[0]);
+        await pendingcountTabs();
         // if (props.stateValue?.activeTab) {
         //   setActiveTab(props.stateValue.activeTab);
         // }
@@ -596,6 +705,7 @@ const RecruitmentProcess = (props: any) => {
 
   const handleRefresh = (tab: string) => {
     void fetchData(props.TabDetails[0]?.[0]?.Value);
+    void pendingcountTabs();
   };
 
   const onPageChange = (event: any) => {
@@ -887,6 +997,7 @@ const RecruitmentProcess = (props: any) => {
                       setAlertPopupOpen(false);
                       setIsLoading(false);
                       await fetchData(props.TabDetails[0]?.[0]?.Value);
+                      await pendingcountTabs();
                     }
                   },
                 };
@@ -1098,6 +1209,7 @@ const RecruitmentProcess = (props: any) => {
                   setAlertPopupOpen(false);
                   setIsLoading(false);
                   await fetchData(props.TabDetails[0]?.[0]?.Value);
+                  await pendingcountTabs();
                 }
               },
             };
@@ -1186,8 +1298,49 @@ const RecruitmentProcess = (props: any) => {
     }
   };
 
+  const getTabLabel = (tab: any) => {
+    switch (tab.TabName) {
+      case TabName.AssignRecuritmentHR:
+        return pendingcount?.AssignHRCount > 0
+          ? `${tab.TabName} (${pendingcount.AssignHRCount})`
+          : tab.TabName;
+      case TabName.UploadONEMDoc:
+        return pendingcount?.UploadONEMCount > 0
+          ? `${tab.TabName} (${pendingcount.UploadONEMCount})`
+          : tab.TabName;
+      case TabName.UploadAdvertisement:
+        return pendingcount?.UploadAdvertisementCount > 0
+          ? `${tab.TabName} (${pendingcount.UploadAdvertisementCount})`
+          : tab.TabName;
+      case TabName.ReviewJobAdvertisement:
+        if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+          return pendingcount?.ReviewLineManagerCount > 0
+            ? `${tab.TabName} (${pendingcount.ReviewLineManagerCount})`
+            : tab.TabName;
+        } else {
+          return pendingcount?.ReviewHODCount > 0
+            ? `${tab.TabName} (${pendingcount.ReviewHODCount})`
+            : tab.TabName;
+        }
+      case TabName.AssignAgencies:
+        return pendingcount?.AssignAgencyCount > 0
+          ? `${tab.TabName} (${pendingcount.AssignAgencyCount})`
+          : tab.TabName;
+      case TabName.InterviewQuestion:
+        return pendingcount?.lineManagerInterviewCount > 0
+          ? `${tab.TabName} (${pendingcount.lineManagerInterviewCount})`
+          : tab.TabName;
+      case TabName.Evaluation:
+        return pendingcount?.EvaluationCount > 0
+          ? `${tab.TabName} (${pendingcount.EvaluationCount})`
+          : tab.TabName;
+      default:
+        return tab.TabName;
+    }
+  };
+
   const tabs = TabNameData.map((tab: TabDetails) => ({
-    label: tab.TabName,
+    label: getTabLabel(tab), //  `${tab.TabName} (${data.length})`,
     value: tab.Value,
     content: (
       <Card

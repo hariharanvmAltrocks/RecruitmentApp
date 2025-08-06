@@ -7,6 +7,8 @@ import TabsComponent from "../../components/TabsComponent ";
 import {
   ActionIcon,
   ButtonAction,
+  Choices,
+  ResponeStatus,
   RoleID,
   StatusId,
   TabName,
@@ -17,6 +19,12 @@ import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
 import SearchableDataTable from "../../components/CustomDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 
+type tabPendingCount = {
+  ReviewPrfileCount: number;
+  AssignInterviewPanelCount: number;
+  InterviewQuestionCount: number;
+  EvaluationCount: number;
+};
 const ReviewProfileList = (props: any) => {
   // console.log(props, "props in ReviewProfileList");
 
@@ -28,6 +36,12 @@ const ReviewProfileList = (props: any) => {
   const [TabNameData, setTabNameData] = React.useState<TabDetails[]>(
     props.TabDetails[0]
   );
+  const [pendingcount, setPendingCount] = React.useState<tabPendingCount>({
+    ReviewPrfileCount: 0,
+    AssignInterviewPanelCount: 0,
+    InterviewQuestionCount: 0,
+    EvaluationCount: 0,
+  });
   const storedStringRef = React.useRef("");
 
   const handleRedirectView = (
@@ -241,11 +255,52 @@ const ReviewProfileList = (props: any) => {
     }
   };
 
+  const pendingcountTabs = async () => {
+    setIsLoading(true);
+    try {
+      const recrutimentData = await getVRRDetails.GetRecruitmentDetails(
+        [
+          {
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          },
+        ],
+        ""
+      );
+      if (recrutimentData.status === ResponeStatus.SUCCESS) {
+        const InterviewQuestionCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId ===
+              StatusId.PendingwithHRandLMtocreateinterviewQuestion ||
+            (item.StatusId ===
+              StatusId.PendingwithLMcreateDisqualificationQuestion &&
+              item.AssignLineManager === props.userDetails[0]?.EmailId)
+          // (item.AssignEMail === props.userDetails[0]?.EmailId ||
+        );
+
+        const Evalution = await getVRRDetails.GetcountInEvalution(
+          props.CurrentUserEmailId
+        );
+
+        setPendingCount((prevState) => ({
+          ...prevState,
+          InterviewQuestionCount: InterviewQuestionCount.length,
+          EvaluationCount: Evalution.data[0].length,
+        }));
+      }
+    } catch (error) {
+      console.log("Error in pendingcountTabs", error);
+    }
+    setIsLoading(false);
+  };
+
   React.useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
         await fetchRecuritmentData(props.TabDetails[0]);
+        await pendingcountTabs();
         let TabDetails: any;
         if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
           TabDetails = (props.TabDetails[0] ?? []).filter(
@@ -282,6 +337,7 @@ const ReviewProfileList = (props: any) => {
 
   const handleRefresh = (tab: string) => {
     void fetchRecuritmentData(props.TabDetails[0]);
+    void pendingcountTabs();
     setActiveTab(tab);
   };
 
@@ -334,8 +390,31 @@ const ReviewProfileList = (props: any) => {
     }
   };
 
+  const getTabLabel = (tab: any) => {
+    switch (tab.TabName) {
+      case TabName.ReviewProfile:
+        return pendingcount?.ReviewPrfileCount > 0
+          ? `${tab.TabName} (${pendingcount.ReviewPrfileCount})`
+          : tab.TabName;
+      case TabName.AssignInterviewPanel:
+        return pendingcount?.AssignInterviewPanelCount > 0
+          ? `${tab.TabName} (${pendingcount.AssignInterviewPanelCount})`
+          : tab.TabName;
+      case TabName.InterviewQuestion:
+        return pendingcount?.InterviewQuestionCount > 0
+          ? `${tab.TabName} (${pendingcount.InterviewQuestionCount})`
+          : tab.TabName;
+      case TabName.Evaluation:
+        return pendingcount?.EvaluationCount > 0
+          ? `${tab.TabName} (${pendingcount.EvaluationCount})`
+          : tab.TabName;
+      default:
+        return tab.TabName;
+    }
+  };
+
   const tabs = TabNameData.map((tab: TabDetails) => ({
-    label: tab.TabName,
+    label: getTabLabel(tab), //tab.TabName,
     value: tab.Value,
     content: (
       <Card

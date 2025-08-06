@@ -2008,7 +2008,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         StatusId.PendingwithLMcreateDisqualificationQuestion && (
                         <Box sx={{ mb: 2, width: "50%" }}>
                           <CustomRadioGroup
-                            label="Disqualification Question?"
+                            label="Is this a disqualification question?"
                             value={InterviewQuesData?.Disqualification ?? ""}
                             options={isDisqualificationOption}
                             error={ValidationError.Disqualification}

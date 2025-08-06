@@ -365,3 +365,16 @@ export type ValidationErrors = {
   YourRole: boolean;
   RegionProvince: boolean;
 };
+
+export type tabCount = {
+  AssignHRCount: number;
+  UploadONEMCount: number;
+  UploadAdvertisementCount: number;
+  AssignAgencyCount: number;
+  ReviewLineManagerCount: number;
+  ReviewHODCount: number;
+  lineManagerInterviewCount: number;
+  HODReviewScoreCount: number;
+  EvaluationCount: number;
+  advertExtensionCount: number;
+}
