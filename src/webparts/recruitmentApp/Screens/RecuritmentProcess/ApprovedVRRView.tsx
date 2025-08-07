@@ -7,6 +7,7 @@ import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import {
   ColorCode,
   DocumentLibraray,
+  labelName,
   RoleProfileMaster,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
@@ -685,7 +686,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     >
                       <div>
                         <CustomLabel
-                          value={"View Job Advertisement"}
+                          value={labelName.ViewJobAdvetisement}
                           // mandatory={true}
                         />
                         <ReuseButton
@@ -727,7 +728,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     style={{ position: "relative", right: "1px" }}
                   >
                     {/* <div className="ms-Grid-col ms-lg4"> */}
-                    <CustomLabel value={" View Justifications"} />
+                    <CustomLabel value={labelName.ViewComments} />
                     <ReuseButton
                       Style={{
                         minWidth: "117px",

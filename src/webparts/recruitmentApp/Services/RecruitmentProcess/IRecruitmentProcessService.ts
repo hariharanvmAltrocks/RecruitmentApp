@@ -139,7 +139,8 @@ export type DataSyncToRecruitmentResponse = {
   JobPostingFirstExtensionEndDate: Date | undefined,
   JobPostingSecondExtensionEndDate: Date | undefined,
 
-  AssignEMail: string
+  AssignEMail: string,
+  AssignHRLead?: string;
 }
 
 export type JobCodeData = {
@@ -275,4 +276,8 @@ export type IRecruitmentService = {
   GetcountInEvalution(
     CurrentUser: string,
   ): Promise<ApiResponse<any>>;
+  GetADGroupUsers(
+    ADGroupID: string,
+    Role: string
+  ): Promise<ApiResponse<{ Key: string; Value: string }>>;
 };

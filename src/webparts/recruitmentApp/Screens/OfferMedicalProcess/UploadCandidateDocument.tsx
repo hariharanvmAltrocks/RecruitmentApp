@@ -1236,7 +1236,7 @@ const UploadCandidateDocument = (props: any) => {
                           <div className="ms-Grid-row">
                             <div className="ms-Grid-col ms-lg12">
                               <CustomTextArea
-                                label="Comments"
+                                label={labelName.Comment}
                                 value={data.TASystem.Comments}
                                 error={false}
                                 onChange={(value) =>
@@ -1477,7 +1477,7 @@ const UploadCandidateDocument = (props: any) => {
                               <div className="ms-Grid-row">
                                 <div className="ms-Grid-col ms-lg12">
                                   <CustomTextArea
-                                    label="Comments"
+                                    label={labelName.Comment}
                                     value={data.ITSystem.Comments}
                                     error={false}
                                     onChange={(value) =>
@@ -1519,7 +1519,7 @@ const UploadCandidateDocument = (props: any) => {
                         style={{ marginBottom: "7px" }}
                       >
                         <CustomTextArea
-                          label="Justification"
+                          label={labelName.Comment}
                           value={data.comments}
                           error={validationErrors.comments}
                           onChange={(value) =>
@@ -1833,10 +1833,10 @@ const UploadCandidateDocument = (props: any) => {
 
               let obj: UpdateCandidateData = {
                 InductionType: data.TrainingSystem?.Inductiontype.text,
-                TCSStartDate: SpiltDateOnly(data.TrainingSystem?.StartDate),
-                TCSEndDate: SpiltDateOnly(data.TrainingSystem?.EndDate),
-                TCSZone: data.TrainingSystem?.Zone.text,
-                TCSRegion: data.TrainingSystem?.Region.text,
+                // TCSStartDate: SpiltDateOnly(data.TrainingSystem?.StartDate),
+                // TCSEndDate: SpiltDateOnly(data.TrainingSystem?.EndDate),
+                // TCSZone: data.TrainingSystem?.Zone.text,
+                // TCSRegion: data.TrainingSystem?.Region.text,
                 TCSComments: data.TrainingSystem?.Comments,
                 PermanentBadgeStartDate: SpiltDateOnly(
                   data.TASystem?.StartDate

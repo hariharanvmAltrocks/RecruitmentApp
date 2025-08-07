@@ -46,6 +46,7 @@ import CheckboxDataTable from "../../components/CheckboxDataTable";
 import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
 import * as moment from "moment";
 import ReuseButton from "../../components/ReuseButton";
+import ToolTipButton from "../../components/Tooltip";
 
 export type formValidation = {
   Comments: boolean;
@@ -110,7 +111,60 @@ const RecruitmentProcess = (props: any) => {
     advertExtensionCount: 0,
   });
 
+  const [pendingInfo, setPendingInfo] = React.useState<any>(null);
   const storedStringRef = React.useRef("");
+
+  const handleHover = async (statusId: number, rowData: any) => {
+    let pendingName: any = null;
+    switch (statusId) {
+      case StatusId.Completed:
+        pendingName = (
+          await getVRRDetails.GetADGroupUsers(
+            rowData.AssignHRLead,
+            "RecruitmentHRLead"
+          )
+        ).data;
+        break;
+      case StatusId.PendingwithRecruitmentHRtouploadAdv:
+        pendingName = (
+          await getVRRDetails.GetADGroupUsers(
+            rowData.AssignEMail,
+            "RecruitmentHR"
+          )
+        ).data;
+        break;
+      case StatusId.PendingwithLineManagereviewAdv:
+        pendingName = (
+          await getVRRDetails.GetADGroupUsers(
+            rowData.AssignLineManager,
+            "LineManager"
+          )
+        ).data;
+        break;
+      case StatusId.PendingwithLMcreateDisqualificationQuestion:
+        pendingName = (
+          await getVRRDetails.GetADGroupUsers(
+            rowData.AssignLineManager,
+            "LineManager"
+          )
+        ).data;
+        break;
+      case StatusId.PendingwithHODtoreviewAdv:
+        pendingName = (
+          await getVRRDetails.GetADGroupUsers(rowData.AssignHOD, "HOD")
+        ).data;
+        break;
+      case StatusId.PendingwithHRLeadtouploadONEMsigneddoc:
+        pendingName = (
+          await getVRRDetails.GetADGroupUsers(rowData.AssignHRLead, "HRLead")
+        ).data;
+        break;
+      default:
+        pendingName = { Key: "N/A", Value: "No matching group" };
+        break;
+    }
+    setPendingInfo(pendingName);
+  };
 
   const columnConfig = (
     tab: string,
@@ -153,6 +207,25 @@ const RecruitmentProcess = (props: any) => {
       fieldName: "Status",
       sortable: false,
       body: (rowData: any) => {
+        const isTooltipStatus = [
+          StatusId.Completed,
+          StatusId.RecruitmentInProgress,
+        ].includes(rowData.StatusId);
+        if (!isTooltipStatus) {
+          return (
+            <div>
+              <ToolTipButton
+                Title=""
+                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                Rowdata={rowData}
+                ApproverData={pendingInfo}
+                onHover={() => handleHover(rowData.StatusId, rowData)}
+              />
+
+              <span>{rowData.Status}</span>
+            </div>
+          );
+        }
         return <span>{rowData.Status}</span>;
       },
     },
@@ -640,10 +713,12 @@ const RecruitmentProcess = (props: any) => {
         //     item.StatusId === StatusId.RecruitmentInProgress &&
         //     item.AssignEMail === props.userDetails[0]?.EmailId
         // );
-
-        const Evalution = await getVRRDetails.GetcountInEvalution(
-          props.CurrentUserEmailId
-        );
+        let Evalution = { data: [] };
+        if (props.CurrentRoleID.includes(RoleID.LineManager, RoleID.HOD)) {
+          Evalution = await getVRRDetails.GetcountInEvalution(
+            props.CurrentUserEmailId
+          );
+        }
 
         setPendingCount((prevState) => ({
           ...prevState,
@@ -654,7 +729,7 @@ const RecruitmentProcess = (props: any) => {
           ReviewLineManagerCount: ReviewLinemanagerCount.length,
           ReviewHODCount: ReviewHODCount.length,
           // AssignAgencyCount: AssignAgenciesCount.length,
-          EvaluationCount: Evalution.data[0].length,
+          EvaluationCount: Evalution ? Evalution.data[0] : 0,
         }));
       }
     } catch (error) {

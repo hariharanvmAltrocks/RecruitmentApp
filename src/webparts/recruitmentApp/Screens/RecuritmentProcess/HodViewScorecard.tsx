@@ -15,6 +15,7 @@ import {
   DocumentLibraray,
   HRMSAlertOptions,
   InterviewLevels,
+  labelName,
   // labelName,
   ListNames,
   RecuritmentHRMsg,
@@ -1262,7 +1263,7 @@ const HodViewScorecard = (props: any) => {
                       className="ms-Grid-col ms-lg4"
                       style={{ marginLeft: "-5px" }}
                     >
-                      <CustomLabel value={" View Justifications"} />
+                      <CustomLabel value={labelName.ViewComments} />
                       <ReuseButton
                         Style={{
                           minWidth: "117px",

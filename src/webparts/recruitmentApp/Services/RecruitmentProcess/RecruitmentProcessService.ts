@@ -688,7 +688,8 @@ export default class RecruitmentService implements IRecruitmentService {
               JobPostingSecondExtensionEndDate: item?.JobPostingSecondExtensionEndDate || undefined,
 
               AssignEMail: item?.AssignedHR,
-              AssignHOD: item?.HOD
+              AssignHOD: item?.HOD,
+              AssignHRLead: item?.RecruitmentHRLead || ""
             };
             return Recruitment;
 
@@ -1925,6 +1926,9 @@ export default class RecruitmentService implements IRecruitmentService {
       );
       const candidateItems = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Select:
+          "*,Status/ID,Status/StatusDescription,RecruitmentID/ID,JobCode/JobCode",
+        Expand: "Status,RecruitmentID,JobCode",
         Filter: [
           {
             FilterKey: "StatusId",
@@ -1942,7 +1946,7 @@ export default class RecruitmentService implements IRecruitmentService {
           {
             FilterKey: "ID",
             Operator: "in",
-            FilterValue: candidateIDs,
+            FilterValue: candidateIDs ? candidateIDs : [],
           }
         ],
         FilterCondition: "and",
@@ -1964,6 +1968,34 @@ export default class RecruitmentService implements IRecruitmentService {
         status: 500,
         message:
           "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+      };
+    }
+  }
+
+  async GetADGroupUsers(
+    RoleEmail: string,
+    Role: string
+  ): Promise<ApiResponse<{ Key: string; Value: string }>> {
+    try {
+      let AdGroupUser = await GetUserName(RoleEmail);
+      debugger
+      return {
+        data: {
+          Key: Role,
+          Value: AdGroupUser.data || "No users found"
+        },
+        status: 200,
+        message: "GetADGroupUsers Fetched successfully"
+      };
+    } catch (err) {
+      console.log("Error in GetADGroupUsers:", err);
+      return {
+        data: {
+          Key: Role,
+          Value: "Unable to fetch users"
+        },
+        status: 500,
+        message: "Error occurred while fetching user list"
       };
     }
   }
