@@ -2062,7 +2062,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         {formState.AdvertisementDocument.length > 0 ? (
                           <div className="ms-Grid-col ms-lg3 custom-document-column ">
                             <CustomLabel
-                              value={"Advertisement Documents(French)"}
+                              value={"Draft ONEM Advert Doc (French)"}
                             />
                             <CustomViewDocument
                               Attachment={formState.AdvertisementDocument}
@@ -2071,7 +2071,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         ) : (
                           <div className="ms-Grid-col ms-lg4">
                             <CustomLabel
-                              value={"Advertisement Document (Only PDF)"}
+                              value={"Draft ONEM AdvertDoc French(Only PDF)"}
                               mandatory={true}
                             />
                             <AttachmentButton
@@ -2198,7 +2198,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           className="ms-Grid-col ms-lg3"
                           style={{ marginLeft: "-5px" }}
                         >
-                          <CustomLabel value={"View Justifications"} />
+                          <CustomLabel value={labelName.ViewComments} />
                           <ReuseButton
                             Style={{
                               minWidth: "117px",
@@ -2296,7 +2296,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg12">
                       <CustomTextArea
-                        label="Justification"
+                        label={labelName.Comment}
                         value={formState.Comments}
                         error={validationErrors.Comments}
                         onChange={(value) =>
@@ -2404,7 +2404,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           >
                             <div>
                               <CustomLabel
-                                value={"View Advertisement"}
+                                value={labelName.ViewJobAdvetisement}
                                 // mandatory={true}
                               />
                               <ReuseButton
@@ -2459,7 +2459,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         />
                       )}
 
-                      <CustomLabel value={" View Justifications"} />
+                      <CustomLabel value={labelName.ViewComments} />
                       <ReuseButton
                         Style={{
                           minWidth: "117px",
@@ -2487,7 +2487,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg12">
                           <CustomTextArea
-                            label="Justification"
+                            label={labelName.Comment}
                             value={formState.Comments}
                             error={validationErrors.Comments}
                             onChange={(value) =>

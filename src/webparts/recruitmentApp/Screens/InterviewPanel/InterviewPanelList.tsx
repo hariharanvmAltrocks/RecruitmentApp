@@ -24,6 +24,9 @@ import * as moment from "moment";
 import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 
+// type tabCount = {
+//   EvalutionCount: number;
+// }
 const InterviewPanelList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
@@ -41,6 +44,9 @@ const InterviewPanelList = (props: any) => {
   );
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
   const storedStringRef = React.useRef("");
+  //  const [pendingcount, setPendingCount] = React.useState<tabCount>({
+  //     EvalutionCount: 0,
+  //   });
 
   function handleRedirectView(
     rowData: any,
@@ -575,8 +581,20 @@ const InterviewPanelList = (props: any) => {
     }
   };
 
+  const getTabLabel = (tab: any) => {
+    switch (tab.TabName) {
+      case TabName.Evaluation:
+        return CandidateData.length > 0
+          ? `${tab.TabName} (${CandidateData.length})`
+          : tab.TabName;
+
+      default:
+        return tab.TabName;
+    }
+  };
+
   const tabs = TabNameData.map((tab: TabDetails) => ({
-    label: tab.TabName,
+    label: getTabLabel(tab), //tab.TabName,
     value: tab.Value,
     content: (
       <Card

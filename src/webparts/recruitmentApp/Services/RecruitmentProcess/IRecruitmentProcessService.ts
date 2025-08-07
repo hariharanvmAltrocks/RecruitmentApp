@@ -131,6 +131,7 @@ export type DataSyncToRecruitmentResponse = {
   AssignedHRId: number;
   AssignLineManager: string;
   AssignLineManagerId: number;
+  AssignHOD: string;
   ReasonForVacancy: string;
 
   JobPostingStartDate: Date | undefined,
@@ -138,7 +139,8 @@ export type DataSyncToRecruitmentResponse = {
   JobPostingFirstExtensionEndDate: Date | undefined,
   JobPostingSecondExtensionEndDate: Date | undefined,
 
-  AssignEMail: string
+  AssignEMail: string,
+  AssignHRLead?: string;
 }
 
 export type JobCodeData = {
@@ -270,5 +272,12 @@ export type IRecruitmentService = {
     CandidateID: number,
     levels: string[],
     StatusID: number,
-  ): Promise<ApiResponse<InterviewPanelMember | null>>
+  ): Promise<ApiResponse<InterviewPanelMember | null>>;
+  GetcountInEvalution(
+    CurrentUser: string,
+  ): Promise<ApiResponse<any>>;
+  GetADGroupUsers(
+    ADGroupID: string,
+    Role: string
+  ): Promise<ApiResponse<{ Key: string; Value: string }>>;
 };

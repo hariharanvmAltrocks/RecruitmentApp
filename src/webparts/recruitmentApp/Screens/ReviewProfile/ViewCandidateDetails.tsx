@@ -1264,7 +1264,7 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomAutoComplete
-                            label="Review Profile Feedback - HR"
+                            label={labelName.ReviewProfileFeedback}
                             options={InterviewedLevel.CandidateScoreOption}
                             value={InterviewedLevel.CandidateScoreValue}
                             disabled={
@@ -1287,7 +1287,7 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomInput
-                            label="Review profile Feedback - HR"
+                            label={labelName.ReviewProfileFeedback}
                             value={CandidateProfile.hrComments}
                             disabled={true}
                             // mandatory={true}
@@ -1305,7 +1305,7 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomInput
-                            label="Review profile Feedback"
+                            label={labelName.ReviewProfileFeedback}
                             value={CandidateProfile.hrComments}
                             disabled={true}
                             // mandatory={true}
@@ -1320,7 +1320,7 @@ const ViewCandidateDetails = (props: any) => {
                   CandidateProfile.Comments.length > 0 && (
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg4">
-                        <CustomLabel value={"View Justifications"} />
+                        <CustomLabel value={labelName.ViewComments} />
                         <ReuseButton
                           Style={{
                             minWidth: "117px",
@@ -1358,7 +1358,7 @@ const ViewCandidateDetails = (props: any) => {
                         style={{ marginBottom: "7px" }}
                       >
                         <CustomTextArea
-                          label="Justification"
+                          label={labelName.Comment}
                           value={actionValue.Comments}
                           error={validationErrors.Comments}
                           onChange={(value) => handleInputChangeTextArea(value)}
@@ -2064,7 +2064,7 @@ const ViewCandidateDetails = (props: any) => {
           header={
             <>
               <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                <LabelHeaderComponents value="Justifications" />
+                <LabelHeaderComponents value={labelName.Comment} />
               </div>
             </>
           }
