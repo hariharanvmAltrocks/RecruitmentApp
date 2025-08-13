@@ -1,12 +1,13 @@
 import * as moment from "moment";
-import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, jobsApplied, profileDetailAttachments, profileJobsComments, profileXagent, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, jobsApplied, profileDetailAttachments, profileJobsComments, profileXagent, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { CommanQuestion, QuestionItem } from "../../Models/RecuritmentVRR";
 import { agentCode, CategoryID, DataType, DocumentLibraray, ListNames, ResponeStatus, RoleName, RoleProfileMaster, workflowStatusApi } from "../../utilities/Config";
 import { GetJobRequestData, getProfileData, GetStateByCountryApi, postAdveDetails, QuestionnaireApi, UploadCandidateCVData } from "../ReviewProfileService/ReviewCandidateService";
 import { CommonServices, GetPortalJobsService } from "../ServiceExport";
 import SPServices from "../SPService/SPServices";
-import { CandidateDetails, DocumentValue, IGetPortalJobs, RescheduledCandidate, UpsertDocument } from "./IGetPortalJobs";
+import { CandidateDetails, COIAttach, DocumentValue, IGetPortalJobs, RescheduledCandidate, UpsertDocument } from "./IGetPortalJobs";
 import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
+import { IDocFiles } from "../SPService/ISPServicesProps";
 
 export default class GetPortalJobs implements IGetPortalJobs {
   async UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>> {
@@ -239,6 +240,9 @@ export default class GetPortalJobs implements IGetPortalJobs {
           FamilyLink: FamilyLinkPath[0]?.document?.filePath,
           BusinessLink: BusinessLinkPath[0]?.document?.filePath,
           GPA: 0,
+
+          COIAppreve: op?.profile?.profileDetailCoi?.approver ?? "",
+          COIComments: op?.profile?.profileDetailCoi?.comments ?? ""
         };
 
         GetProfileByJobCodeData.push(GetProfileDahboard);
@@ -975,6 +979,87 @@ export default class GetPortalJobs implements IGetPortalJobs {
         data: [],
         status: 500,
         message: "Error Get Candidate details",
+      };
+    }
+  }
+
+  UploadCOIAttachment = async (
+    DocumentName: COIAttach,
+    AttachFile: IDocFiles[],
+  ): Promise<ApiResponse<any>> => {
+    try {
+      let response;
+      if (AttachFile.length > 0) {
+        response = await SPServices.addDocLibFiles({
+          FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
+          FolderNames: [`${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`],
+          Datas: AttachFile,
+        });
+
+        return {
+          data: response,
+          status: 200,
+          message: "Attachment replaced successfully",
+        };
+      }
+      return {
+        data: response,
+        status: 400,
+        message: "No attachments provided",
+      };
+    } catch (error) {
+      console.error("Error during file replacement process:", error);
+      return {
+        data: null,
+        status: 500,
+        message: `Error during file replacement: ${error.message}`,
+      };
+    }
+  };
+
+  fetchCOIAttachment = async (
+    DocumentName: COIAttach,
+  ): Promise<ApiResponse<any>> => {
+    try {
+      let response;
+      response = (await SPServices.getDocLibFiles({
+        FilePath: `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${DocumentName.RequestID}/${DocumentName.DocumentName}`,
+      })) as IDocFiles[];
+
+      return {
+        data: response,
+        status: 200,
+        message: "Attachment replaced successfully",
+      };
+    } catch (error) {
+      console.error("Error during file replacement process:", error);
+      return {
+        data: null,
+        status: 500,
+        message: `Error during file replacement: ${error.message}`,
+      };
+    }
+  };
+
+  async GetUpsertCOI(data: COIType): Promise<ApiResponse<any | null>> {
+    try {
+
+      const Response = await GetJobRequestData.UpsertCOI(data);
+      return {
+        data: Response.data,
+        status: Response.status,
+        message: Response.data.message,
+      };
+
+    } catch (error) {
+      console.error(
+        "Error inserting data into AdvertisementDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting data into AdvertisementDetails",
       };
     }
   }

@@ -61,7 +61,7 @@ function CommanComments({ onClose, Comments }: props) {
                           className="ms-Grid-col ms-lg12"
                           style={{ marginBottom: "2%" }}
                         >
-                          <Labelheader value="Justification" />
+                          <Labelheader value="Comments" />
 
                           <LabelValue value={item?.comments ?? "N/A"} />
                         </div>

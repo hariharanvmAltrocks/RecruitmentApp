@@ -49,10 +49,12 @@ import {
   UpdateCandidateData,
 } from "../../Services/InitiateOfferLetter/IOfferLetterService";
 import CustomRadioGroup from "../../components/CustomRadioGroup";
-import { Link, Tooltip } from "@mui/material";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomDatePicker from "../../components/CustomDatePicker";
+import CustomDialogbox from "../../components/CustomDialogbox";
+import ReuseButton from "../../components/ReuseButton";
+import { ViewCandidateDocument } from "../ScreenComponent/ViewCandidateDocument";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -65,10 +67,17 @@ type ValidationError = {
   ITRequired: boolean;
 };
 
-type viewDocument = {
+export type viewDocument = {
   ReviewOfferDoc: IDocFiles[];
   ReviewEmployDocs: IDocFiles[];
+  ReviewOthersDoc: IDocFiles[];
   ViewFolderPath: string;
+};
+
+export type CustomViewDocument = {
+  Title: string;
+  DocumentName: string;
+  DocumentContent: any;
 };
 
 type optionValue = {
@@ -138,9 +147,13 @@ const UploadCandidateDocument = (props: any) => {
   });
   const [viewDocument, setViewDocument] = React.useState<viewDocument>({
     ReviewOfferDoc: [],
+    ReviewOthersDoc: [],
     ReviewEmployDocs: [],
     ViewFolderPath: "",
   });
+  const [documentview, setdocumentview] = React.useState<CustomViewDocument[]>(
+    []
+  );
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [validationErrors, setValidationErrors] =
@@ -167,7 +180,7 @@ const UploadCandidateDocument = (props: any) => {
     ZoneOption: [],
     HarewareOption: [],
   });
-  // const [requiredBtn, setRequiredBtn] = React.useState<string>("");
+  const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
 
   const fetchData = async () => {
     if (isLoading) return;
@@ -209,7 +222,7 @@ const UploadCandidateDocument = (props: any) => {
       console.log(OfferLetter.data, "OfferLetter");
       let PersonalDocument: GetCandidateDocument = {
         ListName: DocumentLibraray.HRMSCandidateDocs,
-        RequestID: "1089", //item?.CandidateDetails?.JobRequestID,
+        RequestID: item?.CandidateDetails?.JobRequestID, //item?.CandidateDetails?.JobRequestID,
         DocumentType: DocumentFolderName?.PersonalDocs,
         DocumentName: DocumentFolderName?.PersonalDocs,
         UnsignedDoc: DocumentFolderName?.UnsignedDoc,
@@ -219,7 +232,7 @@ const UploadCandidateDocument = (props: any) => {
       );
       let MedicalDocument: GetCandidateDocument = {
         ListName: DocumentLibraray.HRMSCandidateDocs,
-        RequestID: "1089", //item?.CandidateDetails?.JobRequestID,
+        RequestID: item?.CandidateDetails?.JobRequestID, //item?.CandidateDetails?.JobRequestID,
         DocumentType: DocumentFolderName?.Medical,
         DocumentName: DocumentFolderName?.Medical,
         UnsignedDoc: DocumentFolderName?.UnsignedDoc,
@@ -228,6 +241,63 @@ const UploadCandidateDocument = (props: any) => {
         MedicalDocument
       );
 
+      let ConsentFormDocs = OfferLetter.data.filter((item: any) =>
+        item.name.includes("ConsentForm")
+      );
+      let OfferDocs = OfferLetter.data.filter((item: any) =>
+        item.name.includes("OfferLetter")
+      );
+      let docs: any[] = [];
+      let OfferDOcsview: CustomViewDocument[] = OfferDocs.map((item: any) => ({
+        Title: "Offer Letter",
+        DocumentName: item.name,
+        DocumentContent: item.content,
+      }));
+      let ConsentDocs: CustomViewDocument[] = ConsentFormDocs.map(
+        (item: any) => ({
+          Title: "Code of Business Content",
+          DocumentName: item.name,
+          DocumentContent: item.content,
+        })
+      );
+      let OthersDocs: CustomViewDocument[] = PersonalDocs.data.map(
+        (item: any) => ({
+          Title: item.category,
+          DocumentName: item?.documents[0]?.name,
+          DocumentContent: item?.documents[0]?.content,
+        })
+      );
+      let EmployeeContract: CustomViewDocument[] = EmployementContract.data.map(
+        (item: any) => ({
+          Title: "Employment Contract",
+          DocumentName: item.name,
+          DocumentContent: item.content,
+        })
+      );
+      let MedicalDoc: CustomViewDocument[] = MedicalDocs.data.map(
+        (item: any) => ({
+          Title: DocumentFolderName.EmploymentContractForm,
+          DocumentName: item.name,
+          DocumentContent: item.content,
+        })
+      );
+      if (OfferDOcsview.length > 0) {
+        docs.push(OfferDOcsview[0]);
+      }
+      if (ConsentDocs.length > 0) {
+        docs.push(ConsentDocs[0]);
+      }
+      if (OthersDocs.length > 0) {
+        docs.push(OthersDocs[0]);
+      }
+      if (EmployeeContract.length > 0) {
+        docs.push(EmployeeContract[0]);
+      }
+      if (MedicalDoc.length > 0) {
+        docs.push(MedicalDoc[0]);
+      }
+      console.log(docs, "docs");
+      setdocumentview(docs);
       setData((prev) => ({
         ...prev,
         CandidateID: item?.CandidateDetails.CandidateID,
@@ -257,6 +327,7 @@ const UploadCandidateDocument = (props: any) => {
         ReviewEmployDocs: EmployementContract.data,
         ViewFolderPath: item?.CandidateDetails?.DocumentFolderPath,
       }));
+
       if (
         props.stateValue?.StatusId ===
           StatusId.OnboardingProcessinitiatedforDRC ||
@@ -544,13 +615,13 @@ const UploadCandidateDocument = (props: any) => {
     }
   };
 
-  function handleFileDownload(documentUrl: string) {
-    const viewUrl = documentUrl.includes("?")
-      ? `${documentUrl}&web=1`
-      : `${documentUrl}?web=1`;
+  // function handleFileDownload(documentUrl: string) {
+  //   const viewUrl = documentUrl.includes("?")
+  //     ? `${documentUrl}&web=1`
+  //     : `${documentUrl}?web=1`;
 
-    window.open(viewUrl, "_blank");
-  }
+  //   window.open(viewUrl, "_blank");
+  // }
 
   const tabs = [
     {
@@ -745,34 +816,58 @@ const UploadCandidateDocument = (props: any) => {
                     </div>
                   </div>
                 )} */}
+
+                {/* {data.OfferLetterDoc.length > 0 && (
+                  <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
+                    <div className="custom-document-column">
+                      <CustomLabel value={"Medical Document"} />
+                      <div
+                        className="document-wrapper"
+                        title={
+                          Array.isArray(viewDocument.ReviewOfferDoc)
+                            ? viewDocument.ReviewOfferDoc.join(", ")
+                            : viewDocument.ReviewOfferDoc
+                        }
+                      >
+                        <CustomViewDocument
+                          Attachment={viewDocument.ReviewOfferDoc}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )} */}
+
                 {props.stateValue?.StatusId !=
                   StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter && (
                   <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
                     <div className="custom-document-column">
                       <CustomLabel value={"Candidate Documents"} />
                       <div className="document-wrapper">
-                        <Tooltip title={"Documents"} arrow>
-                          <Link
-                            // href={}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleFileDownload(viewDocument.ViewFolderPath);
-                            }}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                              color: "blue",
-                              fontWeight: "bold",
-                              display: "inline-block",
-                              maxWidth: "100%",
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                            }}
-                          >
-                            {"Documents"}
-                          </Link>
-                        </Tooltip>
+                        <ReuseButton
+                          Style={{
+                            minWidth: "117px",
+                            fontSize: "13px",
+                            paddingBottom: "24px",
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "41px",
+                            paddingTop: "23px",
+                            backgroundColor:
+                              ColorCode.ButtonColorCode.ButtonColor,
+                            color: "white",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                          label="VIEW"
+                          imgSrc={require("../../assets/viewSubmision-white.svg")}
+                          imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                          imgAlt="View"
+                          imgAltHover="Hovered View"
+                          onClick={() => {
+                            setDocumentPopup(true);
+                          }}
+                          spacing={4}
+                        />
                       </div>
                     </div>
                   </div>
@@ -793,7 +888,7 @@ const UploadCandidateDocument = (props: any) => {
                           label="Upload"
                           iconName="CloudUpload"
                           iconNameHover="CloudUpload"
-                          allowMultiple={true}
+                          allowMultiple={false}
                           AttachState={(newAttachment: any) => {
                             let attachment: IDocFiles[] = newAttachment.map(
                               (item: any) => {
@@ -878,8 +973,7 @@ const UploadCandidateDocument = (props: any) => {
                   <></>
                 )}
 
-                {/* {props.stateValue?.StatusId ===
-                  StatusId.PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs && (
+                {/* {data.PersonalDocs.length > 0 && (
                   <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
                     <LabelHeaderComponents value={"Candidate Documents"} />
                     {data.PersonalDocs.map((item, idx) => (
@@ -1236,7 +1330,7 @@ const UploadCandidateDocument = (props: any) => {
                           <div className="ms-Grid-row">
                             <div className="ms-Grid-col ms-lg12">
                               <CustomTextArea
-                                label="Comments"
+                                label={labelName.Comment}
                                 value={data.TASystem.Comments}
                                 error={false}
                                 onChange={(value) =>
@@ -1477,7 +1571,7 @@ const UploadCandidateDocument = (props: any) => {
                               <div className="ms-Grid-row">
                                 <div className="ms-Grid-col ms-lg12">
                                   <CustomTextArea
-                                    label="Comments"
+                                    label={labelName.Comment}
                                     value={data.ITSystem.Comments}
                                     error={false}
                                     onChange={(value) =>
@@ -1519,7 +1613,7 @@ const UploadCandidateDocument = (props: any) => {
                         style={{ marginBottom: "7px" }}
                       >
                         <CustomTextArea
-                          label="Justification"
+                          label={labelName.Comment}
                           value={data.comments}
                           error={validationErrors.comments}
                           onChange={(value) =>
@@ -1833,10 +1927,10 @@ const UploadCandidateDocument = (props: any) => {
 
               let obj: UpdateCandidateData = {
                 InductionType: data.TrainingSystem?.Inductiontype.text,
-                TCSStartDate: SpiltDateOnly(data.TrainingSystem?.StartDate),
-                TCSEndDate: SpiltDateOnly(data.TrainingSystem?.EndDate),
-                TCSZone: data.TrainingSystem?.Zone.text,
-                TCSRegion: data.TrainingSystem?.Region.text,
+                // TCSStartDate: SpiltDateOnly(data.TrainingSystem?.StartDate),
+                // TCSEndDate: SpiltDateOnly(data.TrainingSystem?.EndDate),
+                // TCSZone: data.TrainingSystem?.Zone.text,
+                // TCSRegion: data.TrainingSystem?.Region.text,
                 TCSComments: data.TrainingSystem?.Comments,
                 PermanentBadgeStartDate: SpiltDateOnly(
                   data.TASystem?.StartDate
@@ -2004,6 +2098,8 @@ const UploadCandidateDocument = (props: any) => {
     });
   };
 
+  console.log(viewDocument, "ViewDocument.");
+
   return (
     <>
       <CustomLoader isLoading={isLoading}>
@@ -2065,6 +2161,59 @@ const UploadCandidateDocument = (props: any) => {
           <CustomAlert
             {...alertProps}
             onClose={() => setAlertPopupOpen(!AlertPopupOpen)}
+          />
+        </>
+      ) : (
+        <></>
+      )}
+
+      {documentPopup ? (
+        <>
+          <CustomDialogbox
+            Style={{ width: "45vw", height: "35vw" }}
+            visible={documentPopup}
+            children={
+              <ViewCandidateDocument
+                data={documentview}
+                onClose={() => setDocumentPopup(false)}
+              />
+            }
+            onClose={() => setDocumentPopup(false)}
+            header={
+              <div style={{ textAlign: "center", width: "100%" }}>
+                <h2
+                  style={{
+                    color: ColorCode.LabelStyleColorCode.LabelStyleColor,
+                    fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
+                          -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                  }}
+                >
+                  {" "}
+                  Candidate Documents
+                </h2>
+              </div>
+            }
+            footer={
+              <div
+                className="ms-Grid-row"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: "10px 0",
+                  gap: "33px",
+                }}
+              >
+                <ReuseButton
+                  label="Close"
+                  onClick={() => setDocumentPopup(false)}
+                  Style={{
+                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                    color: "white",
+                    width: "50%",
+                  }}
+                />
+              </div>
+            }
           />
         </>
       ) : (

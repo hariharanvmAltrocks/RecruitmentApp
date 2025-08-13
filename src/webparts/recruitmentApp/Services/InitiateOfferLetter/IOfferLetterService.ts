@@ -21,11 +21,11 @@ export type GetCandidateDocument = {
 
 export type UpdateCandidateData = {
     InductionType: string
-    TCSStartDate: Date | any;
-    TCSEndDate: Date | any;
-    TCSZone: string;
-    TCSRegion: string;
-    TCSComments: string;
+    TCSStartDate?: Date | any;
+    TCSEndDate?: Date | any;
+    TCSZone?: string;
+    TCSRegion?: string;
+    TCSComments?: string;
 
     PermanentBadgeStartDate: Date | any;
     PermanentBadgeEndDate: Date | any;

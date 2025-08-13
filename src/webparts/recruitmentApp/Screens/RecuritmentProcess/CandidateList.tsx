@@ -16,6 +16,7 @@ import {
   RoleName,
   StatusId,
   TabName,
+  tabType,
   WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
@@ -25,6 +26,8 @@ import BreadcrumbsComponent, {
 import { alertPropsData } from "../../Models/Screens";
 import CandidateDataTable from "../../components/CandidateDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
+import TabsComponent from "../../components/TabsComponent ";
+import { tabStyle } from "../../components/TabMerge";
 
 const CandidateList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
@@ -33,6 +36,7 @@ const CandidateList = (props: any) => {
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
+  const [breadcrumbTab, setBreadcrumbTab] = React.useState<string>("tab1");
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
     Message: "",
     Type: "",
@@ -322,14 +326,24 @@ const CandidateList = (props: any) => {
     setIsLoading(false); // Stop loader
   };
 
-  const tabs = [
+  const handleBreadcrumbChange = (newItem: string) => {
+    setBreadcrumbTab(newItem);
+  };
+
+  const tab = (tab: string) => [
     {
       label: TabName.ViewCandidateList,
       value: "tab1",
       content: (
         <Card
           variant="outlined"
-          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", mt: 2 }}
+          sx={{
+            boxShadow: "0px 2px 4px 3px #d3d3d3",
+            marginTop: "2%",
+            "& .MuiPaper-root-MuiCard-root": {
+              overflow: "visible",
+            },
+          }}
         >
           <CardContent>
             <CandidateDataTable
@@ -351,21 +365,61 @@ const CandidateList = (props: any) => {
     },
   ];
 
-  const handleBreadcrumbChange = (newItem: string) => {
-    setActiveTab(newItem);
+  const getTabLabel = (tab: any) => {
+    const PendingCount = CandidateData.filter(
+      (item) =>
+        item.StatusId === StatusId.Selected &&
+        item.StatusId === StatusId.OnHoldbyHOD &&
+        item.StatusId === StatusId.PendingwithHODtoAssignPositionID &&
+        item.StatusId === StatusId.PendingwithHODtoselectthecandidateLevel2
+    );
+    switch (tab) {
+      case TabName.ReviewScorecard:
+        return String(tabStyle(tab.TabName, PendingCount.length));
+      default:
+        return tab;
+    }
   };
+
+  const tabs = [
+    {
+      label: getTabLabel(TabName.ReviewScorecard), //TabName.ReviewScorecard,
+      value: "tab1",
+      content: (
+        <Card
+          variant="outlined"
+          sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", mt: 2 }}
+        >
+          <CardContent>
+            <BreadcrumbsComponent
+              items={tab("tab1")}
+              initialItem={breadcrumbTab}
+              TabName={TabNameData}
+              onBreadcrumbChange={handleBreadcrumbChange}
+              additionalButtons={[
+                {
+                  label: "Back",
+                  onClick: async () => {
+                    back_fn();
+                  },
+                },
+              ]}
+            />
+          </CardContent>
+        </Card>
+      ),
+    },
+  ];
 
   React.useEffect(() => {
     const activeTabObj = tabs.find((item) => item.value === activeTab);
-    if (activeTab === "tab1") {
-      const newTabNames = [
-        { tabName: props.stateValue?.TabName },
-        { tabName: props.stateValue?.ButtonAction },
-        { tabName: activeTabObj?.label },
-      ];
-      if (JSON.stringify(TabNameData) !== JSON.stringify(newTabNames)) {
-        setTabNameData(newTabNames);
-      }
+    const newTabNames = [
+      { tabName: props.stateValue?.TabName },
+      { tabName: props.stateValue?.ButtonAction },
+      { tabName: activeTabObj?.label },
+    ];
+    if (JSON.stringify(TabNameData) !== JSON.stringify(newTabNames)) {
+      setTabNameData(newTabNames);
     }
   }, [activeTab, tabs, props.stateValue, TabNameData]);
 
@@ -378,22 +432,22 @@ const CandidateList = (props: any) => {
     });
   }
 
+  const handleTabChange = async (newTab: string) => {
+    setActiveTab(newTab);
+    // await fetchCandidateData(newTab);
+    // await pendingcountTabs();
+  };
+
   return (
     <CustomLoader isLoading={isLoading}>
       <div className="menu-card">
-        <BreadcrumbsComponent
-          items={tabs}
-          initialItem={activeTab}
-          TabName={TabNameData}
-          onBreadcrumbChange={handleBreadcrumbChange}
-          additionalButtons={[
-            {
-              label: "Back",
-              onClick: async () => {
-                back_fn();
-              },
-            },
-          ]}
+        <TabsComponent
+          tabs={tabs}
+          initialTab={activeTab}
+          // tabClassName={"Tab"}
+          tabtype={tabType.Dashboard}
+          onTabChange={handleTabChange}
+          IsNotscroll={true}
         />
       </div>
       {AlertPopupOpen && (

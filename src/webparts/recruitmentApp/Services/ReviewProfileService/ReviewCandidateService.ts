@@ -1,4 +1,4 @@
-import { AdvertisementDetails, CheckMyCandidate, GetProfileByFilter, getQuestionById, profileXagent, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, profileXagent, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
 export const getProfileData = {
@@ -119,5 +119,10 @@ export const GetJobRequestData = {
         return await AxiosInstance.post(
             `/hrms/GetJobRequestStatus`, params
         );
-    }
+    },
+    UpsertCOI: async function (COIType: COIType) {
+        return await AxiosInstance.post(
+            `/hrms/UpsertCoi`, COIType
+        );
+    },
 };

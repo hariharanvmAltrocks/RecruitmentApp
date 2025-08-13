@@ -1,6 +1,6 @@
 import * as React from "react";
 import JobCodeSelector from "../../components/CustomMultiselectwithswipe";
-import { ADGroupID, ListNames, RoleID } from "../../utilities/Config";
+import { ListNames, RoleID } from "../../utilities/Config";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import { JobCodeTilte } from "../../Models/RecuritmentVRR";
@@ -55,25 +55,19 @@ export const AssignRecuritmentHR = ({
   React.useEffect(() => {
     const initialize = async () => {
       try {
-        // let filterConditions = [];
-        // filterConditions.push({
-        //   FilterKey: "ID",
-        //   FilterValue: "eq",
-        //   Operator: RoleID.RecruitmentHR,
-        // });
-        // const GetADGruopUserID = await CommonServices.GetMasterData(
-        //   ListNames.HRMSRecruitmentUserRole
-        // );
-        // console.log(GetADGruopUserID, "GetADGruopUserID");
-        // let ADGroupIDs = GetADGruopUserID.data?.filter(
-        //   (item: any) => item.ID === RoleID.RecruitmentHR
-        // );
+        const GetADGruopUserID = await CommonServices.GetMasterData(
+          ListNames.HRMSRecruitmentUserRole
+        );
+        console.log(GetADGruopUserID, "GetADGruopUserID");
+        let ADGroupIDs = GetADGruopUserID.data?.filter(
+          (item: any) => item.ID === RoleID.RecruitmentHR
+        );
         // console.log(ADGroupIDs, "ADGroupID");
 
         const [HRMSExternalAgents, AssignRecurtimentHROption] =
           await Promise.all([
             CommonServices.GetMasterData(ListNames.HRMSExternalAgents),
-            CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSRecruitmentHR),
+            CommonServices.GetADgruopsEmailIDs(ADGroupIDs[0]?.ADGroupID),
           ]);
         let ExternalAgent = HRMSExternalAgents.data?.filter(
           (nat) => nat.Nationality === Nationality
@@ -192,11 +186,11 @@ export const AssignRecuritmentHR = ({
                 error={validationErrors.Comments}
                 onChange={(value) => handleInputChangeTextArea(value)}
                 mandatory={true}
-                placeholder={
-                  CurrentRole.includes(RoleID.RecruitmentHRLead)
-                    ? "You may provide Hiring Line Manager and Hiring HOD name and number here to RecruitmentHR...."
-                    : ""
-                }
+                // placeholder={
+                //   CurrentRole.includes(RoleID.RecruitmentHRLead)
+                //     ? "You may provide Hiring Line Manager and Hiring HOD name and number here to RecruitmentHR...."
+                //     : ""
+                // }
               />
             </div>
           </div>

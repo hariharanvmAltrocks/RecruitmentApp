@@ -1,4 +1,4 @@
-import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, profileXagent, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, profileXagent, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { CommanQuestion, QuestionItem } from "../../Models/RecuritmentVRR";
 import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
 import { IDocFiles } from "../SPService/ISPServicesProps";
@@ -50,6 +50,9 @@ export type CandidateDetails = {
     BusinessLink: string;
     GPA: number;
 
+    COIComments: string;
+    COIEmail: string;
+
 
     // CandidateOnboardingDate: string;
     // EngagementDate: string;
@@ -76,6 +79,11 @@ export type DocumentValue = {
     ProfileId: string;
 }
 
+export type COIAttach = {
+    RequestID: string;
+    DocumentName: string;
+}
+
 export type IGetPortalJobs = {
     UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>>;
     getCandidateDetailsInJobCode(FilterValue: FilterItem): Promise<ApiResponse<GetProfileByJobCode[] | null>>;
@@ -99,4 +107,7 @@ export type IGetPortalJobs = {
     GetJobRequestData(data: any[]): Promise<ApiResponse<any | null>>;
     GetQuestionByJobCode(jobCode: string): Promise<ApiResponse<CommanQuestion[] | null>>;
     UpsertDocumentUpload(DocumentDetails: DocumentValue): Promise<ApiResponse<any | null>>;
+    UploadCOIAttachment(DocumentName: COIAttach, AttachFile: IDocFiles[]): Promise<ApiResponse<any>>;
+    fetchCOIAttachment(DocumentName: COIAttach): Promise<ApiResponse<any>>;
+    GetUpsertCOI(data: COIType): Promise<ApiResponse<any | null>>;
 }

@@ -268,11 +268,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   };
 
   const onSelectAllChange = (value: boolean, pagination?: any) => {
-    if (
-      FilterData.Nationality.text === "" &&
-      !selectAll &&
-      assignLabel != "Assign Agencies"
-    ) {
+    if (FilterData.Nationality.text === "" && !selectAll) {
       let CancelAlert = {
         Message: RecuritmentHRMsg.NationalityErrorMsg,
         Type: HRMSAlertOptions.Error,
@@ -408,13 +404,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 MinHeight={"1px"}
               />
             </div>
-            <div
-              className={
-                assignLabel === "Assign Agencies"
-                  ? "ms-Grid-col ms-lg3"
-                  : "ms-Grid-col ms-lg2"
-              }
-            >
+            <div className="ms-Grid-col ms-lg2">
               <CustomAutoComplete
                 label="Business Unit Code"
                 options={FilterData.BusinessUnitCodeOption ?? []}
@@ -426,13 +416,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 MinHeight={"1px"}
               />
             </div>
-            <div
-              className={
-                assignLabel === "Assign Agencies"
-                  ? "ms-Grid-col ms-lg3"
-                  : "ms-Grid-col ms-lg2"
-              }
-            >
+            <div className="ms-Grid-col ms-lg2">
               <CustomAutoComplete
                 label="Job Code"
                 options={FilterData.JobCodeOption ?? []}
@@ -442,7 +426,18 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 MinHeight={"1px"}
               />
             </div>
-            {assignLabel === "Assign Agencies" ? (
+            <div className="ms-Grid-col ms-lg2">
+              <CustomAutoComplete
+                label="Nationality"
+                options={NationalityOption ?? []}
+                value={FilterData.Nationality}
+                disabled={false}
+                onChange={(item) => handleAutoComplete("Nationality", item)}
+                MinHeight={"1px"}
+              />
+            </div>
+
+            {/* {assignLabel === "Assign Agencies" ? (
               <></>
             ) : (
               <>
@@ -457,7 +452,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                   />
                 </div>
               </>
-            )}
+            )} */}
 
             <div className="ms-Grid-col ms-lg2" style={{ marginTop: "43px" }}>
               <ReuseButton

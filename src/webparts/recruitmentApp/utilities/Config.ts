@@ -1,4 +1,3 @@
-import { IADGroupID } from "../Models/MainPage";
 import { AutoCompleteItem } from "../Models/Screens";
 
 export const APIURL = "https://altrocks1.sharepoint.com/sites/HRMSDEV2";
@@ -94,6 +93,7 @@ export const StatusId = {
   PendingInterviewQuestionwithLineManagerandHR: 39,
   InterviewScheduled: 40,
   Completed: 13,
+  ReadyforRecruitmentProcess: 155,
   PendingwithHRandLMtocreateinterviewQuestion: 124,
   PendingwithLineManagereviewAdv: 125,
   PendingwithLMcreateDisqualificationQuestion: 126,
@@ -270,6 +270,9 @@ export const RecuritmentHRMsg = {
   RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
 
   NationalityErrorMsg: "Please select the Nationality filter before proceeding.",
+
+  QuestionValiErrorMsg: "Please add at least 5 questions before proceeding.",
+  COIWarningMsg: "This is the COI profile. Are you sure you're ready to proceed?"
 };
 
 export const validationMsg = {
@@ -289,15 +292,15 @@ export const validationMsg = {
 // };
 
 //UAT
-export const ADGroupID: IADGroupID = {
-  HRMSHOD: "166e7062-6d48-4eeb-b8b9-5d4c1c24d245",
-  HRMSRecruitmentLineManager: "e46c5079-6a7d-40bf-a8cb-c7fbfa10f220",
-  HRMSRecruitmentHR: "f5017ec6-5c87-4461-8e42-e1316909f2c5",
-  HRMSRecruitmentHRLead: "35d68e0f-b77e-47a4-b504-1ca65f71b070",
-  HRMSInterviewPanel: "b6562870-0b24-49ad-9ada-2dc40774e9ce",
-  LineManager: "79c343ae-666f-42a0-bf27-0f58adcb1fee",
-  RecruitmentAppExternalAgency: "2d03b531-d87e-4a9e-907d-fb6db73bdb38",
-};
+// export const ADGroupID: IADGroupID = {
+//   HRMSHOD: "166e7062-6d48-4eeb-b8b9-5d4c1c24d245",
+//   HRMSRecruitmentLineManager: "e46c5079-6a7d-40bf-a8cb-c7fbfa10f220",
+//   HRMSRecruitmentHR: "f5017ec6-5c87-4461-8e42-e1316909f2c5",
+//   HRMSRecruitmentHRLead: "35d68e0f-b77e-47a4-b504-1ca65f71b070",
+//   HRMSInterviewPanel: "b6562870-0b24-49ad-9ada-2dc40774e9ce",
+//   LineManager: "79c343ae-666f-42a0-bf27-0f58adcb1fee",
+//   RecruitmentAppExternalAgency: "2d03b531-d87e-4a9e-907d-fb6db73bdb38",
+// };
 
 //Production
 // export const ADGroupID: IADGroupID = {
@@ -394,7 +397,7 @@ export const TabName = {
   Scorecard: "Scorecard",
   ViewPositionDetails: "View Position Details",
   ViewCandidateList: "View Applicants List",
-  ViewJustification: "View Justification",
+  ViewJustification: "View Comments",
   EvaluationTab: "Candidate Details",
   AdvertExtension: "Advert Extension",
   ReviewLevel1: "Review Profile - Level 1",
@@ -594,7 +597,7 @@ export const labelName = {
   ResumeCV: "Resume/CV and Cover Letter",
 
   OfferLetter: "Upload Offer Letter",
-  ConsentDoc: "Upload Consent Form ",
+  ConsentDoc: "Upload Code of Business Content",
   EmployementDoc: "Upload Employement Contract",
 
   Attachment: "Attachment",
@@ -609,7 +612,18 @@ export const labelName = {
 
   whichOperation: "For which Operation?",
   YourRole: "What was your role?",
-  RegionProvince: "Region / Province"
+  RegionProvince: "Region / Province",
+  Comment: "Comments",
+  ViewComments: "View Comments",
+
+  ReviewProfileFeedback: "Review Profile Feedback - HR",
+
+  Firstextensiondate: "First Extension Date",
+  Secondextensiondate: "Second Extension Date",
+  Thirdextensiondate: "Third Extension Date",
+  COIAttach: "Upload Attachment",
+  COIProfileLabel: "Employee Name"
+
 };
 export const ButtonAction = {
   Update: "Update",
@@ -656,7 +670,9 @@ export const DocumentFolderName = {
   EmploymentContractForm: "EmploymentContractForm",
   UnsignedDoc: "UnsignedDoc",
   PersonalDocs: "PersonalDocs",
-  Medical: "Medical"
+  Medical: "Medical",
+  COIAttach: "COIAttch",
+  ConsentForm: "ConsentForm"
 }
 
 export const PostRecrutimentCheckboxContent = {
@@ -695,6 +711,9 @@ export const NationalityOption = [
   { key: 1, text: "Nationals (Congolese)" },
   { key: 2, text: "Expatriate" },
 ];
+
+export const ProfileReview = ["Yes", "No", "On Hold"]
+export const ProfileReviewl2 = ["Yes", "No"]
 
 export const ColorCode = {
   TabColorCode: {

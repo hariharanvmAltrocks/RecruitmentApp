@@ -96,6 +96,8 @@ interface QuestionItem {
 }
 
 const InterviewQuesEdit: React.FC = (props: any) => {
+  console.log(props, "InterviewQuesEditProps.");
+
   const [InterviewQuesData, setInterviewQuesData] = useState<InterviewQues>({
     Disciplines: { key: 0, text: "" },
     QuestionNumber: { key: 0, text: "" },
@@ -371,32 +373,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
           setAlertPopupOpen(true);
           setalertProps(WarningMsg);
-          setIsLoading(false);
-        }
-        const category = getMasterData?.category.find(
-          (cat) => cat.text === InterviewQuesData.Catogry
-        );
-        const obj: getQuestionById = {
-          discipline: String(value?.key || ""),
-          category: String(category?.key),
-        };
-        const res = await GetPortalJobsService.GetQuestionaireByScope(obj);
-        if (res.status === ResponeStatus.SUCCESS) {
-          setQuestionnaire(res.data ?? []); // fallback to [] if null
-        } else {
-          const ApiFailedMsg = {
-            Message: RecuritmentHRMsg.APIErrorMsg,
-            Type: HRMSAlertOptions.Error,
-            visible: true,
-            ButtonAction: async (userClickedOK: boolean) => {
-              if (userClickedOK) {
-                setAlertPopupOpen(false);
-              }
-            },
-          };
-
-          setAlertPopupOpen(true);
-          setalertProps(ApiFailedMsg);
           setIsLoading(false);
         }
       } catch (error) {
@@ -779,9 +755,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       const CategoryData = await GetPortalJobsService.GetAllMaster(
         CategoryID.QuestionCategory
       );
-      const ScopeData = await GetPortalJobsService.GetAllMaster(
-        CategoryID.QuestionScopes
-      );
+      // const ScopeData = await GetPortalJobsService.GetAllMaster(
+      //   CategoryID.QuestionScopes
+      // );
       const QuestionType = await GetPortalJobsService.GetAllMaster(
         CategoryID.QuestionType
       );
@@ -800,11 +776,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           (item) => item.text
         );
 
-        const ScopeOption: AutoCompleteItem[] = (ScopeData.data ?? [])
-          .filter((item: any) => item.value !== "S6" && item.value !== "S7")
+        const ScopeOption: AutoCompleteItem[] = (props.Department ?? [])
+          // .filter((item: any) => item.value !== "S6" && item.value !== "S7")
           .map((opt: any) => ({
-            key: opt.value,
-            text: opt.displayText,
+            key: opt.code,
+            text: opt.text,
           }));
 
         const QuestionTypeOption: AutoCompleteItem[] = (QuestionType.data ?? [])
@@ -828,6 +804,44 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             key: opt.value,
             text: opt.displayText,
           }));
+
+        const Departments = ScopeOption.filter(
+          (item) => item.text === props.stateValue?.Department
+        );
+        const DepartmentCode = props.Department.filter(
+          (item: any) => item.text === props.stateValue?.Department
+        );
+        const category = CategoryOption.find(
+          (cat) => cat.text === InterviewQuesData.Catogry
+        );
+        const obj: getQuestionById = {
+          discipline: String(DepartmentCode[0]?.code || ""),
+          category: String(category?.key),
+        };
+        const res = await GetPortalJobsService.GetQuestionaireByScope(obj);
+        if (res.status === ResponeStatus.SUCCESS) {
+          setQuestionnaire(res.data ?? []); // fallback to [] if null
+        } else {
+          const ApiFailedMsg = {
+            Message: RecuritmentHRMsg.APIErrorMsg,
+            Type: HRMSAlertOptions.Error,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+              if (userClickedOK) {
+                setAlertPopupOpen(false);
+              }
+            },
+          };
+
+          setAlertPopupOpen(true);
+          setalertProps(ApiFailedMsg);
+          setIsLoading(false);
+        }
+
+        setInterviewQuesData((prev) => ({
+          ...prev,
+          Disciplines: Departments[0],
+        }));
         setGetMasterData((prevState) => ({
           ...prevState,
           category: CategoryOption,
@@ -1091,7 +1105,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         onChange={(val) =>
                           handleAutoComplete("Disciplines", val)
                         }
-                        disabled={false}
+                        disabled={true}
                         mandatory={true}
                         error={ValidationError.Disciplines}
                       />
@@ -2008,7 +2022,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         StatusId.PendingwithLMcreateDisqualificationQuestion && (
                         <Box sx={{ mb: 2, width: "50%" }}>
                           <CustomRadioGroup
-                            label="Disqualification Question?"
+                            label="Is this a disqualification question?"
                             value={InterviewQuesData?.Disqualification ?? ""}
                             options={isDisqualificationOption}
                             error={ValidationError.Disqualification}
@@ -2265,162 +2279,189 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     }));
 
     const QuestionairesData = [...resuequestionnaire, ...adjustedQuestions];
-    let QuestionValue: UpsertQuestions[] = QuestionairesData.map((item) => {
-      const category = getMasterData.category.find(
-        (cat) => cat.text === InterviewQuesData.Catogry
+    let IsVaild =
+      InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
+        ? QuestionairesData.length >= 5
+        : true;
+    if (IsVaild) {
+      let QuestionValue: UpsertQuestions[] = QuestionairesData.map((item) => {
+        const category = getMasterData.category.find(
+          (cat) => cat.text === InterviewQuesData.Catogry
+        );
+
+        // Initialize variables
+        let OptionsValue: optionsValue[] = [];
+        let answerValue: answersValue[] = [];
+
+        const decodeBase64 = (str: string): string => {
+          const utf8Bytes: any = new TextEncoder().encode(str);
+          const binary = String.fromCharCode(...utf8Bytes);
+          return btoa(binary);
+        };
+        //  const stripHtml = (html: string) => {
+        //         if (!html) return "";
+        //         const tmp = document.createElement("DIV");
+        //         tmp.innerHTML = html;
+        //         return tmp.textContent || tmp.innerText || "";
+        //       };
+
+        if (category?.text === CatogryOptionCode.CareerPortalCandidate) {
+          OptionsValue =
+            item.options?.map((opt, index) => ({
+              optionEn: opt.text,
+              optionFr: opt.text,
+              sequence: index + 1,
+            })) || [];
+
+          answerValue =
+            item.CareerportalAnswer?.map((ans) => ({
+              optionEn: ans.text,
+              optionFr: ans.text,
+            })) || [];
+        } else {
+          OptionsValue = [
+            {
+              optionEn:
+                item?.Type === DataType.Existing
+                  ? decodeBase64(item.expectedAnswer[0])
+                  : decodeBase64(item.expectedAnswer),
+              optionFr:
+                item?.Type === DataType.Existing
+                  ? decodeBase64(item.expectedAnswer[0])
+                  : decodeBase64(item.expectedAnswer),
+              sequence: 1,
+            },
+          ];
+
+          answerValue = [
+            {
+              optionEn:
+                item?.Type === DataType.Existing
+                  ? decodeBase64(item.expectedAnswer[0])
+                  : decodeBase64(item.expectedAnswer),
+              optionFr:
+                item?.Type === DataType.Existing
+                  ? decodeBase64(item.expectedAnswer[0])
+                  : decodeBase64(item.expectedAnswer),
+            },
+          ];
+        }
+        const scopeId =
+          item?.Type === DataType.Existing
+            ? String(item.discipline)
+            : String(item.discipline.key);
+        const questionTypeId =
+          item?.Type === DataType.Existing
+            ? String(item.questionType)
+            : String(item.questionType.key);
+
+        return {
+          questionEn: decodeBase64(item.question),
+          questionFr: decodeBase64(item.question),
+          scopeId: scopeId,
+          categoryId: String(category?.key),
+          // questionTypeId: String(item.questionType.key),
+          questionTypeId: questionTypeId,
+          isQualifier:
+            InterviewQuesData.Catogry ===
+            CatogryOptionCode.CareerPortalCandidate
+              ? 1
+              : 0,
+          isAnswerValidate: item.Disqualification === "No" ? 0 : 1,
+          sequence: item.id,
+          jobCode: props.stateValue.JobCode,
+          options: OptionsValue,
+          answers: answerValue,
+        };
+      });
+
+      const response = await GetPortalJobsService.UpsertQuestions(
+        QuestionValue
       );
 
-      // Initialize variables
-      let OptionsValue: optionsValue[] = [];
-      let answerValue: answersValue[] = [];
-
-      const decodeBase64 = (str: string): string => {
-        const utf8Bytes: any = new TextEncoder().encode(str);
-        const binary = String.fromCharCode(...utf8Bytes);
-        return btoa(binary);
-      };
-      //  const stripHtml = (html: string) => {
-      //         if (!html) return "";
-      //         const tmp = document.createElement("DIV");
-      //         tmp.innerHTML = html;
-      //         return tmp.textContent || tmp.innerText || "";
-      //       };
-
-      if (category?.text === CatogryOptionCode.CareerPortalCandidate) {
-        OptionsValue =
-          item.options?.map((opt, index) => ({
-            optionEn: opt.text,
-            optionFr: opt.text,
-            sequence: index + 1,
-          })) || [];
-
-        answerValue =
-          item.CareerportalAnswer?.map((ans) => ({
-            optionEn: ans.text,
-            optionFr: ans.text,
-          })) || [];
-      } else {
-        OptionsValue = [
-          {
-            optionEn:
-              item?.Type === DataType.Existing
-                ? decodeBase64(item.expectedAnswer[0])
-                : decodeBase64(item.expectedAnswer),
-            optionFr:
-              item?.Type === DataType.Existing
-                ? decodeBase64(item.expectedAnswer[0])
-                : decodeBase64(item.expectedAnswer),
-            sequence: 1,
-          },
-        ];
-
-        answerValue = [
-          {
-            optionEn:
-              item?.Type === DataType.Existing
-                ? decodeBase64(item.expectedAnswer[0])
-                : decodeBase64(item.expectedAnswer),
-            optionFr:
-              item?.Type === DataType.Existing
-                ? decodeBase64(item.expectedAnswer[0])
-                : decodeBase64(item.expectedAnswer),
-          },
-        ];
-      }
-      const scopeId =
-        item?.Type === DataType.Existing
-          ? String(item.discipline)
-          : String(item.discipline.key);
-      const questionTypeId =
-        item?.Type === DataType.Existing
-          ? String(item.questionType)
-          : String(item.questionType.key);
-
-      return {
-        questionEn: decodeBase64(item.question),
-        questionFr: decodeBase64(item.question),
-        scopeId: scopeId,
-        categoryId: String(category?.key),
-        // questionTypeId: String(item.questionType.key),
-        questionTypeId: questionTypeId,
-        isQualifier:
+      if (response.status === ResponeStatus.SUCCESS) {
+        if (
           InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
-            ? 1
-            : 0,
-        isAnswerValidate: item.Disqualification === "No" ? 0 : 1,
-        sequence: item.id,
-        jobCode: props.stateValue.JobCode,
-        options: OptionsValue,
-        answers: answerValue,
-      };
-    });
+        ) {
+          const obj: any = {
+            ActionId: WorkflowAction.Approved,
+            ItemCreated: "Yes",
+          };
+          await SPServices.SPUpdateItem({
+            Listname: ListNames.HRMSRecruitmentDptDetails,
+            RequestJSON: obj,
+            ID: props.stateValue?.ID,
+          });
+        }
 
-    const response = await GetPortalJobsService.UpsertQuestions(QuestionValue);
-
-    if (response.status === ResponeStatus.SUCCESS) {
-      if (
-        InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
-      ) {
-        const obj: any = {
-          ActionId: WorkflowAction.Approved,
-          ItemCreated: "Yes",
-        };
-        await SPServices.SPUpdateItem({
-          Listname: ListNames.HRMSRecruitmentDptDetails,
-          RequestJSON: obj,
-          ID: props.stateValue?.ID,
-        });
-      }
-
-      const SuccessAlert = {
-        Message:
-          InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
-            ? RecuritmentHRMsg.CareerportalSuccessMsg
-            : RecuritmentHRMsg.InterviewQuestionSuccessMsg,
-        Type: HRMSAlertOptions.Success,
-        visible: true,
-        ButtonAction: async (userClickedOK: boolean) => {
-          if (userClickedOK) {
-            if (
-              props.CurrentRoleID &&
-              props.CurrentRoleID.includes &&
-              props.CurrentRoleID.includes(RoleID.RecruitmentHR)
-            ) {
-              props.navigation("/ReviewProfileList", {
-                state: {
-                  TabName: props.stateValue?.TabName,
-                  tab: props.stateValue?.tab,
-                },
-              });
-            } else if (
-              props.CurrentRoleID &&
-              props.CurrentRoleID.includes &&
-              props.CurrentRoleID.includes(RoleID.LineManager)
-            ) {
-              props.navigation("/RecurimentProcess", {
-                state: {
-                  TabName: props.stateValue?.TabNames,
-                  tab: props.stateValue?.tab,
-                },
-              });
+        const SuccessAlert = {
+          Message:
+            InterviewQuesData.Catogry ===
+            CatogryOptionCode.CareerPortalCandidate
+              ? RecuritmentHRMsg.CareerportalSuccessMsg
+              : RecuritmentHRMsg.InterviewQuestionSuccessMsg,
+          Type: HRMSAlertOptions.Success,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              if (
+                props.CurrentRoleID &&
+                props.CurrentRoleID.includes &&
+                props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+              ) {
+                props.navigation("/ReviewProfileList", {
+                  state: {
+                    TabName: props.stateValue?.TabName,
+                    tab: props.stateValue?.tab,
+                  },
+                });
+              } else if (
+                props.CurrentRoleID &&
+                props.CurrentRoleID.includes &&
+                props.CurrentRoleID.includes(RoleID.LineManager)
+              ) {
+                props.navigation("/RecurimentProcess", {
+                  state: {
+                    TabName: props.stateValue?.TabNames,
+                    tab: props.stateValue?.tab,
+                  },
+                });
+              }
+              setAlertPopupOpen(false);
+            } else {
+              setAlertPopupOpen(false);
             }
-            setAlertPopupOpen(false);
-          } else {
-            setAlertPopupOpen(false);
-          }
-        },
-      };
+          },
+        };
 
-      setAlertPopupOpen(true);
-      setalertProps(SuccessAlert);
-      setIsLoading(false);
-      setInterviewQuesData((prev) => ({
-        ...prev,
-        Catogry: "",
-      }));
+        setAlertPopupOpen(true);
+        setalertProps(SuccessAlert);
+        setIsLoading(false);
+        setInterviewQuesData((prev) => ({
+          ...prev,
+          Catogry: "",
+        }));
+      } else {
+        const APIError = {
+          Message: RecuritmentHRMsg.APIErrorMsg,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              setAlertPopupOpen(false);
+            } else {
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+
+        setAlertPopupOpen(true);
+        setalertProps(APIError);
+        setIsLoading(false);
+      }
     } else {
-      const APIError = {
-        Message: RecuritmentHRMsg.APIErrorMsg,
+      const QuestionValiError = {
+        Message: RecuritmentHRMsg.QuestionValiErrorMsg,
         Type: HRMSAlertOptions.Error,
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
@@ -2433,9 +2474,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       };
 
       setAlertPopupOpen(true);
-      setalertProps(APIError);
+      setalertProps(QuestionValiError);
       setIsLoading(false);
     }
+
     setIsLoading(false);
   }
 

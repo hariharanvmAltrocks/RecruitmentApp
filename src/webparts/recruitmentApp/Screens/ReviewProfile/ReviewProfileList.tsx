@@ -1,12 +1,15 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
 //import { Link } from "@mui/material";
-import { getVRRDetails } from "../../Services/ServiceExport";
+import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import {
   ActionIcon,
   ButtonAction,
+  Choices,
+  InterviewLevels,
+  ResponeStatus,
   RoleID,
   StatusId,
   TabName,
@@ -16,7 +19,15 @@ import {
 import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
 import SearchableDataTable from "../../components/CustomDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
+import { tabStyle } from "../../components/TabMerge";
+import ToolTipButton from "../../components/Tooltip";
 
+type tabPendingCount = {
+  ReviewPrfileCount: number;
+  AssignInterviewPanelCount: number;
+  InterviewQuestionCount: number;
+  EvaluationCount: number;
+};
 const ReviewProfileList = (props: any) => {
   // console.log(props, "props in ReviewProfileList");
 
@@ -28,6 +39,13 @@ const ReviewProfileList = (props: any) => {
   const [TabNameData, setTabNameData] = React.useState<TabDetails[]>(
     props.TabDetails[0]
   );
+  const [pendingcount, setPendingCount] = React.useState<tabPendingCount>({
+    ReviewPrfileCount: 0,
+    AssignInterviewPanelCount: 0,
+    InterviewQuestionCount: 0,
+    EvaluationCount: 0,
+  });
+  const [pendingInfo, setPendingInfo] = React.useState<any>(null);
   const storedStringRef = React.useRef("");
 
   const handleRedirectView = (
@@ -85,6 +103,51 @@ const ReviewProfileList = (props: any) => {
     }
   };
 
+  const handleHover = async (statusId: number, rowData: any) => {
+    let pendingName: any[] = [];
+    switch (statusId) {
+      case StatusId.RecruitmentInProgress: {
+        let Tooltipdata = await getVRRDetails.GetInterviewPanelTooltiData(
+          rowData
+        );
+        let GradeLevel = await CommonServices.GetGradeLevel(
+          rowData?.PatersonGrade
+        );
+        if (Tooltipdata?.data && Tooltipdata.data[0]?.LineManager) {
+          pendingName = [
+            {
+              Key: Tooltipdata.data[0].LineManager.Role,
+              Value: Tooltipdata.data[0].LineManager.Name,
+            },
+            {
+              Key: Tooltipdata.data[0].HOD.Role,
+              Value: Tooltipdata.data[0].HOD.Name,
+            },
+            {
+              Key: Tooltipdata.data[0].HR.Role,
+              Value: Tooltipdata.data[0].HR.Name,
+            },
+            GradeLevel.data[0]?.Level === InterviewLevels.Level2
+              ? [
+                  {
+                    Key: Tooltipdata.data[0].Exco.Role,
+                    Value: Tooltipdata.data[0].Exco.Name,
+                  },
+                ]
+              : [],
+          ];
+        } else {
+          pendingName = [{ Key: "N/A", Value: "No matching group" }];
+        }
+        break;
+      }
+      default:
+        pendingName = [{ Key: "N/A", Value: "No matching group" }];
+        break;
+    }
+    setPendingInfo(pendingName);
+  };
+
   const columnConfig = (
     tab: string,
     ButtonActions: number,
@@ -111,6 +174,26 @@ const ReviewProfileList = (props: any) => {
       fieldName: "Status",
       sortable: false,
       body: (rowData: any) => {
+        const isTooltipStatus = [
+          // StatusId.Completed,
+          // StatusId.RecruitmentInProgress,
+          StatusId.PendingwithHRandLMtocreateinterviewQuestion,
+        ].includes(rowData.StatusId);
+
+        if (!isTooltipStatus) {
+          return (
+            <div>
+              <ToolTipButton
+                Title=""
+                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                Rowdata={rowData}
+                ApproverData={pendingInfo}
+                onHover={() => handleHover(rowData.StatusId, rowData)}
+              />
+              <span>{rowData.Status}</span>
+            </div>
+          );
+        }
         return <span>{rowData.Status}</span>;
       },
     },
@@ -241,11 +324,52 @@ const ReviewProfileList = (props: any) => {
     }
   };
 
+  const pendingcountTabs = async () => {
+    setIsLoading(true);
+    try {
+      const recrutimentData = await getVRRDetails.GetRecruitmentDetails(
+        [
+          {
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          },
+        ],
+        ""
+      );
+      if (recrutimentData.status === ResponeStatus.SUCCESS) {
+        const InterviewQuestionCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId ===
+              StatusId.PendingwithHRandLMtocreateinterviewQuestion ||
+            (item.StatusId ===
+              StatusId.PendingwithLMcreateDisqualificationQuestion &&
+              item.AssignLineManager === props.userDetails[0]?.EmailId)
+          // (item.AssignEMail === props.userDetails[0]?.EmailId ||
+        );
+
+        const Evalution = await getVRRDetails.GetcountInEvalution(
+          props.CurrentUserEmailId
+        );
+
+        setPendingCount((prevState) => ({
+          ...prevState,
+          InterviewQuestionCount: InterviewQuestionCount.length,
+          EvaluationCount: Evalution.data[0].length,
+        }));
+      }
+    } catch (error) {
+      console.log("Error in pendingcountTabs", error);
+    }
+    setIsLoading(false);
+  };
+
   React.useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
         await fetchRecuritmentData(props.TabDetails[0]);
+        await pendingcountTabs();
         let TabDetails: any;
         if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
           TabDetails = (props.TabDetails[0] ?? []).filter(
@@ -282,6 +406,7 @@ const ReviewProfileList = (props: any) => {
 
   const handleRefresh = (tab: string) => {
     void fetchRecuritmentData(props.TabDetails[0]);
+    void pendingcountTabs();
     setActiveTab(tab);
   };
 
@@ -334,8 +459,23 @@ const ReviewProfileList = (props: any) => {
     }
   };
 
+  const getTabLabel = (tab: any) => {
+    switch (tab.TabName) {
+      // case TabName.ReviewProfile:
+      //   return tabStyle(tab.TabName, pendingcount.ReviewPrfileCount);
+      // case TabName.AssignInterviewPanel:
+      //   return tabStyle(tab.TabName, pendingcount.AssignInterviewPanelCount);
+      case TabName.InterviewQuestion:
+        return tabStyle(tab.TabName, pendingcount.InterviewQuestionCount);
+      case TabName.Evaluation:
+        return tabStyle(tab.TabName, pendingcount.EvaluationCount);
+      default:
+        return tab.TabName;
+    }
+  };
+
   const tabs = TabNameData.map((tab: TabDetails) => ({
-    label: tab.TabName,
+    label: getTabLabel(tab), //tab.TabName,
     value: tab.Value,
     content: (
       <Card
