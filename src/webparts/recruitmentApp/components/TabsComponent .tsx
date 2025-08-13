@@ -7,7 +7,7 @@ import StatusBar from "./StatusBar";
 import { ColorCode, tabType } from "../utilities/Config";
 
 interface TabData {
-  label: string;
+  label: string | JSX.Element;
   value: string;
   content: React.ReactNode;
 }

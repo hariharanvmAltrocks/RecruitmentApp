@@ -199,6 +199,7 @@ export type JobCodeTilte = {
   JobTitle: string;
   JobCode: string;
   ID?: number | undefined;
+  Nationality?: string;
 };
 
 // export type RecruitementPositionDetails = {

@@ -1,4 +1,4 @@
-import { ADGroupID, DataFrom, DocumentLibraray, InOperator, InterviewLevels, ListNames, Nationality, ResponeStatus, RoleName, StatusId, count, workflowStatusApi } from "../../utilities/Config";
+import { DataFrom, DocumentLibraray, InOperator, InterviewLevels, ListNames, Nationality, ResponeStatus, RoleID, RoleName, StatusId, count, workflowStatusApi } from "../../utilities/Config";
 import SPServices from "../SPService/SPServices";
 import {
   CommentsData,
@@ -14,7 +14,7 @@ import { CommonServices, GetPortalJobsService } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import * as moment from "moment";
 import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
-import { AutoCompleteItem, InterviewPanelItem, InterviewPanelMember } from "../../Models/Screens";
+import { AutoCompleteItem, InterviewPanelItem, InterviewPanelMember, tooltipInterviewPanel } from "../../Models/Screens";
 
 interface IAttachmentExampleState {
   file: File | any;
@@ -1664,6 +1664,12 @@ export default class RecruitmentService implements IRecruitmentService {
         jobSummary: decodeBase64(data.JobDescription || ""),
       };
 
+      const DescriptionFr: Descriptions = {
+        jobTitle: RecuritmentDetails.JobNameInFrench === undefined ? RecuritmentDetails.JobNameInFrench : RecuritmentDetails.JobNameInFrench,
+        jobShortSummary: decodeBase64(data.RoleProfile || ""),
+        jobSummary: decodeBase64(data.JobDescription || ""),
+      };
+
       const onamdocpathfile = await CommonServices.GetAttachmentLink(
         RecuritmentDetails.JobCode,
         DocumentLibraray.ONAMSignedStampDocuments
@@ -1697,7 +1703,7 @@ export default class RecruitmentService implements IRecruitmentService {
         ),
         nationality: NationalityValue,
         Descriptions_en: Description,
-        Descriptions_fr: Description,
+        Descriptions_fr: DescriptionFr,
         RoleAndTechSkills: Roleandtechnical,
         MinAndPreferedQualifications: MinAndPreferedQualification,
       };
@@ -1750,8 +1756,15 @@ export default class RecruitmentService implements IRecruitmentService {
       })
         .then(async (res) => {
           // console.log(res, "res");
+          const GetADGruopUserID = await CommonServices.GetMasterData(
+            ListNames.HRMSRecruitmentUserRole
+          );
+          console.log(GetADGruopUserID, "GetADGruopUserID");
+          let ADGroupIDs = GetADGruopUserID.data?.filter(
+            (item: any) => item.ID === RoleID.InterviewPanel
+          );
           const interviewpanelOption = await CommonServices.GetADgruopsEmailIDs(
-            ADGroupID.HRMSInterviewPanel
+            ADGroupIDs[0]?.ADGroupID
           );
           let panelMembers: InterviewPanelItem[] = [];
           let Filter = [
@@ -1924,31 +1937,35 @@ export default class RecruitmentService implements IRecruitmentService {
       const candidateIDs = listItems.map(
         (panel: any) => panel?.CandidateID?.ID
       );
+      const filters = [
+        {
+          FilterKey: "StatusId",
+          Operator: "in",
+          FilterValue: [
+            StatusId.InterviewScheduled,
+            StatusId.InterviewScheduledforLevel2,
+          ],
+        },
+        {
+          FilterKey: "ItemCreated",
+          Operator: "eq",
+          FilterValue: "No",
+        },
+      ];
+
+      if (candidateIDs && candidateIDs.length > 0) {
+        filters.push({
+          FilterKey: "ID",
+          Operator: "in",
+          FilterValue: candidateIDs,
+        });
+      }
       const candidateItems = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Select:
           "*,Status/ID,Status/StatusDescription,RecruitmentID/ID,JobCode/JobCode",
         Expand: "Status,RecruitmentID,JobCode",
-        Filter: [
-          {
-            FilterKey: "StatusId",
-            Operator: "in",
-            FilterValue: [
-              StatusId.InterviewScheduled,
-              StatusId.InterviewScheduledforLevel2,
-            ],
-          },
-          {
-            FilterKey: "ItemCreated",
-            Operator: "eq",
-            FilterValue: "No",
-          },
-          {
-            FilterKey: "ID",
-            Operator: "in",
-            FilterValue: candidateIDs ? candidateIDs : [],
-          }
-        ],
+        Filter: filters,
         FilterCondition: "and",
         Topcount: count.Topcount,
       });
@@ -1996,6 +2013,135 @@ export default class RecruitmentService implements IRecruitmentService {
         },
         status: 500,
         message: "Error occurred while fetching user list"
+      };
+    }
+  }
+
+  async GetInterviewPanelTooltiData(
+    data: DataSyncToRecruitmentResponse,
+  ): Promise<ApiResponse<tooltipInterviewPanel[] | null>> {
+    let GetItem: tooltipInterviewPanel[] = [{} as tooltipInterviewPanel];
+    try {
+      await SPServices.SPReadItems({
+        Listname: ListNames.JDEDataMapping,
+        Select: "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
+        Filter: [{
+          FilterKey: "BUC",
+          Operator: "eq",
+          FilterValue: data.BusinessUnitCodeId
+        }],
+        Expand: "BUC,LineManager,HOD,HR,EXCO",
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      })
+        .then(async (res) => {
+          // console.log(res, "res");
+          for (const item of res) {
+            if (item?.LineManagerId && item?.LineManager?.EMail) {
+              let UserName = await GetUserName(item.LineManager.EMail);
+              let LineManager = {
+                Role: RoleName.LineManager,
+                Name: String(UserName.data)
+              }
+              GetItem[0].LineManager = LineManager;
+            }
+            if (item?.HODId && item?.HOD?.EMail) {
+              let UserName = await GetUserName(item?.HOD?.EMail);
+              let HOD = {
+                Role: RoleName.HOD,
+                Name: String(UserName.data)
+              }
+              GetItem[0].HOD = HOD;
+            }
+            if (item?.EXCOId && item?.EXCO?.EMail) {
+              // let UserName = await GetUserName(item?.EXCO?.EMail);
+              // panelMembers.push({
+              //   key: item.EXCOId,
+              //   Role: RoleName.EXCO,
+              //   text: String(UserName.data),
+              // });
+              let UserName = await GetUserName(item?.EXCO?.EMail);
+              let EXCO = {
+                Role: RoleName.EXCO,
+                Name: String(UserName.data)
+              }
+              GetItem[0].Exco = EXCO;
+            }
+            if (data.AssignEMail) {
+              let UserName = await GetUserName(data.AssignEMail);
+              let HR = {
+                Role: RoleName.RecruitmentHR,
+                Name: String(UserName.data)
+              }
+              GetItem[0].HR = HR;
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(
+            "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+            error
+          );
+        });
+      return {
+        data: GetItem,
+        status: 200,
+        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+        error
+      );
+      return {
+        data: GetItem,
+        status: 500,
+        message:
+          "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+      };
+    }
+  }
+
+  async GetEvalutionActionData(
+    filterConditions: any,
+  ): Promise<ApiResponse<any[]>> {
+    let GetItem: any[] = []
+    try {
+      await SPServices.SPReadItems({
+        Listname: ListNames.HRMSInterviewPanelDetails,
+        Select:
+          "ID, CandidateID/ID, RecruitmentID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail,IsScoreSheetUploaded",
+        Expand: "InterviewPanel,RecruitmentID,CandidateID",
+        Filter: filterConditions,
+        FilterCondition: "and"
+      }).then(async (res) => {
+        console.log(res, "res");
+        for (const item of res) {
+          let UserName = await GetUserName(item.InterviewPanel.EMail)
+          let ActionValues = {
+            Key: String(UserName.data),
+            Value: item?.IsScoreSheetUploaded === "Yes" ? "Completed" : "Pending"
+          }
+          GetItem.push(ActionValues)
+        }
+      })
+        .catch((error) => {
+          console.log(
+            "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+            error
+          );
+        });
+      return {
+        data: GetItem,
+        status: 200,
+        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching interview panel details:", error);
+      return {
+        data: [],
+        status: 400,
+        message: "Error fetching data",
       };
     }
   }

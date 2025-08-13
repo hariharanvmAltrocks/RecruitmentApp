@@ -4,6 +4,7 @@ import CustomDatePicker from "./CustomDatePicker";
 import {
   ColorCode,
   HRMSAlertOptions,
+  labelName,
   ListNames,
   ResponeStatus,
 } from "../utilities/Config";
@@ -217,7 +218,7 @@ export const DateExtension = ({
               </div>
               <div>
                 <div className="ms-Grid-row" style={{ marginLeft: "9%" }}>
-                  <Labelheader value={"Advert Duration -1"} />
+                  <Labelheader value={labelName.Firstextensiondate} />
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
                       <CustomDatePicker
@@ -242,7 +243,7 @@ export const DateExtension = ({
                   </div>
                 </div>
                 <div className="ms-Grid-row" style={{ marginLeft: "9%" }}>
-                  <Labelheader value={"Advert Duration -2"} />
+                  <Labelheader value={labelName.Secondextensiondate} />
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
                       <CustomDatePicker
@@ -270,7 +271,7 @@ export const DateExtension = ({
                 {AdvertDuration3 && (
                   <>
                     <div className="ms-Grid-row" style={{ marginLeft: "9%" }}>
-                      <Labelheader value={"Advert Duration -3"} />
+                      <Labelheader value={labelName.Thirdextensiondate} />
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomDatePicker

@@ -1,4 +1,4 @@
-import { AutoCompleteItem, InterviewPanelMember } from "../../Models/Screens";
+import { AutoCompleteItem, InterviewPanelMember, tooltipInterviewPanel } from "../../Models/Screens";
 
 
 export interface IAttachmentExampleState {
@@ -280,4 +280,8 @@ export type IRecruitmentService = {
     ADGroupID: string,
     Role: string
   ): Promise<ApiResponse<{ Key: string; Value: string }>>;
+  GetInterviewPanelTooltiData(
+    data: DataSyncToRecruitmentResponse,
+  ): Promise<ApiResponse<tooltipInterviewPanel[] | null>>;
+  GetEvalutionActionData(filterConditions: any): Promise<ApiResponse<any[]>>;
 };

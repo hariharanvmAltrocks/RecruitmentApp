@@ -165,6 +165,7 @@ export interface CandidateComment {
   Comments: string;
   Level: string;
 }
+
 export type IInterviewProcessService = {
   GetInterviewPanelDetails(
     filterConditions: any[]
@@ -224,7 +225,6 @@ export type IInterviewProcessService = {
     candidateID: number,
     EmployeeList: any[]
   ): Promise<ApiResponse<CommentsData[]>>;
-
   GetPanelLeveldata(
     filterConditions: any[],
     EmployeeList: any[]

@@ -23,6 +23,8 @@ import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import * as moment from "moment";
 import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
+import { tabStyle } from "../../components/TabMerge";
+import ToolTipButton from "../../components/Tooltip";
 
 // type tabCount = {
 //   EvalutionCount: number;
@@ -47,6 +49,7 @@ const InterviewPanelList = (props: any) => {
   //  const [pendingcount, setPendingCount] = React.useState<tabCount>({
   //     EvalutionCount: 0,
   //   });
+  const [pendingInfo, setPendingInfo] = React.useState<any>(null);
 
   function handleRedirectView(
     rowData: any,
@@ -181,6 +184,29 @@ const InterviewPanelList = (props: any) => {
     setIsLoading(false);
   }
 
+  const handleHover = async (statusId: number, rowData: any) => {
+    let pendingName: any[] = [];
+    console.log(rowData, "rowdaya");
+    let Levels =
+      statusId === StatusId.InterviewScheduled
+        ? InterviewLevels.Level1
+        : InterviewLevels.Level2;
+    let data = await getVRRDetails.GetEvalutionActionData([
+      {
+        FilterKey: "CandidateID/Id",
+        Operator: "eq",
+        FilterValue: rowData.ID,
+      },
+      {
+        FilterKey: "InterviewLevel",
+        Operator: "eq",
+        FilterValue: Levels,
+      },
+    ]);
+    pendingName = data.data;
+    setPendingInfo(pendingName);
+  };
+
   const columnConfig = (
     tab: string,
     ButtonActions: number,
@@ -218,7 +244,19 @@ const InterviewPanelList = (props: any) => {
       header: "Status",
       sortable: false,
       body: (rowData: any) => {
-        return <span>{rowData.Status}</span>;
+        return (
+          <div>
+            <ToolTipButton
+              Title=""
+              CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+              Rowdata={rowData}
+              ApproverData={pendingInfo}
+              onHover={() => handleHover(rowData.StatusId, rowData)}
+            />
+            <span>{rowData.Status}</span>
+          </div>
+        );
+        // return <span>{rowData.Status}</span>;
       },
     },
 
@@ -584,10 +622,7 @@ const InterviewPanelList = (props: any) => {
   const getTabLabel = (tab: any) => {
     switch (tab.TabName) {
       case TabName.Evaluation:
-        return CandidateData.length > 0
-          ? `${tab.TabName} (${CandidateData.length})`
-          : tab.TabName;
-
+        return String(tabStyle(tab.TabName, CandidateData.length));
       default:
         return tab.TabName;
     }

@@ -1,13 +1,14 @@
 import * as React from "react";
 import { Card, CardContent } from "@mui/material";
 //import { Link } from "@mui/material";
-import { getVRRDetails } from "../../Services/ServiceExport";
+import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import {
   ActionIcon,
   ButtonAction,
   Choices,
+  InterviewLevels,
   ResponeStatus,
   RoleID,
   StatusId,
@@ -18,6 +19,8 @@ import {
 import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
 import SearchableDataTable from "../../components/CustomDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
+import { tabStyle } from "../../components/TabMerge";
+import ToolTipButton from "../../components/Tooltip";
 
 type tabPendingCount = {
   ReviewPrfileCount: number;
@@ -42,6 +45,7 @@ const ReviewProfileList = (props: any) => {
     InterviewQuestionCount: 0,
     EvaluationCount: 0,
   });
+  const [pendingInfo, setPendingInfo] = React.useState<any>(null);
   const storedStringRef = React.useRef("");
 
   const handleRedirectView = (
@@ -99,6 +103,51 @@ const ReviewProfileList = (props: any) => {
     }
   };
 
+  const handleHover = async (statusId: number, rowData: any) => {
+    let pendingName: any[] = [];
+    switch (statusId) {
+      case StatusId.RecruitmentInProgress: {
+        let Tooltipdata = await getVRRDetails.GetInterviewPanelTooltiData(
+          rowData
+        );
+        let GradeLevel = await CommonServices.GetGradeLevel(
+          rowData?.PatersonGrade
+        );
+        if (Tooltipdata?.data && Tooltipdata.data[0]?.LineManager) {
+          pendingName = [
+            {
+              Key: Tooltipdata.data[0].LineManager.Role,
+              Value: Tooltipdata.data[0].LineManager.Name,
+            },
+            {
+              Key: Tooltipdata.data[0].HOD.Role,
+              Value: Tooltipdata.data[0].HOD.Name,
+            },
+            {
+              Key: Tooltipdata.data[0].HR.Role,
+              Value: Tooltipdata.data[0].HR.Name,
+            },
+            GradeLevel.data[0]?.Level === InterviewLevels.Level2
+              ? [
+                  {
+                    Key: Tooltipdata.data[0].Exco.Role,
+                    Value: Tooltipdata.data[0].Exco.Name,
+                  },
+                ]
+              : [],
+          ];
+        } else {
+          pendingName = [{ Key: "N/A", Value: "No matching group" }];
+        }
+        break;
+      }
+      default:
+        pendingName = [{ Key: "N/A", Value: "No matching group" }];
+        break;
+    }
+    setPendingInfo(pendingName);
+  };
+
   const columnConfig = (
     tab: string,
     ButtonActions: number,
@@ -125,6 +174,26 @@ const ReviewProfileList = (props: any) => {
       fieldName: "Status",
       sortable: false,
       body: (rowData: any) => {
+        const isTooltipStatus = [
+          // StatusId.Completed,
+          // StatusId.RecruitmentInProgress,
+          StatusId.PendingwithHRandLMtocreateinterviewQuestion,
+        ].includes(rowData.StatusId);
+
+        if (!isTooltipStatus) {
+          return (
+            <div>
+              <ToolTipButton
+                Title=""
+                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                Rowdata={rowData}
+                ApproverData={pendingInfo}
+                onHover={() => handleHover(rowData.StatusId, rowData)}
+              />
+              <span>{rowData.Status}</span>
+            </div>
+          );
+        }
         return <span>{rowData.Status}</span>;
       },
     },
@@ -392,22 +461,14 @@ const ReviewProfileList = (props: any) => {
 
   const getTabLabel = (tab: any) => {
     switch (tab.TabName) {
-      case TabName.ReviewProfile:
-        return pendingcount?.ReviewPrfileCount > 0
-          ? `${tab.TabName} (${pendingcount.ReviewPrfileCount})`
-          : tab.TabName;
-      case TabName.AssignInterviewPanel:
-        return pendingcount?.AssignInterviewPanelCount > 0
-          ? `${tab.TabName} (${pendingcount.AssignInterviewPanelCount})`
-          : tab.TabName;
+      // case TabName.ReviewProfile:
+      //   return tabStyle(tab.TabName, pendingcount.ReviewPrfileCount);
+      // case TabName.AssignInterviewPanel:
+      //   return tabStyle(tab.TabName, pendingcount.AssignInterviewPanelCount);
       case TabName.InterviewQuestion:
-        return pendingcount?.InterviewQuestionCount > 0
-          ? `${tab.TabName} (${pendingcount.InterviewQuestionCount})`
-          : tab.TabName;
+        return tabStyle(tab.TabName, pendingcount.InterviewQuestionCount);
       case TabName.Evaluation:
-        return pendingcount?.EvaluationCount > 0
-          ? `${tab.TabName} (${pendingcount.EvaluationCount})`
-          : tab.TabName;
+        return tabStyle(tab.TabName, pendingcount.EvaluationCount);
       default:
         return tab.TabName;
     }

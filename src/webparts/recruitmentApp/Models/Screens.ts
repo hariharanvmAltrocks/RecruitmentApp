@@ -16,6 +16,18 @@ export type InterviewPanelMember = {
   InterviewPanel: AutoCompleteItem[];
 };
 
+export type tooltipData = {
+  Role: string;
+  Name: string;
+}
+
+export type tooltipInterviewPanel = {
+  LineManager: tooltipData;
+  HOD: tooltipData;
+  HR: tooltipData;
+  Exco: tooltipData;
+}
+
 export type alertPropsData = {
   Message: string;
   Type: string;

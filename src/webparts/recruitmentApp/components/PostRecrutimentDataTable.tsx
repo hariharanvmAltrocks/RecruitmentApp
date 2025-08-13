@@ -66,7 +66,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
     WorkflowStatus: { key: 0, text: "" },
     WorkflowStatusOption: [],
   });
-  const [totalItem, setTotalItem] = React.useState<number>(0);
+  // const [totalItem, setTotalItem] = React.useState<number>(0);
 
   React.useEffect(() => {
     const PagewiseData =
@@ -74,7 +74,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
         ? data
         : data.slice(pagination.first, pagination.first + pagination.rows);
     setFilteredItems(PagewiseData);
-    setTotalItem(data[0]?.TotalItems ?? data.length);
+    // setTotalItem(data[0]?.TotalItems ?? data.length);
     const workflowStatusoption: AutoCompleteItem[] = Array.from(
       data.map((sta) => ({
         key: sta.StatusID,
@@ -108,7 +108,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
   };
 
   React.useEffect(() => {
-    setTotalItem(filteredItems[0]?.TotalItems ?? filteredItems.length);
+    // setTotalItem(filteredItems[0]?.TotalItems ?? filteredItems.length);
   }, [filteredItems]);
 
   const search_fn = (field: string, item: AutoCompleteItem) => {
@@ -339,13 +339,13 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
           <DataTable
             className="normalTable"
             value={filteredItems}
-            lazy
-            rows={pagination.rows}
-            first={pagination.first}
-            totalRecords={totalItem}
-            onPage={(event) => {
-              onPageChange(event);
-            }}
+            // lazy
+            rows={rows}
+            // first={pagination.first}
+            // totalRecords={totalItem}
+            // onPage={(event) => {
+            //   onPageChange(event);
+            // }}
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             scrollable
@@ -355,8 +355,8 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
             paginator
             stripedRows
             filters={dashboardSearch}
-            onFilter={(e) => setFilteredItems(e.filteredValue || data)}
-            style={{ overflow: "visible" }}
+            // onFilter={(e) => setFilteredItems(e.filteredValue || data)}
+            // style={{ overflow: "visible" }}
             emptyMessage="No Record Found"
           >
             {columns.map((col) => (

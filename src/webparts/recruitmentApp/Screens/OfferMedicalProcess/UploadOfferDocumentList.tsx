@@ -19,7 +19,11 @@ import {
 } from "../../Services/ServiceExport";
 import { DataSyncToResiProcess } from "../../Services/InitiateOfferLetter/IOfferLetterService";
 import PostRecrutimentDataTable from "../../components/PostRecrutimentDataTable";
+import { tabStyle } from "../../components/TabMerge";
 
+type tabcount = {
+  CandidateDocumentCount: number;
+};
 const UploadOfferDocumentList = (props: any) => {
   const [data, setData] = React.useState<DataSyncToResiProcess[]>([]);
   const [rows, setRows] = React.useState<number>(5);
@@ -32,6 +36,9 @@ const UploadOfferDocumentList = (props: any) => {
     first: 0,
     rows: rows,
     totalPages: 1,
+  });
+  const [pendingcount, setPendingCount] = React.useState<tabcount>({
+    CandidateDocumentCount: 0,
   });
 
   const OfferLettertabs = React.useRef("");
@@ -306,6 +313,28 @@ const UploadOfferDocumentList = (props: any) => {
         await OfferLetterServices.UpdateStatusInSpfxlist(nullChecked);
       }
       setData(response);
+      let DocumentCount = response.filter(
+        (item: any) =>
+          item.StatusID ===
+            StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ||
+          item.StatusID ===
+            StatusId.PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter ||
+          item.StatusID ===
+            StatusId.PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments ||
+          item.StatusID ===
+            StatusId.RevertedBacktoCandidateforReuploadOfferLetter ||
+          item.StatusID ===
+            StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
+          item.StatusID === StatusId.RevertedBacktoCandidateforReuploadDocs ||
+          item.StatusID ===
+            StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm ||
+          item.StatusID ===
+            StatusId.RevertedBacktoCandidateforReuploadEmploymentContract
+      );
+      setPendingCount((prev) => ({
+        ...prev,
+        CandidateDocumentCount: DocumentCount.length,
+      }));
     } catch (error) {
       console.log("GetVacancyDetails doesn't fetch the data", error);
     }
@@ -388,8 +417,17 @@ const UploadOfferDocumentList = (props: any) => {
     }
   };
 
+  const getTabLabel = (tab: any) => {
+    switch (tab.TabName) {
+      case TabName.CandidateDocuments:
+        return tabStyle(tab.TabName, pendingcount.CandidateDocumentCount);
+      default:
+        return tab.TabName;
+    }
+  };
+
   const tabs = TabNameData.map((tab: TabDetails) => ({
-    label: tab.TabName,
+    label: getTabLabel(tab),
     value: tab.Value,
     content: (
       <Card

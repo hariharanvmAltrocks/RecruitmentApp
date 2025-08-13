@@ -261,10 +261,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   const [Preview, setPreview] = useState<boolean>(false);
   const [isViewed, setIsViewed] = useState(false);
   const [experValidation, setExperValidation] = useState<boolean>(false);
-  const [masterLibrary, setMasterLibrary] = useState<masterLibrary>({
-    RoleProfile: [],
-    Grading: [],
-  });
+  // Commented out this section because the client mentioned that the Recruitment HR did not upload
+  // the Role Profile and Grading Document. This functionality will remain disabled until those documents
+  // are provided and approved.
+  // const [masterLibrary, setMasterLibrary] = useState<masterLibrary>({
+  //   RoleProfile: [],
+  //   Grading: [],
+  // });
 
   const [currentRoleID, setCurrentRoleID] = useState<number>(0);
 
@@ -595,7 +598,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       filterConditions.push({
         FilterKey: "StatusId",
         Operator: "eq",
-        FilterValue: StatusId.Completed,
+        FilterValue: StatusId.ReadyforRecruitmentProcess,
       });
       filterConditions.push({
         FilterKey: "IsDataSyncToRecruitment",
@@ -801,24 +804,32 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           if (advDetails.JobcodeChecked === true) {
             errors.Comments = !IsValid(Comments);
             errors.Checkboxalidation = !IsValid(Checkbox);
-            if (formState.RoleProfileDocument.length === 0) {
-              errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
-            }
-            if (formState.GradingDocument.length === 0) {
-              errors.Grading = !IsValid(masterLibrary.Grading);
-            }
+            // Commented out this section because the client mentioned that the Recruitment HR did not upload
+            // the Role Profile and Grading Document. This functionality will remain disabled until those documents
+            // are provided and approved.
+            // if (formState.RoleProfileDocument.length === 0) {
+            //   errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
+            // }
+            // if (formState.GradingDocument.length === 0) {
+            //   errors.Grading = !IsValid(masterLibrary.Grading);
+            // }
             if (formState.AdvertisementDocument.length === 0) {
               errors.AdvertisementAttachement = !IsValid(
                 advDetails.AdvertisementAttachement
               );
             }
           } else {
-            if (formState.RoleProfileDocument.length === 0) {
-              errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
+            {
+              /* Commented out this section because the client mentioned that the Recruitment HR did not upload 
+ the Role Profile and Grading Document. This functionality will remain disabled until those documents 
+ are provided and approved. */
             }
-            if (formState.GradingDocument.length === 0) {
-              errors.Grading = !IsValid(masterLibrary.Grading);
-            }
+            // if (formState.RoleProfileDocument.length === 0) {
+            //   errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
+            // }
+            // if (formState.GradingDocument.length === 0) {
+            //   errors.Grading = !IsValid(masterLibrary.Grading);
+            // }
             if (formState.AdvertisementDocument.length === 0) {
               errors.AdvertisementAttachement = !IsValid(
                 advDetails.AdvertisementAttachement
@@ -918,12 +929,17 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       Grading: false,
     };
     if (tab === "tab1") {
-      if (formState.RoleProfileDocument.length === 0) {
-        errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
+      {
+        /* Commented out this section because the client mentioned that the Recruitment HR did not upload 
+ the Role Profile and Grading Document. This functionality will remain disabled until those documents 
+ are provided and approved. */
       }
-      if (formState.GradingDocument.length === 0) {
-        errors.Grading = !IsValid(masterLibrary.Grading);
-      }
+      // if (formState.RoleProfileDocument.length === 0) {
+      //   errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
+      // }
+      // if (formState.GradingDocument.length === 0) {
+      //   errors.Grading = !IsValid(masterLibrary.Grading);
+      // }
       if (formState.AdvertisementDocument.length === 0) {
         errors.AdvertisementAttachement = !IsValid(
           advDetails.AdvertisementAttachement
@@ -1189,18 +1205,23 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   advDetails?.AdvertisementAttachement ?? [],
                   DocumentLibraray.RecruitmentAdvertisementDocument
                 );
-                await CommonServices.uploadRoleProfileMaster(
-                  formState.JobCode,
-                  RoleProfileMaster.RoleProfile,
-                  masterLibrary?.RoleProfile ?? [],
-                  DocumentLibraray.RoleProfileMaster
-                );
-                await CommonServices.uploadRoleProfileMaster(
-                  formState.JobCode,
-                  RoleProfileMaster.Grading,
-                  masterLibrary?.Grading ?? [],
-                  DocumentLibraray.RoleProfileMaster
-                );
+                {
+                  /* Commented out this section because the client mentioned that the Recruitment HR did not upload 
+ the Role Profile and Grading Document. This functionality will remain disabled until those documents 
+ are provided and approved. */
+                }
+                // await CommonServices.uploadRoleProfileMaster(
+                //   formState.JobCode,
+                //   RoleProfileMaster.RoleProfile,
+                //   masterLibrary?.RoleProfile ?? [],
+                //   DocumentLibraray.RoleProfileMaster
+                // );
+                // await CommonServices.uploadRoleProfileMaster(
+                //   formState.JobCode,
+                //   RoleProfileMaster.Grading,
+                //   masterLibrary?.Grading ?? [],
+                //   DocumentLibraray.RoleProfileMaster
+                // );
                 await SPServices.SPUpdateItem({
                   Listname: ListNames.HRMSRecruitmentDptDetails,
                   RequestJSON: obj,
@@ -1369,20 +1390,23 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }
   };
 
-  const handleRoleprofileDelete = (index: number, attachmentType: string) => {
-    setMasterLibrary((prevState) => {
-      const updatedAttachments = [
-        ...(prevState[attachmentType as keyof masterLibrary] ?? []),
-      ];
+  // Commented out this section because the client mentioned that the Recruitment HR did not upload
+  // the Role Profile and Grading Document. This functionality will remain disabled until those documents
+  // are provided and approved.
+  // const handleRoleprofileDelete = (index: number, attachmentType: string) => {
+  //   setMasterLibrary((prevState) => {
+  //     const updatedAttachments = [
+  //       ...(prevState[attachmentType as keyof masterLibrary] ?? []),
+  //     ];
 
-      updatedAttachments.splice(index, 1);
+  //     updatedAttachments.splice(index, 1);
 
-      return {
-        ...prevState,
-        [attachmentType]: updatedAttachments,
-      };
-    });
-  };
+  //     return {
+  //       ...prevState,
+  //       [attachmentType]: updatedAttachments,
+  //     };
+  //   });
+  // };
 
   const handleInputChangeTextArea = (
     value: string | any,
@@ -1520,19 +1544,22 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }));
   };
 
-  const handleRoleprofileDocument = (
-    StateValue: string,
-    value: IDocFiles[]
-  ) => {
-    setMasterLibrary((prevState) => ({
-      ...prevState,
-      [StateValue]: value,
-    }));
-    setValidationError((prevState: any) => ({
-      ...prevState,
-      [StateValue]: false,
-    }));
-  };
+  // Commented out this section because the client mentioned that the Recruitment HR did not upload
+  // the Role Profile and Grading Document. This functionality will remain disabled until those documents
+  // are provided and approved.
+  // const handleRoleprofileDocument = (
+  //   StateValue: string,
+  //   value: IDocFiles[]
+  // ) => {
+  //   setMasterLibrary((prevState) => ({
+  //     ...prevState,
+  //     [StateValue]: value,
+  //   }));
+  //   setValidationError((prevState: any) => ({
+  //     ...prevState,
+  //     [StateValue]: false,
+  //   }));
+  // };
 
   const tabs = [
     {
@@ -1909,8 +1936,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               ) : (
                 <>
                   <div className="ms-Grid-row">
-                    <div className="ms-Grid-col ms-lg3">
-                      {formState.RoleProfileDocument.length > 0 ? (
+                    {formState.RoleProfileDocument.length > 0 && (
+                      <div className="ms-Grid-col ms-lg3">
                         <div className="custom-document-column">
                           <CustomLabel value={"RoleProfile Documents"} />
                           <div
@@ -1926,13 +1953,19 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             />
                           </div>
                         </div>
-                      ) : (
+                      </div>
+                    )}
+
+                    {/* : (
                         <>
                           {currentRoleID === RoleID.RecruitmentHRLead &&
                           props.stateValue?.StatusId === StatusId.Completed ? (
                             <></>
                           ) : (
                             <>
+                              Commented out this section because the client mentioned that the Recruitment HR did not upload 
+ the Role Profile and Grading Document. This functionality will remain disabled until those documents 
+ are provided and approved.
                               <CustomLabel
                                 value={"RoleProfile Documents (Only Word)"}
                                 mandatory={true}
@@ -1980,9 +2013,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           )}
                         </>
                       )}
-                    </div>
-                    <div className="ms-Grid-col ms-lg3">
-                      {formState.GradingDocument.length > 0 ? (
+                    </div> */}
+
+                    {formState.GradingDocument.length > 0 && (
+                      <div className="ms-Grid-col ms-lg3">
                         <div className="custom-document-column">
                           <CustomLabel value={"Grading Documents"} />
                           <div
@@ -1998,13 +2032,19 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             />
                           </div>
                         </div>
-                      ) : (
-                        <>
-                          {currentRoleID === RoleID.RecruitmentHRLead &&
+                      </div>
+                    )}
+                    {/* Commented out this section because the client mentioned that the Recruitment HR did not upload 
+ the Role Profile and Grading Document. This functionality will remain disabled until those documents 
+ are provided and approved.
+                    </div> : (
+                         <>
+                           {currentRoleID === RoleID.RecruitmentHRLead &&
                           props.stateValue?.StatusId === StatusId.Completed ? (
                             <></>
                           ) : (
                             <>
+                             
                               <CustomLabel
                                 value={"Grading Documents (Only Word)"}
                                 mandatory={true}
@@ -2051,8 +2091,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             </>
                           )}
                         </>
-                      )}
-                    </div>
+                      )} */}
 
                     {currentRoleID === RoleID.RecruitmentHRLead &&
                     props.stateValue?.StatusId === StatusId.Completed ? (

@@ -1,3 +1,4 @@
+import * as React from "react";
 import { TabDetails } from "../Models/Master";
 import { MenuResponse } from "../Models/Menu";
 import {
@@ -95,3 +96,24 @@ export function GetWorkflowStatusByID(StatusIds: string) {
       return "";
   }
 }
+
+export const tabStyle = (TabName: string, Count: number) => {
+  return Count > 0 ? (
+    <>
+      <span>
+        {TabName}{" "}
+        <span
+          style={{
+            color: "red",
+            fontWeight: "bold",
+            fontFamily: "Segoe UI, Arial, sans-serif",
+          }}
+        >
+          ({Count})
+        </span>
+      </span>
+    </>
+  ) : (
+    `${TabName} (${0})`
+  );
+};

@@ -11,6 +11,7 @@ import {
   ButtonAction,
   HRMSAlertOptions,
   RoleID,
+  RoleName,
   StatusId,
   TabName,
   tabType,
@@ -30,6 +31,18 @@ import TabsComponent from "../../components/TabsComponent ";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { alertPropsData } from "../../Models/Screens";
 import * as moment from "moment";
+import { tabStyle } from "../../components/TabMerge";
+import ToolTipButton from "../../components/Tooltip";
+
+type tabCount = {
+  ReviewProfileCount: number;
+  Level1Count: number;
+  Level2Count: number;
+  ONHoldRejectedCount: number;
+  InterviewPanelCount: number;
+  InterviewPanel2Count: number;
+  RescheduleCount: number;
+};
 
 const ReviewCandidateList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<
@@ -57,6 +70,16 @@ const ReviewCandidateList = (props: any) => {
     rows: rows,
     totalPages: 1,
   });
+  const [pendingcount, setPendingCount] = React.useState<tabCount>({
+    ReviewProfileCount: 0,
+    Level1Count: 0,
+    Level2Count: 0,
+    ONHoldRejectedCount: 0,
+    InterviewPanelCount: 0,
+    InterviewPanel2Count: 0,
+    RescheduleCount: 0,
+  });
+  const [pendingInfo, setPendingInfo] = React.useState<any>(null);
 
   function handleRedirectView(
     rowData: any,
@@ -96,7 +119,7 @@ const ReviewCandidateList = (props: any) => {
       ? "/RecurimentProcess/ReviewCandidateList/ViewCandidateDetails"
       : "/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails";
     if (tab === "tab2 - Level 2") {
-      if (JobValidation) {
+      if (JobValidation && pendingcount.ONHoldRejectedCount === 0) {
         props.navigation(ScreenNavigation, {
           state: {
             ID: rowData?.CandidateID,
@@ -106,10 +129,32 @@ const ReviewCandidateList = (props: any) => {
             ButtonAction,
             TabNamed,
             JobCodeID: props.stateValue?.JobCodeID,
+            JobCode: props.stateValue?.JobCode,
             initialTab: props.stateValue?.TabNames,
             PreActionBtn,
           },
         });
+      } else if (pendingcount.ONHoldRejectedCount > 0) {
+        // const JobExpiredMsg = `There are ${pendingcount.ONHoldRejectedCount} pending candidate is there so please review the candidate after the processed .`;
+        const JobExpiredMsg = `
+          <div style="text-align: center;">
+            <h3>⚠️ Pending Candidate Review.</h3>
+            <p>There is ${pendingcount.ONHoldRejectedCount} pending candidate currently on hold</p>
+            <p>Please review the candidate and take the necessary action to proceed with interview scheduling.</p>
+          </div>`;
+        const SuccessAlert = {
+          Message: JobExpiredMsg,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+
+        setAlertPopupOpen(true);
+        setalertProps(SuccessAlert);
       } else {
         const Dateformat = JobPostingSecondExtensionEndDate
           ? moment(JobPostingSecondExtensionEndDate).format("DD/MM/YYYY")
@@ -145,6 +190,7 @@ const ReviewCandidateList = (props: any) => {
           RecruitmentID,
           tab,
           JobCodeID: props.stateValue?.JobCodeID,
+          JobCode: props.stateValue?.JobCode,
           ButtonAction,
           TabNamed,
           initialTab: props.stateValue?.TabNames,
@@ -153,6 +199,89 @@ const ReviewCandidateList = (props: any) => {
       });
     }
   }
+
+  const handleHover = async (workflowStatusId: string, rowData: any) => {
+    let pendingName: any[] = [];
+    let RecrutimentHR = RecruitmentDetails[0]?.AssignEMail;
+    let LineManager = RecruitmentDetails[0]?.AssignLineManager;
+    let HOD = RecruitmentDetails[0]?.AssignHOD;
+    switch (workflowStatusId) {
+      case workflowStatusApi.HRPending:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              RecrutimentHR,
+              RoleName.RecruitmentHR
+            )
+          ).data,
+        ];
+        break;
+      case workflowStatusApi.LineManagerL1Pending:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              LineManager,
+              RoleName.LineManager
+            )
+          ).data,
+        ];
+        break;
+      case workflowStatusApi.LineManagerL2Pending:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              LineManager,
+              RoleName.LineManager
+            )
+          ).data,
+        ];
+        break;
+      case workflowStatusApi.LineManagerLevel1OnHold:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              LineManager,
+              RoleName.LineManager
+            )
+          ).data,
+        ];
+        break;
+      case workflowStatusApi.LineManagerLevel2OnHold:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              LineManager,
+              RoleName.LineManager
+            )
+          ).data,
+        ];
+        break;
+      case workflowStatusApi.PendingRecruitmentHRscheduleInterview:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              RecrutimentHR,
+              RoleName.RecruitmentHR
+            )
+          ).data,
+        ];
+        break;
+      case workflowStatusApi.pendingHODSelection:
+        pendingName = [
+          (await getVRRDetails.GetADGroupUsers(HOD, RoleName.HOD)).data,
+        ];
+        break;
+      case workflowStatusApi.CandidateOnHoldIPanel:
+        pendingName = [
+          (await getVRRDetails.GetADGroupUsers(HOD, RoleName.HOD)).data,
+        ];
+        break;
+      default:
+        pendingName = [{ Key: "N/A", Value: "No matching group" }];
+        break;
+    }
+    setPendingInfo(pendingName);
+  };
 
   const columnConfig = (
     tab: string,
@@ -194,6 +323,31 @@ const ReviewCandidateList = (props: any) => {
       fieldName: "Status",
       sortable: false,
       body: (rowData: any) => {
+        const isTooltipStatus = [
+          workflowStatusApi.CandidateRejectedIPanel,
+          workflowStatusApi.LineManagerLevel1Rejected,
+          workflowStatusApi.LineManagerLevel2Rejected,
+          workflowStatusApi.HRRejected,
+        ].includes(rowData.workflowStatusId);
+        if (
+          !isTooltipStatus &&
+          breadcrumbTab === "tab2" &&
+          props.stateValue?.TabNames === TabName.ReviewProfile &&
+          props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+        ) {
+          return (
+            <div>
+              <ToolTipButton
+                Title=""
+                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                Rowdata={rowData}
+                ApproverData={pendingInfo}
+                onHover={() => handleHover(rowData.workflowStatusId, rowData)}
+              />
+              <span>{rowData.Status}</span>
+            </div>
+          );
+        }
         return (
           <span>
             {rowData.applicationStatusId ===
@@ -478,6 +632,144 @@ const ReviewCandidateList = (props: any) => {
     setIsLoading(false);
   };
 
+  const pendingcountTabs = async () => {
+    setIsLoading(true);
+    try {
+      let FilterValueData: GetProfileByFilter = {
+        filterValue: "",
+        sortBy: "",
+        sortOrder: 0,
+        pageSize: 10000,
+        currentPage: 0,
+        totalItems: 0,
+      };
+      let createFilter = (workflowStausId: string[]): FilterItem => ({
+        jobCode: props.stateValue?.JobCode, //"JC0005",
+        workflowStausId: workflowStausId,
+        pagination: FilterValueData,
+      });
+      let FilterValue: FilterItem = {
+        jobCode: "",
+        workflowStausId: [],
+        pagination: {
+          filterValue: "",
+          sortBy: "",
+          sortOrder: 0,
+          pageSize: 0,
+          currentPage: 0,
+          totalItems: 0,
+        },
+      };
+
+      FilterValue = createFilter([
+        workflowStatusApi.LineManagerL1Pending,
+        workflowStatusApi.LineManagerL2Pending,
+        workflowStatusApi.LineManagerLevel1OnHold,
+        workflowStatusApi.LineManagerLevel2OnHold,
+        workflowStatusApi.LineManagerLevel1Rejected,
+        workflowStatusApi.LineManagerLevel2Rejected,
+        workflowStatusApi.pendingHODSelection,
+        workflowStatusApi.CandidateSelectedIPanel,
+        workflowStatusApi.CandidateRejectedIPanel,
+        workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+        workflowStatusApi.HRPending,
+      ]);
+
+      await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
+        .then(async (res) => {
+          console.log(res, "res");
+          console.log(pendingcount, "pendingcount");
+          let ReviewProfileCount = res.data?.filter(
+            (item) => item.workflowStatusId === workflowStatusApi.HRPending
+          );
+          let InterviewLevel1 = res.data?.filter(
+            (item) =>
+              item.workflowStatusId === workflowStatusApi.LineManagerL1Pending
+          );
+          let InterviewLevel2 = res.data?.filter(
+            (item) =>
+              item.workflowStatusId === workflowStatusApi.LineManagerL2Pending
+          );
+
+          const RejectedOnHold = res.data?.filter(
+            (item) =>
+              item.workflowStatusId ===
+                workflowStatusApi.LineManagerLevel1OnHold ||
+              // item.workflowStatusId ===
+              //   workflowStatusApi.LineManagerLevel1Rejected ||
+              item.workflowStatusId ===
+                workflowStatusApi.LineManagerLevel2OnHold
+            // item.workflowStatusId ===
+            //   workflowStatusApi.LineManagerLevel2Rejected
+          );
+
+          const InterviewScheduledLevel1 = res.data?.filter(
+            (item) =>
+              item.workflowStatusId ===
+              workflowStatusApi.PendingRecruitmentHRscheduleInterview
+          );
+
+          setPendingCount((prev) => ({
+            ...prev,
+            ReviewProfileCount:
+              typeof ReviewProfileCount?.length === "number"
+                ? ReviewProfileCount?.length
+                : 0,
+            Level1Count:
+              typeof InterviewLevel1?.length === "number"
+                ? InterviewLevel1?.length
+                : 0,
+            Level2Count:
+              typeof InterviewLevel2?.length === "number"
+                ? InterviewLevel2?.length
+                : 0,
+            ONHoldRejectedCount:
+              typeof RejectedOnHold?.length === "number"
+                ? RejectedOnHold?.length
+                : 0,
+            InterviewPanelCount:
+              typeof InterviewScheduledLevel1?.length === "number"
+                ? InterviewScheduledLevel1?.length
+                : 0,
+          }));
+        })
+        .catch((error) => {
+          console.log("Candidate details doesn't fetch the data", error);
+        });
+      await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
+        [
+          {
+            FilterKey: "JobCode",
+            Operator: "eq",
+            FilterValue: props?.stateValue?.JobCodeID,
+          },
+        ],
+        ""
+      ).then(async (res) => {
+        let InterviewScheduledLevel2 = res.data?.filter(
+          (item: any) =>
+            item.StatusId ===
+            StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+        );
+
+        let RescheduledCount = res.data?.filter(
+          (item: any) =>
+            item.StatusId === StatusId.InterviewScheduled &&
+            item.StatusId === StatusId.InterviewScheduledforLevel2
+        );
+        setPendingCount((prev) => ({
+          ...prev,
+          InterviewPanel2Count: InterviewScheduledLevel2?.data?.length ?? 0,
+          RescheduleCount: RescheduledCount?.data?.length ?? 0,
+          // typeof res.data?.length === "number" ? res.data.length : 0,
+        }));
+      });
+    } catch (error) {
+      console.log("Error in pendingcountTabs", error);
+    }
+    setIsLoading(false);
+  };
+
   const fetchRecuritmentData = async () => {
     const filterConditions = [];
     const Conditions = "";
@@ -500,6 +792,7 @@ const ReviewCandidateList = (props: any) => {
       setIsLoading(true);
       await fetchRecuritmentData();
       await fetchCandidateData(breadcrumbTab);
+      await pendingcountTabs();
     };
     void fetchData();
   }, []);
@@ -514,11 +807,13 @@ const ReviewCandidateList = (props: any) => {
     setRows(event.rows);
     let PageItem = event.rows * event.totalPages;
     void fetchCandidateData(breadcrumbTab, PageItem);
+    void pendingcountTabs();
   };
   const handleRefresh = (tab: string) => {
     setBreadcrumbTab(tab);
     void fetchCandidateData(tab);
     void fetchRecuritmentData();
+    void pendingcountTabs();
   };
 
   const tabs = (tab: string) => [
@@ -597,11 +892,36 @@ const ReviewCandidateList = (props: any) => {
     }
   }, [activeTab]);
 
+  const getTabLabel = (tab: string) => {
+    switch (tab) {
+      case TabName.ReviewProfile:
+        return tabStyle(tab, pendingcount.ReviewProfileCount);
+      case TabName.ReviewLevel1:
+        return tabStyle(tab, pendingcount.Level1Count);
+      case TabName.ReviewLevel2:
+        return tabStyle(tab, pendingcount.Level2Count);
+        break;
+      case TabName.InterviewpanelL1:
+        return tabStyle(tab, pendingcount.InterviewPanelCount);
+        break;
+      case TabName.InterviewpanelL2:
+        return tabStyle(tab, pendingcount.InterviewPanel2Count);
+        break;
+      case TabName.OnHoldRejected:
+        return tabStyle(tab, pendingcount.ONHoldRejectedCount);
+      case TabName.ReschedulInterview:
+        return tabStyle(tab, pendingcount.RescheduleCount);
+        break;
+      default:
+        return tab;
+    }
+  };
+
   const breadcrumbs = [
     ...(props.CurrentRoleID.includes(RoleID.LineManager)
       ? [
           {
-            label: TabName.ReviewLevel1,
+            label: getTabLabel(TabName.ReviewLevel1), //TabName.ReviewLevel1,
             value: "tab1",
             content: (
               <Card
@@ -635,7 +955,7 @@ const ReviewCandidateList = (props: any) => {
             ),
           },
           {
-            label: TabName.ReviewLevel2,
+            label: getTabLabel(TabName.ReviewLevel2), //TabName.ReviewLevel2,
             value: "tab2 - Level 2",
             content: (
               <Card
@@ -669,7 +989,7 @@ const ReviewCandidateList = (props: any) => {
             ),
           },
           {
-            label: TabName.Shortlisted,
+            label: getTabLabel(TabName.Shortlisted), //TabName.Shortlisted,
             value: "tab2",
             content: (
               <Card
@@ -703,7 +1023,7 @@ const ReviewCandidateList = (props: any) => {
             ),
           },
           {
-            label: TabName.OnHoldRejected,
+            label: getTabLabel(TabName.OnHoldRejected), // TabName.OnHoldRejected,
             value: "tab3",
             content: (
               <Card
@@ -739,7 +1059,7 @@ const ReviewCandidateList = (props: any) => {
         ]
       : [
           {
-            label: TabName.ReviewProfile,
+            label: getTabLabel(TabName.ReviewProfile),
             value: "tab1",
             content: (
               <Card
@@ -773,7 +1093,7 @@ const ReviewCandidateList = (props: any) => {
             ),
           },
           {
-            label: TabName.MySubmission,
+            label: getTabLabel(TabName.MySubmission), // TabName.MySubmission,
             value: "tab2",
             content: (
               <Card
@@ -811,7 +1131,7 @@ const ReviewCandidateList = (props: any) => {
 
   const AssignInterviewPanel = [
     {
-      label: TabName.InterviewpanelL1,
+      label: getTabLabel(TabName.InterviewpanelL1), //TabName.InterviewpanelL1,
       value: "tab1",
       content: (
         <Card
@@ -845,7 +1165,7 @@ const ReviewCandidateList = (props: any) => {
       ),
     },
     {
-      label: TabName.InterviewpanelL2,
+      label: getTabLabel(TabName.InterviewpanelL2), // TabName.InterviewpanelL2,
       value: "tab2",
       content: (
         <Card
@@ -879,7 +1199,7 @@ const ReviewCandidateList = (props: any) => {
       ),
     },
     {
-      label: TabName.ReschedulInterview,
+      label: getTabLabel(TabName.ReschedulInterview), //TabName.ReschedulInterview,
       value: "tab3",
       content: (
         <Card
@@ -917,6 +1237,7 @@ const ReviewCandidateList = (props: any) => {
   const handleTabChange = async (newTab: string) => {
     setBreadcrumbTab(newTab);
     await fetchCandidateData(newTab);
+    await pendingcountTabs();
   };
 
   function back_fn() {

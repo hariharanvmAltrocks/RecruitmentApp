@@ -67,7 +67,9 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
       const data = ApproverData;
 
       if (!data) return <div>Loading...</div>;
-      return renderApproverList([boldLabel(data.Key, data.Value)]);
+      return renderApproverList(
+        data.map((item: any) => boldLabel(item.Key, item.Value))
+      );
     },
   };
 

@@ -121,6 +121,9 @@ export type CandidateProfile = {
     FamilyLink: string;
     BusinessLink: string;
     GPA: number;
+
+    COIAppreve: string;
+    COIComments: string;
 }
 
 export type WorkflowJson = {
@@ -354,6 +357,13 @@ export type ITSystem = {
     Zone: AutoCompleteItem;
     Comments: string;
     ITStatus: string;
+}
+
+export type COIType = {
+    profileId: number;
+    approver: string;
+    comments: string;
+    attachmentPath: string;
 }
 
 
