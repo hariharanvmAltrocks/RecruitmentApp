@@ -618,7 +618,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
       const response =
         userRole === RoleID.RecruitmentHRLead &&
-        props.stateValue?.StatusId === StatusId.Completed
+        props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess
           ? props.stateValue?.type === DataFrom.NewPosition
             ? await getVRRDetails.fetchNewPositionRequest(
                 filterConditions,
@@ -643,7 +643,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         // Ensure `op` is always a single object
         const op: DataSyncToRecruitmentResponse =
           userRole === RoleID.RecruitmentHRLead &&
-          props.stateValue?.StatusId === StatusId.Completed
+          props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess
             ? NewpositionData.length > 0
               ? NewpositionData[0]
               : response?.data?.[0] || ({} as DataSyncToRecruitmentResponse)
@@ -1590,7 +1590,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   </LabelHeaderComponents>
                 </div>
                 {currentRoleID === RoleID.RecruitmentHRLead &&
-                props.stateValue?.StatusId === StatusId.Completed ? (
+                props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess ? (
                   <></>
                 ) : (
                   <div
@@ -1931,7 +1931,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               {formState.RoleProfileDocument.length === 0 &&
               formState.GradingDocument.length === 0 &&
               currentRoleID === RoleID.RecruitmentHRLead &&
-              props.stateValue?.StatusId === StatusId.Completed ? (
+              props.stateValue?.StatusId ===
+                StatusId.ReadyforRecruitmentProcess ? (
                 <></>
               ) : (
                 <>
@@ -1959,7 +1960,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     {/* : (
                         <>
                           {currentRoleID === RoleID.RecruitmentHRLead &&
-                          props.stateValue?.StatusId === StatusId.Completed ? (
+                          props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess ? (
                             <></>
                           ) : (
                             <>
@@ -2040,7 +2041,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     </div> : (
                          <>
                            {currentRoleID === RoleID.RecruitmentHRLead &&
-                          props.stateValue?.StatusId === StatusId.Completed ? (
+                          props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess ? (
                             <></>
                           ) : (
                             <>
@@ -2094,7 +2095,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       )} */}
 
                     {currentRoleID === RoleID.RecruitmentHRLead &&
-                    props.stateValue?.StatusId === StatusId.Completed ? (
+                    props.stateValue?.StatusId ===
+                      StatusId.ReadyforRecruitmentProcess ? (
                       <></>
                     ) : (
                       <>
@@ -2191,7 +2193,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
               <div className="ms-Grid-row">
                 {currentRoleID === RoleID.RecruitmentHRLead &&
-                props.stateValue?.StatusId === StatusId.Completed ? (
+                props.stateValue?.StatusId ===
+                  StatusId.ReadyforRecruitmentProcess ? (
                   <></>
                 ) : (
                   <>
@@ -2679,13 +2682,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   JobTitle: formState.JobNameInEnglish,
                   JobCode: formState.JobCode,
                   Status:
-                    props.stateValue?.StatusId === StatusId.Completed
+                    props.stateValue?.StatusId ===
+                    StatusId.ReadyforRecruitmentProcess
                       ? ""
                       : props.stateValue?.Status,
                 }}
                 additionalButtons={
                   (currentRoleID === RoleID.RecruitmentHRLead &&
-                    props.stateValue?.StatusId === StatusId.Completed) ||
+                    props.stateValue?.StatusId ===
+                      StatusId.ReadyforRecruitmentProcess) ||
                   (currentRoleID === RoleID.RecruitmentHR &&
                     props.stateValue?.StatusId ===
                       StatusId.PendingwithRecruitmentHRtoAssignExternalAgency)

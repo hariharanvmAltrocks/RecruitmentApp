@@ -355,7 +355,7 @@ const InterviewPanelEdit = (props: any) => {
                     if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
                       props.navigation("/ReviewProfileList", {
                         state: {
-                          tab: "tab4", //props.stateValue?.tab,
+                          tab: props.stateValue.tab, //props.stateValue?.tab,
                           TabName: TabName.Evaluation,
                         },
                       });
@@ -365,9 +365,7 @@ const InterviewPanelEdit = (props: any) => {
                     ) {
                       props.navigation("/RecurimentProcess", {
                         state: {
-                          tab: props.CurrentRoleID.includes(RoleID.HOD)
-                            ? "tab3"
-                            : "tab4", //props.stateValue?.tab,
+                          tab: props.stateValue.tab, //props.stateValue?.tab,
                           TabName: TabName.Evaluation,
                         },
                       });
@@ -397,7 +395,7 @@ const InterviewPanelEdit = (props: any) => {
                   if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
                     props.navigation("/ReviewProfileList", {
                       state: {
-                        tab: "tab4", //props.stateValue?.tab,
+                        tab: props.stateValue.tab, //props.stateValue?.tab,
                         TabName: TabName.Evaluation,
                       },
                     });
@@ -407,9 +405,7 @@ const InterviewPanelEdit = (props: any) => {
                   ) {
                     props.navigation("/RecurimentProcess", {
                       state: {
-                        tab: props.CurrentRoleID.includes(RoleID.HOD)
-                          ? "tab3"
-                          : "tab4", //props.stateValue?.tab,
+                        tab: props.stateValue.tab, //props.stateValue?.tab,
                         TabName: TabName.Evaluation,
                       },
                     });
@@ -709,7 +705,7 @@ const InterviewPanelEdit = (props: any) => {
             if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
               props.navigation("/ReviewProfileList", {
                 state: {
-                  tab: "tab4", //props.stateValue?.tab,
+                  tab: props.stateValue.tab, //props.stateValue?.tab,
                   TabName: TabName.Evaluation,
                 },
               });
@@ -719,9 +715,7 @@ const InterviewPanelEdit = (props: any) => {
             ) {
               props.navigation("/RecurimentProcess", {
                 state: {
-                  tab: props.CurrentRoleID.includes(RoleID.HOD)
-                    ? "tab3"
-                    : "tab4", //props.stateValue?.tab,
+                  tab: props.stateValue.tab, //props.stateValue?.tab,
                   TabName: TabName.Evaluation,
                 },
               });
@@ -1782,7 +1776,7 @@ const InterviewPanelEdit = (props: any) => {
           if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
             props.navigation("/ReviewProfileList", {
               state: {
-                tab: "tab4", //props.stateValue?.tab,
+                tab: props.stateValue.tab, //props.stateValue?.tab,
                 TabName: TabName.Evaluation,
               },
             });
@@ -1792,7 +1786,7 @@ const InterviewPanelEdit = (props: any) => {
           ) {
             props.navigation("/RecurimentProcess", {
               state: {
-                tab: props.CurrentRoleID.includes(RoleID.HOD) ? "tab3" : "tab4", //props.stateValue?.tab,
+                tab: props.stateValue.tab, //props.stateValue?.tab,
                 TabName: TabName.Evaluation,
               },
             });

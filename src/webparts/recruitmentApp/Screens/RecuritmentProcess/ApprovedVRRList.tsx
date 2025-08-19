@@ -119,12 +119,22 @@ const RecruitmentProcess = (props: any) => {
   const handleHover = async (statusId: number, rowData: any) => {
     let pendingName: any[] = [];
     switch (statusId) {
-      case StatusId.Completed:
+      case StatusId.ReadyforRecruitmentProcess:
         pendingName = [
           (
             await getVRRDetails.GetADGroupUsers(
               rowData.AssignHRLead,
               "RecruitmentHRLead"
+            )
+          ).data,
+        ];
+        break;
+      case StatusId.PendingwithHRLeadtoAssignRecruitmentHR:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              rowData.AssignEMail,
+              "RecruitmentHR"
             )
           ).data,
         ];
@@ -269,6 +279,7 @@ const RecruitmentProcess = (props: any) => {
         if (props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)) {
           isTooltipStatus = [
             StatusId.ReadyforRecruitmentProcess,
+            // StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
             // StatusId.RecruitmentInProgress,
           ].includes(rowData.StatusId);
         } else {
@@ -286,7 +297,10 @@ const RecruitmentProcess = (props: any) => {
 
         console.log(pendingInfo, "pendingInfo");
 
-        if (!isTooltipStatus) {
+        if (
+          !isTooltipStatus &&
+          storedStringRef.current != TabName.UploadONEMDoc
+        ) {
           return (
             <div>
               <ToolTipButton
