@@ -654,10 +654,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             (item: any) => item.key === op?.BusinessUnitCodeId
           ) || {};
 
-        const JobtitleFrench =
-          props?.JobInFrenchList.find(
-            (item: any) => item.key === op?.JobTitleFrenchId
-          ) || {};
+        // const   JobtitleFrench =
+        //   props?.JobInFrenchList.find(
+        //     (item: any) => item.key === op?.JobTitleFrenchId
+        //   ) || {};
 
         const [
           RoleProfileDocment,
@@ -716,7 +716,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             DepartmentCode: op.DepartmentCode || "",
             Nationality: op.Nationality || "",
             JobNameInEnglish: op.JobTitleEnglish || "",
-            JobNameInFrench: JobtitleFrench.text || "",
+            JobNameInFrench: op.JobTitleFrench || "",
             PatersonGrade: op.PatersonGrade || "",
             DRCGrade: op.DRCGrade || "",
             EmployementCategory: op.EmploymentCategory || "",

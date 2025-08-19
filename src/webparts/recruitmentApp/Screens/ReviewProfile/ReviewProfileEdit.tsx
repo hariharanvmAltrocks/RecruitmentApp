@@ -274,10 +274,10 @@ const ReviewProfileEdit: React.FC = (props: any) => {
           props?.BusinessUnitCodeAllColumn.find(
             (item: any) => item.key === op.BusinessUnitCodeId
           ) || {};
-        const JobtitleFrench =
-          props?.JobInFrenchList.find(
-            (item: any) => item.key === op.JobTitleFrenchId
-          ) || {};
+        // const JobtitleFrench =
+        //   props?.JobInFrenchList.find(
+        //     (item: any) => item.key === op.JobTitleFrenchId
+        //   ) || {};
 
         const [
           RoleProfileDocment,
@@ -336,7 +336,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
             DepartmentCode: op.DepartmentCode || "",
             Nationality: op.Nationality || "",
             JobNameInEnglish: op.JobTitleEnglish || "",
-            JobNameInFrench: JobtitleFrench.text || "",
+            JobNameInFrench: op.JobTitleFrench || "",
             PatersonGrade: op.PatersonGrade || "",
             DRCGrade: op.DRCGrade || "",
             EmployementCategory: op.EmploymentCategory || "",

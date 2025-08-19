@@ -416,9 +416,72 @@ const RecruitmentProcess = (props: any) => {
                     cursor: "pointer",
                   }}
                   onClick={() => {
-                    let selectedData = [rowData];
-                    setSelectedrowdata(selectedData);
-                    setDatePopup(true);
+                    const today = new Date();
+                    // today.setDate(today.getDate() + 1); // Add 1 day
+                    today.setHours(0, 0, 0, 0); // Normalize to midnight
+
+                    const {
+                      JobPostingEndDate,
+                      JobPostingFirstExtensionEndDate,
+                      JobPostingSecondExtensionEndDate,
+                    } = rowData || {};
+
+                    let JobValidation = false;
+
+                    let comparisonDate = null;
+
+                    if (JobPostingSecondExtensionEndDate) {
+                      comparisonDate = new Date(
+                        JobPostingSecondExtensionEndDate
+                      );
+                    } else if (JobPostingFirstExtensionEndDate) {
+                      comparisonDate = new Date(
+                        JobPostingFirstExtensionEndDate
+                      );
+                    } else if (JobPostingEndDate) {
+                      comparisonDate = new Date(JobPostingEndDate);
+                    }
+
+                    if (comparisonDate) {
+                      comparisonDate.setHours(0, 0, 0, 0); // Normalize time
+                      JobValidation = today >= comparisonDate; // <-- reversed comparison
+                    }
+
+                    if (!JobValidation) {
+                      const Dateformat = JobPostingSecondExtensionEndDate
+                        ? moment(JobPostingSecondExtensionEndDate).format(
+                            "DD/MM/YYYY"
+                          )
+                        : JobPostingFirstExtensionEndDate
+                        ? moment(JobPostingFirstExtensionEndDate).format(
+                            "DD/MM/YYYY"
+                          )
+                        : moment(JobPostingEndDate).format("DD/MM/YYYY");
+                      const JobExpiredMsg = `
+          <div style="text-align: center;">
+            <h3>⚠️ Action cannot be performed.</h3>
+            <p>This job advert is still active and open for recruitment.</p>
+            <p><strong>Expiry Date:</strong> ${Dateformat}</p>
+            <p>Please try again after it expires.</p>
+          </div>`;
+                      const SuccessAlert = {
+                        Message: JobExpiredMsg,
+                        Type: HRMSAlertOptions.Error,
+                        visible: true,
+                        ButtonAction: async (userClickedOK: boolean) => {
+                          if (userClickedOK) {
+                            setAlertPopupOpen(false);
+                          }
+                        },
+                      };
+
+                      setAlertPopupOpen(true);
+                      setalertProps(SuccessAlert);
+                    } else {
+                      let selectedData = [rowData];
+                      setSelectedrowdata(selectedData);
+                      setDatePopup(true);
+                    }
                   }}
                 />
               </>

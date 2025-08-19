@@ -1778,7 +1778,7 @@ const ViewCandidateDetails = (props: any) => {
 
     if (
       CandidateProfile.ConflictsOfInterest === "Yes" &&
-      props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+      props.stateValue?.StatusId === workflowStatusApi.HRPending
     ) {
       errors.COIComments = !IsValid(InterviewedLevel?.COIComments);
       errors.COIProfileLabel = !IsValid(InterviewedLevel?.COIProfileLabel.text);

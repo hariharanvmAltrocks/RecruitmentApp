@@ -759,8 +759,8 @@ const ReviewCandidateList = (props: any) => {
         );
         setPendingCount((prev) => ({
           ...prev,
-          InterviewPanel2Count: InterviewScheduledLevel2?.data?.length ?? 0,
-          RescheduleCount: RescheduledCount?.data?.length ?? 0,
+          InterviewPanel2Count: InterviewScheduledLevel2?.length ?? 0,
+          RescheduleCount: RescheduledCount?.length ?? 0,
           // typeof res.data?.length === "number" ? res.data.length : 0,
         }));
       });
