@@ -653,7 +653,7 @@ export default class RecruitmentService implements IRecruitmentService {
               EnterNumberOfMonths: item?.EnterNumberOfMonths,
               AreaofWork: item?.AreaofWork,
               DateRequried: item?.DateRequried ? item?.DateRequried : "",
-              Type: DataFrom?.NewPosition,
+              Type: item?.DataFrom ?? "",
               Status: item?.Status ? item?.Status?.StatusDescription : "",
               StatusId: item?.StatusId,
               Action: item?.Action?.Action ? item?.Action?.Action : "",
@@ -1665,7 +1665,7 @@ export default class RecruitmentService implements IRecruitmentService {
       };
 
       const DescriptionFr: Descriptions = {
-        jobTitle: RecuritmentDetails.JobNameInFrench === undefined ? RecuritmentDetails.JobNameInFrench : RecuritmentDetails.JobNameInFrench,
+        jobTitle: RecuritmentDetails.JobNameInFrench === undefined ? RecuritmentDetails.JobTitleFrench : RecuritmentDetails.JobNameInFrench,
         jobShortSummary: decodeBase64(data.RoleProfile || ""),
         jobSummary: decodeBase64(data.JobDescription || ""),
       };

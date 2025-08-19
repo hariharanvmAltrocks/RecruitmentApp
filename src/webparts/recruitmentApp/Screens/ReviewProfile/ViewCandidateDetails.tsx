@@ -375,17 +375,19 @@ const ViewCandidateDetails = (props: any) => {
             await fetchCandidateData(props.stateValue?.ID);
           } else {
             if ((res.data?.length ?? 0) > 0) {
-              let COIAttchObj: COIAttach = {
-                RequestID: String(response?.profileID),
-                DocumentName: DocumentFolderName.COIAttach,
-              };
-              let COIAttach = await GetPortalJobsService.fetchCOIAttachment(
-                COIAttchObj
-              );
-              setInterviewedLevel((prev) => ({
-                ...prev,
-                COIAttachment: COIAttach.data,
-              }));
+              if (props.stateValue?.StatusId != workflowStatusApi.HRPending) {
+                let COIAttchObj: COIAttach = {
+                  RequestID: String(response?.profileID),
+                  DocumentName: DocumentFolderName.COIAttach,
+                };
+                let COIAttach = await GetPortalJobsService.fetchCOIAttachment(
+                  COIAttchObj
+                );
+                setInterviewedLevel((prev) => ({
+                  ...prev,
+                  COIAttachment: COIAttach.data,
+                }));
+              }
 
               setCandidateProfile((prevState: any) => ({
                 ...prevState,
@@ -1465,12 +1467,16 @@ const ViewCandidateDetails = (props: any) => {
                                 label={labelName.Comment}
                                 value={InterviewedLevel.COIComments}
                                 error={validationErrors.COIComments}
-                                onChange={(value) =>
+                                onChange={(value) => {
                                   setInterviewedLevel((prev) => ({
                                     ...prev,
                                     COIComments: value,
-                                  }))
-                                }
+                                  }));
+                                  setValidationErrors((prevState) => ({
+                                    ...prevState,
+                                    COIComments: false,
+                                  }));
+                                }}
                                 disabled={
                                   props.stateValue?.StatusId ===
                                   workflowStatusApi.HRPending
@@ -2155,7 +2161,10 @@ const ViewCandidateDetails = (props: any) => {
             }
           }
           let COIResponse: any;
-          if (CandidateProfile.ConflictsOfInterest === "Yes") {
+          if (
+            CandidateProfile.ConflictsOfInterest === "Yes" &&
+            props.stateValue?.StatusId === workflowStatusApi.HRPending
+          ) {
             let DocumentData: COIAttach = {
               RequestID: String(CandidateProfile.profileID),
               DocumentName: DocumentFolderName.COIAttach,

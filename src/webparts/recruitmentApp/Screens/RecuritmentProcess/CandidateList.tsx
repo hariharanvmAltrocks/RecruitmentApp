@@ -368,14 +368,15 @@ const CandidateList = (props: any) => {
   const getTabLabel = (tab: any) => {
     const PendingCount = CandidateData.filter(
       (item) =>
-        item.StatusId === StatusId.Selected &&
-        item.StatusId === StatusId.OnHoldbyHOD &&
-        item.StatusId === StatusId.PendingwithHODtoAssignPositionID &&
-        item.StatusId === StatusId.PendingwithHODtoselectthecandidateLevel2
+        item.StatusId === StatusId.Selected ||
+        item.StatusId === StatusId.OnHoldbyHOD ||
+        item.StatusId === StatusId.PendingwithHODtoAssignPositionID ||
+        item.StatusId === StatusId.PendingwithHODtoselectthecandidateLevel2 ||
+        item.StatusId === StatusId.PendingwithHODtoselectthecandidate
     );
     switch (tab) {
       case TabName.ReviewScorecard:
-        return String(tabStyle(tab.TabName, PendingCount.length));
+        return tabStyle(tab, PendingCount.length);
       default:
         return tab;
     }

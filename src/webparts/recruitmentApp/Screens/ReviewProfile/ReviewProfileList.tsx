@@ -79,6 +79,7 @@ const ReviewProfileList = (props: any) => {
             StatusId: rowData?.StatusId,
             Status: rowData?.Status,
             JobTitleInEnglish: rowData.JobTitleEnglish,
+            Department: rowData.Department,
             JobCode: rowData.JobCode,
             JobCodeID: rowData?.JobCodeId,
             TabNames,
@@ -106,6 +107,41 @@ const ReviewProfileList = (props: any) => {
   const handleHover = async (statusId: number, rowData: any) => {
     let pendingName: any[] = [];
     switch (statusId) {
+      // case StatusId.RecruitmentInProgress: {
+      //   let Tooltipdata = await getVRRDetails.GetInterviewPanelTooltiData(
+      //     rowData
+      //   );
+      //   let GradeLevel = await CommonServices.GetGradeLevel(
+      //     rowData?.PatersonGrade
+      //   );
+      //   if (Tooltipdata?.data && Tooltipdata.data[0]?.LineManager) {
+      //     pendingName = [
+      //       {
+      //         Key: Tooltipdata.data[0].LineManager.Role,
+      //         Value: Tooltipdata.data[0].LineManager.Name,
+      //       },
+      //       {
+      //         Key: Tooltipdata.data[0].HOD.Role,
+      //         Value: Tooltipdata.data[0].HOD.Name,
+      //       },
+      //       {
+      //         Key: Tooltipdata.data[0].HR.Role,
+      //         Value: Tooltipdata.data[0].HR.Name,
+      //       },
+      //       GradeLevel.data[0]?.Level === InterviewLevels.Level2
+      //         ? [
+      //             {
+      //               Key: Tooltipdata.data[0].Exco.Role,
+      //               Value: Tooltipdata.data[0].Exco.Name,
+      //             },
+      //           ]
+      //         : [],
+      //     ];
+      //   } else {
+      //     pendingName = [{ Key: "N/A", Value: "No matching group" }];
+      //   }
+      //   break;
+      // }
       case StatusId.RecruitmentInProgress: {
         let Tooltipdata = await getVRRDetails.GetInterviewPanelTooltiData(
           rowData
@@ -113,6 +149,8 @@ const ReviewProfileList = (props: any) => {
         let GradeLevel = await CommonServices.GetGradeLevel(
           rowData?.PatersonGrade
         );
+        console.log(GradeLevel);
+
         if (Tooltipdata?.data && Tooltipdata.data[0]?.LineManager) {
           pendingName = [
             {
@@ -127,15 +165,14 @@ const ReviewProfileList = (props: any) => {
               Key: Tooltipdata.data[0].HR.Role,
               Value: Tooltipdata.data[0].HR.Name,
             },
-            GradeLevel.data[0]?.Level === InterviewLevels.Level2
-              ? [
-                  {
-                    Key: Tooltipdata.data[0].Exco.Role,
-                    Value: Tooltipdata.data[0].Exco.Name,
-                  },
-                ]
-              : [],
           ];
+
+          if (GradeLevel.data[0]?.Level === InterviewLevels.Level2) {
+            pendingName.push({
+              Key: Tooltipdata.data[0].Exco.Role,
+              Value: Tooltipdata.data[0].Exco.Name,
+            });
+          }
         } else {
           pendingName = [{ Key: "N/A", Value: "No matching group" }];
         }
@@ -453,7 +490,7 @@ const ReviewProfileList = (props: any) => {
           />
         );
       case TabName.Evaluation:
-        return <InterviewPanelList {...props} />;
+        return <InterviewPanelList {...props} TabValue={activeTab} />;
       default:
         return null;
     }

@@ -63,7 +63,7 @@ export function GetRoleKeysArray(array: any[]): number[] {
 
 export function GetStatusIdRoles(StatusIds: number) {
   switch (StatusIds) {
-    case StatusId.Completed:
+    case StatusId.ReadyforRecruitmentProcess:
     case StatusId.PendingwithHRLeadtoAssignRecruitmentHR:
     case StatusId.PendingwithHRLeadtouploadONEMsigneddoc:
       return RoleID.RecruitmentHRLead;

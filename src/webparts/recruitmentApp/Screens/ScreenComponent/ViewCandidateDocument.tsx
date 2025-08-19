@@ -8,11 +8,13 @@ import ReuseButton from "../../components/ReuseButton";
 interface AssignPositionDialogProps {
   data: CustomViewDocument[];
   onClose: () => void;
+  webUrl: string;
 }
 
 export const ViewCandidateDocument = ({
   data,
   onClose,
+  webUrl,
 }: AssignPositionDialogProps) => {
   const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
   const [documentcontent, setDocumentcontent] = React.useState<string>("");
@@ -26,13 +28,20 @@ export const ViewCandidateDocument = ({
     if (fileUrl.endsWith(".pdf")) {
       return fileUrl;
     } else if (fileUrl.endsWith(".docx")) {
+      // You likely don't need to build rootUrl + fileUrl unless fileUrl is relative
+      const absoluteUrl = fileUrl.startsWith("http")
+        ? fileUrl
+        : `${webUrl.split("/sites")[0]}${fileUrl}`;
+
+      // Office viewer requires a publicly accessible link
       return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
-        fileUrl
+        absoluteUrl
       )}`;
     } else {
-      return ""; // or show error
+      return "";
     }
   };
+
   return (
     <>
       <div className="ms-Grid-row">

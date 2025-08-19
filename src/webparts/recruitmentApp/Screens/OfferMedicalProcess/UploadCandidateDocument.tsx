@@ -2175,6 +2175,7 @@ const UploadCandidateDocument = (props: any) => {
             children={
               <ViewCandidateDocument
                 data={documentview}
+                webUrl={props.webURL}
                 onClose={() => setDocumentPopup(false)}
               />
             }

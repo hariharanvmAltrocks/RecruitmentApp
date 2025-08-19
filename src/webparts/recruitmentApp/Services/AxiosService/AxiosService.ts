@@ -4,7 +4,7 @@ import { setToken, getToken } from "./TokenContext";
 
 const AxiosInstance = axios.create({
   baseURL: ApiUrl,
-  timeout: 10000
+  timeout: 10000000
 });
 
 AxiosInstance.interceptors.request.use(
