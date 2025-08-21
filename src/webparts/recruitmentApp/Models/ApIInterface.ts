@@ -124,6 +124,24 @@ export type CandidateProfile = {
 
     COIAppreve: string;
     COIComments: string;
+
+    countryOfResidency: string;
+    residentStatus: string;
+    maritalStatus: string;
+    childrenDetails: childrenDetails[],
+    employeeReferenceDetails: employeeReferenceDetail | undefined
+}
+
+export type childrenDetails = {
+    name: string;
+    age: number;
+}
+
+export type employeeReferenceDetail = {
+    empId: string;
+    empName: string;
+    empEmail: string;
+    company: string;
 }
 
 export type WorkflowJson = {

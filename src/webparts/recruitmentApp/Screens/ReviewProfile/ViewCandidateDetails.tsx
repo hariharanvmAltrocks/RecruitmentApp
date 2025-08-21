@@ -69,6 +69,8 @@ import { Label } from "@fluentui/react";
 import AttachmentButton from "../../components/AttachmentButton";
 import CustomViewAttachment from "../../components/CustomViewAttachment";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
+import MaritalChildrenTooltip from "../ScreenComponent/MaritalChildrenTooltip";
+import EmployeeDetailsTooltip from "../ScreenComponent/EmployeeDetailsTooltip";
 
 type InterviewedLevelValue = {
   Levels: string;
@@ -173,6 +175,11 @@ const ViewCandidateDetails = (props: any) => {
 
     COIAppreve: "",
     COIComments: "",
+    countryOfResidency: "",
+    residentStatus: "",
+    maritalStatus: "",
+    childrenDetails: [],
+    employeeReferenceDetails: undefined,
   });
   const todaydate = new Date();
 
@@ -443,6 +450,12 @@ const ViewCandidateDetails = (props: any) => {
                 FamilyLink: response?.FamilyLink,
                 BusinessLink: response?.BusinessLink,
                 GPA: response?.GPA,
+
+                countryOfResidency: response?.countryOfResidency,
+                residentStatus: response?.residentStatus,
+                maritalStatus: response?.maritalStatus,
+                childrenDetails: response?.childrenDetails || [],
+                employeeReferenceDetails: response?.employeeReferenceDetails,
               }));
               setInterviewedLevel((prev) => ({
                 ...prev,
@@ -1048,6 +1061,57 @@ const ViewCandidateDetails = (props: any) => {
                     </>
                   )}
                 </div>
+                {CandidateProfile?.countryOfResidency && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomInput
+                        label="Country Of Residency"
+                        value={CandidateProfile?.countryOfResidency}
+                        disabled={true}
+                        mandatory={false}
+                      />
+                    </div>
+                  </div>
+                )}
+                {CandidateProfile?.residentStatus && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg6">
+                      <CustomRadioGroup
+                        label="Are you residency in that country?"
+                        value={CandidateProfile?.residentStatus}
+                        options={["Yes", "No"]}
+                        mandatory={false}
+                        error={false}
+                        disabled={true}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {CandidateProfile?.maritalStatus && (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomInput
+                          label="Marital Status"
+                          value={CandidateProfile?.maritalStatus}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+                      <div
+                        className="ms-Grid-col ms-lg1"
+                        style={{ marginTop: "4%" }}
+                      >
+                        <MaritalChildrenTooltip
+                          data={CandidateProfile.childrenDetails}
+                          // onHover={() => handleHover(rowData.StatusId, rowData)}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {props.stateValue?.initialTab === TabName.ReviewProfile && (
                   <>
                     <div className="ms-Grid-row">
@@ -1099,7 +1163,19 @@ const ViewCandidateDetails = (props: any) => {
                     <div className="ms-Grid-row">
                       {CandidateProfile?.familylinks === "Yes" ? (
                         <div className="ms-Grid-col ms-lg6">
-                          <Label>Attachment</Label>
+                          <label
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              cursor: "default",
+                            }}
+                          >
+                            Attachment
+                            <EmployeeDetailsTooltip
+                              data={CandidateProfile.employeeReferenceDetails}
+                            />
+                          </label>
                           <CustomViewDocument
                             Attachment={CandidateProfile.familyDocuments}
                           />
@@ -1107,6 +1183,9 @@ const ViewCandidateDetails = (props: any) => {
                       ) : (
                         <></>
                       )}
+                      <EmployeeDetailsTooltip
+                        data={CandidateProfile.employeeReferenceDetails}
+                      />
                       {CandidateProfile?.businesslinks === "Yes" ? (
                         <div className="ms-Grid-col ms-lg6">
                           <Label>Attachment</Label>

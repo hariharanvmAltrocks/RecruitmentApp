@@ -754,7 +754,7 @@ const ReviewCandidateList = (props: any) => {
 
         let RescheduledCount = res.data?.filter(
           (item: any) =>
-            item.StatusId === StatusId.InterviewScheduled &&
+            item.StatusId === StatusId.InterviewScheduled ||
             item.StatusId === StatusId.InterviewScheduledforLevel2
         );
         setPendingCount((prev) => ({

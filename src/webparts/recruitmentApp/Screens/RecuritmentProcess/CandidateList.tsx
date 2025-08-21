@@ -413,11 +413,11 @@ const CandidateList = (props: any) => {
   ];
 
   React.useEffect(() => {
-    const activeTabObj = tabs.find((item) => item.value === activeTab);
+    // const activeTabObj = tabs.find((item) => item.value === activeTab);
     const newTabNames = [
       { tabName: props.stateValue?.TabName },
       { tabName: props.stateValue?.ButtonAction },
-      { tabName: activeTabObj?.label },
+      { tabName: TabName.ViewCandidateList }, //activeTabObj?.label },
     ];
     if (JSON.stringify(TabNameData) !== JSON.stringify(newTabNames)) {
       setTabNameData(newTabNames);

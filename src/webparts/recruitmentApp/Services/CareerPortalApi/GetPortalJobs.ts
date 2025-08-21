@@ -188,6 +188,18 @@ export default class GetPortalJobs implements IGetPortalJobs {
         // console.log(getOptAnswers, "getOptAnswers");
         let AgenName = op?.profile?.profileXAgent?.agentCode === agentCode.RecruitmentHR ? RoleName.RecruitmentHR : op?.profile?.profileXAgent?.agent?.name;
         let IdentityID = ProofIdentity.data?.filter((item) => item?.value === op?.profile?.identityTypeId)
+        let childrenDetails = op?.profile?.childrenDetails?.map((item: any) => {
+          return {
+            name: item?.childrenName,
+            age: item?.age,
+          }
+        });
+        let employeeReferenceDetail = {
+          empId: op?.profile?.employeeReferenceDetails?.empId,
+          empName: op?.profile?.employeeReferenceDetails?.empName,
+          empEmail: op?.profile?.employeeReferenceDetails?.empEmail,
+          company: op?.profile?.employeeReferenceDetails?.company,
+        }
         let GetProfileDahboard: CandidateProfile = {
           CandidateID: op?.jobRequestId,
           profileID: op?.profileId,
@@ -242,7 +254,13 @@ export default class GetPortalJobs implements IGetPortalJobs {
           GPA: 0,
 
           COIAppreve: op?.profile?.profileDetailCoi?.approver ?? "",
-          COIComments: op?.profile?.profileDetailCoi?.comments ?? ""
+          COIComments: op?.profile?.profileDetailCoi?.comments ?? "",
+
+          countryOfResidency: op?.profile?.countryOfResidency ?? "",
+          residentStatus: op?.profile?.residentStatus === "Y" ? "Yes" : op?.profile?.residentStatus === "N" ? "No" : "",
+          maritalStatus: op?.profile?.maritalStatusDetail?.displayText ?? "",
+          childrenDetails: childrenDetails,
+          employeeReferenceDetails: employeeReferenceDetail
         };
 
         GetProfileByJobCodeData.push(GetProfileDahboard);

@@ -47,6 +47,7 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
 }: AttachmentButtonProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [fileFormatted, setFileFormatted] = useState(false);
 
   const onAttachmentIconClick = () => {
     if (fileInputRef.current) {
@@ -65,6 +66,8 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
       const files = Array.from(fileInput.files);
       const filteredFiles = files.filter((file) => {
         const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
+        const isValidFormat = !acceptedFormats.includes(fileExtension);
+        setFileFormatted(isValidFormat);
         return (
           acceptedFormats.includes(fileExtension) &&
           file.size <= 15 * 1024 * 1024
@@ -186,6 +189,19 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
           }}
         >
           File Is Required
+        </p>
+      )}
+      {fileFormatted && (
+        <p
+          style={{
+            marginTop: 5,
+            color: "red",
+            fontSize: 12,
+            marginLeft: 0,
+            ...paragraphStyle,
+          }}
+        >
+          Invalid file format
         </p>
       )}
     </div>
