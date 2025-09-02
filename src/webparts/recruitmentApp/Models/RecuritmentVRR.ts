@@ -31,7 +31,7 @@ export type RecuritmentData = {
   JobNameInFrenchID: number;
   PatersonGradeID: number;
   DRCGradeID: number;
-  JobCodeID: number;
+  JobCodeId: number;
   BusinessUnitCode: string;
   BusinessUnitName: string;
   BusinessUnitDescription: string;

@@ -63,7 +63,19 @@ const EmployeeDetailsTooltip: React.FC<ToolTipButtonProps> = ({
       if (!data) return <div>Loading...</div>;
       return renderApproverList([
         <div>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              fontFamily:
+                '"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
+              fontSize: "10px",
+              fontWeight: 600,
+              color: "rgb(50, 49, 48)",
+              boxSizing: "border-box",
+              overflowWrap: "inherit",
+            }}
+          >
             <thead>
               <tr>
                 <th style={{ border: "1px solid #ccc", padding: "8px" }}>
@@ -84,18 +96,14 @@ const EmployeeDetailsTooltip: React.FC<ToolTipButtonProps> = ({
               {data.empId === "" ? (
                 <tr>
                   <td
-                    colSpan={2}
+                    colSpan={4}
                     style={{ textAlign: "center", padding: "8px" }}
                   >
                     No Record Found
                   </td>
                 </tr>
               ) : (
-                <tr
-                  style={{
-                    backgroundColor: "#fff",
-                  }}
-                >
+                <tr style={{ backgroundColor: "#fff" }}>
                   <td style={{ border: "1px solid #ccc", padding: "8px" }}>
                     {data.empId}
                   </td>

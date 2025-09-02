@@ -300,6 +300,22 @@ const ReviewProfileList = (props: any) => {
         : props.stateValue?.TabName;
       switch (TabValue) {
         case TabName.ReviewProfile:
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.RecruitmentInProgress,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: "No",
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "AssignedHR",
+            Operator: "eq",
+            FilterValue: props.userDetails[0]?.EmailId,
+          });
+          break;
         case TabName.AssignInterviewPanel:
           filterConditionsRecuritment.push({
             FilterKey: "StatusId",
@@ -310,6 +326,11 @@ const ReviewProfileList = (props: any) => {
             FilterKey: "ItemCreated",
             Operator: "eq",
             FilterValue: "No",
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "AssignedHR",
+            Operator: "eq",
+            FilterValue: props.userDetails[0]?.EmailId,
           });
           break;
 
@@ -324,27 +345,32 @@ const ReviewProfileList = (props: any) => {
             Operator: "eq",
             FilterValue: "No",
           });
+          filterConditionsRecuritment.push({
+            FilterKey: "AssignedHR",
+            Operator: "eq",
+            FilterValue: props.userDetails[0]?.EmailId,
+          });
           break;
       }
-      if (props.CurrentRoleID.includes(RoleID.LineManager)) {
-        filterConditionsRecuritment.push({
-          FilterKey: "LineManager",
-          Operator: "eq",
-          FilterValue: props.userDetails[0]?.EmailId,
-        });
-      } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
-        filterConditionsRecuritment.push({
-          FilterKey: "HOD",
-          Operator: "eq",
-          FilterValue: props.userDetails[0]?.EmailId,
-        });
-      } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-        filterConditionsRecuritment.push({
-          FilterKey: "AssignedHR",
-          Operator: "eq",
-          FilterValue: props.userDetails[0]?.EmailId,
-        });
-      }
+      // if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+      //   filterConditionsRecuritment.push({
+      //     FilterKey: "LineManager",
+      //     Operator: "eq",
+      //     FilterValue: props.userDetails[0]?.EmailId,
+      //   });
+      // } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
+      //   filterConditionsRecuritment.push({
+      //     FilterKey: "HOD",
+      //     Operator: "eq",
+      //     FilterValue: props.userDetails[0]?.EmailId,
+      //   });
+      // } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+      //   filterConditionsRecuritment.push({
+      //     FilterKey: "AssignedHR",
+      //     Operator: "eq",
+      //     FilterValue: props.userDetails[0]?.EmailId,
+      //   });
+      // }
 
       const data = await getVRRDetails.GetRecruitmentDetails(
         filterConditionsRecuritment,

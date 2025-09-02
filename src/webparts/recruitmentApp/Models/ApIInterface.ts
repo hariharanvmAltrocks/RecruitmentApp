@@ -18,6 +18,7 @@ export type AdvertisementDetails = {
     RoleAndTechSkills: RoleAndTechSkills[],
     MinAndPreferedQualifications: MinAndPreferedQualifications[];
     isActive: number;
+    IsExtened: number;
     // profileXAgent: profileXagent;
 }
 
@@ -124,17 +125,23 @@ export type CandidateProfile = {
 
     COIAppreve: string;
     COIComments: string;
+    COIReason: string;
 
     countryOfResidency: string;
     residentStatus: string;
     maritalStatus: string;
     childrenDetails: childrenDetails[],
-    employeeReferenceDetails: employeeReferenceDetail | undefined
+    employeeReferenceDetails: employeeReferenceDetail | undefined,
+    maritalStatusId: string;
+
+    joiningDate: string;
+    noticePeriod: string;
 }
 
 export type childrenDetails = {
     name: string;
     age: number;
+    genderId: string;
 }
 
 export type employeeReferenceDetail = {
@@ -343,8 +350,12 @@ export type UploadDocument = {
     TrainingSystem: TrainingSystem;
     TASystem: TASystem;
     ITSystem: ITSystem;
+    MedicalSystem: MedicalSystem;
 
     ITRequired: string;
+
+    JoiningDate: string;
+    NoticePeriod: string;
 }
 
 export type DocumentName = {
@@ -355,26 +366,35 @@ export type TrainingSystem = {
     Inductiontype: AutoCompleteItem;
     StartDate: Date | any;
     EndDate: Date | any;
-    Region: AutoCompleteItem;
-    Zone: AutoCompleteItem;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
     Comments: string;
 }
 
 export type TASystem = {
     StartDate: Date | any;
     EndDate: Date | any;
-    Region: AutoCompleteItem;
-    Zone: AutoCompleteItem;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
     Comments: string;
 }
 
 export type ITSystem = {
     StartDate: Date | any;
     Hardware: AutoCompleteItem[];
-    Region: AutoCompleteItem;
-    Zone: AutoCompleteItem;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
     Comments: string;
     ITStatus: string;
+}
+
+export type MedicalSystem = {
+    StartDate: Date | any;
+    EndDate: Date | any;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
+    Comments: string;
+    MedicalStatus: string;
 }
 
 export type COIType = {

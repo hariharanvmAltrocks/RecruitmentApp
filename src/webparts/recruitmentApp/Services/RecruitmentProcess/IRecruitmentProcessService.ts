@@ -184,6 +184,12 @@ export type PostRecuritmentData = {
     IsDataSyncToRecruitment: string,
   }
 }
+
+export type GetJobUniqueKey = {
+  JobCode: string;
+  JobUniqueKey: string;
+  IsActive: string;
+}
 export type IRecruitmentService = {
   GetJobTitleInNPEP(
     Filter: any[],
@@ -263,7 +269,8 @@ export type IRecruitmentService = {
     RecuritmentDetails: any,
     AdvertisementValue: any,
     MasterData: any,
-    IsActive: number
+    IsActive: number,
+    IsExtened: number,
   ): Promise<ApiResponse<null>>;
   GetInterviewPanelDetails(
     filterParam: any[],
@@ -284,4 +291,8 @@ export type IRecruitmentService = {
     data: DataSyncToRecruitmentResponse,
   ): Promise<ApiResponse<tooltipInterviewPanel[] | null>>;
   GetEvalutionActionData(filterConditions: any): Promise<ApiResponse<any[]>>;
+  GetJobUniqueDataValue(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<GetJobUniqueKey[]>>;
 };

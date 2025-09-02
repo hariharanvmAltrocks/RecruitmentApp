@@ -157,7 +157,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     JobNameInFrenchID: 0,
     PatersonGradeID: 0,
     DRCGradeID: 0,
-    JobCodeID: 0,
+    JobCodeId: 0,
     BusinessUnitCode: "",
     BusinessUnitName: "",
     BusinessUnitDescription: "",
@@ -706,7 +706,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             JobNameInFrenchID: op.JobTitleFrenchId,
             PatersonGradeID: op.PatersonGradeId,
             DRCGradeID: op.DRCGradeId,
-            JobCodeID: op.JobCodeId,
+            JobCodeId: op.JobCodeId,
             BusinessUnitCode: op.BusinessUnitCode || "",
             BusinessUnitName: BUName.Name || "",
             BusinessUnitDescription: BUName.Description || "",
@@ -1001,7 +1001,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 {
                   FilterKey: "JobCode",
                   Operator: "eq",
-                  FilterValue: formState.JobCodeID,
+                  FilterValue: formState.JobCodeId,
                 },
               ];
               const Conditions = "";
@@ -1011,7 +1011,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 formState,
                 advDetails,
                 props,
-                1
+                1,
+                0
               );
 
               if (result?.status === 200) {
@@ -1145,7 +1146,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               TechnicalSkillsKnowledgeJson: JSON.stringify(
                 TechnicalSkillsKnowledgeJson
               ),
-              JobCodeId: formState.JobCodeID,
+              JobCodeId: formState.JobCodeId,
               TotalPreferredExperienceId: Number(
                 advDetails.TotalExperience.key
               ),
@@ -1177,7 +1178,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 {
                   FilterKey: "JobCode",
                   Operator: "eq",
-                  FilterValue: formState.JobCodeID,
+                  FilterValue: formState.JobCodeId,
                 },
               ];
               let Conditions = "";
@@ -1187,6 +1188,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 formState,
                 advDetails,
                 props,
+                0,
                 0
               );
               resetForm();

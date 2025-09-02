@@ -65,7 +65,17 @@ const MaritalChildrenTooltip: React.FC<ToolTipButtonProps> = ({
         <div style={{ maxHeight: "40vh", overflowY: "auto" }} key="customTable">
           <table
             className="normalTable"
-            style={{ width: "100%", borderCollapse: "collapse" }}
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              fontFamily:
+                '"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif',
+              fontSize: "14px",
+              fontWeight: 600,
+              color: "rgb(50, 49, 48)",
+              boxSizing: "border-box",
+              overflowWrap: "inherit",
+            }}
           >
             <thead>
               <tr>
@@ -74,6 +84,9 @@ const MaritalChildrenTooltip: React.FC<ToolTipButtonProps> = ({
                 </th>
                 <th style={{ border: "1px solid #ccc", padding: "8px" }}>
                   Age
+                </th>
+                <th style={{ border: "1px solid #ccc", padding: "8px" }}>
+                  Gender
                 </th>
               </tr>
             </thead>
@@ -100,6 +113,9 @@ const MaritalChildrenTooltip: React.FC<ToolTipButtonProps> = ({
                     </td>
                     <td style={{ border: "1px solid #ccc", padding: "8px" }}>
                       {item.age}
+                    </td>
+                    <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                      {item.genderId}
                     </td>
                   </tr>
                 ))

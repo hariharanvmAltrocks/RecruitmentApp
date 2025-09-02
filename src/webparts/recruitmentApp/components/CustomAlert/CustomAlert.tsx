@@ -10,6 +10,7 @@ export type CustomAlert = {
   Type: string;
   onClose: () => void;
   visible: boolean;
+  ButtonLebel?: string;
 };
 export default function CustomAlert(props: CustomAlert) {
   React.useEffect(() => {}, [props]);
@@ -42,7 +43,7 @@ export default function CustomAlert(props: CustomAlert) {
       >
         <div className="ms-Grid-col ms-lg3">
           <ReuseButton
-            label="OK"
+            label={props.ButtonLebel ? "Yes" : "OK"}
             onClick={() => props.ButtonAction && props.ButtonAction(true)}
             spacing={4}
             Style={{
@@ -59,7 +60,7 @@ export default function CustomAlert(props: CustomAlert) {
         {props.Type === HRMSAlertOptions.Confirmation && (
           <div className="ms-Grid-col ms-lg3">
             <ReuseButton
-              label="Cancel"
+              label={props.ButtonLebel ? "No" : "Cancel"}
               onClick={() => props.ButtonAction && props.ButtonAction(false)}
               spacing={4}
               Style={{

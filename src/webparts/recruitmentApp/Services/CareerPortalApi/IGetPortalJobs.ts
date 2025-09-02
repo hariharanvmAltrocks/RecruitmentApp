@@ -52,8 +52,13 @@ export type CandidateDetails = {
 
     COIComments: string;
     COIEmail: string;
+    COIReason: string;
 
-
+    countryOfResidency: string;
+    ResidencyStatus: string;
+    MaritalStatus: string;
+    ChildrenDetails: string;
+    ReferenceEmployeeDetails: string;
     // CandidateOnboardingDate: string;
     // EngagementDate: string;
 }

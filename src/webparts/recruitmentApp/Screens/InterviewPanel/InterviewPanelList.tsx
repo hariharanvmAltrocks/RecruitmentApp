@@ -95,6 +95,7 @@ const InterviewPanelList = (props: any) => {
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
             InterviewLevel: rowData?.InterviewLevel,
+            JobCodeID: rowData?.JobCodeID,
           },
         });
       } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
@@ -108,6 +109,7 @@ const InterviewPanelList = (props: any) => {
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
             InterviewLevel: rowData?.InterviewLevel,
+            JobCodeID: rowData?.JobCodeID,
           },
         });
       } else if (props.CurrentRoleID.includes(RoleID.LineManager)) {
@@ -121,6 +123,7 @@ const InterviewPanelList = (props: any) => {
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
             InterviewLevel: rowData?.InterviewLevel,
+            JobCodeID: rowData?.JobCodeID,
           },
         });
       } else {
@@ -134,6 +137,7 @@ const InterviewPanelList = (props: any) => {
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
             InterviewLevel: rowData?.InterviewLevel,
+            JobCodeID: rowData?.JobCodeID,
           },
         });
       }
@@ -456,7 +460,7 @@ const InterviewPanelList = (props: any) => {
           RecuritmentConditions,
           props.EmployeeList
         );
-
+      let JobCodeIDs: number;
       const enrichedCandidates = await Promise.all(
         statusResponse.data.map(async (candidate: any) => {
           let grade = "";
@@ -473,7 +477,7 @@ const InterviewPanelList = (props: any) => {
               ],
               ""
             );
-
+            JobCodeIDs = vrrResponse?.data?.[0]?.JobCodeId || 0;
             grade = vrrResponse?.data?.[0]?.PatersonGrade || "";
 
             if (grade) {
@@ -521,6 +525,7 @@ const InterviewPanelList = (props: any) => {
             InterviewDate: candidate?.InterviewDate,
             InterviewDateLevel2: candidate?.InterviewDateLevel2,
             InterviewDateTime: InterviewDateTime,
+            JobCodeID: JobCodeIDs,
           };
         })
       );

@@ -87,6 +87,7 @@ type InterviewedLevelValue = {
   COIProfileLabelOption: AutoCompleteItem[];
   COIAttachment: IDocFiles[];
   COIComments: string;
+  COIReason: string;
 };
 
 type ValidationError = {
@@ -175,11 +176,17 @@ const ViewCandidateDetails = (props: any) => {
 
     COIAppreve: "",
     COIComments: "",
+    COIReason: "",
+
     countryOfResidency: "",
     residentStatus: "",
     maritalStatus: "",
     childrenDetails: [],
     employeeReferenceDetails: undefined,
+    maritalStatusId: "",
+
+    joiningDate: "",
+    noticePeriod: "",
   });
   const todaydate = new Date();
 
@@ -199,6 +206,7 @@ const ViewCandidateDetails = (props: any) => {
       COIProfileLabelOption: [],
       COIAttachment: [],
       COIComments: "",
+      COIReason: "",
     });
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
@@ -456,11 +464,13 @@ const ViewCandidateDetails = (props: any) => {
                 maritalStatus: response?.maritalStatus,
                 childrenDetails: response?.childrenDetails || [],
                 employeeReferenceDetails: response?.employeeReferenceDetails,
+                maritalStatusId: response?.maritalStatusId,
               }));
               setInterviewedLevel((prev) => ({
                 ...prev,
                 COIComments: response?.COIComments || "",
                 COIProfileLabel: { key: 1, text: response?.COIAppreve || "" },
+                COIReason: response?.COIReason || "",
               }));
             } else {
               const APIErrorMsg = {
@@ -1061,54 +1071,60 @@ const ViewCandidateDetails = (props: any) => {
                     </>
                   )}
                 </div>
-                {CandidateProfile?.countryOfResidency && (
-                  <div className="ms-Grid-row">
-                    <div className="ms-Grid-col ms-lg4">
-                      <CustomInput
-                        label="Country Of Residency"
-                        value={CandidateProfile?.countryOfResidency}
-                        disabled={true}
-                        mandatory={false}
-                      />
-                    </div>
-                  </div>
-                )}
-                {CandidateProfile?.residentStatus && (
-                  <div className="ms-Grid-row">
-                    <div className="ms-Grid-col ms-lg6">
-                      <CustomRadioGroup
-                        label="Are you residency in that country?"
-                        value={CandidateProfile?.residentStatus}
-                        options={["Yes", "No"]}
-                        mandatory={false}
-                        error={false}
-                        disabled={true}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {CandidateProfile?.maritalStatus && (
+                {props.stateValue?.initialTab === TabName.ReviewProfile && (
                   <>
-                    <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg4">
-                        <CustomInput
-                          label="Marital Status"
-                          value={CandidateProfile?.maritalStatus}
-                          disabled={true}
-                          mandatory={false}
-                        />
+                    {CandidateProfile?.countryOfResidency && (
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomInput
+                            label="Country Of Residency"
+                            value={CandidateProfile?.countryOfResidency}
+                            disabled={true}
+                            mandatory={false}
+                          />
+                        </div>
                       </div>
-                      <div
-                        className="ms-Grid-col ms-lg1"
-                        style={{ marginTop: "4%" }}
-                      >
-                        <MaritalChildrenTooltip
-                          data={CandidateProfile.childrenDetails}
-                          // onHover={() => handleHover(rowData.StatusId, rowData)}
-                        />
+                    )}
+                    {CandidateProfile?.residentStatus && (
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg6">
+                          <CustomRadioGroup
+                            label="Are you residency in that country?"
+                            value={CandidateProfile?.residentStatus}
+                            options={["Yes", "No"]}
+                            mandatory={false}
+                            error={false}
+                            disabled={true}
+                          />
+                        </div>
                       </div>
-                    </div>
+                    )}
+
+                    {CandidateProfile?.maritalStatus && (
+                      <>
+                        <div className="ms-Grid-row">
+                          <div className="ms-Grid-col ms-lg4">
+                            <CustomInput
+                              label="Marital Status"
+                              value={CandidateProfile?.maritalStatus}
+                              disabled={true}
+                              mandatory={false}
+                            />
+                          </div>
+                          {CandidateProfile?.maritalStatusId != "MS01" && (
+                            <div
+                              className="ms-Grid-col ms-lg1"
+                              style={{ marginTop: "4%" }}
+                            >
+                              <MaritalChildrenTooltip
+                                data={CandidateProfile.childrenDetails}
+                                // onHover={() => handleHover(rowData.StatusId, rowData)}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </>
                 )}
 
@@ -1183,9 +1199,7 @@ const ViewCandidateDetails = (props: any) => {
                       ) : (
                         <></>
                       )}
-                      <EmployeeDetailsTooltip
-                        data={CandidateProfile.employeeReferenceDetails}
-                      />
+
                       {CandidateProfile?.businesslinks === "Yes" ? (
                         <div className="ms-Grid-col ms-lg6">
                           <Label>Attachment</Label>
@@ -1448,6 +1462,38 @@ const ViewCandidateDetails = (props: any) => {
                             </div>
                           </div>
                           <div className="ms-Grid-row">
+                            <div
+                              style={{
+                                display: "flex",
+                                marginTop: "1% ",
+                                marginLeft: "1%",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  // minWidth: 85,
+                                  fontWeight: "bold",
+                                  fontFamily: '"Roboto", sans-serif',
+                                  fontSize: "17px",
+                                }}
+                              >
+                                {"Reason :"}
+                              </div>
+                              <div
+                                style={{
+                                  fontFamily: '"Roboto", sans-serif',
+                                  // color: "red",
+                                  marginLeft: "1%",
+                                  // fontWeight: "bold",
+                                  fontSize: "17px",
+                                }}
+                              >
+                                {" "}
+                                {InterviewedLevel.COIReason ?? "—"}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="ms-Grid-row">
                             <div className="ms-Grid-col ms-lg4">
                               <CustomAutoComplete
                                 label={labelName.COIProfileLabel}
@@ -1476,7 +1522,7 @@ const ViewCandidateDetails = (props: any) => {
                                   >
                                     <CustomLabel
                                       value={labelName.COIAttach}
-                                      mandatory={true}
+                                      // mandatory={true}
                                     />
                                     <AttachmentButton
                                       label="Upload"
@@ -1502,8 +1548,8 @@ const ViewCandidateDetails = (props: any) => {
                                           attachments
                                         );
                                       }}
-                                      mandatory={true}
-                                      error={validationErrors.COIAttachment}
+                                      // mandatory={true}
+                                      // error={validationErrors.COIAttachment}
                                       Style={{
                                         backgroundColor:
                                           ColorCode.ButtonColorCode.ButtonColor,
@@ -1531,7 +1577,7 @@ const ViewCandidateDetails = (props: any) => {
                             ) : (
                               <>
                                 <div className="ms-Grid-col ms-lg3 custom-document-column ">
-                                  <CustomLabel value={"COI Attachment"} />
+                                  <CustomLabel value={labelName.COIAttach} />
                                   <CustomViewDocument
                                     Attachment={InterviewedLevel.COIAttachment}
                                   />
@@ -1861,7 +1907,7 @@ const ViewCandidateDetails = (props: any) => {
     ) {
       errors.COIComments = !IsValid(InterviewedLevel?.COIComments);
       errors.COIProfileLabel = !IsValid(InterviewedLevel?.COIProfileLabel.text);
-      errors.COIAttachment = !IsValid(InterviewedLevel?.COIAttachment);
+      // errors.COIAttachment = !IsValid(InterviewedLevel?.COIAttachment);
     }
 
     setValidationErrors((prevState) => ({
@@ -1980,9 +2026,18 @@ const ViewCandidateDetails = (props: any) => {
       BusinessLink: CandidateProfile.BusinessLink,
       GPA: CandidateProfile.GPA,
 
-      OthersInterviewed: "Yes",
+      OthersInterviewed: "",
       COIEmail: String(InterviewedLevel.COIProfileLabel.text),
       COIComments: InterviewedLevel.COIComments,
+      COIReason: InterviewedLevel.COIReason,
+
+      countryOfResidency: CandidateProfile.countryOfResidency,
+      ResidencyStatus: CandidateProfile.residentStatus,
+      MaritalStatus: CandidateProfile.maritalStatus,
+      ChildrenDetails: JSON.stringify(CandidateProfile.childrenDetails),
+      ReferenceEmployeeDetails: JSON.stringify(
+        CandidateProfile.employeeReferenceDetails
+      ),
     };
     let selectedinterviewpanal: any[] = [];
 
@@ -2009,7 +2064,7 @@ const ViewCandidateDetails = (props: any) => {
       });
   };
 
-  async function Submit_fn() {
+  async function Submit_fn(COIButtonAction: string) {
     setIsLoading(true);
     try {
       const isValid = !Validation();
@@ -2169,7 +2224,11 @@ const ViewCandidateDetails = (props: any) => {
           };
           let PopupMessage: string = "";
           if (props.CurrentRoleID.includes(RoleID.LineManager)) {
-            switch (actionValue.CandidateStatus) {
+            let CandidateValue =
+              COIButtonAction === ButtonAction.Reject
+                ? CandidateStatus.No
+                : actionValue.CandidateStatus;
+            switch (CandidateValue) {
               case CandidateStatus.Yes:
                 if (
                   CandidateProfile.workflowStatusId ===
@@ -2233,10 +2292,15 @@ const ViewCandidateDetails = (props: any) => {
                   ? RecuritmentHRMsg.InterviewPanalLevel1
                   : RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
             } else {
-              CandidateData = createFilter(
-                workflowStatusApi.LineManagerL1Pending
-              );
-              PopupMessage = RecuritmentHRMsg.HRReviewCandidate;
+              if (COIButtonAction === ButtonAction.Reject) {
+                CandidateData = createFilter(workflowStatusApi.HRRejected);
+                PopupMessage = RecuritmentHRMsg.CandidateRejected;
+              } else {
+                CandidateData = createFilter(
+                  workflowStatusApi.LineManagerL1Pending
+                );
+                PopupMessage = RecuritmentHRMsg.HRReviewCandidate;
+              }
             }
           }
           let COIResponse: any;
@@ -2248,17 +2312,22 @@ const ViewCandidateDetails = (props: any) => {
               RequestID: String(CandidateProfile.profileID),
               DocumentName: DocumentFolderName.COIAttach,
             };
-            let DocumentResponse =
-              await GetPortalJobsService.UploadCOIAttachment(
+            let DocumentResponse: any;
+            if (InterviewedLevel.COIAttachment.length > 0) {
+              DocumentResponse = await GetPortalJobsService.UploadCOIAttachment(
                 DocumentData,
                 InterviewedLevel.COIAttachment
               );
+            }
 
             let COIObj: COIType = {
               profileId: CandidateProfile.profileID,
               approver: InterviewedLevel.COIProfileLabel.text,
               comments: InterviewedLevel.COIComments,
-              attachmentPath: String(DocumentResponse.data[0]?.content),
+              attachmentPath:
+                InterviewedLevel.COIAttachment.length > 0
+                  ? String(DocumentResponse.data[0]?.content)
+                  : "",
             };
             COIResponse = await GetPortalJobsService.GetUpsertCOI(COIObj);
           } else {
@@ -2381,27 +2450,35 @@ const ViewCandidateDetails = (props: any) => {
         props.stateValue?.initialTab === TabName.ReviewProfile
       ) {
         const COIWarnMsg = `
-          <div style="text-align: center;">
-            <p>This is the COI profile</p>
-            <p>Are you sure you're ready to process?.</p>
-          </div>`;
+  <div style="text-align: center;">
+    <p>This is the Conflict of Interest profile.</p>
+    <p>Would you like to proceed with the candidate?</p>
+    <p style="color: red; font-size: small;">Note: Clicking the 'No' button will directly disqualify the candidate.</p>
+  </div>
+`;
         const WarningMsg = {
           Message: COIWarnMsg,
           Type: HRMSAlertOptions.Confirmation,
           visible: true,
+          ButtonLebel: "Yes",
           ButtonAction: async (userClickedOK: boolean) => {
             if (userClickedOK) {
               setAlertPopupOpen(false);
-              await Submit_fn();
+              await Submit_fn(ButtonAction.Approve);
             } else {
+              setActionValue((prevState: any) => ({
+                ...prevState,
+                CandidateStatus: "No",
+              }));
               setAlertPopupOpen(false);
+              await Submit_fn(ButtonAction.Reject);
             }
           },
         };
         setAlertPopupOpen(true);
         setalertProps(WarningMsg);
       } else {
-        await Submit_fn();
+        await Submit_fn(ButtonAction.Remove);
       }
     }
   }

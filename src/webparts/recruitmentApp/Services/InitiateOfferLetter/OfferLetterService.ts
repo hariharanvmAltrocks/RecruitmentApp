@@ -124,22 +124,22 @@ export default class OfferLetterService implements IOfferLetterService {
                             Inductiontype: { key: 0, text: objresult?.InductionType ?? "" },
                             StartDate: objresult?.TCSStartDate ? new Date(objresult?.TCSStartDate) : undefined,
                             EndDate: objresult?.TCSEndDate ? new Date(objresult?.TCSEndDate) : undefined,
-                            Region: { key: 0, text: objresult?.TCSRegion ?? "" },
-                            Zone: { key: 0, text: objresult?.TCSZone ?? "" },
+                            Region: [], //{ key: 0, text: objresult?.TCSRegion ?? "" },
+                            Zone: [], //{ key: 0, text: objresult?.TCSZone ?? "" },
                             Comments: objresult?.TCSComments ?? "",
                         }
                         let TASystem: TASystem = {
                             StartDate: objresult?.PermanentBadgeStartDate ? new Date(objresult?.PermanentBadgeStartDate) : undefined,
                             EndDate: objresult?.PermanentBadgeEndDate ? new Date(objresult?.PermanentBadgeEndDate) : undefined,
-                            Region: { key: 0, text: objresult?.PermanentBadgeRegion ?? "" },
-                            Zone: { key: 0, text: objresult?.PermanentBadgeZone ?? "" },
+                            Region: [],//{ key: 0, text: objresult?.PermanentBadgeRegion ?? "" },
+                            Zone: [],//{ key: 0, text: objresult?.PermanentBadgeZone ?? "" },
                             Comments: objresult?.PermanentBadgeComments ?? ""
                         }
                         let ITSystem: ITSystem = {
                             StartDate: objresult?.ITStartDate ? new Date(objresult?.ITStartDate) : undefined,
                             Hardware: Hardware ?? [],
-                            Region: { key: 0, text: objresult?.ITRegion ?? "" },
-                            Zone: { key: 0, text: objresult?.ITZone ?? "" },
+                            Region: [],//{ key: 0, text: objresult?.ITRegion ?? "" },
+                            Zone: [],//{ key: 0, text: objresult?.ITZone ?? "" },
                             Comments: objresult?.ITComments ?? "",
                             ITStatus: objresult?.ITStatus
                         }

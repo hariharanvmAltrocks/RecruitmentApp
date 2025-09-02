@@ -28,7 +28,8 @@ export default class GetPortalJobs implements IGetPortalJobs {
         Descriptions_fr: data?.Descriptions_fr,
         RoleAndTechSkills: data?.RoleAndTechSkills,
         MinAndPreferedQualifications: data?.MinAndPreferedQualifications,
-        isActive: data?.isActive
+        isActive: data?.isActive,
+        IsExtened: data?.IsExtened
       }
       const response = await postAdveDetails.postUpsertJobs(AdvertisementDetails);
       return {
@@ -80,13 +81,14 @@ export default class GetPortalJobs implements IGetPortalJobs {
       await getProfileData.GetProfileByJobCode(FilterValue).then((res) => {
         let TotalItems = res?.data?.pagination?.totalItems;
         GetProfileByJobCodeData = res.data.data.map((item: any, index: number) => {
+          const JobCode = item?.jobCode?.split('-')[0];
           let createdon = item?.createdOn ? new Date(item.createdOn) : null
           return {
             SNO: index + 1,
             CandidateID: item?.jobRequestId,
             ApplicantName: item?.applicantName,
             PositionTitle: item?.jobTitle?.displayText,
-            JobCode: item?.jobCode,
+            JobCode: JobCode,
             Status: item?.workflowStatus?.displayText,
             workflowStatusId: item?.workflowStatusId,
             createdOn: moment(createdon).format("DD/MM/YYYY HH:mm:ss"),
@@ -192,6 +194,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           return {
             name: item?.childrenName,
             age: item?.age,
+            genderId: item?.genderId
           }
         });
         let employeeReferenceDetail = {
@@ -200,10 +203,11 @@ export default class GetPortalJobs implements IGetPortalJobs {
           empEmail: op?.profile?.employeeReferenceDetails?.empEmail,
           company: op?.profile?.employeeReferenceDetails?.company,
         }
+        const JobCode = op?.jobCode?.split('-')[0];
         let GetProfileDahboard: CandidateProfile = {
           CandidateID: op?.jobRequestId,
           profileID: op?.profileId,
-          JobCode: op?.jobCode,
+          JobCode: JobCode,
           JobTitle: op?.jobDetail?.descriptions_en?.jobTitle,
           ApplicantName: `${op?.profile?.firstName || ""} ${op?.profile?.middleName || ""} ${op?.profile?.lastName || ""}`,
           ApplicantSurName: op?.profile?.lastName,
@@ -255,12 +259,16 @@ export default class GetPortalJobs implements IGetPortalJobs {
 
           COIAppreve: op?.profile?.profileDetailCoi?.approver ?? "",
           COIComments: op?.profile?.profileDetailCoi?.comments ?? "",
+          COIReason: op?.profile?.coiReason ?? "",
 
           countryOfResidency: op?.profile?.countryOfResidency ?? "",
           residentStatus: op?.profile?.residentStatus === "Y" ? "Yes" : op?.profile?.residentStatus === "N" ? "No" : "",
           maritalStatus: op?.profile?.maritalStatusDetail?.displayText ?? "",
           childrenDetails: childrenDetails,
-          employeeReferenceDetails: employeeReferenceDetail
+          employeeReferenceDetails: employeeReferenceDetail,
+          maritalStatusId: op?.profile?.maritalStatus ?? "",
+          joiningDate: op?.startDate ?? "",
+          noticePeriod: op?.noticePeriodDays ?? ""
         };
 
         GetProfileByJobCodeData.push(GetProfileDahboard);

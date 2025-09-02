@@ -101,7 +101,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
     JobNameInFrenchID: 0,
     PatersonGradeID: 0,
     DRCGradeID: 0,
-    JobCodeID: 0,
+    JobCodeId: 0,
     BusinessUnitCode: "",
     BusinessUnitName: "",
     BusinessUnitDescription: "",

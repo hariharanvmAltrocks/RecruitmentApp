@@ -454,7 +454,7 @@ const HodViewScorecard = (props: any) => {
                 JobCode: CandidateData?.JobCode,
                 StatusId: props.stateValue?.StatusId,
                 NoOfPosition: props.stateValue.NoOfPosition,
-                JobCodeId: props.stateValue.JobCodeId,
+                JobCodeID: props.stateValue.JobCodeID,
                 Department: props.stateValue.Department,
               },
             });
@@ -589,8 +589,21 @@ const HodViewScorecard = (props: any) => {
 
   const View_Btnfn = async () => {
     setIsLoading(true);
+    let JobCodeFilter = [
+      {
+        FilterKey: "JobCodeId",
+        Operator: "eq",
+        FilterValue: props.stateValue?.JobCodeID,
+      },
+      { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+    ];
+    let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
+      JobCodeFilter,
+      "and"
+    );
+
     const getQuestion = await GetPortalJobsService.getQuestionnaire(
-      CandidateData.JobCode
+      JobUniqueValue.data[0]?.JobUniqueKey //CandidateData.JobCode
     );
     if (getQuestion.status === ResponeStatus.SUCCESS) {
       setquestionnaire(getQuestion?.data ?? []);
@@ -1551,7 +1564,7 @@ const HodViewScorecard = (props: any) => {
       {
         FilterKey: "JobCode",
         Operator: "eq",
-        FilterValue: props.stateValue.JobCodeId,
+        FilterValue: props.stateValue.JobCodeID,
       },
       {
         FilterKey: "Department",
@@ -2021,12 +2034,23 @@ const HodViewScorecard = (props: any) => {
           comments: CandidateData.Comments,
           actionBy: RoleName.HOD,
         });
-
+        let InterviewedCount =
+          await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
+            [
+              {
+                FilterKey: "JobCode",
+                Operator: "eq",
+                FilterValue: props?.stateValue?.JobCodeID,
+              },
+            ],
+            ""
+          );
         let obj: ActionUpdate = {
           ActionId: 0,
           Id: candidateID,
           ItemCreated: "",
           GPA: CandidateData.GPA,
+          OthersInterviewed: InterviewedCount?.length > 1 ? "Yes" : "No",
         };
 
         let CandidateDatas: WorkflowJson = {
@@ -2045,6 +2069,7 @@ const HodViewScorecard = (props: any) => {
               Id: props.stateValue.ID,
               ItemCreated: isNotEvaluationTab ? "Yes" : "No",
               GPA: CandidateData.GPA,
+              OthersInterviewed: InterviewedCount?.length > 1 ? "Yes" : "No",
             };
             CandidateDatas = createFilter(
               workflowStatusApi.CandidateSelectedIPanel
@@ -2064,6 +2089,7 @@ const HodViewScorecard = (props: any) => {
               Id: props.stateValue.ID,
               ItemCreated: isNotEvaluationTab ? "Yes" : "No",
               GPA: CandidateData.GPA,
+              OthersInterviewed: InterviewedCount?.length > 1 ? "Yes" : "No",
             };
             CandidateDatas = createFilter(
               workflowStatusApi.CandidateRejectedIPanel
@@ -2085,6 +2111,7 @@ const HodViewScorecard = (props: any) => {
               Id: props.stateValue.ID,
               ItemCreated: isNotEvaluationTab ? "Yes" : "No",
               GPA: CandidateData.GPA,
+              OthersInterviewed: InterviewedCount?.length > 1 ? "Yes" : "No",
             };
             CandidateDatas = createFilter(
               workflowStatusApi.CandidateOnHoldIPanel
@@ -2160,7 +2187,7 @@ const HodViewScorecard = (props: any) => {
                         ButtonAction: props.stateValue?.PreviousTabName,
                         JobCode: CandidateData?.JobCode,
                         StatusId: props.stateValue?.StatusId,
-                        JobCodeId: props.stateValue.JobCodeId,
+                        JobCodeID: props.stateValue.JobCodeID,
                         Department: props.stateValue.Department,
                         NoOfPosition: props.stateValue.NoOfPosition,
                       },

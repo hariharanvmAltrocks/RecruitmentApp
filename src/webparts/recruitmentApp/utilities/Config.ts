@@ -68,6 +68,8 @@ export const ListNames = {
   //TCS Integration
   TCSInductionMeetings: "TCSInductionMeetings",
   TrainerAndFacilityDetails: "TrainerAndFacilityDetails",
+
+  RecruitAppCareerPortalIntegration: "RecruitAppCareerPortalIntegration"
 };
 
 export const DocumentLibraray = {
@@ -571,6 +573,7 @@ export const labelName = {
   TASystem: "T&A System",
   ITSystem: "IT System",
   TrainingDetails: "Training Details",
+  MedicalSystem: "Medical System",
 
   //Upload CV 
   Title: "Title",
@@ -621,8 +624,8 @@ export const labelName = {
   Firstextensiondate: "First Extension Date",
   Secondextensiondate: "Second Extension Date",
   Thirdextensiondate: "Third Extension Date",
-  COIAttach: "Upload Attachment",
-  COIProfileLabel: "Employee Name"
+  COIAttach: "Proof of Discussion",
+  COIProfileLabel: "Consulted With"
 
 };
 export const ButtonAction = {

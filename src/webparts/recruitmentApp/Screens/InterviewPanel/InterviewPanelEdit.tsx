@@ -341,8 +341,20 @@ const InterviewPanelEdit = (props: any) => {
         }));
         // await fetchRoleProfileData(op.JobCodeId);
         if (questionnaire.length === 0) {
+          let JobCodeFilter = [
+            {
+              FilterKey: "JobCodeId",
+              Operator: "eq",
+              FilterValue: props.stateValue?.JobCodeID,
+            },
+            { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+          ];
+          let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
+            JobCodeFilter,
+            "and"
+          );
           const getQuestion = await GetPortalJobsService.getQuestionnaire(
-            op?.JobCode
+            JobUniqueValue.data[0]?.JobUniqueKey //op?.JobCode
           );
           if (getQuestion.status === ResponeStatus.SUCCESS) {
             if (getQuestion?.data?.length === 0) {

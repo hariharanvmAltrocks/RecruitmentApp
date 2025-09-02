@@ -48,7 +48,10 @@ import {
   optionsValue,
   UpsertQuestions,
 } from "../../Models/ApIInterface";
-import { GetPortalJobsService } from "../../Services/ServiceExport";
+import {
+  GetPortalJobsService,
+  getVRRDetails,
+} from "../../Services/ServiceExport";
 import SPServices from "../../Services/SPService/SPServices";
 import ViewQuestionCheckbox, {
   ViewQuestion,
@@ -2284,6 +2287,18 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         ? QuestionairesData.length >= 5
         : true;
     if (IsVaild) {
+      let JobCodeFilter = [
+        {
+          FilterKey: "JobCodeId",
+          Operator: "eq",
+          FilterValue: props.stateValue?.JobCodeID,
+        },
+        { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+      ];
+      let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
+        JobCodeFilter,
+        "and"
+      );
       let QuestionValue: UpsertQuestions[] = QuestionairesData.map((item) => {
         const category = getMasterData.category.find(
           (cat) => cat.text === InterviewQuesData.Catogry
@@ -2369,7 +2384,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               : 0,
           isAnswerValidate: item.Disqualification === "No" ? 0 : 1,
           sequence: item.id,
-          jobCode: props.stateValue.JobCode,
+          jobCode: JobUniqueValue.data[0]?.JobUniqueKey,
           options: OptionsValue,
           answers: answerValue,
         };

@@ -3,6 +3,7 @@ import SPServices from "../SPService/SPServices";
 import {
   CommentsData,
   DataSyncToRecruitmentResponse,
+  GetJobUniqueKey,
   InsertComments,
   IRecruitmentService,
   JobCodeData,
@@ -796,6 +797,14 @@ export default class RecruitmentService implements IRecruitmentService {
               ID: RecruitmentValue.updatePreList.ID,
             });
             InsertResponse = UpdateList
+            const IntegretionData = {
+              JobCodeId: RecruitmentValue.Data.JobCodeId,
+              RecruitmentIDId: response?.data?.ID,
+            };
+            await SPServices.SPAddItem({
+              Listname: ListNames.RecruitAppCareerPortalIntegration,
+              RequestJSON: IntegretionData,
+            });
           }
         }
       }
@@ -851,9 +860,14 @@ export default class RecruitmentService implements IRecruitmentService {
     param: any
   ): Promise<ApiResponse<any | null>> {
     try {
-      let response: any = await SPServices.SPAddItem({
+      let Obj = {
+        JoiningDate: param.JoiningDate,
+        NoticePeriod: param.NoticePeriod,
+      }
+      let response: any = await SPServices.SPUpdateItem({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        RequestJSON: param,
+        RequestJSON: Obj,
+        ID: param.ID,
       });
       // console.log(response);
       return {
@@ -1591,6 +1605,7 @@ export default class RecruitmentService implements IRecruitmentService {
     AdvertisementValue: any,
     MasterData: any,
     IsActive: number,
+    IsExtened: number,
   ): Promise<ApiResponse<null>> {
     try {
       const res = await SPServices.SPGetItems({
@@ -1613,6 +1628,21 @@ export default class RecruitmentService implements IRecruitmentService {
       const technicalSkill = data.TechnicalSkillsKnowledgeJson
         ? JSON.parse(data.TechnicalSkillsKnowledgeJson)
         : [];
+      let JobCodeFilter = [
+        { FilterKey: "JobCodeId", Operator: "eq", FilterValue: RecuritmentDetails.JobCodeId },
+        { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+      ];
+
+      let JobUniqueData = await SPServices.SPReadItems({
+        Listname: ListNames.RecruitAppCareerPortalIntegration,
+        Select: "*",
+        Filter: JobCodeFilter,
+        FilterCondition: "and",
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      })
+      console.log("JobUniqueKey", JobUniqueData);
+
 
       const roleSpecificSkills: RoleAndTechSkills[] = roleSpecificKnowledge.map(
         (item: any) => ({
@@ -1688,7 +1718,7 @@ export default class RecruitmentService implements IRecruitmentService {
           : RecuritmentDetails.Nationality;
 
       const AdvertisementDetails: AdvertisementDetails = {
-        jobCode: RecuritmentDetails.JobCode,
+        jobCode: JobUniqueData[0].JobUniqueKey,   //RecuritmentDetails.JobCode,
         isActive: IsActive,
         noOfPositions: String(RecuritmentDetails?.NoofPositionAssigned === undefined ? RecuritmentDetails?.NumberOfPersonNeeded : RecuritmentDetails?.NoofPositionAssigned),
         validFrom: AdvertisementValue.ValidFrom ?? null,
@@ -1706,6 +1736,7 @@ export default class RecruitmentService implements IRecruitmentService {
         Descriptions_fr: DescriptionFr,
         RoleAndTechSkills: Roleandtechnical,
         MinAndPreferedQualifications: MinAndPreferedQualification,
+        IsExtened: IsExtened
       };
 
       const response = await GetPortalJobsService.UpsertJobs(
@@ -2142,6 +2173,50 @@ export default class RecruitmentService implements IRecruitmentService {
         data: [],
         status: 400,
         message: "Error fetching data",
+      };
+    }
+  }
+
+  async GetJobUniqueDataValue(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<GetJobUniqueKey[]>> {
+    let GridResult: GetJobUniqueKey[] = []
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: ListNames.RecruitAppCareerPortalIntegration,
+        Select: `*,JobCode/JobCode`,
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Expand: `JobCode`,
+        Topcount: count.Topcount,
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      });
+      if (res.length > 0) {
+        GridResult = await Promise.all(
+          res.map((item) => {
+            let JobUniqueData: GetJobUniqueKey = {
+              JobCode: item?.JobCode?.JobCode || "",
+              JobUniqueKey: item?.JobUniqueKey || "",
+              IsActive: item?.IsActive || "",
+            };
+            return JobUniqueData;
+
+          })
+        );
+      }
+      return {
+        data: GridResult,
+        status: 200,
+        message: "GetRecruitmentDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching data in GetRecruitmentDetails:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data from GetRecruitmentDetails",
       };
     }
   }

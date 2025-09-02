@@ -41,6 +41,7 @@ import IsValid from "../../components/Validation";
 import {
   CommonServices,
   GetPortalJobsService,
+  getVRRDetails,
   OfferLetterServices,
 } from "../../Services/ServiceExport";
 import {
@@ -119,29 +120,39 @@ const UploadCandidateDocument = (props: any) => {
     RadioAction: "",
     CheckboxContent: "",
     ConsentDocs: [],
+    JoiningDate: "",
+    NoticePeriod: "",
 
     TrainingSystem: {
       Inductiontype: { key: 0, text: "" },
       StartDate: undefined,
       EndDate: undefined,
-      Region: { key: 0, text: "" },
-      Zone: { key: 0, text: "" },
+      Region: [],
+      Zone: [],
       Comments: "",
     },
     TASystem: {
       StartDate: undefined,
       EndDate: undefined,
-      Region: { key: 0, text: "" },
-      Zone: { key: 0, text: "" },
+      Region: [],
+      Zone: [],
       Comments: "",
     },
     ITSystem: {
       StartDate: undefined,
       Hardware: [],
-      Region: { key: 0, text: "" },
-      Zone: { key: 0, text: "" },
+      Region: [],
+      Zone: [],
       Comments: "",
       ITStatus: "",
+    },
+    MedicalSystem: {
+      StartDate: undefined,
+      EndDate: undefined,
+      Region: [],
+      Zone: [],
+      Comments: "",
+      MedicalStatus: "",
     },
     ITRequired: "",
   });
@@ -298,6 +309,11 @@ const UploadCandidateDocument = (props: any) => {
       }
       console.log(docs, "docs");
       setdocumentview(docs);
+      let CandidateDetails = await GetPortalJobsService.getCandidateProfile(
+        item?.CandidateDetails?.JobRequestID
+      );
+      console.log(CandidateDetails, "CandidateDetails");
+
       setData((prev) => ({
         ...prev,
         CandidateID: item?.CandidateDetails.CandidateID,
@@ -320,7 +336,10 @@ const UploadCandidateDocument = (props: any) => {
         ProofOfIdentity: item?.CandidateDetails?.ProofOfIdentity,
         PersonalDocs: PersonalDocs.data,
         MedicalDocs: MedicalDocs.data,
+        JoiningDate: CandidateDetails?.data?.[0]?.joiningDate ?? "",
+        NoticePeriod: CandidateDetails?.data?.[0]?.noticePeriod ?? "",
       }));
+
       setViewDocument((prev) => ({
         ...prev,
         ReviewOfferDoc: OfferLetter.data,
@@ -359,11 +378,22 @@ const UploadCandidateDocument = (props: any) => {
       const getMasterValue = await CommonServices.GetMasterData(
         ListNames.HRMSRegion
       );
-      if (getMasterValue.status === ResponeStatus.SUCCESS) {
+      const zoneOptions = await OfferLetterServices.FilterZoneInRegion([], "");
+      if (
+        getMasterValue.status === ResponeStatus.SUCCESS &&
+        zoneOptions.status === ResponeStatus.SUCCESS
+      ) {
         const RegionOpt: AutoCompleteItem[] = (getMasterValue.data ?? []).map(
           (opt: any) => ({
             key: opt.ID,
             text: opt.Region,
+          })
+        );
+
+        const ZoneOpt: AutoCompleteItem[] = (zoneOptions.data ?? []).map(
+          (opt: any) => ({
+            key: opt.ID,
+            text: opt.Zone,
           })
         );
 
@@ -372,6 +402,7 @@ const UploadCandidateDocument = (props: any) => {
           InductionTypeOption: Inductiontype,
           RegionOption: RegionOpt,
           HarewareOption: HardwareoptValue,
+          ZoneOption: ZoneOpt,
         }));
       }
     } catch (error) {
@@ -799,6 +830,28 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                 </div>
 
+                {props.stateValue?.StatusId !=
+                  StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg3">
+                      <CustomInput
+                        label="Joining Date"
+                        value={data?.JoiningDate}
+                        disabled={true}
+                        mandatory={false}
+                      />
+                    </div>
+                    <div className="ms-Grid-col ms-lg3">
+                      <CustomInput
+                        label="Notice Period"
+                        value={data?.NoticePeriod}
+                        disabled={true}
+                        mandatory={false}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 {/* {data.MedicalDocs.length > 0 && (
                   <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
                     <div className="custom-document-column">
@@ -1069,7 +1122,7 @@ const UploadCandidateDocument = (props: any) => {
                 props.stateValue?.StatusId ===
                   StatusId.OnboardingProcessinitiatedforExpat ? (
                   <>
-                    {/* <Card
+                    <Card
                       variant="outlined"
                       sx={{
                         boxShadow: "0px 7px 4px 3px #d3d3d3",
@@ -1155,10 +1208,17 @@ const UploadCandidateDocument = (props: any) => {
                               />
                             </div>
                             <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={"Region"}
-                                options={optionValue.RegionOption}
-                                value={data.TrainingSystem?.Region}
+                              <CustomMultiSelect
+                                label="Zone"
+                                value={data.TrainingSystem?.Zone}
+                                options={optionValue.ZoneOption}
+                                onChange={(value) =>
+                                  handleMulitiSelect(
+                                    "TrainingSystem",
+                                    "Zone",
+                                    value
+                                  )
+                                }
                                 disabled={
                                   props.stateValue?.StatusId ===
                                     StatusId.OnboardingProcessinitiatedforDRC ||
@@ -1166,20 +1226,9 @@ const UploadCandidateDocument = (props: any) => {
                                     StatusId.OnboardingProcessinitiatedforExpat
                                 }
                                 mandatory={false}
-                                onChange={(item) =>
-                                  handleAutoComplete(
-                                    "TrainingSystem",
-                                    "Region",
-                                    item
-                                  )
-                                }
                                 error={false}
                               />
-                            </div>
-                          </div>
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
+                              {/* <CustomAutoComplete
                                 label={"Zone"}
                                 options={optionValue.ZoneOption}
                                 value={data.TrainingSystem?.Zone}
@@ -1198,7 +1247,51 @@ const UploadCandidateDocument = (props: any) => {
                                   )
                                 }
                                 error={false}
+                              /> */}
+                            </div>
+                          </div>
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg3">
+                              <CustomMultiSelect
+                                label="Access Group"
+                                value={data.TrainingSystem?.Region}
+                                options={optionValue.RegionOption}
+                                onChange={(value) =>
+                                  handleMulitiSelect(
+                                    "TrainingSystem",
+                                    "Region",
+                                    value
+                                  )
+                                }
+                                disabled={
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforDRC ||
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforExpat
+                                }
+                                mandatory={false}
+                                error={false}
                               />
+                              {/* <CustomAutoComplete
+                                label={"Region"}
+                                options={optionValue.RegionOption}
+                                value={data.TrainingSystem?.Region}
+                                disabled={
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforDRC ||
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforExpat
+                                }
+                                mandatory={false}
+                                onChange={(item) =>
+                                  handleAutoComplete(
+                                    "TrainingSystem",
+                                    "Region",
+                                    item
+                                  )
+                                }
+                                error={false}
+                              /> */}
                             </div>
                           </div>
                           <div className="ms-Grid-row">
@@ -1226,7 +1319,7 @@ const UploadCandidateDocument = (props: any) => {
                           </div>
                         </div>
                       </CardContent>
-                    </Card> */}
+                    </Card>
 
                     <Card
                       variant="outlined"
@@ -1290,25 +1383,23 @@ const UploadCandidateDocument = (props: any) => {
                               />
                             </div>
                             <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={"Region"}
-                                options={optionValue.RegionOption}
-                                value={data.TASystem?.Region}
-                                mandatory={false}
-                                onChange={(item) =>
-                                  handleAutoComplete("TASystem", "Region", item)
+                              <CustomMultiSelect
+                                label="Zone"
+                                value={data.TASystem?.Zone}
+                                options={optionValue.ZoneOption}
+                                onChange={(value) =>
+                                  handleMulitiSelect("TASystem", "Zone", value)
                                 }
-                                error={false}
                                 disabled={
                                   props.stateValue?.StatusId ===
                                     StatusId.OnboardingProcessinitiatedforDRC ||
                                   props.stateValue?.StatusId ===
                                     StatusId.OnboardingProcessinitiatedforExpat
                                 }
+                                mandatory={false}
+                                error={false}
                               />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
+                              {/* <CustomAutoComplete
                                 label={"Zone"}
                                 options={optionValue.ZoneOption}
                                 value={data.TASystem?.Zone}
@@ -1323,7 +1414,45 @@ const UploadCandidateDocument = (props: any) => {
                                   handleAutoComplete("TASystem", "Zone", item)
                                 }
                                 error={false}
+                              /> */}
+                            </div>
+                            <div className="ms-Grid-col ms-lg3">
+                              <CustomMultiSelect
+                                label="Access Group"
+                                value={data.TASystem?.Region}
+                                options={optionValue.RegionOption}
+                                onChange={(value) =>
+                                  handleMulitiSelect(
+                                    "TASystem",
+                                    "Region",
+                                    value
+                                  )
+                                }
+                                disabled={
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforDRC ||
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforExpat
+                                }
+                                mandatory={false}
+                                error={false}
                               />
+                              {/* <CustomAutoComplete
+                                label={"Access Group"}
+                                options={optionValue.RegionOption}
+                                value={data.TASystem?.Region}
+                                mandatory={false}
+                                onChange={(item) =>
+                                  handleAutoComplete("TASystem", "Region", item)
+                                }
+                                error={false}
+                                disabled={
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforDRC ||
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforExpat
+                                }
+                              /> */}
                             </div>
                           </div>
 
@@ -1337,6 +1466,182 @@ const UploadCandidateDocument = (props: any) => {
                                   handleInputChangeTextArea(
                                     "Comments",
                                     "TASystem",
+                                    value
+                                  )
+                                }
+                                mandatory={false}
+                                disabled={
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforDRC ||
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforExpat
+                                }
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card
+                      variant="outlined"
+                      sx={{
+                        boxShadow: "0px 7px 4px 3px #d3d3d3",
+                        borderRadius: "10px",
+                        marginTop: "2%",
+                      }}
+                    >
+                      <CardContent>
+                        <div>
+                          <div
+                            className="ms-Grid-row"
+                            style={{ marginLeft: "0%" }}
+                          >
+                            <LabelHeaderComponents
+                              value={labelName.MedicalSystem}
+                            />
+                          </div>
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg3">
+                              <CustomDatePicker
+                                label="Start Date"
+                                selectedDate={data.MedicalSystem?.StartDate}
+                                error={false}
+                                minDate={todaydate}
+                                mandatory={false}
+                                onChange={(date) =>
+                                  handleDateChange(
+                                    "MedicalSystem",
+                                    "StartDate",
+                                    date ?? undefined
+                                  )
+                                }
+                                disabled={
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforDRC ||
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforExpat
+                                }
+                              />
+                            </div>
+                            <div className="ms-Grid-col ms-lg3">
+                              <CustomDatePicker
+                                label="End Date"
+                                selectedDate={data.MedicalSystem?.EndDate}
+                                error={false}
+                                minDate={todaydate}
+                                mandatory={false}
+                                onChange={(date) =>
+                                  handleDateChange(
+                                    "MedicalSystem",
+                                    "EndDate",
+                                    date ?? undefined
+                                  )
+                                }
+                                disabled={
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforDRC ||
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforExpat
+                                }
+                              />
+                            </div>
+                            <div className="ms-Grid-col ms-lg3">
+                              <CustomMultiSelect
+                                label="Zone"
+                                value={data.MedicalSystem?.Zone}
+                                options={optionValue.ZoneOption}
+                                onChange={(value) =>
+                                  handleMulitiSelect(
+                                    "MedicalSystem",
+                                    "Zone",
+                                    value
+                                  )
+                                }
+                                disabled={
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforDRC ||
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforExpat
+                                }
+                                mandatory={false}
+                                error={false}
+                              />
+                              {/* <CustomAutoComplete
+                                label={"Zone"}
+                                options={optionValue.ZoneOption}
+                                value={data.MedicalSystem?.Zone}
+                                disabled={
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforDRC ||
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforExpat
+                                }
+                                mandatory={false}
+                                onChange={(item) =>
+                                  handleAutoComplete(
+                                    "MedicalSystem",
+                                    "Zone",
+                                    item
+                                  )
+                                }
+                                error={false}
+                              /> */}
+                            </div>
+                            <div className="ms-Grid-col ms-lg3">
+                              <CustomMultiSelect
+                                label="Access Group"
+                                value={data.MedicalSystem?.Region}
+                                options={optionValue.RegionOption}
+                                onChange={(value) =>
+                                  handleMulitiSelect(
+                                    "MedicalSystem",
+                                    "Region",
+                                    value
+                                  )
+                                }
+                                disabled={
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforDRC ||
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforExpat
+                                }
+                                mandatory={false}
+                                error={false}
+                              />
+                              {/* <CustomAutoComplete
+                                label={"Access Group"}
+                                options={optionValue.RegionOption}
+                                value={data.MedicalSystem?.Region}
+                                mandatory={false}
+                                onChange={(item) =>
+                                  handleAutoComplete(
+                                    "MedicalSystem",
+                                    "Region",
+                                    item
+                                  )
+                                }
+                                error={false}
+                                disabled={
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforDRC ||
+                                  props.stateValue?.StatusId ===
+                                    StatusId.OnboardingProcessinitiatedforExpat
+                                }
+                              /> */}
+                            </div>
+                          </div>
+
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg12">
+                              <CustomTextArea
+                                label={labelName.Comment}
+                                value={data.MedicalSystem.Comments}
+                                error={false}
+                                onChange={(value) =>
+                                  handleInputChangeTextArea(
+                                    "Comments",
+                                    "MedicalSystem",
                                     value
                                   )
                                 }
@@ -1523,10 +1828,17 @@ const UploadCandidateDocument = (props: any) => {
                                   />
                                 </div>
                                 <div className="ms-Grid-col ms-lg3">
-                                  <CustomAutoComplete
-                                    label={"Region"}
-                                    options={optionValue.RegionOption}
-                                    value={data.ITSystem?.Region}
+                                  <CustomMultiSelect
+                                    label="Zone"
+                                    value={data.ITSystem?.Zone}
+                                    options={optionValue.ZoneOption}
+                                    onChange={(value) =>
+                                      handleMulitiSelect(
+                                        "ITSystem",
+                                        "Zone",
+                                        value
+                                      )
+                                    }
                                     disabled={
                                       props.stateValue?.StatusId ===
                                         StatusId.OnboardingProcessinitiatedforDRC ||
@@ -1534,18 +1846,9 @@ const UploadCandidateDocument = (props: any) => {
                                         StatusId.OnboardingProcessinitiatedforExpat
                                     }
                                     mandatory={false}
-                                    onChange={(item) =>
-                                      handleAutoComplete(
-                                        "ITSystem",
-                                        "Region",
-                                        item
-                                      )
-                                    }
                                     error={false}
                                   />
-                                </div>
-                                <div className="ms-Grid-col ms-lg3">
-                                  <CustomAutoComplete
+                                  {/* <CustomAutoComplete
                                     label={"Zone"}
                                     options={optionValue.ZoneOption}
                                     value={data.ITSystem?.Zone}
@@ -1564,7 +1867,49 @@ const UploadCandidateDocument = (props: any) => {
                                       )
                                     }
                                     error={false}
+                                  /> */}
+                                </div>
+                                <div className="ms-Grid-col ms-lg3">
+                                  <CustomMultiSelect
+                                    label="Access Group"
+                                    value={data.ITSystem?.Region}
+                                    options={optionValue.RegionOption}
+                                    onChange={(value) =>
+                                      handleMulitiSelect(
+                                        "ITSystem",
+                                        "Region",
+                                        value
+                                      )
+                                    }
+                                    disabled={
+                                      props.stateValue?.StatusId ===
+                                        StatusId.OnboardingProcessinitiatedforDRC ||
+                                      props.stateValue?.StatusId ===
+                                        StatusId.OnboardingProcessinitiatedforExpat
+                                    }
+                                    mandatory={false}
+                                    error={false}
                                   />
+                                  {/* <CustomAutoComplete
+                                    label={"Access Group"}
+                                    options={optionValue.RegionOption}
+                                    value={data.ITSystem?.Region}
+                                    disabled={
+                                      props.stateValue?.StatusId ===
+                                        StatusId.OnboardingProcessinitiatedforDRC ||
+                                      props.stateValue?.StatusId ===
+                                        StatusId.OnboardingProcessinitiatedforExpat
+                                    }
+                                    mandatory={false}
+                                    onChange={(item) =>
+                                      handleAutoComplete(
+                                        "ITSystem",
+                                        "Region",
+                                        item
+                                      )
+                                    }
+                                    error={false}
+                                  /> */}
                                 </div>
                               </div>
 
@@ -1893,7 +2238,17 @@ const UploadCandidateDocument = (props: any) => {
           let UpdateStatus = await OfferLetterServices.UpdateStatusInSpfxlist(
             Obj
           );
-
+          if (
+            props.stateValue?.StatusId ===
+            StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm
+          ) {
+            let datas = {
+              JoiningDate: data.JoiningDate,
+              NoticePeriod: data.NoticePeriod,
+              ID: data.CandidateID,
+            };
+            await getVRRDetails.InsertRecruitmentCandidateDetails({ datas });
+          }
           if (UpdateStatus.status === ResponeStatus.SUCCESS) {
             if (
               props.stateValue?.StatusId ===
@@ -1936,18 +2291,16 @@ const UploadCandidateDocument = (props: any) => {
                   data.TASystem?.StartDate
                 ),
                 PermanentBadgeEndDate: SpiltDateOnly(data.TASystem?.EndDate),
-                PermanentBadgeRegion: data.TASystem?.Region.text,
-                PermanentBadgeZone: data.TASystem?.Zone.text,
+                PermanentBadgeRegion: "", //data.TASystem?.Region.text,
+                PermanentBadgeZone: "", //data.TASystem?.Zone.text,
                 PermanentBadgeComments: data.TASystem?.Comments,
                 ITStartDate:
                   data.ITRequired === "No"
                     ? null
                     : SpiltDateOnly(data.ITSystem?.StartDate),
                 Hardware: Hardwarevalue,
-                ITZone:
-                  data.ITRequired === "No" ? "" : data.ITSystem?.Zone.text,
-                ITRegion:
-                  data.ITRequired === "No" ? "" : data.ITSystem?.Region.text,
+                ITZone: data.ITRequired === "No" ? "" : "", //data.ITSystem?.Zone,
+                ITRegion: data.ITRequired === "No" ? "" : "", //data.ITSystem?.Region.text,
                 ITComments:
                   data.ITRequired === "No" ? "" : data.ITSystem?.Comments,
                 ITStatus:

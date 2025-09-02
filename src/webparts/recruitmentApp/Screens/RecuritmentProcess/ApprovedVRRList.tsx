@@ -543,7 +543,7 @@ const RecruitmentProcess = (props: any) => {
             TabName: TabNames,
             ButtonAction,
             JobCode: rowData?.JobCode?.toString().trim(),
-            JobCodeId: rowData?.JobCodeId,
+            JobCodeID: rowData?.JobCodeId,
             Department: rowData?.DepartmentId,
             NoOfPosition: rowData?.NumberOfPersonNeeded,
           },
@@ -561,6 +561,7 @@ const RecruitmentProcess = (props: any) => {
             JobTitleInEnglish: rowData.JobTitleEnglish,
             Department: rowData.Department,
             JobCode: rowData.JobCode,
+            JobCodeID: rowData?.JobCodeId,
             TabNames,
             ButtonAction,
           },
@@ -572,6 +573,7 @@ const RecruitmentProcess = (props: any) => {
           state: {
             ID: rowData?.ID,
             JobCode: rowData?.JobCode,
+            JobCodeID: rowData?.JobCodeId,
             tab,
             StatusId: rowData?.StatusId,
             Status: rowData?.Status,
@@ -667,11 +669,46 @@ const RecruitmentProcess = (props: any) => {
             Operator: "eq",
             FilterValue: Choices.No,
           });
+          filterConditionsRecuritment.push({
+            FilterKey: "AssignedHR",
+            Operator: "eq",
+            FilterValue: props.userDetails[0]?.EmailId,
+          });
           break;
         case TabName.AssignAgencies:
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.RecruitmentInProgress,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "AssignedHR",
+            Operator: "eq",
+            FilterValue: props.userDetails[0]?.EmailId,
+          });
+          break;
         case TabName.ReviewProfile:
-        case TabName.ReviewScorecard:
-        case TabName.AdvertExtension:
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.RecruitmentInProgress,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "LineManager",
+            Operator: "eq",
+            FilterValue: props.userDetails[0]?.EmailId,
+          });
+          break;
         case TabName.UploadCV:
           filterConditionsRecuritment.push({
             FilterKey: "StatusId",
@@ -684,6 +721,40 @@ const RecruitmentProcess = (props: any) => {
             FilterValue: Choices.No,
           });
           break;
+        case TabName.ReviewScorecard:
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.RecruitmentInProgress,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "HOD",
+            Operator: "eq",
+            FilterValue: props.userDetails[0]?.EmailId,
+          });
+          break;
+        case TabName.AdvertExtension:
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.RecruitmentInProgress,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "HOD",
+            Operator: "eq",
+            FilterValue: props.userDetails[0]?.EmailId,
+          });
+          break;
         case TabName.ReviewJobAdvertisement:
           if (props.CurrentRoleID.includes(RoleID.LineManager)) {
             filterConditionsRecuritment.push({
@@ -691,11 +762,21 @@ const RecruitmentProcess = (props: any) => {
               Operator: "eq",
               FilterValue: StatusId.PendingwithLineManagereviewAdv,
             });
+            filterConditionsRecuritment.push({
+              FilterKey: "LineManager",
+              Operator: "eq",
+              FilterValue: props.userDetails[0]?.EmailId,
+            });
           } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
             filterConditionsRecuritment.push({
               FilterKey: "StatusId",
               Operator: "eq",
               FilterValue: StatusId.PendingwithHODtoreviewAdv,
+            });
+            filterConditionsRecuritment.push({
+              FilterKey: "HOD",
+              Operator: "eq",
+              FilterValue: props.userDetails[0]?.EmailId,
             });
           }
 
@@ -719,6 +800,11 @@ const RecruitmentProcess = (props: any) => {
             Operator: "eq",
             FilterValue: "No",
           });
+          filterConditionsRecuritment.push({
+            FilterKey: "LineManager",
+            Operator: "eq",
+            FilterValue: props.userDetails[0]?.EmailId,
+          });
           break;
         default:
           filterConditionsRecuritment = [];
@@ -726,25 +812,25 @@ const RecruitmentProcess = (props: any) => {
           break;
       }
 
-      if (props.CurrentRoleID.includes(RoleID.LineManager)) {
-        filterConditionsRecuritment.push({
-          FilterKey: "LineManager",
-          Operator: "eq",
-          FilterValue: props.userDetails[0]?.EmailId,
-        });
-      } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
-        filterConditionsRecuritment.push({
-          FilterKey: "HOD",
-          Operator: "eq",
-          FilterValue: props.userDetails[0]?.EmailId,
-        });
-      } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-        filterConditionsRecuritment.push({
-          FilterKey: "AssignedHR",
-          Operator: "eq",
-          FilterValue: props.userDetails[0]?.EmailId,
-        });
-      }
+      // if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+      //   filterConditionsRecuritment.push({
+      //     FilterKey: "LineManager",
+      //     Operator: "eq",
+      //     FilterValue: props.userDetails[0]?.EmailId,
+      //   });
+      // } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
+      //   filterConditionsRecuritment.push({
+      //     FilterKey: "HOD",
+      //     Operator: "eq",
+      //     FilterValue: props.userDetails[0]?.EmailId,
+      //   });
+      // } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+      //   filterConditionsRecuritment.push({
+      //     FilterKey: "AssignedHR",
+      //     Operator: "eq",
+      //     FilterValue: props.userDetails[0]?.EmailId,
+      //   });
+      // }
 
       const response =
         props.CurrentRoleID.includes(RoleID.RecruitmentHRLead) &&
@@ -1141,6 +1227,7 @@ const RecruitmentProcess = (props: any) => {
         setIsLoading(true);
         // console.log("selectedJobCodes", selectedJobCodes);
         if (selectedJobCodes.length > 0) {
+          let ResponseStatusCode;
           for (const selectedJob of selectedJobCodes) {
             const correspondingJob = data.find(
               (item: any) => item.ID === selectedJob.ID
@@ -1202,6 +1289,7 @@ const RecruitmentProcess = (props: any) => {
               const response = await getVRRDetails.InsertRecruitmentDpt(
                 RecruitmentValue
               );
+              ResponseStatusCode = response.status;
               if (response.status === ResponeStatus.SUCCESS) {
                 setAssignHRData((prevState) => ({
                   ...prevState,
@@ -1215,25 +1303,7 @@ const RecruitmentProcess = (props: any) => {
                   }))
                 );
                 setSelectedJobCodes([]);
-                let SuccessAlert = {
-                  Message:
-                    selectedJobCodes.length === 1
-                      ? RecuritmentHRMsg.SingleHRSuccessMsg
-                      : RecuritmentHRMsg.HRSuccess,
-                  Type: HRMSAlertOptions.Success,
-                  visible: true,
-                  ButtonAction: async (userClickedOK: boolean) => {
-                    if (userClickedOK) {
-                      setAlertPopupOpen(false);
-                      setIsLoading(false);
-                      await fetchData(props.TabDetails[0]?.[0]?.Value);
-                      await pendingcountTabs();
-                    }
-                  },
-                };
-                setAlertPopupOpen(true);
-                setIsLoading(true);
-                setalertProps(SuccessAlert);
+
                 setAssignHRData((prevState) => ({
                   ...prevState,
                   AssignRecruitmentAgencies: [],
@@ -1275,6 +1345,27 @@ const RecruitmentProcess = (props: any) => {
                 setalertProps(APIErrorAlert);
               }
             }
+          }
+          if (ResponseStatusCode === ResponeStatus.SUCCESS) {
+            let SuccessAlert = {
+              Message:
+                selectedJobCodes.length === 1
+                  ? RecuritmentHRMsg.SingleHRSuccessMsg
+                  : RecuritmentHRMsg.HRSuccess,
+              Type: HRMSAlertOptions.Success,
+              visible: true,
+              ButtonAction: async (userClickedOK: boolean) => {
+                if (userClickedOK) {
+                  setAlertPopupOpen(false);
+                  setIsLoading(false);
+                  await fetchData(props.TabDetails[0]?.[0]?.Value);
+                  await pendingcountTabs();
+                }
+              },
+            };
+            setAlertPopupOpen(true);
+            setIsLoading(true);
+            setalertProps(SuccessAlert);
           }
         }
       }

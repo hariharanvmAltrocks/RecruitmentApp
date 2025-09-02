@@ -25,6 +25,7 @@ export interface ActionUpdate {
   ItemCreated?: string;
   ScoreCardLevelItemCreated?: string;
   GPA: string;
+  OthersInterviewed: string;
 }
 
 export type AssignPositionID = {
