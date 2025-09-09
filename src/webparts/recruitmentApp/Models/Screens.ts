@@ -3,6 +3,31 @@ export type AutoCompleteItem = {
   text: string;
 };
 
+export type InterviewPanelItem = {
+  key: number;
+  text: string;
+  Role: string;
+  Levels?: string;
+};
+
+export type InterviewPanelMember = {
+  Level1Panel: AutoCompleteItem[];
+  Level2Panel: AutoCompleteItem[];
+  InterviewPanel: AutoCompleteItem[];
+};
+
+export type tooltipData = {
+  Role: string;
+  Name: string;
+}
+
+export type tooltipInterviewPanel = {
+  LineManager: tooltipData;
+  HOD: tooltipData;
+  HR: tooltipData;
+  Exco: tooltipData;
+}
+
 export type alertPropsData = {
   Message: string;
   Type: string;

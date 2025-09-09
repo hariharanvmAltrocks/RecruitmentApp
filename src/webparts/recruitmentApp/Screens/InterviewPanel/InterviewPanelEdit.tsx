@@ -27,6 +27,8 @@ import {
   RoleID,
   ResponeStatus,
   CheckboxContent,
+  Choices,
+  RoleName,
 } from "../../utilities/Config";
 import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
@@ -66,8 +68,6 @@ type InterviewedLevelValue = {
   Grade: string;
 };
 const InterviewPanelEdit = (props: any) => {
-  console.log("props", props.stateValue);
-  console.log("RecruitmentID", props.stateValue?.RecruitmentID);
   const todaydate = new Date();
   const [CandidateData, setCandidateData] = React.useState<ScoreCardData>({
     CandidateID: 0,
@@ -121,6 +121,9 @@ const InterviewPanelEdit = (props: any) => {
     PanelFullNames: [],
     InterviewLevels: [],
     GPA: "",
+    ConflictsOfInterest: "",
+    disability: "",
+    disabilityReason: "",
   });
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -176,9 +179,28 @@ const InterviewPanelEdit = (props: any) => {
   const [ratingErrors, setRatingErrors] = React.useState<
     Record<number, boolean>
   >({});
-  const [interviewPanelTitles, setInterviewPanelTitles] = React.useState<
-    string[]
-  >([]);
+  const [interviewPanelTitlesLevel1, setInterviewPanelTitlesLevel1] =
+    React.useState<string[]>([]);
+  const [interviewPanelTitlesLevel2, setInterviewPanelTitlesLevel2] =
+    React.useState<string[]>([]);
+  const [currentRoleID, setCurrentRoleID] = React.useState<number>(0);
+
+  React.useEffect(() => {
+    // let userRole = props.CurrentRoleID.filter(
+    //   (role: number) =>
+    //     role === RoleID.RecruitmentHR ||
+    //     role === RoleID.LineManager ||
+    //     role === RoleID.HOD ||
+    //     role === RoleID.InterviewPanel
+    // );
+    setCurrentRoleID(
+      props.stateValue?.TabName !== TabName.Evaluation
+        ? RoleID.HOD
+        : props.CurrentRoleID.includes(RoleID.LineManager)
+        ? RoleID.LineManager
+        : props.CurrentRoleID[0]
+    );
+  }, []);
 
   const handleRatingChange = (id: number, value: AutoCompleteItem | null) => {
     setQuestionnaire((prevState) =>
@@ -206,32 +228,26 @@ const InterviewPanelEdit = (props: any) => {
       },
     ];
 
-    InterviewServices.GetInterviewPanelDetails(filterConditions)
+    InterviewServices.GetPanelLeveldata(filterConditions, props.EmployeeList)
       .then((scoreResponse) => {
         if (scoreResponse?.status === 200) {
-          const candidatePanels = (scoreResponse.data as any[]).filter(
-            (candidate) => candidate.CandidateID === candidateID
-          );
+          const groupedPanelData = scoreResponse.data as Record<
+            string,
+            string[]
+          >;
 
-          const panelTitles = Array.from(
-            new Set(
-              candidatePanels
-                .map((panel) => panel.InterviewPanelTitle?.trim())
-                .filter(
-                  (title: string | undefined): title is string =>
-                    !!title && title.length > 0
-                )
-            )
-          );
-
-          setInterviewPanelTitles(panelTitles);
+          // Set titles by level
+          setInterviewPanelTitlesLevel1(groupedPanelData["Level 1"] || []);
+          setInterviewPanelTitlesLevel2(groupedPanelData["Level 2"] || []);
         } else {
-          setInterviewPanelTitles([]);
+          setInterviewPanelTitlesLevel1([]);
+          setInterviewPanelTitlesLevel2([]);
         }
       })
       .catch((error) => {
-        console.error("Error fetching panel/score data:", error);
-        setInterviewPanelTitles([]);
+        console.error("Error fetching panel data:", error);
+        setInterviewPanelTitlesLevel1([]);
+        setInterviewPanelTitlesLevel2([]);
       });
   };
 
@@ -315,6 +331,9 @@ const InterviewPanelEdit = (props: any) => {
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
           JobGrade: op?.JobGrade,
+          ConflictsOfInterest: op?.ConflictsOfInterest,
+          disability: op?.disability,
+          disabilityReason: op?.disabilityReason,
         }));
         // await fetchRoleProfileData(op.JobCodeId);
         if (questionnaire.length === 0) {
@@ -322,7 +341,46 @@ const InterviewPanelEdit = (props: any) => {
             op?.JobCode
           );
           if (getQuestion.status === ResponeStatus.SUCCESS) {
-            setQuestionnaire(getQuestion?.data ?? []);
+            if (getQuestion?.data?.length === 0) {
+              let QuestionAlertMsg = {
+                Message: RecuritmentHRMsg.QuestionAlertMsg,
+                Type: HRMSAlertOptions.Error,
+                visible: true,
+                ButtonAction: async (userClickedOK: boolean) => {
+                  if (userClickedOK) {
+                    if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+                      props.navigation("/ReviewProfileList", {
+                        state: {
+                          tab: props.stateValue.tab, //props.stateValue?.tab,
+                          TabName: TabName.Evaluation,
+                        },
+                      });
+                    } else if (
+                      props.CurrentRoleID.includes(RoleID.HOD) ||
+                      props.CurrentRoleID.includes(RoleID.LineManager)
+                    ) {
+                      props.navigation("/RecurimentProcess", {
+                        state: {
+                          tab: props.stateValue.tab, //props.stateValue?.tab,
+                          TabName: TabName.Evaluation,
+                        },
+                      });
+                    } else {
+                      props.navigation("/InterviewPanelList");
+                    }
+                    setAlertPopupOpen(false);
+                  } else {
+                    setAlertPopupOpen(false);
+                  }
+                },
+              };
+
+              setAlertPopupOpen(true);
+              setalertProps(QuestionAlertMsg);
+              setIsLoading(false);
+            } else {
+              setQuestionnaire(getQuestion?.data ?? []);
+            }
           } else {
             let APIErrorMsg = {
               Message: RecuritmentHRMsg.APIErrorMsg,
@@ -330,23 +388,22 @@ const InterviewPanelEdit = (props: any) => {
               visible: true,
               ButtonAction: async (userClickedOK: boolean) => {
                 if (userClickedOK) {
-                  if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+                  if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
                     props.navigation("/ReviewProfileList", {
-                      // state: {
-                      //   activeTab: "tab3",
-                      // },
+                      state: {
+                        tab: props.stateValue.tab, //props.stateValue?.tab,
+                        TabName: TabName.Evaluation,
+                      },
                     });
-                  } else if (props.CurrentRoleID === RoleID.HOD) {
+                  } else if (
+                    props.CurrentRoleID.includes(RoleID.HOD) ||
+                    props.CurrentRoleID.includes(RoleID.LineManager)
+                  ) {
                     props.navigation("/RecurimentProcess", {
-                      // state: {
-                      //   activeTab: "tab3",
-                      // },
-                    });
-                  } else if (props.CurrentRoleID === RoleID.LineManager) {
-                    props.navigation("/ReviewProfileList", {
-                      // state: {
-                      //   activeTab: "tab3",
-                      // },
+                      state: {
+                        tab: props.stateValue.tab, //props.stateValue?.tab,
+                        TabName: TabName.Evaluation,
+                      },
                     });
                   } else {
                     props.navigation("/InterviewPanelList");
@@ -567,17 +624,16 @@ const InterviewPanelEdit = (props: any) => {
           }),
           OverAllEvaluationFeedback: CandidateData?.OverAllEvaluationFeedback,
           RecruitmentIDId: CandidateData?.RecruitmentID,
-          RoleId: props.CurrentRoleID,
+          RoleId: currentRoleID,
           InterviewPersonNameId: currentUserKey,
           InterviewPanelIDId: InterviewPanelID,
           QuestionJson: JSON.stringify(QuestionScore),
         };
 
-        const newRecordResponse = await getVRRDetails.InsertList(
+        await getVRRDetails.InsertList(
           scorecardObj,
           ListNames.HRMSCandidateScoreCard
         );
-        console.log("", newRecordResponse);
 
         await SPServices.SPUpdateItem({
           Listname: ListNames.HRMSInterviewPanelDetails,
@@ -602,8 +658,7 @@ const InterviewPanelEdit = (props: any) => {
       }
 
       const level1Panels = updatedInterviewPanelResponse.data.filter(
-        (p) =>
-          p.InterviewLevel === InterviewLevels.Level1 || InterviewLevels.Level2
+        (p) => p.InterviewLevel === InterviewLevels.Level1
       );
 
       const uploadedCount = level1Panels.filter(
@@ -616,12 +671,12 @@ const InterviewPanelEdit = (props: any) => {
             workflowStatus: workflowStatusApi.pendingHODSelection,
             jobRequestId: Number(CandidateData.JobRequestID),
             comments: "",
-            actionBy: props.CurrentUserRole,
+            actionBy: RoleName.HOD,
           };
 
           await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
 
-          const updateResponse = await SPServices.SPUpdateItem({
+          await SPServices.SPUpdateItem({
             Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
             RequestJSON: {
               IsScoreSheetUploaded: "Yes",
@@ -630,15 +685,12 @@ const InterviewPanelEdit = (props: any) => {
             },
             ID: props.stateValue?.ID,
           });
-
-          console.log("", updateResponse);
         } catch (finalUpdateError) {
           console.error("", finalUpdateError);
         }
       } else {
       }
 
-      console.log("Showing Success Popup...");
       setAlertPopupOpen(true);
       setalertProps({
         Message: RecuritmentHRMsg.ScoreCardSubmitMsg,
@@ -646,23 +698,22 @@ const InterviewPanelEdit = (props: any) => {
         visible: true,
         ButtonAction: (userClickedOK: any) => {
           if (userClickedOK) {
-            if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+            if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
               props.navigation("/ReviewProfileList", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
+                state: {
+                  tab: props.stateValue.tab, //props.stateValue?.tab,
+                  TabName: TabName.Evaluation,
+                },
               });
-            } else if (props.CurrentRoleID === RoleID.HOD) {
+            } else if (
+              props.CurrentRoleID.includes(RoleID.HOD) ||
+              props.CurrentRoleID.includes(RoleID.LineManager)
+            ) {
               props.navigation("/RecurimentProcess", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
-              });
-            } else if (props.CurrentRoleID === RoleID.LineManager) {
-              props.navigation("/ReviewProfileList", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
+                state: {
+                  tab: props.stateValue.tab, //props.stateValue?.tab,
+                  TabName: TabName.Evaluation,
+                },
               });
             } else {
               props.navigation("/InterviewPanelList");
@@ -718,7 +769,7 @@ const InterviewPanelEdit = (props: any) => {
         >
           <CardContent>
             <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg6">
+              {/* <div className="ms-Grid-col ms-lg6">
                 <LabelHeaderComponents
                   value={`Job Title - ${CandidateData.PositionTitle} (${CandidateData.JobCode})`}
                 >
@@ -734,7 +785,7 @@ const InterviewPanelEdit = (props: any) => {
                 >
                   {" "}
                 </LabelHeaderComponents>
-              </div>
+              </div> */}
 
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
@@ -853,7 +904,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Level of Interview"
+                    label="No of Interview Level's"
                     value={InterviewedLevel.Levels}
                     disabled={true}
                     mandatory={false}
@@ -869,8 +920,44 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
               </div>
               <div className="ms-Grid-row">
+                {CandidateData?.ConflictsOfInterest && (
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Conflicts Of Interest"
+                      value={CandidateData?.ConflictsOfInterest}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                )}
+                {CandidateData?.ConflictsOfInterest && (
+                  <div className="ms-Grid-col ms-lg4">
+                    <CustomInput
+                      label="Disability"
+                      value={CandidateData?.disability}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                )}
+              </div>
+              {CandidateData?.disabilityReason &&
+                CandidateData?.disability === Choices.Yes && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg12">
+                      <CustomTextArea
+                        label="Disability Details"
+                        value={CandidateData?.disabilityReason}
+                        disabled={true}
+                        mandatory={false}
+                        error={false}
+                      />
+                    </div>
+                  </div>
+                )}
+              <div className="ms-Grid-row">
                 <div
-                  className="ms-Grid-col ms-lg4"
+                  className="ms-Grid-col ms-lg12"
                   style={{ position: "relative", top: "14px" }}
                 >
                   <label
@@ -880,7 +967,7 @@ const InterviewPanelEdit = (props: any) => {
                       display: "block",
                     }}
                   >
-                    Interview Panel
+                    Interview Panel Level 1
                   </label>
                   <div
                     style={{
@@ -896,8 +983,9 @@ const InterviewPanelEdit = (props: any) => {
                       boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px",
                     }}
                   >
-                    {interviewPanelTitles && interviewPanelTitles.length > 0
-                      ? interviewPanelTitles.map((title, index) => (
+                    {interviewPanelTitlesLevel1 &&
+                    interviewPanelTitlesLevel1.length > 0
+                      ? interviewPanelTitlesLevel1.map((title, index) => (
                           <Chip
                             key={index}
                             label={`${index + 1}. ${title}`}
@@ -914,9 +1002,64 @@ const InterviewPanelEdit = (props: any) => {
                       : null}
                   </div>
                 </div>
+                {props.stateValue?.InterviewLevel === InterviewLevels.Levels2 &&
+                interviewPanelTitlesLevel2.length > 0 ? (
+                  <div
+                    className="ms-Grid-col ms-lg12"
+                    style={{
+                      position: "relative",
+                      top: "14px",
+                      marginTop: "2%",
+                    }}
+                  >
+                    <label
+                      style={{
+                        fontWeight: 600,
+                        marginBottom: "4px",
+                        display: "block",
+                      }}
+                    >
+                      Interview Panel Level 2
+                    </label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "8px",
+                        minHeight: "38px",
+                        background: "none",
+                        backgroundColor: "rgb(243, 242, 241)",
+                        padding: "8px",
+                        borderRadius: "6px",
+                        border: "rgb(243, 242, 241)",
+                        boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 4px 4px",
+                      }}
+                    >
+                      {interviewPanelTitlesLevel2 &&
+                      interviewPanelTitlesLevel2.length > 0
+                        ? interviewPanelTitlesLevel2.map((title, index) => (
+                            <Chip
+                              key={index}
+                              label={`${index + 1}. ${title}`}
+                              size="small"
+                              sx={{
+                                backgroundColor: "rgb(243, 242, 241)",
+                                fontWeight: 500,
+                                color: "rgb(85, 82, 79)",
+                                cursor: "not-allowed",
+                                // opacity: 0.6,
+                              }}
+                            />
+                          ))
+                        : null}
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
 
-              <div className="ms-Grid-row" style={{ marginTop: "10px" }}>
+              <div className="ms-Grid-row" style={{ marginTop: "22px" }}>
                 <div className="ms-Grid-col ms-lg6">
                   <LabelHeaderComponents value={"Attachments"} />
                 </div>
@@ -1251,7 +1394,11 @@ const InterviewPanelEdit = (props: any) => {
                       <strong>Expected Answer:</strong>
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: q.answer,
+                          __html: `${q.answer
+                            .replace(/<p>/gi, "")
+                            .replace(/<\/p>/gi, "")
+                            .replace(/<br\s*\/?>/gi, "")
+                            .trim()}`,
                         }}
                       />
                       {/* {q.answer} */}
@@ -1599,7 +1746,7 @@ const InterviewPanelEdit = (props: any) => {
                 (panel) => panel.InterviewPanelTitle
               );
 
-              console.log("sad", InterviewPanelData);
+              console.log(InterviewPanelData);
               setInterviewPanelData((prevState) => ({
                 ...prevState,
                 interviewPanelTitles: interviewPanelTitles || [],
@@ -1621,30 +1768,28 @@ const InterviewPanelEdit = (props: any) => {
 
   const handleCancel = () => {
     setIsLoading(true);
-
     let CancelAlert = {
       Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
       Type: HRMSAlertOptions.Confirmation,
       visible: true,
       ButtonAction: async (userClickedOK: boolean) => {
         if (userClickedOK) {
-          if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+          if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
             props.navigation("/ReviewProfileList", {
-              // state: {
-              //   activeTab: "tab3",
-              // },
+              state: {
+                tab: props.stateValue.tab, //props.stateValue?.tab,
+                TabName: TabName.Evaluation,
+              },
             });
-          } else if (props.CurrentRoleID === RoleID.HOD) {
+          } else if (
+            props.CurrentRoleID.includes(RoleID.HOD) ||
+            props.CurrentRoleID.includes(RoleID.LineManager)
+          ) {
             props.navigation("/RecurimentProcess", {
-              // state: {
-              //   activeTab: "tab3",
-              // },
-            });
-          } else if (props.CurrentRoleID === RoleID.LineManager) {
-            props.navigation("/ReviewProfileList", {
-              // state: {
-              //   activeTab: "tab3",
-              // },
+              state: {
+                tab: props.stateValue.tab, //props.stateValue?.tab,
+                TabName: TabName.Evaluation,
+              },
             });
           } else {
             props.navigation("/InterviewPanelList");
@@ -1663,8 +1808,7 @@ const InterviewPanelEdit = (props: any) => {
 
   const handleBreadcrumbChange = (newItem: string) => {
     setactiveTab(newItem);
-    // console.log("", newItem);
-  }
+  };
 
 
   return (
@@ -1677,7 +1821,12 @@ const InterviewPanelEdit = (props: any) => {
             TabName={TabNameData}
             onBreadcrumbChange={handleBreadcrumbChange}
             handleCancel={handleCancel}
-       
+            ValidationError={() => validateRatings(activeTab)}
+            JobValue={{
+              JobTitle: CandidateData.PositionTitle ?? "",
+              JobCode: CandidateData.JobCode,
+              Status: props.stateValue?.Status,
+            }}
             additionalButtons={[
               {
                 label: "Submit",

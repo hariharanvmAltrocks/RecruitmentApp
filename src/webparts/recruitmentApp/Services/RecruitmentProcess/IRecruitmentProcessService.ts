@@ -1,3 +1,4 @@
+import { AutoCompleteItem, InterviewPanelMember, tooltipInterviewPanel } from "../../Models/Screens";
 
 
 export interface IAttachmentExampleState {
@@ -16,14 +17,14 @@ export type CommentsData = {
   comments: string;
   Department: string;
   Date: any | null;
-  JobTitle: string;  
+  JobTitle: string;
   RoleName: string;
   CandidateID?: any;
   RoleId?: number;
   RoleTitle?: string;
   Level?: string;
   OverAllEvaluationFeedback?: string;
- 
+
 };
 
 export type InsertComments = {
@@ -108,6 +109,7 @@ export type DataSyncToRecruitmentResponse = {
   StatusId: number,
   Action: string,
   ActionTypeId: number,
+  Location: string,
 
   JobCodeId: number,
   JobCode: string,
@@ -129,6 +131,7 @@ export type DataSyncToRecruitmentResponse = {
   AssignedHRId: number;
   AssignLineManager: string;
   AssignLineManagerId: number;
+  AssignHOD: string;
   ReasonForVacancy: string;
 
   JobPostingStartDate: Date | undefined,
@@ -136,7 +139,8 @@ export type DataSyncToRecruitmentResponse = {
   JobPostingFirstExtensionEndDate: Date | undefined,
   JobPostingSecondExtensionEndDate: Date | undefined,
 
-  AssignEMail: string
+  AssignEMail: string,
+  AssignHRLead?: string;
 }
 
 export type JobCodeData = {
@@ -162,7 +166,9 @@ export type PostRecuritmentData = {
     StatusId: number,
     ActionId: number,
     JobCodeId: number,
-    AssignedHRId: number
+    AssignedHR: string,
+    RecruitmentHRLead: string
+    Location: string;
   },
   PositionData: {
     JobTitleEnglishId: number,
@@ -259,5 +265,23 @@ export type IRecruitmentService = {
     MasterData: any,
     IsActive: number
   ): Promise<ApiResponse<null>>;
-
+  GetInterviewPanelDetails(
+    filterParam: any[],
+    filterConditions: any,
+    AssignHR: AutoCompleteItem,
+    CandidateID: number,
+    levels: string[],
+    StatusID: number,
+  ): Promise<ApiResponse<InterviewPanelMember | null>>;
+  GetcountInEvalution(
+    CurrentUser: string,
+  ): Promise<ApiResponse<any>>;
+  GetADGroupUsers(
+    ADGroupID: string,
+    Role: string
+  ): Promise<ApiResponse<{ Key: string; Value: string }>>;
+  GetInterviewPanelTooltiData(
+    data: DataSyncToRecruitmentResponse,
+  ): Promise<ApiResponse<tooltipInterviewPanel[] | null>>;
+  GetEvalutionActionData(filterConditions: any): Promise<ApiResponse<any[]>>;
 };

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import "../App.css";
+// import "../App.css";
 import { TextField } from "office-ui-fabric-react";
 import { Icon } from "@fluentui/react";
 import ReuseButton from "./ReuseButton";
@@ -9,6 +9,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import { FilterMatchMode } from "primereact/api";
 import { AutoCompleteItem } from "../Models/Screens";
 import CustomAutoComplete from "./CustomAutoComplete";
+import { ColorCode, TabName } from "../utilities/Config";
 
 interface ColumnConfig {
   field: string;
@@ -26,6 +27,7 @@ interface SearchableDataTableProps {
   handleRefresh: () => void;
   MasterData: any;
   handleAssignBtn?: () => void;
+  UploadCV?: string;
 }
 export type FilterData = {
   Department: AutoCompleteItem;
@@ -36,6 +38,7 @@ export type FilterData = {
   BusinessUnitNameOption: AutoCompleteItem[];
   JobCode: AutoCompleteItem;
   JobCodeOption: AutoCompleteItem[];
+  Nationality: AutoCompleteItem;
 };
 
 const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
@@ -45,6 +48,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
   onPageChange,
   handleRefresh,
   handleAssignBtn,
+  UploadCV,
 }) => {
   const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
   const [dashboardSearch, setDashboardSearch] = React.useState<any>({
@@ -59,6 +63,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
     BusinessUnitCodeOption: [],
     JobCodeOption: [],
     BusinessUnitNameOption: [],
+    Nationality: { key: 0, text: "" },
   });
 
   React.useEffect(() => {
@@ -207,7 +212,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                 borderRadius: "4px",
                 boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
                 borderColor: "#c9bdbd",
-                height: "42px",
+                height: "33px",
               },
             }}
             value={dashboardSearch.global.value}
@@ -216,10 +221,10 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
           <Icon
             iconName="Search"
             style={{
-              fontSize: "28px",
+              fontSize: "20px",
               position: "absolute",
-              top: "5%",
-              right: "11px",
+              top: "20%",
+              right: "14px",
               color: "black",
             }}
           />
@@ -233,7 +238,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
                   marginTop: "1%",
                   marginLeft: "6%",
                   minWidth: "119px",
-                  height: "43px",
+                  height: "30px",
                 }}
               />
             }
@@ -247,24 +252,9 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
               handleRefresh();
             }}
             spacing={4}
-            height="33px"
-            width="32%"
-            Style={{ marginRight: "11px", minWidth: "118px", height: "42px" }}
+            Style={{ marginRight: "11px", minWidth: "54%", height: "31px" }}
           />
         </div>
-        {handleAssignBtn && (
-          <div className="ms-Grid-col ms-lg2">
-            <ReuseButton
-              label="Assign HR"
-              onClick={handleAssignBtn}
-              spacing={4}
-              Style={{
-                width: "fit-content",
-                height: "35px",
-              }}
-            />
-          </div>
-        )}
       </div>
       <div
         className="ms_Grid-row"
@@ -282,6 +272,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
             value={FilterData.Department}
             disabled={false}
             onChange={(item) => handleAutoComplete("Department", item)}
+            MinHeight={"1px"}
           />
         </div>
         <div className="ms-Grid-col ms-lg3">
@@ -291,6 +282,7 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
             value={FilterData.BusinessUnitCode}
             disabled={false}
             onChange={(item) => handleAutoComplete("BusinessUnitCode", item)}
+            MinHeight={"1px"}
           />
         </div>
         <div className="ms-Grid-col ms-lg3">
@@ -300,23 +292,44 @@ const SearchableDataTable: React.FC<SearchableDataTableProps> = ({
             value={FilterData.JobCode}
             disabled={false}
             onChange={(item) => handleAutoComplete("JobCode", item)}
+            MinHeight={"1px"}
           />
         </div>
+        {UploadCV === TabName.UploadCV && (
+          <div className="ms-Grid-col ms-lg2" style={{ marginTop: "43px" }}>
+            <ReuseButton
+              label={UploadCV === TabName.UploadCV ? "Upload" : ""}
+              onClick={handleAssignBtn}
+              spacing={4}
+              // error={AssignBtnValidation}
+              Style={{
+                width: "80%",
+                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                color: "white",
+                height: "42px",
+                lineHeight: "normal",
+                marginTop: "1px",
+              }}
+            />
+          </div>
+        )}
       </div>
       <div className="ms-Grid-row" style={{ marginTop: "2%" }}>
         <div className="ms-Grid-col ms-lg12">
           <DataTable
+            className="normalTable"
             value={filteredItems}
             rows={rows}
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             scrollable
-            scrollHeight="400px"
-            paginatorDropdownAppendTo="self"
+            scrollHeight="40vh"
+            // paginatorDropdownAppendTo="self"
             rowsPerPageOptions={[5, 10, 20]}
             paginator
             stripedRows
             filters={dashboardSearch}
+            emptyMessage="No Record Found"
           >
             {columns.map((col) => (
               <Column

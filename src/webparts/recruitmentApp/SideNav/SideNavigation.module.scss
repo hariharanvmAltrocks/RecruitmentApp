@@ -44,7 +44,7 @@
             height: auto;
             overflow: hidden;
             transition: opacity 1.5s, height 2s;
-            color: white;
+            color: rgb(255, 253, 253);
             font-weight: 400;
 
             &:hover {
@@ -156,7 +156,7 @@
     margin-left: 56px;
     display: flex;
     flex-direction: column;
-    color: black;
+    color: rgb(255, 255, 255);
     // background-color: rgba(255, 255, 255, 0.5);
     border-radius: 18px 0px 0px 18px;
     padding: 0%;

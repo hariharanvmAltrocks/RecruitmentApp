@@ -85,6 +85,10 @@ const ReviewProfileEdit: React.FC = (props: any) => {
     addMasterMinimumQualification: "",
     AdvertisementAttachement: [],
     JobcodeChecked: false,
+    JobTitleofFunctionalManager: { key: 0, text: "" },
+    FunctionalManagerName: "",
+    JobTitleofLineManagerSupervisor: { key: 0, text: "" },
+    LineManagerSupervisorName: "",
   });
   const [formState, setFormState] = useState<RecuritmentData>({
     VRRID: 0,
@@ -270,10 +274,10 @@ const ReviewProfileEdit: React.FC = (props: any) => {
           props?.BusinessUnitCodeAllColumn.find(
             (item: any) => item.key === op.BusinessUnitCodeId
           ) || {};
-        const JobtitleFrench =
-          props?.JobInFrenchList.find(
-            (item: any) => item.key === op.JobTitleFrenchId
-          ) || {};
+        // const JobtitleFrench =
+        //   props?.JobInFrenchList.find(
+        //     (item: any) => item.key === op.JobTitleFrenchId
+        //   ) || {};
 
         const [
           RoleProfileDocment,
@@ -332,7 +336,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
             DepartmentCode: op.DepartmentCode || "",
             Nationality: op.Nationality || "",
             JobNameInEnglish: op.JobTitleEnglish || "",
-            JobNameInFrench: JobtitleFrench.text || "",
+            JobNameInFrench: op.JobTitleFrench || "",
             PatersonGrade: op.PatersonGrade || "",
             DRCGrade: op.DRCGrade || "",
             EmployementCategory: op.EmploymentCategory || "",
@@ -511,7 +515,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
         >
           <CardContent>
             <div>
-              <div className="ms-Grid-row">
+              {/* <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg6">
                   <LabelHeaderComponents
                     value={`Job Title - ${formState.JobNameInEnglish} (${formState.JobCode})`}
@@ -529,7 +533,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                     {" "}
                   </LabelHeaderComponents>
                 </div>
-              </div>
+              </div> */}
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
@@ -853,7 +857,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                 </div>
 
                 <div className="ms-Grid-col ms-lg3">
-                  <CustomLabel value="View Justifications" />
+                  <CustomLabel value={labelName.ViewComments} />
                   <ReuseButton
                     Style={{
                       minWidth: "117px",
@@ -881,7 +885,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg12">
                   <CustomTextArea
-                    label="Justification"
+                    label={labelName.Comment}
                     value={formState.Comments}
                     error={validationErrors.Comments}
                     onChange={(value) =>
@@ -1032,6 +1036,11 @@ const ReviewProfileEdit: React.FC = (props: any) => {
                 TabName={TabNameData}
                 handleCancel={handleCancel}
                 onBreadcrumbChange={handleBreadcrumbChange}
+                JobValue={{
+                  JobTitle: formState.JobNameInEnglish ?? "",
+                  JobCode: formState.JobCode,
+                  Status: props.stateValue?.Status,
+                }}
                 additionalButtons={
                   props.CurrentRoleID === RoleID.LineManager && isViewed
                     ? [

@@ -7,6 +7,7 @@ import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import {
   ColorCode,
   DocumentLibraray,
+  labelName,
   RoleProfileMaster,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
@@ -133,6 +134,10 @@ const ApprovedVRRView: React.FC = (props: any) => {
     addMasterMinimumQualification: "",
     AdvertisementAttachement: [],
     JobcodeChecked: false,
+    JobTitleofFunctionalManager: { key: 0, text: "" },
+    FunctionalManagerName: "",
+    JobTitleofLineManagerSupervisor: { key: 0, text: "" },
+    LineManagerSupervisorName: "",
   });
 
   const fetchData = async () => {
@@ -161,10 +166,10 @@ const ApprovedVRRView: React.FC = (props: any) => {
           props?.BusinessUnitCodeAllColumn.find(
             (item: any) => item.key === op.BusinessUnitCodeId
           ) || {};
-        const JobtitleFrench =
-          props?.JobInFrenchList.find(
-            (item: any) => item.key === op.JobTitleFrenchId
-          ) || {};
+        // const JobtitleFrench =
+        //   props?.JobInFrenchList.find(
+        //     (item: any) => item.key === op.JobTitleFrenchId
+        //   ) || {};
 
         const [
           RoleProfileDocment,
@@ -218,7 +223,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
             DepartmentCode: op.DepartmentCode || "",
             Nationality: op.Nationality || "",
             JobNameInEnglish: op.JobTitleEnglish || "",
-            JobNameInFrench: JobtitleFrench.text || "",
+            JobNameInFrench: op.JobTitleFrench || "",
             PatersonGrade: op.PatersonGrade || "",
             DRCGrade: op.DRCGrade || "",
             EmployementCategory: op.EmploymentCategory || "",
@@ -372,7 +377,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
           <CardContent>
             {tabVisibility.tab1 && (
               <div>
-                <div className="ms-Grid-row">
+                {/* <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg6">
                     <LabelHeaderComponents
                       value={`Job Title - ${data.JobNameInEnglish} (${data.JobCode})`}
@@ -387,7 +392,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                       {" "}
                     </LabelHeaderComponents>
                   </div>
-                </div>
+                </div> */}
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
@@ -681,7 +686,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     >
                       <div>
                         <CustomLabel
-                          value={"View Job Advertisement"}
+                          value={labelName.ViewJobAdvetisement}
                           // mandatory={true}
                         />
                         <ReuseButton
@@ -723,7 +728,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     style={{ position: "relative", right: "1px" }}
                   >
                     {/* <div className="ms-Grid-col ms-lg4"> */}
-                    <CustomLabel value={" View Justifications"} />
+                    <CustomLabel value={labelName.ViewComments} />
                     <ReuseButton
                       Style={{
                         minWidth: "117px",
@@ -757,7 +762,12 @@ const ApprovedVRRView: React.FC = (props: any) => {
     },
   ];
   const back_fn = () => {
-    props.navigation("/RecurimentProcess");
+    props.navigation("/RecurimentProcess", {
+      state: {
+        TabName: props.stateValue?.TabName,
+        tab: props.stateValue?.tab,
+      },
+    });
   };
 
   const handleBreadcrumbChange = (newItem: string) => {
@@ -788,6 +798,11 @@ const ApprovedVRRView: React.FC = (props: any) => {
                 initialItem={activeTab}
                 TabName={TabNameData}
                 onBreadcrumbChange={handleBreadcrumbChange}
+                JobValue={{
+                  JobTitle: data.JobNameInEnglish,
+                  JobCode: data.JobCode,
+                  Status: props.stateValue?.Status,
+                }}
                 additionalButtons={[
                   {
                     label: "Back",

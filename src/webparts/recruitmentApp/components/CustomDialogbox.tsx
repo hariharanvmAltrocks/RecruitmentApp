@@ -15,13 +15,13 @@ export default function CustomDialogbox(props: DynamicFormDialogProps) {
   React.useEffect(() => {}, [props]);
 
   const DialogStyles: React.CSSProperties = {
-    minWidth: "10%",
+    minWidth: "36%",
     overflowY: "hidden",
     zIndex: 9999,
     backgroundColor: "white",
     borderRadius: "26px",
     padding: "20px",
-    height: "37vh",
+    // height: "37vh",
     ...props.Style,
   };
 

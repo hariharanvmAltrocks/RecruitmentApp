@@ -61,6 +61,7 @@ import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
 //import * as moment from "moment";
 import { UploadAdvertisement } from "../ScreenComponent/UploadAdvertisement";
 import CustomViewAttachment from "../../components/CustomViewAttachment";
+import { GetStatusIdRoles } from "../../components/TabMerge";
 // import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 
 export type roleSpeKnowledgeValidationErrors = {
@@ -93,6 +94,10 @@ export type formValidationEdit = {
   addMasterMinimumQualification: boolean;
   RoleProfile: boolean;
   Grading: boolean;
+  JobTitleofFunctionalManager: boolean;
+  FunctionalManagerName: boolean;
+  JobTitleofLineManagerSupervisor: boolean;
+  LineManagerSupervisorName: boolean;
 };
 
 export type masterLibrary = {
@@ -135,6 +140,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     addMasterMinimumQualification: "",
     AdvertisementAttachement: [],
     JobcodeChecked: false,
+
+    JobTitleofFunctionalManager: { key: 0, text: "" },
+    FunctionalManagerName: "",
+    JobTitleofLineManagerSupervisor: { key: 0, text: "" },
+    LineManagerSupervisorName: "",
   });
   const [formState, setFormState] = useState<RecuritmentData>({
     VRRID: 0,
@@ -215,6 +225,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       addMasterMinimumQualification: false,
       RoleProfile: false,
       Grading: false,
+      JobTitleofFunctionalManager: false,
+      FunctionalManagerName: false,
+      JobTitleofLineManagerSupervisor: false,
+      LineManagerSupervisorName: false,
     });
   const [MainComponent, setMainComponent] = useState<boolean>(true);
   const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
@@ -247,10 +261,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   const [Preview, setPreview] = useState<boolean>(false);
   const [isViewed, setIsViewed] = useState(false);
   const [experValidation, setExperValidation] = useState<boolean>(false);
-  const [masterLibrary, setMasterLibrary] = useState<masterLibrary>({
-    RoleProfile: [],
-    Grading: [],
-  });
+  // Commented out this section because the client mentioned that the Recruitment HR did not upload
+  // the Role Profile and Grading Document. This functionality will remain disabled until those documents
+  // are provided and approved.
+  // const [masterLibrary, setMasterLibrary] = useState<masterLibrary>({
+  //   RoleProfile: [],
+  //   Grading: [],
+  // });
+
+  const [currentRoleID, setCurrentRoleID] = useState<number>(0);
+
+  useEffect(() => {
+    let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
+    setCurrentRoleID(userRole ?? 0);
+  }, [props.stateValue?.StatusId]);
 
   const handleAddRow = (stateValue: string, index: number) => {
     switch (stateValue) {
@@ -574,7 +598,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       filterConditions.push({
         FilterKey: "StatusId",
         Operator: "eq",
-        FilterValue: StatusId.Completed,
+        FilterValue: StatusId.ReadyforRecruitmentProcess,
       });
       filterConditions.push({
         FilterKey: "IsDataSyncToRecruitment",
@@ -586,10 +610,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         Operator: "eq",
         FilterValue: Choices.No,
       });
-
+      // filterConditions.push({
+      //   FilterKey: "Id",
+      //   Operator: "eq",
+      //   FilterValue: props.stateValue?.ID,
+      // });
+      let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
       const response =
-        props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-        props.stateValue?.StatusId === StatusId.Completed
+        userRole === RoleID.RecruitmentHRLead &&
+        props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess
           ? props.stateValue?.type === DataFrom.NewPosition
             ? await getVRRDetails.fetchNewPositionRequest(
                 filterConditions,
@@ -613,8 +642,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
         // Ensure `op` is always a single object
         const op: DataSyncToRecruitmentResponse =
-          props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-          props.stateValue?.StatusId === StatusId.Completed
+          userRole === RoleID.RecruitmentHRLead &&
+          props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess
             ? NewpositionData.length > 0
               ? NewpositionData[0]
               : response?.data?.[0] || ({} as DataSyncToRecruitmentResponse)
@@ -625,10 +654,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             (item: any) => item.key === op?.BusinessUnitCodeId
           ) || {};
 
-        const JobtitleFrench =
-          props?.JobInFrenchList.find(
-            (item: any) => item.key === op?.JobTitleFrenchId
-          ) || {};
+        // const   JobtitleFrench =
+        //   props?.JobInFrenchList.find(
+        //     (item: any) => item.key === op?.JobTitleFrenchId
+        //   ) || {};
 
         const [
           RoleProfileDocment,
@@ -687,7 +716,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             DepartmentCode: op.DepartmentCode || "",
             Nationality: op.Nationality || "",
             JobNameInEnglish: op.JobTitleEnglish || "",
-            JobNameInFrench: JobtitleFrench.text || "",
+            JobNameInFrench: op.JobTitleFrench || "",
             PatersonGrade: op.PatersonGrade || "",
             DRCGrade: op.DRCGrade || "",
             EmployementCategory: op.EmploymentCategory || "",
@@ -743,9 +772,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       JobFunctionalType: false,
       RoleProfile: false,
       Grading: false,
+      JobTitleofFunctionalManager: false,
+      FunctionalManagerName: false,
+      JobTitleofLineManagerSupervisor: false,
+      LineManagerSupervisorName: false,
     };
 
-    switch (props.CurrentRoleID) {
+    switch (currentRoleID) {
       case RoleID.RecruitmentHRLead: {
         if (props.stateValue?.tab === "tab1") {
           errors.AssignRecruitmentHR = !IsValid(AssignRecruitmentHR.text);
@@ -771,24 +804,32 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           if (advDetails.JobcodeChecked === true) {
             errors.Comments = !IsValid(Comments);
             errors.Checkboxalidation = !IsValid(Checkbox);
-            if (formState.RoleProfileDocument.length === 0) {
-              errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
-            }
-            if (formState.GradingDocument.length === 0) {
-              errors.Grading = !IsValid(masterLibrary.Grading);
-            }
+            // Commented out this section because the client mentioned that the Recruitment HR did not upload
+            // the Role Profile and Grading Document. This functionality will remain disabled until those documents
+            // are provided and approved.
+            // if (formState.RoleProfileDocument.length === 0) {
+            //   errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
+            // }
+            // if (formState.GradingDocument.length === 0) {
+            //   errors.Grading = !IsValid(masterLibrary.Grading);
+            // }
             if (formState.AdvertisementDocument.length === 0) {
               errors.AdvertisementAttachement = !IsValid(
                 advDetails.AdvertisementAttachement
               );
             }
           } else {
-            if (formState.RoleProfileDocument.length === 0) {
-              errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
+            {
+              /* Commented out this section because the client mentioned that the Recruitment HR did not upload 
+ the Role Profile and Grading Document. This functionality will remain disabled until those documents 
+ are provided and approved. */
             }
-            if (formState.GradingDocument.length === 0) {
-              errors.Grading = !IsValid(masterLibrary.Grading);
-            }
+            // if (formState.RoleProfileDocument.length === 0) {
+            //   errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
+            // }
+            // if (formState.GradingDocument.length === 0) {
+            //   errors.Grading = !IsValid(masterLibrary.Grading);
+            // }
             if (formState.AdvertisementDocument.length === 0) {
               errors.AdvertisementAttachement = !IsValid(
                 advDetails.AdvertisementAttachement
@@ -825,13 +866,26 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             errors.JobFunctionalType = !IsValid(
               advDetails.JobFunctionalType.text
             );
+            errors.JobTitleofFunctionalManager = !IsValid(
+              advDetails.JobTitleofFunctionalManager.text
+            );
+            errors.FunctionalManagerName = !IsValid(
+              advDetails.FunctionalManagerName
+            );
+            errors.JobTitleofLineManagerSupervisor = !IsValid(
+              advDetails.JobTitleofLineManagerSupervisor.text
+            );
+            errors.LineManagerSupervisorName = !IsValid(
+              advDetails.LineManagerSupervisorName
+            );
           }
         }
 
         break;
       }
 
-      case RoleID.HOD: {
+      case RoleID.HOD:
+      case RoleID.LineManager: {
         if (props.stateValue?.tab === "tab1") {
           errors.Comments = !IsValid(Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
@@ -875,12 +929,17 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       Grading: false,
     };
     if (tab === "tab1") {
-      if (formState.RoleProfileDocument.length === 0) {
-        errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
+      {
+        /* Commented out this section because the client mentioned that the Recruitment HR did not upload 
+ the Role Profile and Grading Document. This functionality will remain disabled until those documents 
+ are provided and approved. */
       }
-      if (formState.GradingDocument.length === 0) {
-        errors.Grading = !IsValid(masterLibrary.Grading);
-      }
+      // if (formState.RoleProfileDocument.length === 0) {
+      //   errors.RoleProfile = !IsValid(masterLibrary.RoleProfile);
+      // }
+      // if (formState.GradingDocument.length === 0) {
+      //   errors.Grading = !IsValid(masterLibrary.Grading);
+      // }
       if (formState.AdvertisementDocument.length === 0) {
         errors.AdvertisementAttachement = !IsValid(
           advDetails.AdvertisementAttachement
@@ -910,6 +969,18 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }
   }
 
+  const SpiltDateOnly = (date: Date) => {
+    const updatedDate = date;
+    const year = updatedDate?.getFullYear();
+    const month = String(updatedDate?.getMonth() + 1).padStart(2, "0");
+    const day = String(updatedDate?.getDate()).padStart(2, "0");
+
+    const dateOnly = new Date(
+      Date.UTC(Number(year), Number(month) - 1, Number(day))
+    ); //`${year}-${month}-${day}`;
+    return dateOnly.toISOString();
+  };
+
   const SaveRecruitment = async () => {
     try {
       setIsLoading(true);
@@ -920,18 +991,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           ActionId: WorkflowAction.Approved,
           ItemCreated: "Yes",
         };
-
-        if (formState.Comments) {
-          const commentsData: InsertComments = {
-            RoleId: props.CurrentRoleID,
-            RecruitmentIDId: props.stateValue?.ID,
-            Comments: formState.Comments,
-          };
-
-          await getVRRDetails.InsertCommentsList(commentsData);
-        }
-
-        switch (props.CurrentRoleID) {
+        switch (currentRoleID) {
           case RoleID.RecruitmentHRLead: {
             if (
               props.stateValue?.StatusId ===
@@ -955,6 +1015,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               );
 
               if (result?.status === 200) {
+                if (formState.Comments) {
+                  const commentsData: InsertComments = {
+                    RoleId: currentRoleID,
+                    RecruitmentIDId: props.stateValue?.ID,
+                    Comments: formState.Comments,
+                  };
+
+                  await getVRRDetails.InsertCommentsList(commentsData);
+                }
                 await CommonServices.uploadAttachmentToLibrary(
                   formState.JobCode,
                   formState.OnamSignedStampsAttchment ?? [],
@@ -963,8 +1032,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 const obj: any = {
                   ActionId: WorkflowAction.Approved,
                   ItemCreated: "Yes",
-                  JobPostingStartDate: advDetails.ValidFrom,
-                  JobPostingEndDate: advDetails.ValidTo,
+                  JobPostingStartDate: advDetails.ValidFrom
+                    ? SpiltDateOnly(advDetails.ValidFrom)
+                    : "",
+                  JobPostingEndDate: advDetails.ValidTo
+                    ? SpiltDateOnly(advDetails.ValidTo)
+                    : "",
                 };
                 await SPServices.SPUpdateItem({
                   Listname: ListNames.HRMSRecruitmentDptDetails,
@@ -978,7 +1051,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   visible: true,
                   ButtonAction: async (userClickedOK: boolean) => {
                     if (userClickedOK) {
-                      props.navigation("/RecurimentProcess");
+                      props.navigation("/RecurimentProcess", {
+                        state: {
+                          TabName: props.stateValue?.TabName,
+                          tab: props.stateValue?.tab,
+                        },
+                      });
                       setAlertPopupOpen(false);
                     }
                   },
@@ -993,7 +1071,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   visible: true,
                   ButtonAction: async (userClickedOK: boolean) => {
                     if (userClickedOK) {
-                      props.navigation("/RecurimentProcess");
+                      props.navigation("/RecurimentProcess", {
+                        state: {
+                          TabName: props.stateValue?.TabName,
+                          tab: props.stateValue?.tab,
+                        },
+                      });
                       setAlertPopupOpen(false);
                     }
                   },
@@ -1070,6 +1153,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 advDetails.ExperienceinMiningIndustry.key
               ),
               FunctionTypeId: advDetails.JobFunctionalType.key,
+              JobTitleofFunctionalManagerId:
+                advDetails.JobTitleofFunctionalManager.key,
+              JobTitleofLMorSupervisorId:
+                advDetails.JobTitleofLineManagerSupervisor.key,
+              FunctionalManagerName: advDetails.FunctionalManagerName,
+              LineManagerorSupervisorName: advDetails.LineManagerSupervisorName,
             };
             let AdvDetailsResponse;
             if (advDetails.JobcodeChecked === false) {
@@ -1102,23 +1191,37 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               );
               resetForm();
               if (result.status === ResponeStatus.SUCCESS) {
+                if (formState.Comments) {
+                  const commentsData: InsertComments = {
+                    RoleId: currentRoleID,
+                    RecruitmentIDId: props.stateValue?.ID,
+                    Comments: formState.Comments,
+                  };
+
+                  await getVRRDetails.InsertCommentsList(commentsData);
+                }
                 await CommonServices.uploadAttachmentToLibrary(
                   formState.JobCode,
                   advDetails?.AdvertisementAttachement ?? [],
                   DocumentLibraray.RecruitmentAdvertisementDocument
                 );
-                await CommonServices.uploadRoleProfileMaster(
-                  formState.JobCode,
-                  RoleProfileMaster.RoleProfile,
-                  masterLibrary?.RoleProfile ?? [],
-                  DocumentLibraray.RoleProfileMaster
-                );
-                await CommonServices.uploadRoleProfileMaster(
-                  formState.JobCode,
-                  RoleProfileMaster.Grading,
-                  masterLibrary?.Grading ?? [],
-                  DocumentLibraray.RoleProfileMaster
-                );
+                {
+                  /* Commented out this section because the client mentioned that the Recruitment HR did not upload 
+ the Role Profile and Grading Document. This functionality will remain disabled until those documents 
+ are provided and approved. */
+                }
+                // await CommonServices.uploadRoleProfileMaster(
+                //   formState.JobCode,
+                //   RoleProfileMaster.RoleProfile,
+                //   masterLibrary?.RoleProfile ?? [],
+                //   DocumentLibraray.RoleProfileMaster
+                // );
+                // await CommonServices.uploadRoleProfileMaster(
+                //   formState.JobCode,
+                //   RoleProfileMaster.Grading,
+                //   masterLibrary?.Grading ?? [],
+                //   DocumentLibraray.RoleProfileMaster
+                // );
                 await SPServices.SPUpdateItem({
                   Listname: ListNames.HRMSRecruitmentDptDetails,
                   RequestJSON: obj,
@@ -1134,7 +1237,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   visible: true,
                   ButtonAction: async (userClickedOK: boolean) => {
                     if (userClickedOK) {
-                      props.navigation("/RecurimentProcess");
+                      props.navigation("/RecurimentProcess", {
+                        state: {
+                          TabName: props.stateValue?.TabName,
+                          tab: props.stateValue?.tab,
+                        },
+                      });
                       setAlertPopupOpen(false);
                     }
                   },
@@ -1163,21 +1271,38 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             }
             break;
           }
-          case RoleID.HOD: {
+          case RoleID.HOD:
+          case RoleID.LineManager: {
             await SPServices.SPUpdateItem({
               Listname: ListNames.HRMSRecruitmentDptDetails,
               RequestJSON: obj,
               ID: props.stateValue?.ID,
             });
             resetForm();
+            if (formState.Comments) {
+              const commentsData: InsertComments = {
+                RoleId: currentRoleID,
+                RecruitmentIDId: props.stateValue?.ID,
+                Comments: formState.Comments,
+              };
 
+              await getVRRDetails.InsertCommentsList(commentsData);
+            }
             let approveAlert = {
-              Message: RecuritmentHRMsg.ApprovedMsg,
+              Message:
+                currentRoleID === RoleID.HOD
+                  ? RecuritmentHRMsg.ApprovedMsg
+                  : RecuritmentHRMsg.AdvertisementReveiwMsg,
               Type: HRMSAlertOptions.Success,
               visible: true,
               ButtonAction: async (userClickedOK: boolean) => {
                 if (userClickedOK) {
-                  props.navigation("/RecurimentProcess");
+                  props.navigation("/RecurimentProcess", {
+                    state: {
+                      TabName: props.stateValue?.TabName,
+                      tab: props.stateValue?.tab,
+                    },
+                  });
                   setAlertPopupOpen(false);
                 }
               },
@@ -1265,20 +1390,23 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }
   };
 
-  const handleRoleprofileDelete = (index: number, attachmentType: string) => {
-    setMasterLibrary((prevState) => {
-      const updatedAttachments = [
-        ...(prevState[attachmentType as keyof masterLibrary] ?? []),
-      ];
+  // Commented out this section because the client mentioned that the Recruitment HR did not upload
+  // the Role Profile and Grading Document. This functionality will remain disabled until those documents
+  // are provided and approved.
+  // const handleRoleprofileDelete = (index: number, attachmentType: string) => {
+  //   setMasterLibrary((prevState) => {
+  //     const updatedAttachments = [
+  //       ...(prevState[attachmentType as keyof masterLibrary] ?? []),
+  //     ];
 
-      updatedAttachments.splice(index, 1);
+  //     updatedAttachments.splice(index, 1);
 
-      return {
-        ...prevState,
-        [attachmentType]: updatedAttachments,
-      };
-    });
-  };
+  //     return {
+  //       ...prevState,
+  //       [attachmentType]: updatedAttachments,
+  //     };
+  //   });
+  // };
 
   const handleInputChangeTextArea = (
     value: string | any,
@@ -1319,23 +1447,44 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }));
   };
 
-  const OpenComments = async () => {
-    setMainComponent(false);
-    let filterConditions = [];
-    let Conditions = "";
+  const handleInputChange = (value: string, StateValue: string) => {
+    setAdvDetails((prevState: any) => ({
+      ...prevState,
+      [StateValue]: value,
+    }));
+    setValidationError((prevState) => ({
+      ...prevState,
+      [StateValue]: false,
+    }));
+  };
 
-    filterConditions.push({
-      FilterKey: "RecruitmentID",
-      Operator: "eq",
-      FilterValue: props.stateValue.ID,
-    });
-    const CommentsList = await getVRRDetails.GetCommentsData(
-      props.EmployeeList,
-      Conditions,
-      filterConditions
-    );
-    if (CommentsList.status === 200) {
-      setCommentsData(CommentsList.data);
+  const OpenComments = async () => {
+    setIsLoading(true);
+    try {
+      setMainComponent(false);
+      let filterConditions = [];
+      let Conditions = "";
+
+      filterConditions.push({
+        FilterKey: "RecruitmentID",
+        Operator: "eq",
+        FilterValue: props.stateValue.ID,
+      });
+      const CommentsList = await getVRRDetails.GetCommentsData(
+        props.EmployeeList,
+        Conditions,
+        filterConditions
+      );
+      if (CommentsList.status === 200) {
+        setCommentsData(CommentsList.data);
+      }
+      setMainComponent(false);
+    } catch (error) {
+      console.error("Error in OpenComments:", error);
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
     }
   };
 
@@ -1395,24 +1544,27 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }));
   };
 
-  const handleRoleprofileDocument = (
-    StateValue: string,
-    value: IDocFiles[]
-  ) => {
-    setMasterLibrary((prevState) => ({
-      ...prevState,
-      [StateValue]: value,
-    }));
-    setValidationError((prevState: any) => ({
-      ...prevState,
-      [StateValue]: false,
-    }));
-  };
+  // Commented out this section because the client mentioned that the Recruitment HR did not upload
+  // the Role Profile and Grading Document. This functionality will remain disabled until those documents
+  // are provided and approved.
+  // const handleRoleprofileDocument = (
+  //   StateValue: string,
+  //   value: IDocFiles[]
+  // ) => {
+  //   setMasterLibrary((prevState) => ({
+  //     ...prevState,
+  //     [StateValue]: value,
+  //   }));
+  //   setValidationError((prevState: any) => ({
+  //     ...prevState,
+  //     [StateValue]: false,
+  //   }));
+  // };
 
   const tabs = [
     {
       label:
-        props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+        currentRoleID === RoleID.RecruitmentHRLead &&
         props.stateValue?.StatusId ===
           StatusId.PendingwithHRLeadtouploadONEMsigneddoc
           ? TabName.AdvertisementDetails
@@ -1429,7 +1581,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         >
           <CardContent>
             <div>
-              <div className="ms-Grid-row">
+              {/* <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg6">
                   <LabelHeaderComponents
                     value={`Job Title - ${formState.JobNameInEnglish} (${formState.JobCode})`}
@@ -1437,8 +1589,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     {" "}
                   </LabelHeaderComponents>
                 </div>
-                {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-                props.stateValue?.StatusId === StatusId.Completed ? (
+                {currentRoleID === RoleID.RecruitmentHRLead &&
+                props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess ? (
                   <></>
                 ) : (
                   <div
@@ -1452,7 +1604,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     </LabelHeaderComponents>
                   </div>
                 )}
-              </div>
+              </div> */}
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
@@ -1573,29 +1725,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
               </div>
               <div className="ms-Grid-row">
-                {/*                                    
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Position Name (English)"
-                                            value={formState.JobNameInEnglish}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, JobNameInEnglish: value }))
-                                            }
-                                        />
-                                    </div>
-                                    <div className="ms-Grid-col ms-lg3">
-                                        <CustomInput
-                                            label="Position Name (French)"
-                                            value={formState.JobNameInFrench}
-                                            disabled={true}
-                                            mandatory={false}
-                                            onChange={(value) =>
-                                                setFormState((prevState) => ({ ...prevState, JobNameInFrench: value }))
-                                            }
-                                        />
-                                    </div> */}
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
                     label="Paterson Grade"
@@ -1712,7 +1841,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
               </div>
 
-              {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+              {currentRoleID === RoleID.RecruitmentHRLead &&
                 props.stateValue?.StatusId ===
                   StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
                   <>
@@ -1801,14 +1930,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
               {formState.RoleProfileDocument.length === 0 &&
               formState.GradingDocument.length === 0 &&
-              props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-              props.stateValue?.StatusId === StatusId.Completed ? (
+              currentRoleID === RoleID.RecruitmentHRLead &&
+              props.stateValue?.StatusId ===
+                StatusId.ReadyforRecruitmentProcess ? (
                 <></>
               ) : (
                 <>
                   <div className="ms-Grid-row">
-                    <div className="ms-Grid-col ms-lg3">
-                      {formState.RoleProfileDocument.length > 0 ? (
+                    {formState.RoleProfileDocument.length > 0 && (
+                      <div className="ms-Grid-col ms-lg3">
                         <div className="custom-document-column">
                           <CustomLabel value={"RoleProfile Documents"} />
                           <div
@@ -1824,13 +1954,19 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             />
                           </div>
                         </div>
-                      ) : (
+                      </div>
+                    )}
+
+                    {/* : (
                         <>
-                          {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-                          props.stateValue?.StatusId === StatusId.Completed ? (
+                          {currentRoleID === RoleID.RecruitmentHRLead &&
+                          props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess ? (
                             <></>
                           ) : (
                             <>
+                              Commented out this section because the client mentioned that the Recruitment HR did not upload 
+ the Role Profile and Grading Document. This functionality will remain disabled until those documents 
+ are provided and approved.
                               <CustomLabel
                                 value={"RoleProfile Documents (Only Word)"}
                                 mandatory={true}
@@ -1839,6 +1975,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 label="Upload"
                                 iconName="CloudUpload"
                                 iconNameHover="CloudUpload"
+                                allowMultiple={false}
                                 AttachState={(newAttachment: any) => {
                                   let attachment: IDocFiles[] =
                                     newAttachment.map((item: any) => {
@@ -1848,13 +1985,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         type: "New",
                                       };
                                     });
-                                  const attachments = [
-                                    ...(masterLibrary.RoleProfile || []),
-                                    ...attachment,
-                                  ];
+                                  // const attachments = [
+                                  //   ...(masterLibrary.RoleProfile || []),
+                                  //   ...attachment,
+                                  // ];
                                   handleRoleprofileDocument(
                                     "RoleProfile",
-                                    attachments
+                                    attachment
                                   );
                                 }}
                                 mandatory={true}
@@ -1877,9 +2014,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           )}
                         </>
                       )}
-                    </div>
-                    <div className="ms-Grid-col ms-lg3">
-                      {formState.GradingDocument.length > 0 ? (
+                    </div> */}
+
+                    {formState.GradingDocument.length > 0 && (
+                      <div className="ms-Grid-col ms-lg3">
                         <div className="custom-document-column">
                           <CustomLabel value={"Grading Documents"} />
                           <div
@@ -1895,13 +2033,19 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             />
                           </div>
                         </div>
-                      ) : (
-                        <>
-                          {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-                          props.stateValue?.StatusId === StatusId.Completed ? (
+                      </div>
+                    )}
+                    {/* Commented out this section because the client mentioned that the Recruitment HR did not upload 
+ the Role Profile and Grading Document. This functionality will remain disabled until those documents 
+ are provided and approved.
+                    </div> : (
+                         <>
+                           {currentRoleID === RoleID.RecruitmentHRLead &&
+                          props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess ? (
                             <></>
                           ) : (
                             <>
+                             
                               <CustomLabel
                                 value={"Grading Documents (Only Word)"}
                                 mandatory={true}
@@ -1910,6 +2054,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 label="Upload"
                                 iconName="CloudUpload"
                                 iconNameHover="CloudUpload"
+                                allowMultiple={false}
                                 AttachState={(newAttachment: any) => {
                                   let attachment: IDocFiles[] =
                                     newAttachment.map((item: any) => {
@@ -1919,13 +2064,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                         type: "New",
                                       };
                                     });
-                                  const attachments = [
-                                    ...(masterLibrary.Grading || []),
-                                    ...attachment,
-                                  ];
+                                  // const attachments = [
+                                  //   ...(masterLibrary.Grading || []),
+                                  //   ...attachment,
+                                  // ];
                                   handleRoleprofileDocument(
                                     "Grading",
-                                    attachments
+                                    attachment
                                   );
                                 }}
                                 mandatory={true}
@@ -1947,18 +2092,18 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             </>
                           )}
                         </>
-                      )}
-                    </div>
+                      )} */}
 
-                    {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-                    props.stateValue?.StatusId === StatusId.Completed ? (
+                    {currentRoleID === RoleID.RecruitmentHRLead &&
+                    props.stateValue?.StatusId ===
+                      StatusId.ReadyforRecruitmentProcess ? (
                       <></>
                     ) : (
                       <>
                         {formState.AdvertisementDocument.length > 0 ? (
                           <div className="ms-Grid-col ms-lg3 custom-document-column ">
                             <CustomLabel
-                              value={"Advertisement Documents(French)"}
+                              value={"Draft ONEM Advert Doc (French)"}
                             />
                             <CustomViewDocument
                               Attachment={formState.AdvertisementDocument}
@@ -1967,13 +2112,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         ) : (
                           <div className="ms-Grid-col ms-lg4">
                             <CustomLabel
-                              value={"Advertisement Document (Only PDF)"}
+                              value={"Draft ONEM AdvertDoc French(Only PDF)"}
                               mandatory={true}
                             />
                             <AttachmentButton
                               label="Upload"
                               iconName="CloudUpload"
                               iconNameHover="CloudUpload"
+                              allowMultiple={false}
                               AttachState={(newAttachment: any) => {
                                 let attachment: IDocFiles[] = newAttachment.map(
                                   (item: any) => {
@@ -1984,14 +2130,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                     };
                                   }
                                 );
-                                const attachments = [
-                                  ...(advDetails.AdvertisementAttachement ||
-                                    []),
-                                  ...attachment,
-                                ];
+                                // const attachments = [
+                                //   ...(advDetails.AdvertisementAttachement ||
+                                //     []),
+                                //   ...attachment,
+                                // ];
                                 handleFileAttachment(
                                   "AdvertisementAttachement",
-                                  attachments
+                                  attachment
                                 );
                               }}
                               mandatory={true}
@@ -2046,8 +2192,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               )} */}
 
               <div className="ms-Grid-row">
-                {props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-                props.stateValue?.StatusId === StatusId.Completed ? (
+                {currentRoleID === RoleID.RecruitmentHRLead &&
+                props.stateValue?.StatusId ===
+                  StatusId.ReadyforRecruitmentProcess ? (
                   <></>
                 ) : (
                   <>
@@ -2093,7 +2240,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           className="ms-Grid-col ms-lg3"
                           style={{ marginLeft: "-5px" }}
                         >
-                          <CustomLabel value={"View Justifications"} />
+                          <CustomLabel value={labelName.ViewComments} />
                           <ReuseButton
                             Style={{
                               minWidth: "117px",
@@ -2136,6 +2283,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       label="Upload"
                       iconName="CloudUpload"
                       iconNameHover="CloudUpload"
+                      allowMultiple={false}
                       AttachState={(newAttachment: any) => {
                         let attachment: IDocFiles[] = newAttachment.map(
                           (item: any) => {
@@ -2146,13 +2294,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             };
                           }
                         );
-                        const attachments = [
-                          ...(formState.OnamSignedStampsAttchment || []),
-                          ...attachment,
-                        ];
+                        // const attachments = [
+                        //   ...(formState.OnamSignedStampsAttchment || []),
+                        //   ...attachment,
+                        // ];
                         handleFileAttachment(
                           "OnamSignedStampsAttchment",
-                          attachments
+                          attachment
                         );
                       }}
                       mandatory={true}
@@ -2174,12 +2322,15 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 )}
               </div>
 
-              {((props.CurrentRoleID === RoleID.HOD &&
+              {((currentRoleID === RoleID.HOD &&
                 props.stateValue?.StatusId ===
                   StatusId.PendingwithHODtoreviewAdv) ||
+                (currentRoleID === RoleID.LineManager &&
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithLineManagereviewAdv) ||
                 props.stateValue?.StatusId ===
                   StatusId.PendingwithHRLeadtouploadONEMsigneddoc ||
-                (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                (currentRoleID === RoleID.RecruitmentHR &&
                   props.stateValue?.StatusId ===
                     StatusId.PendingwithRecruitmentHRtouploadAdv &&
                   advDetails.JobcodeChecked === true)) && (
@@ -2187,7 +2338,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg12">
                       <CustomTextArea
-                        label="Justification"
+                        label={labelName.Comment}
                         value={formState.Comments}
                         error={validationErrors.Comments}
                         onChange={(value) =>
@@ -2267,7 +2418,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         </Card>
       ),
     },
-    ...(props.CurrentRoleID === RoleID.RecruitmentHR &&
+    ...(currentRoleID === RoleID.RecruitmentHR &&
     props.stateValue?.StatusId ===
       StatusId.PendingwithRecruitmentHRtouploadAdv &&
     advDetails.JobcodeChecked === false
@@ -2295,7 +2446,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           >
                             <div>
                               <CustomLabel
-                                value={"View Advertisement"}
+                                value={labelName.ViewJobAdvetisement}
                                 // mandatory={true}
                               />
                               <ReuseButton
@@ -2336,6 +2487,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           handleRichTextEditor={handleRichTextEditor}
                           handleAutoComplete={handleAutoComplete}
                           handleMulitiSelect={handleMulitiSelect}
+                          handleInputChange={handleInputChange}
                           handleDelete={handleDelete}
                           handleAutoCompleterow={handleAutoCompleterow}
                           handleAddRow={handleAddRow}
@@ -2345,10 +2497,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           TechnicalSkillValue={TechnicalSkillValue}
                           RoleSpeKnowledgeValue={RoleSpeKnowledgeValue}
                           setAdvDetails={setAdvDetails}
+                          MasterData={props}
                         />
                       )}
 
-                      <CustomLabel value={" View Justifications"} />
+                      <CustomLabel value={labelName.ViewComments} />
                       <ReuseButton
                         Style={{
                           minWidth: "117px",
@@ -2376,7 +2529,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg12">
                           <CustomTextArea
-                            label="Justification"
+                            label={labelName.Comment}
                             value={formState.Comments}
                             error={validationErrors.Comments}
                             onChange={(value) =>
@@ -2467,7 +2620,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       });
     }
     if (
-      props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+      currentRoleID === RoleID.RecruitmentHRLead &&
       props.stateValue?.StatusId ===
         StatusId.PendingwithHRLeadtouploadONEMsigneddoc
     ) {
@@ -2490,7 +2643,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       visible: true,
       ButtonAction: async (userClickedOK: boolean) => {
         if (userClickedOK) {
-          props.navigation("/RecurimentProcess");
+          props.navigation("/RecurimentProcess", {
+            state: {
+              TabName: props.stateValue?.TabName,
+              tab: props.stateValue?.tab,
+            },
+          });
           setAlertPopupOpen(false);
         } else {
           setAlertPopupOpen(false);
@@ -2520,21 +2678,36 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 ValidationError={() => NextValidation(activeTab)}
                 handleCancel={handleCancel}
                 onBreadcrumbChange={handleBreadcrumbChange}
+                JobValue={{
+                  JobTitle: formState.JobNameInEnglish,
+                  JobCode: formState.JobCode,
+                  Status:
+                    props.stateValue?.StatusId ===
+                    StatusId.ReadyforRecruitmentProcess
+                      ? ""
+                      : props.stateValue?.Status,
+                }}
                 additionalButtons={
-                  (props.CurrentRoleID === RoleID.RecruitmentHRLead &&
-                    props.stateValue?.StatusId === StatusId.Completed) ||
-                  (props.CurrentRoleID === RoleID.RecruitmentHR &&
+                  (currentRoleID === RoleID.RecruitmentHRLead &&
+                    props.stateValue?.StatusId ===
+                      StatusId.ReadyforRecruitmentProcess) ||
+                  (currentRoleID === RoleID.RecruitmentHR &&
                     props.stateValue?.StatusId ===
                       StatusId.PendingwithRecruitmentHRtoAssignExternalAgency)
                     ? [
                         {
-                          label: "Close",
+                          label: "Back",
                           onClick: async () => {
-                            props.navigation("/RecurimentProcess");
+                            props.navigation("/RecurimentProcess", {
+                              state: {
+                                TabName: props.stateValue?.TabName,
+                                tab: props.stateValue?.tab,
+                              },
+                            });
                           },
                         },
                       ]
-                    : props.CurrentRoleID === RoleID.RecruitmentHRLead &&
+                    : currentRoleID === RoleID.RecruitmentHRLead &&
                       props.stateValue?.StatusId ===
                         StatusId.PendingwithHRLeadtouploadONEMsigneddoc
                     ? [
@@ -2545,7 +2718,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           },
                         },
                       ]
-                    : props.CurrentRoleID === RoleID.RecruitmentHR &&
+                    : currentRoleID === RoleID.RecruitmentHR &&
                       props.stateValue?.StatusId ===
                         StatusId.PendingwithRecruitmentHRtouploadAdv
                     ? [
@@ -2571,9 +2744,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             ]
                           : []),
                       ]
-                    : props.CurrentRoleID === RoleID.HOD &&
-                      props.stateValue?.StatusId ===
-                        StatusId.PendingwithHODtoreviewAdv
+                    : (currentRoleID === RoleID.HOD &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithHODtoreviewAdv) ||
+                      (currentRoleID === RoleID.LineManager &&
+                        props.stateValue?.StatusId ===
+                          StatusId.PendingwithLineManagereviewAdv)
                     ? isViewed
                       ? [
                           {
@@ -2587,9 +2763,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     : props.stateValue?.TabName === TabName.AssignAgencies
                     ? [
                         {
-                          label: "Close",
+                          label: "Back",
                           onClick: async () => {
-                            props.navigation("/RecurimentProcess");
+                            props.navigation("/RecurimentProcess", {
+                              state: {
+                                TabName: props.stateValue?.TabName,
+                                tab: props.stateValue?.tab,
+                              },
+                            });
                           },
                         },
                       ]

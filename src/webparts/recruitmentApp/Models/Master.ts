@@ -1,3 +1,5 @@
+import { MenuResponse } from "./Menu";
+
 export type UserRoleResponseDetails = {
     data: UserRoleData[] | undefined;
     status: number;
@@ -8,6 +10,7 @@ export type UserRoleData = {
     ID: number;
     RoleTitle: string;
     ADGroupID: string;
+    EmailId: string;
 };
 
 export type MasterDataResponseDetails = {
@@ -165,8 +168,23 @@ export type MasterData = {
     BuCodeToDepartmentMappingList: BuCodeToDepartmentResponse[];
     CompanyCodeDetailsList: CompanyCodeDetailsResponse[];
     CurrentUserEmailId: string;
-    CurrentRoleID: number;
+    CurrentRoleID: number[];
     CurrentUserName: string,
-    CurrentUserRole: string
+    CurrentUserRole: string[],
+    menuMartixData: MenuResponse[];
+    TabDetails: TabDetails[];
+    CurrentMenuID: number;
 };
+
+export type TabDetails = {
+    StatusDetails: StatusDetails[];
+    TabName: string;
+    Value: string;
+}
+export type StatusDetails = {
+    Action: string[];
+    ActionId: number[];
+    Status: string;
+    StatusId: string;
+}
 

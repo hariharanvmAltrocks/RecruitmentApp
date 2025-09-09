@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { useState } from "react";
 import { Dropdown, IDropdownOption } from "@fluentui/react";
@@ -8,11 +7,12 @@ type Role = {
   ID: number;
   RoleTitle: string;
   ADGroupID: string;
+  EmailId: string;
 };
 
 type Props = {
   roles: Role[];
-  onRoleSelect: (role: Role) => void;
+  onRoleSelect: (role: Role, Email: string) => void;
 };
 
 const RoleSelection = ({ roles, onRoleSelect }: Props) => {
@@ -26,18 +26,15 @@ const RoleSelection = ({ roles, onRoleSelect }: Props) => {
   const handleGetStarted = () => {
     const selected = roles.find((r) => r.ID === selectedRoleId);
     if (selected) {
-      onRoleSelect(selected);
+      onRoleSelect(selected, selected.EmailId);
     }
   };
 
   return (
     <>
-    
       <div className="roleHeader">
         <div className="logo">
-          <img 
-           src={require("../assets/Logo.png")}
-           alt="KAMOA Copper Logo" />
+          <img src={require("../assets/Logo.png")} alt="KAMOA Copper Logo" />
         </div>
         <h2>Human Resource Management System</h2>
       </div>
@@ -45,7 +42,9 @@ const RoleSelection = ({ roles, onRoleSelect }: Props) => {
       <div className="RoleContainer">
         <div className="selRoleContainer">
           <div className="role-card">
-            <label htmlFor="roleDropdown" className="dropdownLabel">Select Role</label>
+            <label htmlFor="roleDropdown" className="dropdownLabel">
+              Select Role
+            </label>
             <Dropdown
               id="roleDropdown"
               placeholder="Select a role"
@@ -64,15 +63,11 @@ const RoleSelection = ({ roles, onRoleSelect }: Props) => {
 
         <div className="imgContainer">
           <div className="imgBorder">
-            <img
-              src={require("../assets/Main.png")}
-              alt="KAMOA Site"
-            />
+            <img src={require("../assets/Main.png")} alt="KAMOA Site" />
           </div>
         </div>
       </div>
 
-  
       <div className="footer">
         <span>KAMOA Copper S.A | All Rights Reserved</span>
       </div>

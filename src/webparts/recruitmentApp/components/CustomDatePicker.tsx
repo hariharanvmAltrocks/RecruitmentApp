@@ -18,25 +18,44 @@ interface FormFields {
   mandatory?: boolean;
 }
 
-const datePickerStyle: Partial<IDatePickerStyles> = {
+const getDatePickerStyle = (
+  disabled?: boolean
+): Partial<IDatePickerStyles> => ({
   root: {
     borderRadius: "4px",
     boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-    borderColor: "rgb(205, 45, 45)",
-    color: "rgb(205, 45, 45)",
+    color: "rgb(0, 0, 0)",
 
     ".ms-TextField-fieldGroup": {
       height: "42px",
+      // border: "1px solid rgb(255 249 249)",
     },
     ".icon-153": {
       padding: "9px 9px 9px",
     },
+    fieldGroup: {
+      height: 42,
+      borderRadius: "4px",
+      boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+      border: "rgb(15, 15, 15)",
+      ...(disabled && {
+        border: "1px solid rgb(210 200 200)",
+      }),
+    },
+    field: {
+      ...(disabled && {
+        color: "rgb(123 113 102)",
+        "::placeholder": {
+          color: "rgb(123 113 102)",
+        },
+      }),
+    },
   },
   textField: {
-    borderColor: "rgb(205, 45, 45)",
+    border: "rgb(4, 4, 4)",
     height: "42px",
   },
-};
+});
 
 function CustomDatePicker({
   label,
@@ -57,16 +76,16 @@ function CustomDatePicker({
         </Label>
         <DatePicker
           value={selectedDate ? new Date(selectedDate) : undefined}
-          className="label-color ms-TextField-field"
+          // className="label-color ms-TextField-field"
           allowTextInput
           placeholder="Select a date"
-          styles={datePickerStyle}
+          styles={getDatePickerStyle(disabled)}
           onSelectDate={(date) => onChange && onChange(date || null)}
           formatDate={(date) => moment(date).format("DD/MM/YYYY")}
           minDate={minDate}
           disabled={disabled}
           maxDate={maxDate}
-          initialPickerDate={minDate}
+          initialPickerDate={maxDate}
         />
         {error && (
           <p

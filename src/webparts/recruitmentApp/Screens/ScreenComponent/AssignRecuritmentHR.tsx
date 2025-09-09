@@ -1,15 +1,9 @@
 import * as React from "react";
 import JobCodeSelector from "../../components/CustomMultiselectwithswipe";
-import {
-  ADGroupID,
-  ColorCode,
-  ListNames,
-  RoleID,
-} from "../../utilities/Config";
+import { ListNames, RoleID } from "../../utilities/Config";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import { JobCodeTilte } from "../../Models/RecuritmentVRR";
-import ReuseButton from "../../components/ReuseButton";
 import CustomTextArea from "../../components/CustomTextArea";
 import { AutoCompleteItem } from "../../Models/Screens";
 import { CommonServices } from "../../Services/ServiceExport";
@@ -25,7 +19,7 @@ interface AssignPositionDialogProps {
   selectedJobCodes: JobCodeTilte[];
   onSelectAllChange: (value: boolean) => void;
   onRowChange?: (value: boolean, rowIndex: number) => void;
-  CurrentRole: number;
+  CurrentRole: number[];
   onClose: () => void;
   AssignedHRId: number; //props.stateValue?.AssignedHRId
   validationErrors: formValidation;
@@ -34,6 +28,7 @@ interface AssignPositionDialogProps {
   handleAgencyChange: (value: AutoCompleteItem[] | null) => void;
   handleInputChangeTextArea: (value: string | null) => void;
   AssignHRSubmit: () => void;
+  Nationality: string;
 }
 
 export const AssignRecuritmentHR = ({
@@ -50,6 +45,7 @@ export const AssignRecuritmentHR = ({
   handleAgencyChange,
   handleInputChangeTextArea,
   AssignHRSubmit,
+  Nationality,
 }: AssignPositionDialogProps) => {
   const [AssignRecruitmentHROption, setAssignRecruitmentHROption] =
     React.useState<AutoCompleteItem[]>([]);
@@ -59,14 +55,25 @@ export const AssignRecuritmentHR = ({
   React.useEffect(() => {
     const initialize = async () => {
       try {
+        const GetADGruopUserID = await CommonServices.GetMasterData(
+          ListNames.HRMSRecruitmentUserRole
+        );
+        console.log(GetADGruopUserID, "GetADGruopUserID");
+        let ADGroupIDs = GetADGruopUserID.data?.filter(
+          (item: any) => item.ID === RoleID.RecruitmentHR
+        );
+        // console.log(ADGroupIDs, "ADGroupID");
+
         const [HRMSExternalAgents, AssignRecurtimentHROption] =
           await Promise.all([
             CommonServices.GetMasterData(ListNames.HRMSExternalAgents),
-            CommonServices.GetADgruopsEmailIDs(ADGroupID.HRMSRecruitmentHR),
+            CommonServices.GetADgruopsEmailIDs(ADGroupIDs[0]?.ADGroupID),
           ]);
-
+        let ExternalAgent = HRMSExternalAgents.data?.filter(
+          (nat) => nat.Nationality === Nationality
+        );
         const agentsOptions: AutoCompleteItem[] =
-          HRMSExternalAgents.data?.map((item: any) => ({
+          ExternalAgent?.map((item: any) => ({
             key: item.Id,
             text: item.AgentName,
           })) ?? [];
@@ -123,7 +130,7 @@ export const AssignRecuritmentHR = ({
           </div>
           <div className="ms-Grid-row" style={{ textAlign: "left" }}>
             <div className="ms-Grid-col ms-lg6">
-              {CurrentRole === RoleID.RecruitmentHRLead ? (
+              {CurrentRole.includes(RoleID.RecruitmentHRLead) ? (
                 <CustomAutoComplete
                   label="Assign Recruitment HR"
                   options={AssignRecruitmentHROption}
@@ -148,7 +155,7 @@ export const AssignRecuritmentHR = ({
                     onChange={(item) => handleAgencyChange(item)}
                     error={validationErrors.AssignRecruitmentAgencies}
                   />
-                  {CurrentRole === RoleID.RecruitmentHR && (
+                  {CurrentRole.includes(RoleID.RecruitmentHR) && (
                     <span
                       style={{
                         color: "red",
@@ -171,7 +178,7 @@ export const AssignRecuritmentHR = ({
             <div className="ms-Grid-col ms-lg10">
               <CustomTextArea
                 label={
-                  CurrentRole === RoleID.RecruitmentHR
+                  CurrentRole.includes(RoleID.RecruitmentHR)
                     ? "Notes for Agencies"
                     : "Notes for Recruitment HR"
                 }
@@ -179,17 +186,17 @@ export const AssignRecuritmentHR = ({
                 error={validationErrors.Comments}
                 onChange={(value) => handleInputChangeTextArea(value)}
                 mandatory={true}
-                placeholder={
-                  CurrentRole === RoleID.RecruitmentHRLead
-                    ? "You may provide Hiring Line Manager and Hiring HOD name and number here to RecruitmentHR...."
-                    : ""
-                }
+                // placeholder={
+                //   CurrentRole.includes(RoleID.RecruitmentHRLead)
+                //     ? "You may provide Hiring Line Manager and Hiring HOD name and number here to RecruitmentHR...."
+                //     : ""
+                // }
               />
             </div>
           </div>
           <div className="ms-Grid-row" style={{ marginTop: "20px" }}></div>
         </div>
-        <div
+        {/* <div
           className="ms-Grid-row"
           style={{
             display: "flex",
@@ -219,7 +226,7 @@ export const AssignRecuritmentHR = ({
               width: "50%",
             }}
           />
-        </div>
+        </div> */}
       </div>
     </>
   );

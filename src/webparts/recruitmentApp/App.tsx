@@ -5,11 +5,24 @@ import { RoleProvider } from "./utilities/RoleContext";
 import "./App.css";
 import "office-ui-fabric-core/dist/css/fabric.css";
 
-
 const SubMain = (props: any) => {
   const location = useLocation();
   const state = location.state;
   const navigate = useNavigate();
+  React.useEffect(() => {
+    const faviconURL = `${props.webURL}/SiteAssets/favicon/favicon.png`;
+
+    // Remove existing favicon
+    const existingIcons = document.querySelectorAll("link[rel*='icon']");
+    existingIcons.forEach((el) => el.parentNode?.removeChild(el));
+
+    // Add custom favicon
+    const link = document.createElement("link");
+    link.rel = "icon";
+    link.type = "image/x-icon";
+    link.href = faviconURL;
+    document.head.appendChild(link);
+  }, []);
   return (
     <>
       <MainPage
@@ -30,10 +43,7 @@ function App(props: any) {
         </div>
       </HashRouter>
     </RoleProvider>
-
   );
 }
-
-
 
 export default App;

@@ -20,6 +20,7 @@ interface AutoCompleteFields {
   disabled: boolean;
   mandatory?: boolean;
   placeholder?: string;
+  MinHeight?: string;
 }
 const removeDuplicates = (items: AutoCompleteItem[]) => {
   const seen = new Map();
@@ -42,6 +43,7 @@ function CustomAutoComplete({
   onChange,
   mandatory = false,
   placeholder,
+  MinHeight,
 }: AutoCompleteFields) {
   const uniqueOptions = React.useMemo(
     () => removeDuplicates(options),
@@ -66,23 +68,33 @@ function CustomAutoComplete({
           borderColor: "#5f5f5f",
           boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
           "& input": {
-            height: "10px",
+            height: MinHeight ? MinHeight : "10px",
           },
-          "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-            {
-              borderColor: "#5f5f5f",
-            },
-          // "& .MuiAutocomplete-popupIndicator, & .MuiAutocomplete-clearIndicator":
-          //   {
-          //     color: "black",
-          //   },
+          "& .MuiOutlinedInput-root": {
+            minWidth: "50px",
+            ...(disabled && {
+              background: "none rgb(243, 242, 241)",
+            }),
+          },
+          field: {
+            ...(disabled && {
+              background: "none rgb(243, 242, 241);",
+              "::placeholder": {
+                background: "none rgb(243, 242, 241)",
+              },
+            }),
+          },
         }}
         disabled={disabled}
         autoSelect={true}
         autoComplete={true}
         onChange={onChange ? (event, value) => onChange(value) : undefined}
         renderInput={(params) => (
-          <TextField placeholder={placeholder} {...params} />
+          <TextField
+            placeholder={placeholder}
+            {...params}
+            sx={{ minWidth: "50px" }}
+          />
         )}
       />
       {error && (

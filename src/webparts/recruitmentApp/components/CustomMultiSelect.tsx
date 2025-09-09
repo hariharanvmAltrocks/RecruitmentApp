@@ -86,6 +86,7 @@ function CustomMultiSelect({
           borderRadius: "4px",
           borderColor: "#5f5f5f",
           boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+          ...(disabled ? { background: "none rgb(243, 242, 241)" } : {}),
           "& input": {
             height: "10px",
           },

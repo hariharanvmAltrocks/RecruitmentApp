@@ -4,33 +4,77 @@ import {
   TooltipDelay,
   DirectionalHint,
   ITooltipProps,
-  ITooltipHostStyles
+  ITooltipHostStyles,
 } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 
 interface ToolTipButtonProps {
   Title: string;
-  Rowdata: {
-    Section?: string;
-    DepartmentCode?: string;
-  };
+  CurrentMenuId: number;
+  Rowdata: any;
+  ApproverData: any;
+  onHover: () => void;
 }
 
-const ToolTipButton: React.FC<ToolTipButtonProps> = ({ Title, Rowdata }) => {
+const ToolTipButton: React.FC<ToolTipButtonProps> = ({
+  Title,
+  Rowdata,
+  ApproverData,
+  onHover,
+}) => {
   const tooltipId = useId("tooltip");
-  const hostStyles: Partial<ITooltipHostStyles> = { root: { display: "inline-block" } };
+  const hostStyles: Partial<ITooltipHostStyles> = {
+    root: { display: "inline-block" },
+  };
+
+  const renderApproverList = (lines: React.ReactNode[]) => (
+    <div style={{ fontFamily: "monospace", padding: 10 }}>
+      <div
+        style={{
+          textDecoration: "underline",
+          fontWeight: "bold",
+          fontFamily: '"Roboto", sans-serif',
+          fontSize: "16px",
+          marginBottom: "8px",
+        }}
+      >
+        Approver Name
+      </div>
+      {lines}
+    </div>
+  );
+
+  const boldLabel = (label: string, value: string | undefined) => (
+    <div style={{ display: "flex", marginBottom: 4 }}>
+      <div
+        style={{
+          minWidth: 85,
+          fontWeight: "bold",
+          fontFamily: '"Roboto", sans-serif',
+        }}
+      >
+        {label}
+      </div>
+      <div style={{ fontFamily: '"Roboto", sans-serif' }}>
+        {" "}
+        : {value ?? "—"}
+      </div>
+    </div>
+  );
 
   const tooltipProps: ITooltipProps = {
-    onRenderContent: () => (
-      <ul style={{ margin: 10, padding: 0, listStyle: "none", textAlign: "left" }}>
-        <li>{`Section Name: ${Rowdata?.Section || "N/A"}`}</li>
-        <li>{`Department Code: ${Rowdata?.DepartmentCode || "N/A"}`}</li>
-      </ul>
-    ),
+    onRenderContent: () => {
+      const data = ApproverData;
+
+      if (!data) return <div>Loading...</div>;
+      return renderApproverList(
+        data.map((item: any) => boldLabel(item.Key, item.Value))
+      );
+    },
   };
 
   return (
-    <div className="button-container" style={{ display: "inline-flex", alignItems: "center" }}>
+    <div className="button-container" style={{ float: "inline-start" }}>
       {Title}
       <TooltipHost
         tooltipProps={tooltipProps}
@@ -40,11 +84,14 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({ Title, Rowdata }) => {
         styles={hostStyles}
       >
         <img
-          src={require("../../../assets/info.svg")}
+          src={require("../assets/info.svg")}
           alt="tooltip-icon"
+          onMouseEnter={() => {
+            onHover(); // Notify parent to fetch based on status
+          }}
           style={{
             width: "20px",
-            marginLeft: "5px",
+            marginRight: "5px",
             padding: "3px",
             cursor: "pointer",
             height: "20px",

@@ -61,6 +61,7 @@ function CustomTextArea({
           fontFamily: "sans-serif",
           paddingTop: value ? "5px" : "7px",
           paddingLeft: value ? "7px" : "11px",
+          ...(disabled ? { background: "none rgb(243, 242, 241)" } : {}),
         }}
         onChange={
           onChange ? (event, value) => onChange(value?.value || "") : undefined

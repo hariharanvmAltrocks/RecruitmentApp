@@ -23,8 +23,29 @@ export type MenuResponse = {
     ParentId: number;
     Sort: number;
     IsActive: boolean;
+    SubMenu?: MenuResponse;
+    Tab?: ITab;
+    Action?: IAction;
+    Status?: IStatus;
     Children?: MenuResponse[];
+    TabDetails?: any[]
 }
+
+interface ITab {
+    key: string;
+    text: string;
+    sorting: string;
+}
+
+interface IAction {
+    key: number;
+    text: string;
+}
+interface IStatus {
+    key: number;
+    text: string;
+}
+
 
 export type MenuDetailsResponse = {
     data: MenuResponse[];

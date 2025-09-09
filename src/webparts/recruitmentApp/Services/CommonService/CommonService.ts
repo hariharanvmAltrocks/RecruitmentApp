@@ -4,7 +4,8 @@ import SPServices from "../SPService/SPServices";
 import { ICommonService } from "./ICommonService";
 import GraphService from "../GraphService/GraphService";
 import { AutoCompleteItem } from "../../Models/Screens";
-import { ListNames } from "../../utilities/Config";
+import { DocumentLibraray, ListNames } from "../../utilities/Config";
+
 
 export default class CommonService implements ICommonService {
   uploadAttachmentToLibrary = async (
@@ -27,7 +28,7 @@ export default class CommonService implements ICommonService {
             await sp.web
               .getFileByServerRelativeUrl(file.ServerRelativeUrl)
               .delete();
-            console.log(`Deleted existing file: ${file.Name}`);
+            // console.log(`Deleted existing file: ${file.Name}`);
           } catch (error) {
             console.warn(` Error deleting file: ${file.Name}`, error);
           }
@@ -39,9 +40,6 @@ export default class CommonService implements ICommonService {
           Datas: AttachFile,
         });
 
-        console.log(
-          "All existing files deleted, and new files added successfully"
-        );
 
         return {
           data: "Successfully Replaced Document",
@@ -210,8 +208,30 @@ export default class CommonService implements ICommonService {
       const user = await sp.web.siteUsers.getByEmail(email)();
       const UserID = {
         key: user.Id,
-        text: user.Title,
+        text: user.Title    //`${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || "" }`,
       };
+      return {
+        data: UserID,
+        status: 200,
+        message: "ADGroups retrieved successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching user ID by email: ", error);
+      // Return null in case of an error
+      return {
+        data: null,
+        status: 500,
+        message: "Error getting ADGroups",
+      };
+    }
+  };
+
+  getUserIDByEmail = async (
+    userId: number
+  ): Promise<ApiResponse<any | null>> => {
+    try {
+      const user = await sp.web.siteUsers.getById(userId)();
+      const UserID = user.Email
       return {
         data: UserID,
         status: 200,
@@ -252,6 +272,51 @@ export default class CommonService implements ICommonService {
     }
   };
 
+  GetDocumentinUrl = async (url: string): Promise<ApiResponse<any[]>> => {
+    try {
+      let filteredFiles: IDocFiles[] = [];
+      if (url) {
+        const extractedPath =
+          url.split("/root:/")[1]?.split(":/content")[0] || "";
+
+        if (extractedPath) {
+          const folderPath =
+            extractedPath.substring(0, extractedPath.lastIndexOf("/")) || "";
+
+          try {
+            let FileData = (await SPServices.getDocLibFiles({
+              FilePath: `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${folderPath}`,
+            })) as IDocFiles[];
+
+            if (FileData && FileData.length > 0) {
+              const fileName = extractedPath.split("/").pop();
+              filteredFiles = FileData.filter((file) => file.name === fileName);
+            } else {
+              console.warn("Warning: No files found in the directory");
+            }
+          } catch (error) {
+            console.error("Error fetching document library files:", error);
+          }
+        }
+      }
+      return {
+        data: filteredFiles,
+        status: 200,
+        message: "HRMSRecruitmentCandidateDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data HRMSRecruitmentCandidateDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data from HRMSRecruitmentCandidateDetails",
+      };
+    }
+  };
+
   async GetGradeLevel(PatersonGrade: string): Promise<ApiResponse<any | null>> {
     try {
       let op: AutoCompleteItem[] = [];
@@ -271,7 +336,7 @@ export default class CommonService implements ICommonService {
           op = data.map((item: any) => ({
             Level: item.Levels,
           }));
-          console.log("data HRMSGradeMaster", op);
+          // console.log("data HRMSGradeMaster", op);
         });
       }
       return {
@@ -284,14 +349,30 @@ export default class CommonService implements ICommonService {
       throw error;
     }
   }
+
+
 }
 
 async function getUserGuidByEmail(email: string) {
   try {
     const user = await sp.web.siteUsers.getByEmail(email)();
+    const listItems: any[] = await SPServices.SPReadItems({
+      Listname: ListNames.HRMSSageList,
+      Select: "*",
+      Filter: [{
+        FilterKey: "EmailId",
+        FilterValue: "eq",
+        Operator: email
+      }]
+    });
+    let UserName = listItems.find((emp: any) => {
+      return emp.EmailId?.toLowerCase() === email?.toLowerCase();
+    });
+    // console.log(UserName, "UserName");
+
     return {
       key: user.Id,
-      text: user.Title,
+      text: `${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || ""}`,
     };
   } catch (error) {
     console.error("Error fetching user ID by email: ", error);

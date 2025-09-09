@@ -19,28 +19,36 @@ import {
   Choices,
   ResponeStatus,
   ColorCode,
+  ActionIcon,
+  ButtonAction,
+  InterviewLevels,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Card, CardContent } from "@mui/material";
 import { AutoCompleteItem } from "../../Models/Screens";
-import { JobCodeTilte } from "../../Models/RecuritmentVRR";
+import { JobCodeTilte, tabCount } from "../../Models/RecuritmentVRR";
 import {
   DataSyncToRecruitmentResponse,
   InsertComments,
   PostRecuritmentData,
 } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
-import CheckboxDataTable from "../../components/CheckboxDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import { alertPropsData } from "../../Models/Screens";
 import { jobsXAgents, profileXagent } from "../../Models/ApIInterface";
 import CustomDialogbox from "../../components/CustomDialogbox";
 import { DateExtension } from "../../components/DateExtension";
-import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
 import {
   AssignHRData,
   AssignRecuritmentHR,
 } from "../ScreenComponent/AssignRecuritmentHR";
 import IsValid from "../../components/Validation";
+import { StatusDetails, TabDetails } from "../../Models/Master";
+import CheckboxDataTable from "../../components/CheckboxDataTable";
+import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
+import * as moment from "moment";
+import ReuseButton from "../../components/ReuseButton";
+import ToolTipButton from "../../components/Tooltip";
+import { tabStyle } from "../../components/TabMerge";
 
 export type formValidation = {
   Comments: boolean;
@@ -49,7 +57,7 @@ export type formValidation = {
 };
 
 const RecruitmentProcess = (props: any) => {
-  // console.log(props, "ApprovedVRR");
+  console.log(props, "PROPSvALUE");
 
   const [data, setData] = React.useState<DataSyncToRecruitmentResponse[]>([]);
   const [selectedrowdata, setSelectedrowdata] = React.useState<
@@ -58,13 +66,15 @@ const RecruitmentProcess = (props: any) => {
   // const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
   const [rows, setRows] = React.useState<number>(5);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [activeTab, setActiveTab] = React.useState<string>("tab1");
+  const [activeTab, setActiveTab] = React.useState<string>();
   const [AssignHR, setAssignHR] = React.useState<boolean>(false);
   const [AssignHRData, setAssignHRData] = React.useState<AssignHRData>({
     AssignRecruitmentHR: { key: 0, text: "" },
     AssignRecruitmentAgencies: [],
     Comments: "",
   });
+  const [TabNameData, setTabNameData] = React.useState<TabDetails[]>([]);
+  // const [isCurrectTab, setIsCurrectTab] = React.useState<string>("");
   const [allJobData, setJobCodeTitle] = React.useState<JobCodeTilte[]>([
     {
       JobTitle: "",
@@ -75,7 +85,6 @@ const RecruitmentProcess = (props: any) => {
   const [selectedJobCodes, setSelectedJobCodes] = React.useState<
     JobCodeTilte[]
   >([]);
-  const [selectAll, setSelectAll] = React.useState<boolean>(false);
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
     Message: "",
@@ -84,9 +93,6 @@ const RecruitmentProcess = (props: any) => {
     visible: false,
   });
   const [DatePopup, setDatePopup] = React.useState<boolean>(false);
-  const [assignedCandidates, setAssignedCandidates] =
-    React.useState<boolean>(false);
-
   const [validationErrors, setValidationErrors] =
     React.useState<formValidation>({
       Comments: false,
@@ -94,9 +100,143 @@ const RecruitmentProcess = (props: any) => {
       AssignRecruitmentAgencies: false,
     });
 
+  const [pendingcount, setPendingCount] = React.useState<tabCount>({
+    AssignHRCount: 0,
+    UploadONEMCount: 0,
+    UploadAdvertisementCount: 0,
+    AssignAgencyCount: 0,
+    ReviewLineManagerCount: 0,
+    ReviewHODCount: 0,
+    lineManagerInterviewCount: 0,
+    HODReviewScoreCount: 0,
+    EvaluationCount: 0,
+    advertExtensionCount: 0,
+  });
+
+  const [pendingInfo, setPendingInfo] = React.useState<any>(null);
+  const storedStringRef = React.useRef("");
+
+  const handleHover = async (statusId: number, rowData: any) => {
+    let pendingName: any[] = [];
+    switch (statusId) {
+      case StatusId.ReadyforRecruitmentProcess:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              rowData.AssignHRLead,
+              "RecruitmentHRLead"
+            )
+          ).data,
+        ];
+        break;
+      case StatusId.PendingwithHRLeadtoAssignRecruitmentHR:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              rowData.AssignEMail,
+              "RecruitmentHR"
+            )
+          ).data,
+        ];
+        break;
+      case StatusId.PendingwithRecruitmentHRtouploadAdv:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              rowData.AssignEMail,
+              "RecruitmentHR"
+            )
+          ).data,
+        ];
+        break;
+      case StatusId.PendingwithLineManagereviewAdv:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              rowData.AssignLineManager,
+              "LineManager"
+            )
+          ).data,
+        ];
+        break;
+      case StatusId.PendingwithLMcreateDisqualificationQuestion:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              rowData.AssignLineManager,
+              "LineManager"
+            )
+          ).data,
+        ];
+        break;
+      case StatusId.PendingwithHODtoreviewAdv:
+        pendingName = [
+          (await getVRRDetails.GetADGroupUsers(rowData.AssignHOD, "HOD")).data,
+        ];
+        break;
+      case StatusId.PendingwithHRLeadtouploadONEMsigneddoc:
+        pendingName = [
+          (await getVRRDetails.GetADGroupUsers(rowData.AssignHRLead, "HRLead"))
+            .data,
+        ];
+        break;
+
+      case StatusId.PendingwithHRandLMtocreateinterviewQuestion:
+        pendingName = [
+          (
+            await getVRRDetails.GetADGroupUsers(
+              rowData.AssignLineManager,
+              "LineManager"
+            )
+          ).data,
+        ];
+        break;
+      case StatusId.RecruitmentInProgress: {
+        let Tooltipdata = await getVRRDetails.GetInterviewPanelTooltiData(
+          rowData
+        );
+        let GradeLevel = await CommonServices.GetGradeLevel(
+          rowData?.PatersonGrade
+        );
+        console.log(GradeLevel);
+
+        if (Tooltipdata?.data && Tooltipdata.data[0]?.LineManager) {
+          pendingName = [
+            {
+              Key: Tooltipdata.data[0].LineManager.Role,
+              Value: Tooltipdata.data[0].LineManager.Name,
+            },
+            {
+              Key: Tooltipdata.data[0].HOD.Role,
+              Value: Tooltipdata.data[0].HOD.Name,
+            },
+            {
+              Key: Tooltipdata.data[0].HR.Role,
+              Value: Tooltipdata.data[0].HR.Name,
+            },
+          ];
+
+          if (GradeLevel.data[0]?.Level === InterviewLevels.Level2) {
+            pendingName.push({
+              Key: Tooltipdata.data[0].Exco.Role,
+              Value: Tooltipdata.data[0].Exco.Name,
+            });
+          }
+        } else {
+          pendingName = [{ Key: "N/A", Value: "No matching group" }];
+        }
+        break;
+      }
+      default:
+        pendingName = [{ Key: "N/A", Value: "No matching group" }];
+        break;
+    }
+    setPendingInfo(pendingName);
+  };
+
   const columnConfig = (
     tab: string,
-    ButtonAction: string,
+    ButtonActions: number,
     TabNames: string
   ) => [
     {
@@ -120,11 +260,60 @@ const RecruitmentProcess = (props: any) => {
       sortable: true,
     },
     {
+      field: "Type",
+      header: "Position Request",
+      sortable: true,
+    },
+    {
+      field: "Nationality",
+      header: "Nationality",
+      sortable: true,
+    },
+    {
       field: "Status",
       header: "Status",
       fieldName: "Status",
       sortable: false,
       body: (rowData: any) => {
+        let isTooltipStatus: any;
+        if (props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)) {
+          isTooltipStatus = [
+            StatusId.ReadyforRecruitmentProcess,
+            // StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
+            // StatusId.RecruitmentInProgress,
+          ].includes(rowData.StatusId);
+        } else {
+          isTooltipStatus = [
+            StatusId.ReadyforRecruitmentProcess,
+            StatusId.PendingwithRecruitmentHRtouploadAdv,
+            StatusId.PendingwithLineManagereviewAdv,
+            StatusId.PendingwithHRandLMtocreateinterviewQuestion,
+            StatusId.PendingwithLMcreateDisqualificationQuestion,
+            StatusId.PendingwithHODtoreviewAdv,
+            StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
+            // StatusId.RecruitmentInProgress,
+          ].includes(rowData.StatusId);
+        }
+
+        console.log(pendingInfo, "pendingInfo");
+
+        if (
+          !isTooltipStatus &&
+          storedStringRef.current != TabName.UploadONEMDoc
+        ) {
+          return (
+            <div>
+              <ToolTipButton
+                Title=""
+                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                Rowdata={rowData}
+                ApproverData={pendingInfo}
+                onHover={() => handleHover(rowData.StatusId, rowData)}
+              />
+              <span>{rowData.Status}</span>
+            </div>
+          );
+        }
         return <span>{rowData.Status}</span>;
       },
     },
@@ -132,93 +321,85 @@ const RecruitmentProcess = (props: any) => {
       field: "Action",
       header: "Action",
       sortable: false,
-      style: { width: "8%" },
+      style:
+        TabNames === TabName.AdvertExtension
+          ? { width: "13%" }
+          : { width: "8%" },
       body: (rowData: any) => {
         return (
           <div
             style={{
               display: "flex",
               flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "5px",
+              alignItems:
+                TabNames === TabName.AdvertExtension ? "left" : "center",
+              justifyContent:
+                TabNames === TabName.AdvertExtension ? "left" : "center",
+              gap: "10px", // slightly more space for small screens
+              flexWrap: "wrap", // allow wrapping on smaller screens
             }}
           >
-            {ButtonAction === "Edit" ? (
+            {ButtonActions === ActionIcon.Edit ? (
               <>
-                {/* <Button
-                    
-                    className="table_btn"
-                    style={{
-                      width: "30px",
-                      marginRight: "7px",
-                      padding: "3px",
-                    }}
-                  >
-                  </Button> */}
                 <img
                   src={require("../../assets/Editbutton.svg")}
                   alt="Stamp Icon"
                   onClick={() =>
-                    handleRedirectView(rowData, tab, TabNames, ButtonAction)
+                    handleRedirectView(
+                      rowData,
+                      tab,
+                      TabNames,
+                      ButtonAction.Edit
+                    )
                   }
                   style={{
-                    width: "70%",
-                    height: "60%",
+                    width: "50%", // scales with font size
+                    height: "auto",
+                    maxWidth: "40px", // limit maximum size
+                    cursor: "pointer",
                   }}
                 />
               </>
-            ) : ButtonAction === "Upload" ? (
+            ) : ButtonActions === ActionIcon.Upload ? (
               <>
-                {/* <Button
-                    
-                    className="table_btn"
-                    // icon="pi pi-eye"
-                    style={{
-                      width: "30px",
-                      marginRight: "7px",
-                      padding: "3px",
-                    }}
-                  >
-                    
-                  </Button> */}
                 <img
                   src={require("../../assets/UploadIcon.svg")}
                   alt="Stamp Icon"
                   style={{
-                    width: "60%",
-                    height: "60%",
+                    width: "50%", // scales with font size
+                    height: "auto",
+                    maxWidth: "40px", // limit maximum size
+                    cursor: "pointer",
                   }}
                   onClick={() =>
-                    handleRedirectView(rowData, tab, TabNames, ButtonAction)
+                    handleRedirectView(
+                      rowData,
+                      tab,
+                      TabNames,
+                      ButtonAction.Upload
+                    )
                   }
                 />
               </>
             ) : (
               <>
-                {/* <Button
-                    onClick={() =>
-                      handleRedirectView(rowData, tab, TabName, ButtonAction)
-                    }
-                    className="table_btn"
-                    // icon="pi pi-eye"
-                    style={{
-                      width: "30px",
-                      marginRight: "7px",
-                      padding: "3px",
-                    }}
-                  >
-                   
-                  </Button> */}
                 <img
                   src={require("../../assets/Viewicon.svg")}
                   alt="Stamp Icon"
                   style={{
-                    width: "70%",
-                    height: "60%",
+                    width: "50%", // scales with font size
+                    height: "auto",
+                    maxWidth:
+                      TabNames === TabName.AdvertExtension ? "29px" : "40px", // limit maximum size
+                    cursor: "pointer",
                   }}
                   onClick={() =>
-                    handleRedirectView(rowData, tab, TabNames, ButtonAction)
+                    handleRedirectView(
+                      rowData,
+                      tab,
+                      TabNames,
+                      ButtonAction.View
+                    )
                   }
                 />
               </>
@@ -229,13 +410,78 @@ const RecruitmentProcess = (props: any) => {
                   src={require("../../assets/AddDate.svg")}
                   alt="Stamp Icon"
                   style={{
-                    width: "70%",
-                    height: "60%",
+                    width: "50%",
+                    height: "auto",
+                    maxWidth: "29px",
+                    cursor: "pointer",
                   }}
                   onClick={() => {
-                    let selectedData = [rowData];
-                    setSelectedrowdata(selectedData);
-                    setDatePopup(true);
+                    const today = new Date();
+                    // today.setDate(today.getDate() + 1); // Add 1 day
+                    today.setHours(0, 0, 0, 0); // Normalize to midnight
+
+                    const {
+                      JobPostingEndDate,
+                      JobPostingFirstExtensionEndDate,
+                      JobPostingSecondExtensionEndDate,
+                    } = rowData || {};
+
+                    let JobValidation = false;
+
+                    let comparisonDate = null;
+
+                    if (JobPostingSecondExtensionEndDate) {
+                      comparisonDate = new Date(
+                        JobPostingSecondExtensionEndDate
+                      );
+                    } else if (JobPostingFirstExtensionEndDate) {
+                      comparisonDate = new Date(
+                        JobPostingFirstExtensionEndDate
+                      );
+                    } else if (JobPostingEndDate) {
+                      comparisonDate = new Date(JobPostingEndDate);
+                    }
+
+                    if (comparisonDate) {
+                      comparisonDate.setHours(0, 0, 0, 0); // Normalize time
+                      JobValidation = today >= comparisonDate; // <-- reversed comparison
+                    }
+
+                    if (!JobValidation) {
+                      const Dateformat = JobPostingSecondExtensionEndDate
+                        ? moment(JobPostingSecondExtensionEndDate).format(
+                            "DD/MM/YYYY"
+                          )
+                        : JobPostingFirstExtensionEndDate
+                        ? moment(JobPostingFirstExtensionEndDate).format(
+                            "DD/MM/YYYY"
+                          )
+                        : moment(JobPostingEndDate).format("DD/MM/YYYY");
+                      const JobExpiredMsg = `
+          <div style="text-align: center;">
+            <h3>⚠️ Action cannot be performed.</h3>
+            <p>This job advert is still active and open for recruitment.</p>
+            <p><strong>Expiry Date:</strong> ${Dateformat}</p>
+            <p>Please try again after it expires.</p>
+          </div>`;
+                      const SuccessAlert = {
+                        Message: JobExpiredMsg,
+                        Type: HRMSAlertOptions.Error,
+                        visible: true,
+                        ButtonAction: async (userClickedOK: boolean) => {
+                          if (userClickedOK) {
+                            setAlertPopupOpen(false);
+                          }
+                        },
+                      };
+
+                      setAlertPopupOpen(true);
+                      setalertProps(SuccessAlert);
+                    } else {
+                      let selectedData = [rowData];
+                      setSelectedrowdata(selectedData);
+                      setDatePopup(true);
+                    }
                   }}
                 />
               </>
@@ -249,228 +495,115 @@ const RecruitmentProcess = (props: any) => {
   async function handleRedirectView(
     rowData: any,
     tab: string,
-    TabName: string,
+    TabNames: string,
     ButtonAction: string
   ) {
-    switch (props.CurrentRoleID) {
-      case RoleID.RecruitmentHRLead:
-        {
-          if (tab === "tab1") {
-            props.navigation("/RecurimentProcess/ApprovedVRREdit", {
-              state: {
-                type: rowData?.Type,
-                ID: rowData?.ID,
-                tab,
-                StatusId: rowData?.StatusId,
-                Status: rowData?.Status,
-                TabName: TabName,
-                ButtonAction,
-              },
-            });
-          } else if (tab === "tab2") {
-            props.navigation("/RecurimentProcess/ApprovedVRREdit", {
-              state: {
-                ID: rowData?.ID,
-                AssignedHRId: rowData?.AssignedHRId,
-                tab,
-                StatusId: rowData?.StatusId,
-                Status: rowData?.Status,
-                TabName: TabName,
-                ButtonAction,
-              },
-            });
-          } else {
-            props.navigation("/RecurimentProcess/ApprovedVRRView", {
-              state: {
-                ID: rowData?.ID,
-                AssignedHR: rowData?.AssignedHR,
-                tab,
-                StatusId: rowData?.StatusId,
-                Status: rowData?.Status,
-                TabName: TabName,
-                ButtonAction,
-              },
-            });
-          }
-        }
+    switch (TabNames) {
+      case TabName.AssignRecuritmentHR:
+      case TabName.UploadONEMDoc:
+      case TabName.UploadAdvertisement:
+      case TabName.AssignAgencies:
+      case TabName.ReviewJobAdvertisement:
+        props.navigation("/RecurimentProcess/ApprovedVRREdit", {
+          state: {
+            type: rowData?.Type,
+            ID: rowData?.ID,
+            AssignedHRId: rowData?.AssignedHRId,
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            TabName: TabNames,
+            ButtonAction,
+          },
+        });
         break;
 
-      case RoleID.RecruitmentHR:
-        {
-          if (tab === "tab1" || tab === "tab2") {
-            props.navigation("/RecurimentProcess/ApprovedVRREdit", {
-              state: {
-                ID: rowData?.ID,
-                tab,
-                StatusId: rowData?.StatusId,
-                Status: rowData?.Status,
-                TabName: TabName,
-                ButtonAction,
-              },
-            });
-          } else if (tab === "tab4") {
-            props.navigation("/RecurimentProcess/ApprovedVRRView", {
-              state: {
-                ID: rowData?.ID,
-                tab,
-                StatusId: rowData?.StatusId,
-                Status: rowData?.Status,
-                TabName: TabName,
-                ButtonAction,
-              },
-            });
-          } else if (tab === "tab3") {
-            props.navigation("/RecurimentProcess/ReviewProfile", {
-              state: {
-                ID: rowData?.ID,
-                tab,
-                StatusId: rowData?.StatusId,
-                Status: rowData?.Status,
-                TabName: TabName,
-                ButtonAction,
-              },
-            });
-          } else if (tab === "tab5") {
-            props.navigation("/RecurimentProcess/AssignInterviewPanel", {
-              state: {
-                ID: rowData?.ID,
-                tab,
-                StatusId: rowData?.StatusId,
-                Status: rowData?.Status,
-                TabName: TabName,
-                ButtonAction,
-              },
-            });
-          }
-        }
+      case TabName.MySubmission:
+      case TabName.AdvertExtension:
+        props.navigation("/RecurimentProcess/ApprovedVRRView", {
+          state: {
+            ID: rowData?.ID,
+            AssignedHR: rowData?.AssignedHR,
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            TabName: TabNames,
+            ButtonAction,
+          },
+        });
         break;
 
-      case RoleID.HOD:
-        {
-          if (tab === "tab1") {
-            props.navigation("/RecurimentProcess/ApprovedVRREdit", {
-              state: {
-                ID: rowData?.ID,
-                tab,
-                StatusId: rowData?.StatusId,
-                Status: rowData?.Status,
-                TabName: TabName,
-                ButtonAction,
-              },
-            });
-          } else if (tab === "tab2") {
-            props.navigation("/RecurimentProcess/HodScoreCard/CandidateList", {
-              state: {
-                ID: rowData?.ID.toString().trim(),
-                tab,
-                StatusId: rowData?.StatusId,
-                Status: rowData?.Status,
-                TabName: TabName,
-                ButtonAction,
-                JobCode: rowData?.JobCode?.toString().trim(),
-                JobCodeId: rowData?.JobCodeId,
-                Department: rowData?.DepartmentId,
-              },
-            });
-          } else if (tab === "tab3") {
-            if (ButtonAction === "View") {
-              props.navigation("/RecurimentProcess/ApprovedVRRView", {
-                state: {
-                  ID: rowData?.ID,
-                  AssignedHR: rowData?.AssignedHR,
-                  tab,
-                  StatusId: rowData?.StatusId,
-                  Status: rowData?.Status,
-                  TabName: TabName,
-                  ButtonAction,
-                },
-              });
-            }
-          }
-        }
+      case TabName.ReviewScorecard:
+        props.navigation("/RecurimentProcess/HodScoreCard/CandidateList", {
+          state: {
+            ID: rowData?.ID.toString().trim(),
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            TabName: TabNames,
+            ButtonAction,
+            JobCode: rowData?.JobCode?.toString().trim(),
+            JobCodeId: rowData?.JobCodeId,
+            Department: rowData?.DepartmentId,
+            NoOfPosition: rowData?.NumberOfPersonNeeded,
+          },
+        });
         break;
-      case RoleID.LineManager:
-        {
-          if (tab === "tab1") {
-            props.navigation("/RecurimentProcess/ReviewProfile", {
-              state: {
-                ID: rowData?.ID,
-                tab,
-                StatusId: rowData?.StatusId,
-                Status: rowData?.Status,
-                TabName: TabName,
-                ButtonAction,
-              },
-            });
-          }
-        }
+
+      case TabName.InterviewQuestion:
+        props.navigation("/RecurimentProcess/InterviewQuesEdit", {
+          state: {
+            ID: rowData?.ID,
+            AssignedHRId: rowData?.AssignedHRId,
+            tab: "tab2",
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            JobTitleInEnglish: rowData.JobTitleEnglish,
+            Department: rowData.Department,
+            JobCode: rowData.JobCode,
+            TabNames,
+            ButtonAction,
+          },
+        });
+        break;
+
+      case TabName.ReviewProfile:
+        props.navigation("/RecurimentProcess/ReviewCandidateList", {
+          state: {
+            ID: rowData?.ID,
+            JobCode: rowData?.JobCode,
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            TabNames,
+            ButtonAction,
+          },
+        });
+        break;
+      case TabName.UploadCV:
+        props.navigation("/RecurimentProcess/UploadCandidateList", {
+          state: {
+            ID: rowData?.ID,
+            JobCode: rowData?.JobCode,
+            JobCodeId: rowData?.JobCodeId,
+            JobTitle: rowData?.JobTitleEnglish,
+            tab,
+            StatusId: rowData?.StatusId,
+            Status: rowData?.Status,
+            TabName: TabNames,
+            ButtonAction,
+          },
+        });
+        break;
+
+      default:
+        // optional: handle unknown TabName
+        console.warn("Unknown TabName:", TabNames);
         break;
     }
   }
 
-  const fetchCandidateData = async () => {
-    setIsLoading(true);
-    try {
-      const interviewPanelResponse = await CommonServices.GetMasterData(
-        ListNames.HRMSInterviewPanelDetails
-      );
-
-      if (
-        !interviewPanelResponse.data ||
-        interviewPanelResponse.data.length === 0
-      ) {
-        setIsLoading(false);
-        return;
-      }
-
-      const userResponse = await CommonServices.getUserGuidByEmail(
-        props.CurrentUserEmailId
-      );
-
-      if (userResponse.status !== 200 || !userResponse.data) {
-        setIsLoading(false);
-        return;
-      }
-
-      const userGUID = userResponse.data.key;
-
-      const filteredPanels = interviewPanelResponse.data.filter(
-        (panel) => panel.InterviewPanelId === userGUID
-      );
-
-      if (filteredPanels.length === 0) {
-        setAssignedCandidates(false);
-        setIsLoading(false);
-        return;
-      }
-
-      const candidateIDs = filteredPanels.map((panel) => panel.CandidateIDId);
-
-      const candidateDetailsResponse = await CommonServices.GetMasterData(
-        ListNames.HRMSRecruitmentCandidatePersonalDetails
-      );
-
-      if (
-        !candidateDetailsResponse.data ||
-        candidateDetailsResponse.data.length === 0
-      ) {
-        setIsLoading(false);
-        return;
-      }
-
-      const matchedCandidates = candidateDetailsResponse.data.filter(
-        (candidate) => candidateIDs.includes(candidate.ID)
-      );
-
-      setAssignedCandidates(matchedCandidates.length > 0);
-    } catch (error) {
-      console.error("Error fetching candidate data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchData = async () => {
+  const fetchData = async (tabName: any[]) => {
     setIsLoading(true);
     try {
       let filterConditions = [];
@@ -478,7 +611,7 @@ const RecruitmentProcess = (props: any) => {
       filterConditions.push({
         FilterKey: "StatusId",
         Operator: "eq",
-        FilterValue: StatusId.Completed,
+        FilterValue: StatusId.ReadyforRecruitmentProcess,
       });
       filterConditions.push({
         FilterKey: "IsDataSyncToRecruitment",
@@ -493,84 +626,129 @@ const RecruitmentProcess = (props: any) => {
 
       let filterConditionsRecuritment = [];
       let RecuritmentConditions = "and";
-      switch (props.CurrentRoleID) {
-        case RoleID.RecruitmentHRLead: {
-          if (activeTab === "tab2") {
-            filterConditionsRecuritment.push({
-              FilterKey: "StatusId",
-              Operator: "eq",
-              FilterValue: StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
-            });
-            filterConditionsRecuritment.push({
-              FilterKey: "ItemCreated",
-              Operator: "eq",
-              FilterValue: Choices.No,
-            });
-          } else {
-            filterConditionsRecuritment = [];
-            RecuritmentConditions = "";
-          }
+      let CurrentTab;
+      if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+        CurrentTab = TabName.UploadAdvertisement;
+      } else if (
+        props.CurrentRoleID.includes(RoleID.HOD) ||
+        props.CurrentRoleID.includes(RoleID.LineManager)
+      ) {
+        CurrentTab = TabName.ReviewJobAdvertisement;
+      } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)) {
+        CurrentTab = TabName.AssignRecuritmentHR;
+      } else {
+        CurrentTab = props.stateValue?.TabName;
+      }
+      let TabValue = storedStringRef.current
+        ? storedStringRef.current
+        : CurrentTab;
+      //tabName[0]?.TabName;
+      switch (TabValue) {
+        case TabName.UploadONEMDoc:
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          });
           break;
-        }
-        case RoleID.RecruitmentHR: {
-          if (activeTab === "tab1") {
-            filterConditionsRecuritment.push({
-              FilterKey: "StatusId",
-              Operator: "eq",
-              FilterValue: StatusId.PendingwithRecruitmentHRtouploadAdv,
-            });
-            filterConditionsRecuritment.push({
-              FilterKey: "ItemCreated",
-              Operator: "eq",
-              FilterValue: Choices.No,
-            });
-          } else if (activeTab === "tab2") {
-            filterConditionsRecuritment.push({
-              FilterKey: "StatusId",
-              Operator: "eq",
-              FilterValue: StatusId.RecruitmentInProgress,
-            });
-            filterConditionsRecuritment.push({
-              FilterKey: "ItemCreated",
-              Operator: "eq",
-              FilterValue: Choices.No,
-            });
-          }
+        case TabName.UploadAdvertisement:
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.PendingwithRecruitmentHRtouploadAdv,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          });
           break;
-        }
-        case RoleID.HOD: {
-          if (activeTab === "tab1") {
+        case TabName.AssignAgencies:
+        case TabName.ReviewProfile:
+        case TabName.ReviewScorecard:
+        case TabName.AdvertExtension:
+        case TabName.UploadCV:
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "eq",
+            FilterValue: StatusId.RecruitmentInProgress,
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          });
+          break;
+        case TabName.ReviewJobAdvertisement:
+          if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+            filterConditionsRecuritment.push({
+              FilterKey: "StatusId",
+              Operator: "eq",
+              FilterValue: StatusId.PendingwithLineManagereviewAdv,
+            });
+          } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
             filterConditionsRecuritment.push({
               FilterKey: "StatusId",
               Operator: "eq",
               FilterValue: StatusId.PendingwithHODtoreviewAdv,
             });
-            filterConditionsRecuritment.push({
-              FilterKey: "ItemCreated",
-              Operator: "eq",
-              FilterValue: Choices.No,
-            });
-          } else if (activeTab === "tab2" || activeTab === "tab3") {
-            filterConditionsRecuritment.push({
-              FilterKey: "StatusId",
-              Operator: "eq",
-              FilterValue: StatusId.RecruitmentInProgress,
-            });
-            filterConditionsRecuritment.push({
-              FilterKey: "ItemCreated",
-              Operator: "eq",
-              FilterValue: Choices.No,
-            });
           }
+
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          });
           break;
-        }
-        default: {
+        case TabName.InterviewQuestion:
+          filterConditionsRecuritment.push({
+            FilterKey: "StatusId",
+            Operator: "in",
+            FilterValue: [
+              StatusId.PendingwithHRandLMtocreateinterviewQuestion,
+              StatusId.PendingwithLMcreateDisqualificationQuestion,
+            ],
+          });
+          filterConditionsRecuritment.push({
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: "No",
+          });
+          break;
+        default:
           filterConditionsRecuritment = [];
           RecuritmentConditions = "and";
-        }
+          break;
       }
+
+      if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+        filterConditionsRecuritment.push({
+          FilterKey: "LineManager",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
+      } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
+        filterConditionsRecuritment.push({
+          FilterKey: "HOD",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
+      } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+        filterConditionsRecuritment.push({
+          FilterKey: "AssignedHR",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
+      }
+
       const response =
-        props.CurrentRoleID === RoleID.RecruitmentHRLead && activeTab === "tab1"
+        props.CurrentRoleID.includes(RoleID.RecruitmentHRLead) &&
+        TabValue === TabName.AssignRecuritmentHR
           ? await getVRRDetails.GetJobTitleInNPEP(
               filterConditions,
               Conditions,
@@ -581,11 +759,28 @@ const RecruitmentProcess = (props: any) => {
               RecuritmentConditions
             );
       if (response.status === 200) {
-        setData(response.data);
+        let responseData;
+        if (TabValue === TabName.UploadCV) {
+          const todayl = new Date();
+          const today = moment(todayl).format("YYYY-MM-DD");
+          responseData = response.data.filter((item) => {
+            let endDateStr =
+              item.JobPostingSecondExtensionEndDate ||
+              item.JobPostingFirstExtensionEndDate ||
+              item.JobPostingEndDate;
+            if (!endDateStr) return false;
+            const endDate = moment(endDateStr).format("YYYY-MM-DD");
+            return endDate >= today;
+          });
+        } else {
+          responseData = response.data;
+        }
+        setData(responseData);
         const JobCode = response.data.map((item) => ({
           ID: item.ID,
           JobCode: item.JobCode,
           JobTitle: item.JobTitleEnglish,
+          Nationality: item.Nationality,
         }));
         const uniqueJobData = JobCode.filter(
           (job, index, self) =>
@@ -593,22 +788,141 @@ const RecruitmentProcess = (props: any) => {
         );
         setJobCodeTitle(uniqueJobData);
       }
-      if (props.CurrentRoleID === RoleID.HOD) {
-        void fetchCandidateData();
-      }
     } catch (error) {
       console.log("GetVacancyDetails doesn't fetch the data", error);
     }
     setIsLoading(false);
   };
 
+  const pendingcountTabs = async () => {
+    setIsLoading(true);
+    try {
+      const recrutimentData = await getVRRDetails.GetRecruitmentDetails(
+        [
+          {
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          },
+        ],
+        ""
+      );
+      if (recrutimentData.status === ResponeStatus.SUCCESS) {
+        const AssignHRCount = await getVRRDetails.GetJobTitleInNPEP(
+          [
+            {
+              FilterKey: "StatusId",
+              Operator: "eq",
+              FilterValue: StatusId.ReadyforRecruitmentProcess,
+            },
+            {
+              FilterKey: "IsDataSyncToRecruitment",
+              Operator: "eq",
+              FilterValue: Choices.Yes,
+            },
+            {
+              FilterKey: "ItemCreated",
+              Operator: "eq",
+              FilterValue: Choices.No,
+            },
+          ],
+          "and",
+          props
+        );
+
+        const UploadONEMCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+        );
+
+        const UploadAdvertismentCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv &&
+            item.AssignEMail === props.userDetails[0]?.EmailId
+        );
+        const InterviewQuestionCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId ===
+              StatusId.PendingwithHRandLMtocreateinterviewQuestion ||
+            (item.StatusId ===
+              StatusId.PendingwithLMcreateDisqualificationQuestion &&
+              item.AssignLineManager === props.userDetails[0]?.EmailId)
+          // (item.AssignEMail === props.userDetails[0]?.EmailId ||
+        );
+
+        const ReviewLinemanagerCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.PendingwithLineManagereviewAdv &&
+            item.AssignLineManager === props.userDetails[0]?.EmailId
+        );
+
+        const ReviewHODCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.PendingwithHODtoreviewAdv &&
+            item.AssignHOD === props.userDetails[0]?.EmailId
+        );
+        // const AssignAgenciesCount = recrutimentData.data.filter(
+        //   (item) =>
+        //     item.StatusId === StatusId.RecruitmentInProgress &&
+        //     item.AssignEMail === props.userDetails[0]?.EmailId
+        // );
+        let Evalution: any;
+        // if (props.CurrentRoleID.includes(RoleID.LineManager, RoleID.HOD)) {
+        Evalution = await getVRRDetails.GetcountInEvalution(
+          props.CurrentUserEmailId
+        );
+        // }
+
+        setPendingCount((prevState) => ({
+          ...prevState,
+          AssignHRCount: AssignHRCount.data.length,
+          UploadONEMCount: UploadONEMCount.length,
+          UploadAdvertisementCount: UploadAdvertismentCount.length,
+          lineManagerInterviewCount: InterviewQuestionCount.length,
+          ReviewLineManagerCount: ReviewLinemanagerCount.length,
+          ReviewHODCount: ReviewHODCount.length,
+          // AssignAgencyCount: AssignAgenciesCount.length,
+          EvaluationCount: Evalution ? Evalution.data[0].length : 0,
+        }));
+      }
+    } catch (error) {
+      console.log("Error in pendingcountTabs", error);
+    }
+    setIsLoading(false);
+  };
+
+  React.useEffect(() => {
+    if (props.stateValue) {
+      storedStringRef.current = props.stateValue?.TabName;
+      setActiveTab(props.stateValue?.tab);
+    } else {
+      if (!storedStringRef.current) {
+        if (props.TabDetails[0]) {
+          // storedStringRef.current = props.TabDetails[0]?.[0]?.Value ?? "";
+        }
+      }
+      setActiveTab("tab1");
+    }
+    // handleRefresh(props.TabDetails[0]?.[0]?.Value);
+  }, []);
+
   React.useEffect(() => {
     const fetchDataAndGetADGroupsOption = async () => {
       try {
-        await fetchData();
+        await fetchData(props.TabDetails[0]);
+        await pendingcountTabs();
         // if (props.stateValue?.activeTab) {
         //   setActiveTab(props.stateValue.activeTab);
         // }
+        let TabDetails: any;
+        if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
+          TabDetails = (props.TabDetails[0] ?? []).filter(
+            (tab: any) => tab.TabName !== TabName.Evaluation
+          );
+        } else {
+          TabDetails = props.TabDetails[0] ?? [];
+        }
+        setTabNameData(TabDetails);
       } catch (error) {
         console.error(error);
       }
@@ -617,48 +931,62 @@ const RecruitmentProcess = (props: any) => {
     void fetchDataAndGetADGroupsOption();
   }, [activeTab]);
 
-  React.useEffect(() => {}, [isLoading]);
+  const handleRefresh = (tab: string) => {
+    void fetchData(props.TabDetails[0]?.[0]?.Value);
+    void pendingcountTabs();
+  };
 
-  const onPageChange = (event: any, Type: string) => {
+  const onPageChange = (event: any) => {
     // setFirst(event.first);
     setRows(event.rows);
   };
 
   const handleCancel = () => {
     setIsLoading(false);
-    setAssignHR(false);
-    setAssignHRData((prevState) => ({
-      ...prevState,
-      AssignRecruitmentHR: { key: 0, text: "" },
-      Comments: "",
-    }));
-    setData((prevData) =>
-      prevData.map((item) => ({
-        ...item,
-        Checked: false,
-      }))
-    );
+    let CancelAlert = {
+      Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
+      Type: HRMSAlertOptions.Confirmation,
+      visible: true,
+      ButtonAction: async (userClickedOK: boolean) => {
+        if (userClickedOK) {
+          setAssignHR(false);
+          setAssignHRData((prevState) => ({
+            ...prevState,
+            AssignRecruitmentHR: { key: 0, text: "" },
+            AssignRecruitmentAgencies: [],
+            Comments: "",
+          }));
+          setData((prevData) =>
+            prevData.map((item) => ({
+              ...item,
+              Checked: false,
+            }))
+          );
 
-    setSelectedJobCodes([]);
-    setSelectAll(false);
+          setSelectedJobCodes([]);
 
-    setValidationErrors((prevErrors) => ({
-      ...prevErrors,
-      AssignRecruitmentHR: false,
-      AssignRecruitmentAgencies: false,
-      Comments: false,
-    }));
-  };
+          setValidationErrors((prevErrors) => ({
+            ...prevErrors,
+            AssignRecruitmentHR: false,
+            AssignRecruitmentAgencies: false,
+            Comments: false,
+          }));
+          setAlertPopupOpen(false);
+        } else {
+          setAlertPopupOpen(false);
+        }
+      },
+    };
 
-  const handleRefresh = (tab: string) => {
-    void fetchData();
-    // setActiveTab(tab);
+    setAlertPopupOpen(true);
+    setalertProps(CancelAlert);
+    setIsLoading(false);
   };
 
   const handleAutoComplete = async (value: AutoCompleteItem | null) => {
     const defaultValue = { key: 0, text: "" };
 
-    if (props.CurrentRoleID === RoleID.RecruitmentHR) {
+    if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
       setAssignHRData((prevState) => ({
         ...prevState,
         AssignRecruitmentAgencies: value ? [value] : [defaultValue],
@@ -701,20 +1029,8 @@ const RecruitmentProcess = (props: any) => {
     }
   };
 
-  const handleCheckbox = (value: boolean, item: any) => {
-    const itemIdentifier = item.ID;
-    console.log("Checkbox Clicked | Value:", value, "| Item:", item);
-
-    const updatedDataset = data.map((currentItem) => {
-      const currentItemIdentifier = currentItem.ID;
-      if (currentItemIdentifier === itemIdentifier) {
-        return { ...currentItem, Checked: value };
-      }
-
-      return currentItem;
-    });
-
-    const selectedJobCodes = updatedDataset
+  const handleCheckbox = (item: any[]) => {
+    const selectedJobCodes = item
       .filter((currentItem) => currentItem.Checked)
       .map((currentItem) => {
         const JobTitle = props.JobInEnglishList.find(
@@ -727,26 +1043,14 @@ const RecruitmentProcess = (props: any) => {
           JobCode: currentItem.JobCode,
           JobCodeId: currentItem.JobCodeId,
           JobTitle: JobTitle ? JobTitle.text : "",
+          Nationality: currentItem.Nationality,
         };
       });
-
-    setData(updatedDataset);
-
     setSelectedJobCodes(selectedJobCodes);
-
-    setSelectAll(
-      selectedJobCodes.length > 0 &&
-        selectedJobCodes.length === updatedDataset.length
-    );
   };
 
-  const onSelectAllChange = (value: boolean) => {
-    const updatedDataset = data.map((item) => ({
-      ...item,
-      Checked: value,
-    }));
-
-    const selectedJobCodes = updatedDataset
+  const onSelectAllChange = (item: any[]) => {
+    const selectedJobCodes = item
       .filter((item) => item.Checked)
       .map((item) => {
         const JobTitle = props.JobInEnglishList.find(
@@ -755,21 +1059,14 @@ const RecruitmentProcess = (props: any) => {
         );
 
         return {
-          ID: item.JobCodeId,
+          ID: item.ID,
           JobCode: item.JobCode,
           JobCodeId: item.JobCodeId,
           JobTitle: JobTitle ? JobTitle.text : "",
+          Nationality: item.Nationality,
         };
       });
-
-    setData(updatedDataset);
-
     setSelectedJobCodes(selectedJobCodes);
-
-    setSelectAll(
-      selectedJobCodes.length > 0 &&
-        selectedJobCodes.length === updatedDataset.length
-    );
   };
 
   const handleInputChangeTextArea = (value: string) => {
@@ -792,10 +1089,9 @@ const RecruitmentProcess = (props: any) => {
     } else {
       let CancelAlert = {
         // Message: RecuritmentHRMsg.RecruitmentErrorMsg,
-        Message:
-          props.CurrentRoleID === RoleID.RecruitmentHR
-            ? RecuritmentHRMsg.AgenciesErrorMsg
-            : RecuritmentHRMsg.RecruitmentErrorMsg,
+        Message: props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+          ? RecuritmentHRMsg.AgenciesErrorMsg
+          : RecuritmentHRMsg.RecruitmentErrorMsg,
         Type: HRMSAlertOptions.Error,
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
@@ -810,28 +1106,23 @@ const RecruitmentProcess = (props: any) => {
       setIsLoading(false);
     }
   };
+
   const Validation = (): boolean => {
     let errors = {
       AssignRecruitmentHR: false,
       Comments: false,
-      // AssignRecruitmentAgencies: false,
+      AssignRecruitmentAgencies: false,
     };
-    switch (props.CurrentRoleID) {
-      case RoleID.RecruitmentHRLead: {
-        errors.AssignRecruitmentHR = !IsValid(
-          AssignHRData.AssignRecruitmentHR.text
-        );
-        errors.Comments = !IsValid(AssignHRData.Comments);
-        break;
-      }
-
-      case RoleID.RecruitmentHR: {
-        // errors.AssignRecruitmentAgencies = !IsValid(
-        //   AssignHRData.AssignRecruitmentAgencies[0]?.text
-        // );
-        errors.Comments = !IsValid(AssignHRData.Comments);
-        break;
-      }
+    if (props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)) {
+      errors.AssignRecruitmentHR = !IsValid(
+        AssignHRData.AssignRecruitmentHR.text
+      );
+      errors.Comments = !IsValid(AssignHRData.Comments);
+    } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+      errors.AssignRecruitmentAgencies = !IsValid(
+        AssignHRData.AssignRecruitmentAgencies[0]?.text
+      );
+      errors.Comments = !IsValid(AssignHRData.Comments);
     }
 
     setValidationErrors((prevState) => ({
@@ -848,15 +1139,19 @@ const RecruitmentProcess = (props: any) => {
       if (IsVaild) {
         setAssignHR(false);
         setIsLoading(true);
-        console.log("selectedJobCodes", selectedJobCodes);
+        // console.log("selectedJobCodes", selectedJobCodes);
         if (selectedJobCodes.length > 0) {
           for (const selectedJob of selectedJobCodes) {
             const correspondingJob = data.find(
               (item: any) => item.ID === selectedJob.ID
             );
-            console.log("Corresponding Job:", correspondingJob);
-
+            // console.log("Corresponding Job:", correspondingJob);
             if (correspondingJob) {
+              let UserIDbyEmail = await CommonServices.getUserIDByEmail(
+                AssignHRData.AssignRecruitmentHR.key
+              );
+              // console.log(UserIDbyEmail.data, "UserIDbyEmail");
+
               const RecruitmentValue: PostRecuritmentData = {
                 Data: {
                   BusinessUnitCodeId: correspondingJob.BusinessUnitCodeId,
@@ -877,8 +1172,10 @@ const RecruitmentProcess = (props: any) => {
                   ActionId: WorkflowAction.Approved,
                   JobCodeId: correspondingJob.JobCodeId,
                   AreaofWork: correspondingJob.AreaofWork,
-                  AssignedHRId: AssignHRData.AssignRecruitmentHR.key,
+                  AssignedHR: UserIDbyEmail.data,
+                  RecruitmentHRLead: props.CurrentUserEmailId,
                   DataFrom: correspondingJob.Type ?? "",
+                  Location: correspondingJob.Location ?? "",
                 },
                 PositionData: {
                   PatersonGradeId: correspondingJob.PatersonGradeId ?? 0,
@@ -887,7 +1184,10 @@ const RecruitmentProcess = (props: any) => {
                   JobTitleFrenchId: correspondingJob.JobTitleFrenchId ?? 0,
                 },
                 CommentsList: {
-                  RoleId: props.CurrentRoleID,
+                  RoleId:
+                    storedStringRef.current === TabName.AssignRecuritmentHR
+                      ? RoleID.RecruitmentHRLead
+                      : RoleID.RecruitmentHR,
                   RecruitmentIDId: 0,
                   Comments: AssignHRData.Comments,
                 },
@@ -915,7 +1215,6 @@ const RecruitmentProcess = (props: any) => {
                   }))
                 );
                 setSelectedJobCodes([]);
-                setSelectAll(false);
                 let SuccessAlert = {
                   Message:
                     selectedJobCodes.length === 1
@@ -927,7 +1226,8 @@ const RecruitmentProcess = (props: any) => {
                     if (userClickedOK) {
                       setAlertPopupOpen(false);
                       setIsLoading(false);
-                      await fetchData();
+                      await fetchData(props.TabDetails[0]?.[0]?.Value);
+                      await pendingcountTabs();
                     }
                   },
                 };
@@ -946,7 +1246,6 @@ const RecruitmentProcess = (props: any) => {
                   }))
                 );
                 setSelectedJobCodes([]);
-                setSelectAll(false);
               } else {
                 let APIErrorAlert = {
                   Message: RecuritmentHRMsg.APIErrorMsg,
@@ -956,6 +1255,18 @@ const RecruitmentProcess = (props: any) => {
                     if (userClickedOK) {
                       setAlertPopupOpen(false);
                       setIsLoading(false);
+                      setAssignHRData((prevState) => ({
+                        ...prevState,
+                        AssignRecruitmentAgencies: [],
+                        Comments: "",
+                      }));
+                      setData((prevData) =>
+                        prevData.map((item) => ({
+                          ...item,
+                          Checked: false,
+                        }))
+                      );
+                      setSelectedJobCodes([]);
                     }
                   },
                 };
@@ -1043,7 +1354,11 @@ const RecruitmentProcess = (props: any) => {
 
                     if (response.status === ResponeStatus.SUCCESS) {
                       const commentsData: InsertComments = {
-                        RoleId: props.CurrentRoleID,
+                        RoleId:
+                          storedStringRef.current ===
+                          TabName.AssignRecuritmentHR
+                            ? RoleID.RecruitmentHRLead
+                            : RoleID.RecruitmentHR,
                         RecruitmentIDId: recruitmentID,
                         Comments: AssignHRData.Comments,
                       };
@@ -1072,7 +1387,6 @@ const RecruitmentProcess = (props: any) => {
                         }))
                       );
                       setSelectedJobCodes([]);
-                      setSelectAll(false);
                     }
                   } else {
                     console.log(
@@ -1088,6 +1402,18 @@ const RecruitmentProcess = (props: any) => {
                       if (userClickedOK) {
                         setAlertPopupOpen(false);
                         setIsLoading(false);
+                        setAssignHRData((prevState) => ({
+                          ...prevState,
+                          AssignRecruitmentAgencies: [],
+                          Comments: "",
+                        }));
+                        setData((prevData) =>
+                          prevData.map((item) => ({
+                            ...item,
+                            Checked: false,
+                          }))
+                        );
+                        setSelectedJobCodes([]);
                       }
                     },
                   };
@@ -1112,7 +1438,8 @@ const RecruitmentProcess = (props: any) => {
                 if (userClickedOK) {
                   setAlertPopupOpen(false);
                   setIsLoading(false);
-                  await fetchData();
+                  await fetchData(props.TabDetails[0]?.[0]?.Value);
+                  await pendingcountTabs();
                 }
               },
             };
@@ -1132,344 +1459,118 @@ const RecruitmentProcess = (props: any) => {
     }
   };
 
-  // async function AssignHRSubmit() {S
-  //   try {
-  //     setIsLoading(true);
+  const renderTable = (
+    TabNames: string,
+    TabValue: string,
+    StatusData: StatusDetails[]
+  ) => {
+    if (TabValue === activeTab) {
+      storedStringRef.current = TabNames;
+    }
+    let Action: any;
+    let StatusID: any;
+    if (StatusData) {
+      Action = StatusData.filter((item) => item.Action);
+      StatusID = StatusData.filter((item) => item.StatusId);
+      console.log(StatusID, "StatusID");
+    }
 
-  //     for (const job of allJobData) {
-  //       const itemToUpdate = data.find((item: any) => item.ID === job.ID);
+    switch (TabNames) {
+      case TabName.AssignRecuritmentHR:
+      case TabName.AssignAgencies:
+        return (
+          <CheckboxDataTable
+            data={data}
+            columns={columnConfig(
+              TabValue,
+              Number(Action[0]?.Action?.[0]),
+              TabNames
+            )}
+            rows={rows}
+            onPageChange={(event) => onPageChange(event)}
+            handleRefresh={() => handleRefresh(TabValue)}
+            handleSelectedRow={handleCheckbox}
+            onSelectAllRow={onSelectAllChange}
+            handleAssignBtn={AssignBtn_fn}
+            AssignBtnValidation={false}
+            MasterData={props || {}}
+            assignLabel={
+              props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+                ? "Assign Agencies"
+                : "Assign HR"
+            }
+          />
+        );
 
-  //       if (!itemToUpdate) {
-  //         continue;
-  //       }
-  //     }
+      case TabName.UploadONEMDoc:
+      case TabName.MySubmission:
+      case TabName.UploadAdvertisement:
+      case TabName.ReviewJobAdvertisement:
+      case TabName.ReviewScorecard:
+      case TabName.InterviewQuestion:
+      case TabName.ReviewProfile:
+      case TabName.AdvertExtension:
+      case TabName.UploadCV:
+        return (
+          <SearchableDataTable
+            data={data}
+            columns={columnConfig(TabValue, Action[0]?.ActionId?.[0], TabNames)}
+            rows={rows}
+            onPageChange={(event) => onPageChange(event)}
+            handleRefresh={() => handleRefresh(TabValue)}
+            MasterData={props}
+          />
+        );
+      case TabName.Evaluation:
+        return <InterviewPanelList {...props} TabValue={activeTab} />;
+      default:
+        return null;
+    }
+  };
 
-  //     if (props.CurrentRoleID === RoleID.RecruitmentHRLead) {
-  //       await handleSubmit();
-  //     } else if (props.CurrentRoleID === RoleID.RecruitmentHR) {
-  //       await handleAgencySubmit();
-  //     }
-  //     setIsLoading(false);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
+  const getTabLabel = (tab: any) => {
+    switch (tab.TabName) {
+      case TabName.AssignRecuritmentHR:
+        return tabStyle(tab.TabName, pendingcount.AssignHRCount);
+      // return pendingcount?.ReviewPrfileCount > 0
+      //   ? `${tab.TabName} (${pendingcount.ReviewPrfileCount})`
+      //   : tab.TabName;
+      case TabName.UploadONEMDoc:
+        return tabStyle(tab.TabName, pendingcount.UploadONEMCount);
+      case TabName.UploadAdvertisement:
+        return tabStyle(tab.TabName, pendingcount.UploadAdvertisementCount);
 
-  const tabs = [
-    ...(props.CurrentRoleID === RoleID.RecruitmentHRLead
-      ? [
-          {
-            label: TabName.AssignRecuritmentHR, //"Assign Recuritment HR",
-            value: "tab1",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  {/* <SearchableDataTable
-                                data={data}
-                                columns={columnConfig("tab1", "view", TabName.AssignRecuritmentHR,)}
-                                rows={rows}
-                                onPageChange={(event) => onPageChange(event, "Recruitment")}
-                                handleRefresh={() => handleRefresh("tab1")}
-                            /> */}
-                  <CheckboxDataTable //AssignHR
-                    data={data}
-                    columns={columnConfig(
-                      "tab1",
-                      "View",
-                      TabName.AssignRecuritmentHR
-                    )}
-                    rows={rows}
-                    onPageChange={(event) => onPageChange(event, "Recruitment")}
-                    handleRefresh={() => handleRefresh("tab1")}
-                    handleAssignBtn={AssignBtn_fn}
-                    AssignBtnValidation={false}
-                    handleCheckbox={handleCheckbox}
-                    selectAll={selectAll}
-                    onSelectAllChange={onSelectAllChange}
-                    assignLabel={
-                      props.CurrentRoleID === RoleID.RecruitmentHR
-                        ? "Assign Agencies"
-                        : "Assign HR"
-                    }
-                    MasterData={props || {}}
-                    //checkedValue={}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-          {
-            label: TabName.UploadONEMDoc, //"upload Signed Doc",
-            value: "tab2",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  <SearchableDataTable
-                    data={data}
-                    columns={columnConfig(
-                      "tab2",
-                      "Upload",
-                      TabName.UploadONEMDoc
-                    )}
-                    rows={rows}
-                    onPageChange={(event) => onPageChange(event, "VRR")}
-                    handleRefresh={() => handleRefresh("tab2")}
-                    MasterData={props}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-          {
-            label: TabName.MySubmission, //"My Submission",
-            value: "tab3",
-            content: (
-              <Card
-                variant="outlined"
-                sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-              >
-                <CardContent>
-                  <SearchableDataTable
-                    data={data}
-                    columns={columnConfig("tab3", "View", TabName.MySubmission)}
-                    rows={rows}
-                    onPageChange={(event) => onPageChange(event, "VRR")}
-                    handleRefresh={() => handleRefresh("tab3")}
-                    MasterData={props}
-                  />
-                </CardContent>
-              </Card>
-            ),
-          },
-        ]
-      : [
-          ...(props.CurrentRoleID === RoleID.RecruitmentHR
-            ? [
-                {
-                  label: TabName.UploadAdvertisement, //"Upload Advertisement",
-                  value: "tab1",
-                  content: (
-                    <Card
-                      variant="outlined"
-                      sx={{
-                        boxShadow: "0px 2px 4px 3px #d3d3d3",
-                        marginTop: "2%",
-                      }}
-                    >
-                      <CardContent>
-                        <SearchableDataTable
-                          data={data}
-                          columns={columnConfig(
-                            "tab1",
-                            "Upload",
-                            TabName.UploadAdvertisement
-                          )}
-                          rows={rows}
-                          onPageChange={(event) => onPageChange(event, "VRR")}
-                          handleRefresh={() => handleRefresh("tab1")}
-                          MasterData={props}
-                        />
-                      </CardContent>
-                    </Card>
-                  ),
-                },
-                {
-                  label: TabName.AssignAgencies, //"Assigne Agencies",
-                  value: "tab2",
-                  content: (
-                    <Card
-                      variant="outlined"
-                      sx={{
-                        boxShadow: "0px 2px 4px 3px #d3d3d3",
-                        marginTop: "2%",
-                      }}
-                    >
-                      <CardContent>
-                        {/* <SearchableDataTable
-                                    data={RecruitmentDetails}
-                                    columns={columnConfig("tab2", "view", TabName.AssignAgencies)}
-                                    rows={rows}
-                                    onPageChange={(event) => onPageChange(event, "VRR")}
-                                    handleRefresh={() => handleRefresh("tab2")}
-                                /> */}
-                        <CheckboxDataTable //AssignAgency
-                          data={data}
-                          columns={columnConfig(
-                            "tab2",
-                            "View",
-                            TabName.AssignAgencies
-                          )}
-                          rows={rows}
-                          onPageChange={(event) => onPageChange(event, "VRR")}
-                          handleRefresh={() => handleRefresh("tab2")}
-                          handleAssignBtn={AssignBtn_fn}
-                          AssignBtnValidation={false}
-                          handleCheckbox={handleCheckbox}
-                          selectAll={selectAll}
-                          onSelectAllChange={onSelectAllChange}
-                          assignLabel={
-                            props.CurrentRoleID === RoleID.RecruitmentHR
-                              ? "Assign Agencies"
-                              : "Assign HR"
-                          }
-                          MasterData={props}
-                          //checkedValue={}
-                        />
-                      </CardContent>
-                    </Card>
-                  ),
-                },
-              ]
-            : [
-                ...(props.CurrentRoleID === RoleID.HOD
-                  ? [
-                      {
-                        label: TabName.ReviewONEMAdvertisement,
-                        value: "tab1",
-                        content: (
-                          <Card
-                            variant="outlined"
-                            sx={{
-                              boxShadow: "0px 2px 4px 3px #d3d3d3",
-                              marginTop: "2%",
-                            }}
-                          >
-                            <CardContent>
-                              <SearchableDataTable
-                                data={data}
-                                columns={columnConfig(
-                                  "tab1",
-                                  "View",
-                                  TabName.ReviewONEMAdvertisement
-                                )}
-                                rows={rows}
-                                onPageChange={(event) =>
-                                  onPageChange(event, "VRR")
-                                }
-                                handleRefresh={() => handleRefresh("tab1")}
-                                MasterData={props}
-                              />
-                            </CardContent>
-                          </Card>
-                        ),
-                      },
-                      {
-                        label: TabName.ScorecardDetails,
-                        value: "tab2",
-                        content: (
-                          <Card
-                            variant="outlined"
-                            sx={{
-                              boxShadow: "0px 2px 4px 3px #d3d3d3",
-                              marginTop: "2%",
-                            }}
-                          >
-                            <CardContent>
-                              <SearchableDataTable
-                                data={data}
-                                columns={columnConfig(
-                                  "tab2",
-                                  "View",
-                                  TabName.ScorecardDetails
-                                )}
-                                rows={rows}
-                                onPageChange={(event) =>
-                                  onPageChange(event, "VRR")
-                                }
-                                handleRefresh={() => handleRefresh("tab2")}
-                                MasterData={props}
-                              />
-                            </CardContent>
-                          </Card>
-                        ),
-                      },
-                      {
-                        label: TabName.AdvertExtension,
-                        value: "tab3",
-                        content: (
-                          <Card
-                            variant="outlined"
-                            sx={{
-                              boxShadow: "0px 2px 4px 3px #d3d3d3",
-                              marginTop: "2%",
-                            }}
-                          >
-                            <CardContent>
-                              <SearchableDataTable
-                                data={data}
-                                columns={columnConfig(
-                                  "tab3",
-                                  "View",
-                                  TabName.AdvertExtension
-                                )}
-                                rows={rows}
-                                onPageChange={(event) =>
-                                  onPageChange(event, "Rec")
-                                }
-                                handleRefresh={() => handleRefresh("tab3")}
-                                MasterData={props}
-                              />
-                            </CardContent>
-                          </Card>
-                        ),
-                      },
-                      ...(assignedCandidates
-                        ? [
-                            {
-                              label: TabName.Evaluation, //"EvaluationTab for HR",
-                              value: "tab4",
-                              content: <InterviewPanelList {...props} />,
-                            },
-                          ]
-                        : []),
-                    ]
-                  : [
-                      ...(props.CurrentRoleID === RoleID.LineManager
-                        ? [
-                            {
-                              label: TabName.ReviewProfile,
-                              value: "tab1",
-                              content: (
-                                <Card
-                                  variant="outlined"
-                                  sx={{
-                                    boxShadow: "0px 2px 4px 3px #d3d3d3",
-                                    marginTop: "2%",
-                                  }}
-                                >
-                                  <CardContent>
-                                    <SearchableDataTable
-                                      data={data}
-                                      columns={columnConfig(
-                                        "tab1",
-                                        "Edit",
-                                        TabName.ReviewProfile
-                                      )}
-                                      rows={rows}
-                                      onPageChange={(event) =>
-                                        onPageChange(event, "VRR")
-                                      }
-                                      handleRefresh={() =>
-                                        handleRefresh("tab1")
-                                      }
-                                      MasterData={props}
-                                    />
-                                  </CardContent>
-                                </Card>
-                              ),
-                            },
-                          ]
-                        : []),
-                    ]),
-              ]),
-        ]),
-  ];
+      case TabName.ReviewJobAdvertisement:
+        if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+          return tabStyle(tab.TabName, pendingcount.ReviewLineManagerCount);
+        } else {
+          return tabStyle(tab.TabName, pendingcount.ReviewHODCount);
+        }
+      // case TabName.AssignAgencies:
+      //   return tabStyle(tab.TabName, pendingcount.AssignAgencyCount);
+      case TabName.InterviewQuestion:
+        return tabStyle(tab.TabName, pendingcount.lineManagerInterviewCount);
+      case TabName.Evaluation:
+        return tabStyle(tab.TabName, pendingcount.EvaluationCount);
+      default:
+        return tab.TabName;
+    }
+  };
+
+  const tabs = TabNameData.map((tab: TabDetails) => ({
+    label: getTabLabel(tab), //  `${tab.TabName} (${data.length})`,
+    value: tab.Value,
+    content: (
+      <Card
+        variant="outlined"
+        sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
+      >
+        <CardContent>
+          <div>{renderTable(tab.TabName, tab.Value, tab.StatusDetails)}</div>
+        </CardContent>
+      </Card>
+    ),
+  }));
 
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab);
@@ -1557,13 +1658,14 @@ const RecruitmentProcess = (props: any) => {
               <AssignRecuritmentHR
                 jobCodes={allJobData}
                 selectedJobCodes={selectedJobCodes}
-                onSelectAllChange={onSelectAllChange}
-                onRowChange={handleCheckbox}
+                onSelectAllChange={() => onSelectAllChange}
+                onRowChange={() => handleCheckbox}
                 CurrentRole={props.CurrentRoleID}
                 onClose={handleCancel}
                 AssignedHRId={props.stateValue?.AssignedHRId}
                 validationErrors={validationErrors}
                 ValueData={AssignHRData}
+                Nationality={selectedJobCodes[0]?.Nationality ?? ""}
                 handleAutoComplete={(item) => handleAutoComplete(item)}
                 handleAgencyChange={(item: AutoCompleteItem[]) =>
                   handleAgencyChange(item)
@@ -1572,7 +1674,7 @@ const RecruitmentProcess = (props: any) => {
                   handleInputChangeTextArea(item)
                 }
                 AssignHRSubmit={
-                  props.CurrentRoleID === RoleID.RecruitmentHRLead
+                  props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)
                     ? () => handleSubmit()
                     : () => handleAgencySubmit()
                 }
@@ -1588,10 +1690,49 @@ const RecruitmentProcess = (props: any) => {
                     -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
                   }}
                 >
-                  {props.CurrentRoleID === RoleID.RecruitmentHR
+                  {props.CurrentRoleID.includes(RoleID.RecruitmentHR)
                     ? "Assign Agencies"
                     : "Assign Recruitment HR"}
                 </h2>
+              </div>
+            }
+            footer={
+              <div
+                className="ms-Grid-row"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: "10px 0",
+                  gap: "33px",
+                }}
+              >
+                <ReuseButton
+                  label="Cancel"
+                  onClick={() => handleCancel()}
+                  Style={{
+                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                    color: "white",
+                    width: "50%",
+                  }}
+                />
+
+                <ReuseButton
+                  label="Assign"
+                  onClick={async () => {
+                    if (
+                      props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)
+                    ) {
+                      await handleSubmit();
+                    } else {
+                      await handleAgencySubmit();
+                    }
+                  }}
+                  Style={{
+                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                    color: "white",
+                    width: "50%",
+                  }}
+                />
               </div>
             }
           />
