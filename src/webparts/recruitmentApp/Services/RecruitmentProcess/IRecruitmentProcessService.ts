@@ -141,6 +141,8 @@ export type DataSyncToRecruitmentResponse = {
 
   AssignEMail: string,
   AssignHRLead?: string;
+  QuestionByHR: string;
+  QuestionByLM: string;
 }
 
 export type JobCodeData = {
@@ -295,4 +297,8 @@ export type IRecruitmentService = {
     filterParam: any,
     filterConditions: any
   ): Promise<ApiResponse<GetJobUniqueKey[]>>;
+  GetPositionIDData(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<any[]>>;
 };

@@ -35,6 +35,7 @@ export default function CustomDialogbox(props: DynamicFormDialogProps) {
         footer={props.footer}
         closable={false}
         draggable={false}
+        resizable={false}
       >
         {props.children}
       </Dialog>

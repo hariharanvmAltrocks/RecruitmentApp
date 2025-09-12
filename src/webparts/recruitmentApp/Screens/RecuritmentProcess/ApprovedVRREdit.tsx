@@ -1806,7 +1806,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="No of Personnel Required"
+                    label="No of Person(s)"
                     value={formState.NoofPositionAssigned}
                     disabled={true}
                     error={false}
@@ -1851,7 +1851,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <div className="ms-Grid-col ms-lg3">
                         <CustomDatePicker
                           selectedDate={advDetails.ValidFrom}
-                          label="Valid From"
+                          label=" Advert Valid From"
                           error={validationErrors.ValidFrom}
                           minDate={todaydate}
                           // mandatory={true}
@@ -1864,7 +1864,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <div className="ms-Grid-col ms-lg3">
                         <CustomDatePicker
                           selectedDate={advDetails.ValidTo}
-                          label="Valid To"
+                          label="Advert Valid To"
                           error={false}
                           // minDate={
                           //   advDetails.ValidFrom
@@ -2159,6 +2159,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               handleDelete={(index, fileState) =>
                                 handleDelete(index, fileState)
                               }
+                              webUrl={props.webURL}
                             />
                           </div>
                         )}
@@ -2319,6 +2320,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       handleDelete={(index, fileState) =>
                         handleDelete(index, fileState)
                       }
+                      webUrl={props.webURL}
                     />
                   </div>
                 )}

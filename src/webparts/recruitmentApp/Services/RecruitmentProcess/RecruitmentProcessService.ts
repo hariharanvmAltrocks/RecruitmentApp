@@ -200,6 +200,9 @@ export default class RecruitmentService implements IRecruitmentService {
 
               AssignEMail: "",
               AssignHOD: "",
+
+              QuestionByHR: "",
+              QuestionByLM: ""
             };
             return item;
           })
@@ -345,7 +348,10 @@ export default class RecruitmentService implements IRecruitmentService {
               JobPostingSecondExtensionEndDate: undefined,
 
               AssignEMail: "",
-              AssignHOD: " "
+              AssignHOD: " ",
+
+              QuestionByHR: "",
+              QuestionByLM: "",
             };
             return NPData;
           })
@@ -621,7 +627,7 @@ export default class RecruitmentService implements IRecruitmentService {
     try {
       const res = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentDptDetails,
-        Select: `*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,BusinessUnitCode/BusineesUnitCode,AssignedHR/Title`,
+        Select: `*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,JobCode/ID,BusinessUnitCode/BusineesUnitCode,AssignedHR/Title`,
         Filter: filterParam,
         FilterCondition: filterConditions,
         Expand: `Department,SubDepartment,Section,DepartmentCode,Status,Action,JobCode,BusinessUnitCode`,
@@ -661,7 +667,7 @@ export default class RecruitmentService implements IRecruitmentService {
               ActionTypeId: item?.ActionId ? item?.ActionId : "",
               Location: item?.Location || "",
 
-              JobCodeId: item?.JobCodeId ? item?.JobCodeId : 0,
+              JobCodeId: item?.JobCode?.ID ? item?.JobCode?.ID : 0,
               JobCode: item?.JobCode?.JobCode ? item?.JobCode?.JobCode : "",
               JobTitleEnglish: "",
               JobTitleFrench: "",
@@ -690,7 +696,10 @@ export default class RecruitmentService implements IRecruitmentService {
 
               AssignEMail: item?.AssignedHR,
               AssignHOD: item?.HOD,
-              AssignHRLead: item?.RecruitmentHRLead || ""
+              AssignHRLead: item?.RecruitmentHRLead || "",
+
+              QuestionByHR: item?.QuestionByHR || "",
+              QuestionByLM: item?.QuestionByLM || ""
             };
             return Recruitment;
 
@@ -2217,6 +2226,50 @@ export default class RecruitmentService implements IRecruitmentService {
         data: [],
         status: 500,
         message: "Error fetching data from GetRecruitmentDetails",
+      };
+    }
+  }
+
+  async GetPositionIDData(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<any[]>> {
+    let GetItem: any[] = []
+    try {
+      await SPServices.SPReadItems({
+        Listname: ListNames.HRMSPositionIDMaster,
+        Select: "*,JobCode/JobCode,Department/DepartmentName",
+        Expand: "JobCode,Department",
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Topcount: 100,
+      })
+        .then((res: any[]) => {
+          for (const item of res) {
+            let ActionValues = {
+              Key: String(item.PositionID),
+              Value: item.PositionIDStatus === "Vacant" ? "Pending" : "Completed"
+            }
+            GetItem.push(ActionValues)
+          }
+        })
+        .catch((error) => {
+          console.log(
+            "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+            error
+          );
+        });
+      return {
+        data: GetItem,
+        status: 200,
+        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching interview panel details:", error);
+      return {
+        data: [],
+        status: 400,
+        message: "Error fetching data",
       };
     }
   }

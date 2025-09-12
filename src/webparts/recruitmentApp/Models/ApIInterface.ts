@@ -1,3 +1,4 @@
+import { CommentsData } from "../Services/RecruitmentProcess/IRecruitmentProcessService";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 import { AutoCompleteItem } from "./Screens";
 
@@ -94,7 +95,7 @@ export type CandidateProfile = {
     CandidateResume: IDocFiles[];
     RoleProfile: IDocFiles[];
     Advertisement: IDocFiles[];
-    Comments: profileJobsComments[];
+    Comments: CommentsData[];
     workflowStatusId: string;
     hrComments: string;
     JobVaildFromDate: string;
@@ -136,12 +137,21 @@ export type CandidateProfile = {
 
     joiningDate: string;
     noticePeriod: string;
+
+    hasIvanhoeZijinExperience: string;
+    companyDetails: CompanyDetails | undefined,
 }
 
 export type childrenDetails = {
     name: string;
     age: number;
     genderId: string;
+}
+
+export type CompanyDetails = {
+    operation: string;
+    role: string;
+    region: string;
 }
 
 export type employeeReferenceDetail = {

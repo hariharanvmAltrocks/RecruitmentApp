@@ -657,31 +657,43 @@ const ApprovedVRRView: React.FC = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomLabel value={"RoleProfile Documents"} />
-                    <CustomViewDocument Attachment={data.RoleProfileDocument} />
+                    <CustomViewDocument
+                      Attachment={data.RoleProfileDocument}
+                      webUrl={props.webURL}
+                    />
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomLabel value={"Grading Documents"} />
-                    <CustomViewDocument Attachment={data.GradingDocument} />
-                  </div>
-
-                  <div className="ms-Grid-col ms-lg3">
-                    <CustomLabel value={"View Job Advertisement"} />
                     <CustomViewDocument
-                      Attachment={data.AdvertisementDocument}
+                      Attachment={data.GradingDocument}
+                      webUrl={props.webURL}
                     />
                   </div>
 
-                  <div className="ms-Grid-col ms-lg3">
-                    <CustomLabel value={"ONEM Signed&Stamps Documents"} />
-                    <CustomViewDocument
-                      Attachment={data.OnamSignedStampsDocument}
-                    />
-                  </div>
+                  {data.AdvertisementDocument.length > 0 && (
+                    <div className="ms-Grid-col ms-lg3">
+                      <CustomLabel value={"View Job Advertisement"} />
+                      <CustomViewDocument
+                        Attachment={data.AdvertisementDocument}
+                        webUrl={props.webURL}
+                      />
+                    </div>
+                  )}
+
+                  {data.OnamSignedStampsDocument.length > 0 && (
+                    <div className="ms-Grid-col ms-lg3">
+                      <CustomLabel value={"ONEM Signed&Stamps Documents"} />
+                      <CustomViewDocument
+                        Attachment={data.OnamSignedStampsDocument}
+                        webUrl={props.webURL}
+                      />
+                    </div>
+                  )}
                 </div>
-                {advDetails.RolePurpose != "" ? (
-                  <div className="ms-Grid-row">
+                <div className="ms-Grid-row">
+                  {advDetails.RolePurpose != "" ? (
                     <div
-                      className="ms-Grid-col ms-lg2"
+                      className="ms-Grid-col ms-lg3"
                       style={{ position: "relative", right: "1px" }}
                     >
                       <div>
@@ -717,14 +729,11 @@ const ApprovedVRRView: React.FC = (props: any) => {
                         />
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <></>
-                )}
-
-                <div className="ms-Grid-row">
+                  ) : (
+                    <></>
+                  )}
                   <div
-                    className="ms-Grid-col ms-lg2"
+                    className="ms-Grid-col ms-lg3"
                     style={{ position: "relative", right: "1px" }}
                   >
                     {/* <div className="ms-Grid-col ms-lg4"> */}

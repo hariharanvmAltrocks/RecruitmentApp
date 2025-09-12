@@ -11,6 +11,7 @@ import {
   InterviewLevels,
   ResponeStatus,
   RoleID,
+  RoleName,
   StatusId,
   TabName,
   tabType,
@@ -37,7 +38,7 @@ const ReviewProfileList = (props: any) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabDetails[]>(
-    props.TabDetails[0]
+    props?.TabDetails[0] === undefined ? [] : props?.TabDetails[0]
   );
   const [pendingcount, setPendingCount] = React.useState<tabPendingCount>({
     ReviewPrfileCount: 0,
@@ -142,6 +143,18 @@ const ReviewProfileList = (props: any) => {
       //   }
       //   break;
       // }
+      case StatusId.PendingwithHRandLMtocreateinterviewQuestion:
+        pendingName = [
+          {
+            Key: RoleName?.RecruitmentHR,
+            Value: rowData?.QuestionByHR === "Yes" ? "Completed" : "Pending",
+          },
+          {
+            Key: RoleName?.LineManager,
+            Value: rowData?.QuestionByLM === "Yes" ? "Completed" : "Pending",
+          },
+        ];
+        break;
       case StatusId.RecruitmentInProgress: {
         let Tooltipdata = await getVRRDetails.GetInterviewPanelTooltiData(
           rowData
@@ -212,9 +225,9 @@ const ReviewProfileList = (props: any) => {
       sortable: false,
       body: (rowData: any) => {
         const isTooltipStatus = [
-          // StatusId.Completed,
+          StatusId.Completed,
           // StatusId.RecruitmentInProgress,
-          StatusId.PendingwithHRandLMtocreateinterviewQuestion,
+          // StatusId.PendingwithHRandLMtocreateinterviewQuestion,
         ].includes(rowData.StatusId);
 
         if (!isTooltipStatus) {

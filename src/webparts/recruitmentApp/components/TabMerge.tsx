@@ -4,6 +4,7 @@ import { MenuResponse } from "../Models/Menu";
 import {
   ActionIcon,
   RoleID,
+  RoleName,
   StatusId,
   workflowStatusApi,
 } from "../utilities/Config";
@@ -85,12 +86,12 @@ export function GetWorkflowStatusByID(StatusIds: string) {
   switch (StatusIds) {
     case workflowStatusApi.HRPending:
     case workflowStatusApi.PendingRecruitmentHRscheduleInterview:
-      return "Recrutiment HR";
+      return RoleName.RecruitmentHR;
     case workflowStatusApi.LineManagerL1Pending:
     case workflowStatusApi.LineManagerL2Pending:
     case workflowStatusApi.LineManagerLevel1OnHold:
     case workflowStatusApi.LineManagerLevel2OnHold:
-      return "Line Manager";
+      return RoleName.LineManager;
 
     default:
       return "";
@@ -117,3 +118,19 @@ export const tabStyle = (TabName: string, Count: number) => {
     `${TabName} (${0})`
   );
 };
+
+export function addWeekdays(date: any, daysToAdd: number) {
+  const result = new Date(date);
+  let addedDays = 0;
+
+  while (addedDays < daysToAdd) {
+    result.setDate(result.getDate() + 1);
+
+    const day = result.getDay();
+    if (day !== 0 && day !== 6) {
+      addedDays++;
+    }
+  }
+
+  return result;
+}

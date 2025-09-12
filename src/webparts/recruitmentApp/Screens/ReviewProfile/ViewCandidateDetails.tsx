@@ -22,6 +22,7 @@ import {
   CandidateStatus,
   CheckboxContent,
   Choices,
+  COIWarningMsg,
   ColorCode,
   DocumentFolderName,
   DocumentLibraray,
@@ -39,6 +40,8 @@ import {
   RoleProfileMaster,
   StatusId,
   TabName,
+  TooltipHeader,
+  TooltipType,
   WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
@@ -64,13 +67,14 @@ import {
   CandidateDetails,
   COIAttach,
 } from "../../Services/CareerPortalApi/IGetPortalJobs";
-import { GetWorkflowStatusByID } from "../../components/TabMerge";
+import { addWeekdays, GetWorkflowStatusByID } from "../../components/TabMerge";
 import { Label } from "@fluentui/react";
 import AttachmentButton from "../../components/AttachmentButton";
 import CustomViewAttachment from "../../components/CustomViewAttachment";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
-import MaritalChildrenTooltip from "../ScreenComponent/MaritalChildrenTooltip";
 import EmployeeDetailsTooltip from "../ScreenComponent/EmployeeDetailsTooltip";
+import CommanComments from "../../components/CommanComments";
+import { DataSyncToRecruitmentResponse } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 
 type InterviewedLevelValue = {
   Levels: string;
@@ -120,7 +124,9 @@ type Level2Data = {
 
 const ViewCandidateDetails = (props: any) => {
   console.log(props, "ViewCandidateDetails");
-
+  const [RecrutimentData, setRecrutimentData] = useState<
+    DataSyncToRecruitmentResponse[]
+  >([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [CandidateProfile, setCandidateProfile] = useState<CandidateProfile>({
     CandidateID: "",
@@ -187,8 +193,12 @@ const ViewCandidateDetails = (props: any) => {
 
     joiningDate: "",
     noticePeriod: "",
+    hasIvanhoeZijinExperience: "",
+    companyDetails: undefined,
   });
   const todaydate = new Date();
+  // todaydate = addWeekdays(todaydate, 5);
+  const MinDateInterview = addWeekdays(todaydate, 5);
 
   const [InterviewedLevel, setInterviewedLevel] =
     useState<InterviewedLevelValue>({
@@ -252,6 +262,7 @@ const ViewCandidateDetails = (props: any) => {
     useState<boolean>(false);
 
   const storedNoOfInterviewpanel = React.useRef<boolean>(false);
+  const [MainComponent, setMainComponent] = useState<boolean>(true);
 
   const fetchCandidateData = async (ID: number) => {
     setIsLoading(true);
@@ -379,7 +390,24 @@ const ViewCandidateDetails = (props: any) => {
     if (isLoading) return;
     setIsLoading(true);
     try {
-      await GetPortalJobsService.getCandidateProfile(props.stateValue?.ID)
+      const filterConditions = [
+        {
+          FilterKey: "ID",
+          Operator: "eq",
+          FilterValue: props.stateValue?.RecruitmentID,
+        },
+      ];
+      const Conditions = "";
+      let RecrutimentData = await getVRRDetails.GetRecruitmentDetails(
+        filterConditions,
+        Conditions
+      );
+      setRecrutimentData(RecrutimentData.data);
+      await GetPortalJobsService.getCandidateProfile(
+        props.stateValue?.ID,
+        props.EmployeeList,
+        RecrutimentData.data[0]
+      )
         .then(async (res) => {
           let response = res.data?.[0];
           if (
@@ -465,6 +493,8 @@ const ViewCandidateDetails = (props: any) => {
                 childrenDetails: response?.childrenDetails || [],
                 employeeReferenceDetails: response?.employeeReferenceDetails,
                 maritalStatusId: response?.maritalStatusId,
+                hasIvanhoeZijinExperience: response?.hasIvanhoeZijinExperience,
+                companyDetails: response?.companyDetails,
               }));
               setInterviewedLevel((prev) => ({
                 ...prev,
@@ -584,6 +614,8 @@ const ViewCandidateDetails = (props: any) => {
           props.stateValue?.StatusId === StatusId.InterviewScheduled
           ? "Reschedule"
           : "Schedule for Interview "
+        : actionValue.CandidateStatus === "No"
+        ? "Reject"
         : "Submit"
     );
     const newTabNames = [
@@ -623,20 +655,20 @@ const ViewCandidateDetails = (props: any) => {
 
   React.useEffect(() => {
     const getRecurtimentList = async () => {
-      const filterConditions = [
-        {
-          FilterKey: "ID",
-          Operator: "eq",
-          FilterValue: props.stateValue?.RecruitmentID,
-        },
-      ];
+      // const filterConditions = [
+      //   {
+      //     FilterKey: "ID",
+      //     Operator: "eq",
+      //     FilterValue: props.stateValue?.RecruitmentID,
+      //   },
+      // ];
       const Conditions = "";
-      const response = await getVRRDetails.GetRecruitmentDetails(
-        filterConditions,
-        Conditions
-      );
+      // const response = await getVRRDetails.GetRecruitmentDetails(
+      //   filterConditions,
+      //   Conditions
+      // );
       const Gradelevel = await CommonServices.GetGradeLevel(
-        response.data[0]?.PatersonGrade
+        RecrutimentData[0]?.PatersonGrade
       );
       // console.log(Gradelevel);
 
@@ -644,15 +676,15 @@ const ViewCandidateDetails = (props: any) => {
         {
           FilterKey: "BUCId",
           Operator: "eq",
-          FilterValue: response.data[0]?.BusinessUnitCodeId,
+          FilterValue: RecrutimentData[0]?.BusinessUnitCodeId,
         },
       ];
       const AssignHRID = await CommonServices.getUserGuidByEmail(
-        response.data[0]?.AssignEMail
+        RecrutimentData[0]?.AssignEMail
       );
       let AssignHR = {
         key: Number(AssignHRID.data?.key),
-        text: response.data[0]?.AssignEMail,
+        text: RecrutimentData[0]?.AssignEMail,
       };
       let Levels: string[] =
         Gradelevel.data[0]?.Level === InterviewLevels.Level1
@@ -690,7 +722,7 @@ const ViewCandidateDetails = (props: any) => {
       }
       setInterviewedLevel((prevState) => ({
         ...prevState,
-        Grade: response.data[0]?.PatersonGrade,
+        Grade: RecrutimentData[0]?.PatersonGrade,
         Levels: Gradelevel.data[0]?.Level,
         AssignInterviewedLevel1Option:
           AssignInterviewPanel.data && AssignInterviewPanel.data?.InterviewPanel
@@ -720,7 +752,7 @@ const ViewCandidateDetails = (props: any) => {
         COIProfileLabelOption: COIProfile,
       }));
     }
-  }, []);
+  }, [submitBtn]);
 
   const handleRadioChange = async (item: string) => {
     setActionValue((prevState: any) => ({
@@ -731,6 +763,7 @@ const ViewCandidateDetails = (props: any) => {
       ...prevState,
       CandidateStatus: false,
     }));
+    setSubmitBtn(item === "No" ? "Reject" : "Submit");
   };
 
   const handleInputChangeTextArea = (value: string | any) => {
@@ -1073,8 +1106,8 @@ const ViewCandidateDetails = (props: any) => {
                 </div>
                 {props.stateValue?.initialTab === TabName.ReviewProfile && (
                   <>
-                    {CandidateProfile?.countryOfResidency && (
-                      <div className="ms-Grid-row">
+                    <div className="ms-Grid-row">
+                      {CandidateProfile?.countryOfResidency && (
                         <div className="ms-Grid-col ms-lg4">
                           <CustomInput
                             label="Country Of Residency"
@@ -1083,35 +1116,67 @@ const ViewCandidateDetails = (props: any) => {
                             mandatory={false}
                           />
                         </div>
-                      </div>
-                    )}
-                    {CandidateProfile?.residentStatus && (
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg6">
-                          <CustomRadioGroup
-                            label="Are you residency in that country?"
-                            value={CandidateProfile?.residentStatus}
-                            options={["Yes", "No"]}
-                            mandatory={false}
-                            error={false}
-                            disabled={true}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {CandidateProfile?.maritalStatus && (
-                      <>
+                      )}
+                      {CandidateProfile?.residentStatus && (
                         <div className="ms-Grid-row">
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                            }}
+                          >
+                            <Label
+                              style={{ marginTop: 10, overflowWrap: "inherit" }}
+                            >
+                              Are you residency in that country?
+                            </Label>
+                            <span
+                              style={{
+                                fontFamily: '"Roboto", sans-serif',
+                                // color: "red",
+                                marginTop: "1%",
+                                fontWeight: "bold",
+                                fontSize: "17px",
+                              }}
+                            >
+                              {" "}
+                              - {CandidateProfile?.residentStatus}
+                            </span>
+                          </div>
+                        </div>
+                        // <div className="ms-Grid-row">
+                        //   <div className="ms-Grid-col ms-lg6">
+                        //     <CustomRadioGroup
+                        //       label="Are you residency in that country?"
+                        //       value={CandidateProfile?.residentStatus}
+                        //       options={["Yes", "No"]}
+                        //       mandatory={false}
+                        //       error={false}
+                        //       disabled={true}
+                        //     />
+                        //   </div>
+                        // </div>
+                      )}
+
+                      {CandidateProfile?.maritalStatus && (
+                        <>
                           <div className="ms-Grid-col ms-lg4">
                             <CustomInput
                               label="Marital Status"
                               value={CandidateProfile?.maritalStatus}
                               disabled={true}
                               mandatory={false}
+                              TooltipTitle={
+                                CandidateProfile?.maritalStatusId != "MS01"
+                                  ? TooltipType.ChildData
+                                  : ""
+                              }
+                              TooltipData={CandidateProfile.childrenDetails}
+                              Tooltipheader={TooltipHeader?.ChildData}
                             />
                           </div>
-                          {CandidateProfile?.maritalStatusId != "MS01" && (
+                          {/* {CandidateProfile?.maritalStatusId != "MS01" && (
                             <div
                               className="ms-Grid-col ms-lg1"
                               style={{ marginTop: "4%" }}
@@ -1121,17 +1186,226 @@ const ViewCandidateDetails = (props: any) => {
                                 // onHover={() => handleHover(rowData.StatusId, rowData)}
                               />
                             </div>
-                          )}
+                          )} */}
+                        </>
+                      )}
+                      <div className="ms-Grid-col ms-lg4">
+                        <CustomInput
+                          label="Worked with Group/Partner Companies"
+                          value={CandidateProfile?.hasIvanhoeZijinExperience}
+                          disabled={true}
+                          mandatory={false}
+                          TooltipTitle={
+                            CandidateProfile?.hasIvanhoeZijinExperience != "No"
+                              ? TooltipType.CompanyData
+                              : ""
+                          }
+                          TooltipData={CandidateProfile.companyDetails}
+                          Tooltipheader={TooltipHeader?.CompanyData}
+                        />
+                      </div>
+                      {/* {CandidateProfile?.hasIvanhoeZijinExperience != "No" && (
+                        <div
+                          className="ms-Grid-col ms-lg1"
+                          style={{ marginTop: "4%" }}
+                        >
+                          <CompanyDetails
+                            data={CandidateProfile?.companyDetails}
+                            // onHover={() => handleHover(rowData.StatusId, rowData)}
+                          />
                         </div>
-                      </>
-                    )}
+                      )} */}
+                    </div>
                   </>
                 )}
 
                 {props.stateValue?.initialTab === TabName.ReviewProfile && (
                   <>
-                    <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg6">
+                    <div style={{ padding: "1%" }}>
+                      <div className="ms-Grid-row">
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <Label
+                            style={{ marginTop: 10, overflowWrap: "inherit" }}
+                          >
+                            Willing to relocate if not currently living close to
+                            the relevant project site/office?
+                          </Label>
+                          <span
+                            style={{
+                              fontFamily: '"Roboto", sans-serif',
+                              // color: "red",
+                              marginTop: "1%",
+                              fontWeight: "bold",
+                              fontSize: "17px",
+                            }}
+                          >
+                            {" "}
+                            - {CandidateProfile?.WillingToRelocate}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="ms-Grid-row">
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <Label
+                            style={{ marginTop: 10, overflowWrap: "inherit" }}
+                          >
+                            Has the person previously worked within the Ivanhoe
+                            Mines Group?
+                          </Label>
+                          <span
+                            style={{
+                              fontFamily: '"Roboto", sans-serif',
+                              // color: "red",
+                              marginTop: "1%",
+                              fontWeight: "bold",
+                              fontSize: "17px",
+                            }}
+                          >
+                            {" "}
+                            - {CandidateProfile?.previouslyworkedMine}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="ms-Grid-row">
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <Label
+                            style={{ marginTop: 10, overflowWrap: "inherit" }}
+                          >
+                            Any family or other links with existing employees to
+                            declare? (If so, who? Attach detail)
+                          </Label>
+                          <span
+                            style={{
+                              fontFamily: '"Roboto", sans-serif',
+                              // color: "red",
+                              marginTop: "1%",
+                              fontWeight: "bold",
+                              fontSize: "17px",
+                            }}
+                          >
+                            {" "}
+                            - {CandidateProfile?.familylinks}
+                          </span>
+                          <span>
+                            <div
+                              style={{ marginTop: "4%", marginLeft: "124px" }}
+                            >
+                              {CandidateProfile?.familylinks === "Yes" ? (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                  }}
+                                >
+                                  <label
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "4px",
+                                      cursor: "default",
+                                      fontWeight: "600",
+                                    }}
+                                  >
+                                    Attachment
+                                    <EmployeeDetailsTooltip
+                                      data={
+                                        CandidateProfile.employeeReferenceDetails
+                                      }
+                                    />
+                                    :
+                                  </label>
+                                  <span>
+                                    <CustomViewDocument
+                                      Attachment={
+                                        CandidateProfile.familyDocuments
+                                      }
+                                    />
+                                  </span>
+                                </div>
+                              ) : (
+                                <></>
+                              )}
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="ms-Grid-row">
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <Label
+                            style={{ marginTop: 10, overflowWrap: "inherit" }}
+                          >
+                            Any business links to declare? (If so, who? Attach
+                            detail)
+                          </Label>
+                          <span
+                            style={{
+                              fontFamily: '"Roboto", sans-serif',
+                              // color: "red",
+                              marginTop: "1%",
+                              fontWeight: "bold",
+                              fontSize: "17px",
+                            }}
+                          >
+                            {" "}
+                            - {CandidateProfile?.businesslinks}
+                          </span>
+                          <span style={{ marginLeft: "322px" }}>
+                            <div style={{ marginTop: "12%" }}>
+                              {CandidateProfile?.businesslinks === "Yes" ? (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                  }}
+                                >
+                                  <Label>Attachment : </Label>
+                                  <span>
+                                    <CustomViewDocument
+                                      Attachment={
+                                        CandidateProfile.businessDocuments
+                                      }
+                                    />
+                                  </span>
+                                </div>
+                              ) : (
+                                <></>
+                              )}
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* <div className="ms-Grid-col ms-lg6">
                         <CustomRadioGroup
                           label="Willing to relocate if not currently living close to the relevant project site/office?"
                           value={CandidateProfile?.WillingToRelocate}
@@ -1140,8 +1414,8 @@ const ViewCandidateDetails = (props: any) => {
                           error={false}
                           disabled={true}
                         />
-                      </div>
-                      <div className="ms-Grid-col ms-lg6">
+                      </div> */}
+                    {/* <div className="ms-Grid-col ms-lg6">
                         <CustomRadioGroup
                           label="Has the person previously worked within the Ivanhoe Mines Group?"
                           value={CandidateProfile?.previouslyworkedMine}
@@ -1150,13 +1424,12 @@ const ViewCandidateDetails = (props: any) => {
                           error={false}
                           disabled={true}
                         />
-                      </div>
-                    </div>
+                      </div> */}
 
-                    <div className="ms-Grid-row">
+                    {/* <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg6">
                         <CustomRadioGroup
-                          label="Any family or other links with existing employees to declare? (If so, who? Attach detail)"
+                          label=""
                           value={CandidateProfile?.familylinks}
                           options={["Yes", "No"]}
                           mandatory={false}
@@ -1174,43 +1447,7 @@ const ViewCandidateDetails = (props: any) => {
                           disabled={true}
                         />
                       </div>
-                    </div>
-
-                    <div className="ms-Grid-row">
-                      {CandidateProfile?.familylinks === "Yes" ? (
-                        <div className="ms-Grid-col ms-lg6">
-                          <label
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "4px",
-                              cursor: "default",
-                            }}
-                          >
-                            Attachment
-                            <EmployeeDetailsTooltip
-                              data={CandidateProfile.employeeReferenceDetails}
-                            />
-                          </label>
-                          <CustomViewDocument
-                            Attachment={CandidateProfile.familyDocuments}
-                          />
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-
-                      {CandidateProfile?.businesslinks === "Yes" ? (
-                        <div className="ms-Grid-col ms-lg6">
-                          <Label>Attachment</Label>
-                          <CustomViewDocument
-                            Attachment={CandidateProfile.businessDocuments}
-                          />
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-                    </div>
+                    </div> */}
                   </>
                 )}
 
@@ -1223,7 +1460,7 @@ const ViewCandidateDetails = (props: any) => {
                           selectedDate={InterviewedLevel.InterviewedDate}
                           label="Interview Date -  level 1"
                           error={validationErrors.InterviewedDate}
-                          minDate={todaydate}
+                          minDate={MinDateInterview}
                           mandatory={!level2Date}
                           onChange={(date) =>
                             handleDateChange(date ?? undefined)
@@ -1277,7 +1514,7 @@ const ViewCandidateDetails = (props: any) => {
                               selectedDate={level2Data.InterviewedDate}
                               label="Interviewed Date-Level 2"
                               error={validationErrors.InterviewedDateLevel2}
-                              minDate={todaydate}
+                              minDate={MinDateInterview}
                               mandatory={true}
                               onChange={(date) =>
                                 handleDateChange(date ?? undefined)
@@ -1713,37 +1950,39 @@ const ViewCandidateDetails = (props: any) => {
                     </>
                   )}
 
-                {props.CurrentRoleID.includes(RoleID.LineManager) &&
-                  CandidateProfile.Comments.length > 0 && (
-                    <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg4">
-                        <CustomLabel value={labelName.ViewComments} />
-                        <ReuseButton
-                          Style={{
-                            minWidth: "117px",
-                            fontSize: "13px",
-                            paddingBottom: "24px",
-                            display: "flex",
-                            flexDirection: "column",
-                            height: "41px",
-                            paddingTop: "23px",
-                            backgroundColor:
-                              ColorCode.ButtonColorCode.ButtonColor,
-                            color: "white",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                          label="VIEW"
-                          imgSrc={require("../../assets/viewSubmision-white.svg")}
-                          imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                          imgAlt="View"
-                          imgAltHover="Hovered View"
-                          onClick={() => setOpenComments(true)}
-                          spacing={4}
-                        />
-                      </div>
+                {/* ((props.CurrentRoleID.includes(RoleID.RecruitmentHR) &&
+                  props.stateValue?.ButtonAction === ButtonAction.View) ||
+                  props.CurrentRoleID.includes(RoleID.LineManager)) && */}
+                {CandidateProfile.Comments.length > 0 && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomLabel value={labelName.ViewComments} />
+                      <ReuseButton
+                        Style={{
+                          minWidth: "117px",
+                          fontSize: "13px",
+                          paddingBottom: "24px",
+                          display: "flex",
+                          flexDirection: "column",
+                          height: "41px",
+                          paddingTop: "23px",
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          color: "white",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        label="VIEW"
+                        imgSrc={require("../../assets/viewSubmision-white.svg")}
+                        imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                        imgAlt="View"
+                        imgAltHover="Hovered View"
+                        onClick={() => setMainComponent(false)}
+                        spacing={4}
+                      />
                     </div>
-                  )}
+                  </div>
+                )}
 
                 {props.stateValue?.ButtonAction === ButtonAction.View ? (
                   <></>
@@ -1953,17 +2192,17 @@ const ViewCandidateDetails = (props: any) => {
   };
 
   const UploadCandidateDetails = async () => {
-    const filterConditions = [];
-    const Conditions = "";
-    filterConditions.push({
-      FilterKey: "ID",
-      Operator: "eq",
-      FilterValue: props.stateValue.RecruitmentID,
-    });
-    const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails(
-      filterConditions,
-      Conditions
-    );
+    // const filterConditions = [];
+    // const Conditions = "";
+    // filterConditions.push({
+    //   FilterKey: "ID",
+    //   Operator: "eq",
+    //   FilterValue: props.stateValue.RecruitmentID,
+    // });
+    // const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails(
+    //   filterConditions,
+    //   Conditions
+    // );
     // const HRMSExternalAgents = await CommonServices.GetMasterData(
     //   ListNames.HRMSExternalAgents
     // );
@@ -1979,7 +2218,7 @@ const ViewCandidateDetails = (props: any) => {
     let DOBData = SpiltDateOnly(DOBValue ?? new Date());
     const CandidateDetails: CandidateDetails = {
       RecruitmentIDId: props.stateValue.RecruitmentID,
-      JobCodeId: RecruitmentDetails.data[0].JobCodeId,
+      JobCodeId: RecrutimentData[0].JobCodeId,
       FristName: CandidateProfile.FristName,
       MiddleName: CandidateProfile.MiddleName,
       LastName: CandidateProfile.ApplicantSurName,
@@ -1994,8 +2233,8 @@ const ViewCandidateDetails = (props: any) => {
       Qualification: CandidateProfile.HighestQualification,
       JobRequestID: String(CandidateProfile.CandidateID),
       ProfileID: String(CandidateProfile.profileID),
-      PositionTitle: RecruitmentDetails?.data[0]?.JobTitleEnglish,
-      JobGrade: RecruitmentDetails?.data[0]?.DRCGrade,
+      PositionTitle: RecrutimentData[0]?.JobTitleEnglish,
+      JobGrade: RecrutimentData[0]?.DRCGrade,
       ExternalAgentDetails: CandidateProfile.Agencies,
       InterviewDate: InterviewDate,
       InterviewTime: InterviewedLevel?.InterviewTime,
@@ -2036,7 +2275,11 @@ const ViewCandidateDetails = (props: any) => {
       MaritalStatus: CandidateProfile.maritalStatus,
       ChildrenDetails: JSON.stringify(CandidateProfile.childrenDetails),
       ReferenceEmployeeDetails: JSON.stringify(
-        CandidateProfile.employeeReferenceDetails
+        Object.entries(CandidateProfile.employeeReferenceDetails || {})
+      ),
+      hasIvanhoeZijinExperience: CandidateProfile?.hasIvanhoeZijinExperience,
+      OperationRoleRegion: JSON.stringify(
+        Object.entries(CandidateProfile?.companyDetails || {})
       ),
     };
     let selectedinterviewpanal: any[] = [];
@@ -2044,7 +2287,7 @@ const ViewCandidateDetails = (props: any) => {
     for (let i = 0; i < InterviewedLevel.AssignInterviewLevel1.length; i++) {
       const currentItem = InterviewedLevel.AssignInterviewLevel1[i];
       let selectedinterview = {
-        RecruitmentIDId: RecruitmentDetails.data[0]?.ID,
+        RecruitmentIDId: RecrutimentData[0]?.ID,
         InterviewLevel: InterviewLevels.Level1, //InterviewedLevel.Levels,
         InterviewPanel: currentItem.key,
         CandidateID: 0,
@@ -2449,15 +2692,8 @@ const ViewCandidateDetails = (props: any) => {
         CandidateProfile.ConflictsOfInterest === "Yes" &&
         props.stateValue?.initialTab === TabName.ReviewProfile
       ) {
-        const COIWarnMsg = `
-  <div style="text-align: center;">
-    <p>This is the Conflict of Interest profile.</p>
-    <p>Would you like to proceed with the candidate?</p>
-    <p style="color: red; font-size: small;">Note: Clicking the 'No' button will directly disqualify the candidate.</p>
-  </div>
-`;
         const WarningMsg = {
-          Message: COIWarnMsg,
+          Message: COIWarningMsg,
           Type: HRMSAlertOptions.Confirmation,
           visible: true,
           ButtonLebel: "Yes",
@@ -2530,47 +2766,70 @@ const ViewCandidateDetails = (props: any) => {
 
   return (
     <>
-      <CustomLoader isLoading={isLoading}>
-        <div className="menu-card">
-          <BreadcrumbsComponent
-            items={tabs}
-            initialItem={activeTab}
-            TabName={TabNameData}
-            onBreadcrumbChange={handleBreadcrumbChange}
-            handleCancel={handleCancel}
-            JobValue={{
-              JobTitle: CandidateProfile.JobTitle ?? "",
-              JobCode: CandidateProfile.JobCode,
-              Status: CandidateProfile.Status,
-            }}
-            Agencies={CandidateProfile.Agencies}
-            additionalButtons={
-              props.stateValue?.ButtonAction === ButtonAction.View
-                ? [
-                    {
-                      label: "Back",
-                      onClick: async () => {
-                        back_fn();
-                      },
-                    },
-                  ]
-                : [
-                    {
-                      label: submitBtn,
-                      onClick: async () => {
-                        await COIValidation();
-                      },
-                    },
-                  ]
-            }
-          />
-          {/* <TabsComponent
+      {MainComponent ? (
+        <>
+          <CustomLoader isLoading={isLoading}>
+            <div className="menu-card">
+              <BreadcrumbsComponent
+                items={tabs}
+                initialItem={activeTab}
+                TabName={TabNameData}
+                onBreadcrumbChange={handleBreadcrumbChange}
+                handleCancel={handleCancel}
+                JobValue={{
+                  JobTitle: CandidateProfile.JobTitle ?? "",
+                  JobCode: CandidateProfile.JobCode,
+                  Status: CandidateProfile.Status,
+                }}
+                Agencies={CandidateProfile.Agencies}
+                additionalButtons={
+                  props.stateValue?.ButtonAction === ButtonAction.View
+                    ? [
+                        {
+                          label: "Back",
+                          onClick: async () => {
+                            back_fn();
+                          },
+                        },
+                      ]
+                    : actionValue.CandidateStatus === "NO"
+                    ? [
+                        {
+                          label: "Reject",
+                          onClick: async () => {
+                            await Submit_fn(ButtonAction.Remove);
+                          },
+                        },
+                      ]
+                    : [
+                        {
+                          label: submitBtn,
+                          onClick: async () => {
+                            await COIValidation();
+                          },
+                        },
+                      ]
+                }
+              />
+              {/* <TabsComponent
             tabs={tabs}
             initialTab="tab1"
             
           /> */}
-        </div>
-      </CustomLoader>
+            </div>
+          </CustomLoader>
+        </>
+      ) : (
+        <>
+          <CommanComments
+            onClose={() => {
+              setMainComponent(true);
+              setactiveTab(activeTab);
+            }}
+            Comments={CandidateProfile.Comments}
+          />
+        </>
+      )}
 
       {AlertPopupOpen ? (
         <>

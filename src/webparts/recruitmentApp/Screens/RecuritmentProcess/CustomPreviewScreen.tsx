@@ -5,6 +5,7 @@ import LabelHeaderComponents from "../../components/TitleHeader";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import CustomLabel from "../../components/CustomLabel";
+import { Notes } from "../../utilities/Config";
 
 interface FormFields {
   data: AdvDetails;
@@ -55,6 +56,29 @@ function CustomPreviewScreen({
           >
             <CardContent>
               <div style={{ padding: "2%" }}>
+                <div
+                  className="ms-Grid-row"
+                  style={{
+                    margin: "0%",
+                    marginTop: "1%",
+                    marginBottom: "-1%",
+                  }}
+                >
+                  <p>
+                    <span
+                      style={{
+                        color: "red",
+                        marginTop: "8px",
+                        display: "block",
+                        fontFamily: "sans-serif",
+                        fontSize: "14px",
+                        fontWeight: "700",
+                      }}
+                    >
+                      Note:- {Notes.JobAdvetisementNotes}
+                    </span>
+                  </p>
+                </div>
                 <div className="ms-Grid-row" style={{ textAlign: "center" }}>
                   <div className="ms-Grid-col ms-lg12">
                     <LabelHeaderComponents value="Advertisement" />

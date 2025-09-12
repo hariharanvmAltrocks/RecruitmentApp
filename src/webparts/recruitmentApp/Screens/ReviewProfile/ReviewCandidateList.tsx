@@ -326,7 +326,7 @@ const ReviewCandidateList = (props: any) => {
       field: "Status",
       header: "Status",
       fieldName: "Status",
-      sortable: false,
+      sortable: true,
       body: (rowData: any) => {
         const isTooltipStatus = [
           workflowStatusApi.CandidateRejectedIPanel,

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import "../../App.css";
-import { Typography, Button, Box } from "@mui/material";
+import { Typography, Button, Box, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CustomLoader from "../../Services/Loader/CustomLoader";
@@ -74,6 +74,8 @@ export type OptionRow = {
   key: number;
   text: string;
   isCorrect?: boolean;
+  textvalidation?: boolean;
+  fieldValidation?: boolean;
 };
 
 export type MasterOption = {
@@ -117,7 +119,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   });
 
   const [OptionsType, setOptionsType] = useState<OptionRow[]>([
-    { key: 0, text: "", isCorrect: false },
+    {
+      key: 0,
+      text: "",
+      isCorrect: false,
+      textvalidation: false,
+      fieldValidation: false,
+    },
   ]);
 
   const [ValidationError, setValidationError] =
@@ -195,9 +203,20 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   // };
 
   const handleOptionChange = (index: number, newVal: string) => {
+    if (newVal.length > 155) {
+      setOptionsType((prev) => {
+        const updated = [...prev];
+        updated[index].textvalidation = true;
+        return updated;
+      });
+      console.warn("Input exceeds 155 characters");
+      return;
+    }
+
     setOptionsType((prev) => {
       const updated = [...prev];
       updated[index].text = newVal;
+      updated[index].textvalidation = false;
       return updated;
     });
   };
@@ -485,7 +504,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     });
   };
 
-  const handleSaveQuestion = (index: number) => {
+  const handleSaveQuestion = (index: number, OptionIndex: number) => {
     const shouldValidateQuestionType =
       props?.stateValue?.StatusId ===
       StatusId.PendingwithLMcreateDisqualificationQuestion;
@@ -496,6 +515,17 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     const questionType: AutoCompleteItem = shouldValidateQuestionType
       ? InterviewQuesData.QuestionType
       : customAnswerType || { key: 0, text: "" };
+
+    // setOptionsType((prev) => {
+    //   const updated = [...prev];
+    //   if (updated[OptionIndex].text === "") {
+    //     updated[OptionIndex - 1].fieldValidation = true;
+    //   } else {
+    //     updated[OptionIndex - 1].fieldValidation = false;
+    //   }
+    //   return updated;
+    // });
+
     if (!Validation()) {
       console.warn("Validation failed. Exiting save function.");
       return;
@@ -1890,107 +1920,155 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                             OptionsType.map((option, index) => {
                               const isSelected = option.isCorrect;
                               return (
-                                <Box
-                                  key={index}
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    mb: 2,
-                                    gap: 1,
-                                  }}
-                                >
-                                  <Typography
-                                    variant="body1"
-                                    sx={{ width: "80px" }}
-                                  >
-                                    Option {index + 1} *
-                                  </Typography>
-
-                                  <CustomInput
-                                    label=""
-                                    value={option.text}
-                                    onChange={(val) =>
-                                      handleOptionChange(index, val)
-                                    }
-                                  />
-
+                                <>
                                   <Box
+                                    key={index}
                                     sx={{
-                                      backgroundColor: isSelected
-                                        ? "#4CAF50"
-                                        : "#D3D3D3",
-                                      borderRadius: "50%",
-                                      width: 30,
-                                      height: 30,
                                       display: "flex",
                                       alignItems: "center",
-                                      justifyContent: "center",
-                                      cursor: "pointer",
-                                      boxShadow: isSelected
-                                        ? "0px 0px 5px rgba(0, 128, 0, 0.5)"
-                                        : "0px 0px 5px rgba(0, 0, 0, 0.2)",
-                                      transition: "all 0.3s ease-in-out",
+                                      mb: 2,
+                                      gap: 1,
                                     }}
-                                    onClick={() =>
-                                      handleAnswerSelections(index)
-                                    }
                                   >
-                                    <CheckCircleOutlineIcon
+                                    <Typography
+                                      variant="body1"
+                                      sx={{ width: "80px", marginTop: "2%" }}
+                                    >
+                                      Option {index + 1} *
+                                    </Typography>
+
+                                    <div style={{ width: "42%" }}>
+                                      <CustomInput
+                                        label=""
+                                        placeHolder="Enter your text (maximum 155 characters)"
+                                        value={option.text}
+                                        onChange={(val) =>
+                                          handleOptionChange(index, val)
+                                        }
+                                      />
+                                    </div>
+
+                                    <Box
+                                      sx={{
+                                        backgroundColor: isSelected
+                                          ? "#4CAF50"
+                                          : "#D3D3D3",
+                                        borderRadius: "50%",
+                                        width: 30,
+                                        height: 30,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        cursor: "pointer",
+                                        boxShadow: isSelected
+                                          ? "0px 0px 5px rgba(0, 128, 0, 0.5)"
+                                          : "0px 0px 5px rgba(0, 0, 0, 0.2)",
+                                        transition: "all 0.3s ease-in-out",
+                                        marginTop: "2%",
+                                      }}
+                                      onClick={() =>
+                                        handleAnswerSelections(index)
+                                      }
+                                    >
+                                      <Tooltip title="select the correct answer">
+                                        <CheckCircleOutlineIcon
+                                          sx={{
+                                            color: isSelected
+                                              ? "white"
+                                              : "black",
+                                            fontSize: 24,
+                                            cursor: "pointer", // Optional: make it look clickable
+                                          }}
+                                        />
+                                      </Tooltip>
+                                      {/* <CheckCircleOutlineIcon
                                       sx={{
                                         color: isSelected ? "white" : "black",
                                         fontSize: 24,
                                       }}
-                                    />
-                                  </Box>
+                                    /> */}
+                                    </Box>
 
-                                  <Box sx={{ display: "flex", gap: 1 }}>
-                                    {OptionsType.length > 1 && (
-                                      <Button
-                                        variant="contained"
-                                        sx={{
-                                          backgroundColor:
-                                            ColorCode.ButtonColorCode
-                                              .ButtonColor,
-                                          color:
-                                            ColorCode.ButtonColorCode.color,
-                                          minWidth: 40,
-                                          "&:hover": {
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        gap: 1,
+                                        marginTop: "2%",
+                                      }}
+                                    >
+                                      {OptionsType.length > 1 && (
+                                        <Button
+                                          variant="contained"
+                                          sx={{
                                             backgroundColor:
                                               ColorCode.ButtonColorCode
                                                 .ButtonColor,
-                                          },
-                                        }}
-                                        onClick={() => handleDeleteRow(index)}
-                                      >
-                                        <DeleteOutlineIcon
-                                          sx={{ fontSize: 20 }}
-                                        />
-                                      </Button>
-                                    )}
+                                            color:
+                                              ColorCode.ButtonColorCode.color,
+                                            minWidth: 40,
+                                            "&:hover": {
+                                              backgroundColor:
+                                                ColorCode.ButtonColorCode
+                                                  .ButtonColor,
+                                            },
+                                          }}
+                                          onClick={() => handleDeleteRow(index)}
+                                        >
+                                          <DeleteOutlineIcon
+                                            sx={{ fontSize: 20 }}
+                                          />
+                                        </Button>
+                                      )}
 
-                                    {index === OptionsType.length - 1 && (
-                                      <Button
-                                        variant="contained"
-                                        sx={{
-                                          backgroundColor:
-                                            ColorCode.ButtonColorCode
-                                              .ButtonColor,
-                                          color:
-                                            ColorCode.ButtonColorCode.color,
-                                          minWidth: 40,
-                                          "&:hover": {
+                                      {index === OptionsType.length - 1 && (
+                                        <Button
+                                          variant="contained"
+                                          sx={{
                                             backgroundColor:
                                               ColorCode.ButtonColorCode
                                                 .ButtonColor,
-                                          },
-                                        }}
-                                        onClick={handleAddRow}
-                                      >
-                                        <AddIcon />
-                                      </Button>
-                                    )}
+                                            color:
+                                              ColorCode.ButtonColorCode.color,
+                                            minWidth: 40,
+                                            "&:hover": {
+                                              backgroundColor:
+                                                ColorCode.ButtonColorCode
+                                                  .ButtonColor,
+                                            },
+                                          }}
+                                          onClick={handleAddRow}
+                                        >
+                                          <AddIcon />
+                                        </Button>
+                                      )}
+                                    </Box>
                                   </Box>
-                                </Box>
+                                  {option.textvalidation && (
+                                    <p
+                                      style={{
+                                        marginTop: 5,
+                                        color: "red",
+                                        fontSize: 12,
+                                        marginLeft: 0,
+                                      }}
+                                    >
+                                      Your input is too long. Please reduce to
+                                      155 characters or fewer.
+                                    </p>
+                                  )}
+                                  {option.fieldValidation && (
+                                    <p
+                                      style={{
+                                        marginTop: 5,
+                                        color: "red",
+                                        fontSize: 12,
+                                        marginLeft: 0,
+                                      }}
+                                    >
+                                      Field is Required
+                                    </p>
+                                  )}
+                                </>
                               );
                             })
                           ) : (
@@ -2046,7 +2124,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         variant="contained"
                         // startIcon={<AddIcon />}
                         onClick={() =>
-                          handleSaveQuestion(resuequestionnaire.length + 1)
+                          handleSaveQuestion(
+                            resuequestionnaire.length + 1,
+                            OptionsType.length
+                          )
                         }
                         sx={{
                           backgroundColor:
@@ -2402,6 +2483,23 @@ const InterviewQuesEdit: React.FC = (props: any) => {
             ActionId: WorkflowAction.Approved,
             ItemCreated: "Yes",
           };
+          await SPServices.SPUpdateItem({
+            Listname: ListNames.HRMSRecruitmentDptDetails,
+            RequestJSON: obj,
+            ID: props.stateValue?.ID,
+          });
+        } else {
+          let obj: any = {};
+          if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+            obj = {
+              QuestionByHR: "Yes",
+            };
+          } else {
+            obj = {
+              QuestionByLM: "Yes",
+            };
+          }
+
           await SPServices.SPUpdateItem({
             Listname: ListNames.HRMSRecruitmentDptDetails,
             RequestJSON: obj,

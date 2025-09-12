@@ -22,6 +22,7 @@ import {
   ActionIcon,
   ButtonAction,
   InterviewLevels,
+  RoleName,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Card, CardContent } from "@mui/material";
@@ -80,6 +81,7 @@ const RecruitmentProcess = (props: any) => {
       JobTitle: "",
       JobCode: " ",
       ID: 0,
+      JobCodeId: 0,
     },
   ]);
   const [selectedJobCodes, setSelectedJobCodes] = React.useState<
@@ -114,6 +116,7 @@ const RecruitmentProcess = (props: any) => {
   });
 
   const [pendingInfo, setPendingInfo] = React.useState<any>(null);
+  const [positionIDs, setPositionIDs] = React.useState<any>(null);
   const storedStringRef = React.useRef("");
 
   const handleHover = async (statusId: number, rowData: any) => {
@@ -183,12 +186,14 @@ const RecruitmentProcess = (props: any) => {
 
       case StatusId.PendingwithHRandLMtocreateinterviewQuestion:
         pendingName = [
-          (
-            await getVRRDetails.GetADGroupUsers(
-              rowData.AssignLineManager,
-              "LineManager"
-            )
-          ).data,
+          {
+            Key: RoleName?.RecruitmentHR,
+            Value: rowData?.QuestionByHR === "Yes" ? "Completed" : "Pending",
+          },
+          {
+            Key: RoleName?.LineManager,
+            Value: rowData?.QuestionByLM === "Yes" ? "Completed" : "Pending",
+          },
         ];
         break;
       case StatusId.RecruitmentInProgress: {
@@ -234,6 +239,32 @@ const RecruitmentProcess = (props: any) => {
     setPendingInfo(pendingName);
   };
 
+  const handlePositionHover = async (rowData: any) => {
+    const filterConditions = [
+      {
+        FilterKey: "JobCode",
+        Operator: "eq",
+        FilterValue: rowData.JobCodeId,
+      },
+      {
+        FilterKey: "Department",
+        Operator: "eq",
+        FilterValue: rowData.DepartmentId,
+      },
+      // {
+      //   FilterKey: "PositionIDStatus",
+      //   Operator: "eq",
+      //   FilterValue: "Vacant",
+      // },
+    ];
+    const response = await getVRRDetails.GetPositionIDData(
+      filterConditions,
+      "and"
+    );
+    console.log(response.data, "responseresponseresponseresponse");
+    setPositionIDs(response.data);
+  };
+
   const columnConfig = (
     tab: string,
     ButtonActions: number,
@@ -260,6 +291,26 @@ const RecruitmentProcess = (props: any) => {
       sortable: true,
     },
     {
+      field: "NumberOfPersonNeeded",
+      header: "No. of person(s)",
+      sortable: true,
+      body: (rowData: any) => {
+        return (
+          <div>
+            <ToolTipButton
+              Title=""
+              CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+              Rowdata={rowData}
+              ApproverData={positionIDs}
+              onHover={() => handlePositionHover(rowData)}
+              TooltipHeader={"Job IDs"}
+            />
+            <span>{rowData.NumberOfPersonNeeded}</span>
+          </div>
+        );
+      },
+    },
+    {
       field: "Type",
       header: "Position Request",
       sortable: true,
@@ -281,6 +332,12 @@ const RecruitmentProcess = (props: any) => {
             StatusId.ReadyforRecruitmentProcess,
             // StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
             // StatusId.RecruitmentInProgress,
+          ].includes(rowData.StatusId);
+        } else if (props.CurrentRoleID.includes(RoleID.LineManager)) {
+          isTooltipStatus = [
+            StatusId.ReadyforRecruitmentProcess,
+            StatusId.PendingwithLMcreateDisqualificationQuestion,
+            StatusId.PendingwithLineManagereviewAdv,
           ].includes(rowData.StatusId);
         } else {
           isTooltipStatus = [
@@ -867,6 +924,7 @@ const RecruitmentProcess = (props: any) => {
           JobCode: item.JobCode,
           JobTitle: item.JobTitleEnglish,
           Nationality: item.Nationality,
+          JobCodeId: item.JobCodeId,
         }));
         const uniqueJobData = JobCode.filter(
           (job, index, self) =>
@@ -1409,8 +1467,21 @@ const RecruitmentProcess = (props: any) => {
                 // isSuspended: 1,
               };
             });
+            let JobCodeFilter = [
+              {
+                FilterKey: "JobCodeId",
+                Operator: "eq",
+                FilterValue: selectedJob?.JobCodeId,
+              },
+              { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+            ];
+            let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
+              JobCodeFilter,
+              "and"
+            );
+            let JobUniquedata = JobUniqueValue.data[0]?.JobUniqueKey || "";
             const AgentDetails: profileXagent = {
-              jobCode: selectedJob.JobCode,
+              jobCode: JobUniquedata,
               jobsXAgents: agentDetails,
             };
             await GetPortalJobsService.UpsertAgenciesJobs(AgentDetails)
@@ -1742,91 +1813,109 @@ const RecruitmentProcess = (props: any) => {
       )}
       {AssignHR ? (
         <>
-          <CustomDialogbox
-            Style={{ width: "45vw", height: "35vw" }}
-            visible={AssignHR}
-            children={
-              <AssignRecuritmentHR
-                jobCodes={allJobData}
-                selectedJobCodes={selectedJobCodes}
-                onSelectAllChange={() => onSelectAllChange}
-                onRowChange={() => handleCheckbox}
-                CurrentRole={props.CurrentRoleID}
-                onClose={handleCancel}
-                AssignedHRId={props.stateValue?.AssignedHRId}
-                validationErrors={validationErrors}
-                ValueData={AssignHRData}
-                Nationality={selectedJobCodes[0]?.Nationality ?? ""}
-                handleAutoComplete={(item) => handleAutoComplete(item)}
-                handleAgencyChange={(item: AutoCompleteItem[]) =>
-                  handleAgencyChange(item)
-                }
-                handleInputChangeTextArea={(item: string) =>
-                  handleInputChangeTextArea(item)
-                }
-                AssignHRSubmit={
-                  props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)
-                    ? () => handleSubmit()
-                    : () => handleAgencySubmit()
-                }
-              />
-            }
-            onClose={() => setAssignHR(false)}
-            header={
-              <div style={{ textAlign: "center", width: "100%" }}>
-                <h2
+          <div>
+            <CustomDialogbox
+              Style={{
+                width: "45vw",
+                height: "35vw",
+                padding: "0px",
+                overflowX: "hidden",
+              }}
+              visible={AssignHR}
+              children={
+                <AssignRecuritmentHR
+                  jobCodes={allJobData}
+                  selectedJobCodes={selectedJobCodes}
+                  onSelectAllChange={() => onSelectAllChange}
+                  onRowChange={() => handleCheckbox}
+                  CurrentRole={props.CurrentRoleID}
+                  onClose={handleCancel}
+                  AssignedHRId={props.stateValue?.AssignedHRId}
+                  validationErrors={validationErrors}
+                  ValueData={AssignHRData}
+                  Nationality={selectedJobCodes[0]?.Nationality ?? ""}
+                  handleAutoComplete={(item) => handleAutoComplete(item)}
+                  handleAgencyChange={(item: AutoCompleteItem[]) =>
+                    handleAgencyChange(item)
+                  }
+                  handleInputChangeTextArea={(item: string) =>
+                    handleInputChangeTextArea(item)
+                  }
+                  AssignHRSubmit={
+                    props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)
+                      ? () => handleSubmit()
+                      : () => handleAgencySubmit()
+                  }
+                />
+              }
+              onClose={() => setAssignHR(false)}
+              header={
+                <div
                   style={{
-                    color: ColorCode.LabelStyleColorCode.LabelStyleColor,
-                    fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
-                    -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                    textAlign: "center",
+                    width: "100%",
+                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                    marginTop: "-5%",
+                    height: "50px",
                   }}
                 >
-                  {props.CurrentRoleID.includes(RoleID.RecruitmentHR)
-                    ? "Assign Agencies"
-                    : "Assign Recruitment HR"}
-                </h2>
-              </div>
-            }
-            footer={
-              <div
-                className="ms-Grid-row"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  padding: "10px 0",
-                  gap: "33px",
-                }}
-              >
-                <ReuseButton
-                  label="Cancel"
-                  onClick={() => handleCancel()}
-                  Style={{
-                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                    color: "white",
-                    width: "50%",
+                  <h2
+                    style={{
+                      color: "white",
+                      fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
+                    -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                      // textDecoration: "underline",
+                      // textUnderlineOffset: "6px",
+                      marginTop: "7%",
+                    }}
+                  >
+                    {props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+                      ? "Assign Agencies"
+                      : "Assign Recruitment HR"}
+                  </h2>
+                </div>
+              }
+              footer={
+                <div
+                  className="ms-Grid-row"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    padding: "10px 0",
+                    gap: "33px",
                   }}
-                />
+                >
+                  <ReuseButton
+                    label="Cancel"
+                    onClick={() => handleCancel()}
+                    Style={{
+                      backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                      color: "white",
+                      width: "50%",
+                    }}
+                  />
 
-                <ReuseButton
-                  label="Assign"
-                  onClick={async () => {
-                    if (
-                      props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)
-                    ) {
-                      await handleSubmit();
-                    } else {
-                      await handleAgencySubmit();
-                    }
-                  }}
-                  Style={{
-                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                    color: "white",
-                    width: "50%",
-                  }}
-                />
-              </div>
-            }
-          />
+                  <ReuseButton
+                    label="Assign"
+                    onClick={async () => {
+                      if (
+                        props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)
+                      ) {
+                        await handleSubmit();
+                      } else {
+                        await handleAgencySubmit();
+                      }
+                    }}
+                    Style={{
+                      backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                      color: "white",
+                      width: "50%",
+                    }}
+                  />
+                </div>
+              }
+            />
+          </div>
         </>
       ) : (
         <></>

@@ -13,6 +13,7 @@ interface ToolTipButtonProps {
   CurrentMenuId: number;
   Rowdata: any;
   ApproverData: any;
+  TooltipHeader?: string;
   onHover: () => void;
 }
 
@@ -21,6 +22,7 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
   Rowdata,
   ApproverData,
   onHover,
+  TooltipHeader,
 }) => {
   const tooltipId = useId("tooltip");
   const hostStyles: Partial<ITooltipHostStyles> = {
@@ -38,7 +40,7 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
           marginBottom: "8px",
         }}
       >
-        Approver Name
+        {TooltipHeader ? TooltipHeader : "Next Approver Name"}
       </div>
       {lines}
     </div>
@@ -67,6 +69,7 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
       const data = ApproverData;
 
       if (!data) return <div>Loading...</div>;
+      // if(ApproverData)
       return renderApproverList(
         data.map((item: any) => boldLabel(item.Key, item.Value))
       );

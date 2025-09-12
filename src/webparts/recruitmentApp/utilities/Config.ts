@@ -500,7 +500,8 @@ export const ApplicationStatusId = {
 export const Notes = {
   Roleprofile: "Role Profile is not available for the Job Title.",
   Grding: "Grading Report is not available for the Job Title.",
-  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving this submission."
+  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving this submission.",
+  JobAdvetisementNotes: "The Advertisement is published in Career webpage.",
 }
 // sneka
 export const CatogryOption = [
@@ -718,6 +719,14 @@ export const NationalityOption = [
 export const ProfileReview = ["Yes", "No", "On Hold"]
 export const ProfileReviewl2 = ["Yes", "No"]
 
+export const COIWarningMsg = `
+  <div style="text-align: center;">
+    <p>This is the Conflict of Interest profile.</p>
+    <p>Would you like to proceed with the candidate?</p>
+    <p style="color: red; font-size: small;">Note: Clicking 'No' will lead to automatic disqualification of the candidate.</p>
+  </div>
+`
+
 export const ColorCode = {
   TabColorCode: {
     Tabcolor: "#a8b8c6",
@@ -741,4 +750,17 @@ export const ColorCode = {
   ProfileColorCode: {
     colorCode: "#597b98"
   }
+}
+
+export const TooltipType = {
+  ChildData: "Children Details",
+  EmplyeeData: "Reference Employee Details",
+  CompanyData: "Company Details"
+}
+
+export const TooltipHeader = {
+  ChildData: [{ key: "name", label: "Name" }, { key: "age", label: "Age" }, { key: "genderId", label: "Gender" }],
+  EmplyeeData: [{ key: "empId", label: "Employee ID" }, { key: "empName", label: "Employee Name" }, { key: "empEmail", label: "Employee Email" }, { key: "company", label: "Employee Company" }],
+  CompanyData: [{ key: "operation", label: "Operation" }, { key: "role", label: "Role" }, { key: "region", label: "Region / Province" }],
+
 }
