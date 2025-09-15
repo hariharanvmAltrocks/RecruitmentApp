@@ -1221,6 +1221,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                               >
                                 <CustomViewDocument
                                   Attachment={data.familyDocuments ?? []}
+                                  webUrl={props.webURL}
                                 />
                               </div>
                             </div>
@@ -1246,6 +1247,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                                       name: item.name,
                                       content: item.file,
                                       type: "New",
+                                      url: item.Url,
                                     }));
                                   handleDocument("familyDocuments", attachment);
                                 }}
@@ -1308,6 +1310,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                               >
                                 <CustomViewDocument
                                   Attachment={data.businessDocuments ?? []}
+                                  webUrl={props.webURL}
                                 />
                               </div>
                             </div>
@@ -1333,6 +1336,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                                       name: item.name,
                                       content: item.file,
                                       type: "New",
+                                      url: item.Url,
                                     }));
                                   handleDocument(
                                     "businessDocuments",
@@ -1502,6 +1506,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                             >
                               <CustomViewDocument
                                 Attachment={data.CandidateCV ?? []}
+                                webUrl={props.webURL}
                               />
                             </div>
                           </div>
@@ -1527,6 +1532,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                                     name: item.name,
                                     content: item.file,
                                     type: "New",
+                                    url: item.Url,
                                   })
                                 );
                                 handleDocument("CandidateCV", attachment);

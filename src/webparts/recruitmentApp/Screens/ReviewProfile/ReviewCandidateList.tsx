@@ -334,8 +334,12 @@ const ReviewCandidateList = (props: any) => {
           workflowStatusApi.LineManagerLevel2Rejected,
           workflowStatusApi.HRRejected,
         ].includes(rowData.workflowStatusId);
+        const isApplicationStatus = [
+          ApplicationStatusId.ApplicationSuspended,
+        ].includes(rowData.applicationStatusId);
         if (
           !isTooltipStatus &&
+          !isApplicationStatus &&
           breadcrumbTab === "tab2" &&
           props.stateValue?.TabNames === TabName.ReviewProfile &&
           props.CurrentRoleID.includes(RoleID.RecruitmentHR)
@@ -349,7 +353,16 @@ const ReviewCandidateList = (props: any) => {
                 ApproverData={pendingInfo}
                 onHover={() => handleHover(rowData.workflowStatusId, rowData)}
               />
-              <span>{rowData.Status}</span>
+              <span>
+                {rowData.applicationStatusId ===
+                ApplicationStatusId.ApplicationSuspended ? (
+                  <span style={{ color: "red" }}>
+                    {rowData.applicationStatus}
+                  </span>
+                ) : (
+                  <span> {rowData.Status}</span>
+                )}
+              </span>
             </div>
           );
         }
@@ -357,9 +370,11 @@ const ReviewCandidateList = (props: any) => {
           <span>
             {rowData.applicationStatusId ===
             ApplicationStatusId.ApplicationSuspended ? (
-              <span style={{ color: "red" }}>{rowData.applicationStatus}</span>
+              <span style={{ color: "red", marginLeft: "7%" }}>
+                {rowData.applicationStatus}
+              </span>
             ) : (
-              <span> {rowData.Status}</span>
+              <span style={{ marginLeft: "7%" }}>{rowData.Status}</span>
             )}
           </span>
         );
@@ -592,6 +607,8 @@ const ReviewCandidateList = (props: any) => {
                 workflowStatusApi.CandidateSelectedIPanel,
                 workflowStatusApi.CandidateRejectedIPanel,
                 workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+                ApplicationStatusId.ApplicationSuspended,
+                // workflowStatusApi.Appl
               ]);
             }
             break;

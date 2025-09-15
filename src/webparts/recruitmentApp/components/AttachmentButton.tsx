@@ -29,6 +29,7 @@ interface Item {
   file?: File | any;
   serverRelativeUrl?: string;
   ID?: string;
+  Url?: string;
 }
 
 const AttachmentButton: React.FC<AttachmentButtonProps> = ({
@@ -84,11 +85,12 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
         const fileReader = new FileReader();
         fileReader.onload = (event) => {
           const fileContent = event.target?.result as ArrayBuffer;
-
+          const Url = URL.createObjectURL(file);
           newAttachments.push({
             name: file.name,
             fileContent,
             file,
+            Url,
           });
 
           if (newAttachments.length === finalFiles.length) {

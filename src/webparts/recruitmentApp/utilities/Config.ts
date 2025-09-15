@@ -415,19 +415,7 @@ export const TabName = {
 
 };
 
-export const CheckboxContent = {
-  CheckboxContent: "I hereby agree to submit this request for approval.",
-  ApprovalCheckbox: "I hereby acknowledge that I have reviewed the job advertisement.",
 
-  UploadOnemDocument: "I hereby agree to post the advert on the portal.",
-
-  ReviewedCandidate: "I hereby acknowledge that I have reviewed the candidate details.",
-  InterviewPanel: "I hereby reviewed candidate details and assigning interview panel.",
-  RescheduleInterview: "I hereby acknowledge that I have reschedule the interview.",
-
-  ScorecardEntry: "I hereby acknowledge completion of the scorecard entry.",
-  HODscorecarddetails: "I hereby acknowledge that I have reviewed the candidate scorecard details."
-}
 
 export const ProfileStatus = {
   HR: "Pending with HR - Review Profile",
@@ -564,8 +552,7 @@ export const categoryOption = [
 ];
 
 export const labelName = {
-  Level1CandidateLabel: "Does the candidate fit for the vacant position ? (Level 1)",
-  Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)",
+
   ViewJobAdvetisement: "View Job Advertisement",
   Candidate: "Candidate",
 
@@ -617,10 +604,10 @@ export const labelName = {
   whichOperation: "For which Operation?",
   YourRole: "What was your role?",
   RegionProvince: "Region / Province",
-  Comment: "Comments",
-  ViewComments: "View Comments",
+  // Comment: "Comments",
+  // ViewComments: "View Comments",
 
-  ReviewProfileFeedback: "Review Profile Feedback - HR",
+
 
   Firstextensiondate: "First Extension Date",
   Secondextensiondate: "Second Extension Date",

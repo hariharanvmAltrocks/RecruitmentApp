@@ -56,6 +56,7 @@ import CustomDatePicker from "../../components/CustomDatePicker";
 import CustomDialogbox from "../../components/CustomDialogbox";
 import ReuseButton from "../../components/ReuseButton";
 import { ViewCandidateDocument } from "../ScreenComponent/ViewCandidateDocument";
+import { labelNames } from "../../utilities/LabelName";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -949,6 +950,7 @@ const UploadCandidateDocument = (props: any) => {
                                   name: "OfferLetter-" + item.name,
                                   content: item.file,
                                   type: "New",
+                                  url: item.Url,
                                 };
                               }
                             );
@@ -994,6 +996,7 @@ const UploadCandidateDocument = (props: any) => {
                                   name: "ConsentForm- " + item.name,
                                   content: item.file,
                                   type: "New",
+                                  url: item.Url,
                                 };
                               }
                             );
@@ -1062,6 +1065,7 @@ const UploadCandidateDocument = (props: any) => {
                                 name: item.name,
                                 content: item.file,
                                 type: "New",
+                                url: item.Url,
                               };
                             }
                           );
@@ -1459,7 +1463,7 @@ const UploadCandidateDocument = (props: any) => {
                           <div className="ms-Grid-row">
                             <div className="ms-Grid-col ms-lg12">
                               <CustomTextArea
-                                label={labelName.Comment}
+                                label={labelNames.CommanLabel.Comments}
                                 value={data.TASystem.Comments}
                                 error={false}
                                 onChange={(value) =>
@@ -1635,7 +1639,7 @@ const UploadCandidateDocument = (props: any) => {
                           <div className="ms-Grid-row">
                             <div className="ms-Grid-col ms-lg12">
                               <CustomTextArea
-                                label={labelName.Comment}
+                                label={labelNames.CommanLabel.Comments}
                                 value={data.MedicalSystem.Comments}
                                 error={false}
                                 onChange={(value) =>
@@ -1916,7 +1920,7 @@ const UploadCandidateDocument = (props: any) => {
                               <div className="ms-Grid-row">
                                 <div className="ms-Grid-col ms-lg12">
                                   <CustomTextArea
-                                    label={labelName.Comment}
+                                    label={labelNames.CommanLabel.Comments}
                                     value={data.ITSystem.Comments}
                                     error={false}
                                     onChange={(value) =>
@@ -1958,7 +1962,7 @@ const UploadCandidateDocument = (props: any) => {
                         style={{ marginBottom: "7px" }}
                       >
                         <CustomTextArea
-                          label={labelName.Comment}
+                          label={labelNames.CommanLabel.Comments}
                           value={data.comments}
                           error={validationErrors.comments}
                           onChange={(value) =>

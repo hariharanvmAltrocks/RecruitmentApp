@@ -20,7 +20,6 @@ import BreadcrumbsComponent, {
 import {
   ButtonAction,
   CandidateStatus,
-  CheckboxContent,
   Choices,
   COIWarningMsg,
   ColorCode,
@@ -75,6 +74,12 @@ import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
 import EmployeeDetailsTooltip from "../ScreenComponent/EmployeeDetailsTooltip";
 import CommanComments from "../../components/CommanComments";
 import { DataSyncToRecruitmentResponse } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
+import {
+  Attachment,
+  CheckboxContent,
+  labelNames,
+  ValidationMsg,
+} from "../../utilities/LabelName";
 
 type InterviewedLevelValue = {
   Levels: string;
@@ -965,7 +970,7 @@ const ViewCandidateDetails = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Applicant Name"
+                      label={labelNames.CandidateDetails.ApplicantName}
                       value={CandidateProfile.ApplicantName}
                       disabled={true}
                       mandatory={false}
@@ -973,7 +978,7 @@ const ViewCandidateDetails = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Applicant Surname"
+                      label={labelNames.CandidateDetails.ApplicantSurname}
                       value={CandidateProfile.ApplicantSurName}
                       disabled={true}
                       mandatory={false}
@@ -981,7 +986,7 @@ const ViewCandidateDetails = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Nationality"
+                      label={labelNames.CandidateDetails.Nationality}
                       value={CandidateProfile.Nationality}
                       disabled={true}
                       mandatory={false}
@@ -992,7 +997,7 @@ const ViewCandidateDetails = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Gender"
+                      label={labelNames.CandidateDetails.Gender}
                       value={CandidateProfile.Gender}
                       disabled={true}
                       mandatory={false}
@@ -1001,7 +1006,9 @@ const ViewCandidateDetails = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Highest Relevant Qualification"
+                      label={
+                        labelNames.CandidateDetails.HighestRelevantQualification
+                      }
                       value={CandidateProfile?.HighestQualification}
                       disabled={true}
                       mandatory={false}
@@ -1010,7 +1017,9 @@ const ViewCandidateDetails = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Experience In Mining Industry(Years)"
+                      label={
+                        labelNames.CandidateDetails.ExperienceInMiningIndustry
+                      }
                       value={CandidateProfile?.ExperienceMining}
                       disabled={true}
                       mandatory={false}
@@ -1022,7 +1031,9 @@ const ViewCandidateDetails = (props: any) => {
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
                       <CustomInput
-                        label="Number of tax dependents "
+                        label={
+                          labelNames.CandidateDetails.Numberoftaxdependents
+                        }
                         value={CandidateProfile.NumberOftax}
                         disabled={true}
                         mandatory={false}
@@ -1031,7 +1042,7 @@ const ViewCandidateDetails = (props: any) => {
 
                     <div className="ms-Grid-col ms-lg4">
                       <CustomInput
-                        label="Last/Current position"
+                        label={labelNames.CandidateDetails.LastCurrentposition}
                         value={CandidateProfile?.CurrentPosition}
                         disabled={true}
                         mandatory={false}
@@ -1040,7 +1051,7 @@ const ViewCandidateDetails = (props: any) => {
 
                     <div className="ms-Grid-col ms-lg4">
                       <CustomInput
-                        label="Last/Current employer"
+                        label={labelNames.CandidateDetails.Currentemployer}
                         value={CandidateProfile?.CurrentEmployer}
                         disabled={true}
                         mandatory={false}
@@ -1052,7 +1063,9 @@ const ViewCandidateDetails = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Experience In Related Field(Years)"
+                      label={
+                        labelNames.CandidateDetails.ExperienceInRelatedField
+                      }
                       value={CandidateProfile?.ExperRelatedfield}
                       disabled={true}
                       mandatory={false}
@@ -1063,7 +1076,9 @@ const ViewCandidateDetails = (props: any) => {
                       {CandidateProfile?.ConflictsOfInterest === "No" && (
                         <div className="ms-Grid-col ms-lg4">
                           <CustomInput
-                            label="Conflicts Of Interest"
+                            label={
+                              labelNames.CandidateDetails.ConflictsOfInterest
+                            }
                             value={CandidateProfile?.ConflictsOfInterest}
                             disabled={true}
                             mandatory={false}
@@ -1073,7 +1088,7 @@ const ViewCandidateDetails = (props: any) => {
                       {CandidateProfile?.disability && (
                         <div className="ms-Grid-col ms-lg4">
                           <CustomInput
-                            label="Disability"
+                            label={labelNames.CandidateDetails.Disability}
                             value={CandidateProfile?.disability}
                             disabled={true}
                             mandatory={false}
@@ -1087,7 +1102,9 @@ const ViewCandidateDetails = (props: any) => {
                     <>
                       <div className="ms-Grid-col ms-lg4">
                         <CustomInput
-                          label="No Of Interview Level's"
+                          label={
+                            labelNames.CandidateDetails.NoOfInterviewLevels
+                          }
                           value={InterviewedLevel.Levels}
                           disabled={true}
                           mandatory={false}
@@ -1095,7 +1112,7 @@ const ViewCandidateDetails = (props: any) => {
                       </div>
                       <div className="ms-Grid-col ms-lg4">
                         <CustomInput
-                          label="Grade"
+                          label={labelNames.CandidateDetails.Grade}
                           value={InterviewedLevel.Grade}
                           disabled={true}
                           mandatory={false}
@@ -1110,7 +1127,9 @@ const ViewCandidateDetails = (props: any) => {
                       {CandidateProfile?.countryOfResidency && (
                         <div className="ms-Grid-col ms-lg4">
                           <CustomInput
-                            label="Country Of Residency"
+                            label={
+                              labelNames.CandidateDetails.CountryOfResidency
+                            }
                             value={CandidateProfile?.countryOfResidency}
                             disabled={true}
                             mandatory={false}
@@ -1129,7 +1148,7 @@ const ViewCandidateDetails = (props: any) => {
                             <Label
                               style={{ marginTop: 10, overflowWrap: "inherit" }}
                             >
-                              Are you residency in that country?
+                              {labelNames.CandidateDetails.ResidencyCountry}
                             </Label>
                             <span
                               style={{
@@ -1163,7 +1182,7 @@ const ViewCandidateDetails = (props: any) => {
                         <>
                           <div className="ms-Grid-col ms-lg4">
                             <CustomInput
-                              label="Marital Status"
+                              label={labelNames.CandidateDetails.MaritalStatus}
                               value={CandidateProfile?.maritalStatus}
                               disabled={true}
                               mandatory={false}
@@ -1191,7 +1210,10 @@ const ViewCandidateDetails = (props: any) => {
                       )}
                       <div className="ms-Grid-col ms-lg4">
                         <CustomInput
-                          label="Worked with Group/Partner Companies"
+                          label={
+                            labelNames.CandidateDetails
+                              .WorkedGroupPartnerCompanies
+                          }
                           value={CandidateProfile?.hasIvanhoeZijinExperience}
                           disabled={true}
                           mandatory={false}
@@ -1233,8 +1255,7 @@ const ViewCandidateDetails = (props: any) => {
                           <Label
                             style={{ marginTop: 10, overflowWrap: "inherit" }}
                           >
-                            Willing to relocate if not currently living close to
-                            the relevant project site/office?
+                            {labelNames.CandidateDetails.Willingrelocate}
                           </Label>
                           <span
                             style={{
@@ -1262,8 +1283,7 @@ const ViewCandidateDetails = (props: any) => {
                           <Label
                             style={{ marginTop: 10, overflowWrap: "inherit" }}
                           >
-                            Has the person previously worked within the Ivanhoe
-                            Mines Group?
+                            {labelNames.CandidateDetails.previouslyworked}
                           </Label>
                           <span
                             style={{
@@ -1291,8 +1311,7 @@ const ViewCandidateDetails = (props: any) => {
                           <Label
                             style={{ marginTop: 10, overflowWrap: "inherit" }}
                           >
-                            Any family or other links with existing employees to
-                            declare? (If so, who? Attach detail)
+                            {labelNames.CandidateDetails.existingemployees}
                           </Label>
                           <span
                             style={{
@@ -1327,7 +1346,7 @@ const ViewCandidateDetails = (props: any) => {
                                       fontWeight: "600",
                                     }}
                                   >
-                                    Attachment
+                                    {Attachment.Attachments}
                                     <EmployeeDetailsTooltip
                                       data={
                                         CandidateProfile.employeeReferenceDetails
@@ -1340,6 +1359,7 @@ const ViewCandidateDetails = (props: any) => {
                                       Attachment={
                                         CandidateProfile.familyDocuments
                                       }
+                                      webUrl={props.webURL}
                                     />
                                   </span>
                                 </div>
@@ -1362,8 +1382,7 @@ const ViewCandidateDetails = (props: any) => {
                           <Label
                             style={{ marginTop: 10, overflowWrap: "inherit" }}
                           >
-                            Any business links to declare? (If so, who? Attach
-                            detail)
+                            {labelNames.CandidateDetails.businesslinks}
                           </Label>
                           <span
                             style={{
@@ -1393,6 +1412,7 @@ const ViewCandidateDetails = (props: any) => {
                                       Attachment={
                                         CandidateProfile.businessDocuments
                                       }
+                                      webUrl={props.webURL}
                                     />
                                   </span>
                                 </div>
@@ -1458,7 +1478,9 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-col ms-lg4">
                         <CustomDatePicker
                           selectedDate={InterviewedLevel.InterviewedDate}
-                          label="Interview Date -  level 1"
+                          label={
+                            labelNames.CandidateDetails.InterviewDateLevel1
+                          }
                           error={validationErrors.InterviewedDate}
                           minDate={MinDateInterview}
                           mandatory={!level2Date}
@@ -1483,7 +1505,9 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-col ms-lg4">
                         <CustomTimePicker
                           selectedTime={InterviewedLevel.InterviewTime}
-                          label="Interview Time - Level 1"
+                          label={
+                            labelNames.CandidateDetails.InterviewTimeLevel1
+                          }
                           error={validationErrors.InterviewTime}
                           mandatory={!level2Date}
                           disabled={level2Date}
@@ -1492,7 +1516,7 @@ const ViewCandidateDetails = (props: any) => {
                       </div>
                       <div className="ms-Grid-col ms-lg4">
                         <CustomInput
-                          label="Meeting Link for Interview  - Level  1"
+                          label={labelNames.CandidateDetails.MeetingLinkLevel1}
                           value={InterviewedLevel.InterviewMeetingInviteLink}
                           disabled={level2Date}
                           mandatory={!level2Date}
@@ -1512,7 +1536,9 @@ const ViewCandidateDetails = (props: any) => {
                           <div className="ms-Grid-col ms-lg4">
                             <CustomDatePicker
                               selectedDate={level2Data.InterviewedDate}
-                              label="Interviewed Date-Level 2"
+                              label={
+                                labelNames.CandidateDetails.InterviewDateLevel2
+                              }
                               error={validationErrors.InterviewedDateLevel2}
                               minDate={MinDateInterview}
                               mandatory={true}
@@ -1529,14 +1555,16 @@ const ViewCandidateDetails = (props: any) => {
                                   marginLeft: 0,
                                 }}
                               >
-                                Invaild Date
+                                {ValidationMsg.InvaildDate}
                               </p>
                             )}
                           </div>
                           <div className="ms-Grid-col ms-lg4">
                             <CustomTimePicker
                               selectedTime={level2Data.InterviewTime}
-                              label="Interview Time-Level 2"
+                              label={
+                                labelNames.CandidateDetails.InterviewTimeLevel2
+                              }
                               error={validationErrors.InterviewTimeLevel2}
                               mandatory={true}
                               onChange={handleInterviewTimeChange}
@@ -1544,7 +1572,9 @@ const ViewCandidateDetails = (props: any) => {
                           </div>
                           <div className="ms-Grid-col ms-lg4">
                             <CustomInput
-                              label="Meeting Link for Interview - Level  2"
+                              label={
+                                labelNames.CandidateDetails.MeetingLinkLevel2
+                              }
                               value={level2Data.InterviewMeetingInviteLink}
                               mandatory={true}
                               onChange={handleInputChange}
@@ -1561,7 +1591,10 @@ const ViewCandidateDetails = (props: any) => {
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg12">
                         <CustomMultiSelect
-                          label="Interview Panel Members - Level 1"
+                          label={
+                            labelNames.CandidateDetails
+                              .InterviewPanelMembersLevel1
+                          }
                           value={InterviewedLevel.AssignInterviewLevel1}
                           options={
                             InterviewedLevel.AssignInterviewedLevel1Option
@@ -1581,7 +1614,7 @@ const ViewCandidateDetails = (props: any) => {
                                 marginLeft: 0,
                               }}
                             >
-                              Minimum of three is required
+                              {ValidationMsg.Minimumthreerequired}
                             </p>
                           )}
                       </div>
@@ -1596,7 +1629,10 @@ const ViewCandidateDetails = (props: any) => {
                               style={{ marginTop: "2%" }}
                             >
                               <CustomMultiSelect
-                                label="Interview Panel Members - Level 2"
+                                label={
+                                  labelNames.CandidateDetails
+                                    .InterviewPanelMembersLevel2
+                                }
                                 value={InterviewedLevel.AssignInterviewedLevel2}
                                 options={
                                   InterviewedLevel.AssignInterviewedLevel1Option
@@ -1617,7 +1653,7 @@ const ViewCandidateDetails = (props: any) => {
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg12">
                         <CustomTextArea
-                          label="Disability Details"
+                          label={labelNames.CandidateDetails.DisabilityDetails}
                           value={CandidateProfile?.disabilityReason}
                           disabled={true}
                           mandatory={false}
@@ -1627,13 +1663,16 @@ const ViewCandidateDetails = (props: any) => {
                     </div>
                   )}
                 <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
-                  <LabelHeaderComponents value={"Attachments"} />
+                  <LabelHeaderComponents value={Attachment.Attachments} />
                 </div>
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
-                    <CustomLabel value={"Candidate Resume"} />
+                    <CustomLabel
+                      value={Attachment.PositionDocument.CandidateResume}
+                    />
                     <CustomViewDocument
                       Attachment={CandidateProfile.CandidateResume}
+                      webUrl={props.webURL}
                       // Label={"Candidate Resume"}
                     />
                   </div>
@@ -1682,7 +1721,10 @@ const ViewCandidateDetails = (props: any) => {
                                   fontSize: "17px",
                                 }}
                               >
-                                {"Conflicts Of Interest"}
+                                {
+                                  labelNames.CandidateDetails
+                                    .ConflictsOfInterest
+                                }
                               </div>
                               <div
                                 style={{
@@ -1714,7 +1756,7 @@ const ViewCandidateDetails = (props: any) => {
                                   fontSize: "17px",
                                 }}
                               >
-                                {"Reason :"}
+                                {labelNames.CandidateDetails.Reason}
                               </div>
                               <div
                                 style={{
@@ -1733,7 +1775,9 @@ const ViewCandidateDetails = (props: any) => {
                           <div className="ms-Grid-row">
                             <div className="ms-Grid-col ms-lg4">
                               <CustomAutoComplete
-                                label={labelName.COIProfileLabel}
+                                label={
+                                  labelNames.CandidateDetails.ConsultedWith
+                                }
                                 options={InterviewedLevel.COIProfileLabelOption}
                                 value={InterviewedLevel.COIProfileLabel}
                                 disabled={
@@ -1758,7 +1802,10 @@ const ViewCandidateDetails = (props: any) => {
                                     style={{ marginLeft: "2px" }}
                                   >
                                     <CustomLabel
-                                      value={labelName.COIAttach}
+                                      value={
+                                        labelNames.CandidateDetails
+                                          .ProofDiscussion
+                                      }
                                       // mandatory={true}
                                     />
                                     <AttachmentButton
@@ -1773,6 +1820,7 @@ const ViewCandidateDetails = (props: any) => {
                                               name: item.name,
                                               content: item.file,
                                               type: "New",
+                                              url: item.Url,
                                             };
                                           });
                                         const attachments = [
@@ -1814,9 +1862,15 @@ const ViewCandidateDetails = (props: any) => {
                             ) : (
                               <>
                                 <div className="ms-Grid-col ms-lg3 custom-document-column ">
-                                  <CustomLabel value={labelName.COIAttach} />
+                                  <CustomLabel
+                                    value={
+                                      labelNames.CandidateDetails
+                                        .ProofDiscussion
+                                    }
+                                  />
                                   <CustomViewDocument
                                     Attachment={InterviewedLevel.COIAttachment}
+                                    webUrl={props.webURL}
                                   />
                                 </div>
                               </>
@@ -1826,7 +1880,7 @@ const ViewCandidateDetails = (props: any) => {
                           <div className="ms-Grid-row">
                             <div className="ms-Grid-col ms-lg12">
                               <CustomTextArea
-                                label={labelName.Comment}
+                                label={labelNames.CommanLabel.Comments}
                                 value={InterviewedLevel.COIComments}
                                 error={validationErrors.COIComments}
                                 onChange={(value) => {
@@ -1864,8 +1918,10 @@ const ViewCandidateDetails = (props: any) => {
                             label={
                               props.stateValue?.StatusId ===
                               workflowStatusApi.LineManagerL1Pending
-                                ? labelName.Level1CandidateLabel
-                                : labelName.Level2CandidateLabel
+                                ? labelNames.CandidateDetails
+                                    .Level1CandidateLabel
+                                : labelNames.CandidateDetails
+                                    .Level2CandidateLabel
                             }
                             value={actionValue.CandidateStatus}
                             options={
@@ -1896,7 +1952,9 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomAutoComplete
-                            label={labelName.ReviewProfileFeedback}
+                            label={
+                              labelNames.CandidateDetails.ReviewProfileFeedback
+                            }
                             options={InterviewedLevel.CandidateScoreOption}
                             value={InterviewedLevel.CandidateScoreValue}
                             disabled={
@@ -1921,7 +1979,9 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomInput
-                            label={labelName.ReviewProfileFeedback}
+                            label={
+                              labelNames.CandidateDetails.ReviewProfileFeedback
+                            }
                             value={CandidateProfile.hrComments}
                             disabled={true}
                             // mandatory={true}
@@ -1939,7 +1999,9 @@ const ViewCandidateDetails = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomInput
-                            label={labelName.ReviewProfileFeedback}
+                            label={
+                              labelNames.CandidateDetails.ReviewProfileFeedback
+                            }
                             value={CandidateProfile.hrComments}
                             disabled={true}
                             // mandatory={true}
@@ -1956,7 +2018,9 @@ const ViewCandidateDetails = (props: any) => {
                 {CandidateProfile.Comments.length > 0 && (
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
-                      <CustomLabel value={labelName.ViewComments} />
+                      <CustomLabel
+                        value={Attachment.PositionDocument.ViewComments}
+                      />
                       <ReuseButton
                         Style={{
                           minWidth: "117px",
@@ -1994,7 +2058,7 @@ const ViewCandidateDetails = (props: any) => {
                         style={{ marginBottom: "7px" }}
                       >
                         <CustomTextArea
-                          label={labelName.Comment}
+                          label={labelNames.CommanLabel.Comments}
                           value={actionValue.Comments}
                           error={validationErrors.Comments}
                           onChange={(value) => handleInputChangeTextArea(value)}
@@ -2847,7 +2911,9 @@ const ViewCandidateDetails = (props: any) => {
           header={
             <>
               <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                <LabelHeaderComponents value={labelName.Comment} />
+                <LabelHeaderComponents
+                  value={labelNames.CommanLabel.Comments}
+                />
               </div>
             </>
           }

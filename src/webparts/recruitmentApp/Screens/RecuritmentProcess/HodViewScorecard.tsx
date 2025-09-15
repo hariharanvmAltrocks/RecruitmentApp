@@ -9,14 +9,11 @@ import CustomLoader from "../../Services/Loader/CustomLoader";
 import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import {
-  CheckboxContent,
   Choices,
   ColorCode,
   DocumentLibraray,
   HRMSAlertOptions,
   InterviewLevels,
-  labelName,
-  // labelName,
   ListNames,
   RecuritmentHRMsg,
   ResponeStatus,
@@ -59,6 +56,7 @@ import CustomRadioGroup from "../../components/CustomRadioGroup";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import SPServices from "../../Services/SPService/SPServices";
 import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
+import { Attachment, CheckboxContent } from "../../utilities/LabelName";
 
 type ValidationError = {
   Comments: boolean;
@@ -984,6 +982,7 @@ const HodViewScorecard = (props: any) => {
                     <CustomLabel value={"Candidate Resume"} />
                     <CustomViewDocument
                       Attachment={CandidateData.CandidateCVDoc}
+                      webUrl={props.webURL}
                     />
                   </div>
                 </div>
@@ -1276,7 +1275,9 @@ const HodViewScorecard = (props: any) => {
                       className="ms-Grid-col ms-lg4"
                       style={{ marginLeft: "-5px" }}
                     >
-                      <CustomLabel value={labelName.ViewComments} />
+                      <CustomLabel
+                        value={Attachment.PositionDocument.ViewComments}
+                      />
                       <ReuseButton
                         Style={{
                           minWidth: "117px",

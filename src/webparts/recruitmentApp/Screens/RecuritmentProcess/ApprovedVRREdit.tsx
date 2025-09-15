@@ -9,13 +9,11 @@ import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import AttachmentButton from "../../components/AttachmentButton";
 import {
-  CheckboxContent,
   Choices,
   ColorCode,
   DataFrom,
   DocumentLibraray,
   HRMSAlertOptions,
-  labelName,
   ListNames,
   Notes,
   RecuritmentHRMsg,
@@ -62,6 +60,11 @@ import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
 import { UploadAdvertisement } from "../ScreenComponent/UploadAdvertisement";
 import CustomViewAttachment from "../../components/CustomViewAttachment";
 import { GetStatusIdRoles } from "../../components/TabMerge";
+import {
+  Attachment,
+  CheckboxContent,
+  labelNames,
+} from "../../utilities/LabelName";
 // import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 
 export type roleSpeKnowledgeValidationErrors = {
@@ -1610,7 +1613,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Business Unit Code"
+                    label={labelNames.PositionDetails.BusinessUnitCode}
                     value={formState.BusinessUnitCode}
                     error={false}
                     disabled={true}
@@ -1625,7 +1628,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Business Unit Name"
+                    label={labelNames.PositionDetails.BusinessUnitName}
                     value={formState.BusinessUnitName}
                     disabled={true}
                     error={false}
@@ -1640,7 +1643,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Business Unit Description"
+                    label={labelNames.PositionDetails.BusinessUnitDescription}
                     value={formState.BusinessUnitDescription}
                     error={false}
                     disabled={true}
@@ -1655,7 +1658,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Department"
+                    label={labelNames.PositionDetails.Department}
                     value={formState.Department}
                     disabled={true}
                     mandatory={false}
@@ -1671,7 +1674,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Sub-Department"
+                    label={labelNames.PositionDetails.SubDepartment}
                     value={formState.SubDepartment}
                     disabled={true}
                     mandatory={false}
@@ -1685,7 +1688,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Section"
+                    label={labelNames.PositionDetails.Section}
                     value={formState.Section}
                     disabled={true}
                     mandatory={false}
@@ -1699,7 +1702,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Department Code"
+                    label={labelNames.PositionDetails.DepartmentCode}
                     value={formState.DepartmentCode}
                     disabled={true}
                     mandatory={false}
@@ -1713,7 +1716,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Nationality"
+                    label={labelNames.PositionDetails.Nationality}
                     value={formState.Nationality}
                     disabled={true}
                     mandatory={false}
@@ -1729,7 +1732,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Paterson Grade"
+                    label={labelNames.PositionDetails.PatersonGrade}
                     value={formState.PatersonGrade}
                     disabled={true}
                     mandatory={false}
@@ -1744,7 +1747,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="DRC Grade"
+                    label={labelNames.PositionDetails.DRCGrade}
                     value={formState.DRCGrade}
                     disabled={true}
                     mandatory={false}
@@ -1758,7 +1761,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Employment Category"
+                    label={labelNames.PositionDetails.EmploymentCategory}
                     value={formState.EmployementCategory}
                     disabled={true}
                     error={false}
@@ -1773,7 +1776,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Type of Contract"
+                    label={labelNames.PositionDetails.TypeofContract}
                     value={formState.ContractType}
                     disabled={true}
                     error={false}
@@ -1790,7 +1793,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Area of Work"
+                    label={labelNames.PositionDetails.AreaofWork}
                     value={formState.AreaOfWork}
                     disabled={true}
                     error={false}
@@ -1806,7 +1809,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="No of Person(s)"
+                    label={labelNames.PositionDetails.NoofPerson}
                     value={formState.NoofPositionAssigned}
                     disabled={true}
                     error={false}
@@ -1822,7 +1825,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Date When Position Is Required"
+                    label={labelNames.PositionDetails.DatePositionRequired}
                     value={
                       formState.DateRequried
                         ? new Date(formState.DateRequried)
@@ -1851,7 +1854,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <div className="ms-Grid-col ms-lg3">
                         <CustomDatePicker
                           selectedDate={advDetails.ValidFrom}
-                          label=" Advert Valid From"
+                          label={labelNames.PositionDetails.AdvertValidFrom}
                           error={validationErrors.ValidFrom}
                           minDate={todaydate}
                           // mandatory={true}
@@ -1864,7 +1867,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <div className="ms-Grid-col ms-lg3">
                         <CustomDatePicker
                           selectedDate={advDetails.ValidTo}
-                          label="Advert Valid To"
+                          label={labelNames.PositionDetails.AdvertValidTo}
                           error={false}
                           // minDate={
                           //   advDetails.ValidFrom
@@ -1884,7 +1887,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 )}
 
               <div className="ms-Grid-row" style={{ marginLeft: "0px" }}>
-                <LabelHeaderComponents value={"Attachments"} />
+                <LabelHeaderComponents value={Attachment.Attachments} />
               </div>
 
               <div className="ms-Grid-row" style={{ margin: "0%" }}>
@@ -1942,7 +1945,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     {formState.RoleProfileDocument.length > 0 && (
                       <div className="ms-Grid-col ms-lg3">
                         <div className="custom-document-column">
-                          <CustomLabel value={"RoleProfile Documents"} />
+                          <CustomLabel
+                            value={
+                              Attachment.PositionDocument.RoleProfileDocuments
+                            }
+                          />
                           <div
                             className="document-wrapper"
                             title={
@@ -1953,6 +1960,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           >
                             <CustomViewDocument
                               Attachment={formState.RoleProfileDocument}
+                              webUrl={props.webURL}
                             />
                           </div>
                         </div>
@@ -2021,7 +2029,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     {formState.GradingDocument.length > 0 && (
                       <div className="ms-Grid-col ms-lg3">
                         <div className="custom-document-column">
-                          <CustomLabel value={"Grading Documents"} />
+                          <CustomLabel
+                            value={Attachment.PositionDocument.GradingDocuments}
+                          />
                           <div
                             className="document-wrapper"
                             title={
@@ -2032,6 +2042,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           >
                             <CustomViewDocument
                               Attachment={formState.GradingDocument}
+                              webUrl={props.webURL}
                             />
                           </div>
                         </div>
@@ -2105,16 +2116,23 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         {formState.AdvertisementDocument.length > 0 ? (
                           <div className="ms-Grid-col ms-lg3 custom-document-column ">
                             <CustomLabel
-                              value={"Draft ONEM Advert Doc (French)"}
+                              value={
+                                Attachment.PositionDocument
+                                  .DraftONEMAdvertDocFrench
+                              }
                             />
                             <CustomViewDocument
                               Attachment={formState.AdvertisementDocument}
+                              webUrl={props.webURL}
                             />
                           </div>
                         ) : (
                           <div className="ms-Grid-col ms-lg4">
                             <CustomLabel
-                              value={"Draft ONEM AdvertDoc French(Only PDF)"}
+                              value={
+                                Attachment.PositionDocument
+                                  .DraftONEMAdvertDocFrench
+                              }
                               mandatory={true}
                             />
                             <AttachmentButton
@@ -2129,6 +2147,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                       name: item.name,
                                       content: item.file,
                                       type: "New",
+                                      url: item.Url,
                                     };
                                   }
                                 );
@@ -2175,6 +2194,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           >
                             <CustomViewDocument
                               Attachment={formState.AdvertisementDocument}
+                               webUrl={props.webURL}
                             />
                           </div>
                         </div> */}
@@ -2208,7 +2228,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           style={{ position: "relative", right: "1px" }}
                         >
                           <CustomLabel
-                            value={labelName.ViewJobAdvetisement}
+                            value={
+                              Attachment.PositionDocument.ViewJobAdvertisement
+                            }
                             // mandatory={true}
                           />
                           <ReuseButton
@@ -2243,7 +2265,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           className="ms-Grid-col ms-lg3"
                           style={{ marginLeft: "-5px" }}
                         >
-                          <CustomLabel value={labelName.ViewComments} />
+                          <CustomLabel
+                            value={Attachment.PositionDocument.ViewComments}
+                          />
                           <ReuseButton
                             Style={{
                               minWidth: "117px",
@@ -2279,7 +2303,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
                   <div className="ms-Grid-col ms-lg4">
                     <CustomLabel
-                      value={"ONEM Signed and Stamped Document(Only Pdf)"}
+                      value={
+                        Attachment.PositionDocument.ONEMSignedStampedDocuments
+                      }
                       mandatory={true}
                     />
                     <AttachmentButton
@@ -2294,6 +2320,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               name: item.name,
                               content: item.file,
                               type: "New",
+                              url: item.Url,
                             };
                           }
                         );
@@ -2342,7 +2369,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg12">
                       <CustomTextArea
-                        label={labelName.Comment}
+                        label={labelNames.CommanLabel.Comments}
                         value={formState.Comments}
                         error={validationErrors.Comments}
                         onChange={(value) =>
@@ -2450,7 +2477,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           >
                             <div>
                               <CustomLabel
-                                value={labelName.ViewJobAdvetisement}
+                                value={
+                                  Attachment.PositionDocument
+                                    .ViewJobAdvertisement
+                                }
                                 // mandatory={true}
                               />
                               <ReuseButton
@@ -2505,7 +2535,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         />
                       )}
 
-                      <CustomLabel value={labelName.ViewComments} />
+                      <CustomLabel
+                        value={Attachment.PositionDocument.ViewComments}
+                      />
                       <ReuseButton
                         Style={{
                           minWidth: "117px",
@@ -2533,7 +2565,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg12">
                           <CustomTextArea
-                            label={labelName.Comment}
+                            label={labelNames.CommanLabel.Comments}
                             value={formState.Comments}
                             error={validationErrors.Comments}
                             onChange={(value) =>

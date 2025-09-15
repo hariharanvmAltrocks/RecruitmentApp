@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as moment from "moment";
 import ReuseButton from "./ReuseButton";
-import { labelName } from "../utilities/Config";
+import { labelNames } from "../utilities/LabelName";
 
 interface viewProps {
   onClose: () => void;
@@ -49,7 +49,7 @@ function CustomJsonComments({ onClose, Comments }: viewProps) {
                   </p>
                   {/* {comment.Status && <p><b>Stage:</b> {comment.Status?.StatusDescription}</p>} */}
                   <p>
-                    <b>{labelName.Comment}:</b> {comment.comments}
+                    <b>{labelNames.CommanLabel.Comments}:</b> {comment.comments}
                   </p>
                 </div>
               ))

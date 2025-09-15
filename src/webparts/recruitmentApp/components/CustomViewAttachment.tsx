@@ -46,7 +46,7 @@ function CustomViewAttachment({
 
       return viewerUrl;
     } else {
-      return "";
+      return fileUrl;
     }
   };
 
@@ -86,7 +86,7 @@ function CustomViewAttachment({
                         </a> */}
                         <Link
                           href={file.content}
-                          onClick={(e) => handleFileDownload(e, file.content)}
+                          onClick={(e) => handleFileDownload(e, file.url ?? "")}
                           target="_blank"
                           style={{
                             color: "blue",

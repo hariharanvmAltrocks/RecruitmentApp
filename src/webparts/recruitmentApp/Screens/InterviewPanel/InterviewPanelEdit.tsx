@@ -26,7 +26,6 @@ import {
   workflowStatusApi,
   RoleID,
   ResponeStatus,
-  CheckboxContent,
   Choices,
   RoleName,
 } from "../../utilities/Config";
@@ -47,6 +46,7 @@ import BreadcrumbsComponent, {
 import CustomLabel from "../../components/CustomLabel";
 import SPServices from "../../Services/SPService/SPServices";
 import { WorkflowJson } from "../../Models/ApIInterface";
+import { CheckboxContent, labelNames } from "../../utilities/LabelName";
 
 type ValidationError = {
   Qualifications: boolean;
@@ -806,7 +806,7 @@ const InterviewPanelEdit = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Applicant Name"
+                    label={labelNames.CandidateDetails.ApplicantName}
                     value={CandidateData.FullName}
                     disabled={true}
                     mandatory={false}
@@ -820,7 +820,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Nationality"
+                    label={labelNames.CandidateDetails.Nationality}
                     value={CandidateData.Nationality}
                     disabled={true}
                     mandatory={false}
@@ -834,7 +834,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Gender"
+                    label={labelNames.CandidateDetails.Gender}
                     value={CandidateData.Gender}
                     disabled={true}
                     mandatory={false}
@@ -851,7 +851,9 @@ const InterviewPanelEdit = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Highest Relevant Qualification"
+                    label={
+                      labelNames.CandidateDetails.HighestRelevantQualification
+                    }
                     value={CandidateData.Qualification}
                     disabled={true}
                     mandatory={false}
@@ -865,7 +867,9 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Experiance in Mining Industry (Years)"
+                    label={
+                      labelNames.CandidateDetails.ExperienceInMiningIndustry
+                    }
                     value={CandidateData.TotalYearOfExperiance}
                     disabled={true}
                     mandatory={false}
@@ -879,7 +883,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Experiance in Related Field (Years)"
+                    label={labelNames.CandidateDetails.ExperienceInRelatedField}
                     value={CandidateData.ReleventExperience}
                     disabled={true}
                     mandatory={false}
@@ -895,7 +899,7 @@ const InterviewPanelEdit = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Date of Interview"
+                    label={labelNames.CandidateDetails.DateInterview}
                     value={
                       CandidateData.InterviewDate
                         ? new Date(CandidateData.InterviewDate)
@@ -915,7 +919,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="No of Interview Level's"
+                    label={labelNames.CandidateDetails.NofInterviewLevel}
                     value={InterviewedLevel.Levels}
                     disabled={true}
                     mandatory={false}
@@ -923,7 +927,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Grade"
+                    label={labelNames.CandidateDetails.Grade}
                     value={InterviewedLevel.Grade}
                     disabled={true}
                     mandatory={false}
@@ -934,7 +938,7 @@ const InterviewPanelEdit = (props: any) => {
                 {CandidateData?.ConflictsOfInterest && (
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Conflicts Of Interest"
+                      label={labelNames.CandidateDetails.ConflictsOfInterest}
                       value={CandidateData?.ConflictsOfInterest}
                       disabled={true}
                       mandatory={false}
@@ -944,7 +948,7 @@ const InterviewPanelEdit = (props: any) => {
                 {CandidateData?.ConflictsOfInterest && (
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Disability"
+                      label={labelNames.CandidateDetails.Disability}
                       value={CandidateData?.disability}
                       disabled={true}
                       mandatory={false}
@@ -957,7 +961,7 @@ const InterviewPanelEdit = (props: any) => {
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg12">
                       <CustomTextArea
-                        label="Disability Details"
+                        label={labelNames.CandidateDetails.DisabilityDetails}
                         value={CandidateData?.disabilityReason}
                         disabled={true}
                         mandatory={false}
@@ -978,7 +982,7 @@ const InterviewPanelEdit = (props: any) => {
                       display: "block",
                     }}
                   >
-                    Interview Panel Level 1
+                    {labelNames.CandidateDetails.InterviewPanelLevel1}
                   </label>
                   <div
                     style={{
@@ -1030,7 +1034,7 @@ const InterviewPanelEdit = (props: any) => {
                         display: "block",
                       }}
                     >
-                      Interview Panel Level 2
+                      {labelNames.CandidateDetails.InterviewPanelLevel2}
                     </label>
                     <div
                       style={{
