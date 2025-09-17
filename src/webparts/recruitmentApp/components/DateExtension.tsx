@@ -15,6 +15,7 @@ import { getVRRDetails } from "../Services/ServiceExport";
 import SPServices from "../Services/SPService/SPServices";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import LabelHeaderComponents from "./TitleHeader";
+import { ButtonAction } from "../utilities/LabelName";
 
 interface AssignPositionDialogProps {
   RecuritmentData: DataSyncToRecruitmentResponse;
@@ -314,7 +315,7 @@ export const DateExtension = ({
                 }}
               >
                 <ReuseButton
-                  label="Close"
+                  label={ButtonAction.close}
                   onClick={() => onClose()}
                   Style={{
                     backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
@@ -326,7 +327,7 @@ export const DateExtension = ({
                   <></>
                 ) : (
                   <ReuseButton
-                    label="Submit"
+                    label={ButtonAction.Submit}
                     onClick={async () => {
                       await DataExtension();
                     }}

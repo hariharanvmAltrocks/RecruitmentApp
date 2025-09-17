@@ -6,7 +6,6 @@ import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import {
   ActionIcon,
-  ButtonAction,
   Choices,
   InterviewLevels,
   ResponeStatus,
@@ -22,6 +21,7 @@ import SearchableDataTable from "../../components/CustomDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 import { tabStyle } from "../../components/TabMerge";
 import ToolTipButton from "../../components/Tooltip";
+import { ActionName, ButtonAction } from "../../utilities/LabelName";
 
 type tabPendingCount = {
   ReviewPrfileCount: number;
@@ -147,11 +147,17 @@ const ReviewProfileList = (props: any) => {
         pendingName = [
           {
             Key: RoleName?.RecruitmentHR,
-            Value: rowData?.QuestionByHR === "Yes" ? "Completed" : "Pending",
+            Value:
+              rowData?.QuestionByHR === "Yes"
+                ? ActionName.Completed
+                : ActionName.Pending, //"Completed" : "Pending",
           },
           {
             Key: RoleName?.LineManager,
-            Value: rowData?.QuestionByLM === "Yes" ? "Completed" : "Pending",
+            Value:
+              rowData?.QuestionByLM === "Yes"
+                ? ActionName.Completed
+                : ActionName.Pending,
           },
         ];
         break;
@@ -162,7 +168,7 @@ const ReviewProfileList = (props: any) => {
         let GradeLevel = await CommonServices.GetGradeLevel(
           rowData?.PatersonGrade
         );
-        console.log(GradeLevel);
+        // console.log(GradeLevel);
 
         if (Tooltipdata?.data && Tooltipdata.data[0]?.LineManager) {
           pendingName = [
@@ -507,11 +513,10 @@ const ReviewProfileList = (props: any) => {
       }
     }
     let Action: any;
-    let StatusID: any;
+    // let StatusID: any;
     if (StatusData) {
       Action = StatusData.filter((item) => item.Action);
-      StatusID = StatusData.filter((item) => item.StatusId);
-      console.log(StatusID, "StatusID");
+      // StatusID = StatusData.filter((item) => item.StatusId);
     }
 
     switch (TabNames) {

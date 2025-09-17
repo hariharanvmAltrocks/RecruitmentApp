@@ -62,6 +62,7 @@ import CustomViewAttachment from "../../components/CustomViewAttachment";
 import { GetStatusIdRoles } from "../../components/TabMerge";
 import {
   Attachment,
+  ButtonAction,
   CheckboxContent,
   labelNames,
 } from "../../utilities/LabelName";
@@ -1170,7 +1171,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 AdvData,
                 ListNames.HRMSRecruitmentRoleProfileDetails
               );
-              // console.log(AdvDetailsResponse.data, "AdvDetailsResponse");
             }
             if (
               advDetails.JobcodeChecked === false
@@ -2632,7 +2632,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
           { tabName: props.stateValue?.TabName },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: activeTabObj?.label },
         ];
         return newTabNames;
@@ -2641,7 +2641,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
           { tabName: props.stateValue?.TabName },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: prevTabObj?.label },
           { tabName: activeTabObj?.label },
         ];
@@ -2732,7 +2732,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       StatusId.PendingwithRecruitmentHRtoAssignExternalAgency)
                     ? [
                         {
-                          label: "Back",
+                          label: ButtonAction.Back,
                           onClick: async () => {
                             props.navigation("/RecurimentProcess", {
                               state: {
@@ -2748,7 +2748,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         StatusId.PendingwithHRLeadtouploadONEMsigneddoc
                     ? [
                         {
-                          label: "Upload",
+                          label: ButtonAction.Upload,
                           onClick: async () => {
                             await SaveRecruitment();
                           },
@@ -2761,7 +2761,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         ...(advDetails.JobcodeChecked === false
                           ? [
                               {
-                                label: "Preview",
+                                label: ButtonAction.Preview,
                                 onClick: async () => {
                                   previewBtn_Fn();
                                 },
@@ -2772,7 +2772,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         ...(isViewed
                           ? [
                               {
-                                label: "Submit",
+                                label: ButtonAction.Submit,
                                 onClick: async () => {
                                   await SaveRecruitment();
                                 },
@@ -2789,7 +2789,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     ? isViewed
                       ? [
                           {
-                            label: "Reviewed",
+                            label: ButtonAction.Review,
                             onClick: async () => {
                               await SaveRecruitment();
                             },
@@ -2799,7 +2799,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     : props.stateValue?.TabName === TabName.AssignAgencies
                     ? [
                         {
-                          label: "Back",
+                          label: ButtonAction.Back,
                           onClick: async () => {
                             props.navigation("/RecurimentProcess", {
                               state: {

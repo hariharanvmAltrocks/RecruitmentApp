@@ -239,7 +239,6 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
 
   const handleCheckbox = (value: boolean, item: any) => {
     const itemIdentifier = item.ID;
-    // console.log("Checkbox Clicked | Value:", value, "| Item:", item);
     const updatedDataset = filteredItems.map((currentItem) => {
       const currentItemIdentifier = currentItem.ID;
       if (currentItemIdentifier === itemIdentifier) {

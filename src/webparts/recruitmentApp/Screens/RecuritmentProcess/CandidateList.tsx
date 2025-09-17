@@ -28,6 +28,7 @@ import CandidateDataTable from "../../components/CandidateDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import TabsComponent from "../../components/TabsComponent ";
 import { tabStyle } from "../../components/TabMerge";
+import { ButtonAction } from "../../utilities/LabelName";
 
 const CandidateList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
@@ -361,7 +362,7 @@ const CandidateList = (props: any) => {
               data={CandidateData}
               columns={columnConfig(
                 "tab1",
-                "Edit",
+                ButtonAction.Edit,
                 props.stateValue?.TabName,
                 TabName.ViewCandidateList
               )}
@@ -410,7 +411,7 @@ const CandidateList = (props: any) => {
               onBreadcrumbChange={handleBreadcrumbChange}
               additionalButtons={[
                 {
-                  label: "Back",
+                  label: ButtonAction.Back,
                   onClick: async () => {
                     back_fn();
                   },
@@ -427,7 +428,7 @@ const CandidateList = (props: any) => {
     // const activeTabObj = tabs.find((item) => item.value === activeTab);
     const newTabNames = [
       { tabName: props.stateValue?.TabName },
-      { tabName: props.stateValue?.ButtonAction },
+      // { tabName: props.stateValue?.ButtonAction },
       { tabName: TabName.ViewCandidateList }, //activeTabObj?.label },
     ];
     if (JSON.stringify(TabNameData) !== JSON.stringify(newTabNames)) {

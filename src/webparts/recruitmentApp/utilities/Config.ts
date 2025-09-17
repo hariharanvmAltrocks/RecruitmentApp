@@ -392,13 +392,12 @@ export const TabName = {
   InterviewQuestions: "Interview Questions",
 
   CandidateDetails: "Applicants Details",
-  PositionDetails: "Position Details",
+  PositionDetails: "Job Details",
   AdvertisementDetails: "Advertisement Details",
   AdvertisementViewDetails: "View Advertisement ",
-  ViewCandidateDetails: "View Applicants Details",
-  Scorecard: "Scorecard",
-  ViewPositionDetails: "View Position Details",
-  ViewCandidateList: "View Applicants List",
+  ViewCandidateDetails: "Applicants Details",
+  Scorecard: "ScoreCard",
+  ViewCandidateList: "Applicants List",
   ViewJustification: "View Comments",
   EvaluationTab: "Candidate Details",
   AdvertExtension: "Advert Extension",
@@ -427,11 +426,7 @@ export const Nationality = {
   Expatriate: "Expatriate",
 };
 
-export const CandidateStatus = {
-  Yes: "Yes",
-  No: "No",
-  OnHold: "On Hold",
-};
+
 
 export const InterviewLevels = {
   Level1: "Level 1",
@@ -616,27 +611,7 @@ export const labelName = {
   COIProfileLabel: "Consulted With"
 
 };
-export const ButtonAction = {
-  Update: "Update",
-  Submit: "Submit",
-  Approve: "Approve",
-  Reject: "Reject",
-  Revert: "Revert",
-  Cancel: "Cancel",
-  Back: "Back",
-  Save: "Save",
-  Add: "Add",
-  Delete: "Delete",
-  Edit: "Edit",
-  View: "View",
-  Download: "Download",
-  Upload: "Upload",
-  Reschedule: "Reschedule",
-  Assign: "Assign",
-  Remove: "Remove",
-  close: "Close",
-  Review: "Reviewed",
-}
+
 
 export const ActionIcon = {
   Add: 1,
@@ -736,6 +711,9 @@ export const ColorCode = {
   },
   ProfileColorCode: {
     colorCode: "#597b98"
+  },
+  BreadCrump: {
+    BreadCrumpColor: "#868a8b"
   }
 }
 

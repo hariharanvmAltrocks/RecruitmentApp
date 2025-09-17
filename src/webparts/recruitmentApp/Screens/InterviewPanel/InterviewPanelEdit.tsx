@@ -6,11 +6,7 @@ import {
   InterviewServices,
 } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import {
-  alertPropsData,
-  AutoCompleteItem,
-  InterviewPanaldata,
-} from "../../Models/Screens";
+import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import {
   DocumentLibraray,
@@ -46,7 +42,12 @@ import BreadcrumbsComponent, {
 import CustomLabel from "../../components/CustomLabel";
 import SPServices from "../../Services/SPService/SPServices";
 import { WorkflowJson } from "../../Models/ApIInterface";
-import { CheckboxContent, labelNames } from "../../utilities/LabelName";
+import {
+  Attachment,
+  ButtonAction,
+  CheckboxContent,
+  labelNames,
+} from "../../utilities/LabelName";
 
 type ValidationError = {
   Qualifications: boolean;
@@ -154,20 +155,20 @@ const InterviewPanelEdit = (props: any) => {
     }
   );
   const [Checkbox, setCheckbox] = React.useState<boolean>(false);
-  const [InterviewPanelData, setInterviewPanelData] = React.useState<
-    InterviewPanaldata[]
-  >([
-    {
-      ID: 0,
-      CandidateID: 0,
-      RecruitmentID: 0,
-      InterviewLevel: "",
-      InterviewPanel: 0,
-      InterviewPanalNames: [],
-      InterviewPanelTitle: "",
-      IsScoreSheetUploaded: "",
-    },
-  ]);
+  // const [InterviewPanelData, setInterviewPanelData] = React.useState<
+  //   InterviewPanaldata[]
+  // >([
+  //   {
+  //     ID: 0,
+  //     CandidateID: 0,
+  //     RecruitmentID: 0,
+  //     InterviewLevel: "",
+  //     InterviewPanel: 0,
+  //     InterviewPanalNames: [],
+  //     InterviewPanelTitle: "",
+  //     IsScoreSheetUploaded: "",
+  //   },
+  // ]);
   const [InterviewedLevel, setInterviewedLevel] =
     React.useState<InterviewedLevelValue>({
       Levels: "",
@@ -1076,13 +1077,15 @@ const InterviewPanelEdit = (props: any) => {
 
               <div className="ms-Grid-row" style={{ marginTop: "22px" }}>
                 <div className="ms-Grid-col ms-lg6">
-                  <LabelHeaderComponents value={"Attachments"} />
+                  <LabelHeaderComponents value={Attachment.Attachments} />
                 </div>
               </div>
 
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
-                  <CustomLabel value={"Candidate Resume"} />
+                  <CustomLabel
+                    value={Attachment.PositionDocument.CandidateResume}
+                  />
                   <CustomViewDocument
                     Attachment={CandidateData.CandidateCVDoc}
                   />
@@ -1374,11 +1377,11 @@ const InterviewPanelEdit = (props: any) => {
                       gap: "10px",
                     }}
                   >
-                    <LabelHeaderComponents value={"Questionnaires"} />
+                    <LabelHeaderComponents
+                      value={labelNames.Questionnaires.Questionnaires}
+                    />
                     <CustomLabel
-                      value={
-                        "(Rating Guide: 3 - Excellent, 2 - Acceptable, 1 - Not Acceptable)"
-                      }
+                      value={labelNames.Questionnaires.QuestionGrade}
                     />
                   </div>
                 </div>
@@ -1406,7 +1409,9 @@ const InterviewPanelEdit = (props: any) => {
                       </div>
                     </p>
                     <p>
-                      <strong>Expected Answer:</strong>
+                      <strong>
+                        {labelNames.Questionnaires.ExpectedAnswer}
+                      </strong>
                       <span
                         dangerouslySetInnerHTML={{
                           __html: `${q.answer
@@ -1428,7 +1433,7 @@ const InterviewPanelEdit = (props: any) => {
                     >
                       <div className="ms-Grid-col ms-lg4">
                         <CustomAutoComplete
-                          label="Rating "
+                          label={labelNames.Questionnaires.Rating}
                           value={
                             ScoreRating.find(
                               (option) => option.key === q.rating
@@ -1463,14 +1468,14 @@ const InterviewPanelEdit = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
                   <LabelHeaderComponents
-                    value={"Scorecard Details(1-Lower Score, 5 -Highest Score)"}
+                    value={labelNames.Questionnaires.ScorecardDetails}
                   />
                 </div>
 
                 <div className="ms-Grid-row" style={{ marginLeft: "1px" }}>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Qualifications (Relevant)"
+                      label={labelNames.Questionnaires.QualificationsRelevant}
                       value={CandidateData.Qualifications}
                       options={ScoreRanking}
                       onChange={(value) =>
@@ -1484,7 +1489,7 @@ const InterviewPanelEdit = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Experience (Relevant)"
+                      label={labelNames.Questionnaires.ExperienceRelevant}
                       value={CandidateData.Experience}
                       options={ScoreRanking}
                       onChange={(value) =>
@@ -1498,7 +1503,7 @@ const InterviewPanelEdit = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Knowledge"
+                      label={labelNames.Questionnaires.Knowledge}
                       value={CandidateData.Knowledge}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1513,7 +1518,7 @@ const InterviewPanelEdit = (props: any) => {
                 <div className="ms-Grid-row" style={{ marginLeft: "1px" }}>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Energy Level"
+                      label={labelNames.Questionnaires.EnergyLevel}
                       value={CandidateData.Energylevel}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1527,7 +1532,7 @@ const InterviewPanelEdit = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Meets All Job Requirements"
+                      label={labelNames.Questionnaires.MeetsJobRequirements}
                       value={CandidateData.Requirements}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1541,7 +1546,9 @@ const InterviewPanelEdit = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Will Contribute to the Culture Required"
+                      label={
+                        labelNames.Questionnaires.WillContributeCultureRequired
+                      }
                       value={CandidateData.contributeculture}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1557,7 +1564,7 @@ const InterviewPanelEdit = (props: any) => {
                 <div className="ms-Grid-row" style={{ marginLeft: "1px" }}>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Expat Experience/Congolese"
+                      label={labelNames.Questionnaires.ExpatExperienceCongolese}
                       value={CandidateData.ExpatExperienceCongolese}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1571,7 +1578,9 @@ const InterviewPanelEdit = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Other Criteria Recognized by the Panel"
+                      label={
+                        labelNames.Questionnaires.OtherCriteriaRecognizedPanel
+                      }
                       value={CandidateData.CriteriaRecognised}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1590,7 +1599,7 @@ const InterviewPanelEdit = (props: any) => {
                     style={{ marginLeft: "11px" }}
                   >
                     <CustomRadioGroup
-                      label="To Consider for Employment"
+                      label={labelNames.Questionnaires.ConsiderEmployment}
                       value={CandidateData?.Employment}
                       options={EmploymentOption}
                       mandatory={true}
@@ -1608,7 +1617,9 @@ const InterviewPanelEdit = (props: any) => {
                       style={{ marginLeft: "2px" }}
                     >
                       <CustomTextArea
-                        label="Feedback(Required for Ratings Below 2)"
+                        label={
+                          labelNames.Questionnaires.FeedbackRequiredRatingsBelow
+                        }
                         value={CandidateData?.EvaluationFeedback}
                         error={ValidationError.EvaluationFeedback}
                         mandatory={true}
@@ -1626,7 +1637,9 @@ const InterviewPanelEdit = (props: any) => {
                     style={{ marginLeft: "6px" }}
                   >
                     <CustomTextArea
-                      label="Overall Evaluation Feedback"
+                      label={
+                        labelNames.Questionnaires.OverallEvaluationFeedback
+                      }
                       value={CandidateData?.OverAllEvaluationFeedback}
                       error={ValidationError.OverAllEvaluationFeedback}
                       mandatory={true}
@@ -1688,7 +1701,7 @@ const InterviewPanelEdit = (props: any) => {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
           { tabName: props.stateValue?.TabName },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: activeTabObj?.label },
         ];
         return newTabNames;
@@ -1697,7 +1710,7 @@ const InterviewPanelEdit = (props: any) => {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
           { tabName: props.stateValue?.TabName },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: TabName.ViewCandidateDetails },
           { tabName: activeTabObj?.label },
         ];
@@ -1761,11 +1774,11 @@ const InterviewPanelEdit = (props: any) => {
                 (panel) => panel.InterviewPanelTitle
               );
 
-              console.log(InterviewPanelData);
-              setInterviewPanelData((prevState) => ({
-                ...prevState,
-                interviewPanelTitles: interviewPanelTitles || [],
-              }));
+              // console.log(InterviewPanelData);
+              // setInterviewPanelData((prevState) => ({
+              //   ...prevState,
+              //   interviewPanelTitles: interviewPanelTitles || [],
+              // }));
 
               setCandidateData((prevState) => ({
                 ...prevState,
@@ -1858,7 +1871,7 @@ const InterviewPanelEdit = (props: any) => {
             }}
             additionalButtons={[
               {
-                label: "Submit",
+                label: ButtonAction.Submit,
                 onClick: async () => {
                   await Submit_fn();
                 },

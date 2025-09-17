@@ -9,7 +9,6 @@ import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
 import {
-  ButtonAction,
   ColorCode,
   DocumentFolderName,
   DocumentLibraray,
@@ -56,7 +55,7 @@ import CustomDatePicker from "../../components/CustomDatePicker";
 import CustomDialogbox from "../../components/CustomDialogbox";
 import ReuseButton from "../../components/ReuseButton";
 import { ViewCandidateDocument } from "../ScreenComponent/ViewCandidateDocument";
-import { labelNames } from "../../utilities/LabelName";
+import { ButtonAction, labelNames } from "../../utilities/LabelName";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -157,12 +156,12 @@ const UploadCandidateDocument = (props: any) => {
     },
     ITRequired: "",
   });
-  const [viewDocument, setViewDocument] = React.useState<viewDocument>({
-    ReviewOfferDoc: [],
-    ReviewOthersDoc: [],
-    ReviewEmployDocs: [],
-    ViewFolderPath: "",
-  });
+  // const [viewDocument, setViewDocument] = React.useState<viewDocument>({
+  //   ReviewOfferDoc: [],
+  //   ReviewOthersDoc: [],
+  //   ReviewEmployDocs: [],
+  //   ViewFolderPath: "",
+  // });
   const [documentview, setdocumentview] = React.useState<CustomViewDocument[]>(
     []
   );
@@ -231,7 +230,6 @@ const UploadCandidateDocument = (props: any) => {
         await OfferLetterServices.FetchCandidateDocument(
           EmployementContractDocument
         );
-      console.log(OfferLetter.data, "OfferLetter");
       let PersonalDocument: GetCandidateDocument = {
         ListName: DocumentLibraray.HRMSCandidateDocs,
         RequestID: item?.CandidateDetails?.JobRequestID, //item?.CandidateDetails?.JobRequestID,
@@ -308,12 +306,10 @@ const UploadCandidateDocument = (props: any) => {
       if (MedicalDoc.length > 0) {
         docs.push(MedicalDoc[0]);
       }
-      console.log(docs, "docs");
       setdocumentview(docs);
       let CandidateDetails = await GetPortalJobsService.getCandidateProfile(
         item?.CandidateDetails?.JobRequestID
       );
-      console.log(CandidateDetails, "CandidateDetails");
 
       setData((prev) => ({
         ...prev,
@@ -341,12 +337,12 @@ const UploadCandidateDocument = (props: any) => {
         NoticePeriod: CandidateDetails?.data?.[0]?.noticePeriod ?? "",
       }));
 
-      setViewDocument((prev) => ({
-        ...prev,
-        ReviewOfferDoc: OfferLetter.data,
-        ReviewEmployDocs: EmployementContract.data,
-        ViewFolderPath: item?.CandidateDetails?.DocumentFolderPath,
-      }));
+      // setViewDocument((prev) => ({
+      //   ...prev,
+      //   ReviewOfferDoc: OfferLetter.data,
+      //   ReviewEmployDocs: EmployementContract.data,
+      //   ViewFolderPath: item?.CandidateDetails?.DocumentFolderPath,
+      // }));
 
       if (
         props.stateValue?.StatusId ===
@@ -2267,7 +2263,7 @@ const UploadCandidateDocument = (props: any) => {
               let Hardwarevalue = {
                 results: Hardwaredata,
               };
-              console.log(Hardwaredata, "Hardwaredata");
+              // console.log(Hardwaredata, "Hardwaredata");
               const hasTrainingSystem =
                 !!data.TrainingSystem &&
                 Object.values(data.TrainingSystem).some(
@@ -2455,8 +2451,6 @@ const UploadCandidateDocument = (props: any) => {
     });
   };
 
-  console.log(viewDocument, "ViewDocument.");
-
   return (
     <>
       <CustomLoader isLoading={isLoading}>
@@ -2476,7 +2470,7 @@ const UploadCandidateDocument = (props: any) => {
               props.stateValue?.ButtonAction === ButtonAction.View
                 ? [
                     {
-                      label: "Back",
+                      label: ButtonAction.Back,
                       onClick: async () => {
                         back_fn();
                       },

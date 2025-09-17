@@ -64,6 +64,40 @@ export const labelNames = {
         NofInterviewLevel: "No of Interview Level's",
         InterviewPanelLevel1: "Interview Panel Level 1",
         InterviewPanelLevel2: "Interview Panel Level 2"
+    },
+    Questionnaires: {
+        Questionnaires: "Questionnaires",
+        QuestionGrade: "(Rating Guide: 3 - Excellent, 2 - Acceptable, 1 - Not Acceptable)",
+        ExpectedAnswer: "Expected Answer:",
+        Rating: "Rating ",
+        ScorecardDetails: "Scorecard Details(1-Lower Score, 5 -Highest Score)",
+        QualificationsRelevant: "Qualifications (Relevant)",
+        ExperienceRelevant: "Experience (Relevant)",
+        Knowledge: "Knowledge",
+        EnergyLevel: "Energy Level",
+        MeetsJobRequirements: "Meets All Job Requirements",
+        WillContributeCultureRequired: "Will Contribute to the Culture Required",
+        ExpatExperienceCongolese: "Expat Experience/Congolese",
+        OtherCriteriaRecognizedPanel: "Other Criteria Recognized by the Panel",
+        ConsiderEmployment: "To Consider for Employment",
+        FeedbackRequiredRatingsBelow: "Feedback(Required for Ratings Below 2)",
+        OverallEvaluationFeedback: "Overall Evaluation Feedback",
+    },
+    HODScordCard: {
+        ScorecardDetailsLevel: "Scorecard Details - Level 1",
+        ScorecardDetails: "Scorecard Details",
+        QuestionEvaluationScorecard: "Question Evaluation Scorecard",
+        OverallEvaluationScorecard: " Overall Evaluation Scorecard",
+        wishselectcandidate: "Do you wish to select this candidate?",
+        AssignPositionID: "Assign PositionID",
+        Selectposition: "Select a position",
+        FeedbackLevel2: "Feedback - Level 2",
+        FeedbackLevel1: "Feedback - Level 1",
+
+        //  OVERALLGRADEPOINT = (GPA: string) => {
+        //     return `OVERALL GRADE POINT AVERAGE (GPA) - ${GPA} /5.0`
+        //  },
+
     }
 }
 
@@ -93,5 +127,84 @@ export const CheckboxContent = {
 
 export const ValidationMsg = {
     Minimumthreerequired: "Minimum of three is required",
-    InvaildDate: "Invaild Date"
-} 
+    InvaildDate: "Invaild Date",
+}
+
+export const InterviewDate = (formattedDate: any): string => {
+    return `
+    <div style="text-align: center;">
+      <h3>⚠️ Action cannot be performed.</h3>
+      <p><strong>Interview Open Date:</strong> ${formattedDate}</p>
+      <p>Please try again on the Interview Date.</p>
+    </div>`;
+}
+
+export const PendingCandidateAlertMsg = (pendingcount: number): string => {
+    return `
+          <div style="text-align: center;">
+            <h3>⚠️ Pending Candidate Review.</h3>
+            <p>There is ${pendingcount} pending candidate currently on hold</p>
+            <p>Please review the candidate and take the necessary action to proceed with interview scheduling.</p>
+          </div>`
+}
+
+export const JobAdvertAlertMsg = (Dateformat: any): string => {
+    return `
+              <div style="text-align: center;">
+                <h3>⚠️ Action cannot be performed.</h3>
+                <p>This job advert is still active and open for recruitment.</p>
+                <p><strong>Expiry Date:</strong> ${Dateformat}</p>
+                <p>Please try again after it expires.</p>
+              </div>`
+}
+
+export const ActionName = {
+    Completed: "Completed",
+    Pending: "Pending"
+}
+
+export const PositionStatus = {
+    Vacant: "Vacant",
+    RecruitmentInProgress: "Recruitment InProgress"
+}
+
+export const ButtonAction = {
+    Update: "Update",
+    Next: "Next",
+    Preview: "Preview",
+    Submit: "Submit",
+    Approve: "Approve",
+    Reject: "Reject",
+    Revert: "Revert",
+    Cancel: "Cancel",
+    Back: "Back",
+    Save: "Save",
+    Add: "Add",
+    Delete: "Delete",
+    Edit: "Edit",
+    View: "View",
+    Download: "Download",
+    Upload: "Upload",
+    Reschedule: "Reschedule",
+    Assign: "Assign",
+    Remove: "Remove",
+    close: "Close",
+    Review: "Reviewed",
+    OnHold: "OnHold",
+    ScheduleforInterview: "Schedule for Interview",
+    Selected: "Selected",
+    Rejected: "Rejected",
+}
+
+export const IsCandidateFit = {
+    Yes: "Yes",
+    No: "No",
+    OnHold: "On Hold",
+};
+
+export const ValidationAction = {
+    Yes: "Yes",
+    No: "No",
+    Ok: "OK",
+    Cancel: "Cancel"
+}

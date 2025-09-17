@@ -56,7 +56,13 @@ import CustomRadioGroup from "../../components/CustomRadioGroup";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import SPServices from "../../Services/SPService/SPServices";
 import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
-import { Attachment, CheckboxContent } from "../../utilities/LabelName";
+import {
+  Attachment,
+  ButtonAction,
+  CheckboxContent,
+  labelNames,
+  PositionStatus,
+} from "../../utilities/LabelName";
 
 type ValidationError = {
   Comments: boolean;
@@ -691,7 +697,7 @@ const HodViewScorecard = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Applicant Name"
+                      label={labelNames.CandidateDetails.ApplicantName}
                       value={CandidateData.FullName}
                       disabled={true}
                       mandatory={false}
@@ -705,7 +711,7 @@ const HodViewScorecard = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Nationality"
+                      label={labelNames.CandidateDetails.Nationality}
                       value={CandidateData.Nationality}
                       disabled={true}
                       mandatory={false}
@@ -719,7 +725,7 @@ const HodViewScorecard = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Gender"
+                      label={labelNames.CandidateDetails.Gender}
                       value={CandidateData.Gender}
                       disabled={true}
                       mandatory={false}
@@ -736,7 +742,9 @@ const HodViewScorecard = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Highest Relevant Qualification"
+                      label={
+                        labelNames.CandidateDetails.HighestRelevantQualification
+                      }
                       value={CandidateData.Qualification}
                       disabled={true}
                       mandatory={false}
@@ -750,7 +758,9 @@ const HodViewScorecard = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Experiance in Mining Industry (Years)"
+                      label={
+                        labelNames.CandidateDetails.ExperienceInMiningIndustry
+                      }
                       value={CandidateData.TotalYearOfExperiance}
                       disabled={true}
                       mandatory={false}
@@ -764,7 +774,9 @@ const HodViewScorecard = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Experiance in Related Field (Years)"
+                      label={
+                        labelNames.CandidateDetails.ExperienceInRelatedField
+                      }
                       value={CandidateData.ReleventExperience}
                       disabled={true}
                       mandatory={false}
@@ -780,7 +792,7 @@ const HodViewScorecard = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Date of Interview"
+                      label={labelNames.CandidateDetails.DateInterview}
                       value={
                         CandidateData.InterviewDate
                           ? new Date(CandidateData.InterviewDate)
@@ -800,7 +812,7 @@ const HodViewScorecard = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="No of Interview Level's"
+                      label={labelNames.CandidateDetails.NofInterviewLevel}
                       value={InterviewedLevel.Levels}
                       disabled={true}
                       mandatory={false}
@@ -808,7 +820,7 @@ const HodViewScorecard = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Grade"
+                      label={labelNames.CandidateDetails.Grade}
                       value={InterviewedLevel.Grade}
                       disabled={true}
                       mandatory={false}
@@ -820,7 +832,7 @@ const HodViewScorecard = (props: any) => {
                   {CandidateData?.ConflictsOfInterest && (
                     <div className="ms-Grid-col ms-lg4">
                       <CustomInput
-                        label="Conflicts Of Interest"
+                        label={labelNames.CandidateDetails.ConflictsOfInterest}
                         value={CandidateData?.ConflictsOfInterest}
                         disabled={true}
                         mandatory={false}
@@ -830,7 +842,7 @@ const HodViewScorecard = (props: any) => {
                   {CandidateData?.disability && (
                     <div className="ms-Grid-col ms-lg4">
                       <CustomInput
-                        label="Disability"
+                        label={labelNames.CandidateDetails.Disability}
                         value={CandidateData?.disability}
                         disabled={true}
                         mandatory={false}
@@ -844,7 +856,7 @@ const HodViewScorecard = (props: any) => {
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg12">
                         <CustomTextArea
-                          label="Disability Details"
+                          label={labelNames.CandidateDetails.DisabilityDetails}
                           value={CandidateData?.disabilityReason}
                           disabled={true}
                           mandatory={false}
@@ -866,7 +878,7 @@ const HodViewScorecard = (props: any) => {
                         display: "block",
                       }}
                     >
-                      Interview Panel Level 1
+                      {labelNames.CandidateDetails.InterviewPanelLevel1}
                     </label>
                     <div
                       style={{
@@ -919,7 +931,7 @@ const HodViewScorecard = (props: any) => {
                           display: "block",
                         }}
                       >
-                        Interview Panel Level 2
+                        {labelNames.CandidateDetails.InterviewPanelLevel2}
                       </label>
                       <div
                         style={{
@@ -961,7 +973,7 @@ const HodViewScorecard = (props: any) => {
 
                 <div className="ms-Grid-row" style={{ marginTop: "22px" }}>
                   <div className="ms-Grid-col ms-lg6">
-                    <LabelHeaderComponents value={"Attachments"} />
+                    <LabelHeaderComponents value={Attachment.Attachments} />
                   </div>
                 </div>
 
@@ -979,7 +991,9 @@ const HodViewScorecard = (props: any) => {
                     />
                   </div> */}
                   <div className="ms-Grid-col ms-lg4">
-                    <CustomLabel value={"Candidate Resume"} />
+                    <CustomLabel
+                      value={Attachment.PositionDocument.CandidateResume}
+                    />
                     <CustomViewDocument
                       Attachment={CandidateData.CandidateCVDoc}
                       webUrl={props.webURL}
@@ -1064,8 +1078,8 @@ const HodViewScorecard = (props: any) => {
                     {props.stateValue?.TabName === TabName.Evaluation ||
                     props.stateValue?.StatusId ===
                       StatusId.PendingwithHODtoAssignPositionID
-                      ? "Scorecard Details - Level 1"
-                      : "Scorecard Details"}
+                      ? labelNames.HODScordCard.ScorecardDetailsLevel
+                      : labelNames.HODScordCard.ScorecardDetails}
                   </h2>
                 </div>
                 {/* <div
@@ -1136,7 +1150,7 @@ const HodViewScorecard = (props: any) => {
                         fontWeight: "bold",
                       }}
                     >
-                      Question Evaluation Scorecard
+                      {labelNames.HODScordCard.QuestionEvaluationScorecard}
                     </AccordionSummary>
                     <AccordionDetails>
                       <div style={{ overflowX: "auto" }}>
@@ -1222,7 +1236,7 @@ const HodViewScorecard = (props: any) => {
                         fontWeight: "bold",
                       }}
                     >
-                      Overall Evaluation Scorecard
+                      {labelNames.HODScordCard.OverallEvaluationScorecard}
                     </AccordionSummary>
                     <AccordionDetails>
                       <div style={{ overflowX: "auto" }}>
@@ -1257,7 +1271,7 @@ const HodViewScorecard = (props: any) => {
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg5">
                       <CustomRadioGroup
-                        label={"Do you wish to select this candidate?"}
+                        label={labelNames.HODScordCard.wishselectcandidate}
                         value={actionValue.CandidateStatus}
                         options={["Yes", "No", "On Hold"]}
                         error={validationErrors.CandidateStatus}
@@ -1313,7 +1327,7 @@ const HodViewScorecard = (props: any) => {
                         style={{ marginLeft: "-5px" }}
                       >
                         <CustomAutoComplete
-                          label="Assign PositionID"
+                          label={labelNames.HODScordCard.AssignPositionID}
                           options={positionOptions}
                           value={selectedPosition}
                           onChange={(item: AutoCompleteItem | null) =>
@@ -1322,7 +1336,7 @@ const HodViewScorecard = (props: any) => {
                           error={validationErrors.PositionID}
                           disabled={true}
                           mandatory={true}
-                          placeholder="Select a position"
+                          placeholder={labelNames.HODScordCard.Selectposition}
                         />
                       </div>
                     </div>
@@ -1341,7 +1355,7 @@ const HodViewScorecard = (props: any) => {
                           style={{ marginLeft: "-5px" }}
                         >
                           <CustomAutoComplete
-                            label="Assign PositionID"
+                            label={labelNames.HODScordCard.AssignPositionID}
                             options={positionOptions}
                             value={selectedPosition}
                             onChange={(item: AutoCompleteItem | null) =>
@@ -1350,7 +1364,7 @@ const HodViewScorecard = (props: any) => {
                             error={validationErrors.PositionID}
                             disabled={false}
                             mandatory={true}
-                            placeholder="Select a position"
+                            placeholder={labelNames.HODScordCard.Selectposition}
                           />
                         </div>
                       </div>
@@ -1365,8 +1379,8 @@ const HodViewScorecard = (props: any) => {
                           StatusId.PendingwithHODtoAssignPositionID ||
                         props?.stateValue?.StatusId ===
                           StatusId.InterviewScheduledforLevel2
-                          ? "Feedback - Level 2"
-                          : "Feedback - Level 1"
+                          ? labelNames.HODScordCard.FeedbackLevel2
+                          : labelNames.HODScordCard.FeedbackLevel1
                       }
                       value={CandidateData.Comments}
                       error={validationErrors.Comments}
@@ -1575,7 +1589,7 @@ const HodViewScorecard = (props: any) => {
       {
         FilterKey: "PositionIDStatus",
         Operator: "eq",
-        FilterValue: "Vacant",
+        FilterValue: PositionStatus.Vacant, //"Vacant",
       },
     ];
     const response = await InterviewServices.GetHRMSPositionDetails(
@@ -1605,25 +1619,25 @@ const HodViewScorecard = (props: any) => {
     if (isEvaluationTab) {
       const evaluationTabNames = [
         { tabName: props.stateValue?.TabName },
-        { tabName: "View" },
+        // { tabName: "View" },
         { tabName: activeTabObj?.label },
       ];
       setTabNameData(evaluationTabNames);
     } else if (activeTab === "tab1") {
       const newTabNames = [
         { tabName: props.stateValue?.TabName },
-        { tabName: "View" },
+        // { tabName: "View" },
         { tabName: props.stateValue?.PreviousTabName },
-        { tabName: props.stateValue?.ButtonAction },
+        // { tabName: props.stateValue?.ButtonAction },
         { tabName: activeTabObj?.label },
       ];
       setTabNameData(newTabNames);
     } else {
       const newTabNames = [
         { tabName: props.stateValue?.TabName },
-        { tabName: "View" },
+        // { tabName: "View" },
         { tabName: props.stateValue?.PreviousTabName },
-        { tabName: props.stateValue?.ButtonAction },
+        // { tabName: props.stateValue?.ButtonAction },
         { tabName: TabName.ViewCandidateDetails },
         { tabName: TabName.ViewScoreDetails },
       ];
@@ -1759,7 +1773,9 @@ const HodViewScorecard = (props: any) => {
       if (res.status === 200) {
         await SPServices.SPUpdateItem({
           Listname: ListNames.HRMSPositionIDMaster,
-          RequestJSON: { PositionIDStatus: "Recruitment InProgress" },
+          RequestJSON: {
+            PositionIDStatus: PositionStatus.RecruitmentInProgress,
+          },
           ID: selectedPosition.ID,
         });
       }
@@ -2100,7 +2116,7 @@ const HodViewScorecard = (props: any) => {
             if (selectedPosition) {
               await SPServices.SPUpdateItem({
                 Listname: ListNames.HRMSPositionIDMaster,
-                RequestJSON: { PositionIDStatus: "Vacant" },
+                RequestJSON: { PositionIDStatus: PositionStatus.Vacant },
                 ID: selectedPosition.key,
               });
             }
@@ -2121,7 +2137,7 @@ const HodViewScorecard = (props: any) => {
             if (selectedPosition) {
               await SPServices.SPUpdateItem({
                 Listname: ListNames.HRMSPositionIDMaster,
-                RequestJSON: { PositionIDStatus: "Vacant" },
+                RequestJSON: { PositionIDStatus: PositionStatus.Vacant },
                 ID: selectedPosition.key,
               });
             }
@@ -2232,7 +2248,7 @@ const HodViewScorecard = (props: any) => {
                 ...(fieldsEditable.visibleButtons.includes("Selected")
                   ? [
                       {
-                        label: "Selected",
+                        label: ButtonAction.Selected,
                         onClick: async () => await Submit_fn("Selected"),
                       },
                     ]
@@ -2240,7 +2256,7 @@ const HodViewScorecard = (props: any) => {
                 ...(fieldsEditable.visibleButtons.includes("Rejected")
                   ? [
                       {
-                        label: "Rejected",
+                        label: ButtonAction.Rejected,
                         onClick: async () => await Submit_fn("Rejected"),
                       },
                     ]
@@ -2248,7 +2264,7 @@ const HodViewScorecard = (props: any) => {
                 ...(fieldsEditable.visibleButtons.includes("OnHold")
                   ? [
                       {
-                        label: "OnHold",
+                        label: ButtonAction.OnHold,
                         onClick: async () => await Submit_fn("OnHold"),
                       },
                     ]
@@ -2256,7 +2272,7 @@ const HodViewScorecard = (props: any) => {
                 ...(props.stateValue?.TabName === TabName.Evaluation
                   ? [
                       {
-                        label: "Submit",
+                        label: ButtonAction.Submit,
                         onClick: async () => await Submit_fn("Selected"),
                       },
                     ]

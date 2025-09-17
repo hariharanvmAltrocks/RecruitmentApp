@@ -7,6 +7,7 @@ import {
   ITooltipHostStyles,
 } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
+import { ActionName, PositionStatus } from "../utilities/LabelName";
 
 interface ToolTipButtonProps {
   Title: string;
@@ -57,7 +58,16 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
       >
         {label}
       </div>
-      <div style={{ fontFamily: '"Roboto", sans-serif' }}>
+      <div
+        style={{
+          fontFamily: '"Roboto", sans-serif',
+          color:
+            value === ActionName.Completed ||
+            value === PositionStatus.RecruitmentInProgress
+              ? "green"
+              : "red",
+        }}
+      >
         {" "}
         : {value ?? "—"}
       </div>
@@ -69,10 +79,28 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
       const data = ApproverData;
 
       if (!data) return <div>Loading...</div>;
-      // if(ApproverData)
-      return renderApproverList(
-        data.map((item: any) => boldLabel(item.Key, item.Value))
-      );
+      if (ApproverData.length > 0) {
+        return renderApproverList(
+          data.map((item: any) => boldLabel(item.Key, item.Value))
+        );
+      } else {
+        return (
+          <div>
+            <p
+            // style={{
+            //   display: "flex",
+            //   justifyContent: "center",
+            //   padding: "1.2%",
+            //   fontSize: "1.3em",
+            //   marginTop: "16%",
+            //   marginBottom: "18%",
+            // }}
+            >
+              No Record Found
+            </p>
+          </div>
+        );
+      }
     },
   };
 

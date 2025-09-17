@@ -2,7 +2,8 @@ import * as React from "react";
 import "./CustomAlert.modules.css";
 import { HRMSAlertOptions } from "../../utilities/Config";
 import ReuseButton from "../ReuseButton";
-import CustomDialogbox from "../CustomDialogbox";
+import AlertDialogbox from "./AlertDialogbox";
+import { ValidationAction } from "../../utilities/LabelName";
 
 export type CustomAlert = {
   ButtonAction: (confirmed: boolean) => void;
@@ -43,7 +44,9 @@ export default function CustomAlert(props: CustomAlert) {
       >
         <div className="ms-Grid-col ms-lg3">
           <ReuseButton
-            label={props.ButtonLebel ? "Yes" : "OK"}
+            label={
+              props.ButtonLebel ? ValidationAction.Yes : ValidationAction.Ok
+            }
             onClick={() => props.ButtonAction && props.ButtonAction(true)}
             spacing={4}
             Style={{
@@ -60,7 +63,11 @@ export default function CustomAlert(props: CustomAlert) {
         {props.Type === HRMSAlertOptions.Confirmation && (
           <div className="ms-Grid-col ms-lg3">
             <ReuseButton
-              label={props.ButtonLebel ? "No" : "Cancel"}
+              label={
+                props.ButtonLebel
+                  ? ValidationAction.No
+                  : ValidationAction.Cancel
+              }
               onClick={() => props.ButtonAction && props.ButtonAction(false)}
               spacing={4}
               Style={{
@@ -133,7 +140,7 @@ export default function CustomAlert(props: CustomAlert) {
       className="ms-Grid-row"
       style={{ display: "flex", justifyContent: "center" }}
     >
-      <CustomDialogbox
+      <AlertDialogbox
         Style={{ padding: "7px", minHeight: "10%", maxWidth: "28%" }}
         header={headerContent}
         visible={props.visible}

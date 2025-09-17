@@ -20,7 +20,6 @@ import {
   ResponeStatus,
   ColorCode,
   ActionIcon,
-  ButtonAction,
   InterviewLevels,
   RoleName,
 } from "../../utilities/Config";
@@ -50,6 +49,11 @@ import * as moment from "moment";
 import ReuseButton from "../../components/ReuseButton";
 import ToolTipButton from "../../components/Tooltip";
 import { tabStyle } from "../../components/TabMerge";
+import {
+  ActionName,
+  ButtonAction,
+  JobAdvertAlertMsg,
+} from "../../utilities/LabelName";
 
 export type formValidation = {
   Comments: boolean;
@@ -58,7 +62,7 @@ export type formValidation = {
 };
 
 const RecruitmentProcess = (props: any) => {
-  console.log(props, "PROPSvALUE");
+  // console.log(props, "PROPSvALUE");
 
   const [data, setData] = React.useState<DataSyncToRecruitmentResponse[]>([]);
   const [selectedrowdata, setSelectedrowdata] = React.useState<
@@ -188,11 +192,17 @@ const RecruitmentProcess = (props: any) => {
         pendingName = [
           {
             Key: RoleName?.RecruitmentHR,
-            Value: rowData?.QuestionByHR === "Yes" ? "Completed" : "Pending",
+            Value:
+              rowData?.QuestionByHR === "Yes"
+                ? ActionName.Completed
+                : ActionName.Pending,
           },
           {
             Key: RoleName?.LineManager,
-            Value: rowData?.QuestionByLM === "Yes" ? "Completed" : "Pending",
+            Value:
+              rowData?.QuestionByLM === "Yes"
+                ? ActionName.Completed
+                : ActionName.Pending,
           },
         ];
         break;
@@ -203,7 +213,6 @@ const RecruitmentProcess = (props: any) => {
         let GradeLevel = await CommonServices.GetGradeLevel(
           rowData?.PatersonGrade
         );
-        console.log(GradeLevel);
 
         if (Tooltipdata?.data && Tooltipdata.data[0]?.LineManager) {
           pendingName = [
@@ -261,7 +270,7 @@ const RecruitmentProcess = (props: any) => {
       filterConditions,
       "and"
     );
-    console.log(response.data, "responseresponseresponseresponse");
+    // console.log(response.data, "responseresponseresponseresponse");
     setPositionIDs(response.data);
   };
 
@@ -303,7 +312,7 @@ const RecruitmentProcess = (props: any) => {
               Rowdata={rowData}
               ApproverData={positionIDs}
               onHover={() => handlePositionHover(rowData)}
-              TooltipHeader={"Job IDs"}
+              TooltipHeader={"Position IDs"}
             />
             <span>{rowData.NumberOfPersonNeeded}</span>
           </div>
@@ -324,6 +333,7 @@ const RecruitmentProcess = (props: any) => {
       field: "Status",
       header: "Status",
       fieldName: "Status",
+      style: { width: "13%" },
       sortable: false,
       body: (rowData: any) => {
         let isTooltipStatus: any;
@@ -351,9 +361,6 @@ const RecruitmentProcess = (props: any) => {
             // StatusId.RecruitmentInProgress,
           ].includes(rowData.StatusId);
         }
-
-        console.log(pendingInfo, "pendingInfo");
-
         if (
           !isTooltipStatus &&
           storedStringRef.current != TabName.UploadONEMDoc
@@ -514,13 +521,7 @@ const RecruitmentProcess = (props: any) => {
                             "DD/MM/YYYY"
                           )
                         : moment(JobPostingEndDate).format("DD/MM/YYYY");
-                      const JobExpiredMsg = `
-          <div style="text-align: center;">
-            <h3>⚠️ Action cannot be performed.</h3>
-            <p>This job advert is still active and open for recruitment.</p>
-            <p><strong>Expiry Date:</strong> ${Dateformat}</p>
-            <p>Please try again after it expires.</p>
-          </div>`;
+                      const JobExpiredMsg = JobAdvertAlertMsg(Dateformat);
                       const SuccessAlert = {
                         Message: JobExpiredMsg,
                         Type: HRMSAlertOptions.Error,
@@ -1283,19 +1284,16 @@ const RecruitmentProcess = (props: any) => {
       if (IsVaild) {
         setAssignHR(false);
         setIsLoading(true);
-        // console.log("selectedJobCodes", selectedJobCodes);
         if (selectedJobCodes.length > 0) {
           let ResponseStatusCode;
           for (const selectedJob of selectedJobCodes) {
             const correspondingJob = data.find(
               (item: any) => item.ID === selectedJob.ID
             );
-            // console.log("Corresponding Job:", correspondingJob);
             if (correspondingJob) {
               let UserIDbyEmail = await CommonServices.getUserIDByEmail(
                 AssignHRData.AssignRecruitmentHR.key
               );
-              // console.log(UserIDbyEmail.data, "UserIDbyEmail");
 
               const RecruitmentValue: PostRecuritmentData = {
                 Data: {
@@ -1630,11 +1628,10 @@ const RecruitmentProcess = (props: any) => {
       storedStringRef.current = TabNames;
     }
     let Action: any;
-    let StatusID: any;
+    // let StatusID: any;
     if (StatusData) {
       Action = StatusData.filter((item) => item.Action);
-      StatusID = StatusData.filter((item) => item.StatusId);
-      console.log(StatusID, "StatusID");
+      // StatusID = StatusData.filter((item) => item.StatusId);
     }
 
     switch (TabNames) {
@@ -1854,9 +1851,6 @@ const RecruitmentProcess = (props: any) => {
                   style={{
                     textAlign: "center",
                     width: "100%",
-                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                    marginTop: "-5%",
-                    height: "50px",
                   }}
                 >
                   <h2
@@ -1866,7 +1860,6 @@ const RecruitmentProcess = (props: any) => {
                     -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
                       // textDecoration: "underline",
                       // textUnderlineOffset: "6px",
-                      marginTop: "7%",
                     }}
                   >
                     {props.CurrentRoleID.includes(RoleID.RecruitmentHR)

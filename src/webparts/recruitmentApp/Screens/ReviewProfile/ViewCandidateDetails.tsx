@@ -18,8 +18,6 @@ import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
 import {
-  ButtonAction,
-  CandidateStatus,
   Choices,
   COIWarningMsg,
   ColorCode,
@@ -57,8 +55,6 @@ import {
 import CustomSignature from "../../components/CustomSignature";
 import IsValid from "../../components/Validation";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
-import { Dialog } from "primereact/dialog";
-import CustomJsonComments from "../../components/CustomJsonComments";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomTimePicker from "../../components/CustomTimePicker";
@@ -76,8 +72,11 @@ import CommanComments from "../../components/CommanComments";
 import { DataSyncToRecruitmentResponse } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 import {
   Attachment,
+  ButtonAction,
   CheckboxContent,
+  IsCandidateFit,
   labelNames,
+  ValidationAction,
   ValidationMsg,
 } from "../../utilities/LabelName";
 
@@ -255,7 +254,6 @@ const ViewCandidateDetails = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
-  const [OpenComments, setOpenComments] = useState<boolean>(false);
   const [submitBtn, setSubmitBtn] = React.useState<string>("");
   const [level2Date, setLevel2Date] = useState<boolean>(false);
   const [level2Data, setLevel2Data] = useState<Level2Data>({
@@ -566,7 +564,7 @@ const ViewCandidateDetails = (props: any) => {
           ) {
             setActionValue((prevState: any) => ({
               ...prevState,
-              CandidateStatus: CandidateStatus.OnHold,
+              CandidateStatus: IsCandidateFit.OnHold,
             }));
           }
           if (
@@ -579,7 +577,7 @@ const ViewCandidateDetails = (props: any) => {
           ) {
             setActionValue((prevState: any) => ({
               ...prevState,
-              CandidateStatus: CandidateStatus.No,
+              CandidateStatus: IsCandidateFit.No,
             }));
           }
           let CandidateScore = ReviewProfileScore.filter(
@@ -617,17 +615,17 @@ const ViewCandidateDetails = (props: any) => {
       props.stateValue?.initialTab === TabName.AssignInterviewPanel
         ? props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2 ||
           props.stateValue?.StatusId === StatusId.InterviewScheduled
-          ? "Reschedule"
-          : "Schedule for Interview "
-        : actionValue.CandidateStatus === "No"
-        ? "Reject"
-        : "Submit"
+          ? ButtonAction.Reschedule //"Reschedule"
+          : ButtonAction.ScheduleforInterview //"Schedule for Interview "
+        : actionValue.CandidateStatus === IsCandidateFit.No
+        ? ButtonAction.Reject //"Reject"
+        : ButtonAction.Submit //"Submit"
     );
     const newTabNames = [
       { tabName: props.stateValue?.initialTab },
-      { tabName: props.stateValue?.PreActionBtn },
+      // { tabName: props.stateValue?.PreActionBtn },
       { tabName: TabName.ViewCandidateList },
-      { tabName: props.stateValue?.ButtonAction },
+      // { tabName: props.stateValue?.ButtonAction },
       { tabName: TabName.ViewCandidateDetails },
     ];
     setTabNameData(newTabNames);
@@ -768,7 +766,9 @@ const ViewCandidateDetails = (props: any) => {
       ...prevState,
       CandidateStatus: false,
     }));
-    setSubmitBtn(item === "No" ? "Reject" : "Submit");
+    setSubmitBtn(
+      item === IsCandidateFit.No ? ButtonAction.Reject : ButtonAction.Submit
+    );
   };
 
   const handleInputChangeTextArea = (value: string | any) => {
@@ -1073,7 +1073,8 @@ const ViewCandidateDetails = (props: any) => {
                   </div>
                   {CandidateProfile?.Agencies === labelName.Candidate && (
                     <>
-                      {CandidateProfile?.ConflictsOfInterest === "No" && (
+                      {CandidateProfile?.ConflictsOfInterest ===
+                        ValidationAction.No && (
                         <div className="ms-Grid-col ms-lg4">
                           <CustomInput
                             label={
@@ -1137,33 +1138,15 @@ const ViewCandidateDetails = (props: any) => {
                         </div>
                       )}
                       {CandidateProfile?.residentStatus && (
-                        <div className="ms-Grid-row">
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "8px",
-                            }}
-                          >
-                            <Label
-                              style={{ marginTop: 10, overflowWrap: "inherit" }}
-                            >
-                              {labelNames.CandidateDetails.ResidencyCountry}
-                            </Label>
-                            <span
-                              style={{
-                                fontFamily: '"Roboto", sans-serif',
-                                // color: "red",
-                                marginTop: "1%",
-                                fontWeight: "bold",
-                                fontSize: "17px",
-                              }}
-                            >
-                              {" "}
-                              - {CandidateProfile?.residentStatus}
-                            </span>
-                          </div>
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomInput
+                            label={labelNames.CandidateDetails.ResidencyCountry}
+                            value={CandidateProfile?.residentStatus}
+                            disabled={true}
+                            mandatory={false}
+                          />
                         </div>
+
                         // <div className="ms-Grid-row">
                         //   <div className="ms-Grid-col ms-lg6">
                         //     <CustomRadioGroup
@@ -1218,7 +1201,8 @@ const ViewCandidateDetails = (props: any) => {
                           disabled={true}
                           mandatory={false}
                           TooltipTitle={
-                            CandidateProfile?.hasIvanhoeZijinExperience != "No"
+                            CandidateProfile?.hasIvanhoeZijinExperience !=
+                            ValidationAction.No
                               ? TooltipType.CompanyData
                               : ""
                           }
@@ -1329,7 +1313,8 @@ const ViewCandidateDetails = (props: any) => {
                             <div
                               style={{ marginTop: "4%", marginLeft: "124px" }}
                             >
-                              {CandidateProfile?.familylinks === "Yes" ? (
+                              {CandidateProfile?.familylinks ===
+                              ValidationAction.Yes ? (
                                 <div
                                   style={{
                                     display: "flex",
@@ -1398,7 +1383,8 @@ const ViewCandidateDetails = (props: any) => {
                           </span>
                           <span style={{ marginLeft: "322px" }}>
                             <div style={{ marginTop: "12%" }}>
-                              {CandidateProfile?.businesslinks === "Yes" ? (
+                              {CandidateProfile?.businesslinks ===
+                              ValidationAction.Yes ? (
                                 <div
                                   style={{
                                     display: "flex",
@@ -1692,7 +1678,8 @@ const ViewCandidateDetails = (props: any) => {
                   </div> */}
                 </div>
 
-                {CandidateProfile?.ConflictsOfInterest === "Yes" &&
+                {CandidateProfile?.ConflictsOfInterest ===
+                  ValidationAction.Yes &&
                   props.stateValue?.initialTab === TabName.ReviewProfile && (
                     <Card
                       variant="outlined"
@@ -2205,7 +2192,7 @@ const ViewCandidateDetails = (props: any) => {
     }
 
     if (
-      CandidateProfile.ConflictsOfInterest === "Yes" &&
+      CandidateProfile.ConflictsOfInterest === ValidationAction.Yes &&
       props.stateValue?.StatusId === workflowStatusApi.HRPending
     ) {
       errors.COIComments = !IsValid(InterviewedLevel?.COIComments);
@@ -2533,10 +2520,10 @@ const ViewCandidateDetails = (props: any) => {
           if (props.CurrentRoleID.includes(RoleID.LineManager)) {
             let CandidateValue =
               COIButtonAction === ButtonAction.Reject
-                ? CandidateStatus.No
+                ? IsCandidateFit.No
                 : actionValue.CandidateStatus;
             switch (CandidateValue) {
-              case CandidateStatus.Yes:
+              case IsCandidateFit.Yes:
                 if (
                   CandidateProfile.workflowStatusId ===
                     workflowStatusApi.LineManagerL2Pending ||
@@ -2555,7 +2542,7 @@ const ViewCandidateDetails = (props: any) => {
                 }
                 break;
 
-              case CandidateStatus.No:
+              case IsCandidateFit.No:
                 if (
                   CandidateProfile.workflowStatusId ===
                   workflowStatusApi.LineManagerL2Pending
@@ -2572,7 +2559,7 @@ const ViewCandidateDetails = (props: any) => {
                 }
                 break;
 
-              case CandidateStatus.OnHold:
+              case IsCandidateFit.OnHold:
                 if (
                   CandidateProfile.workflowStatusId ===
                   workflowStatusApi.LineManagerL2Pending
@@ -2612,7 +2599,7 @@ const ViewCandidateDetails = (props: any) => {
           }
           let COIResponse: any;
           if (
-            CandidateProfile.ConflictsOfInterest === "Yes" &&
+            CandidateProfile.ConflictsOfInterest === ValidationAction.Yes &&
             props.stateValue?.StatusId === workflowStatusApi.HRPending
           ) {
             let DocumentData: COIAttach = {
@@ -2753,14 +2740,14 @@ const ViewCandidateDetails = (props: any) => {
     const isValid = !Validation();
     if (isValid) {
       if (
-        CandidateProfile.ConflictsOfInterest === "Yes" &&
+        CandidateProfile.ConflictsOfInterest === ValidationAction.Yes &&
         props.stateValue?.initialTab === TabName.ReviewProfile
       ) {
         const WarningMsg = {
           Message: COIWarningMsg,
           Type: HRMSAlertOptions.Confirmation,
           visible: true,
-          ButtonLebel: "Yes",
+          ButtonLebel: ValidationAction.Yes,
           ButtonAction: async (userClickedOK: boolean) => {
             if (userClickedOK) {
               setAlertPopupOpen(false);
@@ -2768,7 +2755,7 @@ const ViewCandidateDetails = (props: any) => {
             } else {
               setActionValue((prevState: any) => ({
                 ...prevState,
-                CandidateStatus: "No",
+                CandidateStatus: IsCandidateFit.No,
               }));
               setAlertPopupOpen(false);
               await Submit_fn(ButtonAction.Reject);
@@ -2850,16 +2837,25 @@ const ViewCandidateDetails = (props: any) => {
                   props.stateValue?.ButtonAction === ButtonAction.View
                     ? [
                         {
-                          label: "Back",
+                          label: ButtonAction.Back, //"Back",
                           onClick: async () => {
                             back_fn();
                           },
                         },
                       ]
-                    : actionValue.CandidateStatus === "NO"
+                    : actionValue.CandidateStatus === IsCandidateFit.No
                     ? [
                         {
-                          label: "Reject",
+                          label: ButtonAction.Reject, //"Reject",
+                          onClick: async () => {
+                            await Submit_fn(ButtonAction.Remove);
+                          },
+                        },
+                      ]
+                    : actionValue.CandidateStatus === IsCandidateFit.OnHold
+                    ? [
+                        {
+                          label: ButtonAction.OnHold, //"OnHold",
                           onClick: async () => {
                             await Submit_fn(ButtonAction.Remove);
                           },
@@ -2904,33 +2900,6 @@ const ViewCandidateDetails = (props: any) => {
         </>
       ) : (
         <></>
-      )}
-
-      {OpenComments && (
-        <Dialog
-          header={
-            <>
-              <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                <LabelHeaderComponents
-                  value={labelNames.CommanLabel.Comments}
-                />
-              </div>
-            </>
-          }
-          visible={OpenComments}
-          style={{
-            width: "26vw",
-            backgroundColor: "white",
-            borderRadius: "26px",
-            padding: "20px",
-          }}
-          onHide={() => setOpenComments(false)}
-        >
-          <CustomJsonComments
-            onClose={() => setOpenComments(false)}
-            Comments={CandidateProfile.Comments}
-          />
-        </Dialog>
       )}
     </>
   );

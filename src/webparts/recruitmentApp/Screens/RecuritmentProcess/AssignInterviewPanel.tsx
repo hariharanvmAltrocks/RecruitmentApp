@@ -15,6 +15,7 @@ import AssignRecuritmentHR, {
   HeaderValue,
 } from "../../components/AssignRecuritmentHR";
 import { Button } from "primereact/button";
+import { ButtonAction } from "../../utilities/LabelName";
 
 const AssignInterviewPanel = (props: any) => {
   // console.log(props, "ReviewProfile");
@@ -63,10 +64,10 @@ const AssignInterviewPanel = (props: any) => {
       body: (rowData: any) => {
         return (
           <span>
-            {rowData.FristName ??
+            {/* {rowData.FristName ??
               "" + " " + rowData.MiddleName ??
               "" + " " + rowData.LastName ??
-              ""}
+              ""} */}
           </span>
         );
       },
@@ -372,7 +373,7 @@ const AssignInterviewPanel = (props: any) => {
               handleCancel={handleCancel}
               additionalButtons={[
                 {
-                  label: "Submit",
+                  label: ButtonAction.Submit,
                   onClick: async () => {
                     await Submit_fn();
                   },

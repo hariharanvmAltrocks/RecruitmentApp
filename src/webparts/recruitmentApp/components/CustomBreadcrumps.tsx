@@ -3,6 +3,8 @@ import { Breadcrumbs, Typography, useMediaQuery } from "@mui/material";
 import ReuseButton from "./ReuseButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LabelHeaderComponents from "./TitleHeader";
+import { ButtonAction } from "../utilities/LabelName";
+import { ColorCode } from "../utilities/Config";
 
 type BreadcrumbData = {
   label: string;
@@ -12,6 +14,8 @@ type BreadcrumbData = {
 
 export type TabNameData = {
   tabName: string;
+  IsCurrent?: boolean;
+  navigationPath?: string;
 };
 
 export type JobTitleData = {
@@ -85,7 +89,9 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
         </div> */}
         <div className="ms-Grid-col ms-lg9">
           <span style={{ display: "flex" }}>
-            {additionalButtons.some((button) => button.label === "Back") &&
+            {additionalButtons.some(
+              (button) => button.label === ButtonAction.Back
+            ) &&
               additionalButtons.map((button, index) => {
                 return <ArrowBackIcon key={index} onClick={button.onClick} />;
               })}
@@ -95,7 +101,15 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
               sx={{ marginBottom: "16px", marginLeft: "2%" }}
             >
               {TabName.map((item, index) => (
-                <Typography key={index} color="text.primary" fontWeight="Bold">
+                <Typography
+                  key={index}
+                  color={
+                    index === TabName.length - 1
+                      ? "text.primary"
+                      : ColorCode.BreadCrump.BreadCrumpColor
+                  }
+                  fontWeight="Bold"
+                >
                   {item.tabName}
                 </Typography>
               ))}
@@ -200,7 +214,8 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
             ? "calc(-158px + 73vh)"
             : additionalButtons.length > 0 &&
               additionalButtons.some(
-                (button) => button.label === "Close" || button.label === "Back"
+                (button) =>
+                  button.label === "Close" || button.label === ButtonAction.Back
               )
             ? " calc(-158px + 88vh)"
             : "calc(-158px + 85vh) ",
@@ -227,34 +242,48 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
       >
         {handleCancel &&
           !additionalButtons.some(
-            (button) => button.label === "Close" || button.label === "Back"
+            (button) =>
+              button.label === ButtonAction.close ||
+              button.label === ButtonAction.Back
           ) && (
             <div style={{ marginRight: "10px" }}>
-              <ReuseButton label="Cancel" onClick={handleCancel} spacing={4} />
+              <ReuseButton
+                label={ButtonAction.Cancel}
+                onClick={handleCancel}
+                spacing={4}
+              />
             </div>
           )}
 
         {currentIndex > 0 && (
           <div style={{ marginRight: "10px" }}>
-            <ReuseButton label="Back" onClick={handleBackClick} spacing={4} />
+            <ReuseButton
+              label={ButtonAction.Back}
+              onClick={handleBackClick}
+              spacing={4}
+            />
           </div>
         )}
         {currentIndex < items.length - 1 && (
           <div style={{ marginRight: "10px" }}>
-            <ReuseButton label="Next" onClick={handleNextClick} spacing={4} />
+            <ReuseButton
+              label={ButtonAction.Next}
+              onClick={handleNextClick}
+              spacing={4}
+            />
           </div>
         )}
 
         {additionalButtons.map((button, index) => {
-          if (button.label === "Back") {
+          if (button.label === ButtonAction.Back) {
             return null;
           } else if (
-            button.label === "Submit" ||
-            button.label === "Preview" ||
-            button.label === "Approve" ||
-            button.label === "Selected" ||
-            button.label === "Rejected" ||
-            button.label === "OnHold"
+            button.label === ButtonAction.Submit ||
+            button.label === ButtonAction.Preview ||
+            button.label === ButtonAction.Approve ||
+            button.label === ButtonAction.Selected ||
+            button.label === ButtonAction.Rejected ||
+            button.label === ButtonAction.OnHold
           ) {
             return currentValue === items[items.length - 1].value ? (
               <div key={index} style={{ marginRight: "10px" }}>

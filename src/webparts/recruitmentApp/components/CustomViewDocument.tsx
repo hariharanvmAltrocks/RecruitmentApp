@@ -33,8 +33,6 @@ function CustomViewDocument({ Attachment, Label, webUrl }: fieldItems) {
     //   window.open(viewUrl, "_blank");
     // }
     setDocumentPopup(true);
-    console.log(documentcontent, "documentUrl");
-
     setDocumentcontent(documentUrl);
   }
 

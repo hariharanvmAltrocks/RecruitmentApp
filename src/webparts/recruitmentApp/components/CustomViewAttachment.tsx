@@ -25,8 +25,6 @@ function CustomViewAttachment({
   function handleFileDownload(event: React.MouseEvent, documentUrl: string) {
     event.preventDefault();
     setDocumentPopup(true);
-    console.log(documentcontent, "documentUrl");
-
     setDocumentcontent(documentUrl);
   }
 
@@ -38,11 +36,9 @@ function CustomViewAttachment({
       // ? fileUrl
       // : `${webUrl.split("/sites")[0]}${fileUrl}`;
 
-      // Build the WOPI Frame URL (keep using relative `fileUrl` in `sourcedoc`)
       const viewerUrl = `${webUrl}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(
         fileUrl
       )}&action=embedview`;
-      console.log(viewerUrl, "viewerUrl");
 
       return viewerUrl;
     } else {

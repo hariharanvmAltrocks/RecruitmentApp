@@ -16,6 +16,7 @@ import { IDocFiles } from "../SPService/ISPServicesProps";
 import * as moment from "moment";
 import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 import { AutoCompleteItem, InterviewPanelItem, InterviewPanelMember, tooltipInterviewPanel } from "../../Models/Screens";
+import { ActionName } from "../../utilities/LabelName";
 
 interface IAttachmentExampleState {
   file: File | any;
@@ -2155,12 +2156,11 @@ export default class RecruitmentService implements IRecruitmentService {
         Filter: filterConditions,
         FilterCondition: "and"
       }).then(async (res) => {
-        console.log(res, "res");
         for (const item of res) {
           let UserName = await GetUserName(item.InterviewPanel.EMail)
           let ActionValues = {
             Key: String(UserName.data),
-            Value: item?.IsScoreSheetUploaded === "Yes" ? "Completed" : "Pending"
+            Value: item?.IsScoreSheetUploaded === "Yes" ? ActionName.Completed : ActionName.Pending
           }
           GetItem.push(ActionValues)
         }
@@ -2248,7 +2248,7 @@ export default class RecruitmentService implements IRecruitmentService {
           for (const item of res) {
             let ActionValues = {
               Key: String(item.PositionID),
-              Value: item.PositionIDStatus === "Vacant" ? "Pending" : "Completed"
+              Value: item.PositionIDStatus //=== PositionStatus.Vacant ? ActionName.Pending : ActionName.Completed
             }
             GetItem.push(ActionValues)
           }

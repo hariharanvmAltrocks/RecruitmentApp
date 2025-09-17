@@ -24,7 +24,11 @@ import BreadcrumbsComponent, {
 
 import CustomPreviewScreen from "./CustomPreviewScreen";
 import * as moment from "moment";
-import { Attachment, labelNames } from "../../utilities/LabelName";
+import {
+  Attachment,
+  ButtonAction,
+  labelNames,
+} from "../../utilities/LabelName";
 
 const ApprovedVRRView: React.FC = (props: any) => {
   const [tabVisibility, setTabVisibility] = useState({
@@ -830,7 +834,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                 }}
                 additionalButtons={[
                   {
-                    label: "Back",
+                    label: ButtonAction.Back,
                     onClick: () => {
                       back_fn();
                     },

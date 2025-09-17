@@ -8,7 +8,6 @@ import {
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
   ApplicationStatusId,
-  ButtonAction,
   HRMSAlertOptions,
   ResponeStatus,
   RoleID,
@@ -34,6 +33,11 @@ import { alertPropsData } from "../../Models/Screens";
 import * as moment from "moment";
 import { tabStyle } from "../../components/TabMerge";
 import ToolTipButton from "../../components/Tooltip";
+import {
+  ButtonAction,
+  JobAdvertAlertMsg,
+  PendingCandidateAlertMsg,
+} from "../../utilities/LabelName";
 
 type tabCount = {
   ReviewProfileCount: number;
@@ -141,12 +145,9 @@ const ReviewCandidateList = (props: any) => {
         });
       } else if (pendingcount.ONHoldRejectedCount > 0) {
         // const JobExpiredMsg = `There are ${pendingcount.ONHoldRejectedCount} pending candidate is there so please review the candidate after the processed .`;
-        const JobExpiredMsg = `
-          <div style="text-align: center;">
-            <h3>⚠️ Pending Candidate Review.</h3>
-            <p>There is ${pendingcount.ONHoldRejectedCount} pending candidate currently on hold</p>
-            <p>Please review the candidate and take the necessary action to proceed with interview scheduling.</p>
-          </div>`;
+        const JobExpiredMsg = PendingCandidateAlertMsg(
+          pendingcount.ONHoldRejectedCount
+        );
         const SuccessAlert = {
           Message: JobExpiredMsg,
           Type: HRMSAlertOptions.Error,
@@ -166,13 +167,7 @@ const ReviewCandidateList = (props: any) => {
           : JobPostingFirstExtensionEndDate
           ? moment(JobPostingFirstExtensionEndDate).format("DD/MM/YYYY")
           : moment(JobPostingEndDate).format("DD/MM/YYYY");
-        const JobExpiredMsg = `
-          <div style="text-align: center;">
-            <h3>⚠️ Action cannot be performed.</h3>
-            <p>This job advert is still active and open for recruitment.</p>
-            <p><strong>Expiry Date:</strong> ${Dateformat}</p>
-            <p>Please try again after it expires.</p>
-          </div>`;
+        const JobExpiredMsg = JobAdvertAlertMsg(Dateformat);
         const SuccessAlert = {
           Message: JobExpiredMsg,
           Type: HRMSAlertOptions.Error,
@@ -705,8 +700,6 @@ const ReviewCandidateList = (props: any) => {
 
       await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
         .then(async (res) => {
-          console.log(res, "res");
-          console.log(pendingcount, "pendingcount");
           let ReviewProfileCount = res.data?.filter(
             (item) => item.workflowStatusId === workflowStatusApi.HRPending
           );
@@ -830,7 +823,7 @@ const ReviewCandidateList = (props: any) => {
         JobCodeFilter,
         "and"
       );
-      console.log("JobUniqueValue", JobUniqueValue);
+      // console.log("JobUniqueValue", JobUniqueValue);
       if (
         JobUniqueValue.status === ResponeStatus.SUCCESS &&
         JobUniqueValue.data.length > 0
@@ -914,7 +907,7 @@ const ReviewCandidateList = (props: any) => {
       setTabNameData(() => {
         const newTabNames = [
           { tabName: props.stateValue?.TabNames },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: activeTabObj?.label },
         ];
         return newTabNames;
@@ -923,7 +916,7 @@ const ReviewCandidateList = (props: any) => {
       setTabNameData(() => {
         const newTabNames = [
           { tabName: props.stateValue?.TabNames },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: prevTabObj?.label },
           { tabName: activeTabObj?.label },
         ];
@@ -994,7 +987,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -1028,7 +1021,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -1062,7 +1055,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -1096,7 +1089,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -1132,7 +1125,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -1166,7 +1159,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -1204,7 +1197,7 @@ const ReviewCandidateList = (props: any) => {
               MainTable={true}
               additionalButtons={[
                 {
-                  label: "Back",
+                  label: ButtonAction.Back,
                   onClick: async () => {
                     back_fn();
                   },
@@ -1238,7 +1231,7 @@ const ReviewCandidateList = (props: any) => {
               MainTable={true}
               additionalButtons={[
                 {
-                  label: "Back",
+                  label: ButtonAction.Back,
                   onClick: async () => {
                     back_fn();
                   },
@@ -1272,7 +1265,7 @@ const ReviewCandidateList = (props: any) => {
               MainTable={true}
               additionalButtons={[
                 {
-                  label: "Back",
+                  label: ButtonAction.Back,
                   onClick: async () => {
                     back_fn();
                   },

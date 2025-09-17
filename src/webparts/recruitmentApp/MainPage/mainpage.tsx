@@ -33,7 +33,6 @@ export default function MainPage(props: any) {
     setIsExpanded((prevState: any) => !prevState);
   };
   console.log("Recruitment-App(2-Sep-2025) V-1.3 SIT");
-  // console.log("masterData", masterData);
 
   return (
     <div className="mainPage">

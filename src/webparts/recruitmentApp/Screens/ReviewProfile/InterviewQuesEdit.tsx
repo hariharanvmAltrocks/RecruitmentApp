@@ -25,7 +25,6 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 import {
-  ButtonAction,
   CategoryID,
   CatogryOptionCode,
   ColorCode,
@@ -58,6 +57,7 @@ import ViewQuestionCheckbox, {
 } from "../ScreenComponent/ViewQuestionCheckbox";
 import CustomLabel from "../../components/CustomLabel";
 import { Label } from "@fluentui/react";
+import { ButtonAction } from "../../utilities/LabelName";
 
 type InterviewQuesValidationError = {
   QuestionType: boolean;
@@ -101,7 +101,7 @@ interface QuestionItem {
 }
 
 const InterviewQuesEdit: React.FC = (props: any) => {
-  console.log(props, "InterviewQuesEditProps.");
+  // console.log(props, "InterviewQuesEditProps.");
 
   const [InterviewQuesData, setInterviewQuesData] = useState<InterviewQues>({
     Disciplines: { key: 0, text: "" },
@@ -2180,7 +2180,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       setTabNameData(() => {
         return [
           { tabName: props.stateValue?.TabNames },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           {
             tabName:
               InterviewQuesData.Catogry ===
@@ -2693,7 +2693,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                     ...(resuequestionnaire.length > 0
                       ? [
                           {
-                            label: "Submit",
+                            label: ButtonAction.Submit,
                             onClick: async () => {
                               await Submit_fn();
                             },
