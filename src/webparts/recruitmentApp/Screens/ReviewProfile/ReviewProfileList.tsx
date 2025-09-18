@@ -447,6 +447,19 @@ const ReviewProfileList = (props: any) => {
   };
 
   React.useEffect(() => {
+    if (props.stateValue) {
+      storedStringRef.current = props.stateValue?.TabName;
+      setActiveTab(props.stateValue?.tab);
+    } else {
+      if (!storedStringRef.current) {
+        if (props.TabDetails[0]) {
+          storedStringRef.current = props.TabDetails[0]?.[0]?.Value ?? "";
+        }
+      }
+    }
+  }, []);
+
+  React.useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
@@ -468,19 +481,6 @@ const ReviewProfileList = (props: any) => {
     };
     void fetchData();
   }, [activeTab]);
-
-  React.useEffect(() => {
-    if (props.stateValue) {
-      storedStringRef.current = props.stateValue?.TabName;
-      setActiveTab(props.stateValue?.tab);
-    } else {
-      if (!storedStringRef.current) {
-        if (props.TabDetails[0]) {
-          storedStringRef.current = props.TabDetails[0]?.[0]?.Value ?? "";
-        }
-      }
-    }
-  }, []);
 
   const onPageChange = (event: any) => {
     setRows(event.rows);

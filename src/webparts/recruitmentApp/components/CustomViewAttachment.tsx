@@ -2,9 +2,9 @@ import * as React from "react";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 import { Link, Tooltip } from "@mui/material";
 import { Icon } from "office-ui-fabric-react";
-import CustomDialogbox from "./CustomDialogbox";
 import ReuseButton from "./ReuseButton";
 import { ColorCode } from "../utilities/Config";
+import AlertDialogbox from "./CustomAlert/AlertDialogbox";
 
 interface fieldItems {
   Attachment: IDocFiles[];
@@ -115,7 +115,7 @@ function CustomViewAttachment({
         : null}
       {documentPopup ? (
         <>
-          <CustomDialogbox
+          <AlertDialogbox
             Style={{ width: "75vw", height: "41vw" }}
             visible={documentPopup}
             children={

@@ -301,4 +301,8 @@ export type IRecruitmentService = {
     filterParam: any,
     filterConditions: any
   ): Promise<ApiResponse<any[]>>;
+  GetAssignAgentDetail(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<any[]>>;
 };

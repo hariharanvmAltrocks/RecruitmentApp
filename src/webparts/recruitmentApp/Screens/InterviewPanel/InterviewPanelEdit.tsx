@@ -557,192 +557,207 @@ const InterviewPanelEdit = (props: any) => {
   const Submit_fn = async () => {
     try {
       let isValid = !Validation();
-      if (!isValid) return;
-      setIsLoading(true);
-      const CurrentUserResponse = await CommonServices.getUserGuidByEmail(
-        props.CurrentUserEmailId
-      );
-      const currentUserKey = CurrentUserResponse.data?.key?.toString();
+      if (isValid) {
+        setIsLoading(true);
+        const CurrentUserResponse = await CommonServices.getUserGuidByEmail(
+          props.CurrentUserEmailId
+        );
+        const currentUserKey = CurrentUserResponse.data?.key?.toString();
 
-      const CandidatePersonalDetailsResponse =
-        await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
-          undefined,
-          [
+        const CandidatePersonalDetailsResponse =
+          await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
+            undefined,
+            [
+              {
+                FilterKey: "ID",
+                Operator: "eq",
+                FilterValue: props.stateValue?.ID,
+              },
+            ]
+          );
+        const InterviewPanelResponse =
+          await InterviewServices.GetInterviewPanelDetails([
             {
-              FilterKey: "ID",
+              FilterKey: "CandidateIDId",
               Operator: "eq",
               FilterValue: props.stateValue?.ID,
             },
-          ]
-        );
-      const InterviewPanelResponse =
-        await InterviewServices.GetInterviewPanelDetails([
-          {
-            FilterKey: "CandidateIDId",
-            Operator: "eq",
-            FilterValue: props.stateValue?.ID,
-          },
-        ]);
+          ]);
 
-      if (
-        !CandidatePersonalDetailsResponse.data ||
-        !InterviewPanelResponse.data
-      ) {
-        return;
-      }
+        if (
+          !CandidatePersonalDetailsResponse.data ||
+          !InterviewPanelResponse.data
+        ) {
+          return;
+        }
 
-      const CandidateDatares = CandidatePersonalDetailsResponse.data.find(
-        (item: any) => item.ID === props.stateValue?.ID
-      );
-
-      const matchingPanels = InterviewPanelResponse.data.filter(
-        (panel: any) =>
-          props.stateValue?.ID === panel.CandidateID &&
-          CandidateDatares?.RecruitmentID === panel.RecruitmentID
-      );
-
-      if (matchingPanels.length === 0) {
-        return;
-      }
-
-      const userPanels = matchingPanels.filter(
-        (panel: any) => panel.InterviewPanel === Number(currentUserKey)
-      );
-
-      if (userPanels.length === 0) {
-        return;
-      }
-
-      for (const panel of userPanels) {
-        const InterviewPanelID = panel.ID;
-        let QuestionScore: { [key: string]: number }[] = [];
-
-        questionnaire.forEach((item) => {
-          let QuestionScoreData = {
-            [item.header as string]: item.rating ?? 0,
-          };
-          QuestionScore.push(QuestionScoreData);
-        });
-
-        const scorecardObj = {
-          RelevantQualification: String(CandidateData?.Qualifications?.key),
-          ReleventExperience: String(CandidateData?.Experience?.key),
-          Knowledge: String(CandidateData?.Knowledge?.key),
-          EnergyLevel: String(CandidateData?.Energylevel?.key),
-          MeetJobRequirement: String(CandidateData?.Requirements?.key),
-          ContributeTowardsCultureRequried: String(
-            CandidateData?.contributeculture?.key
-          ),
-          Experience: String(CandidateData?.ExpatExperienceCongolese?.key),
-          OtherCriteriaScore: String(CandidateData?.CriteriaRecognised?.key),
-          ConsiderForEmployment: CandidateData?.Employment,
-          ...(shouldShowTextArea && {
-            Feedback: CandidateData?.EvaluationFeedback,
-          }),
-          OverAllEvaluationFeedback: CandidateData?.OverAllEvaluationFeedback,
-          RecruitmentIDId: CandidateData?.RecruitmentID,
-          RoleId: currentRoleID,
-          InterviewPersonNameId: currentUserKey,
-          InterviewPanelIDId: InterviewPanelID,
-          QuestionJson: JSON.stringify(QuestionScore),
-        };
-
-        await getVRRDetails.InsertList(
-          scorecardObj,
-          ListNames.HRMSCandidateScoreCard
+        const CandidateDatares = CandidatePersonalDetailsResponse.data.find(
+          (item: any) => item.ID === props.stateValue?.ID
         );
 
-        await SPServices.SPUpdateItem({
-          Listname: ListNames.HRMSInterviewPanelDetails,
-          RequestJSON: { IsScoreSheetUploaded: "Yes" },
-          ID: InterviewPanelID,
-        });
-      }
-      const updatedInterviewPanelResponse =
-        await InterviewServices.GetInterviewPanelDetails([
-          {
-            FilterKey: "CandidateID",
-            Operator: "eq",
-            FilterValue: props.stateValue?.ID,
-          },
-        ]);
+        const matchingPanels = InterviewPanelResponse.data.filter(
+          (panel: any) =>
+            props.stateValue?.ID === panel.CandidateID &&
+            CandidateDatares?.RecruitmentID === panel.RecruitmentID
+        );
 
-      if (
-        !updatedInterviewPanelResponse.data ||
-        updatedInterviewPanelResponse.data.length === 0
-      ) {
-        return;
-      }
+        if (matchingPanels.length === 0) {
+          return;
+        }
 
-      const level1Panels = updatedInterviewPanelResponse.data.filter(
-        (p) => p.InterviewLevel === InterviewLevels.Level1
-      );
+        const userPanels = matchingPanels.filter(
+          (panel: any) => panel.InterviewPanel === Number(currentUserKey)
+        );
 
-      const uploadedCount = level1Panels.filter(
-        (p) => p.IsScoreSheetUploaded === "Yes"
-      ).length;
+        if (userPanels.length === 0) {
+          return;
+        }
 
-      if (uploadedCount === level1Panels.length) {
-        try {
-          let CandidateDatas: WorkflowJson = {
-            workflowStatus: workflowStatusApi.pendingHODSelection,
-            jobRequestId: Number(CandidateData.JobRequestID),
-            comments: "",
-            actionBy: RoleName.HOD,
+        for (const panel of userPanels) {
+          const InterviewPanelID = panel.ID;
+          let QuestionScore: { [key: string]: number }[] = [];
+
+          questionnaire.forEach((item) => {
+            let QuestionScoreData = {
+              [item.header as string]: item.rating ?? 0,
+            };
+            QuestionScore.push(QuestionScoreData);
+          });
+
+          const scorecardObj = {
+            RelevantQualification: String(CandidateData?.Qualifications?.key),
+            ReleventExperience: String(CandidateData?.Experience?.key),
+            Knowledge: String(CandidateData?.Knowledge?.key),
+            EnergyLevel: String(CandidateData?.Energylevel?.key),
+            MeetJobRequirement: String(CandidateData?.Requirements?.key),
+            ContributeTowardsCultureRequried: String(
+              CandidateData?.contributeculture?.key
+            ),
+            Experience: String(CandidateData?.ExpatExperienceCongolese?.key),
+            OtherCriteriaScore: String(CandidateData?.CriteriaRecognised?.key),
+            ConsiderForEmployment: CandidateData?.Employment,
+            ...(shouldShowTextArea && {
+              Feedback: CandidateData?.EvaluationFeedback,
+            }),
+            OverAllEvaluationFeedback: CandidateData?.OverAllEvaluationFeedback,
+            RecruitmentIDId: CandidateData?.RecruitmentID,
+            RoleId: currentRoleID,
+            InterviewPersonNameId: currentUserKey,
+            InterviewPanelIDId: InterviewPanelID,
+            QuestionJson: JSON.stringify(QuestionScore),
           };
 
-          await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
+          await getVRRDetails.InsertList(
+            scorecardObj,
+            ListNames.HRMSCandidateScoreCard
+          );
 
           await SPServices.SPUpdateItem({
-            Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-            RequestJSON: {
-              IsScoreSheetUploaded: "Yes",
-              ActionId: WorkflowAction.Approved,
-              ItemCreated: "Yes",
-            },
-            ID: props.stateValue?.ID,
+            Listname: ListNames.HRMSInterviewPanelDetails,
+            RequestJSON: { IsScoreSheetUploaded: "Yes" },
+            ID: InterviewPanelID,
           });
-        } catch (finalUpdateError) {
-          console.error("", finalUpdateError);
         }
-      } else {
-      }
+        const updatedInterviewPanelResponse =
+          await InterviewServices.GetInterviewPanelDetails([
+            {
+              FilterKey: "CandidateID",
+              Operator: "eq",
+              FilterValue: props.stateValue?.ID,
+            },
+          ]);
 
-      setAlertPopupOpen(true);
-      setalertProps({
-        Message: RecuritmentHRMsg.ScoreCardSubmitMsg,
-        Type: HRMSAlertOptions.Success,
-        visible: true,
-        ButtonAction: (userClickedOK: any) => {
-          if (userClickedOK) {
-            if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-              props.navigation("/ReviewProfileList", {
-                state: {
-                  tab: props.stateValue.tab, //props.stateValue?.tab,
-                  TabName: TabName.Evaluation,
-                },
-              });
-            } else if (
-              props.CurrentRoleID.includes(RoleID.HOD) ||
-              props.CurrentRoleID.includes(RoleID.LineManager)
-            ) {
-              props.navigation("/RecurimentProcess", {
-                state: {
-                  tab: props.stateValue.tab, //props.stateValue?.tab,
-                  TabName: TabName.Evaluation,
-                },
-              });
-            } else {
-              props.navigation("/InterviewPanelList");
-            }
-            setAlertPopupOpen(false);
-          } else {
-            setAlertPopupOpen(false);
+        if (
+          !updatedInterviewPanelResponse.data ||
+          updatedInterviewPanelResponse.data.length === 0
+        ) {
+          return;
+        }
+
+        const level1Panels = updatedInterviewPanelResponse.data.filter(
+          (p) => p.InterviewLevel === InterviewLevels.Level1
+        );
+
+        const uploadedCount = level1Panels.filter(
+          (p) => p.IsScoreSheetUploaded === "Yes"
+        ).length;
+
+        if (uploadedCount === level1Panels.length) {
+          try {
+            let CandidateDatas: WorkflowJson = {
+              workflowStatus: workflowStatusApi.pendingHODSelection,
+              jobRequestId: Number(CandidateData.JobRequestID),
+              comments: "",
+              actionBy: RoleName.HOD,
+            };
+
+            await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
+
+            await SPServices.SPUpdateItem({
+              Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+              RequestJSON: {
+                IsScoreSheetUploaded: "Yes",
+                ActionId: WorkflowAction.Approved,
+                ItemCreated: "Yes",
+              },
+              ID: props.stateValue?.ID,
+            });
+          } catch (finalUpdateError) {
+            console.error("", finalUpdateError);
           }
-        },
-      });
+        } else {
+        }
 
-      setIsLoading(false);
+        setAlertPopupOpen(true);
+        setalertProps({
+          Message: RecuritmentHRMsg.ScoreCardSubmitMsg,
+          Type: HRMSAlertOptions.Success,
+          visible: true,
+          ButtonAction: (userClickedOK: any) => {
+            if (userClickedOK) {
+              if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+                props.navigation("/ReviewProfileList", {
+                  state: {
+                    tab: props.stateValue.tab, //props.stateValue?.tab,
+                    TabName: TabName.Evaluation,
+                  },
+                });
+              } else if (
+                props.CurrentRoleID.includes(RoleID.HOD) ||
+                props.CurrentRoleID.includes(RoleID.LineManager)
+              ) {
+                props.navigation("/RecurimentProcess", {
+                  state: {
+                    tab: props.stateValue.tab, //props.stateValue?.tab,
+                    TabName: TabName.Evaluation,
+                  },
+                });
+              } else {
+                props.navigation("/InterviewPanelList");
+              }
+              setAlertPopupOpen(false);
+            } else {
+              setAlertPopupOpen(false);
+            }
+          },
+        });
+
+        setIsLoading(false);
+      } else {
+        let FormFieldFailed = {
+          Message: RecuritmentHRMsg.FormValidationMsg,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+        setAlertPopupOpen(true);
+        setalertProps(FormFieldFailed);
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error("Error submitting data:", error);
       throw new Error("Failed to submit data. Please try again later.");

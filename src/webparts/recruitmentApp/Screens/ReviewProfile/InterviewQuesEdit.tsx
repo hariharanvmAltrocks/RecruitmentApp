@@ -57,7 +57,7 @@ import ViewQuestionCheckbox, {
 } from "../ScreenComponent/ViewQuestionCheckbox";
 import CustomLabel from "../../components/CustomLabel";
 import { Label } from "@fluentui/react";
-import { ButtonAction } from "../../utilities/LabelName";
+import { ButtonAction, ValidationAction } from "../../utilities/LabelName";
 
 type InterviewQuesValidationError = {
   QuestionType: boolean;
@@ -710,7 +710,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           ) {
             props.navigation("/ReviewProfileList", {
               state: {
-                TabName: props.stateValue?.TabName,
+                TabName: props.stateValue?.TabNames,
                 tab: props.stateValue?.tab,
               },
             });
@@ -898,7 +898,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               ) {
                 props.navigation("/ReviewProfileList", {
                   state: {
-                    TabName: props.stateValue?.TabName,
+                    TabName: props.stateValue?.TabNames,
                     tab: props.stateValue?.tab,
                   },
                 });
@@ -990,6 +990,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       Message: RecuritmentHRMsg.deleteMsg,
       Type: HRMSAlertOptions.Confirmation,
       visible: true,
+      ButtonLebel: ValidationAction.Yes,
       ButtonAction: async (userClickedOK: boolean) => {
         if (userClickedOK) {
           let updatedQuestionnaire: ViewQuestion[] = [];
@@ -2524,7 +2525,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               ) {
                 props.navigation("/ReviewProfileList", {
                   state: {
-                    TabName: props.stateValue?.TabName,
+                    TabName: props.stateValue?.TabNames,
                     tab: props.stateValue?.tab,
                   },
                 });

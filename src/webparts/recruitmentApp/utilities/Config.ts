@@ -48,6 +48,7 @@ export const ListNames = {
   HRMSPositionIDMaster: "HRMSPositionIDMaster",
   HRMSCategoryMaster: "HRMSCategoryMaster",
 
+
   //Additional Exisiting
   HRMSAdditionalHeadCountForExisitingPosition: "HRMSAdditionalHeadCountForExisitingPosition",
   HRMSAdditionalHCForExisitingPositionWithHeadCountDetails: "HRMSAdditionalHCForExisitingPositionWithHeadCountDetails",
@@ -249,7 +250,7 @@ export const RecuritmentHRMsg = {
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
   AddedMsg: "Added Successfully",
-  deleteMsg: "Are you sure you want to delete this? Any unsaved changes will be lost",
+  deleteMsg: "Are you sure you want to delete this Question?",
 
   SelectedErrorMsg: "Please Choose the Disciplines.",
   WarningMsg: "Are you sure want to Change the Disciplines? Any unsaved changes will be lost",
@@ -274,7 +275,9 @@ export const RecuritmentHRMsg = {
   NationalityErrorMsg: "Please select the Nationality filter before proceeding.",
 
   QuestionValiErrorMsg: "Please add at least 5 questions before proceeding.",
-  COIWarningMsg: "This is the COI profile. Are you sure you're ready to proceed?"
+  COIWarningMsg: "This is the COI profile. Are you sure you're ready to proceed?",
+
+  FormValidationMsg: "One or more required actions are missing."
 };
 
 export const validationMsg = {
@@ -484,7 +487,7 @@ export const Notes = {
   Roleprofile: "Role Profile is not available for the Job Title.",
   Grding: "Grading Report is not available for the Job Title.",
   ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving this submission.",
-  JobAdvetisementNotes: "The Advertisement is published in Career webpage.",
+  JobAdvetisementNotes: "This Advertisement is published in Career webpage.",
 }
 // sneka
 export const CatogryOption = [

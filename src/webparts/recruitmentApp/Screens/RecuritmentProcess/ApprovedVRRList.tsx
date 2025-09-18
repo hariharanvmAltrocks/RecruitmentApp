@@ -333,8 +333,8 @@ const RecruitmentProcess = (props: any) => {
       field: "Status",
       header: "Status",
       fieldName: "Status",
-      style: { width: "13%" },
-      sortable: false,
+      style: { width: "18%" },
+      sortable: true,
       body: (rowData: any) => {
         let isTooltipStatus: any;
         if (props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)) {
@@ -1226,10 +1226,24 @@ const RecruitmentProcess = (props: any) => {
   };
 
   //AssignButton function for AssignHR
-  const AssignBtn_fn = () => {
+  const AssignBtn_fn = async () => {
     const isItemSelected = selectedJobCodes.length > 0;
 
     if (isItemSelected) {
+      let IDs = selectedJobCodes.map((item) => item.ID);
+      let filterConditions = [];
+      let Conditions = "and";
+      filterConditions.push({
+        FilterKey: "RecruitmentID",
+        Operator: "in",
+        FilterValue: IDs,
+      });
+      const AssignAgencies = await getVRRDetails.GetAssignAgentDetail(
+        filterConditions,
+        Conditions
+      );
+      console.log(AssignAgencies, "Agencies.");
+
       setAssignHR(true);
     } else {
       let CancelAlert = {

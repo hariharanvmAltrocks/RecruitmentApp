@@ -934,6 +934,9 @@ const ReviewCandidateList = (props: any) => {
     if (activeTab !== prevActiveTab) {
       setPrevActiveTab(activeTab);
     }
+    setBreadcrumbTab(
+      props.stateValue?.tabs ? props.stateValue?.tabs : breadcrumbTab
+    );
   }, [activeTab]);
 
   const getTabLabel = (tab: string) => {

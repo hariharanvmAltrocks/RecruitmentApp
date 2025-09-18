@@ -1319,6 +1319,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             break;
           }
         }
+      } else {
+        let FormFieldFailed = {
+          Message: RecuritmentHRMsg.FormValidationMsg,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+        setAlertPopupOpen(true);
+        setalertProps(FormFieldFailed);
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Failed to fetch Vacancy Details:", error);

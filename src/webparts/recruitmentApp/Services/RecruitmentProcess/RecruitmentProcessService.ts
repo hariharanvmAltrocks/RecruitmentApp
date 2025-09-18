@@ -2273,4 +2273,49 @@ export default class RecruitmentService implements IRecruitmentService {
       };
     }
   }
+
+  async GetAssignAgentDetail(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<any[]>> {
+    let GetItem: any[] = []
+    try {
+      await SPServices.SPReadItems({
+        Listname: ListNames.HRMSExternalAgentsDetailsForRecruitment,
+        Select: "*,ExternalAgentDetails/ID,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName",
+        Expand: "ExternalAgentDetails,RecruitmentID",
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Topcount: 100,
+      })
+        .then((res: any[]) => {
+          for (const item of res) {
+            let ActionValues = {
+              RecrutimentID: item.RecruitmentID?.ID,
+              AgentName: item.ExternalAgentDetails?.AgentName,
+              AgentCode: item.ExternalAgentDetails?.AgentCode,
+            }
+            GetItem.push(ActionValues)
+          }
+        })
+        .catch((error) => {
+          console.log(
+            "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+            error
+          );
+        });
+      return {
+        data: GetItem,
+        status: 200,
+        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching interview panel details:", error);
+      return {
+        data: [],
+        status: 400,
+        message: "Error fetching data",
+      };
+    }
+  }
 }
