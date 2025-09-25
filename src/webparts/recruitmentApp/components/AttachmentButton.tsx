@@ -85,6 +85,8 @@ const AttachmentButton: React.FC<AttachmentButtonProps> = ({
         const fileReader = new FileReader();
         fileReader.onload = (event) => {
           const fileContent = event.target?.result as ArrayBuffer;
+          // const Url = event.target?.result as string;
+
           const Url = URL.createObjectURL(file);
           newAttachments.push({
             name: file.name,

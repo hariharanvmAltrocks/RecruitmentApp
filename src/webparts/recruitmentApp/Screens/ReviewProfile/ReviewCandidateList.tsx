@@ -459,18 +459,21 @@ const ReviewCandidateList = (props: any) => {
     },
   ];
 
-  // React.useEffect(() => {
-  //   const getMasterData = async () => {
-  //     const StatusMaster = await CommonServices.GetMasterData(
-  //       ListNames.HRMSRecruitmentWorkFlowMasterStatus
-  //     );
-  //     let MasterStatusData = StatusMaster.data.map((item) => ({
-  //       key: item.Code,
-  //       text: item.Status,
-  //     }));
-  //   };
-  //   void getMasterData();
-  // }, [activeTab]);
+  React.useEffect(() => {
+    const getMasterData = async () => {
+      // const StatusMaster = await CommonServices.GetMasterData(
+      //   ListNames.HRMSRecruitmentWorkFlowMasterStatus
+      // );
+      // let MasterStatusData = StatusMaster.data.map((item) => ({
+      //   key: item.Code,
+      //   text: item.Status,
+      // }));
+      setBreadcrumbTab(
+        props.stateValue?.tabs ? props.stateValue?.tabs : breadcrumbTab
+      );
+    };
+    void getMasterData();
+  }, [activeTab]);
 
   const fetchCandidateData = async (
     tabs: string,
@@ -831,7 +834,7 @@ const ReviewCandidateList = (props: any) => {
         setJobUniqueValue(JobUniqueValue.data[0]?.JobUniqueKey);
         await fetchRecuritmentData();
         await fetchCandidateData(
-          breadcrumbTab,
+          props.stateValue?.tabs ? props.stateValue?.tabs : breadcrumbTab,
           5,
           JobUniqueValue.data[0]?.JobUniqueKey
         );
@@ -934,9 +937,6 @@ const ReviewCandidateList = (props: any) => {
     if (activeTab !== prevActiveTab) {
       setPrevActiveTab(activeTab);
     }
-    setBreadcrumbTab(
-      props.stateValue?.tabs ? props.stateValue?.tabs : breadcrumbTab
-    );
   }, [activeTab]);
 
   const getTabLabel = (tab: string) => {

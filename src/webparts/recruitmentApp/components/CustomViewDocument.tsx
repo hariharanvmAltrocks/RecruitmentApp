@@ -48,7 +48,7 @@ function CustomViewDocument({ Attachment, Label, webUrl }: fieldItems) {
       const viewerUrl = `${webUrl}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(
         fileUrl
       )}&action=embedview`;
-      console.log(viewerUrl, "viewerUrl");
+      // console.log(viewerUrl, "viewerUrl");
 
       return viewerUrl;
     } else {

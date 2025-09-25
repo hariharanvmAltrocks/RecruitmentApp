@@ -7,6 +7,7 @@ import {
   ITooltipHostStyles,
 } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
+import { labelNames } from "../../utilities/LabelName";
 interface DataRow {
   [key: string]: string | number | undefined;
 }
@@ -16,6 +17,7 @@ interface ToolTipButtonProps {
   headers: { key: string; label: string }[];
   data: DataRow[];
   onHover?: () => void;
+  dataValue?: string;
 }
 
 const ToolTipTable: React.FC<ToolTipButtonProps> = ({
@@ -23,6 +25,7 @@ const ToolTipTable: React.FC<ToolTipButtonProps> = ({
   headers,
   data,
   onHover,
+  dataValue,
 }) => {
   const tooltipId = useId("tooltip");
   const hostStyles: Partial<ITooltipHostStyles> = {
@@ -69,9 +72,8 @@ const ToolTipTable: React.FC<ToolTipButtonProps> = ({
       const normalizedData = Array.isArray(data) ? data : data ? [data] : [];
       if (!normalizedData) return <div>Loading...</div>;
       return renderApproverList([
-        <div style={{ maxHeight: "40vh", overflowY: "auto" }} key="customTable">
+        <div>
           <table
-            className="normalTable"
             style={{
               width: "100%",
               borderCollapse: "collapse",
@@ -132,10 +134,66 @@ const ToolTipTable: React.FC<ToolTipButtonProps> = ({
     },
   };
 
+  const boldLabel = (label: string) => (
+    <div style={{ display: "flex", marginBottom: 4 }}>
+      <div
+        style={{
+          minWidth: 85,
+          fontWeight: "bold",
+          fontFamily: '"Roboto", sans-serif',
+        }}
+      >
+        {label}
+      </div>
+      {/* <div
+          style={{
+            fontFamily: '"Roboto", sans-serif',
+            color:
+              value === ActionName.Completed ||
+              value === PositionStatus.RecruitmentInProgress
+                ? "green"
+                : "red",
+          }}
+        >
+          {" "}
+          : {value ?? "—"}
+        </div> */}
+    </div>
+  );
+
+  const dataValueProps: ITooltipProps = {
+    onRenderContent: () => {
+      if (dataValue) {
+        return renderApproverList([boldLabel(dataValue)]);
+      } else {
+        return (
+          <div>
+            <p
+            // style={{
+            //   display: "flex",
+            //   justifyContent: "center",
+            //   padding: "1.2%",
+            //   fontSize: "1.3em",
+            //   marginTop: "16%",
+            //   marginBottom: "18%",
+            // }}
+            >
+              No Record Found
+            </p>
+          </div>
+        );
+      }
+    },
+  };
+
   return (
     <div className="button-container" style={{ float: "inline-start" }}>
       <TooltipHost
-        tooltipProps={tooltipProps}
+        tooltipProps={
+          Title === labelNames.CandidateDetails.CompanyName
+            ? dataValueProps
+            : tooltipProps
+        }
         delay={TooltipDelay.zero}
         id={tooltipId}
         directionalHint={DirectionalHint.bottomCenter}

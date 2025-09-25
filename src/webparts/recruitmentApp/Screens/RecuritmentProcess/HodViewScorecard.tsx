@@ -431,21 +431,24 @@ const HodViewScorecard = (props: any) => {
           if (props.stateValue?.TabName === TabName.Evaluation) {
             if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
               props.navigation("/ReviewProfileList", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
+                state: {
+                  tab: props.stateValue.tab,
+                  TabName: TabName.Evaluation,
+                },
               });
             } else if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
               props.navigation("/InterviewPanelList", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
+                state: {
+                  tab: props.stateValue.tab,
+                  TabName: TabName.Evaluation,
+                },
               });
             } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
               props.navigation("/RecurimentProcess", {
-                // state: {
-                //   activeTab: "tab3",
-                // },
+                state: {
+                  tab: props.stateValue.tab,
+                  TabName: TabName.Evaluation,
+                },
               });
             }
           } else {
@@ -460,6 +463,8 @@ const HodViewScorecard = (props: any) => {
                 NoOfPosition: props.stateValue.NoOfPosition,
                 JobCodeID: props.stateValue.JobCodeID,
                 Department: props.stateValue.Department,
+                tab: props.stateValue?.tabs,
+                tabs: props.stateValue.tab,
               },
             });
           }
@@ -2019,23 +2024,26 @@ const HodViewScorecard = (props: any) => {
               if (userClickedOK) {
                 if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
                   props.navigation("/ReviewProfileList", {
-                    // state: {
-                    //   activeTab: "tab3",
-                    // },
+                    state: {
+                      tab: props.stateValue.tab,
+                      TabName: TabName.Evaluation,
+                    },
                   });
                 } else if (
                   props.CurrentRoleID.includes(RoleID.InterviewPanel)
                 ) {
                   props.navigation("/InterviewPanelList", {
-                    // state: {
-                    //   activeTab: "tab3",
-                    // },
+                    state: {
+                      tab: props.stateValue.tab,
+                      TabName: TabName.Evaluation,
+                    },
                   });
                 } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
                   props.navigation("/RecurimentProcess", {
-                    // state: {
-                    //   activeTab: "tab3",
-                    // },
+                    state: {
+                      tab: props.stateValue.tab,
+                      TabName: TabName.Evaluation,
+                    },
                   });
                 }
                 setAlertPopupOpen(false);
@@ -2175,23 +2183,26 @@ const HodViewScorecard = (props: any) => {
                   if (props.stateValue?.TabName === TabName.Evaluation) {
                     if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
                       props.navigation("/ReviewProfileList", {
-                        // state: {
-                        //   activeTab: "tab3",
-                        // },
+                        state: {
+                          tab: props.stateValue.tab,
+                          TabName: TabName.Evaluation,
+                        },
                       });
                     } else if (
                       props.CurrentRoleID.includes(RoleID.InterviewPanel)
                     ) {
                       props.navigation("/InterviewPanelList", {
-                        // state: {
-                        //   activeTab: "tab3",
-                        // },
+                        state: {
+                          tab: props.stateValue.tab,
+                          TabName: TabName.Evaluation,
+                        },
                       });
                     } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
                       props.navigation("/RecurimentProcess", {
-                        // state: {
-                        //   activeTab: "tab3",
-                        // },
+                        state: {
+                          tab: props.stateValue.tab,
+                          TabName: TabName.Evaluation,
+                        },
                       });
                     }
                   } else {
@@ -2208,6 +2219,8 @@ const HodViewScorecard = (props: any) => {
                           JobCodeID: props.stateValue.JobCodeID,
                           Department: props.stateValue.Department,
                           NoOfPosition: props.stateValue.NoOfPosition,
+                          tab: props.stateValue?.tabs,
+                          tabs: props.stateValue.tab,
                         },
                       }
                     );

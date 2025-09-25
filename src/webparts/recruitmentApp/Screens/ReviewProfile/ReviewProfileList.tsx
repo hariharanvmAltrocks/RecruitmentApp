@@ -7,7 +7,10 @@ import TabsComponent from "../../components/TabsComponent ";
 import {
   ActionIcon,
   Choices,
+  HRMSAlertOptions,
   InterviewLevels,
+  ListNames,
+  RecuritmentHRMsg,
   ResponeStatus,
   RoleID,
   RoleName,
@@ -16,12 +19,19 @@ import {
   tabType,
 } from "../../utilities/Config";
 
-import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
 import SearchableDataTable from "../../components/CustomDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 import { tabStyle } from "../../components/TabMerge";
 import ToolTipButton from "../../components/Tooltip";
-import { ActionName, ButtonAction } from "../../utilities/LabelName";
+import {
+  ActionName,
+  ButtonAction,
+  InterviewDate,
+} from "../../utilities/LabelName";
+import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
+import { alertPropsData } from "../../Models/Screens";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
+import * as moment from "moment";
 
 type tabPendingCount = {
   ReviewPrfileCount: number;
@@ -48,6 +58,13 @@ const ReviewProfileList = (props: any) => {
   });
   const [pendingInfo, setPendingInfo] = React.useState<any>(null);
   const storedStringRef = React.useRef("");
+  const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
+  const [alertProps, setalertProps] = React.useState<alertPropsData>({
+    Message: "",
+    Type: "",
+    ButtonAction: null,
+    visible: false,
+  });
 
   const handleRedirectView = (
     rowData: any,
@@ -197,10 +214,56 @@ const ReviewProfileList = (props: any) => {
         }
         break;
       }
+      case StatusId.InterviewScheduled:
+      case StatusId.InterviewScheduledforLevel2:
+        {
+          let pendingName: any[] = [];
+          let Levels =
+            statusId === StatusId.InterviewScheduled
+              ? InterviewLevels.Level1
+              : InterviewLevels.Level2;
+          let data = await getVRRDetails.GetEvalutionActionData([
+            {
+              FilterKey: "CandidateID/Id",
+              Operator: "eq",
+              FilterValue: rowData.ID,
+            },
+            {
+              FilterKey: "InterviewLevel",
+              Operator: "eq",
+              FilterValue: Levels,
+            },
+          ]);
+          pendingName = data.data;
+          setPendingInfo(pendingName);
+        }
+        break;
       default:
         pendingName = [{ Key: "N/A", Value: "No matching group" }];
         break;
     }
+    setPendingInfo(pendingName);
+  };
+
+  const handleHoverInterviewPanel = async (statusId: number, rowData: any) => {
+    let pendingName: any[] = [];
+    let Levels =
+      statusId === StatusId.InterviewScheduled
+        ? InterviewLevels.Level1
+        : InterviewLevels.Level2;
+    let data = await getVRRDetails.GetEvalutionActionData([
+      {
+        FilterKey: "CandidateID/Id",
+        Operator: "eq",
+        FilterValue: rowData.ID,
+      },
+      {
+        FilterKey: "InterviewLevel",
+        Operator: "eq",
+        FilterValue: Levels,
+      },
+    ]);
+    pendingName = data.data;
     setPendingInfo(pendingName);
   };
 
@@ -309,6 +372,262 @@ const ReviewProfileList = (props: any) => {
     },
   ];
 
+  function handleAlert(Level: string) {
+    let CancelAlert = {
+      Message:
+        Level === InterviewLevels.Level1
+          ? RecuritmentHRMsg.InterviewScoredAlready
+          : RecuritmentHRMsg.InterviewScoreCommentsAlready,
+      Type: HRMSAlertOptions.Error,
+      visible: true,
+      ButtonAction: async (userClickedOK: boolean) => {
+        if (userClickedOK) {
+          setAlertPopupOpen(false);
+        }
+      },
+    };
+    setAlertPopupOpen(true);
+    setalertProps(CancelAlert);
+    setIsLoading(false);
+  }
+
+  function handleRedirect(
+    rowData: any,
+    tab: string,
+    TabName: string,
+    ButtonAction: string
+  ) {
+    let navigationPath =
+      rowData?.StatusId === StatusId.InterviewScheduled
+        ? "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit"
+        : rowData.StatusId === StatusId.InterviewScheduledforLevel2
+        ? "/ReviewProfileList/HodViewScorecard"
+        : "";
+    const today = new Date();
+    // const todayDateStr = today.toISOString().split("T")[0];
+    const interviewDateStr = moment(
+      rowData.InterviewDateTime,
+      "DD-MMM-YYYY hh:mm A"
+    ).format("YYYY-MM-DD");
+    const todayDateStr = moment(today).format("YYYY-MM-DD");
+    // const InterviewDate = new Date(rowData.InterviewDateTime)
+    //   .toISOString()
+    //   .split("T")[0];
+    if (todayDateStr >= interviewDateStr) {
+      props.navigation(navigationPath, {
+        state: {
+          ID: rowData?.ID,
+          tab: tab,
+          StatusId: rowData?.StatusId,
+          Status: rowData?.Status,
+          TabName: TabName,
+          ButtonAction,
+          RecruitmentID: rowData?.RecruitmentID,
+          InterviewLevel: rowData?.InterviewLevel,
+          JobCodeID: rowData?.JobCodeID,
+        },
+      });
+    } else {
+      const formattedDate = moment(
+        `${interviewDateStr}`,
+        "YYYY-MM-DD HH:mm"
+      ).format("DD-MMM-YYYY hh:mm A");
+
+      const ValidationMsg = InterviewDate(formattedDate);
+      let ValidationError = {
+        Message: ValidationMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+      setAlertPopupOpen(true);
+      setalertProps(ValidationError);
+      setIsLoading(false);
+    }
+  }
+
+  const CandidateConfig = (
+    tab: string,
+    ButtonActions: number,
+    TabName: string
+  ) => [
+    {
+      field: "SNO",
+      header: "S.No",
+      sortable: true,
+    },
+    {
+      field: "ApplicantName",
+      header: "ApplicantName",
+      sortable: true,
+    },
+    {
+      field: "PositionTitle",
+      header: "Position Title",
+      sortable: true,
+    },
+    {
+      field: "InterviewDateTime",
+      header: "Interview Date & Time",
+      sortable: true,
+    },
+    // {
+    //   field: "JobGrade",
+    //   header: "JobGrade",
+    //   sortable: true,
+    // },
+    { field: "InterviewLevel", header: "Interview Levels", sortable: true },
+    { field: "Grade", header: "Grade", sortable: true },
+    {
+      field: "Status",
+      header: "Status",
+      style: { width: "20%" },
+      sortable: false,
+      body: (rowData: any) => {
+        return (
+          <div>
+            <ToolTipButton
+              Title=""
+              CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+              Rowdata={rowData}
+              ApproverData={pendingInfo}
+              onHover={() =>
+                handleHoverInterviewPanel(rowData.StatusId, rowData)
+              }
+            />
+            <span>{rowData.Status}</span>
+          </div>
+        );
+        // return <span>{rowData.Status}</span>;
+      },
+    },
+
+    {
+      field: "Action",
+      header: "Action",
+      sortable: false,
+      style: { width: "8%" },
+      body: (rowData: any) => {
+        const checkIsScoreSheetUploaded = async () => {
+          try {
+            const [interviewPanelResponse, currentUserResponse] =
+              await Promise.all([
+                CommonServices.GetMasterData(
+                  ListNames.HRMSInterviewPanelDetails
+                ),
+                CommonServices.getUserGuidByEmail(props.CurrentUserEmailId),
+              ]);
+
+            const currentUserKey = currentUserResponse.data?.key?.toString();
+            if (!currentUserKey) {
+              return;
+            }
+            if (
+              !interviewPanelResponse?.data ||
+              interviewPanelResponse.data.length === 0
+            ) {
+              return;
+            }
+
+            const candidatePanels = interviewPanelResponse.data.filter(
+              (panel) =>
+                panel.CandidateIDId?.toString() === rowData.ID?.toString()
+            );
+
+            if (candidatePanels.length === 0) {
+              return;
+            }
+
+            const userPanels = candidatePanels.filter((panel) =>
+              panel.InterviewPanelStringId?.includes(currentUserKey)
+            );
+
+            if (userPanels.length === 0) {
+              return;
+            }
+            if (rowData.StatusId === StatusId.InterviewScheduled) {
+              const isLevelbasedFiltered = userPanels.filter(
+                (item) => item.InterviewLevel === InterviewLevels.Level1
+              );
+
+              const isScoreSheetUploaded = isLevelbasedFiltered.some(
+                (panel) => panel.IsScoreSheetUploaded === "Yes"
+              );
+              if (isScoreSheetUploaded) {
+                handleAlert(InterviewLevels.Level1);
+                return;
+              }
+              handleRedirect(
+                {
+                  ...rowData,
+                  InterviewLevel: rowData?.InterviewLevel,
+                  RecruitmentID: rowData?.RecruitmentID,
+                },
+                tab,
+                TabName,
+                ButtonAction.View
+              );
+              return;
+            } else if (
+              rowData.StatusId === StatusId.InterviewScheduledforLevel2
+            ) {
+              const isLevelbasedFiltered = userPanels.filter(
+                (item) => item.InterviewLevel === InterviewLevels.Level2
+              );
+
+              const isScoreSheetUploaded = isLevelbasedFiltered.some(
+                (panel) => panel.IsScoreSheetUploaded === "Yes"
+              );
+              if (isScoreSheetUploaded) {
+                handleAlert(InterviewLevels.Level2);
+                return;
+              }
+              handleRedirect(
+                {
+                  ...rowData,
+                  InterviewLevel: rowData?.InterviewLevel,
+                  RecruitmentID: rowData?.RecruitmentID,
+                },
+                tab,
+                TabName,
+                ButtonAction.View
+              );
+              return;
+            }
+          } catch (error) {}
+        };
+        return (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px", // slightly more space for small screens
+              flexWrap: "wrap", // allow wrapping on smaller screens
+            }}
+          >
+            <img
+              src={require("../../assets/Viewicon.svg")}
+              alt="Stamp Icon"
+              style={{
+                width: "50%", // scales with font size
+                height: "auto",
+                maxWidth: "40px", // limit maximum size
+                cursor: "pointer",
+              }}
+              onClick={checkIsScoreSheetUploaded}
+            />
+          </div>
+        );
+      },
+    },
+  ];
+
   const fetchRecuritmentData = async (tabName: any[]) => {
     setIsLoading(true);
     try {
@@ -391,10 +710,18 @@ const ReviewProfileList = (props: any) => {
       //   });
       // }
 
-      const data = await getVRRDetails.GetRecruitmentDetails(
-        filterConditionsRecuritment,
-        RecuritmentConditions
-      );
+      let data: any;
+      if (TabValue === TabName.Evaluation) {
+        data = await getVRRDetails.GetcountInEvalution(
+          props.CurrentUserEmailId,
+          props.EmployeeList
+        );
+      } else {
+        data = await getVRRDetails.GetRecruitmentDetails(
+          filterConditionsRecuritment,
+          RecuritmentConditions
+        );
+      }
 
       if (data.status === 200 && data.data !== null) {
         setRecuritmentData(data.data);
@@ -431,13 +758,15 @@ const ReviewProfileList = (props: any) => {
         );
 
         const Evalution = await getVRRDetails.GetcountInEvalution(
-          props.CurrentUserEmailId
+          props.CurrentUserEmailId,
+          props.EmployeeList
         );
 
         setPendingCount((prevState) => ({
           ...prevState,
           InterviewQuestionCount: InterviewQuestionCount.length,
-          EvaluationCount: Evalution.data[0].length,
+          EvaluationCount: Evalution.data.length,
+          // EvaluationCount: Evalution.data[0].length,
         }));
       }
     } catch (error) {
@@ -534,7 +863,19 @@ const ReviewProfileList = (props: any) => {
           />
         );
       case TabName.Evaluation:
-        return <InterviewPanelList {...props} TabValue={activeTab} />;
+        return (
+          <InterviewPanelDataTable
+            data={RecuritmentData}
+            columns={CandidateConfig(
+              TabValue,
+              Number(Action[0]?.Action?.[0]),
+              TabNames
+            )}
+            rows={rows}
+            onPageChange={onPageChange}
+            handleRefresh={() => handleRefresh(TabValue)}
+          />
+        );
       default:
         return null;
     }
@@ -585,6 +926,9 @@ const ReviewProfileList = (props: any) => {
           </React.Fragment>
         </div>
       </CustomLoader>
+      {AlertPopupOpen ? (
+        <CustomAlert {...alertProps} onClose={() => setAlertPopupOpen(false)} />
+      ) : null}
     </>
   );
 };

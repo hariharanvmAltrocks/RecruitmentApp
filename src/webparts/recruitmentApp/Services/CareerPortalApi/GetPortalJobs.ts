@@ -236,11 +236,22 @@ export default class GetPortalJobs implements IGetPortalJobs {
         // console.log(getOptAnswers, "getOptAnswers");
         let AgenName = op?.profile?.profileXAgent?.agentCode === agentCode.RecruitmentHR ? RoleName.RecruitmentHR : op?.profile?.profileXAgent?.agent?.name;
         let IdentityID = ProofIdentity.data?.filter((item) => item?.value === op?.profile?.identityTypeId)
-        let childrenDetails = op?.profile?.childrenDetails?.map((item: any) => {
+        let familyDetails = op?.profile?.familyDetails?.map((item: any) => {
           return {
-            "name": item?.childrenName,
-            "age": item?.age,
-            "genderId": item?.genderId
+            "name": item?.name,
+            // "age": item?.age,
+            // "genderId": item?.genderId,
+            "relationshipDetail": item?.relationshipDetail?.displayText,
+            "contactNumber": item?.contactNumber,
+          }
+        });
+        let emergencyContacts = op?.profile?.emergencyContacts?.map((item: any) => {
+          return {
+            "name": item?.contactName,
+            // "age": item?.age,
+            // "genderId": item?.genderId,
+            "relationshipDetail": item?.relationshipDetail?.displayText,
+            "contactNumber": item?.contactNumber,
           }
         });
         let employeeReferenceDetail = {
@@ -315,13 +326,14 @@ export default class GetPortalJobs implements IGetPortalJobs {
           countryOfResidency: op?.profile?.countryOfResidency ?? "",
           residentStatus: op?.profile?.residentStatus === "Y" ? "Yes" : op?.profile?.residentStatus === "N" ? "No" : "",
           maritalStatus: op?.profile?.maritalStatusDetail?.displayText ?? "",
-          childrenDetails: childrenDetails,
+          childrenDetails: op?.profile?.nationalityId === "N0" ? familyDetails : emergencyContacts,
           employeeReferenceDetails: employeeReferenceDetail,
           maritalStatusId: op?.profile?.maritalStatus ?? "",
           joiningDate: op?.startDate ?? "",
           noticePeriod: op?.noticePeriodDays ?? "",
           hasIvanhoeZijinExperience: op?.profile?.profileDetailEmploymentHistory?.hasIvanhoeZijinExperienceId === "3" ? "No" : op?.profile?.profileDetailEmploymentHistory?.hasIvanhoeZijinExperience?.displayText ?? "",
-          companyDetails: companyDetails
+          companyDetails: companyDetails,
+          businesslinkscompany: op?.profile?.businessLinkCompany === "CD03" ? op?.profile?.whichCompany : op?.profile?.businessLinkCompanyDetail?.displayText
         };
 
         GetProfileByJobCodeData.push(GetProfileDahboard);

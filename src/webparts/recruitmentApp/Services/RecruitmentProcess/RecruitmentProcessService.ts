@@ -11,7 +11,7 @@ import {
 } from "./IRecruitmentProcessService";
 import { CandidateData } from "../../Models/RecuritmentVRR";
 import { sp } from "@pnp/sp/presets/all";
-import { CommonServices, GetPortalJobsService } from "../ServiceExport";
+import { CommonServices, GetPortalJobsService, getVRRDetails, InterviewServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import * as moment from "moment";
 import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
@@ -1958,6 +1958,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
   async GetcountInEvalution(
     CurrentUser: string,
+    EmployeeList: any[]
   ): Promise<ApiResponse<any>> {
     let GetItem: any = [];
     try {
@@ -2001,16 +2002,102 @@ export default class RecruitmentService implements IRecruitmentService {
           FilterValue: candidateIDs,
         });
       }
-      const candidateItems = await SPServices.SPReadItems({
-        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Select:
-          "*,Status/ID,Status/StatusDescription,RecruitmentID/ID,JobCode/JobCode",
-        Expand: "Status,RecruitmentID,JobCode",
-        Filter: filters,
-        FilterCondition: "and",
-        Topcount: count.Topcount,
+      const statusResponse =
+        await InterviewServices.GetCombinedCandidatePositionDetails(
+          filters,
+          "and",
+          EmployeeList
+        );
+      let JobCodeIDs: number;
+      const enrichedCandidates = await Promise.all(
+        statusResponse.data.map(async (candidate: any) => {
+          let grade = "";
+          let level = "";
+
+          try {
+            const vrrResponse = await getVRRDetails.GetRecruitmentDetails(
+              [
+                {
+                  FilterKey: "ID",
+                  Operator: "eq",
+                  FilterValue: candidate.RecruitmentID,
+                },
+              ],
+              ""
+            );
+            JobCodeIDs = vrrResponse?.data?.[0]?.JobCodeId || 0;
+            grade = vrrResponse?.data?.[0]?.PatersonGrade || "";
+
+            if (grade) {
+              const gradeLevelResponse = await CommonServices.GetGradeLevel(
+                grade
+              );
+              level = gradeLevelResponse?.data?.[0]?.Level || "";
+            }
+          } catch (err) {
+            console.warn(
+              "Failed to fetch grade or level for candidate:",
+              candidate.ID,
+              err
+            );
+          }
+          const InterviewDate = candidate?.InterviewDateLevel2
+            ? candidate?.InterviewDateLevel2
+            : candidate?.InterviewDate;
+          const InterviewTime = candidate?.InterviewTimeLevel2
+            ? candidate?.InterviewTimeLevel2
+            : candidate?.InterviewTime;
+          const InterviewDateTime = moment(
+            `${InterviewDate} ${InterviewTime}`,
+            "YYYY-MM-DD HH:mm"
+          ).format("DD-MMM-YYYY hh:mm A");
+
+          return {
+            SNO: candidate.SNO,
+            ID: candidate.ID,
+            FristName: candidate.FristName || "",
+            LastName: candidate.LastName || "",
+            ApplicantName: `${candidate.FristName || ""} ${candidate.LastName || ""
+              }`.trim(),
+            PositionTitle: candidate.PositionTitle || "",
+            JobGrade: candidate.JobGrade || "",
+            Grade: grade,
+            InterviewLevel:
+              level === InterviewLevels.Level2
+                ? InterviewLevels.Levels2
+                : level,
+            Status: candidate.Status || "",
+            StatusId: candidate.StatusId || "",
+            RecruitmentID: candidate.RecruitmentID || "",
+            InterviewDate: candidate?.InterviewDate,
+            InterviewDateLevel2: candidate?.InterviewDateLevel2,
+            InterviewDateTime: InterviewDateTime,
+            JobCodeID: JobCodeIDs,
+          };
+        })
+      );
+      const finalValue = enrichedCandidates.filter((candidate) => {
+        const matchingPanel = listItems.find((item) => {
+          if (
+            candidate.StatusId === StatusId.InterviewScheduled &&
+            item.InterviewLevel === InterviewLevels.Level1
+          ) {
+            return true;
+          }
+
+          if (
+            candidate.StatusId === StatusId.InterviewScheduledforLevel2 &&
+            item.InterviewLevel === InterviewLevels.Level2
+          ) {
+            return true;
+          }
+
+          return false;
+        });
+
+        return !!matchingPanel;
       });
-      GetItem.push(candidateItems)
+      GetItem = finalValue;
       return {
         data: GetItem,
         status: 200,
@@ -2036,7 +2123,6 @@ export default class RecruitmentService implements IRecruitmentService {
   ): Promise<ApiResponse<{ Key: string; Value: string }>> {
     try {
       let AdGroupUser = await GetUserName(RoleEmail);
-      debugger
       return {
         data: {
           Key: Role,

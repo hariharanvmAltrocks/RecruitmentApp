@@ -290,6 +290,11 @@ export default class OfferLetterService implements IOfferLetterService {
                     }
                     break;
                 }
+                default:
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.RequestID}/${DocumentName.DocumentName}`,
+                    })) as IDocFiles[];
+                    break;
             }
             return {
                 data: response,

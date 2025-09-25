@@ -63,7 +63,8 @@ export const labelNames = {
         DateInterview: "Date of Interview",
         NofInterviewLevel: "No of Interview Level's",
         InterviewPanelLevel1: "Interview Panel Level 1",
-        InterviewPanelLevel2: "Interview Panel Level 2"
+        InterviewPanelLevel2: "Interview Panel Level 2",
+        CompanyName: "Company Name",
     },
     Questionnaires: {
         Questionnaires: "Questionnaires",
@@ -207,4 +208,11 @@ export const ValidationAction = {
     No: "No",
     Ok: "OK",
     Cancel: "Cancel"
+}
+
+export const DisplayFolderName = {
+    Offerletter: "Offer Letter",
+    ConsentForm: "Code of Business Content",
+    EmploymentContractForm: "Employment Contract",
+    PersonalDocument: "Personal Document",
 }

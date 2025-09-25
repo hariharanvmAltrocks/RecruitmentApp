@@ -119,6 +119,7 @@ export const StatusId = {
   pendingwithRecruitmentHRtoReviewtheEmploymentContractForm: 139,
   OnboardingProcessinitiatedforDRC: 23,
   OnboardingProcessinitiatedforExpat: 24,
+  PendingwithTAforMedicalScreening: 144,
 
   //Revert Post Recrutiment
   RevertedBacktoCandidateforReuploadOfferLetter: 149,
@@ -487,7 +488,7 @@ export const Notes = {
   Roleprofile: "Role Profile is not available for the Job Title.",
   Grding: "Grading Report is not available for the Job Title.",
   ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving this submission.",
-  JobAdvetisementNotes: "This Advertisement is published in Career webpage.",
+  JobAdvetisementNotes: "This Advert will be published in the Career Portal.",
 }
 // sneka
 export const CatogryOption = [
@@ -533,6 +534,7 @@ export const CategoryID = {
   Disciplines: 22,
   ProofofIdentity: 23,
   TitleforProfile: 24,
+  DocumentType: 26,
 }
 
 export const CatogryOptionCode = {
@@ -638,11 +640,14 @@ export const DocumentFolderName = {
   Offerletter: "OfferLetter",
   EmploymentContractForm: "EmploymentContractForm",
   UnsignedDoc: "UnsignedDoc",
+  SignedDoc: "SignedDoc",
   PersonalDocs: "PersonalDocs",
   Medical: "Medical",
   COIAttach: "COIAttch",
   ConsentForm: "ConsentForm"
 }
+
+
 
 export const PostRecrutimentCheckboxContent = {
   OfferLetterDRC: "I hereby confirm that I have reviewed and verified the medical document, and I consent to the release of the offer letter.",
@@ -721,13 +726,13 @@ export const ColorCode = {
 }
 
 export const TooltipType = {
-  ChildData: "Children Details",
+  ChildData: "Family Details",
   EmplyeeData: "Reference Employee Details",
   CompanyData: "Company Details"
 }
 
 export const TooltipHeader = {
-  ChildData: [{ key: "name", label: "Name" }, { key: "age", label: "Age" }, { key: "genderId", label: "Gender" }],
+  ChildData: [{ key: "name", label: "Name" }, { key: "relationshipDetail", label: "Relationship" }, { key: "contactNumber", label: "Contact Number" }],
   EmplyeeData: [{ key: "empId", label: "Employee ID" }, { key: "empName", label: "Employee Name" }, { key: "empEmail", label: "Employee Email" }, { key: "company", label: "Employee Company" }],
   CompanyData: [{ key: "operation", label: "Operation" }, { key: "role", label: "Role" }, { key: "region", label: "Region / Province" }],
 

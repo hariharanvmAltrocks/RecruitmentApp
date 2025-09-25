@@ -284,6 +284,7 @@ export type IRecruitmentService = {
   ): Promise<ApiResponse<InterviewPanelMember | null>>;
   GetcountInEvalution(
     CurrentUser: string,
+    EmployeeList: any[]
   ): Promise<ApiResponse<any>>;
   GetADGroupUsers(
     ADGroupID: string,

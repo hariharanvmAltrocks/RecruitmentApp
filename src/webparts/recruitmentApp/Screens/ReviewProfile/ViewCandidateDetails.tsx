@@ -79,6 +79,7 @@ import {
   ValidationAction,
   ValidationMsg,
 } from "../../utilities/LabelName";
+import ToolTipTable from "../ScreenComponent/ToolTipTable";
 
 type InterviewedLevelValue = {
   Levels: string;
@@ -199,6 +200,7 @@ const ViewCandidateDetails = (props: any) => {
     noticePeriod: "",
     hasIvanhoeZijinExperience: "",
     companyDetails: undefined,
+    businesslinkscompany: "",
   });
   const todaydate = new Date();
   // todaydate = addWeekdays(todaydate, 5);
@@ -498,13 +500,16 @@ const ViewCandidateDetails = (props: any) => {
                 maritalStatusId: response?.maritalStatusId,
                 hasIvanhoeZijinExperience: response?.hasIvanhoeZijinExperience,
                 companyDetails: response?.companyDetails,
+                businesslinkscompany: response?.businesslinkscompany,
               }));
-              setInterviewedLevel((prev) => ({
-                ...prev,
-                COIComments: response?.COIComments || "",
-                COIProfileLabel: { key: 1, text: response?.COIAppreve || "" },
-                COIReason: response?.COIReason || "",
-              }));
+              if (props.stateValue?.initialTab != TabName.ReviewProfile) {
+                setInterviewedLevel((prev) => ({
+                  ...prev,
+                  COIComments: response?.COIComments || "",
+                  COIProfileLabel: { key: 1, text: response?.COIAppreve || "" },
+                  COIReason: response?.COIReason || "",
+                }));
+              }
             } else {
               const APIErrorMsg = {
                 Message: RecuritmentHRMsg.APIErrorMsg,
@@ -524,6 +529,7 @@ const ViewCandidateDetails = (props: any) => {
                             tab: props.stateValue?.tab,
                             tabs: props.stateValue.tab,
                             JobCodeID: props.stateValue?.JobCodeID,
+                            CandidateTabName: props.stateValue?.TabNamed,
                           },
                         }
                       );
@@ -660,20 +666,21 @@ const ViewCandidateDetails = (props: any) => {
 
   React.useEffect(() => {
     const getRecurtimentList = async () => {
-      // const filterConditions = [
-      //   {
-      //     FilterKey: "ID",
-      //     Operator: "eq",
-      //     FilterValue: props.stateValue?.RecruitmentID,
-      //   },
-      // ];
+      // setIsLoading(true);
+      const filterConditions = [
+        {
+          FilterKey: "ID",
+          Operator: "eq",
+          FilterValue: props.stateValue?.RecruitmentID,
+        },
+      ];
       const Conditions = "";
-      // const response = await getVRRDetails.GetRecruitmentDetails(
-      //   filterConditions,
-      //   Conditions
-      // );
+      const response = await getVRRDetails.GetRecruitmentDetails(
+        filterConditions,
+        Conditions
+      );
       const Gradelevel = await CommonServices.GetGradeLevel(
-        RecrutimentData[0]?.PatersonGrade
+        response.data[0]?.PatersonGrade
       );
       // console.log(Gradelevel);
 
@@ -681,15 +688,15 @@ const ViewCandidateDetails = (props: any) => {
         {
           FilterKey: "BUCId",
           Operator: "eq",
-          FilterValue: RecrutimentData[0]?.BusinessUnitCodeId,
+          FilterValue: response.data[0]?.BusinessUnitCodeId,
         },
       ];
       const AssignHRID = await CommonServices.getUserGuidByEmail(
-        RecrutimentData[0]?.AssignEMail
+        response.data[0]?.AssignEMail
       );
       let AssignHR = {
         key: Number(AssignHRID.data?.key),
-        text: RecrutimentData[0]?.AssignEMail,
+        text: response.data[0]?.AssignEMail,
       };
       let Levels: string[] =
         Gradelevel.data[0]?.Level === InterviewLevels.Level1
@@ -727,7 +734,7 @@ const ViewCandidateDetails = (props: any) => {
       }
       setInterviewedLevel((prevState) => ({
         ...prevState,
-        Grade: RecrutimentData[0]?.PatersonGrade,
+        Grade: response.data[0]?.PatersonGrade,
         Levels: Gradelevel.data[0]?.Level,
         AssignInterviewedLevel1Option:
           AssignInterviewPanel.data && AssignInterviewPanel.data?.InterviewPanel
@@ -745,6 +752,7 @@ const ViewCandidateDetails = (props: any) => {
     };
     if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
       void getRecurtimentList();
+      // setIsLoading(false);
     } else {
       let COIProfile = props.EmployeeList.map((item: any) => ({
         key: item.Email,
@@ -756,6 +764,7 @@ const ViewCandidateDetails = (props: any) => {
         ...prev,
         COIProfileLabelOption: COIProfile,
       }));
+      // setIsLoading(false);
     }
   }, [submitBtn]);
 
@@ -1394,7 +1403,27 @@ const ViewCandidateDetails = (props: any) => {
                                     gap: "8px",
                                   }}
                                 >
-                                  <Label>Attachment : </Label>
+                                  <label
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "4px",
+                                      cursor: "default",
+                                      fontWeight: "600",
+                                    }}
+                                  >
+                                    {Attachment.Attachments}
+                                    <ToolTipTable
+                                      Title={
+                                        labelNames.CandidateDetails.CompanyName
+                                      }
+                                      dataValue={
+                                        CandidateProfile.businesslinkscompany
+                                      }
+                                      headers={[]}
+                                      data={[]}
+                                    />
+                                  </label>
                                   <span>
                                     <CustomViewDocument
                                       Attachment={
@@ -2476,6 +2505,7 @@ const ViewCandidateDetails = (props: any) => {
                         tab: props.stateValue?.tab,
                         tabs: props.stateValue.tab,
                         JobCodeID: props.stateValue?.JobCodeID,
+                        CandidateTabName: props.stateValue?.TabNamed,
                       },
                     });
                   } else {
@@ -2668,6 +2698,7 @@ const ViewCandidateDetails = (props: any) => {
                               tab: props.stateValue?.tab,
                               tabs: props.stateValue.tab,
                               JobCodeID: props.stateValue?.JobCodeID,
+                              CandidateTabName: props.stateValue?.TabNamed,
                             },
                           }
                         );
@@ -2713,6 +2744,7 @@ const ViewCandidateDetails = (props: any) => {
                               tab: props.stateValue?.tab,
                               tabs: props.stateValue.tab,
                               JobCodeID: props.stateValue?.JobCodeID,
+                              CandidateTabName: props.stateValue?.TabNamed,
                             },
                           }
                         );

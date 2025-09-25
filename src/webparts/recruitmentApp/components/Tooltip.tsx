@@ -10,12 +10,13 @@ import { useId } from "@fluentui/react-hooks";
 import { ActionName, PositionStatus } from "../utilities/LabelName";
 
 interface ToolTipButtonProps {
-  Title: string;
-  CurrentMenuId: number;
-  Rowdata: any;
-  ApproverData: any;
+  Title?: string;
+  CurrentMenuId?: number;
+  Rowdata?: any;
+  ApproverData?: any;
   TooltipHeader?: string;
-  onHover: () => void;
+  onHover?: () => void;
+  TooltipLabel?: string;
 }
 
 const ToolTipButton: React.FC<ToolTipButtonProps> = ({
@@ -24,6 +25,7 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
   ApproverData,
   onHover,
   TooltipHeader,
+  TooltipLabel,
 }) => {
   const tooltipId = useId("tooltip");
   const hostStyles: Partial<ITooltipHostStyles> = {
@@ -41,7 +43,11 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
           marginBottom: "8px",
         }}
       >
-        {TooltipHeader ? TooltipHeader : "Next Approver Name"}
+        {TooltipHeader
+          ? TooltipHeader
+          : TooltipLabel
+          ? TooltipLabel
+          : "Next Approver Name"}
       </div>
       {lines}
     </div>
@@ -118,7 +124,7 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
           src={require("../assets/info.svg")}
           alt="tooltip-icon"
           onMouseEnter={() => {
-            onHover(); // Notify parent to fetch based on status
+            if (onHover) onHover();
           }}
           style={{
             width: "20px",

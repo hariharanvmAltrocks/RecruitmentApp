@@ -141,7 +141,9 @@ const UploadOfferDocumentList = (props: any) => {
               rowData?.StatusID ===
                 StatusId.RevertedBacktoCandidateforReuploadDocs ||
               rowData?.StatusID ===
-                StatusId.RevertedBacktoCandidateforReuploadEmploymentContract ? (
+                StatusId.RevertedBacktoCandidateforReuploadEmploymentContract ||
+              rowData?.StatusID ===
+                StatusId.PendingwithTAforMedicalScreening ? (
               <>
                 <img
                   src={require("../../assets/Viewicon.svg")}
@@ -243,6 +245,7 @@ const UploadOfferDocumentList = (props: any) => {
           StatusId.RevertedBacktoCandidateforReuploadDocs,
           StatusId.RevertedBacktoCandidateforReuploadEmploymentContract,
           StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
+          StatusId.PendingwithTAforMedicalScreening,
         ],
       });
       filterConditions.push({

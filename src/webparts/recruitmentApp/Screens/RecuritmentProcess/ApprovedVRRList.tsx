@@ -44,7 +44,6 @@ import {
 import IsValid from "../../components/Validation";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 import CheckboxDataTable from "../../components/CheckboxDataTable";
-import InterviewPanelList from "../InterviewPanel/InterviewPanelList";
 import * as moment from "moment";
 import ReuseButton from "../../components/ReuseButton";
 import ToolTipButton from "../../components/Tooltip";
@@ -52,8 +51,10 @@ import { tabStyle } from "../../components/TabMerge";
 import {
   ActionName,
   ButtonAction,
+  InterviewDate,
   JobAdvertAlertMsg,
 } from "../../utilities/LabelName";
+import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
 
 export type formValidation = {
   Comments: boolean;
@@ -241,10 +242,56 @@ const RecruitmentProcess = (props: any) => {
         }
         break;
       }
+      case StatusId.InterviewScheduled:
+      case StatusId.InterviewScheduledforLevel2:
+        {
+          let pendingName: any[] = [];
+          let Levels =
+            statusId === StatusId.InterviewScheduled
+              ? InterviewLevels.Level1
+              : InterviewLevels.Level2;
+          let data = await getVRRDetails.GetEvalutionActionData([
+            {
+              FilterKey: "CandidateID/Id",
+              Operator: "eq",
+              FilterValue: rowData.ID,
+            },
+            {
+              FilterKey: "InterviewLevel",
+              Operator: "eq",
+              FilterValue: Levels,
+            },
+          ]);
+          pendingName = data.data;
+          setPendingInfo(pendingName);
+        }
+        break;
       default:
         pendingName = [{ Key: "N/A", Value: "No matching group" }];
         break;
     }
+    setPendingInfo(pendingName);
+  };
+
+  const handleHoverInterviewPanel = async (statusId: number, rowData: any) => {
+    let pendingName: any[] = [];
+    let Levels =
+      statusId === StatusId.InterviewScheduled
+        ? InterviewLevels.Level1
+        : InterviewLevels.Level2;
+    let data = await getVRRDetails.GetEvalutionActionData([
+      {
+        FilterKey: "CandidateID/Id",
+        Operator: "eq",
+        FilterValue: rowData.ID,
+      },
+      {
+        FilterKey: "InterviewLevel",
+        Operator: "eq",
+        FilterValue: Levels,
+      },
+    ]);
+    pendingName = data.data;
     setPendingInfo(pendingName);
   };
 
@@ -273,6 +320,25 @@ const RecruitmentProcess = (props: any) => {
     // console.log(response.data, "responseresponseresponseresponse");
     setPositionIDs(response.data);
   };
+
+  function handleAlert(Level: string) {
+    let CancelAlert = {
+      Message:
+        Level === InterviewLevels.Level1
+          ? RecuritmentHRMsg.InterviewScoredAlready
+          : RecuritmentHRMsg.InterviewScoreCommentsAlready,
+      Type: HRMSAlertOptions.Error,
+      visible: true,
+      ButtonAction: async (userClickedOK: boolean) => {
+        if (userClickedOK) {
+          setAlertPopupOpen(false);
+        }
+      },
+    };
+    setAlertPopupOpen(true);
+    setalertProps(CancelAlert);
+    setIsLoading(false);
+  }
 
   const columnConfig = (
     tab: string,
@@ -544,6 +610,243 @@ const RecruitmentProcess = (props: any) => {
                 />
               </>
             )}
+          </div>
+        );
+      },
+    },
+  ];
+
+  function handleRedirect(
+    rowData: any,
+    tab: string,
+    TabName: string,
+    ButtonAction: string
+  ) {
+    let navigationPath =
+      rowData?.StatusId === StatusId.InterviewScheduled
+        ? "/RecurimentProcess/InterviewPanelList/InterviewPanelEdit"
+        : rowData.StatusId === StatusId.InterviewScheduledforLevel2
+        ? "/RecurimentProcess/HodViewScorecard"
+        : "";
+    const today = new Date();
+    // const todayDateStr = today.toISOString().split("T")[0];
+    const interviewDateStr = moment(
+      rowData.InterviewDateTime,
+      "DD-MMM-YYYY hh:mm A"
+    ).format("YYYY-MM-DD");
+    const todayDateStr = moment(today).format("YYYY-MM-DD");
+    // const InterviewDate = new Date(rowData.InterviewDateTime)
+    //   .toISOString()
+    //   .split("T")[0];
+    if (todayDateStr >= interviewDateStr) {
+      props.navigation(navigationPath, {
+        state: {
+          ID: rowData?.ID,
+          tab: tab,
+          StatusId: rowData?.StatusId,
+          Status: rowData?.Status,
+          TabName: TabName,
+          ButtonAction,
+          RecruitmentID: rowData?.RecruitmentID,
+          InterviewLevel: rowData?.InterviewLevel,
+          JobCodeID: rowData?.JobCodeID,
+        },
+      });
+    } else {
+      const formattedDate = moment(
+        `${interviewDateStr}`,
+        "YYYY-MM-DD HH:mm"
+      ).format("DD-MMM-YYYY hh:mm A");
+
+      const ValidationMsg = InterviewDate(formattedDate);
+      let ValidationError = {
+        Message: ValidationMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+      setAlertPopupOpen(true);
+      setalertProps(ValidationError);
+      setIsLoading(false);
+    }
+  }
+
+  const CandidateConfig = (
+    tab: string,
+    ButtonActions: number,
+    TabName: string
+  ) => [
+    {
+      field: "SNO",
+      header: "S.No",
+      sortable: true,
+    },
+    {
+      field: "ApplicantName",
+      header: "ApplicantName",
+      sortable: true,
+    },
+    {
+      field: "PositionTitle",
+      header: "Position Title",
+      sortable: true,
+    },
+    {
+      field: "InterviewDateTime",
+      header: "Interview Date & Time",
+      sortable: true,
+    },
+    // {
+    //   field: "JobGrade",
+    //   header: "JobGrade",
+    //   sortable: true,
+    // },
+    { field: "InterviewLevel", header: "Interview Levels", sortable: true },
+    { field: "Grade", header: "Grade", sortable: true },
+    {
+      field: "Status",
+      header: "Status",
+      style: { width: "20%" },
+      sortable: false,
+      body: (rowData: any) => {
+        return (
+          <div>
+            <ToolTipButton
+              Title=""
+              CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+              Rowdata={rowData}
+              ApproverData={pendingInfo}
+              onHover={() =>
+                handleHoverInterviewPanel(rowData.StatusId, rowData)
+              }
+            />
+            <span>{rowData.Status}</span>
+          </div>
+        );
+        // return <span>{rowData.Status}</span>;
+      },
+    },
+
+    {
+      field: "Action",
+      header: "Action",
+      sortable: false,
+      style: { width: "8%" },
+      body: (rowData: any) => {
+        const checkIsScoreSheetUploaded = async () => {
+          try {
+            const [interviewPanelResponse, currentUserResponse] =
+              await Promise.all([
+                CommonServices.GetMasterData(
+                  ListNames.HRMSInterviewPanelDetails
+                ),
+                CommonServices.getUserGuidByEmail(props.CurrentUserEmailId),
+              ]);
+
+            const currentUserKey = currentUserResponse.data?.key?.toString();
+            if (!currentUserKey) {
+              return;
+            }
+            if (
+              !interviewPanelResponse?.data ||
+              interviewPanelResponse.data.length === 0
+            ) {
+              return;
+            }
+
+            const candidatePanels = interviewPanelResponse.data.filter(
+              (panel) =>
+                panel.CandidateIDId?.toString() === rowData.ID?.toString()
+            );
+
+            if (candidatePanels.length === 0) {
+              return;
+            }
+
+            const userPanels = candidatePanels.filter((panel) =>
+              panel.InterviewPanelStringId?.includes(currentUserKey)
+            );
+
+            if (userPanels.length === 0) {
+              return;
+            }
+            if (rowData.StatusId === StatusId.InterviewScheduled) {
+              const isLevelbasedFiltered = userPanels.filter(
+                (item) => item.InterviewLevel === InterviewLevels.Level1
+              );
+
+              const isScoreSheetUploaded = isLevelbasedFiltered.some(
+                (panel) => panel.IsScoreSheetUploaded === "Yes"
+              );
+              if (isScoreSheetUploaded) {
+                handleAlert(InterviewLevels.Level1);
+                return;
+              }
+              handleRedirect(
+                {
+                  ...rowData,
+                  InterviewLevel: rowData?.InterviewLevel,
+                  RecruitmentID: rowData?.RecruitmentID,
+                },
+                tab,
+                TabName,
+                ButtonAction.View
+              );
+              return;
+            } else if (
+              rowData.StatusId === StatusId.InterviewScheduledforLevel2
+            ) {
+              const isLevelbasedFiltered = userPanels.filter(
+                (item) => item.InterviewLevel === InterviewLevels.Level2
+              );
+
+              const isScoreSheetUploaded = isLevelbasedFiltered.some(
+                (panel) => panel.IsScoreSheetUploaded === "Yes"
+              );
+              if (isScoreSheetUploaded) {
+                handleAlert(InterviewLevels.Level2);
+                return;
+              }
+              handleRedirect(
+                {
+                  ...rowData,
+                  InterviewLevel: rowData?.InterviewLevel,
+                  RecruitmentID: rowData?.RecruitmentID,
+                },
+                tab,
+                TabName,
+                ButtonAction.View
+              );
+              return;
+            }
+          } catch (error) {}
+        };
+        return (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px", // slightly more space for small screens
+              flexWrap: "wrap", // allow wrapping on smaller screens
+            }}
+          >
+            <img
+              src={require("../../assets/Viewicon.svg")}
+              alt="Stamp Icon"
+              style={{
+                width: "50%", // scales with font size
+                height: "auto",
+                maxWidth: "40px", // limit maximum size
+                cursor: "pointer",
+              }}
+              onClick={checkIsScoreSheetUploaded}
+            />
           </div>
         );
       },
@@ -889,49 +1192,58 @@ const RecruitmentProcess = (props: any) => {
       //     FilterValue: props.userDetails[0]?.EmailId,
       //   });
       // }
-
-      const response =
-        props.CurrentRoleID.includes(RoleID.RecruitmentHRLead) &&
-        TabValue === TabName.AssignRecuritmentHR
-          ? await getVRRDetails.GetJobTitleInNPEP(
-              filterConditions,
-              Conditions,
-              props
-            )
-          : await getVRRDetails.GetRecruitmentDetails(
-              filterConditionsRecuritment,
-              RecuritmentConditions
-            );
-      if (response.status === 200) {
-        let responseData;
-        if (TabValue === TabName.UploadCV) {
-          const todayl = new Date();
-          const today = moment(todayl).format("YYYY-MM-DD");
-          responseData = response.data.filter((item) => {
-            let endDateStr =
-              item.JobPostingSecondExtensionEndDate ||
-              item.JobPostingFirstExtensionEndDate ||
-              item.JobPostingEndDate;
-            if (!endDateStr) return false;
-            const endDate = moment(endDateStr).format("YYYY-MM-DD");
-            return endDate >= today;
-          });
-        } else {
-          responseData = response.data;
-        }
-        setData(responseData);
-        const JobCode = response.data.map((item) => ({
-          ID: item.ID,
-          JobCode: item.JobCode,
-          JobTitle: item.JobTitleEnglish,
-          Nationality: item.Nationality,
-          JobCodeId: item.JobCodeId,
-        }));
-        const uniqueJobData = JobCode.filter(
-          (job, index, self) =>
-            index === self.findIndex((item) => item.ID === job.ID)
+      if (TabValue === TabName.Evaluation) {
+        const response = await getVRRDetails.GetcountInEvalution(
+          props.CurrentUserEmailId,
+          props.EmployeeList
         );
-        setJobCodeTitle(uniqueJobData);
+        if (response.status === ResponeStatus.SUCCESS) {
+          setData(response.data);
+        }
+      } else {
+        const response =
+          props.CurrentRoleID.includes(RoleID.RecruitmentHRLead) &&
+          TabValue === TabName.AssignRecuritmentHR
+            ? await getVRRDetails.GetJobTitleInNPEP(
+                filterConditions,
+                Conditions,
+                props
+              )
+            : await getVRRDetails.GetRecruitmentDetails(
+                filterConditionsRecuritment,
+                RecuritmentConditions
+              );
+        if (response.status === 200) {
+          let responseData;
+          if (TabValue === TabName.UploadCV) {
+            const todayl = new Date();
+            const today = moment(todayl).format("YYYY-MM-DD");
+            responseData = response.data.filter((item) => {
+              let endDateStr =
+                item.JobPostingSecondExtensionEndDate ||
+                item.JobPostingFirstExtensionEndDate ||
+                item.JobPostingEndDate;
+              if (!endDateStr) return false;
+              const endDate = moment(endDateStr).format("YYYY-MM-DD");
+              return endDate >= today;
+            });
+          } else {
+            responseData = response.data;
+          }
+          setData(responseData);
+          const JobCode = response.data.map((item) => ({
+            ID: item.ID,
+            JobCode: item.JobCode,
+            JobTitle: item.JobTitleEnglish,
+            Nationality: item.Nationality,
+            JobCodeId: item.JobCodeId,
+          }));
+          const uniqueJobData = JobCode.filter(
+            (job, index, self) =>
+              index === self.findIndex((item) => item.ID === job.ID)
+          );
+          setJobCodeTitle(uniqueJobData);
+        }
       }
     } catch (error) {
       console.log("GetVacancyDetails doesn't fetch the data", error);
@@ -1006,18 +1318,15 @@ const RecruitmentProcess = (props: any) => {
             item.StatusId === StatusId.PendingwithHODtoreviewAdv &&
             item.AssignHOD === props.userDetails[0]?.EmailId
         );
-        // const AssignAgenciesCount = recrutimentData.data.filter(
-        //   (item) =>
-        //     item.StatusId === StatusId.RecruitmentInProgress &&
-        //     item.AssignEMail === props.userDetails[0]?.EmailId
-        // );
-        let Evalution: any;
-        // if (props.CurrentRoleID.includes(RoleID.LineManager, RoleID.HOD)) {
-        Evalution = await getVRRDetails.GetcountInEvalution(
-          props.CurrentUserEmailId
+        const AssignAgenciesCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.RecruitmentInProgress &&
+            item.AssignEMail === props.userDetails[0]?.EmailId
         );
-        // }
-
+        const EvalutionData = await getVRRDetails.GetcountInEvalution(
+          props.CurrentUserEmailId,
+          props.EmployeeList
+        );
         setPendingCount((prevState) => ({
           ...prevState,
           AssignHRCount: AssignHRCount.data.length,
@@ -1026,8 +1335,8 @@ const RecruitmentProcess = (props: any) => {
           lineManagerInterviewCount: InterviewQuestionCount.length,
           ReviewLineManagerCount: ReviewLinemanagerCount.length,
           ReviewHODCount: ReviewHODCount.length,
-          // AssignAgencyCount: AssignAgenciesCount.length,
-          EvaluationCount: Evalution ? Evalution.data[0].length : 0,
+          AssignAgencyCount: AssignAgenciesCount.length,
+          EvaluationCount: EvalutionData.data.length,
         }));
       }
     } catch (error) {
@@ -1695,7 +2004,22 @@ const RecruitmentProcess = (props: any) => {
           />
         );
       case TabName.Evaluation:
-        return <InterviewPanelList {...props} TabValue={activeTab} />;
+        return (
+          <InterviewPanelDataTable
+            data={data}
+            columns={CandidateConfig(
+              TabValue,
+              Number(Action[0]?.Action?.[0]),
+              TabNames
+            )}
+            rows={rows}
+            onPageChange={onPageChange}
+            handleRefresh={() => handleRefresh(TabValue)}
+          />
+        );
+
+      // case TabName.Evaluation:
+      // return <InterviewPanelList {...props} TabValue={activeTab} />;
       default:
         return null;
     }

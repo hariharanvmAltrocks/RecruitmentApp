@@ -119,13 +119,19 @@ function CustomViewAttachment({
             Style={{ width: "75vw", height: "41vw" }}
             visible={documentPopup}
             children={
-              <iframe
+              // <iframe
+              //   src={getIframeSrc(documentcontent)}
+              //   width="100%"
+              //   height="600px"
+              //   frameBorder="0"
+              //   style={{ border: "none" }}
+              // ></iframe>
+              <embed
                 src={getIframeSrc(documentcontent)}
+                type="application/pdf"
                 width="100%"
                 height="600px"
-                frameBorder="0"
-                style={{ border: "none" }}
-              ></iframe>
+              />
             }
             onClose={() => setDocumentPopup(false)}
             // header={

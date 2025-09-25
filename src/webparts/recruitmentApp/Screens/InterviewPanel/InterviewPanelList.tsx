@@ -620,7 +620,7 @@ const InterviewPanelList = (props: any) => {
   const getTabLabel = (tab: any) => {
     switch (tab.TabName) {
       case TabName.Evaluation:
-        return String(tabStyle(tab.TabName, CandidateData.length));
+        return tabStyle(tab.TabName, CandidateData.length);
       default:
         return tab.TabName;
     }

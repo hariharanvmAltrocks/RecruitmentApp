@@ -74,6 +74,11 @@ const CandidateList = (props: any) => {
           FilterValue: props?.stateValue?.ID,
         },
         {
+          FilterKey: "JobCodeId",
+          Operator: "eq",
+          FilterValue: props?.stateValue?.JobCodeID,
+        },
+        {
           FilterKey: "StatusId",
           Operator: "in",
           FilterValue: [
@@ -159,6 +164,7 @@ const CandidateList = (props: any) => {
           state: {
             ID: rowData?.ID,
             tab,
+            tabs: props.stateValue?.tab,
             StatusId: rowData?.StatusId,
             Status: rowData?.Status,
             PreviousTabName: previousTabName,

@@ -140,6 +140,8 @@ export type CandidateProfile = {
 
     hasIvanhoeZijinExperience: string;
     companyDetails: CompanyDetails | undefined,
+
+    businesslinkscompany: string;
 }
 
 export type childrenDetails = {

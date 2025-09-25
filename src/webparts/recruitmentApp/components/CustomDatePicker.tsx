@@ -28,7 +28,9 @@ const getDatePickerStyle = (
 
     ".ms-TextField-fieldGroup": {
       height: "42px",
-      // border: "1px solid rgb(255 249 249)",
+      ...(disabled && {
+        border: "1px solid rgb(242 242 242)",
+      }),
     },
     ".icon-153": {
       padding: "9px 9px 9px",
