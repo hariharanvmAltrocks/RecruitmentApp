@@ -1,3 +1,4 @@
+
 export const labelNames = {
     PositionDetails: {
         BusinessUnitCode: "Business Unit Code",
@@ -16,7 +17,8 @@ export const labelNames = {
         NoofPerson: "No of Person(s)",
         DatePositionRequired: "Date When Position Is Required",
         AdvertValidFrom: "Advert Valid From",
-        AdvertValidTo: "Advert Valid To"
+        AdvertValidTo: "Advert Valid To",
+        Location: "Location"
     },
     CommanLabel: {
         Comments: "Comments",
@@ -65,6 +67,12 @@ export const labelNames = {
         InterviewPanelLevel1: "Interview Panel Level 1",
         InterviewPanelLevel2: "Interview Panel Level 2",
         CompanyName: "Company Name",
+        PositionID: "PositionID",
+        Email: "Email",
+        ProofOfIdentity: "Proof Of Identity",
+        IdentityNumber: "Identity Number",
+        JoiningDate: "Joining Date",
+        NoticePeriod: "Notice Period"
     },
     Questionnaires: {
         Questionnaires: "Questionnaires",
@@ -112,6 +120,10 @@ export const Attachment = {
         ViewJobAdvertisement: "View Job Advertisement",
         CandidateResume: "Candidate Resume",
         ViewComments: "View Comments",
+        CandidateDocuments: "Candidate Documents",
+        OfferLetter: "Upload Offer Letter",
+        ConsentDoc: "Upload Code of Business Content",
+        EmployementDoc: "Upload Employement Contract",
     }
 }
 
@@ -123,7 +135,8 @@ export const CheckboxContent = {
     InterviewPanel: "I hereby reviewed candidate details and assigning interview panel.",
     RescheduleInterview: "I hereby acknowledge that I have reschedule the interview.",
     ScorecardEntry: "I hereby acknowledge completion of the scorecard entry.",
-    HODscorecarddetails: "I hereby acknowledge that I have reviewed the candidate scorecard details."
+    HODscorecarddetails: "I hereby acknowledge that I have reviewed the candidate scorecard details.",
+    PostRecrutimentCheckboxContent: "I confirm that I have carefully reviewed the contents and will take necessary action based on my expertise."
 }
 
 export const ValidationMsg = {

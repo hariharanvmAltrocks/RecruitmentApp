@@ -1,6 +1,7 @@
 import { ILabelStyles, Label } from "@fluentui/react";
 import * as React from "react";
 import { Textarea } from "@fluentui/react-components";
+import "../../recruitmentApp/App.css";
 
 interface fieldItems {
   label: string;
@@ -46,9 +47,10 @@ function CustomTextArea({
         {mandatory && <span style={{ color: "red" }}> *</span>}
       </Label>
       <Textarea
+        className={disabled ? "DisableColor" : ""}
         value={value}
         placeholder={"Enter your text (maximum 256 characters)"}
-        disabled={disabled}
+        // disabled={disabled}
         onChange={handleChange}
         style={{
           color: value ? "#000000" : "#C9C9C9",
@@ -63,7 +65,9 @@ function CustomTextArea({
           fontFamily: "sans-serif",
           paddingTop: value ? "5px" : "7px",
           paddingLeft: value ? "7px" : "11px",
-          ...(disabled ? { background: "none rgb(243, 242, 241)" } : {}),
+          ...(disabled
+            ? { background: "none rgb(243, 242, 241)", color: "" }
+            : {}),
         }}
       />
       {error && (

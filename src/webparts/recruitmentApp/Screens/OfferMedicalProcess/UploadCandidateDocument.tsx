@@ -13,7 +13,6 @@ import {
   DocumentFolderName,
   DocumentLibraray,
   HRMSAlertOptions,
-  labelName,
   ListNames,
   PostRecrutimentCheckboxContent,
   RecuritmentHRMsg,
@@ -46,7 +45,9 @@ import CustomRadioGroup from "../../components/CustomRadioGroup";
 import ReuseButton from "../../components/ReuseButton";
 import { ViewCandidateDocument } from "../ScreenComponent/ViewCandidateDocument";
 import {
+  Attachment,
   ButtonAction,
+  CheckboxContent,
   DisplayFolderName,
   labelNames,
 } from "../../utilities/LabelName";
@@ -720,7 +721,7 @@ const UploadCandidateDocument = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="PositionID"
+                      label={labelNames.CandidateDetails.PositionID}
                       value={data?.positionID}
                       disabled={true}
                       mandatory={false}
@@ -728,7 +729,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Applicant Name"
+                      label={labelNames.CandidateDetails.ApplicantName}
                       value={data.ApplicantName}
                       disabled={true}
                       mandatory={false}
@@ -736,7 +737,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Applicant Surname"
+                      label={labelNames.CandidateDetails.ApplicantSurname}
                       value={data.ApplicantSurName}
                       disabled={true}
                       mandatory={false}
@@ -744,7 +745,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Nationality"
+                      label={labelNames.CandidateDetails.Nationality}
                       value={data.Nationalty}
                       disabled={true}
                       mandatory={false}
@@ -755,7 +756,7 @@ const UploadCandidateDocument = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="BusinessUnitCode"
+                      label={labelNames.PositionDetails.BusinessUnitCode}
                       value={data.BusinessUnitCode}
                       disabled={true}
                       mandatory={false}
@@ -763,7 +764,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Department"
+                      label={labelNames.PositionDetails.Department}
                       value={data?.Department}
                       disabled={true}
                       mandatory={false}
@@ -771,7 +772,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="SubDepartment"
+                      label={labelNames.PositionDetails.SubDepartment}
                       value={data?.SubDepartment}
                       disabled={true}
                       mandatory={false}
@@ -779,7 +780,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Section"
+                      label={labelNames.PositionDetails.Section}
                       value={data?.Section}
                       disabled={true}
                       mandatory={false}
@@ -790,7 +791,7 @@ const UploadCandidateDocument = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Department Code"
+                      label={labelNames.PositionDetails.DepartmentCode}
                       value={data?.DepartmentCode}
                       disabled={true}
                       mandatory={false}
@@ -798,7 +799,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Employment Category"
+                      label={labelNames.PositionDetails.EmploymentCategory}
                       value={data?.EmploymentCategory}
                       disabled={true}
                       mandatory={false}
@@ -806,7 +807,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Type Of Contract"
+                      label={labelNames.PositionDetails.TypeofContract}
                       value={data?.TypeOfCOntract}
                       disabled={true}
                       mandatory={false}
@@ -814,7 +815,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Area Of Work"
+                      label={labelNames.PositionDetails.AreaofWork}
                       value={data?.AreaOfWork}
                       disabled={true}
                       mandatory={false}
@@ -825,7 +826,7 @@ const UploadCandidateDocument = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Location"
+                      label={labelNames.PositionDetails.Location}
                       value={data?.Location}
                       disabled={true}
                       mandatory={false}
@@ -833,7 +834,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Email"
+                      label={labelNames.CandidateDetails.Email}
                       value={data?.Email}
                       disabled={true}
                       mandatory={false}
@@ -841,7 +842,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Proof Of Identity"
+                      label={labelNames.CandidateDetails.ProofOfIdentity}
                       value={data?.ProofOfIdentity}
                       disabled={true}
                       mandatory={false}
@@ -849,7 +850,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Identity Number"
+                      label={labelNames.CandidateDetails.IdentityNumber}
                       value={data?.IdentityNumber}
                       disabled={true}
                       mandatory={false}
@@ -864,7 +865,7 @@ const UploadCandidateDocument = (props: any) => {
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg3">
                         <CustomInput
-                          label="Joining Date"
+                          label={labelNames.CandidateDetails.JoiningDate}
                           value={data?.JoiningDate}
                           disabled={true}
                           mandatory={false}
@@ -872,7 +873,7 @@ const UploadCandidateDocument = (props: any) => {
                       </div>
                       <div className="ms-Grid-col ms-lg3">
                         <CustomInput
-                          label="Notice Period"
+                          label={labelNames.CandidateDetails.NoticePeriod}
                           value={data?.NoticePeriod}
                           disabled={true}
                           mandatory={false}
@@ -920,10 +921,12 @@ const UploadCandidateDocument = (props: any) => {
                 )} */}
 
                 {props.stateValue?.StatusId !=
-                  StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter && (
+                StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ? (
                   <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
                     <div className="custom-document-column">
-                      <CustomLabel value={"Candidate Documents"} />
+                      <CustomLabel
+                        value={Attachment.PositionDocument.CandidateDocuments}
+                      />
                       <div className="document-wrapper">
                         <ReuseButton
                           Style={{
@@ -953,6 +956,8 @@ const UploadCandidateDocument = (props: any) => {
                       </div>
                     </div>
                   </div>
+                ) : (
+                  <></>
                 )}
 
                 {props.stateValue?.StatusId ===
@@ -963,7 +968,7 @@ const UploadCandidateDocument = (props: any) => {
                     <div className="ms-Grid-col ms-lg3">
                       <>
                         <CustomLabel
-                          value={labelName.OfferLetter}
+                          value={Attachment.PositionDocument.OfferLetter}
                           mandatory={true}
                         />
                         <AttachmentButton
@@ -1009,7 +1014,7 @@ const UploadCandidateDocument = (props: any) => {
                     <div className="ms-Grid-col ms-lg3">
                       <>
                         <CustomLabel
-                          value={labelName.ConsentDoc}
+                          value={Attachment.PositionDocument.ConsentDoc}
                           mandatory={true}
                         />
                         <AttachmentButton
@@ -1078,7 +1083,7 @@ const UploadCandidateDocument = (props: any) => {
                   data.RadioAction === "Yes" && (
                     <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
                       <CustomLabel
-                        value={labelName.EmployementDoc}
+                        value={Attachment.PositionDocument.EmployementDoc}
                         mandatory={true}
                       />
                       <AttachmentButton
@@ -1180,7 +1185,7 @@ const UploadCandidateDocument = (props: any) => {
                     >
                       <div className="ms-Grid-col ms-lg12">
                         <SignatureCheckbox
-                          label="I confirm that I have carefully reviewed the contents and will take necessary action based on my expertise."
+                          label={CheckboxContent.PostRecrutimentCheckboxContent}
                           checked={data.Checkbox}
                           error={validationErrors.checkbox}
                           onChange={(value: boolean) =>

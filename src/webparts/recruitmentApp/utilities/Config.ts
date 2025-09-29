@@ -587,9 +587,6 @@ export const labelName = {
   PostalCode: "Postal Code ",
   ResumeCV: "Resume/CV and Cover Letter",
 
-  OfferLetter: "Upload Offer Letter",
-  ConsentDoc: "Upload Code of Business Content",
-  EmployementDoc: "Upload Employement Contract",
 
   Attachment: "Attachment",
   UploadAttachment: "Upload Attachment",
