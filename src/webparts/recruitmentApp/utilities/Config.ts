@@ -70,7 +70,8 @@ export const ListNames = {
   TCSInductionMeetings: "TCSInductionMeetings",
   TrainerAndFacilityDetails: "TrainerAndFacilityDetails",
 
-  RecruitAppCareerPortalIntegration: "RecruitAppCareerPortalIntegration"
+  RecruitAppCareerPortalIntegration: "RecruitAppCareerPortalIntegration",
+  RecruitmentCareerPortalLink: "RecruitmentCareerPortalLink"
 };
 
 export const DocumentLibraray = {
@@ -106,6 +107,7 @@ export const StatusId = {
   PendingwithRecruitmentHRtoassignLevel2InterviewPanel: 128,
   InterviewScheduledforLevel2: 129,
   PendingwithHODtoAssignPositionID: 130,
+  Rescheduled: 159,
 
   // Post Recruitment
   PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,

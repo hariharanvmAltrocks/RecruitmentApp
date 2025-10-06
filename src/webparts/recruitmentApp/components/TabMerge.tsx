@@ -8,6 +8,7 @@ import {
   StatusId,
   workflowStatusApi,
 } from "../utilities/Config";
+import { getVRRDetails } from "../Services/ServiceExport";
 
 export function GetAddAction(data: any[]): boolean {
   return data.some((item) => item.ActionId?.includes(ActionIcon.Add));
@@ -134,3 +135,14 @@ export function addWeekdays(date: any, daysToAdd: number) {
 
   return result;
 }
+
+export async function fetchApiUrl() {
+  const siteUrl = await getVRRDetails.GetCareerPortalIntergLink([], "and");
+  const ApiUrl = siteUrl?.data;
+  return ApiUrl;
+}
+
+export const ApiUrl = () => {
+  let apiUrl = fetchApiUrl();
+  return apiUrl;
+};

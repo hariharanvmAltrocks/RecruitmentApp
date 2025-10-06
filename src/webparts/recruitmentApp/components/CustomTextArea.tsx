@@ -50,10 +50,10 @@ function CustomTextArea({
         className={disabled ? "DisableColor" : ""}
         value={value}
         placeholder={"Enter your text (maximum 256 characters)"}
-        // disabled={disabled}
+        disabled={disabled}
         onChange={handleChange}
         style={{
-          color: value ? "#000000" : "#C9C9C9",
+          color: "#000000",
           borderRadius: "4px",
           borderWidth: "1px",
           borderColor: "#5f5f5f",

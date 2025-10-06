@@ -2075,7 +2075,7 @@ const HodViewScorecard = (props: any) => {
             Id: candidateID,
             ItemCreated: "",
             GPA: CandidateData.GPA,
-            OthersInterviewed: InterviewedCount?.length > 1 ? "Yes" : "No",
+            OthersInterviewed: "",
           };
 
           let CandidateDatas: WorkflowJson = {
@@ -2094,7 +2094,8 @@ const HodViewScorecard = (props: any) => {
                 Id: props.stateValue.ID,
                 ItemCreated: isNotEvaluationTab ? "Yes" : "No",
                 GPA: CandidateData.GPA,
-                OthersInterviewed: InterviewedCount?.length > 1 ? "Yes" : "No",
+                OthersInterviewed:
+                  InterviewedCount.data?.length > 1 ? "Yes" : "No",
               };
               CandidateDatas = createFilter(
                 workflowStatusApi.CandidateSelectedIPanel
@@ -2114,7 +2115,8 @@ const HodViewScorecard = (props: any) => {
                 Id: props.stateValue.ID,
                 ItemCreated: isNotEvaluationTab ? "Yes" : "No",
                 GPA: CandidateData.GPA,
-                OthersInterviewed: InterviewedCount?.length > 1 ? "Yes" : "No",
+                OthersInterviewed:
+                  InterviewedCount.data?.length > 1 ? "Yes" : "No",
               };
               CandidateDatas = createFilter(
                 workflowStatusApi.CandidateRejectedIPanel
@@ -2136,7 +2138,8 @@ const HodViewScorecard = (props: any) => {
                 Id: props.stateValue.ID,
                 ItemCreated: isNotEvaluationTab ? "Yes" : "No",
                 GPA: CandidateData.GPA,
-                OthersInterviewed: InterviewedCount?.length > 1 ? "Yes" : "No",
+                OthersInterviewed:
+                  InterviewedCount.data?.length > 1 ? "Yes" : "No",
               };
               CandidateDatas = createFilter(
                 workflowStatusApi.CandidateOnHoldIPanel

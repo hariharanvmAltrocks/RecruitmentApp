@@ -502,7 +502,7 @@ const ViewCandidateDetails = (props: any) => {
                 companyDetails: response?.companyDetails,
                 businesslinkscompany: response?.businesslinkscompany,
               }));
-              if (props.stateValue?.initialTab != TabName.ReviewProfile) {
+              if (props.stateValue?.StatusId != workflowStatusApi.HRPending) {
                 setInterviewedLevel((prev) => ({
                   ...prev,
                   COIComments: response?.COIComments || "",
@@ -1804,7 +1804,12 @@ const ViewCandidateDetails = (props: any) => {
                                     ? false
                                     : true
                                 }
-                                mandatory={true}
+                                mandatory={
+                                  props.stateValue?.StatusId ===
+                                  workflowStatusApi.HRPending
+                                    ? true
+                                    : false
+                                }
                                 onChange={(item) =>
                                   handleAutoComplete(item, "COIProfileLabel")
                                 }
@@ -1830,7 +1835,7 @@ const ViewCandidateDetails = (props: any) => {
                                       label="Upload"
                                       iconName="CloudUpload"
                                       iconNameHover="CloudUpload"
-                                      allowMultiple={true}
+                                      allowMultiple={false}
                                       AttachState={(newAttachment: any) => {
                                         let attachment: IDocFiles[] =
                                           newAttachment.map((item: any) => {
@@ -1841,14 +1846,14 @@ const ViewCandidateDetails = (props: any) => {
                                               url: item.Url,
                                             };
                                           });
-                                        const attachments = [
-                                          ...(InterviewedLevel.COIAttachment ||
-                                            []),
-                                          ...attachment,
-                                        ];
+                                        // const attachments = [
+                                        //   ...(InterviewedLevel.COIAttachment ||
+                                        //     []),
+                                        //   ...attachment,
+                                        // ];
                                         handleDocument(
                                           "COIAttachment",
-                                          attachments
+                                          attachment
                                         );
                                       }}
                                       // mandatory={true}
@@ -1917,7 +1922,12 @@ const ViewCandidateDetails = (props: any) => {
                                     ? false
                                     : true
                                 }
-                                mandatory={true}
+                                mandatory={
+                                  props.stateValue?.StatusId ===
+                                  workflowStatusApi.HRPending
+                                    ? true
+                                    : false
+                                }
                               />
                             </div>
                           </div>
@@ -2809,6 +2819,7 @@ const ViewCandidateDetails = (props: any) => {
           Type: HRMSAlertOptions.Confirmation,
           visible: true,
           ButtonLebel: ValidationAction.Yes,
+          IsCloseIcon: true,
           ButtonAction: async (userClickedOK: boolean) => {
             if (userClickedOK) {
               setAlertPopupOpen(false);

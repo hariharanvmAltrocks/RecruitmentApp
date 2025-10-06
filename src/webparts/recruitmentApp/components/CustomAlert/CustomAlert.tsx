@@ -12,6 +12,7 @@ export type CustomAlert = {
   onClose: () => void;
   visible: boolean;
   ButtonLebel?: string;
+  IsCloseIcon?: boolean;
 };
 export default function CustomAlert(props: CustomAlert) {
   React.useEffect(() => {}, [props]);
@@ -90,48 +91,74 @@ export default function CustomAlert(props: CustomAlert) {
       className="ms-Grid-row"
       style={{ display: "flex", justifyContent: "center" }}
     >
-      {props.Type === HRMSAlertOptions.Success ? (
-        <div className="ms-Grid-col ms-lg4">
-          <div className="sa">
-            <div className="sa-success">
-              <div className="sa-success-tip"></div>
-              <div className="sa-success-long"></div>
-              <div className="sa-success-placeholder"></div>
-              <div className="sa-success-fix"></div>
-            </div>
-          </div>
-        </div>
-      ) : props.Type === HRMSAlertOptions.Error ? (
-        <div className="ms-Grid-col ms-lg4">
-          <div className="sa">
-            <div className="sa-error">
-              <div className="sa-error-x">
-                <div className="sa-error-left"></div>
-                <div className="sa-error-right"></div>
+      <div
+        className="ms-Grid-col ms-lg10"
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+        {props.Type === HRMSAlertOptions.Success ? (
+          <div className="ms-Grid-col ms-lg4">
+            <div className="sa">
+              <div className="sa-success">
+                <div className="sa-success-tip"></div>
+                <div className="sa-success-long"></div>
+                <div className="sa-success-placeholder"></div>
+                <div className="sa-success-fix"></div>
               </div>
-              <div className="sa-error-placeholder"></div>
-              <div className="sa-error-fix"></div>
             </div>
           </div>
-        </div>
-      ) : props.Type === HRMSAlertOptions.Confirmation ? (
-        <div className="ms-Grid-col ms-lg4">
-          <div className="sa">
-            <div className="sa-question">
-              <div className="sa-question-mark"></div>
+        ) : props.Type === HRMSAlertOptions.Error ? (
+          <div className="ms-Grid-col ms-lg4">
+            <div className="sa">
+              <div className="sa-error">
+                <div className="sa-error-x">
+                  <div className="sa-error-left"></div>
+                  <div className="sa-error-right"></div>
+                </div>
+                <div className="sa-error-placeholder"></div>
+                <div className="sa-error-fix"></div>
+              </div>
             </div>
           </div>
-        </div>
-      ) : props.Type === HRMSAlertOptions.Warning ? (
-        <div className="ms-Grid-col ms-lg4">
-          <div className="sa">
-            <div className="sa-warning">
-              <div className="sa-warning-body"></div>
-              <div className="sa-warning-dot"></div>
+        ) : props.Type === HRMSAlertOptions.Confirmation ? (
+          <div className="ms-Grid-col ms-lg4">
+            <div className="sa">
+              <div className="sa-question">
+                <div className="sa-question-mark"></div>
+              </div>
             </div>
           </div>
+        ) : props.Type === HRMSAlertOptions.Warning ? (
+          <div className="ms-Grid-col ms-lg4">
+            <div className="sa">
+              <div className="sa-warning">
+                <div className="sa-warning-body"></div>
+                <div className="sa-warning-dot"></div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </div>
+
+      {props.IsCloseIcon ? (
+        <div className="ms-Grid-col ms-lg1" style={{ marginTop: "6%" }}>
+          <div>
+            <ReuseButton
+              Style={{
+                height: "24px",
+                width: "24px",
+                minWidth: "auto",
+                backgroundColor: "#597b98",
+                border: "none",
+              }}
+              imgSrc={require("../../assets/viewclose.svg")}
+              imgAlt="close"
+              onClick={() => props.onClose()}
+            />
+          </div>
         </div>
-      ) : null}
+      ) : (
+        <></>
+      )}
     </div>
   );
 

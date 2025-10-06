@@ -2404,4 +2404,40 @@ export default class RecruitmentService implements IRecruitmentService {
       };
     }
   }
+
+  async GetCareerPortalIntergLink(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<string>> {
+    let GridResult: string = ""
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: ListNames.RecruitmentCareerPortalLink,
+        Select: `*`,
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Topcount: count.Topcount,
+      });
+      if (res.length > 0) {
+        //  = await Promise.all(
+        res.map((item) => {
+          GridResult = item?.CareerPortalLink;
+          return item?.CareerPortalLink;
+        })
+        // );
+      }
+      return {
+        data: GridResult,
+        status: 200,
+        message: "GetRecruitmentDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching data in GetRecruitmentDetails:", error);
+      return {
+        data: "",
+        status: 500,
+        message: "Error fetching data from GetRecruitmentDetails",
+      };
+    }
+  }
 }

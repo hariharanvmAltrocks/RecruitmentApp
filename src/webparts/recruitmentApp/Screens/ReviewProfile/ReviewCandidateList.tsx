@@ -368,6 +368,10 @@ const ReviewCandidateList = (props: any) => {
               <span style={{ color: "red", marginLeft: "7%" }}>
                 {rowData.applicationStatus}
               </span>
+            ) : rowData.workflowStatusId === StatusId.Rescheduled ? (
+              <span style={{ color: "red", marginLeft: "7%" }}>
+                {rowData.Status}
+              </span>
             ) : (
               <span style={{ marginLeft: "7%" }}>{rowData.Status}</span>
             )}
@@ -495,6 +499,7 @@ const ReviewCandidateList = (props: any) => {
             FilterValue: [
               StatusId.InterviewScheduledforLevel2,
               StatusId.InterviewScheduled,
+              StatusId.Rescheduled,
             ],
           });
           filterConditionsRecuritment.push({
@@ -779,7 +784,8 @@ const ReviewCandidateList = (props: any) => {
         let RescheduledCount = res.data?.filter(
           (item: any) =>
             item.StatusId === StatusId.InterviewScheduled ||
-            item.StatusId === StatusId.InterviewScheduledforLevel2
+            item.StatusId === StatusId.InterviewScheduledforLevel2 ||
+            item.StatusId === StatusId.Rescheduled
         );
         setPendingCount((prev) => ({
           ...prev,

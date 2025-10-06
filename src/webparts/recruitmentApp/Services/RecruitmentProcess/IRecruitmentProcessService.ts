@@ -306,4 +306,8 @@ export type IRecruitmentService = {
     filterParam: any,
     filterConditions: any
   ): Promise<ApiResponse<any[]>>;
+  GetCareerPortalIntergLink(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<string>>;
 };
