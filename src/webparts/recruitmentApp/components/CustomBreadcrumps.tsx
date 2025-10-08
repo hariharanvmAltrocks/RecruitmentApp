@@ -58,8 +58,15 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
   ISExpended,
 }) => {
   const [currentValue, setCurrentValue] = React.useState(initialItem);
+  const contentRef = React.useRef<HTMLDivElement>(null);
 
   const currentIndex = items.findIndex((item) => item.value === currentValue);
+
+  React.useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+  }, [currentValue]);
 
   const handleNextClick = () => {
     const isValid = ValidationError ? !ValidationError() : true;
@@ -81,6 +88,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
     }
   };
   const isMobile = useMediaQuery("(max-width:600px)");
+
   return (
     <div>
       <div className="ms-Grid-row">
@@ -206,6 +214,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
         */}
 
       <div
+        ref={contentRef}
         className={MainTable ? "no-scrollbar" : ""}
         style={{
           height: ISExpended

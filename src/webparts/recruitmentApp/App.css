@@ -284,6 +284,7 @@ p:hover .tooltip {
 .p-icon {
   width: 1rem;
   height: 1rem;
+  margin-right: 32%;
 }
 
 .p-paginator .p-paginator-next {
@@ -1239,8 +1240,11 @@ html {
 }
  
 .p-dialog-title {
-  margin-top: -24px;
-  font-size: 1rem;
+  /* margin-top: -24px; */
+  font-size: 19px;
+  margin-left: 1%;
+  font-weight: 600;
+  font-family: "Roboto", sans-serif !important;
 }
 .p-dialog-header-icon {
   transform: scale(1.5);
@@ -1588,7 +1592,12 @@ padding: 0%;
     padding-right: 0% !important;
   }
 
-  .DisableColor {
-    background: "none rgb(243, 242, 241)";
-  color: #6d6666;
+/* .DisableColor textarea {
+  color: rgb(85, 82, 79);
+  background-color: rgb(243, 242, 241);
+} */
+
+.DisableColor textarea:disabled {
+  color: rgb(85, 82, 79);
+  background-color: rgb(243, 242, 241);
 }

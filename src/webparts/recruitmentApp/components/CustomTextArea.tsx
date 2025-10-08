@@ -47,13 +47,14 @@ function CustomTextArea({
         {mandatory && <span style={{ color: "red" }}> *</span>}
       </Label>
       <Textarea
-        className={disabled ? "DisableColor" : ""}
+        className="DisableColor"
         value={value}
         placeholder={"Enter your text (maximum 256 characters)"}
         disabled={disabled}
         onChange={handleChange}
+        color="rgb(85, 82, 79)"
         style={{
-          color: "#000000",
+          color: "rgb(85, 82, 79)",
           borderRadius: "4px",
           borderWidth: "1px",
           borderColor: "#5f5f5f",
@@ -66,7 +67,10 @@ function CustomTextArea({
           paddingTop: value ? "5px" : "7px",
           paddingLeft: value ? "7px" : "11px",
           ...(disabled
-            ? { background: "none rgb(243, 242, 241)", color: "" }
+            ? {
+                background: "none rgb(243, 242, 241)",
+                color: "rgb(85, 82, 79);",
+              }
             : {}),
         }}
       />

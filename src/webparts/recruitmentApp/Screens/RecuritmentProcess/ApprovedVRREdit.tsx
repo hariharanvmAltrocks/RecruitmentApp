@@ -970,6 +970,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     if (isValid) {
       setPreviewBtn(true);
       setMainComponent(false);
+    } else {
+      let FormFieldFailed = {
+        Message: RecuritmentHRMsg.FormValidationMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+      setAlertPopupOpen(true);
+      setalertProps(FormFieldFailed);
+      setIsLoading(false);
     }
   }
 

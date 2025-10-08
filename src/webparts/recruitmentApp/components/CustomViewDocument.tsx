@@ -1,9 +1,9 @@
 import * as React from "react";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 import { Link, Tooltip } from "@mui/material";
-import { ColorCode } from "../utilities/Config";
-import ReuseButton from "./ReuseButton";
-import AlertDialogbox from "./CustomAlert/AlertDialogbox";
+import { Dialog } from "primereact/dialog";
+import "../App.css";
+import { labelNames } from "../utilities/LabelName";
 
 interface fieldItems {
   Attachment: IDocFiles[];
@@ -98,8 +98,15 @@ function CustomViewDocument({ Attachment, Label, webUrl }: fieldItems) {
         : null}
       {documentPopup ? (
         <>
-          <AlertDialogbox
-            Style={{ width: "75vw", height: "41vw" }}
+          <Dialog
+            style={{
+              width: "75vw",
+              height: "41vw",
+              // overflowY: "hidden",
+              zIndex: 9999,
+              backgroundColor: "white",
+              borderRadius: "5px",
+            }}
             visible={documentPopup}
             children={
               <iframe
@@ -110,42 +117,62 @@ function CustomViewDocument({ Attachment, Label, webUrl }: fieldItems) {
                 style={{ border: "none" }}
               ></iframe>
             }
-            onClose={() => setDocumentPopup(false)}
+            onHide={() => setDocumentPopup(false)}
+            header={labelNames.DocumentViewer}
             // header={
-            //   <div style={{ textAlign: "center", width: "100%" }}>
-            //     <h2
-            //       style={{
-            //         color: ColorCode.LabelStyleColorCode.LabelStyleColor,
-            //         fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
-            //                          -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+            //   <>
+            //     <div className="ms-Grid-row">
+            //       <div className="ms-Grid-col ms-lg6">
+            //         <span
+            //           style={{
+            //             fontWeight: "bold",
+            //             fontSize: "20px",
+            //             fontFamily: "Roboto,sans-serif!important",
+            //           }}
+            //         >
+            //         </span>
+            //       </div>
+            //       <div
+            //         className="ms-Grid-col ms-lg6"
+            //         style={{ textAlign: "right" }}
+            //       >
+            //         <ReuseButton
+            //           Style={{
+            //             height: "24px",
+            //             width: "24px",
+            //             minWidth: "auto",
+            //             backgroundColor: "#597b98",
+            //             border: "none",
+            //           }}
+            //           imgSrc={require("../assets/viewclose.svg")}
+            //           imgAlt="close"
+            //           onClick={() => setDocumentPopup(false)}
+            //         />
+            //       </div>
+            //     </div>
+            //   </>
+            // }
+            // footer={
+            //   <div
+            //     className="ms-Grid-row"
+            //     style={{
+            //       display: "flex",
+            //       justifyContent: "center",
+            //       padding: "10px 0",
+            //       gap: "33px",
+            //     }}
+            //   >
+            //     <ReuseButton
+            //       label="Close"
+            //       onClick={() => setDocumentPopup(false)}
+            //       Style={{
+            //         backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+            //         color: "white",
+            //         width: "50%",
             //       }}
-            //     >
-            //       {" "}
-            //       Candidate Documents
-            //     </h2>
+            //     />
             //   </div>
             // }
-            footer={
-              <div
-                className="ms-Grid-row"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  padding: "10px 0",
-                  gap: "33px",
-                }}
-              >
-                <ReuseButton
-                  label="Close"
-                  onClick={() => setDocumentPopup(false)}
-                  Style={{
-                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                    color: "white",
-                    width: "50%",
-                  }}
-                />
-              </div>
-            }
           />
         </>
       ) : (

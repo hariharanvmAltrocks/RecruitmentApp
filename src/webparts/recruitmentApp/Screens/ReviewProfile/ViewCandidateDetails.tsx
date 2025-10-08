@@ -391,6 +391,92 @@ const ViewCandidateDetails = (props: any) => {
     setIsLoading(false);
   };
 
+  const GetInterviewPanelDetails = async () => {
+    // setIsLoading(true);
+    const filterConditions = [
+      {
+        FilterKey: "ID",
+        Operator: "eq",
+        FilterValue: props.stateValue?.RecruitmentID,
+      },
+    ];
+    const Conditions = "";
+    const response = await getVRRDetails.GetRecruitmentDetails(
+      filterConditions,
+      Conditions
+    );
+    const Gradelevel = await CommonServices.GetGradeLevel(
+      response.data[0]?.PatersonGrade
+    );
+    // console.log(Gradelevel);
+
+    const filterJDEMapping = [
+      {
+        FilterKey: "BUCId",
+        Operator: "eq",
+        FilterValue: response.data[0]?.BusinessUnitCodeId,
+      },
+    ];
+    const AssignHRID = await CommonServices.getUserGuidByEmail(
+      response.data[0]?.AssignEMail
+    );
+    let AssignHR = {
+      key: Number(AssignHRID.data?.key),
+      text: response.data[0]?.AssignEMail,
+    };
+    let Levels: string[] =
+      Gradelevel.data[0]?.Level === InterviewLevels.Level1
+        ? [InterviewLevels.Level1]
+        : [InterviewLevels.Level1, InterviewLevels.Level2];
+    // let InterviewPanel =
+    //   props.stateValue?.StatusId ===
+    //   StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+    //     ? false
+    //     : true;
+    const AssignInterviewPanel = await getVRRDetails.GetInterviewPanelDetails(
+      filterJDEMapping,
+      Conditions,
+      AssignHR,
+      props.stateValue?.ID,
+      Levels,
+      props.stateValue?.StatusId
+    );
+
+    if (
+      props.stateValue?.StatusId ===
+      StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+    ) {
+      storedNoOfInterviewpanel.current =
+        AssignInterviewPanel.data &&
+        AssignInterviewPanel.data?.Level2Panel.length < 3
+          ? false
+          : true;
+    } else {
+      storedNoOfInterviewpanel.current =
+        AssignInterviewPanel.data &&
+        AssignInterviewPanel.data?.Level1Panel.length < 3
+          ? false
+          : true;
+    }
+    setInterviewedLevel((prevState) => ({
+      ...prevState,
+      Grade: response.data[0]?.PatersonGrade,
+      Levels: Gradelevel.data[0]?.Level,
+      AssignInterviewedLevel1Option:
+        AssignInterviewPanel.data && AssignInterviewPanel.data?.InterviewPanel
+          ? AssignInterviewPanel.data?.InterviewPanel
+          : [],
+      AssignInterviewLevel1:
+        AssignInterviewPanel.data && AssignInterviewPanel.data?.Level1Panel
+          ? AssignInterviewPanel.data?.Level1Panel
+          : [],
+      AssignInterviewedLevel2:
+        AssignInterviewPanel.data && AssignInterviewPanel.data?.Level2Panel
+          ? AssignInterviewPanel.data?.Level2Panel
+          : [],
+    }));
+  };
+
   const fetchData = async () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -562,6 +648,22 @@ const ViewCandidateDetails = (props: any) => {
               setIsLoading(false);
             }
           }
+          if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
+            void (await GetInterviewPanelDetails());
+            // setIsLoading(false);
+          } else {
+            let COIProfile = props.EmployeeList.map((item: any) => ({
+              key: item.Email,
+              text: `${item?.FirstName || ""} ${item?.MiddleName || ""} ${
+                item?.LastName || ""
+              }`,
+            }));
+            setInterviewedLevel((prev) => ({
+              ...prev,
+              COIProfileLabelOption: COIProfile,
+            }));
+            // setIsLoading(false);
+          }
           if (
             response?.workflowStatusId === workflowStatusApi.HROnHold ||
             response?.workflowStatusId === workflowStatusApi.HROnHold ||
@@ -575,6 +677,7 @@ const ViewCandidateDetails = (props: any) => {
               CandidateStatus: IsCandidateFit.OnHold,
             }));
           }
+
           if (
             (props.stateValue?.ButtonAction === ButtonAction.View &&
               response?.workflowStatusId === workflowStatusApi.HRRejected) ||
@@ -663,110 +766,6 @@ const ViewCandidateDetails = (props: any) => {
 
   //   return null;
   // };
-
-  React.useEffect(() => {
-    const getRecurtimentList = async () => {
-      // setIsLoading(true);
-      const filterConditions = [
-        {
-          FilterKey: "ID",
-          Operator: "eq",
-          FilterValue: props.stateValue?.RecruitmentID,
-        },
-      ];
-      const Conditions = "";
-      const response = await getVRRDetails.GetRecruitmentDetails(
-        filterConditions,
-        Conditions
-      );
-      const Gradelevel = await CommonServices.GetGradeLevel(
-        response.data[0]?.PatersonGrade
-      );
-      // console.log(Gradelevel);
-
-      const filterJDEMapping = [
-        {
-          FilterKey: "BUCId",
-          Operator: "eq",
-          FilterValue: response.data[0]?.BusinessUnitCodeId,
-        },
-      ];
-      const AssignHRID = await CommonServices.getUserGuidByEmail(
-        response.data[0]?.AssignEMail
-      );
-      let AssignHR = {
-        key: Number(AssignHRID.data?.key),
-        text: response.data[0]?.AssignEMail,
-      };
-      let Levels: string[] =
-        Gradelevel.data[0]?.Level === InterviewLevels.Level1
-          ? [InterviewLevels.Level1]
-          : [InterviewLevels.Level1, InterviewLevels.Level2];
-      // let InterviewPanel =
-      //   props.stateValue?.StatusId ===
-      //   StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
-      //     ? false
-      //     : true;
-      const AssignInterviewPanel = await getVRRDetails.GetInterviewPanelDetails(
-        filterJDEMapping,
-        Conditions,
-        AssignHR,
-        props.stateValue?.ID,
-        Levels,
-        props.stateValue?.StatusId
-      );
-
-      if (
-        props.stateValue?.StatusId ===
-        StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
-      ) {
-        storedNoOfInterviewpanel.current =
-          AssignInterviewPanel.data &&
-          AssignInterviewPanel.data?.Level2Panel.length < 3
-            ? false
-            : true;
-      } else {
-        storedNoOfInterviewpanel.current =
-          AssignInterviewPanel.data &&
-          AssignInterviewPanel.data?.Level1Panel.length < 3
-            ? false
-            : true;
-      }
-      setInterviewedLevel((prevState) => ({
-        ...prevState,
-        Grade: response.data[0]?.PatersonGrade,
-        Levels: Gradelevel.data[0]?.Level,
-        AssignInterviewedLevel1Option:
-          AssignInterviewPanel.data && AssignInterviewPanel.data?.InterviewPanel
-            ? AssignInterviewPanel.data?.InterviewPanel
-            : [],
-        AssignInterviewLevel1:
-          AssignInterviewPanel.data && AssignInterviewPanel.data?.Level1Panel
-            ? AssignInterviewPanel.data?.Level1Panel
-            : [],
-        AssignInterviewedLevel2:
-          AssignInterviewPanel.data && AssignInterviewPanel.data?.Level2Panel
-            ? AssignInterviewPanel.data?.Level2Panel
-            : [],
-      }));
-    };
-    if (props.stateValue?.initialTab === TabName.AssignInterviewPanel) {
-      void getRecurtimentList();
-      // setIsLoading(false);
-    } else {
-      let COIProfile = props.EmployeeList.map((item: any) => ({
-        key: item.Email,
-        text: `${item?.FirstName || ""} ${item?.MiddleName || ""} ${
-          item?.LastName || ""
-        }`,
-      }));
-      setInterviewedLevel((prev) => ({
-        ...prev,
-        COIProfileLabelOption: COIProfile,
-      }));
-      // setIsLoading(false);
-    }
-  }, [submitBtn]);
 
   const handleRadioChange = async (item: string) => {
     setActionValue((prevState: any) => ({
@@ -1879,23 +1878,28 @@ const ViewCandidateDetails = (props: any) => {
                                     handleDelete={(index, fileState) =>
                                       handleDelete(index, fileState)
                                     }
+                                    webUrl={props.webURL}
                                   />
                                 </div>
                               </>
                             ) : (
                               <>
-                                <div className="ms-Grid-col ms-lg3 custom-document-column ">
-                                  <CustomLabel
-                                    value={
-                                      labelNames.CandidateDetails
-                                        .ProofDiscussion
-                                    }
-                                  />
-                                  <CustomViewDocument
-                                    Attachment={InterviewedLevel.COIAttachment}
-                                    webUrl={props.webURL}
-                                  />
-                                </div>
+                                {InterviewedLevel.COIAttachment.length > 0 && (
+                                  <div className="ms-Grid-col ms-lg3 custom-document-column ">
+                                    <CustomLabel
+                                      value={
+                                        labelNames.CandidateDetails
+                                          .ProofDiscussion
+                                      }
+                                    />
+                                    <CustomViewDocument
+                                      Attachment={
+                                        InterviewedLevel.COIAttachment
+                                      }
+                                      webUrl={props.webURL}
+                                    />
+                                  </div>
+                                )}
                               </>
                             )}
                           </div>
@@ -2872,7 +2876,7 @@ const ViewCandidateDetails = (props: any) => {
                 TabNames: props.stateValue?.initialTab,
                 ButtonAction: ButtonAction.View,
                 JobCode: props.stateValue?.JobCode,
-                tab: props.stateValue?.tab,
+                tab: props.stateValue?.tabs,
                 tabs: props.stateValue.tab,
                 JobCodeID: props.stateValue?.JobCodeID,
                 CandidateTabName: props.stateValue?.TabNamed,
@@ -2885,7 +2889,7 @@ const ViewCandidateDetails = (props: any) => {
                 TabNames: props.stateValue?.initialTab,
                 ButtonAction: ButtonAction.View,
                 JobCode: props.stateValue?.JobCode,
-                tab: props.stateValue?.tab,
+                tab: props.stateValue?.tabs,
                 tabs: props.stateValue.tab,
                 JobCodeID: props.stateValue?.JobCodeID,
                 CandidateTabName: props.stateValue?.TabNamed,

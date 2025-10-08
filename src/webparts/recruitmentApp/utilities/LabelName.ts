@@ -107,7 +107,8 @@ export const labelNames = {
         //     return `OVERALL GRADE POINT AVERAGE (GPA) - ${GPA} /5.0`
         //  },
 
-    }
+    },
+    DocumentViewer: "Document Viewer",
 }
 
 export const Attachment = {
@@ -124,7 +125,7 @@ export const Attachment = {
         OfferLetter: "Upload Offer Letter",
         ConsentDoc: "Upload Code of Business Content",
         EmployementDoc: "Upload Employement Contract",
-    }
+    },
 }
 
 export const CheckboxContent = {
