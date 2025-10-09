@@ -66,49 +66,41 @@
         }
     }
 
-    .navLine {
-        // padding: 8px 4px 8px 20px;
-        color: #fff;
-        // background-color: #e65f2b;
-        height: 20px;
-        border-radius: 20px;
-        padding: 8%;
+   .navLine {
+  color: #fff;
+  height: 41px;              // fixed height (no resize)
+  border-radius: 20px;
+  padding: 8px 16px;         // fixed padding (no percent)
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease; // smooth color/bg transition
 
-        &.active {
-            color: #e65f2b;
-            background-color: #fff;
-            height: 20px;
-            border-radius: 20px;
-            padding: 8%;
-        }
+  &.active {
+    color: #e65f2b;
+    background-color: #fff;
+  }
 
-        &.activeSub {
-            color: black;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 18px 0px 0px 18px;
-            padding: 0%;
-            box-shadow: "0px 5px 10px 0px #0F4B8426";
-            margin-top: 4%;
-            text-decoration: none;
-            transition: background-color 0.3s;
-            width: 93%;
-            margin-left: 22px;
-            display: flex;
-            flex-direction: column;
-            height: 52px;
+  &.activeSub {
+    color: black;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 18px 0 0 18px;
+    box-shadow: 0px 5px 10px 0px #0F4B8426;
+    margin-top: 4%;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    width: 93%;
+    margin-left: 22px;
+    height: 41px;
+  }
 
-        }
+  &:hover {
+    cursor: pointer;
+    background-color: white;  // only color change
+    color: black;
+    // do not change padding or height here
+  }
+}
 
-        &:hover {
-            cursor: pointer;
-            background: white;
-            // padding: 8px 4px 8px 20px;
-            border-radius: 20px;
-            height: 20px;
-            color: black;
-            padding: 8%;
-        }
-    }
 
     .navLineSelect {
         background-color: #fff;

@@ -1380,6 +1380,9 @@ footer {
 #SuiteNavPlaceholder {
   display: none;
 }
+#contentScrollRegion{
+  overflow-y: hidden;
+}
 
 .o_c_8474018e {
   scrollbar-width: none;
