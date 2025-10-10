@@ -4,6 +4,7 @@ import { Link, Tooltip } from "@mui/material";
 import { Icon } from "office-ui-fabric-react";
 import { Dialog } from "primereact/dialog";
 import "../App.css";
+import { labelNames } from "../utilities/LabelName";
 
 interface fieldItems {
   Attachment: IDocFiles[];
@@ -115,6 +116,7 @@ function CustomViewAttachment({
       {documentPopup ? (
         <>
           <Dialog
+            className="document-viewer"
             style={{
               width: "75vw",
               height: "41vw",
@@ -134,7 +136,7 @@ function CustomViewAttachment({
               ></iframe>
             }
             onHide={() => setDocumentPopup(false)}
-            header="Document Viewer"
+            header={labelNames.DocumentViewer}
             // header={
             //   <>
             //     <div className="ms-Grid-row">

@@ -608,9 +608,7 @@ export const labelName = {
 
 
 
-  Firstextensiondate: "First Extension Date",
-  Secondextensiondate: "Second Extension Date",
-  Thirdextensiondate: "Third Extension Date",
+
   COIAttach: "Proof of Discussion",
   COIProfileLabel: "Consulted With"
 

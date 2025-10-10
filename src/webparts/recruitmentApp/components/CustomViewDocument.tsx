@@ -99,6 +99,7 @@ function CustomViewDocument({ Attachment, Label, webUrl }: fieldItems) {
       {documentPopup ? (
         <>
           <Dialog
+            className="document-viewer"
             style={{
               width: "75vw",
               height: "41vw",

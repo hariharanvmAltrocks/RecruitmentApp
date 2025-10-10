@@ -4,7 +4,6 @@ import CustomDatePicker from "./CustomDatePicker";
 import {
   ColorCode,
   HRMSAlertOptions,
-  labelName,
   ListNames,
   ResponeStatus,
 } from "../utilities/Config";
@@ -14,8 +13,7 @@ import CustomLabel from "./CustomLabel";
 import { getVRRDetails } from "../Services/ServiceExport";
 import SPServices from "../Services/SPService/SPServices";
 import CustomLoader from "../Services/Loader/CustomLoader";
-import LabelHeaderComponents from "./TitleHeader";
-import { ButtonAction } from "../utilities/LabelName";
+import { ButtonAction, labelNames } from "../utilities/LabelName";
 
 interface AssignPositionDialogProps {
   RecuritmentData: DataSyncToRecruitmentResponse;
@@ -200,9 +198,9 @@ export const DateExtension = ({
       <CustomLoader isLoading={false}>
         <React.Fragment>
           <div>
-            <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+            {/* <div className="ms-Grid-row" style={{ textAlign: "center" }}>
               <LabelHeaderComponents value={"Advertisement Extension"} />
-            </div>
+            </div> */}
             <div className="ms-Grid-col ms-lg12">
               <div
                 className="ms-Grid-row"
@@ -220,12 +218,14 @@ export const DateExtension = ({
               </div>
               <div>
                 <div className="ms-Grid-row" style={{ marginLeft: "9%" }}>
-                  <Labelheader value={labelName.Firstextensiondate} />
+                  <Labelheader
+                    value={labelNames.AdvertExten.Firstextensiondate}
+                  />
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
                       <CustomDatePicker
                         selectedDate={Level1Date.StartDate}
-                        label="Start Date"
+                        label={labelNames.AdvertExten.StartDate}
                         error={false}
                         minDate={todaydate}
                         disabled={true}
@@ -235,7 +235,7 @@ export const DateExtension = ({
                     <div className="ms-Grid-col ms-lg4">
                       <CustomDatePicker
                         selectedDate={Level1Date.EndDate}
-                        label="End Date"
+                        label={labelNames.AdvertExten.EndDate}
                         error={false}
                         disabled={true}
                         mandatory={false}
@@ -245,12 +245,14 @@ export const DateExtension = ({
                   </div>
                 </div>
                 <div className="ms-Grid-row" style={{ marginLeft: "9%" }}>
-                  <Labelheader value={labelName.Secondextensiondate} />
+                  <Labelheader
+                    value={labelNames.AdvertExten.Secondextensiondate}
+                  />
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg4">
                       <CustomDatePicker
                         selectedDate={Level1Date.StartDate}
-                        label="Start Date"
+                        label={labelNames.AdvertExten.StartDate}
                         error={false}
                         minDate={todaydate}
                         disabled={true}
@@ -260,7 +262,7 @@ export const DateExtension = ({
                     <div className="ms-Grid-col ms-lg4">
                       <CustomDatePicker
                         selectedDate={Level2Date.EndDate}
-                        label="End Date"
+                        label={labelNames.AdvertExten.EndDate}
                         error={false}
                         disabled={true}
                         mandatory={false}
@@ -273,12 +275,14 @@ export const DateExtension = ({
                 {AdvertDuration3 && (
                   <>
                     <div className="ms-Grid-row" style={{ marginLeft: "9%" }}>
-                      <Labelheader value={labelName.Thirdextensiondate} />
+                      <Labelheader
+                        value={labelNames.AdvertExten.Thirdextensiondate}
+                      />
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg4">
                           <CustomDatePicker
                             selectedDate={Level1Date.StartDate}
-                            label="Start Date"
+                            label={labelNames.AdvertExten.StartDate}
                             error={false}
                             minDate={todaydate}
                             disabled={true}
@@ -290,7 +294,7 @@ export const DateExtension = ({
                         <div className="ms-Grid-col ms-lg4">
                           <CustomDatePicker
                             selectedDate={Level3Date.EndDate}
-                            label="End Date"
+                            label={labelNames.AdvertExten.EndDate}
                             error={false}
                             disabled={true}
                             mandatory={false}

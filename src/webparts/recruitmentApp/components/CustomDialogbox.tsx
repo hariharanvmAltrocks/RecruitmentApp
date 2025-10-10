@@ -37,7 +37,7 @@ export default function CustomDialogbox(props: DynamicFormDialogProps) {
         justifyContent: "center",
         fontWeight: "bold",
         fontSize: "1.3rem",
-        padding: "18px 0 8px 0",
+        // padding: "18px 0 8px 0",
         color: "#FFFF !important",
         backgroundColor: ColorCode.ProfileColorCode.colorCode, //"#597B98",
         // borderBottom: "2px solid  #597B98",

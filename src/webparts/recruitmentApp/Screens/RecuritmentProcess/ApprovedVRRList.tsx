@@ -2131,8 +2131,33 @@ const RecruitmentProcess = (props: any) => {
       {DatePopup && (
         <>
           <CustomDialogbox
-            Style={{ width: "40vw", height: "28vw" }}
+            Style={{
+              width: "40vw",
+              height: "28vw",
+              padding: "0px",
+              overflowX: "hidden",
+            }}
             visible={DatePopup}
+            header={
+              <div
+                style={{
+                  textAlign: "center",
+                  width: "100%",
+                }}
+              >
+                <h2
+                  style={{
+                    color: "white",
+                    fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
+                    -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                    // textDecoration: "underline",
+                    // textUnderlineOffset: "6px",
+                  }}
+                >
+                  {"Advertisement Extension"}
+                </h2>
+              </div>
+            }
             children={
               <DateExtension
                 RecuritmentData={selectedrowdata[0]}

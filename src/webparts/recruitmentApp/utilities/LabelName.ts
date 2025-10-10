@@ -109,6 +109,15 @@ export const labelNames = {
 
     },
     DocumentViewer: "Document Viewer",
+    AdvertExten: {
+        StartDate: "Start Date",
+        EndDate: "End Date",
+        Firstextensiondate: "First Extension Date",
+        Secondextensiondate: "Second Extension Date",
+        Thirdextensiondate: "Third Extension Date",
+    },
+    AdvertisementExtension: "Advertisement Extension",
+
 }
 
 export const Attachment = {
