@@ -1,4 +1,4 @@
-import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, profileXagent, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { CommanQuestion, QuestionItem } from "../../Models/RecuritmentVRR";
 import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
 import { DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
@@ -118,4 +118,5 @@ export type IGetPortalJobs = {
     UploadCOIAttachment(DocumentName: COIAttach, AttachFile: IDocFiles[]): Promise<ApiResponse<any>>;
     fetchCOIAttachment(DocumentName: COIAttach): Promise<ApiResponse<any>>;
     GetUpsertCOI(data: COIType): Promise<ApiResponse<any | null>>;
+    SendEmailNotification(data: sendEmail): Promise<ApiResponse<any | null>>;
 }

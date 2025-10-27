@@ -131,7 +131,8 @@ export const Attachment = {
         CandidateResume: "Candidate Resume",
         ViewComments: "View Comments",
         CandidateDocuments: "Candidate Documents",
-        OfferLetter: "Upload Offer Letter",
+        OfferLetter: "Upload Offer Letter (English)",
+        OfferLetterFre: "Upload Offer Letter (French)",
         ConsentDoc: "Upload Code of Business Content",
         EmployementDoc: "Upload Employement Contract",
     },
@@ -218,6 +219,7 @@ export const ButtonAction = {
     ScheduleforInterview: "Schedule for Interview",
     Selected: "Selected",
     Rejected: "Rejected",
+    Initiated: "Initiated",
 }
 
 export const IsCandidateFit = {
@@ -238,4 +240,15 @@ export const DisplayFolderName = {
     ConsentForm: "Code of Business Content",
     EmploymentContractForm: "Employment Contract",
     PersonalDocument: "Personal Document",
+    BackgroundVerification: "Background Verification",
+    WorkPermitDocument: "WorkPermit Document"
+}
+
+export const EmailTemplateCodes = {
+    LineManagerEmail: "LM1_ReviewProfile",
+    CandidateRejected: "LM1_CandidateRejected",
+    InterviewSchedule: "RecuritmentHR_ScheduleInterview",
+    HODSelection: "HOD_SelectCandidate",
+    HODSelectionLevel1: "HOD1_SelectCandidate",
+    InterviewScheduleLevel1: "RecuritmentHR_ScheduleInterview_Level1",
 }

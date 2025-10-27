@@ -105,7 +105,7 @@ const UploadOfferDocumentList = (props: any) => {
             rowData?.StatusID ===
               StatusId.PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter ||
             rowData?.StatusID ===
-              StatusId.PendingwithRecruitmentHRtoUploadtheEmploymentContract ? (
+              StatusId.WorkPermitAcknowledgedContractUploaded ? (
               <>
                 <img
                   src={require("../../assets/UploadIcon.svg")}
@@ -127,12 +127,15 @@ const UploadOfferDocumentList = (props: any) => {
                 />
               </>
             ) : // ButtonActions === ActionIcon.View
-            rowData?.StatusID ===
+            rowData?.StatusID === StatusId.PendingBGdocuploadedbycandidate ||
+              rowData?.StatusID ===
                 StatusId.PendingwithCandidatetoSignOfferLetter ||
               rowData?.StatusID ===
-                StatusId.PendingwithCandidatetoUploadOtherDocuments ||
+                StatusId.PendingWorkPermituploadedbycandidate ||
+              // rowData?.StatusID ===
+              //   StatusId.PendingwithCandidatetoUploadOtherDocuments ||
               rowData?.StatusID ===
-                StatusId.PendingwithCandidatetoSignEmploymentContract ||
+                StatusId.WorkPermitAcknowledgedContractUploaded ||
               rowData?.StatusID === StatusId.OnboardingProcessinitiatedforDRC ||
               rowData?.StatusID ===
                 StatusId.OnboardingProcessinitiatedforExpat ||
@@ -160,6 +163,27 @@ const UploadOfferDocumentList = (props: any) => {
                       tab,
                       TabNames,
                       ButtonAction.View
+                    )
+                  }
+                />
+              </>
+            ) : rowData?.StatusID === StatusId.PendingHRBGVInitiation ? (
+              <>
+                <img
+                  src={require("../../assets/Editbutton.svg")}
+                  alt="Stamp Icon"
+                  style={{
+                    width: "50%",
+                    height: "auto",
+                    maxWidth: "40px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    handleRedirectView(
+                      rowData,
+                      tab,
+                      TabNames,
+                      ButtonAction.Initiated
                     )
                   }
                 />
@@ -230,22 +254,31 @@ const UploadOfferDocumentList = (props: any) => {
         FilterKey: "StatusId",
         Operator: "in",
         FilterValue: [
+          StatusId.PendingHRBGVInitiation,
+          StatusId.PendingBGdocuploadedbycandidate,
+          StatusId.PendingHRReviewBGCheck,
+          StatusId.PendingHRReviewOfferWorkPermit,
           StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter,
           StatusId.PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter,
           StatusId.PendingwithCandidatetoSignOfferLetter,
-          StatusId.PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments,
-          StatusId.PendingwithCandidatetoUploadOtherDocuments,
-          StatusId.PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs,
-          StatusId.PendingwithRecruitmentHRtoUploadtheEmploymentContract,
-          StatusId.PendingwithCandidatetoSignEmploymentContract,
-          StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm,
-          StatusId.OnboardingProcessinitiatedforDRC,
-          StatusId.OnboardingProcessinitiatedforExpat,
-          StatusId.RevertedBacktoCandidateforReuploadOfferLetter,
-          StatusId.RevertedBacktoCandidateforReuploadDocs,
-          StatusId.RevertedBacktoCandidateforReuploadEmploymentContract,
-          StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
-          StatusId.PendingwithTAforMedicalScreening,
+          StatusId.PendingHRReviewOfferWorkPermit,
+          StatusId.PendingWorkPermituploadedbycandidate,
+          StatusId.WorkPermitHRReview,
+          StatusId.WorkPermitAcknowledgedContractUploaded,
+          StatusId.HRReviewContractSigned,
+          StatusId.PendingHRPreOnboardingChecklist,
+          // StatusId.PendingwithCandidatetoUploadOtherDocuments,
+          // StatusId.PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs,
+          // StatusId.PendingwithRecruitmentHRtoUploadtheEmploymentContract,
+          // StatusId.PendingwithCandidatetoSignEmploymentContract,
+          // StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm,
+          // StatusId.OnboardingProcessinitiatedforDRC,
+          // StatusId.OnboardingProcessinitiatedforExpat,
+          // StatusId.RevertedBacktoCandidateforReuploadOfferLetter,
+          // StatusId.RevertedBacktoCandidateforReuploadDocs,
+          // StatusId.RevertedBacktoCandidateforReuploadEmploymentContract,
+          // StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
+          // StatusId.PendingwithTAforMedicalScreening,
         ],
       });
       filterConditions.push({
@@ -267,10 +300,10 @@ const UploadOfferDocumentList = (props: any) => {
       let FilterDataCareerportal = respons.data.filter(
         (item) =>
           item.StatusID === StatusId.PendingwithCandidatetoSignOfferLetter ||
-          item.StatusID ===
-            StatusId.PendingwithCandidatetoUploadOtherDocuments ||
-          item.StatusID ===
-            StatusId.PendingwithCandidatetoSignEmploymentContract ||
+          // item.StatusID ===
+          //   StatusId.PendingwithCandidatetoUploadOtherDocuments ||
+          // item.StatusID ===
+          //   StatusId.PendingwithCandidatetoSignEmploymentContract ||
           item.StatusID ===
             StatusId.RevertedBacktoCandidateforReuploadOfferLetter ||
           item.StatusID === StatusId.RevertedBacktoCandidateforReuploadDocs ||
@@ -315,21 +348,27 @@ const UploadOfferDocumentList = (props: any) => {
       setData(response);
       let DocumentCount = response.filter(
         (item: any) =>
+          item.StatusID === StatusId.PendingHRBGVInitiation ||
+          // item.StatusID === StatusId.PendingBGdocuploadedbycandidate
+          item.StatusID === StatusId.PendingHRReviewBGCheck ||
+          item.StatusID === StatusId.PendingHRReviewOfferWorkPermit ||
           item.StatusID ===
             StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ||
           item.StatusID ===
             StatusId.PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter ||
           item.StatusID ===
-            StatusId.PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments ||
-          item.StatusID ===
             StatusId.RevertedBacktoCandidateforReuploadOfferLetter ||
-          item.StatusID ===
-            StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
-          item.StatusID === StatusId.RevertedBacktoCandidateforReuploadDocs ||
-          item.StatusID ===
-            StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm ||
-          item.StatusID ===
-            StatusId.RevertedBacktoCandidateforReuploadEmploymentContract
+          item.StatusID === StatusId.WorkPermitHRReview ||
+          item.StatusID === StatusId.WorkPermitAcknowledgedContractUploaded ||
+          item.StatusID === StatusId.HRReviewContractSigned ||
+          item.StatusID === StatusId.PendingHRPreOnboardingChecklist
+        // item.StatusID ===
+        //   StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract
+        // item.StatusID === StatusId.RevertedBacktoCandidateforReuploadDocs ||
+        // item.StatusID ===
+        //   StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm ||
+        // item.StatusID ===
+        //   StatusId.RevertedBacktoCandidateforReuploadEmploymentContract
       );
       setPendingCount((prev) => ({
         ...prev,

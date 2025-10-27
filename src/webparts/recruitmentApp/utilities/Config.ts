@@ -110,14 +110,24 @@ export const StatusId = {
   Rescheduled: 159,
 
   // Post Recruitment
+  PendingHRBGVInitiation: 134,
+  PendingBGdocuploadedbycandidate: 163,
+  PendingHRReviewBGCheck: 135,
+  PendingHRReviewOfferWorkPermit: 136,
+  WorkPermitHRReview: 137,
+  WorkPermitAcknowledgedContractUploaded: 138,
+  HRReviewContractSigned: 161,
+  PendingHRPreOnboardingChecklist: 162,
+  PendingWorkPermituploadedbycandidate: 164,
+
   PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,
   PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter: 142,
   PendingwithCandidatetoSignOfferLetter: 133,
-  PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments: 134,
-  PendingwithCandidatetoUploadOtherDocuments: 135,
-  PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs: 136,
-  PendingwithRecruitmentHRtoUploadtheEmploymentContract: 137,
-  PendingwithCandidatetoSignEmploymentContract: 138,
+  // PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments: 134,
+  // PendingwithCandidatetoUploadOtherDocuments: 135,
+  // PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs: 136,
+  // PendingwithRecruitmentHRtoUploadtheEmploymentContract: 137,
+  // PendingwithCandidatetoSignEmploymentContract: 138,
   pendingwithRecruitmentHRtoReviewtheEmploymentContractForm: 139,
   OnboardingProcessinitiatedforDRC: 23,
   OnboardingProcessinitiatedforExpat: 24,
@@ -264,9 +274,15 @@ export const RecuritmentHRMsg = {
   UploadMsg: "Candidate CV Upload Successfully",
   ValidationMsg: "This Candidate Already Exists",
 
+  BGverificationMsg: "Background Verification has been initiated successfully.",
+  BGReviewedMsg: "Background Verification has been completed successfully.",
+
   OfferLetterMsg: "The offer letter has been uploaded successfully.",
-  ReviewOfferLetterMsg: "The offer letter has been reviewed successfully",
+  ReviewOfferLetterMsg: "The offer letter has been reviewed successfully and Initiate the WorkPermit Document ",
   RevertedOfferLetter: "The offer letter has been reverted to candidate successfully..",
+
+  WorkPermitDocs: "The WorkPermit Documents has been reviewed successfully",
+  WPacknowledgeUploadContract: "WorkPermit acknowledge and Employee contract Document Upload Successfully",
 
   ReviewOtherDocsMsg: "Candidate documents has been reviewed successfully",
   RevertOtherDocsMsg: "Candidate documents have been reverted successfully.",
@@ -280,7 +296,8 @@ export const RecuritmentHRMsg = {
   QuestionValiErrorMsg: "Please add at least 5 questions before proceeding.",
   COIWarningMsg: "This is the COI profile. Are you sure you're ready to proceed?",
 
-  FormValidationMsg: "One or more required actions are missing."
+  FormValidationMsg: "One or more required actions are missing.",
+  NationalityMsgError: "Please select the any one Nationality"
 };
 
 export const validationMsg = {
@@ -641,7 +658,10 @@ export const DocumentFolderName = {
   PersonalDocs: "PersonalDocs",
   Medical: "Medical",
   COIAttach: "COIAttch",
-  ConsentForm: "ConsentForm"
+  ConsentForm: "ConsentForm",
+  BackgroundVerification: "BackgroundVerification",
+  WorkPermit: "WorkPermit",
+  Vaccination: "Vaccination"
 }
 
 

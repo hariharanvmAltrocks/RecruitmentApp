@@ -50,6 +50,7 @@ import CustomMultiSelect from "../../components/CustomMultiSelect";
 import {
   CandidateProfile,
   COIType,
+  sendEmail,
   WorkflowJson,
 } from "../../Models/ApIInterface";
 import CustomSignature from "../../components/CustomSignature";
@@ -74,6 +75,7 @@ import {
   Attachment,
   ButtonAction,
   CheckboxContent,
+  EmailTemplateCodes,
   IsCandidateFit,
   labelNames,
   ValidationAction,
@@ -2573,6 +2575,10 @@ const ViewCandidateDetails = (props: any) => {
               actionBy: "",
               hrComments: "",
             };
+            let EmailNot: sendEmail = {
+              jobRequestId: props.stateValue?.ID,
+              templateCode: "",
+            };
             let PopupMessage: string = "";
             if (props.CurrentRoleID.includes(RoleID.LineManager)) {
               let CandidateValue =
@@ -2590,6 +2596,7 @@ const ViewCandidateDetails = (props: any) => {
                     CandidateData = createFilter(
                       workflowStatusApi.PendingRecruitmentHRscheduleInterview
                     );
+                    EmailNot.templateCode = EmailTemplateCodes.LineManagerEmail;
                     PopupMessage = RecuritmentHRMsg.ProfileReviewed;
                   } else {
                     CandidateData = createFilter(
@@ -2607,11 +2614,15 @@ const ViewCandidateDetails = (props: any) => {
                     CandidateData = createFilter(
                       workflowStatusApi.LineManagerLevel2Rejected
                     );
+                    EmailNot.templateCode =
+                      EmailTemplateCodes.CandidateRejected;
                     PopupMessage = RecuritmentHRMsg.ProfileReviewedNo;
                   } else {
                     CandidateData = createFilter(
                       workflowStatusApi.LineManagerLevel1Rejected
                     );
+                    EmailNot.templateCode =
+                      EmailTemplateCodes.CandidateRejected;
                     PopupMessage = RecuritmentHRMsg.ProfileReviewedNo;
                   }
                   break;
@@ -2637,6 +2648,7 @@ const ViewCandidateDetails = (props: any) => {
               if (
                 props.stateValue?.initialTab === TabName.AssignInterviewPanel
               ) {
+                EmailNot.templateCode = EmailTemplateCodes.InterviewSchedule;
                 CandidateData = createFilter(
                   workflowStatusApi.InterviewScheduled
                 );
@@ -2647,6 +2659,7 @@ const ViewCandidateDetails = (props: any) => {
               } else {
                 if (COIButtonAction === ButtonAction.Reject) {
                   CandidateData = createFilter(workflowStatusApi.HRRejected);
+                  EmailNot.templateCode = EmailTemplateCodes.CandidateRejected;
                   PopupMessage = RecuritmentHRMsg.CandidateRejected;
                 } else {
                   CandidateData = createFilter(
@@ -2699,6 +2712,14 @@ const ViewCandidateDetails = (props: any) => {
                   props.stateValue?.initialTab === TabName.AssignInterviewPanel
                 ) {
                   await UploadCandidateDetails();
+                }
+                if (
+                  props.stateValue?.StatusId ===
+                    workflowStatusApi.LineManagerL2Pending ||
+                  props.stateValue?.StatusId ===
+                    workflowStatusApi.PendingRecruitmentHRscheduleInterview
+                ) {
+                  await GetPortalJobsService.SendEmailNotification(EmailNot);
                 }
                 const SuccessAlert = {
                   Message: PopupMessage,

@@ -3,6 +3,7 @@ import { DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmen
 import { IDocFiles } from "../SPService/ISPServicesProps";
 
 export type DocumentName = {
+    ProfileID: string;
     RequestID: string;
     DocumentName: string;
     UnsignedDoc: string;
@@ -13,9 +14,10 @@ export type DocumentStrucDocs = {
 
 export type GetCandidateDocument = {
     ListName: string;
-    RequestID: string;
-    DocumentType: string;
-    DocumentName: string;
+    ProfileID: string;
+    RequestID?: string;
+    DocumentType?: string;
+    DocumentName?: string;
     UnsignedDoc?: string;
 }
 

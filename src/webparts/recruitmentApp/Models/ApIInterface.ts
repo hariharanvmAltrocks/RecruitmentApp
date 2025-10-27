@@ -344,7 +344,8 @@ export type UploadDocument = {
     Location: string;
     Email: string;
     ProofOfIdentity: string;
-    IdentityNumber: string,
+    IdentityNumber: string;
+    ProfileID: string;
 
     comments: string;
     Checkbox: boolean;
@@ -414,6 +415,11 @@ export type COIType = {
     approver: string;
     comments: string;
     attachmentPath: string;
+}
+
+export type sendEmail = {
+    jobRequestId: number;
+    templateCode: string;
 }
 
 

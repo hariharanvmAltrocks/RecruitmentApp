@@ -1,9 +1,18 @@
 import * as React from "react";
-import { Card, CardContent } from "@mui/material";
-import { ColorCode } from "../../utilities/Config";
-import ReuseButton from "../../components/ReuseButton";
-import AlertDialogbox from "../../components/CustomAlert/AlertDialogbox";
-import { DisplayFolderName } from "../../utilities/LabelName";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Card,
+  CardContent,
+  Link,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { labelNames } from "../../utilities/LabelName";
+import { Dialog } from "primereact/dialog";
 
 interface AssignPositionDialogProps {
   data: any[];
@@ -18,10 +27,17 @@ export const ViewCandidateDocument = ({
 }: AssignPositionDialogProps) => {
   const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
   const [documentcontent, setDocumentcontent] = React.useState<string>("");
+  const [IsExpanded, setIsExpanded] = React.useState<number | null>(0);
 
   function view_fn(url: any) {
     setDocumentPopup(true);
     setDocumentcontent(url);
+  }
+
+  function handleFileDownload(event: React.MouseEvent, documentUrl: string) {
+    event.preventDefault();
+    setDocumentPopup(true);
+    setDocumentcontent(documentUrl);
   }
 
   const getIframeSrc = (fileUrl: string): string => {
@@ -34,17 +50,20 @@ export const ViewCandidateDocument = ({
       const viewerUrl = `${webUrl}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(
         fileUrl
       )}&action=embedview`;
-      // Office viewer requires a publicly accessible link
       return viewerUrl;
     } else {
       return fileUrl;
     }
   };
 
+  const handleExpand = (index: number) => {
+    setIsExpanded((prev) => (prev === index ? null : index));
+  };
+
   return (
     <>
       <div className="ms-Grid-row">
-        <Card
+        {/* <Card
           variant="outlined"
           sx={{
             boxShadow: "0px 2px 4px 3px #d3d3d3",
@@ -54,9 +73,9 @@ export const ViewCandidateDocument = ({
             // minHeight: "80vh",
           }}
         >
-          <CardContent>
-            <div style={{ padding: "2%" }}>
-              {/* {data.length === 0 ? (
+          <CardContent> */}
+        <div style={{ padding: "2%" }}>
+          {/* {data.length === 0 ? (
                 <p
                   style={{
                     fontSize: "15px",
@@ -68,215 +87,203 @@ export const ViewCandidateDocument = ({
                   No Candidate Document are found
                 </p>
               ) : ( */}
+          <Card
+            sx={{
+              mb: 2,
+              borderRadius: "4px",
+              borderColor: "#5f5f5f",
+              boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+              height: "auto",
+              transition: "height 0.3s ease-in-out",
+              overflow: "hidden",
+            }}
+          >
+            <CardContent
+              sx={{
+                minHeight: 300,
+                maxHeight: 400,
+                overflowY: "auto",
+                pr: 1,
+              }}
+            >
               {data.map((item, index) => {
-                if (item[0]?.Title === DisplayFolderName.PersonalDocument) {
-                  return item[0].data.map((subitem: any, subindex: any) => (
-                    <div key={subindex} style={{ marginBottom: "15px" }}>
-                      <div
-                        className="ms-Grid-row"
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <div className="ms-Grid-col ms-lg10">
-                          <div
-                            style={{
-                              minWidth: 85,
-                              fontWeight: "bold",
-                              fontFamily: '"Roboto", sans-serif',
-                              fontSize: "17px",
-                            }}
-                          >
-                            {subitem?.Title}
-                          </div>
-                          <div
-                            style={{
-                              fontFamily: '"Roboto", sans-serif',
-                              marginLeft: "1%",
-                            }}
-                          >
-                            File Name: {subitem?.DocumentName ?? "—"}
-                          </div>
-                        </div>
-
-                        <a
-                          style={{ marginRight: "10px", color: "antiquewhite" }}
-                          onClick={() => view_fn(subitem?.DocumentContent)}
-                        >
-                          <img
-                            src={require("../../assets/Viewicon.svg")}
-                            alt="View Icon"
-                            style={{
-                              width: "63%",
-                              height: "auto",
-                              cursor: "pointer",
-                              marginLeft: "32%",
-                            }}
-                          />
-                        </a>
-
-                        <div>
-                          <a
-                            href={subitem?.DocumentContent}
-                            download
-                            style={{
-                              marginRight: "10px",
-                              color: "antiquewhite",
-                            }}
-                          >
-                            <img
-                              src={require("../../assets/Download.svg")}
-                              alt="Download Icon"
-                              style={{
-                                width: "50%",
-                                height: "auto",
-                                maxWidth: "40px",
-                                cursor: "pointer",
-                              }}
-                            />
-                          </a>
-                        </div>
-                      </div>
-                      <hr />
-                    </div>
-                  ));
-                } else {
+                const isExpanded = IsExpanded === index;
+                if (item.data.length > 0) {
                   return (
-                    <div
-                      key={`other-${index}`}
-                      style={{ marginBottom: "15px" }}
-                    >
-                      <div
-                        className="ms-Grid-row"
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
+                    <>
+                      <Box
+                        // key={item.id}
+                        sx={{
+                          boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+                          borderRadius: "4px",
+                          borderColor: "#5f5f5f",
+                          marginTop: "1%",
                         }}
                       >
-                        <div className="ms-Grid-col ms-lg10">
-                          <div
-                            style={{
-                              minWidth: 85,
-                              fontWeight: "bold",
-                              fontFamily: '"Roboto", sans-serif',
-                              fontSize: "17px",
-                            }}
-                          >
-                            {item?.Title}
-                          </div>
-                          <div
-                            style={{
-                              fontFamily: '"Roboto", sans-serif',
-                              marginLeft: "1%",
-                            }}
-                          >
-                            File Name: {item?.DocumentName ?? "—"}
-                          </div>
-                        </div>
-
-                        <a
-                          style={{ marginRight: "10px", color: "antiquewhite" }}
-                          onClick={() => view_fn(item?.DocumentContent)}
+                        <Accordion
+                          expanded={isExpanded}
+                          onChange={() => handleExpand(index)}
+                          sx={{
+                            boxShadow: "none",
+                            borderBottom: "1px solid #ddd",
+                            "&:last-of-type": {
+                              borderBottom: "none",
+                            },
+                            mb: 2,
+                          }}
                         >
-                          <img
-                            src={require("../../assets/Viewicon.svg")}
-                            alt="View Icon"
-                            style={{
-                              width: "63%",
-                              height: "auto",
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            sx={{
+                              color: "rgb(50, 49, 48)",
                               cursor: "pointer",
-                              marginLeft: "32%",
-                            }}
-                          />
-                        </a>
-
-                        <div>
-                          <a
-                            href={item?.DocumentContent}
-                            download
-                            style={{
-                              marginRight: "10px",
-                              color: "antiquewhite",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              width: "100%",
                             }}
                           >
-                            <img
-                              src={require("../../assets/Download.svg")}
-                              alt="Download Icon"
-                              style={{
-                                width: "50%",
-                                height: "auto",
-                                maxWidth: "40px",
-                                cursor: "pointer",
+                            <Typography
+                              sx={{
+                                fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                                fontSize: "14px",
+                                flexGrow: 1,
                               }}
-                            />
-                          </a>
-                        </div>
-                      </div>
-                      <hr />
-                    </div>
+                            >
+                              {item?.Title}
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails
+                            style={{
+                              position: "relative",
+                              bottom: "24px",
+                            }}
+                          >
+                            {item.data.map((docs: any, index: any) => {
+                              const fileName = docs.name;
+                              const truncatedFileName =
+                                fileName.length > 100
+                                  ? fileName.substring(0, 30) + "..."
+                                  : fileName;
+                              return (
+                                <div key={index}>
+                                  <div
+                                    className="ms-Grid-row"
+                                    style={{
+                                      display: "flex",
+                                      marginLeft: "1%",
+                                      marginTop: "2%",
+                                    }}
+                                  >
+                                    <div
+                                      className="ms-Grid-col ms-lg6"
+                                      style={{ marginRight: "1rem" }}
+                                    >
+                                      <Tooltip title={docs.name} arrow>
+                                        <Link
+                                          href="#"
+                                          onClick={(e) =>
+                                            handleFileDownload(e, docs.content)
+                                          }
+                                          style={{
+                                            color: "blue",
+                                            fontWeight: "bold",
+                                            display: "inline-block",
+                                            // maxWidth: "100%",
+                                            whiteSpace: "nowrap",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                          }}
+                                        >
+                                          FileName : {truncatedFileName}
+                                        </Link>
+                                      </Tooltip>
+                                    </div>
+                                    <div className="ms-Grid-col ms-lg6">
+                                      <a
+                                        style={{
+                                          marginRight: "10px",
+                                          color: "antiquewhite",
+                                        }}
+                                        onClick={() => view_fn(docs?.content)}
+                                      >
+                                        <img
+                                          src={require("../../assets/Viewicon.svg")}
+                                          alt="View Icon"
+                                          style={{
+                                            width: "25px",
+                                            // height: "auto",
+                                            cursor: "pointer",
+                                            marginLeft: "32%",
+                                          }}
+                                        />
+                                      </a>
+                                      <a
+                                        href={docs?.content}
+                                        download
+                                        style={{
+                                          marginRight: "10px",
+                                          color: "antiquewhite",
+                                        }}
+                                      >
+                                        <img
+                                          src={require("../../assets/Download.svg")}
+                                          alt="Download Icon"
+                                          style={{
+                                            width: "25px",
+                                            height: "auto",
+                                            maxWidth: "40px",
+                                            cursor: "pointer",
+                                          }}
+                                        />
+                                      </a>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </AccordionDetails>
+                        </Accordion>
+                      </Box>
+                    </>
                   );
+                } else {
+                  return null;
                 }
               })}
+            </CardContent>
+          </Card>
 
-              {/* )} */}
-            </div>
-          </CardContent>
-        </Card>
+          {/* )} */}
+        </div>
+        {/* </CardContent>
+        </Card> */}
       </div>
 
       {documentPopup ? (
         <>
-          <AlertDialogbox
-            Style={{ width: "75vw", height: "41vw" }}
+          <Dialog
+            className="document-viewer"
+            style={{
+              width: "75vw",
+              height: "41vw",
+              // overflowY: "hidden",
+              zIndex: 9999,
+              backgroundColor: "white",
+              borderRadius: "5px",
+            }}
             visible={documentPopup}
             children={
               <iframe
                 src={getIframeSrc(documentcontent)}
-                title="PDF Document"
                 width="100%"
-                height="100%"
+                height="600px"
+                frameBorder="0"
                 style={{ border: "none" }}
               ></iframe>
             }
-            onClose={() => setDocumentPopup(false)}
-            header={
-              <div style={{ textAlign: "center", width: "100%" }}>
-                <h2
-                  style={{
-                    color: ColorCode.LabelStyleColorCode.LabelStyleColor,
-                    fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
-                              -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                  }}
-                >
-                  {" "}
-                  Candidate Documents
-                </h2>
-              </div>
-            }
-            footer={
-              <div
-                className="ms-Grid-row"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  padding: "10px 0",
-                  gap: "33px",
-                }}
-              >
-                <ReuseButton
-                  label="Close"
-                  onClick={() => setDocumentPopup(false)}
-                  Style={{
-                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                    color: "white",
-                    width: "50%",
-                  }}
-                />
-              </div>
-            }
+            onHide={() => setDocumentPopup(false)}
+            header={labelNames.DocumentViewer}
           />
         </>
       ) : (

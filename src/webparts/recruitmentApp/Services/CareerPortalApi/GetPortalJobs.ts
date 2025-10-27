@@ -1,8 +1,8 @@
 import * as moment from "moment";
-import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, jobsApplied, profileDetailAttachments, profileXagent, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, jobsApplied, profileDetailAttachments, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { CommanQuestion, QuestionItem } from "../../Models/RecuritmentVRR";
 import { agentCode, CategoryID, DataType, DocumentLibraray, ListNames, ResponeStatus, RoleName, RoleProfileMaster, workflowStatusApi } from "../../utilities/Config";
-import { GetJobRequestData, getProfileData, GetStateByCountryApi, postAdveDetails, QuestionnaireApi, UploadCandidateCVData } from "../ReviewProfileService/ReviewCandidateService";
+import { EmailService, GetJobRequestData, getProfileData, GetStateByCountryApi, postAdveDetails, QuestionnaireApi, UploadCandidateCVData } from "../ReviewProfileService/ReviewCandidateService";
 import { CommonServices, GetPortalJobsService } from "../ServiceExport";
 import SPServices from "../SPService/SPServices";
 import { CandidateDetails, COIAttach, DocumentValue, IGetPortalJobs, RescheduledCandidate, UpsertDocument } from "./IGetPortalJobs";
@@ -1136,6 +1136,28 @@ export default class GetPortalJobs implements IGetPortalJobs {
     try {
 
       const Response = await GetJobRequestData.UpsertCOI(data);
+      return {
+        data: Response.data,
+        status: Response.status,
+        message: Response.data.message,
+      };
+
+    } catch (error) {
+      console.error(
+        "Error inserting data into AdvertisementDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+
+  async SendEmailNotification(data: sendEmail): Promise<ApiResponse<any | null>> {
+    try {
+      const Response = await EmailService.emailnotification(data);
       return {
         data: Response.data,
         status: Response.status,

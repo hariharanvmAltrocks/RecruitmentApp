@@ -24,26 +24,31 @@ function CustomViewAttachment({
 
   function handleFileDownload(event: React.MouseEvent, documentUrl: string) {
     event.preventDefault();
-    setDocumentPopup(true);
-    setDocumentcontent(documentUrl);
+    if (documentUrl.startsWith("blob:")) {
+      setDocumentPopup(true);
+      setDocumentcontent(documentUrl);
+      return;
+    }
   }
 
   const getIframeSrc = (fileUrl: string): string => {
+    if (!fileUrl) return "";
+
+    const isAbsolute = fileUrl.startsWith("http");
+
     if (fileUrl.endsWith(".pdf")) {
-      return fileUrl;
-    } else if (fileUrl.endsWith(".docx")) {
-      //   const absoluteUrl = fileUrl.startsWith("http")
-      // ? fileUrl
-      // : `${webUrl.split("/sites")[0]}${fileUrl}`;
-
-      const viewerUrl = `${webUrl}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(
-        fileUrl
-      )}&action=embedview`;
-
-      return viewerUrl;
-    } else {
-      return fileUrl;
+      return isAbsolute ? fileUrl : `${webUrl}${fileUrl}`;
     }
+
+    if (fileUrl.endsWith(".docx")) {
+      const absoluteUrl = isAbsolute ? fileUrl : `${webUrl}${fileUrl}`;
+      const viewerUrl = `${webUrl}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(
+        absoluteUrl
+      )}&action=embedview`;
+      return viewerUrl;
+    }
+
+    return isAbsolute ? fileUrl : `${webUrl}${fileUrl}`;
   };
 
   return (
@@ -81,7 +86,7 @@ function CustomViewAttachment({
                           {truncatedFileName}
                         </a> */}
                         <Link
-                          href={file.content}
+                          href="#"
                           onClick={(e) => handleFileDownload(e, file.url ?? "")}
                           target="_blank"
                           style={{

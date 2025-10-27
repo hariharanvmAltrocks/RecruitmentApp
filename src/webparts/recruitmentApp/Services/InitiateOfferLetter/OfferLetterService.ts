@@ -189,8 +189,8 @@ export default class OfferLetterService implements IOfferLetterService {
             let response;
             if (AttachFile.length > 0) {
                 response = await SPServices.addDocLibFiles({
-                    FilePath: DocumentLibraray.HRMSCandidateDocs,
-                    FolderNames: [`${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`, `${DocumentName.UnsignedDoc.toString()}`],
+                    FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                    FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`, `${DocumentName.UnsignedDoc.toString()}`],
                     Datas: AttachFile,
                 });
 
@@ -219,80 +219,43 @@ export default class OfferLetterService implements IOfferLetterService {
         DocumentName: GetCandidateDocument,
     ): Promise<ApiResponse<any>> => {
         try {
-            let response;
+            let response: IDocFiles[];
             switch (DocumentName.DocumentType) {
+                case DocumentFolderName.BackgroundVerification:
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.DocumentType}`,
+                    })) as IDocFiles[];
+                    break;
                 case DocumentFolderName.Offerletter:
                     response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.RequestID}/${DocumentName.DocumentName}/${DocumentName.UnsignedDoc}`,
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${DocumentName.UnsignedDoc}`,
                     })) as IDocFiles[];
                     break;
-                case DocumentFolderName.EmploymentContractForm:
+                case DocumentFolderName.WorkPermit: {
+                    const Medical = await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentFolderName.Medical}`,
+                    }) as IDocFiles[];
+
+                    const Vaccination = await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentFolderName.Vaccination}`,
+                    }) as IDocFiles[];
+
+                    const WorkPermit = await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentFolderName.WorkPermit}`,
+                    }) as IDocFiles[];
+
+                    response = [...Medical, ...Vaccination, ...WorkPermit];
+                    break;
+                }
+                case DocumentFolderName.EmploymentContractForm: {
                     response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.RequestID}/${DocumentName.DocumentName}/${DocumentName.UnsignedDoc}`,
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${DocumentName.UnsignedDoc}`,
                     })) as IDocFiles[];
-                    break;
-                case DocumentFolderName.Medical:
-                    response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.RequestID}/${DocumentName.DocumentName}`,
-                    })) as IDocFiles[];
-                    break;
-                case DocumentFolderName.PersonalDocs: {
-                    const attachmentsLibrary = sp.web.lists.getByTitle(DocumentName.ListName);
-
-                    const rootFolder = await attachmentsLibrary.rootFolder.get();
-                    const folderUrl = `${rootFolder.ServerRelativeUrl}/${DocumentName.RequestID}`;
-
-                    const folders = await sp.web.getFolderByServerRelativeUrl(folderUrl).folders();
-
-                    const targetFolder = folders.filter(
-                        folder => folder.Name !== DocumentFolderName.Offerletter && folder.Name !== DocumentFolderName.EmploymentContractForm && folder.Name !== DocumentFolderName.Medical
-                    );
-
-                    if (targetFolder) {
-                        const filesArray = await Promise.all(
-                            targetFolder.map(async (item) => {
-                                const folderUrl = item?.ServerRelativeUrl;
-                                const files = folderUrl ? await sp.web.getFolderByServerRelativeUrl(folderUrl).files() : [];
-                                // console.log("Files in the filtered folder:", files);
-                                return files;
-                            })
-                        );
-                        let personalDocs: { [category: string]: IDocFiles[] } = {};
-
-                        filesArray.forEach((files) => {
-                            if (files && files.length > 0) {
-                                files.forEach((item) => {
-                                    const filePath = item.ServerRelativeUrl;
-                                    const parts = filePath.split("/");
-                                    const folderName = parts[parts.length - 2]; // e.g. 'Medical'
-
-                                    const categoryDoc: IDocFiles = {
-                                        name: item.Name,
-                                        content: item.ServerRelativeUrl,
-                                        type: "Inlist"
-                                    };
-
-                                    if (!personalDocs[folderName]) {
-                                        personalDocs[folderName] = [];
-                                    }
-
-                                    personalDocs[folderName].push(categoryDoc);
-                                });
-                            }
-                        });
-
-                        response = Object.keys(personalDocs).map((key) => ({
-                            category: key,
-                            documents: personalDocs[key]
-                        }));
-                        // console.log(response, " response.....");
-
-                    }
                     break;
                 }
                 default:
                     response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.RequestID}/${DocumentName.DocumentName}`,
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}`,
                     })) as IDocFiles[];
                     break;
             }
