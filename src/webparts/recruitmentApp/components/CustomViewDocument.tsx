@@ -52,7 +52,7 @@ function CustomViewDocument({ Attachment, Label, webUrl }: fieldItems) {
 
       return viewerUrl;
     } else {
-      return "";
+      return fileUrl;
     }
   };
 

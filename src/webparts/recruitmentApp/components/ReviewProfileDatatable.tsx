@@ -45,11 +45,9 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
   const [totalItem, setTotalItem] = React.useState<number>(0);
   const [sortMeta, setSortMeta] = React.useState<any[]>([]);
 
-  // Handles filtering + sorting + pagination
   const fetchData = React.useCallback(() => {
     let result = [...data];
 
-    // Apply global search
     const searchValue = dashboardSearch.global.value?.toLowerCase();
     if (searchValue) {
       result = result.filter((item: any) =>
@@ -59,7 +57,6 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
       );
     }
 
-    // Apply sorting
     if (sortMeta.length) {
       sortMeta.forEach(({ field, order }) => {
         result.sort((a, b) => {
@@ -71,17 +68,16 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
       });
     }
 
-    // Apply pagination
     const paginated = result.slice(
       pagination.first,
       pagination.first + pagination.rows
     );
 
     setFilteredItems(paginated);
-    setTotalItem(result.length);
+    // setTotalItem(result.length);
+    setTotalItem(data[0]?.TotalItems);
   }, [data, pagination, dashboardSearch, sortMeta]);
 
-  // Fetch on initial mount and whenever data/pagination/search/sort changes
   React.useEffect(() => {
     fetchData();
   }, [fetchData]);
