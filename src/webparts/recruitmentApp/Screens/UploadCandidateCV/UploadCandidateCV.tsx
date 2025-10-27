@@ -10,7 +10,6 @@ import BreadcrumbsComponent, {
 import { Label } from "@fluentui/react";
 import CustomInput from "../../components/CustomInput";
 import {
-  ButtonAction,
   CategoryID,
   ColorCode,
   HRMSAlertOptions,
@@ -54,6 +53,7 @@ import * as moment from "moment";
 import { getProfileData } from "../../Services/ReviewProfileService/ReviewCandidateService";
 import CustomViewDocument from "../../components/CustomViewDocument";
 import { UpsertDocument } from "../../Services/CareerPortalApi/IGetPortalJobs";
+import { ButtonAction } from "../../utilities/LabelName";
 
 const UploadCandidateCV: React.FC = (props: any) => {
   const [tabVisibility, setTabVisibility] = useState({
@@ -1221,6 +1221,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                               >
                                 <CustomViewDocument
                                   Attachment={data.familyDocuments ?? []}
+                                  webUrl={props.webURL}
                                 />
                               </div>
                             </div>
@@ -1246,6 +1247,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                                       name: item.name,
                                       content: item.file,
                                       type: "New",
+                                      url: item.Url,
                                     }));
                                   handleDocument("familyDocuments", attachment);
                                 }}
@@ -1308,6 +1310,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                               >
                                 <CustomViewDocument
                                   Attachment={data.businessDocuments ?? []}
+                                  webUrl={props.webURL}
                                 />
                               </div>
                             </div>
@@ -1333,6 +1336,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                                       name: item.name,
                                       content: item.file,
                                       type: "New",
+                                      url: item.Url,
                                     }));
                                   handleDocument(
                                     "businessDocuments",
@@ -1502,6 +1506,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                             >
                               <CustomViewDocument
                                 Attachment={data.CandidateCV ?? []}
+                                webUrl={props.webURL}
                               />
                             </div>
                           </div>
@@ -1527,6 +1532,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                                     name: item.name,
                                     content: item.file,
                                     type: "New",
+                                    url: item.Url,
                                   })
                                 );
                                 handleDocument("CandidateCV", attachment);
@@ -1931,7 +1937,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
               props.stateValue?.ButtonAction === ButtonAction.View
                 ? [
                     {
-                      label: "Back",
+                      label: ButtonAction.Back,
                       onClick: async () => {
                         back_fn();
                       },
@@ -1939,7 +1945,7 @@ const UploadCandidateCV: React.FC = (props: any) => {
                   ]
                 : [
                     {
-                      label: "Submit",
+                      label: ButtonAction.Submit,
                       onClick: () => {
                         void submit_fn();
                       },

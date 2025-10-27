@@ -141,6 +141,8 @@ export type DataSyncToRecruitmentResponse = {
 
   AssignEMail: string,
   AssignHRLead?: string;
+  QuestionByHR: string;
+  QuestionByLM: string;
 }
 
 export type JobCodeData = {
@@ -183,6 +185,12 @@ export type PostRecuritmentData = {
     ItemCreated: string,
     IsDataSyncToRecruitment: string,
   }
+}
+
+export type GetJobUniqueKey = {
+  JobCode: string;
+  JobUniqueKey: string;
+  IsActive: string;
 }
 export type IRecruitmentService = {
   GetJobTitleInNPEP(
@@ -263,7 +271,8 @@ export type IRecruitmentService = {
     RecuritmentDetails: any,
     AdvertisementValue: any,
     MasterData: any,
-    IsActive: number
+    IsActive: number,
+    IsExtened: number,
   ): Promise<ApiResponse<null>>;
   GetInterviewPanelDetails(
     filterParam: any[],
@@ -275,6 +284,7 @@ export type IRecruitmentService = {
   ): Promise<ApiResponse<InterviewPanelMember | null>>;
   GetcountInEvalution(
     CurrentUser: string,
+    EmployeeList: any[]
   ): Promise<ApiResponse<any>>;
   GetADGroupUsers(
     ADGroupID: string,
@@ -284,4 +294,20 @@ export type IRecruitmentService = {
     data: DataSyncToRecruitmentResponse,
   ): Promise<ApiResponse<tooltipInterviewPanel[] | null>>;
   GetEvalutionActionData(filterConditions: any): Promise<ApiResponse<any[]>>;
+  GetJobUniqueDataValue(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<GetJobUniqueKey[]>>;
+  GetPositionIDData(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<any[]>>;
+  GetAssignAgentDetail(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<any[]>>;
+  GetCareerPortalIntergLink(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<string>>;
 };

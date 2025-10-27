@@ -16,7 +16,7 @@ export type GetCandidateDocument = {
     RequestID: string;
     DocumentType: string;
     DocumentName: string;
-    UnsignedDoc: string;
+    UnsignedDoc?: string;
 }
 
 export type UpdateCandidateData = {

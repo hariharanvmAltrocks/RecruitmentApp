@@ -23,6 +23,7 @@ import UploadCandidateCV from "../Screens/UploadCandidateCV/UploadCandidateCV";
 import UploadCandidateList from "../Screens/UploadCandidateCV/UploadCandidateList";
 import UploadOfferDocumentList from "../Screens/OfferMedicalProcess/UploadOfferDocumentList";
 import UploadCandidateDocument from "../Screens/OfferMedicalProcess/UploadCandidateDocument";
+import { ApiUrl } from "../components/TabMerge";
 
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
@@ -32,8 +33,22 @@ export default function MainPage(props: any) {
   const toggleSideNav = () => {
     setIsExpanded((prevState: any) => !prevState);
   };
-  console.log("Recruitment-App(19-Aug-2025) V-1.2.3 UAT");
-  // console.log("masterData", masterData);
+  console.log("Recruitment-App(6-Oct-2025) V-1.0 PRE PROD");
+  // let ApiUrls = ApiUrl(props.webURL);
+  // console.log("ApiUrl", ApiUrls);
+  React.useEffect(() => {
+    const fetchApiUrl = async () => {
+      const ApiUrls = await ApiUrl();
+      let ApiURL = localStorage.getItem("ApiUrl");
+      if (ApiURL) {
+        localStorage.removeItem("ApiUrl");
+        localStorage.setItem("ApiUrl", ApiUrls);
+      } else {
+        localStorage.setItem("ApiUrl", ApiUrls);
+      }
+    };
+    void fetchApiUrl();
+  }, []);
 
   return (
     <div className="mainPage">

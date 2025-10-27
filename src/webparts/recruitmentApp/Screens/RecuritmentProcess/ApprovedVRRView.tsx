@@ -7,7 +7,6 @@ import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
 import {
   ColorCode,
   DocumentLibraray,
-  labelName,
   RoleProfileMaster,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
@@ -25,6 +24,11 @@ import BreadcrumbsComponent, {
 
 import CustomPreviewScreen from "./CustomPreviewScreen";
 import * as moment from "moment";
+import {
+  Attachment,
+  ButtonAction,
+  labelNames,
+} from "../../utilities/LabelName";
 
 const ApprovedVRRView: React.FC = (props: any) => {
   const [tabVisibility, setTabVisibility] = useState({
@@ -44,7 +48,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
     JobNameInFrenchID: 0,
     PatersonGradeID: 0,
     DRCGradeID: 0,
-    JobCodeID: 0,
+    JobCodeId: 0,
     BusinessUnitCode: "",
     BusinessUnitName: "",
     BusinessUnitDescription: "",
@@ -396,7 +400,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Business Unit Code"
+                      label={labelNames.PositionDetails.BusinessUnitCode}
                       value={data.BusinessUnitCode}
                       error={false}
                       disabled={true}
@@ -411,7 +415,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Business Unit Name"
+                      label={labelNames.PositionDetails.BusinessUnitName}
                       value={data.BusinessUnitName}
                       disabled={true}
                       error={false}
@@ -426,7 +430,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Business Unit Description"
+                      label={labelNames.PositionDetails.BusinessUnitDescription}
                       value={data.BusinessUnitDescription}
                       error={false}
                       disabled={true}
@@ -441,7 +445,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Department"
+                      label={labelNames.PositionDetails.Department}
                       value={data.Department}
                       disabled={true}
                       mandatory={false}
@@ -457,7 +461,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Sub-Department"
+                      label={labelNames.PositionDetails.SubDepartment}
                       value={data.SubDepartment}
                       disabled={true}
                       mandatory={false}
@@ -471,7 +475,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Section"
+                      label={labelNames.PositionDetails.Section}
                       value={data.Section}
                       disabled={true}
                       mandatory={false}
@@ -485,7 +489,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Department Code"
+                      label={labelNames.PositionDetails.DepartmentCode}
                       value={data.DepartmentCode}
                       disabled={true}
                       mandatory={false}
@@ -499,7 +503,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Nationality"
+                      label={labelNames.PositionDetails.Nationality}
                       value={data.Nationality}
                       disabled={true}
                       mandatory={false}
@@ -538,7 +542,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                                     </div> */}
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Paterson Grade"
+                      label={labelNames.PositionDetails.PatersonGrade}
                       value={data.PatersonGrade}
                       disabled={true}
                       mandatory={false}
@@ -553,7 +557,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="DRC Grade"
+                      label={labelNames.PositionDetails.DRCGrade}
                       value={data.DRCGrade}
                       disabled={true}
                       mandatory={false}
@@ -567,7 +571,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Employment Category"
+                      label={labelNames.PositionDetails.EmploymentCategory}
                       value={data.EmployementCategory}
                       disabled={true}
                       error={false}
@@ -582,7 +586,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Type of Contract"
+                      label={labelNames.PositionDetails.TypeofContract}
                       value={data.ContractType}
                       disabled={true}
                       error={false}
@@ -599,7 +603,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Area of Work"
+                      label={labelNames.PositionDetails.AreaofWork}
                       value={data.AreaOfWork}
                       disabled={true}
                       error={false}
@@ -615,7 +619,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="No of Position Assigned"
+                      label={labelNames.PositionDetails.NoofPerson}
                       value={data.NoofPositionAssigned}
                       disabled={true}
                       error={false}
@@ -630,7 +634,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Date When Position Is Required"
+                      label={labelNames.PositionDetails.DatePositionRequired}
                       value={
                         data.DateRequried
                           ? new Date(data.DateRequried)
@@ -652,41 +656,67 @@ const ApprovedVRRView: React.FC = (props: any) => {
                 </div>
 
                 <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
-                  <LabelHeaderComponents value={"Attachments"} />
+                  <LabelHeaderComponents value={Attachment.Attachments} />
                 </div>
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
-                    <CustomLabel value={"RoleProfile Documents"} />
-                    <CustomViewDocument Attachment={data.RoleProfileDocument} />
-                  </div>
-                  <div className="ms-Grid-col ms-lg3">
-                    <CustomLabel value={"Grading Documents"} />
-                    <CustomViewDocument Attachment={data.GradingDocument} />
-                  </div>
-
-                  <div className="ms-Grid-col ms-lg3">
-                    <CustomLabel value={"View Job Advertisement"} />
+                    <CustomLabel
+                      value={Attachment.PositionDocument.RoleProfileDocuments}
+                    />
                     <CustomViewDocument
-                      Attachment={data.AdvertisementDocument}
+                      Attachment={data.RoleProfileDocument}
+                      webUrl={props.webURL}
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomLabel
+                      value={Attachment.PositionDocument.GradingDocuments}
+                    />
+                    <CustomViewDocument
+                      Attachment={data.GradingDocument}
+                      webUrl={props.webURL}
                     />
                   </div>
 
-                  <div className="ms-Grid-col ms-lg3">
-                    <CustomLabel value={"ONEM Signed&Stamps Documents"} />
-                    <CustomViewDocument
-                      Attachment={data.OnamSignedStampsDocument}
-                    />
-                  </div>
+                  {data.AdvertisementDocument.length > 0 && (
+                    <div className="ms-Grid-col ms-lg3">
+                      <CustomLabel
+                        value={
+                          Attachment.PositionDocument.DraftONEMAdvertDocFrench
+                        }
+                      />
+                      <CustomViewDocument
+                        Attachment={data.AdvertisementDocument}
+                        webUrl={props.webURL}
+                      />
+                    </div>
+                  )}
+
+                  {data.OnamSignedStampsDocument.length > 0 && (
+                    <div className="ms-Grid-col ms-lg3">
+                      <CustomLabel
+                        value={
+                          Attachment.PositionDocument.ONEMSignedStampedDocuments
+                        }
+                      />
+                      <CustomViewDocument
+                        Attachment={data.OnamSignedStampsDocument}
+                        webUrl={props.webURL}
+                      />
+                    </div>
+                  )}
                 </div>
-                {advDetails.RolePurpose != "" ? (
-                  <div className="ms-Grid-row">
+                <div className="ms-Grid-row">
+                  {advDetails.RolePurpose != "" ? (
                     <div
-                      className="ms-Grid-col ms-lg2"
+                      className="ms-Grid-col ms-lg3"
                       style={{ position: "relative", right: "1px" }}
                     >
                       <div>
                         <CustomLabel
-                          value={labelName.ViewJobAdvetisement}
+                          value={
+                            Attachment.PositionDocument.ViewJobAdvertisement
+                          }
                           // mandatory={true}
                         />
                         <ReuseButton
@@ -717,18 +747,17 @@ const ApprovedVRRView: React.FC = (props: any) => {
                         />
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <></>
-                )}
-
-                <div className="ms-Grid-row">
+                  ) : (
+                    <></>
+                  )}
                   <div
-                    className="ms-Grid-col ms-lg2"
+                    className="ms-Grid-col ms-lg3"
                     style={{ position: "relative", right: "1px" }}
                   >
                     {/* <div className="ms-Grid-col ms-lg4"> */}
-                    <CustomLabel value={labelName.ViewComments} />
+                    <CustomLabel
+                      value={Attachment.PositionDocument.ViewComments}
+                    />
                     <ReuseButton
                       Style={{
                         minWidth: "117px",
@@ -805,7 +834,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                 }}
                 additionalButtons={[
                   {
-                    label: "Back",
+                    label: ButtonAction.Back,
                     onClick: () => {
                       back_fn();
                     },

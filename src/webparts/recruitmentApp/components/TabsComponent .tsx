@@ -5,6 +5,7 @@ import "../App.css";
 import ReuseButton from "./ReuseButton";
 import StatusBar from "./StatusBar";
 import { ColorCode, tabType } from "../utilities/Config";
+import { ButtonAction } from "../utilities/LabelName";
 
 interface TabData {
   label: string | JSX.Element;
@@ -179,7 +180,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                 {tabs.length > 1 && value !== tabs[0].value && (
                   <div style={{ marginRight: "10px" }}>
                     <ReuseButton
-                      label="Back"
+                      label={ButtonAction.Back}
                       onClick={handlePreviousClick}
                       spacing={4}
                     />
@@ -189,7 +190,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                 {tabs.length > 1 && value !== tabs[tabs.length - 1].value && (
                   <div style={{ marginRight: "10px" }}>
                     <ReuseButton
-                      label="Next"
+                      label={ButtonAction.Next}
                       onClick={handleNextClick}
                       spacing={4}
                     />
@@ -197,7 +198,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                 )}
 
                 {additionalButtons.map((button, index) => {
-                  if (button.label === "Submit") {
+                  if (button.label === ButtonAction.Submit) {
                     return value === tabs[tabs.length - 1].value ? (
                       <div style={{ marginRight: "10px" }} key={index}>
                         <ReuseButton
@@ -208,7 +209,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                         />
                       </div>
                     ) : null;
-                  } else if (button.label === "Preview") {
+                  } else if (button.label === ButtonAction.Preview) {
                     return value === tabs[tabs.length - 1].value ? (
                       <div key={index} style={{ marginRight: "10px" }}>
                         <ReuseButton

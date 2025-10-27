@@ -3,20 +3,16 @@ import { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import CustomTextArea from "../../components/CustomTextArea";
 import CustomInput from "../../components/CustomInput";
 import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
 import {
-  ButtonAction,
+  CategoryID,
   ColorCode,
   DocumentFolderName,
   DocumentLibraray,
-  HardwareoptValue,
   HRMSAlertOptions,
-  Inductiontype,
-  labelName,
   ListNames,
   PostRecrutimentCheckboxContent,
   RecuritmentHRMsg,
@@ -27,11 +23,8 @@ import {
   WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
-import LabelHeaderComponents from "../../components/TitleHeader";
-import SignatureCheckbox from "../../components/SignatureCheckbox";
-import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
+import { alertPropsData } from "../../Models/Screens";
 import { UploadDocument, WorkflowJson } from "../../Models/ApIInterface";
-import CustomSignature from "../../components/CustomSignature";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomLabel from "../../components/CustomLabel";
 import AttachmentButton from "../../components/AttachmentButton";
@@ -41,20 +34,27 @@ import IsValid from "../../components/Validation";
 import {
   CommonServices,
   GetPortalJobsService,
+  getVRRDetails,
   OfferLetterServices,
 } from "../../Services/ServiceExport";
 import {
   DocumentName,
   GetCandidateDocument,
-  UpdateCandidateData,
 } from "../../Services/InitiateOfferLetter/IOfferLetterService";
 import CustomRadioGroup from "../../components/CustomRadioGroup";
-import CustomMultiSelect from "../../components/CustomMultiSelect";
-import CustomAutoComplete from "../../components/CustomAutoComplete";
-import CustomDatePicker from "../../components/CustomDatePicker";
-import CustomDialogbox from "../../components/CustomDialogbox";
 import ReuseButton from "../../components/ReuseButton";
 import { ViewCandidateDocument } from "../ScreenComponent/ViewCandidateDocument";
+import {
+  Attachment,
+  ButtonAction,
+  CheckboxContent,
+  DisplayFolderName,
+  labelNames,
+} from "../../utilities/LabelName";
+import AlertDialogbox from "../../components/CustomAlert/AlertDialogbox";
+import CustomTextArea from "../../components/CustomTextArea";
+import SignatureCheckbox from "../../components/SignatureCheckbox";
+import CustomSignature from "../../components/CustomSignature";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -80,12 +80,12 @@ export type CustomViewDocument = {
   DocumentContent: any;
 };
 
-type optionValue = {
-  InductionTypeOption: AutoCompleteItem[];
-  RegionOption: AutoCompleteItem[];
-  ZoneOption: AutoCompleteItem[];
-  HarewareOption: AutoCompleteItem[];
-};
+// type optionValue = {
+//   InductionTypeOption: AutoCompleteItem[];
+//   RegionOption: AutoCompleteItem[];
+//   ZoneOption: AutoCompleteItem[];
+//   HarewareOption: AutoCompleteItem[];
+// };
 
 const UploadCandidateDocument = (props: any) => {
   const todaydate = new Date();
@@ -119,38 +119,48 @@ const UploadCandidateDocument = (props: any) => {
     RadioAction: "",
     CheckboxContent: "",
     ConsentDocs: [],
+    JoiningDate: "",
+    NoticePeriod: "",
 
     TrainingSystem: {
       Inductiontype: { key: 0, text: "" },
       StartDate: undefined,
       EndDate: undefined,
-      Region: { key: 0, text: "" },
-      Zone: { key: 0, text: "" },
+      Region: [],
+      Zone: [],
       Comments: "",
     },
     TASystem: {
       StartDate: undefined,
       EndDate: undefined,
-      Region: { key: 0, text: "" },
-      Zone: { key: 0, text: "" },
+      Region: [],
+      Zone: [],
       Comments: "",
     },
     ITSystem: {
       StartDate: undefined,
       Hardware: [],
-      Region: { key: 0, text: "" },
-      Zone: { key: 0, text: "" },
+      Region: [],
+      Zone: [],
       Comments: "",
       ITStatus: "",
     },
+    MedicalSystem: {
+      StartDate: undefined,
+      EndDate: undefined,
+      Region: [],
+      Zone: [],
+      Comments: "",
+      MedicalStatus: "",
+    },
     ITRequired: "",
   });
-  const [viewDocument, setViewDocument] = React.useState<viewDocument>({
-    ReviewOfferDoc: [],
-    ReviewOthersDoc: [],
-    ReviewEmployDocs: [],
-    ViewFolderPath: "",
-  });
+  // const [viewDocument, setViewDocument] = React.useState<viewDocument>({
+  //   ReviewOfferDoc: [],
+  //   ReviewOthersDoc: [],
+  //   ReviewEmployDocs: [],
+  //   ViewFolderPath: "",
+  // });
   const [documentview, setdocumentview] = React.useState<CustomViewDocument[]>(
     []
   );
@@ -174,12 +184,12 @@ const UploadCandidateDocument = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
-  const [optionValue, setOptionValue] = React.useState<optionValue>({
-    InductionTypeOption: [],
-    RegionOption: [],
-    ZoneOption: [],
-    HarewareOption: [],
-  });
+  // const [optionValue, setOptionValue] = React.useState<optionValue>({
+  //   InductionTypeOption: [],
+  //   RegionOption: [],
+  //   ZoneOption: [],
+  //   HarewareOption: [],
+  // });
   const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
 
   const fetchData = async () => {
@@ -203,7 +213,7 @@ const UploadCandidateDocument = (props: any) => {
         RequestID: item?.CandidateDetails?.JobRequestID,
         DocumentType: DocumentFolderName?.Offerletter,
         DocumentName: DocumentFolderName?.Offerletter,
-        UnsignedDoc: DocumentFolderName?.UnsignedDoc,
+        UnsignedDoc: DocumentFolderName?.SignedDoc,
       };
       let OfferLetter = await OfferLetterServices.FetchCandidateDocument(
         OfferDocument
@@ -213,33 +223,59 @@ const UploadCandidateDocument = (props: any) => {
         RequestID: item?.CandidateDetails?.JobRequestID,
         DocumentType: DocumentFolderName?.EmploymentContractForm,
         DocumentName: DocumentFolderName?.EmploymentContractForm,
-        UnsignedDoc: DocumentFolderName?.UnsignedDoc,
+        UnsignedDoc: DocumentFolderName?.SignedDoc,
       };
       let EmployementContract =
         await OfferLetterServices.FetchCandidateDocument(
           EmployementContractDocument
         );
-      console.log(OfferLetter.data, "OfferLetter");
-      let PersonalDocument: GetCandidateDocument = {
-        ListName: DocumentLibraray.HRMSCandidateDocs,
-        RequestID: item?.CandidateDetails?.JobRequestID, //item?.CandidateDetails?.JobRequestID,
-        DocumentType: DocumentFolderName?.PersonalDocs,
-        DocumentName: DocumentFolderName?.PersonalDocs,
-        UnsignedDoc: DocumentFolderName?.UnsignedDoc,
-      };
-      let PersonalDocs = await OfferLetterServices.FetchCandidateDocument(
-        PersonalDocument
+      const DocumentName = await GetPortalJobsService.GetAllMaster(
+        CategoryID.DocumentType
       );
-      let MedicalDocument: GetCandidateDocument = {
-        ListName: DocumentLibraray.HRMSCandidateDocs,
-        RequestID: item?.CandidateDetails?.JobRequestID, //item?.CandidateDetails?.JobRequestID,
-        DocumentType: DocumentFolderName?.Medical,
-        DocumentName: DocumentFolderName?.Medical,
-        UnsignedDoc: DocumentFolderName?.UnsignedDoc,
-      };
-      let MedicalDocs = await OfferLetterServices.FetchCandidateDocument(
-        MedicalDocument
-      );
+      console.log("DocumentName?.data", DocumentName?.data);
+      let docs: any[] = [];
+
+      const PersonalDocumentPromises =
+        DocumentName?.data?.map(async (doc: any) => {
+          let PersonalDocument: GetCandidateDocument = {
+            ListName: DocumentLibraray.HRMSCandidateDocs,
+            RequestID: item?.CandidateDetails?.JobRequestID,
+            DocumentType: doc.displayText,
+            DocumentName: doc.displayText,
+          };
+
+          let PersonalDocs = await OfferLetterServices.FetchCandidateDocument(
+            PersonalDocument
+          );
+
+          if (PersonalDocs.data.length > 0) {
+            let PersonalDoc: CustomViewDocument[] = PersonalDocs.data.map(
+              (item: any) => ({
+                Title: doc.displayText,
+                DocumentName: item.name,
+                DocumentContent: item.content,
+              })
+            );
+            return PersonalDoc;
+          }
+          return []; // return empty array if no data
+        }) ?? []; // <-- fallback to empty array if undefined
+
+      const PersonalDocument = await Promise.all(PersonalDocumentPromises);
+      const flattenedPersonalDocuments = PersonalDocument.flat();
+
+      console.log(flattenedPersonalDocuments);
+
+      // let MedicalDocument: GetCandidateDocument = {
+      //   ListName: DocumentLibraray.HRMSCandidateDocs,
+      //   RequestID: item?.CandidateDetails?.JobRequestID, //item?.CandidateDetails?.JobRequestID,
+      //   DocumentType: DocumentFolderName?.Medical,
+      //   DocumentName: DocumentFolderName?.Medical,
+      //   UnsignedDoc: DocumentFolderName?.UnsignedDoc,
+      // };
+      // let MedicalDocs = await OfferLetterServices.FetchCandidateDocument(
+      //   MedicalDocument
+      // );
 
       let ConsentFormDocs = OfferLetter.data.filter((item: any) =>
         item.name.includes("ConsentForm")
@@ -247,57 +283,67 @@ const UploadCandidateDocument = (props: any) => {
       let OfferDocs = OfferLetter.data.filter((item: any) =>
         item.name.includes("OfferLetter")
       );
-      let docs: any[] = [];
       let OfferDOcsview: CustomViewDocument[] = OfferDocs.map((item: any) => ({
-        Title: "Offer Letter",
+        Title: DisplayFolderName.Offerletter,
         DocumentName: item.name,
         DocumentContent: item.content,
       }));
       let ConsentDocs: CustomViewDocument[] = ConsentFormDocs.map(
         (item: any) => ({
-          Title: "Code of Business Content",
+          Title: DisplayFolderName.ConsentForm,
           DocumentName: item.name,
           DocumentContent: item.content,
         })
       );
-      let OthersDocs: CustomViewDocument[] = PersonalDocs.data.map(
-        (item: any) => ({
-          Title: item.category,
-          DocumentName: item?.documents[0]?.name,
-          DocumentContent: item?.documents[0]?.content,
-        })
-      );
+      // let OthersDocs: CustomViewDocument[] = PersonalDocs.data.map(
+      //   (item: any) => ({
+      //     Title: item.category,
+      //     DocumentName: item?.documents[0]?.name,
+      //     DocumentContent: item?.documents[0]?.content,
+      //   })
+      // );
       let EmployeeContract: CustomViewDocument[] = EmployementContract.data.map(
         (item: any) => ({
-          Title: "Employment Contract",
+          Title: DisplayFolderName.EmploymentContractForm,
           DocumentName: item.name,
           DocumentContent: item.content,
         })
       );
-      let MedicalDoc: CustomViewDocument[] = MedicalDocs.data.map(
-        (item: any) => ({
-          Title: DocumentFolderName.EmploymentContractForm,
-          DocumentName: item.name,
-          DocumentContent: item.content,
-        })
-      );
+      let PersonalDocs = [
+        {
+          Title: DisplayFolderName.PersonalDocument,
+          data: flattenedPersonalDocuments,
+        },
+      ];
+      // let MedicalDoc: CustomViewDocument[] = MedicalDocs.data.map(
+      //   (item: any) => ({
+      //     Title: DocumentFolderName.EmploymentContractForm,
+      //     DocumentName: item.name,
+      //     DocumentContent: item.content,
+      //   })
+      // );
       if (OfferDOcsview.length > 0) {
         docs.push(OfferDOcsview[0]);
       }
       if (ConsentDocs.length > 0) {
         docs.push(ConsentDocs[0]);
       }
-      if (OthersDocs.length > 0) {
-        docs.push(OthersDocs[0]);
-      }
+      docs.push(PersonalDocs);
+
+      // if (OthersDocs.length > 0) {
+      //   docs.push(OthersDocs[0]);
+      // }
       if (EmployeeContract.length > 0) {
         docs.push(EmployeeContract[0]);
       }
-      if (MedicalDoc.length > 0) {
-        docs.push(MedicalDoc[0]);
-      }
-      console.log(docs, "docs");
+      // if (MedicalDoc.length > 0) {
+      //   docs.push(MedicalDoc[0]);
+      // }
       setdocumentview(docs);
+      let CandidateDetails = await GetPortalJobsService.getCandidateProfile(
+        item?.CandidateDetails?.JobRequestID
+      );
+
       setData((prev) => ({
         ...prev,
         CandidateID: item?.CandidateDetails.CandidateID,
@@ -318,15 +364,18 @@ const UploadCandidateDocument = (props: any) => {
         Email: item?.CandidateDetails?.Email,
         IdentityNumber: item?.CandidateDetails?.IdentityNumber,
         ProofOfIdentity: item?.CandidateDetails?.ProofOfIdentity,
-        PersonalDocs: PersonalDocs.data,
-        MedicalDocs: MedicalDocs.data,
+        // PersonalDocs: PersonalDocs.data,
+        // MedicalDocs: MedicalDocs.data,
+        JoiningDate: CandidateDetails?.data?.[0]?.joiningDate ?? "",
+        NoticePeriod: CandidateDetails?.data?.[0]?.noticePeriod ?? "",
       }));
-      setViewDocument((prev) => ({
-        ...prev,
-        ReviewOfferDoc: OfferLetter.data,
-        ReviewEmployDocs: EmployementContract.data,
-        ViewFolderPath: item?.CandidateDetails?.DocumentFolderPath,
-      }));
+
+      // setViewDocument((prev) => ({
+      //   ...prev,
+      //   ReviewOfferDoc: OfferLetter.data,
+      //   ReviewEmployDocs: EmployementContract.data,
+      //   ViewFolderPath: item?.CandidateDetails?.DocumentFolderPath,
+      // }));
 
       if (
         props.stateValue?.StatusId ===
@@ -359,20 +408,30 @@ const UploadCandidateDocument = (props: any) => {
       const getMasterValue = await CommonServices.GetMasterData(
         ListNames.HRMSRegion
       );
-      if (getMasterValue.status === ResponeStatus.SUCCESS) {
-        const RegionOpt: AutoCompleteItem[] = (getMasterValue.data ?? []).map(
-          (opt: any) => ({
-            key: opt.ID,
-            text: opt.Region,
-          })
-        );
-
-        setOptionValue((prevState) => ({
-          ...prevState,
-          InductionTypeOption: Inductiontype,
-          RegionOption: RegionOpt,
-          HarewareOption: HardwareoptValue,
-        }));
+      const zoneOptions = await OfferLetterServices.FilterZoneInRegion([], "");
+      if (
+        getMasterValue.status === ResponeStatus.SUCCESS &&
+        zoneOptions.status === ResponeStatus.SUCCESS
+      ) {
+        // const RegionOpt: AutoCompleteItem[] = (getMasterValue.data ?? []).map(
+        //   (opt: any) => ({
+        //     key: opt.ID,
+        //     text: opt.Region,
+        //   })
+        // );
+        // const ZoneOpt: AutoCompleteItem[] = (zoneOptions.data ?? []).map(
+        //   (opt: any) => ({
+        //     key: opt.ID,
+        //     text: opt.Zone,
+        //   })
+        // );
+        // setOptionValue((prevState) => ({
+        //   ...prevState,
+        //   InductionTypeOption: Inductiontype,
+        //   RegionOption: RegionOpt,
+        //   HarewareOption: HardwareoptValue,
+        //   ZoneOption: ZoneOpt,
+        // }));
       }
     } catch (error) {
       console.error("Failed to fetch master data:", error);
@@ -384,7 +443,7 @@ const UploadCandidateDocument = (props: any) => {
 
     const newTabNames = [
       { tabName: props.stateValue?.TabName },
-      { tabName: props.stateValue?.ButtonAction },
+      // { tabName: props.stateValue?.ButtonAction },
       { tabName: TabName.ViewCandidateList },
     ];
     setTabNameData(newTabNames);
@@ -498,122 +557,122 @@ const UploadCandidateDocument = (props: any) => {
     });
   };
 
-  const handleAutoComplete = async (
-    tab: keyof UploadDocument,
-    key: string,
-    item: AutoCompleteItem | null
-  ) => {
-    if (item) {
-      setData((prevState) => ({
-        ...prevState,
-        [tab]: {
-          ...prevState[tab],
-          [key]: item,
-        },
-      }));
-      // setValidationError((prevState: any) => ({
-      //   ...prevState,
-      //   [key]: false,
-      // }));
-    }
-    if (key === "Region") {
-      let filterConditions: any[] = [];
-      let Conditions = "and";
-      filterConditions.push({
-        FilterKey: "Region",
-        Operator: "eq",
-        FilterValue: item?.key,
-      });
-      const zoneOptions = await OfferLetterServices.FilterZoneInRegion(
-        filterConditions,
-        Conditions
-      );
-      if (zoneOptions.status === ResponeStatus.SUCCESS) {
-        const ZoneOpt: AutoCompleteItem[] = (zoneOptions.data ?? []).map(
-          (opt: any) => ({
-            key: opt.ID,
-            text: opt.Zone,
-          })
-        );
-        setOptionValue((prevState) => ({
-          ...prevState,
-          ZoneOption: ZoneOpt,
-        }));
-        setData((prevState) => ({
-          ...prevState,
-          [tab]: {
-            ...prevState[tab],
-            Zone: { key: 0, text: "" },
-          },
-        }));
-      }
-    }
-  };
+  // const handleAutoComplete = async (
+  //   tab: keyof UploadDocument,
+  //   key: string,
+  //   item: AutoCompleteItem | null
+  // ) => {
+  //   if (item) {
+  //     setData((prevState) => ({
+  //       ...prevState,
+  //       [tab]: {
+  //         ...prevState[tab],
+  //         [key]: item,
+  //       },
+  //     }));
+  //     // setValidationError((prevState: any) => ({
+  //     //   ...prevState,
+  //     //   [key]: false,
+  //     // }));
+  //   }
+  //   if (key === "Region") {
+  //     let filterConditions: any[] = [];
+  //     let Conditions = "and";
+  //     filterConditions.push({
+  //       FilterKey: "Region",
+  //       Operator: "eq",
+  //       FilterValue: item?.key,
+  //     });
+  //     const zoneOptions = await OfferLetterServices.FilterZoneInRegion(
+  //       filterConditions,
+  //       Conditions
+  //     );
+  //     if (zoneOptions.status === ResponeStatus.SUCCESS) {
+  //       const ZoneOpt: AutoCompleteItem[] = (zoneOptions.data ?? []).map(
+  //         (opt: any) => ({
+  //           key: opt.ID,
+  //           text: opt.Zone,
+  //         })
+  //       );
+  //       // setOptionValue((prevState) => ({
+  //       //   ...prevState,
+  //       //   ZoneOption: ZoneOpt,
+  //       // }));
+  //       setData((prevState) => ({
+  //         ...prevState,
+  //         [tab]: {
+  //           ...prevState[tab],
+  //           Zone: { key: 0, text: "" },
+  //         },
+  //       }));
+  //     }
+  //   }
+  // };
 
-  const handleDateChange = async (
-    tab: keyof UploadDocument,
-    key: string,
-    item: Date | undefined
-  ) => {
-    if (item) {
-      const now = new Date();
-      const updatedDate = new Date(item);
+  // const handleDateChange = async (
+  //   tab: keyof UploadDocument,
+  //   key: string,
+  //   item: Date | undefined
+  // ) => {
+  //   if (item) {
+  //     const now = new Date();
+  //     const updatedDate = new Date(item);
 
-      updatedDate.setHours(now.getHours());
-      updatedDate.setMinutes(now.getMinutes());
-      updatedDate.setSeconds(now.getSeconds());
-      updatedDate.setMilliseconds(now.getMilliseconds());
+  //     updatedDate.setHours(now.getHours());
+  //     updatedDate.setMinutes(now.getMinutes());
+  //     updatedDate.setSeconds(now.getSeconds());
+  //     updatedDate.setMilliseconds(now.getMilliseconds());
 
-      setData((prevState) => ({
-        ...prevState,
-        [tab]: {
-          ...prevState[tab],
-          [key]: updatedDate,
-        },
-      }));
+  //     setData((prevState) => ({
+  //       ...prevState,
+  //       [tab]: {
+  //         ...prevState[tab],
+  //         [key]: updatedDate,
+  //       },
+  //     }));
 
-      if (key === "StartDate") {
-        setData((prevState) => ({
-          ...prevState,
-          [tab]: {
-            ...prevState[tab],
-            EndDate:
-              updatedDate < data[tab]?.EndDate ? data[tab]?.EndDate : undefined,
-          },
-        }));
-      }
-      if (key === "EndDate") {
-        setData((prevState) => ({
-          ...prevState,
-          [tab]: {
-            ...prevState[tab],
-            EndDate:
-              updatedDate > data[tab]?.StartDate ? updatedDate : undefined,
-          },
-        }));
-      }
-      // setValidationError((prevState: any) => ({
-      //   ...prevState,
-      //   [key]: false,
-      // }));
-    }
-  };
+  //     if (key === "StartDate") {
+  //       setData((prevState) => ({
+  //         ...prevState,
+  //         [tab]: {
+  //           ...prevState[tab],
+  //           EndDate:
+  //             updatedDate < data[tab]?.EndDate ? data[tab]?.EndDate : undefined,
+  //         },
+  //       }));
+  //     }
+  //     if (key === "EndDate") {
+  //       setData((prevState) => ({
+  //         ...prevState,
+  //         [tab]: {
+  //           ...prevState[tab],
+  //           EndDate:
+  //             updatedDate > data[tab]?.StartDate ? updatedDate : undefined,
+  //         },
+  //       }));
+  //     }
+  //     // setValidationError((prevState: any) => ({
+  //     //   ...prevState,
+  //     //   [key]: false,
+  //     // }));
+  //   }
+  // };
 
-  const handleMulitiSelect = async (
-    tab: keyof UploadDocument,
-    key: string,
-    item: AutoCompleteItem[] | null
-  ) => {
-    if (item) {
-      setData((prevState) => ({
-        ...prevState,
-        [tab]: {
-          ...prevState[tab],
-          [key]: item,
-        },
-      }));
-    }
-  };
+  // const handleMulitiSelect = async (
+  //   tab: keyof UploadDocument,
+  //   key: string,
+  //   item: AutoCompleteItem[] | null
+  // ) => {
+  //   if (item) {
+  //     setData((prevState) => ({
+  //       ...prevState,
+  //       [tab]: {
+  //         ...prevState[tab],
+  //         [key]: item,
+  //       },
+  //     }));
+  //   }
+  // };
 
   // function handleFileDownload(documentUrl: string) {
   //   const viewUrl = documentUrl.includes("?")
@@ -662,7 +721,7 @@ const UploadCandidateDocument = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="PositionID"
+                      label={labelNames.CandidateDetails.PositionID}
                       value={data?.positionID}
                       disabled={true}
                       mandatory={false}
@@ -670,7 +729,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Applicant Name"
+                      label={labelNames.CandidateDetails.ApplicantName}
                       value={data.ApplicantName}
                       disabled={true}
                       mandatory={false}
@@ -678,7 +737,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Applicant Surname"
+                      label={labelNames.CandidateDetails.ApplicantSurname}
                       value={data.ApplicantSurName}
                       disabled={true}
                       mandatory={false}
@@ -686,7 +745,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Nationality"
+                      label={labelNames.CandidateDetails.Nationality}
                       value={data.Nationalty}
                       disabled={true}
                       mandatory={false}
@@ -697,7 +756,7 @@ const UploadCandidateDocument = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="BusinessUnitCode"
+                      label={labelNames.PositionDetails.BusinessUnitCode}
                       value={data.BusinessUnitCode}
                       disabled={true}
                       mandatory={false}
@@ -705,7 +764,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Department"
+                      label={labelNames.PositionDetails.Department}
                       value={data?.Department}
                       disabled={true}
                       mandatory={false}
@@ -713,7 +772,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="SubDepartment"
+                      label={labelNames.PositionDetails.SubDepartment}
                       value={data?.SubDepartment}
                       disabled={true}
                       mandatory={false}
@@ -721,7 +780,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Section"
+                      label={labelNames.PositionDetails.Section}
                       value={data?.Section}
                       disabled={true}
                       mandatory={false}
@@ -732,7 +791,7 @@ const UploadCandidateDocument = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Department Code"
+                      label={labelNames.PositionDetails.DepartmentCode}
                       value={data?.DepartmentCode}
                       disabled={true}
                       mandatory={false}
@@ -740,7 +799,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Employment Category"
+                      label={labelNames.PositionDetails.EmploymentCategory}
                       value={data?.EmploymentCategory}
                       disabled={true}
                       mandatory={false}
@@ -748,7 +807,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Type Of Contract"
+                      label={labelNames.PositionDetails.TypeofContract}
                       value={data?.TypeOfCOntract}
                       disabled={true}
                       mandatory={false}
@@ -756,7 +815,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Area Of Work"
+                      label={labelNames.PositionDetails.AreaofWork}
                       value={data?.AreaOfWork}
                       disabled={true}
                       mandatory={false}
@@ -767,7 +826,7 @@ const UploadCandidateDocument = (props: any) => {
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Location"
+                      label={labelNames.PositionDetails.Location}
                       value={data?.Location}
                       disabled={true}
                       mandatory={false}
@@ -775,7 +834,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Email"
+                      label={labelNames.CandidateDetails.Email}
                       value={data?.Email}
                       disabled={true}
                       mandatory={false}
@@ -783,7 +842,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Proof Of Identity"
+                      label={labelNames.CandidateDetails.ProofOfIdentity}
                       value={data?.ProofOfIdentity}
                       disabled={true}
                       mandatory={false}
@@ -791,13 +850,37 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
-                      label="Identity Number"
+                      label={labelNames.CandidateDetails.IdentityNumber}
                       value={data?.IdentityNumber}
                       disabled={true}
                       mandatory={false}
                     />
                   </div>
                 </div>
+
+                {props.stateValue?.StatusId !=
+                  StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ||
+                  (props.stateValue?.StatusId !=
+                    StatusId.PendingwithTAforMedicalScreening && (
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.CandidateDetails.JoiningDate}
+                          value={data?.JoiningDate}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.CandidateDetails.NoticePeriod}
+                          value={data?.NoticePeriod}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+                    </div>
+                  ))}
 
                 {/* {data.MedicalDocs.length > 0 && (
                   <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
@@ -838,10 +921,12 @@ const UploadCandidateDocument = (props: any) => {
                 )} */}
 
                 {props.stateValue?.StatusId !=
-                  StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter && (
+                StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ? (
                   <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
                     <div className="custom-document-column">
-                      <CustomLabel value={"Candidate Documents"} />
+                      <CustomLabel
+                        value={Attachment.PositionDocument.CandidateDocuments}
+                      />
                       <div className="document-wrapper">
                         <ReuseButton
                           Style={{
@@ -871,6 +956,8 @@ const UploadCandidateDocument = (props: any) => {
                       </div>
                     </div>
                   </div>
+                ) : (
+                  <></>
                 )}
 
                 {props.stateValue?.StatusId ===
@@ -881,7 +968,7 @@ const UploadCandidateDocument = (props: any) => {
                     <div className="ms-Grid-col ms-lg3">
                       <>
                         <CustomLabel
-                          value={labelName.OfferLetter}
+                          value={Attachment.PositionDocument.OfferLetter}
                           mandatory={true}
                         />
                         <AttachmentButton
@@ -896,6 +983,7 @@ const UploadCandidateDocument = (props: any) => {
                                   name: "OfferLetter-" + item.name,
                                   content: item.file,
                                   type: "New",
+                                  url: item.Url,
                                 };
                               }
                             );
@@ -926,7 +1014,7 @@ const UploadCandidateDocument = (props: any) => {
                     <div className="ms-Grid-col ms-lg3">
                       <>
                         <CustomLabel
-                          value={labelName.ConsentDoc}
+                          value={Attachment.PositionDocument.ConsentDoc}
                           mandatory={true}
                         />
                         <AttachmentButton
@@ -941,6 +1029,7 @@ const UploadCandidateDocument = (props: any) => {
                                   name: "ConsentForm- " + item.name,
                                   content: item.file,
                                   type: "New",
+                                  url: item.Url,
                                 };
                               }
                             );
@@ -994,7 +1083,7 @@ const UploadCandidateDocument = (props: any) => {
                   data.RadioAction === "Yes" && (
                     <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
                       <CustomLabel
-                        value={labelName.EmployementDoc}
+                        value={Attachment.PositionDocument.EmployementDoc}
                         mandatory={true}
                       />
                       <AttachmentButton
@@ -1009,6 +1098,7 @@ const UploadCandidateDocument = (props: any) => {
                                 name: item.name,
                                 content: item.file,
                                 type: "New",
+                                url: item.Url,
                               };
                             }
                           );
@@ -1060,549 +1150,6 @@ const UploadCandidateDocument = (props: any) => {
                 ) : (
                   <></>
                 )}
-
-                {(props.stateValue?.StatusId ===
-                  StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm &&
-                  data.RadioAction === "Yes") ||
-                props.stateValue?.StatusId ===
-                  StatusId.OnboardingProcessinitiatedforDRC ||
-                props.stateValue?.StatusId ===
-                  StatusId.OnboardingProcessinitiatedforExpat ? (
-                  <>
-                    {/* <Card
-                      variant="outlined"
-                      sx={{
-                        boxShadow: "0px 7px 4px 3px #d3d3d3",
-                        borderRadius: "10px",
-                        marginTop: "2%",
-                      }}
-                    >
-                      <CardContent>
-                        <div>
-                          <div
-                            className="ms-Grid-row"
-                            style={{ marginLeft: "0%" }}
-                          >
-                            <LabelHeaderComponents
-                              value={labelName.TrainingCenterSystem}
-                            />
-                          </div>
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={"Induction Type"}
-                                options={optionValue.InductionTypeOption}
-                                value={data.TrainingSystem?.Inductiontype}
-                                disabled={
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforDRC ||
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforExpat
-                                }
-                                mandatory={false}
-                                onChange={(item) =>
-                                  handleAutoComplete(
-                                    "TrainingSystem",
-                                    "Inductiontype",
-                                    item
-                                  )
-                                }
-                                error={false}
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomDatePicker
-                                label="Start Date"
-                                selectedDate={data.TrainingSystem?.StartDate}
-                                error={false}
-                                minDate={todaydate}
-                                mandatory={false}
-                                onChange={(date) =>
-                                  handleDateChange(
-                                    "TrainingSystem",
-                                    "StartDate",
-                                    date ?? undefined
-                                  )
-                                }
-                                disabled={
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforDRC ||
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforExpat
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomDatePicker
-                                label="End Date"
-                                selectedDate={data.TrainingSystem?.EndDate}
-                                error={false}
-                                minDate={todaydate}
-                                mandatory={false}
-                                onChange={(date) =>
-                                  handleDateChange(
-                                    "TrainingSystem",
-                                    "EndDate",
-                                    date ?? undefined
-                                  )
-                                }
-                                disabled={
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforDRC ||
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforExpat
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={"Region"}
-                                options={optionValue.RegionOption}
-                                value={data.TrainingSystem?.Region}
-                                disabled={
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforDRC ||
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforExpat
-                                }
-                                mandatory={false}
-                                onChange={(item) =>
-                                  handleAutoComplete(
-                                    "TrainingSystem",
-                                    "Region",
-                                    item
-                                  )
-                                }
-                                error={false}
-                              />
-                            </div>
-                          </div>
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={"Zone"}
-                                options={optionValue.ZoneOption}
-                                value={data.TrainingSystem?.Zone}
-                                disabled={
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforDRC ||
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforExpat
-                                }
-                                mandatory={false}
-                                onChange={(item) =>
-                                  handleAutoComplete(
-                                    "TrainingSystem",
-                                    "Zone",
-                                    item
-                                  )
-                                }
-                                error={false}
-                              />
-                            </div>
-                          </div>
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg12">
-                              <CustomTextArea
-                                label="Comments"
-                                value={data.TrainingSystem.Comments}
-                                error={false}
-                                onChange={(value) =>
-                                  handleInputChangeTextArea(
-                                    "Comments",
-                                    "TrainingSystem",
-                                    value
-                                  )
-                                }
-                                mandatory={false}
-                                disabled={
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforDRC ||
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforExpat
-                                }
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card> */}
-
-                    <Card
-                      variant="outlined"
-                      sx={{
-                        boxShadow: "0px 7px 4px 3px #d3d3d3",
-                        borderRadius: "10px",
-                        marginTop: "2%",
-                      }}
-                    >
-                      <CardContent>
-                        <div>
-                          <div
-                            className="ms-Grid-row"
-                            style={{ marginLeft: "0%" }}
-                          >
-                            <LabelHeaderComponents value={labelName.TASystem} />
-                          </div>
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomDatePicker
-                                label="Start Date"
-                                selectedDate={data.TASystem?.StartDate}
-                                error={false}
-                                minDate={todaydate}
-                                mandatory={false}
-                                onChange={(date) =>
-                                  handleDateChange(
-                                    "TASystem",
-                                    "StartDate",
-                                    date ?? undefined
-                                  )
-                                }
-                                disabled={
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforDRC ||
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforExpat
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomDatePicker
-                                label="End Date"
-                                selectedDate={data.TASystem?.EndDate}
-                                error={false}
-                                minDate={todaydate}
-                                mandatory={false}
-                                onChange={(date) =>
-                                  handleDateChange(
-                                    "TASystem",
-                                    "EndDate",
-                                    date ?? undefined
-                                  )
-                                }
-                                disabled={
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforDRC ||
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforExpat
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={"Region"}
-                                options={optionValue.RegionOption}
-                                value={data.TASystem?.Region}
-                                mandatory={false}
-                                onChange={(item) =>
-                                  handleAutoComplete("TASystem", "Region", item)
-                                }
-                                error={false}
-                                disabled={
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforDRC ||
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforExpat
-                                }
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg3">
-                              <CustomAutoComplete
-                                label={"Zone"}
-                                options={optionValue.ZoneOption}
-                                value={data.TASystem?.Zone}
-                                disabled={
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforDRC ||
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforExpat
-                                }
-                                mandatory={false}
-                                onChange={(item) =>
-                                  handleAutoComplete("TASystem", "Zone", item)
-                                }
-                                error={false}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg12">
-                              <CustomTextArea
-                                label={labelName.Comment}
-                                value={data.TASystem.Comments}
-                                error={false}
-                                onChange={(value) =>
-                                  handleInputChangeTextArea(
-                                    "Comments",
-                                    "TASystem",
-                                    value
-                                  )
-                                }
-                                mandatory={false}
-                                disabled={
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforDRC ||
-                                  props.stateValue?.StatusId ===
-                                    StatusId.OnboardingProcessinitiatedforExpat
-                                }
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg5">
-                        <CustomRadioGroup
-                          label={
-                            "Do we need to initiate IT setup (hardware/software) for the candidate?"
-                          }
-                          value={data.ITRequired}
-                          options={["Yes", "No"]}
-                          error={validationErrors.ITRequired}
-                          mandatory={true}
-                          onChange={(item) =>
-                            handleRadioChange("ITRequired", item)
-                          }
-                          disabled={
-                            props.stateValue?.StatusId ===
-                              StatusId.OnboardingProcessinitiatedforDRC ||
-                            props.stateValue?.StatusId ===
-                              StatusId.OnboardingProcessinitiatedforExpat
-                          }
-                        />
-                      </div>
-                    </div>
-                    {data.ITRequired === "Yes" ? (
-                      <>
-                        <Card
-                          variant="outlined"
-                          sx={{
-                            boxShadow: "0px 7px 4px 3px #d3d3d3",
-                            borderRadius: "10px",
-                            marginTop: "2%",
-                          }}
-                        >
-                          <CardContent>
-                            <div>
-                              <div
-                                className="ms-Grid-row"
-                                style={{ marginLeft: "0%" }}
-                              >
-                                <div className="ms-Grid-col ms-lg6">
-                                  <LabelHeaderComponents
-                                    value={labelName.ITSystem}
-                                  />
-                                </div>
-                                <div className="ms-Grid-col ms-lg6">
-                                  <div
-                                    className="ms-Grid-row"
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "flex-end",
-                                      gap: "7%",
-                                    }}
-                                  >
-                                    {/* <div className="ms-Grid-col ms-lg3">
-                                <ReuseButton
-                                  label={ITSystemReq.Required}
-                                  onClick={() => {
-                                    setRequiredBtn(ITSystemReq.Required);
-                                  }}
-                                  spacing={4}
-                                  height="42px"
-                                  width="120px"
-                                  Style={{
-                                    minWidth: "150px",
-                                    height: "42px",
-                                    color:
-                                      requiredBtn === ITSystemReq.Required
-                                        ? "white"
-                                        : "#0e0f0f",
-                                    background:
-                                      requiredBtn === ITSystemReq.Required
-                                        ? ColorCode.ButtonColorCode?.ButtonColor
-                                        : "#d2c6c6",
-                                    fontWeight:
-                                      requiredBtn === ITSystemReq.Required
-                                        ? "bold"
-                                        : "800",
-                                  }}
-                                  disabled={
-                                    props.stateValue?.StatusId ===
-                                      StatusId.OnboardingProcessinitiatedforDRC ||
-                                    props.stateValue?.StatusId ===
-                                      StatusId.OnboardingProcessinitiatedforExpat
-                                  }
-                                />
-                              </div>
-
-                              <div className="ms-Grid-col ms-lg3">
-                                <ReuseButton
-                                  label={ITSystemReq.NotRequired}
-                                  onClick={() => {
-                                    setRequiredBtn(ITSystemReq.NotRequired);
-                                  }}
-                                  spacing={4}
-                                  height="42px"
-                                  width="120px"
-                                  Style={{
-                                    minWidth: "150px",
-                                    height: "42px",
-                                    color:
-                                      requiredBtn === ITSystemReq.NotRequired
-                                        ? "white"
-                                        : "#0e0f0f",
-                                    background:
-                                      requiredBtn === ITSystemReq.NotRequired
-                                        ? ColorCode.ButtonColorCode?.ButtonColor
-                                        : "#d2c6c6",
-                                    fontWeight:
-                                      requiredBtn === ITSystemReq.NotRequired
-                                        ? "bold"
-                                        : "800",
-                                  }}
-                                  disabled={
-                                    props.stateValue?.StatusId ===
-                                      StatusId.OnboardingProcessinitiatedforDRC ||
-                                    props.stateValue?.StatusId ===
-                                      StatusId.OnboardingProcessinitiatedforExpat
-                                  }
-                                />
-                              </div> */}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="ms-Grid-row">
-                                <div className="ms-Grid-col ms-lg3">
-                                  <CustomDatePicker
-                                    label="Start Date"
-                                    selectedDate={data.ITSystem?.StartDate}
-                                    error={false}
-                                    minDate={todaydate}
-                                    mandatory={false}
-                                    onChange={(date) =>
-                                      handleDateChange(
-                                        "ITSystem",
-                                        "StartDate",
-                                        date ?? undefined
-                                      )
-                                    }
-                                    disabled={
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforDRC ||
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforExpat
-                                    }
-                                  />
-                                </div>
-                                <div className="ms-Grid-col ms-lg3">
-                                  <CustomMultiSelect
-                                    label="Hardware"
-                                    value={data.ITSystem?.Hardware}
-                                    options={optionValue.HarewareOption}
-                                    onChange={(value) =>
-                                      handleMulitiSelect(
-                                        "ITSystem",
-                                        "Hardware",
-                                        value
-                                      )
-                                    }
-                                    disabled={
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforDRC ||
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforExpat
-                                    }
-                                    mandatory={false}
-                                    error={false}
-                                  />
-                                </div>
-                                <div className="ms-Grid-col ms-lg3">
-                                  <CustomAutoComplete
-                                    label={"Region"}
-                                    options={optionValue.RegionOption}
-                                    value={data.ITSystem?.Region}
-                                    disabled={
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforDRC ||
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforExpat
-                                    }
-                                    mandatory={false}
-                                    onChange={(item) =>
-                                      handleAutoComplete(
-                                        "ITSystem",
-                                        "Region",
-                                        item
-                                      )
-                                    }
-                                    error={false}
-                                  />
-                                </div>
-                                <div className="ms-Grid-col ms-lg3">
-                                  <CustomAutoComplete
-                                    label={"Zone"}
-                                    options={optionValue.ZoneOption}
-                                    value={data.ITSystem?.Zone}
-                                    disabled={
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforDRC ||
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforExpat
-                                    }
-                                    mandatory={false}
-                                    onChange={(item) =>
-                                      handleAutoComplete(
-                                        "ITSystem",
-                                        "Zone",
-                                        item
-                                      )
-                                    }
-                                    error={false}
-                                  />
-                                </div>
-                              </div>
-
-                              <div className="ms-Grid-row">
-                                <div className="ms-Grid-col ms-lg12">
-                                  <CustomTextArea
-                                    label={labelName.Comment}
-                                    value={data.ITSystem.Comments}
-                                    error={false}
-                                    onChange={(value) =>
-                                      handleInputChangeTextArea(
-                                        "Comments",
-                                        "ITSystem",
-                                        value
-                                      )
-                                    }
-                                    mandatory={false}
-                                    disabled={
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforDRC ||
-                                      props.stateValue?.StatusId ===
-                                        StatusId.OnboardingProcessinitiatedforExpat
-                                    }
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </>
-                    ) : (
-                      <> </>
-                    )}
-                  </>
-                ) : (
-                  <></>
-                )}
-
                 {props.stateValue?.ButtonAction === ButtonAction.View ? (
                   <></>
                 ) : (
@@ -1613,7 +1160,7 @@ const UploadCandidateDocument = (props: any) => {
                         style={{ marginBottom: "7px" }}
                       >
                         <CustomTextArea
-                          label={labelName.Comment}
+                          label={labelNames.CommanLabel.Comments}
                           value={data.comments}
                           error={validationErrors.comments}
                           onChange={(value) =>
@@ -1638,7 +1185,7 @@ const UploadCandidateDocument = (props: any) => {
                     >
                       <div className="ms-Grid-col ms-lg12">
                         <SignatureCheckbox
-                          label="I confirm that I have carefully reviewed the contents and will take necessary action based on my expertise."
+                          label={CheckboxContent.PostRecrutimentCheckboxContent}
                           checked={data.Checkbox}
                           error={validationErrors.checkbox}
                           onChange={(value: boolean) =>
@@ -1717,9 +1264,9 @@ const UploadCandidateDocument = (props: any) => {
       StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm
     ) {
       errors.RadioAction = !IsValid(data.RadioAction);
-      if (data.RadioAction === "Yes") {
-        errors.ITRequired = !IsValid(data.ITRequired);
-      }
+      // if (data.RadioAction === "Yes") {
+      // errors.ITRequired = !IsValid(data.ITRequired);
+      // }
     }
     errors.comments = !IsValid(data.comments);
     errors.checkbox = !IsValid(data.Checkbox);
@@ -1731,17 +1278,17 @@ const UploadCandidateDocument = (props: any) => {
 
     return Object.values(errors).some((error) => error);
   };
-  const SpiltDateOnly = (date: Date) => {
-    const updatedDate = date;
-    const year = updatedDate?.getFullYear();
-    const month = String(updatedDate?.getMonth() + 1).padStart(2, "0");
-    const day = String(updatedDate?.getDate()).padStart(2, "0");
+  // const SpiltDateOnly = (date: Date) => {
+  //   const updatedDate = date;
+  //   const year = updatedDate?.getFullYear();
+  //   const month = String(updatedDate?.getMonth() + 1).padStart(2, "0");
+  //   const day = String(updatedDate?.getDate()).padStart(2, "0");
 
-    const dateOnly = new Date(
-      Date.UTC(Number(year), Number(month) - 1, Number(day))
-    ); //`${year}-${month}-${day}`;
-    return dateOnly.toISOString();
-  };
+  //   const dateOnly = new Date(
+  //     Date.UTC(Number(year), Number(month) - 1, Number(day))
+  //   ); //`${year}-${month}-${day}`;
+  //   return dateOnly.toISOString();
+  // };
 
   const Submit_fn = async (btnAction: string) => {
     setIsLoading(true);
@@ -1893,75 +1440,83 @@ const UploadCandidateDocument = (props: any) => {
           let UpdateStatus = await OfferLetterServices.UpdateStatusInSpfxlist(
             Obj
           );
-
+          if (
+            props.stateValue?.StatusId ===
+            StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm
+          ) {
+            let datas = {
+              JoiningDate: data.JoiningDate,
+              NoticePeriod: data.NoticePeriod,
+              ID: data.CandidateID,
+            };
+            await getVRRDetails.InsertRecruitmentCandidateDetails({ datas });
+          }
           if (UpdateStatus.status === ResponeStatus.SUCCESS) {
-            if (
-              props.stateValue?.StatusId ===
-                StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm &&
-              data.RadioAction === "Yes"
-            ) {
-              let HardwareChiose =
-                data.ITRequired === "No"
-                  ? []
-                  : data.ITSystem?.Hardware.map((item) => item.text);
-              let Hardwaredata: string[] = HardwareChiose;
-              let Hardwarevalue = {
-                results: Hardwaredata,
-              };
-              console.log(Hardwaredata, "Hardwaredata");
-              const hasTrainingSystem =
-                !!data.TrainingSystem &&
-                Object.values(data.TrainingSystem).some(
-                  (v) => !!v && v !== "" && v !== 0
-                );
-              const hasTASystem =
-                !!data.TASystem &&
-                Object.values(data.TASystem).some(
-                  (v) => !!v && v !== "" && v !== 0
-                );
-              const hasITSystem =
-                !!data.ITSystem &&
-                Object.values(data.ITSystem).some(
-                  (v) => !!v && v !== "" && v !== 0
-                );
+            // if (
+            //   props.stateValue?.StatusId ===
+            //     StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm &&
+            //   data.RadioAction === "Yes"
+            // ) {
+            //   let HardwareChiose =
+            //     data.ITRequired === "No"
+            //       ? []
+            //       : data.ITSystem?.Hardware.map((item) => item.text);
+            //   let Hardwaredata: string[] = HardwareChiose;
+            //   let Hardwarevalue = {
+            //     results: Hardwaredata,
+            //   };
+            //   // console.log(Hardwaredata, "Hardwaredata");
+            //   const hasTrainingSystem =
+            //     !!data.TrainingSystem &&
+            //     Object.values(data.TrainingSystem).some(
+            //       (v) => !!v && v !== "" && v !== 0
+            //     );
+            //   const hasTASystem =
+            //     !!data.TASystem &&
+            //     Object.values(data.TASystem).some(
+            //       (v) => !!v && v !== "" && v !== 0
+            //     );
+            //   const hasITSystem =
+            //     !!data.ITSystem &&
+            //     Object.values(data.ITSystem).some(
+            //       (v) => !!v && v !== "" && v !== 0
+            //     );
 
-              let obj: UpdateCandidateData = {
-                InductionType: data.TrainingSystem?.Inductiontype.text,
-                // TCSStartDate: SpiltDateOnly(data.TrainingSystem?.StartDate),
-                // TCSEndDate: SpiltDateOnly(data.TrainingSystem?.EndDate),
-                // TCSZone: data.TrainingSystem?.Zone.text,
-                // TCSRegion: data.TrainingSystem?.Region.text,
-                TCSComments: data.TrainingSystem?.Comments,
-                PermanentBadgeStartDate: SpiltDateOnly(
-                  data.TASystem?.StartDate
-                ),
-                PermanentBadgeEndDate: SpiltDateOnly(data.TASystem?.EndDate),
-                PermanentBadgeRegion: data.TASystem?.Region.text,
-                PermanentBadgeZone: data.TASystem?.Zone.text,
-                PermanentBadgeComments: data.TASystem?.Comments,
-                ITStartDate:
-                  data.ITRequired === "No"
-                    ? null
-                    : SpiltDateOnly(data.ITSystem?.StartDate),
-                Hardware: Hardwarevalue,
-                ITZone:
-                  data.ITRequired === "No" ? "" : data.ITSystem?.Zone.text,
-                ITRegion:
-                  data.ITRequired === "No" ? "" : data.ITSystem?.Region.text,
-                ITComments:
-                  data.ITRequired === "No" ? "" : data.ITSystem?.Comments,
-                ITStatus:
-                  data.ITRequired === "Yes" ? "Pending" : "Not Applicable",
-                IsIntegratedPowerAutomatrTrigger:
-                  hasTrainingSystem || hasTASystem || hasITSystem
-                    ? "Yes"
-                    : "No",
-              };
-              await OfferLetterServices.UpdateCandidateOnboardDate(
-                obj,
-                data.CandidateID
-              );
-            }
+            //   let obj: UpdateCandidateData = {
+            //     InductionType: data.TrainingSystem?.Inductiontype.text,
+            //     // TCSStartDate: SpiltDateOnly(data.TrainingSystem?.StartDate),
+            //     // TCSEndDate: SpiltDateOnly(data.TrainingSystem?.EndDate),
+            //     // TCSZone: data.TrainingSystem?.Zone.text,
+            //     // TCSRegion: data.TrainingSystem?.Region.text,
+            //     TCSComments: data.TrainingSystem?.Comments,
+            //     PermanentBadgeStartDate: SpiltDateOnly(
+            //       data.TASystem?.StartDate
+            //     ),
+            //     PermanentBadgeEndDate: SpiltDateOnly(data.TASystem?.EndDate),
+            //     PermanentBadgeRegion: "", //data.TASystem?.Region.text,
+            //     PermanentBadgeZone: "", //data.TASystem?.Zone.text,
+            //     PermanentBadgeComments: data.TASystem?.Comments,
+            //     ITStartDate:
+            //       data.ITRequired === "No"
+            //         ? null
+            //         : SpiltDateOnly(data.ITSystem?.StartDate),
+            //     Hardware: Hardwarevalue,
+            //     ITZone: data.ITRequired === "No" ? "" : "", //data.ITSystem?.Zone,
+            //     ITRegion: data.ITRequired === "No" ? "" : "", //data.ITSystem?.Region.text,
+            //     ITComments:
+            //       data.ITRequired === "No" ? "" : data.ITSystem?.Comments,
+            //     ITStatus:
+            //       data.ITRequired === "Yes" ? "Pending" : "Not Applicable",
+            //     IsIntegratedPowerAutomatrTrigger:
+            //       hasTrainingSystem || hasTASystem || hasITSystem
+            //         ? "Yes"
+            //         : "No",
+            //   };
+            //   await OfferLetterServices.UpdateCandidateOnboardDate(
+            //     obj,
+            //     data.CandidateID
+            //   );
+            // }
 
             const SuccessAlert = {
               Message: SuccessMsg,
@@ -2098,8 +1653,6 @@ const UploadCandidateDocument = (props: any) => {
     });
   };
 
-  console.log(viewDocument, "ViewDocument.");
-
   return (
     <>
       <CustomLoader isLoading={isLoading}>
@@ -2119,7 +1672,7 @@ const UploadCandidateDocument = (props: any) => {
               props.stateValue?.ButtonAction === ButtonAction.View
                 ? [
                     {
-                      label: "Back",
+                      label: ButtonAction.Back,
                       onClick: async () => {
                         back_fn();
                       },
@@ -2169,8 +1722,8 @@ const UploadCandidateDocument = (props: any) => {
 
       {documentPopup ? (
         <>
-          <CustomDialogbox
-            Style={{ width: "45vw", height: "35vw" }}
+          <AlertDialogbox
+            Style={{ width: "75vw", height: "41vw" }}
             visible={documentPopup}
             children={
               <ViewCandidateDocument

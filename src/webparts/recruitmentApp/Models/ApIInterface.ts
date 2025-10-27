@@ -1,3 +1,4 @@
+import { CommentsData } from "../Services/RecruitmentProcess/IRecruitmentProcessService";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 import { AutoCompleteItem } from "./Screens";
 
@@ -18,6 +19,7 @@ export type AdvertisementDetails = {
     RoleAndTechSkills: RoleAndTechSkills[],
     MinAndPreferedQualifications: MinAndPreferedQualifications[];
     isActive: number;
+    IsExtened: number;
     // profileXAgent: profileXagent;
 }
 
@@ -93,7 +95,7 @@ export type CandidateProfile = {
     CandidateResume: IDocFiles[];
     RoleProfile: IDocFiles[];
     Advertisement: IDocFiles[];
-    Comments: profileJobsComments[];
+    Comments: CommentsData[];
     workflowStatusId: string;
     hrComments: string;
     JobVaildFromDate: string;
@@ -124,6 +126,41 @@ export type CandidateProfile = {
 
     COIAppreve: string;
     COIComments: string;
+    COIReason: string;
+
+    countryOfResidency: string;
+    residentStatus: string;
+    maritalStatus: string;
+    childrenDetails: childrenDetails[],
+    employeeReferenceDetails: employeeReferenceDetail | undefined,
+    maritalStatusId: string;
+
+    joiningDate: string;
+    noticePeriod: string;
+
+    hasIvanhoeZijinExperience: string;
+    companyDetails: CompanyDetails | undefined,
+
+    businesslinkscompany: string;
+}
+
+export type childrenDetails = {
+    name: string;
+    age: number;
+    genderId: string;
+}
+
+export type CompanyDetails = {
+    operation: string;
+    role: string;
+    region: string;
+}
+
+export type employeeReferenceDetail = {
+    empId: string;
+    empName: string;
+    empEmail: string;
+    company: string;
 }
 
 export type WorkflowJson = {
@@ -325,8 +362,12 @@ export type UploadDocument = {
     TrainingSystem: TrainingSystem;
     TASystem: TASystem;
     ITSystem: ITSystem;
+    MedicalSystem: MedicalSystem;
 
     ITRequired: string;
+
+    JoiningDate: string;
+    NoticePeriod: string;
 }
 
 export type DocumentName = {
@@ -337,26 +378,35 @@ export type TrainingSystem = {
     Inductiontype: AutoCompleteItem;
     StartDate: Date | any;
     EndDate: Date | any;
-    Region: AutoCompleteItem;
-    Zone: AutoCompleteItem;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
     Comments: string;
 }
 
 export type TASystem = {
     StartDate: Date | any;
     EndDate: Date | any;
-    Region: AutoCompleteItem;
-    Zone: AutoCompleteItem;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
     Comments: string;
 }
 
 export type ITSystem = {
     StartDate: Date | any;
     Hardware: AutoCompleteItem[];
-    Region: AutoCompleteItem;
-    Zone: AutoCompleteItem;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
     Comments: string;
     ITStatus: string;
+}
+
+export type MedicalSystem = {
+    StartDate: Date | any;
+    EndDate: Date | any;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
+    Comments: string;
+    MedicalStatus: string;
 }
 
 export type COIType = {

@@ -4,7 +4,6 @@ import "../../App.css";
 import {
   TabName,
   tabType,
-  ButtonAction,
   StatusId,
   workflowStatusApi,
   WorkflowAction,
@@ -20,6 +19,7 @@ import {
 import { DataSyncToResiProcess } from "../../Services/InitiateOfferLetter/IOfferLetterService";
 import PostRecrutimentDataTable from "../../components/PostRecrutimentDataTable";
 import { tabStyle } from "../../components/TabMerge";
+import { ButtonAction } from "../../utilities/LabelName";
 
 type tabcount = {
   CandidateDocumentCount: number;
@@ -141,7 +141,9 @@ const UploadOfferDocumentList = (props: any) => {
               rowData?.StatusID ===
                 StatusId.RevertedBacktoCandidateforReuploadDocs ||
               rowData?.StatusID ===
-                StatusId.RevertedBacktoCandidateforReuploadEmploymentContract ? (
+                StatusId.RevertedBacktoCandidateforReuploadEmploymentContract ||
+              rowData?.StatusID ===
+                StatusId.PendingwithTAforMedicalScreening ? (
               <>
                 <img
                   src={require("../../assets/Viewicon.svg")}
@@ -243,6 +245,7 @@ const UploadOfferDocumentList = (props: any) => {
           StatusId.RevertedBacktoCandidateforReuploadDocs,
           StatusId.RevertedBacktoCandidateforReuploadEmploymentContract,
           StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
+          StatusId.PendingwithTAforMedicalScreening,
         ],
       });
       filterConditions.push({
@@ -280,7 +283,6 @@ const UploadOfferDocumentList = (props: any) => {
       let UpdatedStatus = await GetPortalJobsService.GetJobRequestData(
         FilterData
       );
-      // console.log(UpdatedStatus, "DemoData");
       const getStatusById = (UpdatedStatus?.data?.data ?? []).map(
         (item: { jobRequestId: any; workflowStatusId: any }) => {
           const matchedRes = response.find(
@@ -304,11 +306,9 @@ const UploadOfferDocumentList = (props: any) => {
           }
         }
       );
-      // console.log(getStatusById, "getStatusById");
       let nullChecked = getStatusById.filter(
         (item: any) => item !== null && item !== undefined
       );
-      // console.log(nullChecked, "nullChecked");
       if (nullChecked.length > 0) {
         await OfferLetterServices.UpdateStatusInSpfxlist(nullChecked);
       }
@@ -394,11 +394,10 @@ const UploadOfferDocumentList = (props: any) => {
       OfferLettertabs.current = TabNames;
     }
     let Action: any;
-    let StatusID: any;
+    // let StatusID: any;
     if (StatusData) {
       Action = StatusData.filter((item) => item.Action);
-      StatusID = StatusData.filter((item) => item.StatusId);
-      console.log(StatusID, "StatusID");
+      // StatusID = StatusData.filter((item) => item.StatusId);
     }
     switch (TabNames) {
       case TabName.CandidateDocuments:

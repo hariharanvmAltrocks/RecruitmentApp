@@ -7,13 +7,16 @@ import {
   ITooltipHostStyles,
 } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
+import { ActionName, PositionStatus } from "../utilities/LabelName";
 
 interface ToolTipButtonProps {
-  Title: string;
-  CurrentMenuId: number;
-  Rowdata: any;
-  ApproverData: any;
-  onHover: () => void;
+  Title?: string;
+  CurrentMenuId?: number;
+  Rowdata?: any;
+  ApproverData?: any;
+  TooltipHeader?: string;
+  onHover?: () => void;
+  TooltipLabel?: string;
 }
 
 const ToolTipButton: React.FC<ToolTipButtonProps> = ({
@@ -21,6 +24,8 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
   Rowdata,
   ApproverData,
   onHover,
+  TooltipHeader,
+  TooltipLabel,
 }) => {
   const tooltipId = useId("tooltip");
   const hostStyles: Partial<ITooltipHostStyles> = {
@@ -38,7 +43,11 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
           marginBottom: "8px",
         }}
       >
-        Approver Name
+        {TooltipHeader
+          ? TooltipHeader
+          : TooltipLabel
+          ? TooltipLabel
+          : "Next Approver Name"}
       </div>
       {lines}
     </div>
@@ -55,7 +64,16 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
       >
         {label}
       </div>
-      <div style={{ fontFamily: '"Roboto", sans-serif' }}>
+      <div
+        style={{
+          fontFamily: '"Roboto", sans-serif',
+          color:
+            value === ActionName.Completed ||
+            value === PositionStatus.RecruitmentInProgress
+              ? "green"
+              : "red",
+        }}
+      >
         {" "}
         : {value ?? "—"}
       </div>
@@ -67,9 +85,28 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
       const data = ApproverData;
 
       if (!data) return <div>Loading...</div>;
-      return renderApproverList(
-        data.map((item: any) => boldLabel(item.Key, item.Value))
-      );
+      if (ApproverData.length > 0) {
+        return renderApproverList(
+          data.map((item: any) => boldLabel(item.Key, item.Value))
+        );
+      } else {
+        return (
+          <div>
+            <p
+            // style={{
+            //   display: "flex",
+            //   justifyContent: "center",
+            //   padding: "1.2%",
+            //   fontSize: "1.3em",
+            //   marginTop: "16%",
+            //   marginBottom: "18%",
+            // }}
+            >
+              No Record Found
+            </p>
+          </div>
+        );
+      }
     },
   };
 
@@ -87,7 +124,7 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
           src={require("../assets/info.svg")}
           alt="tooltip-icon"
           onMouseEnter={() => {
-            onHover(); // Notify parent to fetch based on status
+            if (onHover) onHover();
           }}
           style={{
             width: "20px",

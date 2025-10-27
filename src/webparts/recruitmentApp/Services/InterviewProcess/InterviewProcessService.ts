@@ -109,42 +109,46 @@ export default class InterviewProcessService
         Topcount: count.Topcount,
       });
 
-      const CandidateDetails: CandidateData[] = candidateItems.map((item) => ({
-        ID: item.ID,
-        JobCode: item?.JobCode?.JobCode || "",
-        JobCodeId: item?.JobCodeId || "",
-        PassportID: item?.PassportID || "",
-        FristName: item?.FristName || "",
-        MiddleName: item?.MiddleName || "",
-        LastName: item?.LastName || "",
-        FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
-          }`.trim(),
-        PositionTitle: item?.PositionTitle || "",
-        JobGrade: item?.JobGrade || "",
-        Status: item?.Status?.StatusDescription || "",
-        StatusId: item?.StatusId || 0,
-        ContactNumber: item?.ContactNumber || "",
-        Email: item?.Email || "",
-        ResidentialAddress: item?.ResidentialAddress || "",
-        DOB: item?.DOB || "",
-        Nationality: item?.Nationality || "",
-        Gender: item?.Gender || "",
-        TotalYearOfExperiance: item?.TotalYearOfExperiance || "",
-        Skills: item?.Skills || "",
-        LanguageKnown: item?.LanguageKnown || "",
-        ReleventExperience: item?.ReleventExperience || "",
-        Qualification: item?.Qualification || "",
-        RecuritmentHR: item?.RecuritmentHR || "",
-        AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail || "",
-        CandidateCVDoc: [],
-        RoleProfileDocument: [],
-        AdvertisementDocument: [],
-        ShortlistedValue: "",
-        ExternalAgentDetails: item?.ExternalAgentDetails
-          ? { AgentName: item?.ExternalAgentDetails?.AgentName }
-          : null,
-        RecruitmentID: item?.RecruitmentID?.ID || 0,
-      }));
+      const CandidateDetails: CandidateData[] = candidateItems.map(
+        (item, index) => ({
+          SNO: index + 1,
+          ID: item.ID,
+          JobCode: item?.JobCode?.JobCode || "",
+          JobCodeId: item?.JobCodeId || "",
+          PassportID: item?.PassportID || "",
+          FristName: item?.FristName || "",
+          MiddleName: item?.MiddleName || "",
+          LastName: item?.LastName || "",
+          FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
+            }`.trim(),
+          PositionTitle: item?.PositionTitle || "",
+          JobGrade: item?.JobGrade || "",
+          Status: item?.Status?.StatusDescription || "",
+          StatusId: item?.StatusId || 0,
+          ContactNumber: item?.ContactNumber || "",
+          Email: item?.Email || "",
+          ResidentialAddress: item?.ResidentialAddress || "",
+          DOB: item?.DOB || "",
+          Nationality: item?.Nationality || "",
+          Gender: item?.Gender || "",
+          TotalYearOfExperiance: item?.TotalYearOfExperiance || "",
+          Skills: item?.Skills || "",
+          LanguageKnown: item?.LanguageKnown || "",
+          ReleventExperience: item?.ReleventExperience || "",
+          Qualification: item?.Qualification || "",
+          RecuritmentHR: item?.RecuritmentHR || "",
+          AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail || "",
+          CandidateCVDoc: [],
+          RoleProfileDocument: [],
+          AdvertisementDocument: [],
+          ShortlistedValue: "",
+          ExternalAgentDetails: item?.ExternalAgentDetails
+            ? { AgentName: item?.ExternalAgentDetails?.AgentName }
+            : null,
+          RecruitmentID: item?.RecruitmentID?.ID || 0,
+        })
+      );
+
       return {
         data: CandidateDetails,
         status: 200,
@@ -160,147 +164,15 @@ export default class InterviewProcessService
       };
     }
   }
-  // async GetCombinedCandidatePositionDetails(
-  //   filterParam: any,
-  //   filterConditions: any,
-  //   EmployeeList: any[]
-  // ) {
-  //   try {
-
-  //     const CandidateDetails: CandidateData[] = [];
-  //     let candidateItems: any[] = [];
-  //     await SPServices.SPReadItems({
-  //       Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-  //       Select: "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,ExternalAgentDetails/AgentCode,ExternalAgentDetails/AgentName,Status/ID,Status/StatusDescription,ID",
-  //       Expand: "JobCode,AssignByInterviewPanel,RecruitmentID,ExternalAgentDetails,Status",
-  //       Filter: filterParam,
-  //       FilterCondition: filterConditions,
-  //       Topcount: count.Topcount,
-  //     })
-  //       .then((data) => {
-  //         candidateItems = data;
-  //       });
-  //     const formattedItems: any[] = await Promise.all(
-  //       candidateItems.map(async (item) => {
-  //         let candidateCV: IDocFiles[] = [];
-
-  //         const jobCode = item?.JobCode?.JobCode ?? "";
-  //         const profileID = item?.ProfileID ?? "";
-
-  //         if (jobCode && profileID) {
-  //           const filePath = `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${profileID}/CV`;
-
-  //           const response = (await SPServices.getDocLibFiles({
-  //             FilePath: filePath,
-  //           })) as IDocFiles[];
-  //           candidateCV = response.filter((file) =>
-  //             file.name.includes(jobCode)
-  //           );
-
-  //           if (candidateCV.length === 0) {
-  //             console.log(
-  //               `No CV found for ProfileID: ${profileID}, JobCode: ${jobCode}`
-  //             );
-  //           }
-  //         } else {
-  //           console.log(
-  //             "No JobCode or ProfileID provided, skipping attachment fetch."
-  //           );
-  //         }
-  //         const filter = [{ FilterKey: "CandidateID", Operator: "eq", FilterValue: item.ID }];
-  //         let positionResult: any = { data: [] };
-
-  //         await this.getInterviewPanelDetails(filter, filterConditions, item.ID, EmployeeList)
-  //           .then((data) => {
-  //             positionResult = data;
-  //           })
-  //           .catch((error) => {
-  //             console.error("Error fetching candidate scorecard:", error);
-  //           });
-  //         const candidateComments = await this.getCandidateComments(item.ID);
-
-  //         const lastCandidateGPA = positionResult?.data?.length
-  //           ? positionResult.data[positionResult.data.length - 1].GPA
-  //           : null;
-  //         return {
-  //           ID: item.ID,
-  //           RecruitmentID: item?.RecruitmentID?.ID,
-  //           JobCode: item?.JobCode?.JobCode,
-  //           JobCodeId: item?.JobCodeId,
-  //           PassportID: item?.PassportID,
-  //           FristName: item?.FristName,
-  //           MiddleName: item?.MiddleName,
-  //           LastName: item?.LastName,
-  //           FullName: `${item?.FristName ?? ""} ${item?.MiddleName ?? ""} ${item?.LastName ?? ""
-  //           }`.trim(),
-  //           ResidentialAddress: item?.ResidentialAddress,
-  //           DOB: item?.DOB,
-  //           ContactNumber: item?.ContactNumber,
-  //           Email: item?.Email,
-  //           Nationality: item?.Nationality,
-  //           Gender: item?.Gender,
-  //           TotalYearOfExperiance: item?.TotalYearOfExperiance,
-  //           Skills: item?.Skills,
-  //           LanguageKnown: item?.LanguageKnown,
-  //           ReleventExperience: item?.ReleventExperience,
-  //           Qualification: item?.Qualification,
-  //           RecuritmentHR: item?.RecuritmentHR,
-  //           AssignByInterviewPanel: item?.AssignByInterviewPanel?.EMail,
-  //           CandidateCVDoc: candidateCV, // Attach candidate CV here
-  //           Status: item?.Status?.StatusDescription || "",
-  //           StatusId: item?.StatusId,
-  //           RoleProfileDocument: [],
-  //           AdvertisementDocument: [],
-  //           ShortlistedValue: "",
-  //           PositionTitle: item.PositionTitle,
-  //           JobGrade: item.JobGrade,
-  //           ExternalAgentDetails: item?.ExternalAgentDetails
-  //             ? { AgentName: item?.ExternalAgentDetails?.AgentName }
-  //             : null,
-  //           HRMSCandidateScoreCard: positionResult?.data || [],
-  //           GPA: lastCandidateGPA,
-  //           JobRequestID: item?.JobRequestID,
-  //           ProfileID: item?.ProfileID,
-  //           InterviewDate: item?.InterviewDate,
-  //           InterviewTime: item?.InterviewTime,
-  //           InterviewLink: item?.InterviewLink,
-  //           InterviewDateLevel2: item?.InterviewDateLevel2,
-  //           InterviewTimeLevel2: item?.InterviewTimeLevel2,
-  //           InterviewLinkLevel2: item?.InterviewLinkLevel2,
-  //           CandidateComments: candidateComments,
-  //           CandidateResumeLink: item?.CandidateResumeLink || "",
-
-  //         };
-  //       })
-  //     );
-
-  //     CandidateDetails.push(...formattedItems);
-  //     console.log("Combined Candidate Details:", CandidateDetails);
-  //     return {
-  //       data: CandidateDetails,
-  //       status: 200,
-  //       message: "Combined Candidate and External Agent Details fetched successfully",
-  //     };
-  //   } catch (error) {
-  //     console.error(error);
-  //     return {
-  //       data: [],
-  //       status: 500,
-  //       message: "Error fetching combined data from Candidate and External Agent Details",
-  //     };
-  //   }
-  // }
   async GetCombinedCandidatePositionDetails(
     filterParam: any,
     filterConditions: any,
     EmployeeList: any[]
   ) {
     try {
-      console.log("Fetching candidate personal details...");
       const CandidateDetails: CandidateData[] = [];
-      let candidateItems: any[] = [];
-  
-      await SPServices.SPReadItems({
+
+      const candidateItems = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Select:
           "*,JobCode/JobCode,AssignByInterviewPanel/EMail,RecruitmentID/ID,Status/ID,Status/StatusDescription,ID",
@@ -309,59 +181,66 @@ export default class InterviewProcessService
         Filter: filterParam,
         FilterCondition: filterConditions,
         Topcount: count.Topcount,
-      }).then((data) => {
-        candidateItems = data;
       });
-  
-      const formattedItems: any[] = await Promise.all(
+
+      const formattedItems = await Promise.all(
         candidateItems.map(async (item, index) => {
           let candidateCV: IDocFiles[] = [];
-  
+
           const resumeLink = item?.CandidateResumeLink || "";
           if (resumeLink) {
             try {
-              const extractedPath = resumeLink.split("/root:/")[1]?.split(":/content")[0] || "";
+              const extractedPath =
+                resumeLink.split("/root:/")[1]?.split(":/content")[0] || "";
               if (extractedPath) {
-                const folderPath = extractedPath.substring(0, extractedPath.lastIndexOf("/"));
-                const fileName = extractedPath.split("/").pop();  
+                const folderPath = extractedPath.substring(
+                  0,
+                  extractedPath.lastIndexOf("/")
+                );
+                const fileName = extractedPath.split("/").pop();
+
                 if (folderPath && fileName) {
                   const response = (await SPServices.getDocLibFiles({
                     FilePath: `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${folderPath}`,
                   })) as IDocFiles[];
 
-                  candidateCV = response.filter((file) => file.name === fileName);
-                
-                  if (candidateCV.length > 0) {
-                    console.log("Matching CV file(s) found:", candidateCV.map(f => f.name));
-                  } else {
-                    console.warn(`CV not found at CandidateResumeLink: ${resumeLink}`);
-                  }
+                  candidateCV = response.filter(
+                    (file) => file.name === fileName
+                  );
                 }
               }
             } catch (error) {
-              console.error("Error while extracting CV from CandidateResumeLink:", error);
+              console.error(
+                "Error while extracting CV from CandidateResumeLink:",
+                error
+              );
             }
-          } else {
-            console.log("CandidateResumeLink not available.");
           }
-  
-          const filter = [{ FilterKey: "CandidateID", Operator: "eq", FilterValue: item.ID }];
+
+          const filter = [
+            { FilterKey: "CandidateID", Operator: "eq", FilterValue: item.ID },
+          ];
           let positionResult: any = { data: [] };
-  
-          console.log("Fetching interview panel details...");
-          await this.getInterviewPanelDetails(filter, filterConditions, item.ID, EmployeeList)
-            .then((data) => {
-              positionResult = data;
-              console.log("Interview panel data fetched:", positionResult);
-            })
-            .catch((error) => {
-              console.error("Error fetching candidate scorecard:", error);
-            });
-  
-          console.log("Fetching candidate comments...");
-          const candidateComments = await this.getCandidateComments(item.ID);
-          console.log("Candidate comments:", candidateComments);
-  
+
+          let CommentResult: any = [];
+
+          try {
+            positionResult = await this.getInterviewPanelDetails(
+              filter,
+              filterConditions,
+              item.ID,
+              EmployeeList
+            );
+          } catch (error) {
+            console.error("Error fetching candidate scorecard:", error);
+          }
+
+          try {
+            CommentResult = await this.getCandidateComments(item.ID);
+          } catch (error) {
+            console.error("Error fetching candidate comments:", error);
+          }
+
           const lastCandidateGPA = positionResult?.data?.length
             ? positionResult.data[positionResult.data.length - 1].GPA
             : null;
@@ -417,7 +296,7 @@ export default class InterviewProcessService
             InterviewDateLevel2: item?.InterviewDateLevel2,
             InterviewTimeLevel2: item?.InterviewTimeLevel2,
             InterviewLinkLevel2: item?.InterviewLinkLevel2,
-            CandidateComments: candidateComments,
+            CandidateComments: CommentResult,
             CandidateResumeLink: resumeLink,
             ConflictsOfInterest: item?.ConflictsOfInterest,
             disability: item?.Disability,
@@ -425,7 +304,7 @@ export default class InterviewProcessService
           };
         })
       );
-  
+
       CandidateDetails.push(...formattedItems);
       // console.log("Final Combined Candidate Details:", CandidateDetails);
 
@@ -444,7 +323,7 @@ export default class InterviewProcessService
           "Error fetching combined data from Candidate and External Agent Details",
       };
     }
-  }  
+  }
   async getInterviewPanelDetails(
     filterParam: any,
     filterConditions: any,
@@ -923,7 +802,8 @@ export default class InterviewProcessService
         ActionId: obj.ActionId,
         ItemCreated: obj.ItemCreated,
         Comments: obj.Comments,
-        GPA: obj.GPA // Include Comments in the payload
+        GPA: obj.GPA, // Include Comments in the payload
+        OthersInterviewed: obj.OthersInterviewed
       };
 
       await SPServices.SPUpdateItem({

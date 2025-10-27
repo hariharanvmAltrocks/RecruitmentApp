@@ -28,6 +28,7 @@ import CandidateDataTable from "../../components/CandidateDataTable";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import TabsComponent from "../../components/TabsComponent ";
 import { tabStyle } from "../../components/TabMerge";
+import { ButtonAction } from "../../utilities/LabelName";
 
 const CandidateList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<any[]>([]);
@@ -71,6 +72,11 @@ const CandidateList = (props: any) => {
           FilterKey: "RecruitmentIDId",
           Operator: "eq",
           FilterValue: props?.stateValue?.ID,
+        },
+        {
+          FilterKey: "JobCodeId",
+          Operator: "eq",
+          FilterValue: props?.stateValue?.JobCodeID,
         },
         {
           FilterKey: "StatusId",
@@ -158,6 +164,7 @@ const CandidateList = (props: any) => {
           state: {
             ID: rowData?.ID,
             tab,
+            tabs: props.stateValue?.tab,
             StatusId: rowData?.StatusId,
             Status: rowData?.Status,
             PreviousTabName: previousTabName,
@@ -165,7 +172,7 @@ const CandidateList = (props: any) => {
             ButtonAction,
             InterviewLevel: rowData?.InterviewLevel,
             RecruitmentID: rowData?.RecruitmentID,
-            JobCodeId: props.stateValue.JobCodeId,
+            JobCodeID: props.stateValue.JobCodeID,
             Department: props.stateValue.Department,
             GPA: rowData.GPA,
             NoOfPosition: props.stateValue.NoOfPosition,
@@ -225,7 +232,13 @@ const CandidateList = (props: any) => {
                 src={require("../../assets/Editbutton.svg")}
                 alt="Edit Icon"
                 onClick={() =>
-                  handleRedirectView(rowData, tab, TabName, ButtonAction, previousTabName)
+                  handleRedirectView(
+                    rowData,
+                    tab,
+                    TabName,
+                    ButtonAction,
+                    previousTabName
+                  )
                 }
                 style={{
                   width: "50%",
@@ -240,7 +253,13 @@ const CandidateList = (props: any) => {
                 src={require("../../assets/Viewicon.svg")}
                 alt="View Icon"
                 onClick={() =>
-                  handleRedirectView(rowData, tab, TabName, ButtonAction, previousTabName)
+                  handleRedirectView(
+                    rowData,
+                    tab,
+                    TabName,
+                    ButtonAction,
+                    previousTabName
+                  )
                 }
                 style={{
                   width: "50%",
@@ -263,7 +282,17 @@ const CandidateList = (props: any) => {
   const handleStatusChange = async (selectedCandidates: any[]) => {
     setIsLoading(true);
     let updateSuccess = false;
-
+    let InterviewedCount =
+      await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
+        [
+          {
+            FilterKey: "JobCode",
+            Operator: "eq",
+            FilterValue: props?.stateValue?.JobCodeID,
+          },
+        ],
+        ""
+      );
     for (const candidate of selectedCandidates) {
       const rejectionPayload = {
         workflowStatus: workflowStatusApi.CandidateRejectedIPanel,
@@ -278,6 +307,7 @@ const CandidateList = (props: any) => {
         ItemCreated: "Yes",
         Comments: candidate.Comments || "",
         GPA: candidate.GPA,
+        OthersInterviewed: InterviewedCount?.length > 1 ? "Yes" : "No",
       };
 
       try {
@@ -338,7 +368,7 @@ const CandidateList = (props: any) => {
               data={CandidateData}
               columns={columnConfig(
                 "tab1",
-                "Edit",
+                ButtonAction.Edit,
                 props.stateValue?.TabName,
                 TabName.ViewCandidateList
               )}
@@ -356,7 +386,7 @@ const CandidateList = (props: any) => {
   const getTabLabel = (tab: any) => {
     const PendingCount = CandidateData.filter(
       (item) =>
-        item.StatusId === StatusId.Selected ||
+        // item.StatusId === StatusId.Selected ||
         item.StatusId === StatusId.OnHoldbyHOD ||
         item.StatusId === StatusId.PendingwithHODtoAssignPositionID ||
         item.StatusId === StatusId.PendingwithHODtoselectthecandidateLevel2 ||
@@ -387,7 +417,7 @@ const CandidateList = (props: any) => {
               onBreadcrumbChange={handleBreadcrumbChange}
               additionalButtons={[
                 {
-                  label: "Back",
+                  label: ButtonAction.Back,
                   onClick: async () => {
                     back_fn();
                   },
@@ -401,11 +431,11 @@ const CandidateList = (props: any) => {
   ];
 
   React.useEffect(() => {
-    const activeTabObj = tabs.find((item) => item.value === activeTab);
+    // const activeTabObj = tabs.find((item) => item.value === activeTab);
     const newTabNames = [
       { tabName: props.stateValue?.TabName },
-      { tabName: props.stateValue?.ButtonAction },
-      { tabName: activeTabObj?.label },
+      // { tabName: props.stateValue?.ButtonAction },
+      { tabName: TabName.ViewCandidateList }, //activeTabObj?.label },
     ];
     if (JSON.stringify(TabNameData) !== JSON.stringify(newTabNames)) {
       setTabNameData(newTabNames);

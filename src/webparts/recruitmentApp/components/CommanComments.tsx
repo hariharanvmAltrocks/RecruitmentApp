@@ -40,7 +40,13 @@ function CommanComments({ onClose, Comments }: props) {
           sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
         >
           <CardContent>
-            <div style={{ height: "calc(-156px + 80vh)", overflowY: "auto" }}>
+            <div
+              style={{
+                height: "calc(-156px + 80vh)",
+                overflowY: "auto",
+                overflowX: "hidden",
+              }}
+            >
               {Comments && Comments.length > 0 ? (
                 <>
                   {Comments.map((item: any, index: number) => (

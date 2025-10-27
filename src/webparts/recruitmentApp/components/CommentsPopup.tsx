@@ -3,7 +3,8 @@ import ReuseButton from "./ReuseButton";
 import LabelHeaderComponents from "./TitleHeader";
 import * as moment from "moment";
 import CustomPopup from "./CustomPopup/CustomPopup";
-import { ColorCode, labelName } from "../utilities/Config";
+import { ColorCode } from "../utilities/Config";
+import { labelNames } from "../utilities/LabelName";
 
 type IProps = {
   CommentsDetail?: [];
@@ -37,7 +38,9 @@ function CommentsPopup({ onClose, CommentsDetail, visible }: IProps) {
           header={
             <>
               <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                <LabelHeaderComponents value={labelName.Comment} />
+                <LabelHeaderComponents
+                  value={labelNames.CommanLabel.Comments}
+                />
               </div>
               <div className="ms-Grid-row">
                 <div
@@ -110,7 +113,7 @@ function CommentsPopup({ onClose, CommentsDetail, visible }: IProps) {
                           </p>
                         )}
                         <p>
-                          <b>{labelName.Comment}</b>{" "}
+                          <b>{labelNames.CommanLabel.Comments}</b>{" "}
                           {comment.comments || comment.Comments}
                         </p>
                       </div>

@@ -38,43 +38,81 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
   handleUploadCV,
   UploadCV,
 }) => {
-  const [filteredItems, setFilteredItems] = React.useState<any[]>(data);
+  const [filteredItems, setFilteredItems] = React.useState<any[]>([]);
   const [dashboardSearch, setDashboardSearch] = React.useState<any>({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    global: { value: "", matchMode: FilterMatchMode.CONTAINS },
   });
   const [totalItem, setTotalItem] = React.useState<number>(0);
+  const [sortMeta, setSortMeta] = React.useState<any[]>([]);
 
+  // Handles filtering + sorting + pagination
+  const fetchData = React.useCallback(() => {
+    let result = [...data];
+
+    // Apply global search
+    const searchValue = dashboardSearch.global.value?.toLowerCase();
+    if (searchValue) {
+      result = result.filter((item: any) =>
+        Object.values(item).some((val) =>
+          String(val).toLowerCase().includes(searchValue)
+        )
+      );
+    }
+
+    // Apply sorting
+    if (sortMeta.length) {
+      sortMeta.forEach(({ field, order }) => {
+        result.sort((a, b) => {
+          const value1 = a[field];
+          const value2 = b[field];
+          const result = value1 < value2 ? -1 : value1 > value2 ? 1 : 0;
+          return order * result;
+        });
+      });
+    }
+
+    // Apply pagination
+    const paginated = result.slice(
+      pagination.first,
+      pagination.first + pagination.rows
+    );
+
+    setFilteredItems(paginated);
+    setTotalItem(result.length);
+  }, [data, pagination, dashboardSearch, sortMeta]);
+
+  // Fetch on initial mount and whenever data/pagination/search/sort changes
   React.useEffect(() => {
-    const PagewiseData =
-      pagination.totalPages === 0
-        ? data
-        : data.slice(pagination.first, pagination.first + pagination.rows);
-    setFilteredItems(PagewiseData);
-    setTotalItem(data[0]?.TotalItems ?? data.length);
-  }, [data]);
+    fetchData();
+  }, [fetchData]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const searchValue = event.target.value;
-
     setDashboardSearch({
       global: {
-        value: searchValue,
+        value: event.target.value,
         matchMode: FilterMatchMode.CONTAINS,
       },
     });
+  };
 
-    const filtered = data.filter((item: any) =>
-      Object.values(item).some((val) =>
-        String(val).toLowerCase().includes(searchValue.toLowerCase())
-      )
-    );
+  const handleSort = (event: any) => {
+    const { multiSortMeta } = event;
+    setSortMeta(multiSortMeta || []);
+  };
 
-    setFilteredItems(filtered);
+  const handleReset = () => {
+    setDashboardSearch({
+      global: {
+        value: "",
+        matchMode: FilterMatchMode.CONTAINS,
+      },
+    });
+    handleRefresh();
   };
 
   return (
-    // <CustomLoader isLoading={isLoading}>
     <div>
+      {/* Search and action buttons */}
       <div className="ms-Grid-row">
         <div
           className="ms-Grid-col ms-lg9 search_div"
@@ -124,15 +162,7 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
                 }}
               />
             }
-            onClick={() => {
-              setDashboardSearch({
-                global: {
-                  value: "",
-                  matchMode: FilterMatchMode.CONTAINS,
-                },
-              });
-              handleRefresh();
-            }}
+            onClick={handleReset}
             spacing={4}
             Style={{ marginRight: "11px", minWidth: "100%", height: "31px" }}
           />
@@ -141,70 +171,52 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
         {UploadCV === TabName.UploadCV && (
           <div className="ms-Grid-col ms-lg1" style={{ marginLeft: "4%" }}>
             <ReuseButton
-              label={UploadCV === TabName.UploadCV ? "Upload" : ""}
+              label="Upload"
               onClick={handleUploadCV}
               spacing={4}
-              // height="33px"
-              // width="32%"
               Style={{ marginLeft: "-42px", minWidth: "100%", height: "31px" }}
             />
           </div>
         )}
       </div>
+
+      {/* Table */}
       <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
         <div className="ms-Grid-col ms-lg12">
           <DataTable
-            className="normalTable"
             value={filteredItems}
             lazy
-            // rows={rows}
+            sortMode="multiple"
+            multiSortMeta={sortMeta}
+            onSort={handleSort}
+            paginator
             rows={pagination.rows}
             first={pagination.first}
             totalRecords={totalItem}
-            paginator
+            onPage={onPageChange}
             rowsPerPageOptions={[5, 10, 20]}
-            onPage={(event) => {
-              onPageChange(event);
-            }}
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords}"
             stripedRows
             scrollable
             scrollHeight="35vh"
-            paginatorDropdownAppendTo="self"
-            // filters={dashboardSearch}
-            onFilter={(e) => setFilteredItems(e.filteredValue || data)}
             style={{ overflow: "visible" }}
             emptyMessage="No Record Found"
           >
-            {columns.map((col) => {
-              return (
-                <Column
-                  key={col.field}
-                  field={col.field}
-                  header={col.header}
-                  sortable={col.sortable}
-                  body={col.body}
-                  style={col.style}
-                />
-              );
-            })}
+            {columns.map((col) => (
+              <Column
+                key={col.field}
+                field={col.field}
+                header={col.header}
+                sortable={col.sortable}
+                body={col.body}
+                style={col.style}
+              />
+            ))}
           </DataTable>
         </div>
       </div>
-      {/* <div className="ms-Grid-row" style={{ marginBottom: "2%" }}>
-                    <div className="ms-Grid-col ms-lg6"></div>
-                    <div
-                        className="ms-Grid-col ms-lg6"
-                        style={{ display: "flex", justifyContent: "end", marginLeft: "48%" }}
-                    >
-                        <div style={{ marginRight: "10px" }}>
-                            <ReuseButton label="Submit" onClick={handleSubmit} spacing={4} />
-                        </div>
-                    </div>
-                </div> */}
     </div>
-    // </CustomLoader>
   );
 };
 

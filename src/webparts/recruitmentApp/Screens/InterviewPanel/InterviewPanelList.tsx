@@ -8,7 +8,6 @@ import {
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import TabsComponent from "../../components/TabsComponent ";
 import {
-  ButtonAction,
   // GridStatusBackgroundcolor,
   HRMSAlertOptions,
   InterviewLevels,
@@ -25,6 +24,7 @@ import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 import { tabStyle } from "../../components/TabMerge";
 import ToolTipButton from "../../components/Tooltip";
+import { ButtonAction, InterviewDate } from "../../utilities/LabelName";
 
 // type tabCount = {
 //   EvalutionCount: number;
@@ -95,6 +95,7 @@ const InterviewPanelList = (props: any) => {
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
             InterviewLevel: rowData?.InterviewLevel,
+            JobCodeID: rowData?.JobCodeID,
           },
         });
       } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
@@ -108,6 +109,7 @@ const InterviewPanelList = (props: any) => {
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
             InterviewLevel: rowData?.InterviewLevel,
+            JobCodeID: rowData?.JobCodeID,
           },
         });
       } else if (props.CurrentRoleID.includes(RoleID.LineManager)) {
@@ -121,6 +123,7 @@ const InterviewPanelList = (props: any) => {
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
             InterviewLevel: rowData?.InterviewLevel,
+            JobCodeID: rowData?.JobCodeID,
           },
         });
       } else {
@@ -134,6 +137,7 @@ const InterviewPanelList = (props: any) => {
             ButtonAction,
             RecruitmentID: rowData?.RecruitmentID,
             InterviewLevel: rowData?.InterviewLevel,
+            JobCodeID: rowData?.JobCodeID,
           },
         });
       }
@@ -143,12 +147,7 @@ const InterviewPanelList = (props: any) => {
         "YYYY-MM-DD HH:mm"
       ).format("DD-MMM-YYYY hh:mm A");
 
-      const ValidationMsg = `
-      <div style="text-align: center;">
-        <h3>⚠️ Action cannot be performed.</h3>
-        <p><strong>Interview Open Date:</strong> ${formattedDate}</p>
-        <p>Please try again on the Interview Date.</p>
-      </div>`;
+      const ValidationMsg = InterviewDate(formattedDate);
       let ValidationError = {
         Message: ValidationMsg,
         Type: HRMSAlertOptions.Error,
@@ -186,7 +185,6 @@ const InterviewPanelList = (props: any) => {
 
   const handleHover = async (statusId: number, rowData: any) => {
     let pendingName: any[] = [];
-    console.log(rowData, "rowdaya");
     let Levels =
       statusId === StatusId.InterviewScheduled
         ? InterviewLevels.Level1
@@ -242,6 +240,7 @@ const InterviewPanelList = (props: any) => {
     {
       field: "Status",
       header: "Status",
+      style: { width: "20%" },
       sortable: false,
       body: (rowData: any) => {
         return (
@@ -456,7 +455,7 @@ const InterviewPanelList = (props: any) => {
           RecuritmentConditions,
           props.EmployeeList
         );
-
+      let JobCodeIDs: number;
       const enrichedCandidates = await Promise.all(
         statusResponse.data.map(async (candidate: any) => {
           let grade = "";
@@ -473,7 +472,7 @@ const InterviewPanelList = (props: any) => {
               ],
               ""
             );
-
+            JobCodeIDs = vrrResponse?.data?.[0]?.JobCodeId || 0;
             grade = vrrResponse?.data?.[0]?.PatersonGrade || "";
 
             if (grade) {
@@ -521,6 +520,7 @@ const InterviewPanelList = (props: any) => {
             InterviewDate: candidate?.InterviewDate,
             InterviewDateLevel2: candidate?.InterviewDateLevel2,
             InterviewDateTime: InterviewDateTime,
+            JobCodeID: JobCodeIDs,
           };
         })
       );
@@ -592,13 +592,11 @@ const InterviewPanelList = (props: any) => {
       storedStringRef.current = TabNames;
     }
     let Action: any;
-    let StatusID: any;
+    // let StatusID: any;
     if (StatusData) {
       Action = StatusData.filter((item) => item.Action);
-      StatusID = StatusData.filter((item) => item.StatusId);
+      // StatusID = StatusData.filter((item) => item.StatusId);
     }
-    console.log(StatusID);
-
     switch (TabNames) {
       case TabName.Evaluation:
         return (
@@ -622,7 +620,7 @@ const InterviewPanelList = (props: any) => {
   const getTabLabel = (tab: any) => {
     switch (tab.TabName) {
       case TabName.Evaluation:
-        return String(tabStyle(tab.TabName, CandidateData.length));
+        return tabStyle(tab.TabName, CandidateData.length);
       default:
         return tab.TabName;
     }

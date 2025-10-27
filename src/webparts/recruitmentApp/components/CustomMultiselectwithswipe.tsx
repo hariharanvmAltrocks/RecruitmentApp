@@ -63,7 +63,7 @@ const JobCodeSelector: React.FC<JobCodeSelectorProps> = ({
               // borderColor: "#5f5f5f",
               borderColor: "#CBCBCB",
               boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-              width: "475px",
+              width: "98%",
               height: "105px",
             },
           }}

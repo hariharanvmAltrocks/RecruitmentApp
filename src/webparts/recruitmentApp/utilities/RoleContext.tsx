@@ -43,6 +43,7 @@ export const RoleProvider = ({ children }: any) => {
   );
   const [availableRoles, setAvailableRoles] = useState<UserRoleData[]>([]);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
+  const [emptyRole, setEmptyRole] = useState(false);
 
   useEffect(() => {
     void getUserRole();
@@ -73,8 +74,12 @@ export const RoleProvider = ({ children }: any) => {
           userDetails.data
         );
 
-        setAvailableRoles(matchedRoles);
-        await finalizeRoleSelection(matchedRoles, userEmail);
+        if (matchedRoles.length != 0) {
+          setAvailableRoles(matchedRoles);
+          await finalizeRoleSelection(matchedRoles, userEmail);
+        } else {
+          setEmptyRole(true);
+        }
       }
     } catch (error) {
       console.error("Error fetching user role:", error);
@@ -196,6 +201,86 @@ export const RoleProvider = ({ children }: any) => {
       >
         {roleID && userName && userRole && masterData && ADGroupData ? (
           children
+        ) : emptyRole ? (
+          <>
+            <div className="mainPage">
+              <div style={{ width: "15%" }}>
+                <div
+                  style={{
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    borderRadius: "0px 30px 30px 0px ",
+                    transition: "width 1s",
+                    backgroundColor: "#597b98",
+                    padding: "0px 0",
+                    height: "90vh",
+                    width: "100%",
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "68px",
+                        padding: "3px",
+                        backgroundColor: "white",
+                        borderTopRightRadius: "14px",
+                        borderBottomRightRadius: "14px",
+                        width: "90%",
+                        //  height: "69px",
+                        margin: "20px 0",
+                        transition: "all 1s",
+                      }}
+                    >
+                      <img
+                        style={{
+                          height: "76px",
+                          width: "84%",
+                          objectFit: "contain",
+                        }}
+                        src={require("../assets/komoa-logo-name.png")}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      color: "white",
+                      fontSize: "15px",
+
+                      alignSelf: "center",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    Version-1.3
+                  </div>
+                </div>
+              </div>
+              <div
+                style={{
+                  width: "85%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <div
+                  style={{
+                    minHeight: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                >
+                  <h3 className="title">
+                    {"You are not assigned to any AD Group for HRMS"}
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </>
         ) : (
           <CustomLoader isLoading={isLoading} />
         )}
