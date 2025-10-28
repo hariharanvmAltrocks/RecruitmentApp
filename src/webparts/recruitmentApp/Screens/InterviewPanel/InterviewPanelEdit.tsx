@@ -1103,6 +1103,7 @@ const InterviewPanelEdit = (props: any) => {
                   />
                   <CustomViewDocument
                     Attachment={CandidateData.CandidateCVDoc}
+                    webUrl={props.webURL}
                   />
                 </div>
 

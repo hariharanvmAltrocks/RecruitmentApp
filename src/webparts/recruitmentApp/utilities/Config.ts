@@ -108,6 +108,10 @@ export const StatusId = {
   InterviewScheduledforLevel2: 129,
   PendingwithHODtoAssignPositionID: 130,
   Rescheduled: 159,
+  CandidateOnHoldbyHODLevel1: 165,
+  CandidateOnHoldbyHODLevel2: 166,
+  CandidateRejectedbyHODLevel1: 167,
+  CandidateRejectedbyHODLevel2: 168,
 
   // Post Recruitment
   PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,
@@ -232,6 +236,8 @@ export const RecuritmentHRMsg = {
 
   CandidateSelected: "Candidate Selected.",
   CandidateSelectedLevel2: "Candidate Level 1 Selected Successfully",
+  CandidateRejectedLevel2: "Candidate Level 1 Rejected Successfully",
+  CandidateonholdLevel2: "Candidate Level 1 On-Hold Successfully",
   CandidateRejected: "Candidate Rejected.",
   CandidateOnHold: "Candidate On Hold.",
   RecuritmentSubmitMsg: "Submitted Successfully.",
@@ -280,7 +286,8 @@ export const RecuritmentHRMsg = {
   QuestionValiErrorMsg: "Please add at least 5 questions before proceeding.",
   COIWarningMsg: "This is the COI profile. Are you sure you're ready to proceed?",
 
-  FormValidationMsg: "One or more required actions are missing."
+  FormValidationMsg: "One or more required actions are missing.",
+  NationalityMsgError: "Please select the any one Nationality"
 };
 
 export const validationMsg = {

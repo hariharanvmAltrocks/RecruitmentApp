@@ -306,7 +306,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           CurrentEmployer: profileExperiance?.company,
           CurrentPosition: profileExperiance?.title,
           WillingToRelocate: getOptAnswers[1]?.answerContent?.contentEn,
-          previouslyworkedMine: op?.profile?.profileDetailEmploymentHistory?.hasIvanhoeZijinExperienceId === "3" ? "No" : "Yes",
+          previouslyworkedMine: op?.profile?.profileDetailEmploymentHistory?.hasIvanhoeZijinExperienceId === "3" ? "No" : op?.profile?.profileDetailEmploymentHistory === null ? "No" : "Yes",
           familylinks: op?.profile?.hasEmployeeRelation === "1" ? "Yes" : "No",
           businesslinks: op?.profile?.hasBusinessLinks === "1" ? "Yes" : "No",
           familyDocuments: FamilyDocument.data,

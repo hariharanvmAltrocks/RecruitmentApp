@@ -62,6 +62,7 @@ import {
   CheckboxContent,
   labelNames,
   PositionStatus,
+  ValidationAction,
 } from "../../utilities/LabelName";
 
 type ValidationError = {
@@ -565,6 +566,8 @@ const HodViewScorecard = (props: any) => {
 
     switch (statusId) {
       case StatusId.RejectedbyHOD:
+      case StatusId.CandidateRejectedbyHODLevel1:
+      case StatusId.CandidateRejectedbyHODLevel2:
         setActionValue({ CandidateStatus: "No", Comments: comments });
         setFieldsEditable({
           radioGroup: false,
@@ -583,6 +586,8 @@ const HodViewScorecard = (props: any) => {
         break;
 
       case StatusId.OnHoldbyHOD:
+      case StatusId.CandidateOnHoldbyHODLevel1:
+      case StatusId.CandidateOnHoldbyHODLevel2:
         setActionValue({ CandidateStatus: "On Hold", Comments: comments });
         setFieldsEditable({
           radioGroup: true,
@@ -1324,6 +1329,34 @@ const HodViewScorecard = (props: any) => {
                   </div>
                 </div>
 
+                {actionValue.CandidateStatus === ValidationAction.Yes &&
+                  props?.stateValue?.StatusId !=
+                    StatusId.PendingwithHODtoselectthecandidateLevel2 &&
+                  props?.stateValue?.StatusId !=
+                    StatusId.CandidateOnHoldbyHODLevel1 &&
+                  props?.stateValue?.StatusId != StatusId.Selected && (
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg12">
+                        <div
+                          className="ms-Grid-col ms-lg4"
+                          style={{ marginLeft: "-5px" }}
+                        >
+                          <CustomAutoComplete
+                            label={labelNames.HODScordCard.AssignPositionID}
+                            options={positionOptions}
+                            value={selectedPosition}
+                            onChange={(item: AutoCompleteItem | null) =>
+                              handleAutoComplete(item)
+                            }
+                            error={validationErrors.PositionID}
+                            disabled={false}
+                            mandatory={true}
+                            placeholder={labelNames.HODScordCard.Selectposition}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 {props?.stateValue?.StatusId === StatusId.Selected && (
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg12">
@@ -1347,34 +1380,6 @@ const HodViewScorecard = (props: any) => {
                     </div>
                   </div>
                 )}
-                {(props?.stateValue?.StatusId ===
-                  StatusId.PendingwithHODtoselectthecandidate ||
-                  props?.stateValue?.StatusId === StatusId.OnHoldbyHOD ||
-                  props?.stateValue?.StatusId ===
-                    StatusId.PendingwithHODtoAssignPositionID) &&
-                  actionValue.CandidateStatus === "Yes" && (
-                    <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg12">
-                        <div
-                          className="ms-Grid-col ms-lg4"
-                          style={{ marginLeft: "-5px" }}
-                        >
-                          <CustomAutoComplete
-                            label={labelNames.HODScordCard.AssignPositionID}
-                            options={positionOptions}
-                            value={selectedPosition}
-                            onChange={(item: AutoCompleteItem | null) =>
-                              handleAutoComplete(item)
-                            }
-                            error={validationErrors.PositionID}
-                            disabled={false}
-                            mandatory={true}
-                            placeholder={labelNames.HODScordCard.Selectposition}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
 
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg12">
@@ -1608,10 +1613,9 @@ const HodViewScorecard = (props: any) => {
     if (
       props.stateValue?.StatusId ===
         StatusId.PendingwithHODtoAssignPositionID ||
-      props.stateValue?.StatusId ===
-        StatusId.PendingwithHODtoselectthecandidate ||
       props.stateValue?.StatusId === StatusId.Selected ||
-      props.stateValue?.StatusId === StatusId.OnHoldbyHOD
+      props.stateValue?.StatusId === StatusId.OnHoldbyHOD ||
+      props.stateValue?.StatusId === StatusId.CandidateOnHoldbyHODLevel2
     ) {
       void PositionData();
     }
@@ -1697,8 +1701,7 @@ const HodViewScorecard = (props: any) => {
         if (
           props.stateValue.StatusId ===
             StatusId.PendingwithHODtoAssignPositionID ||
-          props.stateValue.StatusId ===
-            StatusId.PendingwithHODtoselectthecandidate ||
+          props.stateValue.StatusId === StatusId.CandidateOnHoldbyHODLevel2 ||
           props.stateValue.StatusId === StatusId.OnHoldbyHOD
         ) {
           if (Action === "Selected") {
@@ -2104,8 +2107,9 @@ const HodViewScorecard = (props: any) => {
                 props?.stateValue?.StatusId ===
                 StatusId.PendingwithHODtoselectthecandidateLevel2
                   ? RecuritmentHRMsg.CandidateSelectedLevel2
-                  : props.stateValue?.TabName === TabName.Evaluation
-                  ? RecuritmentHRMsg.ScoreCardMsgLevel2
+                  : props?.stateValue?.StatusId ===
+                    StatusId.CandidateOnHoldbyHODLevel1
+                  ? RecuritmentHRMsg.CandidateSelectedLevel2
                   : RecuritmentHRMsg.CandidateSelected;
               break;
 
@@ -2121,7 +2125,11 @@ const HodViewScorecard = (props: any) => {
               CandidateDatas = createFilter(
                 workflowStatusApi.CandidateRejectedIPanel
               );
-              SuccessMessage = RecuritmentHRMsg.CandidateRejected;
+              SuccessMessage =
+                props?.stateValue?.StatusId ===
+                StatusId.PendingwithHODtoselectthecandidateLevel2
+                  ? RecuritmentHRMsg.CandidateRejectedLevel2
+                  : RecuritmentHRMsg.CandidateRejected;
 
               if (selectedPosition) {
                 await SPServices.SPUpdateItem({
@@ -2144,7 +2152,11 @@ const HodViewScorecard = (props: any) => {
               CandidateDatas = createFilter(
                 workflowStatusApi.CandidateOnHoldIPanel
               );
-              SuccessMessage = RecuritmentHRMsg.CandidateOnHold;
+              SuccessMessage =
+                props?.stateValue?.StatusId ===
+                StatusId.PendingwithHODtoselectthecandidateLevel2
+                  ? RecuritmentHRMsg.CandidateonholdLevel2
+                  : RecuritmentHRMsg.CandidateOnHold;
               if (selectedPosition) {
                 await SPServices.SPUpdateItem({
                   Listname: ListNames.HRMSPositionIDMaster,
@@ -2168,89 +2180,90 @@ const HodViewScorecard = (props: any) => {
           }
           console.log("", CandidateDatas);
 
-          const selectionResponse =
-            await InterviewServices.CandidateSeletionApi(
-              obj,
-              ListNames.HRMSRecruitmentCandidatePersonalDetails
-            );
-          await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
-
-          if (selectionResponse.status === 200) {
-            setAlertPopupOpen(true);
-            setalertProps({
-              Message: SuccessMessage,
-              Type: HRMSAlertOptions.Success,
-              visible: true,
-              ButtonAction: async (userClickedOK: boolean) => {
-                if (userClickedOK) {
-                  if (props.stateValue?.TabName === TabName.Evaluation) {
-                    if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-                      props.navigation("/ReviewProfileList", {
-                        state: {
-                          tab: props.stateValue.tab,
-                          TabName: TabName.Evaluation,
-                        },
-                      });
-                    } else if (
-                      props.CurrentRoleID.includes(RoleID.InterviewPanel)
-                    ) {
-                      props.navigation("/InterviewPanelList", {
-                        state: {
-                          tab: props.stateValue.tab,
-                          TabName: TabName.Evaluation,
-                        },
-                      });
-                    } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
-                      props.navigation("/RecurimentProcess", {
-                        state: {
-                          tab: props.stateValue.tab,
-                          TabName: TabName.Evaluation,
-                        },
-                      });
-                    }
-                  } else {
-                    props.navigation(
-                      "/RecurimentProcess/HodScoreCard/CandidateList",
-                      {
-                        state: {
-                          ID: CandidateData?.RecruitmentID,
-                          Status: props.stateValue?.Status,
-                          TabName: props.stateValue?.TabName,
-                          ButtonAction: props.stateValue?.PreviousTabName,
-                          JobCode: CandidateData?.JobCode,
-                          StatusId: props.stateValue?.StatusId,
-                          JobCodeID: props.stateValue.JobCodeID,
-                          Department: props.stateValue.Department,
-                          NoOfPosition: props.stateValue.NoOfPosition,
-                          tab: props.stateValue?.tabs,
-                          tabs: props.stateValue.tab,
-                        },
+          await InterviewServices.CandidateSeletionApi(
+            obj,
+            ListNames.HRMSRecruitmentCandidatePersonalDetails
+          ).then(async (res) => {
+            await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
+            if (res.status === 200) {
+              let SuccessAlert = {
+                Message: SuccessMessage,
+                Type: HRMSAlertOptions.Success,
+                visible: true,
+                ButtonAction: async (userClickedOK: boolean) => {
+                  if (userClickedOK) {
+                    if (props.stateValue?.TabName === TabName.Evaluation) {
+                      if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+                        props.navigation("/ReviewProfileList", {
+                          state: {
+                            tab: props.stateValue.tab,
+                            TabName: TabName.Evaluation,
+                          },
+                        });
+                      } else if (
+                        props.CurrentRoleID.includes(RoleID.InterviewPanel)
+                      ) {
+                        props.navigation("/InterviewPanelList", {
+                          state: {
+                            tab: props.stateValue.tab,
+                            TabName: TabName.Evaluation,
+                          },
+                        });
+                      } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
+                        props.navigation("/RecurimentProcess", {
+                          state: {
+                            tab: props.stateValue.tab,
+                            TabName: TabName.Evaluation,
+                          },
+                        });
                       }
-                    );
+                    } else {
+                      props.navigation(
+                        "/RecurimentProcess/HodScoreCard/CandidateList",
+                        {
+                          state: {
+                            ID: CandidateData?.RecruitmentID,
+                            Status: props.stateValue?.Status,
+                            TabName: props.stateValue?.TabName,
+                            ButtonAction: props.stateValue?.PreviousTabName,
+                            JobCode: CandidateData?.JobCode,
+                            StatusId: props.stateValue?.StatusId,
+                            JobCodeID: props.stateValue?.JobCodeID,
+                            Department: props.stateValue?.Department,
+                            NoOfPosition: props.stateValue?.NoOfPosition,
+                            tab: props.stateValue?.tabs,
+                            tabs: props.stateValue?.tab,
+                          },
+                        }
+                      );
+                    }
+                    setAlertPopupOpen(false);
+                  } else {
+                    setAlertPopupOpen(false);
                   }
-                  setAlertPopupOpen(false);
-                } else {
-                  setAlertPopupOpen(false);
-                }
-              },
-            });
-          }
-          setIsLoading(false);
-        }
-      } else {
-        let FormFieldFailed = {
-          Message: RecuritmentHRMsg.FormValidationMsg,
-          Type: HRMSAlertOptions.Error,
-          visible: true,
-          ButtonAction: async (userClickedOK: boolean) => {
-            if (userClickedOK) {
-              setAlertPopupOpen(false);
+                },
+              };
+
+              setAlertPopupOpen(true);
+              setalertProps(SuccessAlert);
+              setIsLoading(false);
+            } else {
+              let FormFieldFailed = {
+                Message: RecuritmentHRMsg.FormValidationMsg,
+                Type: HRMSAlertOptions.Error,
+                visible: true,
+                ButtonAction: async (userClickedOK: boolean) => {
+                  if (userClickedOK) {
+                    setAlertPopupOpen(false);
+                  }
+                },
+              };
+              setAlertPopupOpen(true);
+              setalertProps(FormFieldFailed);
+              setIsLoading(false);
             }
-          },
-        };
-        setAlertPopupOpen(true);
-        setalertProps(FormFieldFailed);
-        setIsLoading(false);
+          });
+        }
       }
     } catch (error) {
       console.error("Error in Submit_fn:", error);

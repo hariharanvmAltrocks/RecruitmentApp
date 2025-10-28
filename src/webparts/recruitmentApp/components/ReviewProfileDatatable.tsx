@@ -75,7 +75,7 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
 
     setFilteredItems(paginated);
     // setTotalItem(result.length);
-    setTotalItem(data[0]?.TotalItems);
+    setTotalItem(data[0]?.TotalItems === undefined ? 0 : data[0]?.TotalItems);
   }, [data, pagination, dashboardSearch, sortMeta]);
 
   React.useEffect(() => {

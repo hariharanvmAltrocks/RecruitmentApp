@@ -774,13 +774,19 @@ const ReviewCandidateList = (props: any) => {
             Operator: "eq",
             FilterValue: props?.stateValue?.JobCodeID,
           },
+          {
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: "No",
+          },
         ],
         ""
       ).then(async (res) => {
         let InterviewScheduledLevel2 = res.data?.filter(
           (item: any) =>
             item.StatusId ===
-            StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+              StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel &&
+            item.ItemCreated === "No"
         );
 
         let RescheduledCount = res.data?.filter(

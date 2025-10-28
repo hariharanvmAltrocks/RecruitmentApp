@@ -1537,8 +1537,13 @@ const RecruitmentProcess = (props: any) => {
   //AssignButton function for AssignHR
   const AssignBtn_fn = async () => {
     const isItemSelected = selectedJobCodes.length > 0;
-
-    if (isItemSelected) {
+    const allSameNationality = selectedJobCodes.every(
+      (item: any) => item.Nationality === selectedJobCodes[0]?.Nationality
+    );
+    console.log(allSameNationality, "allSameNationality");
+    if (allSameNationality) {
+    }
+    if (isItemSelected && allSameNationality) {
       let IDs = selectedJobCodes.map((item) => item.ID);
       let filterConditions = [];
       let Conditions = "and";
@@ -1559,6 +1564,8 @@ const RecruitmentProcess = (props: any) => {
         // Message: RecuritmentHRMsg.RecruitmentErrorMsg,
         Message: props.CurrentRoleID.includes(RoleID.RecruitmentHR)
           ? RecuritmentHRMsg.AgenciesErrorMsg
+          : !allSameNationality
+          ? RecuritmentHRMsg.NationalityMsgError
           : RecuritmentHRMsg.RecruitmentErrorMsg,
         Type: HRMSAlertOptions.Error,
         visible: true,
