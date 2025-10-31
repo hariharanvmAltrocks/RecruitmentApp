@@ -2,7 +2,6 @@ import * as React from "react";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 import { Link, Tooltip } from "@mui/material";
 import { Icon } from "office-ui-fabric-react";
-import { Dialog } from "primereact/dialog";
 import "../App.css";
 
 interface fieldItems {
@@ -18,32 +17,32 @@ function CustomViewAttachment({
   StateValue,
   webUrl,
 }: fieldItems) {
-  const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
-  const [documentcontent, setDocumentcontent] = React.useState<string>("");
+  // const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
+  // const [documentcontent, setDocumentcontent] = React.useState<string>("");
 
   function handleFileDownload(event: React.MouseEvent, documentUrl: string) {
     event.preventDefault();
-    setDocumentPopup(true);
-    setDocumentcontent(documentUrl);
+    // setDocumentPopup(true);
+    // setDocumentcontent(documentUrl);
   }
 
-  const getIframeSrc = (fileUrl: string): string => {
-    if (fileUrl.endsWith(".pdf")) {
-      return fileUrl;
-    } else if (fileUrl.endsWith(".docx")) {
-      //   const absoluteUrl = fileUrl.startsWith("http")
-      // ? fileUrl
-      // : `${webUrl.split("/sites")[0]}${fileUrl}`;
+  // const getIframeSrc = (fileUrl: string): string => {
+  //   if (fileUrl.endsWith(".pdf")) {
+  //     return fileUrl;
+  //   } else if (fileUrl.endsWith(".docx")) {
+  //     //   const absoluteUrl = fileUrl.startsWith("http")
+  //     // ? fileUrl
+  //     // : `${webUrl.split("/sites")[0]}${fileUrl}`;
 
-      const viewerUrl = `${webUrl}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(
-        fileUrl
-      )}&action=embedview`;
+  //     const viewerUrl = `${webUrl}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(
+  //       fileUrl
+  //     )}&action=embedview`;
 
-      return viewerUrl;
-    } else {
-      return fileUrl;
-    }
-  };
+  //     return viewerUrl;
+  //   } else {
+  //     return fileUrl;
+  //   }
+  // };
 
   return (
     <>
@@ -112,7 +111,7 @@ function CustomViewAttachment({
             );
           })
         : null}
-      {documentPopup ? (
+      {/* {documentPopup ? (
         <>
           <Dialog
             style={{
@@ -193,7 +192,7 @@ function CustomViewAttachment({
         </>
       ) : (
         <></>
-      )}
+      )} */}
     </>
   );
 }

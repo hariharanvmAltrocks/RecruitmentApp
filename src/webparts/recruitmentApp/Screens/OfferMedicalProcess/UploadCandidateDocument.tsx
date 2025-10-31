@@ -278,10 +278,10 @@ const UploadCandidateDocument = (props: any) => {
       // );
 
       let ConsentFormDocs = OfferLetter.data.filter((item: any) =>
-        item.name.includes("ConsentForm")
+        item.name.includes("Consent")
       );
       let OfferDocs = OfferLetter.data.filter((item: any) =>
-        item.name.includes("OfferLetter")
+        item.name.includes("Offer")
       );
       let OfferDOcsview: CustomViewDocument[] = OfferDocs.map((item: any) => ({
         Title: DisplayFolderName.Offerletter,
@@ -922,7 +922,7 @@ const UploadCandidateDocument = (props: any) => {
 
                 {props.stateValue?.StatusId !=
                 StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ? (
-                  <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
+                  <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
                     <div className="custom-document-column">
                       <CustomLabel
                         value={Attachment.PositionDocument.CandidateDocuments}
@@ -964,7 +964,7 @@ const UploadCandidateDocument = (props: any) => {
                   StatusId.PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter ||
                 props.stateValue?.StatusId ===
                   StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ? (
-                  <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
+                  <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg3">
                       <>
                         <CustomLabel
@@ -1000,7 +1000,7 @@ const UploadCandidateDocument = (props: any) => {
                               ColorCode.ButtonColorCode.ButtonColor,
                             color: "white",
                           }}
-                          fileformat=".doc,.pdf,.docx"
+                          fileformat=".pdf"
                         />
                         <CustomViewAttachment
                           Attachment={data.OfferLetterDoc ?? []}
@@ -1046,7 +1046,7 @@ const UploadCandidateDocument = (props: any) => {
                               ColorCode.ButtonColorCode.ButtonColor,
                             color: "white",
                           }}
-                          fileformat=".doc,.pdf,.docx"
+                          fileformat=".pdf"
                         />
                         <CustomViewAttachment
                           Attachment={data.ConsentDocs ?? []}
