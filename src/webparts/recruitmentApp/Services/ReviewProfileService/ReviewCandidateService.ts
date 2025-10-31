@@ -1,4 +1,4 @@
-import { AdvertisementDetails, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
 export const getProfileData = {
@@ -133,4 +133,12 @@ export const EmailService = {
             `/hrms/SendEmailNotification`, params
         );
     },
+};
+
+export const LaborHire = {
+    initiateLaborHire: async function (params: initiateLaborHire) {
+        return await AxiosInstance.post(
+            `/hrms/UpsertJobsLaborHire`, params
+        );
+    }
 }

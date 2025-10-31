@@ -2702,6 +2702,20 @@ const ViewCandidateDetails = (props: any) => {
                 status: ResponeStatus.SUCCESS,
               };
             }
+            if (
+              props.stateValue?.StatusId ===
+              workflowStatusApi.PendingRecruitmentHRscheduleInterview
+            ) {
+              EmailNot.templateCode = EmailTemplateCodes.InterviewSchedule;
+              EmailNot.dynamicFields = {
+                InterviewDate: SpiltDateOnly(
+                  InterviewedLevel?.InterviewedDate ?? new Date()
+                ),
+                InterviewTime: InterviewedLevel?.InterviewTime,
+                MeetingLink: InterviewedLevel?.InterviewMeetingInviteLink,
+                InterviewLevel: InterviewedLevel?.Levels,
+              };
+            }
 
             if (COIResponse.status === ResponeStatus.SUCCESS) {
               const res = await GetPortalJobsService.UpdateCandidateStatus(

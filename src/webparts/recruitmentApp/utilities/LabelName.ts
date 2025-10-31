@@ -245,10 +245,10 @@ export const DisplayFolderName = {
 }
 
 export const EmailTemplateCodes = {
-    LineManagerEmail: "LM1_ReviewProfile",
-    CandidateRejected: "LM1_CandidateRejected",
-    InterviewSchedule: "RecuritmentHR_ScheduleInterview",
-    HODSelection: "HOD_SelectCandidate",
+    LineManagerEmail: "CANDIDATE_PROFILE_SHORTLISTED",
+    CandidateRejected: "INTERVIEW_REJECTED",
+    InterviewSchedule: "INTERVIEW_PROCESS",
+    HODSelection: "INTERVIEW_SELECTED",
     HODSelectionLevel1: "HOD1_SelectCandidate",
     InterviewScheduleLevel1: "RecuritmentHR_ScheduleInterview_Level1",
 }

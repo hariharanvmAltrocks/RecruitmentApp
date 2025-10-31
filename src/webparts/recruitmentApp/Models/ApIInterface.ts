@@ -420,6 +420,33 @@ export type COIType = {
 export type sendEmail = {
     jobRequestId: number;
     templateCode: string;
+    dynamicFields?: {
+        InterviewDate?: string;
+        InterviewTime?: string;
+        MeetingLink?: string;
+        InterviewLevel?: string;
+        Department?: string;
+    }
+}
+
+export type initiateLaborHire = {
+    jobRequestID: number;
+    positionId: string;
+    location: string;
+    businessUnit: string;
+    department: string;
+    section: string;
+    patersonGrade: string;
+    drcGrade: string;
+    reportingManager: string;
+    dateOfJoining?: Date;
+    typeOfContract: string;
+    noOfMonths?: string;
+    netPay: number;
+    lhCode: string;
+    createdOn: Date;
+    createdBy: string;
+    createrEmail: string;
 }
 
 
