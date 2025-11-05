@@ -857,7 +857,7 @@ const UploadCandidateDocument = (props: any) => {
                     />
                   </div>
                 </div>
-
+                {/* 
                 {props.stateValue?.StatusId !=
                   StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ||
                   (props.stateValue?.StatusId !=
@@ -880,7 +880,7 @@ const UploadCandidateDocument = (props: any) => {
                         />
                       </div>
                     </div>
-                  ))}
+                  ))} */}
 
                 {/* {data.MedicalDocs.length > 0 && (
                   <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
