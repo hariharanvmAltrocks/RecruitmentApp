@@ -69,11 +69,13 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
   // const [totalItem, setTotalItem] = React.useState<number>(0);
 
   React.useEffect(() => {
-    const PagewiseData =
-      pagination.totalPages === 0
-        ? data
-        : data.slice(pagination.first, pagination.first + pagination.rows);
-    setFilteredItems(PagewiseData);
+    console.log(data, "data");
+
+    // const PagewiseData =
+    //   pagination.totalPages === 0
+    //     ? data
+    //     : data.slice(pagination.first, pagination.first + pagination.rows);
+    setFilteredItems(data);
     // setTotalItem(data[0]?.TotalItems ?? data.length);
     const workflowStatusoption: AutoCompleteItem[] = Array.from(
       data.map((sta) => ({
@@ -342,7 +344,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
             // lazy
             rows={rows}
             // first={pagination.first}
-            // totalRecords={totalItem}
+            totalRecords={filteredItems[0]?.TotalItems ?? filteredItems.length}
             // onPage={(event) => {
             //   onPageChange(event);
             // }}

@@ -360,15 +360,18 @@ export type UploadDocument = {
     RadioAction: string;
     CheckboxContent: string;
 
-    TrainingSystem: TrainingSystem;
-    TASystem: TASystem;
-    ITSystem: ITSystem;
-    MedicalSystem: MedicalSystem;
+    TrainingSystem?: TrainingSystem;
+    TASystem?: TASystem;
+    ITSystem?: ITSystem;
+    MedicalSystem?: MedicalSystem;
 
-    ITRequired: string;
+    ITRequired?: string;
 
     JoiningDate: string;
     NoticePeriod: string;
+
+    BGVRadioBtn: string;
+    BGVRadioBtnlabel: string;
 }
 
 export type DocumentName = {

@@ -406,7 +406,10 @@ export const TabName = {
   // Candidate Articles
   // UploadDocuments: "Upload Documents",
   // ViewDocuments: "View Documents",
-  CandidateDocuments: "Candidate Documents",
+  // CandidateDocuments: "Candidate Documents",
+  BackgroundVerification: "Background Verification",
+  OfferLetterLabourHire: "OfferLetter - Labour Hire",
+  OfferLetterKSCA: "OfferLetter - KSCA",
   // HOD
   ReviewJobAdvertisement: "Review Job Advertistment",
   ReviewScorecard: "Review Score card",
@@ -481,6 +484,9 @@ export const workflowStatusApi = {
   LineManagerLevel2Rejected: "WS15",
 
   // post Recrutiment
+  PendingCandidateUploadBGVDocs: "WS33",
+  UploadedtheCandidateBGVDocs: "WS34",
+  initiatetheBGVProcess: "WS35",
   Pendingwithcandidatetosignofferletter: "WS16",
   CandidateuploadedtheSignedOfferLetter: "WS17",
   PendingwithCandidatetouploadotherDocuments: "WS18",

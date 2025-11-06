@@ -244,6 +244,12 @@ export const DisplayFolderName = {
     WorkPermitDocument: "WorkPermit Document"
 }
 
+export const RadioBtnLabel = {
+    BGVNationalsLabel: "Is the background verification cleared?",
+    BGVExpatriatesLabel: "Are you sure you want to initiate Background verification for this candidate?",
+    DocumentVerification: "Is the document verified?"
+}
+
 export const EmailTemplateCodes = {
     LineManagerEmail: "CANDIDATE_PROFILE_SHORTLISTED",
     CandidateRejected: "INTERVIEW_REJECTED",
@@ -251,4 +257,9 @@ export const EmailTemplateCodes = {
     HODSelection: "INTERVIEW_SELECTED",
     HODSelectionLevel1: "HOD1_SelectCandidate",
     InterviewScheduleLevel1: "RecuritmentHR_ScheduleInterview_Level1",
+}
+
+export const EmployeementCategory = {
+    KCSAEmployee: "KCSA Employee",
+    LaborhireContractor: "Labor hire/Contractor",
 }

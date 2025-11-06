@@ -13,6 +13,7 @@ import {
   DocumentLibraray,
   HRMSAlertOptions,
   ListNames,
+  Nationality,
   PostRecrutimentCheckboxContent,
   RecuritmentHRMsg,
   ResponeStatus,
@@ -49,6 +50,7 @@ import {
   CheckboxContent,
   DisplayFolderName,
   labelNames,
+  RadioBtnLabel,
 } from "../../utilities/LabelName";
 import AlertDialogbox from "../../components/CustomAlert/AlertDialogbox";
 import CustomTextArea from "../../components/CustomTextArea";
@@ -64,6 +66,7 @@ type ValidationError = {
   comments: boolean;
   checkbox: boolean;
   ITRequired: boolean;
+  BGVRadioBtn: boolean;
 };
 
 export type viewDocument = {
@@ -154,6 +157,8 @@ const UploadCandidateDocument = (props: any) => {
       MedicalStatus: "",
     },
     ITRequired: "",
+    BGVRadioBtn: "",
+    BGVRadioBtnlabel: "",
   });
   // const [viewDocument, setViewDocument] = React.useState<viewDocument>({
   //   ReviewOfferDoc: [],
@@ -176,6 +181,7 @@ const UploadCandidateDocument = (props: any) => {
       comments: false,
       checkbox: false,
       ITRequired: false,
+      BGVRadioBtn: false,
     });
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -216,12 +222,6 @@ const UploadCandidateDocument = (props: any) => {
       let BGVDocs = await OfferLetterServices.FetchCandidateDocument(
         BGVDocument
       );
-      console.log("OfferLetter", BGVDocs.data);
-      // let BGVDocsdata: CustomViewDocument[] = BGVDocs.data.map((item: any) => ({
-      //   Title: DisplayFolderName.BackgroundVerification,
-      //   DocumentName: item.name,
-      //   DocumentContent: item.content,
-      // }));
       let OfferDocument: GetCandidateDocument = {
         ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
         ProfileID: "13", //item?.CandidateDetails?.ProfileID,
@@ -311,6 +311,10 @@ const UploadCandidateDocument = (props: any) => {
         // MedicalDocs: MedicalDocs.data,
         JoiningDate: CandidateDetails?.data?.[0]?.joiningDate ?? "",
         NoticePeriod: CandidateDetails?.data?.[0]?.noticePeriod ?? "",
+        BGVRadioBtnlabel:
+          item.CandidateDetails?.Nationality === Nationality.Nationals
+            ? RadioBtnLabel.BGVNationalsLabel
+            : RadioBtnLabel.BGVExpatriatesLabel,
       }));
 
       // setViewDocument((prev) => ({
@@ -801,7 +805,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                 </div>
 
-                {props.stateValue?.StatusId ===
+                {/* {props.stateValue?.StatusId ===
                   StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ||
                 props.stateValue?.StatusId ===
                   StatusId.PendingwithTAforMedicalScreening ? (
@@ -827,46 +831,7 @@ const UploadCandidateDocument = (props: any) => {
                       </div>
                     </div>
                   </>
-                )}
-
-                {/* {data.MedicalDocs.length > 0 && (
-                  <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
-                    <div className="custom-document-column">
-                      <CustomLabel value={"Medical Document"} />
-                      <div
-                        className="document-wrapper"
-                        title={
-                          Array.isArray(data.MedicalDocs)
-                            ? data.MedicalDocs.join(", ")
-                            : data.MedicalDocs
-                        }
-                      >
-                        <CustomViewDocument Attachment={data.MedicalDocs} />
-                      </div>
-                    </div>
-                  </div>
                 )} */}
-
-                {/* {data.OfferLetterDoc.length > 0 && (
-                  <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
-                    <div className="custom-document-column">
-                      <CustomLabel value={"Medical Document"} />
-                      <div
-                        className="document-wrapper"
-                        title={
-                          Array.isArray(viewDocument.ReviewOfferDoc)
-                            ? viewDocument.ReviewOfferDoc.join(", ")
-                            : viewDocument.ReviewOfferDoc
-                        }
-                      >
-                        <CustomViewDocument
-                          Attachment={viewDocument.ReviewOfferDoc}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )} */}
-
                 {props.stateValue?.StatusId ===
                   StatusId.PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter ||
                 props.stateValue?.StatusId ===
@@ -1015,22 +980,6 @@ const UploadCandidateDocument = (props: any) => {
                   <></>
                 )}
 
-                {/* {data.PersonalDocs.length > 0 && (
-                  <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
-                    <LabelHeaderComponents value={"Candidate Documents"} />
-                    {data.PersonalDocs.map((item, idx) => (
-                      <div className="ms-Grid-col ms-lg3">
-                        <div className="custom-document-column">
-                          <CustomLabel value={item.category} />{" "}
-                          <div className="document-wrapper">
-                            <CustomViewDocument Attachment={item.documents} />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )} */}
-
                 {props.stateValue?.StatusId ===
                   StatusId.WorkPermitAcknowledgedContractUploaded && (
                   <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
@@ -1122,6 +1071,24 @@ const UploadCandidateDocument = (props: any) => {
                 )}
 
                 {props.stateValue?.StatusId ===
+                  StatusId.PendingHRBGVInitiation && (
+                  <div className="ms-Grid-row" style={{ marginTop: "2%" }}>
+                    <div className="ms-Grid-col ms-lg6">
+                      <CustomRadioGroup
+                        label={data.BGVRadioBtnlabel}
+                        value={data.BGVRadioBtn}
+                        options={["Yes", "No"]}
+                        error={validationErrors.BGVRadioBtn}
+                        mandatory={true}
+                        onChange={(item) =>
+                          handleRadioChange("BGVRadioBtn", item)
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {props.stateValue?.StatusId ===
                   StatusId.PendingHRReviewBGCheck ||
                 props.stateValue?.StatusId ===
                   StatusId.PendingHRReviewOfferWorkPermit ||
@@ -1131,7 +1098,7 @@ const UploadCandidateDocument = (props: any) => {
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg5">
                       <CustomRadioGroup
-                        label={"Is the document verified?"}
+                        label={RadioBtnLabel.DocumentVerification}
                         value={data.RadioAction}
                         options={["Yes", "No"]}
                         error={validationErrors.RadioAction}
@@ -1292,7 +1259,7 @@ const UploadCandidateDocument = (props: any) => {
             {
               if (btnAction === ButtonAction.Initiated) {
                 workflowStatusValue =
-                  workflowStatusApi.Pendingwithcandidatetosignofferletter;
+                  workflowStatusApi.PendingCandidateUploadBGVDocs;
                 SuccessMsg = RecuritmentHRMsg.BGverificationMsg;
                 ActionID = WorkflowAction.Approved;
                 DocumentResponse = {
@@ -1304,8 +1271,7 @@ const UploadCandidateDocument = (props: any) => {
           case StatusId.PendingHRReviewBGCheck:
             {
               if (btnAction === ButtonAction.Review) {
-                workflowStatusValue =
-                  workflowStatusApi.Pendingwithcandidatetosignofferletter;
+                workflowStatusValue = workflowStatusApi.initiatetheBGVProcess;
                 SuccessMsg = RecuritmentHRMsg.BGReviewedMsg;
                 ActionID = WorkflowAction.Approved;
                 DocumentResponse = {
@@ -1716,7 +1682,8 @@ const UploadCandidateDocument = (props: any) => {
                       },
                     },
                   ]
-                : props.stateValue?.ButtonAction === ButtonAction.Initiated
+                : props.stateValue?.ButtonAction === ButtonAction.Initiated &&
+                  data.BGVRadioBtn === "Yes"
                 ? [
                     {
                       label: ButtonAction.Initiated,
