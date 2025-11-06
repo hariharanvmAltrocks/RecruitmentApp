@@ -1235,14 +1235,14 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 1px;
-  padding-top: 1%;
+  /* padding: 10px 1px;
+  padding-top: 1%; */
 }
  
 .p-dialog-title {
   /* margin-top: -24px; */
   font-size: 19px;
-  margin-left: 1%;
+  /* margin-left: 1%; */
   font-weight: 600;
   font-family: "Roboto", sans-serif !important;
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
-import { Link, Tooltip } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import { Icon } from "office-ui-fabric-react";
 import "../App.css";
 
@@ -20,11 +20,11 @@ function CustomViewAttachment({
   // const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
   // const [documentcontent, setDocumentcontent] = React.useState<string>("");
 
-  function handleFileDownload(event: React.MouseEvent, documentUrl: string) {
-    event.preventDefault();
-    // setDocumentPopup(true);
-    // setDocumentcontent(documentUrl);
-  }
+  // function handleFileDownload(event: React.MouseEvent, documentUrl: string) {
+  //   event.preventDefault();
+  // setDocumentPopup(true);
+  // setDocumentcontent(documentUrl);
+  // }
 
   // const getIframeSrc = (fileUrl: string): string => {
   //   if (fileUrl.endsWith(".pdf")) {
@@ -65,7 +65,7 @@ function CustomViewAttachment({
                       <span
                         style={{ display: "inline-flex", alignItems: "center" }}
                       >
-                        {/* <a
+                        <a
                           style={{
                             color: "blue",
                             fontWeight: "bold",
@@ -77,8 +77,8 @@ function CustomViewAttachment({
                           }}
                         >
                           {truncatedFileName}
-                        </a> */}
-                        <Link
+                        </a>
+                        {/* <Link
                           href={file.content}
                           onClick={(e) => handleFileDownload(e, file.url ?? "")}
                           target="_blank"
@@ -93,7 +93,7 @@ function CustomViewAttachment({
                           }}
                         >
                           {truncatedFileName}
-                        </Link>
+                        </Link> */}
                         <Icon
                           iconName="Delete"
                           style={{
