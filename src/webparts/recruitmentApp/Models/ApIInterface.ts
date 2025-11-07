@@ -172,6 +172,8 @@ export type WorkflowJson = {
     OfferLatterPath?: string,
     EmpContractLatterPath?: string,
     ConsentFormPath?: string,
+    HrUserId?: string,
+    HrUserEmail?: string,
 }
 
 export type profileJobsComments = {

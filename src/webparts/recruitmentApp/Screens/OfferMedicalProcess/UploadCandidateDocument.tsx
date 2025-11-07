@@ -1388,6 +1388,14 @@ const UploadCandidateDocument = (props: any) => {
             jobRequestId: Number(data?.jobRequestID),
             comments: data.comments,
             actionBy: RoleName.RecruitmentHR,
+            HrUserId:
+              props.stateValue?.StatusId === StatusId.PendingHRReviewBGCheck
+                ? RoleName.RecruitmentHR
+                : "",
+            HrUserEmail:
+              props.stateValue?.StatusId === StatusId.PendingHRReviewBGCheck
+                ? props.userDetails[0]?.EmailId
+                : "",
             // OfferReleasedOn: Dateformatted,
             // OfferLatterPath: DocumentResponse.data[0]?.content,
           };
