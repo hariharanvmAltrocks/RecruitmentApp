@@ -9,6 +9,7 @@ import { CandidateDetails, COIAttach, DocumentValue, IGetPortalJobs, Rescheduled
 import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import { CommentsData, DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
+import { quesContentId } from "../../utilities/LabelName";
 
 export default class GetPortalJobs implements IGetPortalJobs {
   async UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>> {
@@ -265,6 +266,9 @@ export default class GetPortalJobs implements IGetPortalJobs {
           "role": op?.profile?.profileDetailEmploymentHistory?.workRole,
           "region": op?.profile?.profileDetailEmploymentHistory?.territory,
         }
+        console.log(getOptAnswers, "getOptAnswers");
+
+        let willingRelocated = getOptAnswers.filter((item: any) => item.question?.quesContentId === quesContentId.WillingRelocate)
         const JobCode = op?.jobCode?.split('-')[0];
         let GetProfileDahboard: CandidateProfile = {
           CandidateID: op?.jobRequestId,
@@ -302,10 +306,10 @@ export default class GetPortalJobs implements IGetPortalJobs {
           identityValue: op?.profile?.identityValue,
           identityType: (IdentityID && IdentityID.length > 0) ? IdentityID[0].displayText : "Passport",
 
-          NumberOftax: getOptAnswers[0]?.answerContent?.contentEn,
+          NumberOftax: "3",//getOptAnswers[0]?.answerContent?.contentEn,
           CurrentEmployer: profileExperiance?.company,
           CurrentPosition: profileExperiance?.title,
-          WillingToRelocate: getOptAnswers[1]?.answerContent?.contentEn,
+          WillingToRelocate: willingRelocated[0]?.answerContent?.contentEn,
           previouslyworkedMine: op?.profile?.profileDetailEmploymentHistory?.hasIvanhoeZijinExperienceId === "3" ? "No" : op?.profile?.profileDetailEmploymentHistory === null ? "No" : "Yes",
           familylinks: op?.profile?.hasEmployeeRelation === "1" ? "Yes" : "No",
           businesslinks: op?.profile?.hasBusinessLinks === "1" ? "Yes" : "No",

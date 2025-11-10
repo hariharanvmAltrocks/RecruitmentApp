@@ -230,3 +230,7 @@ export const DisplayFolderName = {
     EmploymentContractForm: "Employment Contract",
     PersonalDocument: "Personal Document",
 }
+
+export const quesContentId = {
+    WillingRelocate: "FD889B9C1B51F13738596ACFB206E881EAC9",
+}

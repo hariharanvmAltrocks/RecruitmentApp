@@ -857,30 +857,38 @@ const UploadCandidateDocument = (props: any) => {
                     />
                   </div>
                 </div>
-                {/* 
-                {props.stateValue?.StatusId !=
-                  StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ||
-                  (props.stateValue?.StatusId !=
-                    StatusId.PendingwithTAforMedicalScreening && (
-                    <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg3">
-                        <CustomInput
-                          label={labelNames.CandidateDetails.JoiningDate}
-                          value={data?.JoiningDate}
-                          disabled={true}
-                          mandatory={false}
-                        />
-                      </div>
-                      <div className="ms-Grid-col ms-lg3">
-                        <CustomInput
-                          label={labelNames.CandidateDetails.NoticePeriod}
-                          value={data?.NoticePeriod}
-                          disabled={true}
-                          mandatory={false}
-                        />
-                      </div>
+
+                {(props.stateValue?.StatusId ===
+                  StatusId.PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithCandidatetoUploadOtherDocuments ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithRecruitmentHRtoUploadtheEmploymentContract ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithCandidatetoSignEmploymentContract ||
+                  props.stateValue?.StatusId ===
+                    StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm) && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg3">
+                      <CustomInput
+                        label={labelNames.CandidateDetails.JoiningDate}
+                        value={data?.JoiningDate}
+                        disabled={true}
+                        mandatory={false}
+                      />
                     </div>
-                  ))} */}
+                    <div className="ms-Grid-col ms-lg3">
+                      <CustomInput
+                        label={labelNames.CandidateDetails.NoticePeriod}
+                        value={data?.NoticePeriod}
+                        disabled={true}
+                        mandatory={false}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {/* {data.MedicalDocs.length > 0 && (
                   <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
