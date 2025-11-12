@@ -106,151 +106,172 @@ export const ViewCandidateDocument = ({
                 pr: 1,
               }}
             >
-              {data.map((item, index) => {
-                const isExpanded = IsExpanded === index;
-                if (item.data.length > 0) {
-                  return (
-                    <>
-                      <Box
-                        // key={item.id}
-                        sx={{
-                          boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-                          borderRadius: "4px",
-                          borderColor: "#5f5f5f",
-                          marginTop: "1%",
-                        }}
-                      >
-                        <Accordion
-                          expanded={isExpanded}
-                          onChange={() => handleExpand(index)}
-                          sx={{
-                            boxShadow: "none",
-                            borderBottom: "1px solid #ddd",
-                            "&:last-of-type": {
-                              borderBottom: "none",
-                            },
-                            mb: 2,
-                          }}
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
+              {data.length > 0 ? (
+                <>
+                  {data.map((item, index) => {
+                    const isExpanded = IsExpanded === index;
+                    if (item.data.length > 0) {
+                      return (
+                        <>
+                          <Box
+                            // key={item.id}
                             sx={{
-                              color: "rgb(50, 49, 48)",
-                              cursor: "pointer",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              width: "100%",
+                              boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
+                              borderRadius: "4px",
+                              borderColor: "#5f5f5f",
+                              marginTop: "1%",
                             }}
                           >
-                            <Typography
+                            <Accordion
+                              expanded={isExpanded}
+                              onChange={() => handleExpand(index)}
                               sx={{
-                                fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                                fontSize: "14px",
-                                flexGrow: 1,
+                                boxShadow: "none",
+                                borderBottom: "1px solid #ddd",
+                                "&:last-of-type": {
+                                  borderBottom: "none",
+                                },
+                                mb: 2,
                               }}
                             >
-                              {item?.Title}
-                            </Typography>
-                          </AccordionSummary>
-                          <AccordionDetails
-                            style={{
-                              position: "relative",
-                              bottom: "24px",
-                            }}
-                          >
-                            {item.data.map((docs: any, index: any) => {
-                              const fileName = docs.name;
-                              const truncatedFileName =
-                                fileName.length > 100
-                                  ? fileName.substring(0, 30) + "..."
-                                  : fileName;
-                              return (
-                                <div key={index}>
-                                  <div
-                                    className="ms-Grid-row"
-                                    style={{
-                                      display: "flex",
-                                      marginLeft: "1%",
-                                      marginTop: "2%",
-                                    }}
-                                  >
-                                    <div
-                                      className="ms-Grid-col ms-lg6"
-                                      style={{ marginRight: "1rem" }}
-                                    >
-                                      <Tooltip title={docs.name} arrow>
-                                        <Link
-                                          href="#"
-                                          onClick={(e) =>
-                                            handleFileDownload(e, docs.content)
-                                          }
-                                          style={{
-                                            color: "blue",
-                                            fontWeight: "bold",
-                                            display: "inline-block",
-                                            // maxWidth: "100%",
-                                            whiteSpace: "nowrap",
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                          }}
+                              <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                sx={{
+                                  color: "rgb(50, 49, 48)",
+                                  cursor: "pointer",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  width: "100%",
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                                    fontSize: "14px",
+                                    flexGrow: 1,
+                                  }}
+                                >
+                                  {item?.Title}
+                                </Typography>
+                              </AccordionSummary>
+                              <AccordionDetails
+                                style={{
+                                  position: "relative",
+                                  bottom: "24px",
+                                }}
+                              >
+                                {item.data.map((docs: any, index: any) => {
+                                  const fileName = docs.name;
+                                  const truncatedFileName =
+                                    fileName.length > 100
+                                      ? fileName.substring(0, 30) + "..."
+                                      : fileName;
+                                  return (
+                                    <div key={index}>
+                                      <div
+                                        className="ms-Grid-row"
+                                        style={{
+                                          display: "flex",
+                                          marginLeft: "1%",
+                                          marginTop: "2%",
+                                        }}
+                                      >
+                                        <div
+                                          className="ms-Grid-col ms-lg6"
+                                          style={{ marginRight: "1rem" }}
                                         >
-                                          FileName : {truncatedFileName}
-                                        </Link>
-                                      </Tooltip>
+                                          <Tooltip title={docs.name} arrow>
+                                            <Link
+                                              href="#"
+                                              onClick={(e) =>
+                                                handleFileDownload(
+                                                  e,
+                                                  docs.content
+                                                )
+                                              }
+                                              style={{
+                                                color: "blue",
+                                                fontWeight: "bold",
+                                                display: "inline-block",
+                                                // maxWidth: "100%",
+                                                whiteSpace: "nowrap",
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                              }}
+                                            >
+                                              FileName : {truncatedFileName}
+                                            </Link>
+                                          </Tooltip>
+                                        </div>
+                                        <div className="ms-Grid-col ms-lg6">
+                                          <a
+                                            style={{
+                                              marginRight: "10px",
+                                              color: "antiquewhite",
+                                            }}
+                                            onClick={() =>
+                                              view_fn(docs?.content)
+                                            }
+                                          >
+                                            <img
+                                              src={require("../../assets/Viewicon.svg")}
+                                              alt="View Icon"
+                                              style={{
+                                                width: "25px",
+                                                // height: "auto",
+                                                cursor: "pointer",
+                                                marginLeft: "32%",
+                                              }}
+                                            />
+                                          </a>
+                                          <a
+                                            href={docs?.content}
+                                            download
+                                            style={{
+                                              marginRight: "10px",
+                                              color: "antiquewhite",
+                                            }}
+                                          >
+                                            <img
+                                              src={require("../../assets/Download.svg")}
+                                              alt="Download Icon"
+                                              style={{
+                                                width: "25px",
+                                                height: "auto",
+                                                maxWidth: "40px",
+                                                cursor: "pointer",
+                                              }}
+                                            />
+                                          </a>
+                                        </div>
+                                      </div>
                                     </div>
-                                    <div className="ms-Grid-col ms-lg6">
-                                      <a
-                                        style={{
-                                          marginRight: "10px",
-                                          color: "antiquewhite",
-                                        }}
-                                        onClick={() => view_fn(docs?.content)}
-                                      >
-                                        <img
-                                          src={require("../../assets/Viewicon.svg")}
-                                          alt="View Icon"
-                                          style={{
-                                            width: "25px",
-                                            // height: "auto",
-                                            cursor: "pointer",
-                                            marginLeft: "32%",
-                                          }}
-                                        />
-                                      </a>
-                                      <a
-                                        href={docs?.content}
-                                        download
-                                        style={{
-                                          marginRight: "10px",
-                                          color: "antiquewhite",
-                                        }}
-                                      >
-                                        <img
-                                          src={require("../../assets/Download.svg")}
-                                          alt="Download Icon"
-                                          style={{
-                                            width: "25px",
-                                            height: "auto",
-                                            maxWidth: "40px",
-                                            cursor: "pointer",
-                                          }}
-                                        />
-                                      </a>
-                                    </div>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </AccordionDetails>
-                        </Accordion>
-                      </Box>
-                    </>
-                  );
-                } else {
-                  return null;
-                }
-              })}
+                                  );
+                                })}
+                              </AccordionDetails>
+                            </Accordion>
+                          </Box>
+                        </>
+                      );
+                    } else {
+                      return null;
+                    }
+                  })}
+                </>
+              ) : (
+                <>
+                  <Typography
+                    sx={{
+                      fontStyle: "italic",
+                      color: "gray",
+                      textAlign: "center",
+                    }}
+                  >
+                    No documents available.
+                  </Typography>
+                </>
+              )}
             </CardContent>
           </Card>
 

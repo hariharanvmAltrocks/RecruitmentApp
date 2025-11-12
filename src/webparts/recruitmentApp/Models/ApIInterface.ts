@@ -374,6 +374,7 @@ export type UploadDocument = {
 
     BGVRadioBtn: string;
     BGVRadioBtnlabel: string;
+    PaymentReview: string;
 }
 
 export type DocumentName = {
@@ -444,7 +445,7 @@ export type initiateLaborHire = {
     patersonGrade: string;
     drcGrade: string;
     reportingManager: string;
-    dateOfJoining?: Date;
+    dateOfJoining?: Date | null;
     typeOfContract: string;
     noOfMonths?: string;
     netPay: number;

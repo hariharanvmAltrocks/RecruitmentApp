@@ -1,11 +1,11 @@
 
 import { sp } from "@pnp/sp";
-import { count, DocumentFolderName, DocumentLibraray, ListNames } from "../../utilities/Config";
-import { getVRRDetails } from "../ServiceExport";
+import { count, DocumentFolderName, DocumentLibraray, ListNames, RoleName } from "../../utilities/Config";
+import { getVRRDetails, laborHireService } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
 import { DataSyncToResiProcess, DocumentName, GetCandidateDocument, ICandidateDetails, IOfferLetterService, UpdateCandidateData } from "./IOfferLetterService";
-import { ITSystem, TASystem, TrainingSystem } from "../../Models/ApIInterface";
+import { initiateLaborHire, ITSystem, TASystem, TrainingSystem, UploadDocument } from "../../Models/ApIInterface";
 import { AutoCompleteItem } from "../../Models/Screens";
 
 
@@ -66,6 +66,7 @@ export default class OfferLetterService implements IOfferLetterService {
                             RecruitmentDetails: response.data[0],
                             Status: objresult?.Status ? objresult?.Status?.StatusDescription : "",
                             StatusID: objresult?.StatusId,
+                            IsExpat: objresult?.IsExpat ?? ""
                         };
                         item.CandidateDetails.Location = response.data[0]?.Location ? response.data[0]?.Location : "";
                         return item;
@@ -361,5 +362,64 @@ export default class OfferLetterService implements IOfferLetterService {
         }
     };
 
+    async InitiateLabouHireOfferRelease(
+        data: UploadDocument,
+        HODData: DataSyncToResiProcess,
+        CurrentUserEmail: string
+    ): Promise<ApiResponse<null>> {
+        try {
+            const res = await SPServices.SPGetItems({
+                Listname: HODData.IsExpat ? ListNames.HRMSRESIExpatDetails : ListNames.HRMSRESIDRCDetails,
+                Filter: [
+                    {
+                        FilterKey: "SelectedCandidateHODId",
+                        Operator: "eq",
+                        FilterValue: HODData.ID,
+                    },
+                ],
+                Select: "*,SelectedCandidateHODId/ID,LabourhireORContractor/AgentCode",
+                Expand: "SelectedCandidateHODId,LabourhireORContractor",
+            });
+            console.log(res, "responseData");
+            const todaydate = new Date();
+            let laborHireData: initiateLaborHire = {
+                jobRequestID: Number(data?.jobRequestID),
+                positionId: data?.positionID,
+                location: data?.Location,
+                businessUnit: data?.BusinessUnitCode,
+                department: data?.Department,
+                section: data?.Section,
+                patersonGrade: HODData.RecruitmentDetails.PatersonGrade, //data?.PatersonGrade,
+                drcGrade: HODData.RecruitmentDetails.DRCGrade, //data?.DRCGrade,
+                reportingManager: RoleName.RecruitmentHR,
+                dateOfJoining: (data?.JoiningDate) ? new Date(data?.JoiningDate) : new Date(),
+                typeOfContract: data?.TypeOfCOntract,
+                noOfMonths:
+                    data?.NoticePeriod === ""
+                        ? "20"
+                        : String(data?.NoticePeriod) ?? "0",
+                netPay: res[0]?.ProposedNetUSDAmount,
+                lhCode: res[0]?.LabourhireORContractor?.AgentCode,
+                createdOn: new Date(todaydate),
+                createdBy: RoleName.RecruitmentHR,
+                createrEmail: CurrentUserEmail //props.userDetails[0]?.EmailId,
+            };
+            let response =
+                await laborHireService.initiateLaborHire(laborHireData);
+
+            return {
+                data: response.data,
+                status: response.status,
+                message: "Error while posting advertisement details",
+            };
+        } catch (error) {
+            console.error("Error posting user data:", error);
+            return {
+                data: null,
+                status: 400,
+                message: "Error On Posting Data",
+            };
+        }
+    }
 
 }

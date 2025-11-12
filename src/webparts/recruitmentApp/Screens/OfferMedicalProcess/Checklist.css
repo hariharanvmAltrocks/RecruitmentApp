@@ -1,0 +1,51 @@
+/* Checklist layout */
+.checklist-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .checklist-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Card styling */
+.checklist-card {
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.checklist-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Card inner content */
+.checklist-card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem !important;
+}
+
+.checklist-title h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Buttons */
+.checklist-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.checklist-buttons button {
+  min-width: 70px;
+}

@@ -21,12 +21,12 @@ interface ColumnConfig {
 interface SearchableDataTableProps {
   data: any[];
   columns: ColumnConfig[];
-  rows: number;
+  rows?: number;
   onPageChange: (event: any) => void;
   handleRefresh: () => void;
   UploadCV?: string;
   totalItem?: number;
-  pagination: { first: number; rows: number; totalPages: number };
+  pagination?: { first: number; rows: number; totalPages: number };
 }
 export type FilterData = {
   Department: AutoCompleteItem;

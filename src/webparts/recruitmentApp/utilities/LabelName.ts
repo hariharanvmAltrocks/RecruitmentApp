@@ -131,7 +131,7 @@ export const Attachment = {
         CandidateResume: "Candidate Resume",
         ViewComments: "View Comments",
         CandidateDocuments: "Candidate Documents",
-        OfferLetter: "Upload Offer Letter (English)",
+        OfferLetter: "Upload Offer Letter(Only PDF)",
         OfferLetterFre: "Upload Offer Letter (French)",
         ConsentDoc: "Upload Code of Business Content",
         EmployementDoc: "Upload Employement Contract",
@@ -237,17 +237,22 @@ export const ValidationAction = {
 
 export const DisplayFolderName = {
     Offerletter: "Offer Letter",
+    LabourHireOffer: "Labour Hire Offer Letter Release",
+    LabourHireEC: "Labour Hire Employment Contract Release",
     ConsentForm: "Code of Business Content",
     EmploymentContractForm: "Employment Contract",
     PersonalDocument: "Personal Document",
     BackgroundVerification: "Background Verification",
-    WorkPermitDocument: "WorkPermit Document"
+    WorkPermitDocument: "WorkPermit Document",
+    WorkPermitPayment: "WorkPermit Payment Document"
 }
 
 export const RadioBtnLabel = {
     BGVNationalsLabel: "Is the background verification cleared?",
     BGVExpatriatesLabel: "Are you sure you want to initiate Background verification for this candidate?",
-    DocumentVerification: "Is the document verified?"
+    OfferInitiationLabel: "Do you want to proceed with initiating the Offer Letter process for the Labour Hire?",
+    DocumentVerification: "Is the document verified?",
+    PaymentReview: "Has the Work Permit payment been verified?"
 }
 
 export const EmailTemplateCodes = {
@@ -262,4 +267,9 @@ export const EmailTemplateCodes = {
 export const EmployeementCategory = {
     KCSAEmployee: "KCSA Employee",
     LaborhireContractor: "Labor hire/Contractor",
+}
+
+export const UserType = {
+    agent: "agent",
+    Labourhire: "LabourHire",
 }

@@ -1,4 +1,4 @@
-import { ITSystem, TASystem, TrainingSystem } from "../../Models/ApIInterface";
+import { ITSystem, TASystem, TrainingSystem, UploadDocument } from "../../Models/ApIInterface";
 import { DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 
@@ -58,6 +58,7 @@ export type DataSyncToResiProcess = {
     CandidateDetails: ICandidateDetails,
     StatusID: number,
     Status: string,
+    IsExpat: string
 }
 
 export type ICandidateDetails = {
@@ -102,4 +103,9 @@ export type IOfferLetterService = {
         UpdateData: UpdateCandidateData,
         CandidateID: number
     ): Promise<ApiResponse<UpdateCandidateData>>;
+    InitiateLabouHireOfferRelease(
+        data: UploadDocument,
+        HODData: DataSyncToResiProcess,
+        CurrentUserEmail: string
+    ): Promise<ApiResponse<null>>;
 };

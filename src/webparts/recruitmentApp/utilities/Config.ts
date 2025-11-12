@@ -71,7 +71,11 @@ export const ListNames = {
   TrainerAndFacilityDetails: "TrainerAndFacilityDetails",
 
   RecruitAppCareerPortalIntegration: "RecruitAppCareerPortalIntegration",
-  RecruitmentCareerPortalLink: "RecruitmentCareerPortalLink"
+  RecruitmentCareerPortalLink: "RecruitmentCareerPortalLink",
+
+  //Resi
+  HRMSRESIDRCDetails: "HRMSRESIDRCDetails",
+  HRMSRESIExpatDetails: "HRMSRESIExpatDetails"
 };
 
 export const DocumentLibraray = {
@@ -109,29 +113,52 @@ export const StatusId = {
   PendingwithHODtoAssignPositionID: 130,
   Rescheduled: 159,
 
-  // Post Recruitment
+  // BackGorund Verification
   PendingHRBGVInitiation: 134,
   PendingBGdocuploadedbycandidate: 163,
   PendingHRReviewBGCheck: 135,
-  PendingHRReviewOfferWorkPermit: 136,
-  WorkPermitHRReview: 137,
+  //Medical Screening
+  PendingwithTAforMedicalScreening: 144,
+  // Post Recruitment
+  PendingHROfferInitiate: 132,
+  // KCSA
+  PendingCandidateOfferLetterUpload: 133,
+  PendingHRReviewOfferWorkPermitInit: 136,
+  PendingCandidateWorkPermitreleatedDoc: 164,
+  PendingHRReviewWorkpermitDocs: 137,
   WorkPermitAcknowledgedContractUploaded: 138,
-  HRReviewContractSigned: 161,
-  PendingHRPreOnboardingChecklist: 162,
-  PendingWorkPermituploadedbycandidate: 164,
+  PendingCandidateEmploymentContractUpload: 161,
+  PendingHREmploymentContractVerification: 142,
+  PendingHRpreonboardingchecklist: 162,
+  //Labor Hire
+  PendingLabourHireOfferRelease: 170,
+  PendingHROfferReview: 171,
+  PendingLabourhireWPPayment: 173,
+  PendingFinancePaymentReview: 174,
+  PendingLHWorkPermitProcess: 175,
+  PendingHRCandidateResign: 176,
+  PendingHREmploymentContractInit: 177,
+  PendingLHECRelease: 178,
+  PendingHREmploymentContractReview: 179,
 
-  PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,
-  PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter: 142,
-  PendingwithCandidatetoSignOfferLetter: 133,
+  // PendingHRReviewOfferWorkPermit: 136,
+  // WorkPermitHRReview: 137,
+  // WorkPermitAcknowledgedContractUploaded: 138,
+  // HRReviewContractSigned: 161,
+  // PendingHRPreOnboardingChecklist: 162,
+  // PendingWorkPermituploadedbycandidate: 164,
+
+  // PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,
+  // PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter: 142,
+  // PendingwithCandidatetoSignOfferLetter: 133,
   // PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments: 134,
   // PendingwithCandidatetoUploadOtherDocuments: 135,
   // PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs: 136,
   // PendingwithRecruitmentHRtoUploadtheEmploymentContract: 137,
   // PendingwithCandidatetoSignEmploymentContract: 138,
-  pendingwithRecruitmentHRtoReviewtheEmploymentContractForm: 139,
+  // pendingwithRecruitmentHRtoReviewtheEmploymentContractForm: 139,
   OnboardingProcessinitiatedforDRC: 23,
   OnboardingProcessinitiatedforExpat: 24,
-  PendingwithTAforMedicalScreening: 144,
 
   //Revert Post Recrutiment
   RevertedBacktoCandidateforReuploadOfferLetter: 149,
@@ -150,6 +177,7 @@ export const RoleID = {
   InterviewPanel: 5,
   RecruitmentAppExternalAgency: 6,
   RecruitmentLineManager: 7,
+  FinanceDepartment: 8
 };
 
 export const GridStatusBackgroundcolor = {
@@ -278,7 +306,10 @@ export const RecuritmentHRMsg = {
   BGReviewedMsg: "Background Verification has been completed successfully.",
 
   OfferLetterMsg: "The offer letter has been uploaded successfully.",
+  OfferLetterinit: "The Offer Letter process has been successfully initiated for the Labour Hire.",
+  ReviewLaborHireOffer: "The Labour Hire offer has been reviewed successfully and forwarded to the candidate.",
   ReviewOfferLetterMsg: "The offer letter has been reviewed successfully and Initiate the WorkPermit Document ",
+  EmployeementInit: "The Employment Contract process has been successfully initiated in the labour plan",
   RevertedOfferLetter: "The offer letter has been reverted to candidate successfully..",
 
   WorkPermitDocs: "The WorkPermit Documents has been reviewed successfully",
@@ -288,7 +319,7 @@ export const RecuritmentHRMsg = {
   RevertOtherDocsMsg: "Candidate documents have been reverted successfully.",
 
   EmploymentContractMsg: "The employment contract has been uploaded successfully.",
-  ReviewEmploymentContractMsg: "The employment contract has been reviewed successful, Please proceed with onboarding process",
+  ReviewEmploymentContractMsg: "The Labour Hire Employment Contract has been reviewed successfully and forwarded to the candidate.",
   RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
 
   NationalityErrorMsg: "Please select the Nationality filter before proceeding.",
@@ -297,7 +328,9 @@ export const RecuritmentHRMsg = {
   COIWarningMsg: "This is the COI profile. Are you sure you're ready to proceed?",
 
   FormValidationMsg: "One or more required actions are missing.",
-  NationalityMsgError: "Please select the any one Nationality"
+  NationalityMsgError: "Please select the any one Nationality",
+  FinancePaymentReviewMsg: "Finance Payment Review has been completed successfully.",
+  RevertedFinancePaymentMsg: "Payment Review has been reverted to LaborHire successfully..",
 };
 
 export const validationMsg = {
@@ -484,19 +517,33 @@ export const workflowStatusApi = {
   LineManagerLevel2Rejected: "WS15",
 
   // post Recrutiment
-  PendingCandidateUploadBGVDocs: "WS33",
-  UploadedtheCandidateBGVDocs: "WS34",
-  initiatetheBGVProcess: "WS35",
+  PendingCandidateUploadBGVDocs: "WS37",
+  UploadedtheCandidateBGVDocs: "WS38",
+  initiatetheBGVProcess: "WS39",
+  // KCSA
   Pendingwithcandidatetosignofferletter: "WS16",
   CandidateuploadedtheSignedOfferLetter: "WS17",
   PendingwithCandidatetouploadotherDocuments: "WS18",
   CandidateUploadedcandidatepersonalDocs: "WS19",
   PendingwithCandidatetosignEmployementContract: "WS20",
   UploadedthesignedEmployementcontractform: "WS21",
+  // Labor Hire
+  PendingHROfferInitiate: "WS27",
+  PendingLabourHireOfferRelease: "WS28",
+  PendingLabourhireWPPayment: "WS29",
+  PendingFinancePaymentReview: "WS30",
+  PendingLHWorkPermitProcess: "WS31",
+  PendingHREmploymentContractInit: "WS32",
+  PendingLHECRelease: "WS33",
+  OnboardingInprogress: "WS36",
+
 
   RevertedBacktoCandidateforreuploadofferLetter: "WS22",
   RevertedBacktoCandidateforreuploadDocs: "WS23",
-  RevertedBacktoCandidateforreuploadEmploymentContract: "WS24"
+  RevertedBacktoCandidateforreuploadEmploymentContract: "WS24",
+  RevertedtheLabourHireOfferRelease: "WS34",
+  RevertedtheLabourHireEmployementContract: "WS35"
+
 };
 
 export const ApplicationStatusId = {
