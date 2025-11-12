@@ -9,6 +9,7 @@ import { CandidateDetails, COIAttach, DocumentValue, IGetPortalJobs, Rescheduled
 import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import { CommentsData, DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
+import { quesContentId } from "../../utilities/LabelName";
 
 export default class GetPortalJobs implements IGetPortalJobs {
   async UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>> {
@@ -266,6 +267,8 @@ export default class GetPortalJobs implements IGetPortalJobs {
           "region": op?.profile?.profileDetailEmploymentHistory?.territory,
         }
         const JobCode = op?.jobCode?.split('-')[0];
+        let willingRelocated = getOptAnswers.filter((item: any) => item.question?.quesContentId === quesContentId.WillingRelocate)
+
         let GetProfileDahboard: CandidateProfile = {
           CandidateID: op?.jobRequestId,
           profileID: op?.profileId,
@@ -305,7 +308,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           NumberOftax: op?.profile?.taxDependents ?? "",
           CurrentEmployer: profileExperiance?.company,
           CurrentPosition: profileExperiance?.title,
-          WillingToRelocate: getOptAnswers[1]?.answerContent?.contentEn,
+          WillingToRelocate: willingRelocated[0]?.answerContent?.contentEn,
           previouslyworkedMine: op?.profile?.profileDetailEmploymentHistory?.hasIvanhoeZijinExperienceId === "3" ? "No" : "Yes",
           familylinks: op?.profile?.hasEmployeeRelation === "1" ? "Yes" : "No",
           businesslinks: op?.profile?.hasBusinessLinks === "1" ? "Yes" : "No",

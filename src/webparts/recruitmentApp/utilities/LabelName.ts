@@ -244,7 +244,11 @@ export const DisplayFolderName = {
     PersonalDocument: "Personal Document",
     BackgroundVerification: "Background Verification",
     WorkPermitDocument: "WorkPermit Document",
-    WorkPermitPayment: "WorkPermit Payment Document"
+    WorkPermitPayment: "WorkPermit Payment Document",
+    PaymentBill: "Payment Bill Document",
+    PoliceClearanceCertificate: "Police Clearance Certificate",
+    CovidVaccinationCertificate: "Covid Vaccination Certificate",
+    YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
 }
 
 export const RadioBtnLabel = {
@@ -266,10 +270,13 @@ export const EmailTemplateCodes = {
 
 export const EmployeementCategory = {
     KCSAEmployee: "KCSA Employee",
-    LaborhireContractor: "Labor hire/Contractor",
+    LaborhireContractor: "Labour hire/Contractor",
 }
 
 export const UserType = {
     agent: "agent",
     Labourhire: "LabourHire",
+}
+export const quesContentId = {
+    WillingRelocate: "FD889B9C1B51F13738596ACFB206E881EAC9",
 }

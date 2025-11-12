@@ -311,7 +311,10 @@ export const RecuritmentHRMsg = {
   ReviewLaborHireOffer: "The Labour Hire offer has been reviewed successfully and forwarded to the candidate.",
   ReviewOfferLetterMsg: "The offer letter has been reviewed successfully and Initiate the WorkPermit Document ",
   EmployeementInit: "The Employment Contract process has been successfully initiated in the labour plan",
-  RevertedOfferLetter: "The offer letter has been reverted to candidate successfully..",
+  RevertedOfferLetter: "The offer letter has been reverted to candidate successfully.",
+  RevertLabourOffer: "The Labour Hire Offer Release has been successfully reverted",
+  RevertWorkPermitDocs: "The Work Permit Document has been successfully reverted",
+  RevertECCocs: "The Labour Hire Employment Contract has been successfully reverted",
 
   WorkPermitDocs: "The WorkPermit Documents has been reviewed successfully",
   WPacknowledgeUploadContract: "WorkPermit acknowledge and Employee contract Document Upload Successfully",
@@ -322,6 +325,8 @@ export const RecuritmentHRMsg = {
   EmploymentContractMsg: "The employment contract has been uploaded successfully.",
   ReviewEmploymentContractMsg: "The Labour Hire Employment Contract has been reviewed successfully and forwarded to the candidate.",
   RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
+  ReviewECMsg: "The Employement Contract Reviewed Successfully ",
+
 
   NationalityErrorMsg: "Please select the Nationality filter before proceeding.",
 
@@ -706,16 +711,21 @@ export const RoleName = {
 
 export const DocumentFolderName = {
   Offerletter: "OfferLetter",
-  EmploymentContractForm: "EmploymentContractForm",
-  UnsignedDoc: "UnsignedDoc",
+  EmploymentContractForm: "Employment contract",
+  UnsignedDoc: "UnSignedDoc",
   SignedDoc: "SignedDoc",
   PersonalDocs: "PersonalDocs",
   Medical: "Medical",
   COIAttach: "COIAttch",
   ConsentForm: "ConsentForm",
   BackgroundVerification: "BackgroundVerification",
-  WorkPermit: "WorkPermit",
-  Vaccination: "Vaccination"
+  WorkPermit: "Work Permit",
+  Vaccination: "Vaccination",
+  PaymentBill: "Payment Bill",
+  PoliceClearanceCertificate: "Police Clearance Certificate",
+  CovidVaccinationCertificate: "Covid Vaccination Certificate",
+  YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
+  CV: "CV"
 }
 
 

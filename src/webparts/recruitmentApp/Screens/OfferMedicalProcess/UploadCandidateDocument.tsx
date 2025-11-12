@@ -57,7 +57,6 @@ import AlertDialogbox from "../../components/CustomAlert/AlertDialogbox";
 import CustomTextArea from "../../components/CustomTextArea";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomSignature from "../../components/CustomSignature";
-import { OnboardingChecklist } from "./OnboardingChecklist";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -80,6 +79,7 @@ export type viewDocument = {
 };
 
 export type CustomViewDocument = {
+  data: any;
   Title: string;
   DocumentName: string;
   DocumentContent: any;
@@ -225,7 +225,7 @@ const UploadCandidateDocument = (props: any) => {
       if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
         let BGVDocument: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
-          ProfileID: "13", //item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
+          ProfileID: item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
           DocumentType: DocumentFolderName.BackgroundVerification,
         };
         let BGVDocs = await OfferLetterServices.FetchCandidateDocument(
@@ -233,8 +233,8 @@ const UploadCandidateDocument = (props: any) => {
         );
         let OfferDocument: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
-          ProfileID: "13", // item?.CandidateDetails?.ProfileID, //item?.CandidateDetails?.ProfileID,
-          RequestID: "1075", //item?.CandidateDetails?.JobRequestID, //item?.CandidateDetails?.JobRequestID,
+          ProfileID: item?.CandidateDetails?.ProfileID, //"13", // item?.CandidateDetails?.ProfileID, //item?.CandidateDetails?.ProfileID,
+          RequestID: item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID, //item?.CandidateDetails?.JobRequestID,
           DocumentType: DocumentFolderName.Offerletter,
           UnsignedDoc: DocumentFolderName.SignedDoc,
         };
@@ -243,8 +243,8 @@ const UploadCandidateDocument = (props: any) => {
         );
         let unSignedOfferDocument: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
-          ProfileID: "13", //item?.CandidateDetails?.ProfileID,
-          RequestID: "1075", //item?.CandidateDetails?.JobRequestID,
+          ProfileID: item?.CandidateDetails?.ProfileID, // "13", //item?.CandidateDetails?.ProfileID,
+          RequestID: item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID,
           DocumentType: DocumentFolderName.Offerletter,
           UnsignedDoc: DocumentFolderName.UnsignedDoc,
         };
@@ -252,20 +252,45 @@ const UploadCandidateDocument = (props: any) => {
           await OfferLetterServices.FetchCandidateDocument(
             unSignedOfferDocument
           );
-        let WorkPermitDocument: GetCandidateDocument = {
+        let PoliceClearanceCertificate: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
           ProfileID: item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
           RequestID: item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID,
-          DocumentType: DocumentFolderName.WorkPermit,
-          UnsignedDoc: DocumentFolderName.SignedDoc,
+          DocumentType: DocumentFolderName.PoliceClearanceCertificate,
         };
-        let WorkPermitDoc = await OfferLetterServices.FetchCandidateDocument(
-          WorkPermitDocument
+        let PoliceDocs = await OfferLetterServices.FetchCandidateDocument(
+          PoliceClearanceCertificate
         );
+        let CovidVaccinationCertificate: GetCandidateDocument = {
+          ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
+          ProfileID: item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
+          RequestID: item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID,
+          DocumentType: DocumentFolderName.CovidVaccinationCertificate,
+          // UnsignedDoc: DocumentFolderName.SignedDoc,
+          // EmployDOcs: [
+          //   DocumentFolderName.PoliceClearanceCertificate,
+          //   DocumentFolderName.CovidVaccinationCertificate,
+          //   DocumentFolderName.YellowFeverVaccinationCertificate,
+          // ],
+        };
+        let CovidVaccinationDocs =
+          await OfferLetterServices.FetchCandidateDocument(
+            CovidVaccinationCertificate
+          );
+        let YellowFeverVaccinationCertificate: GetCandidateDocument = {
+          ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
+          ProfileID: item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
+          RequestID: item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID,
+          DocumentType: DocumentFolderName.YellowFeverVaccinationCertificate,
+        };
+        let YellowFeverDocs = await OfferLetterServices.FetchCandidateDocument(
+          YellowFeverVaccinationCertificate
+        );
+
         let EmployeeContractDocument: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
-          ProfileID: "13", //item?.CandidateDetails?.ProfileID, //"13",
-          RequestID: "1075", //item?.CandidateDetails?.JobRequestID, //"1075",
+          ProfileID: item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID, //"13",
+          RequestID: item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID, //"1075",
           DocumentType: DocumentFolderName.EmploymentContractForm,
           UnsignedDoc: DocumentFolderName.SignedDoc,
         };
@@ -274,8 +299,8 @@ const UploadCandidateDocument = (props: any) => {
         );
         let UnsignedEmployeeContractDocument: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
-          ProfileID: "13", //item?.CandidateDetails?.ProfileID, //"13",
-          RequestID: "1075", //item?.CandidateDetails?.JobRequestID, //"1075",
+          ProfileID: item?.CandidateDetails?.ProfileID, //"13",
+          RequestID: item?.CandidateDetails?.JobRequestID, //"1075",
           DocumentType: DocumentFolderName.EmploymentContractForm,
           UnsignedDoc: DocumentFolderName.UnsignedDoc,
         };
@@ -294,12 +319,12 @@ const UploadCandidateDocument = (props: any) => {
             data: ECDocs.data,
           },
         ];
-        let WPDocs = [
-          {
-            Title: DisplayFolderName.WorkPermitDocument,
-            data: WorkPermitDoc.data,
-          },
-        ];
+        // let WPDocs = [
+        //   {
+        //     Title: DisplayFolderName.WorkPermitDocument,
+        //     data: WorkPermitDoc.data,
+        //   },
+        // ];
         let OfferDocs = [
           {
             Title: DisplayFolderName.Offerletter,
@@ -318,26 +343,89 @@ const UploadCandidateDocument = (props: any) => {
             data: BGVDocs.data,
           },
         ];
+        let policecleDocs = [
+          {
+            Title: DisplayFolderName.PoliceClearanceCertificate,
+            data: PoliceDocs.data,
+          },
+        ];
+        let CovidVaccDocs = [
+          {
+            Title: DisplayFolderName.CovidVaccinationCertificate,
+            data: CovidVaccinationDocs.data,
+          },
+        ];
+        let YellowDocs = [
+          {
+            Title: DisplayFolderName.YellowFeverVaccinationCertificate,
+            data: YellowFeverDocs.data,
+          },
+        ];
+
         docs.push(...BGVDoc);
-        docs.push(...unSignedDocs);
+        if (
+          item?.RecruitmentDetails?.EmploymentCategory ===
+          EmployeementCategory.LaborhireContractor
+        ) {
+          docs.push(...unSignedDocs);
+        }
         docs.push(...OfferDocs);
-        docs.push(...WPDocs);
-        docs.push(...unSignedECDOcs);
+        // docs.push(...WPDocs);
+        docs.push(...policecleDocs);
+        docs.push(...CovidVaccDocs);
+        docs.push(...YellowDocs);
+        if (
+          item?.RecruitmentDetails?.EmploymentCategory ===
+          EmployeementCategory.LaborhireContractor
+        ) {
+          docs.push(...unSignedECDOcs);
+        }
         docs.push(...EmployeeDocs);
+        let WorkPermitDocs: GetCandidateDocument = {
+          ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
+          ProfileID: item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
+          RequestID: item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID,
+          DocumentType: DocumentFolderName.WorkPermit,
+        };
+        let WorkPermitDocument =
+          await OfferLetterServices.FetchCandidateDocument(WorkPermitDocs);
+        let WPDocs = [
+          {
+            Title: DisplayFolderName.WorkPermitDocument,
+            data: WorkPermitDocument.data,
+          },
+        ];
+        docs.push(...WPDocs);
+
+        let PaymentbillDocs: GetCandidateDocument = {
+          ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
+          ProfileID: item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
+          RequestID: item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID,
+          DocumentType: DocumentFolderName.PaymentBill,
+        };
+        let PaymentDocs = await OfferLetterServices.FetchCandidateDocument(
+          PaymentbillDocs
+        );
+        let PBDocs = [
+          {
+            Title: DisplayFolderName.PaymentBill,
+            data: PaymentDocs.data,
+          },
+        ];
+        docs.push(...PBDocs);
       } else {
         let WorkPermitDocument: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
-          ProfileID: "13", //item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
-          RequestID: "1075", //item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID,
-          DocumentType: DocumentFolderName.WorkPermit,
-          UnsignedDoc: DocumentFolderName.SignedDoc,
+          ProfileID: item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
+          RequestID: item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID,
+          DocumentType: DocumentFolderName.PaymentBill,
         };
         let WorkPermitDoc = await OfferLetterServices.FetchCandidateDocument(
           WorkPermitDocument
         );
         let WPDocs = [
           {
-            Title: DisplayFolderName.WorkPermitPayment,
+            Title: DisplayFolderName.PaymentBill,
             data: WorkPermitDoc.data,
           },
         ];
@@ -1408,8 +1496,8 @@ const UploadCandidateDocument = (props: any) => {
                 ActionID = WorkflowAction.Approved;
               } else if (btnAction === ButtonAction.Revert) {
                 workflowStatusValue =
-                  workflowStatusApi.RevertedBacktoCandidateforreuploadofferLetter;
-                SuccessMsg = RecuritmentHRMsg.RevertedOfferLetter;
+                  workflowStatusApi.RevertedtheLabourHireOfferRelease;
+                SuccessMsg = RecuritmentHRMsg.RevertLabourOffer;
                 ActionID = WorkflowAction.Revert;
               }
               DocumentResponse = {
@@ -1435,6 +1523,25 @@ const UploadCandidateDocument = (props: any) => {
             };
             break;
           }
+          case StatusId.PendingHRReviewWorkpermitDocs: {
+            {
+              if (btnAction === ButtonAction.Review) {
+                // workflowStatusValue =
+                //   workflowStatusApi.PendingwithCandidatetosignEmployementContract;
+                SuccessMsg = RecuritmentHRMsg.WorkPermitDocs;
+                ActionID = WorkflowAction.Approved;
+              } else if (btnAction === ButtonAction.Revert) {
+                workflowStatusValue =
+                  workflowStatusApi.RevertedBacktoCandidateforreuploadDocs;
+                SuccessMsg = RecuritmentHRMsg.RevertWorkPermitDocs;
+                ActionID = WorkflowAction.Revert;
+              }
+              DocumentResponse = {
+                status: ResponeStatus.SUCCESS,
+              };
+            }
+            break;
+          }
           case StatusId.PendingFinancePaymentReview: {
             if (btnAction === ButtonAction.Review) {
               workflowStatusValue =
@@ -1452,17 +1559,17 @@ const UploadCandidateDocument = (props: any) => {
             };
             break;
           }
-          case StatusId.PendingHRReviewWorkpermitDocs: {
-            if (btnAction === ButtonAction.Review) {
-              ActionID = WorkflowAction.Approved;
-            } else if (btnAction === ButtonAction.Revert) {
-              ActionID = WorkflowAction.Revert;
-            }
-            DocumentResponse = {
-              status: ResponeStatus.SUCCESS,
-            };
-            break;
-          }
+          // case StatusId.PendingHRReviewWorkpermitDocs: {
+          //   if (btnAction === ButtonAction.Review) {
+          //     ActionID = WorkflowAction.Approved;
+          //   } else if (btnAction === ButtonAction.Revert) {
+          //     ActionID = WorkflowAction.Revert;
+          //   }
+          //   DocumentResponse = {
+          //     status: ResponeStatus.SUCCESS,
+          //   };
+          //   break;
+          // }
           case StatusId.PendingHREmploymentContractInit:
             {
               workflowStatusValue =
@@ -1501,8 +1608,8 @@ const UploadCandidateDocument = (props: any) => {
               ActionID = WorkflowAction.Approved;
             } else if (btnAction === ButtonAction.Revert) {
               workflowStatusValue =
-                workflowStatusApi.RevertedBacktoCandidateforreuploadofferLetter;
-              SuccessMsg = RecuritmentHRMsg.RevertedOfferLetter;
+                workflowStatusApi.RevertedtheLabourHireEmployementContract;
+              SuccessMsg = RecuritmentHRMsg.RevertECCocs;
               ActionID = WorkflowAction.Revert;
             }
             DocumentResponse = {
@@ -1513,12 +1620,12 @@ const UploadCandidateDocument = (props: any) => {
           case StatusId.PendingHREmploymentContractVerification: {
             if (btnAction === ButtonAction.Review) {
               workflowStatusValue = workflowStatusApi.OnboardingInprogress;
-              SuccessMsg = RecuritmentHRMsg.ReviewEmploymentContractMsg;
+              SuccessMsg = RecuritmentHRMsg.ReviewECMsg;
               ActionID = WorkflowAction.Approved;
             } else if (btnAction === ButtonAction.Revert) {
               workflowStatusValue =
                 workflowStatusApi.RevertedBacktoCandidateforreuploadEmploymentContract;
-              SuccessMsg = RecuritmentHRMsg.RevertedOfferLetter;
+              SuccessMsg = RecuritmentHRMsg.RevertedEmploymentContractMsg;
               ActionID = WorkflowAction.Revert;
             }
             DocumentResponse = {
@@ -1568,10 +1675,37 @@ const UploadCandidateDocument = (props: any) => {
           ) {
             CandidateDatas.EmpContractLatterPath =
               DocumentResponse.data[0]?.content;
+          } else if (
+            props.stateValue?.StatusId === StatusId.PendingHROfferReview
+          ) {
+            let LabourOffer = documentview.filter(
+              (item) => item.Title === DisplayFolderName.LabourHireOffer
+            );
+            CandidateDatas.OfferLatterPath = LabourOffer[0]?.data[0]?.content;
+          } else if (
+            props.stateValue?.StatusId ===
+            StatusId.PendingHREmploymentContractReview
+          ) {
+            let LabourEC = documentview.filter(
+              (item) => item.Title === DisplayFolderName.LabourHireEC
+            );
+            CandidateDatas.EmpContractLatterPath =
+              LabourEC[0]?.data[0]?.content;
           }
 
-          const WorkflowStatus =
-            await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
+          let WorkflowStatus: any;
+          if (
+            props.stateValue?.StatusId ===
+            StatusId.PendingHRReviewWorkpermitDocs
+          ) {
+            WorkflowStatus = {
+              status: ResponeStatus.SUCCESS,
+            };
+          } else {
+            WorkflowStatus = await GetPortalJobsService.UpdateCandidateStatus(
+              CandidateDatas
+            );
+          }
 
           if (WorkflowStatus.status === ResponeStatus.SUCCESS) {
             let Obj = [
@@ -1981,13 +2115,13 @@ const UploadCandidateDocument = (props: any) => {
         <></>
       )}
 
-      {documentPopup ? (
+      {/* {documentPopup ? (
         <>
           <OnboardingChecklist documents={[]} />
         </>
       ) : (
         <></>
-      )}
+      )} */}
     </>
   );
 };

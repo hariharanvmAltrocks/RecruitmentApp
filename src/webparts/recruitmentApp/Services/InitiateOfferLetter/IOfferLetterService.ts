@@ -19,6 +19,7 @@ export type GetCandidateDocument = {
     DocumentType?: string;
     DocumentName?: string;
     UnsignedDoc?: string;
+    // EmployDOcs?: any[];
 }
 
 export type UpdateCandidateData = {

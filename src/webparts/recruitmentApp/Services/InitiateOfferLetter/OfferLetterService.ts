@@ -248,9 +248,33 @@ export default class OfferLetterService implements IOfferLetterService {
                     response = [...Medical, ...Vaccination, ...WorkPermit];
                     break;
                 }
+                case DocumentFolderName.CovidVaccinationCertificate: {
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
+                    })) as IDocFiles[];
+                    break;
+                }
+                case DocumentFolderName.PoliceClearanceCertificate: {
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
+                    })) as IDocFiles[];
+                    break;
+                }
+                case DocumentFolderName.YellowFeverVaccinationCertificate: {
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
+                    })) as IDocFiles[];
+                    break;
+                }
                 case DocumentFolderName.EmploymentContractForm: {
                     response = (await SPServices.getDocLibFiles({
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${DocumentName.UnsignedDoc}`,
+                    })) as IDocFiles[];
+                    break;
+                }
+                case DocumentFolderName.PaymentBill: {
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
                     })) as IDocFiles[];
                     break;
                 }

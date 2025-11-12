@@ -1,10 +1,8 @@
 import * as React from "react";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
-import { Link, Tooltip } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import { Icon } from "office-ui-fabric-react";
-import { Dialog } from "primereact/dialog";
 import "../App.css";
-import { labelNames } from "../utilities/LabelName";
 
 interface fieldItems {
   Attachment: IDocFiles[];
@@ -19,37 +17,32 @@ function CustomViewAttachment({
   StateValue,
   webUrl,
 }: fieldItems) {
-  const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
-  const [documentcontent, setDocumentcontent] = React.useState<string>("");
+  // const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
+  // const [documentcontent, setDocumentcontent] = React.useState<string>("");
 
-  function handleFileDownload(event: React.MouseEvent, documentUrl: string) {
-    event.preventDefault();
-    if (documentUrl.startsWith("blob:")) {
-      setDocumentPopup(true);
-      setDocumentcontent(documentUrl);
-      return;
-    }
-  }
+  // function handleFileDownload(event: React.MouseEvent, documentUrl: string) {
+  //   event.preventDefault();
+  // setDocumentPopup(true);
+  // setDocumentcontent(documentUrl);
+  // }
 
-  const getIframeSrc = (fileUrl: string): string => {
-    if (!fileUrl) return "";
+  // const getIframeSrc = (fileUrl: string): string => {
+  //   if (fileUrl.endsWith(".pdf")) {
+  //     return fileUrl;
+  //   } else if (fileUrl.endsWith(".docx")) {
+  //     //   const absoluteUrl = fileUrl.startsWith("http")
+  //     // ? fileUrl
+  //     // : `${webUrl.split("/sites")[0]}${fileUrl}`;
 
-    const isAbsolute = fileUrl.startsWith("http");
+  //     const viewerUrl = `${webUrl}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(
+  //       fileUrl
+  //     )}&action=embedview`;
 
-    if (fileUrl.endsWith(".pdf")) {
-      return isAbsolute ? fileUrl : `${webUrl}${fileUrl}`;
-    }
-
-    if (fileUrl.endsWith(".docx")) {
-      const absoluteUrl = isAbsolute ? fileUrl : `${webUrl}${fileUrl}`;
-      const viewerUrl = `${webUrl}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(
-        absoluteUrl
-      )}&action=embedview`;
-      return viewerUrl;
-    }
-
-    return isAbsolute ? fileUrl : `${webUrl}${fileUrl}`;
-  };
+  //     return viewerUrl;
+  //   } else {
+  //     return fileUrl;
+  //   }
+  // };
 
   return (
     <>
@@ -72,7 +65,7 @@ function CustomViewAttachment({
                       <span
                         style={{ display: "inline-flex", alignItems: "center" }}
                       >
-                        {/* <a
+                        <a
                           style={{
                             color: "blue",
                             fontWeight: "bold",
@@ -84,9 +77,9 @@ function CustomViewAttachment({
                           }}
                         >
                           {truncatedFileName}
-                        </a> */}
-                        <Link
-                          href="#"
+                        </a>
+                        {/* <Link
+                          href={file.content}
                           onClick={(e) => handleFileDownload(e, file.url ?? "")}
                           target="_blank"
                           style={{
@@ -100,7 +93,7 @@ function CustomViewAttachment({
                           }}
                         >
                           {truncatedFileName}
-                        </Link>
+                        </Link> */}
                         <Icon
                           iconName="Delete"
                           style={{
@@ -118,10 +111,9 @@ function CustomViewAttachment({
             );
           })
         : null}
-      {documentPopup ? (
+      {/* {documentPopup ? (
         <>
           <Dialog
-            className="document-viewer"
             style={{
               width: "75vw",
               height: "41vw",
@@ -141,7 +133,7 @@ function CustomViewAttachment({
               ></iframe>
             }
             onHide={() => setDocumentPopup(false)}
-            header={labelNames.DocumentViewer}
+            header="Document Viewer"
             // header={
             //   <>
             //     <div className="ms-Grid-row">
@@ -200,7 +192,7 @@ function CustomViewAttachment({
         </>
       ) : (
         <></>
-      )}
+      )} */}
     </>
   );
 }

@@ -16,7 +16,8 @@ export default function AlertDialogbox(props: DynamicFormDialogProps) {
 
   const DialogStyles: React.CSSProperties = {
     minWidth: "36%",
-    overflow: "hidden",
+    overflowY: "hidden",
+    overflowX: "hidden",
     zIndex: 9999,
     backgroundColor: "white",
     borderRadius: "26px",

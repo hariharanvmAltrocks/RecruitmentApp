@@ -8,6 +8,7 @@ import {
   Choices,
   workflowStatusApi,
   RoleID,
+  WorkflowAction,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Card, CardContent } from "@mui/material";
@@ -299,6 +300,7 @@ const UploadOfferDocumentList = (props: any) => {
             (item) =>
               item.StatusID === StatusId.PendingHROfferInitiate ||
               item.StatusID === StatusId.PendingHRReviewOfferWorkPermitInit ||
+              item.StatusID === StatusId.PendingHRReviewWorkpermitDocs ||
               item.StatusID ===
                 StatusId.WorkPermitAcknowledgedContractUploaded ||
               item.StatusID ===
@@ -342,7 +344,7 @@ const UploadOfferDocumentList = (props: any) => {
       case TabName.OfferLetterLabourHire:
         FilterDataCareerportal = items.filter(
           (item) =>
-            item.StatusID === StatusId.PendingHROfferReview ||
+            item.StatusID === StatusId.PendingLabourHireOfferRelease ||
             item.StatusID === StatusId.PendingCandidateOfferLetterUpload ||
             item.StatusID === StatusId.PendingLabourhireWPPayment ||
             item.StatusID === StatusId.PendingLHWorkPermitProcess ||
@@ -408,8 +410,8 @@ const UploadOfferDocumentList = (props: any) => {
         if (matchedRes) {
           return {
             ...item,
-            // ID: matchedRes?.ID,
-            // ActionId: WorkflowAction.Approved,
+            ID: matchedRes?.ID,
+            ActionId: WorkflowAction.Approved,
           };
         } else {
           return null;
