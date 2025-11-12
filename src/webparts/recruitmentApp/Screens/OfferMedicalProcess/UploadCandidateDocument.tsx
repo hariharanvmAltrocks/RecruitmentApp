@@ -1373,29 +1373,29 @@ const UploadCandidateDocument = (props: any) => {
                 SuccessMsg = RecuritmentHRMsg.OfferLetterMsg;
                 ActionID = WorkflowAction.Approved;
               } else {
-                // let response =
-                //   OfferLetterServices.InitiateLabouHireOfferRelease(
-                //     data,
-                //     dataValue[0],
-                //     props.userDetails[0]?.EmailId
-                //   );
-                // if ((await response).status === 200) {
-                //   DocumentResponse = {
-                //     status: ResponeStatus.SUCCESS,
-                //   };
-                // } else {
-                //   DocumentResponse = {
-                //     status: ResponeStatus.FAILED,
-                //   };
-                // }
-                console.log(dataValue);
+                let response =
+                  OfferLetterServices.InitiateLabouHireOfferRelease(
+                    data,
+                    dataValue[0],
+                    props.userDetails[0]?.EmailId
+                  );
+                if ((await response).status === 200) {
+                  DocumentResponse = {
+                    status: ResponeStatus.SUCCESS,
+                  };
+                } else {
+                  DocumentResponse = {
+                    status: ResponeStatus.FAILED,
+                  };
+                }
+                // console.log(dataValue);
 
                 workflowStatusValue = workflowStatusApi.PendingHROfferInitiate;
                 SuccessMsg = RecuritmentHRMsg.OfferLetterinit;
                 ActionID = WorkflowAction.Approved;
-                DocumentResponse = {
-                  status: ResponeStatus.SUCCESS,
-                };
+                // DocumentResponse = {
+                //   status: ResponeStatus.SUCCESS,
+                // };
               }
             }
             break;

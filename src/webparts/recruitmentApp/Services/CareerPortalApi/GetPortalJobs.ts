@@ -302,7 +302,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           identityValue: op?.profile?.identityValue,
           identityType: (IdentityID && IdentityID.length > 0) ? IdentityID[0].displayText : "Passport",
 
-          NumberOftax: getOptAnswers[0]?.answerContent?.contentEn,
+          NumberOftax: op?.profile?.taxDependents ?? "",
           CurrentEmployer: profileExperiance?.company,
           CurrentPosition: profileExperiance?.title,
           WillingToRelocate: getOptAnswers[1]?.answerContent?.contentEn,

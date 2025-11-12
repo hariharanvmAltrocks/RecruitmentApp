@@ -117,6 +117,7 @@ export const StatusId = {
   PendingHRBGVInitiation: 134,
   PendingBGdocuploadedbycandidate: 163,
   PendingHRReviewBGCheck: 135,
+  PendingDOTAficaVerification: 172,
   //Medical Screening
   PendingwithTAforMedicalScreening: 144,
   // Post Recruitment

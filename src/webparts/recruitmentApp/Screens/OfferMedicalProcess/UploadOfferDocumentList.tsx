@@ -442,6 +442,7 @@ const UploadOfferDocumentList = (props: any) => {
               StatusId.PendingHRBGVInitiation,
               StatusId.PendingBGdocuploadedbycandidate,
               StatusId.PendingHRReviewBGCheck,
+              StatusId.PendingDOTAficaVerification,
             ],
           });
           break;
