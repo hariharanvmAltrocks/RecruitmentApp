@@ -21,7 +21,6 @@ import { DataSyncToResiProcess } from "../../Services/InitiateOfferLetter/IOffer
 import PostRecrutimentDataTable from "../../components/PostRecrutimentDataTable";
 import { tabStyle } from "../../components/TabMerge";
 import { ButtonAction, EmployeementCategory } from "../../utilities/LabelName";
-
 type tabcount = {
   BGVCount: number;
   LabourHireCount: number;

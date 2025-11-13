@@ -1392,9 +1392,11 @@ footer {
 #SuiteNavPlaceholder {
   display: none;
 }
+
 div[data-automation-id="contentScrollRegion"] {
   overflow-y: hidden !important;
 }
+
 .o_c_8474018e {
   scrollbar-width: none;
 }

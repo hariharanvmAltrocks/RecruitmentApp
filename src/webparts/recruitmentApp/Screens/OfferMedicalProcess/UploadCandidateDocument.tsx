@@ -51,12 +51,14 @@ import {
   DisplayFolderName,
   EmployeementCategory,
   labelNames,
+  OnboardingChecklistData,
   RadioBtnLabel,
 } from "../../utilities/LabelName";
 import AlertDialogbox from "../../components/CustomAlert/AlertDialogbox";
 import CustomTextArea from "../../components/CustomTextArea";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomSignature from "../../components/CustomSignature";
+import { OnboardingChecklist } from "./OnboardingChecklist";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -1261,6 +1263,11 @@ const UploadCandidateDocument = (props: any) => {
                   <></>
                 ) : (
                   <>
+                    <div className="ms-Grid-row">
+                      <OnboardingChecklist
+                        documents={OnboardingChecklistData}
+                      />
+                    </div>
                     <div className="ms-Grid-row">
                       <div
                         className="ms-Grid-col ms-lg12"

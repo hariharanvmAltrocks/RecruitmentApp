@@ -1,3 +1,4 @@
+import { Preference } from "../Screens/OfferMedicalProcess/OnboardingChecklist"
 
 export const labelNames = {
     PositionDetails: {
@@ -280,3 +281,36 @@ export const UserType = {
 export const quesContentId = {
     WillingRelocate: "FD889B9C1B51F13738596ACFB206E881EAC9",
 }
+
+export const OnboardingChecklistData: Preference[] = [
+    {
+        id: '1',
+        label: 'Do you enjoy working with React?',
+        description: 'Modern JavaScript UI library',
+        value: null,
+    },
+    {
+        id: '2',
+        label: 'Do you prefer dark mode?',
+        description: 'Easier on the eyes at night',
+        value: null,
+    },
+    {
+        id: '3',
+        label: 'Would you like email notifications?',
+        description: 'Stay updated with news and features',
+        value: null,
+    },
+    {
+        id: '4',
+        label: 'Do you use TypeScript?',
+        description: 'Type-safe JavaScript development',
+        value: null,
+    },
+    {
+        id: '5',
+        label: 'Would you recommend this to others?',
+        description: 'Help us grow our community',
+        value: null,
+    },
+]
