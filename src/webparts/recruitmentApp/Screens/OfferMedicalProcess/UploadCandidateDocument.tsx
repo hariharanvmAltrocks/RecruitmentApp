@@ -51,14 +51,12 @@ import {
   DisplayFolderName,
   EmployeementCategory,
   labelNames,
-  OnboardingChecklistData,
   RadioBtnLabel,
 } from "../../utilities/LabelName";
 import AlertDialogbox from "../../components/CustomAlert/AlertDialogbox";
 import CustomTextArea from "../../components/CustomTextArea";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomSignature from "../../components/CustomSignature";
-import { OnboardingChecklist } from "./OnboardingChecklist";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -198,6 +196,7 @@ const UploadCandidateDocument = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
+  const [btnEnable, setBtnEnable] = React.useState<boolean>(false);
   // const [optionValue, setOptionValue] = React.useState<optionValue>({
   //   InductionTypeOption: [],
   //   RegionOption: [],
@@ -209,6 +208,7 @@ const UploadCandidateDocument = (props: any) => {
   const fetchData = async () => {
     if (isLoading) return;
     setIsLoading(true);
+    setBtnEnable(false);
     try {
       let filterConditions: any[] = [];
       let Conditions = "and";
@@ -1263,11 +1263,12 @@ const UploadCandidateDocument = (props: any) => {
                   <></>
                 ) : (
                   <>
-                    <div className="ms-Grid-row">
+                    {/* <div className="ms-Grid-row">
                       <OnboardingChecklist
                         documents={OnboardingChecklistData}
+                        BtnEnable={setBtnEnable}
                       />
-                    </div>
+                    </div> */}
                     <div className="ms-Grid-row">
                       <div
                         className="ms-Grid-col ms-lg12"
@@ -2047,6 +2048,15 @@ const UploadCandidateDocument = (props: any) => {
                           label: ButtonAction.Initiated,
                           onClick: async () =>
                             await Submit_fn(ButtonAction.Initiated),
+                        },
+                      ];
+                    }
+                    if (btnEnable) {
+                      return [
+                        {
+                          label: ButtonAction.Submit,
+                          onClick: async () =>
+                            await Submit_fn(ButtonAction.Submit),
                         },
                       ];
                     }

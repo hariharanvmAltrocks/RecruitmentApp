@@ -12,10 +12,12 @@ export interface Preference {
 
 interface OnboardingChecklistProps {
   documents: Preference[];
+  BtnEnable: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
   documents,
+  BtnEnable,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
@@ -24,10 +26,17 @@ export const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
   const [errorMessage, setErrorMessage] = React.useState("");
   const [preferences, setPreferences] = React.useState<Preference[]>(documents);
 
+  const completedCount = preferences.filter((p) => p.value === true).length;
+  const completionPercentage = Math.round(
+    (completedCount / preferences.length) * 100
+  );
+
   React.useEffect(() => {
     setIsLoading(false);
     console.log(successMessage);
     console.log(errorMessage);
+    const BtnEnableValue = documents.length === completedCount;
+    BtnEnable(BtnEnableValue);
   }, []);
 
   async function handleToggle(id: string, value: boolean) {
@@ -52,11 +61,6 @@ export const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
       setLoadingId(null);
     }
   }
-
-  const completedCount = preferences.filter((p) => p.value === true).length;
-  const completionPercentage = Math.round(
-    (completedCount / preferences.length) * 100
-  );
 
   function renderCard(pref: Preference) {
     const isLoadingCard = loadingId === pref.id;
@@ -122,7 +126,9 @@ export const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
         <div className="content-wrapper">
           <div className="header">
             <h1>Onboarding Checklist</h1>
-            {/* <p>Help us understand your choices</p> */}
+            <p>
+              All supporting documentation to accompany RESI for approvals .
+            </p>
           </div>
 
           <div className="progress-card">
@@ -134,7 +140,7 @@ export const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
             </div>
             <div className="progress-bar">
               <div
-                className="progress-bar-filled"
+                className="progress-bar filled"
                 style={{ width: `${completionPercentage}%` }}
               />
             </div>

@@ -133,7 +133,7 @@ export const StatusId = {
   PendingHRpreonboardingchecklist: 162,
   //Labor Hire
   PendingLabourHireOfferRelease: 170,
-  PendingHROfferReview: 171,
+  PendingHROfferReview: 184,//171,
   PendingLabourhireWPPayment: 173,
   PendingFinancePaymentReview: 174,
   PendingLHWorkPermitProcess: 175,
