@@ -375,6 +375,7 @@ export type UploadDocument = {
     BGVRadioBtn: string;
     BGVRadioBtnlabel: string;
     PaymentReview: string;
+    RecNationality: string;
 }
 
 export type DocumentName = {

@@ -141,6 +141,7 @@ const UploadOfferDocumentList = (props: any) => {
               rowData?.StatusID === StatusId.PendingLabourhireWPPayment ||
               rowData?.StatusID === StatusId.PendingLHWorkPermitProcess ||
               rowData?.StatusID === StatusId.PendingLHECRelease ||
+              rowData?.StatusID === StatusId.PendingDOTAficaVerification ||
               rowData?.StatusID ===
                 StatusId.PendingwithTAforMedicalScreening ? (
               <>

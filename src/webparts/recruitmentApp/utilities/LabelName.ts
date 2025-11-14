@@ -253,11 +253,12 @@ export const DisplayFolderName = {
 }
 
 export const RadioBtnLabel = {
-    BGVNationalsLabel: "Is the background verification cleared?",
+    BGVNationalsLabel: "Is the background verification cleared ?",
     BGVExpatriatesLabel: "Are you sure you want to initiate Background verification for this candidate?",
     OfferInitiationLabel: "Do you want to proceed with initiating the Offer Letter process for the Labour Hire?",
     DocumentVerification: "Is the document verified?",
-    PaymentReview: "Has the Work Permit payment been verified?"
+    PaymentReview: "Has the Work Permit payment been verified ?",
+    BGVNational: "Are the background documents verified ?"
 }
 
 export const EmailTemplateCodes = {
@@ -275,7 +276,7 @@ export const EmployeementCategory = {
 }
 
 export const UserType = {
-    agent: "agent",
+    agent: "Agent",
     Labourhire: "LabourHire",
 }
 export const quesContentId = {

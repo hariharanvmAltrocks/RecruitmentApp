@@ -128,6 +128,7 @@ const UploadCandidateDocument = (props: any) => {
     NoticePeriod: "",
     ProfileID: "",
     PaymentReview: "",
+    RecNationality: "",
 
     TrainingSystem: {
       Inductiontype: { key: 0, text: "" },
@@ -454,6 +455,7 @@ const UploadCandidateDocument = (props: any) => {
         EmploymentCategory: item?.RecruitmentDetails?.EmploymentCategory,
         TypeOfCOntract: item?.RecruitmentDetails?.TypeOfContract,
         Nationalty: item.CandidateDetails?.Nationality,
+        RecNationality: item.RecruitmentDetails?.Nationality,
         AreaOfWork: item?.RecruitmentDetails?.AreaofWork,
         Location: item?.CandidateDetails?.Location,
         jobRequestID: item?.CandidateDetails?.JobRequestID,
@@ -466,7 +468,7 @@ const UploadCandidateDocument = (props: any) => {
         NoticePeriod: CandidateDetails?.data?.[0]?.noticePeriod ?? "",
         BGVRadioBtnlabel:
           props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation &&
-          item.CandidateDetails?.Nationality === Nationality.Nationals
+          item.RecruitmentDetails?.Nationality === Nationality.Nationals
             ? RadioBtnLabel.BGVNationalsLabel
             : props.stateValue?.StatusId === StatusId.PendingHROfferInitiate &&
               item?.RecruitmentDetails?.EmploymentCategory ===
@@ -1245,7 +1247,13 @@ const UploadCandidateDocument = (props: any) => {
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg5">
                       <CustomRadioGroup
-                        label={RadioBtnLabel.DocumentVerification}
+                        label={
+                          props.stateValue?.StatusId ===
+                            StatusId.PendingHRReviewBGCheck &&
+                          data.RecNationality === Nationality.Nationals
+                            ? RadioBtnLabel.BGVNational
+                            : RadioBtnLabel.DocumentVerification
+                        }
                         value={data.RadioAction}
                         options={["Yes", "No"]}
                         error={validationErrors.RadioAction}
@@ -1435,7 +1443,12 @@ const UploadCandidateDocument = (props: any) => {
             {
               if (btnAction === ButtonAction.Review) {
                 workflowStatusValue = workflowStatusApi.initiatetheBGVProcess;
-                SuccessMsg = RecuritmentHRMsg.BGReviewedMsg;
+                SuccessMsg =
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingHRReviewBGCheck &&
+                  data.RecNationality === Nationality.Nationals
+                    ? RecuritmentHRMsg.BGReviewedMsg
+                    : RecuritmentHRMsg.BGReviewinitBGV;
                 ActionID = WorkflowAction.Approved;
                 DocumentResponse = {
                   status: ResponeStatus.SUCCESS,
@@ -2031,6 +2044,10 @@ const UploadCandidateDocument = (props: any) => {
                       const action =
                         data.PaymentReview === "Yes"
                           ? ButtonAction.Review
+                          : props.stateValue?.StatusId ===
+                              StatusId.PendingHRReviewBGCheck &&
+                            data.RecNationality === Nationality.Nationals
+                          ? ButtonAction.Reject
                           : ButtonAction.Revert;
                       return [
                         {

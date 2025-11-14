@@ -88,6 +88,10 @@ const CandidateList = (props: any) => {
             StatusId.RejectedbyHOD,
             StatusId.PendingwithHODtoAssignPositionID,
             StatusId.PendingwithHODtoselectthecandidateLevel2,
+            StatusId.CandidateOnHoldbyHODLevel1,
+            StatusId.CandidateOnHoldbyHODLevel2,
+            StatusId.CandidateRejectedbyHODLevel1,
+            StatusId.CandidateRejectedbyHODLevel2,
           ],
         },
         {
@@ -212,9 +216,14 @@ const CandidateList = (props: any) => {
           StatusId.PendingwithHODtoselectthecandidate,
           StatusId.PendingwithHODtoselectthecandidateLevel2,
           StatusId.PendingwithHODtoAssignPositionID,
+          StatusId.CandidateOnHoldbyHODLevel1,
+          StatusId.CandidateOnHoldbyHODLevel2,
         ].includes(rowData.StatusId);
 
-        const canView = rowData.StatusId === StatusId.RejectedbyHOD;
+        const canView =
+          rowData.StatusId === StatusId.RejectedbyHOD ||
+          rowData.StatusId === StatusId.CandidateRejectedbyHODLevel1 ||
+          rowData.StatusId === StatusId.CandidateRejectedbyHODLevel2;
 
         return (
           <div
@@ -390,7 +399,8 @@ const CandidateList = (props: any) => {
         item.StatusId === StatusId.OnHoldbyHOD ||
         item.StatusId === StatusId.PendingwithHODtoAssignPositionID ||
         item.StatusId === StatusId.PendingwithHODtoselectthecandidateLevel2 ||
-        item.StatusId === StatusId.PendingwithHODtoselectthecandidate
+        item.StatusId === StatusId.CandidateOnHoldbyHODLevel1 ||
+        item.StatusId === StatusId.CandidateOnHoldbyHODLevel2
     );
     switch (tab) {
       case TabName.ReviewScorecard:

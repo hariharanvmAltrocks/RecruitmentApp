@@ -142,6 +142,8 @@ export const StatusId = {
   PendingLHECRelease: 178,
   PendingHREmploymentContractReview: 179,
 
+  PendingHRReviewOfferanduploadEmployementContract: 183,//169
+
   // PendingHRReviewOfferWorkPermit: 136,
   // WorkPermitHRReview: 137,
   // WorkPermitAcknowledgedContractUploaded: 138,
@@ -167,7 +169,12 @@ export const StatusId = {
   RevertedBacktoCandidateforReuploadEmploymentContract: 151,
 
   Pending: 89,
-  PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract: 152
+  PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract: 152,
+
+  CandidateOnHoldbyHODLevel1: 165,
+  CandidateOnHoldbyHODLevel2: 182,//166,
+  CandidateRejectedbyHODLevel1: 167,
+  CandidateRejectedbyHODLevel2: 168,
 };
 
 export const RoleID = {
@@ -305,6 +312,7 @@ export const RecuritmentHRMsg = {
 
   BGverificationMsg: "Background Verification has been initiated successfully.",
   BGReviewedMsg: "Background Verification has been completed successfully.",
+  BGReviewinitBGV: "Verify the background documents and initiate the DotAfrica verification process.",
 
   OfferLetterMsg: "The offer letter has been uploaded successfully.",
   OfferLetterinit: "The Offer Letter process has been successfully initiated for the Labour Hire.",
@@ -337,6 +345,8 @@ export const RecuritmentHRMsg = {
   NationalityMsgError: "Please select the any one Nationality",
   FinancePaymentReviewMsg: "Finance Payment Review has been completed successfully.",
   RevertedFinancePaymentMsg: "Payment Review has been reverted to LaborHire successfully..",
+  CandidateRejectedLevel2: "Candidate Level 1 Rejected Successfully",
+  CandidateonholdLevel2: "Candidate Level 1 On-Hold Successfully",
 };
 
 export const validationMsg = {
