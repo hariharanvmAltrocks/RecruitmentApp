@@ -79,6 +79,22 @@ export type ICandidateDetails = {
     TrainingSystem: TrainingSystem;
     TASystem: TASystem;
     ITSystem: ITSystem;
+    BackgroundChecks: string
+    SignedOfferLetterVerified: string
+    SignedEmploymentContract: string
+    WorkPermitApproved: string
+    VisaProcess: string
+    AccommodationBooked: string
+    TravelProcess: string
+    ReadyforOnboarding: string
+}
+
+export type GetBGVDocument = {
+    ListName: string;
+    ProfileID: string;
+    RequestID: string;
+    DocumentType: string;
+    DocumentName: string[];
 }
 
 export type IOfferLetterService = {
@@ -109,4 +125,10 @@ export type IOfferLetterService = {
         HODData: DataSyncToResiProcess,
         CurrentUserEmail: string
     ): Promise<ApiResponse<null>>;
+    FetchBGVerificationDOcs(
+        DocumentName: GetBGVDocument,
+    ): Promise<ApiResponse<any>>;
+    UpdateStatusCandidatelist(
+        UpdateParams: any,
+    ): Promise<ApiResponse<any>>;
 };

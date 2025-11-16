@@ -321,6 +321,7 @@ export const RecuritmentHRMsg = {
   EmployeementInit: "The Employment Contract process has been successfully initiated in the labour plan",
   RevertedOfferLetter: "The offer letter has been reverted to candidate successfully.",
   RevertLabourOffer: "The Labour Hire Offer Release has been successfully reverted",
+  RevertWGDocs: "The Background Document Reverted successfully.",
   RevertWorkPermitDocs: "The Work Permit Document has been successfully reverted",
   RevertECCocs: "The Labour Hire Employment Contract has been successfully reverted",
 
@@ -334,6 +335,7 @@ export const RecuritmentHRMsg = {
   ReviewEmploymentContractMsg: "The Labour Hire Employment Contract has been reviewed successfully and forwarded to the candidate.",
   RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
   ReviewECMsg: "The Employement Contract Reviewed Successfully ",
+  OnboardingMsg: "Onboarding has been initiated successfully.",
 
 
   NationalityErrorMsg: "Please select the Nationality filter before proceeding.",
@@ -347,6 +349,8 @@ export const RecuritmentHRMsg = {
   RevertedFinancePaymentMsg: "Payment Review has been reverted to LaborHire successfully..",
   CandidateRejectedLevel2: "Candidate Level 1 Rejected Successfully",
   CandidateonholdLevel2: "Candidate Level 1 On-Hold Successfully",
+
+  ChecklistSaveAsDraftMsg: "Your changes are saved as a draft"
 };
 
 export const validationMsg = {
@@ -486,7 +490,7 @@ export const TabName = {
   InterviewPanel: "Interview Panel",
   ViewScoreDetails: " View ScoreCard Details",
   ReschedulInterview: "Reschedule Interview",
-
+  OnboardingChecklist: "Oboarding Checklist"
 };
 
 
@@ -558,7 +562,8 @@ export const workflowStatusApi = {
   RevertedBacktoCandidateforreuploadDocs: "WS23",
   RevertedBacktoCandidateforreuploadEmploymentContract: "WS24",
   RevertedtheLabourHireOfferRelease: "WS34",
-  RevertedtheLabourHireEmployementContract: "WS35"
+  RevertedtheLabourHireEmployementContract: "WS35",
+  RevetedBacktoBGVDocuments: "WS40"
 
 };
 
@@ -735,7 +740,8 @@ export const DocumentFolderName = {
   PoliceClearanceCertificate: "Police Clearance Certificate",
   CovidVaccinationCertificate: "Covid Vaccination Certificate",
   YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
-  CV: "CV"
+  CV: "CV",
+  BGVConsentform: "BGVConsentForm"
 }
 
 

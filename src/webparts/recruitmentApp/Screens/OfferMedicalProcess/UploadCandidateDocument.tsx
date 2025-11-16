@@ -23,7 +23,11 @@ import {
   WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
-import { alertPropsData } from "../../Models/Screens";
+import {
+  alertPropsData,
+  ChecklistStatus,
+  OnboardingChecklisttype,
+} from "../../Models/Screens";
 import { UploadDocument, WorkflowJson } from "../../Models/ApIInterface";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomLabel from "../../components/CustomLabel";
@@ -34,29 +38,46 @@ import IsValid from "../../components/Validation";
 import {
   GetPortalJobsService,
   getVRRDetails,
+  laborHireService,
   OfferLetterServices,
 } from "../../Services/ServiceExport";
 import {
   DataSyncToResiProcess,
   DocumentName,
+  GetBGVDocument,
   GetCandidateDocument,
 } from "../../Services/InitiateOfferLetter/IOfferLetterService";
 import CustomRadioGroup from "../../components/CustomRadioGroup";
 import ReuseButton from "../../components/ReuseButton";
 import { ViewCandidateDocument } from "../ScreenComponent/ViewCandidateDocument";
 import {
+  ActionName,
   Attachment,
   ButtonAction,
   CheckboxContent,
   DisplayFolderName,
   EmployeementCategory,
   labelNames,
+  NSADocs,
+  onboardingData,
   RadioBtnLabel,
+  SADocs,
 } from "../../utilities/LabelName";
 import AlertDialogbox from "../../components/CustomAlert/AlertDialogbox";
 import CustomTextArea from "../../components/CustomTextArea";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomSignature from "../../components/CustomSignature";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Typography,
+} from "@mui/material";
+import { convertToList } from "../../components/TabMerge";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import "./Checklist.css";
+import StatusBar from "./ChecklistStatus";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -165,6 +186,7 @@ const UploadCandidateDocument = (props: any) => {
     BGVRadioBtn: "",
     BGVRadioBtnlabel: "",
   });
+  // const [checkdata,setCheckdata] = useState<>
   // const [viewDocument, setViewDocument] = React.useState<viewDocument>({
   //   ReviewOfferDoc: [],
   //   ReviewOthersDoc: [],
@@ -176,6 +198,8 @@ const UploadCandidateDocument = (props: any) => {
     []
   );
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
+  const [checklistData, setchecklistData] =
+    React.useState<OnboardingChecklisttype>(onboardingData);
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [validationErrors, setValidationErrors] =
     React.useState<ValidationError>({
@@ -198,18 +222,26 @@ const UploadCandidateDocument = (props: any) => {
     visible: false,
   });
   const [btnEnable, setBtnEnable] = React.useState<boolean>(false);
-  // const [optionValue, setOptionValue] = React.useState<optionValue>({
-  //   InductionTypeOption: [],
-  //   RegionOption: [],
-  //   ZoneOption: [],
-  //   HarewareOption: [],
-  // });
   const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [checklistStatus, setChecklistStatus] = useState<ChecklistStatus>({
+    BackgroundChecks: false,
+    SignedOfferLetter: false,
+    EmploymentContract: false,
+    WorkPermitApproved: false,
+    VisaProcess: false,
+    AccommodationBooked: false,
+    TravelProcess: false,
+    ReadyforOnboarding: false,
+  });
+
+  const handleExpand = (index: number) => {
+    setExpandedIndex(expandedIndex === index ? null : index);
+  };
 
   const fetchData = async () => {
     if (isLoading) return;
     setIsLoading(true);
-    setBtnEnable(false);
     try {
       let filterConditions: any[] = [];
       let Conditions = "and";
@@ -224,14 +256,22 @@ const UploadCandidateDocument = (props: any) => {
       );
       let item = response.data[0];
       setdataValue(response.data);
+      let CandidateDetails = await GetPortalJobsService.getCandidateProfile(
+        item?.CandidateDetails?.JobRequestID
+      );
       let docs: any[] = [];
       if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-        let BGVDocument: GetCandidateDocument = {
+        let BGVDocument: GetBGVDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
           ProfileID: item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
           DocumentType: DocumentFolderName.BackgroundVerification,
+          DocumentName:
+            CandidateDetails?.data?.[0]?.NatioCode === "N154"
+              ? SADocs
+              : NSADocs,
+          RequestID: item?.CandidateDetails?.JobRequestID,
         };
-        let BGVDocs = await OfferLetterServices.FetchCandidateDocument(
+        let BGVDocs = await OfferLetterServices.FetchBGVerificationDOcs(
           BGVDocument
         );
         let OfferDocument: GetCandidateDocument = {
@@ -340,6 +380,8 @@ const UploadCandidateDocument = (props: any) => {
             data: unSignedOfferDocs.data,
           },
         ];
+        BGVDocs.data = BGVDocs.data.filter((item: any) => item !== undefined);
+
         let BGVDoc = [
           {
             Title: DisplayFolderName.BackgroundVerification,
@@ -436,9 +478,6 @@ const UploadCandidateDocument = (props: any) => {
       }
 
       setdocumentview(docs);
-      let CandidateDetails = await GetPortalJobsService.getCandidateProfile(
-        item?.CandidateDetails?.JobRequestID
-      );
 
       setData((prev) => ({
         ...prev,
@@ -477,6 +516,97 @@ const UploadCandidateDocument = (props: any) => {
             : RadioBtnLabel.BGVExpatriatesLabel,
       }));
 
+      setchecklistData((prev) => ({
+        ...prev,
+        DocumentComplianceChecks: {
+          ...prev.DocumentComplianceChecks,
+          DocumentComplianceChecks: {
+            ...prev.DocumentComplianceChecks.DocumentComplianceChecks,
+            BackgroundChecks: {
+              ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                .BackgroundChecks,
+              value:
+                item?.CandidateDetails?.BackgroundChecks ===
+                ActionName.Completed
+                  ? true
+                  : false,
+            },
+            SignedOfferLetter: {
+              ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                .SignedOfferLetter,
+              value:
+                item?.CandidateDetails?.SignedOfferLetterVerified ===
+                ActionName.Completed
+                  ? true
+                  : false,
+            },
+            SignedEmploymentContract: {
+              ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                .SignedEmploymentContract,
+              value:
+                item?.CandidateDetails?.SignedEmploymentContract ===
+                ActionName.Completed
+                  ? true
+                  : false,
+            },
+            WorkPermitApproved: {
+              ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                .WorkPermitApproved,
+              value:
+                item?.CandidateDetails?.WorkPermitApproved ===
+                ActionName.Completed
+                  ? true
+                  : false,
+            },
+          },
+        },
+        LogisticsEmployeeSupport: {
+          ...prev.LogisticsEmployeeSupport,
+          LogisticsEmployeeSupport: {
+            ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport,
+            VisaProcess: {
+              ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport
+                .VisaProcess,
+              value:
+                item?.CandidateDetails?.VisaProcess === ActionName.Completed
+                  ? true
+                  : false,
+            },
+            AccommodationBooked: {
+              ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport
+                .AccommodationBooked,
+              value:
+                item?.CandidateDetails?.AccommodationBooked ===
+                ActionName.Completed
+                  ? true
+                  : false,
+            },
+            TravelProcess: {
+              ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport
+                .TravelProcess,
+              value:
+                item?.CandidateDetails?.TravelProcess === ActionName.Completed
+                  ? true
+                  : false,
+            },
+          },
+        },
+        FinalStatus: {
+          ...prev.FinalStatus,
+          FinalStatus: {
+            ...prev.FinalStatus.FinalStatus,
+            ReadyforOnboarding: {
+              ...prev.FinalStatus.FinalStatus.ReadyforOnboarding,
+              value:
+                item?.CandidateDetails?.ReadyforOnboarding ===
+                ActionName.Completed
+                  ? true
+                  : false,
+            },
+          },
+        },
+      }));
+
       // setViewDocument((prev) => ({
       //   ...prev,
       //   ReviewOfferDoc: OfferLetter.data,
@@ -511,8 +641,9 @@ const UploadCandidateDocument = (props: any) => {
   };
 
   React.useEffect(() => {
+    console.log(props.userDetails[0]?.ID, "UserId");
     void fetchData();
-
+    setchecklistData(onboardingData);
     const newTabNames = [
       { tabName: props.stateValue?.TabName },
       // { tabName: props.stateValue?.ButtonAction },
@@ -574,6 +705,8 @@ const UploadCandidateDocument = (props: any) => {
       }));
     }
   };
+
+  console.log(checklistData, "checklistDatachecklistData");
 
   const handleCheckboxchanges = (value: string | any) => {
     setData((prev) => ({
@@ -748,6 +881,104 @@ const UploadCandidateDocument = (props: any) => {
 
   //   window.open(viewUrl, "_blank");
   // }
+
+  const handleToggle = (
+    section: string,
+    field: string,
+    value: boolean,
+    id: number
+  ) => {
+    if (
+      section !== "DocumentComplianceChecks" &&
+      section !== "LogisticsEmployeeSupport" &&
+      section !== "FinalStatus"
+    ) {
+      console.error("Invalid section:", section);
+      return;
+    }
+
+    const subKey =
+      section === "FinalStatus"
+        ? "FinalStatus"
+        : section === "LogisticsEmployeeSupport"
+        ? "LogisticsEmployeeSupport"
+        : "DocumentComplianceChecks";
+
+    setchecklistData((prev: any) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [subKey]: Object.fromEntries(
+          Object.entries(prev[section][subKey]).map(([key, item]: any) => {
+            if (item.id === id) {
+              return [key, { ...item, value }];
+            }
+            return [key, item];
+          })
+        ),
+      },
+    }));
+  };
+
+  React.useEffect(() => {
+    if (!checklistData) return;
+
+    setChecklistStatus({
+      BackgroundChecks:
+        checklistData.DocumentComplianceChecks.DocumentComplianceChecks
+          .BackgroundChecks.value,
+      SignedOfferLetter:
+        checklistData.DocumentComplianceChecks.DocumentComplianceChecks
+          .SignedOfferLetter.value,
+      EmploymentContract:
+        checklistData.DocumentComplianceChecks.DocumentComplianceChecks
+          .SignedEmploymentContract.value,
+      WorkPermitApproved:
+        checklistData.DocumentComplianceChecks.DocumentComplianceChecks
+          .WorkPermitApproved.value,
+      VisaProcess:
+        checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport
+          .VisaProcess.value,
+      AccommodationBooked:
+        checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport
+          .AccommodationBooked.value,
+      TravelProcess:
+        checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport
+          .TravelProcess.value,
+      ReadyforOnboarding:
+        checklistData.FinalStatus.FinalStatus.ReadyforOnboarding.value,
+    });
+  }, [checklistData]);
+
+  React.useEffect(() => {
+    const allCompleted = Object.values(checklistStatus).every(
+      (value) => value === true
+    );
+
+    setBtnEnable(allCompleted);
+  }, [checklistStatus]);
+
+  const categoryList = [
+    {
+      label: checklistData?.DocumentComplianceChecks.label,
+      section: "DocumentComplianceChecks",
+      items: convertToList(
+        checklistData?.DocumentComplianceChecks.DocumentComplianceChecks
+      ),
+    },
+    {
+      label: checklistData?.LogisticsEmployeeSupport.label,
+      section: "LogisticsEmployeeSupport",
+      items: convertToList(
+        checklistData?.LogisticsEmployeeSupport.LogisticsEmployeeSupport
+      ),
+    },
+    {
+      label: checklistData?.FinalStatus.label,
+      section: "FinalStatus",
+      items: convertToList(checklistData?.FinalStatus.FinalStatus),
+    },
+  ];
 
   const tabs = [
     {
@@ -952,6 +1183,63 @@ const UploadCandidateDocument = (props: any) => {
                     </div>
                   </>
                 )} */}
+
+                {props.stateValue?.StatusId ===
+                StatusId.PendingHRBGVInitiation ? (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <>
+                          <CustomLabel
+                            value={Attachment.PositionDocument.ConsentDoc}
+                            mandatory={true}
+                          />
+                          <AttachmentButton
+                            label="Upload"
+                            iconName="CloudUpload"
+                            iconNameHover="CloudUpload"
+                            allowMultiple={false}
+                            AttachState={(newAttachment: any) => {
+                              let attachment: IDocFiles[] = newAttachment.map(
+                                (item: any) => {
+                                  return {
+                                    name: "ConsentForm- " + item.name,
+                                    content: item.file,
+                                    type: "New",
+                                    url: item.Url,
+                                  };
+                                }
+                              );
+                              // const attachments = [
+                              //   ...(data.ConsentDocs || []),
+                              //   ...attachment,
+                              // ];
+                              handleDocument("ConsentDocs", attachment);
+                            }}
+                            mandatory={true}
+                            error={validationErrors.ConsentDocs}
+                            Style={{
+                              backgroundColor:
+                                ColorCode.ButtonColorCode.ButtonColor,
+                              color: "white",
+                            }}
+                            fileformat=".doc,.pdf,.docx"
+                          />
+                          <CustomViewAttachment
+                            Attachment={data.ConsentDocs ?? []}
+                            StateValue={"ConsentDocs"}
+                            handleDelete={(index, fileState) =>
+                              handleDelete(index, fileState)
+                            }
+                          />
+                        </>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
+
                 {props.stateValue?.StatusId ===
                   StatusId.PendingHROfferInitiate &&
                 data.EmploymentCategory ===
@@ -1003,6 +1291,7 @@ const UploadCandidateDocument = (props: any) => {
                         />
                       </>
                     </div>
+
                     {/* <div className="ms-Grid-col ms-lg3">
                       <>
                         <CustomLabel
@@ -1019,52 +1308,6 @@ const UploadCandidateDocument = (props: any) => {
                               (item: any) => {
                                 return {
                                   name: "OfferLetterFrench- " + item.name,
-                                  content: item.file,
-                                  type: "New",
-                                  url: item.Url,
-                                };
-                              }
-                            );
-                            // const attachments = [
-                            //   ...(data.ConsentDocs || []),
-                            //   ...attachment,
-                            // ];
-                            handleDocument("ConsentDocs", attachment);
-                          }}
-                          mandatory={true}
-                          error={validationErrors.ConsentDocs}
-                          Style={{
-                            backgroundColor:
-                              ColorCode.ButtonColorCode.ButtonColor,
-                            color: "white",
-                          }}
-                          fileformat=".doc,.pdf,.docx"
-                        />
-                        <CustomViewAttachment
-                          Attachment={data.ConsentDocs ?? []}
-                          StateValue={"ConsentDocs"}
-                          handleDelete={(index, fileState) =>
-                            handleDelete(index, fileState)
-                          }
-                        />
-                      </>
-                    </div> */}
-                    {/* <div className="ms-Grid-col ms-lg3">
-                      <>
-                        <CustomLabel
-                          value={Attachment.PositionDocument.ConsentDoc}
-                          mandatory={true}
-                        />
-                        <AttachmentButton
-                          label="Upload"
-                          iconName="CloudUpload"
-                          iconNameHover="CloudUpload"
-                          allowMultiple={false}
-                          AttachState={(newAttachment: any) => {
-                            let attachment: IDocFiles[] = newAttachment.map(
-                              (item: any) => {
-                                return {
-                                  name: "ConsentForm- " + item.name,
                                   content: item.file,
                                   type: "New",
                                   url: item.Url,
@@ -1267,16 +1510,12 @@ const UploadCandidateDocument = (props: any) => {
                 ) : (
                   <></>
                 )}
-                {props.stateValue?.ButtonAction === ButtonAction.View ? (
+                {props.stateValue?.ButtonAction === ButtonAction.View ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingHRpreonboardingchecklist ? (
                   <></>
                 ) : (
                   <>
-                    {/* <div className="ms-Grid-row">
-                      <OnboardingChecklist
-                        documents={OnboardingChecklistData}
-                        BtnEnable={setBtnEnable}
-                      />
-                    </div> */}
                     <div className="ms-Grid-row">
                       <div
                         className="ms-Grid-col ms-lg12"
@@ -1344,6 +1583,190 @@ const UploadCandidateDocument = (props: any) => {
         </>
       ),
     },
+    {
+      label: TabName.OnboardingChecklist,
+      value: "tab2",
+      content: (
+        <>
+          <Card sx={{ marginTop: "2%" }}>
+            <CardContent>
+              <div>
+                <div className="ms-Grid-row">
+                  <div
+                    className="ms-Grid-col ms-lg8"
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      // marginBottom: "20px",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    <h2
+                      style={{
+                        color: ColorCode.ButtonColorCode.ButtonColor,
+                        fontSize: "18px",
+                      }}
+                    >
+                      OnboardingChecklist
+                    </h2>
+                  </div>
+                  <div
+                    className="ms-Grid-col ms-lg4"
+                    style={{
+                      display: "flex",
+                      justifyContent: "end",
+                      marginTop: "-2%",
+                    }}
+                  >
+                    <StatusBar checklist={checklistStatus} />
+                  </div>
+                </div>
+
+                {categoryList.map((cat, index) => (
+                  <Accordion
+                    key={index}
+                    expanded={expandedIndex === index}
+                    onChange={() => handleExpand(index)}
+                    sx={{ marginBottom: 2 }}
+                  >
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography fontSize={16} fontWeight="bold">
+                        {cat.label}
+                      </Typography>
+                    </AccordionSummary>
+
+                    <AccordionDetails>
+                      {cat.items.map((item) => (
+                        <Box
+                          key={item.id}
+                          sx={{
+                            boxShadow: "0px 3px 6px rgba(0,0,0,0.1)",
+                            borderRadius: "8px",
+                            padding: "12px",
+                            marginBottom: "12px",
+                          }}
+                        >
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg6">
+                              <Typography>{item.label}</Typography>
+                            </div>
+
+                            <div
+                              className="ms-Grid-col ms-lg6"
+                              style={{ display: "flex", gap: "12px" }}
+                            >
+                              {/* YES BUTTON */}
+                              <ReuseButton
+                                label="Yes"
+                                Style={{
+                                  height: "32px",
+                                  width: "60px",
+                                  backgroundColor:
+                                    item.value === true ? "green" : "#eaeaea",
+                                  color:
+                                    item.value === true ? "white" : "black",
+                                  border: "1px solid #ccc",
+                                  borderRadius: "5px",
+                                }}
+                                onClick={() =>
+                                  handleToggle(
+                                    cat.section,
+                                    item.label,
+                                    true,
+                                    item.id
+                                  )
+                                }
+                              />
+
+                              {/* NO BUTTON */}
+                              <ReuseButton
+                                label="No"
+                                Style={{
+                                  height: "32px",
+                                  width: "60px",
+                                  backgroundColor:
+                                    item.value === false ? "red" : "#eaeaea",
+                                  color:
+                                    item.value === false ? "white" : "black",
+                                  border: "1px solid #ccc",
+                                  borderRadius: "5px",
+                                }}
+                                onClick={() =>
+                                  handleToggle(
+                                    cat.section,
+                                    item.label,
+                                    false,
+                                    item.id
+                                  )
+                                }
+                              />
+                            </div>
+                          </div>
+                        </Box>
+                      ))}
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+
+                <div className="ms-Grid-row">
+                  <div
+                    className="ms-Grid-col ms-lg12"
+                    style={{ marginBottom: "7px" }}
+                  >
+                    <CustomTextArea
+                      label={labelNames.CommanLabel.Comments}
+                      value={data.comments}
+                      error={validationErrors.comments}
+                      onChange={(value) =>
+                        handleInputChangeTextArea("comments", undefined, value)
+                      }
+                      mandatory={true}
+                    />
+                  </div>
+                </div>
+                <div
+                  className="ms-Grid-row"
+                  style={{
+                    padding: "3px",
+                    marginTop: "20px",
+                    marginBottom: "-33px",
+                  }}
+                >
+                  <div className="ms-Grid-col ms-lg12">
+                    <SignatureCheckbox
+                      label={CheckboxContent.PostRecrutimentCheckboxContent}
+                      checked={data.Checkbox}
+                      error={validationErrors.checkbox}
+                      onChange={(value: boolean) =>
+                        handleCheckboxchanges(value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg12">
+                    <CustomSignature
+                      Name={
+                        (props.userDetails[0].FirstName ?? "") +
+                        " " +
+                        (props.userDetails[0]?.MiddleName ?? "") +
+                        " " +
+                        (props.userDetails[0]?.LastName ?? "")
+                      }
+                      JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
+                      JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                      Department={props.userDetails[0].DepartmentName}
+                      Date={data.SignDate}
+                      TermsAndCondition={data.Checkbox}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      ),
+    },
   ];
 
   const handleBreadcrumbChange = (newItem: string) => {
@@ -1361,6 +1784,9 @@ const UploadCandidateDocument = (props: any) => {
       ITRequired: false,
       PaymentReview: false,
     };
+    if (props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation) {
+      errors.ConsentDocs = !IsValid(data.ConsentDocs);
+    }
     if (
       props.stateValue?.StatusId === StatusId.PendingHROfferInitiate &&
       data.EmploymentCategory === EmployeementCategory.KCSAEmployee
@@ -1414,6 +1840,117 @@ const UploadCandidateDocument = (props: any) => {
   //   ); //`${year}-${month}-${day}`;
   //   return dateOnly.toISOString();
   // };
+  const SaveAsDraft = async () => {
+    setIsLoading(true);
+    try {
+      const isValid = !Validation();
+      if (isValid) {
+        let ChecklistValue = {
+          BackgroundChecks: checklistStatus.BackgroundChecks
+            ? ActionName.Completed
+            : ActionName.Pending,
+          SignedOfferLetterVerified: checklistStatus.SignedOfferLetter
+            ? ActionName.Completed
+            : ActionName.Pending,
+          SignedEmploymentContract: checklistStatus.EmploymentContract
+            ? ActionName.Completed
+            : ActionName.Pending,
+          WorkPermitApproved: checklistStatus.WorkPermitApproved
+            ? ActionName.Completed
+            : ActionName.Pending,
+          VisaProcess: checklistStatus.VisaProcess
+            ? ActionName.Completed
+            : ActionName.Pending,
+          AccommodationBooked: checklistStatus.AccommodationBooked
+            ? ActionName.Completed
+            : ActionName.Pending,
+          TravelProcess: checklistStatus.TravelProcess
+            ? ActionName.Completed
+            : ActionName.Pending,
+          ReadyforOnboarding: checklistStatus.ReadyforOnboarding
+            ? ActionName.Completed
+            : ActionName.Pending,
+          ID: data.CandidateID,
+        };
+        const UpdateStatusCandidateList =
+          await OfferLetterServices.UpdateStatusCandidatelist(ChecklistValue);
+        if (UpdateStatusCandidateList.status === ResponeStatus.SUCCESS) {
+          const SuccessAlert = {
+            Message: RecuritmentHRMsg.ChecklistSaveAsDraftMsg,
+            Type: HRMSAlertOptions.Success,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+              if (userClickedOK) {
+                props.navigation("/UploadOfferDocumentList", {
+                  state: {
+                    ID: props.stateValue?.ID,
+                    TabNames: props.stateValue?.TabName,
+                    ButtonAction: ButtonAction.View,
+                    JobCode: props.stateValue?.JobCode,
+                    tab: props.stateValue?.tab,
+                    JobCodeID: props.stateValue?.JobCodeId,
+                  },
+                });
+                setAlertPopupOpen(false);
+              } else {
+                setAlertPopupOpen(false);
+              }
+            },
+          };
+
+          setAlertPopupOpen(true);
+          setalertProps(SuccessAlert);
+          setIsLoading(false);
+          // }
+        } else {
+          const ApiErrorMsg = {
+            Message: RecuritmentHRMsg.APIErrorMsg,
+            Type: HRMSAlertOptions.Error,
+            visible: true,
+            ButtonAction: async (userClickedOK: boolean) => {
+              if (userClickedOK) {
+                props.navigation("/UploadOfferDocumentList", {
+                  state: {
+                    ID: props.stateValue?.ID,
+                    TabNames: props.stateValue?.TabName,
+                    ButtonAction: ButtonAction.View,
+                    JobCode: props.stateValue?.JobCode,
+                    tab: props.stateValue?.tab,
+                    JobCodeID: props.stateValue?.JobCodeId,
+                  },
+                });
+                setAlertPopupOpen(false);
+              } else {
+                setAlertPopupOpen(false);
+              }
+            },
+          };
+
+          setAlertPopupOpen(true);
+          setalertProps(ApiErrorMsg);
+          setIsLoading(false);
+        }
+      } else {
+        let FormFieldFailed = {
+          Message: RecuritmentHRMsg.FormValidationMsg,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+        setAlertPopupOpen(true);
+        setalertProps(FormFieldFailed);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error submitting candidate details", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const Submit_fn = async (btnAction: string) => {
     setIsLoading(true);
@@ -1429,19 +1966,35 @@ const UploadCandidateDocument = (props: any) => {
           case StatusId.PendingHRBGVInitiation:
             {
               if (btnAction === ButtonAction.Initiated) {
+                DocumentData = {
+                  ProfileID: data?.ProfileID,
+                  RequestID: data?.jobRequestID,
+                  DocumentName: DocumentFolderName.BGVConsentform,
+                  UnsignedDoc: "",
+                };
+                let BGVConsentDocs = [...data.ConsentDocs];
+                DocumentResponse =
+                  await OfferLetterServices.UploadCandidateDocument(
+                    DocumentData,
+                    BGVConsentDocs
+                  );
+
                 workflowStatusValue =
                   workflowStatusApi.PendingCandidateUploadBGVDocs;
                 SuccessMsg = RecuritmentHRMsg.BGverificationMsg;
                 ActionID = WorkflowAction.Approved;
-                DocumentResponse = {
-                  status: ResponeStatus.SUCCESS,
-                };
+                // DocumentResponse = {
+                //   status: ResponeStatus.SUCCESS,
+                // };
               }
             }
             break;
           case StatusId.PendingHRReviewBGCheck:
             {
               if (btnAction === ButtonAction.Review) {
+                DocumentResponse = await laborHireService.InitiateBGVProcess(
+                  Number(data?.jobRequestID)
+                );
                 workflowStatusValue = workflowStatusApi.initiatetheBGVProcess;
                 SuccessMsg =
                   props.stateValue?.StatusId ===
@@ -1450,6 +2003,11 @@ const UploadCandidateDocument = (props: any) => {
                     ? RecuritmentHRMsg.BGReviewedMsg
                     : RecuritmentHRMsg.BGReviewinitBGV;
                 ActionID = WorkflowAction.Approved;
+              } else if (btnAction === ButtonAction.Revert) {
+                workflowStatusValue =
+                  workflowStatusApi.RevetedBacktoBGVDocuments;
+                SuccessMsg = RecuritmentHRMsg.RevertWGDocs;
+                ActionID = WorkflowAction.Revert;
                 DocumentResponse = {
                   status: ResponeStatus.SUCCESS,
                 };
@@ -1580,17 +2138,6 @@ const UploadCandidateDocument = (props: any) => {
             };
             break;
           }
-          // case StatusId.PendingHRReviewWorkpermitDocs: {
-          //   if (btnAction === ButtonAction.Review) {
-          //     ActionID = WorkflowAction.Approved;
-          //   } else if (btnAction === ButtonAction.Revert) {
-          //     ActionID = WorkflowAction.Revert;
-          //   }
-          //   DocumentResponse = {
-          //     status: ResponeStatus.SUCCESS,
-          //   };
-          //   break;
-          // }
           case StatusId.PendingHREmploymentContractInit:
             {
               workflowStatusValue =
@@ -1654,6 +2201,16 @@ const UploadCandidateDocument = (props: any) => {
             };
             break;
           }
+          case StatusId.PendingHRpreonboardingchecklist: {
+            void SaveAsDraft();
+            workflowStatusValue = workflowStatusApi.OnboardingInprogress;
+            SuccessMsg = RecuritmentHRMsg.OnboardingMsg;
+            ActionID = WorkflowAction.Approved;
+            DocumentResponse = {
+              status: ResponeStatus.SUCCESS,
+            };
+            break;
+          }
           default:
             workflowStatusValue = "";
             SuccessMsg = "";
@@ -1666,10 +2223,12 @@ const UploadCandidateDocument = (props: any) => {
             comments: data.comments,
             actionBy: RoleName.RecruitmentHR,
             HrUserId:
+              props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation ||
               props.stateValue?.StatusId === StatusId.PendingHRReviewBGCheck
-                ? RoleName.RecruitmentHR
+                ? String(props.userDetails[0]?.ID)
                 : "",
             HrUserEmail:
+              props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation ||
               props.stateValue?.StatusId === StatusId.PendingHRReviewBGCheck
                 ? props.userDetails[0]?.EmailId
                 : "",
@@ -1683,15 +2242,13 @@ const UploadCandidateDocument = (props: any) => {
             let getOfferLetterPath = DocumentResponse.data.filter((item: any) =>
               item.name.includes("OfferLetter")
             );
-            let getConsentFormPath = DocumentResponse.data.filter((item: any) =>
-              item.name.includes("ConsentForm")
-            );
+            // let getConsentFormPath = DocumentResponse.data.filter((item: any) =>
+            //   item.name.includes("ConsentForm")
+            // );
             CandidateDatas.OfferLatterPath = getOfferLetterPath?.[0]?.content;
-            CandidateDatas.ConsentFormPath =
-              getConsentFormPath?.[0]?.content ?? "";
           } else if (
             props.stateValue?.StatusId ===
-              StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract &&
+              StatusId.WorkPermitAcknowledgedContractUploaded &&
             data.RadioAction === "Yes"
           ) {
             CandidateDatas.EmpContractLatterPath =
@@ -1712,6 +2269,10 @@ const UploadCandidateDocument = (props: any) => {
             );
             CandidateDatas.EmpContractLatterPath =
               LabourEC[0]?.data[0]?.content;
+          } else if (
+            props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation
+          ) {
+            CandidateDatas.ConsentFormPath = DocumentResponse.data[0]?.content;
           }
 
           let WorkflowStatus: any;
@@ -2077,6 +2638,22 @@ const UploadCandidateDocument = (props: any) => {
                         },
                       ];
                     }
+                    if (btnEnable) {
+                      return [
+                        {
+                          label: ButtonAction.Submit,
+                          onClick: async () =>
+                            await Submit_fn(ButtonAction.Submit),
+                        },
+                      ];
+                    } else {
+                      return [
+                        {
+                          label: ButtonAction.SaveAsDraft,
+                          onClick: async () => await SaveAsDraft(),
+                        },
+                      ];
+                    }
                     return [];
                   })()
             }
@@ -2148,14 +2725,6 @@ const UploadCandidateDocument = (props: any) => {
       ) : (
         <></>
       )}
-
-      {/* {documentPopup ? (
-        <>
-          <OnboardingChecklist documents={[]} />
-        </>
-      ) : (
-        <></>
-      )} */}
     </>
   );
 };

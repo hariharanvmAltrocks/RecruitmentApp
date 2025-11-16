@@ -9,6 +9,7 @@ import {
   workflowStatusApi,
 } from "../utilities/Config";
 import { getVRRDetails } from "../Services/ServiceExport";
+import { checklist } from "../Models/Screens";
 
 export function GetAddAction(data: any[]): boolean {
   return data.some((item) => item.ActionId?.includes(ActionIcon.Add));
@@ -145,4 +146,8 @@ export async function fetchApiUrl() {
 export const ApiUrl = () => {
   let apiUrl = fetchApiUrl();
   return apiUrl;
+};
+
+export const convertToList = (obj: any): checklist[] => {
+  return Object.values(obj);
 };

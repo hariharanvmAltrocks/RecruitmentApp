@@ -292,7 +292,8 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
             button.label === ButtonAction.Approve ||
             button.label === ButtonAction.Selected ||
             button.label === ButtonAction.Rejected ||
-            button.label === ButtonAction.OnHold
+            button.label === ButtonAction.OnHold ||
+            button.label === ButtonAction.SaveAsDraft
           ) {
             return currentValue === items[items.length - 1].value ? (
               <div key={index} style={{ marginRight: "10px" }}>

@@ -283,6 +283,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           ContactNumber: op?.profile?.contactNumber1,
           Email: op?.profile?.email,
           Nationality: op?.profile?.nationality?.displayText,
+          NatioCode: op?.profile?.nationality?.value,
           Gender: op?.profile?.gender?.displayText ? op?.profile?.gender?.displayText : op?.profile?.genderId,
           HighestQualification: op?.profile?.education?.displayText,
           ExperienceMining: op?.profile?.totalYearOfExperiance,

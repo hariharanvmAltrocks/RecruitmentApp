@@ -15,12 +15,15 @@ import { Card, CardContent } from "@mui/material";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 import {
   GetPortalJobsService,
+  laborHireService,
   OfferLetterServices,
 } from "../../Services/ServiceExport";
 import { DataSyncToResiProcess } from "../../Services/InitiateOfferLetter/IOfferLetterService";
 import PostRecrutimentDataTable from "../../components/PostRecrutimentDataTable";
 import { tabStyle } from "../../components/TabMerge";
 import { ButtonAction, EmployeementCategory } from "../../utilities/LabelName";
+import ToolTipButton from "../../components/Tooltip";
+import { BGVStatus } from "../../Models/ApIInterface";
 type tabcount = {
   BGVCount: number;
   LabourHireCount: number;
@@ -34,6 +37,7 @@ const UploadOfferDocumentList = (props: any) => {
   const [TabNameData, setTabNameData] = React.useState<TabDetails[]>(
     props.TabDetails
   );
+  const [pendingInfo, setPendingInfo] = React.useState<any>(null);
   const [pagination, setPagination] = React.useState({
     first: 0,
     rows: rows,
@@ -46,6 +50,50 @@ const UploadOfferDocumentList = (props: any) => {
   });
 
   const OfferLettertabs = React.useRef("");
+
+  const handleHover = async (statusId: number, rowData: any) => {
+    try {
+      let FilterValue: BGVStatus = {
+        hrUserId: String(props.userDetails[0]?.ID),
+        pagination: {
+          filterValue: rowData?.CandidateDetails?.JobRequestID,
+          sortBy: "",
+          sortOrder: 0,
+          pageSize: 5,
+          currentPage: 0,
+          totalItems: 0,
+        },
+      };
+      await laborHireService
+        .CheckBGVerification(FilterValue)
+        .then(async (res) => {
+          const mappedArray = res.data.data[0]?.bgVerification
+            ?.filter((item: any) => item.bgType)
+            ?.map((item: any) => ({
+              Key: item.bgType,
+              Value: item.status,
+            }));
+          setPendingInfo(mappedArray);
+          const allCompleted =
+            mappedArray.every((item: any) => item.Value === "completed") ||
+            false;
+          console.log(allCompleted, "allCompleted");
+          if (allCompleted) {
+            const matchedData = {
+              ID: rowData?.ID,
+              ActionId: WorkflowAction.Approved,
+            };
+
+            await OfferLetterServices.UpdateStatusInSpfxlist([matchedData]);
+          }
+        })
+        .catch((error) => {
+          console.log("Candidate details doesn't fetch the data", error);
+        });
+    } catch (error) {
+      console.log("GetVacancyDetails doesn't fetch the data", error);
+    }
+  };
 
   const columnConfig = (
     tab: string,
@@ -83,6 +131,24 @@ const UploadOfferDocumentList = (props: any) => {
       fieldName: "Status",
       sortable: false,
       body: (rowData: any) => {
+        const isTooltipStatus = [StatusId.PendingDOTAficaVerification].includes(
+          rowData.StatusID
+        );
+        if (isTooltipStatus) {
+          return (
+            <div>
+              <ToolTipButton
+                Title=""
+                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                Rowdata={rowData}
+                ApproverData={pendingInfo}
+                onHover={() => handleHover(rowData.StatusId, rowData)}
+                BGDocs={true}
+              />
+              <span>{rowData.Status}</span>
+            </div>
+          );
+        }
         return <span>{rowData.Status}</span>;
       },
     },
@@ -425,6 +491,37 @@ const UploadOfferDocumentList = (props: any) => {
       await OfferLetterServices.UpdateStatusInSpfxlist(nullChecked);
     }
   };
+
+  // const CheckBGVStatus = async (
+  //   items: DataSyncToResiProcess[],
+  //   row?: number
+  // ) => {
+  //   setIsLoading(true);
+  //   try {
+  //     let FilterValue: BGVStatus = {
+  //       hrUserId: props.userDetails[0]?.ID,
+  //       pagination: {
+  //         filterValue: "",
+  //         sortBy: "",
+  //         sortOrder: 0,
+  //         pageSize: row ? row : rows,
+  //         currentPage: 0,
+  //         totalItems: 0,
+  //       },
+  //     };
+  //     await laborHireService
+  //       .CheckBGVerification(FilterValue)
+  //       .then(async (res) => {
+  //         // setCandidateData(res.data);
+  //       })
+  //       .catch((error) => {
+  //         console.log("Candidate details doesn't fetch the data", error);
+  //       });
+  //   } catch (error) {
+  //     console.log("GetVacancyDetails doesn't fetch the data", error);
+  //   }
+  //   setIsLoading(false);
+  // };
 
   const fetchData = async (activeTab: string, row?: number) => {
     setIsLoading(true);

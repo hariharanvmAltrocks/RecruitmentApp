@@ -17,6 +17,7 @@ interface ToolTipButtonProps {
   TooltipHeader?: string;
   onHover?: () => void;
   TooltipLabel?: string;
+  BGDocs?: boolean;
 }
 
 const ToolTipButton: React.FC<ToolTipButtonProps> = ({
@@ -26,6 +27,7 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
   onHover,
   TooltipHeader,
   TooltipLabel,
+  BGDocs,
 }) => {
   const tooltipId = useId("tooltip");
   const hostStyles: Partial<ITooltipHostStyles> = {
@@ -47,6 +49,8 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
           ? TooltipHeader
           : TooltipLabel
           ? TooltipLabel
+          : BGDocs
+          ? "DotAfrica Verification"
           : "Next Approver Name"}
       </div>
       {lines}

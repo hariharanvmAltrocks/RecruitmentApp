@@ -4,7 +4,7 @@ import { count, DocumentFolderName, DocumentLibraray, ListNames, RoleName } from
 import { getVRRDetails, laborHireService } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
-import { DataSyncToResiProcess, DocumentName, GetCandidateDocument, ICandidateDetails, IOfferLetterService, UpdateCandidateData } from "./IOfferLetterService";
+import { DataSyncToResiProcess, DocumentName, GetBGVDocument, GetCandidateDocument, ICandidateDetails, IOfferLetterService, UpdateCandidateData } from "./IOfferLetterService";
 import { initiateLaborHire, ITSystem, TASystem, TrainingSystem, UploadDocument } from "../../Models/ApIInterface";
 import { AutoCompleteItem } from "../../Models/Screens";
 
@@ -161,6 +161,14 @@ export default class OfferLetterService implements IOfferLetterService {
                             TrainingSystem: TrainingSystem,
                             TASystem: TASystem,
                             ITSystem: ITSystem,
+                            BackgroundChecks: objresult?.BackgroundChecks,
+                            SignedOfferLetterVerified: objresult?.SignedOfferLetterVerified,
+                            SignedEmploymentContract: objresult?.SignedEmploymentContract,
+                            WorkPermitApproved: objresult?.WorkPermitApproved,
+                            VisaProcess: objresult?.VisaProcess,
+                            AccommodationBooked: objresult?.AccommodationBooked,
+                            TravelProcess: objresult?.TravelProcess,
+                            ReadyforOnboarding: objresult?.ReadyforOnboarding
                         }
                         return item;
                     })
@@ -189,11 +197,21 @@ export default class OfferLetterService implements IOfferLetterService {
         try {
             let response;
             if (AttachFile.length > 0) {
-                response = await SPServices.addDocLibFiles({
-                    FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
-                    FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`, `${DocumentName.UnsignedDoc.toString()}`],
-                    Datas: AttachFile,
-                });
+                if (DocumentName.DocumentName === DocumentFolderName.BGVConsentform) {
+                    response = await SPServices.addDocLibFiles({
+                        FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                        FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.DocumentName.toString()}`],
+                        Datas: AttachFile,
+                    });
+
+                } else {
+                    response = await SPServices.addDocLibFiles({
+                        FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                        FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`, `${DocumentName.UnsignedDoc.toString()}`],
+                        Datas: AttachFile,
+                    });
+
+                }
 
                 return {
                     data: response,
@@ -445,5 +463,72 @@ export default class OfferLetterService implements IOfferLetterService {
             };
         }
     }
+
+    FetchBGVerificationDOcs = async (
+        DocumentName: GetBGVDocument,
+    ): Promise<ApiResponse<any>> => {
+        try {
+            let response: any = [];
+
+            if (DocumentName?.DocumentName?.length > 0) {
+                const BGVDocs = await Promise.all(
+                    DocumentName.DocumentName.map(async (item) => {
+                        if (!SPServices?.getDocLibFiles) {
+                            console.error("SPServices.getDocLibFiles is undefined");
+                            return null;
+                        }
+
+                        const files = await SPServices.getDocLibFiles({
+                            FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID.toString()}/${DocumentName.DocumentType}/${item}`,
+                        });
+
+                        return files[0] as IDocFiles[];
+                    })
+                );
+
+                response = BGVDocs.filter(x => x !== null);
+            }
+
+            return {
+                data: response,
+                status: 200,
+                message: "BGV Documents fetched",
+            };
+
+        } catch (error: any) {
+            console.error("Error during file replacement process:", error);
+            return {
+                data: null,
+                status: 500,
+                message: `Error during file replacement: ${error.message}`,
+            };
+        }
+    };
+
+    UpdateStatusCandidatelist = async (
+        UpdateParams: any,
+    ): Promise<ApiResponse<any>> => {
+        let response: any;
+        try {
+            response = await SPServices.SPUpdateItem({
+                Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                RequestJSON: UpdateParams,
+                ID: UpdateParams.ID,
+            });
+
+            return {
+                data: response,
+                status: 200,
+                message: "Candidate details fetched successfully",
+            };
+        } catch (error) {
+            console.error("Error during file replacement process:", error);
+            return {
+                data: response,
+                status: 500,
+                message: `Error during file replacement: ${error.message}`,
+            };
+        }
+    };
 
 }

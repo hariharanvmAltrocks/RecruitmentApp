@@ -60,3 +60,56 @@ export type SelectedCandidateData = {
   JobCode: string;
   Comments?: string;
 };
+
+export type checklist = {
+  id: number,
+  label: string,
+  value: boolean
+}
+
+export type ComplianceCheck = {
+  BackgroundChecks: checklist,
+  SignedOfferLetter: checklist,
+  SignedEmploymentContract: checklist,
+  WorkPermitApproved: checklist,
+}
+
+export type EmployeeSupport = {
+  VisaProcess: checklist,
+  AccommodationBooked: checklist,
+  TravelProcess: checklist
+}
+
+export type FinalStatus = {
+  ReadyforOnboarding: checklist
+}
+export type DocumentCheck = {
+  label: string,
+  DocumentComplianceChecks: ComplianceCheck
+}
+export type LogisticsSupport = {
+  label: string,
+  LogisticsEmployeeSupport: EmployeeSupport,
+}
+export type FinalStatuse = {
+  label: string,
+  FinalStatus: FinalStatus
+}
+
+export type OnboardingChecklisttype = {
+  DocumentComplianceChecks: DocumentCheck,
+  LogisticsEmployeeSupport: LogisticsSupport,
+  FinalStatus: FinalStatuse,
+}
+
+export type ChecklistStatus = {
+  BackgroundChecks: boolean;
+  SignedOfferLetter: boolean;
+  EmploymentContract: boolean;
+  WorkPermitApproved: boolean;
+  VisaProcess: boolean;
+  AccommodationBooked: boolean;
+  TravelProcess: boolean;
+  ReadyforOnboarding: boolean;
+}
+

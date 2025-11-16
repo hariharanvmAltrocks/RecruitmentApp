@@ -203,6 +203,7 @@ const ViewCandidateDetails = (props: any) => {
     hasIvanhoeZijinExperience: "",
     companyDetails: undefined,
     businesslinkscompany: "",
+    NatioCode: "",
   });
   const todaydate = new Date();
   // todaydate = addWeekdays(todaydate, 5);

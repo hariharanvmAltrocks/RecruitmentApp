@@ -106,6 +106,7 @@ export type CandidateProfile = {
     disabilityReason: string;
     identityValue: string;
     identityType: string;
+    NatioCode: string;
 
     Age: string;
     NumberOftax: string;
@@ -454,6 +455,11 @@ export type initiateLaborHire = {
     createdOn: Date;
     createdBy: string;
     createrEmail: string;
+}
+
+export type BGVStatus = {
+    hrUserId: string;
+    pagination: GetProfileByFilter
 }
 
 

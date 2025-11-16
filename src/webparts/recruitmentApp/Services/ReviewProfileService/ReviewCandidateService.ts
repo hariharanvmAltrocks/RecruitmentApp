@@ -1,4 +1,4 @@
-import { AdvertisementDetails, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, BGVStatus, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
 export const getProfileData = {
@@ -139,6 +139,19 @@ export const LaborHire = {
     initiateLaborHire: async function (params: initiateLaborHire) {
         return await AxiosInstance.post(
             `/hrms/UpsertJobsLaborHire`, params
+        );
+    }
+}
+
+export const BGverification = {
+    initiateBGVProcess: async function (id: number) {
+        return await AxiosInstance.post(
+            `/BGVerification/RunBGVerification?jobRequestId=${id}`
+        );
+    },
+    GetBGVStatus: async function (params: BGVStatus) {
+        return await AxiosInstance.post(
+            `/hrms/GetBGVStatus`, params
         );
     }
 }

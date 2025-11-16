@@ -1,4 +1,4 @@
-import { Preference } from "../Screens/OfferMedicalProcess/OnboardingChecklist"
+import { OnboardingChecklisttype } from "../Models/Screens"
 
 export const labelNames = {
     PositionDetails: {
@@ -221,6 +221,7 @@ export const ButtonAction = {
     Selected: "Selected",
     Rejected: "Rejected",
     Initiated: "Initiated",
+    SaveAsDraft: "SaveAsDraft"
 }
 
 export const IsCandidateFit = {
@@ -283,35 +284,74 @@ export const quesContentId = {
     WillingRelocate: "FD889B9C1B51F13738596ACFB206E881EAC9",
 }
 
-export const OnboardingChecklistData: Preference[] = [
-    {
-        id: '1',
-        label: 'Do you enjoy working with React?',
-        description: 'Modern JavaScript UI library',
-        value: null,
+export const BGVRequestDocument = {
+    IDV: "ID Verification",
+    PRE: "Matric Pre-92 Umalusi Verification",
+    PST: "Matric Post-92 Umalusi Verification",
+    UMF: "Umalusi Full Verification",
+    SAQ: "SA University Qualification Verification",
+    NL: "TVET and SA Teachers College Verification",
+    TC: "Trade Certificate Verification",
+    SC: "Certificate / Short Course Verification",
+    SETA: "SETA Verification",
+
+    ITC: "TransUnion Credit Check",
+    IDC: "Criminal Record Check",
+    EHCR: "Employment Character Reference Verification",
+    PSY: "Psychometric Assessment",
+    DMC: "Director Member Confirmation",
+    IDCS: "ID Check Secondary",
+}
+
+export const SADocs = ["IDV", "PRE", "PST", "UMF", "SAQ", "NL", "TC", "SC", "SETA", "ITC", "IDC", "EHCR", "PSY", "DMC", "IDCS"]
+export const NSADocs = ["GQ", "CZ", "EXP", "ConsentForm"]
+
+export const NSADocument = {
+    GQ: "Global University Qualification Verification",
+    CZ: "Citizenship Verification",
+    EXP: "Experian Credit Check",
+}
+export const SADocument = {
+    IDV: "ID Verification",
+    PRE: "Matric Pre-92 Umalusi Verification",
+    PST: "Matric Post-92 Umalusi Verification",
+    UMF: "Umalusi Full Verification",
+    SAQ: "SA University Qualification Verification",
+    NL: "TVET and SA Teachers College Verification",
+    TC: "Trade Certificate Verification",
+    SC: "Certificate / Short Course Verification",
+    SETA: "SETA Verification",
+    ITC: "TransUnion Credit Check",
+    IDC: "Criminal Record Check",
+    EHCR: "Employment Character Reference Verification",
+    PSY: "Psychometric Assessment",
+    DMC: "Director Member Confirmation",
+    IDCS: "ID Check Secondary",
+}
+export const onboardingData: OnboardingChecklisttype = {
+    DocumentComplianceChecks: {
+        label: "Document Compliance Checks",
+        DocumentComplianceChecks: {
+            BackgroundChecks: { id: 1, label: "Background Checks", value: false },
+            SignedOfferLetter: { id: 2, label: "Signed Offer Letter", value: false },
+            SignedEmploymentContract: { id: 3, label: "Employment Contract", value: false },
+            WorkPermitApproved: { id: 4, label: "Work Permit Approved", value: false },
+        },
     },
-    {
-        id: '2',
-        label: 'Do you prefer dark mode?',
-        description: 'Easier on the eyes at night',
-        value: null,
+
+    LogisticsEmployeeSupport: {
+        label: "Logistics Employee Support",
+        LogisticsEmployeeSupport: {
+            VisaProcess: { id: 5, label: "Visa Process", value: false },
+            AccommodationBooked: { id: 6, label: "Accommodation Booked", value: false },
+            TravelProcess: { id: 7, label: "Travel Process", value: false },
+        },
     },
-    {
-        id: '3',
-        label: 'Would you like email notifications?',
-        description: 'Stay updated with news and features',
-        value: null,
+
+    FinalStatus: {
+        label: "Final Status",
+        FinalStatus: {
+            ReadyforOnboarding: { id: 8, label: "Ready for Onboarding", value: false },
+        },
     },
-    {
-        id: '4',
-        label: 'Do you use TypeScript?',
-        description: 'Type-safe JavaScript development',
-        value: null,
-    },
-    {
-        id: '5',
-        label: 'Would you recommend this to others?',
-        description: 'Help us grow our community',
-        value: null,
-    },
-]
+};

@@ -166,7 +166,7 @@ export default class MasterService implements IMasterService {
                     if (res.length > 0) {
                         const response = res[0];
                         const UserDetails = {
-                            ID: response?.IdentityNo,
+                            ID: response?.ID,
                             EmailId: response?.EmailId,
                             DepartmentId: response?.DepartmentId,
                             CurrentPosition: response?.CurrentPosition,
