@@ -4,7 +4,7 @@ import { count, DocumentFolderName, DocumentLibraray, ListNames, RoleName } from
 import { getVRRDetails, laborHireService } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
-import { DataSyncToResiProcess, DocumentName, GetBGVDocument, GetCandidateDocument, ICandidateDetails, IOfferLetterService, UpdateCandidateData } from "./IOfferLetterService";
+import { DataSyncToResiProcess, DocumentName, GetBGVDocument, GetCandidateDocument, GetDOTAfricaCF, ICandidateDetails, IOfferLetterService, UpdateCandidateData } from "./IOfferLetterService";
 import { initiateLaborHire, ITSystem, TASystem, TrainingSystem, UploadDocument } from "../../Models/ApIInterface";
 import { AutoCompleteItem } from "../../Models/Screens";
 
@@ -204,6 +204,18 @@ export default class OfferLetterService implements IOfferLetterService {
                         Datas: AttachFile,
                     });
 
+                } else if (DocumentName.DocumentName === DocumentFolderName.ProofOfDocument) {
+                    response = await SPServices.addDocLibFiles({
+                        FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                        FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`],
+                        Datas: AttachFile,
+                    });
+                } else if (DocumentName.DocumentName === DocumentFolderName.WorkPermit) {
+                    response = await SPServices.addDocLibFiles({
+                        FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                        FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`],
+                        Datas: AttachFile,
+                    });
                 } else {
                     response = await SPServices.addDocLibFiles({
                         FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
@@ -525,6 +537,29 @@ export default class OfferLetterService implements IOfferLetterService {
             console.error("Error during file replacement process:", error);
             return {
                 data: response,
+                status: 500,
+                message: `Error during file replacement: ${error.message}`,
+            };
+        }
+    };
+
+    FetchDotAfricaConsentForm = async (
+        DocumentName: GetDOTAfricaCF,
+    ): Promise<ApiResponse<any>> => {
+        try {
+            let response: IDocFiles[];
+            response = (await SPServices.getDocLibFiles({
+                FilePath: `${DocumentName.ListName}/${DocumentName.Natioality}`,
+            })) as IDocFiles[];
+            return {
+                data: response,
+                status: 200,
+                message: "No attachments provided",
+            };
+        } catch (error) {
+            console.error("Error during file replacement process:", error);
+            return {
+                data: null,
                 status: 500,
                 message: `Error during file replacement: ${error.message}`,
             };

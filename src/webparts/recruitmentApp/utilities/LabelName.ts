@@ -134,8 +134,12 @@ export const Attachment = {
         CandidateDocuments: "Candidate Documents",
         OfferLetter: "Upload Offer Letter(Only PDF)",
         OfferLetterFre: "Upload Offer Letter (French)",
-        ConsentDoc: "Upload Code of Business Content",
+        ConsentDoc: "Upload Dot's Africa Consent Form",
         EmployementDoc: "Upload Employement Contract",
+        WorkpermitDocs: "Upload Workpermit Acknowledged ",
+        ProofOfPayment: "Upload Proof Of Document",
+        DownloadConsentForm: "Download Consent Form :",
+        DOTAficaCFD: "Please download the consent form, complete the necessary fields, and re-upload it."
     },
 }
 
@@ -303,7 +307,7 @@ export const BGVRequestDocument = {
     IDCS: "ID Check Secondary",
 }
 
-export const SADocs = ["IDV", "PRE", "PST", "UMF", "SAQ", "NL", "TC", "SC", "SETA", "ITC", "IDC", "EHCR", "PSY", "DMC", "IDCS"]
+export const SADocs = ["IDV", "PRE", "PST", "UMF", "SAQ", "NL", "TC", "SC", "SETA", "ITC", "IDC", "EHCR", "PSY", "DMC", "IDCS", "ConsentForm"]
 export const NSADocs = ["GQ", "CZ", "EXP", "ConsentForm"]
 
 export const NSADocument = {

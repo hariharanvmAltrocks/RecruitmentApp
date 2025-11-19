@@ -86,7 +86,8 @@ export const DocumentLibraray = {
   ONAMSignedStampDocuments: "HRMSRecruitmentOnamStampedDocuments",
   RoleProfileMaster: "RoleProfileMaster",
   HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV",
-  HRMSCandidateDocs: "HRMSCandidateDocs"
+  HRMSCandidateDocs: "HRMSCandidateDocs",
+  DOTAfricaConsentForm: "DOTAfricaConsentForm"
 };
 
 export const StatusId = {
@@ -235,6 +236,7 @@ export const WorkflowAction = {
   Closed: 6,
   ReSubmitted: 7,
   OnHold: 10,
+  Decline: 12
 };
 
 export const viewLabelcolor = {
@@ -540,6 +542,9 @@ export const workflowStatusApi = {
   PendingCandidateUploadBGVDocs: "WS37",
   UploadedtheCandidateBGVDocs: "WS38",
   initiatetheBGVProcess: "WS39",
+
+  Offerdecline: "WS25",
+  SysytmeDecline: "WS26",
   // KCSA
   Pendingwithcandidatetosignofferletter: "WS16",
   CandidateuploadedtheSignedOfferLetter: "WS17",
@@ -741,7 +746,8 @@ export const DocumentFolderName = {
   CovidVaccinationCertificate: "Covid Vaccination Certificate",
   YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
   CV: "CV",
-  BGVConsentform: "BGVConsentForm"
+  BGVConsentform: "BGVConsentForm",
+  ProofOfDocument: "ProofOfPaymentDocument"
 }
 
 

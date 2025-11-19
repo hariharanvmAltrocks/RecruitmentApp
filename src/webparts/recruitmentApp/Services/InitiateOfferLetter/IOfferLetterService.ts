@@ -96,6 +96,10 @@ export type GetBGVDocument = {
     DocumentType: string;
     DocumentName: string[];
 }
+export type GetDOTAfricaCF = {
+    ListName: string;
+    Natioality: string;
+}
 
 export type IOfferLetterService = {
     UploadCandidateDocument(
@@ -130,5 +134,8 @@ export type IOfferLetterService = {
     ): Promise<ApiResponse<any>>;
     UpdateStatusCandidatelist(
         UpdateParams: any,
+    ): Promise<ApiResponse<any>>;
+    FetchDotAfricaConsentForm(
+        DocumentName: GetDOTAfricaCF,
     ): Promise<ApiResponse<any>>;
 };

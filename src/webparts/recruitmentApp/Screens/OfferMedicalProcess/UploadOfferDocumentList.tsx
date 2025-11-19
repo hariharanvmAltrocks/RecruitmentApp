@@ -77,11 +77,16 @@ const UploadOfferDocumentList = (props: any) => {
           const allCompleted =
             mappedArray.every((item: any) => item.Value === "completed") ||
             false;
-          console.log(allCompleted, "allCompleted");
+          const IDCTYpeStatus = res.data.data[0]?.bgVerification
+            ?.filter((item: any) => item.bgTypeCode === "IDC")
+            ?.every((item: any) => item.status === "completed");
+
           if (allCompleted) {
             const matchedData = {
               ID: rowData?.ID,
-              ActionId: WorkflowAction.Approved,
+              ActionId: IDCTYpeStatus
+                ? WorkflowAction.Approved
+                : WorkflowAction.Revert,
             };
 
             await OfferLetterServices.UpdateStatusInSpfxlist([matchedData]);
@@ -430,7 +435,7 @@ const UploadOfferDocumentList = (props: any) => {
     );
     const getStatusById = (UpdatedStatus?.data?.data ?? []).map(
       (item: { jobRequestId: any; workflowStatusId: any }) => {
-        let matchedRes: any = [];
+        let matchedRes: any = null;
         switch (OfferLettertabs.current) {
           case TabName.BackgroundVerification:
             matchedRes = FilterDataCareerportal.find(
@@ -442,6 +447,7 @@ const UploadOfferDocumentList = (props: any) => {
                 )
             );
             break;
+
           case TabName.OfferLetterKSCA:
             matchedRes = FilterDataCareerportal.find(
               (res: any) =>
@@ -454,6 +460,7 @@ const UploadOfferDocumentList = (props: any) => {
                 ].includes(item.workflowStatusId)
             );
             break;
+
           case TabName.OfferLetterLabourHire:
             matchedRes = FilterDataCareerportal.find(
               (res: any) =>
@@ -469,19 +476,37 @@ const UploadOfferDocumentList = (props: any) => {
                 ].includes(item.workflowStatusId)
             );
             break;
+
           default:
             break;
+        }
+
+        const Offerdecline = FilterDataCareerportal.find(
+          (res: any) =>
+            res.CandidateDetails?.JobRequestID === String(item.jobRequestId) &&
+            [
+              workflowStatusApi.Offerdecline,
+              workflowStatusApi.SysytmeDecline,
+            ].includes(item.workflowStatusId)
+        );
+
+        if (Offerdecline) {
+          return {
+            ...item,
+            ID: Offerdecline.ID,
+            ActionId: WorkflowAction.Decline,
+          };
         }
 
         if (matchedRes) {
           return {
             ...item,
-            ID: matchedRes?.ID,
+            ID: matchedRes.ID,
             ActionId: WorkflowAction.Approved,
           };
-        } else {
-          return null;
         }
+
+        return null;
       }
     );
     let nullChecked = getStatusById.filter(
@@ -491,37 +516,6 @@ const UploadOfferDocumentList = (props: any) => {
       await OfferLetterServices.UpdateStatusInSpfxlist(nullChecked);
     }
   };
-
-  // const CheckBGVStatus = async (
-  //   items: DataSyncToResiProcess[],
-  //   row?: number
-  // ) => {
-  //   setIsLoading(true);
-  //   try {
-  //     let FilterValue: BGVStatus = {
-  //       hrUserId: props.userDetails[0]?.ID,
-  //       pagination: {
-  //         filterValue: "",
-  //         sortBy: "",
-  //         sortOrder: 0,
-  //         pageSize: row ? row : rows,
-  //         currentPage: 0,
-  //         totalItems: 0,
-  //       },
-  //     };
-  //     await laborHireService
-  //       .CheckBGVerification(FilterValue)
-  //       .then(async (res) => {
-  //         // setCandidateData(res.data);
-  //       })
-  //       .catch((error) => {
-  //         console.log("Candidate details doesn't fetch the data", error);
-  //       });
-  //   } catch (error) {
-  //     console.log("GetVacancyDetails doesn't fetch the data", error);
-  //   }
-  //   setIsLoading(false);
-  // };
 
   const fetchData = async (activeTab: string, row?: number) => {
     setIsLoading(true);

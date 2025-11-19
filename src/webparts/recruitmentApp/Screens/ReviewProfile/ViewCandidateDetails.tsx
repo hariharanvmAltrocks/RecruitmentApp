@@ -1208,25 +1208,28 @@ const ViewCandidateDetails = (props: any) => {
                           )} */}
                         </>
                       )}
-                      <div className="ms-Grid-col ms-lg4">
-                        <CustomInput
-                          label={
-                            labelNames.CandidateDetails
-                              .WorkedGroupPartnerCompanies
-                          }
-                          value={CandidateProfile?.hasIvanhoeZijinExperience}
-                          disabled={true}
-                          mandatory={false}
-                          TooltipTitle={
-                            CandidateProfile?.hasIvanhoeZijinExperience !=
-                            ValidationAction.No
-                              ? TooltipType.CompanyData
-                              : ""
-                          }
-                          TooltipData={CandidateProfile.companyDetails}
-                          Tooltipheader={TooltipHeader?.CompanyData}
-                        />
-                      </div>
+                      {CandidateProfile?.hasIvanhoeZijinExperience && (
+                        <div className="ms-Grid-col ms-lg4">
+                          <CustomInput
+                            label={
+                              labelNames.CandidateDetails
+                                .WorkedGroupPartnerCompanies
+                            }
+                            value={CandidateProfile?.hasIvanhoeZijinExperience}
+                            disabled={true}
+                            mandatory={false}
+                            TooltipTitle={
+                              CandidateProfile?.hasIvanhoeZijinExperience !=
+                              ValidationAction.No
+                                ? TooltipType.CompanyData
+                                : ""
+                            }
+                            TooltipData={CandidateProfile.companyDetails}
+                            Tooltipheader={TooltipHeader?.CompanyData}
+                          />
+                        </div>
+                      )}
+
                       {/* {CandidateProfile?.hasIvanhoeZijinExperience != "No" && (
                         <div
                           className="ms-Grid-col ms-lg1"

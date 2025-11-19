@@ -89,11 +89,11 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
       const data = ApproverData;
 
       if (!data) return <div>Loading...</div>;
-      if (ApproverData.length > 0) {
+      if (ApproverData.length > 0 && typeof ApproverData != "string") {
         return renderApproverList(
           data.map((item: any) => boldLabel(item.Key, item.Value))
         );
-      } else {
+      } else if (typeof ApproverData === "string") {
         return (
           <div>
             <p
@@ -106,8 +106,14 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
             //   marginBottom: "18%",
             // }}
             >
-              No Record Found
+              {data}
             </p>
+          </div>
+        );
+      } else {
+        return (
+          <div>
+            <p>No Record Found</p>
           </div>
         );
       }

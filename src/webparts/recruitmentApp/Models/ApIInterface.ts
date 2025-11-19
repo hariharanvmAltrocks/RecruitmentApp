@@ -175,6 +175,8 @@ export type WorkflowJson = {
     ConsentFormPath?: string,
     HrUserId?: string,
     HrUserEmail?: string,
+    proofOfPaymentPath?: string,
+    signedWorkPermitPath?: string
 }
 
 export type profileJobsComments = {
@@ -359,6 +361,7 @@ export type UploadDocument = {
     PersonalDocs: DocumentName[];
     MedicalDocs: IDocFiles[];
     ConsentDocs: IDocFiles[];
+    PaymentDocs: IDocFiles[];
 
     RadioAction: string;
     CheckboxContent: string;
@@ -377,6 +380,9 @@ export type UploadDocument = {
     BGVRadioBtnlabel: string;
     PaymentReview: string;
     RecNationality: string;
+
+    DotAfricaCF: IDocFiles[];
+    WorkpermitDoc: IDocFiles[];
 }
 
 export type DocumentName = {

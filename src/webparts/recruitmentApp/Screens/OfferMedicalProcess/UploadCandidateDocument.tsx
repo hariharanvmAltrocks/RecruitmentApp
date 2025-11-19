@@ -46,6 +46,7 @@ import {
   DocumentName,
   GetBGVDocument,
   GetCandidateDocument,
+  GetDOTAfricaCF,
 } from "../../Services/InitiateOfferLetter/IOfferLetterService";
 import CustomRadioGroup from "../../components/CustomRadioGroup";
 import ReuseButton from "../../components/ReuseButton";
@@ -78,6 +79,8 @@ import { convertToList } from "../../components/TabMerge";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "./Checklist.css";
 import StatusBar from "./ChecklistStatus";
+import CustomViewDocument from "../../components/CustomViewDocument";
+import ToolTipButton from "../../components/Tooltip";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -90,6 +93,8 @@ type ValidationError = {
   ITRequired: boolean;
   BGVRadioBtn: boolean;
   PaymentReview: boolean;
+  PaymentDocs: boolean;
+  WorkpermitDoc: boolean;
 };
 
 export type viewDocument = {
@@ -150,7 +155,7 @@ const UploadCandidateDocument = (props: any) => {
     ProfileID: "",
     PaymentReview: "",
     RecNationality: "",
-
+    WorkpermitDoc: [],
     TrainingSystem: {
       Inductiontype: { key: 0, text: "" },
       StartDate: undefined,
@@ -185,6 +190,8 @@ const UploadCandidateDocument = (props: any) => {
     ITRequired: "",
     BGVRadioBtn: "",
     BGVRadioBtnlabel: "",
+    PaymentDocs: [],
+    DotAfricaCF: [],
   });
   // const [checkdata,setCheckdata] = useState<>
   // const [viewDocument, setViewDocument] = React.useState<viewDocument>({
@@ -213,6 +220,8 @@ const UploadCandidateDocument = (props: any) => {
       ITRequired: false,
       BGVRadioBtn: false,
       PaymentReview: false,
+      PaymentDocs: false,
+      WorkpermitDoc: false,
     });
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -478,6 +487,13 @@ const UploadCandidateDocument = (props: any) => {
       }
 
       setdocumentview(docs);
+      let DOtObj: GetDOTAfricaCF = {
+        ListName: DocumentLibraray.DOTAfricaConsentForm,
+        Natioality:
+          CandidateDetails?.data?.[0]?.NatioCode === "N154" ? "SA" : "NSA",
+      };
+      const getDotAfricaCF =
+        await OfferLetterServices.FetchDotAfricaConsentForm(DOtObj);
 
       setData((prev) => ({
         ...prev,
@@ -508,12 +524,13 @@ const UploadCandidateDocument = (props: any) => {
         BGVRadioBtnlabel:
           props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation &&
           item.RecruitmentDetails?.Nationality === Nationality.Nationals
-            ? RadioBtnLabel.BGVNationalsLabel
+            ? RadioBtnLabel.BGVExpatriatesLabel
             : props.stateValue?.StatusId === StatusId.PendingHROfferInitiate &&
               item?.RecruitmentDetails?.EmploymentCategory ===
                 EmployeementCategory.LaborhireContractor
             ? RadioBtnLabel.OfferInitiationLabel
             : RadioBtnLabel.BGVExpatriatesLabel,
+        DotAfricaCF: getDotAfricaCF.data,
       }));
 
       setchecklistData((prev) => ({
@@ -1185,8 +1202,33 @@ const UploadCandidateDocument = (props: any) => {
                 )} */}
 
                 {props.stateValue?.StatusId ===
-                StatusId.PendingHRBGVInitiation ? (
+                  StatusId.PendingHRBGVInitiation &&
+                data.RecNationality === Nationality.Expatriate ? (
                   <>
+                    <div className="ms-Grid-row">
+                      <div
+                        className="ms-Grid-col ms-lg2"
+                        style={{ marginTop: "2%" }}
+                      >
+                        <CustomLabel
+                          value={
+                            Attachment.PositionDocument.DownloadConsentForm
+                          }
+                        />
+                      </div>
+                      <div
+                        className="ms-Grid-col ms-lg6"
+                        style={{ display: "flex", marginTop: "3%" }}
+                      >
+                        <ToolTipButton
+                          ApproverData={Attachment.PositionDocument.DOTAficaCFD}
+                        />
+                        <CustomViewDocument
+                          Attachment={data.DotAfricaCF}
+                          webUrl={props.webURL}
+                        />
+                      </div>
+                    </div>
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg3">
                         <>
@@ -1345,48 +1387,95 @@ const UploadCandidateDocument = (props: any) => {
 
                 {props.stateValue?.StatusId ===
                   StatusId.WorkPermitAcknowledgedContractUploaded && (
-                  <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
-                    <CustomLabel
-                      value={Attachment.PositionDocument.EmployementDoc}
-                      mandatory={true}
-                    />
-                    <AttachmentButton
-                      label="Upload"
-                      iconName="CloudUpload"
-                      iconNameHover="CloudUpload"
-                      allowMultiple={false}
-                      AttachState={(newAttachment: any) => {
-                        let attachment: IDocFiles[] = newAttachment.map(
-                          (item: any) => {
-                            return {
-                              name: item.name,
-                              content: item.file,
-                              type: "New",
-                              url: item.Url,
-                            };
-                          }
-                        );
-                        // const attachments = [
-                        //   ...(data.EmployementDoc || []),
-                        //   ...attachment,
-                        // ];
-                        handleDocument("EmployementDoc", attachment);
-                      }}
-                      mandatory={true}
-                      error={validationErrors.EmployementDoc}
-                      Style={{
-                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                        color: "white",
-                      }}
-                      fileformat=".pdf"
-                    />
-                    <CustomViewAttachment
-                      Attachment={data.EmployementDoc ?? []}
-                      StateValue={"EmployementDoc"}
-                      handleDelete={(index, fileState) =>
-                        handleDelete(index, fileState)
-                      }
-                    />
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg3">
+                      <CustomLabel
+                        value={Attachment.PositionDocument.WorkpermitDocs}
+                        mandatory={true}
+                      />
+                      <AttachmentButton
+                        label="Upload"
+                        iconName="CloudUpload"
+                        iconNameHover="CloudUpload"
+                        allowMultiple={false}
+                        AttachState={(newAttachment: any) => {
+                          let attachment: IDocFiles[] = newAttachment.map(
+                            (item: any) => {
+                              return {
+                                name: item.name,
+                                content: item.file,
+                                type: "New",
+                                url: item.Url,
+                              };
+                            }
+                          );
+                          // const attachments = [
+                          //   ...(data.EmployementDoc || []),
+                          //   ...attachment,
+                          // ];
+                          handleDocument("WorkpermitDoc", attachment);
+                        }}
+                        mandatory={true}
+                        error={validationErrors.WorkpermitDoc}
+                        Style={{
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          color: "white",
+                        }}
+                        fileformat=".pdf"
+                      />
+                      <CustomViewAttachment
+                        Attachment={data.WorkpermitDoc ?? []}
+                        StateValue={"WorkpermitDoc"}
+                        handleDelete={(index, fileState) =>
+                          handleDelete(index, fileState)
+                        }
+                      />
+                    </div>
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomLabel
+                        value={Attachment.PositionDocument.EmployementDoc}
+                        mandatory={true}
+                      />
+                      <AttachmentButton
+                        label="Upload"
+                        iconName="CloudUpload"
+                        iconNameHover="CloudUpload"
+                        allowMultiple={false}
+                        AttachState={(newAttachment: any) => {
+                          let attachment: IDocFiles[] = newAttachment.map(
+                            (item: any) => {
+                              return {
+                                name: item.name,
+                                content: item.file,
+                                type: "New",
+                                url: item.Url,
+                              };
+                            }
+                          );
+                          // const attachments = [
+                          //   ...(data.EmployementDoc || []),
+                          //   ...attachment,
+                          // ];
+                          handleDocument("EmployementDoc", attachment);
+                        }}
+                        mandatory={true}
+                        error={validationErrors.EmployementDoc}
+                        Style={{
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          color: "white",
+                        }}
+                        fileformat=".pdf"
+                      />
+                      <CustomViewAttachment
+                        Attachment={data.EmployementDoc ?? []}
+                        StateValue={"EmployementDoc"}
+                        handleDelete={(index, fileState) =>
+                          handleDelete(index, fileState)
+                        }
+                      />
+                    </div>
                   </div>
                 )}
 
@@ -1450,6 +1539,63 @@ const UploadCandidateDocument = (props: any) => {
                       />
                     </div>
                   </div>
+                ) : (
+                  <></>
+                )}
+
+                {props.stateValue?.StatusId ===
+                  StatusId.PendingFinancePaymentReview &&
+                data.PaymentReview === "Yes" ? (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <>
+                          <CustomLabel
+                            value={Attachment.PositionDocument.ProofOfPayment}
+                            mandatory={true}
+                          />
+                          <AttachmentButton
+                            label="Upload"
+                            iconName="CloudUpload"
+                            iconNameHover="CloudUpload"
+                            allowMultiple={false}
+                            AttachState={(newAttachment: any) => {
+                              let attachment: IDocFiles[] = newAttachment.map(
+                                (item: any) => {
+                                  return {
+                                    name: item.name,
+                                    content: item.file,
+                                    type: "New",
+                                    url: item.Url,
+                                  };
+                                }
+                              );
+                              // const attachments = [
+                              //   ...(data.ConsentDocs || []),
+                              //   ...attachment,
+                              // ];
+                              handleDocument("PaymentDocs", attachment);
+                            }}
+                            mandatory={true}
+                            error={validationErrors.PaymentDocs}
+                            Style={{
+                              backgroundColor:
+                                ColorCode.ButtonColorCode.ButtonColor,
+                              color: "white",
+                            }}
+                            fileformat=".doc,.pdf,.docx"
+                          />
+                          <CustomViewAttachment
+                            Attachment={data.PaymentDocs ?? []}
+                            StateValue={"PaymentDocs"}
+                            handleDelete={(index, fileState) =>
+                              handleDelete(index, fileState)
+                            }
+                          />
+                        </>
+                      </div>
+                    </div>
+                  </>
                 ) : (
                   <></>
                 )}
@@ -1583,190 +1729,212 @@ const UploadCandidateDocument = (props: any) => {
         </>
       ),
     },
-    {
-      label: TabName.OnboardingChecklist,
-      value: "tab2",
-      content: (
-        <>
-          <Card sx={{ marginTop: "2%" }}>
-            <CardContent>
-              <div>
-                <div className="ms-Grid-row">
-                  <div
-                    className="ms-Grid-col ms-lg8"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      // marginBottom: "20px",
-                      marginBottom: "12px",
-                    }}
-                  >
-                    <h2
-                      style={{
-                        color: ColorCode.ButtonColorCode.ButtonColor,
-                        fontSize: "18px",
-                      }}
-                    >
-                      OnboardingChecklist
-                    </h2>
-                  </div>
-                  <div
-                    className="ms-Grid-col ms-lg4"
-                    style={{
-                      display: "flex",
-                      justifyContent: "end",
-                      marginTop: "-2%",
-                    }}
-                  >
-                    <StatusBar checklist={checklistStatus} />
-                  </div>
-                </div>
-
-                {categoryList.map((cat, index) => (
-                  <Accordion
-                    key={index}
-                    expanded={expandedIndex === index}
-                    onChange={() => handleExpand(index)}
-                    sx={{ marginBottom: 2 }}
-                  >
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography fontSize={16} fontWeight="bold">
-                        {cat.label}
-                      </Typography>
-                    </AccordionSummary>
-
-                    <AccordionDetails>
-                      {cat.items.map((item) => (
-                        <Box
-                          key={item.id}
-                          sx={{
-                            boxShadow: "0px 3px 6px rgba(0,0,0,0.1)",
-                            borderRadius: "8px",
-                            padding: "12px",
+    ...(props.stateValue?.StatusId === StatusId.PendingHRpreonboardingchecklist
+      ? [
+          {
+            label: TabName.OnboardingChecklist,
+            value: "tab2",
+            content: (
+              <>
+                <Card sx={{ marginTop: "2%" }}>
+                  <CardContent>
+                    <div>
+                      <div className="ms-Grid-row">
+                        <div
+                          className="ms-Grid-col ms-lg8"
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            // marginBottom: "20px",
                             marginBottom: "12px",
                           }}
                         >
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg6">
-                              <Typography>{item.label}</Typography>
-                            </div>
+                          <h2
+                            style={{
+                              color: ColorCode.ButtonColorCode.ButtonColor,
+                              fontSize: "18px",
+                            }}
+                          >
+                            OnboardingChecklist
+                          </h2>
+                        </div>
+                        <div
+                          className="ms-Grid-col ms-lg4"
+                          style={{
+                            display: "flex",
+                            justifyContent: "end",
+                            marginTop: "-2%",
+                          }}
+                        >
+                          <StatusBar checklist={checklistStatus} />
+                        </div>
+                      </div>
 
-                            <div
-                              className="ms-Grid-col ms-lg6"
-                              style={{ display: "flex", gap: "12px" }}
-                            >
-                              {/* YES BUTTON */}
-                              <ReuseButton
-                                label="Yes"
-                                Style={{
-                                  height: "32px",
-                                  width: "60px",
-                                  backgroundColor:
-                                    item.value === true ? "green" : "#eaeaea",
-                                  color:
-                                    item.value === true ? "white" : "black",
-                                  border: "1px solid #ccc",
-                                  borderRadius: "5px",
-                                }}
-                                onClick={() =>
-                                  handleToggle(
-                                    cat.section,
-                                    item.label,
-                                    true,
-                                    item.id
-                                  )
-                                }
-                              />
+                      {categoryList.map((cat, index) => (
+                        <Accordion
+                          key={index}
+                          expanded={expandedIndex === index}
+                          onChange={() => handleExpand(index)}
+                          sx={{ marginBottom: 2 }}
+                        >
+                          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography fontSize={16} fontWeight="bold">
+                              {cat.label}
+                            </Typography>
+                          </AccordionSummary>
 
-                              {/* NO BUTTON */}
-                              <ReuseButton
-                                label="No"
-                                Style={{
-                                  height: "32px",
-                                  width: "60px",
-                                  backgroundColor:
-                                    item.value === false ? "red" : "#eaeaea",
-                                  color:
-                                    item.value === false ? "white" : "black",
-                                  border: "1px solid #ccc",
-                                  borderRadius: "5px",
+                          <AccordionDetails>
+                            {cat.items.map((item) => (
+                              <Box
+                                key={item.id}
+                                sx={{
+                                  boxShadow: "0px 3px 6px rgba(0,0,0,0.1)",
+                                  borderRadius: "8px",
+                                  padding: "12px",
+                                  marginBottom: "12px",
                                 }}
-                                onClick={() =>
-                                  handleToggle(
-                                    cat.section,
-                                    item.label,
-                                    false,
-                                    item.id
-                                  )
-                                }
-                              />
-                            </div>
-                          </div>
-                        </Box>
+                              >
+                                <div className="ms-Grid-row">
+                                  <div className="ms-Grid-col ms-lg6">
+                                    <Typography>{item.label}</Typography>
+                                  </div>
+
+                                  <div
+                                    className="ms-Grid-col ms-lg6"
+                                    style={{ display: "flex", gap: "12px" }}
+                                  >
+                                    {/* YES BUTTON */}
+                                    <ReuseButton
+                                      label="Yes"
+                                      Style={{
+                                        height: "32px",
+                                        width: "60px",
+                                        backgroundColor:
+                                          item.value === true
+                                            ? "green"
+                                            : "#eaeaea",
+                                        color:
+                                          item.value === true
+                                            ? "white"
+                                            : "black",
+                                        border: "1px solid #ccc",
+                                        borderRadius: "5px",
+                                      }}
+                                      onClick={() =>
+                                        handleToggle(
+                                          cat.section,
+                                          item.label,
+                                          true,
+                                          item.id
+                                        )
+                                      }
+                                    />
+
+                                    {/* NO BUTTON */}
+                                    <ReuseButton
+                                      label="No"
+                                      Style={{
+                                        height: "32px",
+                                        width: "60px",
+                                        backgroundColor:
+                                          item.value === false
+                                            ? "red"
+                                            : "#eaeaea",
+                                        color:
+                                          item.value === false
+                                            ? "white"
+                                            : "black",
+                                        border: "1px solid #ccc",
+                                        borderRadius: "5px",
+                                      }}
+                                      onClick={() =>
+                                        handleToggle(
+                                          cat.section,
+                                          item.label,
+                                          false,
+                                          item.id
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                              </Box>
+                            ))}
+                          </AccordionDetails>
+                        </Accordion>
                       ))}
-                    </AccordionDetails>
-                  </Accordion>
-                ))}
 
-                <div className="ms-Grid-row">
-                  <div
-                    className="ms-Grid-col ms-lg12"
-                    style={{ marginBottom: "7px" }}
-                  >
-                    <CustomTextArea
-                      label={labelNames.CommanLabel.Comments}
-                      value={data.comments}
-                      error={validationErrors.comments}
-                      onChange={(value) =>
-                        handleInputChangeTextArea("comments", undefined, value)
-                      }
-                      mandatory={true}
-                    />
-                  </div>
-                </div>
-                <div
-                  className="ms-Grid-row"
-                  style={{
-                    padding: "3px",
-                    marginTop: "20px",
-                    marginBottom: "-33px",
-                  }}
-                >
-                  <div className="ms-Grid-col ms-lg12">
-                    <SignatureCheckbox
-                      label={CheckboxContent.PostRecrutimentCheckboxContent}
-                      checked={data.Checkbox}
-                      error={validationErrors.checkbox}
-                      onChange={(value: boolean) =>
-                        handleCheckboxchanges(value)
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="ms-Grid-row">
-                  <div className="ms-Grid-col ms-lg12">
-                    <CustomSignature
-                      Name={
-                        (props.userDetails[0].FirstName ?? "") +
-                        " " +
-                        (props.userDetails[0]?.MiddleName ?? "") +
-                        " " +
-                        (props.userDetails[0]?.LastName ?? "")
-                      }
-                      JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
-                      JobTitleInFrench={props.userDetails[0].JopTitleFrench}
-                      Department={props.userDetails[0].DepartmentName}
-                      Date={data.SignDate}
-                      TermsAndCondition={data.Checkbox}
-                    />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </>
-      ),
-    },
+                      <div className="ms-Grid-row">
+                        <div
+                          className="ms-Grid-col ms-lg12"
+                          style={{ marginBottom: "7px" }}
+                        >
+                          <CustomTextArea
+                            label={labelNames.CommanLabel.Comments}
+                            value={data.comments}
+                            error={validationErrors.comments}
+                            onChange={(value) =>
+                              handleInputChangeTextArea(
+                                "comments",
+                                undefined,
+                                value
+                              )
+                            }
+                            mandatory={true}
+                          />
+                        </div>
+                      </div>
+                      <div
+                        className="ms-Grid-row"
+                        style={{
+                          padding: "3px",
+                          marginTop: "20px",
+                          marginBottom: "-33px",
+                        }}
+                      >
+                        <div className="ms-Grid-col ms-lg12">
+                          <SignatureCheckbox
+                            label={
+                              CheckboxContent.PostRecrutimentCheckboxContent
+                            }
+                            checked={data.Checkbox}
+                            error={validationErrors.checkbox}
+                            onChange={(value: boolean) =>
+                              handleCheckboxchanges(value)
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div className="ms-Grid-row">
+                        <div className="ms-Grid-col ms-lg12">
+                          <CustomSignature
+                            Name={
+                              (props.userDetails[0].FirstName ?? "") +
+                              " " +
+                              (props.userDetails[0]?.MiddleName ?? "") +
+                              " " +
+                              (props.userDetails[0]?.LastName ?? "")
+                            }
+                            JobTitleInEnglish={
+                              props.userDetails[0].JopTitleEnglish
+                            }
+                            JobTitleInFrench={
+                              props.userDetails[0].JopTitleFrench
+                            }
+                            Department={props.userDetails[0].DepartmentName}
+                            Date={data.SignDate}
+                            TermsAndCondition={data.Checkbox}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            ),
+          },
+        ]
+      : []),
   ];
 
   const handleBreadcrumbChange = (newItem: string) => {
@@ -1783,8 +1951,13 @@ const UploadCandidateDocument = (props: any) => {
       RadioAction: false,
       ITRequired: false,
       PaymentReview: false,
+      PaymentDocs: false,
+      WorkpermitDoc: false,
     };
-    if (props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation) {
+    if (
+      props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation &&
+      data.RecNationality === Nationality.Expatriate
+    ) {
       errors.ConsentDocs = !IsValid(data.ConsentDocs);
     }
     if (
@@ -1799,6 +1972,7 @@ const UploadCandidateDocument = (props: any) => {
       // props.stateValue?.StatusId === StatusId.PendingHREmploymentContractInit
     ) {
       errors.EmployementDoc = !IsValid(data.EmployementDoc);
+      errors.WorkpermitDoc = !IsValid(data.WorkpermitDoc);
     }
     if (
       props.stateValue?.StatusId === StatusId.PendingHRReviewBGCheck ||
@@ -1820,6 +1994,12 @@ const UploadCandidateDocument = (props: any) => {
       props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview
     ) {
       errors.PaymentReview = !IsValid(data.PaymentReview);
+    }
+    if (
+      props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview &&
+      data.PaymentReview === "Yes"
+    ) {
+      errors.PaymentDocs = !IsValid(data.PaymentDocs);
     }
 
     setValidationErrors((prevState) => ({
@@ -1959,6 +2139,7 @@ const UploadCandidateDocument = (props: any) => {
       if (isValid) {
         let DocumentData: DocumentName;
         let DocumentResponse: any;
+        let WorkPermitDocs: any;
         let workflowStatusValue: string = "";
         let SuccessMsg: string = "";
         let ActionID: number = WorkflowAction.Approved;
@@ -2123,6 +2304,18 @@ const UploadCandidateDocument = (props: any) => {
           }
           case StatusId.PendingFinancePaymentReview: {
             if (btnAction === ButtonAction.Review) {
+              DocumentData = {
+                ProfileID: data?.ProfileID,
+                RequestID: data?.jobRequestID,
+                DocumentName: DocumentFolderName.ProofOfDocument,
+                UnsignedDoc: "",
+              };
+              let PaymentProofDocs = [...data.PaymentDocs];
+              DocumentResponse =
+                await OfferLetterServices.UploadCandidateDocument(
+                  DocumentData,
+                  PaymentProofDocs
+                );
               workflowStatusValue =
                 workflowStatusApi.PendingFinancePaymentReview;
               SuccessMsg = RecuritmentHRMsg.FinancePaymentReviewMsg;
@@ -2132,10 +2325,11 @@ const UploadCandidateDocument = (props: any) => {
               //   workflowStatusApi.RevertedBacktopaymentReview;
               SuccessMsg = RecuritmentHRMsg.RevertedFinancePaymentMsg;
               ActionID = WorkflowAction.Revert;
+              DocumentResponse = {
+                status: ResponeStatus.SUCCESS,
+              };
             }
-            DocumentResponse = {
-              status: ResponeStatus.SUCCESS,
-            };
+
             break;
           }
           case StatusId.PendingHREmploymentContractInit:
@@ -2162,6 +2356,18 @@ const UploadCandidateDocument = (props: any) => {
                   DocumentData,
                   data.EmployementDoc
                 );
+              const WPData = {
+                ProfileID: data?.ProfileID,
+                RequestID: data?.jobRequestID,
+                DocumentName: DocumentFolderName.WorkPermit,
+                UnsignedDoc: "",
+              };
+              WorkPermitDocs =
+                await OfferLetterServices.UploadCandidateDocument(
+                  WPData,
+                  data.WorkpermitDoc
+                );
+
               workflowStatusValue =
                 workflowStatusApi.PendingwithCandidatetosignEmployementContract;
               SuccessMsg = RecuritmentHRMsg.EmploymentContractMsg;
@@ -2248,11 +2454,12 @@ const UploadCandidateDocument = (props: any) => {
             CandidateDatas.OfferLatterPath = getOfferLetterPath?.[0]?.content;
           } else if (
             props.stateValue?.StatusId ===
-              StatusId.WorkPermitAcknowledgedContractUploaded &&
-            data.RadioAction === "Yes"
+            StatusId.WorkPermitAcknowledgedContractUploaded
           ) {
             CandidateDatas.EmpContractLatterPath =
               DocumentResponse.data[0]?.content;
+            CandidateDatas.signedWorkPermitPath =
+              WorkPermitDocs.data[0]?.content;
           } else if (
             props.stateValue?.StatusId === StatusId.PendingHROfferReview
           ) {
@@ -2273,12 +2480,27 @@ const UploadCandidateDocument = (props: any) => {
             props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation
           ) {
             CandidateDatas.ConsentFormPath = DocumentResponse.data[0]?.content;
+          } else if (
+            props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview
+          ) {
+            CandidateDatas.proofOfPaymentPath =
+              DocumentResponse.data[0]?.content;
+          } else if (
+            props.stateValue?.StatusId ===
+            StatusId.PendingHREmploymentContractInit
+          ) {
+            let WorkPermitDocs = documentview.filter(
+              (item) => item.Title === DisplayFolderName.WorkPermitDocument
+            );
+            CandidateDatas.signedWorkPermitPath =
+              WorkPermitDocs[0]?.data[0]?.content;
           }
 
           let WorkflowStatus: any;
           if (
             props.stateValue?.StatusId ===
-            StatusId.PendingHRReviewWorkpermitDocs
+              StatusId.PendingHRReviewWorkpermitDocs &&
+            data.RadioAction === "Yes"
           ) {
             WorkflowStatus = {
               status: ResponeStatus.SUCCESS,
@@ -2629,14 +2851,26 @@ const UploadCandidateDocument = (props: any) => {
                         },
                       ];
                     }
-                    if (btnEnable) {
-                      return [
-                        {
-                          label: ButtonAction.Submit,
-                          onClick: async () =>
-                            await Submit_fn(ButtonAction.Submit),
-                        },
-                      ];
+                    if (
+                      props.stateValue?.StatusId ===
+                      StatusId.PendingHRpreonboardingchecklist
+                    ) {
+                      if (btnEnable) {
+                        return [
+                          {
+                            label: ButtonAction.Submit,
+                            onClick: async () =>
+                              await Submit_fn(ButtonAction.Submit),
+                          },
+                        ];
+                      } else {
+                        return [
+                          {
+                            label: ButtonAction.SaveAsDraft,
+                            onClick: async () => await SaveAsDraft(),
+                          },
+                        ];
+                      }
                     }
                     if (btnEnable) {
                       return [
@@ -2644,13 +2878,6 @@ const UploadCandidateDocument = (props: any) => {
                           label: ButtonAction.Submit,
                           onClick: async () =>
                             await Submit_fn(ButtonAction.Submit),
-                        },
-                      ];
-                    } else {
-                      return [
-                        {
-                          label: ButtonAction.SaveAsDraft,
-                          onClick: async () => await SaveAsDraft(),
                         },
                       ];
                     }
