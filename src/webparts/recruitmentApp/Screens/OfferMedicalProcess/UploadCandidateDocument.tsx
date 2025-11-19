@@ -2147,26 +2147,33 @@ const UploadCandidateDocument = (props: any) => {
           case StatusId.PendingHRBGVInitiation:
             {
               if (btnAction === ButtonAction.Initiated) {
-                DocumentData = {
-                  ProfileID: data?.ProfileID,
-                  RequestID: data?.jobRequestID,
-                  DocumentName: DocumentFolderName.BGVConsentform,
-                  UnsignedDoc: "",
-                };
-                let BGVConsentDocs = [...data.ConsentDocs];
-                DocumentResponse =
-                  await OfferLetterServices.UploadCandidateDocument(
-                    DocumentData,
-                    BGVConsentDocs
-                  );
+                if (
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingHRBGVInitiation &&
+                  data.RecNationality === Nationality.Expatriate
+                ) {
+                  DocumentData = {
+                    ProfileID: data?.ProfileID,
+                    RequestID: data?.jobRequestID,
+                    DocumentName: DocumentFolderName.BGVConsentform,
+                    UnsignedDoc: "",
+                  };
+                  let BGVConsentDocs = [...data.ConsentDocs];
+                  DocumentResponse =
+                    await OfferLetterServices.UploadCandidateDocument(
+                      DocumentData,
+                      BGVConsentDocs
+                    );
+                } else {
+                  DocumentResponse = {
+                    status: ResponeStatus.SUCCESS,
+                  };
+                }
 
                 workflowStatusValue =
                   workflowStatusApi.PendingCandidateUploadBGVDocs;
                 SuccessMsg = RecuritmentHRMsg.BGverificationMsg;
                 ActionID = WorkflowAction.Approved;
-                // DocumentResponse = {
-                //   status: ResponeStatus.SUCCESS,
-                // };
               }
             }
             break;
@@ -2477,7 +2484,8 @@ const UploadCandidateDocument = (props: any) => {
             CandidateDatas.EmpContractLatterPath =
               LabourEC[0]?.data[0]?.content;
           } else if (
-            props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation
+            props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation &&
+            data.RecNationality === Nationality.Expatriate
           ) {
             CandidateDatas.ConsentFormPath = DocumentResponse.data[0]?.content;
           } else if (
