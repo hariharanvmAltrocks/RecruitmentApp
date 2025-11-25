@@ -24,6 +24,8 @@ import UploadCandidateList from "../Screens/UploadCandidateCV/UploadCandidateLis
 import UploadOfferDocumentList from "../Screens/OfferMedicalProcess/UploadOfferDocumentList";
 import UploadCandidateDocument from "../Screens/OfferMedicalProcess/UploadCandidateDocument";
 import { ApiUrl } from "../components/TabMerge";
+import AdminPanelDashboard from "../Screens/AdminPanel/AdminPanelDashboard";
+import AdminPanelPage from "../Screens/AdminPanel/NewAdminPanelPage";
 
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
@@ -213,6 +215,14 @@ export default function MainPage(props: any) {
                   element={
                     <UploadCandidateDocument {...props} {...masterData} />
                   }
+                />
+                <Route
+                  path="/AdminPanelDashboard"
+                  element={<AdminPanelDashboard {...props} {...masterData} />}
+                />
+                <Route
+                  path="/AdminPanelDashboard/AdminPanelPage"
+                  element={<AdminPanelPage {...props} {...masterData} />}
                 />
               </Routes>
             </>

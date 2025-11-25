@@ -102,14 +102,3 @@ export type OnboardingChecklisttype = {
   FinalStatus: FinalStatuse,
 }
 
-export type ChecklistStatus = {
-  BackgroundChecks: boolean;
-  SignedOfferLetter: boolean;
-  EmploymentContract: boolean;
-  WorkPermitApproved: boolean;
-  VisaProcess: boolean;
-  AccommodationBooked: boolean;
-  TravelProcess: boolean;
-  ReadyforOnboarding: boolean;
-}
-

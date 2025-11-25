@@ -44,9 +44,9 @@ const StatusBar: React.FC<StatusBarProps> = ({ checklist }) => {
           width: 53,
         }}
       >
-        {/* <Typography variant="body1" sx={{ mb: 1 }}>
+        <Typography variant="body1" sx={{ mb: 1, marginTop: "-20%" }}>
           Status
-        </Typography> */}
+        </Typography>
         <div className="circularpercentage-container">
           <CircularProgressbar
             value={(completedCount / steps.length) * 100}

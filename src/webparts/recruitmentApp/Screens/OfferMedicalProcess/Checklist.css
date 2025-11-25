@@ -49,37 +49,6 @@
 }
 
 
-@media (max-width: 600px) {
-    .StatusBar-container {
-        max-width: 87px;
-        margin-left: 90%;
-        cursor: pointer;
-        margin-top: 20px;
-        height: 80px;
-        background-color: rgb(239, 51, 64);
-        padding: 14px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px 3px #eeb9b9;
-    }
-}
-
-
-@media (min-width: 601px) {
-    .StatusBar-container {
-        max-width: 87px;
-        margin-left: 88%;
-        cursor: pointer;
-        margin-top: 20px;
-        height: 80px;
-        background-color: #a8b8c6;
-        padding: 14px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px 3px #a8b8c6;
-    }
-}
-
-
-
 
 /* finish */
 
@@ -102,6 +71,12 @@
     }
 }
 
+.CircularProgressbar-text {
+    font-size: 22px;
+    fill: #000000;
+    font-weight: 600;
+}
+
 
 @media (max-width: 600px) {
     .StatusBar-container {
@@ -110,7 +85,7 @@
         margin-left: -63%;
         cursor: pointer;
         margin-top: 20px;
-        height: 49px;
+        height: 66px;
         background-color: rgb(239, 51, 64);
         padding: 14px;
         border-radius: 5px;
@@ -127,7 +102,7 @@
         margin-left: -60%;
         cursor: pointer;
         margin-top: 20px;
-        height: 49px;
+        height: 66px;
         background-color:#a8b8c6;
         padding: 14px;
         border-radius: 5px;

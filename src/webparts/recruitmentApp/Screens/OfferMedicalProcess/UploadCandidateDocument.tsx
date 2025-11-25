@@ -13,6 +13,7 @@ import {
   DocumentLibraray,
   HRMSAlertOptions,
   Nationality,
+  NationalityCode,
   PostRecrutimentCheckboxContent,
   RecuritmentHRMsg,
   ResponeStatus,
@@ -23,11 +24,7 @@ import {
   WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
-import {
-  alertPropsData,
-  ChecklistStatus,
-  OnboardingChecklisttype,
-} from "../../Models/Screens";
+import { alertPropsData, OnboardingChecklisttype } from "../../Models/Screens";
 import { UploadDocument, WorkflowJson } from "../../Models/ApIInterface";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomLabel from "../../components/CustomLabel";
@@ -56,6 +53,7 @@ import {
   Attachment,
   ButtonAction,
   CheckboxContent,
+  ChecklistStatus,
   DisplayFolderName,
   EmployeementCategory,
   labelNames,
@@ -192,6 +190,7 @@ const UploadCandidateDocument = (props: any) => {
     BGVRadioBtnlabel: "",
     PaymentDocs: [],
     DotAfricaCF: [],
+    NationalityCode: "",
   });
   // const [checkdata,setCheckdata] = useState<>
   // const [viewDocument, setViewDocument] = React.useState<viewDocument>({
@@ -232,17 +231,8 @@ const UploadCandidateDocument = (props: any) => {
   });
   const [btnEnable, setBtnEnable] = React.useState<boolean>(false);
   const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  const [checklistStatus, setChecklistStatus] = useState<ChecklistStatus>({
-    BackgroundChecks: false,
-    SignedOfferLetter: false,
-    EmploymentContract: false,
-    WorkPermitApproved: false,
-    VisaProcess: false,
-    AccommodationBooked: false,
-    TravelProcess: false,
-    ReadyforOnboarding: false,
-  });
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
+  const [checklistStatus, setChecklistStatus] = useState<any>(ChecklistStatus);
 
   const handleExpand = (index: number) => {
     setExpandedIndex(expandedIndex === index ? null : index);
@@ -531,6 +521,9 @@ const UploadCandidateDocument = (props: any) => {
             ? RadioBtnLabel.OfferInitiationLabel
             : RadioBtnLabel.BGVExpatriatesLabel,
         DotAfricaCF: getDotAfricaCF.data,
+        NationalityCode: CandidateDetails?.data?.[0]?.NatioCode
+          ? CandidateDetails?.data?.[0]?.NatioCode
+          : "",
       }));
 
       setchecklistData((prev) => ({
@@ -658,7 +651,6 @@ const UploadCandidateDocument = (props: any) => {
   };
 
   React.useEffect(() => {
-    console.log(props.userDetails[0]?.ID, "UserId");
     void fetchData();
     setchecklistData(onboardingData);
     const newTabNames = [
@@ -941,28 +933,28 @@ const UploadCandidateDocument = (props: any) => {
     if (!checklistData) return;
 
     setChecklistStatus({
-      BackgroundChecks:
+      ["Background Checks"]:
         checklistData.DocumentComplianceChecks.DocumentComplianceChecks
           .BackgroundChecks.value,
-      SignedOfferLetter:
+      ["Signed Offer Letter"]:
         checklistData.DocumentComplianceChecks.DocumentComplianceChecks
           .SignedOfferLetter.value,
-      EmploymentContract:
+      ["Employment Contract"]:
         checklistData.DocumentComplianceChecks.DocumentComplianceChecks
           .SignedEmploymentContract.value,
-      WorkPermitApproved:
+      ["Work Permit Approved"]:
         checklistData.DocumentComplianceChecks.DocumentComplianceChecks
           .WorkPermitApproved.value,
-      VisaProcess:
+      ["Visa Process"]:
         checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport
           .VisaProcess.value,
-      AccommodationBooked:
+      ["Accommodation Booked"]:
         checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport
           .AccommodationBooked.value,
-      TravelProcess:
+      ["Travel Process"]:
         checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport
           .TravelProcess.value,
-      ReadyforOnboarding:
+      ["Ready for Onboarding"]:
         checklistData.FinalStatus.FinalStatus.ReadyforOnboarding.value,
     });
   }, [checklistData]);
@@ -1201,9 +1193,52 @@ const UploadCandidateDocument = (props: any) => {
                   </>
                 )} */}
 
+                {props.stateValue?.ButtonAction === ButtonAction.Initiated ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingBGdocuploadedbycandidate ? (
+                  <></>
+                ) : (
+                  <>
+                    <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
+                      <div className="custom-document-column">
+                        <CustomLabel
+                          value={Attachment.PositionDocument.CandidateDocuments}
+                        />
+                        <div className="document-wrapper">
+                          <ReuseButton
+                            Style={{
+                              minWidth: "117px",
+                              fontSize: "13px",
+                              paddingBottom: "24px",
+                              display: "flex",
+                              flexDirection: "column",
+                              height: "41px",
+                              paddingTop: "23px",
+                              backgroundColor:
+                                ColorCode.ButtonColorCode.ButtonColor,
+                              color: "white",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                            label="VIEW"
+                            imgSrc={require("../../assets/viewSubmision-white.svg")}
+                            imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                            imgAlt="View"
+                            imgAltHover="Hovered View"
+                            onClick={() => {
+                              setDocumentPopup(true);
+                            }}
+                            spacing={4}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {props.stateValue?.StatusId ===
                   StatusId.PendingHRBGVInitiation &&
-                data.RecNationality === Nationality.Expatriate ? (
+                data.NationalityCode != NationalityCode.Nationals ? (
                   <>
                     <div className="ms-Grid-row">
                       <div
@@ -1479,49 +1514,6 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                 )}
 
-                {props.stateValue?.ButtonAction === ButtonAction.Initiated ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingBGdocuploadedbycandidate ? (
-                  <></>
-                ) : (
-                  <>
-                    <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
-                      <div className="custom-document-column">
-                        <CustomLabel
-                          value={Attachment.PositionDocument.CandidateDocuments}
-                        />
-                        <div className="document-wrapper">
-                          <ReuseButton
-                            Style={{
-                              minWidth: "117px",
-                              fontSize: "13px",
-                              paddingBottom: "24px",
-                              display: "flex",
-                              flexDirection: "column",
-                              height: "41px",
-                              paddingTop: "23px",
-                              backgroundColor:
-                                ColorCode.ButtonColorCode.ButtonColor,
-                              color: "white",
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                            label="VIEW"
-                            imgSrc={require("../../assets/viewSubmision-white.svg")}
-                            imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                            imgAlt="View"
-                            imgAltHover="Hovered View"
-                            onClick={() => {
-                              setDocumentPopup(true);
-                            }}
-                            spacing={4}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-
                 {props.CurrentRoleID.includes(RoleID.FinanceDepartment) &&
                 props.stateValue?.StatusId ===
                   StatusId.PendingFinancePaymentReview ? (
@@ -1639,7 +1631,7 @@ const UploadCandidateDocument = (props: any) => {
                         label={
                           props.stateValue?.StatusId ===
                             StatusId.PendingHRReviewBGCheck &&
-                          data.RecNationality === Nationality.Nationals
+                          data.NationalityCode === NationalityCode.Nationals
                             ? RadioBtnLabel.BGVNational
                             : RadioBtnLabel.DocumentVerification
                         }
@@ -1739,130 +1731,133 @@ const UploadCandidateDocument = (props: any) => {
                 <Card sx={{ marginTop: "2%" }}>
                   <CardContent>
                     <div>
-                      <div className="ms-Grid-row">
-                        <div
-                          className="ms-Grid-col ms-lg8"
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            // marginBottom: "20px",
-                            marginBottom: "12px",
-                          }}
-                        >
+                      <div
+                        className="ms-Grid-row"
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div className="ms-Grid-col ms-lg8">
                           <h2
                             style={{
                               color: ColorCode.ButtonColorCode.ButtonColor,
                               fontSize: "18px",
                             }}
                           >
-                            OnboardingChecklist
+                            Onboarding Checklist
                           </h2>
                         </div>
+
                         <div
                           className="ms-Grid-col ms-lg4"
                           style={{
                             display: "flex",
-                            justifyContent: "end",
-                            marginTop: "-2%",
+                            justifyContent: "flex-end",
                           }}
                         >
                           <StatusBar checklist={checklistStatus} />
                         </div>
                       </div>
 
-                      {categoryList.map((cat, index) => (
-                        <Accordion
-                          key={index}
-                          expanded={expandedIndex === index}
-                          onChange={() => handleExpand(index)}
-                          sx={{ marginBottom: 2 }}
-                        >
-                          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <Typography fontSize={16} fontWeight="bold">
-                              {cat.label}
-                            </Typography>
-                          </AccordionSummary>
+                      <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
+                        {categoryList.map((cat, index) => (
+                          <div>
+                            <Accordion
+                              key={index}
+                              expanded={expandedIndex === index}
+                              onChange={() => handleExpand(index)}
+                              sx={{ marginBottom: 2 }}
+                            >
+                              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography fontSize={16} fontWeight="bold">
+                                  {cat.label}
+                                </Typography>
+                              </AccordionSummary>
 
-                          <AccordionDetails>
-                            {cat.items.map((item) => (
-                              <Box
-                                key={item.id}
-                                sx={{
-                                  boxShadow: "0px 3px 6px rgba(0,0,0,0.1)",
-                                  borderRadius: "8px",
-                                  padding: "12px",
-                                  marginBottom: "12px",
-                                }}
-                              >
-                                <div className="ms-Grid-row">
-                                  <div className="ms-Grid-col ms-lg6">
-                                    <Typography>{item.label}</Typography>
-                                  </div>
-
-                                  <div
-                                    className="ms-Grid-col ms-lg6"
-                                    style={{ display: "flex", gap: "12px" }}
+                              <AccordionDetails>
+                                {cat.items.map((item) => (
+                                  <Box
+                                    key={item.id}
+                                    sx={{
+                                      boxShadow: "0px 3px 6px rgba(0,0,0,0.1)",
+                                      borderRadius: "8px",
+                                      padding: "12px",
+                                      marginBottom: "12px",
+                                    }}
                                   >
-                                    {/* YES BUTTON */}
-                                    <ReuseButton
-                                      label="Yes"
-                                      Style={{
-                                        height: "32px",
-                                        width: "60px",
-                                        backgroundColor:
-                                          item.value === true
-                                            ? "green"
-                                            : "#eaeaea",
-                                        color:
-                                          item.value === true
-                                            ? "white"
-                                            : "black",
-                                        border: "1px solid #ccc",
-                                        borderRadius: "5px",
-                                      }}
-                                      onClick={() =>
-                                        handleToggle(
-                                          cat.section,
-                                          item.label,
-                                          true,
-                                          item.id
-                                        )
-                                      }
-                                    />
+                                    <div className="ms-Grid-row">
+                                      <div className="ms-Grid-col ms-lg6">
+                                        <Typography>{item.label}</Typography>
+                                      </div>
 
-                                    {/* NO BUTTON */}
-                                    <ReuseButton
-                                      label="No"
-                                      Style={{
-                                        height: "32px",
-                                        width: "60px",
-                                        backgroundColor:
-                                          item.value === false
-                                            ? "red"
-                                            : "#eaeaea",
-                                        color:
-                                          item.value === false
-                                            ? "white"
-                                            : "black",
-                                        border: "1px solid #ccc",
-                                        borderRadius: "5px",
-                                      }}
-                                      onClick={() =>
-                                        handleToggle(
-                                          cat.section,
-                                          item.label,
-                                          false,
-                                          item.id
-                                        )
-                                      }
-                                    />
-                                  </div>
-                                </div>
-                              </Box>
-                            ))}
-                          </AccordionDetails>
-                        </Accordion>
-                      ))}
+                                      <div
+                                        className="ms-Grid-col ms-lg6"
+                                        style={{ display: "flex", gap: "12px" }}
+                                      >
+                                        {/* YES BUTTON */}
+                                        <ReuseButton
+                                          label="Yes"
+                                          Style={{
+                                            height: "32px",
+                                            width: "60px",
+                                            backgroundColor:
+                                              item.value === true
+                                                ? "green"
+                                                : "#eaeaea",
+                                            color:
+                                              item.value === true
+                                                ? "white"
+                                                : "black",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "5px",
+                                          }}
+                                          onClick={() =>
+                                            handleToggle(
+                                              cat.section,
+                                              item.label,
+                                              true,
+                                              item.id
+                                            )
+                                          }
+                                        />
+
+                                        {/* NO BUTTON */}
+                                        <ReuseButton
+                                          label="No"
+                                          Style={{
+                                            height: "32px",
+                                            width: "60px",
+                                            backgroundColor:
+                                              item.value === false
+                                                ? "red"
+                                                : "#eaeaea",
+                                            color:
+                                              item.value === false
+                                                ? "white"
+                                                : "black",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "5px",
+                                          }}
+                                          onClick={() =>
+                                            handleToggle(
+                                              cat.section,
+                                              item.label,
+                                              false,
+                                              item.id
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                    </div>
+                                  </Box>
+                                ))}
+                              </AccordionDetails>
+                            </Accordion>
+                          </div>
+                        ))}
+                      </div>
 
                       <div className="ms-Grid-row">
                         <div
@@ -1956,7 +1951,7 @@ const UploadCandidateDocument = (props: any) => {
     };
     if (
       props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation &&
-      data.RecNationality === Nationality.Expatriate
+      data.NationalityCode != NationalityCode.Nationals
     ) {
       errors.ConsentDocs = !IsValid(data.ConsentDocs);
     }
@@ -2026,28 +2021,28 @@ const UploadCandidateDocument = (props: any) => {
       const isValid = !Validation();
       if (isValid) {
         let ChecklistValue = {
-          BackgroundChecks: checklistStatus.BackgroundChecks
+          BackgroundChecks: checklistStatus["Background Checks"]
             ? ActionName.Completed
             : ActionName.Pending,
-          SignedOfferLetterVerified: checklistStatus.SignedOfferLetter
+          SignedOfferLetterVerified: checklistStatus["Signed Offer Letter"]
             ? ActionName.Completed
             : ActionName.Pending,
-          SignedEmploymentContract: checklistStatus.EmploymentContract
+          SignedEmploymentContract: checklistStatus["Employment Contract"]
             ? ActionName.Completed
             : ActionName.Pending,
-          WorkPermitApproved: checklistStatus.WorkPermitApproved
+          WorkPermitApproved: checklistStatus["Work Permit Approved"]
             ? ActionName.Completed
             : ActionName.Pending,
-          VisaProcess: checklistStatus.VisaProcess
+          VisaProcess: checklistStatus["Visa Process"]
             ? ActionName.Completed
             : ActionName.Pending,
-          AccommodationBooked: checklistStatus.AccommodationBooked
+          AccommodationBooked: checklistStatus["Accommodation Booked"]
             ? ActionName.Completed
             : ActionName.Pending,
-          TravelProcess: checklistStatus.TravelProcess
+          TravelProcess: checklistStatus["Travel Process"]
             ? ActionName.Completed
             : ActionName.Pending,
-          ReadyforOnboarding: checklistStatus.ReadyforOnboarding
+          ReadyforOnboarding: checklistStatus["Ready for Onboarding"]
             ? ActionName.Completed
             : ActionName.Pending,
           ID: data.CandidateID,
@@ -2150,7 +2145,7 @@ const UploadCandidateDocument = (props: any) => {
                 if (
                   props.stateValue?.StatusId ===
                     StatusId.PendingHRBGVInitiation &&
-                  data.RecNationality === Nationality.Expatriate
+                  data.NationalityCode != NationalityCode.Nationals
                 ) {
                   DocumentData = {
                     ProfileID: data?.ProfileID,
@@ -2187,7 +2182,7 @@ const UploadCandidateDocument = (props: any) => {
                 SuccessMsg =
                   props.stateValue?.StatusId ===
                     StatusId.PendingHRReviewBGCheck &&
-                  data.RecNationality === Nationality.Nationals
+                  data.NationalityCode === NationalityCode.Nationals
                     ? RecuritmentHRMsg.BGReviewedMsg
                     : RecuritmentHRMsg.BGReviewinitBGV;
                 ActionID = WorkflowAction.Approved;
@@ -2485,7 +2480,7 @@ const UploadCandidateDocument = (props: any) => {
               LabourEC[0]?.data[0]?.content;
           } else if (
             props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation &&
-            data.RecNationality === Nationality.Expatriate
+            data.NationalityCode != NationalityCode.Nationals
           ) {
             CandidateDatas.ConsentFormPath = DocumentResponse.data[0]?.content;
           } else if (
@@ -2837,7 +2832,7 @@ const UploadCandidateDocument = (props: any) => {
                           ? ButtonAction.Review
                           : props.stateValue?.StatusId ===
                               StatusId.PendingHRReviewBGCheck &&
-                            data.RecNationality === Nationality.Nationals
+                            data.NationalityCode === NationalityCode.Nationals
                           ? ButtonAction.Reject
                           : ButtonAction.Revert;
                       return [

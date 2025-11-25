@@ -1,3 +1,4 @@
+import { AdminPItem, UpsertExternalUser } from "../../Models/AdminPanel";
 import { AdvertisementDetails, BGVStatus, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
@@ -152,6 +153,19 @@ export const BGverification = {
     GetBGVStatus: async function (params: BGVStatus) {
         return await AxiosInstance.post(
             `/hrms/GetBGVStatus`, params
+        );
+    }
+}
+
+export const AdminPanelServiceApi = {
+    GetAdminPanelDashboard: async function (params: AdminPItem) {
+        return await AxiosInstance.post(
+            `/hrms/GetAllExternalUsers`, params
+        );
+    },
+    UpsertExternalUser: async function (params: UpsertExternalUser) {
+        return await AxiosInstance.post(
+            `/hrms/UpsertExternalUser`, params
         );
     }
 }

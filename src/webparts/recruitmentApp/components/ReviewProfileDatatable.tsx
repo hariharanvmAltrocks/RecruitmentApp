@@ -26,6 +26,7 @@ interface SearchableDataTableProps {
   pagination: { first: number; rows: number; totalPages: number };
   handleUploadCV?: () => void;
   UploadCV?: string;
+  AdminLoginUser?: boolean;
 }
 
 const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
@@ -37,6 +38,7 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
   pagination,
   handleUploadCV,
   UploadCV,
+  AdminLoginUser,
 }) => {
   const [filteredItems, setFilteredItems] = React.useState<any[]>([]);
   const [dashboardSearch, setDashboardSearch] = React.useState<any>({
@@ -162,6 +164,17 @@ const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({
             Style={{ marginRight: "11px", minWidth: "100%", height: "31px" }}
           />
         </div>
+
+        {AdminLoginUser && (
+          <div className="ms-Grid-col ms-lg1">
+            <ReuseButton
+              label="New"
+              onClick={handleUploadCV}
+              spacing={4}
+              Style={{ minWidth: "100%", height: "31px" }}
+            />
+          </div>
+        )}
 
         {UploadCV === TabName.UploadCV && (
           <div className="ms-Grid-col ms-lg1" style={{ marginLeft: "4%" }}>

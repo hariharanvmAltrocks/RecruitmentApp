@@ -74,22 +74,24 @@ const UploadOfferDocumentList = (props: any) => {
               Value: item.status,
             }));
           setPendingInfo(mappedArray);
-          const allCompleted =
-            mappedArray.every((item: any) => item.Value === "completed") ||
-            false;
-          const IDCTYpeStatus = res.data.data[0]?.bgVerification
-            ?.filter((item: any) => item.bgTypeCode === "IDC")
-            ?.every((item: any) => item.status === "completed");
+          if (mappedArray.length > 0) {
+            const allCompleted =
+              mappedArray.every((item: any) => item.Value === "completed") ||
+              false;
+            const IDCTYpeStatus = res.data.data[0]?.bgVerification
+              ?.filter((item: any) => item.bgTypeCode === "IDC")
+              ?.every((item: any) => item.status === "completed");
 
-          if (allCompleted) {
-            const matchedData = {
-              ID: rowData?.ID,
-              ActionId: IDCTYpeStatus
-                ? WorkflowAction.Approved
-                : WorkflowAction.Revert,
-            };
+            if (allCompleted) {
+              const matchedData = {
+                ID: rowData?.ID,
+                ActionId: IDCTYpeStatus
+                  ? WorkflowAction.Approved
+                  : WorkflowAction.Revert,
+              };
 
-            await OfferLetterServices.UpdateStatusInSpfxlist([matchedData]);
+              await OfferLetterServices.UpdateStatusInSpfxlist([matchedData]);
+            }
           }
         })
         .catch((error) => {
@@ -668,6 +670,7 @@ const UploadOfferDocumentList = (props: any) => {
     if (props.stateValue) {
       OfferLettertabs.current = props.stateValue?.TabNames;
       setActiveTab(props.stateValue?.tab);
+      OfferLettertabs.current = props.stateValue?.TabNames;
     } else {
       if (!OfferLettertabs.current) {
         if (props.TabDetails[0]) {

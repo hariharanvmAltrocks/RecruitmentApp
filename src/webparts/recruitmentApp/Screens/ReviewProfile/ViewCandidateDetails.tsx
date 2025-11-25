@@ -591,6 +591,7 @@ const ViewCandidateDetails = (props: any) => {
                 hasIvanhoeZijinExperience: response?.hasIvanhoeZijinExperience,
                 companyDetails: response?.companyDetails,
                 businesslinkscompany: response?.businesslinkscompany,
+                NatioCode: response?.NatioCode || "",
               }));
               setInterviewedLevel((prev) => ({
                 ...prev,
@@ -2393,6 +2394,7 @@ const ViewCandidateDetails = (props: any) => {
       OperationRoleRegion: JSON.stringify(
         Object.entries(CandidateProfile?.companyDetails || {})
       ),
+      NationalityCode: CandidateProfile?.NatioCode || "",
     };
     let selectedinterviewpanal: any[] = [];
 

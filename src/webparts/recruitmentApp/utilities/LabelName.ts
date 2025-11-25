@@ -118,7 +118,23 @@ export const labelNames = {
         Thirdextensiondate: "Third Extension Date",
     },
     AdvertisementExtension: "Advertisement Extension",
-
+    AdminPanel: {
+        FirstName: "First Name",
+        LastName: "Last Name",
+        CompanyName: "Company Name",
+        Designation: "Designation",
+        EmailID: "Email ID",
+        UserType: "User Type",
+        Password: "Password",
+        ConfirmPassword: "Confirm Password",
+        IsActive: "Is Active",
+        NoOfUsers: "No of Users",
+        StartDateOfContract: "Start Date of Contract",
+        EndDateOfContract: "End Date of Contract",
+        Nationality: "Nationality",
+        FullName: "Name",
+        PhoneNumber: "Phone Number",
+    }
 }
 
 export const Attachment = {
@@ -310,12 +326,11 @@ export const BGVRequestDocument = {
 export const SADocs = ["IDV", "PRE", "PST", "UMF", "SAQ", "NL", "TC", "SC", "SETA", "ITC", "IDC", "EHCR", "PSY", "DMC", "IDCS", "ConsentForm"]
 export const NSADocs = ["GQ", "CZ", "EXP", "ConsentForm"]
 
-export const NSADocument = {
+
+export const BGVDocumentName = {
     GQ: "Global University Qualification Verification",
     CZ: "Citizenship Verification",
     EXP: "Experian Credit Check",
-}
-export const SADocument = {
     IDV: "ID Verification",
     PRE: "Matric Pre-92 Umalusi Verification",
     PST: "Matric Post-92 Umalusi Verification",
@@ -331,6 +346,7 @@ export const SADocument = {
     PSY: "Psychometric Assessment",
     DMC: "Director Member Confirmation",
     IDCS: "ID Check Secondary",
+    ConsentForm: "Dot's Africa Consent Form",
 }
 export const onboardingData: OnboardingChecklisttype = {
     DocumentComplianceChecks: {
@@ -359,3 +375,14 @@ export const onboardingData: OnboardingChecklisttype = {
         },
     },
 };
+
+export const ChecklistStatus = {
+    "Background Checks": false,
+    "Signed Offer Letter": false,
+    "Employment Contract": false,
+    "Work Permit Approved": false,
+    "Visa Process": false,
+    "Accommodation Booked": false,
+    "Travel Process": false,
+    "Ready for Onboarding": false,
+}

@@ -7,6 +7,7 @@ import SPServices from "../SPService/SPServices";
 import { DataSyncToResiProcess, DocumentName, GetBGVDocument, GetCandidateDocument, GetDOTAfricaCF, ICandidateDetails, IOfferLetterService, UpdateCandidateData } from "./IOfferLetterService";
 import { initiateLaborHire, ITSystem, TASystem, TrainingSystem, UploadDocument } from "../../Models/ApIInterface";
 import { AutoCompleteItem } from "../../Models/Screens";
+import { BGVDocumentName } from "../../utilities/LabelName";
 
 
 export default class OfferLetterService implements IOfferLetterService {
@@ -493,12 +494,21 @@ export default class OfferLetterService implements IOfferLetterService {
                         const files = await SPServices.getDocLibFiles({
                             FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID.toString()}/${DocumentName.DocumentType}/${item}`,
                         });
+                        let folderName = "";
+                        if (item in BGVDocumentName) {
+                            folderName = BGVDocumentName[item as keyof typeof BGVDocumentName];
+                        }
+                        const file = [
+                            folderName,
+                            files[0]
+                        ]
 
-                        return files[0] as IDocFiles[];
+                        return file as IDocFiles[];
                     })
                 );
 
-                response = BGVDocs.filter(x => x !== null);
+                response = BGVDocs.filter(x => x && x[1] !== undefined && x !== null);
+
             }
 
             return {

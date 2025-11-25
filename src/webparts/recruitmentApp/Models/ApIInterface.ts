@@ -383,6 +383,7 @@ export type UploadDocument = {
 
     DotAfricaCF: IDocFiles[];
     WorkpermitDoc: IDocFiles[];
+    NationalityCode: string;
 }
 
 export type DocumentName = {

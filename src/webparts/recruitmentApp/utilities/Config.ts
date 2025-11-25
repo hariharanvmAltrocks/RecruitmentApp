@@ -134,7 +134,7 @@ export const StatusId = {
   PendingHRpreonboardingchecklist: 162,
   //Labor Hire
   PendingLabourHireOfferRelease: 170,
-  PendingHROfferReview: 184,//171,
+  PendingHROfferReview: 171,//184,//171,
   PendingLabourhireWPPayment: 173,
   PendingFinancePaymentReview: 174,
   PendingLHWorkPermitProcess: 175,
@@ -143,7 +143,7 @@ export const StatusId = {
   PendingLHECRelease: 178,
   PendingHREmploymentContractReview: 179,
 
-  PendingHRReviewOfferanduploadEmployementContract: 183,//169
+  PendingHRReviewOfferanduploadEmployementContract: 169,//183,//169
 
   // PendingHRReviewOfferWorkPermit: 136,
   // WorkPermitHRReview: 137,
@@ -173,7 +173,7 @@ export const StatusId = {
   PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract: 152,
 
   CandidateOnHoldbyHODLevel1: 165,
-  CandidateOnHoldbyHODLevel2: 182,//166,
+  CandidateOnHoldbyHODLevel2: 166,//182,//166,
   CandidateRejectedbyHODLevel1: 167,
   CandidateRejectedbyHODLevel2: 168,
 };
@@ -463,8 +463,8 @@ export const TabName = {
   // ViewDocuments: "View Documents",
   // CandidateDocuments: "Candidate Documents",
   BackgroundVerification: "Background Verification",
-  OfferLetterLabourHire: "OfferLetter - Labour Hire",
-  OfferLetterKSCA: "OfferLetter - KSCA",
+  OfferLetterLabourHire: "Offer Letter - Labour Hire",
+  OfferLetterKSCA: "Offer Letter - KSCA",
   // HOD
   ReviewJobAdvertisement: "Review Job Advertistment",
   ReviewScorecard: "Review Score card",
@@ -492,7 +492,11 @@ export const TabName = {
   InterviewPanel: "Interview Panel",
   ViewScoreDetails: " View ScoreCard Details",
   ReschedulInterview: "Reschedule Interview",
-  OnboardingChecklist: "Oboarding Checklist"
+  OnboardingChecklist: "Oboarding Checklist",
+
+  LabourHire: "Labour Hire",
+  Agent: "Agent",
+  CreateAdminPage: "Create Admin Page",
 };
 
 
@@ -505,6 +509,11 @@ export const ProfileStatus = {
 export const Nationality = {
   Nationals: "Nationals (Congolese)",
   Expatriate: "Expatriate",
+};
+
+export const NationalityCode = {
+  Nationals: "N0",
+  SouthAfrica: "N154",
 };
 
 

@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { labelNames } from "../../utilities/LabelName";
+import { DisplayFolderName, labelNames } from "../../utilities/LabelName";
 import { Dialog } from "primereact/dialog";
 
 interface AssignPositionDialogProps {
@@ -148,7 +148,8 @@ export const ViewCandidateDocument = ({
                                 <Typography
                                   sx={{
                                     fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                                    fontSize: "14px",
+                                    fontSize: "16px",
+                                    frontWeight: "bold",
                                     flexGrow: 1,
                                   }}
                                 >
@@ -158,97 +159,201 @@ export const ViewCandidateDocument = ({
                               <AccordionDetails
                                 style={{
                                   position: "relative",
-                                  bottom: "24px",
+                                  // bottom: "24px",
                                 }}
                               >
-                                {item.data.map((docs: any, index: any) => {
-                                  const fileName = docs.name;
-                                  const truncatedFileName =
-                                    fileName.length > 100
-                                      ? fileName.substring(0, 30) + "..."
-                                      : fileName;
-                                  return (
-                                    <div key={index}>
-                                      <div
-                                        className="ms-Grid-row"
-                                        style={{
-                                          display: "flex",
-                                          marginLeft: "1%",
-                                          marginTop: "2%",
-                                        }}
-                                      >
-                                        <div
-                                          className="ms-Grid-col ms-lg6"
-                                          style={{ marginRight: "1rem" }}
-                                        >
-                                          <Tooltip title={docs.name} arrow>
-                                            <Link
-                                              href="#"
-                                              onClick={(e) =>
-                                                handleFileDownload(
-                                                  e,
-                                                  docs.content
-                                                )
-                                              }
-                                              style={{
-                                                color: "blue",
-                                                fontWeight: "bold",
-                                                display: "inline-block",
-                                                // maxWidth: "100%",
-                                                whiteSpace: "nowrap",
-                                                overflow: "hidden",
-                                                textOverflow: "ellipsis",
+                                {item.Title ===
+                                DisplayFolderName.BackgroundVerification ? (
+                                  <>
+                                    {item.data.map(
+                                      (docs: any, index: number) => {
+                                        const subTitle = docs[0];
+                                        const fileObj = docs[1];
+                                        const fileName = fileObj.name;
+
+                                        const truncatedFileName =
+                                          fileName.length > 100
+                                            ? fileName.substring(0, 30) + "..."
+                                            : fileName;
+
+                                        return (
+                                          <div
+                                            key={index}
+                                            style={{ marginBottom: "15px" }}
+                                          >
+                                            <Typography
+                                              sx={{
+                                                fontWeight: "400",
+                                                fontSize: "14px",
                                               }}
                                             >
-                                              FileName : {truncatedFileName}
-                                            </Link>
-                                          </Tooltip>
-                                        </div>
-                                        <div className="ms-Grid-col ms-lg6">
-                                          <a
-                                            style={{
-                                              marginRight: "10px",
-                                              color: "antiquewhite",
-                                            }}
-                                            onClick={() =>
-                                              view_fn(docs?.content)
-                                            }
-                                          >
-                                            <img
-                                              src={require("../../assets/Viewicon.svg")}
-                                              alt="View Icon"
+                                              {subTitle}
+                                            </Typography>
+
+                                            <div
+                                              className="ms-Grid-row"
                                               style={{
-                                                width: "25px",
-                                                // height: "auto",
-                                                cursor: "pointer",
-                                                marginLeft: "32%",
+                                                display: "flex",
+                                                marginLeft: "1%",
+                                                marginTop: "1%",
                                               }}
-                                            />
-                                          </a>
-                                          <a
-                                            href={docs?.content}
-                                            download
-                                            style={{
-                                              marginRight: "10px",
-                                              color: "antiquewhite",
-                                            }}
-                                          >
-                                            <img
-                                              src={require("../../assets/Download.svg")}
-                                              alt="Download Icon"
+                                            >
+                                              <div
+                                                className="ms-Grid-col ms-lg6"
+                                                style={{ marginRight: "1rem" }}
+                                              >
+                                                <Tooltip title={fileName} arrow>
+                                                  <Link
+                                                    href="#"
+                                                    onClick={(e) =>
+                                                      handleFileDownload(
+                                                        e,
+                                                        fileObj.content
+                                                      )
+                                                    }
+                                                    style={{
+                                                      color: "blue",
+                                                      fontWeight: "bold",
+                                                      display: "inline-block",
+                                                      whiteSpace: "nowrap",
+                                                      overflow: "hidden",
+                                                      textOverflow: "ellipsis",
+                                                    }}
+                                                  >
+                                                    FileName:{" "}
+                                                    {truncatedFileName}
+                                                  </Link>
+                                                </Tooltip>
+                                              </div>
+
+                                              <div className="ms-Grid-col ms-lg6">
+                                                <a
+                                                  onClick={() =>
+                                                    view_fn(fileObj?.content)
+                                                  }
+                                                >
+                                                  <img
+                                                    src={require("../../assets/Viewicon.svg")}
+                                                    alt="View Icon"
+                                                    style={{
+                                                      width: "25px",
+                                                      cursor: "pointer",
+                                                      marginLeft: "32%",
+                                                    }}
+                                                  />
+                                                </a>
+
+                                                <a
+                                                  href={fileObj?.content}
+                                                  download
+                                                >
+                                                  <img
+                                                    src={require("../../assets/Download.svg")}
+                                                    alt="Download Icon"
+                                                    style={{
+                                                      width: "25px",
+                                                      cursor: "pointer",
+                                                      marginLeft: "10px",
+                                                    }}
+                                                  />
+                                                </a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        );
+                                      }
+                                    )}
+                                  </>
+                                ) : (
+                                  <>
+                                    {item.data.map(
+                                      (docs: any, index: number) => {
+                                        const fileName = docs.name;
+                                        const truncatedFileName =
+                                          fileName.length > 100
+                                            ? fileName.substring(0, 30) + "..."
+                                            : fileName;
+
+                                        return (
+                                          <div key={index}>
+                                            <div
+                                              className="ms-Grid-row"
                                               style={{
-                                                width: "25px",
-                                                height: "auto",
-                                                maxWidth: "40px",
-                                                cursor: "pointer",
+                                                display: "flex",
+                                                marginLeft: "1%",
+                                                marginTop: "2%",
                                               }}
-                                            />
-                                          </a>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
+                                            >
+                                              <div
+                                                className="ms-Grid-col ms-lg6"
+                                                style={{ marginRight: "1rem" }}
+                                              >
+                                                <Tooltip
+                                                  title={docs.name}
+                                                  arrow
+                                                >
+                                                  <Link
+                                                    href="#"
+                                                    onClick={(e) =>
+                                                      handleFileDownload(
+                                                        e,
+                                                        docs.content
+                                                      )
+                                                    }
+                                                    style={{
+                                                      color: "blue",
+                                                      fontWeight: "bold",
+                                                      display: "inline-block",
+                                                      whiteSpace: "nowrap",
+                                                      overflow: "hidden",
+                                                      textOverflow: "ellipsis",
+                                                    }}
+                                                  >
+                                                    FileName :{" "}
+                                                    {truncatedFileName}
+                                                  </Link>
+                                                </Tooltip>
+                                              </div>
+
+                                              <div className="ms-Grid-col ms-lg6">
+                                                <a
+                                                  onClick={() =>
+                                                    view_fn(docs?.content)
+                                                  }
+                                                >
+                                                  <img
+                                                    src={require("../../assets/Viewicon.svg")}
+                                                    alt="View Icon"
+                                                    style={{
+                                                      width: "25px",
+                                                      cursor: "pointer",
+                                                      marginLeft: "32%",
+                                                    }}
+                                                  />
+                                                </a>
+
+                                                <a
+                                                  href={docs?.content}
+                                                  download
+                                                >
+                                                  <img
+                                                    src={require("../../assets/Download.svg")}
+                                                    alt="Download Icon"
+                                                    style={{
+                                                      width: "25px",
+                                                      cursor: "pointer",
+                                                      marginLeft: "10px",
+                                                    }}
+                                                  />
+                                                </a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        );
+                                      }
+                                    )}
+                                  </>
+                                )}
                               </AccordionDetails>
                             </Accordion>
                           </Box>

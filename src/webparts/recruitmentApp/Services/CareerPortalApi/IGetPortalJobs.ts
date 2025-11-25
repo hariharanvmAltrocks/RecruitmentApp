@@ -64,6 +64,7 @@ export type CandidateDetails = {
     // EngagementDate: string;
     hasIvanhoeZijinExperience: string;
     OperationRoleRegion: string;
+    NationalityCode: string;
 }
 export type RescheduledCandidate = {
     ID: number
