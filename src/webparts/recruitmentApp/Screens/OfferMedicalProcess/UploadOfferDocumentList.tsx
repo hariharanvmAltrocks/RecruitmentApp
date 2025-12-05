@@ -21,7 +21,11 @@ import {
 import { DataSyncToResiProcess } from "../../Services/InitiateOfferLetter/IOfferLetterService";
 import PostRecrutimentDataTable from "../../components/PostRecrutimentDataTable";
 import { tabStyle } from "../../components/TabMerge";
-import { ButtonAction, EmployeementCategory } from "../../utilities/LabelName";
+import {
+  ButtonAction,
+  DotAfricaStatus,
+  EmployeementCategory,
+} from "../../utilities/LabelName";
 import ToolTipButton from "../../components/Tooltip";
 import { BGVStatus } from "../../Models/ApIInterface";
 type tabcount = {
@@ -51,6 +55,20 @@ const UploadOfferDocumentList = (props: any) => {
 
   const OfferLettertabs = React.useRef("");
 
+  React.useEffect(() => {
+    if (props.stateValue) {
+      OfferLettertabs.current = props.stateValue?.TabNames;
+      setActiveTab(props.stateValue?.tab);
+    } else {
+      if (!OfferLettertabs.current) {
+        if (props.TabDetails[0]) {
+          OfferLettertabs.current = props.TabDetails[0]?.[0]?.TabName ?? "";
+        }
+      }
+      setActiveTab("tab1");
+    }
+  }, []);
+
   const handleHover = async (statusId: number, rowData: any) => {
     try {
       let FilterValue: BGVStatus = {
@@ -60,7 +78,7 @@ const UploadOfferDocumentList = (props: any) => {
           sortBy: "",
           sortOrder: 0,
           pageSize: 5,
-          currentPage: 0,
+          currentPage: 1,
           totalItems: 0,
         },
       };
@@ -71,18 +89,23 @@ const UploadOfferDocumentList = (props: any) => {
             ?.filter((item: any) => item.bgType)
             ?.map((item: any) => ({
               Key: item.bgType,
-              Value: item.status,
+              Value: item.result,
             }));
           setPendingInfo(mappedArray);
           if (mappedArray.length > 0) {
             const allCompleted =
-              mappedArray.every((item: any) => item.Value === "completed") ||
-              false;
+              mappedArray.every(
+                (item: any) => item.Value === DotAfricaStatus.Confirmed
+              ) || false;
             const IDCTYpeStatus = res.data.data[0]?.bgVerification
               ?.filter((item: any) => item.bgTypeCode === "IDC")
-              ?.every((item: any) => item.status === "completed");
+              ?.every((item: any) => item.result === DotAfricaStatus.Confirmed);
 
-            if (allCompleted) {
+            if (
+              allCompleted &&
+              rowData.StatusID === StatusId.PendingDOTAficaVerification &&
+              rowData.ActionID === WorkflowAction.Transfer
+            ) {
               const matchedData = {
                 ID: rowData?.ID,
                 ActionId: IDCTYpeStatus
@@ -181,7 +204,9 @@ const UploadOfferDocumentList = (props: any) => {
               rowData?.RecruitmentDetails?.EmploymentCategory ===
                 EmployeementCategory.KCSAEmployee) ||
             rowData?.StatusID ===
-              StatusId.WorkPermitAcknowledgedContractUploaded ? (
+              StatusId.WorkPermitAcknowledgedContractUploaded ||
+            rowData?.StatusID ===
+              StatusId.PendingHRReviewOfferanduploadEmployementContract ? (
               <>
                 <img
                   src={require("../../assets/UploadIcon.svg")}
@@ -215,8 +240,11 @@ const UploadOfferDocumentList = (props: any) => {
               rowData?.StatusID === StatusId.PendingLHWorkPermitProcess ||
               rowData?.StatusID === StatusId.PendingLHECRelease ||
               rowData?.StatusID === StatusId.PendingDOTAficaVerification ||
+              rowData?.StatusID === StatusId.OnboardingProcessinitiatedforDRC ||
               rowData?.StatusID ===
-                StatusId.PendingwithTAforMedicalScreening ? (
+                StatusId.OnboardingProcessinitiatedforExpat ||
+              rowData?.StatusID === StatusId.PendingwithTAforMedicalScreening ||
+              OfferLettertabs.current === TabName.MySubmission ? (
               <>
                 <img
                   src={require("../../assets/Viewicon.svg")}
@@ -295,6 +323,7 @@ const UploadOfferDocumentList = (props: any) => {
       case TabName.BackgroundVerification:
       case TabName.OfferLetterKSCA:
       case TabName.OfferLetterLabourHire:
+      case TabName.MySubmission:
         props.navigation("/UploadOfferDocumentList/UploadDocument", {
           state: {
             type: rowData?.Location,
@@ -307,6 +336,7 @@ const UploadOfferDocumentList = (props: any) => {
             JobCode: rowData?.RecruitmentDetails?.JobCode?.toString().trim(),
             JobCodeId: rowData?.RecruitmentDetails?.JobCodeId,
             JobTitle: rowData?.RecruitmentDetails?.JobTitleEnglish,
+            rowData,
           },
         });
         break;
@@ -378,7 +408,9 @@ const UploadOfferDocumentList = (props: any) => {
                 StatusId.WorkPermitAcknowledgedContractUploaded ||
               item.StatusID ===
                 StatusId.PendingHREmploymentContractVerification ||
-              item.StatusID === StatusId.PendingHRpreonboardingchecklist
+              item.StatusID === StatusId.PendingHRpreonboardingchecklist ||
+              item.StatusID ===
+                StatusId.PendingHRReviewOfferanduploadEmployementContract
           );
 
           setPendingCount({
@@ -400,34 +432,49 @@ const UploadOfferDocumentList = (props: any) => {
 
   const UpdateListPortal = async (items: DataSyncToResiProcess[]) => {
     let FilterDataCareerportal: DataSyncToResiProcess[] = [];
-    switch (OfferLettertabs.current) {
-      case TabName.BackgroundVerification:
-        FilterDataCareerportal = items.filter(
-          (item) => item.StatusID === StatusId.PendingBGdocuploadedbycandidate
-        );
-        break;
-      case TabName.OfferLetterKSCA:
-        FilterDataCareerportal = items.filter(
-          (item) =>
-            item.StatusID === StatusId.PendingCandidateOfferLetterUpload ||
-            item.StatusID === StatusId.PendingCandidateWorkPermitreleatedDoc ||
-            item.StatusID === StatusId.PendingCandidateEmploymentContractUpload
-        );
-        break;
-      case TabName.OfferLetterLabourHire:
-        FilterDataCareerportal = items.filter(
-          (item) =>
-            item.StatusID === StatusId.PendingLabourHireOfferRelease ||
-            item.StatusID === StatusId.PendingCandidateOfferLetterUpload ||
-            item.StatusID === StatusId.PendingLabourhireWPPayment ||
-            item.StatusID === StatusId.PendingLHWorkPermitProcess ||
-            item.StatusID === StatusId.PendingLHECRelease ||
-            item.StatusID === StatusId.PendingCandidateEmploymentContractUpload
-        );
-        break;
-      default:
-        break;
-    }
+    FilterDataCareerportal = items.filter(
+      (item) =>
+        item.StatusID === StatusId.PendingBGdocuploadedbycandidate ||
+        item.StatusID === StatusId.PendingCandidateOfferLetterUpload ||
+        item.StatusID === StatusId.PendingCandidateWorkPermitreleatedDoc ||
+        item.StatusID === StatusId.PendingCandidateEmploymentContractUpload ||
+        item.StatusID === StatusId.PendingLabourHireOfferRelease ||
+        // item.StatusID === StatusId.PendingCandidateOfferLetterUpload ||
+        item.StatusID === StatusId.PendingLabourhireWPPayment ||
+        item.StatusID === StatusId.PendingLHWorkPermitProcess ||
+        item.StatusID === StatusId.PendingLHECRelease ||
+        item.StatusID === StatusId.PendingFinancePaymentReview
+      // item.StatusID === StatusId.PendingCandidateEmploymentContractUpload
+    );
+
+    // switch (OfferLettertabs.current) {
+    //   case TabName.BackgroundVerification:
+    //     FilterDataCareerportal = items.filter(
+    //       (item) => item.StatusID === StatusId.PendingBGdocuploadedbycandidate
+    //     );
+    //     break;
+    //   case TabName.OfferLetterKSCA:
+    //     FilterDataCareerportal = items.filter(
+    //       (item) =>
+    //         item.StatusID === StatusId.PendingCandidateOfferLetterUpload ||
+    //         item.StatusID === StatusId.PendingCandidateWorkPermitreleatedDoc ||
+    //         item.StatusID === StatusId.PendingCandidateEmploymentContractUpload
+    //     );
+    //     break;
+    //   case TabName.OfferLetterLabourHire:
+    //     FilterDataCareerportal = items.filter(
+    //       (item) =>
+    //         item.StatusID === StatusId.PendingLabourHireOfferRelease ||
+    //         item.StatusID === StatusId.PendingCandidateOfferLetterUpload ||
+    //         item.StatusID === StatusId.PendingLabourhireWPPayment ||
+    //         item.StatusID === StatusId.PendingLHWorkPermitProcess ||
+    //         item.StatusID === StatusId.PendingLHECRelease ||
+    //         item.StatusID === StatusId.PendingCandidateEmploymentContractUpload
+    //     );
+    //     break;
+    //   default:
+    //     break;
+    // }
 
     let FilterData = FilterDataCareerportal.map(
       (item) => item.CandidateDetails?.JobRequestID
@@ -438,50 +485,25 @@ const UploadOfferDocumentList = (props: any) => {
     const getStatusById = (UpdatedStatus?.data?.data ?? []).map(
       (item: { jobRequestId: any; workflowStatusId: any }) => {
         let matchedRes: any = null;
-        switch (OfferLettertabs.current) {
-          case TabName.BackgroundVerification:
-            matchedRes = FilterDataCareerportal.find(
-              (res: any) =>
-                res.CandidateDetails?.JobRequestID ===
-                  String(item.jobRequestId) &&
-                [workflowStatusApi.UploadedtheCandidateBGVDocs].includes(
-                  item.workflowStatusId
-                )
-            );
-            break;
-
-          case TabName.OfferLetterKSCA:
-            matchedRes = FilterDataCareerportal.find(
-              (res: any) =>
-                res.CandidateDetails?.JobRequestID ===
-                  String(item.jobRequestId) &&
-                [
-                  workflowStatusApi.CandidateuploadedtheSignedOfferLetter,
-                  workflowStatusApi.CandidateUploadedcandidatepersonalDocs,
-                  workflowStatusApi.UploadedthesignedEmployementcontractform,
-                ].includes(item.workflowStatusId)
-            );
-            break;
-
-          case TabName.OfferLetterLabourHire:
-            matchedRes = FilterDataCareerportal.find(
-              (res: any) =>
-                res.CandidateDetails?.JobRequestID ===
-                  String(item.jobRequestId) &&
-                [
-                  workflowStatusApi.PendingLabourHireOfferRelease,
-                  workflowStatusApi.CandidateuploadedtheSignedOfferLetter,
-                  workflowStatusApi.PendingLabourhireWPPayment,
-                  workflowStatusApi.PendingLHWorkPermitProcess,
-                  workflowStatusApi.PendingLHECRelease,
-                  workflowStatusApi.UploadedthesignedEmployementcontractform,
-                ].includes(item.workflowStatusId)
-            );
-            break;
-
-          default:
-            break;
-        }
+        matchedRes = FilterDataCareerportal.find(
+          (res: any) =>
+            res.CandidateDetails?.JobRequestID === String(item.jobRequestId) &&
+            [
+              workflowStatusApi.UploadedtheCandidateBGVDocs,
+              workflowStatusApi.CandidateuploadedtheSignedOfferLetter,
+              workflowStatusApi.CandidateUploadedcandidatepersonalDocs,
+              workflowStatusApi.UploadedthesignedEmployementcontractform,
+              workflowStatusApi.CandidateuploadedtheSignedOfferLetter,
+              workflowStatusApi.CandidateUploadedcandidatepersonalDocs,
+              workflowStatusApi.UploadedthesignedEmployementcontractform,
+              workflowStatusApi.PendingLabourHireOfferRelease,
+              workflowStatusApi.CandidateuploadedtheSignedOfferLetter,
+              workflowStatusApi.PendingLabourhireWPPayment,
+              workflowStatusApi.PendingLHWorkPermitProcess,
+              workflowStatusApi.PendingLHECRelease,
+              workflowStatusApi.UploadedthesignedEmployementcontractform,
+            ].includes(item.workflowStatusId)
+        );
 
         const Offerdecline = FilterDataCareerportal.find(
           (res: any) =>
@@ -535,9 +557,7 @@ const UploadOfferDocumentList = (props: any) => {
             Operator: "in",
             FilterValue: [
               StatusId.PendingHRBGVInitiation,
-              StatusId.PendingBGdocuploadedbycandidate,
               StatusId.PendingHRReviewBGCheck,
-              StatusId.PendingDOTAficaVerification,
             ],
           });
           break;
@@ -547,14 +567,12 @@ const UploadOfferDocumentList = (props: any) => {
             Operator: "in",
             FilterValue: [
               StatusId.PendingHROfferInitiate,
-              StatusId.PendingCandidateOfferLetterUpload,
               StatusId.PendingHRReviewOfferWorkPermitInit,
-              StatusId.PendingCandidateWorkPermitreleatedDoc,
               StatusId.PendingHRReviewWorkpermitDocs,
               StatusId.WorkPermitAcknowledgedContractUploaded,
-              StatusId.PendingCandidateEmploymentContractUpload,
               StatusId.PendingHREmploymentContractVerification,
               StatusId.PendingHRpreonboardingchecklist,
+              StatusId.PendingHRReviewOfferanduploadEmployementContract,
             ],
           });
           break;
@@ -571,17 +589,11 @@ const UploadOfferDocumentList = (props: any) => {
               Operator: "in",
               FilterValue: [
                 StatusId.PendingHROfferInitiate,
-                StatusId.PendingLabourHireOfferRelease,
                 StatusId.PendingHROfferReview,
-                StatusId.PendingCandidateOfferLetterUpload,
                 StatusId.PendingHRReviewOfferWorkPermitInit,
-                StatusId.PendingLabourhireWPPayment,
-                StatusId.PendingLHWorkPermitProcess,
                 StatusId.PendingHRCandidateResign,
                 StatusId.PendingHREmploymentContractInit,
-                StatusId.PendingLHECRelease,
                 StatusId.PendingHREmploymentContractReview,
-                StatusId.PendingCandidateEmploymentContractUpload,
                 StatusId.PendingHREmploymentContractVerification,
                 StatusId.PendingHRpreonboardingchecklist,
               ],
@@ -594,11 +606,23 @@ const UploadOfferDocumentList = (props: any) => {
             FilterKey: "StatusId",
             Operator: "in",
             FilterValue: [
-              StatusId.PendingHRpreonboardingchecklist,
+              StatusId.PendingDOTAficaVerification,
+              StatusId.PendingBGdocuploadedbycandidate,
+              StatusId.PendingCandidateOfferLetterUpload,
+              StatusId.PendingCandidateWorkPermitreleatedDoc,
+              StatusId.PendingCandidateEmploymentContractUpload,
+              StatusId.PendingLabourHireOfferRelease,
+              StatusId.PendingLHWorkPermitProcess,
+              // StatusId.PendingCandidateOfferLetterUpload,
+              StatusId.PendingLabourhireWPPayment,
+              StatusId.PendingCandidateEmploymentContractUpload,
+              StatusId.PendingLHECRelease,
               StatusId.PendingwithTAforMedicalScreening,
               StatusId.OnboardingProcessinitiatedforDRC,
               StatusId.OnboardingProcessinitiatedforExpat,
               StatusId.PendingFinancePaymentReview,
+              StatusId.RESIProcessInitiatedforDRC,
+              StatusId.RESIProcessInitiatedforExpatriate,
             ],
           });
           break;
@@ -665,21 +689,6 @@ const UploadOfferDocumentList = (props: any) => {
     void fetchData(activeTab, rows);
     void pendingCount();
   };
-
-  React.useEffect(() => {
-    if (props.stateValue) {
-      OfferLettertabs.current = props.stateValue?.TabNames;
-      setActiveTab(props.stateValue?.tab);
-      OfferLettertabs.current = props.stateValue?.TabNames;
-    } else {
-      if (!OfferLettertabs.current) {
-        if (props.TabDetails[0]) {
-          OfferLettertabs.current = props.TabDetails[0]?.[0]?.TabName ?? "";
-        }
-      }
-      setActiveTab("tab1");
-    }
-  }, []);
 
   const onPageChange = (event: any) => {
     // setFirst(event.first);

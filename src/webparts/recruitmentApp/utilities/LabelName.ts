@@ -19,7 +19,8 @@ export const labelNames = {
         DatePositionRequired: "Date When Position Is Required",
         AdvertValidFrom: "Advert Valid From",
         AdvertValidTo: "Advert Valid To",
-        Location: "Location"
+        Location: "Location",
+        LabourHire: "Labour Hire"
     },
     CommanLabel: {
         Comments: "Comments",
@@ -73,7 +74,13 @@ export const labelNames = {
         ProofOfIdentity: "Proof Of Identity",
         IdentityNumber: "Identity Number",
         JoiningDate: "Joining Date",
-        NoticePeriod: "Notice Period"
+        NoticePeriod: "Notice Period",
+        PreviousEmployee: "Reference Employer Details",
+        EmployeeName: "Reference Name",
+        EmployeeDesi: " Reference Designation",
+        EmployeeEmail: " Reference Email ID",
+        EmployeeCN: "Reference Contact Number",
+        EmployeeCompanyN: "Reference Company Name"
     },
     Questionnaires: {
         Questionnaires: "Questionnaires",
@@ -110,6 +117,7 @@ export const labelNames = {
 
     },
     DocumentViewer: "Document Viewer",
+    CandidateDocument: "Candidate Documents",
     AdvertExten: {
         StartDate: "Start Date",
         EndDate: "End Date",
@@ -119,6 +127,7 @@ export const labelNames = {
     },
     AdvertisementExtension: "Advertisement Extension",
     AdminPanel: {
+        ExternalUserCode: "External User Code",
         FirstName: "First Name",
         LastName: "Last Name",
         CompanyName: "Company Name",
@@ -155,7 +164,8 @@ export const Attachment = {
         WorkpermitDocs: "Upload Workpermit Acknowledged ",
         ProofOfPayment: "Upload Proof Of Document",
         DownloadConsentForm: "Download Consent Form :",
-        DOTAficaCFD: "Please download the consent form, complete the necessary fields, and re-upload it."
+        DOTAficaCFD: "Please download and view the consent form, complete the necessary fields, and re-upload it.",
+        BGVComments: "Dot's Africa Comments"
     },
 }
 
@@ -240,8 +250,10 @@ export const ButtonAction = {
     ScheduleforInterview: "Schedule for Interview",
     Selected: "Selected",
     Rejected: "Rejected",
-    Initiated: "Initiated",
-    SaveAsDraft: "SaveAsDraft"
+    Initiated: "initiate",
+    SaveAsDraft: "Save as draft",
+    New: "New",
+    ResetPassword: "Reset Password"
 }
 
 export const IsCandidateFit = {
@@ -296,10 +308,6 @@ export const EmployeementCategory = {
     LaborhireContractor: "Labour hire/Contractor",
 }
 
-export const UserType = {
-    agent: "Agent",
-    Labourhire: "LabourHire",
-}
 export const quesContentId = {
     WillingRelocate: "FD889B9C1B51F13738596ACFB206E881EAC9",
 }
@@ -323,7 +331,7 @@ export const BGVRequestDocument = {
     IDCS: "ID Check Secondary",
 }
 
-export const SADocs = ["IDV", "PRE", "PST", "UMF", "SAQ", "NL", "TC", "SC", "SETA", "ITC", "IDC", "EHCR", "PSY", "DMC", "IDCS", "ConsentForm"]
+export const SADocs = ["IDV", "PRE", "PST", "UMF", "SAQ", "NL", "TC", "SC", "SETA", "ITC", "IDC", "EHCR", "PSY", "DMC", "IDCS", "GQ", "EXP", "ConsentForm"]
 export const NSADocs = ["GQ", "CZ", "EXP", "ConsentForm"]
 
 
@@ -385,4 +393,18 @@ export const ChecklistStatus = {
     "Accommodation Booked": false,
     "Travel Process": false,
     "Ready for Onboarding": false,
+};
+
+export const ExternalUserType = {
+    Agent: "Agent",
+    LabourHire: "Labour Hire",
+}
+
+export const DotAfricaStatus = {
+    Completed: "completed",
+    Confirmed: "Confirmed"
+}
+
+export const CommanStyle = {
+    frontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`
 }

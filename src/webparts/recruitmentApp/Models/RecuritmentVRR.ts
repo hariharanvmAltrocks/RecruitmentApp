@@ -96,9 +96,9 @@ export type AdvDetails = {
   JobcodeChecked: boolean;
 
   JobTitleofFunctionalManager: AutoCompleteItem;
-  FunctionalManagerName: string;
+  FunctionalManagerName: AutoCompleteItem;
   JobTitleofLineManagerSupervisor: AutoCompleteItem;
-  LineManagerSupervisorName: string;
+  LineManagerSupervisorName: AutoCompleteItem;
 };
 
 export type CandidateData = {

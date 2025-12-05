@@ -8,7 +8,7 @@ import CustomTextArea from "../../components/CustomTextArea";
 import { AutoCompleteItem } from "../../Models/Screens";
 import { CommonServices } from "../../Services/ServiceExport";
 import { formValidation } from "../RecuritmentProcess/ApprovedVRRList";
-import { UserType } from "../../utilities/LabelName";
+import { ExternalUserType } from "../../utilities/LabelName";
 
 export type AssignHRData = {
   AssignRecruitmentHR: AutoCompleteItem;
@@ -72,7 +72,8 @@ export const AssignRecuritmentHR = ({
           ]);
         let ExternalAgent = HRMSExternalAgents.data?.filter(
           (nat) =>
-            nat.Nationality === Nationality && nat.UserType === UserType.agent
+            nat.Nationality === Nationality &&
+            nat.UserType === ExternalUserType.Agent
         );
         const agentsOptions: AutoCompleteItem[] =
           ExternalAgent?.map((item: any) => ({

@@ -966,15 +966,28 @@ export const UploadAdvertisement = ({
               />
             </div>
             <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
-              <CustomInput
+              <CustomAutoComplete
                 label="Functional Manager Name"
+                options={MasterData.EmployeeList.filter(
+                  (item) =>
+                    item?.JobTitle ===
+                    advDetails?.JobTitleofFunctionalManager?.text
+                ).map((item) => ({
+                  key: item.key,
+                  text:
+                    item.FirstName +
+                    " " +
+                    item.MiddleName +
+                    " " +
+                    item.LastName,
+                }))}
                 value={advDetails.FunctionalManagerName}
                 disabled={false}
                 mandatory={true}
-                error={validationErrors.FunctionalManagerName}
                 onChange={(item) =>
-                  handleInputChange(item, "FunctionalManagerName")
+                  handleAutoComplete(item, "FunctionalManagerName")
                 }
+                error={validationErrors.FunctionalManagerName}
               />
             </div>
           </div>
@@ -997,15 +1010,28 @@ export const UploadAdvertisement = ({
               />
             </div>
             <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
-              <CustomInput
+              <CustomAutoComplete
                 label="Line Manager/Supervisor Name"
+                options={MasterData.EmployeeList.filter(
+                  (item) =>
+                    item?.JobTitle ===
+                    advDetails?.JobTitleofLineManagerSupervisor?.text
+                ).map((item) => ({
+                  key: item.key,
+                  text:
+                    item.FirstName +
+                    " " +
+                    item.MiddleName +
+                    " " +
+                    item.LastName,
+                }))}
                 value={advDetails.LineManagerSupervisorName}
                 disabled={false}
                 mandatory={true}
-                error={validationErrors.LineManagerSupervisorName}
                 onChange={(item) =>
-                  handleInputChange(item, "LineManagerSupervisorName")
+                  handleAutoComplete(item, "LineManagerSupervisorName")
                 }
+                error={validationErrors.LineManagerSupervisorName}
               />
             </div>
           </div>

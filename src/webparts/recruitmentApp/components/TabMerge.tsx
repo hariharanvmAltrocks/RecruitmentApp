@@ -151,3 +151,7 @@ export const ApiUrl = () => {
 export const convertToList = (obj: any): checklist[] => {
   return Object.values(obj);
 };
+
+export const toUTC = (dateStr: any) => {
+  return new Date(dateStr).toISOString();
+};

@@ -167,5 +167,10 @@ export const AdminPanelServiceApi = {
         return await AxiosInstance.post(
             `/hrms/UpsertExternalUser`, params
         );
+    },
+    ResetPassword: async function (Email: any) {
+        return await AxiosInstance.get(
+            `/Auth/PasswordResetToken?userName=${Email}`
+        );
     }
 }

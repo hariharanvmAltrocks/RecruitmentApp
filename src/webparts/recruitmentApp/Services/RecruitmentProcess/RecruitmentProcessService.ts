@@ -139,11 +139,11 @@ export default class RecruitmentService implements IRecruitmentService {
         Topcount: count.Topcount,
       });
 
-      let ISBudgetOrUnBudgeted: string = ""
+      // let ISBudgetOrUnBudgeted: string = ""
       if (res.length > 0) {
         GridResult = await Promise.all(
           res.map(async (objresult: any, index: number) => {
-            ISBudgetOrUnBudgeted = objresult.ISBudgetOrUnBudgeted
+            // ISBudgetOrUnBudgeted = objresult.ISBudgetOrUnBudgeted
             const item: DataSyncToRecruitmentResponse = {
               ID: objresult.ID,
               BusinessUnitCode: objresult.BusinessUnitCode ? objresult.BusinessUnitCode.BusineesUnitCode : "",
@@ -260,7 +260,7 @@ export default class RecruitmentService implements IRecruitmentService {
               item.PatersonGradeId = filtered.PatersonGradeId ?? 0;
               item.PatersonGrade = filtered.PatersonGrade?.PatersonGrade || "";
               // item.JobCodeId = filtered.ApprovedHeadCountInLP;
-              item.NumberOfPersonNeeded = ISBudgetOrUnBudgeted === "Budgeted Position" ? filtered?.ActualPosition : filtered?.AdditionalHeadCountRequried;
+              item.NumberOfPersonNeeded = filtered?.ActualVacantPosition;
             }
           }
         }

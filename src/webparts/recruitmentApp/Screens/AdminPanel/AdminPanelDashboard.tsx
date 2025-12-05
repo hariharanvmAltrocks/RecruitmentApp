@@ -7,6 +7,7 @@ import { Card, CardContent } from "@mui/material";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 import ReviewProfileDatatable from "../../components/ReviewProfileDatatable";
 import { AdminPanelServices } from "../../Services/ServiceExport";
+import { ButtonAction, ExternalUserType } from "../../utilities/LabelName";
 
 const AdminPanelDashboard = (props: any) => {
   const [data, setdata] = React.useState<AdminPItem[] | null>([]);
@@ -30,61 +31,99 @@ const AdminPanelDashboard = (props: any) => {
 
   const storedStringRef = React.useRef("");
 
+  function handleRedirectView(
+    rowData: any,
+    tab: string,
+    TabName: string,
+    ButtonAction: string
+  ) {
+    props.navigation("/AdminPanelDashboard/AdminPanelPage", {
+      state: {
+        TabName: TabName,
+        tab: tab,
+        ButtonAction: ButtonAction,
+        rowData: rowData,
+      },
+    });
+  }
+
   const columnConfig = (
     tab: string,
     ButtonActions: number,
     TabNames: string
   ) => [
+    // {
+    //   field: "userId",
+    //   header: "User ID",
+    //   sortable: true,
+    // },
     {
-      field: "JobCode",
-      header: "Job Code",
+      field: "exUserCode",
+      header: "User Code",
       sortable: true,
     },
     {
-      field: "JobTitleEnglish",
-      header: "Job Title",
+      field: "name",
+      header: "Name",
       sortable: true,
     },
     {
-      field: "BusinessUnitCode",
-      header: "BusinessUnit Code",
-      sortable: true,
-    },
-    {
-      field: "Type",
-      header: "Position Request",
-      sortable: true,
-    },
-    {
-      field: "Nationality",
-      header: "Nationality",
+      field: "email",
+      header: "Email",
       sortable: true,
     },
     {
       field: "Action",
       header: "Action",
       sortable: false,
+      style: { width: "8%" },
       body: (rowData: any) => {
         return (
-          <div>
-            <p></p>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px",
+              flexWrap: "wrap",
+            }}
+          >
+            <>
+              <img
+                src={require("../../assets/Editbutton.svg")}
+                alt="Stamp Icon"
+                onClick={() =>
+                  handleRedirectView(rowData, tab, TabNames, ButtonAction.Edit)
+                }
+                style={{
+                  width: "50%",
+                  height: "auto",
+                  maxWidth: "40px",
+                  cursor: "pointer",
+                }}
+              />
+            </>
           </div>
         );
       },
     },
   ];
 
-  const fetchData = async (tab: string, row: number) => {
+  const fetchData = async (tab: string, row: number, CurrentPage?: number) => {
     setIsLoading(true);
     try {
+      let FilterType =
+        tab === "tab1" ? ExternalUserType.LabourHire : ExternalUserType.Agent;
       let FilterValue: AdminPItem = {
-        hrUserId: "",
+        hrUserId: String(props.userDetails[0]?.ID),
+        type: FilterType,
         pagination: {
           filterValue: "",
           sortBy: "",
           sortOrder: 0,
           pageSize: row ? row : rows,
-          currentPage: 0,
+          currentPage: 1,
           totalItems: 0,
         },
       };
@@ -129,7 +168,8 @@ const AdminPanelDashboard = (props: any) => {
       totalPages: event.totalPages,
     });
     setRows(event.rows);
-    void fetchData(activeTab, event.rows);
+    let PageItem = event.rows * event.totalPages;
+    void fetchData(activeTab, PageItem, event.totalPages);
   };
 
   const handleRefresh = (tab: string) => {
@@ -139,8 +179,9 @@ const AdminPanelDashboard = (props: any) => {
   const handleNewBtAction = () => {
     props.navigation("/AdminPanelDashboard/AdminPanelPage", {
       state: {
-        TabName: props.stateValue?.TabNames,
-        tab: props.stateValue?.tab,
+        TabName: activeTab === "tab1" ? TabName.LabourHire : TabName.Agent,
+        tab: activeTab,
+        ButtonAction: ButtonAction.New,
       },
     });
   };

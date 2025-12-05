@@ -27,6 +27,7 @@ interface SearchableDataTableProps {
   handleUploadCV?: () => void;
   UploadCV?: string;
   AdminLoginUser?: boolean;
+  fetchdata?: (filterValue: string) => void;
 }
 
 const ReviewProfileDatatable: React.FC<SearchableDataTableProps> = ({

@@ -139,9 +139,9 @@ const ApprovedVRRView: React.FC = (props: any) => {
     AdvertisementAttachement: [],
     JobcodeChecked: false,
     JobTitleofFunctionalManager: { key: 0, text: "" },
-    FunctionalManagerName: "",
+    FunctionalManagerName: { key: 0, text: "" },
     JobTitleofLineManagerSupervisor: { key: 0, text: "" },
-    LineManagerSupervisorName: "",
+    LineManagerSupervisorName: { key: 0, text: "" },
   });
 
   const fetchData = async () => {

@@ -204,6 +204,8 @@ const ViewCandidateDetails = (props: any) => {
     companyDetails: undefined,
     businesslinkscompany: "",
     NatioCode: "",
+    PreviousEmployerDetails: undefined,
+    LanguageKnown: [],
   });
   const todaydate = new Date();
   // todaydate = addWeekdays(todaydate, 5);
@@ -592,6 +594,7 @@ const ViewCandidateDetails = (props: any) => {
                 companyDetails: response?.companyDetails,
                 businesslinkscompany: response?.businesslinkscompany,
                 NatioCode: response?.NatioCode || "",
+                LanguageKnown: response?.LanguageKnown || [],
               }));
               setInterviewedLevel((prev) => ({
                 ...prev,
@@ -1782,6 +1785,7 @@ const ViewCandidateDetails = (props: any) => {
                                   fontWeight: "bold",
                                   fontFamily: '"Roboto", sans-serif',
                                   fontSize: "17px",
+                                  width: "16%",
                                 }}
                               >
                                 {labelNames.CandidateDetails.Reason}
@@ -2387,14 +2391,15 @@ const ViewCandidateDetails = (props: any) => {
       ResidencyStatus: CandidateProfile.residentStatus,
       MaritalStatus: CandidateProfile.maritalStatus,
       ChildrenDetails: JSON.stringify(CandidateProfile.childrenDetails),
-      ReferenceEmployeeDetails: JSON.stringify(
-        Object.entries(CandidateProfile.employeeReferenceDetails || {})
-      ),
+      ReferenceEmployeeDetails: JSON.stringify([
+        CandidateProfile?.employeeReferenceDetails || {},
+      ]),
       hasIvanhoeZijinExperience: CandidateProfile?.hasIvanhoeZijinExperience,
-      OperationRoleRegion: JSON.stringify(
-        Object.entries(CandidateProfile?.companyDetails || {})
-      ),
+      OperationRoleRegion: JSON.stringify([
+        CandidateProfile?.companyDetails || {},
+      ]),
       NationalityCode: CandidateProfile?.NatioCode || "",
+      LanguageKnown: JSON.stringify(CandidateProfile?.LanguageKnown),
     };
     let selectedinterviewpanal: any[] = [];
 
@@ -2409,16 +2414,12 @@ const ViewCandidateDetails = (props: any) => {
 
       selectedinterviewpanal.push(selectedinterview);
     }
-    await GetPortalJobsService.InsertCandidateDetailsInList(
+    const response = await GetPortalJobsService.InsertCandidateDetailsInList(
       CandidateDetails,
       selectedinterviewpanal
-    )
-      .then((res) => {
-        // console.log(res, "res");
-      })
-      .catch((error) => {
-        console.log(error, "Candidate upload failed");
-      });
+    );
+
+    return response;
   };
 
   async function Submit_fn(COIButtonAction: string) {
@@ -2724,68 +2725,121 @@ const ViewCandidateDetails = (props: any) => {
             }
 
             if (COIResponse.status === ResponeStatus.SUCCESS) {
-              const res = await GetPortalJobsService.UpdateCandidateStatus(
-                CandidateData
-              );
-              if (res.status === 200) {
-                if (
-                  props.stateValue?.initialTab === TabName.AssignInterviewPanel
-                ) {
-                  await UploadCandidateDetails();
-                }
-                if (
-                  props.stateValue?.StatusId ===
-                    workflowStatusApi.LineManagerL2Pending ||
-                  props.stateValue?.StatusId ===
-                    workflowStatusApi.PendingRecruitmentHRscheduleInterview
-                ) {
-                  await GetPortalJobsService.SendEmailNotification(EmailNot);
-                }
-                const SuccessAlert = {
-                  Message: PopupMessage,
-                  Type: HRMSAlertOptions.Success,
-                  visible: true,
-                  ButtonAction: async (userClickedOK: boolean) => {
-                    if (userClickedOK) {
-                      if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-                        props.navigation(
-                          "/ReviewProfileList/ReviewCandidateList",
-                          {
-                            state: {
-                              ID: props.stateValue?.RecruitmentID,
-                              TabNames: props.stateValue?.initialTab,
-                              ButtonAction: ButtonAction.View,
-                              JobCode: props.stateValue?.JobCode,
-                              tab: props.stateValue?.tabs,
-                              tabs: props.stateValue.tab,
-                              JobCodeID: props.stateValue?.JobCodeID,
-                              CandidateTabName: props.stateValue?.TabNamed,
-                            },
-                          }
-                        );
-                      } else {
-                        props.navigation(
-                          "/RecurimentProcess/ReviewCandidateList",
-                          {
-                            state: {
-                              ID: props.stateValue?.RecruitmentID,
-                              TabNames: props.stateValue?.initialTab,
-                              ButtonAction: ButtonAction.View,
-                              JobCode: props.stateValue?.JobCode,
-                              tab: props.stateValue?.tabs,
-                              tabs: props.stateValue.tab,
-                              JobCodeID: props.stateValue?.JobCodeID,
-                            },
-                          }
-                        );
-                      }
+              let HRMSCandidateListResposne: any;
+              if (
+                props.stateValue?.initialTab === TabName.AssignInterviewPanel
+              ) {
+                HRMSCandidateListResposne = await UploadCandidateDetails();
+              }
+              if (HRMSCandidateListResposne.status === ResponeStatus.SUCCESS) {
+                const res = await GetPortalJobsService.UpdateCandidateStatus(
+                  CandidateData
+                );
+                if (res.status === 200) {
+                  if (
+                    props.stateValue?.StatusId ===
+                      workflowStatusApi.LineManagerL2Pending ||
+                    props.stateValue?.StatusId ===
+                      workflowStatusApi.PendingRecruitmentHRscheduleInterview
+                  ) {
+                    await GetPortalJobsService.SendEmailNotification(EmailNot);
+                  }
+                  const SuccessAlert = {
+                    Message: PopupMessage,
+                    Type: HRMSAlertOptions.Success,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                      if (userClickedOK) {
+                        if (
+                          props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+                        ) {
+                          props.navigation(
+                            "/ReviewProfileList/ReviewCandidateList",
+                            {
+                              state: {
+                                ID: props.stateValue?.RecruitmentID,
+                                TabNames: props.stateValue?.initialTab,
+                                ButtonAction: ButtonAction.View,
+                                JobCode: props.stateValue?.JobCode,
+                                tab: props.stateValue?.tabs,
+                                tabs: props.stateValue.tab,
+                                JobCodeID: props.stateValue?.JobCodeID,
+                                CandidateTabName: props.stateValue?.TabNamed,
+                              },
+                            }
+                          );
+                        } else {
+                          props.navigation(
+                            "/RecurimentProcess/ReviewCandidateList",
+                            {
+                              state: {
+                                ID: props.stateValue?.RecruitmentID,
+                                TabNames: props.stateValue?.initialTab,
+                                ButtonAction: ButtonAction.View,
+                                JobCode: props.stateValue?.JobCode,
+                                tab: props.stateValue?.tabs,
+                                tabs: props.stateValue.tab,
+                                JobCodeID: props.stateValue?.JobCodeID,
+                              },
+                            }
+                          );
+                        }
 
-                      setAlertPopupOpen(false);
-                    }
-                  },
-                };
-                setAlertPopupOpen(true);
-                setalertProps(SuccessAlert);
+                        setAlertPopupOpen(false);
+                      }
+                    },
+                  };
+                  setAlertPopupOpen(true);
+                  setalertProps(SuccessAlert);
+                } else {
+                  const APIErrorAlert = {
+                    Message: RecuritmentHRMsg.APIErrorMsg,
+                    Type: HRMSAlertOptions.Error,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                      if (userClickedOK) {
+                        if (
+                          props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+                        ) {
+                          props.navigation(
+                            "/ReviewProfileList/ReviewCandidateList",
+                            {
+                              state: {
+                                ID: props.stateValue?.RecruitmentID,
+                                TabNames: props.stateValue?.initialTab,
+                                ButtonAction: ButtonAction.View,
+                                JobCode: props.stateValue?.JobCode,
+                                tab: props.stateValue?.tabs,
+                                tabs: props.stateValue.tab,
+                                JobCodeID: props.stateValue?.JobCodeID,
+                                CandidateTabName: props.stateValue?.TabNamed,
+                              },
+                            }
+                          );
+                        } else {
+                          props.navigation(
+                            "/RecurimentProcess/ReviewCandidateList",
+                            {
+                              state: {
+                                ID: props.stateValue?.RecruitmentID,
+                                TabNames: props.stateValue?.initialTab,
+                                ButtonAction: ButtonAction.View,
+                                JobCode: props.stateValue?.JobCode,
+                                tab: props.stateValue?.tabs,
+                                tabs: props.stateValue.tab,
+                                JobCodeID: props.stateValue?.JobCodeID,
+                              },
+                            }
+                          );
+                        }
+
+                        setAlertPopupOpen(false);
+                      }
+                    },
+                  };
+                  setAlertPopupOpen(true);
+                  setalertProps(APIErrorAlert);
+                }
               } else {
                 const APIErrorAlert = {
                   Message: RecuritmentHRMsg.APIErrorMsg,

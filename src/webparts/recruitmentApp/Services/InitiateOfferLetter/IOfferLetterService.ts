@@ -59,7 +59,8 @@ export type DataSyncToResiProcess = {
     CandidateDetails: ICandidateDetails,
     StatusID: number,
     Status: string,
-    IsExpat: string
+    IsExpat: string,
+    ActionID: number
 }
 
 export type ICandidateDetails = {
@@ -75,7 +76,7 @@ export type ICandidateDetails = {
     IdentityNumber: string,
     ProofOfIdentity: string,
     Location: string;
-    DocumentFolderPath: string;
+    // DocumentFolderPath: string;
     TrainingSystem: TrainingSystem;
     TASystem: TASystem;
     ITSystem: ITSystem;
@@ -87,6 +88,7 @@ export type ICandidateDetails = {
     AccommodationBooked: string
     TravelProcess: string
     ReadyforOnboarding: string
+    Gender: string
 }
 
 export type GetBGVDocument = {
@@ -138,4 +140,6 @@ export type IOfferLetterService = {
     FetchDotAfricaConsentForm(
         DocumentName: GetDOTAfricaCF,
     ): Promise<ApiResponse<any>>;
+    FetchResiDetails(ID: number, IsExpat: string
+    ): Promise<ApiResponse<{ netPay: string, lhCode: string } | null>>;
 };

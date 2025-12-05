@@ -1,5 +1,4 @@
 
-import { sp } from "@pnp/sp";
 import { count, DocumentFolderName, DocumentLibraray, ListNames, RoleName } from "../../utilities/Config";
 import { getVRRDetails, laborHireService } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
@@ -21,10 +20,10 @@ export default class OfferLetterService implements IOfferLetterService {
             const res = await SPServices.SPReadItems({
                 Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
                 Select:
-                    "*,RecruitmentID/ID,PositionID/PositionID,CandidateID/ID,Status/StatusDescription",
+                    "*,RecruitmentID/ID,PositionID/PositionID,CandidateID/ID,Status/StatusDescription,Action/Action",
                 Filter: Filter,
                 Expand:
-                    "RecruitmentID,PositionID,CandidateID,Status",
+                    "RecruitmentID,PositionID,CandidateID,Status,Action",
                 FilterCondition: Conditions,
                 Orderby: "ID",
                 Orderbydecorasc: false,
@@ -67,7 +66,8 @@ export default class OfferLetterService implements IOfferLetterService {
                             RecruitmentDetails: response.data[0],
                             Status: objresult?.Status ? objresult?.Status?.StatusDescription : "",
                             StatusID: objresult?.StatusId,
-                            IsExpat: objresult?.IsExpat ?? ""
+                            IsExpat: objresult?.IsExpat ?? "",
+                            ActionID: objresult?.ActionId
                         };
                         item.CandidateDetails.Location = response.data[0]?.Location ? response.data[0]?.Location : "";
                         return item;
@@ -108,16 +108,16 @@ export default class OfferLetterService implements IOfferLetterService {
             if (res.length > 0) {
                 const candidateArray = await Promise.all(
                     res.map(async (objresult: any, index: number) => {
-                        const attachmentsLibrary = sp.web.lists.getByTitle(DocumentLibraray.HRMSCandidateDocs);
-                        const rootFolder = await attachmentsLibrary.rootFolder.get();
-                        const folderUrl = `${rootFolder.ServerRelativeUrl}/${objresult?.JobRequestID}`;
-                        let folderLink = "";
-                        try {
-                            const folder = await sp.web.getFolderByServerRelativeUrl(folderUrl).get();
-                            folderLink = folder.ServerRelativeUrl;
-                        } catch (err) {
-                            folderLink = "";
-                        }
+                        // const attachmentsLibrary = sp.web.lists.getByTitle(DocumentLibraray.HRMSCandidateDocs);
+                        // const rootFolder = await attachmentsLibrary.rootFolder.get();
+                        // const folderUrl = `${rootFolder.ServerRelativeUrl}/${objresult?.JobRequestID}`;
+                        // let folderLink = "";
+                        // try {
+                        //     const folder = await sp.web.getFolderByServerRelativeUrl(folderUrl).get();
+                        //     folderLink = folder.ServerRelativeUrl;
+                        // } catch (err) {
+                        //     folderLink = "";
+                        // }
                         let Hardware: AutoCompleteItem[] = (objresult?.Hardware ?? []).map((item: any, index: number) => ({
                             key: index + 1,
                             text: item ?? ""
@@ -158,7 +158,8 @@ export default class OfferLetterService implements IOfferLetterService {
                             IdentityNumber: objresult?.IdentityNumber,
                             ProofOfIdentity: objresult?.ProofOfIdentity,
                             Location: "",
-                            DocumentFolderPath: folderLink,
+                            Gender: objresult?.Gender,
+                            // DocumentFolderPath: folderLink,
                             TrainingSystem: TrainingSystem,
                             TASystem: TASystem,
                             ITSystem: ITSystem,
@@ -575,5 +576,41 @@ export default class OfferLetterService implements IOfferLetterService {
             };
         }
     };
+
+    async FetchResiDetails(ID: number, IsExpat: string
+    ): Promise<ApiResponse<{ netPay: string, lhCode: string } | null>> {
+        try {
+            const res = await SPServices.SPGetItems({
+                Listname: IsExpat ? ListNames.HRMSRESIExpatDetails : ListNames.HRMSRESIDRCDetails,
+                Filter: [
+                    {
+                        FilterKey: "SelectedCandidateHODId",
+                        Operator: "eq",
+                        FilterValue: ID,
+                    },
+                ],
+                Select: "*,SelectedCandidateHODId/ID,LabourhireORContractor/AgentName",
+                Expand: "SelectedCandidateHODId,LabourhireORContractor",
+            });
+            console.log(res, "responseData");
+            let laborHireData = {
+                netPay: res[0]?.ProposedNetUSDAmount,
+                lhCode: res[0]?.LabourhireORContractor?.AgentName,
+            };
+
+            return {
+                data: laborHireData,
+                status: 200,
+                message: "Error while posting advertisement details",
+            };
+        } catch (error) {
+            console.error("Error posting user data:", error);
+            return {
+                data: null,
+                status: 400,
+                message: "Error On Posting Data",
+            };
+        }
+    }
 
 }

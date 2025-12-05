@@ -268,6 +268,17 @@ export default class GetPortalJobs implements IGetPortalJobs {
         }
         const JobCode = op?.jobCode?.split('-')[0];
         let willingRelocated = getOptAnswers.filter((item: any) => item.question?.quesContentId === quesContentId.WillingRelocate)
+        let PreviousEmployer = {
+          name: profileExperiance?.refName,
+          Designation: profileExperiance?.refDesignationDetail?.displayText,
+          Email: profileExperiance?.refEmail,
+          ContractNumber: profileExperiance?.refMobile,
+          CompanyName: profileExperiance?.company
+        }
+        const candidateLanguages: string[] =
+          op?.profile?.profileDetailLanguages?.map(
+            (item: { language: string }) => item.language
+          ) || [];
 
         let GetProfileDahboard: CandidateProfile = {
           CandidateID: op?.jobRequestId,
@@ -337,7 +348,9 @@ export default class GetPortalJobs implements IGetPortalJobs {
           noticePeriod: op?.noticePeriodDays ?? "",
           hasIvanhoeZijinExperience: op?.profile?.profileDetailEmploymentHistory?.hasIvanhoeZijinExperienceId === "3" ? "No" : op?.profile?.profileDetailEmploymentHistory?.hasIvanhoeZijinExperience?.displayText ?? "",
           companyDetails: companyDetails,
-          businesslinkscompany: op?.profile?.businessLinkCompany === "CD03" ? op?.profile?.whichCompany : op?.profile?.businessLinkCompanyDetail?.displayText
+          businesslinkscompany: op?.profile?.businessLinkCompany === "CD03" ? op?.profile?.whichCompany : op?.profile?.businessLinkCompanyDetail?.displayText,
+          PreviousEmployerDetails: PreviousEmployer,
+          LanguageKnown: candidateLanguages
         };
 
         GetProfileByJobCodeData.push(GetProfileDahboard);

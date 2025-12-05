@@ -1,118 +1,108 @@
 import * as React from "react";
-import { Callout, ProgressIndicator, Icon, List, Stack } from "@fluentui/react";
-import "../App.css";
+import {
+  Box,
+  Stepper,
+  Step,
+  StepLabel,
+  Typography,
+  Popover,
+} from "@mui/material";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import "../Screens/OfferMedicalProcess/Checklist.css";
 
-interface IStatusBarProps {
-    statusList: { [key: string]: string } | undefined;
-    ReworkLabel?: boolean;
-    EXCOReverted?: number;
-    EXCORevertLogic?: string;
+interface StatusBarProps {
+  checklist: { [key: string]: boolean }; // your checklist values
 }
 
-const StatusBar: React.FC<IStatusBarProps> = ({ statusList }) => {
-    const [status, setStatus] = React.useState<{ [key: string]: string } | undefined>(statusList);
-    const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+const StatusBar: React.FC<StatusBarProps> = ({ checklist }) => {
+  const steps = Object.keys(checklist);
+  const completedCount = steps.filter((step) => checklist[step]).length;
 
-    React.useEffect(() => {
-        setStatus(statusList);
-    }, [statusList]);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+  const handleClose = () => setAnchorEl(null);
 
-    const getStatusColor = (status: string): string => {
-        switch (status) {
-            case "Completed":
-                return "green";
-            case "Pending":
-                return "gray";
-            case "Resubmitted":
-                return "#007bff";
-            case "Reverted":
-                return "red";
-            case "Progress":
-                return "#FFA500";
-            default:
-                return "red"; // Default color
-        }
-    };
+  const open = Boolean(anchorEl);
 
-    const steps = status ? Object.keys(status) : [];
-    const open = Boolean(anchorEl);
-    const id = open ? "simple-callout" : undefined;
-
-    const completedSteps = status ? Object.values(status).filter((s) => s === "Completed").length : 0;
-    const percentage = (completedSteps / steps.length) * 100;
-
-    return (
-        <div>
-            <div className="StatusBar-container" onClick={handleClick} style={{ cursor: "pointer" }}>
-                <div className="ms-Grid-row" style={{ marginTop: "-12px", textAlign: "center" }}>
-                    Status
-                </div>
-
-                <ProgressIndicator
-                    percentComplete={percentage / 100}
-                    label={`${completedSteps}/${steps.length}`}
-                    description="Progress"
-                    styles={{
-                        root: { width: "100%" },
-                        progressTrack: { backgroundColor: "#d6d6d6" },
-                        progressBar: { backgroundColor: "green" },
-                    }}
-                />
-            </div>
-
-            <Callout
-                id={id}
-                target={anchorEl}
-                onDismiss={handleClose}
-                directionalHint={2}
-                setInitialFocus
-            >
-                <div style={{ padding: "20px" }}>
-                    <List>
-                        {steps.map((label, index) => {
-                            const stepStatus = status ? status[label] : "";
-                            const isCompleted = stepStatus === "Completed";
-                            const isReverted = stepStatus === "Reverted";
-                            const isPending = stepStatus === "Pending";
-                            const isProgress = stepStatus === "Progress";
-                            // const isResubmitted = stepStatus === "Resubmitted"; // This can be added back if necessary
-
-                            return (
-                                <Stack key={index} horizontalAlign="start" style={{ marginBottom: "10px" }}>
-                                    <div style={{ display: "flex", alignItems: "center" }}>
-                                        <Icon
-                                            iconName={isCompleted ? "CheckMark" : isReverted ? "Cancel" : "Info"}
-                                            style={{
-                                                color: isCompleted
-                                                    ? "green"
-                                                    : isReverted
-                                                        ? "red"
-                                                        : isPending
-                                                            ? "gray"
-                                                            : isProgress
-                                                                ? "#FFA500"
-                                                                : "#007bff",
-                                                marginRight: "8px",
-                                            }}
-                                        />
-                                        <div style={{ color: getStatusColor(stepStatus) }}>{label}</div>
-                                    </div>
-                                </Stack>
-                            );
-                        })}
-                    </List>
-                </div>
-            </Callout>
+  return (
+    <div>
+      <Box
+        className="StatusBar-container"
+        onClick={handleOpen}
+        sx={{
+          textAlign: "center",
+          p: 2,
+          cursor: "pointer",
+          borderRadius: 3,
+          boxShadow: 2,
+          width: 53,
+        }}
+      >
+        <Typography
+          variant="body1"
+          sx={{ mb: 1, marginTop: "-6%", fontSize: "13px" }}
+        >
+          Status
+        </Typography>
+        <div className="circularpercentage-container">
+          <CircularProgressbar
+            value={(completedCount / steps.length) * 100}
+            text={`${completedCount}/${steps.length}`}
+            styles={buildStyles({
+              textColor: "green",
+              pathColor: "green",
+              trailColor: "#e0e0e0",
+            })}
+            className="circularpercentage"
+          />
         </div>
-    );
+      </Box>
+
+      {/* Popover List */}
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        transformOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Box sx={{ p: 2, width: 250 }}>
+          <Stepper orientation="vertical">
+            {steps.map((label, index) => {
+              const isDone = checklist[label];
+
+              return (
+                <Step key={index} active>
+                  <StepLabel
+                    icon={
+                      isDone ? (
+                        <CheckCircleIcon sx={{ color: "green" }} />
+                      ) : (
+                        <RadioButtonUncheckedIcon sx={{ color: "gray" }} />
+                      )
+                    }
+                  >
+                    <Typography
+                      variant="body1"
+                      sx={{ color: isDone ? "green" : "gray" }}
+                    >
+                      {label}
+                    </Typography>
+                  </StepLabel>
+                </Step>
+              );
+            })}
+          </Stepper>
+        </Box>
+      </Popover>
+    </div>
+  );
 };
 
 export default StatusBar;

@@ -604,33 +604,6 @@ Start */
   }
 }
 
-@media (max-width: 600px) {
-  .StatusBar-container {
-    max-width: 87px;
-    margin-left: 90%;
-    cursor: pointer;
-    margin-top: 20px;
-    height: 80px;
-    background-color: rgb(239, 51, 64);
-    padding: 14px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px 3px #eeb9b9;
-  }
-}
-
-@media (min-width: 601px) {
-  .StatusBar-container {
-    max-width: 87px;
-    margin-left: 88%;
-    cursor: pointer;
-    margin-top: 20px;
-    height: 80px;
-    background-color: rgb(239, 51, 64);
-    padding: 14px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px 3px #eeb9b9;
-  }
-}
 
 /* finish */
 

@@ -21,11 +21,16 @@ import {
   RoleName,
   StatusId,
   TabName,
+  tabType,
   WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
 import { alertPropsData, OnboardingChecklisttype } from "../../Models/Screens";
-import { UploadDocument, WorkflowJson } from "../../Models/ApIInterface";
+import {
+  BGVStatus,
+  UploadDocument,
+  WorkflowJson,
+} from "../../Models/ApIInterface";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomLabel from "../../components/CustomLabel";
 import AttachmentButton from "../../components/AttachmentButton";
@@ -55,6 +60,7 @@ import {
   CheckboxContent,
   ChecklistStatus,
   DisplayFolderName,
+  DotAfricaStatus,
   EmployeementCategory,
   labelNames,
   NSADocs,
@@ -62,23 +68,18 @@ import {
   RadioBtnLabel,
   SADocs,
 } from "../../utilities/LabelName";
-import AlertDialogbox from "../../components/CustomAlert/AlertDialogbox";
 import CustomTextArea from "../../components/CustomTextArea";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomSignature from "../../components/CustomSignature";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { convertToList } from "../../components/TabMerge";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "./Checklist.css";
-import StatusBar from "./ChecklistStatus";
 import CustomViewDocument from "../../components/CustomViewDocument";
 import ToolTipButton from "../../components/Tooltip";
+import TabsComponent from "../../components/TabsComponent ";
+import CustomDialogbox from "../../components/CustomDialogbox";
+import Labelheader from "../../components/LabelHeader";
+import BGVComments, { BGVComment } from "../../components/BGVComments";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -191,6 +192,13 @@ const UploadCandidateDocument = (props: any) => {
     PaymentDocs: [],
     DotAfricaCF: [],
     NationalityCode: "",
+    EmployeeName: "",
+    EmployeeDesignation: "",
+    EmployeeEmail: "",
+    EmployeeCN: "",
+    EmployeeCompany: "",
+    Gender: "",
+    LabourHire: "",
   });
   // const [checkdata,setCheckdata] = useState<>
   // const [viewDocument, setViewDocument] = React.useState<viewDocument>({
@@ -231,11 +239,57 @@ const UploadCandidateDocument = (props: any) => {
   });
   const [btnEnable, setBtnEnable] = React.useState<boolean>(false);
   const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
   const [checklistStatus, setChecklistStatus] = useState<any>(ChecklistStatus);
+  const [BGVerifiedStatus, setBGVerifiedStatus] = useState<any>({});
+  const [OBCheckListTab, setOBCheckListTab] = React.useState<string>("tab1");
+  const [MainComponent, setMainComponent] = useState<boolean>(true);
+  const [DotAfricaComments, setDotAfricaComments] = useState<
+    BGVComment[] | undefined
+  >([]);
 
-  const handleExpand = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? null : index);
+  const fetchBGVStatus = async () => {
+    setIsLoading(true);
+    try {
+      let FilterValue: BGVStatus = {
+        hrUserId: String(props.userDetails[0]?.ID),
+        pagination: {
+          filterValue: props.stateValue.rowData?.CandidateDetails?.JobRequestID,
+          sortBy: "",
+          sortOrder: 0,
+          pageSize: 5,
+          currentPage: 1,
+          totalItems: 0,
+        },
+      };
+      await laborHireService
+        .CheckBGVerification(FilterValue)
+        .then(async (res) => {
+          const mappedObj: { [key: string]: boolean } =
+            res.data.data[0]?.bgVerification
+              ?.filter((item: any) => item.bgType)
+              ?.reduce((acc: { [key: string]: boolean }, item: any) => {
+                acc[item.bgType] =
+                  item.result === DotAfricaStatus.Confirmed ? true : false;
+                return acc;
+              }, {});
+          let BGVRemarks = res.data.data[0]?.bgVerification
+            .filter((item: any) => item.result != DotAfricaStatus.Confirmed)
+            .map((item: any) => ({
+              BGVType: item.bgType,
+              Remarks: item.remarks,
+            }));
+
+          setDotAfricaComments(BGVRemarks);
+          setBGVerifiedStatus(mappedObj);
+        })
+        .catch((error) => {
+          console.log("Candidate details doesn't fetch the data", error);
+        });
+    } catch (error) {
+      console.log("GetVacancyDetails doesn't fetch the data", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchData = async () => {
@@ -484,7 +538,10 @@ const UploadCandidateDocument = (props: any) => {
       };
       const getDotAfricaCF =
         await OfferLetterServices.FetchDotAfricaConsentForm(DOtObj);
-
+      const ResiData = await OfferLetterServices.FetchResiDetails(
+        response.data[0].ID,
+        response.data[0].IsExpat
+      );
       setData((prev) => ({
         ...prev,
         CandidateID: item?.CandidateDetails.CandidateID,
@@ -507,10 +564,24 @@ const UploadCandidateDocument = (props: any) => {
         Email: item?.CandidateDetails?.Email,
         IdentityNumber: item?.CandidateDetails?.IdentityNumber,
         ProofOfIdentity: item?.CandidateDetails?.ProofOfIdentity,
+        Gender: item?.CandidateDetails?.Gender,
         // PersonalDocs: PersonalDocs.data,
         // MedicalDocs: MedicalDocs.data,
         JoiningDate: CandidateDetails?.data?.[0]?.joiningDate ?? "",
         NoticePeriod: CandidateDetails?.data?.[0]?.noticePeriod ?? "",
+        EmployeeName:
+          CandidateDetails?.data?.[0]?.PreviousEmployerDetails?.name ?? "",
+        EmployeeDesignation:
+          CandidateDetails?.data?.[0]?.PreviousEmployerDetails?.Designation ??
+          "",
+        EmployeeEmail:
+          CandidateDetails?.data?.[0]?.PreviousEmployerDetails?.Email ?? "",
+        EmployeeCN:
+          CandidateDetails?.data?.[0]?.PreviousEmployerDetails
+            ?.ContractNumber ?? "",
+        EmployeeCompany:
+          CandidateDetails?.data?.[0]?.PreviousEmployerDetails?.CompanyName ??
+          "",
         BGVRadioBtnlabel:
           props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation &&
           item.RecruitmentDetails?.Nationality === Nationality.Nationals
@@ -524,6 +595,7 @@ const UploadCandidateDocument = (props: any) => {
         NationalityCode: CandidateDetails?.data?.[0]?.NatioCode
           ? CandidateDetails?.data?.[0]?.NatioCode
           : "",
+        LabourHire: ResiData.data?.lhCode ?? "",
       }));
 
       setchecklistData((prev) => ({
@@ -643,6 +715,7 @@ const UploadCandidateDocument = (props: any) => {
               : "Yes",
         }));
       }
+      void fetchBGVStatus();
     } catch (error) {
       console.error("Failed to fetch Vacancy Details:", error);
     } finally {
@@ -969,23 +1042,171 @@ const UploadCandidateDocument = (props: any) => {
 
   const categoryList = [
     {
-      label: checklistData?.DocumentComplianceChecks.label,
+      label: checklistData.DocumentComplianceChecks.label,
       section: "DocumentComplianceChecks",
       items: convertToList(
-        checklistData?.DocumentComplianceChecks.DocumentComplianceChecks
+        checklistData.DocumentComplianceChecks.DocumentComplianceChecks
       ),
     },
     {
-      label: checklistData?.LogisticsEmployeeSupport.label,
+      label: checklistData.LogisticsEmployeeSupport.label,
       section: "LogisticsEmployeeSupport",
       items: convertToList(
-        checklistData?.LogisticsEmployeeSupport.LogisticsEmployeeSupport
+        checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport
       ),
     },
     {
-      label: checklistData?.FinalStatus.label,
+      label: checklistData.FinalStatus.label,
       section: "FinalStatus",
-      items: convertToList(checklistData?.FinalStatus.FinalStatus),
+      items: convertToList(checklistData.FinalStatus.FinalStatus),
+    },
+  ];
+
+  const handleTabChange = (newTab: string) => {
+    setOBCheckListTab(newTab);
+  };
+
+  const OnboardingChecklist = [
+    {
+      label: TabName.OnboardingChecklist,
+      value: "tab1",
+      content: (
+        <>
+          <div className="ms-Grid-row" style={{ marginTop: "3%" }}>
+            {categoryList.map((cat) =>
+              cat.items.map((item) => (
+                <Box
+                  key={item.id}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    background: "#F7F9FB",
+                    padding: "14px 18px",
+                    borderRadius: "12px",
+                    marginBottom: "12px",
+                    boxShadow: "0px 2px 5px rgba(0,0,0,0.08)",
+                  }}
+                >
+                  {/* LEFT: Avatar + Name + ID */}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Box
+                      sx={{
+                        width: "45px",
+                        height: "45px",
+                        borderRadius: "50%",
+                        background: "#16355B",
+                        color: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: "bold",
+                        fontSize: "16px",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {item.label
+                        .split(" ")
+                        .map((x) => x[0])
+                        .join("")}
+                    </Box>
+
+                    <Box>
+                      <Typography fontWeight="600" fontSize={15}>
+                        {item.label}
+                      </Typography>
+                      <Typography fontSize={13} color="gray">
+                        ID: {item.id}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {/* RIGHT: Yes / No */}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <label
+                      style={{ display: "flex", alignItems: "center", gap: 4 }}
+                    >
+                      <input
+                        type="radio"
+                        checked={item.value === true}
+                        onChange={() =>
+                          handleToggle(cat.section, item.label, true, item.id)
+                        }
+                      />
+                      Yes
+                    </label>
+
+                    <label
+                      style={{ display: "flex", alignItems: "center", gap: 4 }}
+                    >
+                      <input
+                        type="radio"
+                        checked={item.value === false}
+                        onChange={() =>
+                          handleToggle(cat.section, item.label, false, item.id)
+                        }
+                      />
+                      No
+                    </label>
+                  </Box>
+                </Box>
+              ))
+            )}
+          </div>
+
+          <div className="ms-Grid-row">
+            <div
+              className="ms-Grid-col ms-lg12"
+              style={{ marginBottom: "7px" }}
+            >
+              <CustomTextArea
+                label={labelNames.CommanLabel.Comments}
+                value={data.comments}
+                error={validationErrors.comments}
+                onChange={(value) =>
+                  handleInputChangeTextArea("comments", undefined, value)
+                }
+                mandatory={true}
+              />
+            </div>
+          </div>
+          <div
+            className="ms-Grid-row"
+            style={{
+              padding: "3px",
+              marginTop: "20px",
+              marginBottom: "-33px",
+            }}
+          >
+            <div className="ms-Grid-col ms-lg12">
+              <SignatureCheckbox
+                label={CheckboxContent.PostRecrutimentCheckboxContent}
+                checked={data.Checkbox}
+                error={validationErrors.checkbox}
+                onChange={(value: boolean) => handleCheckboxchanges(value)}
+              />
+            </div>
+          </div>
+          <div className="ms-Grid-row">
+            <div className="ms-Grid-col ms-lg12">
+              <CustomSignature
+                Name={
+                  (props.userDetails[0].FirstName ?? "") +
+                  " " +
+                  (props.userDetails[0]?.MiddleName ?? "") +
+                  " " +
+                  (props.userDetails[0]?.LastName ?? "")
+                }
+                JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
+                JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                Department={props.userDetails[0].DepartmentName}
+                Date={data.SignDate}
+                TermsAndCondition={data.Checkbox}
+              />
+            </div>
+          </div>
+        </>
+      ),
     },
   ];
 
@@ -1006,25 +1227,6 @@ const UploadCandidateDocument = (props: any) => {
           >
             <CardContent>
               <div>
-                {/* <div className="ms-Grid-row">
-                  <div className="ms-Grid-col ms-lg6">
-                    <LabelHeaderComponents
-                      value={`Job Title - ${props.stateValue.JobTitle} (${props.stateValue.JobCode})`}
-                    >
-                      {" "}
-                    </LabelHeaderComponents>
-                  </div>
-                  <div
-                    className="ms-Grid-col ms-lg6"
-                    style={{ display: "flex", justifyContent: "end" }}
-                  >
-                    <LabelHeaderComponents
-                      value={`Status - ${props.stateValue.Status}`}
-                    >
-                      {" "}
-                    </LabelHeaderComponents>
-                  </div>
-                </div> */}
                 <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
@@ -1042,18 +1244,61 @@ const UploadCandidateDocument = (props: any) => {
                       mandatory={false}
                     />
                   </div>
-                  <div className="ms-Grid-col ms-lg3">
+                  {/* <div className="ms-Grid-col ms-lg3">
                     <CustomInput
                       label={labelNames.CandidateDetails.ApplicantSurname}
                       value={data.ApplicantSurName}
                       disabled={true}
                       mandatory={false}
                     />
-                  </div>
+                  </div> */}
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
                       label={labelNames.CandidateDetails.Nationality}
                       value={data.Nationalty}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label={labelNames.CandidateDetails.Gender}
+                      value={data.Gender}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                </div>
+
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label={labelNames.CandidateDetails.ProofOfIdentity}
+                      value={data?.ProofOfIdentity}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label={labelNames.CandidateDetails.IdentityNumber}
+                      value={data?.IdentityNumber}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label={labelNames.CandidateDetails.Email}
+                      value={data?.Email}
+                      disabled={true}
+                      mandatory={false}
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomInput
+                      label={labelNames.PositionDetails.Location}
+                      value={data?.Location}
                       disabled={true}
                       mandatory={false}
                     />
@@ -1129,46 +1374,108 @@ const UploadCandidateDocument = (props: any) => {
                     />
                   </div>
                 </div>
-
-                <div className="ms-Grid-row">
-                  <div className="ms-Grid-col ms-lg3">
-                    <CustomInput
-                      label={labelNames.PositionDetails.Location}
-                      value={data?.Location}
-                      disabled={true}
-                      mandatory={false}
-                    />
+                {data.EmploymentCategory ===
+                  EmployeementCategory.LaborhireContractor && (
+                  <div className="ms-Grid-row">
+                    <div className="ms-Grid-col ms-lg3">
+                      <CustomInput
+                        label={labelNames.PositionDetails.LabourHire}
+                        value={data?.LabourHire}
+                        disabled={true}
+                        mandatory={false}
+                      />
+                    </div>
                   </div>
-                  <div className="ms-Grid-col ms-lg3">
-                    <CustomInput
-                      label={labelNames.CandidateDetails.Email}
-                      value={data?.Email}
-                      disabled={true}
-                      mandatory={false}
-                    />
-                  </div>
-                  <div className="ms-Grid-col ms-lg3">
-                    <CustomInput
-                      label={labelNames.CandidateDetails.ProofOfIdentity}
-                      value={data?.ProofOfIdentity}
-                      disabled={true}
-                      mandatory={false}
-                    />
-                  </div>
-                  <div className="ms-Grid-col ms-lg3">
-                    <CustomInput
-                      label={labelNames.CandidateDetails.IdentityNumber}
-                      value={data?.IdentityNumber}
-                      disabled={true}
-                      mandatory={false}
-                    />
-                  </div>
-                </div>
+                )}
 
                 {/* {props.stateValue?.StatusId ===
-                  StatusId.PendingwithRecruitmentHRtoUploadtheOfferLetter ||
+                  StatusId.PendingHRReviewBGCheck &&
+                (data.NationalityCode === NationalityCode.Nationals ||
+                  data.NationalityCode === NationalityCode.SouthAfrica) ? (
+                  <>
+                   
+                  </>
+                ) : (
+                  <></>
+                )} */}
+
+                <Card
+                  variant="outlined"
+                  sx={{
+                    boxShadow: "0px 7px 4px 3px #d3d3d3",
+                    borderRadius: "10px",
+                    marginTop: "2%",
+                  }}
+                >
+                  <CardContent>
+                    <div className="ms-Grid-row">
+                      <Labelheader
+                        value={labelNames.CandidateDetails.PreviousEmployee}
+                      />
+                    </div>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.CandidateDetails.EmployeeName}
+                          value={data?.EmployeeName}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.CandidateDetails.EmployeeDesi}
+                          value={data?.EmployeeDesignation}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.CandidateDetails.EmployeeEmail}
+                          value={data?.EmployeeEmail}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.CandidateDetails.EmployeeCN}
+                          value={data?.EmployeeCN}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.CandidateDetails.EmployeeCompanyN}
+                          value={data?.EmployeeCompany}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {props.stateValue?.StatusId ===
+                  StatusId.PendingHRBGVInitiation ||
                 props.stateValue?.StatusId ===
-                  StatusId.PendingwithTAforMedicalScreening ? (
+                  StatusId.PendingBGdocuploadedbycandidate ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingHRReviewBGCheck ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingDOTAficaVerification ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingwithTAforMedicalScreening ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingHROfferInitiate ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingCandidateOfferLetterUpload ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingLabourHireOfferRelease ||
+                props.stateValue?.StatusId === StatusId.PendingHROfferReview ? (
                   <></>
                 ) : (
                   <>
@@ -1191,7 +1498,7 @@ const UploadCandidateDocument = (props: any) => {
                       </div>
                     </div>
                   </>
-                )} */}
+                )}
 
                 {props.stateValue?.ButtonAction === ButtonAction.Initiated ||
                 props.stateValue?.StatusId ===
@@ -1199,39 +1506,78 @@ const UploadCandidateDocument = (props: any) => {
                   <></>
                 ) : (
                   <>
-                    <div className="ms-Grid-row" style={{ marginLeft: "2px" }}>
-                      <div className="custom-document-column">
-                        <CustomLabel
-                          value={Attachment.PositionDocument.CandidateDocuments}
-                        />
-                        <div className="document-wrapper">
-                          <ReuseButton
-                            Style={{
-                              minWidth: "117px",
-                              fontSize: "13px",
-                              paddingBottom: "24px",
-                              display: "flex",
-                              flexDirection: "column",
-                              height: "41px",
-                              paddingTop: "23px",
-                              backgroundColor:
-                                ColorCode.ButtonColorCode.ButtonColor,
-                              color: "white",
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                            label="VIEW"
-                            imgSrc={require("../../assets/viewSubmision-white.svg")}
-                            imgSrcHover={require("../../assets/viewSubmision-white.svg")}
-                            imgAlt="View"
-                            imgAltHover="Hovered View"
-                            onClick={() => {
-                              setDocumentPopup(true);
-                            }}
-                            spacing={4}
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <div className="custom-document-column">
+                          <CustomLabel
+                            value={
+                              Attachment.PositionDocument.CandidateDocuments
+                            }
                           />
+                          <div className="document-wrapper">
+                            <ReuseButton
+                              Style={{
+                                minWidth: "117px",
+                                fontSize: "13px",
+                                paddingBottom: "24px",
+                                display: "flex",
+                                flexDirection: "column",
+                                height: "41px",
+                                paddingTop: "23px",
+                                backgroundColor:
+                                  ColorCode.ButtonColorCode.ButtonColor,
+                                color: "white",
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}
+                              label="VIEW"
+                              imgSrc={require("../../assets/viewSubmision-white.svg")}
+                              imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                              imgAlt="View"
+                              imgAltHover="Hovered View"
+                              onClick={() => {
+                                setDocumentPopup(true);
+                              }}
+                              spacing={4}
+                            />
+                          </div>
                         </div>
                       </div>
+                      {props.stateValue?.StatusId ===
+                        StatusId.PendingDOTAficaVerification &&
+                        DotAfricaComments &&
+                        DotAfricaComments.length > 0 && (
+                          <>
+                            <div className="ms-Grid-col ms-lg4">
+                              <CustomLabel
+                                value={Attachment.PositionDocument.BGVComments}
+                              />
+                              <ReuseButton
+                                Style={{
+                                  minWidth: "117px",
+                                  fontSize: "13px",
+                                  paddingBottom: "24px",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  height: "41px",
+                                  paddingTop: "23px",
+                                  backgroundColor:
+                                    ColorCode.ButtonColorCode.ButtonColor,
+                                  color: "white",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                                label="VIEW"
+                                imgSrc={require("../../assets/viewSubmision-white.svg")}
+                                imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                                imgAlt="View"
+                                imgAltHover="Hovered View"
+                                onClick={() => setMainComponent(false)}
+                                spacing={4}
+                              />
+                            </div>
+                          </>
+                        )}
                     </div>
                   </>
                 )}
@@ -1420,6 +1766,56 @@ const UploadCandidateDocument = (props: any) => {
                   <></>
                 )}
 
+                {props.stateValue.StatusId ===
+                  StatusId.PendingHRReviewOfferanduploadEmployementContract && (
+                  <>
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomLabel
+                        value={Attachment.PositionDocument.EmployementDoc}
+                        mandatory={true}
+                      />
+                      <AttachmentButton
+                        label="Upload"
+                        iconName="CloudUpload"
+                        iconNameHover="CloudUpload"
+                        allowMultiple={false}
+                        AttachState={(newAttachment: any) => {
+                          let attachment: IDocFiles[] = newAttachment.map(
+                            (item: any) => {
+                              return {
+                                name: item.name,
+                                content: item.file,
+                                type: "New",
+                                url: item.Url,
+                              };
+                            }
+                          );
+                          // const attachments = [
+                          //   ...(data.EmployementDoc || []),
+                          //   ...attachment,
+                          // ];
+                          handleDocument("EmployementDoc", attachment);
+                        }}
+                        mandatory={true}
+                        error={validationErrors.EmployementDoc}
+                        Style={{
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          color: "white",
+                        }}
+                        fileformat=".pdf"
+                      />
+                      <CustomViewAttachment
+                        Attachment={data.EmployementDoc ?? []}
+                        StateValue={"EmployementDoc"}
+                        handleDelete={(index, fileState) =>
+                          handleDelete(index, fileState)
+                        }
+                      />
+                    </div>
+                  </>
+                )}
+
                 {props.stateValue?.StatusId ===
                   StatusId.WorkPermitAcknowledgedContractUploaded && (
                   <div className="ms-Grid-row">
@@ -1592,7 +1988,7 @@ const UploadCandidateDocument = (props: any) => {
                   <></>
                 )}
 
-                {(props.stateValue?.StatusId ===
+                {/* {(props.stateValue?.StatusId ===
                   StatusId.PendingHRBGVInitiation ||
                   (props.stateValue?.StatusId ===
                     StatusId.PendingHROfferInitiate &&
@@ -1612,7 +2008,7 @@ const UploadCandidateDocument = (props: any) => {
                       />
                     </div>
                   </div>
-                )}
+                )} */}
 
                 {props.stateValue?.StatusId ===
                   StatusId.PendingHRReviewBGCheck ||
@@ -1731,7 +2127,15 @@ const UploadCandidateDocument = (props: any) => {
                 <Card sx={{ marginTop: "2%" }}>
                   <CardContent>
                     <div>
-                      <div
+                      <TabsComponent
+                        tabs={OnboardingChecklist}
+                        initialTab={OBCheckListTab}
+                        tabtype={tabType.Dashboard}
+                        onTabChange={handleTabChange}
+                        tabClassName="TabStatus"
+                        Statuslist={checklistStatus}
+                      />
+                      {/* <div
                         className="ms-Grid-row"
                         style={{
                           display: "flex",
@@ -1759,169 +2163,7 @@ const UploadCandidateDocument = (props: any) => {
                         >
                           <StatusBar checklist={checklistStatus} />
                         </div>
-                      </div>
-
-                      <div className="ms-Grid-row" style={{ marginTop: "1%" }}>
-                        {categoryList.map((cat, index) => (
-                          <div>
-                            <Accordion
-                              key={index}
-                              expanded={expandedIndex === index}
-                              onChange={() => handleExpand(index)}
-                              sx={{ marginBottom: 2 }}
-                            >
-                              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography fontSize={16} fontWeight="bold">
-                                  {cat.label}
-                                </Typography>
-                              </AccordionSummary>
-
-                              <AccordionDetails>
-                                {cat.items.map((item) => (
-                                  <Box
-                                    key={item.id}
-                                    sx={{
-                                      boxShadow: "0px 3px 6px rgba(0,0,0,0.1)",
-                                      borderRadius: "8px",
-                                      padding: "12px",
-                                      marginBottom: "12px",
-                                    }}
-                                  >
-                                    <div className="ms-Grid-row">
-                                      <div className="ms-Grid-col ms-lg6">
-                                        <Typography>{item.label}</Typography>
-                                      </div>
-
-                                      <div
-                                        className="ms-Grid-col ms-lg6"
-                                        style={{ display: "flex", gap: "12px" }}
-                                      >
-                                        {/* YES BUTTON */}
-                                        <ReuseButton
-                                          label="Yes"
-                                          Style={{
-                                            height: "32px",
-                                            width: "60px",
-                                            backgroundColor:
-                                              item.value === true
-                                                ? "green"
-                                                : "#eaeaea",
-                                            color:
-                                              item.value === true
-                                                ? "white"
-                                                : "black",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "5px",
-                                          }}
-                                          onClick={() =>
-                                            handleToggle(
-                                              cat.section,
-                                              item.label,
-                                              true,
-                                              item.id
-                                            )
-                                          }
-                                        />
-
-                                        {/* NO BUTTON */}
-                                        <ReuseButton
-                                          label="No"
-                                          Style={{
-                                            height: "32px",
-                                            width: "60px",
-                                            backgroundColor:
-                                              item.value === false
-                                                ? "red"
-                                                : "#eaeaea",
-                                            color:
-                                              item.value === false
-                                                ? "white"
-                                                : "black",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "5px",
-                                          }}
-                                          onClick={() =>
-                                            handleToggle(
-                                              cat.section,
-                                              item.label,
-                                              false,
-                                              item.id
-                                            )
-                                          }
-                                        />
-                                      </div>
-                                    </div>
-                                  </Box>
-                                ))}
-                              </AccordionDetails>
-                            </Accordion>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="ms-Grid-row">
-                        <div
-                          className="ms-Grid-col ms-lg12"
-                          style={{ marginBottom: "7px" }}
-                        >
-                          <CustomTextArea
-                            label={labelNames.CommanLabel.Comments}
-                            value={data.comments}
-                            error={validationErrors.comments}
-                            onChange={(value) =>
-                              handleInputChangeTextArea(
-                                "comments",
-                                undefined,
-                                value
-                              )
-                            }
-                            mandatory={true}
-                          />
-                        </div>
-                      </div>
-                      <div
-                        className="ms-Grid-row"
-                        style={{
-                          padding: "3px",
-                          marginTop: "20px",
-                          marginBottom: "-33px",
-                        }}
-                      >
-                        <div className="ms-Grid-col ms-lg12">
-                          <SignatureCheckbox
-                            label={
-                              CheckboxContent.PostRecrutimentCheckboxContent
-                            }
-                            checked={data.Checkbox}
-                            error={validationErrors.checkbox}
-                            onChange={(value: boolean) =>
-                              handleCheckboxchanges(value)
-                            }
-                          />
-                        </div>
-                      </div>
-                      <div className="ms-Grid-row">
-                        <div className="ms-Grid-col ms-lg12">
-                          <CustomSignature
-                            Name={
-                              (props.userDetails[0].FirstName ?? "") +
-                              " " +
-                              (props.userDetails[0]?.MiddleName ?? "") +
-                              " " +
-                              (props.userDetails[0]?.LastName ?? "")
-                            }
-                            JobTitleInEnglish={
-                              props.userDetails[0].JopTitleEnglish
-                            }
-                            JobTitleInFrench={
-                              props.userDetails[0].JopTitleFrench
-                            }
-                            Department={props.userDetails[0].DepartmentName}
-                            Date={data.SignDate}
-                            TermsAndCondition={data.Checkbox}
-                          />
-                        </div>
-                      </div>
+                      </div> */}
                     </div>
                   </CardContent>
                 </Card>
@@ -1968,6 +2210,11 @@ const UploadCandidateDocument = (props: any) => {
     ) {
       errors.EmployementDoc = !IsValid(data.EmployementDoc);
       errors.WorkpermitDoc = !IsValid(data.WorkpermitDoc);
+    } else if (
+      props.stateValue?.StatusId ===
+      StatusId.PendingHRReviewOfferanduploadEmployementContract
+    ) {
+      errors.EmployementDoc = !IsValid(data.EmployementDoc);
     }
     if (
       props.stateValue?.StatusId === StatusId.PendingHRReviewBGCheck ||
@@ -2015,7 +2262,7 @@ const UploadCandidateDocument = (props: any) => {
   //   ); //`${year}-${month}-${day}`;
   //   return dateOnly.toISOString();
   // };
-  const SaveAsDraft = async () => {
+  const SaveAsDraft = async (BtnAction: string) => {
     setIsLoading(true);
     try {
       const isValid = !Validation();
@@ -2050,33 +2297,53 @@ const UploadCandidateDocument = (props: any) => {
         const UpdateStatusCandidateList =
           await OfferLetterServices.UpdateStatusCandidatelist(ChecklistValue);
         if (UpdateStatusCandidateList.status === ResponeStatus.SUCCESS) {
-          const SuccessAlert = {
-            Message: RecuritmentHRMsg.ChecklistSaveAsDraftMsg,
-            Type: HRMSAlertOptions.Success,
-            visible: true,
-            ButtonAction: async (userClickedOK: boolean) => {
-              if (userClickedOK) {
-                props.navigation("/UploadOfferDocumentList", {
-                  state: {
-                    ID: props.stateValue?.ID,
-                    TabNames: props.stateValue?.TabName,
-                    ButtonAction: ButtonAction.View,
-                    JobCode: props.stateValue?.JobCode,
-                    tab: props.stateValue?.tab,
-                    JobCodeID: props.stateValue?.JobCodeId,
-                  },
-                });
-                setAlertPopupOpen(false);
-              } else {
-                setAlertPopupOpen(false);
-              }
-            },
-          };
+          let response: any;
+          if (BtnAction === ButtonAction.Submit) {
+            let Obj = [
+              {
+                ID: props.stateValue.ID,
+                ActionId: WorkflowAction.Approved,
+                ItemCreated: "Yes",
+              },
+            ];
+            response = await OfferLetterServices.UpdateStatusInSpfxlist(Obj);
+          } else {
+            response = {
+              status: ResponeStatus.SUCCESS,
+            };
+          }
+          if (response.status === ResponeStatus.SUCCESS) {
+            const SuccessAlert = {
+              Message:
+                BtnAction === ButtonAction.SaveAsDraft
+                  ? RecuritmentHRMsg.ChecklistSaveAsDraftMsg
+                  : RecuritmentHRMsg.OnboardingMsg,
+              Type: HRMSAlertOptions.Success,
+              visible: true,
+              ButtonAction: async (userClickedOK: boolean) => {
+                if (userClickedOK) {
+                  props.navigation("/UploadOfferDocumentList", {
+                    state: {
+                      ID: props.stateValue?.ID,
+                      TabNames: props.stateValue?.TabName,
+                      ButtonAction: ButtonAction.View,
+                      JobCode: props.stateValue?.JobCode,
+                      tab: props.stateValue?.tab,
+                      JobCodeID: props.stateValue?.JobCodeId,
+                    },
+                  });
+                  setAlertPopupOpen(false);
+                } else {
+                  setAlertPopupOpen(false);
+                }
+              },
+            };
 
-          setAlertPopupOpen(true);
-          setalertProps(SuccessAlert);
-          setIsLoading(false);
-          // }
+            setAlertPopupOpen(true);
+            setalertProps(SuccessAlert);
+            setIsLoading(false);
+            // }s
+          }
         } else {
           const ApiErrorMsg = {
             Message: RecuritmentHRMsg.APIErrorMsg,
@@ -2409,16 +2676,26 @@ const UploadCandidateDocument = (props: any) => {
             };
             break;
           }
-          case StatusId.PendingHRpreonboardingchecklist: {
-            void SaveAsDraft();
-            workflowStatusValue = workflowStatusApi.OnboardingInprogress;
-            SuccessMsg = RecuritmentHRMsg.OnboardingMsg;
-            ActionID = WorkflowAction.Approved;
-            DocumentResponse = {
-              status: ResponeStatus.SUCCESS,
-            };
+          case StatusId.PendingHRReviewOfferanduploadEmployementContract:
+            {
+              DocumentData = {
+                ProfileID: data?.ProfileID,
+                RequestID: data?.jobRequestID,
+                DocumentName: DocumentFolderName.EmploymentContractForm,
+                UnsignedDoc: DocumentFolderName.UnsignedDoc,
+              };
+              DocumentResponse =
+                await OfferLetterServices.UploadCandidateDocument(
+                  DocumentData,
+                  data.EmployementDoc
+                );
+
+              workflowStatusValue =
+                workflowStatusApi.PendingwithCandidatetosignEmployementContract;
+              SuccessMsg = RecuritmentHRMsg.EmploymentContractMsg;
+              ActionID = WorkflowAction.Approved;
+            }
             break;
-          }
           default:
             workflowStatusValue = "";
             SuccessMsg = "";
@@ -2497,6 +2774,12 @@ const UploadCandidateDocument = (props: any) => {
             );
             CandidateDatas.signedWorkPermitPath =
               WorkPermitDocs[0]?.data[0]?.content;
+          } else if (
+            props.stateValue?.StatusId ===
+            StatusId.PendingHRReviewOfferanduploadEmployementContract
+          ) {
+            CandidateDatas.EmpContractLatterPath =
+              DocumentResponse.data[0]?.content;
           }
 
           let WorkflowStatus: any;
@@ -2537,72 +2820,6 @@ const UploadCandidateDocument = (props: any) => {
               await getVRRDetails.InsertRecruitmentCandidateDetails({ datas });
             }
             if (UpdateStatus.status === ResponeStatus.SUCCESS) {
-              // if (
-              //   props.stateValue?.StatusId ===
-              //     StatusId.pendingwithRecruitmentHRtoReviewtheEmploymentContractForm &&
-              //   data.RadioAction === "Yes"
-              // ) {
-              //   let HardwareChiose =
-              //     data.ITRequired === "No"
-              //       ? []
-              //       : data.ITSystem?.Hardware.map((item) => item.text);
-              //   let Hardwaredata: string[] = HardwareChiose;
-              //   let Hardwarevalue = {
-              //     results: Hardwaredata,
-              //   };
-              //   // console.log(Hardwaredata, "Hardwaredata");
-              //   const hasTrainingSystem =
-              //     !!data.TrainingSystem &&
-              //     Object.values(data.TrainingSystem).some(
-              //       (v) => !!v && v !== "" && v !== 0
-              //     );
-              //   const hasTASystem =
-              //     !!data.TASystem &&
-              //     Object.values(data.TASystem).some(
-              //       (v) => !!v && v !== "" && v !== 0
-              //     );
-              //   const hasITSystem =
-              //     !!data.ITSystem &&
-              //     Object.values(data.ITSystem).some(
-              //       (v) => !!v && v !== "" && v !== 0
-              //     );
-
-              //   let obj: UpdateCandidateData = {
-              //     InductionType: data.TrainingSystem?.Inductiontype.text,
-              //     // TCSStartDate: SpiltDateOnly(data.TrainingSystem?.StartDate),
-              //     // TCSEndDate: SpiltDateOnly(data.TrainingSystem?.EndDate),
-              //     // TCSZone: data.TrainingSystem?.Zone.text,
-              //     // TCSRegion: data.TrainingSystem?.Region.text,
-              //     TCSComments: data.TrainingSystem?.Comments,
-              //     PermanentBadgeStartDate: SpiltDateOnly(
-              //       data.TASystem?.StartDate
-              //     ),
-              //     PermanentBadgeEndDate: SpiltDateOnly(data.TASystem?.EndDate),
-              //     PermanentBadgeRegion: "", //data.TASystem?.Region.text,
-              //     PermanentBadgeZone: "", //data.TASystem?.Zone.text,
-              //     PermanentBadgeComments: data.TASystem?.Comments,
-              //     ITStartDate:
-              //       data.ITRequired === "No"
-              //         ? null
-              //         : SpiltDateOnly(data.ITSystem?.StartDate),
-              //     Hardware: Hardwarevalue,
-              //     ITZone: data.ITRequired === "No" ? "" : "", //data.ITSystem?.Zone,
-              //     ITRegion: data.ITRequired === "No" ? "" : "", //data.ITSystem?.Region.text,
-              //     ITComments:
-              //       data.ITRequired === "No" ? "" : data.ITSystem?.Comments,
-              //     ITStatus:
-              //       data.ITRequired === "Yes" ? "Pending" : "Not Applicable",
-              //     IsIntegratedPowerAutomatrTrigger:
-              //       hasTrainingSystem || hasTASystem || hasITSystem
-              //         ? "Yes"
-              //         : "No",
-              //   };
-              //   await OfferLetterServices.UpdateCandidateOnboardDate(
-              //     obj,
-              //     data.CandidateID
-              //   );
-              // }
-
               const SuccessAlert = {
                 Message: SuccessMsg,
                 Type: HRMSAlertOptions.Success,
@@ -2723,6 +2940,49 @@ const UploadCandidateDocument = (props: any) => {
     }
   };
 
+  const Initiate_fn = () => {
+    const isValid = !Validation();
+    if (isValid) {
+      let InitiateBGV = {
+        Message:
+          props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation
+            ? RadioBtnLabel.BGVExpatriatesLabel
+            : props.stateValue?.StatusId === StatusId.PendingHROfferInitiate &&
+              data?.EmploymentCategory ===
+                EmployeementCategory.LaborhireContractor
+            ? RadioBtnLabel.OfferInitiationLabel
+            : RadioBtnLabel.BGVExpatriatesLabel,
+        Type: HRMSAlertOptions.Confirmation,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            void Submit_fn(ButtonAction.Initiated);
+            setAlertPopupOpen(false);
+          } else {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+      setAlertPopupOpen(true);
+      setalertProps(InitiateBGV);
+      setIsLoading(false);
+    } else {
+      let FormFieldFailed = {
+        Message: RecuritmentHRMsg.FormValidationMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+      setAlertPopupOpen(true);
+      setalertProps(FormFieldFailed);
+      setIsLoading(false);
+    }
+  };
+
   const handleCancel = () => {
     setIsLoading(true);
 
@@ -2769,127 +3029,149 @@ const UploadCandidateDocument = (props: any) => {
 
   return (
     <>
-      <CustomLoader isLoading={isLoading}>
-        <div className="menu-card">
-          <BreadcrumbsComponent
-            items={tabs}
-            initialItem={activeTab}
-            TabName={TabNameData}
-            onBreadcrumbChange={handleBreadcrumbChange}
-            handleCancel={handleCancel}
-            JobValue={{
-              JobTitle: props.stateValue.JobTitle,
-              JobCode: props.stateValue.JobCode,
-              Status: props.stateValue.Status,
-            }}
-            additionalButtons={
-              props.stateValue?.ButtonAction === ButtonAction.View
-                ? [
-                    {
-                      label: ButtonAction.Back,
-                      onClick: async () => {
-                        back_fn();
-                      },
-                    },
-                  ]
-                : props.stateValue?.ButtonAction === ButtonAction.Initiated &&
-                  data.BGVRadioBtn === "Yes"
-                ? [
-                    {
-                      label: ButtonAction.Initiated,
-                      onClick: async () => {
-                        await Submit_fn(ButtonAction.Initiated);
-                      },
-                    },
-                  ]
-                : (() => {
-                    if (data.RadioAction) {
-                      const action =
-                        data.RadioAction === "Yes"
-                          ? ButtonAction.Review
-                          : ButtonAction.Revert;
-                      return [
+      {MainComponent ? (
+        <>
+          <CustomLoader isLoading={isLoading}>
+            <div className="menu-card">
+              <BreadcrumbsComponent
+                items={tabs}
+                initialItem={activeTab}
+                TabName={TabNameData}
+                onBreadcrumbChange={handleBreadcrumbChange}
+                handleCancel={handleCancel}
+                JobValue={{
+                  JobTitle: props.stateValue.JobTitle,
+                  JobCode: props.stateValue.JobCode,
+                  Status: props.stateValue.Status,
+                }}
+                Statuslist={
+                  props.stateValue?.StatusId ===
+                  StatusId.PendingDOTAficaVerification
+                    ? BGVerifiedStatus
+                    : null
+                }
+                additionalButtons={
+                  props.stateValue?.ButtonAction === ButtonAction.View
+                    ? [
                         {
-                          label: action,
-                          onClick: async () => await Submit_fn(action),
+                          label: ButtonAction.Back,
+                          onClick: async () => {
+                            back_fn();
+                          },
                         },
-                      ];
-                    }
-                    if (
-                      props.stateValue?.ButtonAction === ButtonAction.Upload
-                    ) {
-                      return [
-                        {
-                          label: ButtonAction.Upload,
-                          onClick: async () =>
-                            await Submit_fn(ButtonAction.Upload),
-                        },
-                      ];
-                    }
-                    if (data.PaymentReview) {
-                      const action =
-                        data.PaymentReview === "Yes"
-                          ? ButtonAction.Review
-                          : props.stateValue?.StatusId ===
-                              StatusId.PendingHRReviewBGCheck &&
-                            data.NationalityCode === NationalityCode.Nationals
-                          ? ButtonAction.Reject
-                          : ButtonAction.Revert;
-                      return [
-                        {
-                          label: action,
-                          onClick: async () => await Submit_fn(action),
-                        },
-                      ];
-                    }
-                    if (
-                      props.stateValue?.StatusId ===
-                      StatusId.PendingHREmploymentContractInit
-                    ) {
-                      return [
+                      ]
+                    : props.stateValue?.ButtonAction === ButtonAction.Initiated
+                    ? // data.BGVRadioBtn === "Yes"
+                      [
                         {
                           label: ButtonAction.Initiated,
-                          onClick: async () =>
-                            await Submit_fn(ButtonAction.Initiated),
-                        },
-                      ];
-                    }
-                    if (
-                      props.stateValue?.StatusId ===
-                      StatusId.PendingHRpreonboardingchecklist
-                    ) {
-                      if (btnEnable) {
-                        return [
-                          {
-                            label: ButtonAction.Submit,
-                            onClick: async () =>
-                              await Submit_fn(ButtonAction.Submit),
+                          onClick: async () => {
+                            void Initiate_fn();
                           },
-                        ];
-                      } else {
-                        return [
-                          {
-                            label: ButtonAction.SaveAsDraft,
-                            onClick: async () => await SaveAsDraft(),
-                          },
-                        ];
-                      }
-                    }
-                    if (btnEnable) {
-                      return [
-                        {
-                          label: ButtonAction.Submit,
-                          onClick: async () =>
-                            await Submit_fn(ButtonAction.Submit),
                         },
-                      ];
-                    }
-                    return [];
-                  })()
-            }
+                      ]
+                    : (() => {
+                        if (data.RadioAction) {
+                          const action =
+                            data.RadioAction === "Yes"
+                              ? ButtonAction.Review
+                              : ButtonAction.Revert;
+                          return [
+                            {
+                              label: action,
+                              onClick: async () => await Submit_fn(action),
+                            },
+                          ];
+                        }
+                        if (
+                          props.stateValue?.ButtonAction === ButtonAction.Upload
+                        ) {
+                          return [
+                            {
+                              label: ButtonAction.Upload,
+                              onClick: async () =>
+                                await Submit_fn(ButtonAction.Upload),
+                            },
+                          ];
+                        }
+                        if (data.PaymentReview) {
+                          const action =
+                            data.PaymentReview === "Yes"
+                              ? ButtonAction.Review
+                              : props.stateValue?.StatusId ===
+                                  StatusId.PendingHRReviewBGCheck &&
+                                data.NationalityCode ===
+                                  NationalityCode.Nationals
+                              ? ButtonAction.Reject
+                              : ButtonAction.Revert;
+                          return [
+                            {
+                              label: action,
+                              onClick: async () => await Submit_fn(action),
+                            },
+                          ];
+                        }
+                        if (
+                          props.stateValue?.StatusId ===
+                          StatusId.PendingHREmploymentContractInit
+                        ) {
+                          return [
+                            {
+                              label: ButtonAction.Initiated,
+                              onClick: async () =>
+                                await Submit_fn(ButtonAction.Initiated),
+                            },
+                          ];
+                        }
+                        if (
+                          props.stateValue?.StatusId ===
+                          StatusId.PendingHRpreonboardingchecklist
+                        ) {
+                          if (btnEnable) {
+                            return [
+                              {
+                                label: ButtonAction.Submit,
+                                onClick: async () =>
+                                  await SaveAsDraft(ButtonAction.Submit),
+                              },
+                            ];
+                          } else {
+                            return [
+                              {
+                                label: ButtonAction.SaveAsDraft,
+                                onClick: async () =>
+                                  await SaveAsDraft(ButtonAction.SaveAsDraft),
+                              },
+                            ];
+                          }
+                        }
+                        if (btnEnable) {
+                          return [
+                            {
+                              label: ButtonAction.Submit,
+                              onClick: async () =>
+                                await Submit_fn(ButtonAction.Submit),
+                            },
+                          ];
+                        }
+                        return [];
+                      })()
+                }
+              />
+            </div>
+          </CustomLoader>
+        </>
+      ) : (
+        <>
+          <BGVComments
+            onClose={() => {
+              setMainComponent(true);
+              setactiveTab(activeTab);
+            }}
+            Comments={DotAfricaComments}
           />
-        </div>
-      </CustomLoader>
+        </>
+      )}
 
       {AlertPopupOpen ? (
         <>
@@ -2904,8 +3186,14 @@ const UploadCandidateDocument = (props: any) => {
 
       {documentPopup ? (
         <>
-          <AlertDialogbox
-            Style={{ width: "75vw", height: "41vw" }}
+          <CustomDialogbox
+            // className="document-viewer"
+            Style={{
+              width: "50vw",
+              height: "auto",
+              padding: "0px",
+              overflowX: "hidden",
+            }}
             visible={documentPopup}
             children={
               <ViewCandidateDocument
@@ -2916,16 +3204,22 @@ const UploadCandidateDocument = (props: any) => {
             }
             onClose={() => setDocumentPopup(false)}
             header={
-              <div style={{ textAlign: "center", width: "100%" }}>
+              <div
+                style={{
+                  textAlign: "center",
+                  width: "100%",
+                }}
+              >
                 <h2
                   style={{
-                    color: ColorCode.LabelStyleColorCode.LabelStyleColor,
+                    color: "white",
                     fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
-                          -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                                -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                    // textDecoration: "underline",
+                    // textUnderlineOffset: "6px",
                   }}
                 >
-                  {" "}
-                  Candidate Documents
+                  {labelNames.CandidateDocument}
                 </h2>
               </div>
             }

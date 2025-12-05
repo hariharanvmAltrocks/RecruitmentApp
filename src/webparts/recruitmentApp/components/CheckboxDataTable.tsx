@@ -267,7 +267,11 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   };
 
   const onSelectAllChange = (value: boolean, pagination?: any) => {
-    if (FilterData.Nationality.text === "" && !selectAll) {
+    if (
+      FilterData.Nationality.text === "" &&
+      !selectAll &&
+      assignLabel != "Assign Agencies"
+    ) {
       let CancelAlert = {
         Message: RecuritmentHRMsg.NationalityErrorMsg,
         Type: HRMSAlertOptions.Error,
@@ -403,7 +407,13 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 MinHeight={"1px"}
               />
             </div>
-            <div className="ms-Grid-col ms-lg2">
+            <div
+              className={
+                assignLabel === "Assign Agencies"
+                  ? "ms-Grid-col ms-lg3"
+                  : "ms-Grid-col ms-lg2"
+              }
+            >
               <CustomAutoComplete
                 label="Business Unit Code"
                 options={FilterData.BusinessUnitCodeOption ?? []}
@@ -415,7 +425,13 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 MinHeight={"1px"}
               />
             </div>
-            <div className="ms-Grid-col ms-lg2">
+            <div
+              className={
+                assignLabel === "Assign Agencies"
+                  ? "ms-Grid-col ms-lg3"
+                  : "ms-Grid-col ms-lg2"
+              }
+            >
               <CustomAutoComplete
                 label="Job Code"
                 options={FilterData.JobCodeOption ?? []}
@@ -425,16 +441,22 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
                 MinHeight={"1px"}
               />
             </div>
-            <div className="ms-Grid-col ms-lg2">
-              <CustomAutoComplete
-                label="Nationality"
-                options={NationalityOption ?? []}
-                value={FilterData.Nationality}
-                disabled={false}
-                onChange={(item) => handleAutoComplete("Nationality", item)}
-                MinHeight={"1px"}
-              />
-            </div>
+            {assignLabel === "Assign Agencies" ? (
+              <></>
+            ) : (
+              <>
+                <div className="ms-Grid-col ms-lg2">
+                  <CustomAutoComplete
+                    label="Nationality"
+                    options={NationalityOption ?? []}
+                    value={FilterData.Nationality}
+                    disabled={false}
+                    onChange={(item) => handleAutoComplete("Nationality", item)}
+                    MinHeight={"1px"}
+                  />
+                </div>
+              </>
+            )}
 
             {/* {assignLabel === "Assign Agencies" ? (
               <></>

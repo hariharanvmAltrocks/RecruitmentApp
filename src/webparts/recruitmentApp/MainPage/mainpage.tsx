@@ -35,7 +35,7 @@ export default function MainPage(props: any) {
   const toggleSideNav = () => {
     setIsExpanded((prevState: any) => !prevState);
   };
-  console.log("Recruitment-App(18-Nov-2025) V-1.2.1 SIT");
+  console.log("Recruitment-App(4-Dec-2025) V-1.3 SIT");
   // let ApiUrls = ApiUrl(props.webURL);
   // console.log("ApiUrl", ApiUrls);
   React.useEffect(() => {

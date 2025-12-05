@@ -71,6 +71,14 @@ export type GetProfileByJobCode = {
     applicationStatusId: string,
     applicationStatus: string
 }
+
+export type PreviousEmployer = {
+    name: string;
+    Designation: string;
+    Email: string;
+    ContractNumber: string;
+    CompanyName: string;
+}
 export type CandidateProfile = {
     CandidateID: string,
     profileID: number,
@@ -143,6 +151,8 @@ export type CandidateProfile = {
     companyDetails: CompanyDetails | undefined,
 
     businesslinkscompany: string;
+    PreviousEmployerDetails: PreviousEmployer | undefined;
+    LanguageKnown: string[];
 }
 
 export type childrenDetails = {
@@ -351,6 +361,7 @@ export type UploadDocument = {
     ProofOfIdentity: string;
     IdentityNumber: string;
     ProfileID: string;
+    Gender: string;
 
     comments: string;
     Checkbox: boolean;
@@ -384,6 +395,13 @@ export type UploadDocument = {
     DotAfricaCF: IDocFiles[];
     WorkpermitDoc: IDocFiles[];
     NationalityCode: string;
+
+    EmployeeName: string;
+    EmployeeDesignation: string;
+    EmployeeEmail: string;
+    EmployeeCN: string;
+    EmployeeCompany: string;
+    LabourHire: string;
 }
 
 export type DocumentName = {

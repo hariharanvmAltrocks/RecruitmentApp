@@ -75,7 +75,8 @@ export const ListNames = {
 
   //Resi
   HRMSRESIDRCDetails: "HRMSRESIDRCDetails",
-  HRMSRESIExpatDetails: "HRMSRESIExpatDetails"
+  HRMSRESIExpatDetails: "HRMSRESIExpatDetails",
+
 };
 
 export const DocumentLibraray = {
@@ -142,6 +143,9 @@ export const StatusId = {
   PendingHREmploymentContractInit: 177,
   PendingLHECRelease: 178,
   PendingHREmploymentContractReview: 179,
+
+  RESIProcessInitiatedforDRC: 42,
+  RESIProcessInitiatedforExpatriate: 75,
 
   PendingHRReviewOfferanduploadEmployementContract: 169,//183,//169
 
@@ -278,11 +282,15 @@ export const RecuritmentHRMsg = {
     "Candidate Profile for the Job Title Reviewed and On - Hold.",
   HRReviewCandidate: "Candidate Profile Reviewed Successfully.",
 
-  CandidateSelected: "Candidate Selected.",
+  CandidateSelected: "Candidate Selected and send for background verification.",
   CandidateSelectedLevel2: "Candidate Level 1 Selected Successfully",
   CandidateRejected: "Candidate Rejected.",
   CandidateOnHold: "Candidate On Hold.",
+  CandidateRejectedLevel2: "Candidate Level 1 Rejected Successfully",
+  CandidateonholdLevel2: "Candidate Level 1 On-Hold Successfully",
   RecuritmentSubmitMsg: "Submitted Successfully.",
+
+
   ApprovedMsg:
     "Advertisement Reviewed Successfully. Ready for ONEM Process (Offline).",
   RecuritmentHRMsgCancel:
@@ -314,46 +322,54 @@ export const RecuritmentHRMsg = {
 
   BGverificationMsg: "Background Verification has been initiated successfully.",
   BGReviewedMsg: "Background Verification has been completed successfully.",
-  BGReviewinitBGV: "Verify the background documents and initiate the DotAfrica verification process.",
+  BGReviewinitBGV: "Verified the background documents and initiated the Dot's Africa verification process.",
+
+  RevertWGDocs: "The Background Document Reverted successfully.",
 
   OfferLetterMsg: "The offer letter has been uploaded successfully.",
-  OfferLetterinit: "The Offer Letter process has been successfully initiated for the Labour Hire.",
+  OfferLetterinit: "The Offer Letter process has been successfully initiated to the Labour Hire.",
   ReviewLaborHireOffer: "The Labour Hire offer has been reviewed successfully and forwarded to the candidate.",
-  ReviewOfferLetterMsg: "The offer letter has been reviewed successfully and Initiate the WorkPermit Document ",
-  EmployeementInit: "The Employment Contract process has been successfully initiated in the labour plan",
+  ReviewOfferLetterMsg: "The offer letter has been reviewed successfully and initiated the WorkPermit Document ",
+
   RevertedOfferLetter: "The offer letter has been reverted to candidate successfully.",
   RevertLabourOffer: "The Labour Hire Offer Release has been successfully reverted",
-  RevertWGDocs: "The Background Document Reverted successfully.",
-  RevertWorkPermitDocs: "The Work Permit Document has been successfully reverted",
-  RevertECCocs: "The Labour Hire Employment Contract has been successfully reverted",
 
   WorkPermitDocs: "The WorkPermit Documents has been reviewed successfully",
   WPacknowledgeUploadContract: "WorkPermit acknowledge and Employee contract Document Upload Successfully",
 
+  RevertWorkPermitDocs: "The Work Permit Document has been successfully reverted",
+
+  EmploymentContractMsg: "The employment contract has been uploaded successfully.",
+  EmployeementInit: "The Employment Contract process has been successfully initiated to the Labour Hire",
+  ReviewEmploymentContractMsg: "The Labour Hire Employment Contract has been reviewed successfully and forwarded to the candidate.",
+  ReviewECMsg: "The Employement Contract Reviewed Successfully",
+
+  RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
+  RevertECCocs: "The Labour Hire Employment Contract has been successfully reverted",
+
+  FinancePaymentReviewMsg: "Finance Payment Review has been completed successfully.",
+  RevertedFinancePaymentMsg: "Payment Review has been reverted to LaborHire successfully..",
+
   ReviewOtherDocsMsg: "Candidate documents has been reviewed successfully",
   RevertOtherDocsMsg: "Candidate documents have been reverted successfully.",
 
-  EmploymentContractMsg: "The employment contract has been uploaded successfully.",
-  ReviewEmploymentContractMsg: "The Labour Hire Employment Contract has been reviewed successfully and forwarded to the candidate.",
-  RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
-  ReviewECMsg: "The Employement Contract Reviewed Successfully ",
   OnboardingMsg: "Onboarding has been initiated successfully.",
 
-
   NationalityErrorMsg: "Please select the Nationality filter before proceeding.",
-
   QuestionValiErrorMsg: "Please add at least 5 questions before proceeding.",
   COIWarningMsg: "This is the COI profile. Are you sure you're ready to proceed?",
-
   FormValidationMsg: "One or more required actions are missing.",
   NationalityMsgError: "Please select the any one Nationality",
-  FinancePaymentReviewMsg: "Finance Payment Review has been completed successfully.",
-  RevertedFinancePaymentMsg: "Payment Review has been reverted to LaborHire successfully..",
-  CandidateRejectedLevel2: "Candidate Level 1 Rejected Successfully",
-  CandidateonholdLevel2: "Candidate Level 1 On-Hold Successfully",
 
-  ChecklistSaveAsDraftMsg: "Your changes are saved as a draft"
-};
+  ChecklistSaveAsDraftMsg: "Your changes are saved as a draft",
+  AddLabourHireSuccessMsg: "Labour Hire details added successfully.",
+  UpdateLabourHireMsg: "Labour Hire details Updated successfully.",
+  AddAgentSuccessMsg: "Agent details added successfully.",
+  UpdateagentMsg: "Agent details Updated Successfully.",
+  NoOfUserLimitMsg: "User limit reached. Kindly upgrade or extend your user limit.",
+  ResetPassword: "Are you sure you want to reset the password?",
+  ResetPasswordMsg: "A password reset link has been sent to your registered email. Please check your inbox to proceed.",
+}
 
 export const validationMsg = {
   MaxOptions: "You must fill at least 2 options.",
@@ -464,7 +480,7 @@ export const TabName = {
   // CandidateDocuments: "Candidate Documents",
   BackgroundVerification: "Background Verification",
   OfferLetterLabourHire: "Offer Letter - Labour Hire",
-  OfferLetterKSCA: "Offer Letter - KSCA",
+  OfferLetterKSCA: "Offer Letter - KCSA",
   // HOD
   ReviewJobAdvertisement: "Review Job Advertistment",
   ReviewScorecard: "Review Score card",
@@ -492,7 +508,7 @@ export const TabName = {
   InterviewPanel: "Interview Panel",
   ViewScoreDetails: " View ScoreCard Details",
   ReschedulInterview: "Reschedule Interview",
-  OnboardingChecklist: "Oboarding Checklist",
+  OnboardingChecklist: "Pre Onboarding Checklist",
 
   LabourHire: "Labour Hire",
   Agent: "Agent",

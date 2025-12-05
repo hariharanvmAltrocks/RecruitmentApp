@@ -1,18 +1,25 @@
 import * as React from "react";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
   Card,
   CardContent,
-  Link,
-  Tooltip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Typography,
+  Grid,
+  IconButton,
+  Box,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { DisplayFolderName, labelNames } from "../../utilities/LabelName";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import DownloadIcon from "@mui/icons-material/Download";
+import {
+  CommanStyle,
+  DisplayFolderName,
+  labelNames,
+} from "../../utilities/LabelName";
 import { Dialog } from "primereact/dialog";
+import CustomViewDocument from "../../components/CustomViewDocument";
 
 interface AssignPositionDialogProps {
   data: any[];
@@ -60,330 +67,168 @@ export const ViewCandidateDocument = ({
     setIsExpanded((prev) => (prev === index ? null : index));
   };
 
+  const renderBackgroundVerificationRow = (
+    docs: any,
+    index: number,
+    handleFileDownload: any,
+    view_fn: any
+  ) => {
+    const subTitle = docs[0];
+    const fileObj = docs[1];
+    // const fileName = fileObj.name;
+
+    return (
+      <Box key={index} sx={{ mb: 2 }}>
+        <Typography
+          sx={{ fontWeight: 500, mb: 1, fontFamily: CommanStyle.frontFamily }}
+        >
+          {subTitle}
+        </Typography>
+
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={8}>
+            <CustomViewDocument
+              Attachment={[fileObj]}
+              // webUrl={props.webURL}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={4} textAlign="right">
+            <IconButton onClick={() => view_fn(fileObj.content)}>
+              <VisibilityIcon color="primary" />
+            </IconButton>
+
+            <IconButton component="a" href={fileObj.content} download>
+              <DownloadIcon color="primary" />
+            </IconButton>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  };
+
+  const renderFileRow = (
+    doc: any,
+    index: number,
+    handleFileDownload: any,
+    view_fn: any
+  ) => {
+    // const fileName = doc.name;
+
+    return (
+      <Box key={index} sx={{ mb: 1 }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={8}>
+            <CustomViewDocument
+              Attachment={[doc]}
+              // webUrl={props.webURL}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={4} textAlign="right">
+            <IconButton onClick={() => view_fn(doc.content)}>
+              <VisibilityIcon color="primary" />
+            </IconButton>
+
+            <IconButton component="a" href={doc.content} download>
+              <DownloadIcon color="primary" />
+            </IconButton>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  };
+
   return (
     <>
-      <div className="ms-Grid-row">
-        {/* <Card
-          variant="outlined"
+      <div style={{ padding: "2%" }}>
+        <Card
           sx={{
-            boxShadow: "0px 2px 4px 3px #d3d3d3",
-            marginTop: "2%",
-            width: "96%",
-            marginLeft: "2%",
-            // minHeight: "80vh",
+            mb: 2,
+            borderRadius: "6px",
+            boxShadow: "0px 2px 10px rgba(0,0,0,0.1)",
+            maxHeight: "80vh",
+            overflowY: "auto",
           }}
         >
-          <CardContent> */}
-        <div style={{ padding: "2%" }}>
-          {/* {data.length === 0 ? (
-                <p
-                  style={{
-                    fontSize: "15px",
-                    fontWeight: "bold",
-                    color: "gray",
-                    textAlign: "center",
-                  }}
-                >
-                  No Candidate Document are found
-                </p>
-              ) : ( */}
-          <Card
-            sx={{
-              mb: 2,
-              borderRadius: "4px",
-              borderColor: "#5f5f5f",
-              boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-              height: "auto",
-              transition: "height 0.3s ease-in-out",
-              overflow: "hidden",
-            }}
-          >
-            <CardContent
-              sx={{
-                minHeight: 300,
-                maxHeight: 400,
-                overflowY: "auto",
-                pr: 1,
-              }}
-            >
-              {data.length > 0 ? (
-                <>
-                  {data.map((item, index) => {
-                    const isExpanded = IsExpanded === index;
-                    if (item.data.length > 0) {
-                      return (
-                        <>
-                          <Box
-                            // key={item.id}
-                            sx={{
-                              boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-                              borderRadius: "4px",
-                              borderColor: "#5f5f5f",
-                              marginTop: "1%",
-                            }}
+          <CardContent sx={{ p: 2 }}>
+            {data.length === 0 ? (
+              <Typography
+                sx={{
+                  fontStyle: "italic",
+                  color: "gray",
+                  textAlign: "center",
+                  pt: 3,
+                }}
+              >
+                No documents available.
+              </Typography>
+            ) : (
+              <>
+                {data.map((item, index) => {
+                  const isExpanded = IsExpanded === index;
+
+                  if (item.data.length === 0) return null;
+
+                  return (
+                    <Box
+                      key={index}
+                      sx={{ border: "1px solid #eee", borderRadius: 2, mb: 2 }}
+                    >
+                      <Accordion
+                        expanded={isExpanded}
+                        onChange={() => handleExpand(index)}
+                        disableGutters
+                        elevation={0}
+                        sx={{
+                          "&:before": { display: "none" },
+                        }}
+                      >
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          sx={{
+                            background: "#fafafa",
+                            borderBottom: "1px solid #eee",
+                            position: "sticky",
+                            top: 0,
+                            zIndex: 5,
+                          }}
+                        >
+                          <Typography
+                            sx={{ fontSize: "16px", fontWeight: 600 }}
                           >
-                            <Accordion
-                              expanded={isExpanded}
-                              onChange={() => handleExpand(index)}
-                              sx={{
-                                boxShadow: "none",
-                                borderBottom: "1px solid #ddd",
-                                "&:last-of-type": {
-                                  borderBottom: "none",
-                                },
-                                mb: 2,
-                              }}
-                            >
-                              <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                sx={{
-                                  color: "rgb(50, 49, 48)",
-                                  cursor: "pointer",
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                  width: "100%",
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                                    fontSize: "16px",
-                                    frontWeight: "bold",
-                                    flexGrow: 1,
-                                  }}
-                                >
-                                  {item?.Title}
-                                </Typography>
-                              </AccordionSummary>
-                              <AccordionDetails
-                                style={{
-                                  position: "relative",
-                                  // bottom: "24px",
-                                }}
-                              >
-                                {item.Title ===
-                                DisplayFolderName.BackgroundVerification ? (
-                                  <>
-                                    {item.data.map(
-                                      (docs: any, index: number) => {
-                                        const subTitle = docs[0];
-                                        const fileObj = docs[1];
-                                        const fileName = fileObj.name;
+                            {item.Title} ({item.data.length})
+                          </Typography>
+                        </AccordionSummary>
 
-                                        const truncatedFileName =
-                                          fileName.length > 100
-                                            ? fileName.substring(0, 30) + "..."
-                                            : fileName;
-
-                                        return (
-                                          <div
-                                            key={index}
-                                            style={{ marginBottom: "15px" }}
-                                          >
-                                            <Typography
-                                              sx={{
-                                                fontWeight: "400",
-                                                fontSize: "14px",
-                                              }}
-                                            >
-                                              {subTitle}
-                                            </Typography>
-
-                                            <div
-                                              className="ms-Grid-row"
-                                              style={{
-                                                display: "flex",
-                                                marginLeft: "1%",
-                                                marginTop: "1%",
-                                              }}
-                                            >
-                                              <div
-                                                className="ms-Grid-col ms-lg6"
-                                                style={{ marginRight: "1rem" }}
-                                              >
-                                                <Tooltip title={fileName} arrow>
-                                                  <Link
-                                                    href="#"
-                                                    onClick={(e) =>
-                                                      handleFileDownload(
-                                                        e,
-                                                        fileObj.content
-                                                      )
-                                                    }
-                                                    style={{
-                                                      color: "blue",
-                                                      fontWeight: "bold",
-                                                      display: "inline-block",
-                                                      whiteSpace: "nowrap",
-                                                      overflow: "hidden",
-                                                      textOverflow: "ellipsis",
-                                                    }}
-                                                  >
-                                                    FileName:{" "}
-                                                    {truncatedFileName}
-                                                  </Link>
-                                                </Tooltip>
-                                              </div>
-
-                                              <div className="ms-Grid-col ms-lg6">
-                                                <a
-                                                  onClick={() =>
-                                                    view_fn(fileObj?.content)
-                                                  }
-                                                >
-                                                  <img
-                                                    src={require("../../assets/Viewicon.svg")}
-                                                    alt="View Icon"
-                                                    style={{
-                                                      width: "25px",
-                                                      cursor: "pointer",
-                                                      marginLeft: "32%",
-                                                    }}
-                                                  />
-                                                </a>
-
-                                                <a
-                                                  href={fileObj?.content}
-                                                  download
-                                                >
-                                                  <img
-                                                    src={require("../../assets/Download.svg")}
-                                                    alt="Download Icon"
-                                                    style={{
-                                                      width: "25px",
-                                                      cursor: "pointer",
-                                                      marginLeft: "10px",
-                                                    }}
-                                                  />
-                                                </a>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        );
-                                      }
-                                    )}
-                                  </>
-                                ) : (
-                                  <>
-                                    {item.data.map(
-                                      (docs: any, index: number) => {
-                                        const fileName = docs.name;
-                                        const truncatedFileName =
-                                          fileName.length > 100
-                                            ? fileName.substring(0, 30) + "..."
-                                            : fileName;
-
-                                        return (
-                                          <div key={index}>
-                                            <div
-                                              className="ms-Grid-row"
-                                              style={{
-                                                display: "flex",
-                                                marginLeft: "1%",
-                                                marginTop: "2%",
-                                              }}
-                                            >
-                                              <div
-                                                className="ms-Grid-col ms-lg6"
-                                                style={{ marginRight: "1rem" }}
-                                              >
-                                                <Tooltip
-                                                  title={docs.name}
-                                                  arrow
-                                                >
-                                                  <Link
-                                                    href="#"
-                                                    onClick={(e) =>
-                                                      handleFileDownload(
-                                                        e,
-                                                        docs.content
-                                                      )
-                                                    }
-                                                    style={{
-                                                      color: "blue",
-                                                      fontWeight: "bold",
-                                                      display: "inline-block",
-                                                      whiteSpace: "nowrap",
-                                                      overflow: "hidden",
-                                                      textOverflow: "ellipsis",
-                                                    }}
-                                                  >
-                                                    FileName :{" "}
-                                                    {truncatedFileName}
-                                                  </Link>
-                                                </Tooltip>
-                                              </div>
-
-                                              <div className="ms-Grid-col ms-lg6">
-                                                <a
-                                                  onClick={() =>
-                                                    view_fn(docs?.content)
-                                                  }
-                                                >
-                                                  <img
-                                                    src={require("../../assets/Viewicon.svg")}
-                                                    alt="View Icon"
-                                                    style={{
-                                                      width: "25px",
-                                                      cursor: "pointer",
-                                                      marginLeft: "32%",
-                                                    }}
-                                                  />
-                                                </a>
-
-                                                <a
-                                                  href={docs?.content}
-                                                  download
-                                                >
-                                                  <img
-                                                    src={require("../../assets/Download.svg")}
-                                                    alt="Download Icon"
-                                                    style={{
-                                                      width: "25px",
-                                                      cursor: "pointer",
-                                                      marginLeft: "10px",
-                                                    }}
-                                                  />
-                                                </a>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        );
-                                      }
-                                    )}
-                                  </>
-                                )}
-                              </AccordionDetails>
-                            </Accordion>
-                          </Box>
-                        </>
-                      );
-                    } else {
-                      return null;
-                    }
-                  })}
-                </>
-              ) : (
-                <>
-                  <Typography
-                    sx={{
-                      fontStyle: "italic",
-                      color: "gray",
-                      textAlign: "center",
-                    }}
-                  >
-                    No documents available.
-                  </Typography>
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* )} */}
-        </div>
-        {/* </CardContent>
-        </Card> */}
+                        <AccordionDetails sx={{ p: 2 }}>
+                          {item.Title ===
+                          DisplayFolderName.BackgroundVerification
+                            ? item.data.map((docs: any, idx: number) =>
+                                renderBackgroundVerificationRow(
+                                  docs,
+                                  idx,
+                                  handleFileDownload,
+                                  view_fn
+                                )
+                              )
+                            : item.data.map((doc: any, idx: number) =>
+                                renderFileRow(
+                                  doc,
+                                  idx,
+                                  handleFileDownload,
+                                  view_fn
+                                )
+                              )}
+                        </AccordionDetails>
+                      </Accordion>
+                    </Box>
+                  );
+                })}
+              </>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {documentPopup ? (

@@ -35,36 +35,37 @@ export type CandidateDetails = {
     IdentityNumber: string,
     ProofOfIdentity: string,
 
-    LastOrCurrentPosition: string,
-    LastOrCurrentEmployer: string,
-    PreviouslyWorkedInIvanhoeMines: string;
-    NumberOfTaxDependents: number;
-    Age: number;
-    Citizenship: string;
-    AnyFamilyorOtherLinks: string;
-    AnyBusinessLinksToDeclare: string;
-    WillingToRelocate: string;
-    CountryofOrgin: string;
-    OthersInterviewed: string;
+    LastOrCurrentPosition?: string,
+    LastOrCurrentEmployer?: string,
+    PreviouslyWorkedInIvanhoeMines?: string;
+    NumberOfTaxDependents?: number;
+    Age?: number;
+    Citizenship?: string;
+    AnyFamilyorOtherLinks?: string;
+    AnyBusinessLinksToDeclare?: string;
+    WillingToRelocate?: string;
+    CountryofOrgin?: string;
+    OthersInterviewed?: string;
 
-    FamilyLink: string;
-    BusinessLink: string;
-    GPA: number;
+    FamilyLink?: string;
+    BusinessLink?: string;
+    GPA?: number;
 
-    COIComments: string;
-    COIEmail: string;
-    COIReason: string;
+    COIComments?: string;
+    COIEmail?: string;
+    COIReason?: string;
 
-    countryOfResidency: string;
-    ResidencyStatus: string;
-    MaritalStatus: string;
-    ChildrenDetails: string;
-    ReferenceEmployeeDetails: string;
+    countryOfResidency?: string;
+    ResidencyStatus?: string;
+    MaritalStatus?: string;
+    ChildrenDetails?: string;
+    ReferenceEmployeeDetails?: string;
     // CandidateOnboardingDate: string;
     // EngagementDate: string;
-    hasIvanhoeZijinExperience: string;
-    OperationRoleRegion: string;
-    NationalityCode: string;
+    hasIvanhoeZijinExperience?: string;
+    OperationRoleRegion?: string;
+    NationalityCode?: string;
+    LanguageKnown?: string;
 }
 export type RescheduledCandidate = {
     ID: number

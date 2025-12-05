@@ -5,6 +5,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LabelHeaderComponents from "./TitleHeader";
 import { ButtonAction } from "../utilities/LabelName";
 import { ColorCode } from "../utilities/Config";
+import StatusBar from "./StatusBar";
 
 type BreadcrumbData = {
   label: string;
@@ -41,6 +42,7 @@ interface BreadcrumbsComponentProps {
     onClick?: () => void;
     disable?: boolean;
   }[];
+  Statuslist?: { [key: string]: boolean } | null;
 }
 
 const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
@@ -56,6 +58,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
   JobValue,
   MainTable,
   ISExpended,
+  Statuslist,
 }) => {
   const [currentValue, setCurrentValue] = React.useState(initialItem);
   const contentRef = React.useRef<HTMLDivElement>(null);
@@ -179,24 +182,38 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
               value={`Job Title - ${JobValue?.JobTitle ?? ""} (${
                 JobValue?.JobCode ?? ""
               })`}
-            >
-              {" "}
-            </LabelHeaderComponents>
+            />
           </div>
+
           {JobValue?.Status && (
             <div
-              className="ms-Grid-col ms-lg6"
-              style={{ display: "flex", justifyContent: "end" }}
+              className={
+                Statuslist ? "ms-Grid-col ms-lg5" : "ms-Grid-col ms-lg6"
+              }
+              style={{ display: "flex", justifyContent: "flex-end" }}
             >
               <LabelHeaderComponents
                 value={`Status - ${JobValue?.Status ?? ""}`}
-              >
-                {" "}
-              </LabelHeaderComponents>
+              />
+            </div>
+          )}
+
+          {Statuslist != null && (
+            <div
+              className="ms-Grid-col ms-lg1"
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                marginTop: "-5%",
+              }}
+            >
+              <StatusBar checklist={Statuslist ?? {}} />
             </div>
           )}
         </div>
       )}
+
       {/* <div
         className="no-scrollbar"
         style={{

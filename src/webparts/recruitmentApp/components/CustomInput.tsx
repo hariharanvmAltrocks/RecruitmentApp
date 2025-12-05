@@ -2,6 +2,7 @@ import { ILabelStyles, Label } from "@fluentui/react";
 import { TextField } from "office-ui-fabric-react";
 import * as React from "react";
 import ToolTipTable from "../Screens/ScreenComponent/ToolTipTable";
+import ToolTipButton from "./Tooltip";
 
 interface fieldItems {
   label?: string;
@@ -16,6 +17,8 @@ interface fieldItems {
   TooltipTitle?: string;
   Tooltipheader?: any;
   TooltipData?: any;
+  WarningMsg?: string;
+  canRevealPassword?: boolean;
 }
 const labelStyles: ILabelStyles = {
   root: { marginTop: 10, overflowWrap: "inherit" },
@@ -34,6 +37,8 @@ function CustomInput({
   TooltipTitle,
   Tooltipheader,
   TooltipData,
+  WarningMsg,
+  canRevealPassword,
 }: fieldItems) {
   return (
     <>
@@ -51,9 +56,15 @@ function CustomInput({
             />
           </span>
         )}
+        {WarningMsg && (
+          <span style={{ marginTop: "3%" }}>
+            <ToolTipButton ApproverData={WarningMsg} />
+          </span>
+        )}
       </div>
 
       <TextField
+        type={canRevealPassword ? "password" : ""}
         value={value}
         placeholder={placeHolder ? placeHolder : label}
         styles={{
@@ -82,6 +93,7 @@ function CustomInput({
           onChange ? (event, value) => onChange(value || "") : undefined
         }
         maxLength={maxLength}
+        canRevealPassword={canRevealPassword}
       />
       {error && (
         <p style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}>
