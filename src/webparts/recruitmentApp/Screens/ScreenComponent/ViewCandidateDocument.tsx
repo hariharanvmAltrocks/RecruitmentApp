@@ -1,12 +1,28 @@
 import * as React from "react";
-import { CustomViewDocument } from "../OfferMedicalProcess/UploadCandidateDocument";
-import { Card, CardContent } from "@mui/material";
-import CustomDialogbox from "../../components/CustomDialogbox";
-import { ColorCode } from "../../utilities/Config";
-import ReuseButton from "../../components/ReuseButton";
+import {
+  Card,
+  CardContent,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+  Grid,
+  IconButton,
+  Box,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import DownloadIcon from "@mui/icons-material/Download";
+import {
+  CommanStyle,
+  DisplayFolderName,
+  labelNames,
+} from "../../utilities/LabelName";
+import { Dialog } from "primereact/dialog";
+import CustomViewDocument from "../../components/CustomViewDocument";
 
 interface AssignPositionDialogProps {
-  data: CustomViewDocument[];
+  data: any[];
   onClose: () => void;
   webUrl: string;
 }
@@ -18,208 +34,223 @@ export const ViewCandidateDocument = ({
 }: AssignPositionDialogProps) => {
   const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
   const [documentcontent, setDocumentcontent] = React.useState<string>("");
+  const [IsExpanded, setIsExpanded] = React.useState<number | null>(0);
 
   function view_fn(url: any) {
     setDocumentPopup(true);
     setDocumentcontent(url);
   }
 
+  function handleFileDownload(event: React.MouseEvent, documentUrl: string) {
+    event.preventDefault();
+    setDocumentPopup(true);
+    setDocumentcontent(documentUrl);
+  }
+
   const getIframeSrc = (fileUrl: string): string => {
     if (fileUrl.endsWith(".pdf")) {
       return fileUrl;
     } else if (fileUrl.endsWith(".docx")) {
-      // You likely don't need to build rootUrl + fileUrl unless fileUrl is relative
-      const absoluteUrl = fileUrl.startsWith("http")
-        ? fileUrl
-        : `${webUrl.split("/sites")[0]}${fileUrl}`;
-
-      // Office viewer requires a publicly accessible link
-      return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
-        absoluteUrl
-      )}`;
+      // const absoluteUrl = fileUrl.startsWith("http")
+      //   ? fileUrl
+      //   : `${webUrl.split("/sites")[0]}${fileUrl}`;
+      const viewerUrl = `${webUrl}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(
+        fileUrl
+      )}&action=embedview`;
+      return viewerUrl;
     } else {
-      return "";
+      return fileUrl;
     }
+  };
+
+  const handleExpand = (index: number) => {
+    setIsExpanded((prev) => (prev === index ? null : index));
+  };
+
+  const renderBackgroundVerificationRow = (
+    docs: any,
+    index: number,
+    handleFileDownload: any,
+    view_fn: any
+  ) => {
+    const subTitle = docs[0];
+    const fileObj = [docs[1]];
+    // const fileName = fileObj.name;
+
+    return (
+      <Box key={index} sx={{ mb: 2 }}>
+        <Typography
+          sx={{ fontWeight: 500, mb: 1, fontFamily: CommanStyle.frontFamily }}
+        >
+          {subTitle}
+        </Typography>
+
+        {fileObj.map((item: any) => (
+          <Grid container spacing={2} alignItems="center" key={item.id}>
+            <Grid item xs={12} sm={8}>
+              <CustomViewDocument Attachment={[item]} webUrl={webUrl} />
+            </Grid>
+
+            <Grid item xs={12} sm={4} textAlign="right">
+              <IconButton onClick={() => view_fn(item.content)}>
+                <VisibilityIcon color="primary" />
+              </IconButton>
+
+              <IconButton component="a" href={item.content} download>
+                <DownloadIcon color="primary" />
+              </IconButton>
+            </Grid>
+          </Grid>
+        ))}
+      </Box>
+    );
+  };
+
+  const renderFileRow = (
+    doc: any,
+    index: number,
+    handleFileDownload: any,
+    view_fn: any
+  ) => {
+    // const fileName = doc.name;
+
+    return (
+      <Box key={index} sx={{ mb: 1 }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={8}>
+            <CustomViewDocument Attachment={[doc]} webUrl={webUrl} />
+          </Grid>
+
+          <Grid item xs={12} sm={4} textAlign="right">
+            <IconButton onClick={() => view_fn(doc.content)}>
+              <VisibilityIcon color="primary" />
+            </IconButton>
+
+            <IconButton component="a" href={doc.content} download>
+              <DownloadIcon color="primary" />
+            </IconButton>
+          </Grid>
+        </Grid>
+      </Box>
+    );
   };
 
   return (
     <>
-      <div className="ms-Grid-row">
+      <div style={{ padding: "2%" }}>
         <Card
-          variant="outlined"
           sx={{
-            boxShadow: "0px 2px 4px 3px #d3d3d3",
-            marginTop: "2%",
-            width: "96%",
-            marginLeft: "2%",
-            // minHeight: "80vh",
+            mb: 2,
+            borderRadius: "6px",
+            boxShadow: "0px 2px 10px rgba(0,0,0,0.1)",
+            maxHeight: "80vh",
+            overflowY: "auto",
           }}
         >
-          <CardContent>
-            <div style={{ padding: "2%" }}>
-              {data.length === 0 ? (
-                <p
-                  style={{
-                    fontSize: "15px",
-                    fontWeight: "bold",
-                    color: "gray",
-                    textAlign: "center",
-                  }}
-                >
-                  No Candidate Document are found
-                </p>
-              ) : (
-                data.map((item, index) => (
-                  <div key={index} style={{ marginBottom: "15px" }}>
-                    <div
-                      className="ms-Grid-row"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div className="ms-Grid-col ms-lg10">
-                        <div
-                          style={{
-                            minWidth: 85,
-                            fontWeight: "bold",
-                            fontFamily: '"Roboto", sans-serif',
-                            fontSize: "17px",
-                          }}
-                        >
-                          {item?.Title}
-                        </div>
-                        <div
-                          style={{
-                            fontFamily: '"Roboto", sans-serif',
-                            // color: "red",
-                            marginLeft: "1%",
-                            // fontWeight: "bold",
-                            // fontSize: "17px",
-                          }}
-                        >
-                          {" "}
-                          File Name: {item?.DocumentName ?? "—"}
-                        </div>
-                      </div>
+          <CardContent sx={{ p: 2 }}>
+            {data.length === 0 ? (
+              <Typography
+                sx={{
+                  fontStyle: "italic",
+                  color: "gray",
+                  textAlign: "center",
+                  pt: 3,
+                }}
+              >
+                No documents available.
+              </Typography>
+            ) : (
+              <>
+                {data.map((item, index) => {
+                  const isExpanded = IsExpanded === index;
 
-                      {/* <div className="ms-Grid-col ms-lg2"> */}
-                      <a
-                        style={{
-                          marginRight: "10px",
-                          color: "antiquewhite",
+                  if (item.data.length === 0) return null;
+
+                  return (
+                    <Box
+                      key={index}
+                      sx={{ border: "1px solid #eee", borderRadius: 2, mb: 2 }}
+                    >
+                      <Accordion
+                        expanded={isExpanded}
+                        onChange={() => handleExpand(index)}
+                        disableGutters
+                        elevation={0}
+                        sx={{
+                          "&:before": { display: "none" },
                         }}
                       >
-                        <img
-                          src={require("../../assets/Viewicon.svg")}
-                          alt="Stamp Icon"
-                          style={{
-                            width: "63%", // scales with font size
-                            height: "auto",
-                            cursor: "pointer",
-                            marginLeft: "32%",
-                          }}
-                          onClick={() => view_fn(item?.DocumentContent)}
-                        />
-                        {/* <ReuseButton
-                              label="View"
-                              onClick={() => view_fn(item?.DocumentContent)}
-                              Style={{
-                                backgroundColor:
-                                  ColorCode.ButtonColorCode.ButtonColor,
-                                color: "white",
-                                width: "50%",
-                              }}
-                            /> */}
-                      </a>
-                      {/* </div> */}
-
-                      {/* <div className="ms-Grid-col ms-lg2"> */}
-                      <div>
-                        <a
-                          href={item?.DocumentContent}
-                          download
-                          style={{
-                            marginRight: "10px",
-                            color: "antiquewhite",
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          sx={{
+                            background: "#fafafa",
+                            borderBottom: "1px solid #eee",
+                            position: "sticky",
+                            top: 0,
+                            zIndex: 5,
                           }}
                         >
-                          <img
-                            src={require("../../assets/Download.svg")}
-                            alt="Stamp Icon"
-                            style={{
-                              width: "50%", // scales with font size
-                              height: "auto",
-                              maxWidth: "40px", // limit maximum size
-                              cursor: "pointer",
-                            }}
-                          />
-                          {/* <button>Download</button> */}
-                        </a>
-                      </div>
-                      {/* </div> */}
-                    </div>
+                          <Typography
+                            sx={{ fontSize: "16px", fontWeight: 600 }}
+                          >
+                            {item.Title} ({item.data.length})
+                          </Typography>
+                        </AccordionSummary>
 
-                    <hr />
-                  </div>
-                ))
-              )}
-            </div>
+                        <AccordionDetails sx={{ p: 2 }}>
+                          {item.Title ===
+                          DisplayFolderName.BackgroundVerification
+                            ? item.data.map((docs: any, idx: number) =>
+                                renderBackgroundVerificationRow(
+                                  docs,
+                                  idx,
+                                  handleFileDownload,
+                                  view_fn
+                                )
+                              )
+                            : item.data.map((doc: any, idx: number) =>
+                                renderFileRow(
+                                  doc,
+                                  idx,
+                                  handleFileDownload,
+                                  view_fn
+                                )
+                              )}
+                        </AccordionDetails>
+                      </Accordion>
+                    </Box>
+                  );
+                })}
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
 
       {documentPopup ? (
         <>
-          <CustomDialogbox
-            Style={{ width: "45vw", height: "35vw" }}
+          <Dialog
+            className="document-viewer"
+            style={{
+              width: "75vw",
+              height: "41vw",
+              // overflowY: "hidden",
+              zIndex: 9999,
+              backgroundColor: "white",
+              borderRadius: "5px",
+            }}
             visible={documentPopup}
             children={
               <iframe
                 src={getIframeSrc(documentcontent)}
-                title="PDF Document"
                 width="100%"
-                height="100%"
+                height="600px"
+                frameBorder="0"
                 style={{ border: "none" }}
               ></iframe>
             }
-            onClose={() => setDocumentPopup(false)}
-            header={
-              <div style={{ textAlign: "center", width: "100%" }}>
-                <h2
-                  style={{
-                    color: ColorCode.LabelStyleColorCode.LabelStyleColor,
-                    fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
-                              -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                  }}
-                >
-                  {" "}
-                  Candidate Documents
-                </h2>
-              </div>
-            }
-            footer={
-              <div
-                className="ms-Grid-row"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  padding: "10px 0",
-                  gap: "33px",
-                }}
-              >
-                <ReuseButton
-                  label="Close"
-                  onClick={() => setDocumentPopup(false)}
-                  Style={{
-                    backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                    color: "white",
-                    width: "50%",
-                  }}
-                />
-              </div>
-            }
+            onHide={() => setDocumentPopup(false)}
+            header={labelNames.DocumentViewer}
           />
         </>
       ) : (

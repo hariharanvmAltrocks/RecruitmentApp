@@ -6,11 +6,7 @@ import {
   InterviewServices,
 } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import {
-  alertPropsData,
-  AutoCompleteItem,
-  InterviewPanaldata,
-} from "../../Models/Screens";
+import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import {
   DocumentLibraray,
@@ -26,7 +22,6 @@ import {
   workflowStatusApi,
   RoleID,
   ResponeStatus,
-  CheckboxContent,
   Choices,
   RoleName,
 } from "../../utilities/Config";
@@ -47,6 +42,12 @@ import BreadcrumbsComponent, {
 import CustomLabel from "../../components/CustomLabel";
 import SPServices from "../../Services/SPService/SPServices";
 import { WorkflowJson } from "../../Models/ApIInterface";
+import {
+  Attachment,
+  ButtonAction,
+  CheckboxContent,
+  labelNames,
+} from "../../utilities/LabelName";
 
 type ValidationError = {
   Qualifications: boolean;
@@ -154,20 +155,20 @@ const InterviewPanelEdit = (props: any) => {
     }
   );
   const [Checkbox, setCheckbox] = React.useState<boolean>(false);
-  const [InterviewPanelData, setInterviewPanelData] = React.useState<
-    InterviewPanaldata[]
-  >([
-    {
-      ID: 0,
-      CandidateID: 0,
-      RecruitmentID: 0,
-      InterviewLevel: "",
-      InterviewPanel: 0,
-      InterviewPanalNames: [],
-      InterviewPanelTitle: "",
-      IsScoreSheetUploaded: "",
-    },
-  ]);
+  // const [InterviewPanelData, setInterviewPanelData] = React.useState<
+  //   InterviewPanaldata[]
+  // >([
+  //   {
+  //     ID: 0,
+  //     CandidateID: 0,
+  //     RecruitmentID: 0,
+  //     InterviewLevel: "",
+  //     InterviewPanel: 0,
+  //     InterviewPanalNames: [],
+  //     InterviewPanelTitle: "",
+  //     IsScoreSheetUploaded: "",
+  //   },
+  // ]);
   const [InterviewedLevel, setInterviewedLevel] =
     React.useState<InterviewedLevelValue>({
       Levels: "",
@@ -341,8 +342,20 @@ const InterviewPanelEdit = (props: any) => {
         }));
         // await fetchRoleProfileData(op.JobCodeId);
         if (questionnaire.length === 0) {
+          let JobCodeFilter = [
+            {
+              FilterKey: "JobCodeId",
+              Operator: "eq",
+              FilterValue: props.stateValue?.JobCodeID,
+            },
+            { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+          ];
+          let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
+            JobCodeFilter,
+            "and"
+          );
           const getQuestion = await GetPortalJobsService.getQuestionnaire(
-            op?.JobCode
+            JobUniqueValue.data[0]?.JobUniqueKey //op?.JobCode
           );
           if (getQuestion.status === ResponeStatus.SUCCESS) {
             if (getQuestion?.data?.length === 0) {
@@ -544,192 +557,207 @@ const InterviewPanelEdit = (props: any) => {
   const Submit_fn = async () => {
     try {
       let isValid = !Validation();
-      if (!isValid) return;
-      setIsLoading(true);
-      const CurrentUserResponse = await CommonServices.getUserGuidByEmail(
-        props.CurrentUserEmailId
-      );
-      const currentUserKey = CurrentUserResponse.data?.key?.toString();
+      if (isValid) {
+        setIsLoading(true);
+        const CurrentUserResponse = await CommonServices.getUserGuidByEmail(
+          props.CurrentUserEmailId
+        );
+        const currentUserKey = CurrentUserResponse.data?.key?.toString();
 
-      const CandidatePersonalDetailsResponse =
-        await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
-          undefined,
-          [
+        const CandidatePersonalDetailsResponse =
+          await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
+            undefined,
+            [
+              {
+                FilterKey: "ID",
+                Operator: "eq",
+                FilterValue: props.stateValue?.ID,
+              },
+            ]
+          );
+        const InterviewPanelResponse =
+          await InterviewServices.GetInterviewPanelDetails([
             {
-              FilterKey: "ID",
+              FilterKey: "CandidateIDId",
               Operator: "eq",
               FilterValue: props.stateValue?.ID,
             },
-          ]
-        );
-      const InterviewPanelResponse =
-        await InterviewServices.GetInterviewPanelDetails([
-          {
-            FilterKey: "CandidateIDId",
-            Operator: "eq",
-            FilterValue: props.stateValue?.ID,
-          },
-        ]);
+          ]);
 
-      if (
-        !CandidatePersonalDetailsResponse.data ||
-        !InterviewPanelResponse.data
-      ) {
-        return;
-      }
+        if (
+          !CandidatePersonalDetailsResponse.data ||
+          !InterviewPanelResponse.data
+        ) {
+          return;
+        }
 
-      const CandidateDatares = CandidatePersonalDetailsResponse.data.find(
-        (item: any) => item.ID === props.stateValue?.ID
-      );
-
-      const matchingPanels = InterviewPanelResponse.data.filter(
-        (panel: any) =>
-          props.stateValue?.ID === panel.CandidateID &&
-          CandidateDatares?.RecruitmentID === panel.RecruitmentID
-      );
-
-      if (matchingPanels.length === 0) {
-        return;
-      }
-
-      const userPanels = matchingPanels.filter(
-        (panel: any) => panel.InterviewPanel === Number(currentUserKey)
-      );
-
-      if (userPanels.length === 0) {
-        return;
-      }
-
-      for (const panel of userPanels) {
-        const InterviewPanelID = panel.ID;
-        let QuestionScore: { [key: string]: number }[] = [];
-
-        questionnaire.forEach((item) => {
-          let QuestionScoreData = {
-            [item.header as string]: item.rating ?? 0,
-          };
-          QuestionScore.push(QuestionScoreData);
-        });
-
-        const scorecardObj = {
-          RelevantQualification: String(CandidateData?.Qualifications?.key),
-          ReleventExperience: String(CandidateData?.Experience?.key),
-          Knowledge: String(CandidateData?.Knowledge?.key),
-          EnergyLevel: String(CandidateData?.Energylevel?.key),
-          MeetJobRequirement: String(CandidateData?.Requirements?.key),
-          ContributeTowardsCultureRequried: String(
-            CandidateData?.contributeculture?.key
-          ),
-          Experience: String(CandidateData?.ExpatExperienceCongolese?.key),
-          OtherCriteriaScore: String(CandidateData?.CriteriaRecognised?.key),
-          ConsiderForEmployment: CandidateData?.Employment,
-          ...(shouldShowTextArea && {
-            Feedback: CandidateData?.EvaluationFeedback,
-          }),
-          OverAllEvaluationFeedback: CandidateData?.OverAllEvaluationFeedback,
-          RecruitmentIDId: CandidateData?.RecruitmentID,
-          RoleId: currentRoleID,
-          InterviewPersonNameId: currentUserKey,
-          InterviewPanelIDId: InterviewPanelID,
-          QuestionJson: JSON.stringify(QuestionScore),
-        };
-
-        await getVRRDetails.InsertList(
-          scorecardObj,
-          ListNames.HRMSCandidateScoreCard
+        const CandidateDatares = CandidatePersonalDetailsResponse.data.find(
+          (item: any) => item.ID === props.stateValue?.ID
         );
 
-        await SPServices.SPUpdateItem({
-          Listname: ListNames.HRMSInterviewPanelDetails,
-          RequestJSON: { IsScoreSheetUploaded: "Yes" },
-          ID: InterviewPanelID,
-        });
-      }
-      const updatedInterviewPanelResponse =
-        await InterviewServices.GetInterviewPanelDetails([
-          {
-            FilterKey: "CandidateID",
-            Operator: "eq",
-            FilterValue: props.stateValue?.ID,
-          },
-        ]);
+        const matchingPanels = InterviewPanelResponse.data.filter(
+          (panel: any) =>
+            props.stateValue?.ID === panel.CandidateID &&
+            CandidateDatares?.RecruitmentID === panel.RecruitmentID
+        );
 
-      if (
-        !updatedInterviewPanelResponse.data ||
-        updatedInterviewPanelResponse.data.length === 0
-      ) {
-        return;
-      }
+        if (matchingPanels.length === 0) {
+          return;
+        }
 
-      const level1Panels = updatedInterviewPanelResponse.data.filter(
-        (p) => p.InterviewLevel === InterviewLevels.Level1
-      );
+        const userPanels = matchingPanels.filter(
+          (panel: any) => panel.InterviewPanel === Number(currentUserKey)
+        );
 
-      const uploadedCount = level1Panels.filter(
-        (p) => p.IsScoreSheetUploaded === "Yes"
-      ).length;
+        if (userPanels.length === 0) {
+          return;
+        }
 
-      if (uploadedCount === level1Panels.length) {
-        try {
-          let CandidateDatas: WorkflowJson = {
-            workflowStatus: workflowStatusApi.pendingHODSelection,
-            jobRequestId: Number(CandidateData.JobRequestID),
-            comments: "",
-            actionBy: RoleName.HOD,
+        for (const panel of userPanels) {
+          const InterviewPanelID = panel.ID;
+          let QuestionScore: { [key: string]: number }[] = [];
+
+          questionnaire.forEach((item) => {
+            let QuestionScoreData = {
+              [item.header as string]: item.rating ?? 0,
+            };
+            QuestionScore.push(QuestionScoreData);
+          });
+
+          const scorecardObj = {
+            RelevantQualification: String(CandidateData?.Qualifications?.key),
+            ReleventExperience: String(CandidateData?.Experience?.key),
+            Knowledge: String(CandidateData?.Knowledge?.key),
+            EnergyLevel: String(CandidateData?.Energylevel?.key),
+            MeetJobRequirement: String(CandidateData?.Requirements?.key),
+            ContributeTowardsCultureRequried: String(
+              CandidateData?.contributeculture?.key
+            ),
+            Experience: String(CandidateData?.ExpatExperienceCongolese?.key),
+            OtherCriteriaScore: String(CandidateData?.CriteriaRecognised?.key),
+            ConsiderForEmployment: CandidateData?.Employment,
+            ...(shouldShowTextArea && {
+              Feedback: CandidateData?.EvaluationFeedback,
+            }),
+            OverAllEvaluationFeedback: CandidateData?.OverAllEvaluationFeedback,
+            RecruitmentIDId: CandidateData?.RecruitmentID,
+            RoleId: currentRoleID,
+            InterviewPersonNameId: currentUserKey,
+            InterviewPanelIDId: InterviewPanelID,
+            QuestionJson: JSON.stringify(QuestionScore),
           };
 
-          await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
+          await getVRRDetails.InsertList(
+            scorecardObj,
+            ListNames.HRMSCandidateScoreCard
+          );
 
           await SPServices.SPUpdateItem({
-            Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-            RequestJSON: {
-              IsScoreSheetUploaded: "Yes",
-              ActionId: WorkflowAction.Approved,
-              ItemCreated: "Yes",
-            },
-            ID: props.stateValue?.ID,
+            Listname: ListNames.HRMSInterviewPanelDetails,
+            RequestJSON: { IsScoreSheetUploaded: "Yes" },
+            ID: InterviewPanelID,
           });
-        } catch (finalUpdateError) {
-          console.error("", finalUpdateError);
         }
-      } else {
-      }
+        const updatedInterviewPanelResponse =
+          await InterviewServices.GetInterviewPanelDetails([
+            {
+              FilterKey: "CandidateID",
+              Operator: "eq",
+              FilterValue: props.stateValue?.ID,
+            },
+          ]);
 
-      setAlertPopupOpen(true);
-      setalertProps({
-        Message: RecuritmentHRMsg.ScoreCardSubmitMsg,
-        Type: HRMSAlertOptions.Success,
-        visible: true,
-        ButtonAction: (userClickedOK: any) => {
-          if (userClickedOK) {
-            if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-              props.navigation("/ReviewProfileList", {
-                state: {
-                  tab: props.stateValue.tab, //props.stateValue?.tab,
-                  TabName: TabName.Evaluation,
-                },
-              });
-            } else if (
-              props.CurrentRoleID.includes(RoleID.HOD) ||
-              props.CurrentRoleID.includes(RoleID.LineManager)
-            ) {
-              props.navigation("/RecurimentProcess", {
-                state: {
-                  tab: props.stateValue.tab, //props.stateValue?.tab,
-                  TabName: TabName.Evaluation,
-                },
-              });
-            } else {
-              props.navigation("/InterviewPanelList");
-            }
-            setAlertPopupOpen(false);
-          } else {
-            setAlertPopupOpen(false);
+        if (
+          !updatedInterviewPanelResponse.data ||
+          updatedInterviewPanelResponse.data.length === 0
+        ) {
+          return;
+        }
+
+        const level1Panels = updatedInterviewPanelResponse.data.filter(
+          (p) => p.InterviewLevel === InterviewLevels.Level1
+        );
+
+        const uploadedCount = level1Panels.filter(
+          (p) => p.IsScoreSheetUploaded === "Yes"
+        ).length;
+
+        if (uploadedCount === level1Panels.length) {
+          try {
+            let CandidateDatas: WorkflowJson = {
+              workflowStatus: workflowStatusApi.pendingHODSelection,
+              jobRequestId: Number(CandidateData.JobRequestID),
+              comments: "",
+              actionBy: RoleName.HOD,
+            };
+
+            await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
+
+            await SPServices.SPUpdateItem({
+              Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+              RequestJSON: {
+                IsScoreSheetUploaded: "Yes",
+                ActionId: WorkflowAction.Approved,
+                ItemCreated: "Yes",
+              },
+              ID: props.stateValue?.ID,
+            });
+          } catch (finalUpdateError) {
+            console.error("", finalUpdateError);
           }
-        },
-      });
+        } else {
+        }
 
-      setIsLoading(false);
+        setAlertPopupOpen(true);
+        setalertProps({
+          Message: RecuritmentHRMsg.ScoreCardSubmitMsg,
+          Type: HRMSAlertOptions.Success,
+          visible: true,
+          ButtonAction: (userClickedOK: any) => {
+            if (userClickedOK) {
+              if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+                props.navigation("/ReviewProfileList", {
+                  state: {
+                    tab: props.stateValue.tab, //props.stateValue?.tab,
+                    TabName: TabName.Evaluation,
+                  },
+                });
+              } else if (
+                props.CurrentRoleID.includes(RoleID.HOD) ||
+                props.CurrentRoleID.includes(RoleID.LineManager)
+              ) {
+                props.navigation("/RecurimentProcess", {
+                  state: {
+                    tab: props.stateValue.tab, //props.stateValue?.tab,
+                    TabName: TabName.Evaluation,
+                  },
+                });
+              } else {
+                props.navigation("/InterviewPanelList");
+              }
+              setAlertPopupOpen(false);
+            } else {
+              setAlertPopupOpen(false);
+            }
+          },
+        });
+
+        setIsLoading(false);
+      } else {
+        let FormFieldFailed = {
+          Message: RecuritmentHRMsg.FormValidationMsg,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+        setAlertPopupOpen(true);
+        setalertProps(FormFieldFailed);
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error("Error submitting data:", error);
       throw new Error("Failed to submit data. Please try again later.");
@@ -794,7 +822,7 @@ const InterviewPanelEdit = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Applicant Name"
+                    label={labelNames.CandidateDetails.ApplicantName}
                     value={CandidateData.FullName}
                     disabled={true}
                     mandatory={false}
@@ -808,7 +836,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Nationality"
+                    label={labelNames.CandidateDetails.Nationality}
                     value={CandidateData.Nationality}
                     disabled={true}
                     mandatory={false}
@@ -822,7 +850,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Gender"
+                    label={labelNames.CandidateDetails.Gender}
                     value={CandidateData.Gender}
                     disabled={true}
                     mandatory={false}
@@ -839,7 +867,9 @@ const InterviewPanelEdit = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Highest Relevant Qualification"
+                    label={
+                      labelNames.CandidateDetails.HighestRelevantQualification
+                    }
                     value={CandidateData.Qualification}
                     disabled={true}
                     mandatory={false}
@@ -853,7 +883,9 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Experiance in Mining Industry (Years)"
+                    label={
+                      labelNames.CandidateDetails.ExperienceInMiningIndustry
+                    }
                     value={CandidateData.TotalYearOfExperiance}
                     disabled={true}
                     mandatory={false}
@@ -867,7 +899,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Experiance in Related Field (Years)"
+                    label={labelNames.CandidateDetails.ExperienceInRelatedField}
                     value={CandidateData.ReleventExperience}
                     disabled={true}
                     mandatory={false}
@@ -883,7 +915,7 @@ const InterviewPanelEdit = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Date of Interview"
+                    label={labelNames.CandidateDetails.DateInterview}
                     value={
                       CandidateData.InterviewDate
                         ? new Date(CandidateData.InterviewDate)
@@ -903,7 +935,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="No of Interview Level's"
+                    label={labelNames.CandidateDetails.NofInterviewLevel}
                     value={InterviewedLevel.Levels}
                     disabled={true}
                     mandatory={false}
@@ -911,7 +943,7 @@ const InterviewPanelEdit = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg4">
                   <CustomInput
-                    label="Grade"
+                    label={labelNames.CandidateDetails.Grade}
                     value={InterviewedLevel.Grade}
                     disabled={true}
                     mandatory={false}
@@ -922,7 +954,7 @@ const InterviewPanelEdit = (props: any) => {
                 {CandidateData?.ConflictsOfInterest && (
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Conflicts Of Interest"
+                      label={labelNames.CandidateDetails.ConflictsOfInterest}
                       value={CandidateData?.ConflictsOfInterest}
                       disabled={true}
                       mandatory={false}
@@ -932,7 +964,7 @@ const InterviewPanelEdit = (props: any) => {
                 {CandidateData?.ConflictsOfInterest && (
                   <div className="ms-Grid-col ms-lg4">
                     <CustomInput
-                      label="Disability"
+                      label={labelNames.CandidateDetails.Disability}
                       value={CandidateData?.disability}
                       disabled={true}
                       mandatory={false}
@@ -945,7 +977,7 @@ const InterviewPanelEdit = (props: any) => {
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg12">
                       <CustomTextArea
-                        label="Disability Details"
+                        label={labelNames.CandidateDetails.DisabilityDetails}
                         value={CandidateData?.disabilityReason}
                         disabled={true}
                         mandatory={false}
@@ -966,7 +998,7 @@ const InterviewPanelEdit = (props: any) => {
                       display: "block",
                     }}
                   >
-                    Interview Panel Level 1
+                    {labelNames.CandidateDetails.InterviewPanelLevel1}
                   </label>
                   <div
                     style={{
@@ -1018,7 +1050,7 @@ const InterviewPanelEdit = (props: any) => {
                         display: "block",
                       }}
                     >
-                      Interview Panel Level 2
+                      {labelNames.CandidateDetails.InterviewPanelLevel2}
                     </label>
                     <div
                       style={{
@@ -1060,13 +1092,15 @@ const InterviewPanelEdit = (props: any) => {
 
               <div className="ms-Grid-row" style={{ marginTop: "22px" }}>
                 <div className="ms-Grid-col ms-lg6">
-                  <LabelHeaderComponents value={"Attachments"} />
+                  <LabelHeaderComponents value={Attachment.Attachments} />
                 </div>
               </div>
 
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg4">
-                  <CustomLabel value={"Candidate Resume"} />
+                  <CustomLabel
+                    value={Attachment.PositionDocument.CandidateResume}
+                  />
                   <CustomViewDocument
                     Attachment={CandidateData.CandidateCVDoc}
                   />
@@ -1358,11 +1392,11 @@ const InterviewPanelEdit = (props: any) => {
                       gap: "10px",
                     }}
                   >
-                    <LabelHeaderComponents value={"Questionnaires"} />
+                    <LabelHeaderComponents
+                      value={labelNames.Questionnaires.Questionnaires}
+                    />
                     <CustomLabel
-                      value={
-                        "(Rating Guide: 3 - Excellent, 2 - Acceptable, 1 - Not Acceptable)"
-                      }
+                      value={labelNames.Questionnaires.QuestionGrade}
                     />
                   </div>
                 </div>
@@ -1390,7 +1424,9 @@ const InterviewPanelEdit = (props: any) => {
                       </div>
                     </p>
                     <p>
-                      <strong>Expected Answer:</strong>
+                      <strong>
+                        {labelNames.Questionnaires.ExpectedAnswer}
+                      </strong>
                       <span
                         dangerouslySetInnerHTML={{
                           __html: `${q.answer
@@ -1412,7 +1448,7 @@ const InterviewPanelEdit = (props: any) => {
                     >
                       <div className="ms-Grid-col ms-lg4">
                         <CustomAutoComplete
-                          label="Rating "
+                          label={labelNames.Questionnaires.Rating}
                           value={
                             ScoreRating.find(
                               (option) => option.key === q.rating
@@ -1447,14 +1483,14 @@ const InterviewPanelEdit = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-row" style={{ marginLeft: "1%" }}>
                   <LabelHeaderComponents
-                    value={"Scorecard Details(1-Lower Score, 5 -Highest Score)"}
+                    value={labelNames.Questionnaires.ScorecardDetails}
                   />
                 </div>
 
                 <div className="ms-Grid-row" style={{ marginLeft: "1px" }}>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Qualifications (Relevant)"
+                      label={labelNames.Questionnaires.QualificationsRelevant}
                       value={CandidateData.Qualifications}
                       options={ScoreRanking}
                       onChange={(value) =>
@@ -1468,7 +1504,7 @@ const InterviewPanelEdit = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Experience (Relevant)"
+                      label={labelNames.Questionnaires.ExperienceRelevant}
                       value={CandidateData.Experience}
                       options={ScoreRanking}
                       onChange={(value) =>
@@ -1482,7 +1518,7 @@ const InterviewPanelEdit = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Knowledge"
+                      label={labelNames.Questionnaires.Knowledge}
                       value={CandidateData.Knowledge}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1497,7 +1533,7 @@ const InterviewPanelEdit = (props: any) => {
                 <div className="ms-Grid-row" style={{ marginLeft: "1px" }}>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Energy Level"
+                      label={labelNames.Questionnaires.EnergyLevel}
                       value={CandidateData.Energylevel}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1511,7 +1547,7 @@ const InterviewPanelEdit = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Meets All Job Requirements"
+                      label={labelNames.Questionnaires.MeetsJobRequirements}
                       value={CandidateData.Requirements}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1525,7 +1561,9 @@ const InterviewPanelEdit = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Will Contribute to the Culture Required"
+                      label={
+                        labelNames.Questionnaires.WillContributeCultureRequired
+                      }
                       value={CandidateData.contributeculture}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1541,7 +1579,7 @@ const InterviewPanelEdit = (props: any) => {
                 <div className="ms-Grid-row" style={{ marginLeft: "1px" }}>
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Expat Experience/Congolese"
+                      label={labelNames.Questionnaires.ExpatExperienceCongolese}
                       value={CandidateData.ExpatExperienceCongolese}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1555,7 +1593,9 @@ const InterviewPanelEdit = (props: any) => {
 
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
-                      label="Other Criteria Recognized by the Panel"
+                      label={
+                        labelNames.Questionnaires.OtherCriteriaRecognizedPanel
+                      }
                       value={CandidateData.CriteriaRecognised}
                       options={ScoreRanking}
                       mandatory={true}
@@ -1574,7 +1614,7 @@ const InterviewPanelEdit = (props: any) => {
                     style={{ marginLeft: "11px" }}
                   >
                     <CustomRadioGroup
-                      label="To Consider for Employment"
+                      label={labelNames.Questionnaires.ConsiderEmployment}
                       value={CandidateData?.Employment}
                       options={EmploymentOption}
                       mandatory={true}
@@ -1592,7 +1632,9 @@ const InterviewPanelEdit = (props: any) => {
                       style={{ marginLeft: "2px" }}
                     >
                       <CustomTextArea
-                        label="Feedback(Required for Ratings Below 2)"
+                        label={
+                          labelNames.Questionnaires.FeedbackRequiredRatingsBelow
+                        }
                         value={CandidateData?.EvaluationFeedback}
                         error={ValidationError.EvaluationFeedback}
                         mandatory={true}
@@ -1610,7 +1652,9 @@ const InterviewPanelEdit = (props: any) => {
                     style={{ marginLeft: "6px" }}
                   >
                     <CustomTextArea
-                      label="Overall Evaluation Feedback"
+                      label={
+                        labelNames.Questionnaires.OverallEvaluationFeedback
+                      }
                       value={CandidateData?.OverAllEvaluationFeedback}
                       error={ValidationError.OverAllEvaluationFeedback}
                       mandatory={true}
@@ -1672,7 +1716,7 @@ const InterviewPanelEdit = (props: any) => {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
           { tabName: props.stateValue?.TabName },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: activeTabObj?.label },
         ];
         return newTabNames;
@@ -1681,7 +1725,7 @@ const InterviewPanelEdit = (props: any) => {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
           { tabName: props.stateValue?.TabName },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: TabName.ViewCandidateDetails },
           { tabName: activeTabObj?.label },
         ];
@@ -1745,11 +1789,11 @@ const InterviewPanelEdit = (props: any) => {
                 (panel) => panel.InterviewPanelTitle
               );
 
-              console.log(InterviewPanelData);
-              setInterviewPanelData((prevState) => ({
-                ...prevState,
-                interviewPanelTitles: interviewPanelTitles || [],
-              }));
+              // console.log(InterviewPanelData);
+              // setInterviewPanelData((prevState) => ({
+              //   ...prevState,
+              //   interviewPanelTitles: interviewPanelTitles || [],
+              // }));
 
               setCandidateData((prevState) => ({
                 ...prevState,
@@ -1842,7 +1886,7 @@ const InterviewPanelEdit = (props: any) => {
             }}
             additionalButtons={[
               {
-                label: "Submit",
+                label: ButtonAction.Submit,
                 onClick: async () => {
                   await Submit_fn();
                 },

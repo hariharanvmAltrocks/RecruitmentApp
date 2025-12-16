@@ -17,9 +17,9 @@ const SideNavComponent = (props: sideNavProps) => {
   const { masterData } = userInfo();
 
   const [sideNavArr, setSideNavArr] = React.useState<MenuResponse[]>([]);
-  const [expandedMenuId, setExpandedMenuId] = React.useState<number | null>(
-    null
-  );
+  // const [expandedMenuId, setExpandedMenuId] = React.useState<number | null>(
+  //   null
+  // );
   const [isHovered, setIsHovered] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -122,7 +122,7 @@ const SideNavComponent = (props: sideNavProps) => {
   };
 
   const toggleExpand = (menuId: number, path: string) => {
-    setExpandedMenuId((prev) => (prev === menuId ? null : menuId));
+    // setExpandedMenuId((prev) => (prev === menuId ? null : menuId));
     handleNavigation(path, menuId);
   };
 
@@ -135,16 +135,14 @@ const SideNavComponent = (props: sideNavProps) => {
         {items?.map((item: MenuResponse) => {
           const isActive = isActiveMenu(item);
           // const isActive = item.Children?.[0]?.Path && isActiveMenu(item.Children[0].Path);
-          let expandID = expandedMenuId
-            ? expandedMenuId
-            : masterData?.menuMartixData[0].Id;
-          let selectedmenuID = sideNavArr.filter(
-            (items) => items.Id === expandID
-          );
-          let menuIDExpend = selectedmenuID[0]?.Children ? true : false;
-          const isExpanded = expandedMenuId === item.Id;
-          console.log(menuIDExpend, "item.Id");
-          console.log(isExpanded, "isExpanded");
+          // let expandID = expandedMenuId
+          //   ? expandedMenuId
+          //   : masterData?.menuMartixData[0].Id;
+          // let selectedmenuID = sideNavArr.filter(
+          //   (items) => items.Id === expandID
+          // );
+          // let menuIDExpend = selectedmenuID[0]?.Children ? true : false;
+          // const isExpanded = expandedMenuId === item.Id;
 
           const isChildIshere = item.Children?.[0]?.Path;
           const isMainMenu = menuType === "menu";
@@ -296,7 +294,7 @@ const SideNavComponent = (props: sideNavProps) => {
               marginBottom: "10px",
             }}
           >
-            Version-1.2
+            Version-1.3
           </div>
         </>
       ) : (
@@ -310,7 +308,7 @@ const SideNavComponent = (props: sideNavProps) => {
               marginBottom: "10px",
             }}
           >
-            V-1.2
+            V-1.3
           </div>
         </>
       )}

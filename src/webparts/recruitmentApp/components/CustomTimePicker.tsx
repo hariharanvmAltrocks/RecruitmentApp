@@ -92,7 +92,7 @@ const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
         {label}
         {mandatory && <span style={{ color: "red" }}> *</span>}
       </Label>
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", gap: "4%" }}>
         <Dropdown
           placeholder="HH"
           options={hourOptions}

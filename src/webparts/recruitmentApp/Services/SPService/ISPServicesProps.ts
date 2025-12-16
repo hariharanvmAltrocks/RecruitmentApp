@@ -4,7 +4,7 @@ export interface IFilter {
     Operator: string;
 }
 
- 
+
 export interface IListItems {
     Listname: string | any;
     Select?: string | any;
@@ -90,6 +90,7 @@ export type IDocFiles = {
     name: string;
     content: any;
     type: string;
+    url?: string;
 
 }
 export type IAddDocLibFiles = {

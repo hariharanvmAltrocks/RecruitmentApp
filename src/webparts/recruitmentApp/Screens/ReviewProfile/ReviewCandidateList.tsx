@@ -8,8 +8,8 @@ import {
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
   ApplicationStatusId,
-  ButtonAction,
   HRMSAlertOptions,
+  ResponeStatus,
   RoleID,
   RoleName,
   StatusId,
@@ -33,6 +33,11 @@ import { alertPropsData } from "../../Models/Screens";
 import * as moment from "moment";
 import { tabStyle } from "../../components/TabMerge";
 import ToolTipButton from "../../components/Tooltip";
+import {
+  ButtonAction,
+  JobAdvertAlertMsg,
+  PendingCandidateAlertMsg,
+} from "../../utilities/LabelName";
 
 type tabCount = {
   ReviewProfileCount: number;
@@ -65,6 +70,7 @@ const ReviewCandidateList = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
+  const [JobUniqueValue, setJobUniqueValue] = React.useState<string>("");
   const [pagination, setPagination] = React.useState({
     first: 0,
     rows: rows,
@@ -92,7 +98,7 @@ const ReviewCandidateList = (props: any) => {
 
     const today = new Date();
     today.setDate(today.getDate() + 1);
-    const todayDateStr = today.toDateString();
+    // const todayDateStr = today.toDateString();
 
     const {
       JobPostingEndDate,
@@ -103,18 +109,21 @@ const ReviewCandidateList = (props: any) => {
 
     let JobValidation = false;
 
+    let comparisonDate = null;
+
     if (JobPostingSecondExtensionEndDate) {
-      JobValidation =
-        new Date(JobPostingSecondExtensionEndDate).toDateString() ===
-        todayDateStr;
+      comparisonDate = new Date(JobPostingSecondExtensionEndDate);
     } else if (JobPostingFirstExtensionEndDate) {
-      JobValidation =
-        new Date(JobPostingFirstExtensionEndDate).toDateString() ===
-        todayDateStr;
+      comparisonDate = new Date(JobPostingFirstExtensionEndDate);
     } else if (JobPostingEndDate) {
-      JobValidation =
-        new Date(JobPostingEndDate).toDateString() === todayDateStr;
+      comparisonDate = new Date(JobPostingEndDate);
     }
+
+    if (comparisonDate) {
+      comparisonDate.setHours(0, 0, 0, 0); // Normalize time
+      JobValidation = today >= comparisonDate; // <-- reversed comparison
+    }
+
     let ScreenNavigation = props.CurrentRoleID.includes(RoleID.LineManager)
       ? "/RecurimentProcess/ReviewCandidateList/ViewCandidateDetails"
       : "/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails";
@@ -126,6 +135,7 @@ const ReviewCandidateList = (props: any) => {
             StatusId: rowData?.workflowStatusId,
             RecruitmentID,
             tab,
+            tabs: props.stateValue?.tab,
             ButtonAction,
             TabNamed,
             JobCodeID: props.stateValue?.JobCodeID,
@@ -136,12 +146,9 @@ const ReviewCandidateList = (props: any) => {
         });
       } else if (pendingcount.ONHoldRejectedCount > 0) {
         // const JobExpiredMsg = `There are ${pendingcount.ONHoldRejectedCount} pending candidate is there so please review the candidate after the processed .`;
-        const JobExpiredMsg = `
-          <div style="text-align: center;">
-            <h3>⚠️ Pending Candidate Review.</h3>
-            <p>There is ${pendingcount.ONHoldRejectedCount} pending candidate currently on hold</p>
-            <p>Please review the candidate and take the necessary action to proceed with interview scheduling.</p>
-          </div>`;
+        const JobExpiredMsg = PendingCandidateAlertMsg(
+          pendingcount.ONHoldRejectedCount
+        );
         const SuccessAlert = {
           Message: JobExpiredMsg,
           Type: HRMSAlertOptions.Error,
@@ -161,13 +168,7 @@ const ReviewCandidateList = (props: any) => {
           : JobPostingFirstExtensionEndDate
           ? moment(JobPostingFirstExtensionEndDate).format("DD/MM/YYYY")
           : moment(JobPostingEndDate).format("DD/MM/YYYY");
-        const JobExpiredMsg = `
-          <div style="text-align: center;">
-            <h3>⚠️ Action cannot be performed.</h3>
-            <p>This job advert is still active and open for recruitment.</p>
-            <p><strong>Expiry Date:</strong> ${Dateformat}</p>
-            <p>Please try again after it expires.</p>
-          </div>`;
+        const JobExpiredMsg = JobAdvertAlertMsg(Dateformat);
         const SuccessAlert = {
           Message: JobExpiredMsg,
           Type: HRMSAlertOptions.Error,
@@ -189,6 +190,7 @@ const ReviewCandidateList = (props: any) => {
           StatusId: rowData?.workflowStatusId,
           RecruitmentID,
           tab,
+          tabs: props.stateValue?.tab,
           JobCodeID: props.stateValue?.JobCodeID,
           JobCode: props.stateValue?.JobCode,
           ButtonAction,
@@ -321,7 +323,7 @@ const ReviewCandidateList = (props: any) => {
       field: "Status",
       header: "Status",
       fieldName: "Status",
-      sortable: false,
+      sortable: true,
       body: (rowData: any) => {
         const isTooltipStatus = [
           workflowStatusApi.CandidateRejectedIPanel,
@@ -329,8 +331,12 @@ const ReviewCandidateList = (props: any) => {
           workflowStatusApi.LineManagerLevel2Rejected,
           workflowStatusApi.HRRejected,
         ].includes(rowData.workflowStatusId);
+        const isApplicationStatus = [
+          ApplicationStatusId.ApplicationSuspended,
+        ].includes(rowData.applicationStatusId);
         if (
           !isTooltipStatus &&
+          !isApplicationStatus &&
           breadcrumbTab === "tab2" &&
           props.stateValue?.TabNames === TabName.ReviewProfile &&
           props.CurrentRoleID.includes(RoleID.RecruitmentHR)
@@ -344,7 +350,16 @@ const ReviewCandidateList = (props: any) => {
                 ApproverData={pendingInfo}
                 onHover={() => handleHover(rowData.workflowStatusId, rowData)}
               />
-              <span>{rowData.Status}</span>
+              <span>
+                {rowData.applicationStatusId ===
+                ApplicationStatusId.ApplicationSuspended ? (
+                  <span style={{ color: "red" }}>
+                    {rowData.applicationStatus}
+                  </span>
+                ) : (
+                  <span> {rowData.Status}</span>
+                )}
+              </span>
             </div>
           );
         }
@@ -352,9 +367,15 @@ const ReviewCandidateList = (props: any) => {
           <span>
             {rowData.applicationStatusId ===
             ApplicationStatusId.ApplicationSuspended ? (
-              <span style={{ color: "red" }}>{rowData.applicationStatus}</span>
+              <span style={{ color: "red", marginLeft: "7%" }}>
+                {rowData.applicationStatus}
+              </span>
+            ) : rowData.workflowStatusId === StatusId.Rescheduled ? (
+              <span style={{ color: "red", marginLeft: "7%" }}>
+                {rowData.Status}
+              </span>
             ) : (
-              <span> {rowData.Status}</span>
+              <span style={{ marginLeft: "7%" }}>{rowData.Status}</span>
             )}
           </span>
         );
@@ -444,20 +465,27 @@ const ReviewCandidateList = (props: any) => {
     },
   ];
 
-  // React.useEffect(() => {
-  //   const getMasterData = async () => {
-  //     const StatusMaster = await CommonServices.GetMasterData(
-  //       ListNames.HRMSRecruitmentWorkFlowMasterStatus
-  //     );
-  //     let MasterStatusData = StatusMaster.data.map((item) => ({
-  //       key: item.Code,
-  //       text: item.Status,
-  //     }));
-  //   };
-  //   void getMasterData();
-  // }, [activeTab]);
+  React.useEffect(() => {
+    const getMasterData = async () => {
+      // const StatusMaster = await CommonServices.GetMasterData(
+      //   ListNames.HRMSRecruitmentWorkFlowMasterStatus
+      // );
+      // let MasterStatusData = StatusMaster.data.map((item) => ({
+      //   key: item.Code,
+      //   text: item.Status,
+      // }));
+      setBreadcrumbTab(
+        props.stateValue?.tabs ? props.stateValue?.tabs : breadcrumbTab
+      );
+    };
+    void getMasterData();
+  }, [activeTab]);
 
-  const fetchCandidateData = async (tabs: string, row?: number) => {
+  const fetchCandidateData = async (
+    tabs: string,
+    row: number,
+    JobUniqueValues: string
+  ) => {
     setIsLoading(true);
     try {
       if (
@@ -473,6 +501,7 @@ const ReviewCandidateList = (props: any) => {
             FilterValue: [
               StatusId.InterviewScheduledforLevel2,
               StatusId.InterviewScheduled,
+              StatusId.Rescheduled,
             ],
           });
           filterConditionsRecuritment.push({
@@ -532,7 +561,7 @@ const ReviewCandidateList = (props: any) => {
           totalItems: 0,
         };
         let createFilter = (workflowStausId: string[]): FilterItem => ({
-          jobCode: props.stateValue?.JobCode, //"JC0005",
+          jobCode: JobUniqueValues, //props.stateValue?.JobCode, //"JC0005",
           workflowStausId: workflowStausId,
           pagination: FilterValueData,
         });
@@ -572,6 +601,7 @@ const ReviewCandidateList = (props: any) => {
               ]);
             } else {
               FilterValue = createFilter([
+                workflowStatusApi.HRRejected,
                 workflowStatusApi.LineManagerL1Pending,
                 workflowStatusApi.LineManagerL2Pending,
                 workflowStatusApi.LineManagerLevel1OnHold,
@@ -582,6 +612,8 @@ const ReviewCandidateList = (props: any) => {
                 workflowStatusApi.CandidateSelectedIPanel,
                 workflowStatusApi.CandidateRejectedIPanel,
                 workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+                ApplicationStatusId.ApplicationSuspended,
+                // workflowStatusApi.Appl
               ]);
             }
             break;
@@ -632,7 +664,7 @@ const ReviewCandidateList = (props: any) => {
     setIsLoading(false);
   };
 
-  const pendingcountTabs = async () => {
+  const pendingcountTabs = async (JobUniqueValue: string) => {
     setIsLoading(true);
     try {
       let FilterValueData: GetProfileByFilter = {
@@ -643,8 +675,9 @@ const ReviewCandidateList = (props: any) => {
         currentPage: 0,
         totalItems: 0,
       };
+
       let createFilter = (workflowStausId: string[]): FilterItem => ({
-        jobCode: props.stateValue?.JobCode, //"JC0005",
+        jobCode: JobUniqueValue, //props.stateValue?.JobCode, //"JC0005",
         workflowStausId: workflowStausId,
         pagination: FilterValueData,
       });
@@ -677,8 +710,6 @@ const ReviewCandidateList = (props: any) => {
 
       await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
         .then(async (res) => {
-          console.log(res, "res");
-          console.log(pendingcount, "pendingcount");
           let ReviewProfileCount = res.data?.filter(
             (item) => item.workflowStatusId === workflowStatusApi.HRPending
           );
@@ -743,19 +774,26 @@ const ReviewCandidateList = (props: any) => {
             Operator: "eq",
             FilterValue: props?.stateValue?.JobCodeID,
           },
+          {
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: "No",
+          },
         ],
         ""
       ).then(async (res) => {
         let InterviewScheduledLevel2 = res.data?.filter(
           (item: any) =>
             item.StatusId ===
-            StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+              StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel &&
+            item.ItemCreated === "No"
         );
 
         let RescheduledCount = res.data?.filter(
           (item: any) =>
-            item.StatusId === StatusId.InterviewScheduled &&
-            item.StatusId === StatusId.InterviewScheduledforLevel2
+            item.StatusId === StatusId.InterviewScheduled ||
+            item.StatusId === StatusId.InterviewScheduledforLevel2 ||
+            item.StatusId === StatusId.Rescheduled
         );
         setPendingCount((prev) => ({
           ...prev,
@@ -790,9 +828,32 @@ const ReviewCandidateList = (props: any) => {
   React.useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      await fetchRecuritmentData();
-      await fetchCandidateData(breadcrumbTab);
-      await pendingcountTabs();
+      let JobCodeFilter = [
+        {
+          FilterKey: "JobCodeId",
+          Operator: "eq",
+          FilterValue: props.stateValue?.JobCodeID,
+        },
+        { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+      ];
+      let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
+        JobCodeFilter,
+        "and"
+      );
+      // console.log("JobUniqueValue", JobUniqueValue);
+      if (
+        JobUniqueValue.status === ResponeStatus.SUCCESS &&
+        JobUniqueValue.data.length > 0
+      ) {
+        setJobUniqueValue(JobUniqueValue.data[0]?.JobUniqueKey);
+        await fetchRecuritmentData();
+        await fetchCandidateData(
+          props.stateValue?.tabs ? props.stateValue?.tabs : breadcrumbTab,
+          5,
+          JobUniqueValue.data[0]?.JobUniqueKey
+        );
+        await pendingcountTabs(JobUniqueValue.data[0]?.JobUniqueKey);
+      }
     };
     void fetchData();
   }, []);
@@ -806,14 +867,14 @@ const ReviewCandidateList = (props: any) => {
     });
     setRows(event.rows);
     let PageItem = event.rows * event.totalPages;
-    void fetchCandidateData(breadcrumbTab, PageItem);
-    void pendingcountTabs();
+    void fetchCandidateData(breadcrumbTab, PageItem, JobUniqueValue);
+    void pendingcountTabs(JobUniqueValue);
   };
   const handleRefresh = (tab: string) => {
     setBreadcrumbTab(tab);
-    void fetchCandidateData(tab);
+    void fetchCandidateData(tab, 5, JobUniqueValue);
     void fetchRecuritmentData();
-    void pendingcountTabs();
+    void pendingcountTabs(JobUniqueValue);
   };
 
   const tabs = (tab: string) => [
@@ -863,7 +924,7 @@ const ReviewCandidateList = (props: any) => {
       setTabNameData(() => {
         const newTabNames = [
           { tabName: props.stateValue?.TabNames },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: activeTabObj?.label },
         ];
         return newTabNames;
@@ -872,7 +933,7 @@ const ReviewCandidateList = (props: any) => {
       setTabNameData(() => {
         const newTabNames = [
           { tabName: props.stateValue?.TabNames },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: prevTabObj?.label },
           { tabName: activeTabObj?.label },
         ];
@@ -943,7 +1004,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -977,7 +1038,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -1011,7 +1072,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -1045,7 +1106,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -1081,7 +1142,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -1115,7 +1176,7 @@ const ReviewCandidateList = (props: any) => {
                     MainTable={true}
                     additionalButtons={[
                       {
-                        label: "Back",
+                        label: ButtonAction.Back,
                         onClick: async () => {
                           back_fn();
                         },
@@ -1153,7 +1214,7 @@ const ReviewCandidateList = (props: any) => {
               MainTable={true}
               additionalButtons={[
                 {
-                  label: "Back",
+                  label: ButtonAction.Back,
                   onClick: async () => {
                     back_fn();
                   },
@@ -1187,7 +1248,7 @@ const ReviewCandidateList = (props: any) => {
               MainTable={true}
               additionalButtons={[
                 {
-                  label: "Back",
+                  label: ButtonAction.Back,
                   onClick: async () => {
                     back_fn();
                   },
@@ -1221,7 +1282,7 @@ const ReviewCandidateList = (props: any) => {
               MainTable={true}
               additionalButtons={[
                 {
-                  label: "Back",
+                  label: ButtonAction.Back,
                   onClick: async () => {
                     back_fn();
                   },
@@ -1236,8 +1297,8 @@ const ReviewCandidateList = (props: any) => {
 
   const handleTabChange = async (newTab: string) => {
     setBreadcrumbTab(newTab);
-    await fetchCandidateData(newTab);
-    await pendingcountTabs();
+    await fetchCandidateData(newTab, 5, JobUniqueValue);
+    await pendingcountTabs(JobUniqueValue);
   };
 
   function back_fn() {

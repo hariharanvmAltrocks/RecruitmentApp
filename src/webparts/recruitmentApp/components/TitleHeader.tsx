@@ -3,12 +3,13 @@ import { Label } from "@fluentui/react";
 
 interface FieldItems {
   value: string | any;
+  Style?: React.CSSProperties;
 }
 
-const LabelHeaderComponents: React.FC<FieldItems> = ({ value }) => {
+const LabelHeaderComponents: React.FC<FieldItems> = ({ value, Style }) => {
   return (
     <>
-      <Label className="title" style={{ fontSize: 18 }}>
+      <Label className="title" style={{ fontSize: 18, ...Style }}>
         {value}
       </Label>
     </>

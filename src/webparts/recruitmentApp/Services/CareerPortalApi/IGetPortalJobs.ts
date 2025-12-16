@@ -1,6 +1,7 @@
-import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, profileXagent, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { CommanQuestion, QuestionItem } from "../../Models/RecuritmentVRR";
 import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
+import { DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 
 export type CandidateDetails = {
@@ -34,28 +35,37 @@ export type CandidateDetails = {
     IdentityNumber: string,
     ProofOfIdentity: string,
 
-    LastOrCurrentPosition: string,
-    LastOrCurrentEmployer: string,
-    PreviouslyWorkedInIvanhoeMines: string;
-    NumberOfTaxDependents: number;
-    Age: number;
-    Citizenship: string;
-    AnyFamilyorOtherLinks: string;
-    AnyBusinessLinksToDeclare: string;
-    WillingToRelocate: string;
-    CountryofOrgin: string;
-    OthersInterviewed: string;
+    LastOrCurrentPosition?: string,
+    LastOrCurrentEmployer?: string,
+    PreviouslyWorkedInIvanhoeMines?: string;
+    NumberOfTaxDependents?: number;
+    Age?: number;
+    Citizenship?: string;
+    AnyFamilyorOtherLinks?: string;
+    AnyBusinessLinksToDeclare?: string;
+    WillingToRelocate?: string;
+    CountryofOrgin?: string;
+    OthersInterviewed?: string;
 
-    FamilyLink: string;
-    BusinessLink: string;
-    GPA: number;
+    FamilyLink?: string;
+    BusinessLink?: string;
+    GPA?: number;
 
-    COIComments: string;
-    COIEmail: string;
+    COIComments?: string;
+    COIEmail?: string;
+    COIReason?: string;
 
-
+    countryOfResidency?: string;
+    ResidencyStatus?: string;
+    MaritalStatus?: string;
+    ChildrenDetails?: string;
+    ReferenceEmployeeDetails?: string;
     // CandidateOnboardingDate: string;
     // EngagementDate: string;
+    hasIvanhoeZijinExperience?: string;
+    OperationRoleRegion?: string;
+    NationalityCode?: string;
+    LanguageKnown?: string;
 }
 export type RescheduledCandidate = {
     ID: number
@@ -87,7 +97,7 @@ export type COIAttach = {
 export type IGetPortalJobs = {
     UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>>;
     getCandidateDetailsInJobCode(FilterValue: FilterItem): Promise<ApiResponse<GetProfileByJobCode[] | null>>;
-    getCandidateProfile(CandidateID: string,): Promise<ApiResponse<CandidateProfile[] | null>>;
+    getCandidateProfile(CandidateID: string, EmployeeList?: any[], RecrutimentData?: DataSyncToRecruitmentResponse): Promise<ApiResponse<CandidateProfile[] | null>>;
     UpdateCandidateStatus(data: WorkflowJson): Promise<ApiResponse<any | null>>;
     InsertCandidateDetailsInList(CandidateDetails: CandidateDetails, InterviewPanel: any): Promise<ApiResponse<any | null>>;
     UpsertAgenciesJobs(data: profileXagent): Promise<ApiResponse<any | null>>;
@@ -110,4 +120,5 @@ export type IGetPortalJobs = {
     UploadCOIAttachment(DocumentName: COIAttach, AttachFile: IDocFiles[]): Promise<ApiResponse<any>>;
     fetchCOIAttachment(DocumentName: COIAttach): Promise<ApiResponse<any>>;
     GetUpsertCOI(data: COIType): Promise<ApiResponse<any | null>>;
+    SendEmailNotification(data: sendEmail): Promise<ApiResponse<any | null>>;
 }

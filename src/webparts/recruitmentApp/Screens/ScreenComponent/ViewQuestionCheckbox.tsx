@@ -7,6 +7,7 @@ import ReuseButton from "../../components/ReuseButton";
 import { ColorCode } from "../../utilities/Config";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import { ButtonAction } from "../../utilities/LabelName";
 
 export type ViewQuestion = {
   id: number;
@@ -163,7 +164,7 @@ function ViewQuestionCheckbox({
           >
             <div className="ms-Grid-col ms-lg1" style={{ marginRight: "10px" }}>
               <ReuseButton
-                label="Back"
+                label={ButtonAction.Back}
                 onClick={onClose}
                 Style={{
                   backgroundColor: ColorCode.ButtonColorCode.ButtonColor,

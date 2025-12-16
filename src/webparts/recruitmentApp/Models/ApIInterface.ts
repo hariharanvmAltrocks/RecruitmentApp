@@ -1,3 +1,4 @@
+import { CommentsData } from "../Services/RecruitmentProcess/IRecruitmentProcessService";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 import { AutoCompleteItem } from "./Screens";
 
@@ -18,6 +19,7 @@ export type AdvertisementDetails = {
     RoleAndTechSkills: RoleAndTechSkills[],
     MinAndPreferedQualifications: MinAndPreferedQualifications[];
     isActive: number;
+    IsExtened: number;
     // profileXAgent: profileXagent;
 }
 
@@ -69,6 +71,14 @@ export type GetProfileByJobCode = {
     applicationStatusId: string,
     applicationStatus: string
 }
+
+export type PreviousEmployer = {
+    name: string;
+    Designation: string;
+    Email: string;
+    ContractNumber: string;
+    CompanyName: string;
+}
 export type CandidateProfile = {
     CandidateID: string,
     profileID: number,
@@ -93,7 +103,7 @@ export type CandidateProfile = {
     CandidateResume: IDocFiles[];
     RoleProfile: IDocFiles[];
     Advertisement: IDocFiles[];
-    Comments: profileJobsComments[];
+    Comments: CommentsData[];
     workflowStatusId: string;
     hrComments: string;
     JobVaildFromDate: string;
@@ -104,6 +114,7 @@ export type CandidateProfile = {
     disabilityReason: string;
     identityValue: string;
     identityType: string;
+    NatioCode: string;
 
     Age: string;
     NumberOftax: string;
@@ -124,6 +135,43 @@ export type CandidateProfile = {
 
     COIAppreve: string;
     COIComments: string;
+    COIReason: string;
+
+    countryOfResidency: string;
+    residentStatus: string;
+    maritalStatus: string;
+    childrenDetails: childrenDetails[],
+    employeeReferenceDetails: employeeReferenceDetail | undefined,
+    maritalStatusId: string;
+
+    joiningDate: string;
+    noticePeriod: string;
+
+    hasIvanhoeZijinExperience: string;
+    companyDetails: CompanyDetails | undefined,
+
+    businesslinkscompany: string;
+    PreviousEmployerDetails: PreviousEmployer | undefined;
+    LanguageKnown: string[];
+}
+
+export type childrenDetails = {
+    name: string;
+    age: number;
+    genderId: string;
+}
+
+export type CompanyDetails = {
+    operation: string;
+    role: string;
+    region: string;
+}
+
+export type employeeReferenceDetail = {
+    empId: string;
+    empName: string;
+    empEmail: string;
+    company: string;
 }
 
 export type WorkflowJson = {
@@ -135,6 +183,10 @@ export type WorkflowJson = {
     OfferLatterPath?: string,
     EmpContractLatterPath?: string,
     ConsentFormPath?: string,
+    HrUserId?: string,
+    HrUserEmail?: string,
+    proofOfPaymentPath?: string,
+    signedWorkPermitPath?: string
 }
 
 export type profileJobsComments = {
@@ -307,7 +359,9 @@ export type UploadDocument = {
     Location: string;
     Email: string;
     ProofOfIdentity: string;
-    IdentityNumber: string,
+    IdentityNumber: string;
+    ProfileID: string;
+    Gender: string;
 
     comments: string;
     Checkbox: boolean;
@@ -318,15 +372,41 @@ export type UploadDocument = {
     PersonalDocs: DocumentName[];
     MedicalDocs: IDocFiles[];
     ConsentDocs: IDocFiles[];
+    PaymentDocs: IDocFiles[];
 
     RadioAction: string;
     CheckboxContent: string;
 
-    TrainingSystem: TrainingSystem;
-    TASystem: TASystem;
-    ITSystem: ITSystem;
+    TrainingSystem?: TrainingSystem;
+    TASystem?: TASystem;
+    ITSystem?: ITSystem;
+    MedicalSystem?: MedicalSystem;
 
-    ITRequired: string;
+    ITRequired?: string;
+
+    JoiningDate: string;
+    NoticePeriod: string;
+
+    BGVRadioBtn: string;
+    BGVRadioBtnlabel: string;
+    PaymentReview: string;
+    RecNationality: string;
+
+    DotAfricaCF: IDocFiles[];
+    WorkpermitDoc: IDocFiles[];
+    NationalityCode: string;
+
+    EmployeeName: string;
+    EmployeeDesignation: string;
+    EmployeeEmail: string;
+    EmployeeCN: string;
+    EmployeeCompany: string;
+    LabourHire: string;
+
+    BGVStatusProcess: AutoCompleteItem;
+    BGVStatusProcessOption: AutoCompleteItem[];
+    BGVProofAttachment: IDocFiles[];
+    BGVComments: string;
 }
 
 export type DocumentName = {
@@ -337,26 +417,35 @@ export type TrainingSystem = {
     Inductiontype: AutoCompleteItem;
     StartDate: Date | any;
     EndDate: Date | any;
-    Region: AutoCompleteItem;
-    Zone: AutoCompleteItem;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
     Comments: string;
 }
 
 export type TASystem = {
     StartDate: Date | any;
     EndDate: Date | any;
-    Region: AutoCompleteItem;
-    Zone: AutoCompleteItem;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
     Comments: string;
 }
 
 export type ITSystem = {
     StartDate: Date | any;
     Hardware: AutoCompleteItem[];
-    Region: AutoCompleteItem;
-    Zone: AutoCompleteItem;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
     Comments: string;
     ITStatus: string;
+}
+
+export type MedicalSystem = {
+    StartDate: Date | any;
+    EndDate: Date | any;
+    Region: AutoCompleteItem[];
+    Zone: AutoCompleteItem[];
+    Comments: string;
+    MedicalStatus: string;
 }
 
 export type COIType = {
@@ -364,6 +453,51 @@ export type COIType = {
     approver: string;
     comments: string;
     attachmentPath: string;
+}
+
+export type sendEmail = {
+    jobRequestId: number;
+    templateCode: string;
+    dynamicFields?: {
+        InterviewDate?: string;
+        InterviewTime?: string;
+        MeetingLink?: string;
+        InterviewLevel?: string;
+        Department?: string;
+    }
+}
+
+export type initiateLaborHire = {
+    jobRequestID: number;
+    positionId: string;
+    location: string;
+    businessUnit: string;
+    department: string;
+    section: string;
+    patersonGrade: string;
+    drcGrade: string;
+    reportingManager: string;
+    dateOfJoining?: Date | null;
+    typeOfContract: string;
+    noOfMonths?: string;
+    netPay: number;
+    lhCode: string;
+    createdOn: Date;
+    createdBy: string;
+    createrEmail: string;
+}
+
+export type BGVStatus = {
+    hrUserId: string;
+    pagination: GetProfileByFilter
+}
+
+export type UpsertBGV = {
+    jobCode: string;
+    verificationType: string;
+    department: string;
+    nationality: string;
+    isActive: boolean;
 }
 
 

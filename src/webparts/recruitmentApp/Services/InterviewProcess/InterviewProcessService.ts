@@ -802,7 +802,8 @@ export default class InterviewProcessService
         ActionId: obj.ActionId,
         ItemCreated: obj.ItemCreated,
         Comments: obj.Comments,
-        GPA: obj.GPA // Include Comments in the payload
+        GPA: obj.GPA, // Include Comments in the payload
+        OthersInterviewed: obj.OthersInterviewed
       };
 
       await SPServices.SPUpdateItem({

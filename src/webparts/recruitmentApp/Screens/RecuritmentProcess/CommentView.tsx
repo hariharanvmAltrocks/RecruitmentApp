@@ -51,7 +51,13 @@ const CommentView: React.FC<CommentViewProps> = ({
           sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
         >
           <CardContent>
-            <div style={{ height: "calc(-156px + 80vh)", overflowY: "auto" }}>
+            <div
+              style={{
+                height: "calc(-156px + 80vh)",
+                overflowY: "auto",
+                overflowX: "hidden",
+              }}
+            >
               {roles.length > 0 ? (
                 roles.map((role, index) => {
                   const c1 = level1.find((c) => c.RoleName === role);

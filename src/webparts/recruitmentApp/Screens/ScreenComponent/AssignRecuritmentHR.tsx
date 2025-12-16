@@ -8,6 +8,7 @@ import CustomTextArea from "../../components/CustomTextArea";
 import { AutoCompleteItem } from "../../Models/Screens";
 import { CommonServices } from "../../Services/ServiceExport";
 import { formValidation } from "../RecuritmentProcess/ApprovedVRRList";
+import { ExternalUserType } from "../../utilities/LabelName";
 
 export type AssignHRData = {
   AssignRecruitmentHR: AutoCompleteItem;
@@ -70,7 +71,9 @@ export const AssignRecuritmentHR = ({
             CommonServices.GetADgruopsEmailIDs(ADGroupIDs[0]?.ADGroupID),
           ]);
         let ExternalAgent = HRMSExternalAgents.data?.filter(
-          (nat) => nat.Nationality === Nationality
+          (nat) =>
+            nat.Nationality === Nationality &&
+            nat.UserType === ExternalUserType.Agent
         );
         const agentsOptions: AutoCompleteItem[] =
           ExternalAgent?.map((item: any) => ({
@@ -100,82 +103,78 @@ export const AssignRecuritmentHR = ({
 
   return (
     <>
-      <div style={{ marginLeft: "4%" }}>
+      <div style={{ marginLeft: "12%", width: "78%" }}>
         <div>
-          <div className="ms-Grid-row">
-            <div className="ms-Grid-col ms-lg10">
-              <JobCodeSelector
-                jobCodes={jobCodes}
-                selectedJobCodes={selectedJobCodes}
-                //onSelectionChange={onSelectionChange}
-                onSelectAllChange={onSelectAllChange}
-                onRowChange={onRowChange}
-              />
+          <div>
+            <JobCodeSelector
+              jobCodes={jobCodes}
+              selectedJobCodes={selectedJobCodes}
+              //onSelectionChange={onSelectionChange}
+              onSelectAllChange={onSelectAllChange}
+              onRowChange={onRowChange}
+            />
 
-              <span
-                style={{
-                  color: "red",
-                  marginTop: "8px",
-                  display: "block",
-                  fontFamily: "sans-serif",
-                  //           fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
-                  // -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                  fontSize: "13px",
-                }}
-              >
-                Note:- To remove a selected Job Title, click ' Cancel ' and
-                return to the Dashboard.
-              </span>
-            </div>
+            <span
+              style={{
+                color: "red",
+                marginTop: "8px",
+                display: "block",
+                fontFamily: "sans-serif",
+                //           fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
+                // -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                fontSize: "13px",
+              }}
+            >
+              Note:- To remove a selected Job Title, click ' Cancel ' and return
+              to the Dashboard.
+            </span>
           </div>
-          <div className="ms-Grid-row" style={{ textAlign: "left" }}>
-            <div className="ms-Grid-col ms-lg6">
-              {CurrentRole.includes(RoleID.RecruitmentHRLead) ? (
-                <CustomAutoComplete
-                  label="Assign Recruitment HR"
-                  options={AssignRecruitmentHROption}
-                  value={ValueData.AssignRecruitmentHR}
+          <div style={{ width: "99%" }}>
+            {CurrentRole.includes(RoleID.RecruitmentHRLead) ? (
+              <CustomAutoComplete
+                label="Assign Recruitment HR"
+                options={AssignRecruitmentHROption}
+                value={ValueData.AssignRecruitmentHR}
+                disabled={false}
+                mandatory={true}
+                onChange={(item) => handleAutoComplete(item)}
+                error={validationErrors.AssignRecruitmentHR}
+              />
+            ) : (
+              <>
+                <CustomMultiSelect
+                  label="Assign Agencies"
                   disabled={false}
                   mandatory={true}
-                  onChange={(item) => handleAutoComplete(item)}
-                  error={validationErrors.AssignRecruitmentHR}
+                  value={
+                    ValueData.AssignRecruitmentAgencies?.filter(
+                      (item) => item.key !== 0
+                    ) ?? []
+                  }
+                  options={AssignRecruitmentAgenciesOption ?? []}
+                  onChange={(item) => handleAgencyChange(item)}
+                  error={validationErrors.AssignRecruitmentAgencies}
                 />
-              ) : (
-                <>
-                  <CustomMultiSelect
-                    label="Assign Agencies"
-                    disabled={false}
-                    mandatory={true}
-                    value={
-                      ValueData.AssignRecruitmentAgencies?.filter(
-                        (item) => item.key !== 0
-                      ) ?? []
-                    }
-                    options={AssignRecruitmentAgenciesOption ?? []}
-                    onChange={(item) => handleAgencyChange(item)}
-                    error={validationErrors.AssignRecruitmentAgencies}
-                  />
-                  {CurrentRole.includes(RoleID.RecruitmentHR) && (
-                    <span
-                      style={{
-                        color: "red",
-                        marginTop: "8px",
-                        display: "block",
-                        fontFamily: "sans-serif",
-                        // fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
-                        // -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                        fontSize: "13px",
-                      }}
-                    >
-                      Note:- You can assign multiple Agencies.
-                    </span>
-                  )}
-                </>
-              )}
-            </div>
+                {CurrentRole.includes(RoleID.RecruitmentHR) && (
+                  <span
+                    style={{
+                      color: "red",
+                      marginTop: "8px",
+                      display: "block",
+                      fontFamily: "sans-serif",
+                      // fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI",
+                      // -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                      fontSize: "13px",
+                    }}
+                  >
+                    Note:- You can assign multiple Agencies.
+                  </span>
+                )}
+              </>
+            )}
           </div>
-          <div className="ms-Grid-row" style={{ paddingRight: "16px" }}>
-            <div className="ms-Grid-col ms-lg10">
+          <div style={{ paddingRight: "3px" }}>
+            <div>
               <CustomTextArea
                 label={
                   CurrentRole.includes(RoleID.RecruitmentHR)
@@ -194,7 +193,6 @@ export const AssignRecuritmentHR = ({
               />
             </div>
           </div>
-          <div className="ms-Grid-row" style={{ marginTop: "20px" }}></div>
         </div>
         {/* <div
           className="ms-Grid-row"

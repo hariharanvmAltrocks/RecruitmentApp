@@ -1,3 +1,5 @@
+import AdminPanelService from "./AdminPanel/AdminPanelService";
+import { IAdminPanelService } from "./AdminPanel/IAdminPanelService";
 import GetPortalJobs from "./CareerPortalApi/GetPortalJobs";
 import { IGetPortalJobs } from "./CareerPortalApi/IGetPortalJobs";
 import CommonService from "./CommonService/CommonService";
@@ -6,6 +8,8 @@ import { IOfferLetterService } from "./InitiateOfferLetter/IOfferLetterService";
 import OfferLetterService from "./InitiateOfferLetter/OfferLetterService";
 import { IInterviewProcessService } from "./InterviewProcess/IInterviewProcessService";
 import InterviewProcessService from "./InterviewProcess/InterviewProcessService";
+import { ILaborHireService } from "./LaborHireApi/IlaborHireService";
+import LaborHireService from "./LaborHireApi/laborHireSerivce";
 import { IMasterService } from "./Master/IMasterService";
 import MasterService from "./Master/MasterService";
 import { IRecruitmentService } from "./RecruitmentProcess/IRecruitmentProcessService";
@@ -18,3 +22,5 @@ export const InterviewServices: IInterviewProcessService =
   new InterviewProcessService();
 export const GetPortalJobsService: IGetPortalJobs = new GetPortalJobs();
 export const OfferLetterServices: IOfferLetterService = new OfferLetterService();
+export const laborHireService: ILaborHireService = new LaborHireService();
+export const AdminPanelServices: IAdminPanelService = new AdminPanelService();

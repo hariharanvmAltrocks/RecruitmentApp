@@ -1,4 +1,5 @@
-import { AdvertisementDetails, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, profileXagent, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdminPItem, UpsertExternalUser } from "../../Models/AdminPanel";
+import { AdvertisementDetails, BGVStatus, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertBGV, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
 export const getProfileData = {
@@ -126,3 +127,61 @@ export const GetJobRequestData = {
         );
     },
 };
+
+export const EmailService = {
+    emailnotification: async function (params: sendEmail) {
+        return await AxiosInstance.post(
+            `/hrms/SendEmailNotification`, params
+        );
+    },
+};
+
+export const LaborHire = {
+    initiateLaborHire: async function (params: initiateLaborHire) {
+        return await AxiosInstance.post(
+            `/hrms/UpsertJobsLaborHire`, params
+        );
+    }
+}
+
+export const BGverification = {
+    initiateBGVProcess: async function (id: number) {
+        return await AxiosInstance.post(
+            `/BGVerification/RunBGVerification?jobRequestId=${id}`
+        );
+    },
+    GetBGVStatus: async function (params: BGVStatus) {
+        return await AxiosInstance.post(
+            `/hrms/GetBGVStatus`, params
+        );
+    },
+    UpsertBGVJobMaster: async function (params: UpsertBGV[]) {
+        return await AxiosInstance.post(
+            `/hrms/UpsertBGVJobMaster`, params
+        )
+    },
+    GetBGVerificationType: async function (NationalityCode: string) {
+        return await AxiosInstance.get(
+            `hrms/GetBGVerificationType?nationality=${NationalityCode}`
+        )
+    },
+
+}
+
+export const AdminPanelServiceApi = {
+    GetAdminPanelDashboard: async function (params: AdminPItem) {
+        return await AxiosInstance.post(
+            `/hrms/GetAllExternalUsers`, params
+        );
+    },
+    UpsertExternalUser: async function (params: UpsertExternalUser) {
+        return await AxiosInstance.post(
+            `/hrms/UpsertExternalUser`, params
+        );
+    },
+    ResetPassword: async function (Email: any) {
+        return await AxiosInstance.get(
+            `/Auth/PasswordResetToken?userName=${Email}`
+        );
+    }
+}

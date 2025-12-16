@@ -1,8 +1,9 @@
-import { ITSystem, TASystem, TrainingSystem } from "../../Models/ApIInterface";
+import { GetAllMaster, ITSystem, TASystem, TrainingSystem, UploadDocument } from "../../Models/ApIInterface";
 import { DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 
 export type DocumentName = {
+    ProfileID: string;
     RequestID: string;
     DocumentName: string;
     UnsignedDoc: string;
@@ -13,10 +14,12 @@ export type DocumentStrucDocs = {
 
 export type GetCandidateDocument = {
     ListName: string;
-    RequestID: string;
-    DocumentType: string;
-    DocumentName: string;
-    UnsignedDoc: string;
+    ProfileID: string;
+    RequestID?: string;
+    DocumentType?: string;
+    DocumentName?: string;
+    UnsignedDoc?: string;
+    // EmployDOcs?: any[];
 }
 
 export type UpdateCandidateData = {
@@ -56,6 +59,8 @@ export type DataSyncToResiProcess = {
     CandidateDetails: ICandidateDetails,
     StatusID: number,
     Status: string,
+    IsExpat: string,
+    ActionID: number
 }
 
 export type ICandidateDetails = {
@@ -71,10 +76,34 @@ export type ICandidateDetails = {
     IdentityNumber: string,
     ProofOfIdentity: string,
     Location: string;
-    DocumentFolderPath: string;
+    Agencies: string;
+    // DocumentFolderPath: string;
     TrainingSystem: TrainingSystem;
     TASystem: TASystem;
     ITSystem: ITSystem;
+    BackgroundChecks: string;
+    SignedOfferLetterVerified: string;
+    SignedEmploymentContract: string;
+    WorkPermitApproved: string;
+    VisaProcess: string;
+    AccommodationBooked: string;
+    TravelProcess: string;
+    ReadyforOnboarding: string;
+    Gender: string;
+    NationalityCode: string;
+}
+
+export type GetBGVDocument = {
+    ListName: string;
+    ProfileID: string;
+    RequestID: string;
+    DocumentType: string;
+    DocumentName: string[];
+    VerificationName: GetAllMaster[] | null
+}
+export type GetDOTAfricaCF = {
+    ListName: string;
+    Natioality: string;
 }
 
 export type IOfferLetterService = {
@@ -100,4 +129,20 @@ export type IOfferLetterService = {
         UpdateData: UpdateCandidateData,
         CandidateID: number
     ): Promise<ApiResponse<UpdateCandidateData>>;
+    InitiateLabouHireOfferRelease(
+        data: UploadDocument,
+        HODData: DataSyncToResiProcess,
+        CurrentUserEmail: string
+    ): Promise<ApiResponse<null>>;
+    FetchBGVerificationDOcs(
+        DocumentName: GetBGVDocument,
+    ): Promise<ApiResponse<any>>;
+    UpdateStatusCandidatelist(
+        UpdateParams: any,
+    ): Promise<ApiResponse<any>>;
+    FetchDotAfricaConsentForm(
+        DocumentName: GetDOTAfricaCF,
+    ): Promise<ApiResponse<any>>;
+    FetchResiDetails(ID: number, IsExpat: string
+    ): Promise<ApiResponse<{ netPay: string, lhCode: string } | null>>;
 };

@@ -1,12 +1,12 @@
 
-import { sp } from "@pnp/sp";
-import { count, DocumentFolderName, DocumentLibraray, ListNames } from "../../utilities/Config";
-import { getVRRDetails } from "../ServiceExport";
+import { count, DocumentFolderName, DocumentLibraray, ListNames, RoleName } from "../../utilities/Config";
+import { getVRRDetails, laborHireService } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
-import { DataSyncToResiProcess, DocumentName, GetCandidateDocument, ICandidateDetails, IOfferLetterService, UpdateCandidateData } from "./IOfferLetterService";
-import { ITSystem, TASystem, TrainingSystem } from "../../Models/ApIInterface";
+import { DataSyncToResiProcess, DocumentName, GetBGVDocument, GetCandidateDocument, GetDOTAfricaCF, ICandidateDetails, IOfferLetterService, UpdateCandidateData } from "./IOfferLetterService";
+import { initiateLaborHire, ITSystem, TASystem, TrainingSystem, UploadDocument } from "../../Models/ApIInterface";
 import { AutoCompleteItem } from "../../Models/Screens";
+import { BGVDocumentName } from "../../utilities/LabelName";
 
 
 export default class OfferLetterService implements IOfferLetterService {
@@ -20,10 +20,10 @@ export default class OfferLetterService implements IOfferLetterService {
             const res = await SPServices.SPReadItems({
                 Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
                 Select:
-                    "*,RecruitmentID/ID,PositionID/PositionID,CandidateID/ID,Status/StatusDescription",
+                    "*,RecruitmentID/ID,PositionID/PositionID,CandidateID/ID,Status/StatusDescription,Action/Action",
                 Filter: Filter,
                 Expand:
-                    "RecruitmentID,PositionID,CandidateID,Status",
+                    "RecruitmentID,PositionID,CandidateID,Status,Action",
                 FilterCondition: Conditions,
                 Orderby: "ID",
                 Orderbydecorasc: false,
@@ -66,6 +66,8 @@ export default class OfferLetterService implements IOfferLetterService {
                             RecruitmentDetails: response.data[0],
                             Status: objresult?.Status ? objresult?.Status?.StatusDescription : "",
                             StatusID: objresult?.StatusId,
+                            IsExpat: objresult?.IsExpat ?? "",
+                            ActionID: objresult?.ActionId
                         };
                         item.CandidateDetails.Location = response.data[0]?.Location ? response.data[0]?.Location : "";
                         return item;
@@ -106,16 +108,16 @@ export default class OfferLetterService implements IOfferLetterService {
             if (res.length > 0) {
                 const candidateArray = await Promise.all(
                     res.map(async (objresult: any, index: number) => {
-                        const attachmentsLibrary = sp.web.lists.getByTitle(DocumentLibraray.HRMSCandidateDocs);
-                        const rootFolder = await attachmentsLibrary.rootFolder.get();
-                        const folderUrl = `${rootFolder.ServerRelativeUrl}/${objresult?.JobRequestID}`;
-                        let folderLink = "";
-                        try {
-                            const folder = await sp.web.getFolderByServerRelativeUrl(folderUrl).get();
-                            folderLink = folder.ServerRelativeUrl;
-                        } catch (err) {
-                            folderLink = "";
-                        }
+                        // const attachmentsLibrary = sp.web.lists.getByTitle(DocumentLibraray.HRMSCandidateDocs);
+                        // const rootFolder = await attachmentsLibrary.rootFolder.get();
+                        // const folderUrl = `${rootFolder.ServerRelativeUrl}/${objresult?.JobRequestID}`;
+                        // let folderLink = "";
+                        // try {
+                        //     const folder = await sp.web.getFolderByServerRelativeUrl(folderUrl).get();
+                        //     folderLink = folder.ServerRelativeUrl;
+                        // } catch (err) {
+                        //     folderLink = "";
+                        // }
                         let Hardware: AutoCompleteItem[] = (objresult?.Hardware ?? []).map((item: any, index: number) => ({
                             key: index + 1,
                             text: item ?? ""
@@ -124,22 +126,22 @@ export default class OfferLetterService implements IOfferLetterService {
                             Inductiontype: { key: 0, text: objresult?.InductionType ?? "" },
                             StartDate: objresult?.TCSStartDate ? new Date(objresult?.TCSStartDate) : undefined,
                             EndDate: objresult?.TCSEndDate ? new Date(objresult?.TCSEndDate) : undefined,
-                            Region: { key: 0, text: objresult?.TCSRegion ?? "" },
-                            Zone: { key: 0, text: objresult?.TCSZone ?? "" },
+                            Region: [], //{ key: 0, text: objresult?.TCSRegion ?? "" },
+                            Zone: [], //{ key: 0, text: objresult?.TCSZone ?? "" },
                             Comments: objresult?.TCSComments ?? "",
                         }
                         let TASystem: TASystem = {
                             StartDate: objresult?.PermanentBadgeStartDate ? new Date(objresult?.PermanentBadgeStartDate) : undefined,
                             EndDate: objresult?.PermanentBadgeEndDate ? new Date(objresult?.PermanentBadgeEndDate) : undefined,
-                            Region: { key: 0, text: objresult?.PermanentBadgeRegion ?? "" },
-                            Zone: { key: 0, text: objresult?.PermanentBadgeZone ?? "" },
+                            Region: [],//{ key: 0, text: objresult?.PermanentBadgeRegion ?? "" },
+                            Zone: [],//{ key: 0, text: objresult?.PermanentBadgeZone ?? "" },
                             Comments: objresult?.PermanentBadgeComments ?? ""
                         }
                         let ITSystem: ITSystem = {
                             StartDate: objresult?.ITStartDate ? new Date(objresult?.ITStartDate) : undefined,
                             Hardware: Hardware ?? [],
-                            Region: { key: 0, text: objresult?.ITRegion ?? "" },
-                            Zone: { key: 0, text: objresult?.ITZone ?? "" },
+                            Region: [],//{ key: 0, text: objresult?.ITRegion ?? "" },
+                            Zone: [],//{ key: 0, text: objresult?.ITZone ?? "" },
                             Comments: objresult?.ITComments ?? "",
                             ITStatus: objresult?.ITStatus
                         }
@@ -156,10 +158,21 @@ export default class OfferLetterService implements IOfferLetterService {
                             IdentityNumber: objresult?.IdentityNumber,
                             ProofOfIdentity: objresult?.ProofOfIdentity,
                             Location: "",
-                            DocumentFolderPath: folderLink,
+                            Gender: objresult?.Gender,
+                            Agencies: objresult?.ExternalAgentDetails === "Candidate" ? objresult?.ExternalAgentDetails : "Agency",
+                            // DocumentFolderPath: folderLink,
                             TrainingSystem: TrainingSystem,
                             TASystem: TASystem,
                             ITSystem: ITSystem,
+                            BackgroundChecks: objresult?.BackgroundChecks,
+                            SignedOfferLetterVerified: objresult?.SignedOfferLetterVerified,
+                            SignedEmploymentContract: objresult?.SignedEmploymentContract,
+                            WorkPermitApproved: objresult?.WorkPermitApproved,
+                            VisaProcess: objresult?.VisaProcess,
+                            AccommodationBooked: objresult?.AccommodationBooked,
+                            TravelProcess: objresult?.TravelProcess,
+                            ReadyforOnboarding: objresult?.ReadyforOnboarding,
+                            NationalityCode: objresult?.NationalityCode
                         }
                         return item;
                     })
@@ -188,11 +201,33 @@ export default class OfferLetterService implements IOfferLetterService {
         try {
             let response;
             if (AttachFile.length > 0) {
-                response = await SPServices.addDocLibFiles({
-                    FilePath: DocumentLibraray.HRMSCandidateDocs,
-                    FolderNames: [`${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`, `${DocumentName.UnsignedDoc.toString()}`],
-                    Datas: AttachFile,
-                });
+                if (DocumentName.DocumentName === DocumentFolderName.BGVConsentform) {
+                    response = await SPServices.addDocLibFiles({
+                        FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                        FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.DocumentName.toString()}`],
+                        Datas: AttachFile,
+                    });
+
+                } else if (DocumentName.DocumentName === DocumentFolderName.ProofOfDocument) {
+                    response = await SPServices.addDocLibFiles({
+                        FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                        FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`],
+                        Datas: AttachFile,
+                    });
+                } else if (DocumentName.DocumentName === DocumentFolderName.WorkPermit) {
+                    response = await SPServices.addDocLibFiles({
+                        FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                        FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`],
+                        Datas: AttachFile,
+                    });
+                } else {
+                    response = await SPServices.addDocLibFiles({
+                        FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                        FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`, `${DocumentName.UnsignedDoc.toString()}`],
+                        Datas: AttachFile,
+                    });
+
+                }
 
                 return {
                     data: response,
@@ -219,77 +254,69 @@ export default class OfferLetterService implements IOfferLetterService {
         DocumentName: GetCandidateDocument,
     ): Promise<ApiResponse<any>> => {
         try {
-            let response;
+            let response: IDocFiles[];
             switch (DocumentName.DocumentType) {
+                case DocumentFolderName.BackgroundVerification:
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.DocumentType}`,
+                    })) as IDocFiles[];
+                    break;
                 case DocumentFolderName.Offerletter:
                     response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.RequestID}/${DocumentName.DocumentName}/${DocumentName.UnsignedDoc}`,
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${DocumentName.UnsignedDoc}`,
                     })) as IDocFiles[];
                     break;
-                case DocumentFolderName.EmploymentContractForm:
-                    response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.RequestID}/${DocumentName.DocumentName}/${DocumentName.UnsignedDoc}`,
-                    })) as IDocFiles[];
-                    break;
-                case DocumentFolderName.Medical:
-                    response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.RequestID}/${DocumentName.DocumentName}`,
-                    })) as IDocFiles[];
-                    break;
-                case DocumentFolderName.PersonalDocs: {
-                    const attachmentsLibrary = sp.web.lists.getByTitle(DocumentName.ListName);
+                case DocumentFolderName.WorkPermit: {
+                    const Medical = await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentFolderName.Medical}`,
+                    }) as IDocFiles[];
 
-                    const rootFolder = await attachmentsLibrary.rootFolder.get();
-                    const folderUrl = `${rootFolder.ServerRelativeUrl}/${DocumentName.RequestID}`;
+                    const Vaccination = await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentFolderName.Vaccination}`,
+                    }) as IDocFiles[];
 
-                    const folders = await sp.web.getFolderByServerRelativeUrl(folderUrl).folders();
+                    const WorkPermit = await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentFolderName.WorkPermit}`,
+                    }) as IDocFiles[];
 
-                    const targetFolder = folders.filter(
-                        folder => folder.Name !== DocumentFolderName.Offerletter && folder.Name !== DocumentFolderName.EmploymentContractForm && folder.Name !== DocumentFolderName.Medical
-                    );
-
-                    if (targetFolder) {
-                        const filesArray = await Promise.all(
-                            targetFolder.map(async (item) => {
-                                const folderUrl = item?.ServerRelativeUrl;
-                                const files = folderUrl ? await sp.web.getFolderByServerRelativeUrl(folderUrl).files() : [];
-                                // console.log("Files in the filtered folder:", files);
-                                return files;
-                            })
-                        );
-                        let personalDocs: { [category: string]: IDocFiles[] } = {};
-
-                        filesArray.forEach((files) => {
-                            if (files && files.length > 0) {
-                                files.forEach((item) => {
-                                    const filePath = item.ServerRelativeUrl;
-                                    const parts = filePath.split("/");
-                                    const folderName = parts[parts.length - 2]; // e.g. 'Medical'
-
-                                    const categoryDoc: IDocFiles = {
-                                        name: item.Name,
-                                        content: item.ServerRelativeUrl,
-                                        type: "Inlist"
-                                    };
-
-                                    if (!personalDocs[folderName]) {
-                                        personalDocs[folderName] = [];
-                                    }
-
-                                    personalDocs[folderName].push(categoryDoc);
-                                });
-                            }
-                        });
-
-                        response = Object.keys(personalDocs).map((key) => ({
-                            category: key,
-                            documents: personalDocs[key]
-                        }));
-                        // console.log(response, " response.....");
-
-                    }
+                    response = [...Medical, ...Vaccination, ...WorkPermit];
                     break;
                 }
+                case DocumentFolderName.CovidVaccinationCertificate: {
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
+                    })) as IDocFiles[];
+                    break;
+                }
+                case DocumentFolderName.PoliceClearanceCertificate: {
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
+                    })) as IDocFiles[];
+                    break;
+                }
+                case DocumentFolderName.YellowFeverVaccinationCertificate: {
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
+                    })) as IDocFiles[];
+                    break;
+                }
+                case DocumentFolderName.EmploymentContractForm: {
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${DocumentName.UnsignedDoc}`,
+                    })) as IDocFiles[];
+                    break;
+                }
+                case DocumentFolderName.PaymentBill: {
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
+                    })) as IDocFiles[];
+                    break;
+                }
+                default:
+                    response = (await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}`,
+                    })) as IDocFiles[];
+                    break;
             }
             return {
                 data: response,
@@ -393,5 +420,218 @@ export default class OfferLetterService implements IOfferLetterService {
         }
     };
 
+    async InitiateLabouHireOfferRelease(
+        data: UploadDocument,
+        HODData: DataSyncToResiProcess,
+        CurrentUserEmail: string
+    ): Promise<ApiResponse<null>> {
+        try {
+            const res = await SPServices.SPGetItems({
+                Listname: HODData.IsExpat ? ListNames.HRMSRESIExpatDetails : ListNames.HRMSRESIDRCDetails,
+                Filter: [
+                    {
+                        FilterKey: "SelectedCandidateHODId",
+                        Operator: "eq",
+                        FilterValue: HODData.ID,
+                    },
+                ],
+                Select: "*,SelectedCandidateHODId/ID,LabourhireORContractor/AgentCode",
+                Expand: "SelectedCandidateHODId,LabourhireORContractor",
+            });
+            console.log(res, "responseData");
+            const todaydate = new Date();
+            let laborHireData: initiateLaborHire = {
+                jobRequestID: Number(data?.jobRequestID),
+                positionId: data?.positionID,
+                location: data?.Location,
+                businessUnit: data?.BusinessUnitCode,
+                department: data?.Department,
+                section: data?.Section,
+                patersonGrade: HODData.RecruitmentDetails.PatersonGrade, //data?.PatersonGrade,
+                drcGrade: HODData.RecruitmentDetails.DRCGrade, //data?.DRCGrade,
+                reportingManager: RoleName.RecruitmentHR,
+                dateOfJoining: (data?.JoiningDate) ? new Date(data?.JoiningDate) : new Date(),
+                typeOfContract: data?.TypeOfCOntract,
+                noOfMonths:
+                    data?.NoticePeriod === ""
+                        ? "20"
+                        : String(data?.NoticePeriod) ?? "0",
+                netPay: res[0]?.ProposedNetUSDAmount,
+                lhCode: res[0]?.LabourhireORContractor?.AgentCode,
+                createdOn: new Date(todaydate),
+                createdBy: RoleName.RecruitmentHR,
+                createrEmail: CurrentUserEmail //props.userDetails[0]?.EmailId,
+            };
+            let response =
+                await laborHireService.initiateLaborHire(laborHireData);
+
+            return {
+                data: response.data,
+                status: response.status,
+                message: "Error while posting advertisement details",
+            };
+        } catch (error) {
+            console.error("Error posting user data:", error);
+            return {
+                data: null,
+                status: 400,
+                message: "Error On Posting Data",
+            };
+        }
+    }
+
+    FetchBGVerificationDOcs = async (
+        DocumentName: GetBGVDocument,
+    ): Promise<ApiResponse<any>> => {
+        try {
+            let response: any = [];
+
+            if (DocumentName?.DocumentName?.length > 0) {
+                const BGVDocs = await Promise.all(
+                    DocumentName.DocumentName.map(async (item) => {
+                        if (!SPServices?.getDocLibFiles) {
+                            console.error("SPServices.getDocLibFiles is undefined");
+                            return null;
+                        }
+
+                        const files = await SPServices.getDocLibFiles({
+                            FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${item}`,
+                        });
+
+                        const latestFile = files?.length
+                            ? (files as any[]).reduce((latest, current) => {
+                                const currDate = new Date(current?.TimeLastModified || current?.Modified || current?.Created);
+                                const latestDate = new Date(latest?.TimeLastModified || latest?.Modified || latest?.Created);
+
+                                return currDate > latestDate ? current : latest;
+                            })
+                            : null;
+
+                        let folderName = "";
+                        if (item in BGVDocumentName) {
+                            let VerifiName = DocumentName.VerificationName?.filter((items: any) => items.value === item)
+                            folderName = VerifiName && VerifiName?.length > 0 ? VerifiName[0]?.displayText : ""
+                            // folderName = BGVDocumentName[item as keyof typeof BGVDocumentName];
+                        }
+
+                        const file = [
+                            folderName,
+                            latestFile
+                        ];
+
+                        return file as unknown as IDocFiles[];
+                    })
+                );
+
+                response = BGVDocs.filter(x =>
+                    x &&
+                    x !== null &&
+                    x[1] &&
+                    (!Array.isArray(x[1]) || x[1].length > 0)
+                );
+
+
+            }
+
+            return {
+                data: response,
+                status: 200,
+                message: "BGV Documents fetched",
+            };
+
+        } catch (error: any) {
+            console.error("Error during file replacement process:", error);
+            return {
+                data: null,
+                status: 500,
+                message: `Error during file replacement: ${error.message}`,
+            };
+        }
+    };
+
+    UpdateStatusCandidatelist = async (
+        UpdateParams: any,
+    ): Promise<ApiResponse<any>> => {
+        let response: any;
+        try {
+            response = await SPServices.SPUpdateItem({
+                Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                RequestJSON: UpdateParams,
+                ID: UpdateParams.ID,
+            });
+
+            return {
+                data: response,
+                status: 200,
+                message: "Candidate details fetched successfully",
+            };
+        } catch (error) {
+            console.error("Error during file replacement process:", error);
+            return {
+                data: response,
+                status: 500,
+                message: `Error during file replacement: ${error.message}`,
+            };
+        }
+    };
+
+    FetchDotAfricaConsentForm = async (
+        DocumentName: GetDOTAfricaCF,
+    ): Promise<ApiResponse<any>> => {
+        try {
+            let response: IDocFiles[];
+            response = (await SPServices.getDocLibFiles({
+                FilePath: `${DocumentName.ListName}/${DocumentName.Natioality}`,
+            })) as IDocFiles[];
+            return {
+                data: response,
+                status: 200,
+                message: "No attachments provided",
+            };
+        } catch (error) {
+            console.error("Error during file replacement process:", error);
+            return {
+                data: null,
+                status: 500,
+                message: `Error during file replacement: ${error.message}`,
+            };
+        }
+    };
+
+    async FetchResiDetails(ID: number, IsExpat: string
+    ): Promise<ApiResponse<{ netPay: string, lhCode: string } | null>> {
+        try {
+            const res = await SPServices.SPGetItems({
+                Listname: IsExpat ? ListNames.HRMSRESIExpatDetails : ListNames.HRMSRESIDRCDetails,
+                Filter: [
+                    {
+                        FilterKey: "SelectedCandidateHODId",
+                        Operator: "eq",
+                        FilterValue: ID,
+                    },
+                ],
+                Select: "*,SelectedCandidateHODId/ID,LabourhireORContractor/AgentName",
+                Expand: "SelectedCandidateHODId,LabourhireORContractor",
+            });
+            console.log(res, "responseData");
+            let laborHireData = {
+                netPay: res[0]?.ProposedNetUSDAmount,
+                lhCode: res[0]?.LabourhireORContractor?.AgentName,
+            };
+
+            return {
+                data: laborHireData,
+                status: 200,
+                message: "Error while posting advertisement details",
+            };
+        } catch (error) {
+            console.error("Error posting user data:", error);
+            return {
+                data: null,
+                status: 400,
+                message: "Error On Posting Data",
+            };
+        }
+    }
 
 }

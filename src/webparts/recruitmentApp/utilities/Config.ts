@@ -48,6 +48,7 @@ export const ListNames = {
   HRMSPositionIDMaster: "HRMSPositionIDMaster",
   HRMSCategoryMaster: "HRMSCategoryMaster",
 
+
   //Additional Exisiting
   HRMSAdditionalHeadCountForExisitingPosition: "HRMSAdditionalHeadCountForExisitingPosition",
   HRMSAdditionalHCForExisitingPositionWithHeadCountDetails: "HRMSAdditionalHCForExisitingPositionWithHeadCountDetails",
@@ -68,6 +69,14 @@ export const ListNames = {
   //TCS Integration
   TCSInductionMeetings: "TCSInductionMeetings",
   TrainerAndFacilityDetails: "TrainerAndFacilityDetails",
+
+  RecruitAppCareerPortalIntegration: "RecruitAppCareerPortalIntegration",
+  RecruitmentCareerPortalLink: "RecruitmentCareerPortalLink",
+
+  //Resi
+  HRMSRESIDRCDetails: "HRMSRESIDRCDetails",
+  HRMSRESIExpatDetails: "HRMSRESIExpatDetails",
+
 };
 
 export const DocumentLibraray = {
@@ -78,7 +87,8 @@ export const DocumentLibraray = {
   ONAMSignedStampDocuments: "HRMSRecruitmentOnamStampedDocuments",
   RoleProfileMaster: "RoleProfileMaster",
   HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV",
-  HRMSCandidateDocs: "HRMSCandidateDocs"
+  HRMSCandidateDocs: "HRMSCandidateDocs",
+  DOTAfricaConsentForm: "DOTAfricaConsentForm"
 };
 
 export const StatusId = {
@@ -103,17 +113,58 @@ export const StatusId = {
   PendingwithRecruitmentHRtoassignLevel2InterviewPanel: 128,
   InterviewScheduledforLevel2: 129,
   PendingwithHODtoAssignPositionID: 130,
+  Rescheduled: 159,
 
+  // BackGorund Verification
+  PendingHRBGVInitiation: 134,
+  PendingBGdocuploadedbycandidate: 163,
+  PendingHRReviewBGCheck: 135,
+  PendingDOTAficaVerification: 172,
+  //Medical Screening
+  PendingwithTAforMedicalScreening: 144,
   // Post Recruitment
-  PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,
-  PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter: 142,
-  PendingwithCandidatetoSignOfferLetter: 133,
-  PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments: 134,
-  PendingwithCandidatetoUploadOtherDocuments: 135,
-  PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs: 136,
-  PendingwithRecruitmentHRtoUploadtheEmploymentContract: 137,
-  PendingwithCandidatetoSignEmploymentContract: 138,
-  pendingwithRecruitmentHRtoReviewtheEmploymentContractForm: 139,
+  PendingHROfferInitiate: 132,
+  // KCSA
+  PendingCandidateOfferLetterUpload: 133,
+  PendingHRReviewOfferWorkPermitInit: 136,
+  PendingCandidateWorkPermitreleatedDoc: 164,
+  PendingHRReviewWorkpermitDocs: 137,
+  WorkPermitAcknowledgedContractUploaded: 138,
+  PendingCandidateEmploymentContractUpload: 161,
+  PendingHREmploymentContractVerification: 142,
+  PendingHRpreonboardingchecklist: 162,
+  //Labor Hire
+  PendingLabourHireOfferRelease: 170,
+  PendingHROfferReview: 171,//184,//171,
+  PendingLabourhireWPPayment: 173,
+  PendingFinancePaymentReview: 174,
+  PendingLHWorkPermitProcess: 175,
+  PendingHRCandidateResign: 176,
+  PendingHREmploymentContractInit: 177,
+  PendingLHECRelease: 178,
+  PendingHREmploymentContractReview: 179,
+
+  RESIProcessInitiatedforDRC: 42,
+  RESIProcessInitiatedforExpatriate: 75,
+
+  PendingHRReviewOfferanduploadEmployementContract: 169,//183,//169
+
+  // PendingHRReviewOfferWorkPermit: 136,
+  // WorkPermitHRReview: 137,
+  // WorkPermitAcknowledgedContractUploaded: 138,
+  // HRReviewContractSigned: 161,
+  // PendingHRPreOnboardingChecklist: 162,
+  // PendingWorkPermituploadedbycandidate: 164,
+
+  // PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,
+  // PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter: 142,
+  // PendingwithCandidatetoSignOfferLetter: 133,
+  // PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments: 134,
+  // PendingwithCandidatetoUploadOtherDocuments: 135,
+  // PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs: 136,
+  // PendingwithRecruitmentHRtoUploadtheEmploymentContract: 137,
+  // PendingwithCandidatetoSignEmploymentContract: 138,
+  // pendingwithRecruitmentHRtoReviewtheEmploymentContractForm: 139,
   OnboardingProcessinitiatedforDRC: 23,
   OnboardingProcessinitiatedforExpat: 24,
 
@@ -123,7 +174,12 @@ export const StatusId = {
   RevertedBacktoCandidateforReuploadEmploymentContract: 151,
 
   Pending: 89,
-  PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract: 152
+  PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract: 152,
+
+  CandidateOnHoldbyHODLevel1: 165,
+  CandidateOnHoldbyHODLevel2: 166,//182,//166,
+  CandidateRejectedbyHODLevel1: 167,
+  CandidateRejectedbyHODLevel2: 168,
 };
 
 export const RoleID = {
@@ -134,6 +190,7 @@ export const RoleID = {
   InterviewPanel: 5,
   RecruitmentAppExternalAgency: 6,
   RecruitmentLineManager: 7,
+  FinanceDepartment: 8
 };
 
 export const GridStatusBackgroundcolor = {
@@ -183,6 +240,7 @@ export const WorkflowAction = {
   Closed: 6,
   ReSubmitted: 7,
   OnHold: 10,
+  Decline: 12
 };
 
 export const viewLabelcolor = {
@@ -224,11 +282,15 @@ export const RecuritmentHRMsg = {
     "Candidate Profile for the Job Title Reviewed and On - Hold.",
   HRReviewCandidate: "Candidate Profile Reviewed Successfully.",
 
-  CandidateSelected: "Candidate Selected.",
+  CandidateSelected: "Candidate Selected and send for background verification.",
   CandidateSelectedLevel2: "Candidate Level 1 Selected Successfully",
   CandidateRejected: "Candidate Rejected.",
   CandidateOnHold: "Candidate On Hold.",
+  CandidateRejectedLevel2: "Candidate Level 1 Rejected Successfully",
+  CandidateonholdLevel2: "Candidate Level 1 On-Hold Successfully",
   RecuritmentSubmitMsg: "Submitted Successfully.",
+
+
   ApprovedMsg:
     "Advertisement Reviewed Successfully. Ready for ONEM Process (Offline).",
   RecuritmentHRMsgCancel:
@@ -247,7 +309,7 @@ export const RecuritmentHRMsg = {
   InterviewQues:
     "Are you sure you want to change the option? Changing this will clear your current question, and you will need to start a new one",
   AddedMsg: "Added Successfully",
-  deleteMsg: "Are you sure you want to delete this? Any unsaved changes will be lost",
+  deleteMsg: "Are you sure you want to delete this Question?",
 
   SelectedErrorMsg: "Please Choose the Disciplines.",
   WarningMsg: "Are you sure want to Change the Disciplines? Any unsaved changes will be lost",
@@ -258,22 +320,56 @@ export const RecuritmentHRMsg = {
   UploadMsg: "Candidate CV Upload Successfully",
   ValidationMsg: "This Candidate Already Exists",
 
+  BGverificationMsg: "Background Verification has been initiated successfully.",
+  BGReviewedMsg: "Background Verification has been completed successfully.",
+  BGReviewinitBGV: "Verified the background documents and initiated the Dot's Africa verification process.",
+
+  RevertWGDocs: "The Background Document Reverted successfully.",
+
   OfferLetterMsg: "The offer letter has been uploaded successfully.",
-  ReviewOfferLetterMsg: "The offer letter has been reviewed successfully",
-  RevertedOfferLetter: "The offer letter has been reverted to candidate successfully..",
+  OfferLetterinit: "The Offer Letter process has been successfully initiated to the Labour Hire.",
+  ReviewLaborHireOffer: "The Labour Hire offer has been reviewed successfully and forwarded to the candidate.",
+  ReviewOfferLetterMsg: "The offer letter has been reviewed successfully and initiated the WorkPermit Document ",
+
+  RevertedOfferLetter: "The offer letter has been reverted to candidate successfully.",
+  RevertLabourOffer: "The Labour Hire Offer Release has been successfully reverted",
+
+  WorkPermitDocs: "The WorkPermit Documents has been reviewed successfully",
+  WPacknowledgeUploadContract: "WorkPermit acknowledge and Employee contract Document Upload Successfully",
+
+  RevertWorkPermitDocs: "The Work Permit Document has been successfully reverted",
+
+  EmploymentContractMsg: "The employment contract has been uploaded successfully.",
+  EmployeementInit: "The Employment Contract process has been successfully initiated to the Labour Hire",
+  ReviewEmploymentContractMsg: "The Labour Hire Employment Contract has been reviewed successfully and forwarded to the candidate.",
+  ReviewECMsg: "The Employement Contract Reviewed Successfully",
+
+  RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
+  RevertECCocs: "The Labour Hire Employment Contract has been successfully reverted",
+
+  FinancePaymentReviewMsg: "Finance Payment Review has been completed successfully.",
+  RevertedFinancePaymentMsg: "Payment Review has been reverted to LaborHire successfully..",
 
   ReviewOtherDocsMsg: "Candidate documents has been reviewed successfully",
   RevertOtherDocsMsg: "Candidate documents have been reverted successfully.",
 
-  EmploymentContractMsg: "The employment contract has been uploaded successfully.",
-  ReviewEmploymentContractMsg: "The employment contract has been reviewed successful, Please proceed with onboarding process",
-  RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
+  OnboardingMsg: "Onboarding has been initiated successfully.",
 
   NationalityErrorMsg: "Please select the Nationality filter before proceeding.",
-
   QuestionValiErrorMsg: "Please add at least 5 questions before proceeding.",
-  COIWarningMsg: "This is the COI profile. Are you sure you're ready to proceed?"
-};
+  COIWarningMsg: "This is the COI profile. Are you sure you're ready to proceed?",
+  FormValidationMsg: "One or more required actions are missing.",
+  NationalityMsgError: "Please select the any one Nationality",
+
+  ChecklistSaveAsDraftMsg: "Your changes are saved as a draft",
+  AddLabourHireSuccessMsg: "Labour Hire details added successfully.",
+  UpdateLabourHireMsg: "Labour Hire details Updated successfully.",
+  AddAgentSuccessMsg: "Agent details added successfully.",
+  UpdateagentMsg: "Agent details Updated Successfully.",
+  NoOfUserLimitMsg: "User limit reached. Kindly upgrade or extend your user limit.",
+  ResetPassword: "Are you sure you want to reset the password?",
+  ResetPasswordMsg: "A password reset link has been sent to your registered email. Please check your inbox to proceed.",
+}
 
 export const validationMsg = {
   MaxOptions: "You must fill at least 2 options.",
@@ -316,6 +412,7 @@ export const validationMsg = {
 
 export const tabType = {
   Dashboard: "Dashboard",
+  EditPage: "EditPage"
 };
 
 export const ActionStatus = {
@@ -339,6 +436,25 @@ export const RoleDescriptionData = {
   Qualification: "Qualification",
   TechnicalSkill: "Technical Skill",
 };
+
+export const masterFieldMap = {
+  [RoleDescriptionData.Qualification]: {
+    label: "Qualification",
+    codeLabel: "QualificationCode",
+    label_fr: "QualificationFrench"
+  },
+  [RoleDescriptionData.RoleSpeKnowledge]: {
+    label: "RoleSpecificKnowledge",
+    codeLabel: "Code",
+    label_fr: "RoleSpecificKnowledgeFrench"
+  },
+  [RoleDescriptionData.TechnicalSkill]: {
+    label: "TechnicalSkills",
+    codeLabel: "Code",
+    label_fr: "TechnicalSkillsfrench"
+  }
+};
+
 
 export const ScoreRanking: AutoCompleteItem[] = [
   // { key: 1, text: "Poor" },
@@ -381,7 +497,10 @@ export const TabName = {
   // Candidate Articles
   // UploadDocuments: "Upload Documents",
   // ViewDocuments: "View Documents",
-  CandidateDocuments: "Candidate Documents",
+  // CandidateDocuments: "Candidate Documents",
+  BackgroundVerification: "Background Verification",
+  OfferLetterLabourHire: "Offer Letter - Labour Hire",
+  OfferLetterKSCA: "Offer Letter - KCSA",
   // HOD
   ReviewJobAdvertisement: "Review Job Advertistment",
   ReviewScorecard: "Review Score card",
@@ -390,13 +509,12 @@ export const TabName = {
   InterviewQuestions: "Interview Questions",
 
   CandidateDetails: "Applicants Details",
-  PositionDetails: "Position Details",
+  PositionDetails: "Job Details",
   AdvertisementDetails: "Advertisement Details",
   AdvertisementViewDetails: "View Advertisement ",
-  ViewCandidateDetails: "View Applicants Details",
-  Scorecard: "Scorecard",
-  ViewPositionDetails: "View Position Details",
-  ViewCandidateList: "View Applicants List",
+  ViewCandidateDetails: "Applicants Details",
+  Scorecard: "ScoreCard",
+  ViewCandidateList: "Applicants List",
   ViewJustification: "View Comments",
   EvaluationTab: "Candidate Details",
   AdvertExtension: "Advert Extension",
@@ -410,22 +528,17 @@ export const TabName = {
   InterviewPanel: "Interview Panel",
   ViewScoreDetails: " View ScoreCard Details",
   ReschedulInterview: "Reschedule Interview",
+  OnboardingChecklist: "Pre Onboarding Checklist",
 
+  LabourHire: "Labour Hire",
+  Agent: "Agent",
+  CreateAdminPage: "Create Admin Page",
+
+  EnglishAdvertisment: "Job Advertisement",
+  FrenchAdvertisement: "Offre d'emploi"
 };
 
-export const CheckboxContent = {
-  CheckboxContent: "I hereby agree to submit this request for approval.",
-  ApprovalCheckbox: "I hereby acknowledge that I have reviewed the job advertisement.",
 
-  UploadOnemDocument: "I hereby agree to post the advert on the portal.",
-
-  ReviewedCandidate: "I hereby acknowledge that I have reviewed the candidate details.",
-  InterviewPanel: "I hereby reviewed candidate details and assigning interview panel.",
-  RescheduleInterview: "I hereby acknowledge that I have reschedule the interview.",
-
-  ScorecardEntry: "I hereby acknowledge completion of the scorecard entry.",
-  HODscorecarddetails: "I hereby acknowledge that I have reviewed the candidate scorecard details."
-}
 
 export const ProfileStatus = {
   HR: "Pending with HR - Review Profile",
@@ -437,11 +550,12 @@ export const Nationality = {
   Expatriate: "Expatriate",
 };
 
-export const CandidateStatus = {
-  Yes: "Yes",
-  No: "No",
-  OnHold: "On Hold",
+export const NationalityCode = {
+  Nationals: "N0",
+  SouthAfrica: "N154",
 };
+
+
 
 export const InterviewLevels = {
   Level1: "Level 1",
@@ -451,8 +565,8 @@ export const InterviewLevels = {
 };
 
 export const DataFrom = {
-  NewPosition: "New Position Request",
-  ExistingPosition: "Additional Headcount for Existing Position"
+  NewPosition: "New Position",
+  ExistingPosition: "Existing Position"
 }
 
 export const workflowStatusApi = {
@@ -473,16 +587,37 @@ export const workflowStatusApi = {
   LineManagerLevel2Rejected: "WS15",
 
   // post Recrutiment
+  PendingCandidateUploadBGVDocs: "WS37",
+  UploadedtheCandidateBGVDocs: "WS38",
+  initiatetheBGVProcess: "WS39",
+
+  Offerdecline: "WS25",
+  SysytmeDecline: "WS26",
+  // KCSA
   Pendingwithcandidatetosignofferletter: "WS16",
   CandidateuploadedtheSignedOfferLetter: "WS17",
   PendingwithCandidatetouploadotherDocuments: "WS18",
   CandidateUploadedcandidatepersonalDocs: "WS19",
   PendingwithCandidatetosignEmployementContract: "WS20",
   UploadedthesignedEmployementcontractform: "WS21",
+  // Labor Hire
+  PendingHROfferInitiate: "WS27",
+  PendingLabourHireOfferRelease: "WS28",
+  PendingLabourhireWPPayment: "WS29",
+  PendingFinancePaymentReview: "WS30",
+  PendingLHWorkPermitProcess: "WS31",
+  PendingHREmploymentContractInit: "WS32",
+  PendingLHECRelease: "WS33",
+  OnboardingInprogress: "WS36",
+
 
   RevertedBacktoCandidateforreuploadofferLetter: "WS22",
   RevertedBacktoCandidateforreuploadDocs: "WS23",
-  RevertedBacktoCandidateforreuploadEmploymentContract: "WS24"
+  RevertedBacktoCandidateforreuploadEmploymentContract: "WS24",
+  RevertedtheLabourHireOfferRelease: "WS34",
+  RevertedtheLabourHireEmployementContract: "WS35",
+  RevetedBacktoBGVDocuments: "WS40"
+
 };
 
 export const ApplicationStatusId = {
@@ -498,7 +633,9 @@ export const ApplicationStatusId = {
 export const Notes = {
   Roleprofile: "Role Profile is not available for the Job Title.",
   Grding: "Grading Report is not available for the Job Title.",
-  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving this submission."
+  ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving this submission.",
+  JobAdvetisementNotes: "This Advert will be published in the Career Portal.",
+  JobAdvetisement_fr: "Cette annonce sera publiée sur le portail des carrières."
 }
 // sneka
 export const CatogryOption = [
@@ -524,7 +661,7 @@ export const CategoryID = {
   Function: 2,
   Level: 3,
   RoleSpecificKnowledge: 4,
-  TechnicalSkill: 5,
+  TechnicalSkills: 5,
   Qualification: 6,
   Nationality: 7,
   Experience: 8,
@@ -544,6 +681,8 @@ export const CategoryID = {
   Disciplines: 22,
   ProofofIdentity: 23,
   TitleforProfile: 24,
+  DocumentType: 26,
+  VerificationType: 41
 }
 
 export const CatogryOptionCode = {
@@ -561,8 +700,7 @@ export const categoryOption = [
 ];
 
 export const labelName = {
-  Level1CandidateLabel: "Does the candidate fit for the vacant position ? (Level 1)",
-  Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)",
+
   ViewJobAdvetisement: "View Job Advertisement",
   Candidate: "Candidate",
 
@@ -571,6 +709,7 @@ export const labelName = {
   TASystem: "T&A System",
   ITSystem: "IT System",
   TrainingDetails: "Training Details",
+  MedicalSystem: "Medical System",
 
   //Upload CV 
   Title: "Title",
@@ -596,9 +735,6 @@ export const labelName = {
   PostalCode: "Postal Code ",
   ResumeCV: "Resume/CV and Cover Letter",
 
-  OfferLetter: "Upload Offer Letter",
-  ConsentDoc: "Upload Code of Business Content",
-  EmployementDoc: "Upload Employement Contract",
 
   Attachment: "Attachment",
   UploadAttachment: "Upload Attachment",
@@ -613,39 +749,17 @@ export const labelName = {
   whichOperation: "For which Operation?",
   YourRole: "What was your role?",
   RegionProvince: "Region / Province",
-  Comment: "Comments",
-  ViewComments: "View Comments",
+  // Comment: "Comments",
+  // ViewComments: "View Comments",
 
-  ReviewProfileFeedback: "Review Profile Feedback - HR",
 
-  Firstextensiondate: "First Extension Date",
-  Secondextensiondate: "Second Extension Date",
-  Thirdextensiondate: "Third Extension Date",
-  COIAttach: "Upload Attachment",
-  COIProfileLabel: "Employee Name"
+
+
+  COIAttach: "Proof of Discussion",
+  COIProfileLabel: "Consulted With"
 
 };
-export const ButtonAction = {
-  Update: "Update",
-  Submit: "Submit",
-  Approve: "Approve",
-  Reject: "Reject",
-  Revert: "Revert",
-  Cancel: "Cancel",
-  Back: "Back",
-  Save: "Save",
-  Add: "Add",
-  Delete: "Delete",
-  Edit: "Edit",
-  View: "View",
-  Download: "Download",
-  Upload: "Upload",
-  Reschedule: "Reschedule",
-  Assign: "Assign",
-  Remove: "Remove",
-  close: "Close",
-  Review: "Reviewed",
-}
+
 
 export const ActionIcon = {
   Add: 1,
@@ -667,13 +781,26 @@ export const RoleName = {
 
 export const DocumentFolderName = {
   Offerletter: "OfferLetter",
-  EmploymentContractForm: "EmploymentContractForm",
-  UnsignedDoc: "UnsignedDoc",
+  EmploymentContractForm: "Employment contract",
+  UnsignedDoc: "UnSignedDoc",
+  SignedDoc: "SignedDoc",
   PersonalDocs: "PersonalDocs",
   Medical: "Medical",
   COIAttach: "COIAttch",
-  ConsentForm: "ConsentForm"
+  ConsentForm: "ConsentForm",
+  BackgroundVerification: "BackgroundVerification",
+  WorkPermit: "Work Permit",
+  Vaccination: "Vaccination",
+  PaymentBill: "Payment Bill",
+  PoliceClearanceCertificate: "Police Clearance Certificate",
+  CovidVaccinationCertificate: "Covid Vaccination Certificate",
+  YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
+  CV: "CV",
+  BGVConsentform: "BGVConsentForm",
+  ProofOfDocument: "ProofOfPaymentDocument"
 }
+
+
 
 export const PostRecrutimentCheckboxContent = {
   OfferLetterDRC: "I hereby confirm that I have reviewed and verified the medical document, and I consent to the release of the offer letter.",
@@ -715,6 +842,14 @@ export const NationalityOption = [
 export const ProfileReview = ["Yes", "No", "On Hold"]
 export const ProfileReviewl2 = ["Yes", "No"]
 
+export const COIWarningMsg = `
+  <div style="text-align: center;">
+    <p>This is the Conflict of Interest profile.</p>
+    <p>Would you like to proceed with the candidate?</p>
+    <p style="color: red; font-size: small;">Note: Clicking 'No' will lead to automatic disqualification of the candidate.</p>
+  </div>
+`
+
 export const ColorCode = {
   TabColorCode: {
     Tabcolor: "#a8b8c6",
@@ -737,5 +872,21 @@ export const ColorCode = {
   },
   ProfileColorCode: {
     colorCode: "#597b98"
+  },
+  BreadCrump: {
+    BreadCrumpColor: "#868a8b"
   }
+}
+
+export const TooltipType = {
+  ChildData: "Family Details",
+  EmplyeeData: "Reference Employee Details",
+  CompanyData: "Company Details"
+}
+
+export const TooltipHeader = {
+  ChildData: [{ key: "name", label: "Name" }, { key: "relationshipDetail", label: "Relationship" }, { key: "contactNumber", label: "Contact Number" }],
+  EmplyeeData: [{ key: "empId", label: "Employee ID" }, { key: "empName", label: "Employee Name" }, { key: "empEmail", label: "Employee Email" }, { key: "company", label: "Employee Company" }],
+  CompanyData: [{ key: "operation", label: "Operation" }, { key: "role", label: "Role" }, { key: "region", label: "Region / Province" }],
+
 }

@@ -3,6 +3,9 @@ import { Breadcrumbs, Typography, useMediaQuery } from "@mui/material";
 import ReuseButton from "./ReuseButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LabelHeaderComponents from "./TitleHeader";
+import { ButtonAction } from "../utilities/LabelName";
+import { ColorCode } from "../utilities/Config";
+import StatusBar from "./StatusBar";
 
 type BreadcrumbData = {
   label: string;
@@ -12,6 +15,8 @@ type BreadcrumbData = {
 
 export type TabNameData = {
   tabName: string;
+  IsCurrent?: boolean;
+  navigationPath?: string;
 };
 
 export type JobTitleData = {
@@ -37,6 +42,7 @@ interface BreadcrumbsComponentProps {
     onClick?: () => void;
     disable?: boolean;
   }[];
+  Statuslist?: { [key: string]: string } | null;
 }
 
 const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
@@ -52,10 +58,18 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
   JobValue,
   MainTable,
   ISExpended,
+  Statuslist,
 }) => {
   const [currentValue, setCurrentValue] = React.useState(initialItem);
+  const contentRef = React.useRef<HTMLDivElement>(null);
 
   const currentIndex = items.findIndex((item) => item.value === currentValue);
+
+  React.useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+  }, [currentValue]);
 
   const handleNextClick = () => {
     const isValid = ValidationError ? !ValidationError() : true;
@@ -77,15 +91,24 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
     }
   };
   const isMobile = useMediaQuery("(max-width:600px)");
+
   return (
     <div>
       <div className="ms-Grid-row">
         {/* <div className="ms-Grid-col ms-lg0.3">
          
         </div> */}
-        <div className="ms-Grid-col ms-lg9">
+        <div
+          className={
+            Statuslist && Object.keys(Statuslist).length > 0
+              ? "ms-Grid-col ms-lg8"
+              : "ms-Grid-col ms-lg9"
+          }
+        >
           <span style={{ display: "flex" }}>
-            {additionalButtons.some((button) => button.label === "Back") &&
+            {additionalButtons.some(
+              (button) => button.label === ButtonAction.Back
+            ) &&
               additionalButtons.map((button, index) => {
                 return <ArrowBackIcon key={index} onClick={button.onClick} />;
               })}
@@ -95,7 +118,15 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
               sx={{ marginBottom: "16px", marginLeft: "2%" }}
             >
               {TabName.map((item, index) => (
-                <Typography key={index} color="text.primary" fontWeight="Bold">
+                <Typography
+                  key={index}
+                  color={
+                    index === TabName.length - 1
+                      ? "text.primary"
+                      : ColorCode.BreadCrump.BreadCrumpColor
+                  }
+                  fontWeight="Bold"
+                >
                   {item.tabName}
                 </Typography>
               ))}
@@ -157,24 +188,40 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
               value={`Job Title - ${JobValue?.JobTitle ?? ""} (${
                 JobValue?.JobCode ?? ""
               })`}
-            >
-              {" "}
-            </LabelHeaderComponents>
+            />
           </div>
+
           {JobValue?.Status && (
             <div
-              className="ms-Grid-col ms-lg6"
-              style={{ display: "flex", justifyContent: "end" }}
+              className={
+                Statuslist && Object.keys(Statuslist).length > 0
+                  ? "ms-Grid-col ms-lg5"
+                  : "ms-Grid-col ms-lg6"
+              }
+              style={{ display: "flex", justifyContent: "flex-end" }}
             >
               <LabelHeaderComponents
                 value={`Status - ${JobValue?.Status ?? ""}`}
-              >
-                {" "}
-              </LabelHeaderComponents>
+              />
+            </div>
+          )}
+
+          {Statuslist && Object.keys(Statuslist).length > 0 && (
+            <div
+              className="ms-Grid-col ms-lg1"
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                marginTop: "-5%",
+              }}
+            >
+              <StatusBar checklist={Statuslist} />
             </div>
           )}
         </div>
       )}
+
       {/* <div
         className="no-scrollbar"
         style={{
@@ -192,6 +239,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
         */}
 
       <div
+        ref={contentRef}
         className={MainTable ? "no-scrollbar" : ""}
         style={{
           height: ISExpended
@@ -200,7 +248,8 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
             ? "calc(-158px + 73vh)"
             : additionalButtons.length > 0 &&
               additionalButtons.some(
-                (button) => button.label === "Close" || button.label === "Back"
+                (button) =>
+                  button.label === "Close" || button.label === ButtonAction.Back
               )
             ? " calc(-158px + 88vh)"
             : "calc(-158px + 85vh) ",
@@ -227,34 +276,49 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
       >
         {handleCancel &&
           !additionalButtons.some(
-            (button) => button.label === "Close" || button.label === "Back"
+            (button) =>
+              button.label === ButtonAction.close ||
+              button.label === ButtonAction.Back
           ) && (
             <div style={{ marginRight: "10px" }}>
-              <ReuseButton label="Cancel" onClick={handleCancel} spacing={4} />
+              <ReuseButton
+                label={ButtonAction.Cancel}
+                onClick={handleCancel}
+                spacing={4}
+              />
             </div>
           )}
 
         {currentIndex > 0 && (
           <div style={{ marginRight: "10px" }}>
-            <ReuseButton label="Back" onClick={handleBackClick} spacing={4} />
+            <ReuseButton
+              label={ButtonAction.Back}
+              onClick={handleBackClick}
+              spacing={4}
+            />
           </div>
         )}
         {currentIndex < items.length - 1 && (
           <div style={{ marginRight: "10px" }}>
-            <ReuseButton label="Next" onClick={handleNextClick} spacing={4} />
+            <ReuseButton
+              label={ButtonAction.Next}
+              onClick={handleNextClick}
+              spacing={4}
+            />
           </div>
         )}
 
         {additionalButtons.map((button, index) => {
-          if (button.label === "Back") {
+          if (button.label === ButtonAction.Back) {
             return null;
           } else if (
-            button.label === "Submit" ||
-            button.label === "Preview" ||
-            button.label === "Approve" ||
-            button.label === "Selected" ||
-            button.label === "Rejected" ||
-            button.label === "OnHold"
+            button.label === ButtonAction.Submit ||
+            button.label === ButtonAction.Preview ||
+            button.label === ButtonAction.Approve ||
+            button.label === ButtonAction.Selected ||
+            button.label === ButtonAction.Rejected ||
+            button.label === ButtonAction.OnHold ||
+            button.label === ButtonAction.SaveAsDraft
           ) {
             return currentValue === items[items.length - 1].value ? (
               <div key={index} style={{ marginRight: "10px" }}>

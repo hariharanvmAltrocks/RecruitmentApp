@@ -2,7 +2,7 @@ import * as React from "react";
 import { Card, CardContent } from "@mui/material";
 import { GetPortalJobsService } from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import { ButtonAction, TabName, tabType } from "../../utilities/Config";
+import { TabName, tabType } from "../../utilities/Config";
 import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
@@ -12,6 +12,7 @@ import {
   GetProfileByJobCode,
 } from "../../Models/ApIInterface";
 import TabsComponent from "../../components/TabsComponent ";
+import { ButtonAction } from "../../utilities/LabelName";
 
 const UploadCandidateList = (props: any) => {
   const [CandidateData, setCandidateData] = React.useState<
@@ -274,7 +275,7 @@ const UploadCandidateList = (props: any) => {
               MainTable={true}
               additionalButtons={[
                 {
-                  label: "Back",
+                  label: ButtonAction.Back,
                   onClick: async () => {
                     back_fn();
                   },

@@ -15,8 +15,6 @@ function CustomProfileComponent({
   Department,
 }: FormFields) {
   const isMobile = useMediaQuery("(max-width:600px)");
-  // const { ADGroupData, setShowRoleSelector } = userInfo();
-  // console.log(ADGroupData, "ADGroupData");
 
   return (
     <div

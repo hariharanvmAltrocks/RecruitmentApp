@@ -7,13 +7,17 @@ import {
   ITooltipHostStyles,
 } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
+import { ActionName, PositionStatus } from "../utilities/LabelName";
 
 interface ToolTipButtonProps {
-  Title: string;
-  CurrentMenuId: number;
-  Rowdata: any;
-  ApproverData: any;
-  onHover: () => void;
+  Title?: string;
+  CurrentMenuId?: number;
+  Rowdata?: any;
+  ApproverData?: any;
+  TooltipHeader?: string;
+  onHover?: () => void;
+  TooltipLabel?: string;
+  BGDocs?: boolean;
 }
 
 const ToolTipButton: React.FC<ToolTipButtonProps> = ({
@@ -21,6 +25,9 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
   Rowdata,
   ApproverData,
   onHover,
+  TooltipHeader,
+  TooltipLabel,
+  BGDocs,
 }) => {
   const tooltipId = useId("tooltip");
   const hostStyles: Partial<ITooltipHostStyles> = {
@@ -38,9 +45,15 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
           marginBottom: "8px",
         }}
       >
-        Approver Name
+        {TooltipHeader
+          ? TooltipHeader
+          : TooltipLabel
+          ? TooltipLabel
+          : BGDocs
+          ? "DotAfrica Verification"
+          : "Next Approver Name"}
       </div>
-      {lines}
+      <div style={{ maxHeight: "20vh", overflowY: "auto" }}>{lines}</div>
     </div>
   );
 
@@ -55,7 +68,16 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
       >
         {label}
       </div>
-      <div style={{ fontFamily: '"Roboto", sans-serif' }}>
+      <div
+        style={{
+          fontFamily: '"Roboto", sans-serif',
+          color:
+            value === ActionName.Completed ||
+            value === PositionStatus.RecruitmentInProgress
+              ? "green"
+              : "red",
+        }}
+      >
         {" "}
         : {value ?? "—"}
       </div>
@@ -66,9 +88,20 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
     onRenderContent: () => {
       const data = ApproverData;
 
-      if (!data) return <div>Loading...</div>;
-      return renderApproverList(
-        data.map((item: any) => boldLabel(item.Key, item.Value))
+      return (
+        <div>
+          {!data && <div>Loading...</div>}
+
+          {ApproverData?.length > 0 &&
+            typeof ApproverData !== "string" &&
+            renderApproverList(
+              data.map((item: any) => boldLabel(item.Key, item.Value))
+            )}
+
+          {typeof ApproverData === "string" && <p>{data}</p>}
+
+          {!ApproverData && <p>No Record Found</p>}
+        </div>
       );
     },
   };
@@ -87,7 +120,7 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
           src={require("../assets/info.svg")}
           alt="tooltip-icon"
           onMouseEnter={() => {
-            onHover(); // Notify parent to fetch based on status
+            if (onHover) onHover();
           }}
           style={{
             width: "20px",

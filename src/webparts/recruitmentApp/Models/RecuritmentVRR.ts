@@ -1,3 +1,4 @@
+import { CheckboxGroupOption } from "../components/CustomCheckboxGroup";
 import { OptionRow } from "../Screens/ReviewProfile/InterviewQuesEdit";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 import { AutoCompleteItem } from "./Screens";
@@ -31,7 +32,7 @@ export type RecuritmentData = {
   JobNameInFrenchID: number;
   PatersonGradeID: number;
   DRCGradeID: number;
-  JobCodeID: number;
+  JobCodeId: number;
   BusinessUnitCode: string;
   BusinessUnitName: string;
   BusinessUnitDescription: string;
@@ -79,6 +80,8 @@ export type AdvDetails = {
   LevelProficiencyOption: AutoCompleteItem[];
   RolePurpose: string;
   JobDescription: string;
+  RolePurpose_fr: string;
+  JobDescription_fr: string;
   addMasterQualification: string;
   TotalExperience: AutoCompleteItem;
   ExperienceinMiningIndustry: AutoCompleteItem;
@@ -90,15 +93,21 @@ export type AdvDetails = {
   ValidTo: Date | undefined;
   FunctionType: any;
   JobFunctionalType: AutoCompleteItem;
+  JobFunctionalType_fr: AutoCompleteItem;
   JobFunctionalTypeOption: AutoCompleteItem[];
   addMasterMinimumQualification: string;
   AdvertisementAttachement: IDocFiles[] | null;
   JobcodeChecked: boolean;
 
   JobTitleofFunctionalManager: AutoCompleteItem;
-  FunctionalManagerName: string;
+  JobTilteFunctionalManager_fr: AutoCompleteItem;
+  JobTitleofFunctionalManagerOption: AutoCompleteItem[];
+  FunctionalManagerName: AutoCompleteItem;
   JobTitleofLineManagerSupervisor: AutoCompleteItem;
-  LineManagerSupervisorName: string;
+  JobTitleofLineManagerSupervisorOption: AutoCompleteItem[];
+  JobTitleofLineManagerSupervisor_fr: AutoCompleteItem;
+  LineManagerSupervisorName: AutoCompleteItem;
+  IsMasterData: boolean;
 };
 
 export type CandidateData = {
@@ -183,16 +192,22 @@ export type ScoreCardData = {
 export type QualificationValue = {
   MinQualification: AutoCompleteItem[];
   PrefeQualification: AutoCompleteItem[];
+  MinQualification_fr: AutoCompleteItem[];
+  PrefeQualification_fr: AutoCompleteItem[];
 };
 
 export type RoleSpecKnowledge = {
   RoleSpeKnowledge: AutoCompleteItem;
   RequiredLevel: AutoCompleteItem;
+  RoleSpeKnowledge_fr: AutoCompleteItem;
+  RequiredLevel_fr: AutoCompleteItem;
 };
 
 export type TechnicalSkills = {
   TechnicalSkills: AutoCompleteItem;
   LevelProficiency: AutoCompleteItem;
+  TechnicalSkills_fr: AutoCompleteItem;
+  LevelProficiency_fr: AutoCompleteItem;
 };
 
 export type JobCodeTilte = {
@@ -200,6 +215,7 @@ export type JobCodeTilte = {
   JobCode: string;
   ID?: number | undefined;
   Nationality?: string;
+  JobCodeId: number;
 };
 
 // export type RecruitementPositionDetails = {
@@ -378,4 +394,9 @@ export type tabCount = {
   HODReviewScoreCount: number;
   EvaluationCount: number;
   advertExtensionCount: number;
+}
+
+export type BGVState = {
+  checkboxBGV: CheckboxGroupOption[];
+  checkboxBGVOption: CheckboxGroupOption[];
 }

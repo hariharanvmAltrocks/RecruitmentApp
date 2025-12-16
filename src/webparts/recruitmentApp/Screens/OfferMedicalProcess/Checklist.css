@@ -1,0 +1,96 @@
+/* Layout for Yes/No buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* YES button */
+.yes-btn {
+  background: white !important;
+  border: 1px solid #10b981 !important;
+  color: #10b981 !important;
+}
+
+.yes-btn.active {
+  background: #10b981 !important;
+  color: white !important;
+}
+
+/* NO button */
+.no-btn {
+  background: white !important;
+  border: 1px solid #ef4444 !important;
+  color: #ef4444 !important;
+}
+
+.no-btn.active {
+  background: #ef4444 !important;
+  color: white !important;
+}
+
+
+/* finish */
+
+
+@media (max-width: 600px) {
+    .circularpercentage-container {
+         max-width: 55px;
+        margin-left: 14%;
+        margin-top: -14%;
+        margin-bottom: -7%;
+    }
+}
+
+@media (min-width: 601px) {
+    .circularpercentage-container {
+         max-width: 55px;
+       margin-left: 14%;
+        margin-top: -14%;
+        margin-bottom: -7%;
+    }
+}
+
+.circularpercentage {
+  /* border: 1px solid !important; */
+  border-radius: 38px !important;
+  background-color: lightcyan;
+}
+
+.CircularProgressbar-text {
+    font-size: 22px;
+    fill: #000000;
+    font-weight: 600;
+  transform: translate(-12px, 6px); /* right 10px, up 5px */
+
+}
+
+
+@media (max-width: 600px) {
+    .StatusBar-container {
+        width: 63px !important;
+        height: 67px !important;
+        cursor: pointer;
+        margin-top: 21px;
+            background-color: #a8b8c6;
+        padding: 8px !important;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px 3px #eeb9b9;
+        padding-right: 9px;
+    }
+}
+
+
+@media (min-width: 601px) {
+    .StatusBar-container {
+      width: 63px !important;
+        height: 67px !important;
+        cursor: pointer;
+        margin-top: 21px;
+            background-color: #a8b8c6;
+        padding: 8px !important;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px 3px #eeb9b9;
+        padding-right: 9px;
+    }
+}

@@ -39,7 +39,7 @@ const labelStyles: ILabelStyles = {
 const removeDuplicates = (items: AutoCompleteItem[]) => {
   const uniqueItems = new Map<string, AutoCompleteItem>();
 
-  items.forEach((item) => {
+  items?.forEach((item) => {
     if (item && item.text) {
       const normalizedText = item.text.trim().replace(/\s+/g, " ");
 

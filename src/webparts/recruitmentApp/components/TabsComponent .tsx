@@ -5,6 +5,7 @@ import "../App.css";
 import ReuseButton from "./ReuseButton";
 import StatusBar from "./StatusBar";
 import { ColorCode, tabType } from "../utilities/Config";
+import { ButtonAction } from "../utilities/LabelName";
 
 interface TabData {
   label: string | JSX.Element;
@@ -85,7 +86,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
   return (
     <>
       <div className="ms-Grid-row">
-        <div>
+        <div className="ms-Grid-col ms-lg12">
           {/* <Box sx={{ width: "100%", typography: "body1" }}> */}
           <TabContext value={value}>
             <TabList
@@ -141,6 +142,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                       overflowY: "auto",
                       // padding: "10px",
                       boxSizing: "border-box",
+                      overflowX: "hidden",
                       // width: "105%",
                       // marginTop: "-2%",
                       // marginLeft: "-27px",
@@ -179,7 +181,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                 {tabs.length > 1 && value !== tabs[0].value && (
                   <div style={{ marginRight: "10px" }}>
                     <ReuseButton
-                      label="Back"
+                      label={ButtonAction.Back}
                       onClick={handlePreviousClick}
                       spacing={4}
                     />
@@ -189,7 +191,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                 {tabs.length > 1 && value !== tabs[tabs.length - 1].value && (
                   <div style={{ marginRight: "10px" }}>
                     <ReuseButton
-                      label="Next"
+                      label={ButtonAction.Next}
                       onClick={handleNextClick}
                       spacing={4}
                     />
@@ -197,7 +199,11 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                 )}
 
                 {additionalButtons.map((button, index) => {
-                  if (button.label === "Submit") {
+                  if (
+                    button.label === ButtonAction.Submit ||
+                    button.label === ButtonAction.Rework ||
+                    button.label === ButtonAction.ProceedToSubmit
+                  ) {
                     return value === tabs[tabs.length - 1].value ? (
                       <div style={{ marginRight: "10px" }} key={index}>
                         <ReuseButton
@@ -208,7 +214,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                         />
                       </div>
                     ) : null;
-                  } else if (button.label === "Preview") {
+                  } else if (button.label === ButtonAction.Preview) {
                     return value === tabs[tabs.length - 1].value ? (
                       <div key={index} style={{ marginRight: "10px" }}>
                         <ReuseButton
@@ -237,13 +243,14 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
               </div>
             </div>
           )}
+          {tabClassName === "TabStatus" && (
+            <div className="overlay-component">
+              <div>
+                <StatusBar checklist={Statuslist ?? {}} />
+              </div>
+            </div>
+          )}
         </div>
-
-        {tabClassName === "TabStatus" && (
-          <div className="overlay-component">
-            <StatusBar statusList={Statuslist} />
-          </div>
-        )}
       </div>
     </>
   );

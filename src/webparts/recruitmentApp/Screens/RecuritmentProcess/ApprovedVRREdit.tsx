@@ -3,20 +3,23 @@ import { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import "../../App.css";
-import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
+import {
+  CommonServices,
+  getVRRDetails,
+  laborHireService,
+} from "../../Services/ServiceExport";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import CustomInput from "../../components/CustomInput";
 import LabelHeaderComponents from "../../components/TitleHeader";
 import AttachmentButton from "../../components/AttachmentButton";
 import {
-  CheckboxContent,
   Choices,
   ColorCode,
   DataFrom,
   DocumentLibraray,
   HRMSAlertOptions,
-  labelName,
   ListNames,
+  NationalityCode,
   Notes,
   RecuritmentHRMsg,
   ResponeStatus,
@@ -34,6 +37,7 @@ import CustomLabel from "../../components/CustomLabel";
 import CustomTextArea from "../../components/CustomTextArea";
 import {
   AdvDetails,
+  BGVState,
   QualificationValue,
   RecuritmentData,
   RoleSpecKnowledge,
@@ -55,13 +59,31 @@ import BreadcrumbsComponent, {
 } from "../../components/CustomBreadcrumps";
 import CustomSignature from "../../components/CustomSignature";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
-import CustomPreviewScreen from "./CustomPreviewScreen";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
 //import * as moment from "moment";
 import { UploadAdvertisement } from "../ScreenComponent/UploadAdvertisement";
 import CustomViewAttachment from "../../components/CustomViewAttachment";
-import { GetStatusIdRoles } from "../../components/TabMerge";
+import {
+  a11yProps,
+  CustomTabPanel,
+  GetStatusIdRoles,
+} from "../../components/TabMerge";
+import {
+  Attachment,
+  ButtonAction,
+  CheckboxContent,
+  JobBasedBVG,
+  labelNames,
+  RadioBtnLabel,
+} from "../../utilities/LabelName";
+import CheckboxGroup, {
+  CheckboxGroupOption,
+} from "../../components/CustomCheckboxGroup";
+import Box from "@mui/material/Box";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import { UpsertBGV } from "../../Models/ApIInterface";
 // import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 
 export type roleSpeKnowledgeValidationErrors = {
@@ -98,6 +120,9 @@ export type formValidationEdit = {
   FunctionalManagerName: boolean;
   JobTitleofLineManagerSupervisor: boolean;
   LineManagerSupervisorName: boolean;
+  BVGVerification: boolean;
+  RolePurpose_fr: boolean;
+  JobDescription_fr: boolean;
 };
 
 export type masterLibrary = {
@@ -142,9 +167,17 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     JobcodeChecked: false,
 
     JobTitleofFunctionalManager: { key: 0, text: "" },
-    FunctionalManagerName: "",
+    FunctionalManagerName: { key: 0, text: "" },
     JobTitleofLineManagerSupervisor: { key: 0, text: "" },
-    LineManagerSupervisorName: "",
+    LineManagerSupervisorName: { key: 0, text: "" },
+    JobFunctionalType_fr: { key: 0, text: "" },
+    JobDescription_fr: "",
+    RolePurpose_fr: "",
+    IsMasterData: false,
+    JobTilteFunctionalManager_fr: { key: 0, text: "" },
+    JobTitleofLineManagerSupervisor_fr: { key: 0, text: "" },
+    JobTitleofFunctionalManagerOption: [],
+    JobTitleofLineManagerSupervisorOption: [],
   });
   const [formState, setFormState] = useState<RecuritmentData>({
     VRRID: 0,
@@ -157,7 +190,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     JobNameInFrenchID: 0,
     PatersonGradeID: 0,
     DRCGradeID: 0,
-    JobCodeID: 0,
+    JobCodeId: 0,
     BusinessUnitCode: "",
     BusinessUnitName: "",
     BusinessUnitDescription: "",
@@ -229,6 +262,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       FunctionalManagerName: false,
       JobTitleofLineManagerSupervisor: false,
       LineManagerSupervisorName: false,
+      BVGVerification: false,
+      RolePurpose_fr: false,
+      JobDescription_fr: false,
     });
   const [MainComponent, setMainComponent] = useState<boolean>(true);
   const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
@@ -240,12 +276,16 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     {
       RoleSpeKnowledge: { key: 0, text: "" },
       RequiredLevel: { key: 0, text: "" },
+      RoleSpeKnowledge_fr: { key: 0, text: "" },
+      RequiredLevel_fr: { key: 0, text: "" },
     },
   ]);
   const [qualificationValue, setQualificationValue] =
     useState<QualificationValue>({
       MinQualification: [],
       PrefeQualification: [],
+      MinQualification_fr: [],
+      PrefeQualification_fr: [],
     });
   const [TechnicalSkillValue, setTechnicalSkillValue] = useState<
     TechnicalSkills[]
@@ -253,14 +293,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     {
       TechnicalSkills: { key: 0, text: "" },
       LevelProficiency: { key: 0, text: "" },
+      TechnicalSkills_fr: { key: 0, text: "" },
+      LevelProficiency_fr: { key: 0, text: "" },
     },
   ]);
   const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
   const [Checkbox, setCheckbox] = useState<boolean>(false);
   const [prevActiveTab, setPrevActiveTab] = React.useState<string | null>(null);
-  const [Preview, setPreview] = useState<boolean>(false);
+  // const [Preview, setPreview] = useState<boolean>(false);
   const [isViewed, setIsViewed] = useState(false);
   const [experValidation, setExperValidation] = useState<boolean>(false);
+  const [BVGVerification, setBVGVerification] = useState<BGVState>({
+    checkboxBGV: [],
+    checkboxBGVOption: [],
+  });
   // Commented out this section because the client mentioned that the Recruitment HR did not upload
   // the Role Profile and Grading Document. This functionality will remain disabled until those documents
   // are provided and approved.
@@ -270,224 +316,279 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   // });
 
   const [currentRoleID, setCurrentRoleID] = useState<number>(0);
+  const [advTab, setAdvTab] = React.useState(0);
+
+  const MasterDataOption = async () => {
+    setIsLoading(true);
+    // Fetch Qualification data
+    const Qualification = await CommonServices.GetMasterData(
+      ListNames.HRMSQualification
+    );
+    // const QualificationOption: AutoCompleteItem[] = Qualification.data.map((item: any) => ({
+    //     key: item.Code,
+    //     text: item.Qualification,
+    // }));
+    const QualificationOption = Qualification.data
+      .filter(
+        (qualItem) =>
+          !qualificationValue.MinQualification.some(
+            (minQual) => minQual.key === qualItem.QualificationCode
+          )
+      )
+      .map((item) => ({
+        key: item.QualificationCode,
+        text: item.Qualification,
+      }))
+      .sort((a, b) => {
+        const textA = typeof a.text === "string" ? a.text : "";
+        const textB = typeof b.text === "string" ? b.text : "";
+        return textA.localeCompare(textB);
+      });
+
+    const PrefeQualificationOption: AutoCompleteItem[] = Qualification.data
+      .filter(
+        (Qualitem) =>
+          // !QualificationValue.some((item) => item.MinQualification.key === Qualitem.QualificationCode)
+          !qualificationValue.MinQualification.some(
+            (item) => item.key === Qualitem.QualificationCode
+          )
+      )
+      .map((item: any) => ({
+        key: item.QualificationCode,
+        text: item.Qualification,
+      }))
+      .sort((a, b) => {
+        const textA = typeof a.text === "string" ? a.text : "";
+        const textB = typeof b.text === "string" ? b.text : "";
+        return textA.localeCompare(textB);
+      });
+
+    // Fetch RoleSpecificKnowledge data
+    const RoleSpecificKnowlege = await CommonServices.GetMasterData(
+      ListNames.HRMSRoleSpecificKnowlegeMaster
+    );
+    const RoleSpecificKnowlegeOption: AutoCompleteItem[] =
+      RoleSpecificKnowlege.data
+        .map((item: any) => ({
+          key: item.Code,
+          text: item.RoleSpecificKnowledge,
+        }))
+        .sort((a, b) => {
+          const textA = typeof a.text === "string" ? a.text : "";
+          const textB = typeof b.text === "string" ? b.text : "";
+          return textA.localeCompare(textB);
+        });
+
+    // Fetch TechnicalSkills data
+    const TechnicalSkills = await CommonServices.GetMasterData(
+      ListNames.HRMSTechnicalSkills
+    );
+    const TechnicalSkillsOption: AutoCompleteItem[] = TechnicalSkills.data
+      .map((item: any) => ({
+        key: item.Code,
+        text: item.TechnicalSkills,
+      }))
+      .sort((a, b) => {
+        const textA = typeof a.text === "string" ? a.text : "";
+        const textB = typeof b.text === "string" ? b.text : "";
+        return textA.localeCompare(textB);
+      });
+
+    // Fetch LevelOfProficiency data
+    const LevelOfProficiency = await CommonServices.GetMasterData(
+      ListNames.HRMSLevelOfProficiency
+    );
+    const LevelOfProficiencyOption: AutoCompleteItem[] =
+      LevelOfProficiency.data.map((item: any) => ({
+        key: item.Code,
+        text: item.Levels,
+        // text_fr: item.
+      }));
+
+    const YearofExperiance = await CommonServices.GetMasterData(
+      ListNames.HRMSExperienceMaster
+    );
+    const YearofExperianceOption: AutoCompleteItem[] =
+      YearofExperiance.data.map((item: any) => ({
+        key: item.Id,
+        text: item.ExperienceInYearRange,
+      }));
+
+    const ExperienceinMiningOption: AutoCompleteItem[] =
+      YearofExperiance.data.map((item: any) => ({
+        key: item.Id,
+        text: item.ExperienceInYearRange,
+      }));
+
+    const JobTitleFunctionType = await CommonServices.GetMasterData(
+      ListNames.HRMSJobTitleFunctionType
+    );
+    const JobTitleFunctionTypeOption: AutoCompleteItem[] =
+      JobTitleFunctionType.data.map((item: any) => ({
+        key: item.Id,
+        text: item.FunctionType,
+      }));
+
+    const MinQualificationData = Qualification.data
+      .filter((item) =>
+        qualificationValue.MinQualification.some(
+          (q: any) => q.key === item.QualificationCode
+        )
+      )
+      .map((item) => ({
+        key: item.Code,
+        text: item.QualificationFrench,
+      }));
+
+    const PreQualificationData = Qualification.data
+      .filter((item) =>
+        qualificationValue.PrefeQualification.some(
+          (q: any) => q.key === item.QualificationCode
+        )
+      )
+      .map((item) => ({
+        key: item.Code,
+        text: item.QualificationFrench,
+      }));
+
+    const RoleSpeKnowledge = RoleSpecificKnowlege.data
+      .filter((item) =>
+        RoleSpeKnowledgeValue.some(
+          (q: any) => q.RoleSpeKnowledge.key === item.Code
+        )
+      )
+      .map((item) => ({
+        key: item.Code,
+        text: item.RoleSpecificKnowledgeFrench,
+      }));
+
+    const RequiredLevel = LevelOfProficiency.data
+      .filter((item) =>
+        RoleSpeKnowledgeValue.some(
+          (q: any) => q.RequiredLevel.key === item.Code
+        )
+      )
+      .map((item) => ({
+        key: item.Code,
+        text: item.LevelsFrench,
+      }));
+
+    const TechnicalSkilData = TechnicalSkills.data
+      .filter((item) =>
+        TechnicalSkillValue.some(
+          (q: any) => q.TechnicalSkills.key === item.Code
+        )
+      )
+      .map((item) => ({
+        key: item.Code,
+        text: item.TechnicalSkillsfrench,
+      }));
+
+    const TeachnicalRequiredLevel = LevelOfProficiency.data
+      .filter((item) =>
+        TechnicalSkillValue.some(
+          (q: any) => q.LevelProficiency.key === item.Code
+        )
+      )
+      .map((item) => ({
+        key: item.Code,
+        text: item.LevelsFrench,
+      }));
+
+    let FunctionType_fr = JobTitleFunctionType.data
+      .filter((item) => item.Id === advDetails.JobFunctionalType?.key)
+      .map((f) => ({
+        key: f.Id,
+        text: f.FunctionTypeFrench,
+      }));
+
+    setQualificationValue((prevState: any) => ({
+      ...prevState,
+      MinQualification_fr: MinQualificationData,
+      PrefeQualification_fr: PreQualificationData,
+    }));
+    setRoleSpeKnowledgeValue((prev) =>
+      prev.map((item) => ({
+        ...item,
+        RoleSpeKnowledge_fr:
+          RoleSpeKnowledge.find((x) => x.key === item.RoleSpeKnowledge?.key) ??
+          item.RoleSpeKnowledge_fr,
+        RequiredLevel_fr:
+          RequiredLevel.find((x) => x.key === item.RequiredLevel?.key) ??
+          item.RequiredLevel_fr,
+      }))
+    );
+    setTechnicalSkillValue((prev) =>
+      prev.map((item) => ({
+        ...item,
+        TechnicalSkills_fr:
+          TechnicalSkilData.find((x) => x.key === item.TechnicalSkills?.key) ??
+          item.TechnicalSkills_fr,
+        LevelProficiency_fr:
+          TeachnicalRequiredLevel.find(
+            (x) => x.key === item.LevelProficiency?.key
+          ) ?? item.LevelProficiency_fr,
+      }))
+    );
+
+    let FunctionalManager = props.JobInFrenchList.filter(
+      (item: any) => item.key === advDetails.JobTitleofFunctionalManager?.key
+    ).map((f: any) => ({
+      key: f.key,
+      text: f.text,
+    }));
+
+    let LineManagerSupervisor_fr = props.JobInFrenchList.filter(
+      (item: any) =>
+        item.key === advDetails.JobTitleofLineManagerSupervisor?.key
+    ).map((f: any) => ({
+      key: f.key,
+      text: f.text,
+    }));
+
+    let JobTitleOption = props.JobInEnglishList.map((item: any) => ({
+      key: item.key,
+      text: item.text,
+    }));
+
+    setAdvDetails((prevState: any) => ({
+      ...prevState,
+      MinQualificationOption: QualificationOption,
+      PrefeQualificationOption: PrefeQualificationOption,
+      RoleSpeKnowledgeoption: RoleSpecificKnowlegeOption,
+      TechnicalSkillsOption: TechnicalSkillsOption,
+      LevelProficiencyOption: LevelOfProficiencyOption,
+      RequiredLeveloption: LevelOfProficiencyOption,
+      TotalExperienceOption: YearofExperianceOption,
+      ExperienceinMiningIndustryOption: ExperienceinMiningOption,
+      JobFunctionalTypeOption: JobTitleFunctionTypeOption,
+      JobFunctionalType_fr: FunctionType_fr[0],
+      JobTilteFunctionalManager_fr:
+        FunctionalManager.length > 1
+          ? { key: 0, text: "" }
+          : FunctionalManager[0],
+      JobTitleofLineManagerSupervisor_fr:
+        LineManagerSupervisor_fr.length > 1
+          ? { key: 0, text: "" }
+          : LineManagerSupervisor_fr[0],
+      JobTitleofFunctionalManagerOption:
+        advTab === 1 ? FunctionalManager : JobTitleOption,
+      JobTitleofLineManagerSupervisorOption:
+        advTab === 1 ? LineManagerSupervisor_fr : JobTitleOption,
+    }));
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
     setCurrentRoleID(userRole ?? 0);
-  }, [props.stateValue?.StatusId]);
-
-  const handleAddRow = (stateValue: string, index: number) => {
-    switch (stateValue) {
-      case RoleDescription.RoleSpeKnowledgeValue:
-        {
-          const currentItem = RoleSpeKnowledgeValue[index];
-          const isRoleKnowledgeValid = IsValid(
-            currentItem?.RoleSpeKnowledge.text
-          );
-          const isRequiredLevelValid = IsValid(currentItem?.RequiredLevel.text);
-
-          setValidationError((prevErrors) => {
-            const updatedErrors = [...prevErrors.RoleSpeKnowledgeValidation];
-            updatedErrors[index] = {
-              RoleSpeKnowledge: !isRoleKnowledgeValid,
-              RequiredLevel: !isRequiredLevelValid,
-            };
-            return {
-              ...prevErrors,
-              RoleSpeKnowledgeValidation: updatedErrors,
-            };
-          });
-
-          if (isRoleKnowledgeValid && isRequiredLevelValid) {
-            setRoleSpeKnowledgeValue((prevState) => [
-              ...prevState,
-              {
-                RoleSpeKnowledge: { key: 0, text: "" },
-                RequiredLevel: { key: 0, text: "" },
-              },
-            ]);
-
-            setValidationError((prevErrors) => ({
-              ...prevErrors,
-              RoleSpeKnowledgeValidation: [
-                ...prevErrors.RoleSpeKnowledgeValidation,
-                { RoleSpeKnowledge: false, RequiredLevel: false },
-              ],
-            }));
-          }
-        }
-        break;
-      case RoleDescription.TechnicalSkillValue: {
-        const currentItem = TechnicalSkillValue[index];
-        const isTechnicalSkillValid = IsValid(
-          currentItem?.TechnicalSkills.text
-        );
-        const isLevelProficiencyValid = IsValid(
-          currentItem?.LevelProficiency.text
-        );
-
-        setValidationError((prevErrors) => {
-          const updatedErrors = [...prevErrors.technicalSkillsKnowledge];
-          updatedErrors[index] = updatedErrors[index] || {
-            TechnicalSkills: false,
-            LevelProficiency: false,
-          };
-          updatedErrors[index] = {
-            TechnicalSkills: !isTechnicalSkillValid,
-            LevelProficiency: !isLevelProficiencyValid,
-          };
-          return {
-            ...prevErrors,
-            technicalSkillsKnowledge: updatedErrors,
-          };
-        });
-
-        if (isTechnicalSkillValid && isLevelProficiencyValid) {
-          setTechnicalSkillValue((prevState) => [
-            ...prevState,
-            {
-              TechnicalSkills: { key: 0, text: "" },
-              LevelProficiency: { key: 0, text: "" },
-            },
-          ]);
-
-          setValidationError((prevErrors) => ({
-            ...prevErrors,
-            technicalSkillsKnowledge: [
-              ...prevErrors.technicalSkillsKnowledge,
-              { TechnicalSkills: false, LevelProficiency: false },
-            ],
-          }));
-        }
-        break;
-      }
+    if (
+      props.stateValue?.StatusId ===
+      StatusId.PendingwithRecruitmentHRtouploadAdv
+    ) {
+      void MasterDataOption();
     }
-  };
-
-  const handleDeleteRow = (index: number, stateValue: string) => {
-    switch (stateValue) {
-      case RoleDescription.RoleSpeKnowledgeValue:
-        {
-          setRoleSpeKnowledgeValue((prevState) =>
-            prevState.filter((_, i) => i !== index)
-          );
-        }
-        break;
-      case RoleDescription.TechnicalSkillValue: {
-        setTechnicalSkillValue((prevState) =>
-          prevState.filter((_, i) => i !== index)
-        );
-      }
-    }
-  };
-
-  const handleAutoComplete = (
-    item: AutoCompleteItem | null,
-    StateValue: string
-  ) => {
-    setAdvDetails((prevState) => ({
-      ...prevState,
-      [StateValue]: item,
-    }));
-    setValidationError((prevState) => ({
-      ...prevState,
-      [StateValue]: false,
-    }));
-    if (StateValue === "ExperienceinMiningIndustry") {
-      const parseRange = (text: string): [number, number] => {
-        const numbers = text.match(/\d+/g)?.map(Number) ?? [];
-        if (text.includes("+")) {
-          return [numbers[0], Infinity];
-        } else if (numbers.length === 2) {
-          return [numbers[0], numbers[1]];
-        } else if (numbers.length === 1) {
-          return [numbers[0], numbers[0]];
-        }
-        return [0, 0];
-      };
-
-      const experienceRange = parseRange(item?.text || "");
-      const totalRange = parseRange(advDetails.TotalExperience.text || "");
-
-      if (experienceRange[1] > totalRange[1]) {
-        setExperValidation(true);
-        setAdvDetails((prevState) => ({
-          ...prevState,
-          ExperienceinMiningIndustry: { key: 0, text: "" },
-        }));
-      } else {
-        setExperValidation(false);
-      }
-    }
-  };
-
-  const handleAutoCompleterow = (
-    item: AutoCompleteItem | null,
-    key: string,
-    index: number,
-    stateKey:
-      | "RoleSpeKnowledgeValue"
-      | "QualificationValue"
-      | "TechnicalSkillValue"
-  ) => {
-    if (stateKey === "RoleSpeKnowledgeValue") {
-      setRoleSpeKnowledgeValue((prevState) => {
-        const updatedRows = [...prevState];
-        if (key === "RoleSpeKnowledge" || key === "RequiredLevel") {
-          updatedRows[index][key] = item || { key: 0, text: "" };
-        }
-        return updatedRows;
-      });
-
-      setValidationError((prevErrors) => {
-        const updatedErrors = [...prevErrors.RoleSpeKnowledgeValidation];
-        updatedErrors[index] = updatedErrors[index] || {
-          RoleSpeKnowledge: false,
-          RequiredLevel: false,
-        };
-
-        if (key === "RoleSpeKnowledge") {
-          updatedErrors[index].RoleSpeKnowledge = false;
-        } else if (key === "RequiredLevel") {
-          updatedErrors[index].RequiredLevel = false;
-        }
-
-        return {
-          ...prevErrors,
-          RoleSpeKnowledgeValidation: updatedErrors,
-        };
-      });
-    }
-
-    if (stateKey === "TechnicalSkillValue") {
-      setTechnicalSkillValue((prevState) => {
-        const updatedRows = [...prevState];
-        if (key === "TechnicalSkills" || key === "LevelProficiency") {
-          updatedRows[index][key] = item || { key: 0, text: "" };
-        }
-        return updatedRows;
-      });
-
-      setValidationError((prevErrors) => {
-        const updatedErrors = [...prevErrors.technicalSkillsKnowledge];
-        updatedErrors[index] = updatedErrors[index] || {
-          TechnicalSkills: false,
-          LevelProficiency: false,
-        };
-
-        if (key === "TechnicalSkills") {
-          updatedErrors[index].TechnicalSkills = false;
-        } else if (key === "LevelProficiency") {
-          updatedErrors[index].LevelProficiency = false;
-        }
-
-        return {
-          ...prevErrors,
-          technicalSkillsKnowledge: updatedErrors,
-        };
-      });
-    }
-  };
+  }, [props.stateValue?.StatusId, advTab]);
 
   const fetchRoleProfileData = async (JobCodeID: number) => {
     try {
@@ -507,64 +608,22 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         const data = response.data;
 
         if (data && data.length > 0) {
-          const rawData = data[0];
-          const roleSpecificKnowledge = Array.isArray(
-            rawData.RoleSpecificKnowledge
-          )
-            ? rawData.RoleSpecificKnowledge
-            : [];
-
-          const RoleSpeKnowledgeValues = roleSpecificKnowledge.map(
-            (item: any) => item.RoleSpecificKnowledge
-          );
-          const RequiredLevelValues = roleSpecificKnowledge.map(
-            (item: any) => item.RequiredLevel
-          );
-          const technicalSkillsKnowledge = Array.isArray(
-            rawData.TechnicalSkillsKnowledge
-          )
-            ? rawData.TechnicalSkillsKnowledge
-            : [];
-
-          const TechnicalSkillsOption = technicalSkillsKnowledge.map(
-            (item: any, index: number) => ({
-              key: index,
-              text: item.TechnicalSkills,
-            })
-          );
-
-          const LevelProficiencyOption = technicalSkillsKnowledge.map(
-            (item: any, index: number) => ({
-              key: index,
-              text: item.LevelProficiency,
-            })
-          );
-          const MinQualificationOption = rawData.Qualification
-            ? [{ key: 0, text: rawData.Qualification }]
-            : [];
-
-          // Set Preferred Qualification as comma-separated values
-          const PrefeQualificationOption = rawData.PreferredQualification
-            ? [{ key: 0, text: rawData.PreferredQualification }]
-            : [];
-
+          const items = data[0];
           setAdvDetails((prevState) => ({
             ...prevState,
-            RolePurpose: rawData.RoleProfile || "",
-            JobDescription: rawData.JobDescription || "",
-            MinQualificationOption: MinQualificationOption,
-            PrefeQualificationOption: PrefeQualificationOption,
-            TechnicalSkillsOption: TechnicalSkillsOption,
-            LevelProficiencyOption: LevelProficiencyOption,
-            RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
-            RequiredLeveloption: RequiredLevelValues,
-            TotalExperience: rawData.YearofExperience || "",
-            ExperienceinMiningIndustry: rawData.PreferredExperience || "",
-            YearofExperience: rawData.YearofExperience || "",
-            PreferredExperience: rawData.PreferredExperience || "",
-            FunctionType: rawData.FunctionType,
+            RolePurpose: items?.RoleProfile || "",
+            JobDescription: items?.JobDescription || "",
+            RolePurpose_fr: items?.RolePurpose_fr || "",
+            JobDescription_fr: items?.JobDescription_fr || "",
+            TotalExperience: items?.TotalExperience || "",
+            ExperienceinMiningIndustry: items?.ExperienceinMiningIndustry || "",
+            JobFunctionalType: items?.JobFunctionalType,
+            JobFunctionalType_fr: items?.JobFunctionalType_fr,
             JobcodeChecked: true,
           }));
+          setRoleSpeKnowledgeValue(items.RoleSpeKnowledgeValue);
+          setTechnicalSkillValue(items.TechnicalSkillValue);
+          setQualificationValue(items.qualificationValue);
         } else {
           setAdvDetails((prev) => ({
             ...prev,
@@ -706,7 +765,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             JobNameInFrenchID: op.JobTitleFrenchId,
             PatersonGradeID: op.PatersonGradeId,
             DRCGradeID: op.DRCGradeId,
-            JobCodeID: op.JobCodeId,
+            JobCodeId: op.JobCodeId,
             BusinessUnitCode: op.BusinessUnitCode || "",
             BusinessUnitName: BUName.Name || "",
             BusinessUnitDescription: BUName.Description || "",
@@ -747,6 +806,335 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     }
   };
 
+  const calculateValidTo = (startDate: Date, daysToAdd: number): Date => {
+    let validToDate = new Date(startDate);
+    let addedDays = 0;
+
+    while (addedDays < daysToAdd) {
+      validToDate.setDate(validToDate.getDate() + 1);
+
+      if (validToDate.getDay() === 0) {
+        continue;
+      }
+
+      addedDays++;
+    }
+
+    if (validToDate.getDay() === 0) {
+      validToDate.setDate(validToDate.getDate() + 1);
+    }
+
+    return validToDate;
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      setIsLoading(true);
+      await fetchData();
+      if (
+        props.stateValue?.StatusId ===
+          StatusId.PendingwithHRLeadtouploadONEMsigneddoc ||
+        props.stateValue?.StatusId ===
+          StatusId.PendingwithRecruitmentHRtouploadAdv
+      ) {
+        const newValidTo = calculateValidTo(todaydate, 13);
+        setAdvDetails((prevState) => ({
+          ...prevState,
+          ValidTo: newValidTo,
+        }));
+        if (
+          props.stateValue?.StatusId ===
+          StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+        ) {
+          try {
+            const res = await laborHireService.GetBGVerificationType(
+              NationalityCode.SouthAfrica
+            );
+            const BGVFilter = res.data.filter((item: any) =>
+              JobBasedBVG.includes(item?.reference)
+            );
+            const BGVOPtions = BGVFilter.map((item: any, index: number) => ({
+              id: index + 1,
+              key: item?.reference,
+              description: item?.displayText,
+              checked: false,
+            }));
+            setBVGVerification((prev) => ({
+              ...prev,
+              checkboxBGVOption: BGVOPtions,
+              // checkboxBGV: BGVOPtions,
+            }));
+            console.log(res, "res");
+          } catch (error) {
+            console.error("Error in OpenComments:", error);
+          }
+        }
+      }
+      setIsLoading(false);
+    };
+
+    void initialize();
+  }, []);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setAdvTab(newValue);
+  };
+
+  const handleAddRow = (stateValue: string, index: number) => {
+    switch (stateValue) {
+      case RoleDescription.RoleSpeKnowledgeValue:
+        {
+          const currentItem = RoleSpeKnowledgeValue[index];
+          const isRoleKnowledgeValid = IsValid(
+            currentItem?.RoleSpeKnowledge.text
+          );
+          const isRequiredLevelValid = IsValid(currentItem?.RequiredLevel.text);
+
+          setValidationError((prevErrors) => {
+            const updatedErrors = [...prevErrors.RoleSpeKnowledgeValidation];
+            updatedErrors[index] = {
+              RoleSpeKnowledge: !isRoleKnowledgeValid,
+              RequiredLevel: !isRequiredLevelValid,
+            };
+            return {
+              ...prevErrors,
+              RoleSpeKnowledgeValidation: updatedErrors,
+            };
+          });
+
+          if (isRoleKnowledgeValid && isRequiredLevelValid) {
+            setRoleSpeKnowledgeValue((prevState) => [
+              ...prevState,
+              {
+                RoleSpeKnowledge: { key: 0, text: "" },
+                RequiredLevel: { key: 0, text: "" },
+                RoleSpeKnowledge_fr: { key: 0, text: "" },
+                RequiredLevel_fr: { key: 0, text: "" },
+              },
+            ]);
+
+            setValidationError((prevErrors) => ({
+              ...prevErrors,
+              RoleSpeKnowledgeValidation: [
+                ...prevErrors.RoleSpeKnowledgeValidation,
+                { RoleSpeKnowledge: false, RequiredLevel: false },
+              ],
+            }));
+          }
+        }
+        break;
+      case RoleDescription.TechnicalSkillValue: {
+        const currentItem = TechnicalSkillValue[index];
+        const isTechnicalSkillValid = IsValid(
+          currentItem?.TechnicalSkills.text
+        );
+        const isLevelProficiencyValid = IsValid(
+          currentItem?.LevelProficiency.text
+        );
+
+        setValidationError((prevErrors) => {
+          const updatedErrors = [...prevErrors.technicalSkillsKnowledge];
+          updatedErrors[index] = updatedErrors[index] || {
+            TechnicalSkills: false,
+            LevelProficiency: false,
+          };
+          updatedErrors[index] = {
+            TechnicalSkills: !isTechnicalSkillValid,
+            LevelProficiency: !isLevelProficiencyValid,
+          };
+          return {
+            ...prevErrors,
+            technicalSkillsKnowledge: updatedErrors,
+          };
+        });
+
+        if (isTechnicalSkillValid && isLevelProficiencyValid) {
+          setTechnicalSkillValue((prevState) => [
+            ...prevState,
+            {
+              TechnicalSkills: { key: 0, text: "" },
+              LevelProficiency: { key: 0, text: "" },
+              TechnicalSkills_fr: { key: 0, text: "" },
+              LevelProficiency_fr: { key: 0, text: "" },
+            },
+          ]);
+
+          setValidationError((prevErrors) => ({
+            ...prevErrors,
+            technicalSkillsKnowledge: [
+              ...prevErrors.technicalSkillsKnowledge,
+              { TechnicalSkills: false, LevelProficiency: false },
+            ],
+          }));
+        }
+        break;
+      }
+    }
+  };
+
+  const handleDeleteRow = (index: number, stateValue: string) => {
+    switch (stateValue) {
+      case RoleDescription.RoleSpeKnowledgeValue:
+        {
+          setRoleSpeKnowledgeValue((prevState) =>
+            prevState.filter((_, i) => i !== index)
+          );
+        }
+        break;
+      case RoleDescription.TechnicalSkillValue: {
+        setTechnicalSkillValue((prevState) =>
+          prevState.filter((_, i) => i !== index)
+        );
+      }
+    }
+  };
+
+  const handleAutoComplete = (
+    item: AutoCompleteItem | null,
+    StateValue: string
+  ) => {
+    setAdvDetails((prevState) => ({
+      ...prevState,
+      [StateValue]: item,
+    }));
+    setValidationError((prevState) => ({
+      ...prevState,
+      [StateValue]: false,
+    }));
+    if (StateValue === "ExperienceinMiningIndustry") {
+      const parseRange = (text: string): [number, number] => {
+        const numbers = text.match(/\d+/g)?.map(Number) ?? [];
+        if (text.includes("+")) {
+          return [numbers[0], Infinity];
+        } else if (numbers.length === 2) {
+          return [numbers[0], numbers[1]];
+        } else if (numbers.length === 1) {
+          return [numbers[0], numbers[0]];
+        }
+        return [0, 0];
+      };
+
+      const experienceRange = parseRange(item?.text || "");
+      const totalRange = parseRange(advDetails.TotalExperience.text || "");
+
+      if (experienceRange[1] > totalRange[1]) {
+        setExperValidation(true);
+        setAdvDetails((prevState) => ({
+          ...prevState,
+          ExperienceinMiningIndustry: { key: 0, text: "" },
+        }));
+      } else {
+        setExperValidation(false);
+      }
+    }
+    if (StateValue === "JobTitleofFunctionalManager") {
+      if (advTab === 1) {
+        setAdvDetails((prevState) => ({
+          ...prevState,
+          JobTilteFunctionalManager_fr: item ?? { key: 0, text: "" },
+        }));
+
+        setValidationError((prevState) => ({
+          ...prevState,
+          JobTilteFunctionalManager_fr: false,
+        }));
+      }
+      if (advTab === 0) {
+        setAdvDetails((prev) => ({
+          ...prev,
+          FunctionalManagerName: { key: 0, text: "" },
+        }));
+      }
+    }
+    if (StateValue === "JobTitleofLineManagerSupervisor") {
+      if (advTab === 1) {
+        setAdvDetails((prevState) => ({
+          ...prevState,
+          JobTitleofLineManagerSupervisor_fr: item ?? { key: 0, text: "" },
+        }));
+
+        setValidationError((prevState) => ({
+          ...prevState,
+          JobTitleofLineManagerSupervisor_fr: false,
+        }));
+      }
+      if (advTab === 0) {
+        setAdvDetails((prev) => ({
+          ...prev,
+          LineManagerSupervisorName: { key: 0, text: "" },
+        }));
+      }
+    }
+  };
+
+  const handleAutoCompleterow = (
+    item: AutoCompleteItem | null,
+    key: string,
+    index: number,
+    stateKey:
+      | "RoleSpeKnowledgeValue"
+      | "QualificationValue"
+      | "TechnicalSkillValue"
+  ) => {
+    if (stateKey === "RoleSpeKnowledgeValue") {
+      setRoleSpeKnowledgeValue((prevState) => {
+        const updatedRows = [...prevState];
+        if (key === "RoleSpeKnowledge" || key === "RequiredLevel") {
+          updatedRows[index][key] = item || { key: 0, text: "" };
+        }
+        return updatedRows;
+      });
+
+      setValidationError((prevErrors) => {
+        const updatedErrors = [...prevErrors.RoleSpeKnowledgeValidation];
+        updatedErrors[index] = updatedErrors[index] || {
+          RoleSpeKnowledge: false,
+          RequiredLevel: false,
+        };
+
+        if (key === "RoleSpeKnowledge") {
+          updatedErrors[index].RoleSpeKnowledge = false;
+        } else if (key === "RequiredLevel") {
+          updatedErrors[index].RequiredLevel = false;
+        }
+
+        return {
+          ...prevErrors,
+          RoleSpeKnowledgeValidation: updatedErrors,
+        };
+      });
+    }
+
+    if (stateKey === "TechnicalSkillValue") {
+      setTechnicalSkillValue((prevState) => {
+        const updatedRows = [...prevState];
+        if (key === "TechnicalSkills" || key === "LevelProficiency") {
+          updatedRows[index][key] = item || { key: 0, text: "" };
+        }
+        return updatedRows;
+      });
+
+      setValidationError((prevErrors) => {
+        const updatedErrors = [...prevErrors.technicalSkillsKnowledge];
+        updatedErrors[index] = updatedErrors[index] || {
+          TechnicalSkills: false,
+          LevelProficiency: false,
+        };
+
+        if (key === "TechnicalSkills") {
+          updatedErrors[index].TechnicalSkills = false;
+        } else if (key === "LevelProficiency") {
+          updatedErrors[index].LevelProficiency = false;
+        }
+
+        return {
+          ...prevErrors,
+          technicalSkillsKnowledge: updatedErrors,
+        };
+      });
+    }
+  };
+
   const Validation = (): boolean => {
     const { AssignRecruitmentHR, Comments, OnamSignedStampsAttchment } =
       formState;
@@ -776,6 +1164,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       FunctionalManagerName: false,
       JobTitleofLineManagerSupervisor: false,
       LineManagerSupervisorName: false,
+      RolePurpose_fr: false,
+      JobDescription_fr: false,
+      BVGVerification: false,
     };
 
     switch (currentRoleID) {
@@ -790,6 +1181,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           );
           errors.Comments = !IsValid(Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
+          errors.BVGVerification = !IsValid(
+            BVGVerification.checkboxBGV &&
+              BVGVerification.checkboxBGV.length > 0 &&
+              BVGVerification.checkboxBGV[0]?.checked
+          );
           // errors.ValidFrom = !IsValid(advDetails.ValidFrom);  // ONEM Page Validition for Valid from and Valid To Changes
           // errors.ValidTo = !IsValid(advDetails.ValidTo);
         }
@@ -856,6 +1252,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             );
             errors.RolePurpose = !IsValid(advDetails.RolePurpose);
             errors.JobDescription = !IsValid(advDetails.JobDescription);
+            errors.RolePurpose_fr = !IsValid(advDetails.RolePurpose_fr);
+            errors.JobDescription_fr = !IsValid(advDetails.JobDescription_fr);
             errors.ExperienceinMiningIndustry = !IsValid(
               advDetails.ExperienceinMiningIndustry.text
             );
@@ -950,6 +1348,22 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       ...prevState,
       ...errors,
     }));
+    let Error = Object.values(errors).some((error) => error);
+    if (Error) {
+      let FormFieldFailed = {
+        Message: RecuritmentHRMsg.FormValidationMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+      setAlertPopupOpen(true);
+      setalertProps(FormFieldFailed);
+      setIsLoading(false);
+    }
 
     return Object.values(errors).some((error) => error);
   };
@@ -966,6 +1380,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     if (isValid) {
       setPreviewBtn(true);
       setMainComponent(false);
+    } else {
+      let FormFieldFailed = {
+        Message: RecuritmentHRMsg.FormValidationMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+      setAlertPopupOpen(true);
+      setalertProps(FormFieldFailed);
+      setIsLoading(false);
     }
   }
 
@@ -1001,7 +1429,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 {
                   FilterKey: "JobCode",
                   Operator: "eq",
-                  FilterValue: formState.JobCodeID,
+                  FilterValue: formState.JobCodeId,
                 },
               ];
               const Conditions = "";
@@ -1011,59 +1439,97 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 formState,
                 advDetails,
                 props,
-                1
+                1,
+                0
               );
 
               if (result?.status === 200) {
-                if (formState.Comments) {
-                  const commentsData: InsertComments = {
-                    RoleId: currentRoleID,
-                    RecruitmentIDId: props.stateValue?.ID,
-                    Comments: formState.Comments,
-                  };
-
-                  await getVRRDetails.InsertCommentsList(commentsData);
-                }
-                await CommonServices.uploadAttachmentToLibrary(
-                  formState.JobCode,
-                  formState.OnamSignedStampsAttchment ?? [],
-                  DocumentLibraray.ONAMSignedStampDocuments
+                const DepartmentCode = props.Department.find(
+                  (item: { key: number }) => item.key === formState.DepartmentID
                 );
-                const obj: any = {
-                  ActionId: WorkflowAction.Approved,
-                  ItemCreated: "Yes",
-                  JobPostingStartDate: advDetails.ValidFrom
-                    ? SpiltDateOnly(advDetails.ValidFrom)
-                    : "",
-                  JobPostingEndDate: advDetails.ValidTo
-                    ? SpiltDateOnly(advDetails.ValidTo)
-                    : "",
-                };
-                await SPServices.SPUpdateItem({
-                  Listname: ListNames.HRMSRecruitmentDptDetails,
-                  RequestJSON: obj,
-                  ID: props.stateValue?.ID,
-                });
-                resetForm();
-                let SuccessAlert = {
-                  Message: RecuritmentHRMsg.ONEMDocumentMsg,
-                  Type: HRMSAlertOptions.Success,
-                  visible: true,
-                  ButtonAction: async (userClickedOK: boolean) => {
-                    if (userClickedOK) {
-                      props.navigation("/RecurimentProcess", {
-                        state: {
-                          TabName: props.stateValue?.TabName,
-                          tab: props.stateValue?.tab,
-                        },
-                      });
-                      setAlertPopupOpen(false);
-                    }
-                  },
-                };
-                setAlertPopupOpen(true);
-                setalertProps(SuccessAlert);
-                setIsLoading(false);
+                let UpsertBGVData: UpsertBGV[] =
+                  BVGVerification.checkboxBGV.map((item) => ({
+                    jobCode: formState.JobCode,
+                    verificationType: item.key,
+                    department: DepartmentCode.code,
+                    nationality: NationalityCode.SouthAfrica,
+                    isActive: item.checked ?? false,
+                  }));
+                const UpsertBGV = await laborHireService.UpsertBGVJobMaster(
+                  UpsertBGVData
+                );
+
+                if (UpsertBGV.status === ResponeStatus.SUCCESS) {
+                  if (formState.Comments) {
+                    const commentsData: InsertComments = {
+                      RoleId: currentRoleID,
+                      RecruitmentIDId: props.stateValue?.ID,
+                      Comments: formState.Comments,
+                    };
+
+                    await getVRRDetails.InsertCommentsList(commentsData);
+                  }
+                  await CommonServices.uploadAttachmentToLibrary(
+                    formState.JobCode,
+                    formState.OnamSignedStampsAttchment ?? [],
+                    DocumentLibraray.ONAMSignedStampDocuments
+                  );
+                  const obj: any = {
+                    ActionId: WorkflowAction.Approved,
+                    ItemCreated: "Yes",
+                    JobPostingStartDate: advDetails.ValidFrom
+                      ? SpiltDateOnly(advDetails.ValidFrom)
+                      : "",
+                    JobPostingEndDate: advDetails.ValidTo
+                      ? SpiltDateOnly(advDetails.ValidTo)
+                      : "",
+                  };
+                  await SPServices.SPUpdateItem({
+                    Listname: ListNames.HRMSRecruitmentDptDetails,
+                    RequestJSON: obj,
+                    ID: props.stateValue?.ID,
+                  });
+                  resetForm();
+                  let SuccessAlert = {
+                    Message: RecuritmentHRMsg.ONEMDocumentMsg,
+                    Type: HRMSAlertOptions.Success,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                      if (userClickedOK) {
+                        props.navigation("/RecurimentProcess", {
+                          state: {
+                            TabName: props.stateValue?.TabName,
+                            tab: props.stateValue?.tab,
+                          },
+                        });
+                        setAlertPopupOpen(false);
+                      }
+                    },
+                  };
+                  setAlertPopupOpen(true);
+                  setalertProps(SuccessAlert);
+                  setIsLoading(false);
+                } else {
+                  let APIFailed = {
+                    Message: RecuritmentHRMsg.APIErrorMsg,
+                    Type: HRMSAlertOptions.Error,
+                    visible: true,
+                    ButtonAction: async (userClickedOK: boolean) => {
+                      if (userClickedOK) {
+                        props.navigation("/RecurimentProcess", {
+                          state: {
+                            TabName: props.stateValue?.TabName,
+                            tab: props.stateValue?.tab,
+                          },
+                        });
+                        setAlertPopupOpen(false);
+                      }
+                    },
+                  };
+                  setAlertPopupOpen(true);
+                  setalertProps(APIFailed);
+                  setIsLoading(false);
+                }
               } else {
                 let APIFailed = {
                   Message: RecuritmentHRMsg.APIErrorMsg,
@@ -1145,7 +1611,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               TechnicalSkillsKnowledgeJson: JSON.stringify(
                 TechnicalSkillsKnowledgeJson
               ),
-              JobCodeId: formState.JobCodeID,
+              JobCodeId: formState.JobCodeId,
               TotalPreferredExperienceId: Number(
                 advDetails.TotalExperience.key
               ),
@@ -1157,8 +1623,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 advDetails.JobTitleofFunctionalManager.key,
               JobTitleofLMorSupervisorId:
                 advDetails.JobTitleofLineManagerSupervisor.key,
-              FunctionalManagerName: advDetails.FunctionalManagerName,
-              LineManagerorSupervisorName: advDetails.LineManagerSupervisorName,
+              FunctionalManagerName: advDetails.FunctionalManagerName.text,
+              LineManagerorSupervisorName:
+                advDetails.LineManagerSupervisorName.text,
+              JobDescriptionFrench: advDetails.JobDescription_fr,
+              RoleProfileFrench: advDetails.RolePurpose_fr,
             };
             let AdvDetailsResponse;
             if (advDetails.JobcodeChecked === false) {
@@ -1166,7 +1635,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 AdvData,
                 ListNames.HRMSRecruitmentRoleProfileDetails
               );
-              // console.log(AdvDetailsResponse.data, "AdvDetailsResponse");
             }
             if (
               advDetails.JobcodeChecked === false
@@ -1177,7 +1645,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 {
                   FilterKey: "JobCode",
                   Operator: "eq",
-                  FilterValue: formState.JobCodeID,
+                  FilterValue: formState.JobCodeId,
                 },
               ];
               let Conditions = "";
@@ -1187,6 +1655,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 formState,
                 advDetails,
                 props,
+                0,
                 0
               );
               resetForm();
@@ -1314,6 +1783,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             break;
           }
         }
+      } else {
+        let FormFieldFailed = {
+          Message: RecuritmentHRMsg.FormValidationMsg,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async (userClickedOK: boolean) => {
+            if (userClickedOK) {
+              setAlertPopupOpen(false);
+            }
+          },
+        };
+        setAlertPopupOpen(true);
+        setalertProps(FormFieldFailed);
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Failed to fetch Vacancy Details:", error);
@@ -1321,47 +1804,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       setIsLoading(false);
     }
   };
-
-  const calculateValidTo = (startDate: Date, daysToAdd: number): Date => {
-    let validToDate = new Date(startDate);
-    let addedDays = 0;
-
-    while (addedDays < daysToAdd) {
-      validToDate.setDate(validToDate.getDate() + 1);
-
-      if (validToDate.getDay() === 0) {
-        continue;
-      }
-
-      addedDays++;
-    }
-
-    if (validToDate.getDay() === 0) {
-      validToDate.setDate(validToDate.getDate() + 1);
-    }
-
-    return validToDate;
-  };
-
-  useEffect(() => {
-    const initialize = async () => {
-      await fetchData();
-      if (
-        props.stateValue?.StatusId ===
-          StatusId.PendingwithHRLeadtouploadONEMsigneddoc ||
-        props.stateValue?.StatusId ===
-          StatusId.PendingwithRecruitmentHRtouploadAdv
-      ) {
-        const newValidTo = calculateValidTo(todaydate, 13);
-        setAdvDetails((prevState) => ({
-          ...prevState,
-          ValidTo: newValidTo,
-        }));
-      }
-    };
-
-    void initialize();
-  }, []);
 
   const handleDelete = (index: number, attachmentType: string) => {
     if (attachmentType === "AdvertisementAttachement") {
@@ -1489,14 +1931,31 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   };
 
   const handleRichTextEditor = (value: string | any, StateValue: string) => {
-    setAdvDetails((prevState) => ({
-      ...prevState,
-      [StateValue]: value,
-    }));
-    setValidationError((prevState) => ({
-      ...prevState,
-      [StateValue]: false,
-    }));
+    if (advTab === 1) {
+      let StateData =
+        StateValue === "RolePurpose"
+          ? "RolePurpose_fr"
+          : StateValue === "JobDescription"
+          ? "JobDescription_fr"
+          : "";
+      setAdvDetails((prevState) => ({
+        ...prevState,
+        [StateData]: value,
+      }));
+      setValidationError((prevState) => ({
+        ...prevState,
+        [StateData]: false,
+      }));
+    } else {
+      setAdvDetails((prevState) => ({
+        ...prevState,
+        [StateValue]: value,
+      }));
+      setValidationError((prevState) => ({
+        ...prevState,
+        [StateValue]: false,
+      }));
+    }
   };
 
   const handleDateChange = (value: Date | null, stateKey: string) => {
@@ -1561,6 +2020,27 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   //   }));
   // };
 
+  // const options = [
+  //   { id: 1, label: BGVDocumentName.NL },
+  //   { id: 2, label: BGVDocumentName.TC },
+  //   { id: 3, label: BGVDocumentName.SC },
+  //   { id: 4, label: BGVDocumentName.SETA },
+  //   { id: 5, label: BGVDocumentName.ITC },
+  //   { id: 6, label: BGVDocumentName.DMC },
+  //   { id: 7, label: BGVDocumentName.PS },
+  // ];
+
+  const handleCheckboxGroup = (value: CheckboxGroupOption[]) => {
+    setBVGVerification((prevState) => ({
+      ...prevState,
+      checkboxBGV: value,
+    }));
+    setValidationError((prevState) => ({
+      ...prevState,
+      BVGVerification: false,
+    }));
+  };
+
   const tabs = [
     {
       label:
@@ -1608,7 +2088,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Business Unit Code"
+                    label={labelNames.PositionDetails.BusinessUnitCode}
                     value={formState.BusinessUnitCode}
                     error={false}
                     disabled={true}
@@ -1623,7 +2103,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Business Unit Name"
+                    label={labelNames.PositionDetails.BusinessUnitName}
                     value={formState.BusinessUnitName}
                     disabled={true}
                     error={false}
@@ -1638,7 +2118,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Business Unit Description"
+                    label={labelNames.PositionDetails.BusinessUnitDescription}
                     value={formState.BusinessUnitDescription}
                     error={false}
                     disabled={true}
@@ -1653,7 +2133,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Department"
+                    label={labelNames.PositionDetails.Department}
                     value={formState.Department}
                     disabled={true}
                     mandatory={false}
@@ -1669,7 +2149,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Sub-Department"
+                    label={labelNames.PositionDetails.SubDepartment}
                     value={formState.SubDepartment}
                     disabled={true}
                     mandatory={false}
@@ -1683,7 +2163,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Section"
+                    label={labelNames.PositionDetails.Section}
                     value={formState.Section}
                     disabled={true}
                     mandatory={false}
@@ -1697,7 +2177,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Department Code"
+                    label={labelNames.PositionDetails.DepartmentCode}
                     value={formState.DepartmentCode}
                     disabled={true}
                     mandatory={false}
@@ -1711,7 +2191,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Nationality"
+                    label={labelNames.PositionDetails.Nationality}
                     value={formState.Nationality}
                     disabled={true}
                     mandatory={false}
@@ -1727,7 +2207,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Paterson Grade"
+                    label={labelNames.PositionDetails.PatersonGrade}
                     value={formState.PatersonGrade}
                     disabled={true}
                     mandatory={false}
@@ -1742,7 +2222,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="DRC Grade"
+                    label={labelNames.PositionDetails.DRCGrade}
                     value={formState.DRCGrade}
                     disabled={true}
                     mandatory={false}
@@ -1756,7 +2236,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Employment Category"
+                    label={labelNames.PositionDetails.EmploymentCategory}
                     value={formState.EmployementCategory}
                     disabled={true}
                     error={false}
@@ -1771,7 +2251,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 </div>
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Type of Contract"
+                    label={labelNames.PositionDetails.TypeofContract}
                     value={formState.ContractType}
                     disabled={true}
                     error={false}
@@ -1788,7 +2268,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Area of Work"
+                    label={labelNames.PositionDetails.AreaofWork}
                     value={formState.AreaOfWork}
                     disabled={true}
                     error={false}
@@ -1804,7 +2284,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="No of Personnel Required"
+                    label={labelNames.PositionDetails.NoofPerson}
                     value={formState.NoofPositionAssigned}
                     disabled={true}
                     error={false}
@@ -1820,7 +2300,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
                 <div className="ms-Grid-col ms-lg3">
                   <CustomInput
-                    label="Date When Position Is Required"
+                    label={labelNames.PositionDetails.DatePositionRequired}
                     value={
                       formState.DateRequried
                         ? new Date(formState.DateRequried)
@@ -1849,7 +2329,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <div className="ms-Grid-col ms-lg3">
                         <CustomDatePicker
                           selectedDate={advDetails.ValidFrom}
-                          label="Valid From"
+                          label={labelNames.PositionDetails.AdvertValidFrom}
                           error={validationErrors.ValidFrom}
                           minDate={todaydate}
                           // mandatory={true}
@@ -1862,7 +2342,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <div className="ms-Grid-col ms-lg3">
                         <CustomDatePicker
                           selectedDate={advDetails.ValidTo}
-                          label="Valid To"
+                          label={labelNames.PositionDetails.AdvertValidTo}
                           error={false}
                           // minDate={
                           //   advDetails.ValidFrom
@@ -1882,7 +2362,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 )}
 
               <div className="ms-Grid-row" style={{ marginLeft: "0px" }}>
-                <LabelHeaderComponents value={"Attachments"} />
+                <LabelHeaderComponents value={Attachment.Attachments} />
               </div>
 
               <div className="ms-Grid-row" style={{ margin: "0%" }}>
@@ -1940,7 +2420,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     {formState.RoleProfileDocument.length > 0 && (
                       <div className="ms-Grid-col ms-lg3">
                         <div className="custom-document-column">
-                          <CustomLabel value={"RoleProfile Documents"} />
+                          <CustomLabel
+                            value={
+                              Attachment.PositionDocument.RoleProfileDocuments
+                            }
+                          />
                           <div
                             className="document-wrapper"
                             title={
@@ -1951,6 +2435,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           >
                             <CustomViewDocument
                               Attachment={formState.RoleProfileDocument}
+                              webUrl={props.webURL}
                             />
                           </div>
                         </div>
@@ -2019,7 +2504,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     {formState.GradingDocument.length > 0 && (
                       <div className="ms-Grid-col ms-lg3">
                         <div className="custom-document-column">
-                          <CustomLabel value={"Grading Documents"} />
+                          <CustomLabel
+                            value={Attachment.PositionDocument.GradingDocuments}
+                          />
                           <div
                             className="document-wrapper"
                             title={
@@ -2030,6 +2517,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           >
                             <CustomViewDocument
                               Attachment={formState.GradingDocument}
+                              webUrl={props.webURL}
                             />
                           </div>
                         </div>
@@ -2103,16 +2591,23 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         {formState.AdvertisementDocument.length > 0 ? (
                           <div className="ms-Grid-col ms-lg3 custom-document-column ">
                             <CustomLabel
-                              value={"Draft ONEM Advert Doc (French)"}
+                              value={
+                                Attachment.PositionDocument
+                                  .DraftONEMAdvertDocFrench
+                              }
                             />
                             <CustomViewDocument
                               Attachment={formState.AdvertisementDocument}
+                              webUrl={props.webURL}
                             />
                           </div>
                         ) : (
                           <div className="ms-Grid-col ms-lg4">
                             <CustomLabel
-                              value={"Draft ONEM AdvertDoc French(Only PDF)"}
+                              value={
+                                Attachment.PositionDocument
+                                  .DraftONEMAdvertDocFrench
+                              }
                               mandatory={true}
                             />
                             <AttachmentButton
@@ -2127,6 +2622,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                       name: item.name,
                                       content: item.file,
                                       type: "New",
+                                      url: item.Url,
                                     };
                                   }
                                 );
@@ -2157,6 +2653,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               handleDelete={(index, fileState) =>
                                 handleDelete(index, fileState)
                               }
+                              webUrl={props.webURL}
                             />
                           </div>
                         )}
@@ -2172,6 +2669,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           >
                             <CustomViewDocument
                               Attachment={formState.AdvertisementDocument}
+                               webUrl={props.webURL}
                             />
                           </div>
                         </div> */}
@@ -2205,7 +2703,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           style={{ position: "relative", right: "1px" }}
                         >
                           <CustomLabel
-                            value={labelName.ViewJobAdvetisement}
+                            value={
+                              Attachment.PositionDocument.ViewJobAdvertisement
+                            }
                             // mandatory={true}
                           />
                           <ReuseButton
@@ -2229,7 +2729,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             imgAlt="View"
                             imgAltHover="Hovered View"
                             onClick={async () => {
-                              setPreview(true);
+                              setPreviewBtn(true);
                               setMainComponent(false);
                               setIsViewed(true);
                             }}
@@ -2240,7 +2740,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           className="ms-Grid-col ms-lg3"
                           style={{ marginLeft: "-5px" }}
                         >
-                          <CustomLabel value={labelName.ViewComments} />
+                          <CustomLabel
+                            value={Attachment.PositionDocument.ViewComments}
+                          />
                           <ReuseButton
                             Style={{
                               minWidth: "117px",
@@ -2276,7 +2778,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
                   <div className="ms-Grid-col ms-lg4">
                     <CustomLabel
-                      value={"ONEM Signed and Stamped Document(Only Pdf)"}
+                      value={
+                        Attachment.PositionDocument.ONEMSignedStampedDocuments
+                      }
                       mandatory={true}
                     />
                     <AttachmentButton
@@ -2291,6 +2795,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                               name: item.name,
                               content: item.file,
                               type: "New",
+                              url: item.Url,
                             };
                           }
                         );
@@ -2317,10 +2822,26 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       handleDelete={(index, fileState) =>
                         handleDelete(index, fileState)
                       }
+                      webUrl={props.webURL}
                     />
                   </div>
                 )}
               </div>
+
+              {props.stateValue?.StatusId ===
+                StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                <>
+                  <CheckboxGroup
+                    label={RadioBtnLabel.JobBasedVerification}
+                    value={BVGVerification.checkboxBGV}
+                    options={BVGVerification.checkboxBGVOption}
+                    onChange={(item) => handleCheckboxGroup(item ?? [])}
+                    multiple={true}
+                    mandatory={true}
+                    error={validationErrors.BVGVerification}
+                  />
+                </>
+              )}
 
               {((currentRoleID === RoleID.HOD &&
                 props.stateValue?.StatusId ===
@@ -2338,7 +2859,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg12">
                       <CustomTextArea
-                        label={labelName.Comment}
+                        label={labelNames.CommanLabel.Comments}
                         value={formState.Comments}
                         error={validationErrors.Comments}
                         onChange={(value) =>
@@ -2446,7 +2967,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           >
                             <div>
                               <CustomLabel
-                                value={labelName.ViewJobAdvetisement}
+                                value={
+                                  Attachment.PositionDocument
+                                    .ViewJobAdvertisement
+                                }
                                 // mandatory={true}
                               />
                               <ReuseButton
@@ -2470,7 +2994,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 imgAlt="View"
                                 imgAltHover="Hovered View"
                                 onClick={async () => {
-                                  setPreview(true);
+                                  setPreviewBtn(true);
                                   setMainComponent(false);
                                   setIsViewed(true);
                                 }}
@@ -2480,28 +3004,72 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           </div>
                         </div>
                       ) : (
-                        <UploadAdvertisement
-                          advDetails={advDetails}
-                          validationErrors={validationErrors}
-                          handleFileAttachment={handleFileAttachment}
-                          handleRichTextEditor={handleRichTextEditor}
-                          handleAutoComplete={handleAutoComplete}
-                          handleMulitiSelect={handleMulitiSelect}
-                          handleInputChange={handleInputChange}
-                          handleDelete={handleDelete}
-                          handleAutoCompleterow={handleAutoCompleterow}
-                          handleAddRow={handleAddRow}
-                          handleDeleteRow={handleDeleteRow}
-                          InvaildSelection={experValidation}
-                          qualificationValue={qualificationValue}
-                          TechnicalSkillValue={TechnicalSkillValue}
-                          RoleSpeKnowledgeValue={RoleSpeKnowledgeValue}
-                          setAdvDetails={setAdvDetails}
-                          MasterData={props}
-                        />
+                        <Box sx={{ width: "100%" }}>
+                          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                            <Tabs
+                              value={advTab}
+                              onChange={handleChange}
+                              aria-label="basic tabs example"
+                              TabIndicatorProps={{
+                                style: { display: "none" },
+                              }}
+                            >
+                              <Tab label="English" {...a11yProps(0)} />
+                              <Tab label="French" {...a11yProps(1)} />
+                            </Tabs>
+                          </Box>
+                          <CustomTabPanel value={advTab} index={0}>
+                            <UploadAdvertisement
+                              advDetails={advDetails}
+                              validationErrors={validationErrors}
+                              handleFileAttachment={handleFileAttachment}
+                              handleRichTextEditor={handleRichTextEditor}
+                              handleAutoComplete={handleAutoComplete}
+                              handleMulitiSelect={handleMulitiSelect}
+                              handleInputChange={handleInputChange}
+                              handleDelete={handleDelete}
+                              handleAutoCompleterow={handleAutoCompleterow}
+                              handleAddRow={handleAddRow}
+                              handleDeleteRow={handleDeleteRow}
+                              InvaildSelection={experValidation}
+                              qualificationValue={qualificationValue}
+                              TechnicalSkillValue={TechnicalSkillValue}
+                              RoleSpeKnowledgeValue={RoleSpeKnowledgeValue}
+                              setAdvDetails={setAdvTab}
+                              MasterData={props}
+                              IsEnglish={true}
+                              // MasterDataOption={MasterDataOption}
+                            />
+                          </CustomTabPanel>
+                          <CustomTabPanel value={advTab} index={1}>
+                            <UploadAdvertisement
+                              advDetails={advDetails}
+                              validationErrors={validationErrors}
+                              handleFileAttachment={handleFileAttachment}
+                              handleRichTextEditor={handleRichTextEditor}
+                              handleAutoComplete={handleAutoComplete}
+                              handleMulitiSelect={handleMulitiSelect}
+                              handleInputChange={handleInputChange}
+                              handleDelete={handleDelete}
+                              handleAutoCompleterow={handleAutoCompleterow}
+                              handleAddRow={handleAddRow}
+                              handleDeleteRow={handleDeleteRow}
+                              InvaildSelection={experValidation}
+                              qualificationValue={qualificationValue}
+                              TechnicalSkillValue={TechnicalSkillValue}
+                              RoleSpeKnowledgeValue={RoleSpeKnowledgeValue}
+                              setAdvDetails={setAdvTab}
+                              MasterData={props}
+                              IsEnglish={false}
+                              // MasterDataOption={MasterDataOption}
+                            />
+                          </CustomTabPanel>
+                        </Box>
                       )}
 
-                      <CustomLabel value={labelName.ViewComments} />
+                      <CustomLabel
+                        value={Attachment.PositionDocument.ViewComments}
+                      />
                       <ReuseButton
                         Style={{
                           minWidth: "117px",
@@ -2529,7 +3097,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg12">
                           <CustomTextArea
-                            label={labelName.Comment}
+                            label={labelNames.CommanLabel.Comments}
                             value={formState.Comments}
                             error={validationErrors.Comments}
                             onChange={(value) =>
@@ -2596,7 +3164,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
           { tabName: props.stateValue?.TabName },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: activeTabObj?.label },
         ];
         return newTabNames;
@@ -2605,7 +3173,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       setTabNameData((prevTabNames) => {
         const newTabNames = [
           { tabName: props.stateValue?.TabName },
-          { tabName: props.stateValue?.ButtonAction },
+          // { tabName: props.stateValue?.ButtonAction },
           { tabName: prevTabObj?.label },
           { tabName: activeTabObj?.label },
         ];
@@ -2619,17 +3187,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         return uniqueTabNames;
       });
     }
-    if (
-      currentRoleID === RoleID.RecruitmentHRLead &&
-      props.stateValue?.StatusId ===
-        StatusId.PendingwithHRLeadtouploadONEMsigneddoc
-    ) {
-      const newValidTo = calculateValidTo(todaydate, 13);
-      setAdvDetails((prevState) => ({
-        ...prevState,
-        ValidTo: newValidTo,
-      }));
-    }
+
     if (activeTab !== prevActiveTab) {
       setPrevActiveTab(activeTab);
     }
@@ -2696,7 +3254,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       StatusId.PendingwithRecruitmentHRtoAssignExternalAgency)
                     ? [
                         {
-                          label: "Back",
+                          label: ButtonAction.Back,
                           onClick: async () => {
                             props.navigation("/RecurimentProcess", {
                               state: {
@@ -2712,7 +3270,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         StatusId.PendingwithHRLeadtouploadONEMsigneddoc
                     ? [
                         {
-                          label: "Upload",
+                          label: ButtonAction.Upload,
                           onClick: async () => {
                             await SaveRecruitment();
                           },
@@ -2725,7 +3283,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         ...(advDetails.JobcodeChecked === false
                           ? [
                               {
-                                label: "Preview",
+                                label: ButtonAction.Preview,
                                 onClick: async () => {
                                   previewBtn_Fn();
                                 },
@@ -2736,7 +3294,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         ...(isViewed
                           ? [
                               {
-                                label: "Submit",
+                                label: ButtonAction.Submit,
                                 onClick: async () => {
                                   await SaveRecruitment();
                                 },
@@ -2753,7 +3311,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     ? isViewed
                       ? [
                           {
-                            label: "Reviewed",
+                            label: ButtonAction.Review,
                             onClick: async () => {
                               await SaveRecruitment();
                             },
@@ -2763,7 +3321,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     : props.stateValue?.TabName === TabName.AssignAgencies
                     ? [
                         {
-                          label: "Back",
+                          label: ButtonAction.Back,
                           onClick: async () => {
                             props.navigation("/RecurimentProcess", {
                               state: {
@@ -2787,38 +3345,31 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             onclose={() => {
               setPreviewBtn(false);
               setMainComponent(true);
-              setactiveTab("tab2");
+              if (advDetails.JobcodeChecked) {
+                setactiveTab("tab1");
+              } else {
+                setactiveTab("tab2");
+              }
               setIsViewed(false);
             }}
             Ok_btnfn={() => {
               // setSubmitBtn(false);
               setPreviewBtn(false);
               setMainComponent(true);
-              setactiveTab("tab2");
+              if (advDetails.JobcodeChecked) {
+                setactiveTab("tab1");
+              } else {
+                setactiveTab("tab2");
+              }
               setIsViewed(true);
             }}
             RoleSpec={RoleSpeKnowledgeValue}
             Qualification={qualificationValue}
             TechinicalSkills={TechnicalSkillValue}
             JobTitle={formState.JobNameInEnglish}
+            JobTitle_fr={formState.JobNameInFrench}
           />
         </>
-      ) : Preview ? (
-        <CustomPreviewScreen
-          data={advDetails}
-          onclose={() => {
-            setPreview(false);
-            setMainComponent(true);
-            // setactiveTab("tab2");
-          }}
-          Ok_btnfn={() => {
-            setPreview(false);
-            //setSubmitBtn(false);
-            setMainComponent(true);
-            // setactiveTab("tab2");
-          }}
-          JobTitle={formState.JobNameInEnglish}
-        />
       ) : (
         <>
           <CommanComments

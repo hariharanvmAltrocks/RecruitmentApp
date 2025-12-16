@@ -15,28 +15,35 @@ import { alertPropsData, AutoCompleteItem } from "../../Models/Screens";
 import CustomInput from "../../components/CustomInput";
 import ReuseButton from "../../components/ReuseButton";
 import {
+  CategoryID,
   HRMSAlertOptions,
   ListNames,
+  masterFieldMap,
   RecuritmentHRMsg,
+  ResponeStatus,
   RoleDescription,
   RoleDescriptionData,
 } from "../../utilities/Config";
 import {
-  CommonServices,
   GetPortalJobsService,
   getVRRDetails,
 } from "../../Services/ServiceExport";
 import { category, UpsertMasters } from "../../Models/ApIInterface";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import LabelHeaderComponents from "../../components/TitleHeader";
 import CustomDialogbox from "../../components/CustomDialogbox";
 import IsValid from "../../components/Validation";
 import { MasterData } from "../../Models/Master";
+import { labelNames } from "../../utilities/LabelName";
 
 type ValidationErrors = {
-  QualificationValue: boolean;
-  MasterDataValue: boolean;
+  masterdata_En: boolean;
+  masterdata_fr: boolean;
+};
+
+type masterdata = {
+  masterdata_En: string;
+  masterdata_fr: string;
 };
 interface AssignPositionDialogProps {
   advDetails: AdvDetails;
@@ -59,8 +66,9 @@ interface AssignPositionDialogProps {
   qualificationValue: QualificationValue;
   TechnicalSkillValue: TechnicalSkills[];
   RoleSpeKnowledgeValue: RoleSpecKnowledge[];
-  setAdvDetails: React.Dispatch<React.SetStateAction<AdvDetails>>;
+  setAdvDetails: React.Dispatch<React.SetStateAction<number>>;
   MasterData: MasterData;
+  IsEnglish: boolean;
 }
 
 export const UploadAdvertisement = ({
@@ -81,6 +89,7 @@ export const UploadAdvertisement = ({
   handleDeleteRow,
   setAdvDetails,
   MasterData,
+  IsEnglish,
 }: AssignPositionDialogProps) => {
   console.log(MasterData, "MasterData");
 
@@ -95,432 +104,171 @@ export const UploadAdvertisement = ({
     visible: false,
   });
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [AddQualifbtn, setAddQualifbtn] = React.useState<boolean>(false);
+  const [addmasterBtn, setaddmasterBtn] = React.useState<boolean>(false);
   const [HeaderValue, setHeaderValue] = React.useState<string>("");
   const [LabelValue, setLabelValue] = React.useState<string>("");
-  const [masterAddQuali, setMasterAddQuali] = React.useState<string>("");
-  const [masterdataValue, setmasterdataValue] = React.useState<string>("");
+  const [addMasterData, setAddMasterData] = React.useState<masterdata>({
+    masterdata_En: "",
+    masterdata_fr: "",
+  });
+  // const [masterdataValue, setmasterdataValue] = React.useState<string>("");
   const [validationError, setValidationErrors] =
     React.useState<ValidationErrors>({
-      QualificationValue: false,
-      MasterDataValue: false,
+      masterdata_En: false,
+      masterdata_fr: false,
     });
 
   React.useEffect(() => {
-    const MasterDataOption = async () => {
-      // Fetch Qualification data
-      const Qualification = await CommonServices.GetMasterData(
-        ListNames.HRMSQualification
-      );
-      // const QualificationOption: AutoCompleteItem[] = Qualification.data.map((item: any) => ({
-      //     key: item.Code,
-      //     text: item.Qualification,
-      // }));
-      const QualificationOption = Qualification.data
-        .filter(
-          (qualItem) =>
-            !qualificationValue.MinQualification.some(
-              (minQual) => minQual.key === qualItem.QualificationCode
-            )
-        )
-        .map((item) => ({
-          key: item.QualificationCode,
-          text: item.Qualification,
-        }))
-        .sort((a, b) => {
-          const textA = typeof a.text === "string" ? a.text : "";
-          const textB = typeof b.text === "string" ? b.text : "";
-          return textA.localeCompare(textB);
-        });
-
-      const PrefeQualificationOption: AutoCompleteItem[] = Qualification.data
-        .filter(
-          (Qualitem) =>
-            // !QualificationValue.some((item) => item.MinQualification.key === Qualitem.QualificationCode)
-            !qualificationValue.MinQualification.some(
-              (item) => item.key === Qualitem.QualificationCode
-            )
-        )
-        .map((item: any) => ({
-          key: item.QualificationCode,
-          text: item.Qualification,
-        }))
-        .sort((a, b) => {
-          const textA = typeof a.text === "string" ? a.text : "";
-          const textB = typeof b.text === "string" ? b.text : "";
-          return textA.localeCompare(textB);
-        });
-
-      // Fetch RoleSpecificKnowledge data
-      const RoleSpecificKnowlege = await CommonServices.GetMasterData(
-        ListNames.HRMSRoleSpecificKnowlegeMaster
-      );
-      const RoleSpecificKnowlegeOption: AutoCompleteItem[] =
-        RoleSpecificKnowlege.data
-          .map((item: any) => ({
-            key: item.Code,
-            text: item.RoleSpecificKnowledge,
-          }))
-          .sort((a, b) => {
-            const textA = typeof a.text === "string" ? a.text : "";
-            const textB = typeof b.text === "string" ? b.text : "";
-            return textA.localeCompare(textB);
-          });
-
-      // Fetch TechnicalSkills data
-      const TechnicalSkills = await CommonServices.GetMasterData(
-        ListNames.HRMSTechnicalSkills
-      );
-      const TechnicalSkillsOption: AutoCompleteItem[] = TechnicalSkills.data
-        .map((item: any) => ({
-          key: item.Code,
-          text: item.TechnicalSkills,
-        }))
-        .sort((a, b) => {
-          const textA = typeof a.text === "string" ? a.text : "";
-          const textB = typeof b.text === "string" ? b.text : "";
-          return textA.localeCompare(textB);
-        });
-
-      // Fetch LevelOfProficiency data
-      const LevelOfProficiency = await CommonServices.GetMasterData(
-        ListNames.HRMSLevelOfProficiency
-      );
-      const LevelOfProficiencyOption: AutoCompleteItem[] =
-        LevelOfProficiency.data.map((item: any) => ({
-          key: item.Code,
-          text: item.Levels,
-        }));
-
-      const YearofExperiance = await CommonServices.GetMasterData(
-        ListNames.HRMSExperienceMaster
-      );
-      const YearofExperianceOption: AutoCompleteItem[] =
-        YearofExperiance.data.map((item: any) => ({
-          key: item.Id,
-          text: item.ExperienceInYearRange,
-        }));
-
-      const ExperienceinMiningOption: AutoCompleteItem[] =
-        YearofExperiance.data.map((item: any) => ({
-          key: item.Id,
-          text: item.ExperienceInYearRange,
-        }));
-
-      const JobTitleFunctionType = await CommonServices.GetMasterData(
-        ListNames.HRMSJobTitleFunctionType
-      );
-      const JobTitleFunctionTypeOption: AutoCompleteItem[] =
-        JobTitleFunctionType.data.map((item: any) => ({
-          key: item.Id,
-          text: item.FunctionType,
-        }));
-
-      setAdvDetails((prevState: any) => ({
-        ...prevState,
-        MinQualificationOption: QualificationOption,
-        PrefeQualificationOption: PrefeQualificationOption,
-        RoleSpeKnowledgeoption: RoleSpecificKnowlegeOption,
-        TechnicalSkillsOption: TechnicalSkillsOption,
-        LevelProficiencyOption: LevelOfProficiencyOption,
-        RequiredLeveloption: LevelOfProficiencyOption,
-        TotalExperienceOption: YearofExperianceOption,
-        ExperienceinMiningIndustryOption: ExperienceinMiningOption,
-        JobFunctionalTypeOption: JobTitleFunctionTypeOption,
-      }));
-    };
-
-    void MasterDataOption();
-  }, [AddQualifbtn, masterAddQuali, masterdataValue, qualificationValue]);
+    // setAdvDetails((prev) => ({
+    //   ...prev,
+    //   IsMasterData: true,
+    // }));
+    if (addmasterBtn) {
+      setShowQualificationInput(!addmasterBtn);
+    }
+  }, [addmasterBtn, addMasterData, qualificationValue, advDetails]);
 
   const AddMasterData_fn = (Header: string, LabelValue: string) => {
-    setAddQualifbtn(true);
+    setaddmasterBtn(true);
     setHeaderValue(Header);
     setLabelValue(LabelValue);
+    setAddMasterData((prev) => ({
+      ...prev,
+      masterdata_En: "",
+      masterdata_fr: "",
+    }));
+    // setValidationErrors((prev) => ({
+    //   ...prev,
+    //   masterdata_En: false,
+    //   masterdata_fr: false,
+    // }));
   };
 
   const handlemasterValue = (value: string, type: string) => {
-    if (type === "masterdataValue") {
-      setmasterdataValue(value);
-      setValidationErrors((prevState) => ({
-        ...prevState,
-        MasterDataValue: false,
-      }));
-    } else {
-      setMasterAddQuali(value);
-      setValidationErrors((prevState) => ({
-        ...prevState,
-        QualificationValue: false,
-      }));
-    }
+    setAddMasterData((prev) => ({
+      ...prev,
+      [type]: value,
+    }));
+    // setMasterAddQuali(value);
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      [type]: false,
+    }));
   };
 
   const onclickClose = () => {
     setValidationErrors((prevState) => ({
       ...prevState,
-      MasterDataValue: false,
+      masterdata_En: false,
+      masterdata_fr: false,
     }));
-    setAddQualifbtn(false);
-    setmasterdataValue("");
-    setValidationErrors((prevState) => ({
-      ...prevState,
-      MasterDataValue: false,
+    setaddmasterBtn(false);
+    setAddMasterData((prev) => ({
+      ...prev,
+      masterdata_En: "",
+      masterdata_fr: "",
     }));
   };
 
   async function InsertMasterData(Value: string) {
     let IsVaild;
-    if (Value === RoleDescriptionData.Qualification) {
-      const Vaildation = IsValid(masterAddQuali);
-      // const Valid = !Vaildation;
-      setValidationErrors((prevState) => ({
-        ...prevState,
-        QualificationValue: !Vaildation,
-      }));
-      IsVaild = Vaildation;
-    } else {
-      const Vaildation = IsValid(masterdataValue);
-      // const Valid = !isValids;
-      setValidationErrors((prevState) => ({
-        ...prevState,
-        MasterDataValue: !Vaildation,
-      }));
-      IsVaild = Vaildation;
-    }
+    validationError.masterdata_En = !IsValid(addMasterData.masterdata_En);
+    validationError.masterdata_fr = !IsValid(addMasterData.masterdata_fr);
+    setValidationErrors((prev) => ({
+      ...prev,
+      masterdata_En: !IsValid(addMasterData.masterdata_En),
+      masterdata_fr: !IsValid(addMasterData.masterdata_fr),
+    }));
+    IsVaild = !(validationError.masterdata_En && validationError.masterdata_fr);
     if (IsVaild) {
       let MasterData;
-      switch (Value) {
-        case RoleDescriptionData.Qualification:
-          {
-            let filterConditions = [
-              {
-                FilterKey: "Category",
-                Operator: "eq",
-                FilterValue: RoleDescriptionData.Qualification,
-              },
-            ];
-            const CategoryData = await getVRRDetails.GetFilterInCategory(
-              filterConditions
-            );
-            let category: category = {
-              id: Number(CategoryData.data[0]?.CategoryCode),
-              name: CategoryData.data[0]?.Category,
+      let category: category = {
+        id: 0,
+        name: "",
+      };
+      let ListName: string = "";
+      ListName =
+        Value === RoleDescriptionData.Qualification
+          ? ListNames.HRMSQualification
+          : Value === RoleDescriptionData.RoleSpeKnowledge
+          ? ListNames.HRMSRoleSpecificKnowlegeMaster
+          : Value === RoleDescriptionData.TechnicalSkill
+          ? ListNames.HRMSTechnicalSkills
+          : "";
+      category = {
+        id: Number(
+          CategoryID[masterFieldMap[Value]?.label as keyof typeof CategoryID]
+        ),
+        name: Value,
+      };
+      const { label, codeLabel, label_fr } = masterFieldMap[Value];
+      let AgentDetailsList: UpsertMasters[] = [
+        {
+          displayText: addMasterData.masterdata_En,
+          displayText_fr: addMasterData.masterdata_fr,
+          category: category,
+        },
+      ];
+      await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
+        async (res) => {
+          if (res.status === 200) {
+            // MasterData = {
+            //   Qualification: res.data.data[0].displayText,
+            //   QualificationCode: res.data.data[0].value,
+            // };
+            MasterData = {
+              [label]: res.data.data[0].displayText,
+              [codeLabel]: res.data.data[0].value,
+              [label_fr]: res.data.data[0].displayText_fr,
             };
-            let AgentDetailsList: UpsertMasters[] = [
-              {
-                displayText: masterAddQuali,
-                displayText_fr: masterAddQuali,
-                category: category,
-              },
-            ];
+            let response = await getVRRDetails.InsertList(MasterData, ListName);
+            if (response.status === ResponeStatus.SUCCESS) {
+              let SuccessMsg = {
+                Message: RecuritmentHRMsg.AddedMsg,
+                Type: HRMSAlertOptions.Success,
+                visible: true,
+                ButtonAction: async (userClickedOK: boolean) => {
+                  if (userClickedOK) {
+                    setAlertPopupOpen(false);
+                  } else {
+                    setAlertPopupOpen(false);
+                  }
+                },
+              };
 
-            // console.log(AgentDetailsList, "AgentDetailsList");
-
-            await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
-              async (res) => {
-                // console.log(res, "res");
-                if (res.status === 200) {
-                  MasterData = {
-                    Qualification: res.data.data[0].displayText,
-                    QualificationCode: res.data.data[0].value,
-                  };
-                  await getVRRDetails.InsertList(
-                    MasterData,
-                    ListNames.HRMSQualification
-                  );
-                  let SuccessMsg = {
-                    Message: RecuritmentHRMsg.AddedMsg,
-                    Type: HRMSAlertOptions.Success,
-                    visible: true,
-                    ButtonAction: async (userClickedOK: boolean) => {
-                      if (userClickedOK) {
-                        setAlertPopupOpen(false);
-                      } else {
-                        setAlertPopupOpen(false);
-                      }
-                    },
-                  };
-
-                  setAlertPopupOpen(true);
-                  setalertProps(SuccessMsg);
-                  setIsLoading(false);
+              setAlertPopupOpen(true);
+              setalertProps(SuccessMsg);
+              setIsLoading(false);
+            }
+          } else {
+            let APIError = {
+              Message: RecuritmentHRMsg.APIErrorMsg,
+              Type: HRMSAlertOptions.Error,
+              visible: true,
+              ButtonAction: async (userClickedOK: boolean) => {
+                if (userClickedOK) {
+                  setAlertPopupOpen(false);
                 } else {
-                  let APIError = {
-                    Message: RecuritmentHRMsg.APIErrorMsg,
-                    Type: HRMSAlertOptions.Error,
-                    visible: true,
-                    ButtonAction: async (userClickedOK: boolean) => {
-                      if (userClickedOK) {
-                        setAlertPopupOpen(false);
-                      } else {
-                        setAlertPopupOpen(false);
-                      }
-                    },
-                  };
-
-                  setAlertPopupOpen(true);
-                  setalertProps(APIError);
-                  setIsLoading(false);
+                  setAlertPopupOpen(false);
                 }
-              }
-            );
-          }
-          break;
-        case RoleDescriptionData.RoleSpeKnowledge:
-          {
-            let filterConditions = [
-              {
-                FilterKey: "Category",
-                Operator: "eq",
-                FilterValue: RoleDescriptionData.RoleSpeKnowledge,
               },
-            ];
-            const CategoryData = await getVRRDetails.GetFilterInCategory(
-              filterConditions
-            );
-            let category: category = {
-              id: Number(CategoryData.data[0]?.CategoryCode),
-              name: CategoryData.data[0]?.Category,
             };
-            let AgentDetailsList: UpsertMasters[] = [
-              {
-                displayText: masterdataValue,
-                displayText_fr: masterdataValue,
-                category: category,
-              },
-            ];
 
-            // console.log(AgentDetailsList, "AgentDetailsList");
-
-            await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
-              async (res) => {
-                // console.log(res, "res");
-                if (res.status === 200) {
-                  MasterData = {
-                    RoleSpecificKnowledge: res.data.data[0].displayText,
-                    Code: res.data.data[0].value,
-                  };
-                  await getVRRDetails.InsertList(
-                    MasterData,
-                    ListNames.HRMSRoleSpecificKnowlegeMaster
-                  );
-                  let SuccessMsg = {
-                    Message: RecuritmentHRMsg.AddedMsg,
-                    Type: HRMSAlertOptions.Success,
-                    visible: true,
-                    ButtonAction: async (userClickedOK: boolean) => {
-                      if (userClickedOK) {
-                        setAlertPopupOpen(false);
-                      } else {
-                        setAlertPopupOpen(false);
-                      }
-                    },
-                  };
-                  setAlertPopupOpen(true);
-                  setalertProps(SuccessMsg);
-                  setIsLoading(false);
-                } else {
-                  let APIError = {
-                    Message: RecuritmentHRMsg.APIErrorMsg,
-                    Type: HRMSAlertOptions.Error,
-                    visible: true,
-                    ButtonAction: async (userClickedOK: boolean) => {
-                      if (userClickedOK) {
-                        setAlertPopupOpen(false);
-                      } else {
-                        setAlertPopupOpen(false);
-                      }
-                    },
-                  };
-
-                  setAlertPopupOpen(true);
-                  setalertProps(APIError);
-                  setIsLoading(false);
-                }
-              }
-            );
+            setAlertPopupOpen(true);
+            setalertProps(APIError);
+            setIsLoading(false);
           }
-          break;
-        case RoleDescriptionData.TechnicalSkill:
-          {
-            let filterConditions = [
-              {
-                FilterKey: "Category",
-                Operator: "eq",
-                FilterValue: RoleDescriptionData.TechnicalSkill,
-              },
-            ];
-            const CategoryData = await getVRRDetails.GetFilterInCategory(
-              filterConditions
-            );
-            let category: category = {
-              id: Number(CategoryData.data[0]?.CategoryCode),
-              name: CategoryData.data[0]?.Category,
-            };
-            let AgentDetailsList: UpsertMasters[] = [
-              {
-                displayText: masterdataValue,
-                displayText_fr: masterdataValue,
-                category: category,
-              },
-            ];
+        }
+      );
 
-            // console.log(AgentDetailsList, "AgentDetailsList");
-
-            await GetPortalJobsService.UpsertMaster(AgentDetailsList).then(
-              async (res) => {
-                // console.log(res, "res");
-                if (res.status === 200) {
-                  MasterData = {
-                    TechnicalSkills: res.data.data[0].displayText,
-                    Code: res.data.data[0].value,
-                  };
-                  await getVRRDetails.InsertList(
-                    MasterData,
-                    ListNames.HRMSTechnicalSkills
-                  );
-                  let SuccessMsg = {
-                    Message: RecuritmentHRMsg.AddedMsg,
-                    Type: HRMSAlertOptions.Success,
-                    visible: true,
-                    ButtonAction: async (userClickedOK: boolean) => {
-                      if (userClickedOK) {
-                        setAlertPopupOpen(false);
-                      } else {
-                        setAlertPopupOpen(false);
-                      }
-                    },
-                  };
-                  setAlertPopupOpen(true);
-                  setalertProps(SuccessMsg);
-                  setIsLoading(false);
-                } else {
-                  let APIError = {
-                    Message: RecuritmentHRMsg.APIErrorMsg,
-                    Type: HRMSAlertOptions.Error,
-                    visible: true,
-                    ButtonAction: async (userClickedOK: boolean) => {
-                      if (userClickedOK) {
-                        setAlertPopupOpen(false);
-                      } else {
-                        setAlertPopupOpen(false);
-                      }
-                    },
-                  };
-
-                  setAlertPopupOpen(true);
-                  setalertProps(APIError);
-                  setIsLoading(false);
-                }
-              }
-            );
-          }
-          break;
-      }
-      setAddQualifbtn(false);
-      setmasterdataValue("");
-      setMasterAddQuali("");
+      setaddmasterBtn(false);
+      setAddMasterData((prev) => ({
+        ...prev,
+        masterdata_En: "",
+        masterdata_fr: "",
+      }));
       setShowQualificationInput(false);
+      setAdvDetails(1);
     }
   }
 
@@ -531,11 +279,21 @@ export const UploadAdvertisement = ({
           <div className="ms-Grid-row">
             <div className="ms-Grid-col ms-lg12">
               <RichTextEditor
-                label="Role Purpose"
-                value={advDetails.RolePurpose}
+                label={
+                  IsEnglish
+                    ? labelNames.AdvertisementLabel.RolePurpose
+                    : labelNames.Advertisement_fr.RolePurpose
+                }
+                value={
+                  IsEnglish ? advDetails.RolePurpose : advDetails.RolePurpose_fr
+                }
                 mandatory={true}
                 onChange={(value) => handleRichTextEditor(value, "RolePurpose")}
-                error={validationErrors.RolePurpose}
+                error={
+                  IsEnglish
+                    ? validationErrors.RolePurpose
+                    : validationErrors.RolePurpose_fr
+                }
               />
             </div>
           </div>
@@ -543,13 +301,25 @@ export const UploadAdvertisement = ({
           <div className="ms-Grid-row">
             <div className="ms-Grid-col ms-lg12">
               <RichTextEditor
-                label="Job Description"
-                value={advDetails.JobDescription}
+                label={
+                  IsEnglish
+                    ? labelNames.AdvertisementLabel.JobDescription
+                    : labelNames.Advertisement_fr.JobDescription
+                }
+                value={
+                  IsEnglish
+                    ? advDetails.JobDescription
+                    : advDetails.JobDescription_fr
+                }
                 mandatory={true}
                 onChange={(value) =>
                   handleRichTextEditor(value, "JobDescription")
                 }
-                error={validationErrors.JobDescription}
+                error={
+                  IsEnglish
+                    ? validationErrors.JobDescription
+                    : validationErrors.JobDescription_fr
+                }
               />
             </div>
           </div>
@@ -559,11 +329,15 @@ export const UploadAdvertisement = ({
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg5">
                   <CustomAutoComplete
-                    label="Preferred Total Experience"
+                    label={
+                      IsEnglish
+                        ? labelNames.AdvertisementLabel.PreferredTotalExperience
+                        : labelNames.Advertisement_fr.PreferredTotalExperience
+                    }
                     options={advDetails.TotalExperienceOption}
                     value={advDetails.TotalExperience}
-                    disabled={false}
-                    mandatory={true}
+                    disabled={!IsEnglish}
+                    mandatory={IsEnglish}
                     onChange={(item) =>
                       handleAutoComplete(item, "TotalExperience")
                     }
@@ -572,11 +346,16 @@ export const UploadAdvertisement = ({
                 </div>
                 <div className="ms-Grid-col ms-lg5">
                   <CustomAutoComplete
-                    label="Preferred Experience in Mining Industry (Years)"
+                    label={
+                      IsEnglish
+                        ? labelNames.AdvertisementLabel
+                            .PreferredExperienceMining
+                        : labelNames.Advertisement_fr.PreferredExperienceMining
+                    }
                     options={advDetails.ExperienceinMiningIndustryOption}
                     value={advDetails.ExperienceinMiningIndustry}
-                    disabled={false}
-                    mandatory={true}
+                    disabled={!IsEnglish}
+                    mandatory={IsEnglish}
                     onChange={(item) =>
                       handleAutoComplete(item, "ExperienceinMiningIndustry")
                     }
@@ -612,27 +391,43 @@ export const UploadAdvertisement = ({
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg5">
                   <CustomMultiSelect
-                    label="Minimum Qualification"
-                    value={qualificationValue.MinQualification}
+                    label={
+                      IsEnglish
+                        ? labelNames.AdvertisementLabel.MinimumQualification
+                        : labelNames.Advertisement_fr.MinimumQualification
+                    }
+                    value={
+                      IsEnglish
+                        ? qualificationValue.MinQualification
+                        : qualificationValue.MinQualification_fr
+                    }
                     options={advDetails.MinQualificationOption}
                     onChange={(value) =>
                       handleMulitiSelect(value, "MinQualification")
                     }
-                    disabled={false}
-                    mandatory={true}
+                    disabled={!IsEnglish}
+                    mandatory={IsEnglish}
                     error={validationErrors.MinQualification}
                   />
                 </div>
                 <div className="ms-Grid-col ms-lg5">
                   <CustomMultiSelect
-                    label="Preferred Qualification"
-                    value={qualificationValue.PrefeQualification}
+                    label={
+                      IsEnglish
+                        ? labelNames.AdvertisementLabel.PreferredQualification
+                        : labelNames.Advertisement_fr.PreferredQualification
+                    }
+                    value={
+                      IsEnglish
+                        ? qualificationValue.PrefeQualification
+                        : qualificationValue.PrefeQualification_fr
+                    }
                     options={advDetails.MinQualificationOption}
                     onChange={(value) =>
                       handleMulitiSelect(value, "PrefeQualification")
                     }
-                    disabled={false}
-                    // mandatory={true}
+                    disabled={!IsEnglish}
+                    mandatory={IsEnglish}
                     error={validationErrors.PrefeQualification}
                   />
                 </div>
@@ -658,62 +453,95 @@ export const UploadAdvertisement = ({
                             }
                               
                           /> */}
-              <CustomButton
-                text="Add New Qualification"
-                onClick={() => setShowQualificationInput(true)}
-              />
+              {IsEnglish && (
+                <>
+                  <CustomButton
+                    text="Add New Qualification"
+                    onClick={() => setShowQualificationInput(true)}
+                    disabled={!IsEnglish}
+                  />
+                </>
+              )}
             </div>
           </div>
-          {showQualificationInput && (
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg10">
-                <div
-                  className="ms-Grid-col ms-lg5"
-                  style={{ marginLeft: "-6px", width: "336px" }}
-                >
-                  <CustomInput
-                    label="Add New Qualification"
-                    value={masterAddQuali}
-                    disabled={false}
-                    mandatory={true}
-                    onChange={(value) =>
-                      handlemasterValue(value, "addMasterMinimumQualification")
-                    }
-                    error={validationError.QualificationValue}
-                  />
+          {IsEnglish && (
+            <>
+              {showQualificationInput && (
+                <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-lg10">
+                    <div
+                      className="ms-Grid-col ms-lg5"
+                      style={{ marginLeft: "-6px", width: "336px" }}
+                    >
+                      <CustomInput
+                        label="Add New Qualification English"
+                        value={addMasterData.masterdata_En}
+                        disabled={!IsEnglish}
+                        mandatory={IsEnglish}
+                        onChange={(value) =>
+                          handlemasterValue(value, "masterdata_En")
+                        }
+                        error={validationError.masterdata_En}
+                      />
+                    </div>
+                    <div
+                      className="ms-Grid-col ms-lg5"
+                      style={{ marginLeft: "-6px", width: "336px" }}
+                    >
+                      <CustomInput
+                        label="Add New Qualification French"
+                        value={addMasterData.masterdata_fr}
+                        disabled={!IsEnglish}
+                        mandatory={IsEnglish}
+                        onChange={(value) =>
+                          handlemasterValue(value, "masterdata_fr")
+                        }
+                        error={validationError.masterdata_fr}
+                      />
+                    </div>
+                    <div
+                      className="ms-Grid-col ms-lg1"
+                      style={{ marginTop: "39px", marginRight: "24px" }}
+                    >
+                      <ReuseButton
+                        label="Add"
+                        onClick={async () => {
+                          void InsertMasterData(
+                            RoleDescriptionData.Qualification
+                          );
+                        }}
+                        spacing={4}
+                        disabled={!IsEnglish}
+                      />
+                    </div>
+                    <div
+                      className="ms-Grid-col ms-lg1"
+                      style={{ marginTop: "39px" }}
+                    >
+                      <ReuseButton
+                        label="Remove"
+                        onClick={() => {
+                          setShowQualificationInput(false);
+                          setAddMasterData((prev) => ({
+                            ...prev,
+                            masterdata_En: "",
+                            masterdata_fr: "",
+                          }));
+                          setValidationErrors((prevState) => ({
+                            ...prevState,
+                            masterdata_En: false,
+                            masterdata_fr: false,
+                          }));
+                        }}
+                        spacing={4}
+                        disabled={!IsEnglish}
+                      />
+                    </div>
+                    <div className="ms-Grid-col ms-lg3"></div>
+                  </div>
                 </div>
-                <div
-                  className="ms-Grid-col ms-lg1"
-                  style={{ marginTop: "39px", marginRight: "24px" }}
-                >
-                  <ReuseButton
-                    label="Add"
-                    onClick={async () => {
-                      void InsertMasterData(RoleDescriptionData.Qualification);
-                    }}
-                    spacing={4}
-                  />
-                </div>
-                <div
-                  className="ms-Grid-col ms-lg1"
-                  style={{ marginTop: "39px" }}
-                >
-                  <ReuseButton
-                    label="Remove"
-                    onClick={() => {
-                      setShowQualificationInput(false);
-                      setMasterAddQuali("");
-                      setValidationErrors((prevState) => ({
-                        ...prevState,
-                        QualificationValue: false,
-                      }));
-                    }}
-                    spacing={4}
-                  />
-                </div>
-                <div className="ms-Grid-col ms-lg3"></div>
-              </div>
-            </div>
+              )}
+            </>
           )}
 
           <div className="ms-Grid-row">
@@ -722,11 +550,19 @@ export const UploadAdvertisement = ({
                 <div className="ms-Grid-row" key={index}>
                   <div className="ms-Grid-col ms-lg5">
                     <CustomAutoComplete
-                      label="Role Specific Knowledge"
+                      label={
+                        IsEnglish
+                          ? labelNames.AdvertisementLabel.RoleSpecificKnowledge
+                          : labelNames.Advertisement_fr.RoleSpecificKnowledge
+                      }
                       options={advDetails.RoleSpeKnowledgeoption}
-                      value={row.RoleSpeKnowledge}
-                      disabled={false}
-                      mandatory={true}
+                      value={
+                        IsEnglish
+                          ? row.RoleSpeKnowledge
+                          : row.RoleSpeKnowledge_fr
+                      }
+                      disabled={!IsEnglish}
+                      mandatory={IsEnglish}
                       onChange={(item) =>
                         handleAutoCompleterow(
                           item,
@@ -743,11 +579,17 @@ export const UploadAdvertisement = ({
                   </div>
                   <div className="ms-Grid-col ms-lg5">
                     <CustomAutoComplete
-                      label="Required Level"
+                      label={
+                        IsEnglish
+                          ? labelNames.AdvertisementLabel.RequiredLevel
+                          : labelNames.Advertisement_fr.RequiredLevel
+                      }
                       options={advDetails.RequiredLeveloption}
-                      value={row.RequiredLevel}
-                      disabled={false}
-                      mandatory={true}
+                      value={
+                        IsEnglish ? row.RequiredLevel : row.RequiredLevel_fr
+                      }
+                      disabled={!IsEnglish}
+                      mandatory={IsEnglish}
                       onChange={(item) =>
                         handleAutoCompleterow(
                           item,
@@ -762,63 +604,78 @@ export const UploadAdvertisement = ({
                       }
                     />
                   </div>
-                  <div
-                    className="ms-Grid-col ms-lg2"
-                    style={{
-                      textAlign: "right",
-                      marginTop: "42px",
-                      display: "flex",
-                      gap: "15px",
-                    }}
-                  >
-                    {index > 0 ? (
-                      <>
-                        <CustomButton
-                          onClick={() =>
-                            handleDeleteRow(
-                              index,
-                              RoleDescription.RoleSpeKnowledgeValue
-                            )
-                          }
-                          iconName="Delete"
-                          style={{ marginRight: "4%" }}
-                        />
-                        <CustomButton
-                          onClick={() =>
-                            handleAddRow(
-                              RoleDescription.RoleSpeKnowledgeValue,
-                              index
-                            )
-                          }
-                          iconName="Add"
-                        />
-                      </>
-                    ) : (
-                      <CustomButton
-                        onClick={() =>
-                          handleAddRow(
-                            RoleDescription.RoleSpeKnowledgeValue,
-                            index
-                          )
-                        }
-                        iconName="Add"
-                      />
-                    )}
-                  </div>
+                  {IsEnglish && (
+                    <>
+                      <div
+                        className="ms-Grid-col ms-lg2"
+                        style={{
+                          textAlign: "right",
+                          marginTop: "42px",
+                          display: "flex",
+                          gap: "15px",
+                        }}
+                      >
+                        {index > 0 ? (
+                          <>
+                            <CustomButton
+                              onClick={() =>
+                                handleDeleteRow(
+                                  index,
+                                  RoleDescription.RoleSpeKnowledgeValue
+                                )
+                              }
+                              iconName="Delete"
+                              style={{ marginRight: "4%" }}
+                              disabled={!IsEnglish}
+                            />
+                            <CustomButton
+                              onClick={() =>
+                                handleAddRow(
+                                  RoleDescription.RoleSpeKnowledgeValue,
+                                  index
+                                )
+                              }
+                              iconName="Add"
+                              disabled={!IsEnglish}
+                            />
+                          </>
+                        ) : (
+                          <CustomButton
+                            onClick={() =>
+                              handleAddRow(
+                                RoleDescription.RoleSpeKnowledgeValue,
+                                index
+                              )
+                            }
+                            iconName="Add"
+                            disabled={!IsEnglish}
+                          />
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
-            <div className="ms-Grid-col ms-lg2" style={{ marginTop: "42px" }}>
-              <CustomButton
-                text="Add New Role Specific Knowledge"
-                onClick={() =>
-                  AddMasterData_fn(
-                    RoleDescriptionData.RoleSpeKnowledge,
-                    "Add Role Specific Knowledge"
-                  )
-                }
-              />
-            </div>
+            {IsEnglish && (
+              <>
+                <div
+                  className="ms-Grid-col ms-lg2"
+                  style={{ marginTop: "42px" }}
+                >
+                  <CustomButton
+                    text="Add New Role Specific Knowledge"
+                    onClick={() =>
+                      AddMasterData_fn(
+                        RoleDescriptionData.RoleSpeKnowledge,
+                        "Role Knowledge"
+                      )
+                    }
+                    disabled={!IsEnglish}
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           <div className="ms-Grid-row">
@@ -827,11 +684,17 @@ export const UploadAdvertisement = ({
                 <div className="ms-Grid-row" key={index}>
                   <div className="ms-Grid-col ms-lg5">
                     <CustomAutoComplete
-                      label="Technical Skills - Ability to apply Knowledge"
+                      label={
+                        IsEnglish
+                          ? labelNames.AdvertisementLabel.TechnicalSkills
+                          : labelNames.Advertisement_fr.TechnicalSkills
+                      }
                       options={advDetails.TechnicalSkillsOption}
-                      value={row.TechnicalSkills}
-                      disabled={false}
-                      mandatory={true}
+                      value={
+                        IsEnglish ? row.TechnicalSkills : row.TechnicalSkills_fr
+                      }
+                      disabled={!IsEnglish}
+                      mandatory={IsEnglish}
                       onChange={(item) =>
                         handleAutoCompleterow(
                           item,
@@ -848,11 +711,19 @@ export const UploadAdvertisement = ({
                   </div>
                   <div className="ms-Grid-col ms-lg5">
                     <CustomAutoComplete
-                      label="Level of Proficiency"
+                      label={
+                        IsEnglish
+                          ? labelNames.AdvertisementLabel.LevelProficiency
+                          : labelNames.Advertisement_fr.LevelProficiency
+                      }
                       options={advDetails.LevelProficiencyOption}
-                      value={row.LevelProficiency}
-                      disabled={false}
-                      mandatory={true}
+                      value={
+                        IsEnglish
+                          ? row.LevelProficiency
+                          : row.LevelProficiency_fr
+                      }
+                      disabled={!IsEnglish}
+                      mandatory={IsEnglish}
                       onChange={(item) =>
                         handleAutoCompleterow(
                           item,
@@ -867,98 +738,123 @@ export const UploadAdvertisement = ({
                       }
                     />
                   </div>
-                  <div
-                    className="ms-Grid-col ms-lg2"
-                    style={{
-                      textAlign: "right",
-                      marginTop: "42px",
-                      display: "flex",
-                      gap: "15px",
-                    }}
-                  >
-                    {index > 0 ? (
-                      <>
-                        <CustomButton
-                          onClick={() =>
-                            handleDeleteRow(
-                              index,
-                              RoleDescription.TechnicalSkillValue
-                            )
-                          }
-                          iconName="Delete"
-                          style={{
-                            borderRadius: "5px",
-                            marginRight: "4%",
-                            minWidth: "60px",
-                          }}
-                        />
-                        <CustomButton
-                          onClick={() =>
-                            handleAddRow(
-                              RoleDescription.TechnicalSkillValue,
-                              index
-                            )
-                          }
-                          iconName="Add"
-                          style={{
-                            borderRadius: "5px",
-                            minWidth: "60px",
-                          }}
-                        />
-                      </>
-                    ) : (
-                      <CustomButton
-                        onClick={() =>
-                          handleAddRow(
-                            RoleDescription.TechnicalSkillValue,
-                            index
-                          )
-                        }
-                        iconName="Add"
+                  {IsEnglish && (
+                    <>
+                      <div
+                        className="ms-Grid-col ms-lg2"
                         style={{
-                          borderRadius: "5px",
-                          minWidth: "60px",
+                          textAlign: "right",
+                          marginTop: "42px",
+                          display: "flex",
+                          gap: "15px",
                         }}
-                      />
-                    )}
-                  </div>
+                      >
+                        {index > 0 ? (
+                          <>
+                            <CustomButton
+                              onClick={() =>
+                                handleDeleteRow(
+                                  index,
+                                  RoleDescription.TechnicalSkillValue
+                                )
+                              }
+                              iconName="Delete"
+                              style={{
+                                borderRadius: "5px",
+                                marginRight: "4%",
+                                minWidth: "60px",
+                              }}
+                              disabled={!IsEnglish}
+                            />
+                            <CustomButton
+                              onClick={() =>
+                                handleAddRow(
+                                  RoleDescription.TechnicalSkillValue,
+                                  index
+                                )
+                              }
+                              iconName="Add"
+                              style={{
+                                borderRadius: "5px",
+                                minWidth: "60px",
+                              }}
+                              disabled={!IsEnglish}
+                            />
+                          </>
+                        ) : (
+                          <CustomButton
+                            onClick={() =>
+                              handleAddRow(
+                                RoleDescription.TechnicalSkillValue,
+                                index
+                              )
+                            }
+                            iconName="Add"
+                            style={{
+                              borderRadius: "5px",
+                              minWidth: "60px",
+                            }}
+                            disabled={!IsEnglish}
+                          />
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
 
-            <div
-              className="ms-Grid-col ms-lg2"
-              style={{
-                marginTop: "42px",
-              }}
-            >
-              <CustomButton
-                text="Add New Technical Skills"
-                onClick={() =>
-                  AddMasterData_fn(
-                    RoleDescriptionData.TechnicalSkill,
-                    "Add Technical Skills"
-                  )
-                }
-                // iconName="Add"
-                // style={{
-                //   borderRadius: "10px",
-                // }}
-              />
-            </div>
+            {IsEnglish && (
+              <>
+                <div
+                  className="ms-Grid-col ms-lg2"
+                  style={{
+                    marginTop: "42px",
+                  }}
+                >
+                  <CustomButton
+                    text="Add New Technical Skills"
+                    onClick={() =>
+                      AddMasterData_fn(
+                        RoleDescriptionData.TechnicalSkill,
+                        "Technical Skills"
+                      )
+                    }
+                    disabled={!IsEnglish}
+                    // iconName="Add"
+                    // style={{
+                    //   borderRadius: "10px",
+                    // }}
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           <div className="ms-Grid-row">
             <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
+              {}
               <CustomAutoComplete
-                label="Job Title of Functional Manager"
-                options={MasterData.JobInEnglishList.map((item) => ({
-                  key: item.key,
-                  text: item.text,
-                }))}
-                value={advDetails.JobTitleofFunctionalManager}
-                disabled={false}
-                mandatory={true}
+                label={
+                  IsEnglish
+                    ? labelNames.AdvertisementLabel.JobTitleFunctionalManager
+                    : labelNames.Advertisement_fr.JobTitleFunctionalManager
+                }
+                options={advDetails.JobTitleofFunctionalManagerOption}
+                value={
+                  IsEnglish
+                    ? advDetails.JobTitleofFunctionalManager
+                    : advDetails.JobTilteFunctionalManager_fr
+                }
+                disabled={
+                  !IsEnglish &&
+                  advDetails.JobTitleofFunctionalManagerOption.length < 2
+                }
+                mandatory={
+                  IsEnglish
+                    ? true
+                    : advDetails.JobTitleofFunctionalManagerOption.length > 1
+                }
                 onChange={(item) =>
                   handleAutoComplete(item, "JobTitleofFunctionalManager")
                 }
@@ -966,15 +862,32 @@ export const UploadAdvertisement = ({
               />
             </div>
             <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
-              <CustomInput
-                label="Functional Manager Name"
-                value={advDetails.FunctionalManagerName}
-                disabled={false}
-                mandatory={true}
-                error={validationErrors.FunctionalManagerName}
-                onChange={(item) =>
-                  handleInputChange(item, "FunctionalManagerName")
+              <CustomAutoComplete
+                label={
+                  IsEnglish
+                    ? labelNames.AdvertisementLabel.FunctionalManagerName
+                    : labelNames.Advertisement_fr.FunctionalManagerName
                 }
+                options={MasterData.EmployeeList.filter(
+                  (item) =>
+                    item?.JobTitle ===
+                    advDetails?.JobTitleofFunctionalManager?.text
+                ).map((item) => ({
+                  key: item.key,
+                  text:
+                    item.FirstName +
+                    " " +
+                    item.MiddleName +
+                    " " +
+                    item.LastName,
+                }))}
+                value={advDetails.FunctionalManagerName}
+                disabled={!IsEnglish}
+                mandatory={IsEnglish}
+                onChange={(item) =>
+                  handleAutoComplete(item, "FunctionalManagerName")
+                }
+                error={validationErrors.FunctionalManagerName}
               />
             </div>
           </div>
@@ -982,14 +895,28 @@ export const UploadAdvertisement = ({
           <div className="ms-Grid-row">
             <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
               <CustomAutoComplete
-                label="Job Title of Line Manager/Supervisor"
-                options={MasterData.JobInEnglishList.map((item) => ({
-                  key: item.key,
-                  text: item.text,
-                }))}
-                value={advDetails.JobTitleofLineManagerSupervisor}
-                disabled={false}
-                mandatory={true}
+                label={
+                  IsEnglish
+                    ? labelNames.AdvertisementLabel
+                        .JobTitleLineManagerSupervisor
+                    : labelNames.Advertisement_fr.JobTitleLineManagerSupervisor
+                }
+                options={advDetails.JobTitleofLineManagerSupervisorOption}
+                value={
+                  IsEnglish
+                    ? advDetails.JobTitleofLineManagerSupervisor
+                    : advDetails.JobTitleofLineManagerSupervisor_fr
+                }
+                disabled={
+                  !IsEnglish &&
+                  advDetails.JobTitleofLineManagerSupervisorOption.length < 2
+                }
+                mandatory={
+                  IsEnglish
+                    ? true
+                    : advDetails.JobTitleofLineManagerSupervisorOption.length >
+                      1
+                }
                 onChange={(item) =>
                   handleAutoComplete(item, "JobTitleofLineManagerSupervisor")
                 }
@@ -997,15 +924,32 @@ export const UploadAdvertisement = ({
               />
             </div>
             <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
-              <CustomInput
-                label="Line Manager/Supervisor Name"
-                value={advDetails.LineManagerSupervisorName}
-                disabled={false}
-                mandatory={true}
-                error={validationErrors.LineManagerSupervisorName}
-                onChange={(item) =>
-                  handleInputChange(item, "LineManagerSupervisorName")
+              <CustomAutoComplete
+                label={
+                  IsEnglish
+                    ? labelNames.AdvertisementLabel.LineManagerSupervisorName
+                    : labelNames.Advertisement_fr.LineManagerSupervisorName
                 }
+                options={MasterData.EmployeeList.filter(
+                  (item) =>
+                    item?.JobTitle ===
+                    advDetails?.JobTitleofLineManagerSupervisor?.text
+                ).map((item) => ({
+                  key: item.key,
+                  text:
+                    item.FirstName +
+                    " " +
+                    item.MiddleName +
+                    " " +
+                    item.LastName,
+                }))}
+                value={advDetails.LineManagerSupervisorName}
+                disabled={!IsEnglish}
+                mandatory={IsEnglish}
+                onChange={(item) =>
+                  handleAutoComplete(item, "LineManagerSupervisorName")
+                }
+                error={validationErrors.LineManagerSupervisorName}
               />
             </div>
           </div>
@@ -1013,11 +957,19 @@ export const UploadAdvertisement = ({
           <div className="ms-Grid-row">
             <div className="ms-Grid-col ms-lg5" style={{ width: "34.9%" }}>
               <CustomAutoComplete
-                label="Job Functional Type"
+                label={
+                  IsEnglish
+                    ? labelNames.AdvertisementLabel.JobFunctionalType
+                    : labelNames.Advertisement_fr.JobFunctionalType
+                }
                 options={advDetails.JobFunctionalTypeOption}
-                value={advDetails.JobFunctionalType}
-                disabled={false}
-                mandatory={true}
+                value={
+                  IsEnglish
+                    ? advDetails.JobFunctionalType
+                    : advDetails.JobFunctionalType_fr
+                }
+                disabled={!IsEnglish}
+                mandatory={IsEnglish}
                 onChange={(item) =>
                   handleAutoComplete(item, "JobFunctionalType")
                 }
@@ -1039,33 +991,63 @@ export const UploadAdvertisement = ({
         <></>
       )}
 
-      {AddQualifbtn && (
+      {addmasterBtn && (
         <>
           <CustomDialogbox
-            Style={{ width: "28vw", height: "37vh" }}
-            visible={AddQualifbtn}
+            Style={{
+              width: "28vh",
+              height: "38vh",
+              padding: "0px",
+              overflowX: "hidden",
+            }}
+            visible={addmasterBtn}
             children={
               <div className="ms-Grid-row" style={{ marginLeft: "6%" }}>
-                <div className="ms-Grid-col ms-lg9">
+                <div className="ms-Grid-col ms-lg5">
                   <CustomInput
-                    label={LabelValue}
-                    value={masterdataValue}
+                    label={LabelValue + " " + "English"}
+                    value={addMasterData.masterdata_En}
                     disabled={false}
                     mandatory={true}
                     onChange={(value) =>
-                      handlemasterValue(value, "masterdataValue")
+                      handlemasterValue(value, "masterdata_En")
                     }
-                    error={validationError.MasterDataValue}
+                    error={validationError.masterdata_En}
+                  />
+                </div>
+                <div className="ms-Grid-col ms-lg5">
+                  <CustomInput
+                    label={LabelValue + " " + "French"}
+                    value={addMasterData.masterdata_fr}
+                    disabled={false}
+                    mandatory={true}
+                    onChange={(value) =>
+                      handlemasterValue(value, "masterdata_fr")
+                    }
+                    error={validationError.masterdata_fr}
                   />
                 </div>
               </div>
             }
-            onClose={() => setAddQualifbtn(false)}
+            onClose={() => setaddmasterBtn(false)}
             header={
-              <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                <div className="ms-Grid-col ms-lg12">
-                  <LabelHeaderComponents value={HeaderValue} />
-                </div>
+              <div
+                style={{
+                  textAlign: "center",
+                  width: "100%",
+                }}
+              >
+                <h2
+                  style={{
+                    color: "white",
+                    fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
+                                  -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                    // textDecoration: "underline",
+                    // textUnderlineOffset: "6px",
+                  }}
+                >
+                  {HeaderValue}
+                </h2>
               </div>
             }
             footer={
@@ -1074,21 +1056,21 @@ export const UploadAdvertisement = ({
                 style={{
                   display: "flex",
                   justifyContent: "center",
-                  marginTop: "11%",
+                  marginTop: "1%",
+                  marginBottom: "1%",
                 }}
               >
                 <ReuseButton
-                  label="Close"
-                  onClick={() => onclickClose()}
+                  label="Add"
+                  onClick={() => InsertMasterData(HeaderValue)}
                   spacing={4}
                   Style={{
                     marginRight: "14px",
                   }}
                 />
-
                 <ReuseButton
-                  label="Add"
-                  onClick={() => InsertMasterData(HeaderValue)}
+                  label="Close"
+                  onClick={() => onclickClose()}
                   spacing={4}
                 />
               </div>
