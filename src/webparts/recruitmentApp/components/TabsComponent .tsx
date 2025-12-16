@@ -19,7 +19,7 @@ interface TabsComponentProps {
   handleCancel?: () => void;
   tabClassName?: string;
   tabtype?: string;
-  Statuslist?: { [key: string]: boolean };
+  Statuslist?: { [key: string]: string };
   validateTab?: (tab: string) => boolean;
   IsNotscroll?: boolean;
   additionalButtons?: {
@@ -199,7 +199,11 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                 )}
 
                 {additionalButtons.map((button, index) => {
-                  if (button.label === ButtonAction.Submit) {
+                  if (
+                    button.label === ButtonAction.Submit ||
+                    button.label === ButtonAction.Rework ||
+                    button.label === ButtonAction.ProceedToSubmit
+                  ) {
                     return value === tabs[tabs.length - 1].value ? (
                       <div style={{ marginRight: "10px" }} key={index}>
                         <ReuseButton

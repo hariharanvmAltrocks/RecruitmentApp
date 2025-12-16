@@ -143,6 +143,45 @@ export const labelNames = {
         Nationality: "Nationality",
         FullName: "Name",
         PhoneNumber: "Phone Number",
+    },
+    BGVLabels: {
+        BGVConsultedLabel: "Background Verification"
+    },
+    AdvertisementLabel: {
+        Advertisement: "Advertisement",
+        RolePurpose: "Role Purpose",
+        JobDescription: "Job Description",
+        PreferredTotalExperience: "Preferred Total Experience",
+        PreferredExperienceMining: "Preferred Experience in Mining Industry (Years) ",
+        MinimumQualification: "Minimum Qualification",
+        PreferredQualification: "Preferred Qualification",
+        RoleSpecificKnowledge: "Role Specific Knowledge ",
+        RequiredLevel: "Required Level ",
+        TechnicalSkills: "Technical Skills - Ability to apply Knowledge",
+        LevelProficiency: "Level of Proficiency",
+        JobTitleFunctionalManager: "Job Title of Functional Manager",
+        FunctionalManagerName: "Functional Manager Name",
+        JobTitleLineManagerSupervisor: "Job Title of Line Manager/Supervisor ",
+        LineManagerSupervisorName: "Line Manager/Supervisor Name ",
+        JobFunctionalType: "Job Functional Type "
+    },
+    Advertisement_fr: {
+        Advertisement: "Annonce",
+        RolePurpose: "Objectif du rôle",
+        JobDescription: "Description du poste",
+        PreferredTotalExperience: "Expérience totale préférée",
+        PreferredExperienceMining: "Expérience préférée dans l’industrie minière (années)",
+        MinimumQualification: "Qualification minimale",
+        PreferredQualification: "Qualification préférée",
+        RoleSpecificKnowledge: "Connaissances spécifiques au rôle",
+        RequiredLevel: "Niveau requis",
+        TechnicalSkills: "Compétences techniques - Capacité à appliquer les connaissances",
+        LevelProficiency: "Niveau de maîtrise",
+        JobTitleFunctionalManager: "Titre du poste du responsable fonctionnel",
+        FunctionalManagerName: "Nom du responsable fonctionnel",
+        JobTitleLineManagerSupervisor: "Titre du poste du supérieur hiérarchique",
+        LineManagerSupervisorName: "Nom du supérieur hiérarchique",
+        JobFunctionalType: "Type fonctionnel du poste"
     }
 }
 
@@ -253,7 +292,9 @@ export const ButtonAction = {
     Initiated: "initiate",
     SaveAsDraft: "Save as draft",
     New: "New",
-    ResetPassword: "Reset Password"
+    ResetPassword: "Reset Password",
+    Rework: "Rework",
+    ProceedToSubmit: "Proceed To Submit"
 }
 
 export const IsCandidateFit = {
@@ -291,7 +332,9 @@ export const RadioBtnLabel = {
     OfferInitiationLabel: "Do you want to proceed with initiating the Offer Letter process for the Labour Hire?",
     DocumentVerification: "Is the document verified?",
     PaymentReview: "Has the Work Permit payment been verified ?",
-    BGVNational: "Are the background documents verified ?"
+    BGVNational: "Are the background documents verified ?",
+    BGVStatusProcess: "Are you sure you want Move the candidate to Resi Process",
+    JobBasedVerification: "For this Job Title, what types of background verification are required?"
 }
 
 export const EmailTemplateCodes = {
@@ -334,6 +377,7 @@ export const BGVRequestDocument = {
 export const SADocs = ["IDV", "PRE", "PST", "UMF", "SAQ", "NL", "TC", "SC", "SETA", "ITC", "IDC", "EHCR", "PSY", "DMC", "IDCS", "GQ", "EXP", "ConsentForm"]
 export const NSADocs = ["GQ", "CZ", "EXP", "ConsentForm"]
 
+export const JobBasedBVG = ["NL", "TC", "SETA", "ITC", "DMC", "PS"]
 
 export const BGVDocumentName = {
     GQ: "Global University Qualification Verification",
@@ -354,6 +398,7 @@ export const BGVDocumentName = {
     PSY: "Psychometric Assessment",
     DMC: "Director Member Confirmation",
     IDCS: "ID Check Secondary",
+    PS: "Psychometric Assessment",
     ConsentForm: "Dot's Africa Consent Form",
 }
 export const onboardingData: OnboardingChecklisttype = {
@@ -402,7 +447,25 @@ export const ExternalUserType = {
 
 export const DotAfricaStatus = {
     Completed: "completed",
-    Confirmed: "Confirmed"
+    Confirmed: "Confirmed",
+    skipped: "skipped",
+    pending: "pending",
+    error: "error",
+    cancelled: "cancelled",
+    new: "new",
+
+}
+
+export const StatusBarValue = {
+    Completed: "Completed",
+    Pending: "Pending",
+    Failed: "Failed"
+}
+
+export const DotTooltipStatus = {
+    Passed: "Passed",
+    Failed: "Failed",
+    Pending: "Pending"
 }
 
 export const CommanStyle = {

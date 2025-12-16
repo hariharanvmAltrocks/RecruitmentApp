@@ -412,6 +412,7 @@ export const validationMsg = {
 
 export const tabType = {
   Dashboard: "Dashboard",
+  EditPage: "EditPage"
 };
 
 export const ActionStatus = {
@@ -435,6 +436,25 @@ export const RoleDescriptionData = {
   Qualification: "Qualification",
   TechnicalSkill: "Technical Skill",
 };
+
+export const masterFieldMap = {
+  [RoleDescriptionData.Qualification]: {
+    label: "Qualification",
+    codeLabel: "QualificationCode",
+    label_fr: "QualificationFrench"
+  },
+  [RoleDescriptionData.RoleSpeKnowledge]: {
+    label: "RoleSpecificKnowledge",
+    codeLabel: "Code",
+    label_fr: "RoleSpecificKnowledgeFrench"
+  },
+  [RoleDescriptionData.TechnicalSkill]: {
+    label: "TechnicalSkills",
+    codeLabel: "Code",
+    label_fr: "TechnicalSkillsfrench"
+  }
+};
+
 
 export const ScoreRanking: AutoCompleteItem[] = [
   // { key: 1, text: "Poor" },
@@ -513,6 +533,9 @@ export const TabName = {
   LabourHire: "Labour Hire",
   Agent: "Agent",
   CreateAdminPage: "Create Admin Page",
+
+  EnglishAdvertisment: "Job Advertisement",
+  FrenchAdvertisement: "Offre d'emploi"
 };
 
 
@@ -542,8 +565,8 @@ export const InterviewLevels = {
 };
 
 export const DataFrom = {
-  NewPosition: "New Position Request",
-  ExistingPosition: "Additional Headcount for Existing Position"
+  NewPosition: "New Position",
+  ExistingPosition: "Existing Position"
 }
 
 export const workflowStatusApi = {
@@ -612,6 +635,7 @@ export const Notes = {
   Grding: "Grading Report is not available for the Job Title.",
   ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving this submission.",
   JobAdvetisementNotes: "This Advert will be published in the Career Portal.",
+  JobAdvetisement_fr: "Cette annonce sera publiée sur le portail des carrières."
 }
 // sneka
 export const CatogryOption = [
@@ -637,7 +661,7 @@ export const CategoryID = {
   Function: 2,
   Level: 3,
   RoleSpecificKnowledge: 4,
-  TechnicalSkill: 5,
+  TechnicalSkills: 5,
   Qualification: 6,
   Nationality: 7,
   Experience: 8,
@@ -658,6 +682,7 @@ export const CategoryID = {
   ProofofIdentity: 23,
   TitleforProfile: 24,
   DocumentType: 26,
+  VerificationType: 41
 }
 
 export const CatogryOptionCode = {

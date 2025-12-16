@@ -159,6 +159,7 @@ export default class OfferLetterService implements IOfferLetterService {
                             ProofOfIdentity: objresult?.ProofOfIdentity,
                             Location: "",
                             Gender: objresult?.Gender,
+                            Agencies: objresult?.ExternalAgentDetails === "Candidate" ? objresult?.ExternalAgentDetails : "Agency",
                             // DocumentFolderPath: folderLink,
                             TrainingSystem: TrainingSystem,
                             TASystem: TASystem,
@@ -170,7 +171,8 @@ export default class OfferLetterService implements IOfferLetterService {
                             VisaProcess: objresult?.VisaProcess,
                             AccommodationBooked: objresult?.AccommodationBooked,
                             TravelProcess: objresult?.TravelProcess,
-                            ReadyforOnboarding: objresult?.ReadyforOnboarding
+                            ReadyforOnboarding: objresult?.ReadyforOnboarding,
+                            NationalityCode: objresult?.NationalityCode
                         }
                         return item;
                     })
@@ -493,22 +495,41 @@ export default class OfferLetterService implements IOfferLetterService {
                         }
 
                         const files = await SPServices.getDocLibFiles({
-                            FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID.toString()}/${DocumentName.DocumentType}/${item}`,
+                            FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${item}`,
                         });
+
+                        const latestFile = files?.length
+                            ? (files as any[]).reduce((latest, current) => {
+                                const currDate = new Date(current?.TimeLastModified || current?.Modified || current?.Created);
+                                const latestDate = new Date(latest?.TimeLastModified || latest?.Modified || latest?.Created);
+
+                                return currDate > latestDate ? current : latest;
+                            })
+                            : null;
+
                         let folderName = "";
                         if (item in BGVDocumentName) {
-                            folderName = BGVDocumentName[item as keyof typeof BGVDocumentName];
+                            let VerifiName = DocumentName.VerificationName?.filter((items: any) => items.value === item)
+                            folderName = VerifiName && VerifiName?.length > 0 ? VerifiName[0]?.displayText : ""
+                            // folderName = BGVDocumentName[item as keyof typeof BGVDocumentName];
                         }
+
                         const file = [
                             folderName,
-                            files[0]
-                        ]
+                            latestFile
+                        ];
 
-                        return file as IDocFiles[];
+                        return file as unknown as IDocFiles[];
                     })
                 );
 
-                response = BGVDocs.filter(x => x && x[1] !== undefined && x !== null);
+                response = BGVDocs.filter(x =>
+                    x &&
+                    x !== null &&
+                    x[1] &&
+                    (!Array.isArray(x[1]) || x[1].length > 0)
+                );
+
 
             }
 

@@ -142,6 +142,14 @@ const ApprovedVRRView: React.FC = (props: any) => {
     FunctionalManagerName: { key: 0, text: "" },
     JobTitleofLineManagerSupervisor: { key: 0, text: "" },
     LineManagerSupervisorName: { key: 0, text: "" },
+    JobFunctionalType_fr: { key: 0, text: "" },
+    JobDescription_fr: "",
+    RolePurpose_fr: "",
+    IsMasterData: false,
+    JobTilteFunctionalManager_fr: { key: 0, text: "" },
+    JobTitleofLineManagerSupervisor_fr: { key: 0, text: "" },
+    JobTitleofFunctionalManagerOption: [],
+    JobTitleofLineManagerSupervisorOption: [],
   });
 
   const fetchData = async () => {
@@ -294,19 +302,19 @@ const ApprovedVRRView: React.FC = (props: any) => {
                 })
               ) || [];
 
-            const MinQualificationOption = rawData.Qualification
-              ? [{ key: 0, text: rawData.Qualification }]
-              : [];
-            const PrefeQualificationOption = rawData.PreferredQualification
-              ? [{ key: 0, text: rawData.PreferredQualification }]
-              : [];
+            // const MinQualificationOption = rawData.Qualification
+            //   ? [{ key: 0, text: rawData.Qualification }]
+            //   : [];
+            // const PrefeQualificationOption = rawData.PreferredQualification
+            //   ? [{ key: 0, text: rawData.PreferredQualification }]
+            //   : [];
 
             setAdvDetails((prevState) => ({
               ...prevState,
               RolePurpose: rawData.RoleProfile || "",
               JobDescription: rawData.JobDescription || "",
-              MinQualificationOption: MinQualificationOption,
-              PrefeQualificationOption: PrefeQualificationOption,
+              // MinQualificationOption: MinQualificationOption,
+              // PrefeQualificationOption: PrefeQualificationOption,
               TechnicalSkillsOption: TechnicalSkillsOption,
               LevelProficiencyOption: LevelProficiencyOption,
               RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,

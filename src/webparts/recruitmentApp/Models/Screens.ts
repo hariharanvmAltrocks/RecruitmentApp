@@ -3,6 +3,12 @@ export type AutoCompleteItem = {
   text: string;
 };
 
+export type Fr_AutoComplete = {
+  key: number;
+  text: string;
+  text_Fr: string;
+};
+
 export type InterviewPanelItem = {
   key: number;
   text: string;

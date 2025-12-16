@@ -53,7 +53,7 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
           ? "DotAfrica Verification"
           : "Next Approver Name"}
       </div>
-      {lines}
+      <div style={{ maxHeight: "20vh", overflowY: "auto" }}>{lines}</div>
     </div>
   );
 
@@ -88,35 +88,21 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
     onRenderContent: () => {
       const data = ApproverData;
 
-      if (!data) return <div>Loading...</div>;
-      if (ApproverData.length > 0 && typeof ApproverData != "string") {
-        return renderApproverList(
-          data.map((item: any) => boldLabel(item.Key, item.Value))
-        );
-      } else if (typeof ApproverData === "string") {
-        return (
-          <div>
-            <p
-            // style={{
-            //   display: "flex",
-            //   justifyContent: "center",
-            //   padding: "1.2%",
-            //   fontSize: "1.3em",
-            //   marginTop: "16%",
-            //   marginBottom: "18%",
-            // }}
-            >
-              {data}
-            </p>
-          </div>
-        );
-      } else {
-        return (
-          <div>
-            <p>No Record Found</p>
-          </div>
-        );
-      }
+      return (
+        <div>
+          {!data && <div>Loading...</div>}
+
+          {ApproverData?.length > 0 &&
+            typeof ApproverData !== "string" &&
+            renderApproverList(
+              data.map((item: any) => boldLabel(item.Key, item.Value))
+            )}
+
+          {typeof ApproverData === "string" && <p>{data}</p>}
+
+          {!ApproverData && <p>No Record Found</p>}
+        </div>
+      );
     },
   };
 

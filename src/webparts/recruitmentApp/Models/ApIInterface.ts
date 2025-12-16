@@ -402,6 +402,11 @@ export type UploadDocument = {
     EmployeeCN: string;
     EmployeeCompany: string;
     LabourHire: string;
+
+    BGVStatusProcess: AutoCompleteItem;
+    BGVStatusProcessOption: AutoCompleteItem[];
+    BGVProofAttachment: IDocFiles[];
+    BGVComments: string;
 }
 
 export type DocumentName = {
@@ -485,6 +490,14 @@ export type initiateLaborHire = {
 export type BGVStatus = {
     hrUserId: string;
     pagination: GetProfileByFilter
+}
+
+export type UpsertBGV = {
+    jobCode: string;
+    verificationType: string;
+    department: string;
+    nationality: string;
+    isActive: boolean;
 }
 
 

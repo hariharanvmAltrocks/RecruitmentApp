@@ -2730,6 +2730,10 @@ const ViewCandidateDetails = (props: any) => {
                 props.stateValue?.initialTab === TabName.AssignInterviewPanel
               ) {
                 HRMSCandidateListResposne = await UploadCandidateDetails();
+              } else {
+                HRMSCandidateListResposne = {
+                  status: ResponeStatus.SUCCESS,
+                };
               }
               if (HRMSCandidateListResposne.status === ResponeStatus.SUCCESS) {
                 const res = await GetPortalJobsService.UpdateCandidateStatus(

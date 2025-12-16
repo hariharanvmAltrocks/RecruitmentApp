@@ -8,6 +8,7 @@ import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
 import {
+  CategoryID,
   ColorCode,
   DocumentFolderName,
   DocumentLibraray,
@@ -63,10 +64,9 @@ import {
   DotAfricaStatus,
   EmployeementCategory,
   labelNames,
-  NSADocs,
   onboardingData,
   RadioBtnLabel,
-  SADocs,
+  StatusBarValue,
 } from "../../utilities/LabelName";
 import CustomTextArea from "../../components/CustomTextArea";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
@@ -94,6 +94,8 @@ type ValidationError = {
   PaymentReview: boolean;
   PaymentDocs: boolean;
   WorkpermitDoc: boolean;
+  BGVStatusProcess: boolean;
+  BGVComments: boolean;
 };
 
 export type viewDocument = {
@@ -199,6 +201,10 @@ const UploadCandidateDocument = (props: any) => {
     EmployeeCompany: "",
     Gender: "",
     LabourHire: "",
+    BGVStatusProcess: { key: 0, text: "" },
+    BGVStatusProcessOption: [],
+    BGVProofAttachment: [],
+    BGVComments: "",
   });
   // const [checkdata,setCheckdata] = useState<>
   // const [viewDocument, setViewDocument] = React.useState<viewDocument>({
@@ -229,6 +235,8 @@ const UploadCandidateDocument = (props: any) => {
       PaymentReview: false,
       PaymentDocs: false,
       WorkpermitDoc: false,
+      BGVStatusProcess: false,
+      BGVComments: false,
     });
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
@@ -264,16 +272,21 @@ const UploadCandidateDocument = (props: any) => {
       await laborHireService
         .CheckBGVerification(FilterValue)
         .then(async (res) => {
-          const mappedObj: { [key: string]: boolean } =
+          const mappedObj: { [key: string]: string } =
             res.data.data[0]?.bgVerification
               ?.filter((item: any) => item.bgType)
-              ?.reduce((acc: { [key: string]: boolean }, item: any) => {
+              ?.reduce((acc: { [key: string]: string }, item: any) => {
                 acc[item.bgType] =
-                  item.result === DotAfricaStatus.Confirmed ? true : false;
+                  item.status === DotAfricaStatus.Completed &&
+                  item.result === DotAfricaStatus.Confirmed
+                    ? StatusBarValue.Completed
+                    : item.status === DotAfricaStatus.skipped
+                    ? StatusBarValue.Failed
+                    : StatusBarValue.Pending;
                 return acc;
               }, {});
           let BGVRemarks = res.data.data[0]?.bgVerification
-            .filter((item: any) => item.result != DotAfricaStatus.Confirmed)
+            .filter((item: any) => item.status === DotAfricaStatus.skipped)
             .map((item: any) => ({
               BGVType: item.bgType,
               Remarks: item.remarks,
@@ -314,15 +327,22 @@ const UploadCandidateDocument = (props: any) => {
       );
       let docs: any[] = [];
       if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+        const VerificationType = await GetPortalJobsService.GetAllMaster(
+          CategoryID.VerificationType
+        );
+        let VerificationCode: string[] =
+          VerificationType.data?.map((item) => String(item.value)) ?? [];
         let BGVDocument: GetBGVDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
           ProfileID: item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
           DocumentType: DocumentFolderName.BackgroundVerification,
-          DocumentName:
-            CandidateDetails?.data?.[0]?.NatioCode === "N154"
-              ? SADocs
-              : NSADocs,
+          DocumentName: VerificationCode,
+          // CandidateDetails?.data?.[0]?.NatioCode ===
+          // NationalityCode.SouthAfrica //"N154"
+          //   ? SADocs
+          //   : NSADocs,
           RequestID: item?.CandidateDetails?.JobRequestID,
+          VerificationName: VerificationType.data,
         };
         let BGVDocs = await OfferLetterServices.FetchBGVerificationDOcs(
           BGVDocument
@@ -534,7 +554,10 @@ const UploadCandidateDocument = (props: any) => {
       let DOtObj: GetDOTAfricaCF = {
         ListName: DocumentLibraray.DOTAfricaConsentForm,
         Natioality:
-          CandidateDetails?.data?.[0]?.NatioCode === "N154" ? "SA" : "NSA",
+          item?.CandidateDetails?.NationalityCode ===
+          NationalityCode.SouthAfrica
+            ? "SA"
+            : "NSA",
       };
       const getDotAfricaCF =
         await OfferLetterServices.FetchDotAfricaConsentForm(DOtObj);
@@ -715,7 +738,19 @@ const UploadCandidateDocument = (props: any) => {
               : "Yes",
         }));
       }
-      void fetchBGVStatus();
+      await fetchBGVStatus();
+      if (props.stateValue?.StatusId === StatusId.PendingDOTAficaVerification) {
+        let BGVProcessOption = props.EmployeeList.map((item: any) => ({
+          key: item.Email,
+          text: `${item?.FirstName || ""} ${item?.MiddleName || ""} ${
+            item?.LastName || ""
+          }`,
+        }));
+        setData((prev) => ({
+          ...prev,
+          BGVStatusProcessOption: BGVProcessOption,
+        }));
+      }
     } catch (error) {
       console.error("Failed to fetch Vacancy Details:", error);
     } finally {
@@ -787,8 +822,6 @@ const UploadCandidateDocument = (props: any) => {
       }));
     }
   };
-
-  console.log(checklistData, "checklistDatachecklistData");
 
   const handleCheckboxchanges = (value: string | any) => {
     setData((prev) => ({
@@ -1006,29 +1039,38 @@ const UploadCandidateDocument = (props: any) => {
     if (!checklistData) return;
 
     setChecklistStatus({
-      ["Background Checks"]:
-        checklistData.DocumentComplianceChecks.DocumentComplianceChecks
-          .BackgroundChecks.value,
-      ["Signed Offer Letter"]:
-        checklistData.DocumentComplianceChecks.DocumentComplianceChecks
-          .SignedOfferLetter.value,
-      ["Employment Contract"]:
-        checklistData.DocumentComplianceChecks.DocumentComplianceChecks
-          .SignedEmploymentContract.value,
-      ["Work Permit Approved"]:
-        checklistData.DocumentComplianceChecks.DocumentComplianceChecks
-          .WorkPermitApproved.value,
-      ["Visa Process"]:
-        checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport
-          .VisaProcess.value,
-      ["Accommodation Booked"]:
-        checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport
-          .AccommodationBooked.value,
-      ["Travel Process"]:
-        checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport
-          .TravelProcess.value,
-      ["Ready for Onboarding"]:
-        checklistData.FinalStatus.FinalStatus.ReadyforOnboarding.value,
+      ["Background Checks"]: checklistData.DocumentComplianceChecks
+        .DocumentComplianceChecks.BackgroundChecks.value
+        ? StatusBarValue.Completed
+        : StatusBarValue.Pending,
+      ["Signed Offer Letter"]: checklistData.DocumentComplianceChecks
+        .DocumentComplianceChecks.SignedOfferLetter.value
+        ? StatusBarValue.Completed
+        : StatusBarValue.Pending,
+      ["Employment Contract"]: checklistData.DocumentComplianceChecks
+        .DocumentComplianceChecks.SignedEmploymentContract.value
+        ? StatusBarValue.Completed
+        : StatusBarValue.Pending,
+      ["Work Permit Approved"]: checklistData.DocumentComplianceChecks
+        .DocumentComplianceChecks.WorkPermitApproved.value
+        ? StatusBarValue.Completed
+        : StatusBarValue.Pending,
+      ["Visa Process"]: checklistData.LogisticsEmployeeSupport
+        .LogisticsEmployeeSupport.VisaProcess.value
+        ? StatusBarValue.Completed
+        : StatusBarValue.Pending,
+      ["Accommodation Booked"]: checklistData.LogisticsEmployeeSupport
+        .LogisticsEmployeeSupport.AccommodationBooked.value
+        ? StatusBarValue.Completed
+        : StatusBarValue.Pending,
+      ["Travel Process"]: checklistData.LogisticsEmployeeSupport
+        .LogisticsEmployeeSupport.TravelProcess.value
+        ? StatusBarValue.Completed
+        : StatusBarValue.Pending,
+      ["Ready for Onboarding"]: checklistData.FinalStatus.FinalStatus
+        .ReadyforOnboarding.value
+        ? StatusBarValue.Completed
+        : StatusBarValue.Pending,
     });
   }, [checklistData]);
 
@@ -1065,6 +1107,31 @@ const UploadCandidateDocument = (props: any) => {
   const handleTabChange = (newTab: string) => {
     setOBCheckListTab(newTab);
   };
+
+  // const handleAutoComplete = async (
+  //   value: AutoCompleteItem | null,
+  //   item: string
+  // ) => {
+  //   setData((prevState) => ({
+  //     ...prevState,
+  //     [item]: value || { key: 0, text: "" },
+  //   }));
+  //   setValidationErrors((prevState) => ({
+  //     ...prevState,
+  //     [item]: false,
+  //   }));
+  // };
+
+  // const handleInputChange = async (value: string | null, item: string) => {
+  //   setData((prevState) => ({
+  //     ...prevState,
+  //     [item]: value || { key: 0, text: "" },
+  //   }));
+  //   setValidationErrors((prevState) => ({
+  //     ...prevState,
+  //     [item]: false,
+  //   }));
+  // };
 
   const OnboardingChecklist = [
     {
@@ -1375,89 +1442,97 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                 </div>
                 {data.EmploymentCategory ===
-                  EmployeementCategory.LaborhireContractor && (
-                  <div className="ms-Grid-row">
-                    <div className="ms-Grid-col ms-lg3">
-                      <CustomInput
-                        label={labelNames.PositionDetails.LabourHire}
-                        value={data?.LabourHire}
-                        disabled={true}
-                        mandatory={false}
-                      />
+                  EmployeementCategory.LaborhireContractor &&
+                  ![
+                    StatusId.PendingHRBGVInitiation,
+                    StatusId.PendingHRReviewBGCheck,
+                    StatusId.PendingBGdocuploadedbycandidate,
+                    StatusId.PendingDOTAficaVerification,
+                    StatusId.PendingwithTAforMedicalScreening,
+                    StatusId.RESIProcessInitiatedforDRC,
+                    StatusId.RESIProcessInitiatedforExpatriate,
+                  ].includes(props.stateValue?.StatusId) && (
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.PositionDetails.LabourHire}
+                          value={data?.LabourHire}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* {props.stateValue?.StatusId ===
+                {props.stateValue?.StatusId ===
                   StatusId.PendingHRReviewBGCheck &&
-                (data.NationalityCode === NationalityCode.Nationals ||
-                  data.NationalityCode === NationalityCode.SouthAfrica) ? (
+                dataValue[0]?.CandidateDetails.Agencies === "Candidate" ? (
                   <>
-                   
+                    <Card
+                      variant="outlined"
+                      sx={{
+                        boxShadow: "0px 7px 4px 3px #d3d3d3",
+                        borderRadius: "10px",
+                        marginTop: "2%",
+                      }}
+                    >
+                      <CardContent>
+                        <div className="ms-Grid-row">
+                          <Labelheader
+                            value={labelNames.CandidateDetails.PreviousEmployee}
+                          />
+                        </div>
+                        <div className="ms-Grid-row">
+                          <div className="ms-Grid-col ms-lg3">
+                            <CustomInput
+                              label={labelNames.CandidateDetails.EmployeeName}
+                              value={data?.EmployeeName}
+                              disabled={true}
+                              mandatory={false}
+                            />
+                          </div>
+                          <div className="ms-Grid-col ms-lg3">
+                            <CustomInput
+                              label={labelNames.CandidateDetails.EmployeeDesi}
+                              value={data?.EmployeeDesignation}
+                              disabled={true}
+                              mandatory={false}
+                            />
+                          </div>
+                          <div className="ms-Grid-col ms-lg3">
+                            <CustomInput
+                              label={labelNames.CandidateDetails.EmployeeEmail}
+                              value={data?.EmployeeEmail}
+                              disabled={true}
+                              mandatory={false}
+                            />
+                          </div>
+                          <div className="ms-Grid-col ms-lg3">
+                            <CustomInput
+                              label={labelNames.CandidateDetails.EmployeeCN}
+                              value={data?.EmployeeCN}
+                              disabled={true}
+                              mandatory={false}
+                            />
+                          </div>
+
+                          <div className="ms-Grid-col ms-lg3">
+                            <CustomInput
+                              label={
+                                labelNames.CandidateDetails.EmployeeCompanyN
+                              }
+                              value={data?.EmployeeCompany}
+                              disabled={true}
+                              mandatory={false}
+                            />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </>
                 ) : (
                   <></>
-                )} */}
-
-                <Card
-                  variant="outlined"
-                  sx={{
-                    boxShadow: "0px 7px 4px 3px #d3d3d3",
-                    borderRadius: "10px",
-                    marginTop: "2%",
-                  }}
-                >
-                  <CardContent>
-                    <div className="ms-Grid-row">
-                      <Labelheader
-                        value={labelNames.CandidateDetails.PreviousEmployee}
-                      />
-                    </div>
-                    <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg3">
-                        <CustomInput
-                          label={labelNames.CandidateDetails.EmployeeName}
-                          value={data?.EmployeeName}
-                          disabled={true}
-                          mandatory={false}
-                        />
-                      </div>
-                      <div className="ms-Grid-col ms-lg3">
-                        <CustomInput
-                          label={labelNames.CandidateDetails.EmployeeDesi}
-                          value={data?.EmployeeDesignation}
-                          disabled={true}
-                          mandatory={false}
-                        />
-                      </div>
-                      <div className="ms-Grid-col ms-lg3">
-                        <CustomInput
-                          label={labelNames.CandidateDetails.EmployeeEmail}
-                          value={data?.EmployeeEmail}
-                          disabled={true}
-                          mandatory={false}
-                        />
-                      </div>
-                      <div className="ms-Grid-col ms-lg3">
-                        <CustomInput
-                          label={labelNames.CandidateDetails.EmployeeCN}
-                          value={data?.EmployeeCN}
-                          disabled={true}
-                          mandatory={false}
-                        />
-                      </div>
-
-                      <div className="ms-Grid-col ms-lg3">
-                        <CustomInput
-                          label={labelNames.CandidateDetails.EmployeeCompanyN}
-                          value={data?.EmployeeCompany}
-                          disabled={true}
-                          mandatory={false}
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                )}
 
                 {props.stateValue?.StatusId ===
                   StatusId.PendingHRBGVInitiation ||
@@ -1499,6 +1574,140 @@ const UploadCandidateDocument = (props: any) => {
                     </div>
                   </>
                 )}
+
+                {/* {props.stateValue?.StatusId ===
+                  StatusId.PendingDOTAficaVerification && (
+                  <>
+                    <Card
+                      variant="outlined"
+                      sx={{
+                        boxShadow: "0px 7px 4px 3px #d3d3d3",
+                        borderRadius: "10px",
+                        marginTop: "2%",
+                        overflow: "visible",
+                      }}
+                    >
+                      <CardContent>
+                        <>
+                          <div className="ms-Grid-row">
+                            <div
+                              style={{
+                                display: "flex",
+                                marginTop: "1% ",
+                                marginLeft: "1%",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  minWidth: 85,
+                                  fontWeight: "bold",
+                                  fontFamily: '"Roboto", sans-serif',
+                                  fontSize: "17px",
+                                }}
+                              >
+                                {labelNames.BGVLabels.BGVConsultedLabel}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg4">
+                              <CustomAutoComplete
+                                label={
+                                  labelNames.CandidateDetails.ConsultedWith
+                                }
+                                options={data.BGVStatusProcessOption}
+                                value={data.BGVStatusProcess}
+                                disabled={false}
+                                mandatory={true}
+                                onChange={(item) =>
+                                  handleAutoComplete(item, "BGVStatusProcess")
+                                }
+                                error={validationErrors.BGVStatusProcess}
+                              />
+                            </div>
+                            <div className="ms-Grid-col ms-lg2">
+                              <div
+                                className="ms-Grid-row"
+                                style={{ marginLeft: "2px" }}
+                              >
+                                <CustomLabel
+                                  value={
+                                    labelNames.CandidateDetails.ProofDiscussion
+                                  }
+                                  // mandatory={true}
+                                />
+                                <AttachmentButton
+                                  label="Upload"
+                                  iconName="CloudUpload"
+                                  iconNameHover="CloudUpload"
+                                  allowMultiple={false}
+                                  AttachState={(newAttachment: any) => {
+                                    let attachment: IDocFiles[] =
+                                      newAttachment.map((item: any) => {
+                                        return {
+                                          name: item.name,
+                                          content: item.file,
+                                          type: "New",
+                                          url: item.Url,
+                                        };
+                                      });
+                                    // const attachments = [
+                                    //   ...(InterviewedLevel.COIAttachment ||
+                                    //     []),
+                                    //   ...attachment,
+                                    // ];
+                                    handleDocument(
+                                      "BGVProofAttachment",
+                                      attachment
+                                    );
+                                  }}
+                                  // mandatory={true}
+                                  // error={validationErrors.COIAttachment}
+                                  Style={{
+                                    backgroundColor:
+                                      ColorCode.ButtonColorCode.ButtonColor,
+                                    color: "white",
+                                  }}
+                                  fileformat=".doc,.pdf,.docx,.png"
+                                />
+                              </div>
+                            </div>
+                            <div
+                              className="ms-Grid-col ms-lg4"
+                              style={{ marginTop: "2%" }}
+                            >
+                              <CustomViewAttachment
+                                Attachment={data.BGVProofAttachment ?? []}
+                                StateValue={"BGVProofAttachment"}
+                                handleDelete={(index, fileState) =>
+                                  handleDelete(index, fileState)
+                                }
+                                webUrl={props.webURL}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="ms-Grid-row">
+                            <div className="ms-Grid-col ms-lg12">
+                              <CustomTextArea
+                                label={labelNames.CommanLabel.Comments}
+                                value={data.BGVComments}
+                                error={validationErrors.BGVComments}
+                                onChange={(value) =>
+                                  handleInputChange("BGVComments", value)
+                                }
+                                disabled={false}
+                                mandatory={true}
+                              />
+                            </div>
+                          </div>
+                        </>
+                      </CardContent>
+                    </Card>
+
+                   
+                  </>
+                )} */}
 
                 {props.stateValue?.ButtonAction === ButtonAction.Initiated ||
                 props.stateValue?.StatusId ===
@@ -3049,6 +3258,9 @@ const UploadCandidateDocument = (props: any) => {
                   StatusId.PendingDOTAficaVerification
                     ? BGVerifiedStatus
                     : null
+                }
+                Agencies={
+                  (dataValue && dataValue[0]?.CandidateDetails.Agencies) ?? ""
                 }
                 additionalButtons={
                   props.stateValue?.ButtonAction === ButtonAction.View

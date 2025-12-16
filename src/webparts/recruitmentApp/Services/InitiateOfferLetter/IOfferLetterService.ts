@@ -1,4 +1,4 @@
-import { ITSystem, TASystem, TrainingSystem, UploadDocument } from "../../Models/ApIInterface";
+import { GetAllMaster, ITSystem, TASystem, TrainingSystem, UploadDocument } from "../../Models/ApIInterface";
 import { DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 
@@ -76,19 +76,21 @@ export type ICandidateDetails = {
     IdentityNumber: string,
     ProofOfIdentity: string,
     Location: string;
+    Agencies: string;
     // DocumentFolderPath: string;
     TrainingSystem: TrainingSystem;
     TASystem: TASystem;
     ITSystem: ITSystem;
-    BackgroundChecks: string
-    SignedOfferLetterVerified: string
-    SignedEmploymentContract: string
-    WorkPermitApproved: string
-    VisaProcess: string
-    AccommodationBooked: string
-    TravelProcess: string
-    ReadyforOnboarding: string
-    Gender: string
+    BackgroundChecks: string;
+    SignedOfferLetterVerified: string;
+    SignedEmploymentContract: string;
+    WorkPermitApproved: string;
+    VisaProcess: string;
+    AccommodationBooked: string;
+    TravelProcess: string;
+    ReadyforOnboarding: string;
+    Gender: string;
+    NationalityCode: string;
 }
 
 export type GetBGVDocument = {
@@ -97,6 +99,7 @@ export type GetBGVDocument = {
     RequestID: string;
     DocumentType: string;
     DocumentName: string[];
+    VerificationName: GetAllMaster[] | null
 }
 export type GetDOTAfricaCF = {
     ListName: string;

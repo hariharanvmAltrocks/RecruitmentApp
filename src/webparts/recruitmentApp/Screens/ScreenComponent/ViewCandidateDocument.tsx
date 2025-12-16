@@ -74,7 +74,7 @@ export const ViewCandidateDocument = ({
     view_fn: any
   ) => {
     const subTitle = docs[0];
-    const fileObj = docs[1];
+    const fileObj = [docs[1]];
     // const fileName = fileObj.name;
 
     return (
@@ -85,24 +85,23 @@ export const ViewCandidateDocument = ({
           {subTitle}
         </Typography>
 
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={8}>
-            <CustomViewDocument
-              Attachment={[fileObj]}
-              // webUrl={props.webURL}
-            />
-          </Grid>
+        {fileObj.map((item: any) => (
+          <Grid container spacing={2} alignItems="center" key={item.id}>
+            <Grid item xs={12} sm={8}>
+              <CustomViewDocument Attachment={[item]} webUrl={webUrl} />
+            </Grid>
 
-          <Grid item xs={12} sm={4} textAlign="right">
-            <IconButton onClick={() => view_fn(fileObj.content)}>
-              <VisibilityIcon color="primary" />
-            </IconButton>
+            <Grid item xs={12} sm={4} textAlign="right">
+              <IconButton onClick={() => view_fn(item.content)}>
+                <VisibilityIcon color="primary" />
+              </IconButton>
 
-            <IconButton component="a" href={fileObj.content} download>
-              <DownloadIcon color="primary" />
-            </IconButton>
+              <IconButton component="a" href={item.content} download>
+                <DownloadIcon color="primary" />
+              </IconButton>
+            </Grid>
           </Grid>
-        </Grid>
+        ))}
       </Box>
     );
   };
@@ -119,10 +118,7 @@ export const ViewCandidateDocument = ({
       <Box key={index} sx={{ mb: 1 }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={8}>
-            <CustomViewDocument
-              Attachment={[doc]}
-              // webUrl={props.webURL}
-            />
+            <CustomViewDocument Attachment={[doc]} webUrl={webUrl} />
           </Grid>
 
           <Grid item xs={12} sm={4} textAlign="right">

@@ -770,7 +770,7 @@ const AdminPanelPage: React.FC = (props: any) => {
                     value={data.LastName}
                     disabled={false}
                     error={ValidityState.LastName}
-                    mandatory={false}
+                    mandatory={true}
                     onChange={(value) => handleInputChange("LastName", value)}
                   />
                 </div>
@@ -780,7 +780,7 @@ const AdminPanelPage: React.FC = (props: any) => {
                     value={data.CompanyName}
                     disabled={false}
                     error={ValidityState.CompanyName}
-                    mandatory={false}
+                    mandatory={true}
                     onChange={(value) =>
                       handleInputChange("CompanyName", value)
                     }
@@ -792,7 +792,7 @@ const AdminPanelPage: React.FC = (props: any) => {
                     value={data.Designation}
                     disabled={false}
                     error={ValidityState.Designation}
-                    mandatory={false}
+                    mandatory={true}
                     onChange={(value) =>
                       handleInputChange("Designation", value)
                     }
@@ -820,7 +820,7 @@ const AdminPanelPage: React.FC = (props: any) => {
                     value={data.NoOfUsers}
                     disabled={false}
                     error={ValidityState.NoOfUsers}
-                    mandatory={false}
+                    mandatory={true}
                     onChange={(value) => handleInputChange("NoOfUsers", value)}
                   />
                 </div>
@@ -860,7 +860,7 @@ const AdminPanelPage: React.FC = (props: any) => {
                     disabled={
                       props.stateValue.ButtonAction === ButtonAction.Edit
                     }
-                    mandatory={false}
+                    mandatory={true}
                     onChange={(value) => handleInputChange("EmailID", value)}
                   />
 
@@ -885,7 +885,7 @@ const AdminPanelPage: React.FC = (props: any) => {
                         value={data.Password}
                         disabled={false}
                         error={ValidityState.Password}
-                        mandatory={false}
+                        mandatory={true}
                         WarningMsg="Password must be at least 10 characters long and include an uppercase letter, a lowercase letter, a number, and a special character."
                         onChange={(value) =>
                           handleInputChange("Password", value)
@@ -913,7 +913,7 @@ const AdminPanelPage: React.FC = (props: any) => {
                         value={data.ConfirmPassword}
                         disabled={false}
                         error={ValidityState.ConfirmPassword}
-                        mandatory={false}
+                        mandatory={true}
                         onChange={(value) =>
                           handleInputChange("ConfirmPassword", value)
                         }
@@ -942,7 +942,7 @@ const AdminPanelPage: React.FC = (props: any) => {
                     value={data.AgentCode}
                     error={false}
                     disabled={true}
-                    mandatory={false}
+                    mandatory={true}
                     onChange={(value) =>
                       handleInputChange("ExternalUserCode", value)
                     }

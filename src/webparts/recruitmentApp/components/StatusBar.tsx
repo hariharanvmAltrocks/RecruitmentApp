@@ -11,14 +11,18 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import "../Screens/OfferMedicalProcess/Checklist.css";
+import { StatusBarValue } from "../utilities/LabelName";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 interface StatusBarProps {
-  checklist: { [key: string]: boolean }; // your checklist values
+  checklist: { [key: string]: string }; // your checklist values
 }
 
 const StatusBar: React.FC<StatusBarProps> = ({ checklist }) => {
   const steps = Object.keys(checklist);
-  const completedCount = steps.filter((step) => checklist[step]).length;
+  const completedCount = steps.filter(
+    (step) => checklist[step] === StatusBarValue.Completed
+  ).length;
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -81,16 +85,25 @@ const StatusBar: React.FC<StatusBarProps> = ({ checklist }) => {
                 <Step key={index} active>
                   <StepLabel
                     icon={
-                      isDone ? (
+                      isDone === StatusBarValue.Completed ? (
                         <CheckCircleIcon sx={{ color: "green" }} />
-                      ) : (
+                      ) : isDone === StatusBarValue.Failed ? (
+                        <CancelIcon style={{ color: "#f90606" }} />
+                      ) : isDone === StatusBarValue.Pending ? (
                         <RadioButtonUncheckedIcon sx={{ color: "gray" }} />
-                      )
+                      ) : null
                     }
                   >
                     <Typography
                       variant="body1"
-                      sx={{ color: isDone ? "green" : "gray" }}
+                      sx={{
+                        color:
+                          isDone === StatusBarValue.Completed
+                            ? "green"
+                            : isDone === StatusBarValue.Failed
+                            ? "#f90606"
+                            : "#8cae8c",
+                      }}
                     >
                       {label}
                     </Typography>

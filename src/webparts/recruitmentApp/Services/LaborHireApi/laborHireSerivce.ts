@@ -1,4 +1,4 @@
-import { BGVStatus, initiateLaborHire } from "../../Models/ApIInterface";
+import { BGVStatus, initiateLaborHire, UpsertBGV } from "../../Models/ApIInterface";
 import { BGverification, LaborHire } from "../ReviewProfileService/ReviewCandidateService";
 import { ILaborHireService } from "./IlaborHireService";
 
@@ -66,4 +66,45 @@ export default class LaborHireService implements ILaborHireService {
         }
     }
 
+    async UpsertBGVJobMaster(UpsertData: UpsertBGV[]): Promise<ApiResponse<any | null>> {
+        try {
+            const response = await BGverification.UpsertBGVJobMaster(UpsertData);
+            return {
+                data: response.data,
+                status: response.status,
+                message: response.data.message,
+            };
+        } catch (error) {
+            console.error(
+                "Error inserting data into AdvertisementDetails:",
+                error
+            );
+            return {
+                data: [],
+                status: 500,
+                message: "Error inserting data into AdvertisementDetails",
+            };
+        }
+    }
+
+    async GetBGVerificationType(NationalityCode: string): Promise<ApiResponse<any | null>> {
+        try {
+            const response = await BGverification.GetBGVerificationType(NationalityCode);
+            return {
+                data: response.data,
+                status: response.status,
+                message: response.data.message,
+            };
+        } catch (error) {
+            console.error(
+                "Error inserting data into AdvertisementDetails:",
+                error
+            );
+            return {
+                data: [],
+                status: 500,
+                message: "Error inserting data into AdvertisementDetails",
+            };
+        }
+    }
 }

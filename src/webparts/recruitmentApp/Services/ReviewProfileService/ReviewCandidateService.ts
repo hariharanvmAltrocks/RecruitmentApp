@@ -1,5 +1,5 @@
 import { AdminPItem, UpsertExternalUser } from "../../Models/AdminPanel";
-import { AdvertisementDetails, BGVStatus, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, BGVStatus, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertBGV, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
 export const getProfileData = {
@@ -154,7 +154,18 @@ export const BGverification = {
         return await AxiosInstance.post(
             `/hrms/GetBGVStatus`, params
         );
-    }
+    },
+    UpsertBGVJobMaster: async function (params: UpsertBGV[]) {
+        return await AxiosInstance.post(
+            `/hrms/UpsertBGVJobMaster`, params
+        )
+    },
+    GetBGVerificationType: async function (NationalityCode: string) {
+        return await AxiosInstance.get(
+            `hrms/GetBGVerificationType?nationality=${NationalityCode}`
+        )
+    },
+
 }
 
 export const AdminPanelServiceApi = {

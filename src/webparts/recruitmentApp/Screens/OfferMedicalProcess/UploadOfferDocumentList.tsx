@@ -24,6 +24,7 @@ import { tabStyle } from "../../components/TabMerge";
 import {
   ButtonAction,
   DotAfricaStatus,
+  DotTooltipStatus,
   EmployeementCategory,
 } from "../../utilities/LabelName";
 import ToolTipButton from "../../components/Tooltip";
@@ -89,30 +90,58 @@ const UploadOfferDocumentList = (props: any) => {
             ?.filter((item: any) => item.bgType)
             ?.map((item: any) => ({
               Key: item.bgType,
-              Value: item.result,
+              Value:
+                item.status === DotAfricaStatus.Completed &&
+                item.result === DotAfricaStatus.Confirmed
+                  ? DotTooltipStatus.Passed
+                  : item.status === DotAfricaStatus.skipped ||
+                    item.status === DotAfricaStatus.error ||
+                    item.status === DotAfricaStatus.cancelled
+                  ? DotTooltipStatus.Failed
+                  : item.status === DotAfricaStatus.pending ||
+                    item.status === DotAfricaStatus.new
+                  ? DotTooltipStatus.Pending
+                  : DotTooltipStatus.Pending,
             }));
           setPendingInfo(mappedArray);
           if (mappedArray.length > 0) {
             const allCompleted =
               mappedArray.every(
-                (item: any) => item.Value === DotAfricaStatus.Confirmed
+                (item: any) => item.Value === DotTooltipStatus.Passed
               ) || false;
             const IDCTYpeStatus = res.data.data[0]?.bgVerification
               ?.filter((item: any) => item.bgTypeCode === "IDC")
-              ?.every((item: any) => item.result === DotAfricaStatus.Confirmed);
-
+              ?.every(
+                (item: any) =>
+                  item.status === DotAfricaStatus.skipped ||
+                  item.status === DotAfricaStatus.error ||
+                  item.status === DotAfricaStatus.cancelled
+              );
+            const RejectStatus =
+              mappedArray.every(
+                (item: any) => item.Value === DotTooltipStatus.Failed
+              ) || false;
             if (
-              allCompleted &&
               rowData.StatusID === StatusId.PendingDOTAficaVerification &&
               rowData.ActionID === WorkflowAction.Transfer
             ) {
-              const matchedData = {
-                ID: rowData?.ID,
-                ActionId: IDCTYpeStatus
-                  ? WorkflowAction.Approved
-                  : WorkflowAction.Revert,
-              };
-
+              let matchedData: any;
+              if (allCompleted) {
+                matchedData = {
+                  ID: rowData?.ID,
+                  ActionId: WorkflowAction.Approved,
+                };
+              } else if (IDCTYpeStatus) {
+                matchedData = {
+                  ID: rowData?.ID,
+                  ActionId: WorkflowAction.Revert,
+                };
+              } else if (RejectStatus) {
+                matchedData = {
+                  ID: rowData?.ID,
+                  ActionId: WorkflowAction.Reject,
+                };
+              }
               await OfferLetterServices.UpdateStatusInSpfxlist([matchedData]);
             }
           }
@@ -166,7 +195,7 @@ const UploadOfferDocumentList = (props: any) => {
         );
         if (isTooltipStatus) {
           return (
-            <div>
+            <div style={{ marginLeft: "-11.1%" }}>
               <ToolTipButton
                 Title=""
                 CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
@@ -239,7 +268,7 @@ const UploadOfferDocumentList = (props: any) => {
               rowData?.StatusID === StatusId.PendingLabourhireWPPayment ||
               rowData?.StatusID === StatusId.PendingLHWorkPermitProcess ||
               rowData?.StatusID === StatusId.PendingLHECRelease ||
-              rowData?.StatusID === StatusId.PendingDOTAficaVerification ||
+              // rowData?.StatusID === StatusId.PendingDOTAficaVerification ||
               rowData?.StatusID === StatusId.OnboardingProcessinitiatedforDRC ||
               rowData?.StatusID ===
                 StatusId.OnboardingProcessinitiatedforExpat ||
@@ -558,6 +587,7 @@ const UploadOfferDocumentList = (props: any) => {
             FilterValue: [
               StatusId.PendingHRBGVInitiation,
               StatusId.PendingHRReviewBGCheck,
+              StatusId.PendingDOTAficaVerification,
             ],
           });
           break;

@@ -205,7 +205,8 @@ export default class MasterService implements IMasterService {
             await SPServices.SPGetItems(
                 {
                     Listname: ListNames.HRMSJobTitleMaster,
-                    Select: "*",
+                    Select: "*,JobTitleInFrench/JobTitleInFrench",
+                    Expand: "JobTitleInFrench",
                     Orderby: "ID",
                     Orderbydecorasc: true,
                     PageCount: count.Topcount
@@ -218,12 +219,20 @@ export default class MasterService implements IMasterService {
                             text: item?.JobTitleInEnglish,
                             JobCode: item?.JobCode,
                         });
+                        masterData.JobInFrenchList = items.flatMap((item: any) =>
+                            item.JobTitleInFrench.length > 1
+                                ? item.JobTitleInFrench.map((fr: any) => ({
+                                    key: item.ID,
+                                    text: fr.JobTitleInFrench,
+                                    JobCode: item.JobCode,
+                                }))
+                                : [{
+                                    key: item.ID,
+                                    text: item.JobTitleInFrench[0]?.JobTitleInFrench,
+                                    JobCode: item.JobCode,
+                                }]
+                        );
 
-                        masterData.JobInFrenchList.push({
-                            key: item?.ID,
-                            text: item?.JobTitleInFrench,
-                            JobCode: item?.JobCode,
-                        });
                     });
                 }).catch((error) => {
                     console.error(

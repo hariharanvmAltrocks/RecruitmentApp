@@ -42,7 +42,7 @@ interface BreadcrumbsComponentProps {
     onClick?: () => void;
     disable?: boolean;
   }[];
-  Statuslist?: { [key: string]: boolean } | null;
+  Statuslist?: { [key: string]: string } | null;
 }
 
 const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
@@ -98,7 +98,13 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
         {/* <div className="ms-Grid-col ms-lg0.3">
          
         </div> */}
-        <div className="ms-Grid-col ms-lg9">
+        <div
+          className={
+            Statuslist && Object.keys(Statuslist).length > 0
+              ? "ms-Grid-col ms-lg8"
+              : "ms-Grid-col ms-lg9"
+          }
+        >
           <span style={{ display: "flex" }}>
             {additionalButtons.some(
               (button) => button.label === ButtonAction.Back
@@ -188,7 +194,9 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
           {JobValue?.Status && (
             <div
               className={
-                Statuslist ? "ms-Grid-col ms-lg5" : "ms-Grid-col ms-lg6"
+                Statuslist && Object.keys(Statuslist).length > 0
+                  ? "ms-Grid-col ms-lg5"
+                  : "ms-Grid-col ms-lg6"
               }
               style={{ display: "flex", justifyContent: "flex-end" }}
             >
@@ -198,7 +206,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
             </div>
           )}
 
-          {Statuslist != null && (
+          {Statuslist && Object.keys(Statuslist).length > 0 && (
             <div
               className="ms-Grid-col ms-lg1"
               style={{
@@ -208,7 +216,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
                 marginTop: "-5%",
               }}
             >
-              <StatusBar checklist={Statuslist ?? {}} />
+              <StatusBar checklist={Statuslist} />
             </div>
           )}
         </div>

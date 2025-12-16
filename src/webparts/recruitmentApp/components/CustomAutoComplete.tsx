@@ -2,6 +2,7 @@ import { ILabelStyles, Label } from "@fluentui/react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
+import { Fr_AutoComplete } from "../Models/Screens";
 
 const labelStyles: ILabelStyles = {
   root: { marginTop: 10, overflowWrap: "inherit" },
@@ -14,7 +15,7 @@ type AutoCompleteItem = {
 interface AutoCompleteFields {
   value: AutoCompleteItem | null;
   label: string;
-  options: AutoCompleteItem[];
+  options: AutoCompleteItem[] | Fr_AutoComplete[];
   onChange?: (value: AutoCompleteItem | null) => void;
   error?: boolean;
   disabled: boolean;
