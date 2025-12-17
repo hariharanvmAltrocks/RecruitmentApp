@@ -182,6 +182,13 @@ export const labelNames = {
         JobTitleLineManagerSupervisor: "Titre du poste du supérieur hiérarchique",
         LineManagerSupervisorName: "Nom du supérieur hiérarchique",
         JobFunctionalType: "Type fonctionnel du poste"
+    },
+    DashboardGridFilter: {
+        Department: "Department",
+        Nationality: "Nationality",
+        JobCode: "Job Code",
+        BUCode: "Business Unit Code",
+        PositionRequest: "Position Request"
     }
 }
 

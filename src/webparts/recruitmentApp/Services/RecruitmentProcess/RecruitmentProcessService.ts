@@ -98,11 +98,14 @@ export default class RecruitmentService implements IRecruitmentService {
         this.fetchNewPositionRequest(Filter, Conditions, ModalDropDown),
         this.GetAdditionalExistingPositionEditView(Filter, Conditions, ModalDropDown),
       ]);
-      const combinedData = [
-        ...(newPositionRes.data ?? []).map(item => ({ ...item })),
-        ...(additionalPositionRes.data ?? []).map(item => ({ ...item })),
-      ];
 
+      const combinedData = [
+        ...(newPositionRes.data ?? []),
+        ...(additionalPositionRes.data ?? []),
+      ].map((item, index) => ({
+        ...item,
+        RecordID: index + 1,
+      }));
       return {
         data: combinedData,
         status: 200,
@@ -146,6 +149,7 @@ export default class RecruitmentService implements IRecruitmentService {
             // ISBudgetOrUnBudgeted = objresult.ISBudgetOrUnBudgeted
             const item: DataSyncToRecruitmentResponse = {
               ID: objresult.ID,
+              RecordID: index + 1,
               BusinessUnitCode: objresult.BusinessUnitCode ? objresult.BusinessUnitCode.BusineesUnitCode : "",
               BusinessUnitCodeId: objresult.BusinessUnitCodeId,
               BusinessUnitName: "",
@@ -292,9 +296,10 @@ export default class RecruitmentService implements IRecruitmentService {
 
       if (res.length > 0) {
         GridResult = await Promise.all(
-          res.map(async (item: any) => {
+          res.map(async (item: any, index: number) => {
             const NPData: DataSyncToRecruitmentResponse = {
               ID: item.ID,
+              RecordID: index + 1,
               BusinessUnitCode: item.BusinessUnitCode ? item.BusinessUnitCode.BusineesUnitCode : "",
               BusinessUnitCodeId: item.BusinessUnitCodeId ? item.BusinessUnitCodeId : "",
               BusinessUnitName: "",
@@ -639,9 +644,10 @@ export default class RecruitmentService implements IRecruitmentService {
 
       if (res.length > 0) {
         GridResult = await Promise.all(
-          res.map((item) => {
+          res.map((item, index) => {
             let Recruitment: DataSyncToRecruitmentResponse = {
               ID: item.ID,
+              RecordID: index + 1,
               BusinessUnitCode: item?.BusinessUnitCode ? item?.BusinessUnitCode?.BusineesUnitCode : "",
               BusinessUnitCodeId: item?.BusinessUnitCodeId ? item?.BusinessUnitCodeId : "",
               BusinessUnitName: "",

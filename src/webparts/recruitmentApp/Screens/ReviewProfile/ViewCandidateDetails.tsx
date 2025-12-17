@@ -210,6 +210,7 @@ const ViewCandidateDetails = (props: any) => {
   const todaydate = new Date();
   // todaydate = addWeekdays(todaydate, 5);
   const MinDateInterview = addWeekdays(todaydate, 5);
+  const MaxDateInterview = addWeekdays(todaydate, 130);
 
   const [InterviewedLevel, setInterviewedLevel] =
     useState<InterviewedLevelValue>({
@@ -1513,6 +1514,7 @@ const ViewCandidateDetails = (props: any) => {
                           }
                           error={validationErrors.InterviewedDate}
                           minDate={MinDateInterview}
+                          maxDate={MaxDateInterview}
                           mandatory={!level2Date}
                           onChange={(date) =>
                             handleDateChange(date ?? undefined)

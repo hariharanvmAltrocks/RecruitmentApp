@@ -85,6 +85,7 @@ export type IAdditionalHeadCountResponse = {
 
 export type DataSyncToRecruitmentResponse = {
   ID: number,
+  RecordID: number,
   BusinessUnitCode: string,
   BusinessUnitCodeId: number,
   BusinessUnitName: string;

@@ -35,19 +35,27 @@ export default function MainPage(props: any) {
   const toggleSideNav = () => {
     setIsExpanded((prevState: any) => !prevState);
   };
-  console.log("Recruitment-App(4-Dec-2025) V-1.3 SIT");
+  console.log("Recruitment-App(16-Dec-2025) V-1.2 Pre-proud");
   // let ApiUrls = ApiUrl(props.webURL);
   // console.log("ApiUrl", ApiUrls);
   React.useEffect(() => {
     const fetchApiUrl = async () => {
       const ApiUrls = await ApiUrl();
-      let ApiURL = localStorage.getItem("ApiUrl");
+      const ApiURL = sessionStorage.getItem("ApiUrl");
+
       if (ApiURL) {
-        localStorage.removeItem("ApiUrl");
-        localStorage.setItem("ApiUrl", ApiUrls);
-      } else {
-        localStorage.setItem("ApiUrl", ApiUrls);
+        sessionStorage.removeItem("ApiUrl");
       }
+
+      sessionStorage.setItem("ApiUrl", ApiUrls);
+
+      // let ApiURL = localStorage.getItem("ApiUrl");
+      // if (ApiURL) {
+      //   localStorage.removeItem("ApiUrl");
+      //   localStorage.setItem("ApiUrl", ApiUrls);
+      // } else {
+      //   localStorage.setItem("ApiUrl", ApiUrls);
+      // }
     };
     void fetchApiUrl();
   }, []);

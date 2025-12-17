@@ -51,6 +51,7 @@ import { tabStyle } from "../../components/TabMerge";
 import {
   ActionName,
   ButtonAction,
+  ExternalUserType,
   InterviewDate,
   JobAdvertAlertMsg,
 } from "../../utilities/LabelName";
@@ -122,7 +123,53 @@ const RecruitmentProcess = (props: any) => {
 
   const [pendingInfo, setPendingInfo] = React.useState<any>(null);
   const [positionIDs, setPositionIDs] = React.useState<any>(null);
+  const [AssignRecruitmentHROption, setAssignRecruitmentHROption] =
+    React.useState<AutoCompleteItem[]>([]);
+  const [AssignRecruitmentAgenciesOption, setAssignRecruitmentAgenciesOption] =
+    React.useState<AutoCompleteItem[]>([]);
   const storedStringRef = React.useRef("");
+
+  const fetchHRAgencyDetails = async () => {
+    try {
+      const GetADGruopUserID = await CommonServices.GetMasterData(
+        ListNames.HRMSRecruitmentUserRole
+      );
+      let ADGroupIDs = GetADGruopUserID.data?.filter(
+        (item: any) => item.ID === RoleID.RecruitmentHR
+      );
+      const [HRMSExternalAgents, AssignRecurtimentHROption] = await Promise.all(
+        [
+          CommonServices.GetMasterData(ListNames.HRMSExternalAgents),
+          CommonServices.GetADgruopsEmailIDs(ADGroupIDs[0]?.ADGroupID),
+        ]
+      );
+      let ExternalAgent = HRMSExternalAgents.data?.filter(
+        (nat) =>
+          nat.Nationality === selectedJobCodes[0]?.Nationality &&
+          nat.UserType === ExternalUserType.Agent
+      );
+      const agentsOptions: AutoCompleteItem[] =
+        ExternalAgent?.map((item: any) => ({
+          key: item.Id,
+          text: item.AgentName,
+        })) ?? [];
+      setAssignRecruitmentAgenciesOption(agentsOptions);
+
+      if (
+        AssignRecurtimentHROption.status === 200 &&
+        AssignRecurtimentHROption.data
+      ) {
+        setAssignRecruitmentHROption(AssignRecurtimentHROption.data);
+      } else {
+        console.error(
+          AssignRecurtimentHROption.data?.message ??
+            "Error fetching HR group emails"
+        );
+      }
+    } catch (error) {
+      console.error("Initialization error:", error);
+    }
+  };
 
   const handleHover = async (statusId: number, rowData: any) => {
     let pendingName: any[] = [];
@@ -360,11 +407,11 @@ const RecruitmentProcess = (props: any) => {
       header: "Job Title",
       sortable: true,
     },
-    {
-      field: "BusinessUnitCode",
-      header: "BusinessUnit Code",
-      sortable: true,
-    },
+    // {
+    //   field: "BusinessUnitCode",
+    //   header: "BusinessUnit Code",
+    //   sortable: true,
+    // },
     {
       field: "NumberOfPersonNeeded",
       header: "No. of person(s)",
@@ -1357,6 +1404,7 @@ const RecruitmentProcess = (props: any) => {
       }
       setActiveTab("tab1");
     }
+    fetchHRAgencyDetails;
     // handleRefresh(props.TabDetails[0]?.[0]?.Value);
   }, []);
 
@@ -2200,7 +2248,10 @@ const RecruitmentProcess = (props: any) => {
                   AssignedHRId={props.stateValue?.AssignedHRId}
                   validationErrors={validationErrors}
                   ValueData={AssignHRData}
-                  Nationality={selectedJobCodes[0]?.Nationality ?? ""}
+                  AssignRecruitmentHROption={AssignRecruitmentHROption}
+                  AssignRecruitmentAgenciesOption={
+                    AssignRecruitmentAgenciesOption
+                  }
                   handleAutoComplete={(item) => handleAutoComplete(item)}
                   handleAgencyChange={(item: AutoCompleteItem[]) =>
                     handleAgencyChange(item)

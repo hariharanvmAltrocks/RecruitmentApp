@@ -9,12 +9,14 @@ import {
   workflowStatusApi,
   RoleID,
   WorkflowAction,
+  ResponeStatus,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Card, CardContent } from "@mui/material";
 import { StatusDetails, TabDetails } from "../../Models/Master";
 import {
   GetPortalJobsService,
+  getVRRDetails,
   laborHireService,
   OfferLetterServices,
 } from "../../Services/ServiceExport";
@@ -142,7 +144,18 @@ const UploadOfferDocumentList = (props: any) => {
                   ActionId: WorkflowAction.Reject,
                 };
               }
-              await OfferLetterServices.UpdateStatusInSpfxlist([matchedData]);
+              let UpdateData = await OfferLetterServices.UpdateStatusInSpfxlist(
+                [matchedData]
+              );
+              if (UpdateData.status === ResponeStatus.SUCCESS) {
+                let datas = {
+                  ID: rowData?.CandidateDetails.CandidateID,
+                  BackgroundChecksResults: mappedArray ?? [],
+                };
+                await getVRRDetails.InsertRecruitmentCandidateDetails({
+                  datas,
+                });
+              }
             }
           }
         })
@@ -273,6 +286,7 @@ const UploadOfferDocumentList = (props: any) => {
               rowData?.StatusID ===
                 StatusId.OnboardingProcessinitiatedforExpat ||
               rowData?.StatusID === StatusId.PendingwithTAforMedicalScreening ||
+              rowData?.StatusID === StatusId.PendingDOTAficaVerification ||
               OfferLettertabs.current === TabName.MySubmission ? (
               <>
                 <img

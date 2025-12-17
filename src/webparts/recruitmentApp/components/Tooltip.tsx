@@ -92,15 +92,13 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
         <div>
           {!data && <div>Loading...</div>}
 
-          {ApproverData?.length > 0 &&
-            typeof ApproverData !== "string" &&
+          {data?.length > 0 &&
+            typeof data !== "string" &&
             renderApproverList(
               data.map((item: any) => boldLabel(item.Key, item.Value))
             )}
 
-          {typeof ApproverData === "string" && <p>{data}</p>}
-
-          {!ApproverData && <p>No Record Found</p>}
+          {typeof data === "string" && <p>{data}</p>}
         </div>
       );
     },

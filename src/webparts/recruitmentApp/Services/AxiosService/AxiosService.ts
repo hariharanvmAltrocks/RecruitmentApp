@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "ax
 import { AlertMsg, AuthorizationHeader } from "./axiosConfig";
 import { setToken, getToken } from "./TokenContext";
 
-const ApiUrls = localStorage.getItem("ApiUrl") ?? "";
+const ApiUrls = sessionStorage.getItem("ApiUrl") ?? "";
 const AxiosInstance = axios.create({
   baseURL: ApiUrls,
   timeout: 10000000
