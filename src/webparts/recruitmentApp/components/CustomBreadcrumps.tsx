@@ -91,7 +91,9 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
     }
   };
   const isMobile = useMediaQuery("(max-width:600px)");
-
+  const hasBackButton = additionalButtons?.some(
+    (button) => button.label === ButtonAction.Back
+  );
   return (
     <div>
       <div className="ms-Grid-row">
@@ -105,17 +107,28 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({
               : "ms-Grid-col ms-lg9"
           }
         >
-          <span style={{ display: "flex" }}>
+          <span
+            style={{ display: "flex", marginLeft: hasBackButton ? "3%" : "0%" }}
+          >
             {additionalButtons.some(
               (button) => button.label === ButtonAction.Back
             ) &&
               additionalButtons.map((button, index) => {
-                return <ArrowBackIcon key={index} onClick={button.onClick} />;
+                return (
+                  <ReuseButton
+                    label={ButtonAction.Back}
+                    onClick={button.onClick}
+                    spacing={4}
+                    icon={
+                      <ArrowBackIcon key={index} onClick={button.onClick} />
+                    }
+                  ></ReuseButton>
+                );
               })}
             <Breadcrumbs
               aria-label="breadcrumb"
               separator={separator}
-              sx={{ marginBottom: "16px", marginLeft: "2%" }}
+              sx={{ marginBottom: "16px", marginLeft: "3%", marginTop: "1%" }}
             >
               {TabName.map((item, index) => (
                 <Typography

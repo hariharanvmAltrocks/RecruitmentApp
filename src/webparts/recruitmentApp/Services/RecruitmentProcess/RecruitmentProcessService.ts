@@ -9,7 +9,7 @@ import {
   JobCodeData,
   PostRecuritmentData,
 } from "./IRecruitmentProcessService";
-import { CandidateData, RoleSpecKnowledge } from "../../Models/RecuritmentVRR";
+import { CandidateData, QualificationValue, RoleSpecKnowledge } from "../../Models/RecuritmentVRR";
 import { sp } from "@pnp/sp/presets/all";
 import { CommonServices, GetPortalJobsService, getVRRDetails, InterviewServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
@@ -1386,7 +1386,6 @@ export default class RecruitmentService implements IRecruitmentService {
             },
           };
         });
-
         const Qualification = mergedQualifications.map((qu) => {
           const qualificationKey = qu.MinQualification ?? qu.PrefeQualification;
           const qualiValue = qualificationMap[qualificationKey ?? ""];
@@ -1415,9 +1414,38 @@ export default class RecruitmentService implements IRecruitmentService {
             },
           };
         });
+        const qualificationValue: QualificationValue = Qualification.reduce(
+          (acc, item) => {
+            if (item.MinQualification) {
+              acc.MinQualification.push(item.MinQualification);
+            }
+
+            if (item.PrefeQualification) {
+              acc.PrefeQualification.push(item.PrefeQualification);
+            }
+
+            if (item.MinQualification_fr) {
+              acc.MinQualification_fr.push(item.MinQualification_fr);
+            }
+
+            if (item.PrefeQualification_fr) {
+              acc.PrefeQualification_fr.push(item.PrefeQualification_fr);
+            }
+
+            return acc;
+          },
+          {
+            MinQualification: [],
+            PrefeQualification: [],
+            MinQualification_fr: [],
+            PrefeQualification_fr: [],
+          } as QualificationValue
+        );
+
 
         let functionType = functionTypeMap[item.FunctionType?.ID ?? ""];
         const AdvData = {
+          ID: item.ID,
           RecruitmentID: item?.RecruitmentID?.ID || "",
           RolePurpose: item.RoleProfile || "",
           JobDescription: item.JobDescription || "",
@@ -1427,9 +1455,10 @@ export default class RecruitmentService implements IRecruitmentService {
           ExperienceinMiningIndustry: { key: item.PreferredExperience?.ID, text: experienceMap.get(item.PreferredExperience?.ID) || "" },
           RoleSpeKnowledgeValue: RoleSpeKnowledge,
           TechnicalSkillValue: TechnicalSkills,
-          qualificationValue: Qualification,
+          qualificationValue: qualificationValue,
           JobFunctionalType: { key: item.FunctionType?.ID, text: functionType?.en },
           JobFunctionalType_fr: { key: item.FunctionType?.ID, text: functionType?.fr },
+          JobBasedBGVVerification: JSON.parse(item.JobBasedBGVVerification)
         }
         return AdvData;
       });

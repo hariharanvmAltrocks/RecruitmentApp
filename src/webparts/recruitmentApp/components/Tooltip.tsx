@@ -7,7 +7,11 @@ import {
   ITooltipHostStyles,
 } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
-import { ActionName, PositionStatus } from "../utilities/LabelName";
+import {
+  ActionName,
+  DotTooltipStatus,
+  PositionStatus,
+} from "../utilities/LabelName";
 
 interface ToolTipButtonProps {
   Title?: string;
@@ -50,7 +54,7 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
           : TooltipLabel
           ? TooltipLabel
           : BGDocs
-          ? "DotAfrica Verification"
+          ? "Dot's Africa Verification"
           : "Next Approver Name"}
       </div>
       <div style={{ maxHeight: "20vh", overflowY: "auto" }}>{lines}</div>
@@ -58,27 +62,30 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
   );
 
   const boldLabel = (label: string, value: string | undefined) => (
-    <div style={{ display: "flex", marginBottom: 4 }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "120px 1fr",
+        columnGap: 8,
+        marginBottom: 4,
+        fontFamily: '"Roboto", sans-serif',
+      }}
+    >
+      <div style={{ fontWeight: "bold" }}>{label}</div>
+
       <div
         style={{
-          minWidth: 85,
-          fontWeight: "bold",
-          fontFamily: '"Roboto", sans-serif',
-        }}
-      >
-        {label}
-      </div>
-      <div
-        style={{
-          fontFamily: '"Roboto", sans-serif',
           color:
             value === ActionName.Completed ||
-            value === PositionStatus.RecruitmentInProgress
+            value === PositionStatus.RecruitmentInProgress ||
+            value === DotTooltipStatus.Passed
               ? "green"
+              : value === DotTooltipStatus.Pending
+              ? "gray"
               : "red",
+          fontWeight: "600",
         }}
       >
-        {" "}
         : {value ?? "—"}
       </div>
     </div>
@@ -88,19 +95,24 @@ const ToolTipButton: React.FC<ToolTipButtonProps> = ({
     onRenderContent: () => {
       const data = ApproverData;
 
-      return (
-        <div>
-          {!data && <div>Loading...</div>}
-
-          {data?.length > 0 &&
-            typeof data !== "string" &&
-            renderApproverList(
-              data.map((item: any) => boldLabel(item.Key, item.Value))
-            )}
-
-          {typeof data === "string" && <p>{data}</p>}
-        </div>
-      );
+      if (!data) return <div>Loading...</div>;
+      if (ApproverData.length > 0 && typeof ApproverData != "string") {
+        return renderApproverList(
+          data.map((item: any) => boldLabel(item.Key, item.Value))
+        );
+      } else if (typeof ApproverData === "string") {
+        return (
+          <div>
+            <p>{data}</p>
+          </div>
+        );
+      } else {
+        return (
+          <div>
+            <p>No Record Found</p>
+          </div>
+        );
+      }
     },
   };
 

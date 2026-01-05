@@ -252,86 +252,119 @@ export default class OfferLetterService implements IOfferLetterService {
 
     FetchCandidateDocument = async (
         DocumentName: GetCandidateDocument,
-    ): Promise<ApiResponse<any>> => {
+    ): Promise<ApiResponse<IDocFiles[] | null>> => {
         try {
-            let response: IDocFiles[];
+
+            const getLatestFile = (files: any[] = []): any[] => {
+                if (!files.length) return [];
+
+                const latest = files.reduce((latest, current) => {
+                    const currDate = new Date(
+                        current?.TimeLastModified || current?.Modified || current?.Created
+                    );
+                    const latestDate = new Date(
+                        latest?.TimeLastModified || latest?.Modified || latest?.Created
+                    );
+
+                    return currDate > latestDate ? current : latest;
+                });
+
+                return [latest]; // 👈 return as array
+            };
+
+
+            let response: IDocFiles[] | null = null;
+
             switch (DocumentName.DocumentType) {
-                case DocumentFolderName.BackgroundVerification:
-                    response = (await SPServices.getDocLibFiles({
+
+                case DocumentFolderName.BackgroundVerification: {
+                    const files = await SPServices.getDocLibFiles({
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.DocumentType}`,
-                    })) as IDocFiles[];
+                    }) as IDocFiles[];
+
+                    response = getLatestFile(files);
                     break;
-                case DocumentFolderName.Offerletter:
-                    response = (await SPServices.getDocLibFiles({
+                }
+
+                case DocumentFolderName.Offerletter: {
+                    const files = await SPServices.getDocLibFiles({
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${DocumentName.UnsignedDoc}`,
-                    })) as IDocFiles[];
+                    }) as IDocFiles[];
+
+                    response = getLatestFile(files);
                     break;
+                }
+
                 case DocumentFolderName.WorkPermit: {
-                    const Medical = await SPServices.getDocLibFiles({
+                    const medical = await SPServices.getDocLibFiles({
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentFolderName.Medical}`,
                     }) as IDocFiles[];
 
-                    const Vaccination = await SPServices.getDocLibFiles({
+                    const vaccination = await SPServices.getDocLibFiles({
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentFolderName.Vaccination}`,
                     }) as IDocFiles[];
 
-                    const WorkPermit = await SPServices.getDocLibFiles({
+                    const workPermit = await SPServices.getDocLibFiles({
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentFolderName.WorkPermit}`,
                     }) as IDocFiles[];
 
-                    response = [...Medical, ...Vaccination, ...WorkPermit];
+                    const allFiles = [
+                        ...(getLatestFile(medical) || []),
+                        ...(getLatestFile(vaccination) || []),
+                        ...(getLatestFile(workPermit) || []),
+                    ];
+
+                    response = getLatestFile(allFiles);
                     break;
                 }
-                case DocumentFolderName.CovidVaccinationCertificate: {
-                    response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
-                    })) as IDocFiles[];
-                    break;
-                }
-                case DocumentFolderName.PoliceClearanceCertificate: {
-                    response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
-                    })) as IDocFiles[];
-                    break;
-                }
-                case DocumentFolderName.YellowFeverVaccinationCertificate: {
-                    response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
-                    })) as IDocFiles[];
-                    break;
-                }
-                case DocumentFolderName.EmploymentContractForm: {
-                    response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${DocumentName.UnsignedDoc}`,
-                    })) as IDocFiles[];
-                    break;
-                }
+
+                case DocumentFolderName.CovidVaccinationCertificate:
+                case DocumentFolderName.PoliceClearanceCertificate:
+                case DocumentFolderName.YellowFeverVaccinationCertificate:
                 case DocumentFolderName.PaymentBill: {
-                    response = (await SPServices.getDocLibFiles({
+                    const files = await SPServices.getDocLibFiles({
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
-                    })) as IDocFiles[];
+                    }) as IDocFiles[];
+
+                    response = getLatestFile(files);
                     break;
                 }
-                default:
-                    response = (await SPServices.getDocLibFiles({
-                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}`,
-                    })) as IDocFiles[];
+
+                case DocumentFolderName.EmploymentContractForm: {
+                    const files = await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${DocumentName.UnsignedDoc}`,
+                    }) as IDocFiles[];
+
+                    response = getLatestFile(files);
                     break;
+                }
+
+                default: {
+                    const files = await SPServices.getDocLibFiles({
+                        FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}`,
+                    }) as IDocFiles[];
+
+                    response = getLatestFile(files);
+                    break;
+                }
             }
+
             return {
                 data: response,
                 status: 200,
-                message: "No attachments provided",
+                message: response ? "Latest file fetched successfully" : "No attachments provided",
             };
-        } catch (error) {
-            console.error("Error during file replacement process:", error);
+
+        } catch (error: any) {
+            console.error("Error during file fetch:", error);
             return {
                 data: null,
                 status: 500,
-                message: `Error during file replacement: ${error.message}`,
+                message: `Error during file fetch: ${error.message}`,
             };
         }
     };
+
 
     UpdateStatusInSpfxlist = async (
         UpdateParams: any,
@@ -427,7 +460,7 @@ export default class OfferLetterService implements IOfferLetterService {
     ): Promise<ApiResponse<null>> {
         try {
             const res = await SPServices.SPGetItems({
-                Listname: HODData.IsExpat ? ListNames.HRMSRESIExpatDetails : ListNames.HRMSRESIDRCDetails,
+                Listname: HODData.IsExpat === "Yes" ? ListNames.HRMSRESIExpatDetails : ListNames.HRMSRESIDRCDetails,
                 Filter: [
                     {
                         FilterKey: "SelectedCandidateHODId",
@@ -456,8 +489,10 @@ export default class OfferLetterService implements IOfferLetterService {
                     data?.NoticePeriod === ""
                         ? "20"
                         : String(data?.NoticePeriod) ?? "0",
-                netPay: res[0]?.ProposedNetUSDAmount,
+                netPay: HODData.IsExpat == "Yes" ? res[0]?.ProposedNetUSDAmount : res[0]?.ProposedNetAmount,
                 lhCode: res[0]?.LabourhireORContractor?.AgentCode,
+                // netPay: res[0]?.ProposedNetUSDAmount,
+                // lhCode: res[0]?.LabourhireORContractor?.AgentCode,
                 createdOn: new Date(todaydate),
                 createdBy: RoleName.RecruitmentHR,
                 createrEmail: CurrentUserEmail //props.userDetails[0]?.EmailId,
@@ -602,7 +637,7 @@ export default class OfferLetterService implements IOfferLetterService {
     ): Promise<ApiResponse<{ netPay: string, lhCode: string } | null>> {
         try {
             const res = await SPServices.SPGetItems({
-                Listname: IsExpat ? ListNames.HRMSRESIExpatDetails : ListNames.HRMSRESIDRCDetails,
+                Listname: IsExpat == "Yes" ? ListNames.HRMSRESIExpatDetails : ListNames.HRMSRESIDRCDetails,
                 Filter: [
                     {
                         FilterKey: "SelectedCandidateHODId",
@@ -615,7 +650,7 @@ export default class OfferLetterService implements IOfferLetterService {
             });
             console.log(res, "responseData");
             let laborHireData = {
-                netPay: res[0]?.ProposedNetUSDAmount,
+                netPay: IsExpat == "Yes" ? res[0]?.ProposedNetUSDAmount : res[0]?.ProposedNetAmount,
                 lhCode: res[0]?.LabourhireORContractor?.AgentName,
             };
 

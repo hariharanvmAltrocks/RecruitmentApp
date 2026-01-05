@@ -64,8 +64,6 @@ export type formValidation = {
 };
 
 const RecruitmentProcess = (props: any) => {
-  // console.log(props, "PROPSvALUE");
-
   const [data, setData] = React.useState<DataSyncToRecruitmentResponse[]>([]);
   const [selectedrowdata, setSelectedrowdata] = React.useState<
     DataSyncToRecruitmentResponse[]
@@ -129,7 +127,7 @@ const RecruitmentProcess = (props: any) => {
     React.useState<AutoCompleteItem[]>([]);
   const storedStringRef = React.useRef("");
 
-  const fetchHRAgencyDetails = async () => {
+  const fetchHRAgencyDetails = async (Nationality: string) => {
     try {
       const GetADGruopUserID = await CommonServices.GetMasterData(
         ListNames.HRMSRecruitmentUserRole
@@ -145,7 +143,7 @@ const RecruitmentProcess = (props: any) => {
       );
       let ExternalAgent = HRMSExternalAgents.data?.filter(
         (nat) =>
-          nat.Nationality === selectedJobCodes[0]?.Nationality &&
+          nat.Nationality === Nationality &&
           nat.UserType === ExternalUserType.Agent
       );
       const agentsOptions: AutoCompleteItem[] =
@@ -1404,7 +1402,6 @@ const RecruitmentProcess = (props: any) => {
       }
       setActiveTab("tab1");
     }
-    fetchHRAgencyDetails;
     // handleRefresh(props.TabDetails[0]?.[0]?.Value);
   }, []);
 
@@ -1531,7 +1528,7 @@ const RecruitmentProcess = (props: any) => {
     }
   };
 
-  const handleCheckbox = (item: any[]) => {
+  const handleCheckbox = async (item: any[]) => {
     const selectedJobCodes = item
       .filter((currentItem) => currentItem.Checked)
       .map((currentItem) => {
@@ -1549,9 +1546,10 @@ const RecruitmentProcess = (props: any) => {
         };
       });
     setSelectedJobCodes(selectedJobCodes);
+    await fetchHRAgencyDetails(selectedJobCodes[0]?.Nationality);
   };
 
-  const onSelectAllChange = (item: any[]) => {
+  const onSelectAllChange = async (item: any[]) => {
     const selectedJobCodes = item
       .filter((item) => item.Checked)
       .map((item) => {
@@ -1569,6 +1567,7 @@ const RecruitmentProcess = (props: any) => {
         };
       });
     setSelectedJobCodes(selectedJobCodes);
+    await fetchHRAgencyDetails(selectedJobCodes[0]?.Nationality);
   };
 
   const handleInputChangeTextArea = (value: string) => {

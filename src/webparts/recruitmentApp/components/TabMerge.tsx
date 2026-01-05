@@ -184,3 +184,23 @@ export function a11yProps(index: number) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
+
+export const normalizeQuestion = (value: string) =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[’‘]/g, "'") // normalize smart quotes
+    .replace(/[“”]/g, '"') // normalize smart double quotes
+    .replace(/\s+/g, " "); // collapse multiple spaces
+
+export const SpiltDateOnly = (date: Date) => {
+  const updatedDate = date;
+  const year = updatedDate?.getFullYear();
+  const month = String(updatedDate?.getMonth() + 1).padStart(2, "0");
+  const day = String(updatedDate?.getDate()).padStart(2, "0");
+
+  const dateOnly = new Date(
+    Date.UTC(Number(year), Number(month) - 1, Number(day))
+  ); //`${year}-${month}-${day}`;
+  return dateOnly.toISOString();
+};

@@ -1,5 +1,5 @@
 import { AdminPItem, UpsertExternalUser } from "../../Models/AdminPanel";
-import { AdvertisementDetails, BGVStatus, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertBGV, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertBGV, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import AxiosInstance from "../AxiosService/AxiosService";
 
 export const getProfileData = {
@@ -150,22 +150,26 @@ export const BGverification = {
             `/BGVerification/RunBGVerification?jobRequestId=${id}`
         );
     },
-    GetBGVStatus: async function (params: BGVStatus) {
-        return await AxiosInstance.post(
-            `/hrms/GetBGVStatus`, params
-        );
-    },
+    // GetBGVStatus: async function (params: BGVStatus) {
+    //     return await AxiosInstance.post(
+    //         `/hrms/GetBGVStatus`, params
+    //     );
+    // },
     UpsertBGVJobMaster: async function (params: UpsertBGV[]) {
         return await AxiosInstance.post(
             `/hrms/UpsertBGVJobMaster`, params
         )
     },
-    GetBGVerificationType: async function (NationalityCode: string) {
+    GetBGVerificationType: async function () {
         return await AxiosInstance.get(
-            `hrms/GetBGVerificationType?nationality=${NationalityCode}`
+            `hrms/GetBGVerificationType`
         )
     },
-
+    UpdateBGVerification: async function (params: number) {
+        return await AxiosInstance.get(
+            `BGVerification/ProcessBgvJobs?jobRequestId=${params}`
+        )
+    },
 }
 
 export const AdminPanelServiceApi = {

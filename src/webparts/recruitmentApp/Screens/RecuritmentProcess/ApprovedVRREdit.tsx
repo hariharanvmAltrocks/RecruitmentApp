@@ -73,7 +73,6 @@ import {
   Attachment,
   ButtonAction,
   CheckboxContent,
-  JobBasedBVG,
   labelNames,
   RadioBtnLabel,
 } from "../../utilities/LabelName";
@@ -142,6 +141,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   // const [ButtonLabel, setButtonLabel] = useState<string>("Submit");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [advDetails, setAdvDetails] = useState<AdvDetails>({
+    RoleDetailsID: 0,
     MinQualificationOption: [],
     PrefeQualificationOption: [],
     RoleSpeKnowledgeoption: [],
@@ -178,6 +178,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     JobTitleofLineManagerSupervisor_fr: { key: 0, text: "" },
     JobTitleofFunctionalManagerOption: [],
     JobTitleofLineManagerSupervisorOption: [],
+    JobBasedBGVVerification: [],
   });
   const [formState, setFormState] = useState<RecuritmentData>({
     VRRID: 0,
@@ -234,6 +235,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       todaydate.getMinutes(),
       todaydate.getSeconds()
     ),
+    RoleProfileDocument_fr: [],
+    GradingDocument_fr: [],
   });
   const [validationErrors, setValidationError] =
     React.useState<formValidationEdit>({
@@ -611,7 +614,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           const items = data[0];
           setAdvDetails((prevState) => ({
             ...prevState,
-            RolePurpose: items?.RoleProfile || "",
+            RoleDetailsID: items?.ID,
+            RolePurpose: items?.RolePurpose || "",
             JobDescription: items?.JobDescription || "",
             RolePurpose_fr: items?.RolePurpose_fr || "",
             JobDescription_fr: items?.JobDescription_fr || "",
@@ -620,10 +624,50 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             JobFunctionalType: items?.JobFunctionalType,
             JobFunctionalType_fr: items?.JobFunctionalType_fr,
             JobcodeChecked: true,
+            JobBasedBGVVerification: items.JobBasedBGVVerification,
           }));
           setRoleSpeKnowledgeValue(items.RoleSpeKnowledgeValue);
           setTechnicalSkillValue(items.TechnicalSkillValue);
           setQualificationValue(items.qualificationValue);
+          if (
+            props.stateValue?.StatusId ===
+            StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+          ) {
+            try {
+              const res = await laborHireService.GetBGVerificationType();
+              const BGVOPtions = res.data.map((item: any, index: number) => ({
+                id: index + 1,
+                key: item?.reference,
+                description: item?.displayText,
+                checked: false,
+              }));
+              const RoleBGV = (
+                Array.isArray(items.JobBasedBGVVerification)
+                  ? items.JobBasedBGVVerification
+                  : []
+              ).flatMap((item: any, index: number) =>
+                res.data
+                  .filter(
+                    (data: any) => data.reference === item.verificationType
+                  )
+                  .map((data: any) => ({
+                    id: index + 1,
+                    key: data.reference,
+                    description: data.displayText,
+                    checked: item.isActive,
+                  }))
+              );
+
+              setBVGVerification((prev) => ({
+                ...prev,
+                checkboxBGVOption: BGVOPtions,
+                checkboxBGV: RoleBGV,
+              }));
+              console.log(res, "res");
+            } catch (error) {
+              console.error("Error in OpenComments:", error);
+            }
+          }
         } else {
           setAdvDetails((prev) => ({
             ...prev,
@@ -789,8 +833,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             EnterNumberOfMonths: Number(op.EnterNumberOfMonths) || 0,
             DateRequried: String(op.DateRequried) || "",
             VacancyConfirmed: op.VacancyConfirmed || "",
-            RoleProfileDocument: RoleProfileDoc,
-            GradingDocument: GradingDoc,
+            RoleProfileDocument: RoleProfileDoc.English || [],
+            RoleProfileDocument_fr: RoleProfileDoc.French || [],
+            GradingDocument: GradingDoc.English || [],
+            GradingDocument_fr: GradingDoc.French || [],
             AdvertisementDocument: AdvertismentDocPromises,
             OnamSignedStampsDocument: ONAMSignedStampDoc,
           }));
@@ -842,33 +888,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           ...prevState,
           ValidTo: newValidTo,
         }));
-        if (
-          props.stateValue?.StatusId ===
-          StatusId.PendingwithHRLeadtouploadONEMsigneddoc
-        ) {
-          try {
-            const res = await laborHireService.GetBGVerificationType(
-              NationalityCode.SouthAfrica
-            );
-            const BGVFilter = res.data.filter((item: any) =>
-              JobBasedBVG.includes(item?.reference)
-            );
-            const BGVOPtions = BGVFilter.map((item: any, index: number) => ({
-              id: index + 1,
-              key: item?.reference,
-              description: item?.displayText,
-              checked: false,
-            }));
-            setBVGVerification((prev) => ({
-              ...prev,
-              checkboxBGVOption: BGVOPtions,
-              // checkboxBGV: BGVOPtions,
-            }));
-            console.log(res, "res");
-          } catch (error) {
-            console.error("Error in OpenComments:", error);
-          }
-        }
       }
       setIsLoading(false);
     };
@@ -1484,10 +1503,24 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       ? SpiltDateOnly(advDetails.ValidTo)
                       : "",
                   };
+                  const BVGVerified = BVGVerification.checkboxBGV.map(
+                    (item) => ({
+                      verificationType: item.key,
+                      isActive: item.checked ?? false,
+                    })
+                  );
+                  const RoleObj: any = {
+                    JobBasedBGVVerification: JSON.stringify(BVGVerified),
+                  };
                   await SPServices.SPUpdateItem({
                     Listname: ListNames.HRMSRecruitmentDptDetails,
                     RequestJSON: obj,
                     ID: props.stateValue?.ID,
+                  });
+                  await SPServices.SPUpdateItem({
+                    Listname: ListNames.HRMSRecruitmentRoleProfileDetails,
+                    RequestJSON: RoleObj,
+                    ID: advDetails?.RoleDetailsID,
                   });
                   resetForm();
                   let SuccessAlert = {
@@ -2441,66 +2474,31 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         </div>
                       </div>
                     )}
-
-                    {/* : (
-                        <>
-                          {currentRoleID === RoleID.RecruitmentHRLead &&
-                          props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess ? (
-                            <></>
-                          ) : (
-                            <>
-                              Commented out this section because the client mentioned that the Recruitment HR did not upload 
- the Role Profile and Grading Document. This functionality will remain disabled until those documents 
- are provided and approved.
-                              <CustomLabel
-                                value={"RoleProfile Documents (Only Word)"}
-                                mandatory={true}
-                              />
-                              <AttachmentButton
-                                label="Upload"
-                                iconName="CloudUpload"
-                                iconNameHover="CloudUpload"
-                                allowMultiple={false}
-                                AttachState={(newAttachment: any) => {
-                                  let attachment: IDocFiles[] =
-                                    newAttachment.map((item: any) => {
-                                      return {
-                                        name: item.name,
-                                        content: item.file,
-                                        type: "New",
-                                      };
-                                    });
-                                  // const attachments = [
-                                  //   ...(masterLibrary.RoleProfile || []),
-                                  //   ...attachment,
-                                  // ];
-                                  handleRoleprofileDocument(
-                                    "RoleProfile",
-                                    attachment
-                                  );
-                                }}
-                                mandatory={true}
-                                error={validationErrors.RoleProfile}
-                                Style={{
-                                  backgroundColor:
-                                    ColorCode.ButtonColorCode.ButtonColor,
-                                  color: "white",
-                                }}
-                                fileformat=".doc, .docx"
-                              />
-                              <CustomViewAttachment
-                                Attachment={masterLibrary.RoleProfile ?? []}
-                                StateValue={"RoleProfile"}
-                                handleDelete={(index, fileState) =>
-                                  handleRoleprofileDelete(index, fileState)
-                                }
-                              />
-                            </>
-                          )}
-                        </>
-                      )}
-                    </div> */}
-
+                    {formState.RoleProfileDocument_fr.length > 0 && (
+                      <div className="ms-Grid-col ms-lg3">
+                        <div className="custom-document-column">
+                          <CustomLabel
+                            value={
+                              Attachment.PositionDocument
+                                .RoleProfileDocuments_fr
+                            }
+                          />
+                          <div
+                            className="document-wrapper"
+                            title={
+                              Array.isArray(formState.RoleProfileDocument_fr)
+                                ? formState.RoleProfileDocument_fr.join(", ")
+                                : formState.RoleProfileDocument_fr
+                            }
+                          >
+                            <CustomViewDocument
+                              Attachment={formState.RoleProfileDocument_fr}
+                              webUrl={props.webURL}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     {formState.GradingDocument.length > 0 && (
                       <div className="ms-Grid-col ms-lg3">
                         <div className="custom-document-column">
@@ -2523,71 +2521,40 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         </div>
                       </div>
                     )}
-                    {/* Commented out this section because the client mentioned that the Recruitment HR did not upload 
- the Role Profile and Grading Document. This functionality will remain disabled until those documents 
- are provided and approved.
-                    </div> : (
-                         <>
-                           {currentRoleID === RoleID.RecruitmentHRLead &&
-                          props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess ? (
-                            <></>
-                          ) : (
-                            <>
-                             
-                              <CustomLabel
-                                value={"Grading Documents (Only Word)"}
-                                mandatory={true}
-                              />
-                              <AttachmentButton
-                                label="Upload"
-                                iconName="CloudUpload"
-                                iconNameHover="CloudUpload"
-                                allowMultiple={false}
-                                AttachState={(newAttachment: any) => {
-                                  let attachment: IDocFiles[] =
-                                    newAttachment.map((item: any) => {
-                                      return {
-                                        name: item.name,
-                                        content: item.file,
-                                        type: "New",
-                                      };
-                                    });
-                                  // const attachments = [
-                                  //   ...(masterLibrary.Grading || []),
-                                  //   ...attachment,
-                                  // ];
-                                  handleRoleprofileDocument(
-                                    "Grading",
-                                    attachment
-                                  );
-                                }}
-                                mandatory={true}
-                                error={validationErrors.Grading}
-                                Style={{
-                                  backgroundColor:
-                                    ColorCode.ButtonColorCode.ButtonColor,
-                                  color: "white",
-                                }}
-                                fileformat=".doc, .docx"
-                              />
-                              <CustomViewAttachment
-                                Attachment={masterLibrary.Grading ?? []}
-                                StateValue={"Grading"}
-                                handleDelete={(index, fileState) =>
-                                  handleRoleprofileDelete(index, fileState)
-                                }
-                              />
-                            </>
-                          )}
-                        </>
-                      )} */}
 
-                    {currentRoleID === RoleID.RecruitmentHRLead &&
-                    props.stateValue?.StatusId ===
-                      StatusId.ReadyforRecruitmentProcess ? (
-                      <></>
-                    ) : (
-                      <>
+                    {formState.GradingDocument_fr.length > 0 && (
+                      <div className="ms-Grid-col ms-lg3">
+                        <div className="custom-document-column">
+                          <CustomLabel
+                            value={
+                              Attachment.PositionDocument.GradingDocuments_fr
+                            }
+                          />
+                          <div
+                            className="document-wrapper"
+                            title={
+                              Array.isArray(formState.GradingDocument_fr)
+                                ? formState.GradingDocument_fr.join(", ")
+                                : formState.GradingDocument_fr
+                            }
+                          >
+                            <CustomViewDocument
+                              Attachment={formState.GradingDocument_fr}
+                              webUrl={props.webURL}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {currentRoleID === RoleID.RecruitmentHRLead &&
+                  props.stateValue?.StatusId ===
+                    StatusId.ReadyforRecruitmentProcess ? (
+                    <></>
+                  ) : (
+                    <>
+                      <div className="ms-Grid-row">
                         {formState.AdvertisementDocument.length > 0 ? (
                           <div className="ms-Grid-col ms-lg3 custom-document-column ">
                             <CustomLabel
@@ -2657,37 +2624,68 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                             />
                           </div>
                         )}
-                        {/* <div className="ms-Grid-col ms-lg3 custom-document-column">
-                          <CustomLabel value={"Advertisement Documents"} />
-                          <div
-                            className="document-wrapper"
-                            title={
-                              Array.isArray(formState.AdvertisementDocument)
-                                ? formState.AdvertisementDocument.join(", ")
-                                : formState.AdvertisementDocument
-                            }
-                          >
-                            <CustomViewDocument
-                              Attachment={formState.AdvertisementDocument}
-                               webUrl={props.webURL}
+
+                        {props.stateValue?.StatusId ===
+                          StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
+                          <div className="ms-Grid-col ms-lg4">
+                            <CustomLabel
+                              value={
+                                Attachment.PositionDocument
+                                  .ONEMSignedStampedDocuments
+                              }
+                              mandatory={true}
+                            />
+                            <AttachmentButton
+                              label="Upload"
+                              iconName="CloudUpload"
+                              iconNameHover="CloudUpload"
+                              allowMultiple={false}
+                              AttachState={(newAttachment: any) => {
+                                let attachment: IDocFiles[] = newAttachment.map(
+                                  (item: any) => {
+                                    return {
+                                      name: item.name,
+                                      content: item.file,
+                                      type: "New",
+                                      url: item.Url,
+                                    };
+                                  }
+                                );
+                                // const attachments = [
+                                //   ...(formState.OnamSignedStampsAttchment || []),
+                                //   ...attachment,
+                                // ];
+                                handleFileAttachment(
+                                  "OnamSignedStampsAttchment",
+                                  attachment
+                                );
+                              }}
+                              mandatory={true}
+                              error={validationErrors.OnamSignedStampsAttchment}
+                              Style={{
+                                backgroundColor:
+                                  ColorCode.ButtonColorCode.ButtonColor,
+                                color: "white",
+                              }}
+                              fileformat=".pdf"
+                            />
+                            <CustomViewAttachment
+                              Attachment={
+                                formState.OnamSignedStampsAttchment ?? []
+                              }
+                              StateValue={"OnamSignedStampsAttchment"}
+                              handleDelete={(index, fileState) =>
+                                handleDelete(index, fileState)
+                              }
+                              webUrl={props.webURL}
                             />
                           </div>
-                        </div> */}
-                      </>
-                    )}
-                  </div>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </>
               )}
-
-              {/* {((props.CurrentRoleID === RoleID.HOD &&
-                props.stateValue?.StatusId ===
-                  StatusId.PendingwithHODtoreviewAdv) ||
-                (props.CurrentRoleID === RoleID.RecruitmentHR &&
-                  props.stateValue?.StatusId ===
-                    StatusId.PendingwithRecruitmentHRtouploadAdv &&
-                  advDetails.JobcodeChecked === true)) && (
-               
-              )} */}
 
               <div className="ms-Grid-row">
                 {currentRoleID === RoleID.RecruitmentHRLead &&
@@ -2772,59 +2770,6 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                       <></>
                     )}
                   </>
-                )}
-
-                {props.stateValue?.StatusId ===
-                  StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
-                  <div className="ms-Grid-col ms-lg4">
-                    <CustomLabel
-                      value={
-                        Attachment.PositionDocument.ONEMSignedStampedDocuments
-                      }
-                      mandatory={true}
-                    />
-                    <AttachmentButton
-                      label="Upload"
-                      iconName="CloudUpload"
-                      iconNameHover="CloudUpload"
-                      allowMultiple={false}
-                      AttachState={(newAttachment: any) => {
-                        let attachment: IDocFiles[] = newAttachment.map(
-                          (item: any) => {
-                            return {
-                              name: item.name,
-                              content: item.file,
-                              type: "New",
-                              url: item.Url,
-                            };
-                          }
-                        );
-                        // const attachments = [
-                        //   ...(formState.OnamSignedStampsAttchment || []),
-                        //   ...attachment,
-                        // ];
-                        handleFileAttachment(
-                          "OnamSignedStampsAttchment",
-                          attachment
-                        );
-                      }}
-                      mandatory={true}
-                      error={validationErrors.OnamSignedStampsAttchment}
-                      Style={{
-                        backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                        color: "white",
-                      }}
-                      fileformat=".pdf"
-                    />
-                    <CustomViewAttachment
-                      Attachment={formState.OnamSignedStampsAttchment ?? []}
-                      StateValue={"OnamSignedStampsAttchment"}
-                      handleDelete={(index, fileState) =>
-                        handleDelete(index, fileState)
-                      }
-                      webUrl={props.webURL}
-                    />
-                  </div>
                 )}
               </div>
 

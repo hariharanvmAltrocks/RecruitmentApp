@@ -30,7 +30,6 @@ import {
   EmployeementCategory,
 } from "../../utilities/LabelName";
 import ToolTipButton from "../../components/Tooltip";
-import { BGVStatus } from "../../Models/ApIInterface";
 type tabcount = {
   BGVCount: number;
   LabourHireCount: number;
@@ -55,6 +54,7 @@ const UploadOfferDocumentList = (props: any) => {
     LabourHireCount: 0,
     KCSACount: 0,
   });
+  const [listupdateflag, setListUpdateFlag] = React.useState<boolean>(true);
 
   const OfferLettertabs = React.useRef("");
 
@@ -74,58 +74,71 @@ const UploadOfferDocumentList = (props: any) => {
 
   const handleHover = async (statusId: number, rowData: any) => {
     try {
-      let FilterValue: BGVStatus = {
-        hrUserId: String(props.userDetails[0]?.ID),
-        pagination: {
-          filterValue: rowData?.CandidateDetails?.JobRequestID,
-          sortBy: "",
-          sortOrder: 0,
-          pageSize: 5,
-          currentPage: 1,
-          totalItems: 0,
-        },
-      };
       await laborHireService
-        .CheckBGVerification(FilterValue)
+        .CheckBGVerification(rowData?.CandidateDetails?.JobRequestID)
         .then(async (res) => {
-          const mappedArray = res.data.data[0]?.bgVerification
+          const mappedArray = res.data[0]?.bgVerification
             ?.filter((item: any) => item.bgType)
-            ?.map((item: any) => ({
-              Key: item.bgType,
-              Value:
-                item.status === DotAfricaStatus.Completed &&
-                item.result === DotAfricaStatus.Confirmed
-                  ? DotTooltipStatus.Passed
-                  : item.status === DotAfricaStatus.skipped ||
-                    item.status === DotAfricaStatus.error ||
-                    item.status === DotAfricaStatus.cancelled
-                  ? DotTooltipStatus.Failed
-                  : item.status === DotAfricaStatus.pending ||
-                    item.status === DotAfricaStatus.new
-                  ? DotTooltipStatus.Pending
-                  : DotTooltipStatus.Pending,
-            }));
+            ?.map((item: any) => {
+              const status = item.status?.trim().toLowerCase();
+              const result = item.result?.trim().toLowerCase();
+
+              return {
+                Key: item.bgType,
+                Value:
+                  status === DotAfricaStatus.Completed.trim().toLowerCase() &&
+                  result === DotAfricaStatus.Confirmed.trim().toLowerCase()
+                    ? DotTooltipStatus.Passed
+                    : [
+                        DotAfricaStatus.skipped,
+                        DotAfricaStatus.error,
+                        DotAfricaStatus.cancelled,
+                      ]
+                        .map((s) => s.trim().toLowerCase())
+                        .includes(status)
+                    ? DotTooltipStatus.Failed
+                    : [DotAfricaStatus.pending, DotAfricaStatus.new]
+                        .map((s) => s.trim().toLowerCase())
+                        .includes(status)
+                    ? DotTooltipStatus.Pending
+                    : DotTooltipStatus.Pending,
+              };
+            });
+
           setPendingInfo(mappedArray);
           if (mappedArray.length > 0) {
             const allCompleted =
               mappedArray.every(
                 (item: any) => item.Value === DotTooltipStatus.Passed
               ) || false;
-            const IDCTYpeStatus = res.data.data[0]?.bgVerification
+            const IDCTYpeStatus = res.data[0]?.bgVerification
               ?.filter((item: any) => item.bgTypeCode === "IDC")
               ?.every(
                 (item: any) =>
-                  item.status === DotAfricaStatus.skipped ||
-                  item.status === DotAfricaStatus.error ||
-                  item.status === DotAfricaStatus.cancelled
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.skipped.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.error.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.cancelled.trim().toLowerCase()
               );
-            const RejectStatus =
-              mappedArray.every(
-                (item: any) => item.Value === DotTooltipStatus.Failed
-              ) || false;
+            const RejectStatus = res.data[0]?.bgVerification
+              ?.filter((item: any) => item.bgTypeCode !== "IDC")
+              ?.some(
+                (item: any) =>
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.skipped.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.error.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.cancelled.trim().toLowerCase() ||
+                  false
+              );
+
             if (
               rowData.StatusID === StatusId.PendingDOTAficaVerification &&
-              rowData.ActionID === WorkflowAction.Transfer
+              rowData.ActionID === WorkflowAction.Transfer &&
+              listupdateflag
             ) {
               let matchedData: any;
               if (allCompleted) {
@@ -148,13 +161,18 @@ const UploadOfferDocumentList = (props: any) => {
                 [matchedData]
               );
               if (UpdateData.status === ResponeStatus.SUCCESS) {
-                let datas = {
-                  ID: rowData?.CandidateDetails.CandidateID,
-                  BackgroundChecksResults: mappedArray ?? [],
-                };
-                await getVRRDetails.InsertRecruitmentCandidateDetails({
-                  datas,
-                });
+                setListUpdateFlag(false);
+                if (allCompleted) {
+                  const BGVResult = mappedArray.map((item: any) => ({
+                    [item.Key]: item.Value,
+                  }));
+
+                  let datas = {
+                    ID: rowData?.CandidateDetails.CandidateID,
+                    BackgroundChecksResults: JSON.stringify(BGVResult) ?? [],
+                  };
+                  await getVRRDetails.InsertRecruitmentCandidateDetails(datas);
+                }
               }
             }
           }
@@ -482,12 +500,9 @@ const UploadOfferDocumentList = (props: any) => {
         item.StatusID === StatusId.PendingCandidateWorkPermitreleatedDoc ||
         item.StatusID === StatusId.PendingCandidateEmploymentContractUpload ||
         item.StatusID === StatusId.PendingLabourHireOfferRelease ||
-        // item.StatusID === StatusId.PendingCandidateOfferLetterUpload ||
         item.StatusID === StatusId.PendingLabourhireWPPayment ||
         item.StatusID === StatusId.PendingLHWorkPermitProcess ||
-        item.StatusID === StatusId.PendingLHECRelease ||
-        item.StatusID === StatusId.PendingFinancePaymentReview
-      // item.StatusID === StatusId.PendingCandidateEmploymentContractUpload
+        item.StatusID === StatusId.PendingLHECRelease
     );
 
     // switch (OfferLettertabs.current) {
@@ -534,17 +549,15 @@ const UploadOfferDocumentList = (props: any) => {
             [
               workflowStatusApi.UploadedtheCandidateBGVDocs,
               workflowStatusApi.CandidateuploadedtheSignedOfferLetter,
-              workflowStatusApi.CandidateUploadedcandidatepersonalDocs,
-              workflowStatusApi.UploadedthesignedEmployementcontractform,
-              workflowStatusApi.CandidateuploadedtheSignedOfferLetter,
-              workflowStatusApi.CandidateUploadedcandidatepersonalDocs,
+              res.RecruitmentDetails.EmploymentCategory ===
+              EmployeementCategory.KCSAEmployee
+                ? workflowStatusApi.CandidateUploadedcandidatepersonalDocs
+                : "",
               workflowStatusApi.UploadedthesignedEmployementcontractform,
               workflowStatusApi.PendingLabourHireOfferRelease,
-              workflowStatusApi.CandidateuploadedtheSignedOfferLetter,
               workflowStatusApi.PendingLabourhireWPPayment,
               workflowStatusApi.PendingLHWorkPermitProcess,
               workflowStatusApi.PendingLHECRelease,
-              workflowStatusApi.UploadedthesignedEmployementcontractform,
             ].includes(item.workflowStatusId)
         );
 

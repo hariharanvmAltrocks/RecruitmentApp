@@ -27,11 +27,7 @@ import {
   workflowStatusApi,
 } from "../../utilities/Config";
 import { alertPropsData, OnboardingChecklisttype } from "../../Models/Screens";
-import {
-  BGVStatus,
-  UploadDocument,
-  WorkflowJson,
-} from "../../Models/ApIInterface";
+import { UploadDocument, WorkflowJson } from "../../Models/ApIInterface";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomLabel from "../../components/CustomLabel";
 import AttachmentButton from "../../components/AttachmentButton";
@@ -72,7 +68,7 @@ import CustomTextArea from "../../components/CustomTextArea";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomSignature from "../../components/CustomSignature";
 import { Box, Typography } from "@mui/material";
-import { convertToList } from "../../components/TabMerge";
+import { convertToList, SpiltDateOnly } from "../../components/TabMerge";
 import "./Checklist.css";
 import CustomViewDocument from "../../components/CustomViewDocument";
 import ToolTipButton from "../../components/Tooltip";
@@ -245,6 +241,7 @@ const UploadCandidateDocument = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
+  const [WorkflowStatus, setWorkflowStatus] = React.useState<string>("");
   const [btnEnable, setBtnEnable] = React.useState<boolean>(false);
   const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
   const [checklistStatus, setChecklistStatus] = useState<any>(ChecklistStatus);
@@ -258,35 +255,44 @@ const UploadCandidateDocument = (props: any) => {
   const fetchBGVStatus = async () => {
     setIsLoading(true);
     try {
-      let FilterValue: BGVStatus = {
-        hrUserId: String(props.userDetails[0]?.ID),
-        pagination: {
-          filterValue: props.stateValue.rowData?.CandidateDetails?.JobRequestID,
-          sortBy: "",
-          sortOrder: 0,
-          pageSize: 5,
-          currentPage: 1,
-          totalItems: 0,
-        },
-      };
+      // let FilterValue: BGVStatus = {
+      //   hrUserId: String(props.userDetails[0]?.ID),
+      //   pagination: {
+      //     filterValue: ,
+      //     sortBy: "",
+      //     sortOrder: 0,
+      //     pageSize: 5,
+      //     currentPage: 1,
+      //     totalItems: 0,
+      //   },
+      // };
       await laborHireService
-        .CheckBGVerification(FilterValue)
+        .CheckBGVerification(
+          props.stateValue.rowData?.CandidateDetails?.JobRequestID
+        )
         .then(async (res) => {
           const mappedObj: { [key: string]: string } =
-            res.data.data[0]?.bgVerification
+            res.data[0]?.bgVerification
               ?.filter((item: any) => item.bgType)
               ?.reduce((acc: { [key: string]: string }, item: any) => {
                 acc[item.bgType] =
-                  item.status === DotAfricaStatus.Completed &&
-                  item.result === DotAfricaStatus.Confirmed
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.Completed.trim().toLowerCase() &&
+                  item.result?.trim().toLowerCase() ===
+                    DotAfricaStatus.Confirmed.trim().toLowerCase()
                     ? StatusBarValue.Completed
-                    : item.status === DotAfricaStatus.skipped
+                    : item.status?.trim().toLowerCase() ===
+                      DotAfricaStatus.skipped.trim().toLowerCase()
                     ? StatusBarValue.Failed
                     : StatusBarValue.Pending;
                 return acc;
               }, {});
-          let BGVRemarks = res.data.data[0]?.bgVerification
-            .filter((item: any) => item.status === DotAfricaStatus.skipped)
+          let BGVRemarks = res.data[0]?.bgVerification
+            .filter(
+              (item: any) =>
+                item.status?.trim().toLowerCase() ===
+                DotAfricaStatus.skipped.trim().toLowerCase()
+            )
             .map((item: any) => ({
               BGVType: item.bgType,
               Remarks: item.remarks,
@@ -330,6 +336,18 @@ const UploadCandidateDocument = (props: any) => {
         const VerificationType = await GetPortalJobsService.GetAllMaster(
           CategoryID.VerificationType
         );
+        const existingData = VerificationType.data || [];
+        const lastId = existingData[existingData.length - 1]?.id ?? 0;
+
+        VerificationType.data = [
+          ...existingData,
+          {
+            id: lastId + 1,
+            value: "ConsentForm",
+            displayText: "Consent Form",
+            displayTextFr: "",
+          },
+        ];
         let VerificationCode: string[] =
           VerificationType.data?.map((item) => String(item.value)) ?? [];
         let BGVDocument: GetBGVDocument = {
@@ -565,6 +583,8 @@ const UploadCandidateDocument = (props: any) => {
         response.data[0].ID,
         response.data[0].IsExpat
       );
+      let WorkflowStatusId = CandidateDetails?.data?.[0]?.workflowStatusId;
+      setWorkflowStatus(WorkflowStatusId ?? "");
       setData((prev) => ({
         ...prev,
         CandidateID: item?.CandidateDetails.CandidateID,
@@ -738,7 +758,6 @@ const UploadCandidateDocument = (props: any) => {
               : "Yes",
         }));
       }
-      await fetchBGVStatus();
       if (props.stateValue?.StatusId === StatusId.PendingDOTAficaVerification) {
         let BGVProcessOption = props.EmployeeList.map((item: any) => ({
           key: item.Email,
@@ -750,6 +769,7 @@ const UploadCandidateDocument = (props: any) => {
           ...prev,
           BGVStatusProcessOption: BGVProcessOption,
         }));
+        await fetchBGVStatus();
       }
     } catch (error) {
       console.error("Failed to fetch Vacancy Details:", error);
@@ -1076,9 +1096,8 @@ const UploadCandidateDocument = (props: any) => {
 
   React.useEffect(() => {
     const allCompleted = Object.values(checklistStatus).every(
-      (value) => value === true
+      (value) => value === StatusBarValue.Completed
     );
-
     setBtnEnable(allCompleted);
   }, [checklistStatus]);
 
@@ -1550,7 +1569,11 @@ const UploadCandidateDocument = (props: any) => {
                   StatusId.PendingCandidateOfferLetterUpload ||
                 props.stateValue?.StatusId ===
                   StatusId.PendingLabourHireOfferRelease ||
-                props.stateValue?.StatusId === StatusId.PendingHROfferReview ? (
+                props.stateValue?.StatusId === StatusId.PendingHROfferReview ||
+                props.stateValue?.StatusId ===
+                  StatusId.RESIProcessInitiatedforDRC ||
+                props.stateValue?.StatusId ===
+                  StatusId.RESIProcessInitiatedforExpatriate ? (
                   <></>
                 ) : (
                   <>
@@ -2477,30 +2500,38 @@ const UploadCandidateDocument = (props: any) => {
       const isValid = !Validation();
       if (isValid) {
         let ChecklistValue = {
-          BackgroundChecks: checklistStatus["Background Checks"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          SignedOfferLetterVerified: checklistStatus["Signed Offer Letter"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          SignedEmploymentContract: checklistStatus["Employment Contract"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          WorkPermitApproved: checklistStatus["Work Permit Approved"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          VisaProcess: checklistStatus["Visa Process"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          AccommodationBooked: checklistStatus["Accommodation Booked"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          TravelProcess: checklistStatus["Travel Process"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          ReadyforOnboarding: checklistStatus["Ready for Onboarding"]
-            ? ActionName.Completed
-            : ActionName.Pending,
+          BackgroundChecks:
+            checklistStatus["Background Checks"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          SignedOfferLetterVerified:
+            checklistStatus["Signed Offer Letter"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          SignedEmploymentContract:
+            checklistStatus["Employment Contract"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          WorkPermitApproved:
+            checklistStatus["Work Permit Approved"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          VisaProcess:
+            checklistStatus["Visa Process"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          AccommodationBooked:
+            checklistStatus["Accommodation Booked"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          TravelProcess:
+            checklistStatus["Travel Process"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          ReadyforOnboarding:
+            checklistStatus["Ready for Onboarding"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
           ID: data.CandidateID,
         };
         const UpdateStatusCandidateList =
@@ -2651,9 +2682,18 @@ const UploadCandidateDocument = (props: any) => {
           case StatusId.PendingHRReviewBGCheck:
             {
               if (btnAction === ButtonAction.Review) {
-                DocumentResponse = await laborHireService.InitiateBGVProcess(
-                  Number(data?.jobRequestID)
-                );
+                if (
+                  WorkflowStatus === workflowStatusApi.initiatetheBGVProcess
+                ) {
+                  DocumentResponse = {
+                    status: ResponeStatus.SUCCESS,
+                  };
+                } else {
+                  DocumentResponse = await laborHireService.InitiateBGVProcess(
+                    Number(data?.jobRequestID)
+                  );
+                }
+
                 workflowStatusValue = workflowStatusApi.initiatetheBGVProcess;
                 SuccessMsg =
                   props.stateValue?.StatusId ===
@@ -2874,16 +2914,24 @@ const UploadCandidateDocument = (props: any) => {
               workflowStatusValue = workflowStatusApi.OnboardingInprogress;
               SuccessMsg = RecuritmentHRMsg.ReviewECMsg;
               ActionID = WorkflowAction.Approved;
+              let JoiningDate = SpiltDateOnly(new Date(data.JoiningDate));
+              let datas = {
+                JoiningDate: JoiningDate,
+                NoticePeriod: String(data.NoticePeriod),
+                ID: data.CandidateID,
+              };
+              DocumentResponse =
+                await getVRRDetails.InsertRecruitmentCandidateDetails(datas);
+              break;
             } else if (btnAction === ButtonAction.Revert) {
               workflowStatusValue =
                 workflowStatusApi.RevertedBacktoCandidateforreuploadEmploymentContract;
               SuccessMsg = RecuritmentHRMsg.RevertedEmploymentContractMsg;
               ActionID = WorkflowAction.Revert;
+              DocumentResponse = {
+                status: ResponeStatus.SUCCESS,
+              };
             }
-            DocumentResponse = {
-              status: ResponeStatus.SUCCESS,
-            };
-            break;
           }
           case StatusId.PendingHRReviewOfferanduploadEmployementContract:
             {
@@ -3017,17 +3065,7 @@ const UploadCandidateDocument = (props: any) => {
             let UpdateStatus = await OfferLetterServices.UpdateStatusInSpfxlist(
               Obj
             );
-            if (
-              props.stateValue?.StatusId ===
-              StatusId.PendingHREmploymentContractVerification
-            ) {
-              let datas = {
-                JoiningDate: data.JoiningDate,
-                NoticePeriod: data.NoticePeriod,
-                ID: data.CandidateID,
-              };
-              await getVRRDetails.InsertRecruitmentCandidateDetails({ datas });
-            }
+
             if (UpdateStatus.status === ResponeStatus.SUCCESS) {
               const SuccessAlert = {
                 Message: SuccessMsg,

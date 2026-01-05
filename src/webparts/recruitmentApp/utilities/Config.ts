@@ -369,6 +369,8 @@ export const RecuritmentHRMsg = {
   NoOfUserLimitMsg: "User limit reached. Kindly upgrade or extend your user limit.",
   ResetPassword: "Are you sure you want to reset the password?",
   ResetPasswordMsg: "A password reset link has been sent to your registered email. Please check your inbox to proceed.",
+
+  duplicatedquestionMsg: "Duplicate questions are not allowed. Please modify the question and try again.",
 }
 
 export const validationMsg = {
@@ -534,8 +536,8 @@ export const TabName = {
   Agent: "Agent",
   CreateAdminPage: "Create Admin Page",
 
-  EnglishAdvertisment: "Job Advertisement",
-  FrenchAdvertisement: "Offre d'emploi"
+  EnglishAdvertisment: "English",//"Job Advertisement",
+  FrenchAdvertisement: "French"//"Offre d'emploi"
 };
 
 

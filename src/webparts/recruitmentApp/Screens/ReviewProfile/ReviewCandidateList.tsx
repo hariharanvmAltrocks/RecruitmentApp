@@ -367,15 +367,11 @@ const ReviewCandidateList = (props: any) => {
           <span>
             {rowData.applicationStatusId ===
             ApplicationStatusId.ApplicationSuspended ? (
-              <span style={{ color: "red", marginLeft: "7%" }}>
-                {rowData.applicationStatus}
-              </span>
+              <span style={{ color: "red" }}>{rowData.applicationStatus}</span>
             ) : rowData.workflowStatusId === StatusId.Rescheduled ? (
-              <span style={{ color: "red", marginLeft: "7%" }}>
-                {rowData.Status}
-              </span>
+              <span style={{ color: "red" }}>{rowData.Status}</span>
             ) : (
-              <span style={{ marginLeft: "7%" }}>{rowData.Status}</span>
+              <span>{rowData.Status}</span>
             )}
           </span>
         );
@@ -547,6 +543,7 @@ const ReviewCandidateList = (props: any) => {
               JobCode: item?.JobCode,
               Status: item?.Status,
               workflowStatusId: item?.StatusId,
+              TotalItems: ReschedulData.data.length,
             };
           });
           setCandidateData(ReschedulDataFilter);

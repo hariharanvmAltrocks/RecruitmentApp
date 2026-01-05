@@ -62,6 +62,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [advDetails, setAdvDetails] = useState<AdvDetails>({
+    RoleDetailsID: 0,
     MinQualificationOption: [],
     PrefeQualificationOption: [],
     RoleSpeKnowledgeoption: [],
@@ -97,6 +98,7 @@ const ReviewProfileEdit: React.FC = (props: any) => {
     JobTitleofLineManagerSupervisor_fr: { key: 0, text: "" },
     JobTitleofFunctionalManagerOption: [],
     JobTitleofLineManagerSupervisorOption: [],
+    JobBasedBGVVerification: [],
   });
   const [formState, setFormState] = useState<RecuritmentData>({
     VRRID: 0,
@@ -153,6 +155,8 @@ const ReviewProfileEdit: React.FC = (props: any) => {
       todaydate.getMinutes(),
       todaydate.getSeconds()
     ),
+    RoleProfileDocument_fr: [],
+    GradingDocument_fr: [],
   });
   const [validationErrors, setValidationError] = React.useState<formValidation>(
     {

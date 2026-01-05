@@ -11,7 +11,6 @@ import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import {
   Choices,
   ColorCode,
-  DocumentLibraray,
   HRMSAlertOptions,
   InterviewLevels,
   ListNames,
@@ -19,7 +18,6 @@ import {
   ResponeStatus,
   RoleID,
   RoleName,
-  RoleProfileMaster,
   StatusId,
   TabName,
   WorkflowAction,
@@ -1472,31 +1470,31 @@ const HodViewScorecard = (props: any) => {
         );
 
         // Fetch advertisement documents
-        const response = await CommonServices.GetAttachmentToLibrary(
-          DocumentLibraray.RecruitmentAdvertisementDocument,
-          op?.JobCode
-        );
-        const advertisementDocuments =
-          response?.status === 200
-            ? response.data.map((doc: any) => ({
-                name: doc.name,
-                content: doc.content,
-              }))
-            : [];
+        // const response = await CommonServices.GetAttachmentToLibrary(
+        //   DocumentLibraray.RecruitmentAdvertisementDocument,
+        //   op?.JobCode
+        // );
+        // const advertisementDocuments =
+        //   response?.status === 200
+        //     ? response.data.map((doc: any) => ({
+        //         name: doc.name,
+        //         content: doc.content,
+        //       }))
+        //     : [];
 
         // Fetch role profile documents
-        const roleProfileResponse = await CommonServices.GetAttachmentToLibrary(
-          DocumentLibraray.RoleProfileMaster,
-          op?.JobCode,
-          RoleProfileMaster.RoleProfile
-        );
-        const roleProfileDocuments =
-          roleProfileResponse?.status === 200
-            ? roleProfileResponse.data.map((doc: any) => ({
-                name: doc.name,
-                content: doc.content,
-              }))
-            : [];
+        // const roleProfileResponse = await CommonServices.GetAttachmentToLibrary(
+        //   DocumentLibraray.RoleProfileMaster,
+        //   op?.JobCode,
+        //   RoleProfileMaster.RoleProfile
+        // );
+        // const roleProfileDocuments =
+        //   roleProfileResponse?.status === 200
+        //     ? roleProfileResponse.data.map((doc: any) => ({
+        //         name: doc.name,
+        //         content: doc.content,
+        //       }))
+        //     : [];
 
         setCandidateData((prevState) => ({
           ...prevState,
@@ -1518,8 +1516,8 @@ const HodViewScorecard = (props: any) => {
           ReleventExperience: op?.ReleventExperience,
           Qualification: op?.Qualification,
           CandidateCVDoc: op?.CandidateCVDoc,
-          AdvertisementDocument: advertisementDocuments,
-          RoleProfileDocument: roleProfileDocuments,
+          // AdvertisementDocument: advertisementDocuments,
+          // RoleProfileDocument: roleProfileDocuments,
           PositionTitle: op?.PositionTitle,
           InterviewDate: op?.InterviewDate,
           JobRequestID: op?.JobRequestID,
