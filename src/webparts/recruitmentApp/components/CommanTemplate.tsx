@@ -9,7 +9,6 @@ import CustomDatePicker from "./CustomDatePicker";
 import CustomTextArea from "./CustomTextArea";
 import CustomRadioGroup from "./CustomRadioGroup";
 import CustomInput from "./CustomInput";
-import { getVRRDetails } from "../Services/ServiceExport";
 import CustomAlert from "./CustomAlert/CustomAlert";
 import { HRMSAlertOptions, RecuritmentHRMsg } from "../utilities/Config";
 
@@ -89,7 +88,7 @@ const CommanTemplate = (props: any) => {
     },
   });
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [fetchDatas, setFetchData] = React.useState<any[]>([]);
+  // const [fetchDatas, setFetchData] = React.useState<any[]>([]);
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [alertProps, setalertProps] = React.useState<alertPropsData>({
     Message: "",
@@ -101,21 +100,21 @@ const CommanTemplate = (props: any) => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      let filterConditions = [];
-      let Conditions = "";
-      filterConditions.push({
-        FilterKey: "VRRID",
-        Operator: "eq",
-        FilterValue: props.stateValue?.VRRID,
-      });
-      const data = await getVRRDetails.GetVacancyDetails(
-        filterConditions,
-        Conditions
-      );
-      if (data.status === 200 && data.data !== null) {
-        setFetchData(data.data);
-        console.log(fetchDatas, "fetchDatas");
-      }
+      // let filterConditions = [];
+      // let Conditions = "";
+      // filterConditions.push({
+      //   FilterKey: "VRRID",
+      //   Operator: "eq",
+      //   FilterValue: props.stateValue?.VRRID,
+      // });
+      // const data = await getVRRDetails.GetVacancyDetails(
+      //   filterConditions,
+      //   Conditions
+      // );
+      // if (data.status === 200 && data.data !== null) {
+      // setFetchData([]);
+      // console.log(fetchDatas, "fetchDatas");
+      // }
     } catch (error) {
       console.log("GetVacancyDetails doesn't fetch the data", error);
       console.log("dataVRRR");

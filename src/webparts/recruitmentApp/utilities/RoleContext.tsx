@@ -8,6 +8,7 @@ import { MasterData, UserRoleData } from "../Models/Master";
 import { ResponeStatus } from "./Config";
 import { IMenuService } from "../Services/MenuService/IMenu";
 import MenuService from "../Services/MenuService/MenuService";
+import { ApiUrl } from "../components/TabMerge";
 
 export type RoleContextType = {
   roleID: number[] | undefined;
@@ -51,9 +52,16 @@ export const RoleProvider = ({ children }: any) => {
 
   const MenuItemsService: IMenuService = new MenuService();
 
-  useEffect(() => {
-    // console.log(showRoleSelector, "showRoleSelector");
-  }, [showRoleSelector]);
+  const fetchApiUrl = async () => {
+    const ApiUrls = await ApiUrl();
+    let ApiURL = localStorage.getItem("ApiUrl");
+    if (ApiURL) {
+      localStorage.removeItem("ApiUrl");
+      localStorage.setItem("ApiUrl", ApiUrls);
+    } else {
+      localStorage.setItem("ApiUrl", ApiUrls);
+    }
+  };
 
   async function getUserRole() {
     setIsLoading(true);
@@ -81,6 +89,7 @@ export const RoleProvider = ({ children }: any) => {
           setEmptyRole(true);
         }
       }
+      await fetchApiUrl();
     } catch (error) {
       console.error("Error fetching user role:", error);
     } finally {

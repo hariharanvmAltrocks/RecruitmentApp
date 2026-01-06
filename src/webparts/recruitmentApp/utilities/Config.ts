@@ -568,7 +568,8 @@ export const InterviewLevels = {
 
 export const DataFrom = {
   NewPosition: "New Position",
-  ExistingPosition: "Existing Position"
+  ExistingPosition: "Existing Position",
+  VacancyRecruitmentProcess: "Vacancy Requirement Process"
 }
 
 export const workflowStatusApi = {
