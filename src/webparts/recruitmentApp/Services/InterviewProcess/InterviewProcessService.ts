@@ -146,6 +146,7 @@ export default class InterviewProcessService
             ? { AgentName: item?.ExternalAgentDetails?.AgentName }
             : null,
           RecruitmentID: item?.RecruitmentID?.ID || 0,
+          ItemCreated: item?.ItemCreated || ""
         })
       );
 

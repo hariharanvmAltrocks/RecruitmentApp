@@ -63,7 +63,11 @@ import {
   CandidateDetails,
   COIAttach,
 } from "../../Services/CareerPortalApi/IGetPortalJobs";
-import { addWeekdays, GetWorkflowStatusByID } from "../../components/TabMerge";
+import {
+  addWeekdays,
+  DetailRow,
+  GetWorkflowStatusByID,
+} from "../../components/TabMerge";
 import { Label } from "@fluentui/react";
 import AttachmentButton from "../../components/AttachmentButton";
 import CustomViewAttachment from "../../components/CustomViewAttachment";
@@ -147,11 +151,11 @@ const ViewCandidateDetails = (props: any) => {
     MiddleName: "",
     ResidentialAddress: "",
     DOB: "",
-    ContactNumber: 0,
+    ContactNumber: "",
     Email: "",
     Gender: "",
     HighestQualification: "",
-    ExperienceMining: 0,
+    ExperienceMining: "",
     ExperRelatedfield: 0,
     Status: "",
     StatusId: "",
@@ -206,6 +210,7 @@ const ViewCandidateDetails = (props: any) => {
     NatioCode: "",
     PreviousEmployerDetails: undefined,
     LanguageKnown: [],
+    PPEDetails: [],
   });
   const todaydate = new Date();
   // todaydate = addWeekdays(todaydate, 5);
@@ -596,7 +601,10 @@ const ViewCandidateDetails = (props: any) => {
                 businesslinkscompany: response?.businesslinkscompany,
                 NatioCode: response?.NatioCode || "",
                 LanguageKnown: response?.LanguageKnown || [],
+                PPEDetails: response?.PPEDetails || [],
               }));
+              // console.log(response?.PPEDetails, "response?.PPEDetails");
+
               setInterviewedLevel((prev) => ({
                 ...prev,
                 COIReason: response?.COIReason || "",
@@ -1281,33 +1289,35 @@ const ViewCandidateDetails = (props: any) => {
                         </div>
                       </div>
 
-                      <div className="ms-Grid-row">
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          <Label
-                            style={{ marginTop: 10, overflowWrap: "inherit" }}
-                          >
-                            {labelNames.CandidateDetails.previouslyworked}
-                          </Label>
-                          <span
+                      {CandidateProfile?.previouslyworkedMine && (
+                        <div className="ms-Grid-row">
+                          <div
                             style={{
-                              fontFamily: '"Roboto", sans-serif',
-                              // color: "red",
-                              marginTop: "1%",
-                              fontWeight: "bold",
-                              fontSize: "17px",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
                             }}
                           >
-                            {" "}
-                            - {CandidateProfile?.previouslyworkedMine}
-                          </span>
+                            <Label
+                              style={{ marginTop: 10, overflowWrap: "inherit" }}
+                            >
+                              {labelNames.CandidateDetails.previouslyworked}
+                            </Label>
+                            <span
+                              style={{
+                                fontFamily: '"Roboto", sans-serif',
+                                // color: "red",
+                                marginTop: "1%",
+                                fontWeight: "bold",
+                                fontSize: "17px",
+                              }}
+                            >
+                              {" "}
+                              - {CandidateProfile?.previouslyworkedMine}
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       <div className="ms-Grid-row">
                         <div
@@ -1774,37 +1784,10 @@ const ViewCandidateDetails = (props: any) => {
                             </div>
                           </div>
                           <div className="ms-Grid-row">
-                            <div
-                              style={{
-                                display: "flex",
-                                marginTop: "1% ",
-                                marginLeft: "1%",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  // minWidth: 85,
-                                  fontWeight: "bold",
-                                  fontFamily: '"Roboto", sans-serif',
-                                  fontSize: "17px",
-                                  width: "16%",
-                                }}
-                              >
-                                {labelNames.CandidateDetails.Reason}
-                              </div>
-                              <div
-                                style={{
-                                  fontFamily: '"Roboto", sans-serif',
-                                  // color: "red",
-                                  marginLeft: "1%",
-                                  // fontWeight: "bold",
-                                  fontSize: "17px",
-                                }}
-                              >
-                                {" "}
-                                {InterviewedLevel.COIReason ?? "—"}
-                              </div>
-                            </div>
+                            <DetailRow
+                              label={labelNames.CandidateDetails.Reason}
+                              value={InterviewedLevel?.COIReason}
+                            />
                           </div>
                           <div className="ms-Grid-row">
                             <div className="ms-Grid-col ms-lg4">
@@ -2347,8 +2330,8 @@ const ViewCandidateDetails = (props: any) => {
       Email: CandidateProfile.Email,
       Nationality: CandidateProfile.Nationality,
       Gender: CandidateProfile.Gender,
-      TotalYearOfExperiance: String(CandidateProfile.ExperRelatedfield),
-      ReleventExperience: CandidateProfile.ExperienceMining,
+      TotalYearOfExperiance: String(CandidateProfile.ExperienceMining),
+      ReleventExperience: String(CandidateProfile.ExperRelatedfield),
       Qualification: CandidateProfile.HighestQualification,
       JobRequestID: String(CandidateProfile.CandidateID),
       ProfileID: String(CandidateProfile.profileID),
@@ -2371,7 +2354,10 @@ const ViewCandidateDetails = (props: any) => {
 
       LastOrCurrentPosition: CandidateProfile.CurrentPosition,
       LastOrCurrentEmployer: CandidateProfile.CurrentEmployer,
-      PreviouslyWorkedInIvanhoeMines: CandidateProfile.previouslyworkedMine,
+      PreviouslyWorkedInIvanhoeMines:
+        CandidateProfile.previouslyworkedMine === undefined
+          ? ""
+          : CandidateProfile.previouslyworkedMine,
       NumberOfTaxDependents: Number(CandidateProfile.NumberOftax),
       Age: Number(CandidateProfile.Age),
       AnyFamilyorOtherLinks: CandidateProfile.familylinks,

@@ -23,6 +23,8 @@ import {
   StatusId,
   TabName,
   tabType,
+  TooltipHeader,
+  TooltipType,
   WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
@@ -76,6 +78,8 @@ import TabsComponent from "../../components/TabsComponent ";
 import CustomDialogbox from "../../components/CustomDialogbox";
 import Labelheader from "../../components/LabelHeader";
 import BGVComments, { BGVComment } from "../../components/BGVComments";
+import ToolTipTable from "../ScreenComponent/ToolTipTable";
+import { Label } from "@fluentui/react";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -201,6 +205,7 @@ const UploadCandidateDocument = (props: any) => {
     BGVStatusProcessOption: [],
     BGVProofAttachment: [],
     BGVComments: "",
+    PPEDetails: [],
   });
   // const [checkdata,setCheckdata] = useState<>
   // const [viewDocument, setViewDocument] = React.useState<viewDocument>({
@@ -639,6 +644,7 @@ const UploadCandidateDocument = (props: any) => {
           ? CandidateDetails?.data?.[0]?.NatioCode
           : "",
         LabourHire: ResiData.data?.lhCode ?? "",
+        PPEDetails: CandidateDetails?.data?.[0]?.PPEDetails ?? [],
       }));
 
       setchecklistData((prev) => ({
@@ -1460,18 +1466,19 @@ const UploadCandidateDocument = (props: any) => {
                     />
                   </div>
                 </div>
-                {data.EmploymentCategory ===
-                  EmployeementCategory.LaborhireContractor &&
-                  ![
-                    StatusId.PendingHRBGVInitiation,
-                    StatusId.PendingHRReviewBGCheck,
-                    StatusId.PendingBGdocuploadedbycandidate,
-                    StatusId.PendingDOTAficaVerification,
-                    StatusId.PendingwithTAforMedicalScreening,
-                    StatusId.RESIProcessInitiatedforDRC,
-                    StatusId.RESIProcessInitiatedforExpatriate,
-                  ].includes(props.stateValue?.StatusId) && (
-                    <div className="ms-Grid-row">
+
+                <div className="ms-Grid-row">
+                  {data.EmploymentCategory ===
+                    EmployeementCategory.LaborhireContractor &&
+                    ![
+                      StatusId.PendingHRBGVInitiation,
+                      StatusId.PendingHRReviewBGCheck,
+                      StatusId.PendingBGdocuploadedbycandidate,
+                      StatusId.PendingDOTAficaVerification,
+                      StatusId.PendingwithTAforMedicalScreening,
+                      StatusId.RESIProcessInitiatedforDRC,
+                      StatusId.RESIProcessInitiatedforExpatriate,
+                    ].includes(props.stateValue?.StatusId) && (
                       <div className="ms-Grid-col ms-lg3">
                         <CustomInput
                           label={labelNames.PositionDetails.LabourHire}
@@ -1480,8 +1487,67 @@ const UploadCandidateDocument = (props: any) => {
                           mandatory={false}
                         />
                       </div>
-                    </div>
+                    )}
+
+                  {props.stateValue?.StatusId ===
+                    StatusId.PendingHRBGVInitiation ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingBGdocuploadedbycandidate ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingHRReviewBGCheck ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingDOTAficaVerification ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithTAforMedicalScreening ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingHROfferInitiate ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingCandidateOfferLetterUpload ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingLabourHireOfferRelease ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingHROfferReview ||
+                  props.stateValue?.StatusId ===
+                    StatusId.RESIProcessInitiatedforDRC ||
+                  props.stateValue?.StatusId ===
+                    StatusId.RESIProcessInitiatedforExpatriate ? (
+                    <></>
+                  ) : (
+                    <>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.CandidateDetails.JoiningDate}
+                          value={data?.JoiningDate}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.CandidateDetails.NoticePeriod}
+                          value={data?.NoticePeriod}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+                    </>
                   )}
+                </div>
+
+                {data.PPEDetails.length > 0 && (
+                  <div className="ms-Grid-row" style={{ marginTop: "2%" }}>
+                    {data.PPEDetails && (
+                      <span style={{ marginTop: "3%" }}>
+                        <ToolTipTable
+                          Title={TooltipType?.PPE ?? ""}
+                          headers={TooltipHeader?.PPEData}
+                          data={data.PPEDetails}
+                        />
+                      </span>
+                    )}
+                    <Label>{labelNames.CandidateDetails.PPE}</Label>
+                  </div>
+                )}
 
                 {props.stateValue?.StatusId ===
                   StatusId.PendingHRReviewBGCheck &&
@@ -1551,51 +1617,6 @@ const UploadCandidateDocument = (props: any) => {
                   </>
                 ) : (
                   <></>
-                )}
-
-                {props.stateValue?.StatusId ===
-                  StatusId.PendingHRBGVInitiation ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingBGdocuploadedbycandidate ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingHRReviewBGCheck ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingDOTAficaVerification ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingwithTAforMedicalScreening ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingHROfferInitiate ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingCandidateOfferLetterUpload ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingLabourHireOfferRelease ||
-                props.stateValue?.StatusId === StatusId.PendingHROfferReview ||
-                props.stateValue?.StatusId ===
-                  StatusId.RESIProcessInitiatedforDRC ||
-                props.stateValue?.StatusId ===
-                  StatusId.RESIProcessInitiatedforExpatriate ? (
-                  <></>
-                ) : (
-                  <>
-                    <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg3">
-                        <CustomInput
-                          label={labelNames.CandidateDetails.JoiningDate}
-                          value={data?.JoiningDate}
-                          disabled={true}
-                          mandatory={false}
-                        />
-                      </div>
-                      <div className="ms-Grid-col ms-lg3">
-                        <CustomInput
-                          label={labelNames.CandidateDetails.NoticePeriod}
-                          value={data?.NoticePeriod}
-                          disabled={true}
-                          mandatory={false}
-                        />
-                      </div>
-                    </div>
-                  </>
                 )}
 
                 {/* {props.stateValue?.StatusId ===
@@ -2909,30 +2930,31 @@ const UploadCandidateDocument = (props: any) => {
             };
             break;
           }
-          case StatusId.PendingHREmploymentContractVerification: {
-            if (btnAction === ButtonAction.Review) {
-              workflowStatusValue = workflowStatusApi.OnboardingInprogress;
-              SuccessMsg = RecuritmentHRMsg.ReviewECMsg;
-              ActionID = WorkflowAction.Approved;
-              let JoiningDate = SpiltDateOnly(new Date(data.JoiningDate));
-              let datas = {
-                JoiningDate: JoiningDate,
-                NoticePeriod: String(data.NoticePeriod),
-                ID: data.CandidateID,
-              };
-              DocumentResponse =
-                await getVRRDetails.InsertRecruitmentCandidateDetails(datas);
-              break;
-            } else if (btnAction === ButtonAction.Revert) {
-              workflowStatusValue =
-                workflowStatusApi.RevertedBacktoCandidateforreuploadEmploymentContract;
-              SuccessMsg = RecuritmentHRMsg.RevertedEmploymentContractMsg;
-              ActionID = WorkflowAction.Revert;
-              DocumentResponse = {
-                status: ResponeStatus.SUCCESS,
-              };
+          case StatusId.PendingHREmploymentContractVerification:
+            {
+              if (btnAction === ButtonAction.Review) {
+                workflowStatusValue = workflowStatusApi.OnboardingInprogress;
+                SuccessMsg = RecuritmentHRMsg.ReviewECMsg;
+                ActionID = WorkflowAction.Approved;
+                let JoiningDate = SpiltDateOnly(new Date(data.JoiningDate));
+                let datas = {
+                  JoiningDate: JoiningDate,
+                  NoticePeriod: String(data.NoticePeriod),
+                  ID: data.CandidateID,
+                };
+                DocumentResponse =
+                  await getVRRDetails.InsertRecruitmentCandidateDetails(datas);
+              } else if (btnAction === ButtonAction.Revert) {
+                workflowStatusValue =
+                  workflowStatusApi.RevertedBacktoCandidateforreuploadEmploymentContract;
+                SuccessMsg = RecuritmentHRMsg.RevertedEmploymentContractMsg;
+                ActionID = WorkflowAction.Revert;
+                DocumentResponse = {
+                  status: ResponeStatus.SUCCESS,
+                };
+              }
             }
-          }
+            break;
           case StatusId.PendingHRReviewOfferanduploadEmployementContract:
             {
               DocumentData = {

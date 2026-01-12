@@ -362,7 +362,6 @@ const RecruitmentProcess = (props: any) => {
       filterConditions,
       "and"
     );
-    // console.log(response.data, "responseresponseresponseresponse");
     setPositionIDs(response.data);
   };
 
@@ -1587,7 +1586,7 @@ const RecruitmentProcess = (props: any) => {
     const allSameNationality = selectedJobCodes.every(
       (item: any) => item.Nationality === selectedJobCodes[0]?.Nationality
     );
-    console.log(allSameNationality, "allSameNationality");
+    // console.log(allSameNationality, "allSameNationality");
     if (allSameNationality) {
     }
     if (isItemSelected && allSameNationality) {
@@ -1599,11 +1598,8 @@ const RecruitmentProcess = (props: any) => {
         Operator: "in",
         FilterValue: IDs,
       });
-      const AssignAgencies = await getVRRDetails.GetAssignAgentDetail(
-        filterConditions,
-        Conditions
-      );
-      console.log(AssignAgencies, "Agencies.");
+      await getVRRDetails.GetAssignAgentDetail(filterConditions, Conditions);
+      // console.log(AssignAgencies, "Agencies.");
 
       setAssignHR(true);
     } else {

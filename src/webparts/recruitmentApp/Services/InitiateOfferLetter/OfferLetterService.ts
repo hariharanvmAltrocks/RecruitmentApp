@@ -255,22 +255,22 @@ export default class OfferLetterService implements IOfferLetterService {
     ): Promise<ApiResponse<IDocFiles[] | null>> => {
         try {
 
-            const getLatestFile = (files: any[] = []): any[] => {
-                if (!files.length) return [];
+            // const getLatestFile = (files: any[] = []): any[] => {
+            //     if (!files.length) return [];
 
-                const latest = files.reduce((latest, current) => {
-                    const currDate = new Date(
-                        current?.TimeLastModified || current?.Modified || current?.Created
-                    );
-                    const latestDate = new Date(
-                        latest?.TimeLastModified || latest?.Modified || latest?.Created
-                    );
+            //     const latest = files.reduce((latest, current) => {
+            //         const currDate = new Date(
+            //             current?.TimeLastModified || current?.Modified || current?.Created
+            //         );
+            //         const latestDate = new Date(
+            //             latest?.TimeLastModified || latest?.Modified || latest?.Created
+            //         );
 
-                    return currDate > latestDate ? current : latest;
-                });
+            //         return currDate > latestDate ? current : latest;
+            //     });
 
-                return [latest]; // 👈 return as array
-            };
+            //     return [latest];
+            // };
 
 
             let response: IDocFiles[] | null = null;
@@ -282,7 +282,7 @@ export default class OfferLetterService implements IOfferLetterService {
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.DocumentType}`,
                     }) as IDocFiles[];
 
-                    response = getLatestFile(files);
+                    response = files;
                     break;
                 }
 
@@ -291,7 +291,7 @@ export default class OfferLetterService implements IOfferLetterService {
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${DocumentName.UnsignedDoc}`,
                     }) as IDocFiles[];
 
-                    response = getLatestFile(files);
+                    response = files;
                     break;
                 }
 
@@ -309,12 +309,12 @@ export default class OfferLetterService implements IOfferLetterService {
                     }) as IDocFiles[];
 
                     const allFiles = [
-                        ...(getLatestFile(medical) || []),
-                        ...(getLatestFile(vaccination) || []),
-                        ...(getLatestFile(workPermit) || []),
+                        ...(medical) || [],
+                        ...(vaccination) || [],
+                        ...(workPermit) || [],
                     ];
 
-                    response = getLatestFile(allFiles);
+                    response = allFiles;
                     break;
                 }
 
@@ -326,7 +326,7 @@ export default class OfferLetterService implements IOfferLetterService {
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}`,
                     }) as IDocFiles[];
 
-                    response = getLatestFile(files);
+                    response = files;
                     break;
                 }
 
@@ -335,7 +335,7 @@ export default class OfferLetterService implements IOfferLetterService {
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${DocumentName.UnsignedDoc}`,
                     }) as IDocFiles[];
 
-                    response = getLatestFile(files);
+                    response = files;
                     break;
                 }
 
@@ -344,7 +344,7 @@ export default class OfferLetterService implements IOfferLetterService {
                         FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}`,
                     }) as IDocFiles[];
 
-                    response = getLatestFile(files);
+                    response = files;
                     break;
                 }
             }
@@ -471,7 +471,7 @@ export default class OfferLetterService implements IOfferLetterService {
                 Select: "*,SelectedCandidateHODId/ID,LabourhireORContractor/AgentCode",
                 Expand: "SelectedCandidateHODId,LabourhireORContractor",
             });
-            console.log(res, "responseData");
+            // console.log(res, "responseData");
             const todaydate = new Date();
             let laborHireData: initiateLaborHire = {
                 jobRequestID: Number(data?.jobRequestID),
@@ -532,15 +532,16 @@ export default class OfferLetterService implements IOfferLetterService {
                         const files = await SPServices.getDocLibFiles({
                             FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${item}`,
                         });
+                        // console.log(files, "Files.IDV");
 
-                        const latestFile = files?.length
-                            ? (files as any[]).reduce((latest, current) => {
-                                const currDate = new Date(current?.TimeLastModified || current?.Modified || current?.Created);
-                                const latestDate = new Date(latest?.TimeLastModified || latest?.Modified || latest?.Created);
+                        // const latestFile = files?.length
+                        //     ? (files as any[]).reduce((latest, current) => {
+                        //         const currDate = new Date(current?.TimeLastModified || current?.Modified || current?.Created);
+                        //         const latestDate = new Date(latest?.TimeLastModified || latest?.Modified || latest?.Created);
 
-                                return currDate > latestDate ? current : latest;
-                            })
-                            : null;
+                        //         return currDate > latestDate ? current : latest;
+                        //     })
+                        //     : null;
 
                         let folderName = "";
                         if (item in BGVDocumentName) {
@@ -551,7 +552,7 @@ export default class OfferLetterService implements IOfferLetterService {
 
                         const file = [
                             folderName,
-                            latestFile
+                            files
                         ];
 
                         return file as unknown as IDocFiles[];
@@ -648,7 +649,7 @@ export default class OfferLetterService implements IOfferLetterService {
                 Select: "*,SelectedCandidateHODId/ID,LabourhireORContractor/AgentName",
                 Expand: "SelectedCandidateHODId,LabourhireORContractor",
             });
-            console.log(res, "responseData");
+            // console.log(res, "responseData");
             let laborHireData = {
                 netPay: IsExpat == "Yes" ? res[0]?.ProposedNetUSDAmount : res[0]?.ProposedNetAmount,
                 lhCode: res[0]?.LabourhireORContractor?.AgentName,

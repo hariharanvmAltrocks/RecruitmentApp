@@ -31,11 +31,11 @@ export const labelNames = {
         Nationality: "Nationality",
         Gender: "Gender",
         HighestRelevantQualification: "Highest Relevant Qualification",
-        ExperienceInMiningIndustry: "Experience In Mining Industry(Years)",
+        ExperienceInMiningIndustry: "Total Work Experience",
         Numberoftaxdependents: "Number of tax dependents",
         LastCurrentposition: "Last/Current position",
         Currentemployer: "Last/Current employer",
-        ExperienceInRelatedField: "Experience In Related Field(Years)",
+        ExperienceInRelatedField: "Relevant Experience(Years)",
         Disability: "Disability",
         MaritalStatus: "Marital Status",
         WorkedGroupPartnerCompanies: "Worked with Group/Partner Companies",
@@ -51,7 +51,7 @@ export const labelNames = {
         NoOfInterviewLevels: "No Of Interview Level's",
         Grade: "Grade",
         CountryOfResidency: "Country Of Residency",
-        ResidencyCountry: " Are you residency in that country?",
+        ResidencyCountry: "Are you Resident in that country?",
         InterviewDateLevel1: "Interview Date -  level 1",
         InterviewTimeLevel1: "Interview Time - Level 1",
         MeetingLinkLevel1: "Meeting Link for Interview  - Level  1",
@@ -80,7 +80,8 @@ export const labelNames = {
         EmployeeDesi: " Reference Designation",
         EmployeeEmail: " Reference Email ID",
         EmployeeCN: "Reference Contact Number",
-        EmployeeCompanyN: "Reference Company Name"
+        EmployeeCompanyN: "Reference Company Name",
+        PPE: " Personal Protective Equipment sizing information"
     },
     Questionnaires: {
         Questionnaires: "Questionnaires",
@@ -269,6 +270,8 @@ export const ActionName = {
 
 export const PositionStatus = {
     Vacant: "Vacant",
+    RecruitmentInitiator: "Recruitment Initiator",
+    Filled: "Filled",
     RecruitmentInProgress: "Recruitment InProgress"
 }
 
@@ -479,4 +482,16 @@ export const DotTooltipStatus = {
 
 export const CommanStyle = {
     frontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`
+}
+
+export const RowsPerPageOptions = {
+    FirstCount: 20,
+    MiddleCount: 25,
+    LastCount: 30,
+}
+
+export const tabValue = {
+    tab1: "tab1",
+    tab2: "tab2",
+    tab3: "tab3"
 }

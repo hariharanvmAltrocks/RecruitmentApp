@@ -204,3 +204,99 @@ export const SpiltDateOnly = (date: Date) => {
   ); //`${year}-${month}-${day}`;
   return dateOnly.toISOString();
 };
+const resolveUserFieldByRole = (currentRoles: any[]) => {
+  if (currentRoles.includes(RoleID.RecruitmentHR)) {
+    return "AssignedHR";
+  }
+  if (currentRoles.includes(RoleID.LineManager)) {
+    return "LineManager";
+  }
+
+  if (currentRoles.includes(RoleID.HOD)) {
+    return "HOD";
+  }
+
+  return null;
+};
+
+export const buildRecruitmentTabConfig = (
+  tabNameData: TabDetails[],
+  CurrentRoleID: any[]
+) => {
+  const userField = resolveUserFieldByRole(CurrentRoleID);
+
+  return tabNameData.reduce((acc: any, tab) => {
+    acc[tab.Value] = {
+      status: tab.StatusDetails?.map((s) => s.StatusId) || [],
+      userField: userField,
+      requireItemCreated: true,
+    };
+
+    return acc;
+  }, {});
+};
+
+export function calculateTotalExperienceYears(experiences: any[]): number {
+  const now = new Date();
+
+  let totalMilliseconds = 0;
+
+  experiences.forEach((exp) => {
+    const startDate = new Date(exp.startFrom);
+
+    const endDate = exp.isCurrent === 1 ? now : new Date(exp.endTo);
+
+    if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+      totalMilliseconds += endDate.getTime() - startDate.getTime();
+    }
+  });
+
+  const millisecondsInYear = 1000 * 60 * 60 * 24 * 365.25; // leap year safe
+
+  return Number((totalMilliseconds / millisecondsInYear).toFixed(2));
+}
+
+export function formatExperience(years: number): string {
+  const wholeYears = Math.floor(years);
+  const months = Math.round((years - wholeYears) * 12);
+
+  return `${wholeYears} years ${months} months`;
+}
+
+export function getcountryCode(Code: any[], refMobile: string) {
+  if (!refMobile) return null;
+  const [countryCode, mobileNumber] = refMobile.split("-");
+  const country = Code.find((item) => item.code === countryCode);
+  if (!country) return null;
+  return `${country.id}-${mobileNumber}`;
+}
+
+export const DetailRow = ({
+  label,
+  value,
+}: {
+  label: string;
+  value?: string;
+}) => (
+  <div style={{ display: "flex", marginTop: "1%", marginLeft: "1%" }}>
+    <div
+      style={{
+        fontWeight: "bold",
+        fontFamily: '"Roboto", sans-serif',
+        fontSize: "17px",
+      }}
+    >
+      {label}
+    </div>
+    <div
+      style={{
+        fontFamily: '"Roboto", sans-serif',
+        marginLeft: "1%",
+        fontSize: "17px",
+        wordBreak: "break-word",
+      }}
+    >
+      {value?.trim() || "—"}
+    </div>
+  </div>
+);

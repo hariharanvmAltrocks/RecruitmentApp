@@ -12,11 +12,11 @@ export type CandidateDetails = {
     LastName: string,
     ResidentialAddress: string,
     DOB: string,
-    ContactNumber: number
+    ContactNumber: string
     Email: string,
     Gender: string,
     TotalYearOfExperiance: string,
-    ReleventExperience: number,
+    ReleventExperience: string,
     Qualification: string,
     JobRequestID: string,
     ProfileID: string,

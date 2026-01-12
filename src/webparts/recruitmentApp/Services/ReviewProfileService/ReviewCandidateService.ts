@@ -1,6 +1,15 @@
 import { AdminPItem, UpsertExternalUser } from "../../Models/AdminPanel";
 import { AdvertisementDetails, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertBGV, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AuthorizationHeader } from "../AxiosService/axiosConfig";
 import AxiosInstance from "../AxiosService/AxiosService";
+
+export const InternalSign = {
+    InternalSignIn: async function () {
+        return await AxiosInstance.post(
+            `/hrms/InternalSignIn`, {}, AuthorizationHeader
+        );
+    }
+}
 
 export const getProfileData = {
     GetProfileByJobCode: async function (params: any) {
@@ -186,6 +195,13 @@ export const AdminPanelServiceApi = {
     ResetPassword: async function (Email: any) {
         return await AxiosInstance.get(
             `/Auth/PasswordResetToken?userName=${Email}`
+        );
+    }
+}
+export const PPEMasterTable = {
+    getPPEMaster: async function () {
+        return await AxiosInstance.get(
+            '/jobPortal/GetPPEMaster'
         );
     }
 }

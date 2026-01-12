@@ -1,10 +1,10 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import { AlertMsg, ApiUrl, AuthorizationHeader } from "./axiosConfig";
+import { AlertMsg, AuthorizationHeader } from "./axiosConfig";
 import { setToken, getToken } from "./TokenContext";
 
-// const ApiUrls = localStorage.getItem("ApiUrl") ?? "";
+const ApiUrls = localStorage.getItem("ApiUrl") ?? "";
 const AxiosInstance = axios.create({
-  baseURL: ApiUrl,
+  baseURL: ApiUrls,
   timeout: 10000000
 });
 
@@ -19,7 +19,7 @@ AxiosInstance.interceptors.request.use(
 
         if (Date.now() > tokenExpiration) {
           const res = await axios.post<{ tokens: { jwtToken: string } }>(
-            `${ApiUrl}/hrms/InternalSignIn`,
+            `${ApiUrls}/hrms/InternalSignIn`,
             {},
             AuthorizationHeader
           );
@@ -52,7 +52,7 @@ AxiosInstance.interceptors.response.use(
         console.warn("Unauthorized request. Attempting token refresh...");
         try {
           const res = await axios.post<{ data: { tokens: { jwtToken: string } }, code: number }>(
-            `${ApiUrl}/hrms/InternalSignIn`,
+            `${ApiUrls}/hrms/InternalSignIn`,
             {},
             AuthorizationHeader
           );

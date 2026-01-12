@@ -663,7 +663,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 checkboxBGVOption: BGVOPtions,
                 checkboxBGV: RoleBGV,
               }));
-              console.log(res, "res");
+              // console.log(res, "res");
             } catch (error) {
               console.error("Error in OpenComments:", error);
             }

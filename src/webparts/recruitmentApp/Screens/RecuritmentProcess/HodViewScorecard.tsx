@@ -1597,7 +1597,7 @@ const HodViewScorecard = (props: any) => {
       {
         FilterKey: "PositionIDStatus",
         Operator: "eq",
-        FilterValue: PositionStatus.Vacant, //"Vacant",
+        FilterValue: PositionStatus.RecruitmentInitiator, //"Vacant",
       },
     ];
     const response = await InterviewServices.GetHRMSPositionDetails(
@@ -2134,7 +2134,9 @@ const HodViewScorecard = (props: any) => {
               if (selectedPosition) {
                 await SPServices.SPUpdateItem({
                   Listname: ListNames.HRMSPositionIDMaster,
-                  RequestJSON: { PositionIDStatus: PositionStatus.Vacant },
+                  RequestJSON: {
+                    PositionIDStatus: PositionStatus.RecruitmentInitiator,
+                  },
                   ID: selectedPosition.key,
                 });
               }
@@ -2160,7 +2162,9 @@ const HodViewScorecard = (props: any) => {
               if (selectedPosition) {
                 await SPServices.SPUpdateItem({
                   Listname: ListNames.HRMSPositionIDMaster,
-                  RequestJSON: { PositionIDStatus: PositionStatus.Vacant },
+                  RequestJSON: {
+                    PositionIDStatus: PositionStatus.RecruitmentInitiator,
+                  },
                   ID: selectedPosition.key,
                 });
               }
@@ -2178,7 +2182,7 @@ const HodViewScorecard = (props: any) => {
           if (props.stateValue?.PreviousTabName === TabName.ViewCandidateList) {
             await insertOrUpdateCandidateCommentLevel1();
           }
-          console.log("", CandidateDatas);
+          // console.log("", CandidateDatas);
 
           await InterviewServices.CandidateSeletionApi(
             obj,

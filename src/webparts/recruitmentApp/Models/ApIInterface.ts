@@ -79,6 +79,11 @@ export type PreviousEmployer = {
     ContractNumber: string;
     CompanyName: string;
 }
+
+export type PPEDetail = {
+    PPEType: string;
+    PPESize: string;
+}
 export type CandidateProfile = {
     CandidateID: string,
     profileID: number,
@@ -89,13 +94,13 @@ export type CandidateProfile = {
     MiddleName: string
     ResidentialAddress: string;
     DOB: string;
-    ContactNumber: number;
+    ContactNumber: string;
     Email: string;
     ApplicantSurName: string;
     Nationality: string;
     Gender: string;
     HighestQualification: string;
-    ExperienceMining: number;
+    ExperienceMining: string;
     ExperRelatedfield: number;
     Status: string;
     StatusId: string;
@@ -121,7 +126,7 @@ export type CandidateProfile = {
     CurrentEmployer: string;
     CurrentPosition: string;
     WillingToRelocate: string;
-    previouslyworkedMine: string;
+    previouslyworkedMine: string | undefined;
     familylinks: string;
     businesslinks: string;
     familyDocuments: IDocFiles[];
@@ -153,7 +158,10 @@ export type CandidateProfile = {
     businesslinkscompany: string;
     PreviousEmployerDetails: PreviousEmployer | undefined;
     LanguageKnown: string[];
+
+    PPEDetails: PPEDetail[];
 }
+
 
 export type childrenDetails = {
     name: string;
@@ -407,6 +415,7 @@ export type UploadDocument = {
     BGVStatusProcessOption: AutoCompleteItem[];
     BGVProofAttachment: IDocFiles[];
     BGVComments: string;
+    PPEDetails: PPEDetail[];
 }
 
 export type DocumentName = {

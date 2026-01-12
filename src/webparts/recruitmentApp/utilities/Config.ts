@@ -884,12 +884,13 @@ export const ColorCode = {
 export const TooltipType = {
   ChildData: "Family Details",
   EmplyeeData: "Reference Employee Details",
-  CompanyData: "Company Details"
+  CompanyData: "Company Details",
+  PPE: "Personal Protective Equipment"
 }
 
 export const TooltipHeader = {
   ChildData: [{ key: "name", label: "Name" }, { key: "relationshipDetail", label: "Relationship" }, { key: "contactNumber", label: "Contact Number" }],
   EmplyeeData: [{ key: "empId", label: "Employee ID" }, { key: "empName", label: "Employee Name" }, { key: "empEmail", label: "Employee Email" }, { key: "company", label: "Employee Company" }],
   CompanyData: [{ key: "operation", label: "Operation" }, { key: "role", label: "Role" }, { key: "region", label: "Region / Province" }],
-
+  PPEData: [{ key: "PPEType", label: "PPE Kit" }, { key: "PPESize", label: "Size" }]
 }

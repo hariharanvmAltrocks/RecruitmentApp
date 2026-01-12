@@ -1398,7 +1398,7 @@ export default class RecruitmentService implements IRecruitmentService {
         Listname: ListNames.HRMSQualification,
         Select: "*",
       });
-      console.log("Qualification", qualificationMaster);
+      // console.log("Qualification", qualificationMaster);
       const functionTypeMaster: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSJobTitleFunctionType,
         Select: "*",
@@ -1856,7 +1856,7 @@ export default class RecruitmentService implements IRecruitmentService {
         Orderby: "ID",
         Orderbydecorasc: true,
       })
-      console.log("JobUniqueKey", JobUniqueData);
+      // console.log("JobUniqueKey", JobUniqueData);
 
 
       const roleSpecificSkills: RoleAndTechSkills[] = roleSpecificKnowledge.map(
@@ -2005,7 +2005,7 @@ export default class RecruitmentService implements IRecruitmentService {
           const GetADGruopUserID = await CommonServices.GetMasterData(
             ListNames.HRMSRecruitmentUserRole
           );
-          console.log(GetADGruopUserID, "GetADGruopUserID");
+          // console.log(GetADGruopUserID, "GetADGruopUserID");
           let ADGroupIDs = GetADGruopUserID.data?.filter(
             (item: any) => item.ID === RoleID.InterviewPanel
           );
@@ -2164,13 +2164,42 @@ export default class RecruitmentService implements IRecruitmentService {
   async GetcountInEvalution(
     CurrentUser: string,
     EmployeeList: any[]
-  ): Promise<ApiResponse<any>> {
-    let GetItem: any = [];
+  ): Promise<ApiResponse<any[]>> {
+
+    let result: any[] = [];
+
     try {
-      const getCurrentUserEmailID = await CommonServices.getUserGuidByEmail(
-        CurrentUser
-      );
-      const filters = [
+
+      if (!CurrentUser) {
+        return {
+          data: [],
+          status: 400,
+          message: "Current user is required",
+        };
+      }
+
+      if (!Array.isArray(EmployeeList)) {
+        return {
+          data: [],
+          status: 400,
+          message: "Employee list must be an array",
+        };
+      }
+
+      const userResponse = await CommonServices.getUserGuidByEmail(CurrentUser);
+
+      const panelUserId = userResponse?.data?.key;
+
+      if (!panelUserId) {
+        return {
+          data: [],
+          status: 404,
+          message: "Current user panel ID not found",
+        };
+      }
+
+
+      const statusFilters: any[] = [
         {
           FilterKey: "StatusId",
           Operator: "in",
@@ -2186,177 +2215,175 @@ export default class RecruitmentService implements IRecruitmentService {
         },
       ];
 
+
       const statusResponse =
         await InterviewServices.GetCombinedCandidatePositionDetails(
-          filters,
+          statusFilters,
           "and",
           EmployeeList
         );
-      const candidateIDs = statusResponse.data.map(
-        (panel: any) => panel.ID
-      );
-      const listItems: any[] = await SPServices.SPReadItems({
+
+      const candidates = Array.isArray(statusResponse?.data)
+        ? statusResponse.data
+        : [];
+
+      if (candidates.length === 0) {
+        return {
+          data: [],
+          status: 200,
+          message: "No candidates found",
+        };
+      }
+
+      const candidateIDs = candidates
+        .map((c: any) => c?.ID)
+        .filter(Boolean);
+
+
+      const panelFilters: any[] = [
+        {
+          FilterKey: "InterviewPanelId",
+          Operator: "eq",
+          FilterValue: panelUserId,
+        },
+      ];
+
+      if (candidateIDs.length > 0) {
+        panelFilters.push({
+          FilterKey: "CandidateID",
+          Operator: "in",
+          FilterValue: candidateIDs,
+        });
+      }
+
+
+      const panelItems: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSInterviewPanelDetails,
         Select:
-          "ID, CandidateID/ID, RecruitmentID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail,IsScoreSheetUploaded",
+          "ID, CandidateID/ID, RecruitmentID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail, IsScoreSheetUploaded",
         Expand: "InterviewPanel,RecruitmentID,CandidateID",
-        Filter: [
-          {
-            FilterKey: "InterviewPanelId",
-            Operator: "eq",
-            FilterValue: getCurrentUserEmailID.data?.key,
-          },
-          {
-            FilterKey: "CandidateID",
-            Operator: "in",
-            FilterValue: candidateIDs,
-          },
-        ],
+        Filter: panelFilters,
       });
 
-      const CandidateValue = statusResponse.data.map((item: any) =>
-        listItems.map((items) => items.CandidateID.ID === item.ID))
-      if (CandidateValue.length > 0) {
 
-      }
       const enrichedCandidates = await Promise.all(
-        statusResponse.data.map(async (candidate: any) => {
+        candidates.map(async (candidate: any) => {
+
           let grade = "";
           let level = "";
-          let JobCodeIDs: number = 0
-          try {
-            const vrrResponse = await getVRRDetails.GetRecruitmentDetails(
-              [
-                {
-                  FilterKey: "ID",
-                  Operator: "eq",
-                  FilterValue: candidate.RecruitmentID,
-                },
-              ],
-              ""
-            );
-            JobCodeIDs = vrrResponse?.data?.[0]?.JobCodeId || 0;
-            grade = vrrResponse?.data?.[0]?.PatersonGrade || "";
+          let jobCodeId = 0;
 
-            if (grade) {
-              const gradeLevelResponse = await CommonServices.GetGradeLevel(
-                grade
-              );
-              level = gradeLevelResponse?.data?.[0]?.Level || "";
+          try {
+            if (candidate?.RecruitmentID) {
+              const vrrResponse =
+                await getVRRDetails.GetRecruitmentDetails(
+                  [
+                    {
+                      FilterKey: "ID",
+                      Operator: "eq",
+                      FilterValue: candidate.RecruitmentID,
+                    },
+                  ],
+                  ""
+                );
+
+              const vrrData = vrrResponse?.data?.[0];
+
+              if (vrrData) {
+                grade = vrrData?.PatersonGrade || "";
+                jobCodeId = vrrData?.JobCodeId || 0;
+
+                if (grade) {
+                  const gradeLevelResponse =
+                    await CommonServices.GetGradeLevel(grade);
+                  level = gradeLevelResponse?.data?.[0]?.Level || "";
+                }
+              }
             }
           } catch (err) {
             console.warn(
-              "Failed to fetch grade or level for candidate:",
-              candidate.ID,
+              "Grade/Level fetch failed for candidate:",
+              candidate?.ID,
               err
             );
           }
-          const InterviewDate = candidate?.InterviewDateLevel2
-            ? candidate?.InterviewDateLevel2
-            : candidate?.InterviewDate;
-          const InterviewTime = candidate?.InterviewTimeLevel2
-            ? candidate?.InterviewTimeLevel2
-            : candidate?.InterviewTime;
-          const InterviewDateTime = moment(
-            `${InterviewDate} ${InterviewTime}`,
-            "YYYY-MM-DD HH:mm"
-          ).format("DD-MMM-YYYY hh:mm A");
+
+
+          const interviewDate =
+            candidate?.InterviewDateLevel2 || candidate?.InterviewDate || "";
+
+          const interviewTime =
+            candidate?.InterviewTimeLevel2 || candidate?.InterviewTime || "";
+
+          const interviewDateTime =
+            interviewDate && interviewTime
+              ? moment(
+                `${interviewDate} ${interviewTime}`,
+                "YYYY-MM-DD HH:mm"
+              ).format("DD-MMM-YYYY hh:mm A")
+              : "";
 
           return {
-            SNO: candidate.SNO,
-            ID: candidate.ID,
-            FristName: candidate.FristName || "",
-            LastName: candidate.LastName || "",
-            ApplicantName: `${candidate.FristName || ""} ${candidate.LastName || ""
-              }`.trim(),
-            PositionTitle: candidate.PositionTitle || "",
-            JobGrade: candidate.JobGrade || "",
+            SNO: candidate?.SNO ?? "",
+            ID: candidate?.ID ?? 0,
+            FirstName: candidate?.FristName ?? "",
+            LastName: candidate?.LastName ?? "",
+            ApplicantName: `${candidate?.FristName ?? ""} ${candidate?.LastName ?? ""}`.trim(),
+            PositionTitle: candidate?.PositionTitle ?? "",
+            JobGrade: candidate?.JobGrade ?? "",
             Grade: grade,
             InterviewLevel:
               level === InterviewLevels.Level2
                 ? InterviewLevels.Levels2
                 : level,
-            Status: candidate.Status || "",
-            StatusId: candidate.StatusId || "",
-            RecruitmentID: candidate.RecruitmentID || "",
-            InterviewDate: candidate?.InterviewDate,
-            InterviewDateLevel2: candidate?.InterviewDateLevel2,
-            InterviewDateTime: InterviewDateTime,
-            JobCodeID: JobCodeIDs,
+            Status: candidate?.Status ?? "",
+            StatusId: candidate?.StatusId ?? "",
+            RecruitmentID: candidate?.RecruitmentID ?? 0,
+            InterviewDateTime: interviewDateTime,
+            JobCodeID: jobCodeId,
           };
         })
       );
 
-      // const filters = [
-      //   {
-      //     FilterKey: "StatusId",
-      //     Operator: "in",
-      //     FilterValue: [
-      //       StatusId.InterviewScheduled,
-      //       StatusId.InterviewScheduledforLevel2,
-      //     ],
-      //   },
-      //   {
-      //     FilterKey: "ItemCreated",
-      //     Operator: "eq",
-      //     FilterValue: "No",
-      //   },
-      // ];
 
-      if (candidateIDs && candidateIDs.length > 0) {
-        filters.push({
-          FilterKey: "ID",
-          Operator: "in",
-          FilterValue: candidateIDs,
-        });
-      }
-      // const statusResponse =
-      //   await InterviewServices.GetCombinedCandidatePositionDetails(
-      //     filters,
-      //     "and",
-      //     EmployeeList
-      //   );
-
-      const finalValue = enrichedCandidates.filter((candidate) => {
-        const matchingPanel = listItems.find((item) => {
+      result = enrichedCandidates.filter((candidate) => {
+        return panelItems.some((panel) => {
           if (
             candidate.StatusId === StatusId.InterviewScheduled &&
-            item.InterviewLevel === InterviewLevels.Level1
+            panel.InterviewLevel === InterviewLevels.Level1
           ) {
             return true;
           }
 
           if (
             candidate.StatusId === StatusId.InterviewScheduledforLevel2 &&
-            item.InterviewLevel === InterviewLevels.Level2
+            panel.InterviewLevel === InterviewLevels.Level2
           ) {
             return true;
           }
 
           return false;
         });
-
-        return !!matchingPanel;
       });
-      GetItem = finalValue;
+
+
       return {
-        data: GetItem,
+        data: result,
         status: 200,
-        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+        message: "Evaluation count fetched successfully",
       };
+
     } catch (error) {
-      console.error(
-        "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
-        error
-      );
+      console.error("GetcountInEvalution failed:", error);
+
       return {
-        data: GetItem,
+        data: [],
         status: 500,
-        message:
-          "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+        message: "Failed to fetch evaluation count",
       };
     }
   }
+
 
   async GetADGroupUsers(
     RoleEmail: string,

@@ -27,7 +27,6 @@ import LabelHeaderComponents from "../../components/TitleHeader";
 import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
-import * as moment from "moment";
 import {
   Attachment,
   ButtonAction,
@@ -315,7 +314,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
             RecruitmentAuthorised: op.RecruitmentAuthorised || "",
             IsPayrollEmailed: op.IsPayrollEmailed || "",
             EnterNumberOfMonths: Number(op.EnterNumberOfMonths) ?? 0,
-            DateRequried: moment.utc(op.DateRequried).format("DD/MM/YYYY"),
+            DateRequried: String(op.DateRequried),
             VacancyConfirmed: op.VacancyConfirmed || "",
             RoleProfileDocument: RoleProfileDocment.data.English || [],
             GradingDocument: GradingDocument.data.English || [],

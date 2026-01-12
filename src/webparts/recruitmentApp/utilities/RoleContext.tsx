@@ -9,6 +9,7 @@ import { ResponeStatus } from "./Config";
 import { IMenuService } from "../Services/MenuService/IMenu";
 import MenuService from "../Services/MenuService/MenuService";
 import { ApiUrl } from "../components/TabMerge";
+import { InternalSign } from "../Services/ReviewProfileService/ReviewCandidateService";
 
 export type RoleContextType = {
   roleID: number[] | undefined;
@@ -45,26 +46,34 @@ export const RoleProvider = ({ children }: any) => {
   const [availableRoles, setAvailableRoles] = useState<UserRoleData[]>([]);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
   const [emptyRole, setEmptyRole] = useState(false);
+  const [ApiUrls, setApiUrl] = useState("");
 
   useEffect(() => {
+    void fetchApiUrl();
     void getUserRole();
   }, []);
 
+  async function fetchApiUrl(): Promise<number> {
+    setIsLoading(true);
+    try {
+      const ApiUrls = await ApiUrl();
+      localStorage.setItem("ApiUrl", ApiUrls);
+
+      const CareerPortal = await InternalSign.InternalSignIn();
+      if (CareerPortal.status == ResponeStatus.SUCCESS) {
+        setApiUrl("Successed");
+      }
+      return CareerPortal.status;
+    } catch (error) {
+      console.error("Error fetching user role:", error);
+      return ResponeStatus.FAILED;
+    }
+  }
+
   const MenuItemsService: IMenuService = new MenuService();
 
-  const fetchApiUrl = async () => {
-    const ApiUrls = await ApiUrl();
-    let ApiURL = localStorage.getItem("ApiUrl");
-    if (ApiURL) {
-      localStorage.removeItem("ApiUrl");
-      localStorage.setItem("ApiUrl", ApiUrls);
-    } else {
-      localStorage.setItem("ApiUrl", ApiUrls);
-    }
-  };
-
   async function getUserRole() {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const currentUser = await sp.web.currentUser();
       const userEmail = currentUser.Email;
@@ -89,7 +98,7 @@ export const RoleProvider = ({ children }: any) => {
           setEmptyRole(true);
         }
       }
-      await fetchApiUrl();
+      // await fetchApiUrl();
     } catch (error) {
       console.error("Error fetching user role:", error);
     } finally {
@@ -208,7 +217,12 @@ export const RoleProvider = ({ children }: any) => {
           setShowRoleSelector,
         }}
       >
-        {roleID && userName && userRole && masterData && ADGroupData ? (
+        {roleID &&
+        userName &&
+        userRole &&
+        masterData &&
+        ADGroupData &&
+        ApiUrls ? (
           children
         ) : emptyRole ? (
           <>

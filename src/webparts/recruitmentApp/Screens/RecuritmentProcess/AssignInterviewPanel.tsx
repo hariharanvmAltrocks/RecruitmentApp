@@ -24,7 +24,7 @@ const AssignInterviewPanel = (props: any) => {
   const [rows, setRows] = React.useState<number>(5);
   // const [first, setFirst] = React.useState<number>(0);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
+  // const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
   const [checkedValue, setCheckedValue] = React.useState<any[]>([]);
   const [AssignPopup, setAssignPopup] = React.useState<boolean>(false);
@@ -159,7 +159,7 @@ const AssignInterviewPanel = (props: any) => {
       Conditions
     );
     if (RecruitmentDetails.status === 200 && RecruitmentDetails.data !== null) {
-      setRecruitmentDetails(RecruitmentDetails.data);
+      // setRecruitmentDetails(RecruitmentDetails.data);
       await fetchCandidateData(RecruitmentDetails.data);
     }
   };
@@ -360,7 +360,7 @@ const AssignInterviewPanel = (props: any) => {
     setIsLoading(false);
   };
 
-  console.log(RecruitmentDetails, "RecruitmentDetails");
+  // console.log(RecruitmentDetails, "RecruitmentDetails");
   return (
     <>
       <CustomLoader isLoading={isLoading}>

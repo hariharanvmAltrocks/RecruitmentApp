@@ -88,7 +88,7 @@ export const ViewCandidateDocument = ({
         {fileObj.map((item: any) => (
           <Grid container spacing={2} alignItems="center" key={item.id}>
             <Grid item xs={12} sm={8}>
-              <CustomViewDocument Attachment={[item]} webUrl={webUrl} />
+              <CustomViewDocument Attachment={item} webUrl={webUrl} />
             </Grid>
 
             <Grid item xs={12} sm={4} textAlign="right">
