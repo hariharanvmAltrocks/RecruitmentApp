@@ -7,12 +7,12 @@ import {
   AccordionDetails,
   Typography,
   Grid,
-  IconButton,
+  // IconButton,
   Box,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import DownloadIcon from "@mui/icons-material/Download";
+// import VisibilityIcon from "@mui/icons-material/Visibility";
+// import DownloadIcon from "@mui/icons-material/Download";
 import {
   CommanStyle,
   DisplayFolderName,
@@ -51,9 +51,6 @@ export const ViewCandidateDocument = ({
     if (fileUrl.endsWith(".pdf")) {
       return fileUrl;
     } else if (fileUrl.endsWith(".docx")) {
-      // const absoluteUrl = fileUrl.startsWith("http")
-      //   ? fileUrl
-      //   : `${webUrl.split("/sites")[0]}${fileUrl}`;
       const viewerUrl = `${webUrl}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(
         fileUrl
       )}&action=embedview`;
@@ -86,19 +83,19 @@ export const ViewCandidateDocument = ({
         </Typography>
 
         {fileObj.map((item: any) => (
-          <Grid container spacing={2} alignItems="center" key={item.id}>
-            <Grid item xs={12} sm={8}>
-              <CustomViewDocument Attachment={item} webUrl={webUrl} />
-            </Grid>
-
-            <Grid item xs={12} sm={4} textAlign="right">
-              <IconButton onClick={() => view_fn(item.content)}>
-                <VisibilityIcon color="primary" />
-              </IconButton>
-
-              <IconButton component="a" href={item.content} download>
-                <DownloadIcon color="primary" />
-              </IconButton>
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            key={item.id}
+            style={{ marginLeft: "9px" }}
+          >
+            <Grid container spacing={1}>
+              <CustomViewDocument
+                Attachment={item}
+                webUrl={webUrl}
+                IsBGV={true}
+              />
             </Grid>
           </Grid>
         ))}
@@ -112,23 +109,15 @@ export const ViewCandidateDocument = ({
     handleFileDownload: any,
     view_fn: any
   ) => {
-    // const fileName = doc.name;
-
     return (
       <Box key={index} sx={{ mb: 1 }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={8}>
-            <CustomViewDocument Attachment={[doc]} webUrl={webUrl} />
-          </Grid>
-
-          <Grid item xs={12} sm={4} textAlign="right">
-            <IconButton onClick={() => view_fn(doc.content)}>
-              <VisibilityIcon color="primary" />
-            </IconButton>
-
-            <IconButton component="a" href={doc.content} download>
-              <DownloadIcon color="primary" />
-            </IconButton>
+            <CustomViewDocument
+              Attachment={[doc]}
+              webUrl={webUrl}
+              IsBGV={true}
+            />
           </Grid>
         </Grid>
       </Box>

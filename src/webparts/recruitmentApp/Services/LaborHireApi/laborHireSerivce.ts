@@ -128,4 +128,26 @@ export default class LaborHireService implements ILaborHireService {
             };
         }
     }
+
+    async PerformCriminalRecordCheck(id: number): Promise<ApiResponse<any | null>> {
+        try {
+            const response = await BGverification.PerformCriminalRecordCheck(id);
+            return {
+                data: response.data,
+                status: response.status,
+                message: response.data.message,
+            };
+        } catch (error) {
+            console.error(
+                "Error inserting data into AdvertisementDetails:",
+                error
+            );
+            return {
+                data: [],
+                status: 500,
+                message: "Error inserting data into AdvertisementDetails",
+            };
+        }
+    }
+
 }

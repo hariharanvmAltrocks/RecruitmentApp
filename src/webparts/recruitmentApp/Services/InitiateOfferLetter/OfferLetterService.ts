@@ -89,6 +89,64 @@ export default class OfferLetterService implements IOfferLetterService {
         }
     };
 
+    fetchHODSelectedCandidate = async (
+        Filter: any[],
+        Conditions: any,
+    ): Promise<ApiResponse<any[]>> => {
+        let GridResult: any[] = [];
+        try {
+            const res = await SPServices.SPReadItems({
+                Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
+                Select:
+                    "*,RecruitmentID/ID,PositionID/PositionID,CandidateID/ID,Status/StatusDescription,Action/Action",
+                Filter: Filter,
+                Expand:
+                    "RecruitmentID,PositionID,CandidateID,Status,Action",
+                FilterCondition: Conditions,
+                Orderby: "ID",
+                Orderbydecorasc: false,
+                Topcount: count.Topcount,
+            });
+            if (res.length > 0) {
+                GridResult = await Promise.all(
+                    res.map(async (objresult: any, index: number) => {
+                        const filterCandidate = [
+                            {
+                                FilterKey: "ID",
+                                Operator: "eq",
+                                FilterValue: objresult?.CandidateID?.ID,
+                            },
+                        ];
+                        let CandidateData = await this.fetchCandidateDetails(filterCandidate, "")
+                        const item = {
+                            ID: objresult?.ID,
+                            PositionID: objresult?.PositionID?.PositionID,
+                            RecruitmentIDId: objresult?.RecruitmentID?.ID,
+                            Status: objresult?.Status ? objresult?.Status?.StatusDescription : "",
+                            StatusID: objresult?.StatusId,
+                            IsExpat: objresult?.IsExpat ?? "",
+                            ActionID: objresult?.ActionId,
+                            JobRequestID: CandidateData.data?.JobRequestID
+                        };
+                        return item;
+                    })
+                );
+            }
+            return {
+                data: GridResult,
+                status: 200,
+                message: "Candidate details fetched successfully",
+            };
+        } catch (error) {
+            console.error("Error during file replacement process:", error);
+            return {
+                data: GridResult,
+                status: 500,
+                message: `Error during file replacement: ${error.message}`,
+            };
+        }
+    };
+
     fetchCandidateDetails = async (
         Filter: any[],
         Conditions: any,
@@ -172,7 +230,8 @@ export default class OfferLetterService implements IOfferLetterService {
                             AccommodationBooked: objresult?.AccommodationBooked,
                             TravelProcess: objresult?.TravelProcess,
                             ReadyforOnboarding: objresult?.ReadyforOnboarding,
-                            NationalityCode: objresult?.NationalityCode
+                            NationalityCode: objresult?.NationalityCode,
+                            MedicalCheckStatus: objresult?.MedicalChecks
                         }
                         return item;
                     })

@@ -7,4 +7,5 @@ export type ILaborHireService = {
     UpsertBGVJobMaster(UpsertData: UpsertBGV[]): Promise<ApiResponse<any | null>>;
     GetBGVerificationType(): Promise<ApiResponse<any | null>>;
     UpdateBGVerification(id: number): Promise<ApiResponse<any | null>>;
+    PerformCriminalRecordCheck(id: number): Promise<ApiResponse<any | null>>;
 }

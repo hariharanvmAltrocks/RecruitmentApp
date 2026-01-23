@@ -728,17 +728,25 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 Conditions,
                 props
               )
-            : await getVRRDetails.GetAdditionalExistingPositionEditView(
+            : props.stateValue?.type === DataFrom.ExistingPosition
+            ? await getVRRDetails.GetAdditionalExistingPositionEditView(
                 filterConditions,
                 Conditions,
                 props
               )
-          : await getVRRDetails.GetRecruitmentDetails(
-              filterConditionsRecuritment,
-              RecuritmentConditions
-            );
+            : props.stateValue?.type === DataFrom.VacancyRecruitmentProcess
+            ? await getVRRDetails.GetVacancyDetails(
+                filterConditions,
+                Conditions,
+                props
+              )
+            : await getVRRDetails.GetRecruitmentDetails(
+                filterConditionsRecuritment,
+                RecuritmentConditions
+              )
+          : undefined;
 
-      if (response.data) {
+      if (response && response.data) {
         const NewpositionData =
           response?.data?.filter((item) => item.ID === props.stateValue?.ID) ||
           [];

@@ -179,6 +179,11 @@ export const BGverification = {
             `BGVerification/ProcessBgvJobs?jobRequestId=${params}`
         )
     },
+    PerformCriminalRecordCheck: async function (params: number) {
+        return await AxiosInstance.post(
+            `BGVerification/PerformCriminalRecordCheck?jobRequestId=${params}`
+        )
+    }
 }
 
 export const AdminPanelServiceApi = {

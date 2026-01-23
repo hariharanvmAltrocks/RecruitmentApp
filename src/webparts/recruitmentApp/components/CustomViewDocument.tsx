@@ -1,17 +1,20 @@
 import * as React from "react";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
-import { Link, Tooltip } from "@mui/material";
+import { Box, Grid, IconButton, Link, Tooltip } from "@mui/material";
 import { Dialog } from "primereact/dialog";
 import "../App.css";
 import { labelNames } from "../utilities/LabelName";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import DownloadIcon from "@mui/icons-material/Download";
 
 interface fieldItems {
   Attachment: IDocFiles[];
   Label?: string;
   webUrl?: string;
+  IsBGV?: boolean;
 }
 
-function CustomViewDocument({ Attachment, Label, webUrl }: fieldItems) {
+function CustomViewDocument({ Attachment, Label, webUrl, IsBGV }: fieldItems) {
   const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
   const [documentcontent, setDocumentcontent] = React.useState<string>("");
 
@@ -34,6 +37,11 @@ function CustomViewDocument({ Attachment, Label, webUrl }: fieldItems) {
     // }
     setDocumentPopup(true);
     setDocumentcontent(documentUrl);
+  }
+
+  function view_fn(url: any) {
+    setDocumentPopup(true);
+    setDocumentcontent(url);
   }
 
   const getIframeSrc = (fileUrl: string): string => {
@@ -67,32 +75,61 @@ function CustomViewDocument({ Attachment, Label, webUrl }: fieldItems) {
                 : fileName;
 
             return (
-              <div key={index}>
-                <div className="ms-Grid-row">
-                  <div
-                    className="ms-Grid-col ms-lg12"
-                    style={{ marginRight: "1rem" }}
+              <Grid
+                container
+                key={index}
+                alignItems="center"
+                spacing={1}
+                sx={{
+                  borderBottom: "1px solid #eee",
+                  py: 1,
+                }}
+              >
+                {/* File name */}
+                <Grid item xs={12} sm={8}>
+                  <Tooltip title={fileName} arrow>
+                    <Link
+                      underline="hover"
+                      onClick={(e) => handleFileDownload(e, file.content)}
+                      sx={{
+                        color: "blue",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                        display: "inline-block",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "100%",
+                      }}
+                    >
+                      {truncatedFileName}
+                    </Link>
+                  </Tooltip>
+                </Grid>
+
+                {/* Action buttons */}
+                {IsBGV && (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={4}
+                    textAlign={{ xs: "left", sm: "right" }}
                   >
-                    <Tooltip title={fileName} arrow>
-                      <Link
-                        href="#"
-                        onClick={(e) => handleFileDownload(e, file.content)}
-                        style={{
-                          color: "blue",
-                          fontWeight: "bold",
-                          display: "inline-block",
-                          maxWidth: "100%",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        {truncatedFileName}
-                      </Link>
-                    </Tooltip>
-                  </div>
-                </div>
-              </div>
+                    <Box
+                      display="flex"
+                      justifyContent={{ xs: "flex-start", sm: "flex-end" }}
+                    >
+                      <IconButton onClick={() => view_fn(file.content)}>
+                        <VisibilityIcon color="primary" />
+                      </IconButton>
+
+                      <IconButton component="a" href={file.content} download>
+                        <DownloadIcon color="primary" />
+                      </IconButton>
+                    </Box>
+                  </Grid>
+                )}
+              </Grid>
             );
           })
         : null}

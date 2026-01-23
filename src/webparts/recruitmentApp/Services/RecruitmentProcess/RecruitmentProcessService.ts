@@ -462,14 +462,12 @@ export default class RecruitmentService implements IRecruitmentService {
     try {
       const res = await SPServices.SPReadItems({
         Listname: ListNames.HRMSVacancyReplacementRequest,
-        Select:
-          "*, Department/DepartmentName, SubDepartment/SubDepTitle, Section/SectionName, DepartmentCode/DptCode, Status/StatusDescription, Action/Action, BusinessUnitCode/BusineesUnitCode, JobCode/JobCode",
-        Expand:
-          "Department, SubDepartment, Section, DepartmentCode, Status, Action, BusinessUnitCode, JobCode",
-        Orderby: "ID",
-        Orderbydecorasc: true,
+        Select: "*,Department/DepartmentName,BusinessUnitCode/BusineesUnitCode,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode, Status/StatusDescription,Author/EMail,JobCode/JobCode,JobCode/JobTitleInEnglish,JobTitleFrench/JobTitleInFrench,PatersonGrade/PatersonGrade,PatersonGrade/DRCGrade",
         Filter: filterParam,
+        Expand: "Department,BusinessUnitCode,SubDepartment,Section,DepartmentCode,Status,Author,JobCode,JobTitleFrench,PatersonGrade",
         FilterCondition: filterConditions,
+        Orderby: "ID",
+        Orderbydecorasc: false
       });
 
       if (res.length > 0) {
@@ -504,16 +502,16 @@ export default class RecruitmentService implements IRecruitmentService {
               ActionTypeId: item.ActionId ? item.ActionId : "",
               Location: "DRC",
 
-              JobCodeId: item.JobCodeId || 0,
-              JobCode: item.JobCode?.JobCode || "",
-              JobTitleEnglish: "",
-              JobTitleFrench: "",
-              PatersonGrade: "",
-              DRCGrade: "",
-              JobTitleEnglishId: 0,
-              JobTitleFrenchId: 0,
-              PatersonGradeId: 0,
-              DRCGradeId: 0,
+              JobTitleEnglishId: item?.JobCodeId || 0,
+              JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
+              JobTitleFrenchId: item?.JobTitleFrenchId || 0,
+              JobTitleFrench: item?.JobTitleFrench?.JobTitleInFrench || "",
+              DRCGradeId: item?.PatersonGradeId || 0,
+              DRCGrade: item?.PatersonGrade?.DRCGrade || "",
+              JobCode: item?.JobCode?.JobCode || "",
+              JobCodeId: item?.JobCodeId || 0,
+              PatersonGradeId: item?.PatersonGradeId || 0,
+              PatersonGrade: item?.PatersonGrade?.PatersonGrade || "",
 
               Checked: false,
 

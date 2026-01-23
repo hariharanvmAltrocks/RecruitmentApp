@@ -9,6 +9,7 @@ import TabsComponent from "./TabsComponent ";
 import { TabName } from "../utilities/Config";
 
 export type BGVComment = {
+  BGVCode?: string;
   BGVType: string;
   Remarks: string;
 };

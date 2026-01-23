@@ -1,4 +1,5 @@
-import { OnboardingChecklisttype } from "../Models/Screens"
+import { OnboardingChecklistDRCtype, OnboardingChecklisttype } from "../Models/Screens"
+import { NationalityCode } from "./Config"
 
 export const labelNames = {
     PositionDetails: {
@@ -306,7 +307,8 @@ export const ButtonAction = {
     New: "New",
     ResetPassword: "Reset Password",
     Rework: "Rework",
-    ProceedToSubmit: "Proceed To Submit"
+    ProceedToSubmit: "Proceed To Submit",
+    ReInitiate: "Re-Initiate",
 }
 
 export const IsCandidateFit = {
@@ -413,7 +415,58 @@ export const BGVDocumentName = {
     PS: "Psychometric Assessment",
     ConsentForm: "Dot's Africa Consent Form",
 }
-export const onboardingData: OnboardingChecklisttype = {
+export const CHECKLIST_CONFIG = {
+    [NationalityCode.Nationals]: {
+        DocumentComplianceChecks: [
+            "Background Checks",
+            "Medical Checks",
+            "Signed Offer Letter",
+            "Employment Contract",
+        ],
+        LogisticsEmployeeSupport: [],
+        FinalStatus: ["Ready for Onboarding"],
+    },
+
+    [NationalityCode.SouthAfrica]: {
+        DocumentComplianceChecks: [
+            "Background Checks",
+            "Signed Offer Letter",
+            "Employment Contract",
+            "Work Permit Approved",
+        ],
+        LogisticsEmployeeSupport: [
+            "Visa Process",
+            "Accommodation Booked",
+            "Travel Process",
+        ],
+        FinalStatus: ["Ready for Onboarding"],
+    },
+};
+
+
+export const onboardingDataDRC: OnboardingChecklistDRCtype = {
+    DocumentComplianceChecks: {
+        label: "Document Compliance Checks",
+        DocumentComplianceChecks: {
+            BackgroundChecks: { id: 1, label: "Background Checks", value: false },
+            SignedOfferLetter: { id: 2, label: "Signed Offer Letter", value: false },
+            SignedEmploymentContract: { id: 3, label: "Employment Contract", value: false },
+            MedicalChecks: {
+                id: 0,
+                label: "Medical Checks",
+                value: false
+            }
+        },
+    },
+    FinalStatus: {
+        label: "Final Status",
+        FinalStatus: {
+            ReadyforOnboarding: { id: 8, label: "Ready for Onboarding", value: false },
+        },
+    },
+};
+
+export const onboardingDataExpat: OnboardingChecklisttype = {
     DocumentComplianceChecks: {
         label: "Document Compliance Checks",
         DocumentComplianceChecks: {
@@ -423,7 +476,6 @@ export const onboardingData: OnboardingChecklisttype = {
             WorkPermitApproved: { id: 4, label: "Work Permit Approved", value: false },
         },
     },
-
     LogisticsEmployeeSupport: {
         label: "Logistics Employee Support",
         LogisticsEmployeeSupport: {
@@ -432,7 +484,6 @@ export const onboardingData: OnboardingChecklisttype = {
             TravelProcess: { id: 7, label: "Travel Process", value: false },
         },
     },
-
     FinalStatus: {
         label: "Final Status",
         FinalStatus: {
@@ -441,7 +492,8 @@ export const onboardingData: OnboardingChecklisttype = {
     },
 };
 
-export const ChecklistStatus = {
+
+export const ChecklistStatusExpat = {
     "Background Checks": false,
     "Signed Offer Letter": false,
     "Employment Contract": false,
@@ -451,6 +503,15 @@ export const ChecklistStatus = {
     "Travel Process": false,
     "Ready for Onboarding": false,
 };
+
+export const ChecklistStatusDRC = {
+    "Background Checks": false,
+    "Medical Checks": false,
+    "Signed Offer Letter": false,
+    "Employment Contract": false,
+    "Ready for Onboarding": false,
+};
+
 
 export const ExternalUserType = {
     Agent: "Agent",

@@ -139,7 +139,7 @@ export const StatusId = {
   PendingLabourhireWPPayment: 173,
   PendingFinancePaymentReview: 174,
   PendingLHWorkPermitProcess: 175,
-  PendingHRCandidateResign: 176,
+  PendingHRReviewOfferuploadEmploymentInit: 176,
   PendingHREmploymentContractInit: 177,
   PendingLHECRelease: 178,
   PendingHREmploymentContractReview: 179,
@@ -180,6 +180,10 @@ export const StatusId = {
   CandidateOnHoldbyHODLevel2: 166,//182,//166,
   CandidateRejectedbyHODLevel1: 167,
   CandidateRejectedbyHODLevel2: 168,
+
+  BackgroundCheckVerificationFailed: 180,
+  RESProcessInitiated: 143,
+  FailedmedicalscreeningUnfit: 156
 };
 
 export const RoleID = {
@@ -343,6 +347,7 @@ export const RecuritmentHRMsg = {
   EmployeementInit: "The Employment Contract process has been successfully initiated to the Labour Hire",
   ReviewEmploymentContractMsg: "The Labour Hire Employment Contract has been reviewed successfully and forwarded to the candidate.",
   ReviewECMsg: "The Employement Contract Reviewed Successfully",
+  ReviewOfferLetterInitEC: "The offer letter has been reviewed successfully and initiated the Employment Contract ",
 
   RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
   RevertECCocs: "The Labour Hire Employment Contract has been successfully reverted",
@@ -371,6 +376,8 @@ export const RecuritmentHRMsg = {
   ResetPasswordMsg: "A password reset link has been sent to your registered email. Please check your inbox to proceed.",
 
   duplicatedquestionMsg: "Duplicate questions are not allowed. Please modify the question and try again.",
+  ReinitiateBGVProcess: "The BGV process has been re-initiated successfully.",
+  ReinitiateBGVWarningMsg: "Are you sure you want to re-initiate the Criminal Check (Fingerprint Search) as part of the BGV process for this candidate?",
 }
 
 export const validationMsg = {

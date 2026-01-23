@@ -65,7 +65,7 @@ const SideNavComponent = (props: sideNavProps) => {
       masterData?.menuMartixData?.reduce((acc: TabDetails[], menu: any) => {
         if (!menu.SubMenu) {
           const match = menu.TabDetails?.find(
-            (tab: { Id: number }) => tab?.Id === menuID
+            (tab: { Id: number }) => tab?.Id === menuID,
           );
           let TabDetails = match?.TabDetails.map((item: any, index: number) => {
             return {
@@ -76,7 +76,7 @@ const SideNavComponent = (props: sideNavProps) => {
           if (match) acc.push(TabDetails);
         } else {
           const childMatches = menu.Children?.find(
-            (child: any) => child?.Id === menuID
+            (child: any) => child?.Id === menuID,
           );
           let TabDetails = childMatches?.TabDetails.map(
             (item: any, index: number) => {
@@ -84,7 +84,7 @@ const SideNavComponent = (props: sideNavProps) => {
                 ...item,
                 Value: "tab" + (index + 1),
               };
-            }
+            },
           );
           if (childMatches) acc.push(TabDetails);
         }
@@ -101,7 +101,7 @@ const SideNavComponent = (props: sideNavProps) => {
   const isActiveMenu = (item: MenuResponse) => {
     if (item.Children && item.Children.length > 0) {
       const activeChild = item.Children.find((subItem) =>
-        location.pathname.startsWith(subItem.Path)
+        location.pathname.startsWith(subItem.Path),
       );
       if (activeChild) {
         if (masterData) {
@@ -128,7 +128,7 @@ const SideNavComponent = (props: sideNavProps) => {
 
   const renderMenu = (
     items: MenuResponse[],
-    menuType: string
+    menuType: string,
   ): React.ReactNode => {
     return (
       <>
@@ -294,7 +294,7 @@ const SideNavComponent = (props: sideNavProps) => {
               marginBottom: "10px",
             }}
           >
-            Version-1.3
+            Version-1.5
           </div>
         </>
       ) : (
@@ -308,7 +308,7 @@ const SideNavComponent = (props: sideNavProps) => {
               marginBottom: "10px",
             }}
           >
-            V-1.3
+            V-1.5
           </div>
         </>
       )}
