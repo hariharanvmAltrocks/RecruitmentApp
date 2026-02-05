@@ -1,6 +1,15 @@
 import { AdminPItem, UpsertExternalUser } from "../../Models/AdminPanel";
-import { AdvertisementDetails, BGVStatus, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertBGV, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CheckMyCandidate, COIType, GetProfileByFilter, getQuestionById, initiateLaborHire, profileXagent, sendEmail, UpsertBGV, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AuthorizationHeader } from "../AxiosService/axiosConfig";
 import AxiosInstance from "../AxiosService/AxiosService";
+
+export const InternalSign = {
+    InternalSignIn: async function () {
+        return await AxiosInstance.post(
+            `/hrms/InternalSignIn`, {}, AuthorizationHeader
+        );
+    }
+}
 
 export const getProfileData = {
     GetProfileByJobCode: async function (params: any) {
@@ -150,22 +159,31 @@ export const BGverification = {
             `/BGVerification/RunBGVerification?jobRequestId=${id}`
         );
     },
-    GetBGVStatus: async function (params: BGVStatus) {
-        return await AxiosInstance.post(
-            `/hrms/GetBGVStatus`, params
-        );
-    },
+    // GetBGVStatus: async function (params: BGVStatus) {
+    //     return await AxiosInstance.post(
+    //         `/hrms/GetBGVStatus`, params
+    //     );
+    // },
     UpsertBGVJobMaster: async function (params: UpsertBGV[]) {
         return await AxiosInstance.post(
             `/hrms/UpsertBGVJobMaster`, params
         )
     },
-    GetBGVerificationType: async function (NationalityCode: string) {
+    GetBGVerificationType: async function () {
         return await AxiosInstance.get(
-            `hrms/GetBGVerificationType?nationality=${NationalityCode}`
+            `hrms/GetBGVerificationType`
         )
     },
-
+    UpdateBGVerification: async function (params: number) {
+        return await AxiosInstance.get(
+            `BGVerification/ProcessBgvJobs?jobRequestId=${params}`
+        )
+    },
+    PerformCriminalRecordCheck: async function (params: number) {
+        return await AxiosInstance.post(
+            `BGVerification/PerformCriminalRecordCheck?jobRequestId=${params}`
+        )
+    }
 }
 
 export const AdminPanelServiceApi = {
@@ -182,6 +200,13 @@ export const AdminPanelServiceApi = {
     ResetPassword: async function (Email: any) {
         return await AxiosInstance.get(
             `/Auth/PasswordResetToken?userName=${Email}`
+        );
+    }
+}
+export const PPEMasterTable = {
+    getPPEMaster: async function () {
+        return await AxiosInstance.get(
+            '/jobPortal/GetPPEMaster'
         );
     }
 }

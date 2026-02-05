@@ -1,7 +1,7 @@
 import { sp } from "@pnp/sp";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
-import { ICommonService } from "./ICommonService";
+import { ICommonService, LanguageFiles } from "./ICommonService";
 import GraphService from "../GraphService/GraphService";
 import { AutoCompleteItem } from "../../Models/Screens";
 import { DocumentLibraray, ListNames } from "../../utilities/Config";
@@ -136,26 +136,54 @@ export default class CommonService implements ICommonService {
     JobCode?: string,
     RoleProfile?: string,
     ProfileID?: string
-  ): Promise<ApiResponse<IDocFiles[]>> => {
+  ): Promise<ApiResponse<IDocFiles[] | LanguageFiles>> => {
     try {
-      let response;
+      let response: IDocFiles[] | LanguageFiles;
+
       if (RoleProfile) {
-        response = (await SPServices.getDocLibFiles({
-          FilePath: `${listName}/${JobCode}/${RoleProfile}`,
-        })) as IDocFiles[];
+        const basePath = `${listName}/${JobCode}/${RoleProfile}`;
+
+        const EnglishFiles = await SPServices.getDocLibFiles({
+          FilePath: `${basePath}/English`,
+        }) as IDocFiles[];
+
+        const FrenchFiles = await SPServices.getDocLibFiles({
+          FilePath: `${basePath}/French`,
+        }) as IDocFiles[];
+
+        if ((EnglishFiles && EnglishFiles.length > 0) || (FrenchFiles && FrenchFiles.length > 0)) {
+          response = {
+            English: EnglishFiles || [],
+            French: FrenchFiles || [],
+          };
+        }
+        else {
+          const RoleProfileFiles = await SPServices.getDocLibFiles({
+            FilePath: basePath,
+          }) as IDocFiles[];
+
+          response = {
+            English: RoleProfileFiles,
+            French: [], // or same files if needed
+          };
+        }
+
       } else if (ProfileID) {
-        response = (await SPServices.getDocLibFiles({
+        response = await SPServices.getDocLibFiles({
           FilePath: `${listName}/${ProfileID}/$CV/`,
-        })) as IDocFiles[];
+        }) as IDocFiles[];
+
       } else if (JobCode) {
-        response = (await SPServices.getDocLibFiles({
+        response = await SPServices.getDocLibFiles({
           FilePath: `${listName}/${JobCode}`,
-        })) as IDocFiles[];
+        }) as IDocFiles[];
+
       } else {
-        response = (await SPServices.getDocLibFiles({
+        response = await SPServices.getDocLibFiles({
           FilePath: `${listName}`,
-        })) as IDocFiles[];
+        }) as IDocFiles[];
       }
+
       return {
         data: response,
         status: 200,
@@ -170,6 +198,7 @@ export default class CommonService implements ICommonService {
       };
     }
   };
+
 
   GetADgruopsEmailIDs = async (
     ADGroupID: string

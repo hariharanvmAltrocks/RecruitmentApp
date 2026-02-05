@@ -6,7 +6,6 @@ import {
   TechnicalSkills,
 } from "../../Models/RecuritmentVRR";
 import LabelHeaderComponents from "../../components/TitleHeader";
-import CustomLabel from "../../components/CustomLabel";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import { Notes, TabName, tabType } from "../../utilities/Config";
@@ -189,12 +188,12 @@ function PreviewScreen({
                       />
                     </div>
 
-                    <div style={{ textAlign: "center", marginTop: 6 }}>
+                    {/* <div style={{ textAlign: "center", marginTop: 6 }}>
                       <CustomLabel
                         value={`JobTitle - ${JobTitle}`}
                         style={{ fontSize: 17, fontWeight: "bold" }}
                       />
-                    </div>
+                    </div> */}
 
                     {data.RolePurpose && (
                       <div style={{ marginTop: 12 }}>
@@ -353,12 +352,12 @@ function PreviewScreen({
                       />
                     </div>
 
-                    <div style={{ textAlign: "center", marginTop: 6 }}>
+                    {/* <div style={{ textAlign: "center", marginTop: 6 }}>
                       <CustomLabel
                         value={`JobTitle - ${JobTitle_fr}`}
                         style={{ fontSize: 17, fontWeight: "bold" }}
                       />
-                    </div>
+                    </div> */}
 
                     {data.RolePurpose_fr && (
                       <div style={{ marginTop: 12 }}>

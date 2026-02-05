@@ -23,15 +23,20 @@ import {
   StatusId,
   TabName,
   tabType,
+  TooltipHeader,
+  TooltipType,
   WorkflowAction,
   workflowStatusApi,
 } from "../../utilities/Config";
-import { alertPropsData, OnboardingChecklisttype } from "../../Models/Screens";
 import {
-  BGVStatus,
-  UploadDocument,
-  WorkflowJson,
-} from "../../Models/ApIInterface";
+  alertPropsData,
+  ComplianceCheck,
+  ComplianceCheckDRC,
+  OnboardingChecklist,
+  OnboardingChecklistDRCtype,
+  OnboardingChecklisttype,
+} from "../../Models/Screens";
+import { UploadDocument, WorkflowJson } from "../../Models/ApIInterface";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import CustomLabel from "../../components/CustomLabel";
 import AttachmentButton from "../../components/AttachmentButton";
@@ -59,12 +64,14 @@ import {
   Attachment,
   ButtonAction,
   CheckboxContent,
-  ChecklistStatus,
+  ChecklistStatusDRC,
+  ChecklistStatusExpat,
   DisplayFolderName,
   DotAfricaStatus,
   EmployeementCategory,
   labelNames,
-  onboardingData,
+  onboardingDataDRC,
+  onboardingDataExpat,
   RadioBtnLabel,
   StatusBarValue,
 } from "../../utilities/LabelName";
@@ -72,7 +79,7 @@ import CustomTextArea from "../../components/CustomTextArea";
 import SignatureCheckbox from "../../components/SignatureCheckbox";
 import CustomSignature from "../../components/CustomSignature";
 import { Box, Typography } from "@mui/material";
-import { convertToList } from "../../components/TabMerge";
+import { convertToList, SpiltDateOnly } from "../../components/TabMerge";
 import "./Checklist.css";
 import CustomViewDocument from "../../components/CustomViewDocument";
 import ToolTipButton from "../../components/Tooltip";
@@ -80,6 +87,8 @@ import TabsComponent from "../../components/TabsComponent ";
 import CustomDialogbox from "../../components/CustomDialogbox";
 import Labelheader from "../../components/LabelHeader";
 import BGVComments, { BGVComment } from "../../components/BGVComments";
+import ToolTipTable from "../ScreenComponent/ToolTipTable";
+import { Label } from "@fluentui/react";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -205,6 +214,7 @@ const UploadCandidateDocument = (props: any) => {
     BGVStatusProcessOption: [],
     BGVProofAttachment: [],
     BGVComments: "",
+    PPEDetails: [],
   });
   // const [checkdata,setCheckdata] = useState<>
   // const [viewDocument, setViewDocument] = React.useState<viewDocument>({
@@ -215,11 +225,22 @@ const UploadCandidateDocument = (props: any) => {
   // });
   const [dataValue, setdataValue] = React.useState<DataSyncToResiProcess[]>([]);
   const [documentview, setdocumentview] = React.useState<CustomViewDocument[]>(
-    []
+    [],
   );
   const [activeTab, setactiveTab] = React.useState<string>("tab1");
-  const [checklistData, setchecklistData] =
-    React.useState<OnboardingChecklisttype>(onboardingData);
+  const [checklistData, setchecklistData] = React.useState<OnboardingChecklist>(
+    props.stateValue.rowData?.CandidateDetails?.NationalityCode ===
+      NationalityCode.Nationals
+      ? {
+          nationality: "DRC",
+          ...onboardingDataDRC,
+        }
+      : {
+          nationality: "EXPAT",
+          ...onboardingDataExpat,
+        },
+  );
+
   const [TabNameData, setTabNameData] = React.useState<TabNameData[]>([]);
   const [validationErrors, setValidationErrors] =
     React.useState<ValidationError>({
@@ -245,9 +266,15 @@ const UploadCandidateDocument = (props: any) => {
     ButtonAction: null,
     visible: false,
   });
+  // const [WorkflowStatus, setWorkflowStatus] = React.useState<string>("");
   const [btnEnable, setBtnEnable] = React.useState<boolean>(false);
   const [documentPopup, setDocumentPopup] = React.useState<boolean>(false);
-  const [checklistStatus, setChecklistStatus] = useState<any>(ChecklistStatus);
+  const [checklistStatus, setChecklistStatus] = useState<any>(
+    props.stateValue.rowData?.CandidateDetails?.NationalityCode ==
+      NationalityCode.Nationals
+      ? ChecklistStatusDRC
+      : ChecklistStatusExpat,
+  );
   const [BGVerifiedStatus, setBGVerifiedStatus] = useState<any>({});
   const [OBCheckListTab, setOBCheckListTab] = React.useState<string>("tab1");
   const [MainComponent, setMainComponent] = useState<boolean>(true);
@@ -258,42 +285,130 @@ const UploadCandidateDocument = (props: any) => {
   const fetchBGVStatus = async () => {
     setIsLoading(true);
     try {
-      let FilterValue: BGVStatus = {
-        hrUserId: String(props.userDetails[0]?.ID),
-        pagination: {
-          filterValue: props.stateValue.rowData?.CandidateDetails?.JobRequestID,
-          sortBy: "",
-          sortOrder: 0,
-          pageSize: 5,
-          currentPage: 1,
-          totalItems: 0,
-        },
-      };
+      // let FilterValue: BGVStatus = {
+      //   hrUserId: String(props.userDetails[0]?.ID),
+      //   pagination: {
+      //     filterValue: ,
+      //     sortBy: "",
+      //     sortOrder: 0,
+      //     pageSize: 5,
+      //     currentPage: 1,
+      //     totalItems: 0,
+      //   },
+      // };
       await laborHireService
-        .CheckBGVerification(FilterValue)
+        .CheckBGVerification(
+          props.stateValue.rowData?.CandidateDetails?.JobRequestID,
+        )
         .then(async (res) => {
           const mappedObj: { [key: string]: string } =
-            res.data.data[0]?.bgVerification
+            res.data[0]?.bgVerification
               ?.filter((item: any) => item.bgType)
               ?.reduce((acc: { [key: string]: string }, item: any) => {
                 acc[item.bgType] =
-                  item.status === DotAfricaStatus.Completed &&
-                  item.result === DotAfricaStatus.Confirmed
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.Completed.trim().toLowerCase() &&
+                  item.result?.trim().toLowerCase() ===
+                    DotAfricaStatus.Confirmed.trim().toLowerCase()
                     ? StatusBarValue.Completed
-                    : item.status === DotAfricaStatus.skipped
-                    ? StatusBarValue.Failed
-                    : StatusBarValue.Pending;
+                    : item.status?.trim().toLowerCase() ===
+                          DotAfricaStatus.skipped.trim().toLowerCase() ||
+                        item.status?.trim().toLowerCase() ===
+                          DotAfricaStatus.error.trim().toLowerCase() ||
+                        item.status?.trim().toLowerCase() ===
+                          DotAfricaStatus.cancelled.trim().toLowerCase()
+                      ? StatusBarValue.Failed
+                      : StatusBarValue.Pending;
                 return acc;
               }, {});
-          let BGVRemarks = res.data.data[0]?.bgVerification
-            .filter((item: any) => item.status === DotAfricaStatus.skipped)
+          let BGVRemarks = res.data[0]?.bgVerification
+            .filter(
+              (item: any) =>
+                item.status?.trim().toLowerCase() ===
+                  DotAfricaStatus.skipped.trim().toLowerCase() ||
+                item.status?.trim().toLowerCase() ===
+                  DotAfricaStatus.error.trim().toLowerCase(),
+            )
             .map((item: any) => ({
+              BGVCode: item.bgTypeCode,
               BGVType: item.bgType,
               Remarks: item.remarks,
             }));
 
           setDotAfricaComments(BGVRemarks);
           setBGVerifiedStatus(mappedObj);
+          if (
+            res.data[0]?.bgVerification &&
+            res.data[0]?.bgVerification.length > 0
+          ) {
+            const allCompleted =
+              res.data[0]?.bgVerification.every(
+                (item: any) =>
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.Completed.trim().toLowerCase() &&
+                  item.result?.trim().toLowerCase() ===
+                    DotAfricaStatus.Confirmed.trim().toLowerCase(),
+              ) || false;
+            const IDCTYpeStatus = res.data[0]?.bgVerification
+              ?.filter((item: any) => item.bgTypeCode === "IDCS")
+              ?.every(
+                (item: any) =>
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.skipped.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.error.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.cancelled.trim().toLowerCase(),
+              );
+            const RejectStatus = res.data[0]?.bgVerification
+              ?.filter((item: any) => item.bgTypeCode !== "IDCS")
+              ?.some(
+                (item: any) =>
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.skipped.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.error.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.cancelled.trim().toLowerCase() ||
+                  false,
+              );
+
+            if (allCompleted || IDCTYpeStatus || RejectStatus) {
+              let matchedData: any;
+              if (allCompleted) {
+                matchedData = {
+                  ID: props.stateValue.ID,
+                  ActionId: WorkflowAction.Approved,
+                };
+              } else if (IDCTYpeStatus) {
+                // matchedData = {
+                //   ID: rowData?.ID,
+                //   ActionId: WorkflowAction.Revert,
+                // };
+              } else if (!IDCTYpeStatus && RejectStatus) {
+                matchedData = {
+                  ID: props.stateValue.ID,
+                  ActionId: WorkflowAction.Reject,
+                };
+              }
+              let UpdateData = await OfferLetterServices.UpdateStatusInSpfxlist(
+                [matchedData],
+              );
+              if (UpdateData.status === ResponeStatus.SUCCESS) {
+                if (allCompleted) {
+                  // const BGVResult = mappedArray.map((item: any) => ({
+                  //   [item.Key]: item.Value,
+                  // }));
+
+                  let datas = {
+                    ID: props.stateValue.rowData?.CandidateDetails.CandidateID,
+                    BackgroundChecksResults: JSON.stringify(mappedObj) ?? [],
+                  };
+                  await getVRRDetails.InsertRecruitmentCandidateDetails(datas);
+                }
+              }
+            }
+          }
         })
         .catch((error) => {
           console.log("Candidate details doesn't fetch the data", error);
@@ -318,18 +433,30 @@ const UploadCandidateDocument = (props: any) => {
       });
       const response = await OfferLetterServices.fetchResiCandidateDetails(
         filterConditions,
-        Conditions
+        Conditions,
       );
       let item = response.data[0];
       setdataValue(response.data);
       let CandidateDetails = await GetPortalJobsService.getCandidateProfile(
-        item?.CandidateDetails?.JobRequestID
+        item?.CandidateDetails?.JobRequestID,
       );
       let docs: any[] = [];
       if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
         const VerificationType = await GetPortalJobsService.GetAllMaster(
-          CategoryID.VerificationType
+          CategoryID.VerificationType,
         );
+        const existingData = VerificationType.data || [];
+        const lastId = existingData[existingData.length - 1]?.id ?? 0;
+
+        VerificationType.data = [
+          ...existingData,
+          {
+            id: lastId + 1,
+            value: "ConsentForm",
+            displayText: "Consent Form",
+            displayTextFr: "",
+          },
+        ];
         let VerificationCode: string[] =
           VerificationType.data?.map((item) => String(item.value)) ?? [];
         let BGVDocument: GetBGVDocument = {
@@ -344,9 +471,8 @@ const UploadCandidateDocument = (props: any) => {
           RequestID: item?.CandidateDetails?.JobRequestID,
           VerificationName: VerificationType.data,
         };
-        let BGVDocs = await OfferLetterServices.FetchBGVerificationDOcs(
-          BGVDocument
-        );
+        let BGVDocs =
+          await OfferLetterServices.FetchBGVerificationDOcs(BGVDocument);
         let OfferDocument: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
           ProfileID: item?.CandidateDetails?.ProfileID, //"13", // item?.CandidateDetails?.ProfileID, //item?.CandidateDetails?.ProfileID,
@@ -354,9 +480,8 @@ const UploadCandidateDocument = (props: any) => {
           DocumentType: DocumentFolderName.Offerletter,
           UnsignedDoc: DocumentFolderName.SignedDoc,
         };
-        let OfferDoc = await OfferLetterServices.FetchCandidateDocument(
-          OfferDocument
-        );
+        let OfferDoc =
+          await OfferLetterServices.FetchCandidateDocument(OfferDocument);
         let unSignedOfferDocument: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
           ProfileID: item?.CandidateDetails?.ProfileID, // "13", //item?.CandidateDetails?.ProfileID,
@@ -366,7 +491,7 @@ const UploadCandidateDocument = (props: any) => {
         };
         let unSignedOfferDocs =
           await OfferLetterServices.FetchCandidateDocument(
-            unSignedOfferDocument
+            unSignedOfferDocument,
           );
         let PoliceClearanceCertificate: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
@@ -375,7 +500,7 @@ const UploadCandidateDocument = (props: any) => {
           DocumentType: DocumentFolderName.PoliceClearanceCertificate,
         };
         let PoliceDocs = await OfferLetterServices.FetchCandidateDocument(
-          PoliceClearanceCertificate
+          PoliceClearanceCertificate,
         );
         let CovidVaccinationCertificate: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
@@ -391,7 +516,7 @@ const UploadCandidateDocument = (props: any) => {
         };
         let CovidVaccinationDocs =
           await OfferLetterServices.FetchCandidateDocument(
-            CovidVaccinationCertificate
+            CovidVaccinationCertificate,
           );
         let YellowFeverVaccinationCertificate: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
@@ -400,7 +525,7 @@ const UploadCandidateDocument = (props: any) => {
           DocumentType: DocumentFolderName.YellowFeverVaccinationCertificate,
         };
         let YellowFeverDocs = await OfferLetterServices.FetchCandidateDocument(
-          YellowFeverVaccinationCertificate
+          YellowFeverVaccinationCertificate,
         );
 
         let EmployeeContractDocument: GetCandidateDocument = {
@@ -411,7 +536,7 @@ const UploadCandidateDocument = (props: any) => {
           UnsignedDoc: DocumentFolderName.SignedDoc,
         };
         let ECDocs = await OfferLetterServices.FetchCandidateDocument(
-          EmployeeContractDocument
+          EmployeeContractDocument,
         );
         let UnsignedEmployeeContractDocument: GetCandidateDocument = {
           ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
@@ -421,7 +546,7 @@ const UploadCandidateDocument = (props: any) => {
           UnsignedDoc: DocumentFolderName.UnsignedDoc,
         };
         let UnsignedECDocs = await OfferLetterServices.FetchCandidateDocument(
-          UnsignedEmployeeContractDocument
+          UnsignedEmployeeContractDocument,
         );
         let unSignedECDOcs = [
           {
@@ -521,9 +646,8 @@ const UploadCandidateDocument = (props: any) => {
           RequestID: item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID,
           DocumentType: DocumentFolderName.PaymentBill,
         };
-        let PaymentDocs = await OfferLetterServices.FetchCandidateDocument(
-          PaymentbillDocs
-        );
+        let PaymentDocs =
+          await OfferLetterServices.FetchCandidateDocument(PaymentbillDocs);
         let PBDocs = [
           {
             Title: DisplayFolderName.PaymentBill,
@@ -538,9 +662,8 @@ const UploadCandidateDocument = (props: any) => {
           RequestID: item?.CandidateDetails?.JobRequestID, //"1075", //item?.CandidateDetails?.JobRequestID,
           DocumentType: DocumentFolderName.PaymentBill,
         };
-        let WorkPermitDoc = await OfferLetterServices.FetchCandidateDocument(
-          WorkPermitDocument
-        );
+        let WorkPermitDoc =
+          await OfferLetterServices.FetchCandidateDocument(WorkPermitDocument);
         let WPDocs = [
           {
             Title: DisplayFolderName.PaymentBill,
@@ -563,8 +686,10 @@ const UploadCandidateDocument = (props: any) => {
         await OfferLetterServices.FetchDotAfricaConsentForm(DOtObj);
       const ResiData = await OfferLetterServices.FetchResiDetails(
         response.data[0].ID,
-        response.data[0].IsExpat
+        response.data[0].IsExpat,
       );
+      // let WorkflowStatusId = CandidateDetails?.data?.[0]?.workflowStatusId;
+      // setWorkflowStatus(WorkflowStatusId ?? "");
       setData((prev) => ({
         ...prev,
         CandidateID: item?.CandidateDetails.CandidateID,
@@ -610,107 +735,140 @@ const UploadCandidateDocument = (props: any) => {
           item.RecruitmentDetails?.Nationality === Nationality.Nationals
             ? RadioBtnLabel.BGVExpatriatesLabel
             : props.stateValue?.StatusId === StatusId.PendingHROfferInitiate &&
-              item?.RecruitmentDetails?.EmploymentCategory ===
-                EmployeementCategory.LaborhireContractor
-            ? RadioBtnLabel.OfferInitiationLabel
-            : RadioBtnLabel.BGVExpatriatesLabel,
+                item?.RecruitmentDetails?.EmploymentCategory ===
+                  EmployeementCategory.LaborhireContractor
+              ? RadioBtnLabel.OfferInitiationLabel
+              : RadioBtnLabel.BGVExpatriatesLabel,
         DotAfricaCF: getDotAfricaCF.data,
         NationalityCode: CandidateDetails?.data?.[0]?.NatioCode
           ? CandidateDetails?.data?.[0]?.NatioCode
           : "",
         LabourHire: ResiData.data?.lhCode ?? "",
+        PPEDetails: CandidateDetails?.data?.[0]?.PPEDetails ?? [],
       }));
 
-      setchecklistData((prev) => ({
-        ...prev,
-        DocumentComplianceChecks: {
-          ...prev.DocumentComplianceChecks,
+      setchecklistData((prev) => {
+        if (prev.nationality === "EXPAT") {
+          // ✅ EXPAT ONLY UPDATE
+          return {
+            ...prev,
+
+            DocumentComplianceChecks: {
+              ...prev.DocumentComplianceChecks,
+              DocumentComplianceChecks: {
+                ...prev.DocumentComplianceChecks.DocumentComplianceChecks,
+
+                BackgroundChecks: {
+                  ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                    .BackgroundChecks,
+                  value:
+                    item?.CandidateDetails?.BackgroundChecks ===
+                    ActionName.Completed,
+                },
+
+                SignedOfferLetter: {
+                  ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                    .SignedOfferLetter,
+                  value:
+                    item?.CandidateDetails?.SignedOfferLetterVerified ===
+                    ActionName.Completed,
+                },
+
+                SignedEmploymentContract: {
+                  ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                    .SignedEmploymentContract,
+                  value:
+                    item?.CandidateDetails?.SignedEmploymentContract ===
+                    ActionName.Completed,
+                },
+
+                WorkPermitApproved: {
+                  ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                    .WorkPermitApproved,
+                  value:
+                    item?.CandidateDetails?.WorkPermitApproved ===
+                    ActionName.Completed,
+                },
+              },
+            },
+
+            LogisticsEmployeeSupport: {
+              ...prev.LogisticsEmployeeSupport,
+              LogisticsEmployeeSupport: {
+                ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport,
+
+                VisaProcess: {
+                  ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport
+                    .VisaProcess,
+                  value:
+                    item?.CandidateDetails?.VisaProcess ===
+                    ActionName.Completed,
+                },
+
+                AccommodationBooked: {
+                  ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport
+                    .AccommodationBooked,
+                  value:
+                    item?.CandidateDetails?.AccommodationBooked ===
+                    ActionName.Completed,
+                },
+
+                TravelProcess: {
+                  ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport
+                    .TravelProcess,
+                  value:
+                    item?.CandidateDetails?.TravelProcess ===
+                    ActionName.Completed,
+                },
+              },
+            },
+          };
+        }
+
+        // ✅ DRC ONLY UPDATE
+        return {
+          ...prev,
+
           DocumentComplianceChecks: {
-            ...prev.DocumentComplianceChecks.DocumentComplianceChecks,
-            BackgroundChecks: {
-              ...prev.DocumentComplianceChecks.DocumentComplianceChecks
-                .BackgroundChecks,
-              value:
-                item?.CandidateDetails?.BackgroundChecks ===
-                ActionName.Completed
-                  ? true
-                  : false,
-            },
-            SignedOfferLetter: {
-              ...prev.DocumentComplianceChecks.DocumentComplianceChecks
-                .SignedOfferLetter,
-              value:
-                item?.CandidateDetails?.SignedOfferLetterVerified ===
-                ActionName.Completed
-                  ? true
-                  : false,
-            },
-            SignedEmploymentContract: {
-              ...prev.DocumentComplianceChecks.DocumentComplianceChecks
-                .SignedEmploymentContract,
-              value:
-                item?.CandidateDetails?.SignedEmploymentContract ===
-                ActionName.Completed
-                  ? true
-                  : false,
-            },
-            WorkPermitApproved: {
-              ...prev.DocumentComplianceChecks.DocumentComplianceChecks
-                .WorkPermitApproved,
-              value:
-                item?.CandidateDetails?.WorkPermitApproved ===
-                ActionName.Completed
-                  ? true
-                  : false,
-            },
-          },
-        },
-        LogisticsEmployeeSupport: {
-          ...prev.LogisticsEmployeeSupport,
-          LogisticsEmployeeSupport: {
-            ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport,
-            VisaProcess: {
-              ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport
-                .VisaProcess,
-              value:
-                item?.CandidateDetails?.VisaProcess === ActionName.Completed
-                  ? true
-                  : false,
-            },
-            AccommodationBooked: {
-              ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport
-                .AccommodationBooked,
-              value:
-                item?.CandidateDetails?.AccommodationBooked ===
-                ActionName.Completed
-                  ? true
-                  : false,
-            },
-            TravelProcess: {
-              ...prev.LogisticsEmployeeSupport.LogisticsEmployeeSupport
-                .TravelProcess,
-              value:
-                item?.CandidateDetails?.TravelProcess === ActionName.Completed
-                  ? true
-                  : false,
+            ...prev.DocumentComplianceChecks,
+            DocumentComplianceChecks: {
+              ...prev.DocumentComplianceChecks.DocumentComplianceChecks,
+
+              BackgroundChecks: {
+                ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                  .BackgroundChecks,
+                value:
+                  item?.CandidateDetails?.BackgroundChecks ===
+                  ActionName.Completed,
+              },
+
+              SignedOfferLetter: {
+                ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                  .SignedOfferLetter,
+                value:
+                  item?.CandidateDetails?.SignedOfferLetterVerified ===
+                  ActionName.Completed,
+              },
+
+              SignedEmploymentContract: {
+                ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                  .SignedEmploymentContract,
+                value:
+                  item?.CandidateDetails?.SignedEmploymentContract ===
+                  ActionName.Completed,
+              },
+
+              MedicalChecks: {
+                ...prev.DocumentComplianceChecks.DocumentComplianceChecks
+                  .MedicalChecks,
+                value:
+                  item?.CandidateDetails?.MedicalCheckStatus ===
+                  ActionName.Completed,
+              },
             },
           },
-        },
-        FinalStatus: {
-          ...prev.FinalStatus,
-          FinalStatus: {
-            ...prev.FinalStatus.FinalStatus,
-            ReadyforOnboarding: {
-              ...prev.FinalStatus.FinalStatus.ReadyforOnboarding,
-              value:
-                item?.CandidateDetails?.ReadyforOnboarding ===
-                ActionName.Completed
-                  ? true
-                  : false,
-            },
-          },
-        },
-      }));
+        };
+      });
 
       // setViewDocument((prev) => ({
       //   ...prev,
@@ -734,11 +892,10 @@ const UploadCandidateDocument = (props: any) => {
             item?.CandidateDetails?.ITSystem.ITStatus === "Not Applicable"
               ? "No"
               : item?.CandidateDetails?.ITSystem.ITStatus === "Pending"
-              ? "Yes"
-              : "Yes",
+                ? "Yes"
+                : "Yes",
         }));
       }
-      await fetchBGVStatus();
       if (props.stateValue?.StatusId === StatusId.PendingDOTAficaVerification) {
         let BGVProcessOption = props.EmployeeList.map((item: any) => ({
           key: item.Email,
@@ -750,6 +907,7 @@ const UploadCandidateDocument = (props: any) => {
           ...prev,
           BGVStatusProcessOption: BGVProcessOption,
         }));
+        await fetchBGVStatus();
       }
     } catch (error) {
       console.error("Failed to fetch Vacancy Details:", error);
@@ -760,7 +918,7 @@ const UploadCandidateDocument = (props: any) => {
 
   React.useEffect(() => {
     void fetchData();
-    setchecklistData(onboardingData);
+    // setchecklistData(onboardingDataExpat);
     const newTabNames = [
       { tabName: props.stateValue?.TabName },
       // { tabName: props.stateValue?.ButtonAction },
@@ -773,9 +931,19 @@ const UploadCandidateDocument = (props: any) => {
       todaydate.getDate(),
       todaydate.getHours(),
       todaydate.getMinutes(),
-      todaydate.getSeconds()
+      todaydate.getSeconds(),
     );
     let CheckboxLabel: string = "";
+    if (checklistData.nationality === "DRC") {
+      void checklistData.DocumentComplianceChecks.DocumentComplianceChecks
+        .MedicalChecks;
+    }
+
+    if (checklistData.nationality === "EXPAT") {
+      void checklistData.DocumentComplianceChecks.DocumentComplianceChecks
+        .WorkPermitApproved;
+    }
+
     // switch (props.stateValue?.StatusId) {
     //   case StatusId.PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter:
     //     CheckboxLabel = PostRecrutimentCheckboxContent.OfferLetterDRC;
@@ -801,7 +969,7 @@ const UploadCandidateDocument = (props: any) => {
   const handleInputChangeTextArea = (
     stateValue: string,
     tab?: keyof UploadDocument,
-    value?: string | any
+    value?: string | any,
   ) => {
     if (tab) {
       setData((prevState) => ({
@@ -1001,7 +1169,7 @@ const UploadCandidateDocument = (props: any) => {
     section: string,
     field: string,
     value: boolean,
-    id: number
+    id: number,
   ) => {
     if (
       section !== "DocumentComplianceChecks" &&
@@ -1016,8 +1184,8 @@ const UploadCandidateDocument = (props: any) => {
       section === "FinalStatus"
         ? "FinalStatus"
         : section === "LogisticsEmployeeSupport"
-        ? "LogisticsEmployeeSupport"
-        : "DocumentComplianceChecks";
+          ? "LogisticsEmployeeSupport"
+          : "DocumentComplianceChecks";
 
     setchecklistData((prev: any) => ({
       ...prev,
@@ -1029,80 +1197,107 @@ const UploadCandidateDocument = (props: any) => {
               return [key, { ...item, value }];
             }
             return [key, item];
-          })
+          }),
         ),
       },
     }));
   };
+  const isExpatChecklist = (
+    data: OnboardingChecklisttype | OnboardingChecklistDRCtype,
+  ): data is OnboardingChecklisttype => {
+    return "LogisticsEmployeeSupport" in data;
+  };
+
+  function hasMedicalChecks(
+    checks: ComplianceCheck | ComplianceCheckDRC,
+  ): checks is ComplianceCheckDRC {
+    return "MedicalChecks" in checks;
+  }
 
   React.useEffect(() => {
     if (!checklistData) return;
+    const complianceChecks =
+      checklistData.DocumentComplianceChecks.DocumentComplianceChecks;
+    const StatusList = {
+      ...(checklistStatus?.["Background Checks"] !== undefined && {
+        ["Background Checks"]: checklistData.DocumentComplianceChecks
+          .DocumentComplianceChecks.BackgroundChecks.value
+          ? StatusBarValue.Completed
+          : StatusBarValue.Pending,
+      }),
 
-    setChecklistStatus({
-      ["Background Checks"]: checklistData.DocumentComplianceChecks
-        .DocumentComplianceChecks.BackgroundChecks.value
-        ? StatusBarValue.Completed
-        : StatusBarValue.Pending,
-      ["Signed Offer Letter"]: checklistData.DocumentComplianceChecks
-        .DocumentComplianceChecks.SignedOfferLetter.value
-        ? StatusBarValue.Completed
-        : StatusBarValue.Pending,
-      ["Employment Contract"]: checklistData.DocumentComplianceChecks
-        .DocumentComplianceChecks.SignedEmploymentContract.value
-        ? StatusBarValue.Completed
-        : StatusBarValue.Pending,
-      ["Work Permit Approved"]: checklistData.DocumentComplianceChecks
-        .DocumentComplianceChecks.WorkPermitApproved.value
-        ? StatusBarValue.Completed
-        : StatusBarValue.Pending,
-      ["Visa Process"]: checklistData.LogisticsEmployeeSupport
-        .LogisticsEmployeeSupport.VisaProcess.value
-        ? StatusBarValue.Completed
-        : StatusBarValue.Pending,
-      ["Accommodation Booked"]: checklistData.LogisticsEmployeeSupport
-        .LogisticsEmployeeSupport.AccommodationBooked.value
-        ? StatusBarValue.Completed
-        : StatusBarValue.Pending,
-      ["Travel Process"]: checklistData.LogisticsEmployeeSupport
-        .LogisticsEmployeeSupport.TravelProcess.value
-        ? StatusBarValue.Completed
-        : StatusBarValue.Pending,
-      ["Ready for Onboarding"]: checklistData.FinalStatus.FinalStatus
-        .ReadyforOnboarding.value
-        ? StatusBarValue.Completed
-        : StatusBarValue.Pending,
-    });
+      ...(checklistStatus?.["Signed Offer Letter"] !== undefined && {
+        ["Signed Offer Letter"]: checklistData.DocumentComplianceChecks
+          .DocumentComplianceChecks.SignedOfferLetter.value
+          ? StatusBarValue.Completed
+          : StatusBarValue.Pending,
+      }),
+
+      ...(checklistStatus?.["Employment Contract"] !== undefined && {
+        ["Employment Contract"]: checklistData.DocumentComplianceChecks
+          .DocumentComplianceChecks.SignedEmploymentContract.value
+          ? StatusBarValue.Completed
+          : StatusBarValue.Pending,
+      }),
+
+      ...(checklistStatus?.["Medical Checks"] !== undefined &&
+        hasMedicalChecks(complianceChecks) && {
+          ["Medical Checks"]: complianceChecks.MedicalChecks.value
+            ? StatusBarValue.Completed
+            : StatusBarValue.Pending,
+        }),
+
+      ...(isExpatChecklist(checklistData) &&
+        checklistStatus?.["Work Permit Approved"] !== undefined && {
+          ["Work Permit Approved"]: checklistData.DocumentComplianceChecks
+            .DocumentComplianceChecks.WorkPermitApproved.value
+            ? StatusBarValue.Completed
+            : StatusBarValue.Pending,
+        }),
+
+      ...(isExpatChecklist(checklistData) &&
+        checklistStatus?.["Visa Process"] !== undefined && {
+          ["Visa Process"]: checklistData.LogisticsEmployeeSupport
+            .LogisticsEmployeeSupport.VisaProcess.value
+            ? StatusBarValue.Completed
+            : StatusBarValue.Pending,
+        }),
+
+      ...(isExpatChecklist(checklistData) &&
+        checklistStatus?.["Accommodation Booked"] !== undefined && {
+          ["Accommodation Booked"]: checklistData.LogisticsEmployeeSupport
+            .LogisticsEmployeeSupport.AccommodationBooked.value
+            ? StatusBarValue.Completed
+            : StatusBarValue.Pending,
+        }),
+
+      ...(isExpatChecklist(checklistData) &&
+        checklistStatus?.["Travel Process"] !== undefined && {
+          ["Travel Process"]: checklistData.LogisticsEmployeeSupport
+            .LogisticsEmployeeSupport.TravelProcess.value
+            ? StatusBarValue.Completed
+            : StatusBarValue.Pending,
+        }),
+
+      ...(checklistStatus?.["Ready for Onboarding"] !== undefined && {
+        ["Ready for Onboarding"]: checklistData.FinalStatus.FinalStatus
+          .ReadyforOnboarding.value
+          ? StatusBarValue.Completed
+          : StatusBarValue.Pending,
+      }),
+    };
+
+    console.log(StatusList);
+
+    setChecklistStatus(StatusList);
   }, [checklistData]);
 
   React.useEffect(() => {
     const allCompleted = Object.values(checklistStatus).every(
-      (value) => value === true
+      (value) => value === StatusBarValue.Completed,
     );
-
     setBtnEnable(allCompleted);
   }, [checklistStatus]);
-
-  const categoryList = [
-    {
-      label: checklistData.DocumentComplianceChecks.label,
-      section: "DocumentComplianceChecks",
-      items: convertToList(
-        checklistData.DocumentComplianceChecks.DocumentComplianceChecks
-      ),
-    },
-    {
-      label: checklistData.LogisticsEmployeeSupport.label,
-      section: "LogisticsEmployeeSupport",
-      items: convertToList(
-        checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport
-      ),
-    },
-    {
-      label: checklistData.FinalStatus.label,
-      section: "FinalStatus",
-      items: convertToList(checklistData.FinalStatus.FinalStatus),
-    },
-  ];
 
   const handleTabChange = (newTab: string) => {
     setOBCheckListTab(newTab);
@@ -1133,6 +1328,129 @@ const UploadCandidateDocument = (props: any) => {
   //   }));
   // };
 
+  const Reinitiate_BGV = () => {
+    const ReinitiateBGVAlert = {
+      Message: RecuritmentHRMsg.ReinitiateBGVWarningMsg,
+      Type: HRMSAlertOptions.Confirmation,
+      visible: true,
+      ButtonAction: async (userClickedOK: boolean) => {
+        if (userClickedOK) {
+          let UpdateBGV = await laborHireService.PerformCriminalRecordCheck(
+            Number(data?.jobRequestID),
+          );
+          if (UpdateBGV.status === ResponeStatus.SUCCESS) {
+            const SuccessAlert = {
+              Message: RecuritmentHRMsg.ReinitiateBGVProcess,
+              Type: HRMSAlertOptions.Success,
+              visible: true,
+              ButtonAction: async (userClickedOK: boolean) => {
+                if (userClickedOK) {
+                  props.navigation("/UploadOfferDocumentList", {
+                    state: {
+                      ID: props.stateValue?.ID,
+                      TabNames: props.stateValue?.TabName,
+                      ButtonAction: ButtonAction.View,
+                      JobCode: props.stateValue?.JobCode,
+                      tab: props.stateValue?.tab,
+                      JobCodeID: props.stateValue?.JobCodeId,
+                    },
+                  });
+                  setAlertPopupOpen(false);
+                } else {
+                  setAlertPopupOpen(false);
+                }
+              },
+            };
+            setAlertPopupOpen(true);
+            setalertProps(SuccessAlert);
+            setIsLoading(false);
+          } else {
+            const APIError = {
+              Message: RecuritmentHRMsg.APIErrorMsg,
+              Type: HRMSAlertOptions.Error,
+              visible: true,
+              ButtonAction: async (userClickedOK: boolean) => {
+                if (userClickedOK) {
+                  // props.navigation("/UploadOfferDocumentList", {
+                  //   state: {
+                  //     ID: props.stateValue?.ID,
+                  //     TabNames: props.stateValue?.TabName,
+                  //     ButtonAction: ButtonAction.View,
+                  //     JobCode: props.stateValue?.JobCode,
+                  //     tab: props.stateValue?.tab,
+                  //     JobCodeID: props.stateValue?.JobCodeId,
+                  //   },
+                  // });
+                  setAlertPopupOpen(false);
+                }
+              },
+            };
+            setAlertPopupOpen(true);
+            setalertProps(APIError);
+            setIsLoading(false);
+          }
+        } else {
+          setAlertPopupOpen(false);
+        }
+      },
+    };
+    setAlertPopupOpen(true);
+    setalertProps(ReinitiateBGVAlert);
+    setIsLoading(false);
+  };
+
+  const buildCategory = (label?: string, section?: string, itemsObj?: any) => ({
+    label: label ?? "",
+    section: section ?? "",
+    items: convertToList(itemsObj ?? {}),
+  });
+
+  // const categoryList = [
+  //   {
+  //     label: checklistData.DocumentComplianceChecks.label,
+  //     section: "DocumentComplianceChecks",
+  //     items: convertToList(
+  //       checklistData.DocumentComplianceChecks.DocumentComplianceChecks,
+  //     ),
+  //   },
+  //   {
+  //     label: checklistData.LogisticsEmployeeSupport.label,
+  //     section: "LogisticsEmployeeSupport",
+  //     items: convertToList(
+  //       checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport,
+  //     ),
+  //   },
+  //   {
+  //     label: checklistData.FinalStatus.label,
+  //     section: "FinalStatus",
+  //     items: convertToList(checklistData.FinalStatus.FinalStatus),
+  //   },
+  // ];
+
+  const categoryList = [
+    buildCategory(
+      checklistData.DocumentComplianceChecks.label,
+      "DocumentComplianceChecks",
+      checklistData.DocumentComplianceChecks.DocumentComplianceChecks,
+    ),
+
+    ...(checklistData.nationality === "EXPAT"
+      ? [
+          buildCategory(
+            checklistData.LogisticsEmployeeSupport.label,
+            "LogisticsEmployeeSupport",
+            checklistData.LogisticsEmployeeSupport.LogisticsEmployeeSupport,
+          ),
+        ]
+      : []),
+
+    buildCategory(
+      checklistData.FinalStatus.label,
+      "FinalStatus",
+      checklistData.FinalStatus.FinalStatus,
+    ),
+  ];
+
   const OnboardingChecklist = [
     {
       label: TabName.OnboardingChecklist,
@@ -1141,7 +1459,7 @@ const UploadCandidateDocument = (props: any) => {
         <>
           <div className="ms-Grid-row" style={{ marginTop: "3%" }}>
             {categoryList.map((cat) =>
-              cat.items.map((item) => (
+              cat.items.map((item, index) => (
                 <Box
                   key={item.id}
                   sx={{
@@ -1183,7 +1501,7 @@ const UploadCandidateDocument = (props: any) => {
                         {item.label}
                       </Typography>
                       <Typography fontSize={13} color="gray">
-                        ID: {item.id}
+                        ID: {index + 1}
                       </Typography>
                     </Box>
                   </Box>
@@ -1217,7 +1535,7 @@ const UploadCandidateDocument = (props: any) => {
                     </label>
                   </Box>
                 </Box>
-              ))
+              )),
             )}
           </div>
 
@@ -1441,18 +1759,19 @@ const UploadCandidateDocument = (props: any) => {
                     />
                   </div>
                 </div>
-                {data.EmploymentCategory ===
-                  EmployeementCategory.LaborhireContractor &&
-                  ![
-                    StatusId.PendingHRBGVInitiation,
-                    StatusId.PendingHRReviewBGCheck,
-                    StatusId.PendingBGdocuploadedbycandidate,
-                    StatusId.PendingDOTAficaVerification,
-                    StatusId.PendingwithTAforMedicalScreening,
-                    StatusId.RESIProcessInitiatedforDRC,
-                    StatusId.RESIProcessInitiatedforExpatriate,
-                  ].includes(props.stateValue?.StatusId) && (
-                    <div className="ms-Grid-row">
+
+                <div className="ms-Grid-row">
+                  {data.EmploymentCategory ===
+                    EmployeementCategory.LaborhireContractor &&
+                    ![
+                      StatusId.PendingHRBGVInitiation,
+                      StatusId.PendingHRReviewBGCheck,
+                      StatusId.PendingBGdocuploadedbycandidate,
+                      StatusId.PendingDOTAficaVerification,
+                      StatusId.PendingwithTAforMedicalScreening,
+                      StatusId.RESIProcessInitiatedforDRC,
+                      StatusId.RESIProcessInitiatedforExpatriate,
+                    ].includes(props.stateValue?.StatusId) && (
                       <div className="ms-Grid-col ms-lg3">
                         <CustomInput
                           label={labelNames.PositionDetails.LabourHire}
@@ -1461,8 +1780,67 @@ const UploadCandidateDocument = (props: any) => {
                           mandatory={false}
                         />
                       </div>
-                    </div>
+                    )}
+
+                  {props.stateValue?.StatusId ===
+                    StatusId.PendingHRBGVInitiation ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingBGdocuploadedbycandidate ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingHRReviewBGCheck ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingDOTAficaVerification ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingwithTAforMedicalScreening ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingHROfferInitiate ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingCandidateOfferLetterUpload ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingLabourHireOfferRelease ||
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingHROfferReview ||
+                  props.stateValue?.StatusId ===
+                    StatusId.RESIProcessInitiatedforDRC ||
+                  props.stateValue?.StatusId ===
+                    StatusId.RESIProcessInitiatedforExpatriate ? (
+                    <></>
+                  ) : (
+                    <>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.CandidateDetails.JoiningDate}
+                          value={data?.JoiningDate}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+                      <div className="ms-Grid-col ms-lg3">
+                        <CustomInput
+                          label={labelNames.CandidateDetails.NoticePeriod}
+                          value={data?.NoticePeriod}
+                          disabled={true}
+                          mandatory={false}
+                        />
+                      </div>
+                    </>
                   )}
+                </div>
+
+                {data.PPEDetails.length > 0 && (
+                  <div className="ms-Grid-row" style={{ marginTop: "2%" }}>
+                    {data.PPEDetails && (
+                      <span style={{ marginTop: "3%" }}>
+                        <ToolTipTable
+                          Title={TooltipType?.PPE ?? ""}
+                          headers={TooltipHeader?.PPEData}
+                          data={data.PPEDetails}
+                        />
+                      </span>
+                    )}
+                    <Label>{labelNames.CandidateDetails.PPE}</Label>
+                  </div>
+                )}
 
                 {props.stateValue?.StatusId ===
                   StatusId.PendingHRReviewBGCheck &&
@@ -1532,47 +1910,6 @@ const UploadCandidateDocument = (props: any) => {
                   </>
                 ) : (
                   <></>
-                )}
-
-                {props.stateValue?.StatusId ===
-                  StatusId.PendingHRBGVInitiation ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingBGdocuploadedbycandidate ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingHRReviewBGCheck ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingDOTAficaVerification ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingwithTAforMedicalScreening ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingHROfferInitiate ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingCandidateOfferLetterUpload ||
-                props.stateValue?.StatusId ===
-                  StatusId.PendingLabourHireOfferRelease ||
-                props.stateValue?.StatusId === StatusId.PendingHROfferReview ? (
-                  <></>
-                ) : (
-                  <>
-                    <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg3">
-                        <CustomInput
-                          label={labelNames.CandidateDetails.JoiningDate}
-                          value={data?.JoiningDate}
-                          disabled={true}
-                          mandatory={false}
-                        />
-                      </div>
-                      <div className="ms-Grid-col ms-lg3">
-                        <CustomInput
-                          label={labelNames.CandidateDetails.NoticePeriod}
-                          value={data?.NoticePeriod}
-                          disabled={true}
-                          mandatory={false}
-                        />
-                      </div>
-                    </div>
-                  </>
                 )}
 
                 {/* {props.stateValue?.StatusId ===
@@ -1840,7 +2177,7 @@ const UploadCandidateDocument = (props: any) => {
                                     type: "New",
                                     url: item.Url,
                                   };
-                                }
+                                },
                               );
                               // const attachments = [
                               //   ...(data.ConsentDocs || []),
@@ -1897,7 +2234,7 @@ const UploadCandidateDocument = (props: any) => {
                                   type: "New",
                                   url: item.Url,
                                 };
-                              }
+                              },
                             );
                             // const attachments = [
                             //   ...(data.OfferLetterDoc || []),
@@ -1997,7 +2334,7 @@ const UploadCandidateDocument = (props: any) => {
                                 type: "New",
                                 url: item.Url,
                               };
-                            }
+                            },
                           );
                           // const attachments = [
                           //   ...(data.EmployementDoc || []),
@@ -2047,7 +2384,7 @@ const UploadCandidateDocument = (props: any) => {
                                 type: "New",
                                 url: item.Url,
                               };
-                            }
+                            },
                           );
                           // const attachments = [
                           //   ...(data.EmployementDoc || []),
@@ -2091,7 +2428,7 @@ const UploadCandidateDocument = (props: any) => {
                                 type: "New",
                                 url: item.Url,
                               };
-                            }
+                            },
                           );
                           // const attachments = [
                           //   ...(data.EmployementDoc || []),
@@ -2165,7 +2502,7 @@ const UploadCandidateDocument = (props: any) => {
                                     type: "New",
                                     url: item.Url,
                                   };
-                                }
+                                },
                               );
                               // const attachments = [
                               //   ...(data.ConsentDocs || []),
@@ -2229,7 +2566,11 @@ const UploadCandidateDocument = (props: any) => {
                   StatusId.PendingHREmploymentContractVerification ||
                 props.stateValue?.StatusId === StatusId.PendingHROfferReview ||
                 props.stateValue?.StatusId ===
-                  StatusId.PendingHREmploymentContractReview ? (
+                  StatusId.PendingHREmploymentContractReview ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingHRReviewOfferanduploadEmployementContract ||
+                props.stateValue?.StatusId ===
+                  StatusId.PendingHRReviewOfferuploadEmploymentInit ? (
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg5">
                       <CustomRadioGroup
@@ -2272,7 +2613,7 @@ const UploadCandidateDocument = (props: any) => {
                             handleInputChangeTextArea(
                               "comments",
                               undefined,
-                              value
+                              value,
                             )
                           }
                           mandatory={true}
@@ -2477,30 +2818,42 @@ const UploadCandidateDocument = (props: any) => {
       const isValid = !Validation();
       if (isValid) {
         let ChecklistValue = {
-          BackgroundChecks: checklistStatus["Background Checks"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          SignedOfferLetterVerified: checklistStatus["Signed Offer Letter"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          SignedEmploymentContract: checklistStatus["Employment Contract"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          WorkPermitApproved: checklistStatus["Work Permit Approved"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          VisaProcess: checklistStatus["Visa Process"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          AccommodationBooked: checklistStatus["Accommodation Booked"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          TravelProcess: checklistStatus["Travel Process"]
-            ? ActionName.Completed
-            : ActionName.Pending,
-          ReadyforOnboarding: checklistStatus["Ready for Onboarding"]
-            ? ActionName.Completed
-            : ActionName.Pending,
+          BackgroundChecks:
+            checklistStatus["Background Checks"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          SignedOfferLetterVerified:
+            checklistStatus["Signed Offer Letter"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          SignedEmploymentContract:
+            checklistStatus["Employment Contract"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          WorkPermitApproved:
+            checklistStatus["Work Permit Approved"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          VisaProcess:
+            checklistStatus["Visa Process"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          AccommodationBooked:
+            checklistStatus["Accommodation Booked"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          TravelProcess:
+            checklistStatus["Travel Process"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          ReadyforOnboarding:
+            checklistStatus["Ready for Onboarding"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
+          MedicalChecks:
+            checklistStatus["Medical Checks"] === StatusBarValue.Completed
+              ? ActionName.Completed
+              : ActionName.Pending,
           ID: data.CandidateID,
         };
         const UpdateStatusCandidateList =
@@ -2633,7 +2986,7 @@ const UploadCandidateDocument = (props: any) => {
                   DocumentResponse =
                     await OfferLetterServices.UploadCandidateDocument(
                       DocumentData,
-                      BGVConsentDocs
+                      BGVConsentDocs,
                     );
                 } else {
                   DocumentResponse = {
@@ -2651,9 +3004,18 @@ const UploadCandidateDocument = (props: any) => {
           case StatusId.PendingHRReviewBGCheck:
             {
               if (btnAction === ButtonAction.Review) {
-                DocumentResponse = await laborHireService.InitiateBGVProcess(
-                  Number(data?.jobRequestID)
-                );
+                // if (
+                //   WorkflowStatus === workflowStatusApi.initiatetheBGVProcess
+                // ) {
+                //   DocumentResponse = {
+                //     status: ResponeStatus.SUCCESS,
+                //   };
+                // } else {
+                //   DocumentResponse = await laborHireService.InitiateBGVProcess(
+                //     Number(data?.jobRequestID)
+                //   );
+                // }
+
                 workflowStatusValue = workflowStatusApi.initiatetheBGVProcess;
                 SuccessMsg =
                   props.stateValue?.StatusId ===
@@ -2662,6 +3024,9 @@ const UploadCandidateDocument = (props: any) => {
                     ? RecuritmentHRMsg.BGReviewedMsg
                     : RecuritmentHRMsg.BGReviewinitBGV;
                 ActionID = WorkflowAction.Approved;
+                DocumentResponse = {
+                  status: ResponeStatus.SUCCESS,
+                };
               } else if (btnAction === ButtonAction.Revert) {
                 workflowStatusValue =
                   workflowStatusApi.RevetedBacktoBGVDocuments;
@@ -2691,7 +3056,7 @@ const UploadCandidateDocument = (props: any) => {
                 DocumentResponse =
                   await OfferLetterServices.UploadCandidateDocument(
                     DocumentData,
-                    offerLetterDocs
+                    offerLetterDocs,
                   );
 
                 workflowStatusValue =
@@ -2703,7 +3068,7 @@ const UploadCandidateDocument = (props: any) => {
                   OfferLetterServices.InitiateLabouHireOfferRelease(
                     data,
                     dataValue[0],
-                    props.userDetails[0]?.EmailId
+                    props.userDetails[0]?.EmailId,
                   );
                 if ((await response).status === 200) {
                   DocumentResponse = {
@@ -2792,7 +3157,7 @@ const UploadCandidateDocument = (props: any) => {
               DocumentResponse =
                 await OfferLetterServices.UploadCandidateDocument(
                   DocumentData,
-                  PaymentProofDocs
+                  PaymentProofDocs,
                 );
               workflowStatusValue =
                 workflowStatusApi.PendingFinancePaymentReview;
@@ -2832,7 +3197,7 @@ const UploadCandidateDocument = (props: any) => {
               DocumentResponse =
                 await OfferLetterServices.UploadCandidateDocument(
                   DocumentData,
-                  data.EmployementDoc
+                  data.EmployementDoc,
                 );
               const WPData = {
                 ProfileID: data?.ProfileID,
@@ -2843,7 +3208,7 @@ const UploadCandidateDocument = (props: any) => {
               WorkPermitDocs =
                 await OfferLetterServices.UploadCandidateDocument(
                   WPData,
-                  data.WorkpermitDoc
+                  data.WorkpermitDoc,
                 );
 
               workflowStatusValue =
@@ -2869,22 +3234,31 @@ const UploadCandidateDocument = (props: any) => {
             };
             break;
           }
-          case StatusId.PendingHREmploymentContractVerification: {
-            if (btnAction === ButtonAction.Review) {
-              workflowStatusValue = workflowStatusApi.OnboardingInprogress;
-              SuccessMsg = RecuritmentHRMsg.ReviewECMsg;
-              ActionID = WorkflowAction.Approved;
-            } else if (btnAction === ButtonAction.Revert) {
-              workflowStatusValue =
-                workflowStatusApi.RevertedBacktoCandidateforreuploadEmploymentContract;
-              SuccessMsg = RecuritmentHRMsg.RevertedEmploymentContractMsg;
-              ActionID = WorkflowAction.Revert;
+          case StatusId.PendingHREmploymentContractVerification:
+            {
+              if (btnAction === ButtonAction.Review) {
+                workflowStatusValue = workflowStatusApi.OnboardingInprogress;
+                SuccessMsg = RecuritmentHRMsg.ReviewECMsg;
+                ActionID = WorkflowAction.Approved;
+                let JoiningDate = SpiltDateOnly(new Date(data.JoiningDate));
+                let datas = {
+                  JoiningDate: JoiningDate,
+                  NoticePeriod: String(data.NoticePeriod),
+                  ID: data.CandidateID,
+                };
+                DocumentResponse =
+                  await getVRRDetails.InsertRecruitmentCandidateDetails(datas);
+              } else if (btnAction === ButtonAction.Revert) {
+                workflowStatusValue =
+                  workflowStatusApi.RevertedBacktoCandidateforreuploadEmploymentContract;
+                SuccessMsg = RecuritmentHRMsg.RevertedEmploymentContractMsg;
+                ActionID = WorkflowAction.Revert;
+                DocumentResponse = {
+                  status: ResponeStatus.SUCCESS,
+                };
+              }
             }
-            DocumentResponse = {
-              status: ResponeStatus.SUCCESS,
-            };
             break;
-          }
           case StatusId.PendingHRReviewOfferanduploadEmployementContract:
             {
               DocumentData = {
@@ -2896,13 +3270,34 @@ const UploadCandidateDocument = (props: any) => {
               DocumentResponse =
                 await OfferLetterServices.UploadCandidateDocument(
                   DocumentData,
-                  data.EmployementDoc
+                  data.EmployementDoc,
                 );
 
               workflowStatusValue =
                 workflowStatusApi.PendingwithCandidatetosignEmployementContract;
               SuccessMsg = RecuritmentHRMsg.EmploymentContractMsg;
               ActionID = WorkflowAction.Approved;
+            }
+            break;
+          case StatusId.PendingHRReviewOfferuploadEmploymentInit:
+            {
+              if (btnAction === ButtonAction.Review) {
+                workflowStatusValue =
+                  workflowStatusApi.PendingHREmploymentContractInit;
+                SuccessMsg = RecuritmentHRMsg.ReviewOfferLetterInitEC;
+                ActionID = WorkflowAction.Approved;
+                DocumentResponse = {
+                  status: ResponeStatus.SUCCESS,
+                };
+              } else if (btnAction === ButtonAction.Revert) {
+                workflowStatusValue =
+                  workflowStatusApi.RevertedBacktoCandidateforreuploadDocs;
+                SuccessMsg = RecuritmentHRMsg.RevertedOfferLetter;
+                ActionID = WorkflowAction.Revert;
+                DocumentResponse = {
+                  status: ResponeStatus.SUCCESS,
+                };
+              }
             }
             break;
           default:
@@ -2934,7 +3329,7 @@ const UploadCandidateDocument = (props: any) => {
             data.EmploymentCategory === EmployeementCategory.KCSAEmployee
           ) {
             let getOfferLetterPath = DocumentResponse.data.filter((item: any) =>
-              item.name.includes("OfferLetter")
+              item.name.includes("OfferLetter"),
             );
             // let getConsentFormPath = DocumentResponse.data.filter((item: any) =>
             //   item.name.includes("ConsentForm")
@@ -2952,7 +3347,7 @@ const UploadCandidateDocument = (props: any) => {
             props.stateValue?.StatusId === StatusId.PendingHROfferReview
           ) {
             let LabourOffer = documentview.filter(
-              (item) => item.Title === DisplayFolderName.LabourHireOffer
+              (item) => item.Title === DisplayFolderName.LabourHireOffer,
             );
             CandidateDatas.OfferLatterPath = LabourOffer[0]?.data[0]?.content;
           } else if (
@@ -2960,7 +3355,7 @@ const UploadCandidateDocument = (props: any) => {
             StatusId.PendingHREmploymentContractReview
           ) {
             let LabourEC = documentview.filter(
-              (item) => item.Title === DisplayFolderName.LabourHireEC
+              (item) => item.Title === DisplayFolderName.LabourHireEC,
             );
             CandidateDatas.EmpContractLatterPath =
               LabourEC[0]?.data[0]?.content;
@@ -2979,7 +3374,7 @@ const UploadCandidateDocument = (props: any) => {
             StatusId.PendingHREmploymentContractInit
           ) {
             let WorkPermitDocs = documentview.filter(
-              (item) => item.Title === DisplayFolderName.WorkPermitDocument
+              (item) => item.Title === DisplayFolderName.WorkPermitDocument,
             );
             CandidateDatas.signedWorkPermitPath =
               WorkPermitDocs[0]?.data[0]?.content;
@@ -3001,9 +3396,8 @@ const UploadCandidateDocument = (props: any) => {
               status: ResponeStatus.SUCCESS,
             };
           } else {
-            WorkflowStatus = await GetPortalJobsService.UpdateCandidateStatus(
-              CandidateDatas
-            );
+            WorkflowStatus =
+              await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
           }
 
           if (WorkflowStatus.status === ResponeStatus.SUCCESS) {
@@ -3014,20 +3408,9 @@ const UploadCandidateDocument = (props: any) => {
                 // ItemCreated: "Yes",
               },
             ];
-            let UpdateStatus = await OfferLetterServices.UpdateStatusInSpfxlist(
-              Obj
-            );
-            if (
-              props.stateValue?.StatusId ===
-              StatusId.PendingHREmploymentContractVerification
-            ) {
-              let datas = {
-                JoiningDate: data.JoiningDate,
-                NoticePeriod: data.NoticePeriod,
-                ID: data.CandidateID,
-              };
-              await getVRRDetails.InsertRecruitmentCandidateDetails({ datas });
-            }
+            let UpdateStatus =
+              await OfferLetterServices.UpdateStatusInSpfxlist(Obj);
+
             if (UpdateStatus.status === ResponeStatus.SUCCESS) {
               const SuccessAlert = {
                 Message: SuccessMsg,
@@ -3157,10 +3540,10 @@ const UploadCandidateDocument = (props: any) => {
           props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation
             ? RadioBtnLabel.BGVExpatriatesLabel
             : props.stateValue?.StatusId === StatusId.PendingHROfferInitiate &&
-              data?.EmploymentCategory ===
-                EmployeementCategory.LaborhireContractor
-            ? RadioBtnLabel.OfferInitiationLabel
-            : RadioBtnLabel.BGVExpatriatesLabel,
+                data?.EmploymentCategory ===
+                  EmployeementCategory.LaborhireContractor
+              ? RadioBtnLabel.OfferInitiationLabel
+              : RadioBtnLabel.BGVExpatriatesLabel,
         Type: HRMSAlertOptions.Confirmation,
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
@@ -3235,6 +3618,118 @@ const UploadCandidateDocument = (props: any) => {
       },
     });
   };
+  const getAdditionalButtons = () => {
+    if (props.stateValue?.ButtonAction === ButtonAction.View) {
+      if (
+        props.stateValue?.StatusId === StatusId.PendingDOTAficaVerification &&
+        DotAfricaComments &&
+        DotAfricaComments.length > 0 &&
+        DotAfricaComments?.some((item) => item.BGVCode === "IDCS")
+      ) {
+        return [
+          {
+            label: ButtonAction.ReInitiate,
+            onClick: () => Reinitiate_BGV(),
+          },
+        ];
+      } else {
+        return [
+          {
+            label: ButtonAction.Back,
+            onClick: () => back_fn(),
+          },
+        ];
+      }
+    }
+
+    // 3️⃣ Initiated
+    if (props.stateValue?.ButtonAction === ButtonAction.Initiated) {
+      return [
+        {
+          label: ButtonAction.Initiated,
+          onClick: () => Initiate_fn(),
+        },
+      ];
+    }
+
+    if (data.RadioAction) {
+      const action =
+        data.RadioAction === "Yes" ? ButtonAction.Review : ButtonAction.Revert;
+
+      return [
+        {
+          label: action,
+          onClick: () => Submit_fn(action),
+        },
+      ];
+    }
+
+    if (props.stateValue?.ButtonAction === ButtonAction.Upload) {
+      return [
+        {
+          label: ButtonAction.Upload,
+          onClick: () => Submit_fn(ButtonAction.Upload),
+        },
+      ];
+    }
+
+    if (data.PaymentReview) {
+      const action =
+        data.PaymentReview === "Yes"
+          ? ButtonAction.Review
+          : props.stateValue?.StatusId === StatusId.PendingHRReviewBGCheck &&
+              data.NationalityCode === NationalityCode.Nationals
+            ? ButtonAction.Reject
+            : ButtonAction.Revert;
+
+      return [
+        {
+          label: action,
+          onClick: () => Submit_fn(action),
+        },
+      ];
+    }
+
+    if (
+      props.stateValue?.StatusId === StatusId.PendingHREmploymentContractInit
+    ) {
+      return [
+        {
+          label: ButtonAction.Initiated,
+          onClick: () => Submit_fn(ButtonAction.Initiated),
+        },
+      ];
+    }
+
+    if (
+      props.stateValue?.StatusId === StatusId.PendingHRpreonboardingchecklist
+    ) {
+      return btnEnable
+        ? [
+            {
+              label: ButtonAction.Submit,
+              onClick: () => SaveAsDraft(ButtonAction.Submit),
+            },
+          ]
+        : [
+            {
+              label: ButtonAction.SaveAsDraft,
+              onClick: () => SaveAsDraft(ButtonAction.SaveAsDraft),
+            },
+          ];
+    }
+
+    if (btnEnable) {
+      return [
+        {
+          label: ButtonAction.Submit,
+          onClick: () => Submit_fn(ButtonAction.Submit),
+        },
+      ];
+    }
+
+    return [];
+  };
 
   return (
     <>
@@ -3262,113 +3757,7 @@ const UploadCandidateDocument = (props: any) => {
                 Agencies={
                   (dataValue && dataValue[0]?.CandidateDetails.Agencies) ?? ""
                 }
-                additionalButtons={
-                  props.stateValue?.ButtonAction === ButtonAction.View
-                    ? [
-                        {
-                          label: ButtonAction.Back,
-                          onClick: async () => {
-                            back_fn();
-                          },
-                        },
-                      ]
-                    : props.stateValue?.ButtonAction === ButtonAction.Initiated
-                    ? // data.BGVRadioBtn === "Yes"
-                      [
-                        {
-                          label: ButtonAction.Initiated,
-                          onClick: async () => {
-                            void Initiate_fn();
-                          },
-                        },
-                      ]
-                    : (() => {
-                        if (data.RadioAction) {
-                          const action =
-                            data.RadioAction === "Yes"
-                              ? ButtonAction.Review
-                              : ButtonAction.Revert;
-                          return [
-                            {
-                              label: action,
-                              onClick: async () => await Submit_fn(action),
-                            },
-                          ];
-                        }
-                        if (
-                          props.stateValue?.ButtonAction === ButtonAction.Upload
-                        ) {
-                          return [
-                            {
-                              label: ButtonAction.Upload,
-                              onClick: async () =>
-                                await Submit_fn(ButtonAction.Upload),
-                            },
-                          ];
-                        }
-                        if (data.PaymentReview) {
-                          const action =
-                            data.PaymentReview === "Yes"
-                              ? ButtonAction.Review
-                              : props.stateValue?.StatusId ===
-                                  StatusId.PendingHRReviewBGCheck &&
-                                data.NationalityCode ===
-                                  NationalityCode.Nationals
-                              ? ButtonAction.Reject
-                              : ButtonAction.Revert;
-                          return [
-                            {
-                              label: action,
-                              onClick: async () => await Submit_fn(action),
-                            },
-                          ];
-                        }
-                        if (
-                          props.stateValue?.StatusId ===
-                          StatusId.PendingHREmploymentContractInit
-                        ) {
-                          return [
-                            {
-                              label: ButtonAction.Initiated,
-                              onClick: async () =>
-                                await Submit_fn(ButtonAction.Initiated),
-                            },
-                          ];
-                        }
-                        if (
-                          props.stateValue?.StatusId ===
-                          StatusId.PendingHRpreonboardingchecklist
-                        ) {
-                          if (btnEnable) {
-                            return [
-                              {
-                                label: ButtonAction.Submit,
-                                onClick: async () =>
-                                  await SaveAsDraft(ButtonAction.Submit),
-                              },
-                            ];
-                          } else {
-                            return [
-                              {
-                                label: ButtonAction.SaveAsDraft,
-                                onClick: async () =>
-                                  await SaveAsDraft(ButtonAction.SaveAsDraft),
-                              },
-                            ];
-                          }
-                        }
-                        if (btnEnable) {
-                          return [
-                            {
-                              label: ButtonAction.Submit,
-                              onClick: async () =>
-                                await Submit_fn(ButtonAction.Submit),
-                            },
-                          ];
-                        }
-                        return [];
-                      })()
-                }
+                additionalButtons={getAdditionalButtons()}
               />
             </div>
           </CustomLoader>

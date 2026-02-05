@@ -1,14 +1,12 @@
 import * as React from "react";
 import JobCodeSelector from "../../components/CustomMultiselectwithswipe";
-import { ListNames, RoleID } from "../../utilities/Config";
+import { RoleID } from "../../utilities/Config";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 import { JobCodeTilte } from "../../Models/RecuritmentVRR";
 import CustomTextArea from "../../components/CustomTextArea";
 import { AutoCompleteItem } from "../../Models/Screens";
-import { CommonServices } from "../../Services/ServiceExport";
 import { formValidation } from "../RecuritmentProcess/ApprovedVRRList";
-import { ExternalUserType } from "../../utilities/LabelName";
 
 export type AssignHRData = {
   AssignRecruitmentHR: AutoCompleteItem;
@@ -29,7 +27,8 @@ interface AssignPositionDialogProps {
   handleAgencyChange: (value: AutoCompleteItem[] | null) => void;
   handleInputChangeTextArea: (value: string | null) => void;
   AssignHRSubmit: () => void;
-  Nationality: string;
+  AssignRecruitmentHROption: AutoCompleteItem[];
+  AssignRecruitmentAgenciesOption: AutoCompleteItem[];
 }
 
 export const AssignRecuritmentHR = ({
@@ -46,61 +45,9 @@ export const AssignRecuritmentHR = ({
   handleAgencyChange,
   handleInputChangeTextArea,
   AssignHRSubmit,
-  Nationality,
+  AssignRecruitmentHROption,
+  AssignRecruitmentAgenciesOption,
 }: AssignPositionDialogProps) => {
-  const [AssignRecruitmentHROption, setAssignRecruitmentHROption] =
-    React.useState<AutoCompleteItem[]>([]);
-  const [AssignRecruitmentAgenciesOption, setAssignRecruitmentAgenciesOption] =
-    React.useState<AutoCompleteItem[]>([]);
-
-  React.useEffect(() => {
-    const initialize = async () => {
-      try {
-        const GetADGruopUserID = await CommonServices.GetMasterData(
-          ListNames.HRMSRecruitmentUserRole
-        );
-        console.log(GetADGruopUserID, "GetADGruopUserID");
-        let ADGroupIDs = GetADGruopUserID.data?.filter(
-          (item: any) => item.ID === RoleID.RecruitmentHR
-        );
-        // console.log(ADGroupIDs, "ADGroupID");
-
-        const [HRMSExternalAgents, AssignRecurtimentHROption] =
-          await Promise.all([
-            CommonServices.GetMasterData(ListNames.HRMSExternalAgents),
-            CommonServices.GetADgruopsEmailIDs(ADGroupIDs[0]?.ADGroupID),
-          ]);
-        let ExternalAgent = HRMSExternalAgents.data?.filter(
-          (nat) =>
-            nat.Nationality === Nationality &&
-            nat.UserType === ExternalUserType.Agent
-        );
-        const agentsOptions: AutoCompleteItem[] =
-          ExternalAgent?.map((item: any) => ({
-            key: item.Id,
-            text: item.AgentName,
-          })) ?? [];
-        setAssignRecruitmentAgenciesOption(agentsOptions);
-
-        if (
-          AssignRecurtimentHROption.status === 200 &&
-          AssignRecurtimentHROption.data
-        ) {
-          setAssignRecruitmentHROption(AssignRecurtimentHROption.data);
-        } else {
-          console.error(
-            AssignRecurtimentHROption.data?.message ??
-              "Error fetching HR group emails"
-          );
-        }
-      } catch (error) {
-        console.error("Initialization error:", error);
-      }
-    };
-
-    void initialize();
-  }, []);
-
   return (
     <>
       <div style={{ marginLeft: "12%", width: "78%" }}>

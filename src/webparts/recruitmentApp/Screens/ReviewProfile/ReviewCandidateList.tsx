@@ -92,7 +92,7 @@ const ReviewCandidateList = (props: any) => {
     tab: string,
     TabNamed: string,
     ButtonAction: string,
-    PreActionBtn: string
+    PreActionBtn: string,
   ): void {
     // console.log("RecruitmentDetails", RecruitmentDetails);
 
@@ -147,7 +147,7 @@ const ReviewCandidateList = (props: any) => {
       } else if (pendingcount.ONHoldRejectedCount > 0) {
         // const JobExpiredMsg = `There are ${pendingcount.ONHoldRejectedCount} pending candidate is there so please review the candidate after the processed .`;
         const JobExpiredMsg = PendingCandidateAlertMsg(
-          pendingcount.ONHoldRejectedCount
+          pendingcount.ONHoldRejectedCount,
         );
         const SuccessAlert = {
           Message: JobExpiredMsg,
@@ -166,8 +166,8 @@ const ReviewCandidateList = (props: any) => {
         const Dateformat = JobPostingSecondExtensionEndDate
           ? moment(JobPostingSecondExtensionEndDate).format("DD/MM/YYYY")
           : JobPostingFirstExtensionEndDate
-          ? moment(JobPostingFirstExtensionEndDate).format("DD/MM/YYYY")
-          : moment(JobPostingEndDate).format("DD/MM/YYYY");
+            ? moment(JobPostingFirstExtensionEndDate).format("DD/MM/YYYY")
+            : moment(JobPostingEndDate).format("DD/MM/YYYY");
         const JobExpiredMsg = JobAdvertAlertMsg(Dateformat);
         const SuccessAlert = {
           Message: JobExpiredMsg,
@@ -213,7 +213,7 @@ const ReviewCandidateList = (props: any) => {
           (
             await getVRRDetails.GetADGroupUsers(
               RecrutimentHR,
-              RoleName.RecruitmentHR
+              RoleName.RecruitmentHR,
             )
           ).data,
         ];
@@ -223,7 +223,7 @@ const ReviewCandidateList = (props: any) => {
           (
             await getVRRDetails.GetADGroupUsers(
               LineManager,
-              RoleName.LineManager
+              RoleName.LineManager,
             )
           ).data,
         ];
@@ -233,7 +233,7 @@ const ReviewCandidateList = (props: any) => {
           (
             await getVRRDetails.GetADGroupUsers(
               LineManager,
-              RoleName.LineManager
+              RoleName.LineManager,
             )
           ).data,
         ];
@@ -243,7 +243,7 @@ const ReviewCandidateList = (props: any) => {
           (
             await getVRRDetails.GetADGroupUsers(
               LineManager,
-              RoleName.LineManager
+              RoleName.LineManager,
             )
           ).data,
         ];
@@ -253,7 +253,7 @@ const ReviewCandidateList = (props: any) => {
           (
             await getVRRDetails.GetADGroupUsers(
               LineManager,
-              RoleName.LineManager
+              RoleName.LineManager,
             )
           ).data,
         ];
@@ -263,7 +263,7 @@ const ReviewCandidateList = (props: any) => {
           (
             await getVRRDetails.GetADGroupUsers(
               RecrutimentHR,
-              RoleName.RecruitmentHR
+              RoleName.RecruitmentHR,
             )
           ).data,
         ];
@@ -288,7 +288,7 @@ const ReviewCandidateList = (props: any) => {
   const columnConfig = (
     tab: string,
     ButtonActions: string,
-    TabNames: string
+    TabNames: string,
   ) => [
     {
       field: "SNO",
@@ -367,15 +367,11 @@ const ReviewCandidateList = (props: any) => {
           <span>
             {rowData.applicationStatusId ===
             ApplicationStatusId.ApplicationSuspended ? (
-              <span style={{ color: "red", marginLeft: "7%" }}>
-                {rowData.applicationStatus}
-              </span>
+              <span style={{ color: "red" }}>{rowData.applicationStatus}</span>
             ) : rowData.workflowStatusId === StatusId.Rescheduled ? (
-              <span style={{ color: "red", marginLeft: "7%" }}>
-                {rowData.Status}
-              </span>
+              <span style={{ color: "red" }}>{rowData.Status}</span>
             ) : (
-              <span style={{ marginLeft: "7%" }}>{rowData.Status}</span>
+              <span>{rowData.Status}</span>
             )}
           </span>
         );
@@ -424,7 +420,7 @@ const ReviewCandidateList = (props: any) => {
                         tab,
                         TabNames,
                         ButtonAction.View,
-                        ButtonAction.View
+                        ButtonAction.View,
                       )
                     }
                     style={{
@@ -452,7 +448,7 @@ const ReviewCandidateList = (props: any) => {
                         tab,
                         TabNames,
                         ButtonAction.Edit,
-                        ButtonAction.Edit
+                        ButtonAction.Edit,
                       )
                     }
                   />
@@ -475,7 +471,7 @@ const ReviewCandidateList = (props: any) => {
       //   text: item.Status,
       // }));
       setBreadcrumbTab(
-        props.stateValue?.tabs ? props.stateValue?.tabs : breadcrumbTab
+        props.stateValue?.tabs ? props.stateValue?.tabs : breadcrumbTab,
       );
     };
     void getMasterData();
@@ -484,7 +480,7 @@ const ReviewCandidateList = (props: any) => {
   const fetchCandidateData = async (
     tabs: string,
     row: number,
-    JobUniqueValues: string
+    JobUniqueValues: string,
   ) => {
     setIsLoading(true);
     try {
@@ -535,7 +531,7 @@ const ReviewCandidateList = (props: any) => {
         const ReschedulData =
           await InterviewServices.GetCandidateDetailsInterviewPanalDashboard(
             filterConditionsRecuritment,
-            RecuritmentConditions
+            RecuritmentConditions,
           );
         if (ReschedulData.status === 200 && ReschedulData.data !== null) {
           let ReschedulDataFilter = ReschedulData.data.map((item: any) => {
@@ -547,6 +543,7 @@ const ReviewCandidateList = (props: any) => {
               JobCode: item?.JobCode,
               Status: item?.Status,
               workflowStatusId: item?.StatusId,
+              TotalItems: ReschedulData.data.length,
             };
           });
           setCandidateData(ReschedulDataFilter);
@@ -608,8 +605,8 @@ const ReviewCandidateList = (props: any) => {
                 workflowStatusApi.LineManagerLevel2OnHold,
                 workflowStatusApi.LineManagerLevel1Rejected,
                 workflowStatusApi.LineManagerLevel2Rejected,
-                workflowStatusApi.pendingHODSelection,
-                workflowStatusApi.CandidateSelectedIPanel,
+                // workflowStatusApi.pendingHODSelection,
+                // workflowStatusApi.CandidateSelectedIPanel,
                 workflowStatusApi.CandidateRejectedIPanel,
                 workflowStatusApi.PendingRecruitmentHRscheduleInterview,
                 ApplicationStatusId.ApplicationSuspended,
@@ -711,15 +708,15 @@ const ReviewCandidateList = (props: any) => {
       await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
         .then(async (res) => {
           let ReviewProfileCount = res.data?.filter(
-            (item) => item.workflowStatusId === workflowStatusApi.HRPending
+            (item) => item.workflowStatusId === workflowStatusApi.HRPending,
           );
           let InterviewLevel1 = res.data?.filter(
             (item) =>
-              item.workflowStatusId === workflowStatusApi.LineManagerL1Pending
+              item.workflowStatusId === workflowStatusApi.LineManagerL1Pending,
           );
           let InterviewLevel2 = res.data?.filter(
             (item) =>
-              item.workflowStatusId === workflowStatusApi.LineManagerL2Pending
+              item.workflowStatusId === workflowStatusApi.LineManagerL2Pending,
           );
 
           const RejectedOnHold = res.data?.filter(
@@ -729,7 +726,7 @@ const ReviewCandidateList = (props: any) => {
               // item.workflowStatusId ===
               //   workflowStatusApi.LineManagerLevel1Rejected ||
               item.workflowStatusId ===
-                workflowStatusApi.LineManagerLevel2OnHold
+                workflowStatusApi.LineManagerLevel2OnHold,
             // item.workflowStatusId ===
             //   workflowStatusApi.LineManagerLevel2Rejected
           );
@@ -737,7 +734,7 @@ const ReviewCandidateList = (props: any) => {
           const InterviewScheduledLevel1 = res.data?.filter(
             (item) =>
               item.workflowStatusId ===
-              workflowStatusApi.PendingRecruitmentHRscheduleInterview
+              workflowStatusApi.PendingRecruitmentHRscheduleInterview,
           );
 
           setPendingCount((prev) => ({
@@ -780,20 +777,20 @@ const ReviewCandidateList = (props: any) => {
             FilterValue: "No",
           },
         ],
-        ""
+        "",
       ).then(async (res) => {
         let InterviewScheduledLevel2 = res.data?.filter(
           (item: any) =>
             item.StatusId ===
               StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel &&
-            item.ItemCreated === "No"
+            item.ItemCreated === "No",
         );
 
         let RescheduledCount = res.data?.filter(
           (item: any) =>
             item.StatusId === StatusId.InterviewScheduled ||
             item.StatusId === StatusId.InterviewScheduledforLevel2 ||
-            item.StatusId === StatusId.Rescheduled
+            item.StatusId === StatusId.Rescheduled,
         );
         setPendingCount((prev) => ({
           ...prev,
@@ -818,7 +815,7 @@ const ReviewCandidateList = (props: any) => {
     });
     const RecruitmentDetails = await getVRRDetails.GetRecruitmentDetails(
       filterConditions,
-      Conditions
+      Conditions,
     );
     if (RecruitmentDetails.status === 200 && RecruitmentDetails.data !== null) {
       setRecruitmentDetails(RecruitmentDetails.data);
@@ -838,7 +835,7 @@ const ReviewCandidateList = (props: any) => {
       ];
       let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
         JobCodeFilter,
-        "and"
+        "and",
       );
       // console.log("JobUniqueValue", JobUniqueValue);
       if (
@@ -850,7 +847,7 @@ const ReviewCandidateList = (props: any) => {
         await fetchCandidateData(
           props.stateValue?.tabs ? props.stateValue?.tabs : breadcrumbTab,
           5,
-          JobUniqueValue.data[0]?.JobUniqueKey
+          JobUniqueValue.data[0]?.JobUniqueKey,
         );
         await pendingcountTabs(JobUniqueValue.data[0]?.JobUniqueKey);
       }
@@ -898,7 +895,7 @@ const ReviewCandidateList = (props: any) => {
               columns={columnConfig(
                 tab,
                 ButtonAction.Edit,
-                TabName.ReviewProfile
+                TabName.ReviewProfile,
               )}
               rows={rows}
               onPageChange={onPageChange}
@@ -941,7 +938,7 @@ const ReviewCandidateList = (props: any) => {
         const uniqueTabNames = newTabNames.filter(
           (item, index, self) =>
             item.tabName &&
-            self.findIndex((t) => t.tabName === item.tabName) === index
+            self.findIndex((t) => t.tabName === item.tabName) === index,
         );
 
         return uniqueTabNames;

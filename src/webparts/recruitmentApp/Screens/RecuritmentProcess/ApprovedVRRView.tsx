@@ -10,7 +10,13 @@ import {
   RoleProfileMaster,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import { AdvDetails, RecuritmentData } from "../../Models/RecuritmentVRR";
+import {
+  AdvDetails,
+  QualificationValue,
+  RecuritmentData,
+  RoleSpecKnowledge,
+  TechnicalSkills,
+} from "../../Models/RecuritmentVRR";
 import CustomLabel from "../../components/CustomLabel";
 import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 import CommanComments from "../../components/CommanComments";
@@ -21,14 +27,12 @@ import LabelHeaderComponents from "../../components/TitleHeader";
 import BreadcrumbsComponent, {
   TabNameData,
 } from "../../components/CustomBreadcrumps";
-
-import CustomPreviewScreen from "./CustomPreviewScreen";
-import * as moment from "moment";
 import {
   Attachment,
   ButtonAction,
   labelNames,
 } from "../../utilities/LabelName";
+import PreviewScreen from "./PreviewScreen";
 
 const ApprovedVRRView: React.FC = (props: any) => {
   const [tabVisibility, setTabVisibility] = useState({
@@ -85,6 +89,8 @@ const ApprovedVRRView: React.FC = (props: any) => {
     AssignAgenciesOption: [],
     CandidateCVAttachment: [],
     Comments: "",
+    RoleProfileDocument_fr: [],
+    GradingDocument_fr: [],
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [MainComponent, setMainComponent] = useState<boolean>(true);
@@ -92,29 +98,8 @@ const ApprovedVRRView: React.FC = (props: any) => {
   const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
   const [activeTab, setactiveTab] = useState<string>("tab1");
   const [Preview, setPreview] = useState<boolean>(false);
-  //const [isViewed, setIsViewed] = useState(false);
-  // const [RoleSpeKnowledgeValue, setRoleSpeKnowledgeValue] = useState<
-  //     RoleSpecKnowledge[]
-  //   >([
-  //     {
-  //       RoleSpeKnowledge: { key: 0, text: "" },
-  //       RequiredLevel: { key: 0, text: "" },
-  //     },
-  //   ]);
-  //    const [qualificationValue, setQualificationValue] =
-  //       useState<QualificationValue>({
-  //         MinQualification: [],
-  //         PrefeQualification: [],
-  //       });
-  //     const [TechnicalSkillValue, setTechnicalSkillValue] = useState<
-  //       TechnicalSkills[]
-  //     >([
-  //       {
-  //         TechnicalSkills: { key: 0, text: "" },
-  //         LevelProficiency: { key: 0, text: "" },
-  //       },
-  //     ]);
   const [advDetails, setAdvDetails] = useState<AdvDetails>({
+    RoleDetailsID: 0,
     MinQualificationOption: [],
     PrefeQualificationOption: [],
     RoleSpeKnowledgeoption: [],
@@ -150,7 +135,87 @@ const ApprovedVRRView: React.FC = (props: any) => {
     JobTitleofLineManagerSupervisor_fr: { key: 0, text: "" },
     JobTitleofFunctionalManagerOption: [],
     JobTitleofLineManagerSupervisorOption: [],
+    JobBasedBGVVerification: [],
   });
+
+  const [RoleSpeKnowledgeValue, setRoleSpeKnowledgeValue] = useState<
+    RoleSpecKnowledge[]
+  >([
+    {
+      RoleSpeKnowledge: { key: 0, text: "" },
+      RequiredLevel: { key: 0, text: "" },
+      RoleSpeKnowledge_fr: { key: 0, text: "" },
+      RequiredLevel_fr: { key: 0, text: "" },
+    },
+  ]);
+  const [qualificationValue, setQualificationValue] =
+    useState<QualificationValue>({
+      MinQualification: [],
+      PrefeQualification: [],
+      MinQualification_fr: [],
+      PrefeQualification_fr: [],
+    });
+  const [TechnicalSkillValue, setTechnicalSkillValue] = useState<
+    TechnicalSkills[]
+  >([
+    {
+      TechnicalSkills: { key: 0, text: "" },
+      LevelProficiency: { key: 0, text: "" },
+      TechnicalSkills_fr: { key: 0, text: "" },
+      LevelProficiency_fr: { key: 0, text: "" },
+    },
+  ]);
+
+  const fetchRoleProfileData = async (JobCodeID: number) => {
+    try {
+      let filterConditions = [
+        {
+          FilterKey: "JobCode",
+          Operator: "eq",
+          FilterValue: JobCodeID,
+        },
+      ];
+      const response = await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
+        filterConditions,
+        ""
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+
+        if (data && data.length > 0) {
+          const items = data[0];
+          setAdvDetails((prevState) => ({
+            ...prevState,
+            RoleDetailsID: items?.ID,
+            RolePurpose: items?.RolePurpose || "",
+            JobDescription: items?.JobDescription || "",
+            RolePurpose_fr: items?.RolePurpose_fr || "",
+            JobDescription_fr: items?.JobDescription_fr || "",
+            TotalExperience: items?.TotalExperience || "",
+            ExperienceinMiningIndustry: items?.ExperienceinMiningIndustry || "",
+            JobFunctionalType: items?.JobFunctionalType,
+            JobFunctionalType_fr: items?.JobFunctionalType_fr,
+            JobcodeChecked: true,
+            JobBasedBGVVerification: items.JobBasedBGVVerification,
+          }));
+          setRoleSpeKnowledgeValue(items.RoleSpeKnowledgeValue);
+          setTechnicalSkillValue(items.TechnicalSkillValue);
+          setQualificationValue(items.qualificationValue);
+        } else {
+          setAdvDetails((prev) => ({
+            ...prev,
+            JobcodeChecked: false,
+          }));
+          console.warn("No data found for the given filter.");
+        }
+      } else {
+        console.error("Error fetching data:", response.message);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const fetchData = async () => {
     if (isLoading) return;
@@ -249,85 +314,17 @@ const ApprovedVRRView: React.FC = (props: any) => {
             RecruitmentAuthorised: op.RecruitmentAuthorised || "",
             IsPayrollEmailed: op.IsPayrollEmailed || "",
             EnterNumberOfMonths: Number(op.EnterNumberOfMonths) ?? 0,
-            DateRequried: moment.utc(op.DateRequried).format("DD/MM/YYYY"),
+            DateRequried: String(op.DateRequried),
             VacancyConfirmed: op.VacancyConfirmed || "",
-            RoleProfileDocument: RoleProfileDocment.data || [],
-            GradingDocument: GradingDocument.data || [],
+            RoleProfileDocument: RoleProfileDocment.data.English || [],
+            GradingDocument: GradingDocument.data.English || [],
+            RoleProfileDocument_fr: RoleProfileDocment.data.French || [],
+            GradingDocument_fr: GradingDocument.data.French || [],
             AdvertisementDocument: AdvertismentDocment.data || [],
             OnamSignedStampsDocument: OnamSignedStampsDocment.data || [],
           }));
         }
-        const filterConditions = [
-          {
-            FilterKey: "JobCode",
-            Operator: "eq",
-            FilterValue: op.JobCodeId,
-          },
-        ];
-
-        const Advresponse =
-          await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
-            filterConditions,
-            ""
-          );
-
-        if (Advresponse.status === 200) {
-          const data = Advresponse.data;
-
-          if (data && data.length > 0) {
-            const rawData = data[0];
-
-            const RoleSpeKnowledgeValues =
-              rawData.RoleSpecificKnowledge?.map(
-                (item: any) => item.RoleSpecificKnowledge
-              ) || [];
-            const RequiredLevelValues =
-              rawData.RoleSpecificKnowledge?.map(
-                (item: any) => item.RequiredLevel
-              ) || [];
-
-            const TechnicalSkillsOption =
-              rawData.TechnicalSkillsKnowledge?.map(
-                (item: any, index: number) => ({
-                  key: index,
-                  text: item.TechnicalSkills,
-                })
-              ) || [];
-
-            const LevelProficiencyOption =
-              rawData.TechnicalSkillsKnowledge?.map(
-                (item: any, index: number) => ({
-                  key: index,
-                  text: item.LevelProficiency,
-                })
-              ) || [];
-
-            // const MinQualificationOption = rawData.Qualification
-            //   ? [{ key: 0, text: rawData.Qualification }]
-            //   : [];
-            // const PrefeQualificationOption = rawData.PreferredQualification
-            //   ? [{ key: 0, text: rawData.PreferredQualification }]
-            //   : [];
-
-            setAdvDetails((prevState) => ({
-              ...prevState,
-              RolePurpose: rawData.RoleProfile || "",
-              JobDescription: rawData.JobDescription || "",
-              // MinQualificationOption: MinQualificationOption,
-              // PrefeQualificationOption: PrefeQualificationOption,
-              TechnicalSkillsOption: TechnicalSkillsOption,
-              LevelProficiencyOption: LevelProficiencyOption,
-              RoleSpeKnowledgeoption: RoleSpeKnowledgeValues,
-              RequiredLeveloption: RequiredLevelValues,
-              TotalExperience: rawData.YearofExperience || "",
-              ExperienceinMiningIndustry: rawData.PreferredExperience || "",
-              YearofExperience: rawData.YearofExperience || "",
-              PreferredExperience: rawData.PreferredExperience || "",
-              FunctionType: rawData.FunctionType,
-              JobcodeChecked: true,
-            }));
-          }
-        }
+        await fetchRoleProfileData(op.JobCodeId);
       }
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -662,7 +659,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     />
                   </div>
                 </div>
-
                 <div className="ms-Grid-row" style={{ marginLeft: "0%" }}>
                   <LabelHeaderComponents value={Attachment.Attachments} />
                 </div>
@@ -678,6 +674,17 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                   <div className="ms-Grid-col ms-lg3">
                     <CustomLabel
+                      value={
+                        Attachment.PositionDocument.RoleProfileDocuments_fr
+                      }
+                    />
+                    <CustomViewDocument
+                      Attachment={data.RoleProfileDocument_fr}
+                      webUrl={props.webURL}
+                    />
+                  </div>
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomLabel
                       value={Attachment.PositionDocument.GradingDocuments}
                     />
                     <CustomViewDocument
@@ -685,7 +692,17 @@ const ApprovedVRRView: React.FC = (props: any) => {
                       webUrl={props.webURL}
                     />
                   </div>
-
+                  <div className="ms-Grid-col ms-lg3">
+                    <CustomLabel
+                      value={Attachment.PositionDocument.GradingDocuments_fr}
+                    />
+                    <CustomViewDocument
+                      Attachment={data.GradingDocument_fr}
+                      webUrl={props.webURL}
+                    />
+                  </div>
+                </div>
+                <div className="ms-Grid-row">
                   {data.AdvertisementDocument.length > 0 && (
                     <div className="ms-Grid-col ms-lg3">
                       <CustomLabel
@@ -791,7 +808,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                 </div>
               </div>
-              // </div>
             )}
           </CardContent>
         </Card>
@@ -814,7 +830,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
   return (
     <>
       {Preview ? (
-        <CustomPreviewScreen
+        <PreviewScreen
           data={advDetails}
           onclose={() => {
             setPreview(false);
@@ -824,7 +840,11 @@ const ApprovedVRRView: React.FC = (props: any) => {
             setPreview(false);
             setMainComponent(true);
           }}
+          RoleSpec={RoleSpeKnowledgeValue}
+          Qualification={qualificationValue}
+          TechinicalSkills={TechnicalSkillValue}
           JobTitle={data.JobNameInEnglish}
+          JobTitle_fr={data.JobNameInFrench}
         />
       ) : MainComponent ? (
         <>

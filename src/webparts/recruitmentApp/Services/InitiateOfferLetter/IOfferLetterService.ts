@@ -89,6 +89,7 @@ export type ICandidateDetails = {
     AccommodationBooked: string;
     TravelProcess: string;
     ReadyforOnboarding: string;
+    MedicalCheckStatus: string;
     Gender: string;
     NationalityCode: string;
 }
@@ -115,6 +116,10 @@ export type IOfferLetterService = {
         Filter: any[],
         Conditions: any,
     ): Promise<ApiResponse<DataSyncToResiProcess[]>>;
+    fetchHODSelectedCandidate(
+        Filter: any[],
+        Conditions: any,
+    ): Promise<ApiResponse<any[]>>;
     FetchCandidateDocument(
         DocumentName: GetCandidateDocument,
     ): Promise<ApiResponse<any>>;

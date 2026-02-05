@@ -22,8 +22,8 @@ export const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
   const [isLoading, setIsLoading] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
   const [loadingId, setLoadingId] = React.useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = React.useState("");
-  const [errorMessage, setErrorMessage] = React.useState("");
+  // const [successMessage, setSuccessMessage] = React.useState("");
+  // const [errorMessage, setErrorMessage] = React.useState("");
   const [preferences, setPreferences] = React.useState<Preference[]>(documents);
 
   const completedCount = preferences.filter((p) => p.value === true).length;
@@ -33,16 +33,16 @@ export const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
 
   React.useEffect(() => {
     setIsLoading(false);
-    console.log(successMessage);
-    console.log(errorMessage);
+    // console.log(successMessage);
+    // console.log(errorMessage);
     const BtnEnableValue = documents.length === completedCount;
     BtnEnable(BtnEnableValue);
   }, []);
 
   async function handleToggle(id: string, value: boolean) {
     setLoadingId(id);
-    setErrorMessage("");
-    setSuccessMessage("");
+    // setErrorMessage("");
+    // setSuccessMessage("");
 
     try {
       // await new Promise((res) => setTimeout(res, 300));
@@ -51,12 +51,12 @@ export const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
         prev.map((p) => (p.id === id ? { ...p, value } : p))
       );
 
-      setSuccessMessage("Preference saved!");
-      setTimeout(() => setSuccessMessage(""), 2000);
+      // setSuccessMessage("Preference saved!");
+      // setTimeout(() => setSuccessMessage(""), 2000);
     } catch (err) {
       console.error("Error saving preference:", err);
-      setErrorMessage("Failed to save preference");
-      setTimeout(() => setErrorMessage(""), 2000);
+      // setErrorMessage("Failed to save preference");
+      // setTimeout(() => setErrorMessage(""), 2000);
     } finally {
       setLoadingId(null);
     }

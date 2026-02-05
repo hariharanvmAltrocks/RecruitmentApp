@@ -88,7 +88,7 @@ const StatusBar: React.FC<StatusBarProps> = ({ checklist }) => {
                       isDone === StatusBarValue.Completed ? (
                         <CheckCircleIcon sx={{ color: "green" }} />
                       ) : isDone === StatusBarValue.Failed ? (
-                        <CancelIcon style={{ color: "#f90606" }} />
+                        <CancelIcon style={{ color: "red" }} />
                       ) : isDone === StatusBarValue.Pending ? (
                         <RadioButtonUncheckedIcon sx={{ color: "gray" }} />
                       ) : null
@@ -99,10 +99,12 @@ const StatusBar: React.FC<StatusBarProps> = ({ checklist }) => {
                       sx={{
                         color:
                           isDone === StatusBarValue.Completed
-                            ? "green"
+                            ? "black"
                             : isDone === StatusBarValue.Failed
-                            ? "#f90606"
-                            : "#8cae8c",
+                            ? "black"
+                            : "gray",
+                        fontWeight:
+                          isDone === StatusBarValue.Pending ? "normal" : "bold",
                       }}
                     >
                       {label}

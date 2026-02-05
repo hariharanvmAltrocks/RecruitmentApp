@@ -1,6 +1,11 @@
 import { AutoCompleteItem } from "../../Models/Screens";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 
+export type LanguageFiles = {
+  English: IDocFiles[];
+  French: IDocFiles[];
+};
+
 export type ICommonService = {
   uploadAttachmentToLibrary(
     PositionCode: string,

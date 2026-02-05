@@ -11,7 +11,6 @@ import CommanTemplate from "../components/CommanTemplate";
 import AssignInterviewPanel from "../Screens/RecuritmentProcess/AssignInterviewPanel";
 import InterviewPanelList from "../Screens/InterviewPanel/InterviewPanelList";
 import InterviewPanelEdit from "../Screens/InterviewPanel/InterviewPanelEdit";
-// import Emptypage from "../Screens/EmptyPage/EmptyPage";
 import CandidateList from "../Screens/RecuritmentProcess/CandidateList";
 import ReviewProfileList from "../Screens/ReviewProfile/ReviewProfileList";
 import ReviewCandidateList from "../Screens/ReviewProfile/ReviewCandidateList";
@@ -23,7 +22,6 @@ import UploadCandidateCV from "../Screens/UploadCandidateCV/UploadCandidateCV";
 import UploadCandidateList from "../Screens/UploadCandidateCV/UploadCandidateList";
 import UploadOfferDocumentList from "../Screens/OfferMedicalProcess/UploadOfferDocumentList";
 import UploadCandidateDocument from "../Screens/OfferMedicalProcess/UploadCandidateDocument";
-import { ApiUrl } from "../components/TabMerge";
 import AdminPanelDashboard from "../Screens/AdminPanel/AdminPanelDashboard";
 import AdminPanelPage from "../Screens/AdminPanel/NewAdminPanelPage";
 
@@ -35,22 +33,7 @@ export default function MainPage(props: any) {
   const toggleSideNav = () => {
     setIsExpanded((prevState: any) => !prevState);
   };
-  console.log("Recruitment-App(4-Dec-2025) V-1.3 SIT");
-  // let ApiUrls = ApiUrl(props.webURL);
-  // console.log("ApiUrl", ApiUrls);
-  React.useEffect(() => {
-    const fetchApiUrl = async () => {
-      const ApiUrls = await ApiUrl();
-      let ApiURL = localStorage.getItem("ApiUrl");
-      if (ApiURL) {
-        localStorage.removeItem("ApiUrl");
-        localStorage.setItem("ApiUrl", ApiUrls);
-      } else {
-        localStorage.setItem("ApiUrl", ApiUrls);
-      }
-    };
-    void fetchApiUrl();
-  }, []);
+  console.log("Recruitment-App(22-Jan-2025) V-1.5");
 
   return (
     <div className="mainPage">

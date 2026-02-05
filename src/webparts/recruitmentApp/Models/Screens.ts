@@ -80,6 +80,14 @@ export type ComplianceCheck = {
   WorkPermitApproved: checklist,
 }
 
+export type ComplianceCheckDRC = {
+  BackgroundChecks: checklist,
+  MedicalChecks: checklist,
+  SignedOfferLetter: checklist,
+  SignedEmploymentContract: checklist,
+}
+
+
 export type EmployeeSupport = {
   VisaProcess: checklist,
   AccommodationBooked: checklist,
@@ -92,6 +100,10 @@ export type FinalStatus = {
 export type DocumentCheck = {
   label: string,
   DocumentComplianceChecks: ComplianceCheck
+}
+export type DocumentCheckDRC = {
+  label: string,
+  DocumentComplianceChecks: ComplianceCheckDRC
 }
 export type LogisticsSupport = {
   label: string,
@@ -107,4 +119,42 @@ export type OnboardingChecklisttype = {
   LogisticsEmployeeSupport: LogisticsSupport,
   FinalStatus: FinalStatuse,
 }
+
+export type OnboardingChecklistDRCtype = {
+  DocumentComplianceChecks: DocumentCheckDRC,
+  FinalStatus: FinalStatuse,
+}
+
+// type NationalityType = "DRC" | "EXPAT";
+
+type DocumentCheckBase<T> = {
+  label: string;
+  DocumentComplianceChecks: T;
+};
+
+// export type FinalStatuse = {
+//   label: string;
+//   FinalStatus: {
+//     ReadyforOnboarding: checklist;
+//   };
+// };
+
+export type ExpatChecklist = {
+  nationality: "EXPAT";
+  DocumentComplianceChecks: DocumentCheckBase<ComplianceCheck>;
+  LogisticsEmployeeSupport: {
+    label: string;
+    LogisticsEmployeeSupport: EmployeeSupport;
+  };
+  FinalStatus: FinalStatuse;
+};
+
+export type DRCChecklist = {
+  nationality: "DRC";
+  DocumentComplianceChecks: DocumentCheckBase<ComplianceCheckDRC>;
+  FinalStatus: FinalStatuse;
+};
+
+export type OnboardingChecklist = ExpatChecklist | DRCChecklist;
+
 

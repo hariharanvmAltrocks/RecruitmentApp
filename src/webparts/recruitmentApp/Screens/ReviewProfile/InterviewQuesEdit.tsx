@@ -58,6 +58,7 @@ import ViewQuestionCheckbox, {
 import CustomLabel from "../../components/CustomLabel";
 import { Label } from "@fluentui/react";
 import { ButtonAction, ValidationAction } from "../../utilities/LabelName";
+import { normalizeQuestion } from "../../components/TabMerge";
 
 type InterviewQuesValidationError = {
   QuestionType: boolean;
@@ -505,6 +506,34 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   };
 
   const handleSaveQuestion = (index: number, OptionIndex: number) => {
+    const currentQuestion = normalizeQuestion(InterviewQuesData.Question);
+
+    const duplicatedInReuse = resuequestionnaire.some(
+      (qs) => normalizeQuestion(qs.question) === currentQuestion
+    );
+
+    const duplicatedInNew = newquestionnaire.some(
+      (qs) => normalizeQuestion(qs.question) === currentQuestion
+    );
+
+    if (currentQuestion !== "" && duplicatedInReuse && duplicatedInNew) {
+      const DuplicatedQu = {
+        Message: RecuritmentHRMsg.duplicatedquestionMsg,
+        Type: HRMSAlertOptions.Error,
+        visible: true,
+        ButtonAction: async (userClickedOK: boolean) => {
+          if (userClickedOK) {
+            setAlertPopupOpen(false);
+          }
+        },
+      };
+
+      setAlertPopupOpen(true);
+      setalertProps(DuplicatedQu);
+      setIsLoading(false);
+      return;
+    }
+
     const shouldValidateQuestionType =
       props?.stateValue?.StatusId ===
       StatusId.PendingwithLMcreateDisqualificationQuestion;

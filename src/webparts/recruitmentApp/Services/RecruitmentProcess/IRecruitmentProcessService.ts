@@ -85,6 +85,7 @@ export type IAdditionalHeadCountResponse = {
 
 export type DataSyncToRecruitmentResponse = {
   ID: number,
+  RecordID: number,
   BusinessUnitCode: string,
   BusinessUnitCodeId: number,
   BusinessUnitName: string;
@@ -204,10 +205,6 @@ export type IRecruitmentService = {
     ModalDropDown: any
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
   fetchNewPositionRequest(filterParam: any, filterConditions: any, ModalDropDown: any): Promise<ApiResponse<DataSyncToRecruitmentResponse[] | null>>;
-  GetVacancyDetails(
-    filterParam: any,
-    filterConditions: any
-  ): Promise<ApiResponse<any | null>>;
   InsertRecruitmentDpt(RecruitmentValue: PostRecuritmentData): Promise<ApiResponse<any | null>>;
   GetPositionDetails(
     filterParam: any,
@@ -310,4 +307,5 @@ export type IRecruitmentService = {
     filterParam: any,
     filterConditions: any
   ): Promise<ApiResponse<string>>;
+  GetVacancyDetails(filterParam: any, filterConditions: any, ModalDropDown: any): Promise<ApiResponse<DataSyncToRecruitmentResponse[] | null>>;
 };

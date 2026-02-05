@@ -139,7 +139,7 @@ export const StatusId = {
   PendingLabourhireWPPayment: 173,
   PendingFinancePaymentReview: 174,
   PendingLHWorkPermitProcess: 175,
-  PendingHRCandidateResign: 176,
+  PendingHRReviewOfferuploadEmploymentInit: 176,
   PendingHREmploymentContractInit: 177,
   PendingLHECRelease: 178,
   PendingHREmploymentContractReview: 179,
@@ -180,6 +180,10 @@ export const StatusId = {
   CandidateOnHoldbyHODLevel2: 166,//182,//166,
   CandidateRejectedbyHODLevel1: 167,
   CandidateRejectedbyHODLevel2: 168,
+
+  BackgroundCheckVerificationFailed: 180,
+  RESProcessInitiated: 143,
+  FailedmedicalscreeningUnfit: 156
 };
 
 export const RoleID = {
@@ -343,6 +347,7 @@ export const RecuritmentHRMsg = {
   EmployeementInit: "The Employment Contract process has been successfully initiated to the Labour Hire",
   ReviewEmploymentContractMsg: "The Labour Hire Employment Contract has been reviewed successfully and forwarded to the candidate.",
   ReviewECMsg: "The Employement Contract Reviewed Successfully",
+  ReviewOfferLetterInitEC: "The offer letter has been reviewed successfully and initiated the Employment Contract ",
 
   RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
   RevertECCocs: "The Labour Hire Employment Contract has been successfully reverted",
@@ -369,6 +374,10 @@ export const RecuritmentHRMsg = {
   NoOfUserLimitMsg: "User limit reached. Kindly upgrade or extend your user limit.",
   ResetPassword: "Are you sure you want to reset the password?",
   ResetPasswordMsg: "A password reset link has been sent to your registered email. Please check your inbox to proceed.",
+
+  duplicatedquestionMsg: "Duplicate questions are not allowed. Please modify the question and try again.",
+  ReinitiateBGVProcess: "The BGV process has been re-initiated successfully.",
+  ReinitiateBGVWarningMsg: "Are you sure you want to re-initiate the Criminal Check (Fingerprint Search) as part of the BGV process for this candidate?",
 }
 
 export const validationMsg = {
@@ -534,8 +543,8 @@ export const TabName = {
   Agent: "Agent",
   CreateAdminPage: "Create Admin Page",
 
-  EnglishAdvertisment: "Job Advertisement",
-  FrenchAdvertisement: "Offre d'emploi"
+  EnglishAdvertisment: "English",//"Job Advertisement",
+  FrenchAdvertisement: "French"//"Offre d'emploi"
 };
 
 
@@ -566,7 +575,8 @@ export const InterviewLevels = {
 
 export const DataFrom = {
   NewPosition: "New Position",
-  ExistingPosition: "Existing Position"
+  ExistingPosition: "Existing Position",
+  VacancyRecruitmentProcess: "Vacancy Requirement Process"
 }
 
 export const workflowStatusApi = {
@@ -881,12 +891,13 @@ export const ColorCode = {
 export const TooltipType = {
   ChildData: "Family Details",
   EmplyeeData: "Reference Employee Details",
-  CompanyData: "Company Details"
+  CompanyData: "Company Details",
+  PPE: "Personal Protective Equipment"
 }
 
 export const TooltipHeader = {
   ChildData: [{ key: "name", label: "Name" }, { key: "relationshipDetail", label: "Relationship" }, { key: "contactNumber", label: "Contact Number" }],
   EmplyeeData: [{ key: "empId", label: "Employee ID" }, { key: "empName", label: "Employee Name" }, { key: "empEmail", label: "Employee Email" }, { key: "company", label: "Employee Company" }],
   CompanyData: [{ key: "operation", label: "Operation" }, { key: "role", label: "Role" }, { key: "region", label: "Region / Province" }],
-
+  PPEData: [{ key: "PPEType", label: "PPE Kit" }, { key: "PPESize", label: "Size" }]
 }

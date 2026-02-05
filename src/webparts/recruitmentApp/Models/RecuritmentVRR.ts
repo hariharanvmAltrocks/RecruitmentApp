@@ -57,8 +57,10 @@ export type RecuritmentData = {
   DateRequried: string;
   IsRevert: string;
   VacancyConfirmed: string;
-  RoleProfileDocument: any[];
-  GradingDocument: any[];
+  RoleProfileDocument: IDocFiles[];
+  GradingDocument: IDocFiles[];
+  RoleProfileDocument_fr: IDocFiles[];
+  GradingDocument_fr: IDocFiles[];
   AdvertisementDocument: any[];
   AssignRecruitmentHR: AutoCompleteItem;
   AssignRecruitmentHROption: AutoCompleteItem[];
@@ -72,6 +74,7 @@ export type RecuritmentData = {
 };
 
 export type AdvDetails = {
+  RoleDetailsID: number;
   MinQualificationOption: AutoCompleteItem[];
   PrefeQualificationOption: AutoCompleteItem[];
   RoleSpeKnowledgeoption: AutoCompleteItem[];
@@ -108,6 +111,7 @@ export type AdvDetails = {
   JobTitleofLineManagerSupervisor_fr: AutoCompleteItem;
   LineManagerSupervisorName: AutoCompleteItem;
   IsMasterData: boolean;
+  JobBasedBGVVerification: any[];
 };
 
 export type CandidateData = {

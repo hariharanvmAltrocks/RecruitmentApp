@@ -20,6 +20,7 @@ import {
 import { SelectAll } from "@mui/icons-material";
 import CustomAlert from "./CustomAlert/CustomAlert";
 import CustomLoader from "../Services/Loader/CustomLoader";
+import { labelNames } from "../utilities/LabelName";
 
 interface ColumnConfig {
   field: string;
@@ -63,14 +64,14 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
   const [FilterData, setFilterData] = React.useState<FilterData>({
-    Department: { key: 0, text: "" },
+    PositionRequest: { key: 0, text: "" },
     BusinessUnitCode: { key: 0, text: "" },
     JobCode: { key: 0, text: "" },
-    DepartmentOption: [],
+    PositionRequestOption: [],
     BusinessUnitCodeOption: [],
     JobCodeOption: [],
-    BusinessUnitNameOption: [], // Can be removed if not used elsewhere
-    BusinessUnitName: { key: 0, text: "" }, // Can be removed if not used elsewhere
+    BusinessUnitNameOption: [],
+    BusinessUnitName: { key: 0, text: "" },
     Nationality: { key: 0, text: "" },
   });
   const [pagination, setPagination] = React.useState({ first: 0, rows: rows });
@@ -124,6 +125,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
       if (field === "BusinessUnitCode") return i.BusinessUnitCode === item.text;
       if (field === "JobCode") return i.JobCode === item.text;
       if (field === "Nationality") return i.Nationality === item.text;
+      if (field === "PositionRequest") return i.Type === item.text;
       return false;
     });
 
@@ -144,39 +146,11 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           ...prev,
           JobCode: { key: 0, text: "" },
         }));
-        setFilteredItems(
-          checkedData.filter((row) => {
-            return (
-              (!FilterData.Department.text ||
-                row.Department === FilterData.Department.text) &&
-              (!FilterData.BusinessUnitCode.text ||
-                row.BusinessUnitCode === FilterData.BusinessUnitCode.text)
-            );
-          })
-        );
-      } else if (field === "BusinessUnitCode") {
+        setFilteredItems(checkedData);
+      } else if (field === "PositionRequest") {
         setFilterData((prev) => ({
           ...prev,
-          BusinessUnitCode: { key: 0, text: "" },
-          JobCodeOption: [],
-          JobCode: { key: 0, text: "" },
-        }));
-        setFilteredItems(
-          checkedData.filter((row) => {
-            return (
-              !FilterData.Department.text ||
-              row.Department === FilterData.Department.text
-            );
-          })
-        );
-      } else if (field === "Department") {
-        setFilterData((prev) => ({
-          ...prev,
-          Department: { key: 0, text: "" },
-          BusinessUnitCodeOption: [],
-          JobCodeOption: [],
-          BusinessUnitCode: { key: 0, text: "" },
-          JobCode: { key: 0, text: "" },
+          PositionRequest: { key: 0, text: "" },
         }));
         setFilteredItems(checkedData);
       } else if (field === "Nationality") {
@@ -189,33 +163,6 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
       return;
     }
     search_fn(field, item);
-
-    if (field === "Department") {
-      const departmentToBU = checkedData.filter(
-        (row) => row.Department === item?.text
-      );
-      const businessUnitOptions: AutoCompleteItem[] = Array.from(
-        new Set(departmentToBU.map((row) => row.BusinessUnitCode))
-      ).map((buCode) => ({
-        key: buCode,
-        text: buCode,
-      }));
-
-      const jobCodeOptions: AutoCompleteItem[] = Array.from(
-        new Set(departmentToBU.map((row) => row.JobCode))
-      ).map((jobCode) => ({
-        key: jobCode,
-        text: jobCode,
-      }));
-
-      setFilterData((prev) => ({
-        ...prev,
-        BusinessUnitCodeOption: businessUnitOptions,
-        JobCodeOption: jobCodeOptions,
-        BusinessUnitCode: { key: 0, text: "" },
-        JobCode: { key: 0, text: "" },
-      }));
-    }
 
     if (field === "BusinessUnitCode") {
       const buToJobCode = checkedData.filter(
@@ -238,9 +185,9 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
   };
 
   const handleCheckbox = (value: boolean, item: any) => {
-    const itemIdentifier = item.ID;
+    const itemIdentifier = item.RecordID;
     const updatedDataset = filteredItems.map((currentItem) => {
-      const currentItemIdentifier = currentItem.ID;
+      const currentItemIdentifier = currentItem.RecordID;
       if (currentItemIdentifier === itemIdentifier) {
         return { ...currentItem, Checked: value };
       }
@@ -250,7 +197,7 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
     let IsChecked = checkedData.some((item) => item.Checked === true);
     let currentdata = IsChecked ? checkedData : data;
     const updatedData = currentdata.map((currentItem) => {
-      const currentItemIdentifier = currentItem.ID;
+      const currentItemIdentifier = currentItem.RecordID;
 
       if (currentItemIdentifier === itemIdentifier) {
         return { ...currentItem, Checked: value };
@@ -394,86 +341,44 @@ const CheckboxDataTable: React.FC<SearchableDataTableProps> = ({
           >
             <div className="ms-Grid-col ms-lg3">
               <CustomAutoComplete
-                label="Department"
+                label={labelNames.DashboardGridFilter.PositionRequest}
+                options={Array.from(new Set(data.map((row) => row.Type))).map(
+                  (Type) => ({
+                    key: Type,
+                    text: Type,
+                  })
+                )}
+                value={FilterData.PositionRequest}
+                disabled={false}
+                onChange={(item) => handleAutoComplete("PositionRequest", item)}
+                MinHeight={"1px"}
+              />
+            </div>
+            <div className="ms-Grid-col ms-lg3">
+              <CustomAutoComplete
+                label={labelNames.DashboardGridFilter.Nationality}
+                options={NationalityOption ?? []}
+                value={FilterData.Nationality}
+                disabled={false}
+                onChange={(item) => handleAutoComplete("Nationality", item)}
+                MinHeight={"1px"}
+              />
+            </div>
+            <div className="ms-Grid-col ms-lg3">
+              <CustomAutoComplete
+                label={labelNames.DashboardGridFilter.JobCode}
                 options={Array.from(
-                  new Set(data.map((row) => row.Department))
-                ).map((department) => ({
-                  key: department,
-                  text: department,
+                  new Set(data.map((row) => row.JobCode))
+                ).map((JobCode) => ({
+                  key: JobCode,
+                  text: JobCode,
                 }))}
-                value={FilterData.Department}
-                disabled={false}
-                onChange={(item) => handleAutoComplete("Department", item)}
-                MinHeight={"1px"}
-              />
-            </div>
-            <div
-              className={
-                assignLabel === "Assign Agencies"
-                  ? "ms-Grid-col ms-lg3"
-                  : "ms-Grid-col ms-lg2"
-              }
-            >
-              <CustomAutoComplete
-                label="Business Unit Code"
-                options={FilterData.BusinessUnitCodeOption ?? []}
-                value={FilterData.BusinessUnitCode}
-                disabled={false}
-                onChange={(item) =>
-                  handleAutoComplete("BusinessUnitCode", item)
-                }
-                MinHeight={"1px"}
-              />
-            </div>
-            <div
-              className={
-                assignLabel === "Assign Agencies"
-                  ? "ms-Grid-col ms-lg3"
-                  : "ms-Grid-col ms-lg2"
-              }
-            >
-              <CustomAutoComplete
-                label="Job Code"
-                options={FilterData.JobCodeOption ?? []}
                 value={FilterData.JobCode}
                 disabled={false}
                 onChange={(item) => handleAutoComplete("JobCode", item)}
                 MinHeight={"1px"}
               />
             </div>
-            {assignLabel === "Assign Agencies" ? (
-              <></>
-            ) : (
-              <>
-                <div className="ms-Grid-col ms-lg2">
-                  <CustomAutoComplete
-                    label="Nationality"
-                    options={NationalityOption ?? []}
-                    value={FilterData.Nationality}
-                    disabled={false}
-                    onChange={(item) => handleAutoComplete("Nationality", item)}
-                    MinHeight={"1px"}
-                  />
-                </div>
-              </>
-            )}
-
-            {/* {assignLabel === "Assign Agencies" ? (
-              <></>
-            ) : (
-              <>
-                <div className="ms-Grid-col ms-lg2">
-                  <CustomAutoComplete
-                    label="Nationality"
-                    options={NationalityOption ?? []}
-                    value={FilterData.Nationality}
-                    disabled={false}
-                    onChange={(item) => handleAutoComplete("Nationality", item)}
-                    MinHeight={"1px"}
-                  />
-                </div>
-              </>
-            )} */}
 
             <div className="ms-Grid-col ms-lg2" style={{ marginTop: "43px" }}>
               <ReuseButton

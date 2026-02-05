@@ -1,8 +1,8 @@
 import * as moment from "moment";
-import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, jobsApplied, profileDetailAttachments, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
+import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, jobsApplied, PPEDetail, profileDetailAttachments, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { CommanQuestion, QuestionItem } from "../../Models/RecuritmentVRR";
 import { agentCode, CategoryID, DataType, DocumentLibraray, ListNames, ResponeStatus, RoleName, RoleProfileMaster, workflowStatusApi } from "../../utilities/Config";
-import { EmailService, GetJobRequestData, getProfileData, GetStateByCountryApi, postAdveDetails, QuestionnaireApi, UploadCandidateCVData } from "../ReviewProfileService/ReviewCandidateService";
+import { EmailService, GetJobRequestData, getProfileData, GetStateByCountryApi, postAdveDetails, PPEMasterTable, QuestionnaireApi, UploadCandidateCVData } from "../ReviewProfileService/ReviewCandidateService";
 import { CommonServices, GetPortalJobsService } from "../ServiceExport";
 import SPServices from "../SPService/SPServices";
 import { CandidateDetails, COIAttach, DocumentValue, IGetPortalJobs, RescheduledCandidate, UpsertDocument } from "./IGetPortalJobs";
@@ -10,6 +10,7 @@ import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import { CommentsData, DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
 import { quesContentId } from "../../utilities/LabelName";
+import { calculateTotalExperienceYears, getcountryCode } from "../../components/TabMerge";
 
 export default class GetPortalJobs implements IGetPortalJobs {
   async UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>> {
@@ -93,7 +94,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
             JobCode: JobCode,
             Status: item?.workflowStatus?.displayText,
             workflowStatusId: item?.workflowStatusId,
-            createdOn: moment(createdon).format("DD/MM/YYYY HH:mm:ss"),
+            createdOn: moment(createdon).format("DD/MM/YYYY"),
             TotalItems: TotalItems,
             applicationStatusId: item?.applicationStatusId,
             applicationStatus: item?.applicationStatus?.displayText
@@ -127,7 +128,6 @@ export default class GetPortalJobs implements IGetPortalJobs {
       let GetProfileByJobCodeData: CandidateProfile[] = [];
       await getProfileData.getCandidateProfile(CandidateID).then(async (res) => {
         const op = res.data.data;
-        // console.log(op, "OP");
         const [
           RoleProfileDocment,
           AdvertismentDocment,
@@ -213,12 +213,18 @@ export default class GetPortalJobs implements IGetPortalJobs {
         const ProofIdentity = await GetPortalJobsService.GetAllMaster(
           CategoryID.ProofofIdentity
         );
+        const totalExperienceYears = calculateTotalExperienceYears(
+          op?.profile?.profileDetailExperiences
+        );
+        // const totalExp = formatExperience(totalExperienceYears);
+
+        const CountryCode = await GetPortalJobsService.GetCountryMaster();
+
+
 
         let profileExperiance = Array.isArray(op?.profile?.profileDetailExperiences) && op.profile.profileDetailExperiences.length > 0
           ? op.profile.profileDetailExperiences[op.profile.profileDetailExperiences.length - 1]
           : undefined;
-        // console.log(profileExperiance, "profileExperiance");
-
         const dob = new Date(new Date(op?.profile?.dob));
         const today = new Date();
 
@@ -238,21 +244,23 @@ export default class GetPortalJobs implements IGetPortalJobs {
         let AgenName = op?.profile?.profileXAgent?.agentCode === agentCode.RecruitmentHR ? RoleName.RecruitmentHR : op?.profile?.profileXAgent?.agent?.name;
         let IdentityID = ProofIdentity.data?.filter((item) => item?.value === op?.profile?.identityTypeId)
         let familyDetails = op?.profile?.familyDetails?.map((item: any) => {
+          let code = getcountryCode(CountryCode?.data ?? [], item?.contactNumber)
           return {
             "name": item?.name,
             // "age": item?.age,
             // "genderId": item?.genderId,
             "relationshipDetail": item?.relationshipDetail?.displayText,
-            "contactNumber": item?.contactNumber,
+            "contactNumber": code,
           }
         });
         let emergencyContacts = op?.profile?.emergencyContacts?.map((item: any) => {
+          let code = getcountryCode(CountryCode?.data ?? [], item?.contactNumber)
           return {
             "name": item?.contactName,
             // "age": item?.age,
             // "genderId": item?.genderId,
             "relationshipDetail": item?.relationshipDetail?.displayText,
-            "contactNumber": item?.contactNumber,
+            "contactNumber": code,
           }
         });
         let employeeReferenceDetail = {
@@ -266,20 +274,46 @@ export default class GetPortalJobs implements IGetPortalJobs {
           "role": op?.profile?.profileDetailEmploymentHistory?.workRole,
           "region": op?.profile?.profileDetailEmploymentHistory?.territory,
         }
+        let PPEData: PPEDetail[] = [];
+
+        if (op?.tblJobProfilePpeRequests) {
+          const PPEMaster = await PPEMasterTable.getPPEMaster();
+
+          const ppeMap = new Map<number, any>(
+            PPEMaster.data.data.map((ppe: any) => [ppe.id, ppe])
+          );
+
+          PPEData = op.tblJobProfilePpeRequests.map(
+            (item: any): PPEDetail => {
+              const ppe = ppeMap.get(item.ppeid);
+
+              const size = ppe?.tblMstPpeSizes?.find(
+                (s: any) => s.ppedid === item.sizeId
+              );
+
+              return {
+                PPEType: ppe?.ppename ?? "",
+                PPESize: size?.sizeText ?? "",
+              };
+            }
+          );
+        }
+
         const JobCode = op?.jobCode?.split('-')[0];
         let willingRelocated = getOptAnswers.filter((item: any) => item.question?.quesContentId === quesContentId.WillingRelocate)
+        let code = getcountryCode(CountryCode?.data ?? [], profileExperiance?.refMobile)
         let PreviousEmployer = {
           name: profileExperiance?.refName,
           Designation: profileExperiance?.refDesignationDetail?.displayText,
           Email: profileExperiance?.refEmail,
-          ContractNumber: profileExperiance?.refMobile,
+          ContractNumber: code ?? "",
           CompanyName: profileExperiance?.company
         }
         const candidateLanguages: string[] =
           op?.profile?.profileDetailLanguages?.map(
             (item: { language: string }) => item.language
           ) || [];
-
+        let ContactNumber = getcountryCode(CountryCode?.data ?? [], op?.profile?.contactNumber1)
         let GetProfileDahboard: CandidateProfile = {
           CandidateID: op?.jobRequestId,
           profileID: op?.profileId,
@@ -291,13 +325,13 @@ export default class GetPortalJobs implements IGetPortalJobs {
           MiddleName: op?.profile?.middleName,
           ResidentialAddress: op?.profile?.profileAddress?.address1,
           DOB: op?.profile?.dob,
-          ContactNumber: op?.profile?.contactNumber1,
+          ContactNumber: ContactNumber ?? "",
           Email: op?.profile?.email,
           Nationality: op?.profile?.nationality?.displayText,
           NatioCode: op?.profile?.nationality?.value,
           Gender: op?.profile?.gender?.displayText ? op?.profile?.gender?.displayText : op?.profile?.genderId,
           HighestQualification: op?.profile?.education?.displayText,
-          ExperienceMining: op?.profile?.totalYearOfExperiance,
+          ExperienceMining: totalExperienceYears,
           ExperRelatedfield: op?.profile?.releventExperience,
           Status: op?.workflowStatus?.displayText,
           StatusId: op?.workflowStatusId,
@@ -321,7 +355,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           CurrentEmployer: profileExperiance?.company,
           CurrentPosition: profileExperiance?.title,
           WillingToRelocate: willingRelocated[0]?.answerContent?.contentEn,
-          previouslyworkedMine: op?.profile?.profileDetailEmploymentHistory?.hasIvanhoeZijinExperienceId === "3" ? "No" : "Yes",
+          previouslyworkedMine: op?.profile?.profileDetailEmploymentHistory?.hasIvanhoeZijinExperienceId === "1" ? "Yes" : op?.profile?.profileDetailEmploymentHistory?.hasIvanhoeZijinExperienceId === undefined ? undefined : "No",
           familylinks: op?.profile?.hasEmployeeRelation === "1" ? "Yes" : "No",
           businesslinks: op?.profile?.hasBusinessLinks === "1" ? "Yes" : "No",
           familyDocuments: FamilyDocument.data,
@@ -338,7 +372,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           COIComments: op?.profile?.profileDetailCoi?.comments ?? "",
           COIReason: op?.profile?.coiReason ?? "",
 
-          countryOfResidency: op?.profile?.countryOfResidency ?? "",
+          countryOfResidency: op?.profile?.countryOfResidencyDetail?.countryName ?? "",
           residentStatus: op?.profile?.residentStatus === "Y" ? "Yes" : op?.profile?.residentStatus === "N" ? "No" : "",
           maritalStatus: op?.profile?.maritalStatusDetail?.displayText ?? "",
           childrenDetails: op?.profile?.nationalityId === "N0" ? familyDetails : emergencyContacts,
@@ -350,7 +384,9 @@ export default class GetPortalJobs implements IGetPortalJobs {
           companyDetails: companyDetails,
           businesslinkscompany: op?.profile?.businessLinkCompany === "CD03" ? op?.profile?.whichCompany : op?.profile?.businessLinkCompanyDetail?.displayText,
           PreviousEmployerDetails: PreviousEmployer,
-          LanguageKnown: candidateLanguages
+          LanguageKnown: candidateLanguages,
+
+          PPEDetails: PPEData
         };
 
         GetProfileByJobCodeData.push(GetProfileDahboard);

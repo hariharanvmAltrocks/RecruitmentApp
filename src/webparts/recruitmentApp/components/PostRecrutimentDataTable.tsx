@@ -69,7 +69,7 @@ const PostRecrutimentDataTable: React.FC<SearchableDataTableProps> = ({
   // const [totalItem, setTotalItem] = React.useState<number>(0);
 
   React.useEffect(() => {
-    console.log(data, "data");
+    // console.log(data, "data");
 
     // const PagewiseData =
     //   pagination.totalPages === 0

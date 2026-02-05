@@ -91,7 +91,7 @@ export const UploadAdvertisement = ({
   MasterData,
   IsEnglish,
 }: AssignPositionDialogProps) => {
-  console.log(MasterData, "MasterData");
+  // console.log(MasterData, "MasterData");
 
   const [showQualificationInput, setShowQualificationInput] =
     React.useState(false);

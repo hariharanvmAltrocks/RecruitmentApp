@@ -31,7 +31,7 @@ export async function GetTabDetailsById(menuID: number, items: MenuResponse[]) {
       items?.reduce((acc: TabDetails[], menu: any) => {
         if (!menu.SubMenu) {
           const match = menu.TabDetails?.find(
-            (tab: { Id: number }) => tab?.Id === menuID
+            (tab: { Id: number }) => tab?.Id === menuID,
           );
           let TabDetails = match?.TabDetails.map((item: any, index: number) => {
             return {
@@ -42,7 +42,7 @@ export async function GetTabDetailsById(menuID: number, items: MenuResponse[]) {
           if (match) acc.push(TabDetails);
         } else {
           const childMatches = menu.Children?.find(
-            (child: any) => child?.Id === menuID
+            (child: any) => child?.Id === menuID,
           );
           let TabDetails = childMatches?.TabDetails.map(
             (item: any, index: number) => {
@@ -50,7 +50,7 @@ export async function GetTabDetailsById(menuID: number, items: MenuResponse[]) {
                 ...item,
                 Value: "tab" + (index + 1),
               };
-            }
+            },
           );
           if (childMatches) acc.push(TabDetails);
         }
@@ -184,3 +184,150 @@ export function a11yProps(index: number) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
+
+export const normalizeQuestion = (value: string) =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[’‘]/g, "'") // normalize smart quotes
+    .replace(/[“”]/g, '"') // normalize smart double quotes
+    .replace(/\s+/g, " "); // collapse multiple spaces
+
+export const SpiltDateOnly = (date: Date) => {
+  const updatedDate = date;
+  const year = updatedDate?.getFullYear();
+  const month = String(updatedDate?.getMonth() + 1).padStart(2, "0");
+  const day = String(updatedDate?.getDate()).padStart(2, "0");
+
+  const dateOnly = new Date(
+    Date.UTC(Number(year), Number(month) - 1, Number(day)),
+  ); //`${year}-${month}-${day}`;
+  return dateOnly.toISOString();
+};
+const resolveUserFieldByRole = (currentRoles: any[]) => {
+  if (currentRoles.includes(RoleID.RecruitmentHR)) {
+    return "AssignedHR";
+  }
+  if (currentRoles.includes(RoleID.LineManager)) {
+    return "LineManager";
+  }
+
+  if (currentRoles.includes(RoleID.HOD)) {
+    return "HOD";
+  }
+
+  return null;
+};
+
+export const buildRecruitmentTabConfig = (
+  tabNameData: TabDetails[],
+  CurrentRoleID: any[],
+) => {
+  const userField = resolveUserFieldByRole(CurrentRoleID);
+
+  return tabNameData.reduce((acc: any, tab) => {
+    acc[tab.Value] = {
+      status: tab.StatusDetails?.map((s) => s.StatusId) || [],
+      userField: userField,
+      requireItemCreated: true,
+    };
+
+    return acc;
+  }, {});
+};
+
+// export function calculateTotalExperienceYears(experiences: any[]): number {
+//   const now = new Date();
+
+//   let totalMilliseconds = 0;
+
+//   experiences.forEach((exp) => {
+//     const startDate = new Date(exp.startFrom);
+
+//     const endDate = exp.isCurrent === 1 ? now : new Date(exp.endTo);
+
+//     if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+//       totalMilliseconds += endDate.getTime() - startDate.getTime();
+//     }
+//   });
+
+//   const millisecondsInYear = 1000 * 60 * 60 * 24 * 365.25;
+
+//   return Number((totalMilliseconds / millisecondsInYear).toFixed(2));
+// }
+
+export function calculateTotalExperienceYears(experiences: any[]) {
+  let totalMonths = 0;
+
+  experiences.forEach((exp) => {
+    const startDate = new Date(exp.startFrom);
+
+    let endDate;
+    if (exp.endTo === "current date" || exp.isCurrent === 1 || !exp.endTo) {
+      endDate = new Date(); // today
+    } else {
+      endDate = new Date(exp.endTo);
+    }
+
+    let months =
+      (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+      (endDate.getMonth() - startDate.getMonth());
+
+    // If end day is before start day, reduce one month
+    if (endDate.getDate() < startDate.getDate()) {
+      months--;
+    }
+
+    totalMonths += months;
+  });
+
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+
+  return `${years} years and ${months} months`;
+}
+
+export function formatExperience(years: number): string {
+  const wholeYears = Math.floor(years);
+  const months = Math.round((years - wholeYears) * 12);
+
+  return `${wholeYears} years ${months} months`;
+}
+
+export function getcountryCode(Code: any[], refMobile: string) {
+  if (!refMobile) return null;
+  const [countryCode, mobileNumber] = refMobile.split("-");
+  const country = Code.find((item) => item.code === countryCode);
+  if (!country) return null;
+  return `${country.id}-${mobileNumber}`;
+}
+
+export const DetailRow = ({
+  label,
+  value,
+}: {
+  label: string;
+  value?: string;
+}) => (
+  <div style={{ display: "flex", marginTop: "1%", marginLeft: "1%" }}>
+    <div
+      style={{
+        fontWeight: "bold",
+        fontFamily: '"Roboto", sans-serif',
+        fontSize: "17px",
+      }}
+    >
+      {label}
+    </div>
+    <div
+      style={{
+        fontFamily: '"Roboto", sans-serif',
+        marginLeft: "1%",
+        fontSize: "17px",
+        wordBreak: "break-word",
+      }}
+    >
+      {value?.trim() || "—"}
+    </div>
+  </div>
+);

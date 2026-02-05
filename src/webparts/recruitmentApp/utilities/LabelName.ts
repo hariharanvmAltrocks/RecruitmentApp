@@ -1,4 +1,5 @@
-import { OnboardingChecklisttype } from "../Models/Screens"
+import { OnboardingChecklistDRCtype, OnboardingChecklisttype } from "../Models/Screens"
+import { NationalityCode } from "./Config"
 
 export const labelNames = {
     PositionDetails: {
@@ -6,7 +7,7 @@ export const labelNames = {
         BusinessUnitName: "Business Unit Name",
         BusinessUnitDescription: "Business Unit Description",
         Department: "Department",
-        SubDepartment: "Sub-Department",
+        SubDepartment: "Sub Department",
         Section: "Section",
         DepartmentCode: "Department Code",
         Nationality: "Nationality",
@@ -31,11 +32,11 @@ export const labelNames = {
         Nationality: "Nationality",
         Gender: "Gender",
         HighestRelevantQualification: "Highest Relevant Qualification",
-        ExperienceInMiningIndustry: "Experience In Mining Industry(Years)",
+        ExperienceInMiningIndustry: "Total Work Experience",
         Numberoftaxdependents: "Number of tax dependents",
         LastCurrentposition: "Last/Current position",
         Currentemployer: "Last/Current employer",
-        ExperienceInRelatedField: "Experience In Related Field(Years)",
+        ExperienceInRelatedField: "Relevant Experience(Years)",
         Disability: "Disability",
         MaritalStatus: "Marital Status",
         WorkedGroupPartnerCompanies: "Worked with Group/Partner Companies",
@@ -51,7 +52,7 @@ export const labelNames = {
         NoOfInterviewLevels: "No Of Interview Level's",
         Grade: "Grade",
         CountryOfResidency: "Country Of Residency",
-        ResidencyCountry: " Are you residency in that country?",
+        ResidencyCountry: "Are you Resident in that country?",
         InterviewDateLevel1: "Interview Date -  level 1",
         InterviewTimeLevel1: "Interview Time - Level 1",
         MeetingLinkLevel1: "Meeting Link for Interview  - Level  1",
@@ -80,7 +81,8 @@ export const labelNames = {
         EmployeeDesi: " Reference Designation",
         EmployeeEmail: " Reference Email ID",
         EmployeeCN: "Reference Contact Number",
-        EmployeeCompanyN: "Reference Company Name"
+        EmployeeCompanyN: "Reference Company Name",
+        PPE: " Personal Protective Equipment sizing information"
     },
     Questionnaires: {
         Questionnaires: "Questionnaires",
@@ -182,14 +184,23 @@ export const labelNames = {
         JobTitleLineManagerSupervisor: "Titre du poste du supérieur hiérarchique",
         LineManagerSupervisorName: "Nom du supérieur hiérarchique",
         JobFunctionalType: "Type fonctionnel du poste"
+    },
+    DashboardGridFilter: {
+        Department: "Department",
+        Nationality: "Nationality",
+        JobCode: "Job Code",
+        BUCode: "Business Unit Code",
+        PositionRequest: "Position Request"
     }
 }
 
 export const Attachment = {
     Attachments: "Attachments",
     PositionDocument: {
-        RoleProfileDocuments: "RoleProfile Documents",
-        GradingDocuments: "Grading Documents",
+        RoleProfileDocuments: "RoleProfile Documents(English)",
+        RoleProfileDocuments_fr: "RoleProfile Documents(French)",
+        GradingDocuments: "Grading Documents(English)",
+        GradingDocuments_fr: "Grading Documents(French)",
         DraftONEMAdvertDocFrench: "Draft ONEM AdvertDoc French(Only PDF)",
         ONEMSignedStampedDocuments: "ONEM Signed and Stamped Document(Only Pdf)",
         ViewJobAdvertisement: "View Job Advertisement",
@@ -260,6 +271,8 @@ export const ActionName = {
 
 export const PositionStatus = {
     Vacant: "Vacant",
+    RecruitmentInitiator: "Recruitment Initiator",
+    Filled: "Filled",
     RecruitmentInProgress: "Recruitment InProgress"
 }
 
@@ -289,12 +302,13 @@ export const ButtonAction = {
     ScheduleforInterview: "Schedule for Interview",
     Selected: "Selected",
     Rejected: "Rejected",
-    Initiated: "initiate",
+    Initiated: "Initiate",
     SaveAsDraft: "Save as draft",
     New: "New",
     ResetPassword: "Reset Password",
     Rework: "Rework",
-    ProceedToSubmit: "Proceed To Submit"
+    ProceedToSubmit: "Proceed To Submit",
+    ReInitiate: "Re-Initiate",
 }
 
 export const IsCandidateFit = {
@@ -401,7 +415,58 @@ export const BGVDocumentName = {
     PS: "Psychometric Assessment",
     ConsentForm: "Dot's Africa Consent Form",
 }
-export const onboardingData: OnboardingChecklisttype = {
+export const CHECKLIST_CONFIG = {
+    [NationalityCode.Nationals]: {
+        DocumentComplianceChecks: [
+            "Background Checks",
+            "Medical Checks",
+            "Signed Offer Letter",
+            "Employment Contract",
+        ],
+        LogisticsEmployeeSupport: [],
+        FinalStatus: ["Ready for Onboarding"],
+    },
+
+    [NationalityCode.SouthAfrica]: {
+        DocumentComplianceChecks: [
+            "Background Checks",
+            "Signed Offer Letter",
+            "Employment Contract",
+            "Work Permit Approved",
+        ],
+        LogisticsEmployeeSupport: [
+            "Visa Process",
+            "Accommodation Booked",
+            "Travel Process",
+        ],
+        FinalStatus: ["Ready for Onboarding"],
+    },
+};
+
+
+export const onboardingDataDRC: OnboardingChecklistDRCtype = {
+    DocumentComplianceChecks: {
+        label: "Document Compliance Checks",
+        DocumentComplianceChecks: {
+            BackgroundChecks: { id: 1, label: "Background Checks", value: false },
+            SignedOfferLetter: { id: 2, label: "Signed Offer Letter", value: false },
+            SignedEmploymentContract: { id: 3, label: "Employment Contract", value: false },
+            MedicalChecks: {
+                id: 0,
+                label: "Medical Checks",
+                value: false
+            }
+        },
+    },
+    FinalStatus: {
+        label: "Final Status",
+        FinalStatus: {
+            ReadyforOnboarding: { id: 8, label: "Ready for Onboarding", value: false },
+        },
+    },
+};
+
+export const onboardingDataExpat: OnboardingChecklisttype = {
     DocumentComplianceChecks: {
         label: "Document Compliance Checks",
         DocumentComplianceChecks: {
@@ -411,7 +476,6 @@ export const onboardingData: OnboardingChecklisttype = {
             WorkPermitApproved: { id: 4, label: "Work Permit Approved", value: false },
         },
     },
-
     LogisticsEmployeeSupport: {
         label: "Logistics Employee Support",
         LogisticsEmployeeSupport: {
@@ -420,7 +484,6 @@ export const onboardingData: OnboardingChecklisttype = {
             TravelProcess: { id: 7, label: "Travel Process", value: false },
         },
     },
-
     FinalStatus: {
         label: "Final Status",
         FinalStatus: {
@@ -429,7 +492,8 @@ export const onboardingData: OnboardingChecklisttype = {
     },
 };
 
-export const ChecklistStatus = {
+
+export const ChecklistStatusExpat = {
     "Background Checks": false,
     "Signed Offer Letter": false,
     "Employment Contract": false,
@@ -439,6 +503,15 @@ export const ChecklistStatus = {
     "Travel Process": false,
     "Ready for Onboarding": false,
 };
+
+export const ChecklistStatusDRC = {
+    "Background Checks": false,
+    "Medical Checks": false,
+    "Signed Offer Letter": false,
+    "Employment Contract": false,
+    "Ready for Onboarding": false,
+};
+
 
 export const ExternalUserType = {
     Agent: "Agent",
@@ -470,4 +543,16 @@ export const DotTooltipStatus = {
 
 export const CommanStyle = {
     frontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`
+}
+
+export const RowsPerPageOptions = {
+    FirstCount: 20,
+    MiddleCount: 25,
+    LastCount: 30,
+}
+
+export const tabValue = {
+    tab1: "tab1",
+    tab2: "tab2",
+    tab3: "tab3"
 }
