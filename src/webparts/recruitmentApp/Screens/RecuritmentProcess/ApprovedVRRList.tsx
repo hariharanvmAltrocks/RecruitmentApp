@@ -130,21 +130,21 @@ const RecruitmentProcess = (props: any) => {
   const fetchHRAgencyDetails = async (Nationality: string) => {
     try {
       const GetADGruopUserID = await CommonServices.GetMasterData(
-        ListNames.HRMSRecruitmentUserRole
+        ListNames.HRMSRecruitmentUserRole,
       );
       let ADGroupIDs = GetADGruopUserID.data?.filter(
-        (item: any) => item.ID === RoleID.RecruitmentHR
+        (item: any) => item.ID === RoleID.RecruitmentHR,
       );
       const [HRMSExternalAgents, AssignRecurtimentHROption] = await Promise.all(
         [
           CommonServices.GetMasterData(ListNames.HRMSExternalAgents),
           CommonServices.GetADgruopsEmailIDs(ADGroupIDs[0]?.ADGroupID),
-        ]
+        ],
       );
       let ExternalAgent = HRMSExternalAgents.data?.filter(
         (nat) =>
           nat.Nationality === Nationality &&
-          nat.UserType === ExternalUserType.Agent
+          nat.UserType === ExternalUserType.Agent,
       );
       const agentsOptions: AutoCompleteItem[] =
         ExternalAgent?.map((item: any) => ({
@@ -161,7 +161,7 @@ const RecruitmentProcess = (props: any) => {
       } else {
         console.error(
           AssignRecurtimentHROption.data?.message ??
-            "Error fetching HR group emails"
+            "Error fetching HR group emails",
         );
       }
     } catch (error) {
@@ -177,7 +177,7 @@ const RecruitmentProcess = (props: any) => {
           (
             await getVRRDetails.GetADGroupUsers(
               rowData.AssignHRLead,
-              "RecruitmentHRLead"
+              "RecruitmentHRLead",
             )
           ).data,
         ];
@@ -187,7 +187,7 @@ const RecruitmentProcess = (props: any) => {
           (
             await getVRRDetails.GetADGroupUsers(
               rowData.AssignEMail,
-              "RecruitmentHR"
+              "RecruitmentHR",
             )
           ).data,
         ];
@@ -197,7 +197,7 @@ const RecruitmentProcess = (props: any) => {
           (
             await getVRRDetails.GetADGroupUsers(
               rowData.AssignEMail,
-              "RecruitmentHR"
+              "RecruitmentHR",
             )
           ).data,
         ];
@@ -207,7 +207,7 @@ const RecruitmentProcess = (props: any) => {
           (
             await getVRRDetails.GetADGroupUsers(
               rowData.AssignLineManager,
-              "LineManager"
+              "LineManager",
             )
           ).data,
         ];
@@ -217,7 +217,7 @@ const RecruitmentProcess = (props: any) => {
           (
             await getVRRDetails.GetADGroupUsers(
               rowData.AssignLineManager,
-              "LineManager"
+              "LineManager",
             )
           ).data,
         ];
@@ -253,11 +253,10 @@ const RecruitmentProcess = (props: any) => {
         ];
         break;
       case StatusId.RecruitmentInProgress: {
-        let Tooltipdata = await getVRRDetails.GetInterviewPanelTooltiData(
-          rowData
-        );
+        let Tooltipdata =
+          await getVRRDetails.GetInterviewPanelTooltiData(rowData);
         let GradeLevel = await CommonServices.GetGradeLevel(
-          rowData?.PatersonGrade
+          rowData?.PatersonGrade,
         );
 
         if (Tooltipdata?.data && Tooltipdata.data[0]?.LineManager) {
@@ -360,7 +359,7 @@ const RecruitmentProcess = (props: any) => {
     ];
     const response = await getVRRDetails.GetPositionIDData(
       filterConditions,
-      "and"
+      "and",
     );
     setPositionIDs(response.data);
   };
@@ -387,7 +386,7 @@ const RecruitmentProcess = (props: any) => {
   const columnConfig = (
     tab: string,
     ButtonActions: number,
-    TabNames: string
+    TabNames: string,
   ) => [
     {
       field: "Checkbox",
@@ -411,7 +410,7 @@ const RecruitmentProcess = (props: any) => {
     // },
     {
       field: "NumberOfPersonNeeded",
-      header: "No. of person(s)",
+      header: "No. of Vacant Positions",
       sortable: true,
       body: (rowData: any) => {
         return (
@@ -523,7 +522,7 @@ const RecruitmentProcess = (props: any) => {
                       rowData,
                       tab,
                       TabNames,
-                      ButtonAction.Edit
+                      ButtonAction.Edit,
                     )
                   }
                   style={{
@@ -550,7 +549,7 @@ const RecruitmentProcess = (props: any) => {
                       rowData,
                       tab,
                       TabNames,
-                      ButtonAction.Upload
+                      ButtonAction.Upload,
                     )
                   }
                 />
@@ -572,7 +571,7 @@ const RecruitmentProcess = (props: any) => {
                       rowData,
                       tab,
                       TabNames,
-                      ButtonAction.View
+                      ButtonAction.View,
                     )
                   }
                 />
@@ -606,11 +605,11 @@ const RecruitmentProcess = (props: any) => {
 
                     if (JobPostingSecondExtensionEndDate) {
                       comparisonDate = new Date(
-                        JobPostingSecondExtensionEndDate
+                        JobPostingSecondExtensionEndDate,
                       );
                     } else if (JobPostingFirstExtensionEndDate) {
                       comparisonDate = new Date(
-                        JobPostingFirstExtensionEndDate
+                        JobPostingFirstExtensionEndDate,
                       );
                     } else if (JobPostingEndDate) {
                       comparisonDate = new Date(JobPostingEndDate);
@@ -624,13 +623,13 @@ const RecruitmentProcess = (props: any) => {
                     if (!JobValidation) {
                       const Dateformat = JobPostingSecondExtensionEndDate
                         ? moment(JobPostingSecondExtensionEndDate).format(
-                            "DD/MM/YYYY"
+                            "DD/MM/YYYY",
                           )
                         : JobPostingFirstExtensionEndDate
-                        ? moment(JobPostingFirstExtensionEndDate).format(
-                            "DD/MM/YYYY"
-                          )
-                        : moment(JobPostingEndDate).format("DD/MM/YYYY");
+                          ? moment(JobPostingFirstExtensionEndDate).format(
+                              "DD/MM/YYYY",
+                            )
+                          : moment(JobPostingEndDate).format("DD/MM/YYYY");
                       const JobExpiredMsg = JobAdvertAlertMsg(Dateformat);
                       const SuccessAlert = {
                         Message: JobExpiredMsg,
@@ -664,19 +663,19 @@ const RecruitmentProcess = (props: any) => {
     rowData: any,
     tab: string,
     TabName: string,
-    ButtonAction: string
+    ButtonAction: string,
   ) {
     let navigationPath =
       rowData?.StatusId === StatusId.InterviewScheduled
         ? "/RecurimentProcess/InterviewPanelList/InterviewPanelEdit"
         : rowData.StatusId === StatusId.InterviewScheduledforLevel2
-        ? "/RecurimentProcess/HodViewScorecard"
-        : "";
+          ? "/RecurimentProcess/HodViewScorecard"
+          : "";
     const today = new Date();
     // const todayDateStr = today.toISOString().split("T")[0];
     const interviewDateStr = moment(
       rowData.InterviewDateTime,
-      "DD-MMM-YYYY hh:mm A"
+      "DD-MMM-YYYY hh:mm A",
     ).format("YYYY-MM-DD");
     const todayDateStr = moment(today).format("YYYY-MM-DD");
     // const InterviewDate = new Date(rowData.InterviewDateTime)
@@ -699,7 +698,7 @@ const RecruitmentProcess = (props: any) => {
     } else {
       const formattedDate = moment(
         `${interviewDateStr}`,
-        "YYYY-MM-DD HH:mm"
+        "YYYY-MM-DD HH:mm",
       ).format("DD-MMM-YYYY hh:mm A");
 
       const ValidationMsg = InterviewDate(formattedDate);
@@ -722,7 +721,7 @@ const RecruitmentProcess = (props: any) => {
   const CandidateConfig = (
     tab: string,
     ButtonActions: number,
-    TabName: string
+    TabName: string,
   ) => [
     {
       field: "SNO",
@@ -786,7 +785,7 @@ const RecruitmentProcess = (props: any) => {
             const [interviewPanelResponse, currentUserResponse] =
               await Promise.all([
                 CommonServices.GetMasterData(
-                  ListNames.HRMSInterviewPanelDetails
+                  ListNames.HRMSInterviewPanelDetails,
                 ),
                 CommonServices.getUserGuidByEmail(props.CurrentUserEmailId),
               ]);
@@ -804,7 +803,7 @@ const RecruitmentProcess = (props: any) => {
 
             const candidatePanels = interviewPanelResponse.data.filter(
               (panel) =>
-                panel.CandidateIDId?.toString() === rowData.ID?.toString()
+                panel.CandidateIDId?.toString() === rowData.ID?.toString(),
             );
 
             if (candidatePanels.length === 0) {
@@ -812,7 +811,7 @@ const RecruitmentProcess = (props: any) => {
             }
 
             const userPanels = candidatePanels.filter((panel) =>
-              panel.InterviewPanelStringId?.includes(currentUserKey)
+              panel.InterviewPanelStringId?.includes(currentUserKey),
             );
 
             if (userPanels.length === 0) {
@@ -820,11 +819,11 @@ const RecruitmentProcess = (props: any) => {
             }
             if (rowData.StatusId === StatusId.InterviewScheduled) {
               const isLevelbasedFiltered = userPanels.filter(
-                (item) => item.InterviewLevel === InterviewLevels.Level1
+                (item) => item.InterviewLevel === InterviewLevels.Level1,
               );
 
               const isScoreSheetUploaded = isLevelbasedFiltered.some(
-                (panel) => panel.IsScoreSheetUploaded === "Yes"
+                (panel) => panel.IsScoreSheetUploaded === "Yes",
               );
               if (isScoreSheetUploaded) {
                 handleAlert(InterviewLevels.Level1);
@@ -838,18 +837,18 @@ const RecruitmentProcess = (props: any) => {
                 },
                 tab,
                 TabName,
-                ButtonAction.View
+                ButtonAction.View,
               );
               return;
             } else if (
               rowData.StatusId === StatusId.InterviewScheduledforLevel2
             ) {
               const isLevelbasedFiltered = userPanels.filter(
-                (item) => item.InterviewLevel === InterviewLevels.Level2
+                (item) => item.InterviewLevel === InterviewLevels.Level2,
               );
 
               const isScoreSheetUploaded = isLevelbasedFiltered.some(
-                (panel) => panel.IsScoreSheetUploaded === "Yes"
+                (panel) => panel.IsScoreSheetUploaded === "Yes",
               );
               if (isScoreSheetUploaded) {
                 handleAlert(InterviewLevels.Level2);
@@ -863,7 +862,7 @@ const RecruitmentProcess = (props: any) => {
                 },
                 tab,
                 TabName,
-                ButtonAction.View
+                ButtonAction.View,
               );
               return;
             }
@@ -901,7 +900,7 @@ const RecruitmentProcess = (props: any) => {
     rowData: any,
     tab: string,
     TabNames: string,
-    ButtonAction: string
+    ButtonAction: string,
   ) {
     switch (TabNames) {
       case TabName.AssignRecuritmentHR:
@@ -1239,7 +1238,7 @@ const RecruitmentProcess = (props: any) => {
       if (TabValue === TabName.Evaluation) {
         const response = await getVRRDetails.GetcountInEvalution(
           props.CurrentUserEmailId,
-          props.EmployeeList
+          props.EmployeeList,
         );
         if (response.status === ResponeStatus.SUCCESS) {
           setData(response.data);
@@ -1251,11 +1250,11 @@ const RecruitmentProcess = (props: any) => {
             ? await getVRRDetails.GetJobTitleInNPEP(
                 filterConditions,
                 Conditions,
-                props
+                props,
               )
             : await getVRRDetails.GetRecruitmentDetails(
                 filterConditionsRecuritment,
-                RecuritmentConditions
+                RecuritmentConditions,
               );
         if (response.status === 200) {
           let responseData;
@@ -1284,7 +1283,7 @@ const RecruitmentProcess = (props: any) => {
           }));
           const uniqueJobData = JobCode.filter(
             (job, index, self) =>
-              index === self.findIndex((item) => item.ID === job.ID)
+              index === self.findIndex((item) => item.ID === job.ID),
           );
           setJobCodeTitle(uniqueJobData);
         }
@@ -1306,7 +1305,7 @@ const RecruitmentProcess = (props: any) => {
             FilterValue: Choices.No,
           },
         ],
-        ""
+        "",
       );
       if (recrutimentData.status === ResponeStatus.SUCCESS) {
         const AssignHRCount = await getVRRDetails.GetJobTitleInNPEP(
@@ -1328,18 +1327,18 @@ const RecruitmentProcess = (props: any) => {
             },
           ],
           "and",
-          props
+          props,
         );
 
         const UploadONEMCount = recrutimentData.data.filter(
           (item) =>
-            item.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+            item.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
         );
 
         const UploadAdvertismentCount = recrutimentData.data.filter(
           (item) =>
             item.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv &&
-            item.AssignEMail === props.userDetails[0]?.EmailId
+            item.AssignEMail === props.userDetails[0]?.EmailId,
         );
         const InterviewQuestionCount = recrutimentData.data.filter(
           (item) =>
@@ -1347,29 +1346,29 @@ const RecruitmentProcess = (props: any) => {
               StatusId.PendingwithHRandLMtocreateinterviewQuestion ||
             (item.StatusId ===
               StatusId.PendingwithLMcreateDisqualificationQuestion &&
-              item.AssignLineManager === props.userDetails[0]?.EmailId)
+              item.AssignLineManager === props.userDetails[0]?.EmailId),
           // (item.AssignEMail === props.userDetails[0]?.EmailId ||
         );
 
         const ReviewLinemanagerCount = recrutimentData.data.filter(
           (item) =>
             item.StatusId === StatusId.PendingwithLineManagereviewAdv &&
-            item.AssignLineManager === props.userDetails[0]?.EmailId
+            item.AssignLineManager === props.userDetails[0]?.EmailId,
         );
 
         const ReviewHODCount = recrutimentData.data.filter(
           (item) =>
             item.StatusId === StatusId.PendingwithHODtoreviewAdv &&
-            item.AssignHOD === props.userDetails[0]?.EmailId
+            item.AssignHOD === props.userDetails[0]?.EmailId,
         );
         const AssignAgenciesCount = recrutimentData.data.filter(
           (item) =>
             item.StatusId === StatusId.RecruitmentInProgress &&
-            item.AssignEMail === props.userDetails[0]?.EmailId
+            item.AssignEMail === props.userDetails[0]?.EmailId,
         );
         const EvalutionData = await getVRRDetails.GetcountInEvalution(
           props.CurrentUserEmailId,
-          props.EmployeeList
+          props.EmployeeList,
         );
         setPendingCount((prevState) => ({
           ...prevState,
@@ -1415,7 +1414,7 @@ const RecruitmentProcess = (props: any) => {
         let TabDetails: any;
         if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
           TabDetails = (props.TabDetails[0] ?? []).filter(
-            (tab: any) => tab.TabName !== TabName.Evaluation
+            (tab: any) => tab.TabName !== TabName.Evaluation,
           );
         } else {
           TabDetails = props.TabDetails[0] ?? [];
@@ -1458,7 +1457,7 @@ const RecruitmentProcess = (props: any) => {
             prevData.map((item) => ({
               ...item,
               Checked: false,
-            }))
+            })),
           );
 
           setSelectedJobCodes([]);
@@ -1533,7 +1532,7 @@ const RecruitmentProcess = (props: any) => {
       .map((currentItem) => {
         const JobTitle = props.JobInEnglishList.find(
           (job: { JobCode: string; text: string }) =>
-            job.JobCode === currentItem.JobCode
+            job.JobCode === currentItem.JobCode,
         );
 
         return {
@@ -1554,7 +1553,7 @@ const RecruitmentProcess = (props: any) => {
       .map((item) => {
         const JobTitle = props.JobInEnglishList.find(
           (job: { JobCode: string; text: string }) =>
-            job.JobCode === item.JobCode
+            job.JobCode === item.JobCode,
         );
 
         return {
@@ -1584,7 +1583,7 @@ const RecruitmentProcess = (props: any) => {
   const AssignBtn_fn = async () => {
     const isItemSelected = selectedJobCodes.length > 0;
     const allSameNationality = selectedJobCodes.every(
-      (item: any) => item.Nationality === selectedJobCodes[0]?.Nationality
+      (item: any) => item.Nationality === selectedJobCodes[0]?.Nationality,
     );
     // console.log(allSameNationality, "allSameNationality");
     if (allSameNationality) {
@@ -1608,8 +1607,8 @@ const RecruitmentProcess = (props: any) => {
         Message: props.CurrentRoleID.includes(RoleID.RecruitmentHR)
           ? RecuritmentHRMsg.AgenciesErrorMsg
           : !allSameNationality
-          ? RecuritmentHRMsg.NationalityMsgError
-          : RecuritmentHRMsg.RecruitmentErrorMsg,
+            ? RecuritmentHRMsg.NationalityMsgError
+            : RecuritmentHRMsg.RecruitmentErrorMsg,
         Type: HRMSAlertOptions.Error,
         visible: true,
         ButtonAction: async (userClickedOK: boolean) => {
@@ -1633,12 +1632,12 @@ const RecruitmentProcess = (props: any) => {
     };
     if (props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)) {
       errors.AssignRecruitmentHR = !IsValid(
-        AssignHRData.AssignRecruitmentHR.text
+        AssignHRData.AssignRecruitmentHR.text,
       );
       errors.Comments = !IsValid(AssignHRData.Comments);
     } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
       errors.AssignRecruitmentAgencies = !IsValid(
-        AssignHRData.AssignRecruitmentAgencies[0]?.text
+        AssignHRData.AssignRecruitmentAgencies[0]?.text,
       );
       errors.Comments = !IsValid(AssignHRData.Comments);
     }
@@ -1661,11 +1660,11 @@ const RecruitmentProcess = (props: any) => {
           let ResponseStatusCode;
           for (const selectedJob of selectedJobCodes) {
             const correspondingJob = data.find(
-              (item: any) => item.ID === selectedJob.ID
+              (item: any) => item.ID === selectedJob.ID,
             );
             if (correspondingJob) {
               let UserIDbyEmail = await CommonServices.getUserIDByEmail(
-                AssignHRData.AssignRecruitmentHR.key
+                AssignHRData.AssignRecruitmentHR.key,
               );
 
               const RecruitmentValue: PostRecuritmentData = {
@@ -1678,7 +1677,7 @@ const RecruitmentProcess = (props: any) => {
                   SectionId: correspondingJob.SectionId,
                   DepartmentCodeId: correspondingJob.DepartmentCodeId,
                   NumberOfPersonNeeded: Number(
-                    correspondingJob.NumberOfPersonNeeded
+                    correspondingJob.NumberOfPersonNeeded,
                   ),
                   EnterNumberOfMonths:
                     correspondingJob.EnterNumberOfMonths ?? "0",
@@ -1715,9 +1714,8 @@ const RecruitmentProcess = (props: any) => {
                 },
               };
 
-              const response = await getVRRDetails.InsertRecruitmentDpt(
-                RecruitmentValue
-              );
+              const response =
+                await getVRRDetails.InsertRecruitmentDpt(RecruitmentValue);
               ResponseStatusCode = response.status;
               if (response.status === ResponeStatus.SUCCESS) {
                 setAssignHRData((prevState) => ({
@@ -1729,7 +1727,7 @@ const RecruitmentProcess = (props: any) => {
                   prevData.map((item) => ({
                     ...item,
                     Checked: false,
-                  }))
+                  })),
                 );
                 setSelectedJobCodes([]);
 
@@ -1742,7 +1740,7 @@ const RecruitmentProcess = (props: any) => {
                   prevData.map((item) => ({
                     ...item,
                     Checked: false,
-                  }))
+                  })),
                 );
                 setSelectedJobCodes([]);
               } else {
@@ -1763,7 +1761,7 @@ const RecruitmentProcess = (props: any) => {
                         prevData.map((item) => ({
                           ...item,
                           Checked: false,
-                        }))
+                        })),
                       );
                       setSelectedJobCodes([]);
                     }
@@ -1817,21 +1815,21 @@ const RecruitmentProcess = (props: any) => {
           let ResponseStatusCode;
           for (const selectedJob of selectedJobCodes) {
             const correspondingJob = data.find(
-              (item) => item.ID === selectedJob.ID
+              (item) => item.ID === selectedJob.ID,
             );
             const HRMSExternalAgents = await CommonServices.GetMasterData(
-              ListNames.HRMSExternalAgents
+              ListNames.HRMSExternalAgents,
             );
             let matchedAgents = HRMSExternalAgents.data.filter(
               (data: { Id: number }) =>
                 AssignHRData.AssignRecruitmentAgencies.some(
-                  (item) => item.key === data.Id
-                )
+                  (item) => item.key === data.Id,
+                ),
             );
 
             let agentDetails: jobsXAgents[] = matchedAgents.map((item: any) => {
               AssignHRData.AssignRecruitmentAgencies.filter(
-                (data) => data.key === item.Id
+                (data) => data.key === item.Id,
               );
               return {
                 agentId: item.AgentCode,
@@ -1848,7 +1846,7 @@ const RecruitmentProcess = (props: any) => {
             ];
             let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
               JobCodeFilter,
-              "and"
+              "and",
             );
             let JobUniquedata = JobUniqueValue.data[0]?.JobUniqueKey || "";
             const AgentDetails: profileXagent = {
@@ -1864,7 +1862,7 @@ const RecruitmentProcess = (props: any) => {
 
                     const agencyIDs =
                       AssignHRData.AssignRecruitmentAgencies.map(
-                        (agency) => agency.key
+                        (agency) => agency.key,
                       );
 
                     if (agencyIDs.length === 0) {
@@ -1874,7 +1872,7 @@ const RecruitmentProcess = (props: any) => {
                       key: agencyID,
                       text:
                         AssignHRData.AssignRecruitmentAgencies.find(
-                          (agency) => agency.key === agencyID
+                          (agency) => agency.key === agencyID,
                         )?.text || AssignHRData.AssignRecruitmentHR.text,
                       RecruitmentID: recruitmentID,
                     }));
@@ -1882,7 +1880,7 @@ const RecruitmentProcess = (props: any) => {
                     const response =
                       await getVRRDetails.InsertExternalAgencyDetails(
                         agencyData,
-                        recruitmentID
+                        recruitmentID,
                       );
 
                     if (response.status === ResponeStatus.SUCCESS) {
@@ -1917,13 +1915,13 @@ const RecruitmentProcess = (props: any) => {
                         prevData.map((item) => ({
                           ...item,
                           Checked: false,
-                        }))
+                        })),
                       );
                       setSelectedJobCodes([]);
                     }
                   } else {
                     console.log(
-                      `No corresponding job found for RecruitmentID/VRRId: ${selectedJob.ID}`
+                      `No corresponding job found for RecruitmentID/VRRId: ${selectedJob.ID}`,
                     );
                   }
                 } else {
@@ -1944,7 +1942,7 @@ const RecruitmentProcess = (props: any) => {
                           prevData.map((item) => ({
                             ...item,
                             Checked: false,
-                          }))
+                          })),
                         );
                         setSelectedJobCodes([]);
                       }
@@ -1995,7 +1993,7 @@ const RecruitmentProcess = (props: any) => {
   const renderTable = (
     TabNames: string,
     TabValue: string,
-    StatusData: StatusDetails[]
+    StatusData: StatusDetails[],
   ) => {
     if (TabValue === activeTab) {
       storedStringRef.current = TabNames;
@@ -2016,7 +2014,7 @@ const RecruitmentProcess = (props: any) => {
             columns={columnConfig(
               TabValue,
               Number(Action[0]?.Action?.[0]),
-              TabNames
+              TabNames,
             )}
             rows={rows}
             onPageChange={(event) => onPageChange(event)}
@@ -2060,7 +2058,7 @@ const RecruitmentProcess = (props: any) => {
             columns={CandidateConfig(
               TabValue,
               Number(Action[0]?.Action?.[0]),
-              TabNames
+              TabNames,
             )}
             rows={rows}
             onPageChange={onPageChange}

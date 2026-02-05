@@ -233,7 +233,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       todaydate.getDate(),
       todaydate.getHours(),
       todaydate.getMinutes(),
-      todaydate.getSeconds()
+      todaydate.getSeconds(),
     ),
     RoleProfileDocument_fr: [],
     GradingDocument_fr: [],
@@ -325,7 +325,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     setIsLoading(true);
     // Fetch Qualification data
     const Qualification = await CommonServices.GetMasterData(
-      ListNames.HRMSQualification
+      ListNames.HRMSQualification,
     );
     // const QualificationOption: AutoCompleteItem[] = Qualification.data.map((item: any) => ({
     //     key: item.Code,
@@ -335,8 +335,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       .filter(
         (qualItem) =>
           !qualificationValue.MinQualification.some(
-            (minQual) => minQual.key === qualItem.QualificationCode
-          )
+            (minQual) => minQual.key === qualItem.QualificationCode,
+          ),
       )
       .map((item) => ({
         key: item.QualificationCode,
@@ -353,8 +353,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         (Qualitem) =>
           // !QualificationValue.some((item) => item.MinQualification.key === Qualitem.QualificationCode)
           !qualificationValue.MinQualification.some(
-            (item) => item.key === Qualitem.QualificationCode
-          )
+            (item) => item.key === Qualitem.QualificationCode,
+          ),
       )
       .map((item: any) => ({
         key: item.QualificationCode,
@@ -368,7 +368,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     // Fetch RoleSpecificKnowledge data
     const RoleSpecificKnowlege = await CommonServices.GetMasterData(
-      ListNames.HRMSRoleSpecificKnowlegeMaster
+      ListNames.HRMSRoleSpecificKnowlegeMaster,
     );
     const RoleSpecificKnowlegeOption: AutoCompleteItem[] =
       RoleSpecificKnowlege.data
@@ -384,7 +384,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     // Fetch TechnicalSkills data
     const TechnicalSkills = await CommonServices.GetMasterData(
-      ListNames.HRMSTechnicalSkills
+      ListNames.HRMSTechnicalSkills,
     );
     const TechnicalSkillsOption: AutoCompleteItem[] = TechnicalSkills.data
       .map((item: any) => ({
@@ -399,7 +399,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     // Fetch LevelOfProficiency data
     const LevelOfProficiency = await CommonServices.GetMasterData(
-      ListNames.HRMSLevelOfProficiency
+      ListNames.HRMSLevelOfProficiency,
     );
     const LevelOfProficiencyOption: AutoCompleteItem[] =
       LevelOfProficiency.data.map((item: any) => ({
@@ -409,7 +409,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       }));
 
     const YearofExperiance = await CommonServices.GetMasterData(
-      ListNames.HRMSExperienceMaster
+      ListNames.HRMSExperienceMaster,
     );
     const YearofExperianceOption: AutoCompleteItem[] =
       YearofExperiance.data.map((item: any) => ({
@@ -424,7 +424,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       }));
 
     const JobTitleFunctionType = await CommonServices.GetMasterData(
-      ListNames.HRMSJobTitleFunctionType
+      ListNames.HRMSJobTitleFunctionType,
     );
     const JobTitleFunctionTypeOption: AutoCompleteItem[] =
       JobTitleFunctionType.data.map((item: any) => ({
@@ -435,8 +435,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     const MinQualificationData = Qualification.data
       .filter((item) =>
         qualificationValue.MinQualification.some(
-          (q: any) => q.key === item.QualificationCode
-        )
+          (q: any) => q.key === item.QualificationCode,
+        ),
       )
       .map((item) => ({
         key: item.Code,
@@ -446,8 +446,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     const PreQualificationData = Qualification.data
       .filter((item) =>
         qualificationValue.PrefeQualification.some(
-          (q: any) => q.key === item.QualificationCode
-        )
+          (q: any) => q.key === item.QualificationCode,
+        ),
       )
       .map((item) => ({
         key: item.Code,
@@ -457,8 +457,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     const RoleSpeKnowledge = RoleSpecificKnowlege.data
       .filter((item) =>
         RoleSpeKnowledgeValue.some(
-          (q: any) => q.RoleSpeKnowledge.key === item.Code
-        )
+          (q: any) => q.RoleSpeKnowledge.key === item.Code,
+        ),
       )
       .map((item) => ({
         key: item.Code,
@@ -468,8 +468,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     const RequiredLevel = LevelOfProficiency.data
       .filter((item) =>
         RoleSpeKnowledgeValue.some(
-          (q: any) => q.RequiredLevel.key === item.Code
-        )
+          (q: any) => q.RequiredLevel.key === item.Code,
+        ),
       )
       .map((item) => ({
         key: item.Code,
@@ -479,8 +479,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     const TechnicalSkilData = TechnicalSkills.data
       .filter((item) =>
         TechnicalSkillValue.some(
-          (q: any) => q.TechnicalSkills.key === item.Code
-        )
+          (q: any) => q.TechnicalSkills.key === item.Code,
+        ),
       )
       .map((item) => ({
         key: item.Code,
@@ -490,8 +490,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     const TeachnicalRequiredLevel = LevelOfProficiency.data
       .filter((item) =>
         TechnicalSkillValue.some(
-          (q: any) => q.LevelProficiency.key === item.Code
-        )
+          (q: any) => q.LevelProficiency.key === item.Code,
+        ),
       )
       .map((item) => ({
         key: item.Code,
@@ -519,7 +519,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         RequiredLevel_fr:
           RequiredLevel.find((x) => x.key === item.RequiredLevel?.key) ??
           item.RequiredLevel_fr,
-      }))
+      })),
     );
     setTechnicalSkillValue((prev) =>
       prev.map((item) => ({
@@ -529,13 +529,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           item.TechnicalSkills_fr,
         LevelProficiency_fr:
           TeachnicalRequiredLevel.find(
-            (x) => x.key === item.LevelProficiency?.key
+            (x) => x.key === item.LevelProficiency?.key,
           ) ?? item.LevelProficiency_fr,
-      }))
+      })),
     );
 
     let FunctionalManager = props.JobInFrenchList.filter(
-      (item: any) => item.key === advDetails.JobTitleofFunctionalManager?.key
+      (item: any) => item.key === advDetails.JobTitleofFunctionalManager?.key,
     ).map((f: any) => ({
       key: f.key,
       text: f.text,
@@ -543,7 +543,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
     let LineManagerSupervisor_fr = props.JobInFrenchList.filter(
       (item: any) =>
-        item.key === advDetails.JobTitleofLineManagerSupervisor?.key
+        item.key === advDetails.JobTitleofLineManagerSupervisor?.key,
     ).map((f: any) => ({
       key: f.key,
       text: f.text,
@@ -604,7 +604,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       ];
       const response = await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
         filterConditions,
-        ""
+        "",
       );
 
       if (response.status === 200) {
@@ -648,14 +648,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               ).flatMap((item: any, index: number) =>
                 res.data
                   .filter(
-                    (data: any) => data.reference === item.verificationType
+                    (data: any) => data.reference === item.verificationType,
                   )
                   .map((data: any) => ({
                     id: index + 1,
                     key: data.reference,
                     description: data.displayText,
                     checked: item.isActive,
-                  }))
+                  })),
               );
 
               setBVGVerification((prev) => ({
@@ -721,30 +721,29 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
       const response =
         userRole === RoleID.RecruitmentHRLead &&
-        props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess
-          ? props.stateValue?.type === DataFrom.NewPosition
-            ? await getVRRDetails.fetchNewPositionRequest(
-                filterConditions,
-                Conditions,
-                props
-              )
-            : props.stateValue?.type === DataFrom.ExistingPosition
+        props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess &&
+        props.stateValue?.type === DataFrom.NewPosition
+          ? await getVRRDetails.fetchNewPositionRequest(
+              filterConditions,
+              Conditions,
+              props,
+            )
+          : props.stateValue?.type === DataFrom.ExistingPosition
             ? await getVRRDetails.GetAdditionalExistingPositionEditView(
                 filterConditions,
                 Conditions,
-                props
+                props,
               )
             : props.stateValue?.type === DataFrom.VacancyRecruitmentProcess
-            ? await getVRRDetails.GetVacancyDetails(
-                filterConditions,
-                Conditions,
-                props
-              )
-            : await getVRRDetails.GetRecruitmentDetails(
-                filterConditionsRecuritment,
-                RecuritmentConditions
-              )
-          : undefined;
+              ? await getVRRDetails.GetVacancyDetails(
+                  filterConditions,
+                  Conditions,
+                  props,
+                )
+              : await getVRRDetails.GetRecruitmentDetails(
+                  filterConditionsRecuritment,
+                  RecuritmentConditions,
+                );
 
       if (response && response.data) {
         const NewpositionData =
@@ -762,7 +761,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
         const BUName =
           props?.BusinessUnitCodeAllColumn.find(
-            (item: any) => item.key === op?.BusinessUnitCodeId
+            (item: any) => item.key === op?.BusinessUnitCodeId,
           ) || {};
 
         // const   JobtitleFrench =
@@ -779,20 +778,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           CommonServices.GetAttachmentToLibrary(
             DocumentLibraray.RoleProfileMaster,
             op.JobCode,
-            RoleProfileMaster.RoleProfile
+            RoleProfileMaster.RoleProfile,
           ),
           CommonServices.GetAttachmentToLibrary(
             DocumentLibraray.RoleProfileMaster,
             op.JobCode,
-            RoleProfileMaster.Grading
+            RoleProfileMaster.Grading,
           ),
           CommonServices.GetAttachmentToLibrary(
             DocumentLibraray.RecruitmentAdvertisementDocument,
-            op.JobCode
+            op.JobCode,
           ),
           CommonServices.GetAttachmentToLibrary(
             DocumentLibraray.ONAMSignedStampDocuments,
-            op.JobCode
+            op.JobCode,
           ),
         ]);
 
@@ -913,7 +912,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         {
           const currentItem = RoleSpeKnowledgeValue[index];
           const isRoleKnowledgeValid = IsValid(
-            currentItem?.RoleSpeKnowledge.text
+            currentItem?.RoleSpeKnowledge.text,
           );
           const isRequiredLevelValid = IsValid(currentItem?.RequiredLevel.text);
 
@@ -953,10 +952,10 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       case RoleDescription.TechnicalSkillValue: {
         const currentItem = TechnicalSkillValue[index];
         const isTechnicalSkillValid = IsValid(
-          currentItem?.TechnicalSkills.text
+          currentItem?.TechnicalSkills.text,
         );
         const isLevelProficiencyValid = IsValid(
-          currentItem?.LevelProficiency.text
+          currentItem?.LevelProficiency.text,
         );
 
         setValidationError((prevErrors) => {
@@ -1004,13 +1003,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       case RoleDescription.RoleSpeKnowledgeValue:
         {
           setRoleSpeKnowledgeValue((prevState) =>
-            prevState.filter((_, i) => i !== index)
+            prevState.filter((_, i) => i !== index),
           );
         }
         break;
       case RoleDescription.TechnicalSkillValue: {
         setTechnicalSkillValue((prevState) =>
-          prevState.filter((_, i) => i !== index)
+          prevState.filter((_, i) => i !== index),
         );
       }
     }
@@ -1018,7 +1017,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
   const handleAutoComplete = (
     item: AutoCompleteItem | null,
-    StateValue: string
+    StateValue: string,
   ) => {
     setAdvDetails((prevState) => ({
       ...prevState,
@@ -1101,7 +1100,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     stateKey:
       | "RoleSpeKnowledgeValue"
       | "QualificationValue"
-      | "TechnicalSkillValue"
+      | "TechnicalSkillValue",
   ) => {
     if (stateKey === "RoleSpeKnowledgeValue") {
       setRoleSpeKnowledgeValue((prevState) => {
@@ -1204,14 +1203,14 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           errors.Checkboxalidation = !IsValid(Checkbox);
         } else if (props.stateValue?.tab === "tab2") {
           errors.OnamSignedStampsAttchment = !IsValid(
-            OnamSignedStampsAttchment
+            OnamSignedStampsAttchment,
           );
           errors.Comments = !IsValid(Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
           errors.BVGVerification = !IsValid(
             BVGVerification.checkboxBGV &&
               BVGVerification.checkboxBGV.length > 0 &&
-              BVGVerification.checkboxBGV[0]?.checked
+              BVGVerification.checkboxBGV[0]?.checked,
           );
           // errors.ValidFrom = !IsValid(advDetails.ValidFrom);  // ONEM Page Validition for Valid from and Valid To Changes
           // errors.ValidTo = !IsValid(advDetails.ValidTo);
@@ -1238,7 +1237,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             // }
             if (formState.AdvertisementDocument.length === 0) {
               errors.AdvertisementAttachement = !IsValid(
-                advDetails.AdvertisementAttachement
+                advDetails.AdvertisementAttachement,
               );
             }
           } else {
@@ -1255,53 +1254,53 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             // }
             if (formState.AdvertisementDocument.length === 0) {
               errors.AdvertisementAttachement = !IsValid(
-                advDetails.AdvertisementAttachement
+                advDetails.AdvertisementAttachement,
               );
             }
             errors.Comments = !IsValid(Comments);
             errors.MinQualification = !IsValid(
-              qualificationValue.MinQualification[0]?.text
+              qualificationValue.MinQualification[0]?.text,
             );
             errors.PrefeQualification = !IsValid(
-              qualificationValue.PrefeQualification[0]?.text
+              qualificationValue.PrefeQualification[0]?.text,
             );
             errors.RoleSpeKnowledge = !IsValid(
-              RoleSpeKnowledgeValue[0]?.RoleSpeKnowledge.text
+              RoleSpeKnowledgeValue[0]?.RoleSpeKnowledge.text,
             );
             errors.RequiredLevel = !IsValid(
-              RoleSpeKnowledgeValue[0]?.RequiredLevel.text
+              RoleSpeKnowledgeValue[0]?.RequiredLevel.text,
             );
             errors.TechnicalSkills = !IsValid(
-              TechnicalSkillValue[0]?.TechnicalSkills.text
+              TechnicalSkillValue[0]?.TechnicalSkills.text,
             );
             errors.LevelProficiency = !IsValid(
-              TechnicalSkillValue[0]?.LevelProficiency.text
+              TechnicalSkillValue[0]?.LevelProficiency.text,
             );
             errors.RolePurpose = !IsValid(advDetails.RolePurpose);
             errors.JobDescription = !IsValid(advDetails.JobDescription);
             errors.RolePurpose_fr = !IsValid(advDetails.RolePurpose_fr);
             errors.JobDescription_fr = !IsValid(advDetails.JobDescription_fr);
             errors.ExperienceinMiningIndustry = !IsValid(
-              advDetails.ExperienceinMiningIndustry.text
+              advDetails.ExperienceinMiningIndustry.text,
             );
             errors.TotalExperience = !IsValid(advDetails.TotalExperience.text);
             errors.Checkboxalidation = !IsValid(Checkbox);
             // errors.ValidFrom = !IsValid(advDetails.ValidFrom);
             // errors.ValidTo = !IsValid(advDetails.ValidTo);
             errors.JobFunctionalType = !IsValid(
-              advDetails.JobFunctionalType.text
+              advDetails.JobFunctionalType.text,
             );
             errors.JobTitleofFunctionalManager = !IsValid(
-              advDetails.JobTitleofFunctionalManager.text
+              advDetails.JobTitleofFunctionalManager.text,
             );
             errors.FunctionalManagerName = !IsValid(
-              advDetails.FunctionalManagerName
+              advDetails.FunctionalManagerName,
             );
             errors.JobTitleofLineManagerSupervisor = !IsValid(
-              advDetails.JobTitleofLineManagerSupervisor.text
+              advDetails.JobTitleofLineManagerSupervisor.text,
             );
             errors.LineManagerSupervisorName = !IsValid(
-              advDetails.LineManagerSupervisorName
+              advDetails.LineManagerSupervisorName,
             );
           }
         }
@@ -1367,7 +1366,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       // }
       if (formState.AdvertisementDocument.length === 0) {
         errors.AdvertisementAttachement = !IsValid(
-          advDetails.AdvertisementAttachement
+          advDetails.AdvertisementAttachement,
         );
       }
     }
@@ -1431,7 +1430,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     const day = String(updatedDate?.getDate()).padStart(2, "0");
 
     const dateOnly = new Date(
-      Date.UTC(Number(year), Number(month) - 1, Number(day))
+      Date.UTC(Number(year), Number(month) - 1, Number(day)),
     ); //`${year}-${month}-${day}`;
     return dateOnly.toISOString();
   };
@@ -1467,12 +1466,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 advDetails,
                 props,
                 1,
-                0
+                0,
               );
 
               if (result?.status === 200) {
                 const DepartmentCode = props.Department.find(
-                  (item: { key: number }) => item.key === formState.DepartmentID
+                  (item: { key: number }) =>
+                    item.key === formState.DepartmentID,
                 );
                 let UpsertBGVData: UpsertBGV[] =
                   BVGVerification.checkboxBGV.map((item) => ({
@@ -1482,9 +1482,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     nationality: NationalityCode.SouthAfrica,
                     isActive: item.checked ?? false,
                   }));
-                const UpsertBGV = await laborHireService.UpsertBGVJobMaster(
-                  UpsertBGVData
-                );
+                const UpsertBGV =
+                  await laborHireService.UpsertBGVJobMaster(UpsertBGVData);
 
                 if (UpsertBGV.status === ResponeStatus.SUCCESS) {
                   if (formState.Comments) {
@@ -1499,7 +1498,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                   await CommonServices.uploadAttachmentToLibrary(
                     formState.JobCode,
                     formState.OnamSignedStampsAttchment ?? [],
-                    DocumentLibraray.ONAMSignedStampDocuments
+                    DocumentLibraray.ONAMSignedStampDocuments,
                   );
                   const obj: any = {
                     ActionId: WorkflowAction.Approved,
@@ -1515,7 +1514,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     (item) => ({
                       verificationType: item.key,
                       isActive: item.checked ?? false,
-                    })
+                    }),
                   );
                   const RoleObj: any = {
                     JobBasedBGVVerification: JSON.stringify(BVGVerified),
@@ -1647,17 +1646,17 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               JobDescription: advDetails.JobDescription,
               RoleProfile: advDetails.RolePurpose,
               RoleSpecificKnowledgeJson: JSON.stringify(
-                RoleSpecificKnowledgeJson
+                RoleSpecificKnowledgeJson,
               ),
               TechnicalSkillsKnowledgeJson: JSON.stringify(
-                TechnicalSkillsKnowledgeJson
+                TechnicalSkillsKnowledgeJson,
               ),
               JobCodeId: formState.JobCodeId,
               TotalPreferredExperienceId: Number(
-                advDetails.TotalExperience.key
+                advDetails.TotalExperience.key,
               ),
               PreferredExperienceId: Number(
-                advDetails.ExperienceinMiningIndustry.key
+                advDetails.ExperienceinMiningIndustry.key,
               ),
               FunctionTypeId: advDetails.JobFunctionalType.key,
               JobTitleofFunctionalManagerId:
@@ -1674,7 +1673,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             if (advDetails.JobcodeChecked === false) {
               AdvDetailsResponse = await getVRRDetails.InsertList(
                 AdvData,
-                ListNames.HRMSRecruitmentRoleProfileDetails
+                ListNames.HRMSRecruitmentRoleProfileDetails,
               );
             }
             if (
@@ -1697,7 +1696,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 advDetails,
                 props,
                 0,
-                0
+                0,
               );
               resetForm();
               if (result.status === ResponeStatus.SUCCESS) {
@@ -1713,7 +1712,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 await CommonServices.uploadAttachmentToLibrary(
                   formState.JobCode,
                   advDetails?.AdvertisementAttachement ?? [],
-                  DocumentLibraray.RecruitmentAdvertisementDocument
+                  DocumentLibraray.RecruitmentAdvertisementDocument,
                 );
                 {
                   /* Commented out this section because the client mentioned that the Recruitment HR did not upload 
@@ -1893,7 +1892,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
   const handleInputChangeTextArea = (
     value: string | any,
-    StateValue: string
+    StateValue: string,
   ) => {
     setFormState((prevState) => ({
       ...prevState,
@@ -1918,7 +1917,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
 
   const handleMulitiSelect = (
     value: AutoCompleteItem[],
-    StateValue: string
+    StateValue: string,
   ) => {
     setQualificationValue((prevState: any) => ({
       ...prevState,
@@ -1956,7 +1955,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       const CommentsList = await getVRRDetails.GetCommentsData(
         props.EmployeeList,
         Conditions,
-        filterConditions
+        filterConditions,
       );
       if (CommentsList.status === 200) {
         setCommentsData(CommentsList.data);
@@ -1977,8 +1976,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         StateValue === "RolePurpose"
           ? "RolePurpose_fr"
           : StateValue === "JobDescription"
-          ? "JobDescription_fr"
-          : "";
+            ? "JobDescription_fr"
+            : "";
       setAdvDetails((prevState) => ({
         ...prevState,
         [StateData]: value,
@@ -2599,7 +2598,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                       type: "New",
                                       url: item.Url,
                                     };
-                                  }
+                                  },
                                 );
                                 // const attachments = [
                                 //   ...(advDetails.AdvertisementAttachement ||
@@ -2608,7 +2607,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 // ];
                                 handleFileAttachment(
                                   "AdvertisementAttachement",
-                                  attachment
+                                  attachment,
                                 );
                               }}
                               mandatory={true}
@@ -2657,7 +2656,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                       type: "New",
                                       url: item.Url,
                                     };
-                                  }
+                                  },
                                 );
                                 // const attachments = [
                                 //   ...(formState.OnamSignedStampsAttchment || []),
@@ -2665,7 +2664,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                                 // ];
                                 handleFileAttachment(
                                   "OnamSignedStampsAttchment",
-                                  attachment
+                                  attachment,
                                 );
                               }}
                               mandatory={true}
@@ -3134,7 +3133,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
         const uniqueTabNames = newTabNames.filter(
           (item, index, self) =>
             item.tabName &&
-            self.findIndex((t) => t.tabName === item.tabName) === index
+            self.findIndex((t) => t.tabName === item.tabName) === index,
         );
 
         return uniqueTabNames;
@@ -3219,73 +3218,73 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                         },
                       ]
                     : currentRoleID === RoleID.RecruitmentHRLead &&
-                      props.stateValue?.StatusId ===
-                        StatusId.PendingwithHRLeadtouploadONEMsigneddoc
-                    ? [
-                        {
-                          label: ButtonAction.Upload,
-                          onClick: async () => {
-                            await SaveRecruitment();
-                          },
-                        },
-                      ]
-                    : currentRoleID === RoleID.RecruitmentHR &&
-                      props.stateValue?.StatusId ===
-                        StatusId.PendingwithRecruitmentHRtouploadAdv
-                    ? [
-                        ...(advDetails.JobcodeChecked === false
-                          ? [
-                              {
-                                label: ButtonAction.Preview,
-                                onClick: async () => {
-                                  previewBtn_Fn();
-                                },
-                              },
-                            ]
-                          : []),
-
-                        ...(isViewed
-                          ? [
-                              {
-                                label: ButtonAction.Submit,
-                                onClick: async () => {
-                                  await SaveRecruitment();
-                                },
-                              },
-                            ]
-                          : []),
-                      ]
-                    : (currentRoleID === RoleID.HOD &&
                         props.stateValue?.StatusId ===
-                          StatusId.PendingwithHODtoreviewAdv) ||
-                      (currentRoleID === RoleID.LineManager &&
-                        props.stateValue?.StatusId ===
-                          StatusId.PendingwithLineManagereviewAdv)
-                    ? isViewed
+                          StatusId.PendingwithHRLeadtouploadONEMsigneddoc
                       ? [
                           {
-                            label: ButtonAction.Review,
+                            label: ButtonAction.Upload,
                             onClick: async () => {
                               await SaveRecruitment();
                             },
                           },
                         ]
-                      : []
-                    : props.stateValue?.TabName === TabName.AssignAgencies
-                    ? [
-                        {
-                          label: ButtonAction.Back,
-                          onClick: async () => {
-                            props.navigation("/RecurimentProcess", {
-                              state: {
-                                TabName: props.stateValue?.TabName,
-                                tab: props.stateValue?.tab,
-                              },
-                            });
-                          },
-                        },
-                      ]
-                    : []
+                      : currentRoleID === RoleID.RecruitmentHR &&
+                          props.stateValue?.StatusId ===
+                            StatusId.PendingwithRecruitmentHRtouploadAdv
+                        ? [
+                            ...(advDetails.JobcodeChecked === false
+                              ? [
+                                  {
+                                    label: ButtonAction.Preview,
+                                    onClick: async () => {
+                                      previewBtn_Fn();
+                                    },
+                                  },
+                                ]
+                              : []),
+
+                            ...(isViewed
+                              ? [
+                                  {
+                                    label: ButtonAction.Submit,
+                                    onClick: async () => {
+                                      await SaveRecruitment();
+                                    },
+                                  },
+                                ]
+                              : []),
+                          ]
+                        : (currentRoleID === RoleID.HOD &&
+                              props.stateValue?.StatusId ===
+                                StatusId.PendingwithHODtoreviewAdv) ||
+                            (currentRoleID === RoleID.LineManager &&
+                              props.stateValue?.StatusId ===
+                                StatusId.PendingwithLineManagereviewAdv)
+                          ? isViewed
+                            ? [
+                                {
+                                  label: ButtonAction.Review,
+                                  onClick: async () => {
+                                    await SaveRecruitment();
+                                  },
+                                },
+                              ]
+                            : []
+                          : props.stateValue?.TabName === TabName.AssignAgencies
+                            ? [
+                                {
+                                  label: ButtonAction.Back,
+                                  onClick: async () => {
+                                    props.navigation("/RecurimentProcess", {
+                                      state: {
+                                        TabName: props.stateValue?.TabName,
+                                        tab: props.stateValue?.tab,
+                                      },
+                                    });
+                                  },
+                                },
+                              ]
+                            : []
                 }
               />
             </div>

@@ -10,7 +10,7 @@ import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import { CommentsData, DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
 import { quesContentId } from "../../utilities/LabelName";
-import { calculateTotalExperienceYears, formatExperience, getcountryCode } from "../../components/TabMerge";
+import { calculateTotalExperienceYears, getcountryCode } from "../../components/TabMerge";
 
 export default class GetPortalJobs implements IGetPortalJobs {
   async UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>> {
@@ -94,7 +94,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
             JobCode: JobCode,
             Status: item?.workflowStatus?.displayText,
             workflowStatusId: item?.workflowStatusId,
-            createdOn: moment(createdon).format("DD/MM/YYYY HH:mm:ss"),
+            createdOn: moment(createdon).format("DD/MM/YYYY"),
             TotalItems: TotalItems,
             applicationStatusId: item?.applicationStatusId,
             applicationStatus: item?.applicationStatus?.displayText
@@ -128,7 +128,6 @@ export default class GetPortalJobs implements IGetPortalJobs {
       let GetProfileByJobCodeData: CandidateProfile[] = [];
       await getProfileData.getCandidateProfile(CandidateID).then(async (res) => {
         const op = res.data.data;
-        // console.log(op, "OP");
         const [
           RoleProfileDocment,
           AdvertismentDocment,
@@ -217,17 +216,15 @@ export default class GetPortalJobs implements IGetPortalJobs {
         const totalExperienceYears = calculateTotalExperienceYears(
           op?.profile?.profileDetailExperiences
         );
-        const totalExp = formatExperience(totalExperienceYears);
+        // const totalExp = formatExperience(totalExperienceYears);
 
         const CountryCode = await GetPortalJobsService.GetCountryMaster();
-        // console.log(CountryCode, "CountryCode");
+
 
 
         let profileExperiance = Array.isArray(op?.profile?.profileDetailExperiences) && op.profile.profileDetailExperiences.length > 0
           ? op.profile.profileDetailExperiences[op.profile.profileDetailExperiences.length - 1]
           : undefined;
-        // console.log(profileExperiance, "profileExperiance");
-
         const dob = new Date(new Date(op?.profile?.dob));
         const today = new Date();
 
@@ -334,7 +331,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           NatioCode: op?.profile?.nationality?.value,
           Gender: op?.profile?.gender?.displayText ? op?.profile?.gender?.displayText : op?.profile?.genderId,
           HighestQualification: op?.profile?.education?.displayText,
-          ExperienceMining: totalExp,
+          ExperienceMining: totalExperienceYears,
           ExperRelatedfield: op?.profile?.releventExperience,
           Status: op?.workflowStatus?.displayText,
           StatusId: op?.workflowStatusId,

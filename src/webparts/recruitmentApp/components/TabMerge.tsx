@@ -31,7 +31,7 @@ export async function GetTabDetailsById(menuID: number, items: MenuResponse[]) {
       items?.reduce((acc: TabDetails[], menu: any) => {
         if (!menu.SubMenu) {
           const match = menu.TabDetails?.find(
-            (tab: { Id: number }) => tab?.Id === menuID
+            (tab: { Id: number }) => tab?.Id === menuID,
           );
           let TabDetails = match?.TabDetails.map((item: any, index: number) => {
             return {
@@ -42,7 +42,7 @@ export async function GetTabDetailsById(menuID: number, items: MenuResponse[]) {
           if (match) acc.push(TabDetails);
         } else {
           const childMatches = menu.Children?.find(
-            (child: any) => child?.Id === menuID
+            (child: any) => child?.Id === menuID,
           );
           let TabDetails = childMatches?.TabDetails.map(
             (item: any, index: number) => {
@@ -50,7 +50,7 @@ export async function GetTabDetailsById(menuID: number, items: MenuResponse[]) {
                 ...item,
                 Value: "tab" + (index + 1),
               };
-            }
+            },
           );
           if (childMatches) acc.push(TabDetails);
         }
@@ -200,7 +200,7 @@ export const SpiltDateOnly = (date: Date) => {
   const day = String(updatedDate?.getDate()).padStart(2, "0");
 
   const dateOnly = new Date(
-    Date.UTC(Number(year), Number(month) - 1, Number(day))
+    Date.UTC(Number(year), Number(month) - 1, Number(day)),
   ); //`${year}-${month}-${day}`;
   return dateOnly.toISOString();
 };
@@ -221,7 +221,7 @@ const resolveUserFieldByRole = (currentRoles: any[]) => {
 
 export const buildRecruitmentTabConfig = (
   tabNameData: TabDetails[],
-  CurrentRoleID: any[]
+  CurrentRoleID: any[],
 ) => {
   const userField = resolveUserFieldByRole(CurrentRoleID);
 
@@ -236,24 +236,55 @@ export const buildRecruitmentTabConfig = (
   }, {});
 };
 
-export function calculateTotalExperienceYears(experiences: any[]): number {
-  const now = new Date();
+// export function calculateTotalExperienceYears(experiences: any[]): number {
+//   const now = new Date();
 
-  let totalMilliseconds = 0;
+//   let totalMilliseconds = 0;
+
+//   experiences.forEach((exp) => {
+//     const startDate = new Date(exp.startFrom);
+
+//     const endDate = exp.isCurrent === 1 ? now : new Date(exp.endTo);
+
+//     if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+//       totalMilliseconds += endDate.getTime() - startDate.getTime();
+//     }
+//   });
+
+//   const millisecondsInYear = 1000 * 60 * 60 * 24 * 365.25;
+
+//   return Number((totalMilliseconds / millisecondsInYear).toFixed(2));
+// }
+
+export function calculateTotalExperienceYears(experiences: any[]) {
+  let totalMonths = 0;
 
   experiences.forEach((exp) => {
     const startDate = new Date(exp.startFrom);
 
-    const endDate = exp.isCurrent === 1 ? now : new Date(exp.endTo);
-
-    if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
-      totalMilliseconds += endDate.getTime() - startDate.getTime();
+    let endDate;
+    if (exp.endTo === "current date" || exp.isCurrent === 1 || !exp.endTo) {
+      endDate = new Date(); // today
+    } else {
+      endDate = new Date(exp.endTo);
     }
+
+    let months =
+      (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+      (endDate.getMonth() - startDate.getMonth());
+
+    // If end day is before start day, reduce one month
+    if (endDate.getDate() < startDate.getDate()) {
+      months--;
+    }
+
+    totalMonths += months;
   });
 
-  const millisecondsInYear = 1000 * 60 * 60 * 24 * 365.25; // leap year safe
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
 
-  return Number((totalMilliseconds / millisecondsInYear).toFixed(2));
+  return `${years} years and ${months} months`;
 }
 
 export function formatExperience(years: number): string {
