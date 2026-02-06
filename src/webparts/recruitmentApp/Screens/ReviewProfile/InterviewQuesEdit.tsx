@@ -59,6 +59,7 @@ import CustomLabel from "../../components/CustomLabel";
 import { Label } from "@fluentui/react";
 import { ButtonAction, ValidationAction } from "../../utilities/LabelName";
 import { normalizeQuestion } from "../../components/TabMerge";
+import CustomParallelfunctionAutoComplete from "../../components/CustomParallelfunctionAutoComplete";
 
 type InterviewQuesValidationError = {
   QuestionType: boolean;
@@ -1103,7 +1104,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               </div> */}
             </div>
 
-            <div style={{ display: "flex", justifyContent: "flex-start" }}>
+            {/* <div style={{ display: "flex", justifyContent: "flex-start" }}>
               <Label
                 style={{
                   fontSize: "18px",
@@ -1119,7 +1120,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   ? `Career Portal Candidate Questionnaires `
                   : `Interview Questionnaires `}
               </Label>
-            </div>
+            </div> */}
             {/* <Card
               sx={{
                 mb: 2,
@@ -1158,7 +1159,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               }}
             >
               <Box sx={{ width: "100%", overflow: "visible" }}>
-                <Box sx={{ mb: 2 }}>
+                {/* <Box sx={{ mb: 2 }}>
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg5">
                       <CustomAutoComplete
@@ -1214,7 +1215,86 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       </Button>
                     </div>
                   </div>
-                </Box>
+                </Box> */}
+<Box sx={{ mb: 2 }}>
+  {/* HEADER + ACTIONS */}
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: 2,
+    }}
+  >
+    {/* LEFT SIDE */}
+    <Label
+      style={{
+        fontSize: "18px",
+        color: "black",
+        fontFamily: "Roboto,sans-serif",
+        fontWeight: "600",
+      }}
+    >
+      {props?.stateValue?.StatusId ===
+      StatusId.PendingwithLMcreateDisqualificationQuestion
+        ? "Career Portal Candidate Questionnaires"
+        : "Interview Questionnaires"}
+    </Label>
+
+    {/* RIGHT SIDE BUTTONS */}
+    <Box sx={{ display: "flex", gap: 2 }}>
+      <Button
+        variant="contained"
+        sx={{
+          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+          textTransform: "none",
+          borderRadius: "4px",
+          fontSize: "14px",
+          fontWeight: 500,
+          boxShadow: "none",
+          "&:hover": {
+            backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+          },
+        }}
+        onClick={getFetchQuestion}
+      >
+        View Questions
+      </Button>
+
+      <Button
+        variant="contained"
+        sx={{
+          backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+          textTransform: "none",
+          borderRadius: "4px",
+          fontSize: "14px",
+          fontWeight: 500,
+          boxShadow: "none",
+          "&:hover": {
+            backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+          },
+        }}
+        onClick={handleNewQuestion}
+      >
+        New Question
+      </Button>
+    </Box>
+  </Box>
+
+  {/* DISCIPLINE DROPDOWN */}
+  <Box sx={{ mt: 2, maxWidth: 350 }}>
+    <CustomParallelfunctionAutoComplete
+      label="Disciplines"
+      options={getMasterData.ScopeOption}
+      value={InterviewQuesData.Disciplines}
+      onChange={(val) => handleAutoComplete("Disciplines", val)}
+      disabled
+      mandatory
+      // error={ValidationError.Disciplines}
+    />
+  </Box>
+</Box>
 
                 {existingquestionnaire.length > 0 && (
                   <>

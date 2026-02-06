@@ -292,6 +292,10 @@ export type InterviewQues = {
   OptionsType?: AutoCompleteItem;
   Disqualification?: any;
 };
+export type InterviewQuesEdit = {
+EnglishQuestion: InterviewQues;
+FrenchQuestion: InterviewQues;
+}
 
 export type CandidatedCVDetails = {
   Title: AutoCompleteItem;
