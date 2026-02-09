@@ -59,7 +59,6 @@ import CustomLabel from "../../components/CustomLabel";
 import { Label } from "@fluentui/react";
 import { ButtonAction, ValidationAction } from "../../utilities/LabelName";
 import { normalizeQuestion } from "../../components/TabMerge";
-import CustomParallelfunctionAutoComplete from "../../components/CustomParallelfunctionAutoComplete";
 
 type InterviewQuesValidationError = {
   QuestionType: boolean;
@@ -75,12 +74,9 @@ type InterviewQuesValidationError = {
 export type OptionRow = {
   key: number;
   text: string;
-  textFr?: string;
   isCorrect?: boolean;
   textvalidation?: boolean;
-  textvalidationFr?: boolean;
   fieldValidation?: boolean;
-  fieldValidationFr?: boolean;
 };
 
 export type MasterOption = {
@@ -122,10 +118,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     Disqualification: "",
     CareerportalAnswer: [],
   });
-
-  // Separate state for English and French questions
-  const [EnglishQuestion, setEnglishQuestion] = useState<string>("");
-  const [FrenchQuestion, setFrenchQuestion] = useState<string>("");
 
   const [OptionsType, setOptionsType] = useState<OptionRow[]>([
     {
@@ -211,12 +203,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   //   }));
   // };
 
-  const handleOptionChange = (index: number, newVal: string, lang: "en" | "fr" = "en") => {
+  const handleOptionChange = (index: number, newVal: string) => {
     if (newVal.length > 155) {
       setOptionsType((prev) => {
         const updated = [...prev];
-        if (lang === "en") updated[index].textvalidation = true;
-        else updated[index].textvalidationFr = true;
+        updated[index].textvalidation = true;
         return updated;
       });
       console.warn("Input exceeds 155 characters");
@@ -225,13 +216,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
     setOptionsType((prev) => {
       const updated = [...prev];
-      if (lang === "en") {
-        updated[index].text = newVal;
-        updated[index].textvalidation = false;
-      } else {
-        updated[index].textFr = newVal;
-        updated[index].textvalidationFr = false;
-      }
+      updated[index].text = newVal;
+      updated[index].textvalidation = false;
       return updated;
     });
   };
@@ -241,7 +227,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       .map((opt, index) => ({
         key: index,
         text: opt.text,
-        textFr: opt.textFr,
         isCorrect: opt.isCorrect,
       }))
       .filter((opt) => opt.isCorrect);
@@ -346,7 +331,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         .map((opt, newIndex) => ({
           key: newIndex,
           text: opt.text,
-          textFr: opt.textFr,
           isCorrect: opt.isCorrect,
         }))
         .filter((opt) => opt.isCorrect);
@@ -433,18 +417,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     setValidationError((prev) => ({ ...prev, [stateKey]: false }));
   };
 
-  // Language-specific handlers for English question
-  const handleEnglishQuestion = (value: string) => {
-    setEnglishQuestion(value);
-    setValidationError((prev) => ({ ...prev, Question: false }));
-  };
-
-  // Language-specific handler for French question
-  const handleFrenchQuestion = (value: string) => {
-    setFrenchQuestion(value);
-    setValidationError((prev) => ({ ...prev, Question: false }));
-  };
-
   const handleToggleExpand = (index: number) => {
     setExpandedQuestionIndex((prev) => (prev === index ? null : index));
   };
@@ -468,16 +440,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       CareerportalAnswer: [],
     }));
 
-    setOptionsType([
-      {
-        key: 0,
-        text: "",
-        textFr: "",
-        isCorrect: false,
-        textvalidation: false,
-        textvalidationFr: false,
-      },
-    ]); // reset options
+    setOptionsType([{ key: 0, text: "", isCorrect: false }]); // reset options
   };
 
   const Validation = (): boolean => {
@@ -498,8 +461,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     if (!Disciplines?.text) errors.Disciplines = true;
     if (shouldValidateQuestionType && !QuestionType?.text)
       errors.QuestionType = true;
-    const activeQuestion = EnglishQuestion || Question;
-    if (!activeQuestion) errors.Question = true;
+    if (!Question) errors.Question = true;
     if (!Catogry) errors.Catogry = true;
 
     const isMCQ =
@@ -536,14 +498,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     setOptionsType((prev) => {
       const newOptions = [
         ...prev,
-        {
-          key: prev.length,
-          text: "",
-          textFr: "",
-          isCorrect: false,
-          textvalidation: false,
-          textvalidationFr: false,
-        },
+        { key: prev.length, text: "", isCorrect: false },
       ];
       // Validation();
       return newOptions;
@@ -606,7 +561,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     }
 
     const correctAnswers = OptionsType.filter((opt) => opt.isCorrect).map(
-      (opt, i) => ({ key: i, text: opt.text, textFr: opt.textFr })
+      (opt, i) => ({ key: i, text: opt.text })
     );
     const questionData: ViewQuestion = {
       id:
@@ -615,8 +570,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           : index,
       discipline: InterviewQuesData.Disciplines,
       questionType: questionType,
-      question: EnglishQuestion || InterviewQuesData.Question,
-      questionFr: FrenchQuestion || InterviewQuesData.Question,
+      question: InterviewQuesData.Question,
       expectedAnswer: InterviewQuesData.ExpectedAnswer,
       CareerportalAnswer: correctAnswers,
       options:
@@ -632,12 +586,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           ? `Question ${editingQuestionIndex + 1}`
           : `Question ${index}`,
     };
-    console.log("Saving question:", {
-      questionData,
-      EnglishQuestion,
-      FrenchQuestion,
-      OptionsType,
-    });
     if (editingQuestionIndex !== null) {
       setresuequestionnaire((prev) => {
         const updated = [...prev];
@@ -662,18 +610,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       Catogry: prev.Catogry,
       CareerportalAnswer: [],
     }));
-    setEnglishQuestion("");
-    setFrenchQuestion("");
-    setOptionsType([
-      {
-        key: 0,
-        text: "",
-        textFr: "",
-        isCorrect: false,
-        textvalidation: false,
-        textvalidationFr: false,
-      },
-    ]);
+    setOptionsType([{ key: 0, text: "", isCorrect: false }]);
     setValidationError({} as InterviewQuesValidationError);
   };
 
@@ -688,20 +625,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           ? {
               ...q,
               [field]: value,
-                options:
+              options:
                 field === "questionType" &&
                 (value?.text === displayTextOptionCode.MultiAnswer ||
                   value?.text === displayTextOptionCode.SingleAnswer)
-                  ? [
-                      {
-                        key: 0,
-                        text: "",
-                        textFr: "",
-                        isCorrect: false,
-                        textvalidation: false,
-                        textvalidationFr: false,
-                      },
-                    ]
+                  ? [{ key: 0, text: "", isCorrect: false }]
                   : field === "questionType"
                   ? []
                   : q.options,
@@ -714,8 +642,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const handleQuestionOptionChange = (
     qIndex: number,
     optIndex: number,
-    newVal: string,
-    lang: "en" | "fr" = "en"
+    newVal: string
   ) => {
     setresuequestionnaire((prev) => {
       const updated = [...prev];
@@ -724,7 +651,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       let updatedOptions = [...question.options];
       updatedOptions[optIndex] = {
         ...updatedOptions[optIndex],
-        ...(lang === "en" ? { text: newVal } : { textFr: newVal }),
+        text: newVal,
       };
       question.options = updatedOptions;
       question.CareerportalAnswer = updatedOptions;
@@ -745,10 +672,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       const newOption = {
         key: question.options.length,
         text: "",
-        textFr: "",
         isCorrect: false,
-        textvalidation: false,
-        textvalidationFr: false,
       };
 
       question.options = [...question.options, newOption];
@@ -768,7 +692,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       question.options = question.options.map((opt, i) => ({ ...opt, key: i }));
       const selectedAnswers = question.options
         .filter((opt) => opt.isCorrect)
-        .map((opt, i) => ({ key: i, text: opt.text, textFr: opt.textFr }));
+        .map((opt, i) => ({ key: i, text: opt.text }));
 
       question.expectedAnswer = JSON.stringify(selectedAnswers);
 
@@ -881,16 +805,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         displayTextOptionCode.SingleAnswer,
       ].includes(InterviewQuesData.QuestionType?.text?.trim() || "")
     ) {
-      setOptionsType([
-        {
-          key: 0,
-          text: "",
-          textFr: "",
-          isCorrect: false,
-          textvalidation: false,
-          textvalidationFr: false,
-        },
-      ]);
+      setOptionsType([{ key: 1, text: "", isCorrect: false }]);
     } else {
       setOptionsType([]);
     }
@@ -1188,7 +1103,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               </div> */}
             </div>
 
-            {/* <div style={{ display: "flex", justifyContent: "flex-start" }}>
+            <div style={{ display: "flex", justifyContent: "flex-start" }}>
               <Label
                 style={{
                   fontSize: "18px",
@@ -1204,7 +1119,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   ? `Career Portal Candidate Questionnaires `
                   : `Interview Questionnaires `}
               </Label>
-            </div> */}
+            </div>
             {/* <Card
               sx={{
                 mb: 2,
@@ -1243,7 +1158,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
               }}
             >
               <Box sx={{ width: "100%", overflow: "visible" }}>
-                {/* <Box sx={{ mb: 2 }}>
+                <Box sx={{ mb: 2 }}>
                   <div className="ms-Grid-row">
                     <div className="ms-Grid-col ms-lg5">
                       <CustomAutoComplete
@@ -1299,96 +1214,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       </Button>
                     </div>
                   </div>
-                </Box> */}
-<Box sx={{ mb: 2 }}>
-  <Card
-    sx={{
-      borderRadius: "4px",
-      borderColor: "#5f5f5f",
-      boxShadow: "0px 0px 4px 4px rgba(0,0,0,.1)",
-    }}
-  >
-    <CardContent>
-      {/* HEADER + ACTIONS */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 2,
-        }}
-      >
-        {/* LEFT SIDE */}
-        <Label
-          style={{
-            fontSize: "18px",
-            color: "black",
-            fontFamily: "Roboto,sans-serif",
-            fontWeight: "600",
-          }}
-        >
-          {props?.stateValue?.StatusId ===
-          StatusId.PendingwithLMcreateDisqualificationQuestion
-            ? "Career Portal Candidate Questionnaires"
-            : "Interview Questionnaires"}
-        </Label>
-
-        {/* RIGHT SIDE BUTTONS */}
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-              textTransform: "none",
-              borderRadius: "4px",
-              fontSize: "14px",
-              fontWeight: 500,
-              boxShadow: "none",
-              "&:hover": {
-                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-              },
-            }}
-            onClick={getFetchQuestion}
-          >
-            View Questions
-          </Button>
-
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-              textTransform: "none",
-              borderRadius: "4px",
-              fontSize: "14px",
-              fontWeight: 500,
-              boxShadow: "none",
-              "&:hover": {
-                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-              },
-            }}
-            onClick={handleNewQuestion}
-          >
-            New Question
-          </Button>
-        </Box>
-      </Box>
-
-      {/* DISCIPLINE DROPDOWN */}
-      <Box sx={{ mt: 2, maxWidth: 350 }}>
-        <CustomParallelfunctionAutoComplete
-          label="Disciplines"
-          options={getMasterData.ScopeOption}
-          value={InterviewQuesData.Disciplines}
-          onChange={(val) => handleAutoComplete("Disciplines", val)}
-          disabled
-          mandatory
-          // error={ValidationError.Disciplines}
-        />
-      </Box>
-    </CardContent>
-  </Card>
-</Box>
+                </Box>
 
                 {existingquestionnaire.length > 0 && (
                   <>
@@ -1658,61 +1484,19 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                           </Box>
                                         )}
 
-                                        {/* Bilingual Question Section - Side by Side with Visual Enhancements */}
-                                        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 2, width: "100%" }}>
-                                          {/* English Question Section */}
-                                          <Box
-                                            sx={{
-                                              // p: 2,
-                                              // border: "1px solid #e0e0e0",
-                                              borderRadius: "4px",
-                                              // backgroundColor: "#f9f9f9",
-                                              width: "100%",
-                                              overflow: "hidden",
-                                            }}
-                                          >
-                                            <Box sx={{ mt: 1, width: "100%" }}>
-                                              <RichTextEditor
-                                                label="Question (English)"
-                                                value={q.question || ""}
-                                                onChange={(val) =>
-                                                  handleQuestionFieldChange(
-                                                    index,
-                                                    "question",
-                                                    val
-                                                  )
-                                                }
-                                                mandatory={true}
-                                              />
-                                            </Box>
-                                          </Box>
-
-                                          {/* French Question Section */}
-                                          <Box
-                                            sx={{
-                                              // p: 2,
-                                              // border: "1px solid #e0e0e0",
-                                              borderRadius: "4px",
-                                              // backgroundColor: "#f9f9f9",
-                                              width: "100%",
-                                              overflow: "hidden",
-                                            }}
-                                          >
-                                            <Box sx={{ mt: 1, width: "100%" }}>
-                                              <RichTextEditor
-                                                label="Question (French)"
-                                                value={q.questionFr || ""}
-                                                onChange={(val) =>
-                                                  handleQuestionFieldChange(
-                                                    index,
-                                                    "questionFr",
-                                                    val
-                                                  )
-                                                }
-                                                mandatory={true}
-                                              />
-                                            </Box>
-                                          </Box>
+                                        <Box sx={{ mb: 2 }}>
+                                          <RichTextEditor
+                                            label="Question"
+                                            value={q.question}
+                                            onChange={(val) =>
+                                              handleQuestionFieldChange(
+                                                index,
+                                                "question",
+                                                val
+                                              )
+                                            }
+                                            mandatory={true}
+                                          />
                                         </Box>
 
                                         {q?.questionType?.text ===
@@ -1737,7 +1521,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                     <Typography
                                                       variant="body1"
                                                       sx={{
-                                                        marginTop: "3%",
                                                         width: "80px",
                                                         fontSize: "14px",
                                                         fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
@@ -1746,36 +1529,17 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       Option {optIndex + 1} *
                                                     </Typography>
 
-                                                    <div style={{ display: "flex", gap: 8, width: "77%" }}>
-                                                      <div style={{ flex: 1 }}>
-                                                        <CustomInput
-                                                          label="Option (EN)"
-                                                          value={option.text}
-                                                          onChange={(val) =>
-                                                            handleQuestionOptionChange(
-                                                              Totalindex - 1,
-                                                              optIndex,
-                                                              val,
-                                                              "en"
-                                                            )
-                                                          }
-                                                        />
-                                                      </div>
-                                                      <div style={{ flex: 1 }}>
-                                                        <CustomInput
-                                                          label="Option (FR)"
-                                                          value={option.textFr || ""}
-                                                          onChange={(val) =>
-                                                            handleQuestionOptionChange(
-                                                              Totalindex - 1,
-                                                              optIndex,
-                                                              val,
-                                                              "fr"
-                                                            )
-                                                          }
-                                                        />
-                                                      </div>
-                                                    </div>
+                                                    <CustomInput
+                                                      label=""
+                                                      value={option.text}
+                                                      onChange={(val) =>
+                                                        handleQuestionOptionChange(
+                                                          Totalindex - 1,
+                                                          optIndex,
+                                                          val
+                                                        )
+                                                      }
+                                                    />
                                                     <Box
                                                       sx={{
                                                         backgroundColor:
@@ -1787,7 +1551,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                         height: 30,
                                                         display: "flex",
                                                         alignItems: "center",
-                                                        marginTop: "3%",
                                                         justifyContent:
                                                           "center",
                                                         cursor: "pointer",
@@ -1825,7 +1588,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                         <Button
                                                           variant="contained"
                                                           sx={{
-                                                              
                                                             backgroundColor:
                                                               ColorCode
                                                                 .ButtonColorCode
@@ -1933,7 +1695,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                           <Button
                                             variant="contained"
                                             sx={{
-                                                
                                               backgroundColor:
                                                 ColorCode.ButtonColorCode
                                                   .ButtonColor,
@@ -1981,44 +1742,32 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       borderColor: "#5f5f5f",
                     }}
                   >
-                    <Box sx={{ display: "flex", gap: 2, alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        cursor: "pointer",
+                      }}
+                    >
                       <Typography
                         variant="subtitle1"
                         fontWeight="medium"
                         sx={{
                           color: " rgb(50, 49, 48)",
-                          fontSize: "16px",
+                          fontSize: "14x",
                           fontFamily: `"Segoe UI", "Segoe UI Web (West European)", 
                          "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                          whiteSpace: "nowrap",
                         }}
                       >
                         Create Question
                       </Typography>
-
-                      {props?.stateValue?.StatusId ===
-                        StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                          <Box sx={{ minWidth: 280 }}>
-                            <CustomAutoComplete
-                              label="Type of Question"
-                              options={getMasterData.QueType}
-                              value={InterviewQuesData.QuestionType}
-                              onChange={(val) => {
-                                void handleAutoComplete("QuestionType", val);
-                                setExpandedQuestionIndex(null);
-                              }}
-                              disabled={false}
-                              mandatory={true}
-                              error={ValidationError.QuestionType}
-                            />
-                          </Box>
-                        )}
                     </Box>
 
                     <>
-                      {/* {props?.stateValue?.StatusId ===
+                      {props?.stateValue?.StatusId ===
                         StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                        <Box sx={{ mb: 2 }}>
+                        <Box>
                           <div className="ms-Grid-row">
                             <div className="ms-Grid-col ms-lg5">
                               <CustomAutoComplete
@@ -2036,53 +1785,17 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                             </div>
                           </div>
                         </Box>
-                      )} */}
-
-                      {/* Bilingual Question Section - Side by Side with Fixed Width */}
-                      <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 2, width: "100%" }}>
-                        {/* English Question Section */}
-                        <Box
-                          sx={{
-                            // p: 2,
-                            // border: "1px solid #e0e0e0",
-                            borderRadius: "4px",
-                            // backgroundColor: "#f9f9f9",
-                            width: "100%",
-                            overflow: "hidden",
-                          }}
-                        >
-                          <Box sx={{ mt: 1, width: "100%" }}>
-                            <RichTextEditor
-                              label="Question (English)"
-                              value={EnglishQuestion}
-                              onChange={handleEnglishQuestion}
-                              mandatory={true}
-                              error={ValidationError.Question}
-                            />
-                          </Box>
-                        </Box>
-
-                        {/* French Question Section */}
-                        <Box
-                          sx={{
-                            // p: 2,
-                            // border: "1px solid #e0e0e0",
-                            borderRadius: "4px",
-                            // backgroundColor: "#f9f9f9",
-                            width: "100%",
-                            overflow: "hidden",
-                          }}
-                        >
-                          <Box sx={{ mt: 1, width: "100%" }}>
-                            <RichTextEditor
-                              label="Question (French)"
-                              value={FrenchQuestion}
-                              onChange={handleFrenchQuestion}
-                              mandatory={true}
-                              error={ValidationError.Question}
-                            />
-                          </Box>
-                        </Box>
+                      )}
+                      <Box sx={{ mb: 2 }}>
+                        <RichTextEditor
+                          label={`Question ${resuequestionnaire.length + 1}`}
+                          value={InterviewQuesData.Question}
+                          onChange={(val) =>
+                            handleRichTextEditor(val, "Question")
+                          }
+                          mandatory={true}
+                          error={ValidationError.Question}
+                        />
                       </Box>
 
                       {/* {[
@@ -2112,28 +1825,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                     Option {index + 1} *
                                   </Typography>
 
-                                  <div style={{ display: "flex", gap: 8, width: "60%" }}>
-                                    <div style={{ flex: 1 }}>
-                                      <CustomInput
-                                        label="Option (EN)"
-                                        value={option.text}
-                                        onChange={(val) =>
-                                          handleOptionChange(index, val, "en")
-                                        }
-                                        placeHolder="Option in English"
-                                      />
-                                    </div>
-                                    <div style={{ flex: 1 }}>
-                                      <CustomInput
-                                        label="Option (FR)"
-                                        value={option.textFr || ""}
-                                        onChange={(val) =>
-                                          handleOptionChange(index, val, "fr")
-                                        }
-                                        placeHolder="Option en Français"
-                                      />
-                                    </div>
-                                  </div>
+                                  <CustomInput
+                                    label=""
+                                    value={option.text}
+                                    onChange={(val) =>
+                                      handleOptionChange(index, val)
+                                    }
+                                  />
 
                                   <Box
                                     sx={{
@@ -2247,7 +1945,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       ].includes(
                         InterviewQuesData.QuestionType?.text?.trim() || ""
                       ) ? (
-                        <Box sx={{ mb: 3 }}>
+                        <Box sx={{ mb: 2 }}>
                           {OptionsType && OptionsType.length > 0 ? (
                             OptionsType.map((option, index) => {
                               const isSelected = option.isCorrect;
@@ -2258,87 +1956,26 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                     sx={{
                                       display: "flex",
                                       alignItems: "center",
-                                      justifyContent: "flex-start",
                                       mb: 2,
                                       gap: 1,
                                     }}
                                   >
                                     <Typography
                                       variant="body1"
-                                      sx={{ minWidth: 80, marginTop: 0, textAlign: "right", pr: 1 }}
+                                      sx={{ width: "80px", marginTop: "2%" }}
                                     >
                                       Option {index + 1} *
                                     </Typography>
 
-                                    <div style={{ display: "flex", gap: 8, width: "77%" }}>
-                                      <div style={{ flex: 1 }}>
-                                        <CustomInput
-                                          label="Option (EN)"
-                                          placeHolder="Enter your text (maximum 155 characters)"
-                                          value={option.text}
-                                          onChange={(val) =>
-                                            handleOptionChange(index, val, "en")
-                                          }
-                                        />
-                                        {option.textvalidation && (
-                                          <p
-                                            style={{
-                                              marginTop: 5,
-                                              color: "red",
-                                              fontSize: 12,
-                                              marginLeft: 0,
-                                            }}
-                                          >
-                                            English input is too long. Please reduce to 155 characters or fewer.
-                                          </p>
-                                        )}
-                                        {option.fieldValidation && (
-                                          <p
-                                            style={{
-                                              marginTop: 5,
-                                              color: "red",
-                                              fontSize: 12,
-                                              marginLeft: 0,
-                                            }}
-                                          >
-                                            English field is required
-                                          </p>
-                                        )}
-                                      </div>
-                                      <div style={{ flex: 1 }}>
-                                        <CustomInput
-                                          label="Option (FR)"
-                                          placeHolder="Entrez le texte (maximum 155 caractères)"
-                                          value={option.textFr || ""}
-                                          onChange={(val) =>
-                                            handleOptionChange(index, val, "fr")
-                                          }
-                                        />
-                                        {option.textvalidationFr && (
-                                          <p
-                                            style={{
-                                              marginTop: 5,
-                                              color: "red",
-                                              fontSize: 12,
-                                              marginLeft: 0,
-                                            }}
-                                          >
-                                            French input is too long. Please reduce to 155 characters or fewer.
-                                          </p>
-                                        )}
-                                        {option.fieldValidationFr && (
-                                          <p
-                                            style={{
-                                              marginTop: 5,
-                                              color: "red",
-                                              fontSize: 12,
-                                              marginLeft: 0,
-                                            }}
-                                          >
-                                            French field is required
-                                          </p>
-                                        )}
-                                      </div>
+                                    <div style={{ width: "42%" }}>
+                                      <CustomInput
+                                        label=""
+                                        placeHolder="Enter your text (maximum 155 characters)"
+                                        value={option.text}
+                                        onChange={(val) =>
+                                          handleOptionChange(index, val)
+                                        }
+                                      />
                                     </div>
 
                                     <Box
@@ -2357,7 +1994,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                           ? "0px 0px 5px rgba(0, 128, 0, 0.5)"
                                           : "0px 0px 5px rgba(0, 0, 0, 0.2)",
                                         transition: "all 0.3s ease-in-out",
-                                        marginTop: option.textvalidation || option.textvalidationFr ? 0 : "3%",
+                                        marginTop: "2%",
                                       }}
                                       onClick={() =>
                                         handleAnswerSelections(index)
@@ -2386,14 +2023,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                       sx={{
                                         display: "flex",
                                         gap: 1,
-                                        marginTop: option.textvalidation || option.textvalidationFr ? 0 : "3%",
+                                        marginTop: "2%",
                                       }}
                                     >
                                       {OptionsType.length > 1 && (
                                         <Button
                                           variant="contained"
                                           sx={{
-                                              
                                             backgroundColor:
                                               ColorCode.ButtonColorCode
                                                 .ButtonColor,
@@ -2418,7 +2054,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                         <Button
                                           variant="contained"
                                           sx={{
-                                              
                                             backgroundColor:
                                               ColorCode.ButtonColorCode
                                                 .ButtonColor,
@@ -2438,6 +2073,31 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                       )}
                                     </Box>
                                   </Box>
+                                  {option.textvalidation && (
+                                    <p
+                                      style={{
+                                        marginTop: 5,
+                                        color: "red",
+                                        fontSize: 12,
+                                        marginLeft: 0,
+                                      }}
+                                    >
+                                      Your input is too long. Please reduce to
+                                      155 characters or fewer.
+                                    </p>
+                                  )}
+                                  {option.fieldValidation && (
+                                    <p
+                                      style={{
+                                        marginTop: 5,
+                                        color: "red",
+                                        fontSize: 12,
+                                        marginLeft: 0,
+                                      }}
+                                    >
+                                      Field is Required
+                                    </p>
+                                  )}
                                 </>
                               );
                             })
@@ -2733,12 +2393,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     }));
 
     const QuestionairesData = [...resuequestionnaire, ...adjustedQuestions];
-    console.log("Submitting questions payload:", {
-      InterviewQuesData,
-      EnglishQuestion,
-      FrenchQuestion,
-      QuestionairesData,
-    });
     let IsVaild =
       InterviewQuesData.Catogry === CatogryOptionCode.CareerPortalCandidate
         ? QuestionairesData.length >= 5
@@ -2781,14 +2435,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           OptionsValue =
             item.options?.map((opt, index) => ({
               optionEn: opt.text,
-              optionFr: opt.textFr || opt.text,
+              optionFr: opt.text,
               sequence: index + 1,
             })) || [];
 
           answerValue =
             item.CareerportalAnswer?.map((ans) => ({
               optionEn: ans.text,
-              optionFr: ans.textFr || ans.text,
+              optionFr: ans.text,
             })) || [];
         } else {
           OptionsValue = [
@@ -2829,7 +2483,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
         return {
           questionEn: decodeBase64(item.question),
-          questionFr: decodeBase64(item.question || item.question),
+          questionFr: decodeBase64(item.question),
           scopeId: scopeId,
           categoryId: String(category?.key),
           // questionTypeId: String(item.questionType.key),
@@ -2846,8 +2500,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           answers: answerValue,
         };
       });
-
-        console.log("Mapped QuestionValue to send to API:", QuestionValue);
 
       const response = await GetPortalJobsService.UpsertQuestions(
         QuestionValue

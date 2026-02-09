@@ -17,6 +17,7 @@ export type ViewQuestion = {
   discipline: AutoCompleteItem;
   questionType: AutoCompleteItem;
   question: string;
+  questionFr?: string; 
   expectedAnswer: any;
   options?: OptionRow[];
   Disqualification: string;
