@@ -1,13 +1,14 @@
+
 import * as React from "react";
-import LabelHeaderComponents from "../../components/TitleHeader";
-import SignatureCheckbox from "../../components/SignatureCheckbox";
-import { AutoCompleteItem } from "../../Models/Screens";
-import { OptionRow } from "../ReviewProfile/InterviewQuesEdit";
-import ReuseButton from "../../components/ReuseButton";
-import { ColorCode } from "../../utilities/Config";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import SignatureCheckbox from "../../components/SignatureCheckbox";
+import LabelHeaderComponents from "../../components/TitleHeader";
+import ReuseButton from "../../components/ReuseButton";
+import { ColorCode } from "../../utilities/Config";
 import { ButtonAction } from "../../utilities/LabelName";
+import { AutoCompleteItem } from "../../Models/Screens";
+import { OptionRow } from "../ReviewProfile/InterviewQuesEdit";
 
 export type ViewQuestion = {
   id: number;
@@ -34,6 +35,16 @@ interface FormFields {
   onClose: () => void;
 }
 
+const badgeStyle = (bg: string, color: string) => ({
+  backgroundColor: bg,
+  color,
+  padding: "4px 10px",
+  borderRadius: "4px",
+  fontSize: "12px",
+  marginLeft: "6px",
+  fontWeight: 600,
+});
+
 function ViewQuestionCheckbox({
   questionnaire,
   Disciplines,
@@ -42,217 +53,211 @@ function ViewQuestionCheckbox({
   onClose,
 }: FormFields) {
   return (
-    <>
-      <div className="ms-Grid-row">
-        <div
-          style={{
-            overflow: "auto",
-            height: "calc(-158px + 94vh)",
-            width: "99%",
-            willChange: "transform",
-          }}
-        >
-          <Card
-            variant="outlined"
-            sx={{
-              boxShadow: "0px 2px 4px 3px #d3d3d3",
-              marginTop: "2%",
-              width: "97%",
-              marginLeft: "2%",
-              minHeight: "80vh",
+    <div style={{ padding: "2%" }}>
+      <Card
+        sx={{
+          width: "100%",
+          height: "calc(80vh - 120px)",
+          boxShadow: "0px 2px 4px 3px #d3d3d3",
+        }}
+      >
+        <CardContent sx={{ height: "100%", padding: 2 }}>
+          <div style={{ textAlign: "center", marginBottom: 16 }}>
+            <LabelHeaderComponents value={`Disciplines - ${Disciplines}`} />
+            <LabelHeaderComponents value="Questions and Answers" />
+          </div>
+
+          <div
+            style={{
+              height: "calc(100% - 140px)",
+              overflowY: "auto",
+              overflowX: "hidden",
+              paddingRight: "8px",
             }}
           >
-            <CardContent>
-              <div style={{ padding: "2%" }}>
-                <div className="ms-Grid-row" style={{ textAlign: "center" }}>
-                  <LabelHeaderComponents
-                    value={"Disciplines  - " + Disciplines}
-                  />
-                </div>
-                <div className="ms-Grid-row" style={{ textAlign: "center" }}>
+            {questionnaire.length === 0 ? (
+              <p
+                style={{
+                  textAlign: "center",
+                  color: "gray",
+                  fontWeight: "bold",
+                }}
+              >
+                No Questions and Answers are found
+              </p>
+            ) : (
+              questionnaire.map((q, index) => (
+                <div
+                  key={q.id}
+                  style={{
+                    border: "1px solid #e0e0e0",
+                    borderRadius: "6px",
+                    padding: "9px",
+                    marginBottom: "16px",
+                  }}
+                >
                   <div
-                    className="ms-Grid-col ms-lg12"
-                    style={{ fontSize: "22px" }}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
                   >
-                    <LabelHeaderComponents value="Questions and Answers" />
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <SignatureCheckbox
+                        checked={q.Checked}
+                        onChange={(value) => handleCheckbox(q.id, value)}
+                      />
+                      <strong
+                      //  style={{ marginLeft: 8 }}
+                      >
+                        QUESTION {index + 1}
+                      </strong>
+                    </div>
+
+                    <div>
+                      {q.Disqualification && (
+                        <span style={badgeStyle("#fdecea", "#d93025")}>
+                          {q.Disqualification === "Yes"
+                            ? "Disqualifying"
+                            : q.Disqualification}
+                        </span>
+                      )}
+                      {q.Type && (
+                        <span style={badgeStyle("#e8f0fe", "#1a73e8")}>
+                          {q.Type}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="ms-Grid-row">
-                  <div style={{ marginTop: "20px" }}>
-                    {questionnaire.length === 0 ? (
-                      <p
+
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: "24px",
+                      marginTop: "16px",
+                    }}
+                  >
+                    <div>
+                      <span
                         style={{
-                          fontSize: "15px",
-                          fontWeight: "bold",
-                          color: "gray",
-                          textAlign: "center",
+                          fontSize: 12,
+                          color: "#6b7280",
+                          display: "block",
+                          marginBottom: "8px",
                         }}
                       >
-                        No Questions and Answers are found
-                      </p>
-                    ) : (
-                      questionnaire.map((q, index) => (
-                        // <div key={q.id} style={{ marginBottom: "15px" }}>
-                        //   <h3 style={{ fontWeight: "bold" }}>
-                        //     <div>
-                        //       <SignatureCheckbox
-                        //         label={""}
-                        //         checked={q.Checked === true}
-                        //         onChange={(value: boolean) =>
-                        //           handleCheckbox(q.id, value)
-                        //         }
-                        //       />
-                        //       <span>Q{index + 1}:</span>
+                        QUESTION ENGLISH
+                      </span>
 
-                        //       <span
-                        //         style={{
-                        //           display: "inline-block",
-                        //           marginLeft: "1%",
-                        //         }}
-                        //         dangerouslySetInnerHTML={{
-                        //           __html: `${
-                        //             q.question
-                        //               ? q?.question
-                        //                   .replace(/<p>/gi, "")
-                        //                   .replace(/<\/p>/gi, "")
-                        //                   .replace(/<br\s*\/?>/gi, "")
-                        //                   .trim()
-                        //               : ""
-                        //           }`,
-                        //         }}
-                        //       />
-                        //     </div>
-                        //   </h3>
-                        //   <p>
-                        //     <strong>Expected Answer:</strong>
-                        //     {q.expectedAnswer
-                        //       .map((item: any, index: number) => (
-                        //         <span
-                        //           key={index}
-                        //           dangerouslySetInnerHTML={{
-                        //             __html: item
-                        //               ? item
-                        //                   .replace(/<p>/gi, "")
-                        //                   .replace(/<\/p>/gi, "")
-                        //                   .replace(/<br\s*\/?>/gi, "")
-                        //                   .trim()
-                        //               : "",
-                        //           }}
-                        //         />
-                        //       ))
-                        //       .reduce((prev: any, curr: any) => [
-                        //         prev,
-                        //         " , ",
-                        //         curr,
-                        //       ])}
-                        //   </p>
-                        // </div>
-                        <div key={q.id} style={{ marginBottom: "20px" }}>
+                      <div
+                        style={{
+                          fontWeight: 600,
+                          marginBottom: "12px",
+                          lineHeight: "1.6",
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html: q.question
+                            ?.replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
+                            .trim(),
+                        }}
+                      />
 
-                          {/* ENGLISH */}
-                          <div style={{ marginBottom: "10px" }}>
-                            <span style={{ color: "gray", fontWeight: 600 }}>ENGLISH</span>
+                      <div
+                        style={{
+                          backgroundColor: "#f8fafc",
+                          padding: "12px",
+                          borderRadius: "6px",
+                        }}
+                      >
+                        <strong
+                          style={{ display: "block", marginBottom: "4px" }}
+                        >
+                          Expected Answer
+                        </strong>
+                        <div>{q.expectedAnswer?.join(", ")}</div>
+                      </div>
+                    </div>
 
-                            <h3 style={{ fontWeight: "bold" }}>
-                              <SignatureCheckbox
-                                label=""
-                                checked={q.Checked === true}
-                                onChange={(value: boolean) => handleCheckbox(q.id, value)}
-                              />
+                    {q.questionFr && (
+                     <div>
+  <span
+    style={{
+      fontSize: 12,
+      color: "#6b7280",
+      display: "block",
+      marginBottom: "8px",
+    }}
+  >
+    QUESTION FRANÇAISE
+  </span>
 
-                              <span>Q{index + 1}: </span>
+  <div
+    style={{
+      fontWeight: 600,
+      marginBottom: "12px",
+      lineHeight: "1.6",
+    }}
+    dangerouslySetInnerHTML={{
+      __html: q.questionFr
+        ?.replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
+        .trim(),
+    }}
+  />
 
-                              <span
-                                dangerouslySetInnerHTML={{
-                                  __html: q.question
-                                    ?.replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
-                                    ?.trim(),
-                                }}
-                              />
-                            </h3>
+  <div
+    style={{
+      backgroundColor: "#f8fafc",
+      padding: "12px",
+      borderRadius: "6px",
+    }}
+  >
+    <strong style={{ display: "block", marginBottom: "4px" }}>
+      Expected Answer
+    </strong>
+    <div>{q.expectedAnswerFr?.join(", ")}</div>
+  </div>
+</div>
 
-                            <p>
-                              <strong>Expected Answer: </strong>
-                              {q.expectedAnswer?.join(", ")}
-                            </p>
-                          </div>
-
-                          {/* FRENCH */}
-                          {q.questionFr && (
-                            <div>
-                              <span style={{ color: "gray", fontWeight: 600 }}>FRANÇAIS</span>
-
-                              <h3
-                                style={{ position: "relative", left: "4%" }}
-                                dangerouslySetInnerHTML={{
-                                  __html: `Q${index + 1}: ${q.questionFr
-                                    ?.replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
-                                    ?.trim()}`,
-                                }}
-                              />
-
-                              <p>
-                                <strong>Expected Answer: </strong>
-                                {q.expectedAnswerFr?.join(", ")}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-
-                      ))
                     )}
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              ))
+            )}
+          </div>
 
-        <div
-          className="ms-Grid-row"
-          style={{ marginBottom: "2%", marginTop: "1%", marginRight: "1%" }}
-        >
           <div
-            className="ms-Grid-col ms-lg12"
-            style={{ display: "flex", justifyContent: "flex-end" }}
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 10,
+              marginTop: 12,
+            }}
           >
-            <div className="ms-Grid-col ms-lg1" style={{ marginRight: "10px" }}>
+            <ReuseButton
+              label={ButtonAction.Back}
+              onClick={onClose}
+              Style={{
+                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                color: "white",
+              }}
+            />
+
+            {questionnaire.length > 0 && (
               <ReuseButton
-                label={ButtonAction.Back}
-                onClick={onClose}
+                label="Reuse"
+                onClick={Reusequestion_fn}
                 Style={{
                   backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
                   color: "white",
-                  width: "50%",
                 }}
               />
-            </div>
-            {questionnaire.length === 0 ? (
-              <></>
-            ) : (
-              <>
-                <div
-                  className="ms-Grid-col ms-lg1"
-                  style={{ marginRight: "10px" }}
-                >
-                  <ReuseButton
-                    label="Reuse"
-                    onClick={async () => {
-                      Reusequestion_fn();
-                    }}
-                    Style={{
-                      backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                      color: "white",
-                      width: "50%",
-                    }}
-                  />
-                </div>
-              </>
             )}
           </div>
-        </div>
-      </div>
-    </>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
