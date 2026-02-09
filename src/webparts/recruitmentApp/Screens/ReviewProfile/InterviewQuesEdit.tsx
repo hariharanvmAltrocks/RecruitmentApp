@@ -98,7 +98,9 @@ interface QuestionItem {
   };
   questionType: AutoCompleteItem;
   question: string;
+  questionFr: string;
   expectedAnswer: string;
+  expectedAnswerFr?: string;
   CareerportalAnswer: OptionRow[];
   options?: OptionRow[];
   Disqualification: string;
@@ -2799,8 +2801,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   : decodeBase64(item.expectedAnswer),
               optionFr:
                 item?.Type === DataType.Existing
-                  ? decodeBase64(item.expectedAnswer[0])
-                  : decodeBase64(item.expectedAnswer),
+                  ? decodeBase64(item.expectedAnswer?.[0] || item.expectedAnswer[0])
+                  : decodeBase64(item.expectedAnswer || item.expectedAnswer),
               sequence: 1,
             },
           ];
@@ -2813,8 +2815,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   : decodeBase64(item.expectedAnswer),
               optionFr:
                 item?.Type === DataType.Existing
-                  ? decodeBase64(item.expectedAnswer[0])
-                  : decodeBase64(item.expectedAnswer),
+                  ? decodeBase64(item.expectedAnswerFr?.[0] || item.expectedAnswerFr[0])
+                  : decodeBase64(item.expectedAnswerFr || item.expectedAnswer),
             },
           ];
         }
@@ -2829,7 +2831,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
         return {
           questionEn: decodeBase64(item.question),
-          questionFr: decodeBase64(item.question || item.question),
+          questionFr: decodeBase64(item.questionFr||item.question),
           scopeId: scopeId,
           categoryId: String(category?.key),
           // questionTypeId: String(item.questionType.key),
@@ -2984,6 +2986,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     const ExistingQuestion = SelectedQuestions.map((item) => ({
       ...item,
       Type: DataType.Existing,
+      // Preserve both English and French data
+      question: item.question,
+      questionFr: item.questionFr,
+      expectedAnswer: item.expectedAnswer,
+      expectedAnswerFr: item.expectedAnswerFr,
     }));
     const lastResueId =
       resuequestionnaire.length > 0
@@ -3023,6 +3030,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           header: "Q" + incrementedIndex,
           HeaderLabel: `Question ${incrementedIndex}`,
           Type: item.Type,
+          // Ensure both English and French data are preserved
+          question: item.question,
+          questionFr: item.questionFr,
+          expectedAnswer: item.expectedAnswer,
+          expectedAnswerFr: item.expectedAnswerFr,
         };
       }
     );

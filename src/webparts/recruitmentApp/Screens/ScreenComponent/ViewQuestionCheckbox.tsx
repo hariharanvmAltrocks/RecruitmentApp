@@ -17,12 +17,13 @@ export type ViewQuestion = {
   discipline: AutoCompleteItem;
   questionType: AutoCompleteItem;
   question: string;
-  questionFr?: string; 
+  questionFr?: string;
   expectedAnswer: any;
   options?: OptionRow[];
   Disqualification: string;
   CareerportalAnswer: OptionRow[];
   Type?: string;
+  expectedAnswerFr?: any;
 };
 
 interface FormFields {
@@ -91,61 +92,113 @@ function ViewQuestionCheckbox({
                       </p>
                     ) : (
                       questionnaire.map((q, index) => (
-                        <div key={q.id} style={{ marginBottom: "15px" }}>
-                          <h3 style={{ fontWeight: "bold" }}>
-                            <div>
+                        // <div key={q.id} style={{ marginBottom: "15px" }}>
+                        //   <h3 style={{ fontWeight: "bold" }}>
+                        //     <div>
+                        //       <SignatureCheckbox
+                        //         label={""}
+                        //         checked={q.Checked === true}
+                        //         onChange={(value: boolean) =>
+                        //           handleCheckbox(q.id, value)
+                        //         }
+                        //       />
+                        //       <span>Q{index + 1}:</span>
+
+                        //       <span
+                        //         style={{
+                        //           display: "inline-block",
+                        //           marginLeft: "1%",
+                        //         }}
+                        //         dangerouslySetInnerHTML={{
+                        //           __html: `${
+                        //             q.question
+                        //               ? q?.question
+                        //                   .replace(/<p>/gi, "")
+                        //                   .replace(/<\/p>/gi, "")
+                        //                   .replace(/<br\s*\/?>/gi, "")
+                        //                   .trim()
+                        //               : ""
+                        //           }`,
+                        //         }}
+                        //       />
+                        //     </div>
+                        //   </h3>
+                        //   <p>
+                        //     <strong>Expected Answer:</strong>
+                        //     {q.expectedAnswer
+                        //       .map((item: any, index: number) => (
+                        //         <span
+                        //           key={index}
+                        //           dangerouslySetInnerHTML={{
+                        //             __html: item
+                        //               ? item
+                        //                   .replace(/<p>/gi, "")
+                        //                   .replace(/<\/p>/gi, "")
+                        //                   .replace(/<br\s*\/?>/gi, "")
+                        //                   .trim()
+                        //               : "",
+                        //           }}
+                        //         />
+                        //       ))
+                        //       .reduce((prev: any, curr: any) => [
+                        //         prev,
+                        //         " , ",
+                        //         curr,
+                        //       ])}
+                        //   </p>
+                        // </div>
+                        <div key={q.id} style={{ marginBottom: "20px" }}>
+
+                          {/* ENGLISH */}
+                          <div style={{ marginBottom: "10px" }}>
+                            <span style={{ color: "gray", fontWeight: 600 }}>ENGLISH</span>
+
+                            <h3 style={{ fontWeight: "bold" }}>
                               <SignatureCheckbox
-                                label={""}
+                                label=""
                                 checked={q.Checked === true}
-                                onChange={(value: boolean) =>
-                                  handleCheckbox(q.id, value)
-                                }
+                                onChange={(value: boolean) => handleCheckbox(q.id, value)}
                               />
-                              <span>Q{index + 1}:</span>
+
+                              <span>Q{index + 1}: </span>
 
                               <span
-                                style={{
-                                  display: "inline-block",
-                                  marginLeft: "1%",
-                                }}
                                 dangerouslySetInnerHTML={{
-                                  __html: `${
-                                    q.question
-                                      ? q?.question
-                                          .replace(/<p>/gi, "")
-                                          .replace(/<\/p>/gi, "")
-                                          .replace(/<br\s*\/?>/gi, "")
-                                          .trim()
-                                      : ""
-                                  }`,
+                                  __html: q.question
+                                    ?.replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
+                                    ?.trim(),
                                 }}
                               />
+                            </h3>
+
+                            <p>
+                              <strong>Expected Answer: </strong>
+                              {q.expectedAnswer?.join(", ")}
+                            </p>
+                          </div>
+
+                          {/* FRENCH */}
+                          {q.questionFr && (
+                            <div>
+                              <span style={{ color: "gray", fontWeight: 600 }}>FRANÇAIS</span>
+
+                              <h3
+                                style={{ position: "relative", left: "4%" }}
+                                dangerouslySetInnerHTML={{
+                                  __html: `Q${index + 1}: ${q.questionFr
+                                    ?.replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
+                                    ?.trim()}`,
+                                }}
+                              />
+
+                              <p>
+                                <strong>Expected Answer: </strong>
+                                {q.expectedAnswerFr?.join(", ")}
+                              </p>
                             </div>
-                          </h3>
-                          <p>
-                            <strong>Expected Answer:</strong>
-                            {q.expectedAnswer
-                              .map((item: any, index: number) => (
-                                <span
-                                  key={index}
-                                  dangerouslySetInnerHTML={{
-                                    __html: item
-                                      ? item
-                                          .replace(/<p>/gi, "")
-                                          .replace(/<\/p>/gi, "")
-                                          .replace(/<br\s*\/?>/gi, "")
-                                          .trim()
-                                      : "",
-                                  }}
-                                />
-                              ))
-                              .reduce((prev: any, curr: any) => [
-                                prev,
-                                " , ",
-                                curr,
-                              ])}
-                          </p>
+                          )}
                         </div>
+
                       ))
                     )}
                   </div>
