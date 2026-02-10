@@ -703,6 +703,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           header: "Q" + incrementedIndex,
           HeaderLabel: "Question" + incrementedIndex,
           discipline: item?.question?.scopeId,
+          scope: item?.question?.questionType?.displayText,
           questionType: item?.question?.questionTypeId,
           question: question,
           questionFr: questionFr,

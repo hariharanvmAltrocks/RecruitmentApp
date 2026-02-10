@@ -11,6 +11,7 @@ import { AutoCompleteItem } from "../../Models/Screens";
 import { OptionRow } from "../ReviewProfile/InterviewQuesEdit";
 
 export type ViewQuestion = {
+  scope?: string;
   id: number;
   Checked: boolean;
   header?: string;
@@ -25,6 +26,7 @@ export type ViewQuestion = {
   CareerportalAnswer: OptionRow[];
   Type?: string;
   expectedAnswerFr?: any;
+  
 };
 
 interface FormFields {
@@ -53,13 +55,21 @@ function ViewQuestionCheckbox({
   onClose,
 }: FormFields) {
   return (
-    <div style={{ padding: "2%" }}>
+       <div className="ms-Grid-row">
+        <div style={{
+            overflow: "auto",
+            height: "calc(-158px + 94vh)",
+            width: "99%",
+            willChange: "transform",
+          }}>
       <Card
-        sx={{
-          width: "100%",
-          height: "calc(80vh - 120px)",
-          boxShadow: "0px 2px 4px 3px #d3d3d3",
-        }}
+       sx={{
+              boxShadow: "0px 2px 4px 3px #d3d3d3",
+              marginTop: "2%",
+              width: "97%",
+              marginLeft: "2%",
+              minHeight: "80vh",
+            }}
       >
         <CardContent sx={{ height: "100%", padding: 2 }}>
           <div style={{ textAlign: "center", marginBottom: 16 }}>
@@ -116,18 +126,16 @@ function ViewQuestionCheckbox({
                     </div>
 
                     <div>
-                      {q.Disqualification && (
-                        <span style={badgeStyle("#fdecea", "#d93025")}>
-                          {q.Disqualification === "Yes"
-                            ? "Disqualifying"
-                            : q.Disqualification}
+                      {q.scope && (
+                        <span style={badgeStyle("#e8f0fe", "1a73e8")}>
+                          {q.scope}
                         </span>
                       )}
-                      {q.Type && (
+                      {/* {q.Type && (
                         <span style={badgeStyle("#e8f0fe", "#1a73e8")}>
                           {q.Type}
                         </span>
-                      )}
+                      )} */}
                     </div>
                   </div>
 
@@ -244,7 +252,7 @@ function ViewQuestionCheckbox({
               }}
             />
 
-            {questionnaire.length > 0 && (
+            { questionnaire.some(q => q.Checked) && (
               <ReuseButton
                 label="Reuse"
                 onClick={Reusequestion_fn}
@@ -257,7 +265,8 @@ function ViewQuestionCheckbox({
           </div>
         </CardContent>
       </Card>
-    </div>
+    </div></div>
+    
   );
 }
 
