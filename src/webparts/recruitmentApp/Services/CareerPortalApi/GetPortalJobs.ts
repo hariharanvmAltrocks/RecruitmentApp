@@ -1230,4 +1230,25 @@ export default class GetPortalJobs implements IGetPortalJobs {
     }
   }
 
+  async GetJobAppliedCount(data: string[]): Promise<ApiResponse<any | null>> {
+    try {
+      const response = await getProfileData.GetJobAppliedCount(data);
+      return {
+        data: response.data,
+        status: response.status,
+        message: response.data.message,
+      };
+    } catch (error) {
+      console.error(
+        "Error inserting data into AdvertisementDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+
 }

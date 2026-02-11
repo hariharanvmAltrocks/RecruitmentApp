@@ -14,7 +14,7 @@ import { sp } from "@pnp/sp/presets/all";
 import { CommonServices, GetPortalJobsService, getVRRDetails, InterviewServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import * as moment from "moment";
-import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
+import { AdvertisementDetails, Descriptions, FilterItem, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 import { AutoCompleteItem, InterviewPanelItem, InterviewPanelMember, tooltipInterviewPanel } from "../../Models/Screens";
 import { ActionName } from "../../utilities/LabelName";
 
@@ -209,7 +209,8 @@ export default class RecruitmentService implements IRecruitmentService {
               AssignHOD: "",
 
               QuestionByHR: "",
-              QuestionByLM: ""
+              QuestionByLM: "",
+              JobAppliedCount: ""
             };
             return item;
           })
@@ -360,6 +361,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
               QuestionByHR: "",
               QuestionByLM: "",
+              JobAppliedCount: ""
             };
             return NPData;
           })
@@ -534,6 +536,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
               QuestionByHR: "",
               QuestionByLM: "",
+              JobAppliedCount: ""
             };
             return VRRData;
           })
@@ -764,7 +767,8 @@ export default class RecruitmentService implements IRecruitmentService {
 
   async GetRecruitmentDetails(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
+    JobAppliedCountFilter?: string[]
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>> {
     let GridResult: DataSyncToRecruitmentResponse[] = []
     try {
@@ -781,7 +785,34 @@ export default class RecruitmentService implements IRecruitmentService {
 
       if (res.length > 0) {
         GridResult = await Promise.all(
-          res.map((item, index) => {
+          res.map(async (item, index) => {
+            let JobCodeFilter = [
+              {
+                FilterKey: "JobCodeId",
+                Operator: "eq",
+                FilterValue: String(item?.JobCode?.ID),
+              },
+              { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+            ];
+            let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
+              JobCodeFilter,
+              "and",
+            );
+            let FilterValue: FilterItem = {
+              jobCode: JobUniqueValue?.data[0]?.JobUniqueKey,
+              workflowStausId: JobAppliedCountFilter || [],
+              pagination: {
+                filterValue: "",
+                sortBy: "",
+                sortOrder: 0,
+                pageSize: 10000,
+                currentPage: 0,
+                totalItems: 0,
+              },
+            };
+            let JobAppliedCount = await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
+            console.log(JobAppliedCount, "JobAppliedCount");
+
             let Recruitment: DataSyncToRecruitmentResponse = {
               ID: item.ID,
               RecordID: index + 1,
@@ -833,22 +864,24 @@ export default class RecruitmentService implements IRecruitmentService {
               AssignLineManagerId: item?.AssignLineManagerId || 0,
               ReasonForVacancy: item?.ReasonForVacancy || "",
 
-              JobPostingStartDate: item?.JobPostingStartDate || undefined,
-              JobPostingEndDate: item?.JobPostingEndDate || undefined,
-              JobPostingFirstExtensionEndDate: item?.JobPostingFirstExtensionEndDate || undefined,
-              JobPostingSecondExtensionEndDate: item?.JobPostingSecondExtensionEndDate || undefined,
+              JobPostingStartDate: item?.JobPostingStartDate ? moment(item?.JobPostingStartDate).format("YYYY-MM-DD") : undefined,
+              JobPostingEndDate: item?.JobPostingEndDate ? moment(item?.JobPostingEndDate).format("YYYY-MM-DD") : undefined,
+              JobPostingFirstExtensionEndDate: item?.JobPostingFirstExtensionEndDate ? moment(item?.JobPostingFirstExtensionEndDate).format("YYYY-MM-DD") : undefined,
+              JobPostingSecondExtensionEndDate: item?.JobPostingSecondExtensionEndDate ? moment(item?.JobPostingSecondExtensionEndDate).format("YYYY-MM-DD") : undefined,
 
               AssignEMail: item?.AssignedHR,
               AssignHOD: item?.HOD,
               AssignHRLead: item?.RecruitmentHRLead || "",
 
               QuestionByHR: item?.QuestionByHR || "",
-              QuestionByLM: item?.QuestionByLM || ""
+              QuestionByLM: item?.QuestionByLM || "",
+              JobAppliedCount: String(JobAppliedCount.data?.length)
             };
             return Recruitment;
 
           })
         );
+
         const ids = GridResult.map((item) => item.ID).filter((id => id));
         const Arrayofarray = SPServices.ArraySpiltInOperator(
           ids,
@@ -2310,16 +2343,19 @@ export default class RecruitmentService implements IRecruitmentService {
           const interviewDate =
             candidate?.InterviewDateLevel2 || candidate?.InterviewDate || "";
 
-          const interviewTime =
-            candidate?.InterviewTimeLevel2 || candidate?.InterviewTime || "";
+          // const interviewTime =
+          //   candidate?.InterviewTimeLevel2 || candidate?.InterviewTime || "";
 
-          const interviewDateTime =
-            interviewDate && interviewTime
-              ? moment(
-                `${interviewDate} ${interviewTime}`,
-                "YYYY-MM-DD HH:mm"
-              ).format("DD-MMM-YYYY hh:mm A")
-              : "";
+          // const interviewDateTime =
+          //   interviewDate && interviewTime
+          //     ? moment(
+          //       `${interviewDate} ${interviewTime}`,
+          //       "YYYY-MM-DD HH:mm"
+          //     ).format("DD-MMM-YYYY hh:mm A")
+          //     : "";
+
+          const interviewDateTime = moment(interviewDate).format("YYYY-MM-DD");
+
 
           return {
             SNO: candidate?.SNO ?? "",

@@ -68,8 +68,8 @@ export function GetRoleKeysArray(array: any[]): number[] {
 export function GetStatusIdRoles(StatusIds: number) {
   switch (StatusIds) {
     case StatusId.ReadyforRecruitmentProcess:
-    case StatusId.PendingwithHRLeadtoAssignRecruitmentHR:
-    case StatusId.PendingwithHRLeadtouploadONEMsigneddoc:
+      // case StatusId.PendingwithHRLeadtoAssignRecruitmentHR:
+      // case StatusId.PendingwithHRLeadtouploadONEMsigneddoc:
       return RoleID.RecruitmentHRLead;
     case StatusId.PendingwithRecruitmentHRtouploadAdv:
       return RoleID.RecruitmentHR;
@@ -331,3 +331,6 @@ export const DetailRow = ({
     </div>
   </div>
 );
+
+export const toDate = (value?: string): Date | undefined =>
+  value ? new Date(value) : undefined;

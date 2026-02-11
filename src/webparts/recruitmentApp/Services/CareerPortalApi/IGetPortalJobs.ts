@@ -121,4 +121,5 @@ export type IGetPortalJobs = {
     fetchCOIAttachment(DocumentName: COIAttach): Promise<ApiResponse<any>>;
     GetUpsertCOI(data: COIType): Promise<ApiResponse<any | null>>;
     SendEmailNotification(data: sendEmail): Promise<ApiResponse<any | null>>;
+    GetJobAppliedCount(data: string[]): Promise<ApiResponse<any | null>>;
 }

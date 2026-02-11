@@ -7,17 +7,11 @@ import ReuseButton from "./ReuseButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { FilterMatchMode } from "primereact/api";
 import CandidateCheckbox from "./CandidateCheckbox";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-} from "@mui/material";
 import CustomTextArea from "./CustomTextArea";
-import { ColorCode } from "../utilities/Config";
+import { ColorCode, StatusId } from "../utilities/Config";
 import { alertPropsData } from "../Models/Screens";
 import CustomAlert from "./CustomAlert/CustomAlert";
+import CustomDialogbox from "./CustomDialogbox";
 
 interface ColumnConfig {
   field: string;
@@ -87,11 +81,10 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
       },
     });
   };
-
   const isCheckboxDisabled = (candidate: Candidate) =>
-    candidate.Status === "Selected" ||
-    candidate.Status === "OnHold by HOD" ||
-    candidate.Status === "Rejected by HOD";
+    candidate.StatusId === StatusId.Selected ||
+    candidate.StatusId === StatusId.CandidateRejectedbyHODLevel1 ||
+    candidate.StatusId === StatusId.CandidateRejectedbyHODLevel2;
 
   const handleCheckbox = (checked: boolean, candidate: Candidate) => {
     if (checked) {
@@ -104,19 +97,19 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
   const onSelectAllChange = (value: boolean) => {
     const currentPageItems = filteredItems.slice(
       pagination.first,
-      pagination.first + pagination.rows
+      pagination.first + pagination.rows,
     );
     const allValid = currentPageItems.filter(
-      (item) => !isCheckboxDisabled(item)
+      (item) => !isCheckboxDisabled(item),
     );
     if (value) {
       const newSelections = allValid.filter(
-        (candidate) => !selectedCandidates.includes(candidate)
+        (candidate) => !selectedCandidates.includes(candidate),
       );
       setSelectedCandidates([...selectedCandidates, ...newSelections]);
     } else {
       setSelectedCandidates(
-        selectedCandidates.filter((candidate) => !allValid.includes(candidate))
+        selectedCandidates.filter((candidate) => !allValid.includes(candidate)),
       );
     }
   };
@@ -149,8 +142,7 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
     }));
   };
 
-  const handlePopupSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handlePopupSubmit = () => {
     if (!CommentsData.trim()) {
       setValidationErrors((prevState) => ({
         ...prevState,
@@ -272,10 +264,10 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
                     header={() => {
                       const currentPageItems = filteredItems.slice(
                         pagination.first,
-                        pagination.first + pagination.rows
+                        pagination.first + pagination.rows,
                       );
                       const selectableItems = currentPageItems.filter(
-                        (item) => !isCheckboxDisabled(item)
+                        (item) => !isCheckboxDisabled(item),
                       );
                       const allSelected =
                         selectableItems.length > 0 &&
@@ -316,127 +308,128 @@ const CandidateDataTable: React.FC<SearchableDataTableProps> = ({
           </DataTable>
         </div>
       </div>
-      <Dialog
-        open={isPopupOpen}
-        onClose={() => setIsPopupOpen(false)}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: "26px",
-            fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-          },
-        }}
-        sx={{ overflow: "hidden" }}
-      >
-        <DialogTitle
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "16px 24px",
-            color: ColorCode.LabelStyleColorCode.LabelStyleColor,
-            fontWeight: "bold",
-            position: "relative",
-            marginTop: "8px",
-          }}
-        >
-          <span style={{ flexGrow: 1, textAlign: "center" }}>
-            Reject Candidates
-          </span>
-        </DialogTitle>
 
-        <form onSubmit={handlePopupSubmit}>
-          <DialogContent sx={{ pt: 1, marginTop: "-11px" }}>
-            <div style={{ marginBottom: "16px" }}>
-              <p
-                style={{
-                  fontWeight: 600,
-                  marginBottom: "8px",
-                  fontSize: "12px",
-                  color: "rgb(50, 49, 48)",
-                  fontFamily: `"Segoe UI", sans-serif`,
-                }}
-              >
-                Selected Candidates:
-              </p>
-              <div
-                style={{
-                  border: "1px solid #ccc",
-                  borderRadius: "4px",
-                  padding: "8px",
-                  maxHeight: "150px",
-                  overflowY: "auto",
-                }}
-              >
-                {selectedCandidates.map((candidate, index) => (
-                  <p
-                    key={index}
+      {isPopupOpen ? (
+        <>
+          <div>
+            <CustomDialogbox
+              Style={{
+                width: "39vw",
+                height: "25vw",
+                padding: "0px",
+                overflowX: "hidden",
+              }}
+              visible={isPopupOpen}
+              children={
+                <>
+                  <div style={{ padding: "16px", margin: "0px 48px 4px 48px" }}>
+                    <div style={{ marginBottom: "16px" }}>
+                      <p
+                        style={{
+                          fontWeight: 600,
+                          marginBottom: "8px",
+                          fontSize: "14px",
+                          color: "rgb(50, 49, 48)",
+                          fontFamily: `"Segoe UI", sans-serif`,
+                        }}
+                      >
+                        Selected Candidates:
+                      </p>
+                      <div
+                        style={{
+                          border: "1px solid #ccc",
+                          borderRadius: "4px",
+                          padding: "8px",
+                          maxHeight: "150px",
+                          overflowY: "auto",
+                        }}
+                      >
+                        {selectedCandidates.map((candidate, index) => (
+                          <p
+                            key={index}
+                            style={{
+                              margin: "4px 0",
+                              fontSize: "14px",
+                              color: "rgb(50, 49, 48)",
+                              fontFamily: `"Segoe UI", sans-serif`,
+                            }}
+                          >
+                            {index + 1}. {candidate.FullName} - GPA:{" "}
+                            {candidate.GPA}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                    <CustomTextArea
+                      label="Reasons"
+                      value={CommentsData}
+                      onChange={(value) => handleInputChangeTextArea(value)}
+                      error={validationErrors.Comments}
+                      placeholder="Reason for Reject"
+                      mandatory={true}
+                    />
+                  </div>
+                </>
+              }
+              onClose={() => setIsPopupOpen(false)}
+              header={
+                <div
+                  style={{
+                    textAlign: "center",
+                    width: "100%",
+                  }}
+                >
+                  <h2
                     style={{
-                      margin: "4px 0",
-                      fontSize: "14px",
-                      color: "rgb(50, 49, 48)",
-                      fontFamily: `"Segoe UI", sans-serif`,
+                      color: "white",
+                      fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
+                          -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                      // textDecoration: "underline",
+                      // textUnderlineOffset: "6px",
                     }}
                   >
-                    {index + 1}. {candidate.FullName} - GPA: {candidate.GPA}
-                  </p>
-                ))}
-              </div>
-            </div>
-            <CustomTextArea
-              label="Reasons"
-              value={CommentsData}
-              onChange={(value) => handleInputChangeTextArea(value)}
-              error={validationErrors.Comments}
-              placeholder="Reason for Reject"
-              mandatory={true}
+                    Reject Candidates
+                  </h2>
+                </div>
+              }
+              footer={
+                <div
+                  className="ms-Grid-row"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    padding: "10px 0",
+                    gap: "33px",
+                  }}
+                >
+                  <ReuseButton
+                    label="Cancel"
+                    onClick={() => setIsPopupOpen(false)}
+                    Style={{
+                      backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                      color: "white",
+                      width: "50%",
+                    }}
+                  />
+
+                  <ReuseButton
+                    label="Submit"
+                    onClick={() => handlePopupSubmit()}
+                    Style={{
+                      backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                      color: "white",
+                      width: "50%",
+                    }}
+                  />
+                </div>
+              }
             />
-          </DialogContent>
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
 
-          <DialogActions
-            sx={{ p: 3, pt: 0, display: "flex", justifyContent: "center" }}
-          >
-            <Button
-              onClick={() => setIsPopupOpen(false)}
-              variant="outlined"
-              sx={{
-                borderColor: ColorCode.ButtonColorCode.ButtonColor,
-                color: ColorCode.ButtonColorCode.color,
-                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                textTransform: "capitalize",
-                mr: 2.5,
-                "&:hover": {
-                  borderColor: ColorCode.ButtonColorCode.ButtonColor,
-                  backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                  color: ColorCode.ButtonColorCode.color,
-                },
-              }}
-            >
-              Cancel
-            </Button>
-
-            <Button
-              type="submit"
-              variant="outlined"
-              sx={{
-                borderColor: ColorCode.ButtonColorCode.ButtonColor,
-                color: ColorCode.ButtonColorCode.color,
-                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                textTransform: "capitalize",
-                mr: 2.5,
-                "&:hover": {
-                  borderColor: ColorCode.ButtonColorCode.ButtonColor,
-                  backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                  color: ColorCode.ButtonColorCode.color,
-                },
-              }}
-            >
-              Submit
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
       {AlertPopupOpen && (
         <CustomAlert {...alertProps} onClose={() => setAlertPopupOpen(false)} />
       )}

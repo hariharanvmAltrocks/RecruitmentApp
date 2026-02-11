@@ -57,7 +57,7 @@ const CandidateList = (props: any) => {
             FilterValue: props.stateValue?.ID,
           },
         ],
-        ""
+        "",
       );
 
       const grade = vrrResponse.data[0]?.PatersonGrade;
@@ -105,7 +105,7 @@ const CandidateList = (props: any) => {
         await InterviewServices.GetCombinedCandidatePositionDetails(
           candidateFilter,
           "and",
-          props.EmployeeList
+          props.EmployeeList,
         );
 
       if (response?.status === 200) {
@@ -136,10 +136,10 @@ const CandidateList = (props: any) => {
     tab: string,
     TabName: string,
     ButtonAction: string,
-    previousTabName: string
+    previousTabName: string,
   ) => {
     let SelectedCandidate = CandidateData.filter(
-      (item) => item.StatusId === StatusId.Selected
+      (item) => item.StatusId === StatusId.Selected,
     );
     const canView = rowData.StatusId === StatusId.RejectedbyHOD;
     if (
@@ -188,9 +188,9 @@ const CandidateList = (props: any) => {
 
   const columnConfig = (
     tab: string,
-    ButtonAction: string,
+    ButtonActions: string,
     TabName: string,
-    previousTabName: string
+    previousTabName: string,
   ) => [
     { field: "Checkbox", header: "", sortable: false },
     { field: "SNO", header: "S.NO", sortable: true },
@@ -211,7 +211,6 @@ const CandidateList = (props: any) => {
       sortable: false,
       body: (rowData: any) => {
         const canEdit = [
-          StatusId.Selected,
           StatusId.OnHoldbyHOD,
           StatusId.PendingwithHODtoselectthecandidate,
           StatusId.PendingwithHODtoselectthecandidateLevel2,
@@ -221,6 +220,7 @@ const CandidateList = (props: any) => {
         ].includes(rowData.StatusId);
 
         const canView =
+          rowData.StatusId === StatusId.Selected ||
           rowData.StatusId === StatusId.RejectedbyHOD ||
           rowData.StatusId === StatusId.CandidateRejectedbyHODLevel1 ||
           rowData.StatusId === StatusId.CandidateRejectedbyHODLevel2;
@@ -245,8 +245,8 @@ const CandidateList = (props: any) => {
                     rowData,
                     tab,
                     TabName,
-                    ButtonAction,
-                    previousTabName
+                    ButtonAction.Edit,
+                    previousTabName,
                   )
                 }
                 style={{
@@ -266,8 +266,8 @@ const CandidateList = (props: any) => {
                     rowData,
                     tab,
                     TabName,
-                    ButtonAction,
-                    previousTabName
+                    ButtonAction.View,
+                    previousTabName,
                   )
                 }
                 style={{
@@ -300,7 +300,7 @@ const CandidateList = (props: any) => {
             FilterValue: props?.stateValue?.JobCodeID,
           },
         ],
-        ""
+        "",
       );
     for (const candidate of selectedCandidates) {
       const rejectionPayload = {
@@ -323,7 +323,7 @@ const CandidateList = (props: any) => {
         await GetPortalJobsService.UpdateCandidateStatus(rejectionPayload);
         const response = await InterviewServices.CandidateSeletionApi(
           actionPayload,
-          ListNames.HRMSRecruitmentCandidatePersonalDetails
+          ListNames.HRMSRecruitmentCandidatePersonalDetails,
         );
         if (response.status === 200) {
           updateSuccess = true;
@@ -379,7 +379,7 @@ const CandidateList = (props: any) => {
                 "tab1",
                 ButtonAction.Edit,
                 props.stateValue?.TabName,
-                TabName.ViewCandidateList
+                TabName.ViewCandidateList,
               )}
               rows={rows}
               onPageChange={onPageChange}
@@ -400,7 +400,7 @@ const CandidateList = (props: any) => {
         item.StatusId === StatusId.PendingwithHODtoAssignPositionID ||
         item.StatusId === StatusId.PendingwithHODtoselectthecandidateLevel2 ||
         item.StatusId === StatusId.CandidateOnHoldbyHODLevel1 ||
-        item.StatusId === StatusId.CandidateOnHoldbyHODLevel2
+        item.StatusId === StatusId.CandidateOnHoldbyHODLevel2,
     );
     switch (tab) {
       case TabName.ReviewScorecard:

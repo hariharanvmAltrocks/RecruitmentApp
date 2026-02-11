@@ -17,6 +17,7 @@ import {
   StatusId,
   TabName,
   tabType,
+  workflowStatusApi,
 } from "../../utilities/Config";
 
 import SearchableDataTable from "../../components/CustomDataTable";
@@ -48,7 +49,7 @@ const ReviewProfileList = (props: any) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [activeTab, setActiveTab] = React.useState<string>("tab1");
   const [TabNameData, setTabNameData] = React.useState<TabDetails[]>(
-    props?.TabDetails[0] === undefined ? [] : props?.TabDetails[0]
+    props?.TabDetails[0] === undefined ? [] : props?.TabDetails[0],
   );
   const [pendingcount, setPendingCount] = React.useState<tabPendingCount>({
     ReviewPrfileCount: 0,
@@ -70,7 +71,7 @@ const ReviewProfileList = (props: any) => {
     rowData: any,
     tab: string,
     TabNames: string,
-    ButtonAction: string
+    ButtonAction: string,
   ): void => {
     switch (TabNames) {
       case TabName.ReviewProfile:
@@ -179,11 +180,10 @@ const ReviewProfileList = (props: any) => {
         ];
         break;
       case StatusId.RecruitmentInProgress: {
-        let Tooltipdata = await getVRRDetails.GetInterviewPanelTooltiData(
-          rowData
-        );
+        let Tooltipdata =
+          await getVRRDetails.GetInterviewPanelTooltiData(rowData);
         let GradeLevel = await CommonServices.GetGradeLevel(
-          rowData?.PatersonGrade
+          rowData?.PatersonGrade,
         );
         // console.log(GradeLevel);
 
@@ -270,7 +270,7 @@ const ReviewProfileList = (props: any) => {
   const columnConfig = (
     tab: string,
     ButtonActions: number,
-    TabName: string
+    TabNames: string,
   ) => [
     {
       field: "JobCode",
@@ -282,6 +282,16 @@ const ReviewProfileList = (props: any) => {
       header: "Job Title",
       sortable: true,
     },
+    ...(TabNames === TabName.ReviewProfile ||
+    TabNames === TabName.AssignInterviewPanel
+      ? [
+          {
+            field: "JobAppliedCount",
+            header: "Job Applied Count",
+            sortable: true,
+          },
+        ]
+      : []),
     {
       field: "BusinessUnitCode",
       header: "Business Unit Code",
@@ -339,7 +349,12 @@ const ReviewProfileList = (props: any) => {
                   src={require("../../assets/Editbutton.svg")}
                   alt="Stamp Icon"
                   onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction.Edit)
+                    handleRedirectView(
+                      rowData,
+                      tab,
+                      TabNames,
+                      ButtonAction.Edit,
+                    )
                   }
                   style={{
                     width: "50%", // scales with font size
@@ -361,7 +376,12 @@ const ReviewProfileList = (props: any) => {
                     cursor: "pointer",
                   }}
                   onClick={() =>
-                    handleRedirectView(rowData, tab, TabName, ButtonAction.View)
+                    handleRedirectView(
+                      rowData,
+                      tab,
+                      TabNames,
+                      ButtonAction.View,
+                    )
                   }
                 />
               </>
@@ -395,19 +415,19 @@ const ReviewProfileList = (props: any) => {
     rowData: any,
     tab: string,
     TabName: string,
-    ButtonAction: string
+    ButtonAction: string,
   ) {
     let navigationPath =
       rowData?.StatusId === StatusId.InterviewScheduled
         ? "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit"
         : rowData.StatusId === StatusId.InterviewScheduledforLevel2
-        ? "/ReviewProfileList/HodViewScorecard"
-        : "";
+          ? "/ReviewProfileList/HodViewScorecard"
+          : "";
     const today = new Date();
     // const todayDateStr = today.toISOString().split("T")[0];
     const interviewDateStr = moment(
       rowData.InterviewDateTime,
-      "DD-MMM-YYYY hh:mm A"
+      "DD-MMM-YYYY hh:mm A",
     ).format("YYYY-MM-DD");
     const todayDateStr = moment(today).format("YYYY-MM-DD");
     // const InterviewDate = new Date(rowData.InterviewDateTime)
@@ -430,7 +450,7 @@ const ReviewProfileList = (props: any) => {
     } else {
       const formattedDate = moment(
         `${interviewDateStr}`,
-        "YYYY-MM-DD HH:mm"
+        "YYYY-MM-DD HH:mm",
       ).format("DD-MMM-YYYY hh:mm A");
 
       const ValidationMsg = InterviewDate(formattedDate);
@@ -453,7 +473,7 @@ const ReviewProfileList = (props: any) => {
   const CandidateConfig = (
     tab: string,
     ButtonActions: number,
-    TabName: string
+    TabName: string,
   ) => [
     {
       field: "SNO",
@@ -517,7 +537,7 @@ const ReviewProfileList = (props: any) => {
             const [interviewPanelResponse, currentUserResponse] =
               await Promise.all([
                 CommonServices.GetMasterData(
-                  ListNames.HRMSInterviewPanelDetails
+                  ListNames.HRMSInterviewPanelDetails,
                 ),
                 CommonServices.getUserGuidByEmail(props.CurrentUserEmailId),
               ]);
@@ -535,7 +555,7 @@ const ReviewProfileList = (props: any) => {
 
             const candidatePanels = interviewPanelResponse.data.filter(
               (panel) =>
-                panel.CandidateIDId?.toString() === rowData.ID?.toString()
+                panel.CandidateIDId?.toString() === rowData.ID?.toString(),
             );
 
             if (candidatePanels.length === 0) {
@@ -543,7 +563,7 @@ const ReviewProfileList = (props: any) => {
             }
 
             const userPanels = candidatePanels.filter((panel) =>
-              panel.InterviewPanelStringId?.includes(currentUserKey)
+              panel.InterviewPanelStringId?.includes(currentUserKey),
             );
 
             if (userPanels.length === 0) {
@@ -551,11 +571,11 @@ const ReviewProfileList = (props: any) => {
             }
             if (rowData.StatusId === StatusId.InterviewScheduled) {
               const isLevelbasedFiltered = userPanels.filter(
-                (item) => item.InterviewLevel === InterviewLevels.Level1
+                (item) => item.InterviewLevel === InterviewLevels.Level1,
               );
 
               const isScoreSheetUploaded = isLevelbasedFiltered.some(
-                (panel) => panel.IsScoreSheetUploaded === "Yes"
+                (panel) => panel.IsScoreSheetUploaded === "Yes",
               );
               if (isScoreSheetUploaded) {
                 handleAlert(InterviewLevels.Level1);
@@ -569,18 +589,18 @@ const ReviewProfileList = (props: any) => {
                 },
                 tab,
                 TabName,
-                ButtonAction.View
+                ButtonAction.View,
               );
               return;
             } else if (
               rowData.StatusId === StatusId.InterviewScheduledforLevel2
             ) {
               const isLevelbasedFiltered = userPanels.filter(
-                (item) => item.InterviewLevel === InterviewLevels.Level2
+                (item) => item.InterviewLevel === InterviewLevels.Level2,
               );
 
               const isScoreSheetUploaded = isLevelbasedFiltered.some(
-                (panel) => panel.IsScoreSheetUploaded === "Yes"
+                (panel) => panel.IsScoreSheetUploaded === "Yes",
               );
               if (isScoreSheetUploaded) {
                 handleAlert(InterviewLevels.Level2);
@@ -594,7 +614,7 @@ const ReviewProfileList = (props: any) => {
                 },
                 tab,
                 TabName,
-                ButtonAction.View
+                ButtonAction.View,
               );
               return;
             }
@@ -633,6 +653,7 @@ const ReviewProfileList = (props: any) => {
     try {
       let filterConditionsRecuritment = [];
       let RecuritmentConditions = "and";
+      let JobAppliedCountFilter: string[] = [];
       let TabValue = storedStringRef.current
         ? storedStringRef.current
         : props.stateValue?.TabName;
@@ -653,6 +674,7 @@ const ReviewProfileList = (props: any) => {
             Operator: "eq",
             FilterValue: props.userDetails[0]?.EmailId,
           });
+          JobAppliedCountFilter = [workflowStatusApi.HRPending];
           break;
         case TabName.AssignInterviewPanel:
           filterConditionsRecuritment.push({
@@ -670,6 +692,9 @@ const ReviewProfileList = (props: any) => {
             Operator: "eq",
             FilterValue: props.userDetails[0]?.EmailId,
           });
+          JobAppliedCountFilter = [
+            workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+          ];
           break;
 
         case TabName.InterviewQuestion:
@@ -714,12 +739,13 @@ const ReviewProfileList = (props: any) => {
       if (TabValue === TabName.Evaluation) {
         data = await getVRRDetails.GetcountInEvalution(
           props.CurrentUserEmailId,
-          props.EmployeeList
+          props.EmployeeList,
         );
       } else {
         data = await getVRRDetails.GetRecruitmentDetails(
           filterConditionsRecuritment,
-          RecuritmentConditions
+          RecuritmentConditions,
+          JobAppliedCountFilter,
         );
       }
 
@@ -744,7 +770,7 @@ const ReviewProfileList = (props: any) => {
             FilterValue: Choices.No,
           },
         ],
-        ""
+        "",
       );
       if (recrutimentData.status === ResponeStatus.SUCCESS) {
         const InterviewQuestionCount = recrutimentData.data.filter(
@@ -753,13 +779,18 @@ const ReviewProfileList = (props: any) => {
               StatusId.PendingwithHRandLMtocreateinterviewQuestion ||
             (item.StatusId ===
               StatusId.PendingwithLMcreateDisqualificationQuestion &&
-              item.AssignLineManager === props.userDetails[0]?.EmailId)
+              item.AssignLineManager === props.userDetails[0]?.EmailId),
           // (item.AssignEMail === props.userDetails[0]?.EmailId ||
         );
 
+        const getJobAppiledCount = recrutimentData.data.filter(
+          (item) => item.StatusId === StatusId.RecruitmentInProgress,
+        );
+        console.log(getJobAppiledCount, "getJobAppiledCount");
+
         const Evalution = await getVRRDetails.GetcountInEvalution(
           props.CurrentUserEmailId,
-          props.EmployeeList
+          props.EmployeeList,
         );
 
         setPendingCount((prevState) => ({
@@ -797,7 +828,7 @@ const ReviewProfileList = (props: any) => {
         let TabDetails: any;
         if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
           TabDetails = (props.TabDetails[0] ?? []).filter(
-            (tab: any) => tab.TabName !== TabName.Evaluation
+            (tab: any) => tab.TabName !== TabName.Evaluation,
           );
         } else {
           TabDetails = props.TabDetails[0] ?? [];
@@ -828,7 +859,7 @@ const ReviewProfileList = (props: any) => {
   const renderTable = (
     TabNames: string,
     TabValue: string,
-    StatusData: StatusDetails[]
+    StatusData: StatusDetails[],
   ) => {
     // storedStringRef.current = "";
     if (TabValue === activeTab) {
@@ -869,7 +900,7 @@ const ReviewProfileList = (props: any) => {
             columns={CandidateConfig(
               TabValue,
               Number(Action[0]?.Action?.[0]),
-              TabNames
+              TabNames,
             )}
             rows={rows}
             onPageChange={onPageChange}

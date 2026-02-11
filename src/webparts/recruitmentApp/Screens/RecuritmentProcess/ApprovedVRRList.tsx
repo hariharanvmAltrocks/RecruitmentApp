@@ -22,6 +22,7 @@ import {
   ActionIcon,
   InterviewLevels,
   RoleName,
+  workflowStatusApi,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Card, CardContent } from "@mui/material";
@@ -398,6 +399,16 @@ const RecruitmentProcess = (props: any) => {
       header: "Job Code",
       sortable: true,
     },
+    ...(TabNames === TabName.ReviewProfile ||
+    TabNames === TabName.ReviewScorecard
+      ? [
+          {
+            field: "JobAppliedCount",
+            header: "Job Applied Count",
+            sortable: true,
+          },
+        ]
+      : []),
     {
       field: "JobTitleEnglish",
       header: "Job Title",
@@ -837,7 +848,7 @@ const RecruitmentProcess = (props: any) => {
                 },
                 tab,
                 TabName,
-                ButtonAction.View,
+                ButtonAction.Edit,
               );
               return;
             } else if (
@@ -862,7 +873,7 @@ const RecruitmentProcess = (props: any) => {
                 },
                 tab,
                 TabName,
-                ButtonAction.View,
+                ButtonAction.Edit,
               );
               return;
             }
@@ -1032,6 +1043,7 @@ const RecruitmentProcess = (props: any) => {
 
       let filterConditionsRecuritment = [];
       let RecuritmentConditions = "and";
+      let JobAppliedCountFilter: string[] = [];
       let CurrentTab;
       if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
         CurrentTab = TabName.UploadAdvertisement;
@@ -1112,6 +1124,12 @@ const RecruitmentProcess = (props: any) => {
             Operator: "eq",
             FilterValue: props.userDetails[0]?.EmailId,
           });
+          JobAppliedCountFilter = [
+            workflowStatusApi.LineManagerL1Pending,
+            workflowStatusApi.LineManagerL2Pending,
+            workflowStatusApi.LineManagerLevel1OnHold,
+            workflowStatusApi.LineManagerLevel2OnHold,
+          ];
           break;
         case TabName.UploadCV:
           filterConditionsRecuritment.push({
@@ -1255,6 +1273,7 @@ const RecruitmentProcess = (props: any) => {
             : await getVRRDetails.GetRecruitmentDetails(
                 filterConditionsRecuritment,
                 RecuritmentConditions,
+                JobAppliedCountFilter,
               );
         if (response.status === 200) {
           let responseData;
@@ -2121,10 +2140,10 @@ const RecruitmentProcess = (props: any) => {
     setActiveTab(newTab);
   };
 
-  const AlertpopupSuccess = () => {
+  const AlertpopupSuccess = (msg: string) => {
     setDatePopup(false);
     setIsLoading(true);
-    if (HRMSAlertOptions.Success) {
+    if (msg === HRMSAlertOptions.Success) {
       let SuccessAlert = {
         Message: RecuritmentHRMsg.AdvertExtendsionSuccessMsg,
         Type: HRMSAlertOptions.Success,
@@ -2211,7 +2230,7 @@ const RecruitmentProcess = (props: any) => {
                 RecuritmentData={selectedrowdata[0]}
                 onClose={() => setDatePopup(false)}
                 ModelDropDown={props}
-                AlertpopupSuccess={() => AlertpopupSuccess()}
+                AlertpopupSuccess={(msg) => AlertpopupSuccess(msg)}
                 setIsLoading={setIsLoading}
               />
             }

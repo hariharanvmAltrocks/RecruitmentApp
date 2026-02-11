@@ -720,30 +720,30 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       // });
       let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
       const response =
-        userRole === RoleID.RecruitmentHRLead &&
-        props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess &&
-        props.stateValue?.type === DataFrom.NewPosition
-          ? await getVRRDetails.fetchNewPositionRequest(
-              filterConditions,
-              Conditions,
-              props,
-            )
-          : props.stateValue?.type === DataFrom.ExistingPosition
-            ? await getVRRDetails.GetAdditionalExistingPositionEditView(
+        userRole === RoleID.RecruitmentHRLead
+          ? props.stateValue?.type === DataFrom.NewPosition
+            ? await getVRRDetails.fetchNewPositionRequest(
                 filterConditions,
                 Conditions,
                 props,
               )
-            : props.stateValue?.type === DataFrom.VacancyRecruitmentProcess
-              ? await getVRRDetails.GetVacancyDetails(
+            : props.stateValue?.type === DataFrom.ExistingPosition
+              ? await getVRRDetails.GetAdditionalExistingPositionEditView(
                   filterConditions,
                   Conditions,
                   props,
                 )
-              : await getVRRDetails.GetRecruitmentDetails(
-                  filterConditionsRecuritment,
-                  RecuritmentConditions,
-                );
+              : props.stateValue?.type === DataFrom.VacancyRecruitmentProcess
+                ? await getVRRDetails.GetVacancyDetails(
+                    filterConditions,
+                    Conditions,
+                    props,
+                  )
+                : undefined
+          : await getVRRDetails.GetRecruitmentDetails(
+              filterConditionsRecuritment,
+              RecuritmentConditions,
+            );
 
       if (response && response.data) {
         const NewpositionData =
