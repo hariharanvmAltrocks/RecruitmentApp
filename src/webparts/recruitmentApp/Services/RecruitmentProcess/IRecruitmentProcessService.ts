@@ -1,4 +1,6 @@
+import { tabCount } from "../../Models/RecuritmentVRR";
 import { AutoCompleteItem, InterviewPanelMember, tooltipInterviewPanel } from "../../Models/Screens";
+import { IFilter } from "../SPService/ISPServicesProps";
 
 
 export interface IAttachmentExampleState {
@@ -310,4 +312,10 @@ export type IRecruitmentService = {
     filterConditions: any
   ): Promise<ApiResponse<string>>;
   GetVacancyDetails(filterParam: any, filterConditions: any, ModalDropDown: any): Promise<ApiResponse<DataSyncToRecruitmentResponse[] | null>>;
+  GetCountApprovedList(
+    FilterData: IFilter[],
+    CurrentUserID: string,
+    AssignHRFlag: boolean,
+    EvalutionFlag: boolean,
+  ): Promise<ApiResponse<tabCount>>;
 };
