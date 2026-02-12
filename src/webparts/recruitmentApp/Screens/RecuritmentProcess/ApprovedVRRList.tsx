@@ -48,7 +48,11 @@ import CheckboxDataTable from "../../components/CheckboxDataTable";
 import * as moment from "moment";
 import ReuseButton from "../../components/ReuseButton";
 import ToolTipButton from "../../components/Tooltip";
-import { tabStyle } from "../../components/TabMerge";
+import {
+  getScoreCardCount,
+  getTotalAppliedCount,
+  tabStyle,
+} from "../../components/TabMerge";
 import {
   ActionName,
   ButtonAction,
@@ -118,6 +122,8 @@ const RecruitmentProcess = (props: any) => {
     HODReviewScoreCount: 0,
     EvaluationCount: 0,
     advertExtensionCount: 0,
+    ReviewProfileCount: 0,
+    ReviewScoreCardCount: 0,
   });
 
   const [pendingInfo, setPendingInfo] = React.useState<any>(null);
@@ -399,8 +405,12 @@ const RecruitmentProcess = (props: any) => {
       header: "Job Code",
       sortable: true,
     },
-    ...(TabNames === TabName.ReviewProfile ||
-    TabNames === TabName.ReviewScorecard
+    {
+      field: "JobTitleEnglish",
+      header: "Job Title",
+      sortable: true,
+    },
+    ...(TabNames === TabName.ReviewProfile
       ? [
           {
             field: "JobAppliedCount",
@@ -409,11 +419,16 @@ const RecruitmentProcess = (props: any) => {
           },
         ]
       : []),
-    {
-      field: "JobTitleEnglish",
-      header: "Job Title",
-      sortable: true,
-    },
+    ...(TabNames === TabName.ReviewScorecard
+      ? [
+          {
+            field: "ReviewScoreCount",
+            header: "Job Applied Count",
+            sortable: true,
+          },
+        ]
+      : []),
+
     // {
     //   field: "BusinessUnitCode",
     //   header: "BusinessUnit Code",
@@ -1369,6 +1384,10 @@ const RecruitmentProcess = (props: any) => {
           // (item.AssignEMail === props.userDetails[0]?.EmailId ||
         );
 
+        const getJobAppiledCount = recrutimentData.data.filter(
+          (item) => item.StatusId === StatusId.RecruitmentInProgress,
+        );
+
         const ReviewLinemanagerCount = recrutimentData.data.filter(
           (item) =>
             item.StatusId === StatusId.PendingwithLineManagereviewAdv &&
@@ -1389,8 +1408,17 @@ const RecruitmentProcess = (props: any) => {
           props.CurrentUserEmailId,
           props.EmployeeList,
         );
+        const ReviewProfileCount = await getTotalAppliedCount(
+          getJobAppiledCount,
+          [workflowStatusApi.HRPending],
+        );
+
+        const ScoreCardCount = await getScoreCardCount(getJobAppiledCount);
+
         setPendingCount((prevState) => ({
           ...prevState,
+          ReviewProfileCount: ReviewProfileCount,
+          ReviewScoreCardCount: ScoreCardCount,
           AssignHRCount: AssignHRCount.data.length,
           UploadONEMCount: UploadONEMCount.length,
           UploadAdvertisementCount: UploadAdvertismentCount.length,
@@ -2116,6 +2144,10 @@ const RecruitmentProcess = (props: any) => {
         return tabStyle(tab.TabName, pendingcount.lineManagerInterviewCount);
       case TabName.Evaluation:
         return tabStyle(tab.TabName, pendingcount.EvaluationCount);
+      case TabName.ReviewProfile:
+        return tabStyle(tab.TabName, pendingcount.ReviewProfileCount);
+      case TabName.ReviewScorecard:
+        return tabStyle(tab.TabName, pendingcount.ReviewScoreCardCount);
       default:
         return tab.TabName;
     }

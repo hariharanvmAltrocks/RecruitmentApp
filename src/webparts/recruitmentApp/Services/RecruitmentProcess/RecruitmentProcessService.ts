@@ -811,7 +811,41 @@ export default class RecruitmentService implements IRecruitmentService {
               },
             };
             let JobAppliedCount = await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
-            console.log(JobAppliedCount, "JobAppliedCount");
+            const jobCodeFilter = [
+              {
+                FilterKey: "RecruitmentIDId",
+                Operator: "eq",
+                FilterValue: String(item?.ID),
+              },
+              {
+                FilterKey: "JobCodeId",
+                Operator: "eq",
+                FilterValue: String(item?.JobCodeId),
+              },
+              {
+                FilterKey: "StatusId",
+                Operator: "in",
+                FilterValue: [
+                  StatusId.PendingwithHODtoselectthecandidate,
+                  StatusId.OnHoldbyHOD,
+                  StatusId.PendingwithHODtoAssignPositionID,
+                  StatusId.PendingwithHODtoselectthecandidateLevel2,
+                  StatusId.CandidateOnHoldbyHODLevel1,
+                  StatusId.CandidateOnHoldbyHODLevel2,
+                ],
+              },
+              {
+                FilterKey: "ItemCreated",
+                Operator: "eq",
+                FilterValue: "No",
+              },
+            ];
+
+            const scorecardValue = await getVRRDetails.getReviewScoreCardCount(
+              jobCodeFilter,
+              "and",
+            );
+
 
             let Recruitment: DataSyncToRecruitmentResponse = {
               ID: item.ID,
@@ -875,7 +909,8 @@ export default class RecruitmentService implements IRecruitmentService {
 
               QuestionByHR: item?.QuestionByHR || "",
               QuestionByLM: item?.QuestionByLM || "",
-              JobAppliedCount: String(JobAppliedCount.data?.length)
+              JobAppliedCount: String(JobAppliedCount.data?.length),
+              ReviewScoreCount: scorecardValue.data
             };
             return Recruitment;
 
@@ -2726,6 +2761,40 @@ export default class RecruitmentService implements IRecruitmentService {
           GridResult = item?.CareerPortalLink;
           return item?.CareerPortalLink;
         })
+        // );
+      }
+      return {
+        data: GridResult,
+        status: 200,
+        message: "GetRecruitmentDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching data in GetRecruitmentDetails:", error);
+      return {
+        data: "",
+        status: 500,
+        message: "Error fetching data from GetRecruitmentDetails",
+      };
+    }
+  }
+
+  async getReviewScoreCardCount(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<string>> {
+    let GridResult: string = "0"
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Select: `*`,
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Topcount: count.Topcount,
+      });
+      if (res.length > 0) {
+        //  = await Promise.all(
+        GridResult = String(res.length);
+
         // );
       }
       return {
