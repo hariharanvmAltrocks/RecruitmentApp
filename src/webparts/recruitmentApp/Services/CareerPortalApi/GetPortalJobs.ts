@@ -612,7 +612,9 @@ export default class GetPortalJobs implements IGetPortalJobs {
         return {
           id: incrementedIndex,
           question: item?.question?.quesContent?.contentEn,
+          questionFr: item?.question?.quesContent?.contentFr,
           answer: item?.question?.questionXAnswers?.[0]?.optContent?.contentEn ?? "",
+          answerFr: item?.question?.questionXAnswers?.[0]?.optContent?.contentFr ?? "",
           rating: 0,
           header: "Q" + incrementedIndex,
         };
@@ -669,7 +671,9 @@ export default class GetPortalJobs implements IGetPortalJobs {
         const incrementedIndex = index + 1;
 
         const question = item?.question?.quesContent?.contentEn;
+        const questionFr = item?.question?.quesContent?.contentFr;
         const expectedAnswer = item?.question?.questionXAnswers.map((item: any) => item?.optContent?.contentEn);
+        const expectedAnswerFr = item?.question?.questionXAnswers.map((item: any) => item?.optContent?.contentFr);
 
         if (!question || !expectedAnswer) {
           return null;
@@ -679,6 +683,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           return {
             key: item?.questionId,
             text: item?.optContent?.contentEn,
+            textFr: item?.optContent?.contentFr,
             isCorrect: false,
           };
         });
@@ -687,6 +692,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           return {
             key: index,
             text: item?.optContent?.contentEn,
+            textFr: item?.optContent?.contentFr,
             isCorrect: false,
           };
         });
@@ -697,9 +703,12 @@ export default class GetPortalJobs implements IGetPortalJobs {
           header: "Q" + incrementedIndex,
           HeaderLabel: "Question" + incrementedIndex,
           discipline: item?.question?.scopeId,
+          scope: item?.question?.questionType?.displayText,
           questionType: item?.question?.questionTypeId,
           question: question,
+          questionFr: questionFr,
           expectedAnswer: expectedAnswer,
+          expectedAnswerFr: expectedAnswerFr,
           CareerportalAnswer: CareerportalAnswer,
           options: options,
           Disqualification: item?.question?.isQualifier,
@@ -708,7 +717,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
       }).filter((item: null) => item !== null);
 
 
-      // console.log(response, "GetAllMasterData");
+      console.log(response, "GetAllMasterData");
       return {
         data: GetQuestionnaire,
         status: response.status,
@@ -1092,18 +1101,26 @@ export default class GetPortalJobs implements IGetPortalJobs {
         let OptionContent = item.questionXOptions.map((items: any) => {
           return {
             optContentId: items.optContentId,
-            optContent: items?.optContent?.contentEn
+            optContent: items?.optContent?.contentEn,
+            optContentFr: items?.optContent?.contentFr
           }
         });
         const htmlString = item.quesContent?.contentEn || '';
+        const htmlStringFr = item.quesContent?.contentFr || '';
         const tempElement = document.createElement('div');
         tempElement.innerHTML = htmlString;
         const plainText = tempElement.innerText
           .replace(/\s*\*$/, "")
           .trim();
+        const tempElementFr = document.createElement('div');
+        tempElementFr.innerHTML = htmlStringFr;
+        const plainTextFr = tempElementFr.innerText
+          .replace(/\s*\*$/, "")
+          .trim();
         return {
           id: incrementedIndex,
           question: plainText,
+          questionFr: plainTextFr,
           questionId: item?.questionId,
           questionXOptions: OptionContent,
           answerContentId: ""
