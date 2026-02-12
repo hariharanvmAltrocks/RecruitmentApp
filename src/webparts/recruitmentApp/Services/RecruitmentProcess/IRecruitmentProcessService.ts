@@ -135,15 +135,17 @@ export type DataSyncToRecruitmentResponse = {
   AssignHOD: string;
   ReasonForVacancy: string;
 
-  JobPostingStartDate: Date | undefined,
-  JobPostingEndDate: Date | undefined,
-  JobPostingFirstExtensionEndDate: Date | undefined,
-  JobPostingSecondExtensionEndDate: Date | undefined,
+  JobPostingStartDate: string | undefined,
+  JobPostingEndDate: string | undefined,
+  JobPostingFirstExtensionEndDate: string | undefined,
+  JobPostingSecondExtensionEndDate: string | undefined,
 
   AssignEMail: string,
   AssignHRLead?: string;
   QuestionByHR: string;
   QuestionByLM: string;
+  JobAppliedCount: string;
+  ReviewScoreCount?: string;
 }
 
 export type JobCodeData = {
@@ -212,7 +214,8 @@ export type IRecruitmentService = {
   ): Promise<ApiResponse<any | null>>;
   GetRecruitmentDetails(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
+    JobAppliedCountFilter?: string[]
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
   GetCandidateDetails(
     filterParam: any,
@@ -308,4 +311,8 @@ export type IRecruitmentService = {
     filterConditions: any
   ): Promise<ApiResponse<string>>;
   GetVacancyDetails(filterParam: any, filterConditions: any, ModalDropDown: any): Promise<ApiResponse<DataSyncToRecruitmentResponse[] | null>>;
+  getReviewScoreCardCount(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<string>>;
 };

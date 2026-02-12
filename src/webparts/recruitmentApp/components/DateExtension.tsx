@@ -5,6 +5,7 @@ import {
   ColorCode,
   HRMSAlertOptions,
   ListNames,
+  RecuritmentHRMsg,
   ResponeStatus,
 } from "../utilities/Config";
 import ReuseButton from "./ReuseButton";
@@ -14,6 +15,9 @@ import { getVRRDetails } from "../Services/ServiceExport";
 import SPServices from "../Services/SPService/SPServices";
 import CustomLoader from "../Services/Loader/CustomLoader";
 import { ButtonAction, labelNames } from "../utilities/LabelName";
+import { toDate } from "./TabMerge";
+import CustomAlert from "./CustomAlert/CustomAlert";
+import { alertPropsData } from "../Models/Screens";
 
 interface AssignPositionDialogProps {
   RecuritmentData: DataSyncToRecruitmentResponse;
@@ -48,9 +52,17 @@ export const DateExtension = ({
   });
   const [AdvertDuration3, setAdvertDuration3] = React.useState<boolean>(false);
 
+  const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
+  const [alertProps, setalertProps] = React.useState<alertPropsData>({
+    Message: "",
+    Type: "",
+    ButtonAction: null,
+    visible: false,
+  });
+
   const calculateValidTo = (
     startDate: Date | undefined,
-    daysToAdd: number
+    daysToAdd: number,
   ): Date => {
     let validToDate = new Date(startDate ?? todaydate);
     let addedDays = 0;
@@ -76,28 +88,32 @@ export const DateExtension = ({
     const initialize = async () => {
       setLevel1Date((prevState) => ({
         ...prevState,
-        StartDate: RecuritmentData?.JobPostingStartDate,
-        EndDate: RecuritmentData?.JobPostingEndDate,
+        StartDate: toDate(RecuritmentData?.JobPostingStartDate),
+        EndDate: toDate(RecuritmentData?.JobPostingEndDate),
       }));
-      let SecondEndDate: Date = calculateValidTo(
-        RecuritmentData?.JobPostingEndDate,
-        14
-      );
+
+      const SecondEndDate = RecuritmentData?.JobPostingEndDate
+        ? calculateValidTo(toDate(RecuritmentData?.JobPostingEndDate), 14)
+        : undefined;
+
       setLevel2Date((prevState) => ({
         ...prevState,
-        StartDate: RecuritmentData?.JobPostingStartDate,
+        StartDate: toDate(RecuritmentData?.JobPostingStartDate),
         EndDate: SecondEndDate,
       }));
+
       if (RecuritmentData?.JobPostingFirstExtensionEndDate) {
         setAdvertDuration3(true);
-        let ThiredEndDate: Date = calculateValidTo(
-          RecuritmentData?.JobPostingFirstExtensionEndDate,
-          14
+
+        const ThirdEndDate = calculateValidTo(
+          toDate(RecuritmentData.JobPostingFirstExtensionEndDate),
+          14,
         );
+
         setLevel3Date((prevState) => ({
           ...prevState,
-          StartDate: RecuritmentData?.JobPostingStartDate,
-          EndDate: ThiredEndDate,
+          StartDate: toDate(RecuritmentData?.JobPostingStartDate),
+          EndDate: ThirdEndDate,
         }));
       } else {
         setAdvertDuration3(false);
@@ -128,68 +144,88 @@ export const DateExtension = ({
     const day = String(updatedDate?.getDate()).padStart(2, "0");
 
     const dateOnly = new Date(
-      Date.UTC(Number(year), Number(month) - 1, Number(day))
+      Date.UTC(Number(year), Number(month) - 1, Number(day)),
     ); //`${year}-${month}-${day}`;
     return dateOnly.toISOString();
   };
 
   async function DataExtension() {
-    onClose();
-    setIsLoading(true);
-    const filterConditions = [
-      {
-        FilterKey: "JobCode",
-        Operator: "eq",
-        FilterValue: RecuritmentData.JobCodeId,
-      },
-    ];
-    const Conditions = "";
-    let obj;
-    if (AdvertDuration3) {
-      obj = {
-        ValidTo: Level3Date.EndDate ?? null,
-        ValidFrom: Level3Date.StartDate ?? null,
-      };
-    } else {
-      obj = {
-        ValidTo: Level2Date.EndDate ?? null,
-        ValidFrom: Level2Date.StartDate ?? null,
-      };
-    }
-    const result = await getVRRDetails.UploadAdvertisementInPortal(
-      filterConditions,
-      Conditions,
-      RecuritmentData,
-      obj,
-      ModelDropDown,
-      1,
-      1
-    );
+    let ConfirmMsg = {
+      Message: RecuritmentHRMsg.ConfirmMsg,
+      Type: HRMSAlertOptions.Confirmation,
+      visible: true,
+      ButtonAction: async (userClickedOK: boolean) => {
+        if (userClickedOK) {
+          onClose();
+          setIsLoading(true);
+          const filterConditions = [
+            {
+              FilterKey: "JobCode",
+              Operator: "eq",
+              FilterValue: RecuritmentData.JobCodeId,
+            },
+          ];
+          const Conditions = "";
+          let obj;
+          if (AdvertDuration3) {
+            obj = {
+              ValidTo: Level3Date.EndDate ?? null,
+              ValidFrom: Level3Date.StartDate ?? null,
+            };
+          } else {
+            obj = {
+              ValidTo: Level2Date.EndDate ?? null,
+              ValidFrom: Level2Date.StartDate ?? null,
+            };
+          }
+          const result = await getVRRDetails.UploadAdvertisementInPortal(
+            filterConditions,
+            Conditions,
+            RecuritmentData,
+            obj,
+            ModelDropDown,
+            1,
+            1,
+          );
 
-    if (result?.status === ResponeStatus.SUCCESS) {
-      let DateObj;
-      if (AdvertDuration3) {
-        DateObj = {
-          JobPostingSecondExtensionEndDate: Level3Date?.EndDate
-            ? SpiltDateOnly(Level3Date.EndDate)
-            : undefined,
-        };
-      } else {
-        DateObj = {
-          JobPostingFirstExtensionEndDate: Level2Date.EndDate
-            ? SpiltDateOnly(Level2Date.EndDate)
-            : undefined,
-        };
-      }
-      await SPServices.SPUpdateItem({
-        Listname: ListNames.HRMSRecruitmentDptDetails,
-        RequestJSON: DateObj,
-        ID: RecuritmentData?.ID,
-      });
-      AlertpopupSuccess(HRMSAlertOptions.Success);
-    } else {
-      AlertpopupSuccess(HRMSAlertOptions.Error);
-    }
+          if (result?.status === ResponeStatus.SUCCESS) {
+            let DateObj;
+            if (AdvertDuration3) {
+              DateObj = {
+                JobPostingSecondExtensionEndDate: Level3Date?.EndDate
+                  ? SpiltDateOnly(Level3Date.EndDate)
+                  : undefined,
+              };
+            } else {
+              DateObj = {
+                JobPostingFirstExtensionEndDate: Level2Date.EndDate
+                  ? SpiltDateOnly(Level2Date.EndDate)
+                  : undefined,
+              };
+            }
+            let UpdateList = await SPServices.SPUpdateItem({
+              Listname: ListNames.HRMSRecruitmentDptDetails,
+              RequestJSON: DateObj,
+              ID: RecuritmentData?.ID,
+            });
+            if (UpdateList) {
+              onClose();
+              AlertpopupSuccess(HRMSAlertOptions.Success);
+            }
+          } else {
+            onClose();
+            AlertpopupSuccess(HRMSAlertOptions.Error);
+          }
+          setIsLoading(false);
+        } else {
+          // onClose();
+          setAlertPopupOpen(false);
+        }
+      },
+    };
+
+    setAlertPopupOpen(true);
+    setalertProps(ConfirmMsg);
     setIsLoading(false);
   }
 
@@ -216,7 +252,13 @@ export const DateExtension = ({
                   />
                 </div>
               </div>
-              <div>
+              <div
+                style={{
+                  height: "30vh",
+                  overflowX: "hidden",
+                  overflowY: "scroll",
+                }}
+              >
                 <div className="ms-Grid-row" style={{ marginLeft: "9%" }}>
                   <Labelheader
                     value={labelNames.AdvertExten.Firstextensiondate}
@@ -347,6 +389,10 @@ export const DateExtension = ({
           </div>
         </React.Fragment>
       </CustomLoader>
+
+      {AlertPopupOpen ? (
+        <CustomAlert {...alertProps} onClose={() => setAlertPopupOpen(false)} />
+      ) : null}
     </>
   );
 };

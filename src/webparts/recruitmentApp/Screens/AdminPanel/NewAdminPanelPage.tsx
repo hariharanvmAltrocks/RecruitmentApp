@@ -108,7 +108,7 @@ const AdminPanelPage: React.FC = (props: any) => {
               item.UserType ===
               (props.stateValue.TabName === TabName.Agent
                 ? ExternalUserType.Agent
-                : ExternalUserType.LabourHire)
+                : ExternalUserType.LabourHire),
           );
 
           let lastCode = externalUsers.length
@@ -127,7 +127,7 @@ const AdminPanelPage: React.FC = (props: any) => {
                 ? ExternalUserType.Agent
                 : ExternalUserType.LabourHire,
           }));
-        }
+        },
       );
     } catch (error) {
       console.error("Error fetching External User Code:", error);
@@ -148,10 +148,10 @@ const AdminPanelPage: React.FC = (props: any) => {
         IsAlreadythere: true,
       }));
       let ExternalData = await CommonServices.GetMasterData(
-        ListNames.HRMSExternalAgents
+        ListNames.HRMSExternalAgents,
       );
       let GetID = ExternalData.data.filter(
-        (item) => item.AgentCode === editData?.exUserCode
+        (item) => item.AgentCode === editData?.exUserCode,
       );
       setdata({
         ExternalID: GetID[0].ID,
@@ -252,7 +252,7 @@ const AdminPanelPage: React.FC = (props: any) => {
 
   const handleAutoComplete = async (
     key: keyof AdminCreateUser,
-    value: AutoCompleteItem | null
+    value: AutoCompleteItem | null,
   ) => {
     setdata((prevState) => ({
       ...prevState,
@@ -580,7 +580,7 @@ const AdminPanelPage: React.FC = (props: any) => {
               props.stateValue.ButtonAction === ButtonAction.New ? false : true;
             const InsertList = await AdminPanelServices.InsertExternalUser(
               data,
-              IsEdit
+              IsEdit,
             );
             if (InsertList.status === ResponeStatus.SUCCESS) {
               let SuccessAlert: alertPropsData = {
@@ -590,8 +590,8 @@ const AdminPanelPage: React.FC = (props: any) => {
                       ? RecuritmentHRMsg.AddLabourHireSuccessMsg
                       : RecuritmentHRMsg.AddAgentSuccessMsg
                     : props.stateValue?.TabName == TabName.LabourHire
-                    ? RecuritmentHRMsg.UpdateLabourHireMsg
-                    : RecuritmentHRMsg.UpdateagentMsg,
+                      ? RecuritmentHRMsg.UpdateLabourHireMsg
+                      : RecuritmentHRMsg.UpdateagentMsg,
                 Type: HRMSAlertOptions.Success,
                 visible: true,
                 ButtonAction: (userClickedOK: boolean) => {
@@ -710,46 +710,60 @@ const AdminPanelPage: React.FC = (props: any) => {
                 className="ms-Grid-row"
                 style={{ display: "flex", justifyContent: "end" }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "134px",
-                  }}
-                >
-                  <Label styles={labelStyles}>
-                    {data.IsActive ? "Active" : "In Active"}
-                    {<span style={{ color: "red" }}> *</span>}
-                  </Label>
+                <div>
                   <div
-                    onClick={toggleStatus}
                     style={{
-                      width: "60px",
-                      height: "28px",
-                      borderRadius: "20px",
-                      backgroundColor: data.IsActive ? "#0ccf44" : "#ccc",
                       display: "flex",
                       alignItems: "center",
-                      padding: "4px",
-                      cursor: "pointer",
-                      transition: "0.3s",
-                      marginTop: "10%",
+                      justifyContent: "space-between",
+                      width: "134px",
                     }}
                   >
+                    <Label styles={labelStyles}>
+                      {data.IsActive ? "Active" : "In Active"}
+                      {<span style={{ color: "red" }}> *</span>}
+                    </Label>
                     <div
+                      onClick={toggleStatus}
                       style={{
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        backgroundColor: "#fff",
-                        transform: data.IsActive
-                          ? "translateX(30px)"
-                          : "translateX(0px)",
+                        width: "60px",
+                        height: "28px",
+                        borderRadius: "20px",
+                        backgroundColor: data.IsActive ? "#0ccf44" : "#ccc",
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "4px",
+                        cursor: "pointer",
                         transition: "0.3s",
+                        marginTop: "10%",
                       }}
-                    ></div>
+                    >
+                      <div
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          backgroundColor: "#fff",
+                          transform: data.IsActive
+                            ? "translateX(30px)"
+                            : "translateX(0px)",
+                          transition: "0.3s",
+                        }}
+                      ></div>
+                    </div>
                   </div>
+                  {ValidityState.IsActive && (
+                    <p
+                      style={{
+                        marginTop: 5,
+                        color: "red",
+                        fontSize: 12,
+                        marginLeft: 0,
+                      }}
+                    >
+                      Field is Required
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="ms-Grid-row">

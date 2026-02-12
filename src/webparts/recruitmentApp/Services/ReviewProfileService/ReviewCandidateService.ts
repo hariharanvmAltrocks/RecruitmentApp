@@ -17,6 +17,11 @@ export const getProfileData = {
             `/hrms/GetProfileByJobCode?jobCode`, params
         );
     },
+    GetJobAppliedCount: async function (params: string[]) {
+        return await AxiosInstance.post(
+            '/hrms/GetJobAppliedCount', params
+        )
+    },
     getCandidateProfile: async function (id: any) {
         return await AxiosInstance.post(
             `/hrms/GetMyJobsById?id=${id}`,
