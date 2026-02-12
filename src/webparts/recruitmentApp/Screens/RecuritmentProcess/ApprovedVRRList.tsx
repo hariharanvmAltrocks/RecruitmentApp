@@ -59,6 +59,7 @@ import {
   ExternalUserType,
   InterviewDate,
   JobAdvertAlertMsg,
+  PositionStatus,
 } from "../../utilities/LabelName";
 import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
 
@@ -358,11 +359,11 @@ const RecruitmentProcess = (props: any) => {
         Operator: "eq",
         FilterValue: rowData.DepartmentId,
       },
-      // {
-      //   FilterKey: "PositionIDStatus",
-      //   Operator: "eq",
-      //   FilterValue: "Vacant",
-      // },
+      {
+        FilterKey: "PositionIDStatus",
+        Operator: "eq",
+        FilterValue: PositionStatus.RecruitmentInitiator,
+      },
     ];
     const response = await getVRRDetails.GetPositionIDData(
       filterConditions,
