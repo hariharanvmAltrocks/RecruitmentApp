@@ -784,19 +784,19 @@ const ReviewProfileList = (props: any) => {
         );
 
         const getJobAppiledCount = recrutimentData.data.filter(
-          (item) => item.StatusId === StatusId.RecruitmentInProgress,
+          (item) =>
+            item.StatusId === StatusId.RecruitmentInProgress &&
+            item.AssignEMail === props.userDetails[0]?.EmailId,
         );
         const ReviewProfileCount = await getTotalAppliedCount(
           getJobAppiledCount,
           [workflowStatusApi.HRPending],
         );
-        console.log(ReviewProfileCount, "ReviewProfileCount");
 
         const InterviewPanelCount = await getTotalAppliedCount(
           getJobAppiledCount,
           [workflowStatusApi.PendingRecruitmentHRscheduleInterview],
         );
-        console.log(InterviewPanelCount, "InterviewPanelCount");
         const Evalution = await getVRRDetails.GetcountInEvalution(
           props.CurrentUserEmailId,
           props.EmployeeList,

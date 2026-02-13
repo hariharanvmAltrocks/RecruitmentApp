@@ -361,8 +361,11 @@ const RecruitmentProcess = (props: any) => {
       },
       {
         FilterKey: "PositionIDStatus",
-        Operator: "eq",
-        FilterValue: PositionStatus.RecruitmentInitiator,
+        Operator: "in",
+        FilterValue: [
+          PositionStatus.RecruitmentInitiator,
+          PositionStatus.RecruitmentInProgress,
+        ],
       },
     ];
     const response = await getVRRDetails.GetPositionIDData(
@@ -1385,10 +1388,6 @@ const RecruitmentProcess = (props: any) => {
           // (item.AssignEMail === props.userDetails[0]?.EmailId ||
         );
 
-        const getJobAppiledCount = recrutimentData.data.filter(
-          (item) => item.StatusId === StatusId.RecruitmentInProgress,
-        );
-
         const ReviewLinemanagerCount = recrutimentData.data.filter(
           (item) =>
             item.StatusId === StatusId.PendingwithLineManagereviewAdv &&
@@ -1409,12 +1408,28 @@ const RecruitmentProcess = (props: any) => {
           props.CurrentUserEmailId,
           props.EmployeeList,
         );
+
+        const getReviewProfileCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.RecruitmentInProgress &&
+            item.AssignLineManager === props.userDetails[0]?.EmailId,
+        );
+
         const ReviewProfileCount = await getTotalAppliedCount(
-          getJobAppiledCount,
+          getReviewProfileCount,
           [workflowStatusApi.HRPending],
         );
 
-        const ScoreCardCount = await getScoreCardCount(getJobAppiledCount);
+        const userEmail = props.userDetails[0]?.EmailId;
+
+        const getScoreCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.RecruitmentInProgress &&
+            (item.AssignLineManager === userEmail ||
+              item.AssignHOD === userEmail),
+        );
+
+        const ScoreCardCount = await getScoreCardCount(getScoreCount);
 
         setPendingCount((prevState) => ({
           ...prevState,
