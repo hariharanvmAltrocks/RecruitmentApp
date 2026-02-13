@@ -115,7 +115,7 @@ const CandidateCard: React.FC<Props> = ({ data, onClick, isLoading }) => {
       {/* 2. Position Title */}
       <div className="min-w-0">
         <span className="text-xs text-gray-600 font-medium leading-relaxed block truncate pr-4">
-          {data.PositionTitle || ""}
+          {data.appliedBy || ""}
         </span>
       </div>
       {/* 3. Created On */}
@@ -125,7 +125,9 @@ const CandidateCard: React.FC<Props> = ({ data, onClick, isLoading }) => {
         </span>
       </div>
       {/* 4. Status */}
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div 
+      // style={{ display: "flex", justifyContent: "flex-end" }}
+      >
   <div className={`status-pill-fixed ${statusClassFromId(data.statusId, data.Status)}`}>
     <span className="status-dot-common"></span>
     <span className="truncate">{data.Status}</span>

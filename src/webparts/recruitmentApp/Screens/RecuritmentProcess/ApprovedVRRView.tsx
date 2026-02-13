@@ -280,7 +280,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                 Status: item?.Status,
                 workflowStatusId: item?.StatusId,
                 applicationStatusId: item?.applicationStatusId,
-                createdOn: item?.CreatedOn ? new Date(item.CreatedOn) : new Date(),
+                createdOn: item?.createdOn ? new Date(item.createdOn) : new Date(),
                 applicationStatus: item?.ApplicationStatus || item?.Status || "",
               };
             });
@@ -319,12 +319,8 @@ const getCandidateListData = (): CandidateItem[] => {
   return CandidateData.map((item) => ({
     CandidateID: Number(item.CandidateID) || 0,
     ApplicantName: item.ApplicantName || "",
-    appliedBy: "Self",
-    createdOn: item.createdOn instanceof Date
-      ? item.createdOn
-      : item.createdOn
-        ? new Date(item.createdOn)
-        : new Date(),
+    appliedBy: "Internal job posting", // Assuming this is a static value for nowa
+    createdOn: item.createdOn ? new Date(item.createdOn) : new Date(),
     Status: item.Status || " ",
     statusId: Number((item as any).workflowStatusId) || Number((item as any).applicationStatusId) || undefined,
     PositionTitle: item.PositionTitle || "",
