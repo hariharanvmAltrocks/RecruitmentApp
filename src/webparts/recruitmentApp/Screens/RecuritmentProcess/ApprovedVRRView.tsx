@@ -3,11 +3,17 @@ import { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import "../../App.css";
-import { CommonServices, getVRRDetails } from "../../Services/ServiceExport";
+import {
+  CommonServices,
+  getVRRDetails,
+  GetPortalJobsService,
+} from "../../Services/ServiceExport";
 import {
   ColorCode,
   DocumentLibraray,
   RoleProfileMaster,
+  ResponeStatus,
+  workflowStatusApi,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
@@ -33,6 +39,12 @@ import {
   labelNames,
 } from "../../utilities/LabelName";
 import PreviewScreen from "./PreviewScreen";
+import CandidateList from "../../components/CandidateList";
+import { CandidateItem } from "../../components/CandidateCard";
+import {
+  FilterItem,
+  GetProfileByJobCode,
+} from "../../Models/ApIInterface";
 
 const ApprovedVRRView: React.FC = (props: any) => {
   const [tabVisibility, setTabVisibility] = useState({
@@ -98,6 +110,8 @@ const ApprovedVRRView: React.FC = (props: any) => {
   const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
   const [activeTab, setactiveTab] = useState<string>("tab1");
   const [Preview, setPreview] = useState<boolean>(false);
+  const [CandidateData, setCandidateData] = useState<GetProfileByJobCode[] | null>([]);
+  const [candidateListPage, setCandidateListPage] = useState<number>(1);
   const [advDetails, setAdvDetails] = useState<AdvDetails>({
     RoleDetailsID: 0,
     MinQualificationOption: [],
@@ -217,6 +231,107 @@ const ApprovedVRRView: React.FC = (props: any) => {
     }
   };
 
+  const fetchCandidateData = async (
+    row: number,
+    JobUniqueValues: string
+  ) => {
+    setIsLoading(true);
+    try {
+
+      let FilterValue: FilterItem = {
+        jobCode: JobUniqueValues,
+        workflowStausId: [
+                  workflowStatusApi.LineManagerL1Pending,
+                  workflowStatusApi.LineManagerL2Pending,
+                  workflowStatusApi.LineManagerLevel1OnHold,
+                  workflowStatusApi.LineManagerLevel2OnHold,
+                  workflowStatusApi.LineManagerLevel1Rejected,
+                  workflowStatusApi.LineManagerLevel2Rejected,
+                  workflowStatusApi.pendingHODSelection,
+                  workflowStatusApi.CandidateSelectedIPanel,
+                  workflowStatusApi.CandidateRejectedIPanel,
+                  workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+                  workflowStatusApi.HRPending,
+        ],
+        pagination: {
+          filterValue: "",
+          sortBy: "",
+          sortOrder: 0,
+          pageSize: row ? row : row,
+          currentPage: 0,
+          totalItems: 0,
+        },
+      };
+
+
+      await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
+        .then(async (res) => {
+          console.log("API Response:", res);
+          console.log("API Data:", res.data);
+          if (res.data && res.data.length > 0) {
+            console.log("First Item:", res.data[0]);
+            let CandidateDataFilter = res.data.map((item: any): GetProfileByJobCode => {
+              console.log("Mapping Item:", item);
+              return {
+                CandidateID: item?.ID,
+                ApplicantName: item?.ApplicantName,
+                PositionTitle: item?.PositionTitle,
+                JobCode: item?.JobCode,
+                Status: item?.Status,
+                workflowStatusId: item?.StatusId,
+                applicationStatusId: item?.applicationStatusId,
+                createdOn: item?.CreatedOn ? new Date(item.CreatedOn) : new Date(),
+                applicationStatus: item?.ApplicationStatus || item?.Status || "",
+              };
+            });
+            console.log("Mapped Candidate Data:", CandidateDataFilter);
+            setCandidateData(CandidateDataFilter);
+          } else {
+            console.log("No data received from API");
+            setCandidateData([]);
+          }
+        })
+        .catch((error) => {
+          console.log("API Error:", error);
+          console.error("Candidate details doesn't fetch the data", error);
+          setCandidateData([]);
+        });
+    } catch (error) {
+      console.log("Candidate Api failed", error);
+      setCandidateData([]);
+    }
+    setIsLoading(false);
+  };
+
+
+
+  const handleCandidateListPageChange = (page: number) => {
+    setCandidateListPage(page);
+  };
+
+  const handleCandidateCardClick = (candidateId: number) => {
+    console.log("Candidate clicked:", candidateId);
+    // Add navigation or detail view logic here
+  };
+const getCandidateListData = (): CandidateItem[] => {
+  if (!CandidateData || CandidateData.length === 0) return [];
+   console.log("Candidate List Data:", CandidateData);
+  return CandidateData.map((item) => ({
+    CandidateID: Number(item.CandidateID) || 0,
+    ApplicantName: item.ApplicantName || "",
+    appliedBy: "Self",
+    createdOn: item.createdOn instanceof Date
+      ? item.createdOn
+      : item.createdOn
+        ? new Date(item.createdOn)
+        : new Date(),
+    Status: item.Status || " ",
+    statusId: Number((item as any).workflowStatusId) || Number((item as any).applicationStatusId) || undefined,
+    PositionTitle: item.PositionTitle || "",
+  }));
+ 
+};
+
   const fetchData = async () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -325,6 +440,27 @@ const ApprovedVRRView: React.FC = (props: any) => {
           }));
         }
         await fetchRoleProfileData(op.JobCodeId);
+
+        // Fetch JobUniqueValue and Candidate Data
+        let JobCodeFilter = [
+          {
+            FilterKey: "JobCodeId",
+            Operator: "eq",
+            FilterValue: op.JobCodeId,
+          },
+          { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+        ];
+        let JobUniqueValueResponse = await getVRRDetails.GetJobUniqueDataValue(
+          JobCodeFilter,
+          "and"
+        );
+        if (
+          JobUniqueValueResponse.status === ResponeStatus.SUCCESS &&
+          JobUniqueValueResponse.data.length > 0
+        ) {
+          const uniqueKey = JobUniqueValueResponse.data[0]?.JobUniqueKey;
+          await fetchCandidateData(5, uniqueKey);
+        }
       }
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -643,8 +779,8 @@ const ApprovedVRRView: React.FC = (props: any) => {
                       value={
                         data.DateRequried
                           ? new Date(data.DateRequried)
-                              .toLocaleDateString("en-GB")
-                              .replace(/\//g, "-")
+                            .toLocaleDateString("en-GB")
+                            .replace(/\//g, "-")
                           : ""
                       }
                       disabled={true}
@@ -742,7 +878,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
                           value={
                             Attachment.PositionDocument.ViewJobAdvertisement
                           }
-                          // mandatory={true}
+                        // mandatory={true}
                         />
                         <ReuseButton
                           Style={{
@@ -807,12 +943,21 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     />
                   </div>
                 </div>
+                <CandidateList
+                  candidates={getCandidateListData()}
+                  currentPage={candidateListPage}
+                  pageSize={5}
+                  totalItems={CandidateData?.length || 0}
+                  onPageChange={handleCandidateListPageChange}
+                  onCardClick={handleCandidateCardClick}
+                />
               </div>
             )}
           </CardContent>
         </Card>
       ),
     },
+   
   ];
   const back_fn = () => {
     props.navigation("/RecurimentProcess", {

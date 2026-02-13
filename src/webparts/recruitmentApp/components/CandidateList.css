@@ -1,0 +1,290 @@
+/* ============================= */
+/* Container */
+/* ============================= */
+
+.candidate-list-container {
+  background: #f9fafb;
+  padding: 12px 0;
+  border-radius: 12px;
+  margin-top: 20px;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.candidate-list-title {
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #1f2937;
+  margin-left: 1%;
+}
+
+
+/* ============================= */
+/* Card Layout */
+/* ============================= */
+
+.candidate-card {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 0.6fr 1fr;
+  align-items: center;
+  column-gap: 24px;
+  background: #fff;
+  padding: 10px 16px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+   align-items:center;
+}
+
+.candidate-card:hover {
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.08);
+  border-color: #1f4e79;
+}
+
+
+/* ============================= */
+/* Left Section */
+/* ============================= */
+
+.candidate-card-left {
+  display: flex;
+  /* align-items: flex-start; */
+  gap: 12px;
+  min-width: 220px;
+}
+
+.candidate-card-avatar {
+  width: 36px;
+  height: 36px;
+  background: #1f4e79;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.candidate-card-name{
+  font-weight:600;
+  font-size:14px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.candidate-card-subtext {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.candidate-name-cell{
+  display:flex;
+  align-items:center;   /* 🔥 THIS FIXES YOUR ISSUE */
+  gap:12px;
+  min-width:0;
+}
+
+.candidate-text{
+  min-width:0;
+}
+
+
+
+/* ============================= */
+/* Middle Section */
+/* ============================= */
+
+.candidate-card-middle {
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+}
+
+.candidate-card-middle > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.candidate-card-label {
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  letter-spacing: 0.6px;
+}
+
+.candidate-card-value {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+
+/* ============================= */
+/* Status Badge */
+/* ============================= */
+
+.candidate-card-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+
+  justify-self: start; /* Align to end (right) */
+  align-self: center;  /* Center vertically */
+  text-align: center;
+  justify-content: flex-start;
+}
+
+
+/* ============================= */
+/* Status Colors */
+/* ============================= */
+
+.candidate-status-pending {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.candidate-status-inreview {
+  background: #e0ecff;
+  color: #2563eb;
+}
+
+.candidate-status-interviewed {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+.candidate-status-selected {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.candidate-status-rejected {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.candidate-status-default {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+
+/* ============================= */
+/* Footer */
+/* ============================= */
+
+.candidate-list-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding: 15px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.candidate-list-pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.candidate-list-pagination button {
+  background: #fff;
+  border: 1px solid #d1d5db;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+}
+
+.candidate-list-pagination button:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #1f4e79;
+}
+
+.candidate-list-pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.candidate-list-activePage {
+  background: #1f4e79;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  min-width: 35px;
+  text-align: center;
+}
+
+
+/* ============================= */
+/* Responsive */
+/* ============================= */
+
+@media (max-width: 768px) {
+  .candidate-card {
+    grid-template-columns: 1fr;
+    row-gap: 15px;
+  }
+
+  .candidate-card-middle {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .candidate-card-status {
+    justify-self: start !important
+  }
+
+  .candidate-list-footer {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+/* Status Badge */
+.candidate-card-status,
+.status-pill-fixed {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1.25rem;
+  background-color: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  /* Remove width: 100% and max-width! */
+  text-align: left;
+  justify-content: flex-start;
+  margin-left: auto; /* This will right-align the pill in the grid cell */
+}
+
+/* Status Dot */
+.status-dot-common {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  margin-right: 0.625rem;
+  background-color: #94a3b8;
+  flex-shrink: 0;
+}

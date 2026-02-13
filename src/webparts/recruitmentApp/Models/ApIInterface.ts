@@ -61,6 +61,7 @@ export type FilterItem = {
 }
 
 export type GetProfileByJobCode = {
+    SNO?: number | string;
     CandidateID: string,
     ApplicantName: string,
     PositionTitle: string,
