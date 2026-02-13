@@ -22,7 +22,11 @@ import {
 
 import SearchableDataTable from "../../components/CustomDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
-import { getTotalAppliedCount, tabStyle } from "../../components/TabMerge";
+import {
+  getInterviewPanelCount,
+  getTotalAppliedCount,
+  tabStyle,
+} from "../../components/TabMerge";
 import ToolTipButton from "../../components/Tooltip";
 import {
   ActionName,
@@ -793,14 +797,18 @@ const ReviewProfileList = (props: any) => {
           [workflowStatusApi.HRPending],
         );
 
-        const InterviewPanelCount = await getTotalAppliedCount(
+        const InterviewPanel1Count = await getTotalAppliedCount(
           getJobAppiledCount,
           [workflowStatusApi.PendingRecruitmentHRscheduleInterview],
         );
+        const InterviewPanel2Count =
+          await getInterviewPanelCount(getJobAppiledCount);
         const Evalution = await getVRRDetails.GetcountInEvalution(
           props.CurrentUserEmailId,
           props.EmployeeList,
         );
+
+        let InterviewPanelCount = InterviewPanel1Count + InterviewPanel2Count;
 
         setPendingCount((prevState) => ({
           ...prevState,

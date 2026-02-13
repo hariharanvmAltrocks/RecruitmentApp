@@ -1417,7 +1417,12 @@ const RecruitmentProcess = (props: any) => {
 
         const ReviewProfileCount = await getTotalAppliedCount(
           getReviewProfileCount,
-          [workflowStatusApi.HRPending],
+          [
+            workflowStatusApi.LineManagerL1Pending,
+            workflowStatusApi.LineManagerL2Pending,
+            workflowStatusApi.LineManagerLevel1OnHold,
+            workflowStatusApi.LineManagerLevel2OnHold,
+          ],
         );
 
         const userEmail = props.userDetails[0]?.EmailId;
@@ -1425,8 +1430,7 @@ const RecruitmentProcess = (props: any) => {
         const getScoreCount = recrutimentData.data.filter(
           (item) =>
             item.StatusId === StatusId.RecruitmentInProgress &&
-            (item.AssignLineManager === userEmail ||
-              item.AssignHOD === userEmail),
+            item.AssignHOD === userEmail,
         );
 
         const ScoreCardCount = await getScoreCardCount(getScoreCount);

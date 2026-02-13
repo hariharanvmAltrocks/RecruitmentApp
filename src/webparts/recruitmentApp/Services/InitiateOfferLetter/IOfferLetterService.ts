@@ -104,7 +104,12 @@ export type GetBGVDocument = {
 }
 export type GetDOTAfricaCF = {
     ListName: string;
-    Natioality: string;
+    Natioality?: string;
+    ProfileID: string;
+    RequestID: string;
+    DocumentType?: string;
+    DocumentName?: string[];
+
 }
 
 export type IOfferLetterService = {

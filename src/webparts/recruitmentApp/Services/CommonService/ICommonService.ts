@@ -36,5 +36,8 @@ export type ICommonService = {
     AttachFile: IDocFiles[],
     Listname: string
   ): Promise<ApiResponse<any>>;
-  GetDocumentinUrl(url: string): Promise<ApiResponse<any[]>>
+  GetDocumentinUrl(url: string): Promise<ApiResponse<any[]>>;
+  GetUserName(
+    email: string
+  ): Promise<ApiResponse<any | null>>;
 };

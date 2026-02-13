@@ -671,15 +671,18 @@ const ViewCandidateDetails = (props: any) => {
             void (await GetInterviewPanelDetails());
             // setIsLoading(false);
           } else {
-            let COIProfile = props.EmployeeList.map((item: any) => ({
-              key: item.Email,
-              text: `${item?.FirstName || ""} ${item?.MiddleName || ""} ${
-                item?.LastName || ""
-              }`,
-            }));
+            // let COIProfile = props.EmployeeList.map((item: any) => ({
+            //   key: item.Email,
+            //   text: `${item?.FirstName || ""} ${item?.MiddleName || ""} ${
+            //     item?.LastName || ""
+            //   }`,
+            // }));
+            let COIOptions = await GetPortalJobsService.GetCOIProfileOption(
+              RecrutimentData.data[0],
+            );
             setInterviewedLevel((prev) => ({
               ...prev,
-              COIProfileLabelOption: COIProfile,
+              COIProfileLabelOption: COIOptions.data ?? [],
             }));
             // setIsLoading(false);
           }

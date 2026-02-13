@@ -675,9 +675,12 @@ export default class OfferLetterService implements IOfferLetterService {
     ): Promise<ApiResponse<any>> => {
         try {
             let response: IDocFiles[];
-            response = (await SPServices.getDocLibFiles({
-                FilePath: `${DocumentName.ListName}/${DocumentName.Natioality}`,
-            })) as IDocFiles[];
+            // response = (await SPServices.getDocLibFiles({
+            //     FilePath: `${DocumentName.ListName}/${DocumentName.Natioality}`,
+            // })) as IDocFiles[];
+            response = await SPServices.getDocLibFiles({
+                FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${"ConsentForm"}`,
+            }) as IDocFiles[];
             return {
                 data: response,
                 status: 200,
