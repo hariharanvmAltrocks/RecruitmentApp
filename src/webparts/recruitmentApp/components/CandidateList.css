@@ -206,34 +206,38 @@
   gap: 10px;
 }
 
-.candidate-list-pagination button {
-  background: #fff;
-  border: 1px solid #d1d5db;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 13px;
-}
 
-.candidate-list-pagination button:hover:not(:disabled) {
+/* Pagination Buttons */
+
+.pagination-btn {
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  padding: 4px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  font-size: 14px;
+  color: #374151;
+  font-weight: 600;
+  min-width: 28px;
+  box-shadow: none;
+}
+.pagination-btn.active,
+.pagination-btn:disabled {
+  background: #1f4e79;
+  color: #fff;
+  border-color: #1f4e79;
+  cursor: default;
+  box-shadow: 0 2px 8px rgba(31, 78, 121, 0.10);
+}
+.pagination-btn:disabled:not(.active) {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border-color: #e5e7eb;
+}
+.pagination-btn:not(:disabled):hover {
   background: #f3f4f6;
   border-color: #1f4e79;
-}
-
-.candidate-list-pagination button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.candidate-list-activePage {
-  background: #1f4e79;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-weight: 600;
-  min-width: 35px;
-  text-align: center;
 }
 
 

@@ -328,6 +328,22 @@ const getCandidateListData = (): CandidateItem[] => {
  
 };
 
+
+// const getCandidateListData = (): CandidateItem[] => {
+//   const statuses = ["Pending", "In Review", "Interviewed", "Selected", "Rejected"];
+
+//   return Array.from({ length: 25 }, (_, i) => ({
+//     CandidateID: i + 1,
+//     ApplicantName: `Candidate ${i + 1}`,
+//     appliedBy: i % 2 === 0 ? "Internal Job Posting" : "External Portal",
+//     createdOn: new Date(2026, 0, (i % 28) + 1), // Jan dates
+//     Status: statuses[i % statuses.length],
+//     statusId: i % statuses.length,
+//     PositionTitle: `Software Engineer ${(i % 3) + 1}`,
+//   }));
+// };
+// const [candidateList] = useState<CandidateItem[]>(() => getCandidateListData());
+
   const fetchData = async () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -940,10 +956,12 @@ const getCandidateListData = (): CandidateItem[] => {
                   </div>
                 </div>
                 <CandidateList
+                  // candidates={candidateList}
                   candidates={getCandidateListData()}
                   currentPage={candidateListPage}
                   pageSize={5}
                   totalItems={CandidateData?.length || 0}
+                //  totalItems={candidateList.length}
                   onPageChange={handleCandidateListPageChange}
                   onCardClick={handleCandidateCardClick}
                 />
