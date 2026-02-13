@@ -1,5 +1,6 @@
 import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { CommanQuestion, QuestionItem } from "../../Models/RecuritmentVRR";
+import { AutoCompleteItem } from "../../Models/Screens";
 import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
 import { DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
 import { IDocFiles } from "../SPService/ISPServicesProps";
@@ -122,4 +123,5 @@ export type IGetPortalJobs = {
     GetUpsertCOI(data: COIType): Promise<ApiResponse<any | null>>;
     SendEmailNotification(data: sendEmail): Promise<ApiResponse<any | null>>;
     GetJobAppliedCount(data: string[]): Promise<ApiResponse<any | null>>;
+    GetCOIProfileOption(data: DataSyncToRecruitmentResponse): Promise<ApiResponse<AutoCompleteItem[] | null>>
 }

@@ -390,6 +390,50 @@ export const getTotalAppliedCount = async (
   return totalCount;
 };
 
+export const getInterviewPanelCount = async (
+  getJobAppiledCount: DataSyncToRecruitmentResponse[],
+) => {
+  const counts = await Promise.all(
+    getJobAppiledCount.map(async (item) => {
+      const jobCodeFilter = [
+        {
+          FilterKey: "RecruitmentIDId",
+          Operator: "eq",
+          FilterValue: String(item?.ID),
+        },
+        {
+          FilterKey: "JobCodeId",
+          Operator: "eq",
+          FilterValue: String(item?.JobCodeId),
+        },
+        {
+          FilterKey: "StatusId",
+          Operator: "in",
+          FilterValue: [
+            StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+          ],
+        },
+        {
+          FilterKey: "ItemCreated",
+          Operator: "eq",
+          FilterValue: "No",
+        },
+      ];
+
+      const scorecardValue = await getVRRDetails.getReviewScoreCardCount(
+        jobCodeFilter,
+        "and",
+      );
+
+      return Number(scorecardValue?.data) || 0;
+    }),
+  );
+
+  const totalCount = counts.reduce((sum, count) => sum + count, 0);
+
+  return totalCount;
+};
+
 export const getScoreCardCount = async (
   getJobAppiledCount: DataSyncToRecruitmentResponse[],
 ) => {
@@ -413,7 +457,6 @@ export const getScoreCardCount = async (
             StatusId.PendingwithHODtoselectthecandidate,
             StatusId.OnHoldbyHOD,
             StatusId.PendingwithHODtoAssignPositionID,
-            StatusId.PendingwithHODtoselectthecandidateLevel2,
             StatusId.CandidateOnHoldbyHODLevel1,
             StatusId.CandidateOnHoldbyHODLevel2,
           ],
