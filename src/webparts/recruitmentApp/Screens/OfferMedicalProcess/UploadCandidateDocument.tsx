@@ -675,12 +675,15 @@ const UploadCandidateDocument = (props: any) => {
 
       setdocumentview(docs);
       let DOtObj: GetDOTAfricaCF = {
-        ListName: DocumentLibraray.DOTAfricaConsentForm,
-        Natioality:
-          item?.CandidateDetails?.NationalityCode ===
-          NationalityCode.SouthAfrica
-            ? "SA"
-            : "NSA",
+        ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
+        ProfileID: item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID, //"13", //item?.CandidateDetails?.ProfileID,
+        DocumentType: DocumentFolderName.BackgroundVerification,
+        RequestID: item?.CandidateDetails?.JobRequestID,
+        // Natioality:
+        //   item?.CandidateDetails?.NationalityCode ===
+        //   NationalityCode.SouthAfrica
+        //     ? "SA"
+        //     : "NSA",
       };
       const getDotAfricaCF =
         await OfferLetterServices.FetchDotAfricaConsentForm(DOtObj);
@@ -2129,87 +2132,6 @@ const UploadCandidateDocument = (props: any) => {
                 )}
 
                 {props.stateValue?.StatusId ===
-                  StatusId.PendingHRBGVInitiation &&
-                data.NationalityCode != NationalityCode.Nationals ? (
-                  <>
-                    <div className="ms-Grid-row">
-                      <div
-                        className="ms-Grid-col ms-lg2"
-                        style={{ marginTop: "2%" }}
-                      >
-                        <CustomLabel
-                          value={
-                            Attachment.PositionDocument.DownloadConsentForm
-                          }
-                        />
-                      </div>
-                      <div
-                        className="ms-Grid-col ms-lg6"
-                        style={{ display: "flex", marginTop: "3%" }}
-                      >
-                        <ToolTipButton
-                          ApproverData={Attachment.PositionDocument.DOTAficaCFD}
-                        />
-                        <CustomViewDocument
-                          Attachment={data.DotAfricaCF}
-                          webUrl={props.webURL}
-                        />
-                      </div>
-                    </div>
-                    <div className="ms-Grid-row">
-                      <div className="ms-Grid-col ms-lg3">
-                        <>
-                          <CustomLabel
-                            value={Attachment.PositionDocument.ConsentDoc}
-                            mandatory={true}
-                          />
-                          <AttachmentButton
-                            label="Upload"
-                            iconName="CloudUpload"
-                            iconNameHover="CloudUpload"
-                            allowMultiple={false}
-                            AttachState={(newAttachment: any) => {
-                              let attachment: IDocFiles[] = newAttachment.map(
-                                (item: any) => {
-                                  return {
-                                    name: "ConsentForm- " + item.name,
-                                    content: item.file,
-                                    type: "New",
-                                    url: item.Url,
-                                  };
-                                },
-                              );
-                              // const attachments = [
-                              //   ...(data.ConsentDocs || []),
-                              //   ...attachment,
-                              // ];
-                              handleDocument("ConsentDocs", attachment);
-                            }}
-                            mandatory={true}
-                            error={validationErrors.ConsentDocs}
-                            Style={{
-                              backgroundColor:
-                                ColorCode.ButtonColorCode.ButtonColor,
-                              color: "white",
-                            }}
-                            fileformat=".doc,.pdf,.docx"
-                          />
-                          <CustomViewAttachment
-                            Attachment={data.ConsentDocs ?? []}
-                            StateValue={"ConsentDocs"}
-                            handleDelete={(index, fileState) =>
-                              handleDelete(index, fileState)
-                            }
-                          />
-                        </>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <></>
-                )}
-
-                {props.stateValue?.StatusId ===
                   StatusId.PendingHROfferInitiate &&
                 data.EmploymentCategory ===
                   EmployeementCategory.KCSAEmployee ? (
@@ -2594,6 +2516,89 @@ const UploadCandidateDocument = (props: any) => {
                 ) : (
                   <></>
                 )}
+
+                {data.RadioAction === "Yes" &&
+                props.stateValue?.StatusId ===
+                  StatusId.PendingHRReviewBGCheck &&
+                data.NationalityCode != NationalityCode.Nationals ? (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div
+                        className="ms-Grid-col ms-lg2"
+                        style={{ marginTop: "2%" }}
+                      >
+                        <CustomLabel
+                          value={
+                            Attachment.PositionDocument.DownloadConsentForm
+                          }
+                        />
+                      </div>
+                      <div
+                        className="ms-Grid-col ms-lg6"
+                        style={{ display: "flex", marginTop: "3%" }}
+                      >
+                        <ToolTipButton
+                          ApproverData={Attachment.PositionDocument.DOTAficaCFD}
+                        />
+                        <CustomViewDocument
+                          Attachment={data.DotAfricaCF}
+                          webUrl={props.webURL}
+                        />
+                      </div>
+                    </div>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg3">
+                        <>
+                          <CustomLabel
+                            value={Attachment.PositionDocument.ConsentDoc}
+                            mandatory={true}
+                          />
+                          <AttachmentButton
+                            label="Upload"
+                            iconName="CloudUpload"
+                            iconNameHover="CloudUpload"
+                            allowMultiple={false}
+                            AttachState={(newAttachment: any) => {
+                              let attachment: IDocFiles[] = newAttachment.map(
+                                (item: any) => {
+                                  return {
+                                    name: "ConsentForm- " + item.name,
+                                    content: item.file,
+                                    type: "New",
+                                    url: item.Url,
+                                  };
+                                },
+                              );
+                              // const attachments = [
+                              //   ...(data.ConsentDocs || []),
+                              //   ...attachment,
+                              // ];
+                              handleDocument("ConsentDocs", attachment);
+                            }}
+                            mandatory={true}
+                            error={validationErrors.ConsentDocs}
+                            Style={{
+                              backgroundColor:
+                                ColorCode.ButtonColorCode.ButtonColor,
+                              color: "white",
+                            }}
+                            fileformat=".doc,.pdf,.docx"
+                          />
+                          <CustomViewAttachment
+                            Attachment={data.ConsentDocs ?? []}
+                            StateValue={"ConsentDocs"}
+                            handleDelete={(index, fileState) =>
+                              handleDelete(index, fileState)
+                            }
+                          />
+                        </>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
+
                 {props.stateValue?.ButtonAction === ButtonAction.View ||
                 props.stateValue?.StatusId ===
                   StatusId.PendingHRpreonboardingchecklist ? (
@@ -2742,8 +2747,9 @@ const UploadCandidateDocument = (props: any) => {
       WorkpermitDoc: false,
     };
     if (
-      props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation &&
-      data.NationalityCode != NationalityCode.Nationals
+      props.stateValue?.StatusId === StatusId.PendingHRReviewBGCheck &&
+      data.NationalityCode != NationalityCode.Nationals &&
+      data.RadioAction === "Yes"
     ) {
       errors.ConsentDocs = !IsValid(data.ConsentDocs);
     }
@@ -2971,50 +2977,31 @@ const UploadCandidateDocument = (props: any) => {
           case StatusId.PendingHRBGVInitiation:
             {
               if (btnAction === ButtonAction.Initiated) {
-                if (
-                  props.stateValue?.StatusId ===
-                    StatusId.PendingHRBGVInitiation &&
-                  data.NationalityCode != NationalityCode.Nationals
-                ) {
-                  DocumentData = {
-                    ProfileID: data?.ProfileID,
-                    RequestID: data?.jobRequestID,
-                    DocumentName: DocumentFolderName.BGVConsentform,
-                    UnsignedDoc: "",
-                  };
-                  let BGVConsentDocs = [...data.ConsentDocs];
-                  DocumentResponse =
-                    await OfferLetterServices.UploadCandidateDocument(
-                      DocumentData,
-                      BGVConsentDocs,
-                    );
-                } else {
-                  DocumentResponse = {
-                    status: ResponeStatus.SUCCESS,
-                  };
-                }
-
                 workflowStatusValue =
                   workflowStatusApi.PendingCandidateUploadBGVDocs;
                 SuccessMsg = RecuritmentHRMsg.BGverificationMsg;
                 ActionID = WorkflowAction.Approved;
+                DocumentResponse = {
+                  status: ResponeStatus.SUCCESS,
+                };
               }
             }
             break;
           case StatusId.PendingHRReviewBGCheck:
             {
               if (btnAction === ButtonAction.Review) {
-                // if (
-                //   WorkflowStatus === workflowStatusApi.initiatetheBGVProcess
-                // ) {
-                //   DocumentResponse = {
-                //     status: ResponeStatus.SUCCESS,
-                //   };
-                // } else {
-                //   DocumentResponse = await laborHireService.InitiateBGVProcess(
-                //     Number(data?.jobRequestID)
-                //   );
-                // }
+                DocumentData = {
+                  ProfileID: data?.ProfileID,
+                  RequestID: data?.jobRequestID,
+                  DocumentName: DocumentFolderName.BGVConsentform,
+                  UnsignedDoc: "",
+                };
+                let BGVConsentDocs = [...data.ConsentDocs];
+                DocumentResponse =
+                  await OfferLetterServices.UploadCandidateDocument(
+                    DocumentData,
+                    BGVConsentDocs,
+                  );
 
                 workflowStatusValue = workflowStatusApi.initiatetheBGVProcess;
                 SuccessMsg =
@@ -3024,9 +3011,9 @@ const UploadCandidateDocument = (props: any) => {
                     ? RecuritmentHRMsg.BGReviewedMsg
                     : RecuritmentHRMsg.BGReviewinitBGV;
                 ActionID = WorkflowAction.Approved;
-                DocumentResponse = {
-                  status: ResponeStatus.SUCCESS,
-                };
+                // DocumentResponse = {
+                //   status: ResponeStatus.SUCCESS,
+                // };
               } else if (btnAction === ButtonAction.Revert) {
                 workflowStatusValue =
                   workflowStatusApi.RevetedBacktoBGVDocuments;
@@ -3363,7 +3350,7 @@ const UploadCandidateDocument = (props: any) => {
             props.stateValue?.StatusId === StatusId.PendingHRBGVInitiation &&
             data.NationalityCode != NationalityCode.Nationals
           ) {
-            CandidateDatas.ConsentFormPath = DocumentResponse.data[0]?.content;
+            CandidateDatas.ConsentFormPath = ""; //DocumentResponse.data[0]?.content;
           } else if (
             props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview
           ) {

@@ -22,7 +22,11 @@ import {
 
 import SearchableDataTable from "../../components/CustomDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
-import { tabStyle } from "../../components/TabMerge";
+import {
+  getInterviewPanelCount,
+  getTotalAppliedCount,
+  tabStyle,
+} from "../../components/TabMerge";
 import ToolTipButton from "../../components/Tooltip";
 import {
   ActionName,
@@ -784,17 +788,32 @@ const ReviewProfileList = (props: any) => {
         );
 
         const getJobAppiledCount = recrutimentData.data.filter(
-          (item) => item.StatusId === StatusId.RecruitmentInProgress,
+          (item) =>
+            item.StatusId === StatusId.RecruitmentInProgress &&
+            item.AssignEMail === props.userDetails[0]?.EmailId,
         );
-        console.log(getJobAppiledCount, "getJobAppiledCount");
+        const ReviewProfileCount = await getTotalAppliedCount(
+          getJobAppiledCount,
+          [workflowStatusApi.HRPending],
+        );
 
+        const InterviewPanel1Count = await getTotalAppliedCount(
+          getJobAppiledCount,
+          [workflowStatusApi.PendingRecruitmentHRscheduleInterview],
+        );
+        const InterviewPanel2Count =
+          await getInterviewPanelCount(getJobAppiledCount);
         const Evalution = await getVRRDetails.GetcountInEvalution(
           props.CurrentUserEmailId,
           props.EmployeeList,
         );
 
+        let InterviewPanelCount = InterviewPanel1Count + InterviewPanel2Count;
+
         setPendingCount((prevState) => ({
           ...prevState,
+          ReviewPrfileCount: ReviewProfileCount,
+          AssignInterviewPanelCount: InterviewPanelCount,
           InterviewQuestionCount: InterviewQuestionCount.length,
           EvaluationCount: Evalution.data.length,
           // EvaluationCount: Evalution.data[0].length,
@@ -914,10 +933,10 @@ const ReviewProfileList = (props: any) => {
 
   const getTabLabel = (tab: any) => {
     switch (tab.TabName) {
-      // case TabName.ReviewProfile:
-      //   return tabStyle(tab.TabName, pendingcount.ReviewPrfileCount);
-      // case TabName.AssignInterviewPanel:
-      //   return tabStyle(tab.TabName, pendingcount.AssignInterviewPanelCount);
+      case TabName.ReviewProfile:
+        return tabStyle(tab.TabName, pendingcount.ReviewPrfileCount);
+      case TabName.AssignInterviewPanel:
+        return tabStyle(tab.TabName, pendingcount.AssignInterviewPanelCount);
       case TabName.InterviewQuestion:
         return tabStyle(tab.TabName, pendingcount.InterviewQuestionCount);
       case TabName.Evaluation:

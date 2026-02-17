@@ -27,39 +27,6 @@ interface IAttachmentExampleState {
   ID: string;
 }
 
-const GetUserName = async (
-  email: string
-): Promise<ApiResponse<any | null>> => {
-  try {
-    const listItems: any[] = await SPServices.SPReadItems({
-      Listname: ListNames.HRMSSageList,
-      Select: "*",
-      Filter: [{
-        FilterKey: "EmailId",
-        FilterValue: "eq",
-        Operator: email
-      }]
-    });
-    let UserName = listItems.find((emp: any) => {
-      return emp.EmailId?.toLowerCase() === email?.toLowerCase();
-    });
-    let UserRoleName = `${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || ""}`
-    return {
-      data: UserRoleName,
-      status: 200,
-      message: "ADGroups retrieved successfully",
-    };
-  } catch (error) {
-    console.error("Error fetching user ID by email: ", error);
-    // Return null in case of an error
-    return {
-      data: null,
-      status: 500,
-      message: "Error getting ADGroups",
-    };
-  }
-};
-
 const GetInterviewPanel = async (
   filterConditions: any[] = []
 ): Promise<ApiResponse<any | null>> => {
@@ -2203,7 +2170,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
           for (const item of res) {
             if (item?.LineManagerId && item?.LineManager?.EMail) {
-              let UserName = await GetUserName(item.LineManager.EMail);
+              let UserName = await CommonServices.GetUserName(item.LineManager.EMail);
               panelMembers.push({
                 key: item.LineManagerId,
                 Role: RoleName.LineManager,
@@ -2211,7 +2178,7 @@ export default class RecruitmentService implements IRecruitmentService {
               });
             }
             if (item?.HODId && item?.HOD?.EMail) {
-              let UserName = await GetUserName(item?.HOD?.EMail);
+              let UserName = await CommonServices.GetUserName(item?.HOD?.EMail);
               panelMembers.push({
                 key: item.HODId,
                 Role: RoleName.HOD,
@@ -2219,7 +2186,7 @@ export default class RecruitmentService implements IRecruitmentService {
               });
             }
             if (item?.EXCOId && item?.EXCO?.EMail) {
-              let UserName = await GetUserName(item?.EXCO?.EMail);
+              let UserName = await CommonServices.GetUserName(item?.EXCO?.EMail);
               panelMembers.push({
                 key: item.EXCOId,
                 Role: RoleName.EXCO,
@@ -2227,7 +2194,7 @@ export default class RecruitmentService implements IRecruitmentService {
               });
             }
             if (AssignHR) {
-              let UserName = await GetUserName(AssignHR.text);
+              let UserName = await CommonServices.GetUserName(AssignHR.text);
               panelMembers.push({
                 key: AssignHR.key,
                 Role: RoleName.RecruitmentHR,
@@ -2237,7 +2204,7 @@ export default class RecruitmentService implements IRecruitmentService {
           }
           let Get_InterviewPanel = await Promise.all(
             InterviewPanelDetails.data.map(async (item: any) => {
-              let UserName = await GetUserName(item.InterviewPanel?.EMail);
+              let UserName = await CommonServices.GetUserName(item.InterviewPanel?.EMail);
               return {
                 key: item?.InterviewPanel?.Id,
                 Role: RoleName.InterviewPanel,
@@ -2566,7 +2533,7 @@ export default class RecruitmentService implements IRecruitmentService {
     Role: string
   ): Promise<ApiResponse<{ Key: string; Value: string }>> {
     try {
-      let AdGroupUser = await GetUserName(RoleEmail);
+      let AdGroupUser = await CommonServices.GetUserName(RoleEmail);
       return {
         data: {
           Key: Role,
@@ -2609,7 +2576,7 @@ export default class RecruitmentService implements IRecruitmentService {
           // console.log(res, "res");
           for (const item of res) {
             if (item?.LineManagerId && item?.LineManager?.EMail) {
-              let UserName = await GetUserName(item.LineManager.EMail);
+              let UserName = await CommonServices.GetUserName(item.LineManager.EMail);
               let LineManager = {
                 Role: RoleName.LineManager,
                 Name: String(UserName.data)
@@ -2617,7 +2584,7 @@ export default class RecruitmentService implements IRecruitmentService {
               GetItem[0].LineManager = LineManager;
             }
             if (item?.HODId && item?.HOD?.EMail) {
-              let UserName = await GetUserName(item?.HOD?.EMail);
+              let UserName = await CommonServices.GetUserName(item?.HOD?.EMail);
               let HOD = {
                 Role: RoleName.HOD,
                 Name: String(UserName.data)
@@ -2631,7 +2598,7 @@ export default class RecruitmentService implements IRecruitmentService {
               //   Role: RoleName.EXCO,
               //   text: String(UserName.data),
               // });
-              let UserName = await GetUserName(item?.EXCO?.EMail);
+              let UserName = await CommonServices.GetUserName(item?.EXCO?.EMail);
               let EXCO = {
                 Role: RoleName.EXCO,
                 Name: String(UserName.data)
@@ -2639,7 +2606,7 @@ export default class RecruitmentService implements IRecruitmentService {
               GetItem[0].Exco = EXCO;
             }
             if (data.AssignEMail) {
-              let UserName = await GetUserName(data.AssignEMail);
+              let UserName = await CommonServices.GetUserName(data.AssignEMail);
               let HR = {
                 Role: RoleName.RecruitmentHR,
                 Name: String(UserName.data)
@@ -2687,7 +2654,7 @@ export default class RecruitmentService implements IRecruitmentService {
         FilterCondition: "and"
       }).then(async (res) => {
         for (const item of res) {
-          let UserName = await GetUserName(item.InterviewPanel.EMail)
+          let UserName = await CommonServices.GetUserName(item.InterviewPanel.EMail)
           let ActionValues = {
             Key: String(UserName.data),
             Value: item?.IsScoreSheetUploaded === "Yes" ? ActionName.Completed : ActionName.Pending

@@ -379,6 +379,39 @@ export default class CommonService implements ICommonService {
     }
   }
 
+  GetUserName = async (
+    email: string
+  ): Promise<ApiResponse<any | null>> => {
+    try {
+      const listItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSSageList,
+        Select: "*",
+        Filter: [{
+          FilterKey: "EmailId",
+          FilterValue: "eq",
+          Operator: email
+        }]
+      });
+      let UserName = listItems.find((emp: any) => {
+        return emp.EmailId?.toLowerCase() === email?.toLowerCase();
+      });
+      let UserRoleName = `${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || ""}`
+      return {
+        data: UserRoleName,
+        status: 200,
+        message: "ADGroups retrieved successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching user ID by email: ", error);
+      // Return null in case of an error
+      return {
+        data: null,
+        status: 500,
+        message: "Error getting ADGroups",
+      };
+    }
+  };
+
 
 }
 
