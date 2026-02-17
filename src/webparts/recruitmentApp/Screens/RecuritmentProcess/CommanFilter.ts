@@ -1,3 +1,6 @@
+import { FilterItem } from "../../Models/ApIInterface";
+import { DataSyncToRecruitmentResponse } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
+import { GetPortalJobsService, getVRRDetails } from "../../Services/ServiceExport";
 import { Choices, RoleID, StatusId, TabName, workflowStatusApi } from "../../utilities/Config";
 
 export const getBaseFilters = () => ([
@@ -74,4 +77,152 @@ export const getRecruitmentFiltersByTab = (props: any, tab: string) => {
   filters.push({ FilterKey: "ItemCreated", Operator: "eq", FilterValue: Choices.No });
 
   return { filters, jobAppliedFilter };
+};
+
+export const toDate = (value?: string): Date | undefined =>
+  value ? new Date(value) : undefined;
+
+export const getTotalAppliedCount = async (
+  getJobAppiledCount: DataSyncToRecruitmentResponse[],
+  FilterItem: string[],
+) => {
+  const counts = await Promise.all(
+    getJobAppiledCount.map(async (item) => {
+      // 1. Build JobCode filter
+      const jobCodeFilter = [
+        {
+          FilterKey: "JobCodeId",
+          Operator: "eq",
+          FilterValue: String(item?.JobCodeId),
+        },
+        {
+          FilterKey: "IsActive",
+          Operator: "eq",
+          FilterValue: 1,
+        },
+      ];
+
+      const jobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
+        jobCodeFilter,
+        "and",
+      );
+
+      const jobUniqueKey = jobUniqueValue?.data?.[0]?.JobUniqueKey;
+      if (!jobUniqueKey) return 0;
+
+      const filterValue: FilterItem = {
+        jobCode: jobUniqueKey,
+        workflowStausId: FilterItem ?? [],
+        pagination: {
+          filterValue: "",
+          sortBy: "",
+          sortOrder: 0,
+          pageSize: 10000,
+          currentPage: 0,
+          totalItems: 0,
+        },
+      };
+
+      const jobAppliedCount =
+        await GetPortalJobsService.getCandidateDetailsInJobCode(filterValue);
+
+      return jobAppliedCount?.data?.length || 0;
+    }),
+  );
+
+  const totalCount = counts.reduce((sum, count) => sum + count, 0);
+
+  return totalCount;
+};
+
+export const getInterviewPanelCount = async (
+  getJobAppiledCount: DataSyncToRecruitmentResponse[],
+) => {
+  const counts = await Promise.all(
+    getJobAppiledCount.map(async (item) => {
+      const jobCodeFilter = [
+        {
+          FilterKey: "RecruitmentIDId",
+          Operator: "eq",
+          FilterValue: String(item?.ID),
+        },
+        {
+          FilterKey: "JobCodeId",
+          Operator: "eq",
+          FilterValue: String(item?.JobCodeId),
+        },
+        {
+          FilterKey: "StatusId",
+          Operator: "in",
+          FilterValue: [
+            StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+          ],
+        },
+        {
+          FilterKey: "ItemCreated",
+          Operator: "eq",
+          FilterValue: "No",
+        },
+      ];
+
+      const scorecardValue = await getVRRDetails.getReviewScoreCardCount(
+        jobCodeFilter,
+        "and",
+      );
+
+      return Number(scorecardValue?.data) || 0;
+    }),
+  );
+
+  const totalCount = counts.reduce((sum, count) => sum + count, 0);
+
+  return totalCount;
+};
+
+export const getScoreCardCount = async (
+  getJobAppiledCount: DataSyncToRecruitmentResponse[],
+) => {
+  const counts = await Promise.all(
+    getJobAppiledCount.map(async (item) => {
+      const jobCodeFilter = [
+        {
+          FilterKey: "RecruitmentIDId",
+          Operator: "eq",
+          FilterValue: String(item?.ID),
+        },
+        {
+          FilterKey: "JobCodeId",
+          Operator: "eq",
+          FilterValue: String(item?.JobCodeId),
+        },
+        {
+          FilterKey: "StatusId",
+          Operator: "in",
+          FilterValue: [
+            StatusId.PendingwithHODtoselectthecandidate,
+            StatusId.OnHoldbyHOD,
+            StatusId.PendingwithHODtoAssignPositionID,
+            StatusId.CandidateOnHoldbyHODLevel1,
+            StatusId.CandidateOnHoldbyHODLevel2,
+          ],
+        },
+        {
+          FilterKey: "ItemCreated",
+          Operator: "eq",
+          FilterValue: "No",
+        },
+      ];
+
+      const scorecardValue = await getVRRDetails.getReviewScoreCardCount(
+        jobCodeFilter,
+        "and",
+      );
+
+      return Number(scorecardValue?.data) || 0;
+    }),
+  );
+
+  const totalCount = counts.reduce((sum, count) => sum + count, 0);
+
+  return totalCount;
 };

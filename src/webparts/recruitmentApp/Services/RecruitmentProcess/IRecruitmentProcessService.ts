@@ -147,6 +147,7 @@ export type DataSyncToRecruitmentResponse = {
   QuestionByHR: string;
   QuestionByLM: string;
   JobAppliedCount: string;
+  ReviewScoreCount?: string;
 }
 
 export type JobCodeData = {
@@ -216,7 +217,8 @@ export type IRecruitmentService = {
   GetRecruitmentDetails(
     filterParam: any,
     filterConditions: any,
-    JobAppliedCountFilter?: string[]
+    JobAppliedCountFilter?: string[],
+    CurrentUser?: number[]
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
   GetCandidateDetails(
     filterParam: any,
@@ -317,5 +319,11 @@ export type IRecruitmentService = {
     CurrentUserID: string,
     AssignHRFlag: boolean,
     EvalutionFlag: boolean,
+    ReviewProfileFlag: boolean,
+    ReviewScoreCardFlag: boolean
   ): Promise<ApiResponse<tabCount>>;
+  getReviewScoreCardCount(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<string>>;
 };

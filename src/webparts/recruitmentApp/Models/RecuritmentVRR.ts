@@ -398,6 +398,8 @@ export type tabCount = {
   HODReviewScoreCount: number;
   EvaluationCount?: number;
   advertExtensionCount: number;
+  ReviewProfileCount: number;
+  ReviewScoreCardCount: number;
 }
 
 export type BGVState = {

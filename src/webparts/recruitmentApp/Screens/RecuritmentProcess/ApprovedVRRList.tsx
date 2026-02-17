@@ -31,6 +31,8 @@ const RecruitmentProcess = (props: any) => {
     HODReviewScoreCount: 0,
     EvaluationCount: 0,
     advertExtensionCount: 0,
+    ReviewProfileCount: 0,
+    ReviewScoreCardCount: 0,
   });
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [TabNameData, setTabNameData] = React.useState<TabDetails[]>([]);
@@ -50,12 +52,20 @@ const RecruitmentProcess = (props: any) => {
       let Evalution = TabDetails.some(
         (item) => item.TabName === TabName.Evaluation,
       );
+      let ReviewProfile = TabDetails.some(
+        (item) => item.TabName === TabName.ReviewProfile,
+      );
+      let ReviewScoreCard = TabDetails.some(
+        (item) => item.TabName === TabName.ReviewScorecard,
+      );
 
       let PendingCount = await getVRRDetails.GetCountApprovedList(
         FilterCondition,
         props.userDetails[0]?.EmailId,
         AssignHR,
         Evalution,
+        ReviewProfile,
+        ReviewScoreCard,
       );
       setPendingCount(PendingCount.data);
     } catch (error) {
@@ -102,6 +112,10 @@ const RecruitmentProcess = (props: any) => {
         return tabStyle(tab.TabName, pendingcount.lineManagerInterviewCount);
       case TabName.Evaluation:
         return tabStyle(tab.TabName, pendingcount.EvaluationCount ?? 0);
+      case TabName.ReviewProfile:
+        return tabStyle(tab.TabName, pendingcount.ReviewProfileCount);
+      case TabName.ReviewScorecard:
+        return tabStyle(tab.TabName, pendingcount.ReviewScoreCardCount);
       default:
         return tab.TabName;
     }
