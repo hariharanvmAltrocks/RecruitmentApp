@@ -81,7 +81,7 @@ const RecruitmentProcess = (props: any) => {
     }
     setTabNameData(TabDetails);
     void fetchData(TabDetails);
-  }, []);
+  }, [TabNameData]);
 
   const getTabLabel = (tab: any) => {
     switch (tab.TabName) {

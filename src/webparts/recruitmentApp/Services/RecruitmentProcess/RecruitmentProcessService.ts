@@ -188,6 +188,8 @@ export default class RecruitmentService implements IRecruitmentService {
         });
         EvaluationCount = panelItems.length;
       }
+
+
       const data: tabCount = {
         AssignHRCount,
         UploadONEMCount: res.filter(
@@ -196,28 +198,28 @@ export default class RecruitmentService implements IRecruitmentService {
 
         UploadAdvertisementCount: res.filter(
           i => i.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv &&
-            i.AssignEMail === CurrentUserID
+            i.AssignedHR === CurrentUserID
         ).length,
 
         lineManagerInterviewCount: res.filter(
           i => i.StatusId === StatusId.PendingwithHRandLMtocreateinterviewQuestion ||
             (i.StatusId === StatusId.PendingwithLMcreateDisqualificationQuestion &&
-              i.AssignLineManager === CurrentUserID)
+              i.LineManager === CurrentUserID)
         ).length,
 
         ReviewLineManagerCount: res.filter(
           i => i.StatusId === StatusId.PendingwithLineManagereviewAdv &&
-            i.AssignLineManager === CurrentUserID
+            i.LineManager === CurrentUserID
         ).length,
 
         ReviewHODCount: res.filter(
           i => i.StatusId === StatusId.PendingwithHODtoreviewAdv &&
-            i.AssignHOD === CurrentUserID
+            i.HOD === CurrentUserID
         ).length,
 
         AssignAgencyCount: res.filter(
           i => i.StatusId === StatusId.RecruitmentInProgress &&
-            i.AssignEMail === CurrentUserID
+            i.AssignedHR === CurrentUserID
         ).length,
 
         EvaluationCount: EvaluationCount,
@@ -831,7 +833,6 @@ export default class RecruitmentService implements IRecruitmentService {
               },
             };
             let JobAppliedCount = await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
-            console.log(JobAppliedCount, "JobAppliedCount");
 
             let Recruitment: DataSyncToRecruitmentResponse = {
               ID: item.ID,

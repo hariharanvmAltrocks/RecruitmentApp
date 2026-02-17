@@ -516,7 +516,7 @@ export const TabName = {
   ReviewScorecard: "Review Score card",
   Evaluation: "Evaluation",
   // line Manager
-  InterviewQuestions: "Interview Questions",
+  // InterviewQuestions: "Interview Questions",
 
   CandidateDetails: "Applicants Details",
   PositionDetails: "Job Details",

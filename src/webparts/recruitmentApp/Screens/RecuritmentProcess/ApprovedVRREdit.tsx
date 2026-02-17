@@ -680,6 +680,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

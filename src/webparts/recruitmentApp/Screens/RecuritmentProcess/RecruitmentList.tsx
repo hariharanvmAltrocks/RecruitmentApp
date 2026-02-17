@@ -52,6 +52,7 @@ import {
 } from "../../utilities/LabelName";
 import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
 import { getBaseFilters, getRecruitmentFiltersByTab } from "./CommanFilter";
+import { useEffect } from "react";
 
 export type formValidation = {
   Comments: boolean;
@@ -105,7 +106,8 @@ const RecruitmentList = (props: any) => {
     React.useState<AutoCompleteItem[]>([]);
   const [AssignRecruitmentAgenciesOption, setAssignRecruitmentAgenciesOption] =
     React.useState<AutoCompleteItem[]>([]);
-  const storedStringRef = React.useRef("");
+  const [currentTab, setCurrentTab] = React.useState<string>("");
+  // const storedStringRef = React.useRef("");
 
   const fetchHRAgencyDetails = async (Nationality: string) => {
     try {
@@ -460,10 +462,7 @@ const RecruitmentList = (props: any) => {
             // StatusId.RecruitmentInProgress,
           ].includes(rowData.StatusId);
         }
-        if (
-          !isTooltipStatus &&
-          storedStringRef.current != TabName.UploadONEMDoc
-        ) {
+        if (!isTooltipStatus && currentTab != TabName.UploadONEMDoc) {
           return (
             <div>
               <ToolTipButton
@@ -1021,7 +1020,7 @@ const RecruitmentList = (props: any) => {
 
     let data = res.data;
 
-    if (storedStringRef.current === TabName.UploadCV) {
+    if (currentTab === TabName.UploadCV) {
       const today = moment().format("YYYY-MM-DD");
       data = data.filter((item) => {
         const endDate =
@@ -1052,10 +1051,10 @@ const RecruitmentList = (props: any) => {
     setJobCodeTitle(jobCodes);
   };
 
-  const fetchData = async () => {
+  const fetchData = async (tab: string) => {
     setIsLoading(true);
     try {
-      const tab = storedStringRef.current;
+      // const tab = currentTab;
 
       if (tab === TabName.Evaluation) {
         await fetchEvaluationData();
@@ -1076,8 +1075,8 @@ const RecruitmentList = (props: any) => {
       }
 
       const { filters, jobAppliedFilter } = getRecruitmentFiltersByTab(
-        tab,
         props,
+        tab,
       );
       await fetchRecruitmentData(filters, jobAppliedFilter);
     } catch (err) {
@@ -1087,25 +1086,19 @@ const RecruitmentList = (props: any) => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (props.stateValue) {
-      storedStringRef.current = props.stateValue?.TabName;
+      setCurrentTab(props.stateValue?.TabName);
     } else {
-      if (!storedStringRef.current) {
-        if (props.tab) {
-          // storedStringRef.current = props.tab?.Value ?? "";
-        }
+      if (props?.TabDetails?.TabName) {
+        setCurrentTab(props.TabDetails.TabName);
       }
     }
-    // handleRefresh(props.tab?.Value);
-  }, []);
-
-  React.useEffect(() => {
-    void fetchData();
-  }, []);
+    void fetchData(props.TabDetails.TabName);
+  }, [props.TabDetails.TabName]);
 
   const handleRefresh = (tab: string) => {
-    void fetchData();
+    void fetchData(tab);
   };
 
   const onPageChange = (event: any) => {
@@ -1375,7 +1368,7 @@ const RecruitmentList = (props: any) => {
                 },
                 CommentsList: {
                   RoleId:
-                    storedStringRef.current === TabName.AssignRecuritmentHR
+                    currentTab === TabName.AssignRecuritmentHR
                       ? RoleID.RecruitmentHRLead
                       : RoleID.RecruitmentHR,
                   RecruitmentIDId: 0,
@@ -1458,9 +1451,10 @@ const RecruitmentList = (props: any) => {
               visible: true,
               ButtonAction: async (userClickedOK: boolean) => {
                 if (userClickedOK) {
+                  props.navigation("/RecurimentProcess");
                   setAlertPopupOpen(false);
                   setIsLoading(false);
-                  await fetchData();
+                  // await fetchData();
                 }
               },
             };
@@ -1560,8 +1554,7 @@ const RecruitmentList = (props: any) => {
                     if (response.status === ResponeStatus.SUCCESS) {
                       const commentsData: InsertComments = {
                         RoleId:
-                          storedStringRef.current ===
-                          TabName.AssignRecuritmentHR
+                          currentTab === TabName.AssignRecuritmentHR
                             ? RoleID.RecruitmentHRLead
                             : RoleID.RecruitmentHR,
                         RecruitmentIDId: recruitmentID,
@@ -1643,7 +1636,7 @@ const RecruitmentList = (props: any) => {
                 if (userClickedOK) {
                   setAlertPopupOpen(false);
                   setIsLoading(false);
-                  await fetchData();
+                  // await fetchData();
                 }
               },
             };
@@ -1668,7 +1661,6 @@ const RecruitmentList = (props: any) => {
     TabValue: string,
     StatusData: StatusDetails[],
   ) => {
-    storedStringRef.current = TabNames;
     let Action: any;
     // let StatusID: any;
     if (StatusData) {
@@ -1689,7 +1681,7 @@ const RecruitmentList = (props: any) => {
             )}
             rows={rows}
             onPageChange={(event) => onPageChange(event)}
-            handleRefresh={() => handleRefresh(TabValue)}
+            handleRefresh={() => handleRefresh(TabNames)}
             handleSelectedRow={handleCheckbox}
             onSelectAllRow={onSelectAllChange}
             handleAssignBtn={AssignBtn_fn}
@@ -1718,7 +1710,7 @@ const RecruitmentList = (props: any) => {
             columns={columnConfig(TabValue, Action[0]?.ActionId?.[0], TabNames)}
             rows={rows}
             onPageChange={(event) => onPageChange(event)}
-            handleRefresh={() => handleRefresh(TabValue)}
+            handleRefresh={() => handleRefresh(TabNames)}
             MasterData={props}
           />
         );
@@ -1733,7 +1725,7 @@ const RecruitmentList = (props: any) => {
             )}
             rows={rows}
             onPageChange={onPageChange}
-            handleRefresh={() => handleRefresh(TabValue)}
+            handleRefresh={() => handleRefresh(TabNames)}
           />
         );
       default:

@@ -1,15 +1,159 @@
 
-import { count, DocumentFolderName, DocumentLibraray, ListNames, RoleName } from "../../utilities/Config";
+import { count, DocumentFolderName, DocumentLibraray, ListNames, RoleID, RoleName, StatusId } from "../../utilities/Config";
 import { getVRRDetails, laborHireService } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import SPServices from "../SPService/SPServices";
-import { DataSyncToResiProcess, DocumentName, GetBGVDocument, GetCandidateDocument, GetDOTAfricaCF, ICandidateDetails, IOfferLetterService, UpdateCandidateData } from "./IOfferLetterService";
+import { DataSyncToResiProcess, DocumentName, GetBGVDocument, GetCandidateDocument, GetDOTAfricaCF, ICandidateDetails, IOfferLetterService, tabcountBGV, UpdateCandidateData } from "./IOfferLetterService";
 import { initiateLaborHire, ITSystem, TASystem, TrainingSystem, UploadDocument } from "../../Models/ApIInterface";
 import { AutoCompleteItem } from "../../Models/Screens";
-import { BGVDocumentName } from "../../utilities/LabelName";
+import { BGVDocumentName, EmployeementCategory } from "../../utilities/LabelName";
 
 
 export default class OfferLetterService implements IOfferLetterService {
+
+    GetBVGCandidateCount = async (
+        Filter: any[],
+        Conditions: any,
+        CurrentRoleID: number[]
+    ): Promise<ApiResponse<tabcountBGV>> => {
+        try {
+            const res = await SPServices.SPReadItems({
+                Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
+                Select:
+                    "*,RecruitmentID/ID,PositionID/PositionID,CandidateID/ID,Status/StatusDescription,Action/Action",
+                Filter: Filter,
+                Expand: "RecruitmentID,PositionID,CandidateID,Status,Action",
+                FilterCondition: Conditions,
+                Orderby: "ID",
+                Orderbydecorasc: false,
+                Topcount: count.Topcount,
+            });
+
+            const enrichedData = await Promise.all(
+                res.map(async (item) => {
+                    const recruitmentFilter = [
+                        {
+                            FilterKey: "ID",
+                            Operator: "eq",
+                            FilterValue: item?.RecruitmentID?.ID,
+                        },
+                    ];
+
+                    const response =
+                        await getVRRDetails.GetRecruitmentDetails(
+                            recruitmentFilter,
+                            ""
+                        );
+
+                    const employmentCategory =
+                        response?.data?.[0]?.EmploymentCategory;
+
+                    return {
+                        ...item,
+                        employmentCategory,
+                    };
+                })
+            );
+
+
+            const FinaceRoleData = enrichedData.filter(
+                (item) =>
+                    item.employmentCategory ===
+                    EmployeementCategory.LaborhireContractor &&
+                    item.StatusId ===
+                    StatusId.PendingFinancePaymentReview
+            ).length;
+
+
+            const LabourHireCounts = enrichedData.filter(
+                (item) =>
+                    item.employmentCategory ===
+                    EmployeementCategory.LaborhireContractor &&
+                    (
+                        item.StatusId ===
+                        StatusId.PendingHROfferInitiate ||
+                        item.StatusId ===
+                        StatusId.PendingHROfferReview ||
+                        item.StatusId ===
+                        StatusId.PendingHRReviewOfferWorkPermitInit ||
+                        item.StatusId ===
+                        StatusId.PendingHREmploymentContractInit ||
+                        item.StatusId ===
+                        StatusId.PendingHREmploymentContractReview ||
+                        item.StatusId ===
+                        StatusId.PendingCandidateEmploymentContractUpload ||
+                        item.StatusId ===
+                        StatusId.PendingHREmploymentContractVerification ||
+                        item.StatusId ===
+                        StatusId.PendingHRReviewOfferuploadEmploymentInit ||
+                        item.StatusId ===
+                        StatusId.PendingHRpreonboardingchecklist
+                    )
+            ).length;
+
+
+            const KCSACount = enrichedData.filter(
+                (item) =>
+                    item.employmentCategory ===
+                    EmployeementCategory.KCSAEmployee &&
+                    (
+                        item.StatusId ===
+                        StatusId.PendingHROfferInitiate ||
+                        item.StatusId ===
+                        StatusId.PendingHRReviewOfferWorkPermitInit ||
+                        item.StatusId ===
+                        StatusId.PendingHRReviewWorkpermitDocs ||
+                        item.StatusId ===
+                        StatusId.WorkPermitAcknowledgedContractUploaded ||
+                        item.StatusId ===
+                        StatusId.PendingHREmploymentContractVerification ||
+                        item.StatusId ===
+                        StatusId.PendingHRpreonboardingchecklist ||
+                        item.StatusId ===
+                        StatusId.PendingHRReviewOfferanduploadEmployementContract
+                    )
+            ).length;
+
+
+            const BGVCount = enrichedData.filter(
+                (item) =>
+                    item.StatusId ===
+                    StatusId.PendingHRBGVInitiation ||
+                    item.StatusId ===
+                    StatusId.PendingHRReviewBGCheck ||
+                    item.StatusId ===
+                    StatusId.PendingDOTAficaVerification
+            ).length;
+
+            const data: tabcountBGV = {
+                BGVCount,
+                LabourHireCount: CurrentRoleID.includes(
+                    RoleID.FinanceDepartment
+                )
+                    ? FinaceRoleData
+                    : LabourHireCounts,
+                KCSACount,
+            };
+
+            return {
+                data,
+                status: 200,
+                message: "Candidate details fetched successfully",
+            };
+        } catch (error: any) {
+            console.error(
+                "Error during candidate count process:",
+                error
+            );
+
+            return {
+                data: {} as tabcountBGV,
+                status: 500,
+                message: `Error during candidate count: ${error.message}`,
+            };
+        }
+    };
+
 
     fetchResiCandidateDetails = async (
         Filter: any[],
