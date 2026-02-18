@@ -718,41 +718,39 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       //   Operator: "eq",
       //   FilterValue: props.stateValue?.ID,
       // });
-      let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
+      // let userRole = GetStatusIdRoles(props.stateValue?.StatusId);
       const response =
-        userRole === RoleID.RecruitmentHRLead &&
-        props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess &&
-        props.stateValue?.type === DataFrom.NewPosition
-          ? await getVRRDetails.fetchNewPositionRequest(
-              filterConditions,
-              Conditions,
-              props,
-            )
-          : props.stateValue?.type === DataFrom.ExistingPosition
-            ? await getVRRDetails.GetAdditionalExistingPositionEditView(
+        props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess
+          ? props.stateValue?.type === DataFrom.NewPosition
+            ? await getVRRDetails.fetchNewPositionRequest(
                 filterConditions,
                 Conditions,
                 props,
               )
-            : props.stateValue?.type === DataFrom.VacancyRecruitmentProcess
-              ? await getVRRDetails.GetVacancyDetails(
+            : props.stateValue?.type === DataFrom.ExistingPosition
+              ? await getVRRDetails.GetAdditionalExistingPositionEditView(
                   filterConditions,
                   Conditions,
                   props,
                 )
-              : await getVRRDetails.GetRecruitmentDetails(
-                  filterConditionsRecuritment,
-                  RecuritmentConditions,
-                );
+              : props.stateValue?.type === DataFrom.VacancyRecruitmentProcess
+                ? await getVRRDetails.GetVacancyDetails(
+                    filterConditions,
+                    Conditions,
+                    props,
+                  )
+                : undefined
+          : await getVRRDetails.GetRecruitmentDetails(
+              filterConditionsRecuritment,
+              RecuritmentConditions,
+            );
 
       if (response && response.data) {
         const NewpositionData =
           response?.data?.filter((item) => item.ID === props.stateValue?.ID) ||
           [];
 
-        // Ensure `op` is always a single object
         const op: DataSyncToRecruitmentResponse =
-          userRole === RoleID.RecruitmentHRLead &&
           props.stateValue?.StatusId === StatusId.ReadyforRecruitmentProcess
             ? NewpositionData.length > 0
               ? NewpositionData[0]
@@ -3217,9 +3215,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                           },
                         },
                       ]
-                    : currentRoleID === RoleID.RecruitmentHRLead &&
-                        props.stateValue?.StatusId ===
-                          StatusId.PendingwithHRLeadtouploadONEMsigneddoc
+                    : props.stateValue?.StatusId ===
+                        StatusId.PendingwithHRLeadtouploadONEMsigneddoc
                       ? [
                           {
                             label: ButtonAction.Upload,

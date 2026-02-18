@@ -125,7 +125,7 @@ const HodViewScorecard = (props: any) => {
       todaydate.getDate(),
       todaydate.getHours(),
       todaydate.getMinutes(),
-      todaydate.getSeconds()
+      todaydate.getSeconds(),
     ),
     AdvertisementDocument: [],
     RoleProfileDocument: [],
@@ -216,8 +216,8 @@ const HodViewScorecard = (props: any) => {
       props.stateValue?.TabName !== TabName.Evaluation
         ? RoleID.HOD
         : props.CurrentRoleID.includes(RoleID.LineManager)
-        ? RoleID.LineManager
-        : props.CurrentRoleID[0]
+          ? RoleID.LineManager
+          : props.CurrentRoleID[0],
     );
   }, [props.stateValue?.StatusId]);
 
@@ -243,12 +243,12 @@ const HodViewScorecard = (props: any) => {
       "",
       filterConditions,
       candidateID,
-      props.EmployeeList
+      props.EmployeeList,
     )
       .then((scoreResponse) => {
         if (scoreResponse?.status === 200) {
           const candidatePanels = scoreResponse?.data.filter(
-            (candidate: any) => candidate.CandidateID === candidateID
+            (candidate: any) => candidate.CandidateID === candidateID,
           );
           // setInterviewPanelTitles(
           //   Array.from(
@@ -400,7 +400,7 @@ const HodViewScorecard = (props: any) => {
 
   const handleInputChangeTextArea = (
     value: string | any,
-    StateValue: string
+    StateValue: string,
   ) => {
     setCandidateData((prevState) => ({
       ...prevState,
@@ -495,12 +495,12 @@ const HodViewScorecard = (props: any) => {
         filterConditions,
         Conditions,
         candidateID,
-        props.EmployeeList
+        props.EmployeeList,
       );
       let level1Comments: any[] = [];
       if (level1Response?.status === 200) {
         level1Comments = level1Response.data.filter(
-          (item: any) => item.CandidateID === candidateID
+          (item: any) => item.CandidateID === candidateID,
         );
       }
       const level2Response =
@@ -508,13 +508,13 @@ const HodViewScorecard = (props: any) => {
           Conditions,
           filterConditions,
           candidateID,
-          props.EmployeeList
+          props.EmployeeList,
         );
 
       let level2Comments: any[] = [];
       if (level2Response?.status === 200) {
         level2Comments = level2Response.data.filter(
-          (item: any) => item.CandidateID === candidateID
+          (item: any) => item.CandidateID === candidateID,
         );
       }
       setCommentsData({
@@ -611,11 +611,11 @@ const HodViewScorecard = (props: any) => {
     ];
     let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
       JobCodeFilter,
-      "and"
+      "and",
     );
 
     const getQuestion = await GetPortalJobsService.getQuestionnaire(
-      JobUniqueValue.data[0]?.JobUniqueKey //CandidateData.JobCode
+      JobUniqueValue.data[0]?.JobUniqueKey, //CandidateData.JobCode
     );
     if (getQuestion.status === ResponeStatus.SUCCESS) {
       setquestionnaire(getQuestion?.data ?? []);
@@ -654,7 +654,7 @@ const HodViewScorecard = (props: any) => {
 
       const response = await getVRRDetails.GetRecruitmentDetails(
         filterConditions,
-        ""
+        "",
       );
 
       const grade = response.data[0]?.PatersonGrade;
@@ -1285,7 +1285,9 @@ const HodViewScorecard = (props: any) => {
                         error={validationErrors.CandidateStatus}
                         mandatory={true}
                         onChange={(item) => handleRadioChange(item)}
-                        disabled={!fieldsEditable.radioGroup}
+                        disabled={
+                          props.stateValue?.ButtonAction === ButtonAction.View
+                        } //!fieldsEditable.radioGroup
                       />
                     </div>
                   </div>
@@ -1347,7 +1349,10 @@ const HodViewScorecard = (props: any) => {
                               handleAutoComplete(item)
                             }
                             error={validationErrors.PositionID}
-                            disabled={false}
+                            disabled={
+                              props.stateValue?.ButtonAction ===
+                              ButtonAction.View
+                            }
                             mandatory={true}
                             placeholder={labelNames.HODScordCard.Selectposition}
                           />
@@ -1370,7 +1375,9 @@ const HodViewScorecard = (props: any) => {
                             handleAutoComplete(item)
                           }
                           error={validationErrors.PositionID}
-                          disabled={true}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
                           mandatory={true}
                           placeholder={labelNames.HODScordCard.Selectposition}
                         />
@@ -1379,59 +1386,67 @@ const HodViewScorecard = (props: any) => {
                   </div>
                 )}
 
-                <div className="ms-Grid-row">
-                  <div className="ms-Grid-col ms-lg12">
-                    <CustomTextArea
-                      label={
-                        props?.stateValue?.StatusId ===
-                          StatusId.PendingwithHODtoAssignPositionID ||
-                        props?.stateValue?.StatusId ===
-                          StatusId.InterviewScheduledforLevel2
-                          ? labelNames.HODScordCard.FeedbackLevel2
-                          : labelNames.HODScordCard.FeedbackLevel1
-                      }
-                      value={CandidateData.Comments}
-                      error={validationErrors.Comments}
-                      onChange={(value) =>
-                        handleInputChangeTextArea(value, "Comments")
-                      }
-                      mandatory={true}
-                      disabled={!fieldsEditable.comments}
-                    />
-                  </div>
-                </div>
-                <div className="ms-Grid-col ms-lg12">
-                  <SignatureCheckbox
-                    label={CheckboxContent.HODscorecarddetails}
-                    checked={Checkbox}
-                    error={validationErrors.Checkboxalidation}
-                    onChange={(value: boolean) => {
-                      setCheckbox(value);
-                      setValidationError((prevState) => ({
-                        ...prevState,
-                        Checkboxalidation: false,
-                      }));
-                    }}
-                  />
-                </div>
-                <div className="ms-Grid-row">
-                  <div className="ms-Grid-col ms-lg12">
-                    <CustomSignature
-                      Name={
-                        (props.userDetails[0].FirstName ?? "") +
-                        " " +
-                        (props.userDetails[0]?.MiddleName ?? "") +
-                        " " +
-                        (props.userDetails[0]?.LastName ?? "")
-                      }
-                      JobTitleInEnglish={props.userDetails[0].JopTitleEnglish}
-                      JobTitleInFrench={props.userDetails[0].JopTitleFrench}
-                      Department={props.userDetails[0].DepartmentName}
-                      Date={CandidateData.SignDate.toString()}
-                      TermsAndCondition={Checkbox}
-                    />
-                  </div>
-                </div>
+                {props.stateValue?.ButtonAction != ButtonAction.View && (
+                  <>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg12">
+                        <CustomTextArea
+                          label={
+                            props?.stateValue?.StatusId ===
+                              StatusId.PendingwithHODtoAssignPositionID ||
+                            props?.stateValue?.StatusId ===
+                              StatusId.InterviewScheduledforLevel2
+                              ? labelNames.HODScordCard.FeedbackLevel2
+                              : labelNames.HODScordCard.FeedbackLevel1
+                          }
+                          value={CandidateData.Comments}
+                          error={validationErrors.Comments}
+                          onChange={(value) =>
+                            handleInputChangeTextArea(value, "Comments")
+                          }
+                          mandatory={true}
+                          disabled={
+                            props.stateValue?.ButtonAction === ButtonAction.View
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="ms-Grid-col ms-lg12">
+                      <SignatureCheckbox
+                        label={CheckboxContent.HODscorecarddetails}
+                        checked={Checkbox}
+                        error={validationErrors.Checkboxalidation}
+                        onChange={(value: boolean) => {
+                          setCheckbox(value);
+                          setValidationError((prevState) => ({
+                            ...prevState,
+                            Checkboxalidation: false,
+                          }));
+                        }}
+                      />
+                    </div>
+                    <div className="ms-Grid-row">
+                      <div className="ms-Grid-col ms-lg12">
+                        <CustomSignature
+                          Name={
+                            (props.userDetails[0].FirstName ?? "") +
+                            " " +
+                            (props.userDetails[0]?.MiddleName ?? "") +
+                            " " +
+                            (props.userDetails[0]?.LastName ?? "")
+                          }
+                          JobTitleInEnglish={
+                            props.userDetails[0].JopTitleEnglish
+                          }
+                          JobTitleInFrench={props.userDetails[0].JopTitleFrench}
+                          Department={props.userDetails[0].DepartmentName}
+                          Date={CandidateData.SignDate.toString()}
+                          TermsAndCondition={Checkbox}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </>
@@ -1454,7 +1469,7 @@ const HodViewScorecard = (props: any) => {
       const data = await InterviewServices.GetCombinedCandidatePositionDetails(
         filterConditions,
         "",
-        props.EmployeeList
+        props.EmployeeList,
       );
 
       if (data?.status === 200) {
@@ -1464,9 +1479,9 @@ const HodViewScorecard = (props: any) => {
         const interviewLevels = Array.from(
           new Set(
             (op?.HRMSCandidateScoreCard as { InterviewLevel: any }[])?.map(
-              (item) => item.InterviewLevel
-            )
-          )
+              (item) => item.InterviewLevel,
+            ),
+          ),
         );
 
         // Fetch advertisement documents
@@ -1557,7 +1572,7 @@ const HodViewScorecard = (props: any) => {
 
       const response = await InterviewServices.GetSelectedCandidateDetailsByHOD(
         filterConditions,
-        Conditions
+        Conditions,
       );
 
       if (response.status === 200) {
@@ -1602,7 +1617,7 @@ const HodViewScorecard = (props: any) => {
     ];
     const response = await InterviewServices.GetHRMSPositionDetails(
       filterConditions,
-      "and"
+      "and",
     );
     setPositionOptions(response?.data || []);
   };
@@ -1654,7 +1669,7 @@ const HodViewScorecard = (props: any) => {
       const uniqueTabNames = newTabNames.filter(
         (item, index, self) =>
           item.tabName &&
-          self.findIndex((t) => t.tabName === item.tabName) === index
+          self.findIndex((t) => t.tabName === item.tabName) === index,
       );
 
       setTabNameData(uniqueTabNames);
@@ -1755,7 +1770,7 @@ const HodViewScorecard = (props: any) => {
         filterConditions,
         "",
         "*,JobCode/JobCode",
-        "JobCode"
+        "JobCode",
       );
 
       if (!GetPositionID.data || GetPositionID.data.length === 0) {
@@ -1775,7 +1790,7 @@ const HodViewScorecard = (props: any) => {
       };
       const res = await InterviewServices.AssignPositionID(
         assignPositionPayload,
-        ListNames.HRMSSelectedCandidateDetailsByHOD
+        ListNames.HRMSSelectedCandidateDetailsByHOD,
       );
 
       if (res.status === 200) {
@@ -1803,15 +1818,14 @@ const HodViewScorecard = (props: any) => {
         },
       ];
 
-      const response = await InterviewServices.getCandidateLevel1ScoreCard(
-        filterConditions
-      );
+      const response =
+        await InterviewServices.getCandidateLevel1ScoreCard(filterConditions);
 
       if (response?.status === 200 && response.data?.length > 0) {
         const matchingComment = response.data.find(
           (comment) =>
             comment.CandidateID === CandidateData.CandidateID &&
-            comment.RoleId === currentRoleID
+            comment.RoleId === currentRoleID,
         );
 
         if (matchingComment) {
@@ -1867,15 +1881,14 @@ const HodViewScorecard = (props: any) => {
         },
       ];
 
-      const response = await InterviewServices.getCandidateLevel2ScoreCard(
-        filterConditions
-      );
+      const response =
+        await InterviewServices.getCandidateLevel2ScoreCard(filterConditions);
 
       if (response?.status === 200 && response.data?.length > 0) {
         const matchingComment = response.data.find(
           (comment: any) =>
             comment.CandidateID?.ID === CandidateData.CandidateID &&
-            comment.RoleId === currentRoleID
+            comment.RoleId === currentRoleID,
         );
 
         if (matchingComment) {
@@ -1946,7 +1959,7 @@ const HodViewScorecard = (props: any) => {
         ) {
           await insertOrUpdateLevel2ScorecardComment();
           const CurrentUserResponse = await CommonServices.getUserGuidByEmail(
-            props.CurrentUserEmailId
+            props.CurrentUserEmailId,
           );
           const currentUserKey = CurrentUserResponse.data?.key?.toString();
 
@@ -1964,14 +1977,14 @@ const HodViewScorecard = (props: any) => {
           }
 
           const matchingPanels = InterviewPanelResponse.data.filter(
-            (panel: any) => props.stateValue?.ID === panel.CandidateID
+            (panel: any) => props.stateValue?.ID === panel.CandidateID,
           );
 
           if (matchingPanels.length === 0) {
             return;
           }
           const userPanels = matchingPanels.filter(
-            (panel: any) => panel.InterviewPanel === Number(currentUserKey)
+            (panel: any) => panel.InterviewPanel === Number(currentUserKey),
           );
           if (userPanels.length === 0) {
             return;
@@ -1996,14 +2009,14 @@ const HodViewScorecard = (props: any) => {
           let InterviewCandidate: any[] = [];
           if (level1Response?.status === 200) {
             InterviewCandidate = level1Response.data.filter(
-              (item: any) => item.CandidateID === candidateID
+              (item: any) => item.CandidateID === candidateID,
             );
             const level1Panels = InterviewCandidate.filter(
-              (p) => p.InterviewLevel === InterviewLevels.Level2
+              (p) => p.InterviewLevel === InterviewLevels.Level2,
             );
             const uploadedCount = level1Panels.filter(
               (p: { IsScoreSheetUploaded: string }) =>
-                p.IsScoreSheetUploaded === "Yes"
+                p.IsScoreSheetUploaded === "Yes",
             ).length;
 
             if (uploadedCount === level1Panels.length) {
@@ -2071,7 +2084,7 @@ const HodViewScorecard = (props: any) => {
                   FilterValue: props?.stateValue?.JobCodeID,
                 },
               ],
-              ""
+              "",
             );
           let obj: ActionUpdate = {
             ActionId: 0,
@@ -2101,16 +2114,16 @@ const HodViewScorecard = (props: any) => {
                   InterviewedCount.data?.length > 1 ? "Yes" : "No",
               };
               CandidateDatas = createFilter(
-                workflowStatusApi.CandidateSelectedIPanel
+                workflowStatusApi.CandidateSelectedIPanel,
               );
               SuccessMessage =
                 props?.stateValue?.StatusId ===
                 StatusId.PendingwithHODtoselectthecandidateLevel2
                   ? RecuritmentHRMsg.CandidateSelectedLevel2
                   : props?.stateValue?.StatusId ===
-                    StatusId.CandidateOnHoldbyHODLevel1
-                  ? RecuritmentHRMsg.CandidateSelectedLevel2
-                  : RecuritmentHRMsg.CandidateSelected;
+                      StatusId.CandidateOnHoldbyHODLevel1
+                    ? RecuritmentHRMsg.CandidateSelectedLevel2
+                    : RecuritmentHRMsg.CandidateSelected;
               break;
 
             case "Rejected":
@@ -2123,7 +2136,7 @@ const HodViewScorecard = (props: any) => {
                   InterviewedCount.data?.length > 1 ? "Yes" : "No",
               };
               CandidateDatas = createFilter(
-                workflowStatusApi.CandidateRejectedIPanel
+                workflowStatusApi.CandidateRejectedIPanel,
               );
               SuccessMessage =
                 props?.stateValue?.StatusId ===
@@ -2152,7 +2165,7 @@ const HodViewScorecard = (props: any) => {
                   InterviewedCount.data?.length > 1 ? "Yes" : "No",
               };
               CandidateDatas = createFilter(
-                workflowStatusApi.CandidateOnHoldIPanel
+                workflowStatusApi.CandidateOnHoldIPanel,
               );
               SuccessMessage =
                 props?.stateValue?.StatusId ===
@@ -2186,7 +2199,7 @@ const HodViewScorecard = (props: any) => {
 
           await InterviewServices.CandidateSeletionApi(
             obj,
-            ListNames.HRMSRecruitmentCandidatePersonalDetails
+            ListNames.HRMSRecruitmentCandidatePersonalDetails,
           ).then(async (res) => {
             await GetPortalJobsService.UpdateCandidateStatus(CandidateDatas);
             if (res.status === 200) {
@@ -2238,7 +2251,7 @@ const HodViewScorecard = (props: any) => {
                             tab: props.stateValue?.tabs,
                             tabs: props.stateValue?.tab,
                           },
-                        }
+                        },
                       );
                     }
                     setAlertPopupOpen(false);
@@ -2323,6 +2336,69 @@ const HodViewScorecard = (props: any) => {
                       {
                         label: ButtonAction.Submit,
                         onClick: async () => await Submit_fn("Selected"),
+                      },
+                    ]
+                  : []),
+                ...(props.stateValue?.ButtonAction === ButtonAction.View
+                  ? [
+                      {
+                        label: ButtonAction.Back,
+                        onClick: async () => {
+                          if (
+                            props.stateValue?.TabName === TabName.Evaluation
+                          ) {
+                            if (
+                              props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+                            ) {
+                              props.navigation("/ReviewProfileList", {
+                                state: {
+                                  tab: props.stateValue.tab,
+                                  TabName: TabName.Evaluation,
+                                },
+                              });
+                            } else if (
+                              props.CurrentRoleID.includes(
+                                RoleID.InterviewPanel,
+                              )
+                            ) {
+                              props.navigation("/InterviewPanelList", {
+                                state: {
+                                  tab: props.stateValue.tab,
+                                  TabName: TabName.Evaluation,
+                                },
+                              });
+                            } else if (
+                              props.CurrentRoleID.includes(RoleID.HOD)
+                            ) {
+                              props.navigation("/RecurimentProcess", {
+                                state: {
+                                  tab: props.stateValue.tab,
+                                  TabName: TabName.Evaluation,
+                                },
+                              });
+                            }
+                          } else {
+                            props.navigation(
+                              "/RecurimentProcess/HodScoreCard/CandidateList",
+                              {
+                                state: {
+                                  ID: CandidateData?.RecruitmentID,
+                                  Status: props.stateValue?.Status,
+                                  TabName: props.stateValue?.TabName,
+                                  ButtonAction:
+                                    props.stateValue?.PreviousTabName,
+                                  JobCode: CandidateData?.JobCode,
+                                  StatusId: props.stateValue?.StatusId,
+                                  NoOfPosition: props.stateValue?.NoOfPosition,
+                                  JobCodeID: props.stateValue?.JobCodeID,
+                                  Department: props.stateValue?.Department,
+                                  tab: props.stateValue?.tabs,
+                                  tabs: props.stateValue?.tab,
+                                },
+                              },
+                            );
+                          }
+                        },
                       },
                     ]
                   : []),

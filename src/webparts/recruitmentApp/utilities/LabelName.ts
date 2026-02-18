@@ -209,12 +209,12 @@ export const Attachment = {
         CandidateDocuments: "Candidate Documents",
         OfferLetter: "Upload Offer Letter(Only PDF)",
         OfferLetterFre: "Upload Offer Letter (French)",
-        ConsentDoc: "Upload Dot's Africa Consent Form",
+        ConsentDoc: "Upload Signed Consent Form",
         EmployementDoc: "Upload Employement Contract",
         WorkpermitDocs: "Upload Workpermit Acknowledged ",
         ProofOfPayment: "Upload Proof Of Document",
         DownloadConsentForm: "Download Consent Form :",
-        DOTAficaCFD: "Please download and view the consent form, complete the necessary fields, and re-upload it.",
+        DOTAficaCFD: "Kindly review the consent form, provide your signature, and upload the signed document below.",
         BGVComments: "Dot's Africa Comments"
     },
 }

@@ -11,6 +11,7 @@ import { IDocFiles } from "../SPService/ISPServicesProps";
 import { CommentsData, DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
 import { quesContentId } from "../../utilities/LabelName";
 import { calculateTotalExperienceYears, getcountryCode } from "../../components/TabMerge";
+import { AutoCompleteItem } from "../../Models/Screens";
 
 export default class GetPortalJobs implements IGetPortalJobs {
   async UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>> {
@@ -1247,4 +1248,88 @@ export default class GetPortalJobs implements IGetPortalJobs {
     }
   }
 
+  async GetJobAppliedCount(data: string[]): Promise<ApiResponse<any | null>> {
+    try {
+      const response = await getProfileData.GetJobAppliedCount(data);
+      return {
+        data: response.data,
+        status: response.status,
+        message: response.data.message,
+      };
+    } catch (error) {
+      console.error(
+        "Error inserting data into AdvertisementDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+
+  async GetCOIProfileOption(
+    data: DataSyncToRecruitmentResponse,
+  ): Promise<ApiResponse<AutoCompleteItem[] | null>> {
+    let GetItem: AutoCompleteItem[] = [];
+    try {
+      await SPServices.SPReadItems({
+        Listname: ListNames.JDEDataMapping,
+        Select: "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
+        Filter: [{
+          FilterKey: "BUC",
+          Operator: "eq",
+          FilterValue: data.BusinessUnitCodeId
+        }],
+        Expand: "BUC,LineManager,HOD,HR,EXCO",
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      })
+        .then(async (res) => {
+          //   console.log(res, "res");
+          for (const item of res) {
+            if (item?.LineManagerId && item?.LineManager?.EMail) {
+              // const COIOptions:AutoCompleteItem[] = []
+              let UserName = await CommonServices.GetUserName(item.LineManager.EMail);
+              let LineManager: AutoCompleteItem = {
+                key: item.LineManager.EMail,
+                text: String(UserName.data)
+              }
+              GetItem.push(LineManager)
+            }
+            if (item?.HODId && item?.HOD?.EMail) {
+              let UserName = await CommonServices.GetUserName(item?.HOD?.EMail);
+              let HOD = {
+                key: item?.HOD?.EMail,
+                text: String(UserName.data)
+              }
+              GetItem.push(HOD)
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(
+            "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+            error
+          );
+        });
+      return {
+        data: GetItem,
+        status: 200,
+        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+        error
+      );
+      return {
+        data: GetItem,
+        status: 500,
+        message:
+          "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+      };
+    }
+  }
 }

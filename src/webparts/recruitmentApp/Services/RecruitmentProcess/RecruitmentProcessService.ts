@@ -14,7 +14,7 @@ import { sp } from "@pnp/sp/presets/all";
 import { CommonServices, GetPortalJobsService, getVRRDetails, InterviewServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import * as moment from "moment";
-import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
+import { AdvertisementDetails, Descriptions, FilterItem, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 import { AutoCompleteItem, InterviewPanelItem, InterviewPanelMember, tooltipInterviewPanel } from "../../Models/Screens";
 import { ActionName } from "../../utilities/LabelName";
 
@@ -25,39 +25,6 @@ interface IAttachmentExampleState {
   serverRelativeUrl: string;
   ID: string;
 }
-
-const GetUserName = async (
-  email: string
-): Promise<ApiResponse<any | null>> => {
-  try {
-    const listItems: any[] = await SPServices.SPReadItems({
-      Listname: ListNames.HRMSSageList,
-      Select: "*",
-      Filter: [{
-        FilterKey: "EmailId",
-        FilterValue: "eq",
-        Operator: email
-      }]
-    });
-    let UserName = listItems.find((emp: any) => {
-      return emp.EmailId?.toLowerCase() === email?.toLowerCase();
-    });
-    let UserRoleName = `${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || ""}`
-    return {
-      data: UserRoleName,
-      status: 200,
-      message: "ADGroups retrieved successfully",
-    };
-  } catch (error) {
-    console.error("Error fetching user ID by email: ", error);
-    // Return null in case of an error
-    return {
-      data: null,
-      status: 500,
-      message: "Error getting ADGroups",
-    };
-  }
-};
 
 const GetInterviewPanel = async (
   filterConditions: any[] = []
@@ -209,7 +176,8 @@ export default class RecruitmentService implements IRecruitmentService {
               AssignHOD: "",
 
               QuestionByHR: "",
-              QuestionByLM: ""
+              QuestionByLM: "",
+              JobAppliedCount: ""
             };
             return item;
           })
@@ -360,6 +328,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
               QuestionByHR: "",
               QuestionByLM: "",
+              JobAppliedCount: ""
             };
             return NPData;
           })
@@ -534,6 +503,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
               QuestionByHR: "",
               QuestionByLM: "",
+              JobAppliedCount: ""
             };
             return VRRData;
           })
@@ -764,7 +734,8 @@ export default class RecruitmentService implements IRecruitmentService {
 
   async GetRecruitmentDetails(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
+    JobAppliedCountFilter?: string[]
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>> {
     let GridResult: DataSyncToRecruitmentResponse[] = []
     try {
@@ -781,7 +752,104 @@ export default class RecruitmentService implements IRecruitmentService {
 
       if (res.length > 0) {
         GridResult = await Promise.all(
-          res.map((item, index) => {
+          res.map(async (item, index) => {
+            let JobCodeFilter = [
+              {
+                FilterKey: "JobCodeId",
+                Operator: "eq",
+                FilterValue: String(item?.JobCode?.ID),
+              },
+              { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+            ];
+            let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
+              JobCodeFilter,
+              "and",
+            );
+            let FilterValue: FilterItem = {
+              jobCode: JobUniqueValue?.data[0]?.JobUniqueKey,
+              workflowStausId: JobAppliedCountFilter || [],
+              pagination: {
+                filterValue: "",
+                sortBy: "",
+                sortOrder: 0,
+                pageSize: 10000,
+                currentPage: 0,
+                totalItems: 0,
+              },
+            };
+            let JobAppliedCount
+            JobAppliedCount = await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
+            const jobCodeFilter = [
+              {
+                FilterKey: "RecruitmentIDId",
+                Operator: "eq",
+                FilterValue: String(item?.ID),
+              },
+              {
+                FilterKey: "JobCodeId",
+                Operator: "eq",
+                FilterValue: String(item?.JobCodeId),
+              },
+              {
+                FilterKey: "StatusId",
+                Operator: "in",
+                FilterValue: [
+                  StatusId.PendingwithHODtoselectthecandidate,
+                  StatusId.OnHoldbyHOD,
+                  StatusId.PendingwithHODtoAssignPositionID,
+                  StatusId.PendingwithHODtoselectthecandidateLevel2,
+                  StatusId.CandidateOnHoldbyHODLevel1,
+                  StatusId.CandidateOnHoldbyHODLevel2,
+                ],
+              },
+              {
+                FilterKey: "ItemCreated",
+                Operator: "eq",
+                FilterValue: "No",
+              },
+            ];
+
+            const scorecardValue = await getVRRDetails.getReviewScoreCardCount(
+              jobCodeFilter,
+              "and",
+            );
+            if (JobAppliedCountFilter?.includes(workflowStatusApi.PendingRecruitmentHRscheduleInterview)) {
+              const InterviewFilter = [
+                {
+                  FilterKey: "RecruitmentIDId",
+                  Operator: "eq",
+                  FilterValue: String(item?.ID),
+                },
+                {
+                  FilterKey: "JobCodeId",
+                  Operator: "eq",
+                  FilterValue: String(item?.JobCodeId),
+                },
+                {
+                  FilterKey: "StatusId",
+                  Operator: "in",
+                  FilterValue: [
+                    StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+                  ],
+                },
+                {
+                  FilterKey: "ItemCreated",
+                  Operator: "eq",
+                  FilterValue: "No",
+                },
+              ];
+
+              const scorecardValue = await getVRRDetails.getReviewScoreCardCount(
+                InterviewFilter,
+                "and",
+              );
+              let InterviewPanel1 = Number(JobAppliedCount.data?.length)
+              let InterviewPanel2 = Number(scorecardValue?.data)
+              JobAppliedCount = InterviewPanel1 + InterviewPanel2
+            } else {
+              JobAppliedCount = JobAppliedCount.data?.length
+            }
+
             let Recruitment: DataSyncToRecruitmentResponse = {
               ID: item.ID,
               RecordID: index + 1,
@@ -833,22 +901,25 @@ export default class RecruitmentService implements IRecruitmentService {
               AssignLineManagerId: item?.AssignLineManagerId || 0,
               ReasonForVacancy: item?.ReasonForVacancy || "",
 
-              JobPostingStartDate: item?.JobPostingStartDate || undefined,
-              JobPostingEndDate: item?.JobPostingEndDate || undefined,
-              JobPostingFirstExtensionEndDate: item?.JobPostingFirstExtensionEndDate || undefined,
-              JobPostingSecondExtensionEndDate: item?.JobPostingSecondExtensionEndDate || undefined,
+              JobPostingStartDate: item?.JobPostingStartDate ? moment(item?.JobPostingStartDate).format("YYYY-MM-DD") : undefined,
+              JobPostingEndDate: item?.JobPostingEndDate ? moment(item?.JobPostingEndDate).format("YYYY-MM-DD") : undefined,
+              JobPostingFirstExtensionEndDate: item?.JobPostingFirstExtensionEndDate ? moment(item?.JobPostingFirstExtensionEndDate).format("YYYY-MM-DD") : undefined,
+              JobPostingSecondExtensionEndDate: item?.JobPostingSecondExtensionEndDate ? moment(item?.JobPostingSecondExtensionEndDate).format("YYYY-MM-DD") : undefined,
 
               AssignEMail: item?.AssignedHR,
               AssignHOD: item?.HOD,
               AssignHRLead: item?.RecruitmentHRLead || "",
 
               QuestionByHR: item?.QuestionByHR || "",
-              QuestionByLM: item?.QuestionByLM || ""
+              QuestionByLM: item?.QuestionByLM || "",
+              JobAppliedCount: String(JobAppliedCount),
+              ReviewScoreCount: scorecardValue.data
             };
             return Recruitment;
 
           })
         );
+
         const ids = GridResult.map((item) => item.ID).filter((id => id));
         const Arrayofarray = SPServices.ArraySpiltInOperator(
           ids,
@@ -2028,7 +2099,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
           for (const item of res) {
             if (item?.LineManagerId && item?.LineManager?.EMail) {
-              let UserName = await GetUserName(item.LineManager.EMail);
+              let UserName = await CommonServices.GetUserName(item.LineManager.EMail);
               panelMembers.push({
                 key: item.LineManagerId,
                 Role: RoleName.LineManager,
@@ -2036,7 +2107,7 @@ export default class RecruitmentService implements IRecruitmentService {
               });
             }
             if (item?.HODId && item?.HOD?.EMail) {
-              let UserName = await GetUserName(item?.HOD?.EMail);
+              let UserName = await CommonServices.GetUserName(item?.HOD?.EMail);
               panelMembers.push({
                 key: item.HODId,
                 Role: RoleName.HOD,
@@ -2044,7 +2115,7 @@ export default class RecruitmentService implements IRecruitmentService {
               });
             }
             if (item?.EXCOId && item?.EXCO?.EMail) {
-              let UserName = await GetUserName(item?.EXCO?.EMail);
+              let UserName = await CommonServices.GetUserName(item?.EXCO?.EMail);
               panelMembers.push({
                 key: item.EXCOId,
                 Role: RoleName.EXCO,
@@ -2052,7 +2123,7 @@ export default class RecruitmentService implements IRecruitmentService {
               });
             }
             if (AssignHR) {
-              let UserName = await GetUserName(AssignHR.text);
+              let UserName = await CommonServices.GetUserName(AssignHR.text);
               panelMembers.push({
                 key: AssignHR.key,
                 Role: RoleName.RecruitmentHR,
@@ -2062,7 +2133,7 @@ export default class RecruitmentService implements IRecruitmentService {
           }
           let Get_InterviewPanel = await Promise.all(
             InterviewPanelDetails.data.map(async (item: any) => {
-              let UserName = await GetUserName(item.InterviewPanel?.EMail);
+              let UserName = await CommonServices.GetUserName(item.InterviewPanel?.EMail);
               return {
                 key: item?.InterviewPanel?.Id,
                 Role: RoleName.InterviewPanel,
@@ -2310,16 +2381,19 @@ export default class RecruitmentService implements IRecruitmentService {
           const interviewDate =
             candidate?.InterviewDateLevel2 || candidate?.InterviewDate || "";
 
-          const interviewTime =
-            candidate?.InterviewTimeLevel2 || candidate?.InterviewTime || "";
+          // const interviewTime =
+          //   candidate?.InterviewTimeLevel2 || candidate?.InterviewTime || "";
 
-          const interviewDateTime =
-            interviewDate && interviewTime
-              ? moment(
-                `${interviewDate} ${interviewTime}`,
-                "YYYY-MM-DD HH:mm"
-              ).format("DD-MMM-YYYY hh:mm A")
-              : "";
+          // const interviewDateTime =
+          //   interviewDate && interviewTime
+          //     ? moment(
+          //       `${interviewDate} ${interviewTime}`,
+          //       "YYYY-MM-DD HH:mm"
+          //     ).format("DD-MMM-YYYY hh:mm A")
+          //     : "";
+
+          const interviewDateTime = moment(interviewDate).format("YYYY-MM-DD");
+
 
           return {
             SNO: candidate?.SNO ?? "",
@@ -2388,7 +2462,7 @@ export default class RecruitmentService implements IRecruitmentService {
     Role: string
   ): Promise<ApiResponse<{ Key: string; Value: string }>> {
     try {
-      let AdGroupUser = await GetUserName(RoleEmail);
+      let AdGroupUser = await CommonServices.GetUserName(RoleEmail);
       return {
         data: {
           Key: Role,
@@ -2431,7 +2505,7 @@ export default class RecruitmentService implements IRecruitmentService {
           // console.log(res, "res");
           for (const item of res) {
             if (item?.LineManagerId && item?.LineManager?.EMail) {
-              let UserName = await GetUserName(item.LineManager.EMail);
+              let UserName = await CommonServices.GetUserName(item.LineManager.EMail);
               let LineManager = {
                 Role: RoleName.LineManager,
                 Name: String(UserName.data)
@@ -2439,7 +2513,7 @@ export default class RecruitmentService implements IRecruitmentService {
               GetItem[0].LineManager = LineManager;
             }
             if (item?.HODId && item?.HOD?.EMail) {
-              let UserName = await GetUserName(item?.HOD?.EMail);
+              let UserName = await CommonServices.GetUserName(item?.HOD?.EMail);
               let HOD = {
                 Role: RoleName.HOD,
                 Name: String(UserName.data)
@@ -2453,7 +2527,7 @@ export default class RecruitmentService implements IRecruitmentService {
               //   Role: RoleName.EXCO,
               //   text: String(UserName.data),
               // });
-              let UserName = await GetUserName(item?.EXCO?.EMail);
+              let UserName = await CommonServices.GetUserName(item?.EXCO?.EMail);
               let EXCO = {
                 Role: RoleName.EXCO,
                 Name: String(UserName.data)
@@ -2461,7 +2535,7 @@ export default class RecruitmentService implements IRecruitmentService {
               GetItem[0].Exco = EXCO;
             }
             if (data.AssignEMail) {
-              let UserName = await GetUserName(data.AssignEMail);
+              let UserName = await CommonServices.GetUserName(data.AssignEMail);
               let HR = {
                 Role: RoleName.RecruitmentHR,
                 Name: String(UserName.data)
@@ -2509,7 +2583,7 @@ export default class RecruitmentService implements IRecruitmentService {
         FilterCondition: "and"
       }).then(async (res) => {
         for (const item of res) {
-          let UserName = await GetUserName(item.InterviewPanel.EMail)
+          let UserName = await CommonServices.GetUserName(item.InterviewPanel.EMail)
           let ActionValues = {
             Key: String(UserName.data),
             Value: item?.IsScoreSheetUploaded === "Yes" ? ActionName.Completed : ActionName.Pending
@@ -2690,6 +2764,40 @@ export default class RecruitmentService implements IRecruitmentService {
           GridResult = item?.CareerPortalLink;
           return item?.CareerPortalLink;
         })
+        // );
+      }
+      return {
+        data: GridResult,
+        status: 200,
+        message: "GetRecruitmentDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching data in GetRecruitmentDetails:", error);
+      return {
+        data: "",
+        status: 500,
+        message: "Error fetching data from GetRecruitmentDetails",
+      };
+    }
+  }
+
+  async getReviewScoreCardCount(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<string>> {
+    let GridResult: string = "0"
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Select: `*`,
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Topcount: count.Topcount,
+      });
+      if (res.length > 0) {
+        //  = await Promise.all(
+        GridResult = String(res.length);
+
         // );
       }
       return {

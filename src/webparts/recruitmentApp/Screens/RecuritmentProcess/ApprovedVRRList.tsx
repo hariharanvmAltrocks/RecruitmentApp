@@ -22,6 +22,7 @@ import {
   ActionIcon,
   InterviewLevels,
   RoleName,
+  workflowStatusApi,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import { Card, CardContent } from "@mui/material";
@@ -47,13 +48,18 @@ import CheckboxDataTable from "../../components/CheckboxDataTable";
 import * as moment from "moment";
 import ReuseButton from "../../components/ReuseButton";
 import ToolTipButton from "../../components/Tooltip";
-import { tabStyle } from "../../components/TabMerge";
+import {
+  getScoreCardCount,
+  getTotalAppliedCount,
+  tabStyle,
+} from "../../components/TabMerge";
 import {
   ActionName,
   ButtonAction,
   ExternalUserType,
   InterviewDate,
   JobAdvertAlertMsg,
+  PositionStatus,
 } from "../../utilities/LabelName";
 import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
 
@@ -117,6 +123,8 @@ const RecruitmentProcess = (props: any) => {
     HODReviewScoreCount: 0,
     EvaluationCount: 0,
     advertExtensionCount: 0,
+    ReviewProfileCount: 0,
+    ReviewScoreCardCount: 0,
   });
 
   const [pendingInfo, setPendingInfo] = React.useState<any>(null);
@@ -351,11 +359,14 @@ const RecruitmentProcess = (props: any) => {
         Operator: "eq",
         FilterValue: rowData.DepartmentId,
       },
-      // {
-      //   FilterKey: "PositionIDStatus",
-      //   Operator: "eq",
-      //   FilterValue: "Vacant",
-      // },
+      {
+        FilterKey: "PositionIDStatus",
+        Operator: "in",
+        FilterValue: [
+          PositionStatus.RecruitmentInitiator,
+          PositionStatus.RecruitmentInProgress,
+        ],
+      },
     ];
     const response = await getVRRDetails.GetPositionIDData(
       filterConditions,
@@ -403,6 +414,25 @@ const RecruitmentProcess = (props: any) => {
       header: "Job Title",
       sortable: true,
     },
+    ...(TabNames === TabName.ReviewProfile
+      ? [
+          {
+            field: "JobAppliedCount",
+            header: "Job Applied Count",
+            sortable: true,
+          },
+        ]
+      : []),
+    ...(TabNames === TabName.ReviewScorecard
+      ? [
+          {
+            field: "ReviewScoreCount",
+            header: "Job Applied Count",
+            sortable: true,
+          },
+        ]
+      : []),
+
     // {
     //   field: "BusinessUnitCode",
     //   header: "BusinessUnit Code",
@@ -837,7 +867,7 @@ const RecruitmentProcess = (props: any) => {
                 },
                 tab,
                 TabName,
-                ButtonAction.View,
+                ButtonAction.Edit,
               );
               return;
             } else if (
@@ -862,7 +892,7 @@ const RecruitmentProcess = (props: any) => {
                 },
                 tab,
                 TabName,
-                ButtonAction.View,
+                ButtonAction.Edit,
               );
               return;
             }
@@ -1032,6 +1062,7 @@ const RecruitmentProcess = (props: any) => {
 
       let filterConditionsRecuritment = [];
       let RecuritmentConditions = "and";
+      let JobAppliedCountFilter: string[] = [];
       let CurrentTab;
       if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
         CurrentTab = TabName.UploadAdvertisement;
@@ -1112,6 +1143,12 @@ const RecruitmentProcess = (props: any) => {
             Operator: "eq",
             FilterValue: props.userDetails[0]?.EmailId,
           });
+          JobAppliedCountFilter = [
+            workflowStatusApi.LineManagerL1Pending,
+            workflowStatusApi.LineManagerL2Pending,
+            workflowStatusApi.LineManagerLevel1OnHold,
+            workflowStatusApi.LineManagerLevel2OnHold,
+          ];
           break;
         case TabName.UploadCV:
           filterConditionsRecuritment.push({
@@ -1255,6 +1292,7 @@ const RecruitmentProcess = (props: any) => {
             : await getVRRDetails.GetRecruitmentDetails(
                 filterConditionsRecuritment,
                 RecuritmentConditions,
+                JobAppliedCountFilter,
               );
         if (response.status === 200) {
           let responseData;
@@ -1370,8 +1408,37 @@ const RecruitmentProcess = (props: any) => {
           props.CurrentUserEmailId,
           props.EmployeeList,
         );
+
+        const getReviewProfileCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.RecruitmentInProgress &&
+            item.AssignLineManager === props.userDetails[0]?.EmailId,
+        );
+
+        const ReviewProfileCount = await getTotalAppliedCount(
+          getReviewProfileCount,
+          [
+            workflowStatusApi.LineManagerL1Pending,
+            workflowStatusApi.LineManagerL2Pending,
+            workflowStatusApi.LineManagerLevel1OnHold,
+            workflowStatusApi.LineManagerLevel2OnHold,
+          ],
+        );
+
+        const userEmail = props.userDetails[0]?.EmailId;
+
+        const getScoreCount = recrutimentData.data.filter(
+          (item) =>
+            item.StatusId === StatusId.RecruitmentInProgress &&
+            item.AssignHOD === userEmail,
+        );
+
+        const ScoreCardCount = await getScoreCardCount(getScoreCount);
+
         setPendingCount((prevState) => ({
           ...prevState,
+          ReviewProfileCount: ReviewProfileCount,
+          ReviewScoreCardCount: ScoreCardCount,
           AssignHRCount: AssignHRCount.data.length,
           UploadONEMCount: UploadONEMCount.length,
           UploadAdvertisementCount: UploadAdvertismentCount.length,
@@ -2097,6 +2164,10 @@ const RecruitmentProcess = (props: any) => {
         return tabStyle(tab.TabName, pendingcount.lineManagerInterviewCount);
       case TabName.Evaluation:
         return tabStyle(tab.TabName, pendingcount.EvaluationCount);
+      case TabName.ReviewProfile:
+        return tabStyle(tab.TabName, pendingcount.ReviewProfileCount);
+      case TabName.ReviewScorecard:
+        return tabStyle(tab.TabName, pendingcount.ReviewScoreCardCount);
       default:
         return tab.TabName;
     }
@@ -2121,10 +2192,10 @@ const RecruitmentProcess = (props: any) => {
     setActiveTab(newTab);
   };
 
-  const AlertpopupSuccess = () => {
+  const AlertpopupSuccess = (msg: string) => {
     setDatePopup(false);
     setIsLoading(true);
-    if (HRMSAlertOptions.Success) {
+    if (msg === HRMSAlertOptions.Success) {
       let SuccessAlert = {
         Message: RecuritmentHRMsg.AdvertExtendsionSuccessMsg,
         Type: HRMSAlertOptions.Success,
@@ -2211,7 +2282,7 @@ const RecruitmentProcess = (props: any) => {
                 RecuritmentData={selectedrowdata[0]}
                 onClose={() => setDatePopup(false)}
                 ModelDropDown={props}
-                AlertpopupSuccess={() => AlertpopupSuccess()}
+                AlertpopupSuccess={(msg) => AlertpopupSuccess(msg)}
                 setIsLoading={setIsLoading}
               />
             }

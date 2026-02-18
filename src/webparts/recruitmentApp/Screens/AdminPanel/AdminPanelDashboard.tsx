@@ -35,7 +35,7 @@ const AdminPanelDashboard = (props: any) => {
     rowData: any,
     tab: string,
     TabName: string,
-    ButtonAction: string
+    ButtonAction: string,
   ) {
     props.navigation("/AdminPanelDashboard/AdminPanelPage", {
       state: {
@@ -50,7 +50,7 @@ const AdminPanelDashboard = (props: any) => {
   const columnConfig = (
     tab: string,
     ButtonActions: number,
-    TabNames: string
+    TabNames: string,
   ) => [
     // {
     //   field: "userId",
@@ -142,19 +142,30 @@ const AdminPanelDashboard = (props: any) => {
   };
 
   React.useEffect(() => {
+    void fetchData(activeTab, rows);
+  }, [activeTab]);
+
+  React.useEffect(() => {
     const fetchDataAndGetADGroupsOption = async () => {
       try {
         let TabDetails: any;
-        TabDetails = props.TabDetails[0] ?? [];
-        setTabNameData(TabDetails);
-        void fetchData(activeTab, rows);
+        if (props.stateValue) {
+          storedStringRef.current = props.stateValue?.TabName;
+          setactiveTab(props.stateValue?.tab);
+          TabDetails = props.TabDetails[0] ?? [];
+          setTabNameData(TabDetails);
+        } else {
+          TabDetails = props.TabDetails[0] ?? [];
+          setTabNameData(TabDetails);
+        }
+        // void fetchData(activeTab, rows);
       } catch (error) {
         console.error(error);
       }
     };
 
     void fetchDataAndGetADGroupsOption();
-  }, [activeTab]);
+  }, []);
 
   const handleTabChange = (newTab: string) => {
     setactiveTab(newTab);
@@ -189,7 +200,7 @@ const AdminPanelDashboard = (props: any) => {
   const renderTable = (
     TabNames: string,
     TabValue: string,
-    StatusData: StatusDetails[]
+    StatusData: StatusDetails[],
   ) => {
     // storedStringRef.current = "";
     if (TabValue === activeTab) {
@@ -213,7 +224,7 @@ const AdminPanelDashboard = (props: any) => {
             columns={columnConfig(
               TabValue,
               Number(Action[0]?.Action?.[0]),
-              TabNames
+              TabNames,
             )}
             rows={rows}
             onPageChange={onPageChange}
