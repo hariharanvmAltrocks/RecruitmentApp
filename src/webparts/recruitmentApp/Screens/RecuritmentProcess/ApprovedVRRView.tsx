@@ -45,6 +45,7 @@ import {
   FilterItem,
   GetProfileByJobCode,
 } from "../../Models/ApIInterface";
+import * as moment from "moment";
 
 const ApprovedVRRView: React.FC = (props: any) => {
   const [tabVisibility, setTabVisibility] = useState({
@@ -241,17 +242,17 @@ const ApprovedVRRView: React.FC = (props: any) => {
       let FilterValue: FilterItem = {
         jobCode: JobUniqueValues,
         workflowStausId: [
-                  workflowStatusApi.LineManagerL1Pending,
-                  workflowStatusApi.LineManagerL2Pending,
-                  workflowStatusApi.LineManagerLevel1OnHold,
-                  workflowStatusApi.LineManagerLevel2OnHold,
-                  workflowStatusApi.LineManagerLevel1Rejected,
-                  workflowStatusApi.LineManagerLevel2Rejected,
-                  workflowStatusApi.pendingHODSelection,
-                  workflowStatusApi.CandidateSelectedIPanel,
-                  workflowStatusApi.CandidateRejectedIPanel,
-                  workflowStatusApi.PendingRecruitmentHRscheduleInterview,
-                  workflowStatusApi.HRPending,
+          workflowStatusApi.LineManagerL1Pending,
+          workflowStatusApi.LineManagerL2Pending,
+          workflowStatusApi.LineManagerLevel1OnHold,
+          workflowStatusApi.LineManagerLevel2OnHold,
+          workflowStatusApi.LineManagerLevel1Rejected,
+          workflowStatusApi.LineManagerLevel2Rejected,
+          workflowStatusApi.pendingHODSelection,
+          workflowStatusApi.CandidateSelectedIPanel,
+          workflowStatusApi.CandidateRejectedIPanel,
+          workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+          workflowStatusApi.HRPending,
         ],
         pagination: {
           filterValue: "",
@@ -273,14 +274,17 @@ const ApprovedVRRView: React.FC = (props: any) => {
             let CandidateDataFilter = res.data.map((item: any): GetProfileByJobCode => {
               console.log("Mapping Item:", item);
               return {
-                CandidateID: item?.ID,
+                CandidateID: item?.CandidateID,
                 ApplicantName: item?.ApplicantName,
                 PositionTitle: item?.PositionTitle,
                 JobCode: item?.JobCode,
                 Status: item?.Status,
                 workflowStatusId: item?.StatusId,
                 applicationStatusId: item?.applicationStatusId,
-                createdOn: item?.createdOn ? new Date(item.createdOn) : new Date(),
+                createdOn: item?.createdOn
+                  ? moment(item.createdOn, "DD/MM/YYYY").toDate()
+                  : new Date(),
+
                 applicationStatus: item?.ApplicationStatus || item?.Status || "",
               };
             });
@@ -313,36 +317,36 @@ const ApprovedVRRView: React.FC = (props: any) => {
     console.log("Candidate clicked:", candidateId);
     // Add navigation or detail view logic here
   };
-const getCandidateListData = (): CandidateItem[] => {
-  if (!CandidateData || CandidateData.length === 0) return [];
-   console.log("Candidate List Data:", CandidateData);
-  return CandidateData.map((item) => ({
-    CandidateID: Number(item.CandidateID) || 0,
-    ApplicantName: item.ApplicantName || "",
-    appliedBy: "Internal job posting", // Assuming this is a static value for nowa
-    createdOn: item.createdOn ? new Date(item.createdOn) : new Date(),
-    Status: item.Status || " ",
-    statusId: Number((item as any).workflowStatusId) || Number((item as any).applicationStatusId) || undefined,
-    PositionTitle: item.PositionTitle || "",
-  }));
- 
-};
+  const getCandidateListData = (): CandidateItem[] => {
+    if (!CandidateData || CandidateData.length === 0) return [];
+    console.log("Candidate List Data:", CandidateData);
+    return CandidateData.map((item) => ({
+      CandidateID: Number(item.CandidateID) || 0,
+      ApplicantName: item.ApplicantName || "",
+      appliedBy: "Internal job posting", // Assuming this is a static value for nowa
+      createdOn: item.createdOn ? new Date(item.createdOn) : new Date(),
+      Status: item.Status || " ",
+      statusId: Number((item as any).workflowStatusId) || Number((item as any).applicationStatusId) || undefined,
+      PositionTitle: item.PositionTitle || "",
+    }));
+
+  };
 
 
-// const getCandidateListData = (): CandidateItem[] => {
-//   const statuses = ["Pending", "In Review", "Interviewed", "Selected", "Rejected"];
+  // const getCandidateListData = (): CandidateItem[] => {
+  //   const statuses = ["Pending", "In Review", "Interviewed", "Selected", "Rejected"];
 
-//   return Array.from({ length: 25 }, (_, i) => ({
-//     CandidateID: i + 1,
-//     ApplicantName: `Candidate ${i + 1}`,
-//     appliedBy: i % 2 === 0 ? "Internal Job Posting" : "External Portal",
-//     createdOn: new Date(2026, 0, (i % 28) + 1), // Jan dates
-//     Status: statuses[i % statuses.length],
-//     statusId: i % statuses.length,
-//     PositionTitle: `Software Engineer ${(i % 3) + 1}`,
-//   }));
-// };
-// const [candidateList] = useState<CandidateItem[]>(() => getCandidateListData());
+  //   return Array.from({ length: 25 }, (_, i) => ({
+  //     CandidateID: i + 1,
+  //     ApplicantName: `Candidate ${i + 1}`,
+  //     appliedBy: i % 2 === 0 ? "Internal Job Posting" : "External Portal",
+  //     createdOn: new Date(2026, 0, (i % 28) + 1), // Jan dates
+  //     Status: statuses[i % statuses.length],
+  //     statusId: i % statuses.length,
+  //     PositionTitle: `Software Engineer ${(i % 3) + 1}`,
+  //   }));
+  // };
+  // const [candidateList] = useState<CandidateItem[]>(() => getCandidateListData());
 
   const fetchData = async () => {
     if (isLoading) return;
@@ -961,7 +965,7 @@ const getCandidateListData = (): CandidateItem[] => {
                   currentPage={candidateListPage}
                   pageSize={5}
                   totalItems={CandidateData?.length || 0}
-                //  totalItems={candidateList.length}
+                  //  totalItems={candidateList.length}
                   onPageChange={handleCandidateListPageChange}
                   onCardClick={handleCandidateCardClick}
                 />
@@ -971,7 +975,7 @@ const getCandidateListData = (): CandidateItem[] => {
         </Card>
       ),
     },
-   
+
   ];
   const back_fn = () => {
     props.navigation("/RecurimentProcess", {
