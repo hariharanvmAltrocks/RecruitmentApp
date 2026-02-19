@@ -19,9 +19,12 @@ const CandidateList: React.FC<Props> = ({
   onPageChange,
   onCardClick,
 }) => {
-  const uniqueCandidates = Array.from(
+  const uniqueCandidates = React.useMemo(() => {
+  return Array.from(
     new Map(candidates.map((item) => [item.CandidateID, item])).values(),
   );
+}, [candidates]);
+
   const paginatedCandidates = uniqueCandidates;
   React.useEffect(() => {
     if (paginatedCandidates.length > 0) {

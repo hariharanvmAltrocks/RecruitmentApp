@@ -103,6 +103,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
     GradingDocument_fr: [],
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [iscandidateLoading, setIsCandidateLoading] = useState<boolean>(false);
   const [MainComponent, setMainComponent] = useState<boolean>(true);
   const [CommentData, setCommentsData] = useState<CommentsData[] | undefined>();
   const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
@@ -235,7 +236,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
 
   const fetchCandidateData = async (page: number, jobUniqueValue: string) => {
     try {
-      setIsLoading(true);
+      setIsCandidateLoading(true);
       const filterValue: FilterItem = {
         jobCode: jobUniqueValue,
         workflowStausId: [
@@ -321,7 +322,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
       setCandidateData([]);
       setTotalItems(0);
     } finally {
-      setIsLoading(false);
+      setIsCandidateLoading(false);
     }
   };
 
@@ -499,18 +500,23 @@ const ApprovedVRRView: React.FC = (props: any) => {
     }
   }, [props.stateValue]);
 
+  // useEffect(() => {
+  //   if (jobUniqueKey) {
+  //     setCandidateListPage(1);
+  //     void fetchCandidateData(1, jobUniqueKey);
+  //   }
+  // }, [jobUniqueKey]);
+
+  // useEffect(() => {
+  //   if (jobUniqueKey && candidateListPage !== 1) {
+  //     void fetchCandidateData(candidateListPage, jobUniqueKey);
+  //   }
+  // }, [candidateListPage]);
   useEffect(() => {
     if (jobUniqueKey) {
-      setCandidateListPage(1);
-      void fetchCandidateData(1, jobUniqueKey);
-    }
-  }, [jobUniqueKey]);
-
-  useEffect(() => {
-    if (jobUniqueKey && candidateListPage !== 1) {
       void fetchCandidateData(candidateListPage, jobUniqueKey);
     }
-  }, [candidateListPage]);
+  }, [candidateListPage, jobUniqueKey]);
 
   const OpenComments = async () => {
     setMainComponent(false);
@@ -680,7 +686,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
                   </div>
                 </div>
                 <div className="ms-Grid-row">
-               
                   <div className="ms-Grid-col ms-lg3">
                     <CustomInput
                       label={labelNames.PositionDetails.PatersonGrade}
@@ -878,7 +883,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
                           value={
                             Attachment.PositionDocument.ViewJobAdvertisement
                           }
-                         
                         />
                         <ReuseButton
                           Style={{
@@ -943,14 +947,23 @@ const ApprovedVRRView: React.FC = (props: any) => {
                     />
                   </div>
                 </div>
-                <CandidateList
-                  candidates={getCandidateListData()}
-                  currentPage={candidateListPage}
-                  pageSize={5}
-                  totalItems={totalItems}
-                  onPageChange={handleCandidateListPageChange}
-                  onCardClick={handleCandidateCardClick}
-                />
+
+                <div style={{ position: "relative" }}>
+                  {iscandidateLoading && (
+                    <div className="loader-overlay">
+                      <CustomLoader isLoading={true} />
+                    </div>
+                  )}
+
+                  <CandidateList
+                    candidates={getCandidateListData()}
+                    currentPage={candidateListPage}
+                    pageSize={5}
+                    totalItems={totalItems}
+                    onPageChange={handleCandidateListPageChange}
+                    onCardClick={handleCandidateCardClick}
+                  />
+                </div>
               </div>
             )}
           </CardContent>
