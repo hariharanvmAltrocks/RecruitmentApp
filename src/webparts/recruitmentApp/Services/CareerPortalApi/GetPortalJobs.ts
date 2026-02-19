@@ -124,6 +124,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
   }
 
 
+
   async getCandidateProfile(CandidateID: string, EmployeeList?: any[], RecrutimentData?: DataSyncToRecruitmentResponse): Promise<ApiResponse<CandidateProfile[] | null>> {
     try {
       let GetProfileByJobCodeData: CandidateProfile[] = [];

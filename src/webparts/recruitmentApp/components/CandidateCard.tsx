@@ -72,14 +72,10 @@ const CandidateCard: React.FC<Props> = ({ data, onClick, isLoading }) => {
   const initials = getInitials(data.ApplicantName || "");
 
   const formatDate = (date: Date | string): string => {
-    try {
-      if (typeof date === "string") {
-        return new Date(date).toLocaleDateString("en-GB");
-      }
-      return date instanceof Date ? date.toLocaleDateString("en-GB") : "N/A";
-    } catch {
-      return "N/A";
+    if (typeof date === "string") {
+      return date;
     }
+    return date instanceof Date ? date.toLocaleDateString("en-GB") : "";
   };
 
   const handleCardClick = (): void => {

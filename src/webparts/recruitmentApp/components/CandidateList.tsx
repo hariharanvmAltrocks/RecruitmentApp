@@ -19,14 +19,24 @@ const CandidateList: React.FC<Props> = ({
   onPageChange,
   onCardClick,
 }) => {
+  const uniqueCandidates = Array.from(
+    new Map(candidates.map((item) => [item.CandidateID, item])).values(),
+  );
+  const paginatedCandidates = uniqueCandidates;
+  React.useEffect(() => {
+    if (paginatedCandidates.length > 0) {
+      console.log(
+        `Pagination: Page ${currentPage}`,
+        paginatedCandidates.map((c) => ({
+          CandidateID: c.CandidateID,
+          createdOn: c.createdOn,
+        })),
+      );
+    } else {
+      console.log(`Pagination: Page ${currentPage} (No candidates)`);
+    }
+  }, [currentPage, paginatedCandidates]);
 
-  //  Pagination Logic
-  const paginatedCandidates = React.useMemo(() => {
-    const startIndex = (currentPage - 1) * pageSize;
-    return candidates.slice(startIndex, startIndex + pageSize);
-  }, [candidates, currentPage, pageSize]);
-
-  //  Footer Count
   const start = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const end = Math.min(currentPage * pageSize, totalItems);
 

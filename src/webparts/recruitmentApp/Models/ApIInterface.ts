@@ -71,6 +71,7 @@ export type GetProfileByJobCode = {
     createdOn: Date | undefined,
     applicationStatusId: string,
     applicationStatus: string
+    TotalItems?: number;
 }
 
 export type PreviousEmployer = {
