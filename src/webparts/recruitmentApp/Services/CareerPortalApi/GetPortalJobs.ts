@@ -79,51 +79,106 @@ export default class GetPortalJobs implements IGetPortalJobs {
     }
   }
 
-  async getCandidateDetailsInJobCode(FilterValue: FilterItem): Promise<ApiResponse<GetProfileByJobCode[] | null>> {
-    try {
-      let GetProfileByJobCodeData: GetProfileByJobCode[] = []
-      await getProfileData.GetProfileByJobCode(FilterValue).then((res) => {
-        let TotalItems = res?.data?.pagination?.totalItems;
-        GetProfileByJobCodeData = res.data.data.map((item: any, index: number) => {
-          const JobCode = item?.jobCode?.split('-')[0];
-          let createdon = item?.createdOn ? new Date(item.createdOn) : null
-          return {
-            SNO: index + 1,
-            CandidateID: item?.jobRequestId,
-            ApplicantName: item?.applicantName,
-            PositionTitle: item?.jobTitle?.displayText,
-            JobCode: JobCode,
-            Status: item?.workflowStatus?.displayText,
-            workflowStatusId: item?.workflowStatusId,
-            createdOn: moment(createdon).format("DD/MM/YYYY"),
-            TotalItems: TotalItems,
-            applicationStatusId: item?.applicationStatusId,
-            applicationStatus: item?.applicationStatus?.displayText
-          }
-        })
-      }
-      ).catch((error) => {
-        console.log(error, "error");
-      })
-      return {
-        data: GetProfileByJobCodeData,
-        status: 200,
-        message: "Get Candidate details",
-      };
-    } catch (error) {
-      console.error(
-        "Error Get Candidate details:",
-        error
-      );
+  // async getCandidateDetailsInJobCode(FilterValue: FilterItem): Promise<ApiResponse<GetProfileByJobCode[] | null>> {
+  //   debugger
+  //   try {
+  //     let GetProfileByJobCodeData: GetProfileByJobCode[] = []
+  //     await getProfileData.GetProfileByJobCode(FilterValue).then((res) => {
+  //       let TotalItems = res?.data?.pagination?.totalItems;
+  //       GetProfileByJobCodeData = res.data.data.map((item: any, index: number) => {
+  //         const JobCode = item?.jobCode?.split('-')[0];
+  //         let createdon = item?.createdOn ? new Date(item.createdOn) : null
+  //         return {
+  //           SNO: index + 1,
+  //           CandidateID: item?.jobRequestId,
+  //           ApplicantName: item?.applicantName,
+  //           PositionTitle: item?.jobTitle?.displayText,
+  //           JobCode: JobCode,
+  //           Status: item?.workflowStatus?.displayText,
+  //           workflowStatusId: item?.workflowStatusId,
+  //           createdOn: moment(createdon).format("DD/MM/YYYY"),
+  //           TotalItems: TotalItems,
+  //           applicationStatusId: item?.applicationStatusId,
+  //           applicationStatus: item?.applicationStatus?.displayText,
+  //           createdBy: item?.createdBy,
+  //           tblProfilesKcsas: item?.tblProfilesKcsas || []
+  //         }
+  //       })
+  //     }
+  //     ).catch((error) => {
+  //       console.log(error, "error");
+  //     })
+  //     return {
+  //       data: GetProfileByJobCodeData,
+  //       status: 200,
+  //       message: "Get Candidate details",
+  //     };
+  //   } catch (error) {
+  //     console.error(
+  //       "Error Get Candidate details:",
+  //       error
+  //     );
+  //     return {
+  //       data: [],
+  //       status: 500,
+  //       message: "Error Get Candidate details",
+  //     };
+  //   }
+  // }
+
+async getCandidateDetailsInJobCode(
+  FilterValue: FilterItem
+): Promise<ApiResponse<GetProfileByJobCode[]>> {
+  try {
+    const res = await getProfileData.GetProfileByJobCode(FilterValue);
+
+    if (!res?.data?.data) {
       return {
         data: [],
-        status: 500,
-        message: "Error Get Candidate details",
+        status: 200,
+        message: "No candidate data",
       };
     }
+
+    const totalItems = res.data.pagination?.totalItems || 0;
+
+    const mappedData: GetProfileByJobCode[] = res.data.data.map(
+      (item: any, index: number) => {
+        const JobCode = item?.jobCode?.split("-")[0];
+
+        return {
+          SNO: index + 1,
+          CandidateID: item?.jobRequestId,
+          ApplicantName: item?.applicantName,
+          PositionTitle: item?.jobTitle?.displayText,
+          JobCode: JobCode,
+          Status: item?.workflowStatus?.displayText,
+          workflowStatusId: item?.workflowStatusId,
+          createdOn: moment(item?.createdOn).format("DD/MM/YYYY"),
+          TotalItems: totalItems,
+          applicationStatusId: item?.applicationStatusId,
+          applicationStatus: item?.applicationStatus?.displayText,
+          createdBy: item?.createdBy,
+          tblProfilesKcsas: item?.tblProfilesKcsas || [],
+        };
+      }
+    );
+// console.log("Mapped Candidate Data:", mappedData);
+    return {
+      data: mappedData,
+      status: 200,
+      message: "Get Candidate details",
+    };
+  } catch (error) {
+    console.error("Error Get Candidate details:", error);
+
+    return {
+      data: [],
+      status: 500,
+      message: "Error Get Candidate details",
+    };
   }
-
-
+}
 
   async getCandidateProfile(CandidateID: string, EmployeeList?: any[], RecrutimentData?: DataSyncToRecruitmentResponse): Promise<ApiResponse<CandidateProfile[] | null>> {
     try {
