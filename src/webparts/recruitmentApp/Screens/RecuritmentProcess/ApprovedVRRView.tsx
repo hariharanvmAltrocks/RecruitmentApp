@@ -475,13 +475,14 @@ const handleCandidateListPageChange = (page: number) => {
         (item as any).createdBy,
         (item as any).tblProfilesKcsas,
       ),
-      createdOn: item.createdOn ? new Date(item.createdOn) : new Date(),
+      createdOn: item.createdOn||"" ,
       Status: item.Status || " ",
       statusId:
         Number((item as any).workflowStatusId) ||
         Number((item as any).applicationStatusId) ||
         undefined,
       PositionTitle: item.PositionTitle || "",
+      
     }));
   };
 

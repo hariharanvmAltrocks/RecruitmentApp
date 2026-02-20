@@ -73,19 +73,6 @@ const CandidateCard: React.FC<Props> = ({ data, onClick, isLoading }) => {
 
   const initials = getInitials(data.ApplicantName || "");
 
-  // Format date as dd/mm/yyyy
-  const formatDate = (date: Date | string): string => {
-    if (!date) return "";
-    if (typeof date === "string") {
-      // Try to parse string date
-      const parsed = new Date(date);
-      if (!isNaN(parsed.getTime())) {
-        return parsed.toLocaleDateString("en-GB");
-      }
-      return date;
-    }
-    return date instanceof Date ? date.toLocaleDateString("en-GB") : "";
-  };
 
   const handleCardClick = (e?: React.MouseEvent | React.KeyboardEvent): void => {
     if (onClick && !isLoading) {
@@ -128,7 +115,7 @@ const CandidateCard: React.FC<Props> = ({ data, onClick, isLoading }) => {
       {/* 3. Created On */}
       <div>
         <span className="text-xs text-gray-600 font-medium">
-          {formatDate(data.createdOn)}
+          {data.createdOn}
         </span>
       </div>
 
