@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import "./CandidateList.css";
 import { StatusId } from "../utilities/Config";
@@ -18,6 +19,7 @@ interface Props {
   isLoading?: boolean;
 }
 
+
 const getStatusClass = (status: string): string => {
   switch (status) {
     case "Pending":
@@ -34,6 +36,7 @@ const getStatusClass = (status: string): string => {
       return "candidate-status-default";
   }
 };
+
 
 const statusClassFromId = (id?: number, statusText?: string): string => {
   if (typeof id === "number") {
@@ -58,31 +61,20 @@ const statusClassFromId = (id?: number, statusText?: string): string => {
   return getStatusClass(statusText || "");
 };
 
+
 const CandidateCard: React.FC<Props> = ({ data, onClick, isLoading }) => {
+  // Get initials from name (first two letters of first/last name)
   const getInitials = (name: string): string => {
-    if (!name) return "N/A";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .substring(0, 2)
-      .toUpperCase();
+    if (!name) return " ";
+    const parts = name.trim().split(" ").filter(Boolean);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + (parts[1]?.[0] || "")).toUpperCase();
   };
 
   const initials = getInitials(data.ApplicantName || "");
 
-  const formatDate = (date: Date | string): string => {
-    try {
-      if (typeof date === "string") {
-        return new Date(date).toLocaleDateString("en-GB");
-      }
-      return date instanceof Date ? date.toLocaleDateString("en-GB") : "N/A";
-    } catch {
-      return "N/A";
-    }
-  };
 
-  const handleCardClick = (): void => {
+  const handleCardClick = (e?: React.MouseEvent | React.KeyboardEvent): void => {
     if (onClick && !isLoading) {
       onClick(data.CandidateID);
     }
@@ -90,49 +82,50 @@ const CandidateCard: React.FC<Props> = ({ data, onClick, isLoading }) => {
 
   return (
     <div
-      className={`candidate-card ${isLoading ? "loading" : ""}`}
+      className={`candidate-card${isLoading ? " loading" : ""}`}
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
+      aria-disabled={isLoading}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
-          handleCardClick();
+          handleCardClick(e);
         }
       }}
       title={`View details for ${data.ApplicantName}`}
+      style={{ cursor: isLoading ? "not-allowed" : "pointer", opacity: isLoading ? 0.6 : 1 }}
     >
       {/* 1. Candidate Name */}
-<div className="candidate-name-cell">
-  <div className="candidate-card-avatar">{initials}</div>
+      <div className="candidate-name-cell">
+        <div className="candidate-card-avatar" aria-label={`Avatar for ${data.ApplicantName}`}>{initials}</div>
+        <div className="candidate-text">
+          <div className="candidate-card-name">
+            {data.ApplicantName || ""}
+          </div>
+        </div>
+      </div>
 
-  <div className="candidate-text">
-    <div className="candidate-card-name">
-      {data.ApplicantName || ""}
-    </div>
-  </div>
-</div>
-
-      {/* 2. Position Title */}
+      {/* 2. Applied By */}
       <div className="min-w-0">
         <span className="text-xs text-gray-600 font-medium leading-relaxed block truncate pr-4">
           {data.appliedBy || ""}
         </span>
       </div>
+
       {/* 3. Created On */}
       <div>
         <span className="text-xs text-gray-600 font-medium">
-          {formatDate(data.createdOn)}
+          {data.createdOn}
         </span>
       </div>
+
       {/* 4. Status */}
-      <div 
-      // style={{ display: "flex", justifyContent: "flex-end" }}
-      >
-  <div className={`status-pill-fixed ${statusClassFromId(data.statusId, data.Status)}`}>
-    <span className="status-dot-common"></span>
-    <span className="truncate">{data.Status}</span>
-  </div>
-</div>
+      <div>
+        <div className={`status-pill-fixed ${statusClassFromId(data.statusId, data.Status)}`}>
+          <span className="status-dot-common" aria-hidden="true"></span>
+          <span className="truncate">{data.Status}</span>
+        </div>
+      </div>
     </div>
   );
 };
