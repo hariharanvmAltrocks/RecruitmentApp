@@ -17,3 +17,29 @@ export const AlertMsg = {
     UnableToConnectToServer: 'The application was unable to process request. Please try again later.',
     ServerUnhandledRequest: 'Service is temporarily unavailable.',
 }
+
+export type IRoom = {
+    id: string;
+    RoomName: string;
+    RoomEmailId: string;
+    bookingType: string;
+}
+
+export type IFetchMeeting = {
+    Email: string[];
+    startDate: string;
+    endDate: string;
+}
+
+export type ICreateMeeting = {
+    organizerEmail: string;
+    subject: string;
+    startUtc: string;
+    endUtc: string;
+    location: string;
+    requiredAttendees: string[];
+    optionalAttendees: string[];
+    rooms: string[];
+    categories: string[];
+    isOnlineMeeting: boolean;
+}

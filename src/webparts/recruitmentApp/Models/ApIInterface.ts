@@ -231,6 +231,7 @@ export type UpsertQuestions = {
     jobCode: string;
     options: optionsValue[];
     answers: answersValue[];
+    createdBy: string;
 }
 
 export type optionsValue = {
@@ -253,7 +254,8 @@ export type GetAllMaster = {
 
 export type getQuestionById = {
     discipline: string,
-    category?: string
+    category?: string,
+    createdBy: string,
 }
 
 export type GetMasterByCountry = {

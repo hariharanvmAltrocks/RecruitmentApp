@@ -112,7 +112,18 @@ export type GetDOTAfricaCF = {
 
 }
 
+export type tabcountBGV = {
+    BGVCount: number;
+    LabourHireCount: number;
+    KCSACount: number;
+};
+
 export type IOfferLetterService = {
+    GetBVGCandidateCount(
+        Filter: any[],
+        Conditions: any,
+        CurrentRoleID: number[]
+    ): Promise<ApiResponse<tabcountBGV>>;
     UploadCandidateDocument(
         DocumentName: DocumentName,
         AttachFile: IDocFiles[],

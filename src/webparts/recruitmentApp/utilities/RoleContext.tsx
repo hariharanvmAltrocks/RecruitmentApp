@@ -8,8 +8,8 @@ import { MasterData, UserRoleData } from "../Models/Master";
 import { ResponeStatus } from "./Config";
 import { IMenuService } from "../Services/MenuService/IMenu";
 import MenuService from "../Services/MenuService/MenuService";
-import { ApiUrl } from "../components/TabMerge";
 import { InternalSign } from "../Services/ReviewProfileService/ReviewCandidateService";
+import { ApiUrl } from "../components/TabMerge";
 
 export type RoleContextType = {
   roleID: number[] | undefined;
@@ -38,10 +38,10 @@ export const RoleProvider = ({ children }: any) => {
   const [userRole, setUserRole] = useState<string[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [masterData, setMasterData] = useState<MasterData | undefined>(
-    undefined
+    undefined,
   );
   const [ADGroupData, setADGroupData] = useState<ADGroupData | undefined>(
-    undefined
+    undefined,
   );
   const [availableRoles, setAvailableRoles] = useState<UserRoleData[]>([]);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
@@ -57,7 +57,9 @@ export const RoleProvider = ({ children }: any) => {
     setIsLoading(true);
     try {
       const ApiUrls = await ApiUrl();
-      localStorage.setItem("ApiUrl", ApiUrls);
+      localStorage.setItem("CareerPortalLink", ApiUrls.CareerPortalLink);
+      localStorage.setItem("MeetingCode", ApiUrls.MeetingCode);
+      localStorage.setItem("MeetingUrl", ApiUrls.MeetingUrl);
 
       const CareerPortal = await InternalSign.InternalSignIn();
       if (CareerPortal.status == ResponeStatus.SUCCESS) {
@@ -82,13 +84,13 @@ export const RoleProvider = ({ children }: any) => {
       const userDetails = await masterService.userRole();
       if (userDetails.status === ResponeStatus.SUCCESS && userDetails.data) {
         const azureGroupIdsArray = userDetails.data.map(
-          (item: UserRoleData) => item.ADGroupID
+          (item: UserRoleData) => item.ADGroupID,
         );
 
         const { matchedRoles } = await getUserRoleFromGroups(
           azureGroupIdsArray,
           userEmail,
-          userDetails.data
+          userDetails.data,
         );
 
         if (matchedRoles.length != 0) {
@@ -109,7 +111,7 @@ export const RoleProvider = ({ children }: any) => {
   async function getUserRoleFromGroups(
     azureGroupIds: string[],
     userEmail: string,
-    userDetails: UserRoleData[]
+    userDetails: UserRoleData[],
   ): Promise<{ matchedRoles: UserRoleData[] }> {
     try {
       const graphClient = GraphService.getGraphClient();
@@ -126,12 +128,12 @@ export const RoleProvider = ({ children }: any) => {
             const isMember = members.some(
               (member: any) =>
                 member.userPrincipalName?.toLowerCase() ===
-                userEmail.toLowerCase()
+                userEmail.toLowerCase(),
             );
 
             if (isMember) {
               const matchedRole = userDetails.find(
-                (item) => item.ADGroupID === groupId
+                (item) => item.ADGroupID === groupId,
               );
               return matchedRole || null;
             }
@@ -162,7 +164,7 @@ export const RoleProvider = ({ children }: any) => {
 
   async function finalizeRoleSelection(
     matchedRoles: UserRoleData[],
-    EmailId: string
+    EmailId: string,
   ) {
     setIsLoading(true);
     try {
@@ -175,7 +177,7 @@ export const RoleProvider = ({ children }: any) => {
         EmailId ?? "",
         RoleIDs,
         userName ?? "",
-        RoleTitles
+        RoleTitles,
       );
 
       if (
@@ -183,9 +185,8 @@ export const RoleProvider = ({ children }: any) => {
         MasterDataDetails.data
       ) {
         // let RoleIDs = availableRoles.map((item) => item.ID);
-        const dynamicMenu = await MenuItemsService.getSwitchUserMatrix(
-          matchedRoles
-        );
+        const dynamicMenu =
+          await MenuItemsService.getSwitchUserMatrix(matchedRoles);
         MasterDataDetails.data.menuMartixData = dynamicMenu.data;
         setMasterData(MasterDataDetails.data);
         setADGroupData({

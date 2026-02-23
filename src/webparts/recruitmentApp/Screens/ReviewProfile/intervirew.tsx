@@ -57,7 +57,11 @@ import ViewQuestionCheckbox, {
 } from "../ScreenComponent/ViewQuestionCheckbox";
 import CustomLabel from "../../components/CustomLabel";
 import { Label } from "@fluentui/react";
-import { ButtonAction, ValidationAction } from "../../utilities/LabelName";
+import {
+  ButtonAction,
+  QuestionCreatedBy,
+  ValidationAction,
+} from "../../utilities/LabelName";
 import { normalizeQuestion } from "../../components/TabMerge";
 
 type InterviewQuesValidationError = {
@@ -237,7 +241,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   };
   const removeValidationIfNeeded = (updatedOptions: typeof OptionsType) => {
     const hasCorrectAnswer = updatedOptions.some(
-      (opt) => opt.isCorrect && opt.text.trim() !== ""
+      (opt) => opt.isCorrect && opt.text.trim() !== "",
     );
 
     setValidationError((prev) => ({
@@ -249,7 +253,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const handleSelectCorrectAnswer = (index: number) => {
     setOptionsType((prev) => {
       const updatedOptions = prev.map((opt, i) =>
-        i === index ? { ...opt, isCorrect: !opt.isCorrect } : opt
+        i === index ? { ...opt, isCorrect: !opt.isCorrect } : opt,
       );
 
       removeValidationIfNeeded(updatedOptions);
@@ -308,7 +312,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
       question.options = updatedOptions;
       question.CareerportalAnswer = updatedOptions.filter(
-        (opt) => opt.isCorrect
+        (opt) => opt.isCorrect,
       );
 
       updated[qIndex] = question;
@@ -346,7 +350,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   // Drop down
   const handleAutoComplete = async (
     field: string,
-    value: { key: number; text: string } | null
+    value: { key: number; text: string } | null,
   ) => {
     setInterviewQuesData((prev) => {
       let updatedData = { ...prev, [field]: value };
@@ -509,11 +513,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     const currentQuestion = normalizeQuestion(InterviewQuesData.Question);
 
     const duplicatedInReuse = resuequestionnaire.some(
-      (qs) => normalizeQuestion(qs.question) === currentQuestion
+      (qs) => normalizeQuestion(qs.question) === currentQuestion,
     );
 
     const duplicatedInNew = newquestionnaire.some(
-      (qs) => normalizeQuestion(qs.question) === currentQuestion
+      (qs) => normalizeQuestion(qs.question) === currentQuestion,
     );
 
     if (currentQuestion !== "" && duplicatedInReuse && duplicatedInNew) {
@@ -539,7 +543,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       StatusId.PendingwithLMcreateDisqualificationQuestion;
 
     const customAnswerType = getMasterData.QueType.find(
-      (q) => q.text === displayTextOptionCode.CustomAnswer
+      (q) => q.text === displayTextOptionCode.CustomAnswer,
     );
     const questionType: AutoCompleteItem = shouldValidateQuestionType
       ? InterviewQuesData.QuestionType
@@ -561,7 +565,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     }
 
     const correctAnswers = OptionsType.filter((opt) => opt.isCorrect).map(
-      (opt, i) => ({ key: i, text: opt.text })
+      (opt, i) => ({ key: i, text: opt.text }),
     );
     const questionData: ViewQuestion = {
       id:
@@ -617,7 +621,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const handleQuestionFieldChange = (
     qIndex: number,
     field: string,
-    value: any
+    value: any,
   ) => {
     setresuequestionnaire((prev) =>
       prev.map((q, i) =>
@@ -631,18 +635,18 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   value?.text === displayTextOptionCode.SingleAnswer)
                   ? [{ key: 0, text: "", isCorrect: false }]
                   : field === "questionType"
-                  ? []
-                  : q.options,
+                    ? []
+                    : q.options,
             }
-          : q
-      )
+          : q,
+      ),
     );
   };
 
   const handleQuestionOptionChange = (
     qIndex: number,
     optIndex: number,
-    newVal: string
+    newVal: string,
   ) => {
     setresuequestionnaire((prev) => {
       const updated = [...prev];
@@ -704,11 +708,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const handleCommonRadioChange = (
     index: number,
     field: string,
-    value: string
+    value: string,
   ) => {
     setresuequestionnaire((prevQuestions) => {
       const updatedQuestions = prevQuestions.map((q, i) =>
-        i === index ? { ...q, [field]: value } : q
+        i === index ? { ...q, [field]: value } : q,
       );
 
       return updatedQuestions;
@@ -770,7 +774,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   // DisQualification
   const handleIsDisqualificationChange = async (
     key: keyof InterviewQues,
-    value: string
+    value: string,
   ) => {
     if (value) {
       setInterviewQuesData((prevState) => ({
@@ -815,13 +819,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     async function fetchMaster() {
       setIsLoading(true);
       const CategoryData = await GetPortalJobsService.GetAllMaster(
-        CategoryID.QuestionCategory
+        CategoryID.QuestionCategory,
       );
       // const ScopeData = await GetPortalJobsService.GetAllMaster(
       //   CategoryID.QuestionScopes
       // );
       const QuestionType = await GetPortalJobsService.GetAllMaster(
-        CategoryID.QuestionType
+        CategoryID.QuestionType,
       );
       if (
         CategoryData.status === ResponeStatus.SUCCESS
@@ -835,7 +839,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           text: opt.displayText,
         }));
         let categoryOptionVal: string[] = CategoryOption.map(
-          (item) => item.text
+          (item) => item.text,
         );
 
         const ScopeOption: AutoCompleteItem[] = (props.Department ?? [])
@@ -868,17 +872,20 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           }));
 
         const Departments = ScopeOption.filter(
-          (item) => item.text === props.stateValue?.Department
+          (item) => item.text === props.stateValue?.Department,
         );
         const DepartmentCode = props.Department.filter(
-          (item: any) => item.text === props.stateValue?.Department
+          (item: any) => item.text === props.stateValue?.Department,
         );
         const category = CategoryOption.find(
-          (cat) => cat.text === InterviewQuesData.Catogry
+          (cat) => cat.text === InterviewQuesData.Catogry,
         );
         const obj: getQuestionById = {
           discipline: String(DepartmentCode[0]?.code || ""),
           category: String(category?.key),
+          createdBy: props.CurrentRoleID.includes(RoleID.LineManager)
+            ? QuestionCreatedBy.LM
+            : QuestionCreatedBy.HR,
         };
         const res = await GetPortalJobsService.GetQuestionaireByScope(obj);
         if (res.status === ResponeStatus.SUCCESS) {
@@ -959,10 +966,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   useEffect(() => {
     const existingQuestions = resuequestionnaire.filter(
-      (q) => q.Type === DataType.Existing
+      (q) => q.Type === DataType.Existing,
     ); // Example property
     const newQuestions = resuequestionnaire.filter(
-      (q) => q.Type === DataType.New
+      (q) => q.Type === DataType.New,
     );
     setNewquestionnaire(newQuestions);
     setExistingquestionnaire(existingQuestions);
@@ -1025,16 +1032,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           let updatedQuestionnaire: ViewQuestion[] = [];
           if (Type === DataType.Existing) {
             updatedQuestionnaire = resuequestionnaire.filter(
-              (item) => item.id !== id
+              (item) => item.id !== id,
             );
           } else if (Type === DataType.New) {
             const existingCount = resuequestionnaire.filter(
-              (item) => item.Type === DataType.Existing
+              (item) => item.Type === DataType.Existing,
             ).length;
 
             const nextQuestionId = existingCount + id;
             updatedQuestionnaire = resuequestionnaire.filter(
-              (item) => item.id !== nextQuestionId
+              (item) => item.id !== nextQuestionId,
             );
           }
           // const updatedQuestionnaire = resuequestionnaire.filter(
@@ -1050,7 +1057,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                 header: "Q" + incrementedIndex,
                 HeaderLabel: `Question ${incrementedIndex}`,
               };
-            }
+            },
           );
 
           setresuequestionnaire(questionList);
@@ -1313,7 +1320,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       .replace(/<\/p>/gi, "")
                                                       .replace(
                                                         /<br\s*\/?>/gi,
-                                                        ""
+                                                        "",
                                                       )
                                                       .trim()
                                                   : ""
@@ -1360,7 +1367,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                             e.stopPropagation();
                                             handleRemoveQuestionnaire(
                                               index,
-                                              DataType.Existing
+                                              DataType.Existing,
                                             );
                                           }}
                                         >
@@ -1473,7 +1480,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                     handleQuestionFieldChange(
                                                       Totalindex - 1,
                                                       "questionType",
-                                                      val
+                                                      val,
                                                     )
                                                   }
                                                   disabled={false}
@@ -1492,7 +1499,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                               handleQuestionFieldChange(
                                                 index,
                                                 "question",
-                                                val
+                                                val,
                                               )
                                             }
                                             mandatory={true}
@@ -1536,7 +1543,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                         handleQuestionOptionChange(
                                                           Totalindex - 1,
                                                           optIndex,
-                                                          val
+                                                          val,
                                                         )
                                                       }
                                                     />
@@ -1563,7 +1570,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       onClick={() =>
                                                         handleAnswerSelection(
                                                           Totalindex - 1,
-                                                          optIndex
+                                                          optIndex,
                                                         )
                                                       }
                                                     >
@@ -1604,7 +1611,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                           onClick={() =>
                                                             handleQuestionDeleteRow(
                                                               Totalindex - 1,
-                                                              optIndex
+                                                              optIndex,
                                                             )
                                                           }
                                                         >
@@ -1636,7 +1643,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                           }}
                                                           onClick={() =>
                                                             handleQuestionAddRow(
-                                                              Totalindex - 1
+                                                              Totalindex - 1,
                                                             )
                                                           }
                                                         >
@@ -1646,7 +1653,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                     </Box>
                                                   </Box>
                                                 );
-                                              }
+                                              },
                                             )}
                                           </Box>
                                         ) : props?.stateValue?.StatusId ===
@@ -1659,7 +1666,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                 handleQuestionFieldChange(
                                                   index,
                                                   "expectedAnswer",
-                                                  val
+                                                  val,
                                                 )
                                               }
                                               mandatory={true}
@@ -1677,7 +1684,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                 handleCommonRadioChange(
                                                   Totalindex - 1,
                                                   "Disqualification",
-                                                  val
+                                                  val,
                                                 )
                                               }
                                               mandatory={true}
@@ -1712,7 +1719,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                               e.stopPropagation();
                                               handleRemoveQuestionnaire(
                                                 index,
-                                                DataType.New
+                                                DataType.New,
                                               );
                                             }}
                                           >
@@ -1943,7 +1950,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         displayTextOptionCode.MultiAnswer,
                         displayTextOptionCode.SingleAnswer,
                       ].includes(
-                        InterviewQuesData.QuestionType?.text?.trim() || ""
+                        InterviewQuesData.QuestionType?.text?.trim() || "",
                       ) ? (
                         <Box sx={{ mb: 2 }}>
                           {OptionsType && OptionsType.length > 0 ? (
@@ -2141,7 +2148,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                             onChange={(value) =>
                               handleIsDisqualificationChange(
                                 "Disqualification",
-                                value
+                                value,
                               )
                             }
                           />
@@ -2156,7 +2163,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         onClick={() =>
                           handleSaveQuestion(
                             resuequestionnaire.length + 1,
-                            OptionsType.length
+                            OptionsType.length,
                           )
                         }
                         sx={{
@@ -2408,11 +2415,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       ];
       let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
         JobCodeFilter,
-        "and"
+        "and",
       );
       let QuestionValue: UpsertQuestions[] = QuestionairesData.map((item) => {
         const category = getMasterData.category.find(
-          (cat) => cat.text === InterviewQuesData.Catogry
+          (cat) => cat.text === InterviewQuesData.Catogry,
         );
 
         // Initialize variables
@@ -2498,12 +2505,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           jobCode: JobUniqueValue.data[0]?.JobUniqueKey,
           options: OptionsValue,
           answers: answerValue,
+          createdBy: props.CurrentRoleID.includes(RoleID.LineManager)
+            ? QuestionCreatedBy.LM
+            : QuestionCreatedBy.HR,
         };
       });
 
-      const response = await GetPortalJobsService.UpsertQuestions(
-        QuestionValue
-      );
+      const response =
+        await GetPortalJobsService.UpsertQuestions(QuestionValue);
 
       if (response.status === ResponeStatus.SUCCESS) {
         if (
@@ -2626,7 +2635,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   const handleCheckbox = (id: number, value: boolean) => {
     setQuestionnaire((prevState) =>
-      questionnaire.map((q) => (q.id === id ? { ...q, Checked: value } : q))
+      questionnaire.map((q) => (q.id === id ? { ...q, Checked: value } : q)),
     );
   };
 
@@ -2656,7 +2665,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       },
     }));
     const filteredResueQuestionnaire = resuequestionnaire.filter(
-      (item) => item.Type !== DataType.Existing
+      (item) => item.Type !== DataType.Existing,
     );
 
     const QuestionairesData = [
@@ -2686,7 +2695,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           expectedAnswer: item.expectedAnswer,
           expectedAnswerFr: item.expectedAnswerFr,
         };
-      }
+      },
     );
 
     setresuequestionnaire(questionList);

@@ -516,7 +516,7 @@ export const TabName = {
   ReviewScorecard: "Review Score card",
   Evaluation: "Evaluation",
   // line Manager
-  InterviewQuestions: "Interview Questions",
+  // InterviewQuestions: "Interview Questions",
 
   CandidateDetails: "Applicants Details",
   PositionDetails: "Job Details",
@@ -646,7 +646,8 @@ export const Notes = {
   Grding: "Grading Report is not available for the Job Title.",
   ReviewRolePurpose: "Please review the 'View Job Advertisement' details prior to approving this submission.",
   JobAdvetisementNotes: "This Advert will be published in the Career Portal.",
-  JobAdvetisement_fr: "Cette annonce sera publiée sur le portail des carrières."
+  JobAdvetisement_fr: "Cette annonce sera publiée sur le portail des carrières.",
+  PanelConfirm: "Kindly ensure that all interview panel members are available before finalizing the interview date and time."
 }
 // sneka
 export const CatogryOption = [
@@ -808,7 +809,8 @@ export const DocumentFolderName = {
   YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
   CV: "CV",
   BGVConsentform: "BGVConsentForm",
-  ProofOfDocument: "ProofOfPaymentDocument"
+  ProofOfDocument: "ProofOfPaymentDocument",
+  BGVProofOfDocument: "BGVProofOfDocument",
 }
 
 
