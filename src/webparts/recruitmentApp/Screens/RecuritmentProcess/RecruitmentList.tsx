@@ -729,7 +729,7 @@ const RecruitmentList = (props: any) => {
     },
     {
       field: "InterviewDateTime",
-      header: "Interview Date & Time",
+      header: "Interview Date",
       sortable: true,
     },
     // {

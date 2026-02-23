@@ -50,11 +50,13 @@ const DocumentDashboard = (props: any) => {
       );
 
       const IDCTYpeStatus = res.data[0]?.bgVerification
-        ?.filter((bgItem: any) => bgItem.bgTypeCode === "IDCS")
+        // ?.filter((bgItem: any) => bgItem.bgTypeCode === "IDCS")
         ?.every(
           (bgItem: any) =>
             bgItem.status?.trim().toLowerCase() ===
               DotAfricaStatus.skipped.toLowerCase() ||
+            bgItem.status?.trim().toLowerCase() ===
+              DotAfricaStatus.skiped.toLowerCase() ||
             bgItem.status?.trim().toLowerCase() ===
               DotAfricaStatus.error.toLowerCase() ||
             bgItem.status?.trim().toLowerCase() ===
@@ -340,6 +342,7 @@ const DocumentDashboard = (props: any) => {
                     ? DotTooltipStatus.Passed
                     : [
                           DotAfricaStatus.skipped,
+                          DotAfricaStatus.skiped,
                           DotAfricaStatus.error,
                           DotAfricaStatus.cancelled,
                         ]

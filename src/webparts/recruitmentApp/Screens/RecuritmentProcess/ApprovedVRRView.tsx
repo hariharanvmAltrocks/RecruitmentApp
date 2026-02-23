@@ -41,10 +41,7 @@ import {
 import PreviewScreen from "./PreviewScreen";
 import CandidateList from "../../components/CandidateList";
 import { CandidateItem } from "../../components/CandidateCard";
-import {
-  FilterItem,
-  GetProfileByJobCode,
-} from "../../Models/ApIInterface";
+import { FilterItem, GetProfileByJobCode } from "../../Models/ApIInterface";
 
 const ApprovedVRRView: React.FC = (props: any) => {
   const [tabVisibility, setTabVisibility] = useState({
@@ -110,7 +107,9 @@ const ApprovedVRRView: React.FC = (props: any) => {
   const [TabNameData, setTabNameData] = useState<TabNameData[]>([]);
   const [activeTab, setactiveTab] = useState<string>("tab1");
   const [Preview, setPreview] = useState<boolean>(false);
-  const [CandidateData, setCandidateData] = useState<GetProfileByJobCode[] | null>([]);
+  const [CandidateData, setCandidateData] = useState<
+    GetProfileByJobCode[] | null
+  >([]);
   const [candidateListPage, setCandidateListPage] = useState<number>(1);
   const [advDetails, setAdvDetails] = useState<AdvDetails>({
     RoleDetailsID: 0,
@@ -191,7 +190,7 @@ const ApprovedVRRView: React.FC = (props: any) => {
       ];
       const response = await getVRRDetails.GetHRMSRecruitmentRoleProfileDetails(
         filterConditions,
-        ""
+        "",
       );
 
       if (response.status === 200) {
@@ -231,27 +230,23 @@ const ApprovedVRRView: React.FC = (props: any) => {
     }
   };
 
-  const fetchCandidateData = async (
-    row: number,
-    JobUniqueValues: string
-  ) => {
+  const fetchCandidateData = async (row: number, JobUniqueValues: string) => {
     setIsLoading(true);
     try {
-
       let FilterValue: FilterItem = {
         jobCode: JobUniqueValues,
         workflowStausId: [
-                  workflowStatusApi.LineManagerL1Pending,
-                  workflowStatusApi.LineManagerL2Pending,
-                  workflowStatusApi.LineManagerLevel1OnHold,
-                  workflowStatusApi.LineManagerLevel2OnHold,
-                  workflowStatusApi.LineManagerLevel1Rejected,
-                  workflowStatusApi.LineManagerLevel2Rejected,
-                  workflowStatusApi.pendingHODSelection,
-                  workflowStatusApi.CandidateSelectedIPanel,
-                  workflowStatusApi.CandidateRejectedIPanel,
-                  workflowStatusApi.PendingRecruitmentHRscheduleInterview,
-                  workflowStatusApi.HRPending,
+          workflowStatusApi.LineManagerL1Pending,
+          workflowStatusApi.LineManagerL2Pending,
+          workflowStatusApi.LineManagerLevel1OnHold,
+          workflowStatusApi.LineManagerLevel2OnHold,
+          workflowStatusApi.LineManagerLevel1Rejected,
+          workflowStatusApi.LineManagerLevel2Rejected,
+          workflowStatusApi.pendingHODSelection,
+          workflowStatusApi.CandidateSelectedIPanel,
+          workflowStatusApi.CandidateRejectedIPanel,
+          workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+          workflowStatusApi.HRPending,
         ],
         pagination: {
           filterValue: "",
@@ -263,29 +258,28 @@ const ApprovedVRRView: React.FC = (props: any) => {
         },
       };
 
-
       await GetPortalJobsService.getCandidateDetailsInJobCode(FilterValue)
         .then(async (res) => {
           console.log("API Response:", res);
           console.log("API Data:", res.data);
           if (res.data && res.data.length > 0) {
             console.log("First Item:", res.data[0]);
-            let CandidateDataFilter = res.data.map((item: any): GetProfileByJobCode => {
-              console.log("Mapping Item:", item);
-              return {
-                CandidateID: item?.ID,
-                ApplicantName: item?.ApplicantName,
-                PositionTitle: item?.PositionTitle,
-                JobCode: item?.JobCode,
-                Status: item?.Status,
-                workflowStatusId: item?.StatusId,
-                applicationStatusId: item?.applicationStatusId,
-                createdOn: item?.createdOn ? new Date(item.createdOn) : new Date(),
-                applicationStatus: item?.ApplicationStatus || item?.Status || "",
-              };
-            });
-            console.log("Mapped Candidate Data:", CandidateDataFilter);
-            setCandidateData(CandidateDataFilter);
+            // let CandidateDataFilter = res.data.map((item: any): GetProfileByJobCode => {
+            //   console.log("Mapping Item:", item);
+            //   return {
+            //     CandidateID: item?.ID,
+            //     ApplicantName: item?.ApplicantName,
+            //     PositionTitle: item?.PositionTitle,
+            //     JobCode: item?.JobCode,
+            //     Status: item?.Status,
+            //     workflowStatusId: item?.StatusId,
+            //     applicationStatusId: item?.applicationStatusId,
+            //     createdOn: item?.createdOn ? new Date(item.createdOn) : new Date(),
+            //     applicationStatus: item?.ApplicationStatus || item?.Status || "",
+            //   };
+            // });
+            // console.log("Mapped Candidate Data:", CandidateDataFilter);
+            setCandidateData(res.data);
           } else {
             console.log("No data received from API");
             setCandidateData([]);
@@ -303,8 +297,6 @@ const ApprovedVRRView: React.FC = (props: any) => {
     setIsLoading(false);
   };
 
-
-
   const handleCandidateListPageChange = (page: number) => {
     setCandidateListPage(page);
   };
@@ -313,36 +305,37 @@ const ApprovedVRRView: React.FC = (props: any) => {
     console.log("Candidate clicked:", candidateId);
     // Add navigation or detail view logic here
   };
-const getCandidateListData = (): CandidateItem[] => {
-  if (!CandidateData || CandidateData.length === 0) return [];
-   console.log("Candidate List Data:", CandidateData);
-  return CandidateData.map((item) => ({
-    CandidateID: Number(item.CandidateID) || 0,
-    ApplicantName: item.ApplicantName || "",
-    appliedBy: "Internal job posting", // Assuming this is a static value for nowa
-    createdOn: item.createdOn ? new Date(item.createdOn) : new Date(),
-    Status: item.Status || " ",
-    statusId: Number((item as any).workflowStatusId) || Number((item as any).applicationStatusId) || undefined,
-    PositionTitle: item.PositionTitle || "",
-  }));
- 
-};
+  const getCandidateListData = (): CandidateItem[] => {
+    if (!CandidateData || CandidateData.length === 0) return [];
+    console.log("Candidate List Data:", CandidateData);
+    return CandidateData.map((item) => ({
+      CandidateID: Number(item.CandidateID) || 0,
+      ApplicantName: item.ApplicantName || "",
+      appliedBy: "Internal job posting", // Assuming this is a static value for nowa
+      createdOn: item.createdOn ? new Date(item.createdOn) : new Date(),
+      Status: item.Status || " ",
+      statusId:
+        Number((item as any).workflowStatusId) ||
+        Number((item as any).applicationStatusId) ||
+        undefined,
+      PositionTitle: item.PositionTitle || "",
+    }));
+  };
 
+  // const getCandidateListData = (): CandidateItem[] => {
+  //   const statuses = ["Pending", "In Review", "Interviewed", "Selected", "Rejected"];
 
-// const getCandidateListData = (): CandidateItem[] => {
-//   const statuses = ["Pending", "In Review", "Interviewed", "Selected", "Rejected"];
-
-//   return Array.from({ length: 25 }, (_, i) => ({
-//     CandidateID: i + 1,
-//     ApplicantName: `Candidate ${i + 1}`,
-//     appliedBy: i % 2 === 0 ? "Internal Job Posting" : "External Portal",
-//     createdOn: new Date(2026, 0, (i % 28) + 1), // Jan dates
-//     Status: statuses[i % statuses.length],
-//     statusId: i % statuses.length,
-//     PositionTitle: `Software Engineer ${(i % 3) + 1}`,
-//   }));
-// };
-// const [candidateList] = useState<CandidateItem[]>(() => getCandidateListData());
+  //   return Array.from({ length: 25 }, (_, i) => ({
+  //     CandidateID: i + 1,
+  //     ApplicantName: `Candidate ${i + 1}`,
+  //     appliedBy: i % 2 === 0 ? "Internal Job Posting" : "External Portal",
+  //     createdOn: new Date(2026, 0, (i % 28) + 1), // Jan dates
+  //     Status: statuses[i % statuses.length],
+  //     statusId: i % statuses.length,
+  //     PositionTitle: `Software Engineer ${(i % 3) + 1}`,
+  //   }));
+  // };
+  // const [candidateList] = useState<CandidateItem[]>(() => getCandidateListData());
 
   const fetchData = async () => {
     if (isLoading) return;
@@ -360,7 +353,7 @@ const getCandidateListData = (): CandidateItem[] => {
 
       const response = await getVRRDetails.GetRecruitmentDetails(
         filterConditionsVRR,
-        Conditions
+        Conditions,
       );
 
       if (response.data.length > 0) {
@@ -368,7 +361,7 @@ const getCandidateListData = (): CandidateItem[] => {
 
         const BUName =
           props?.BusinessUnitCodeAllColumn.find(
-            (item: any) => item.key === op.BusinessUnitCodeId
+            (item: any) => item.key === op.BusinessUnitCodeId,
           ) || {};
         // const JobtitleFrench =
         //   props?.JobInFrenchList.find(
@@ -384,20 +377,20 @@ const getCandidateListData = (): CandidateItem[] => {
           CommonServices.GetAttachmentToLibrary(
             DocumentLibraray.RoleProfileMaster,
             op.JobCode,
-            RoleProfileMaster.RoleProfile
+            RoleProfileMaster.RoleProfile,
           ),
           CommonServices.GetAttachmentToLibrary(
             DocumentLibraray.RoleProfileMaster,
             op.JobCode,
-            RoleProfileMaster.Grading
+            RoleProfileMaster.Grading,
           ),
           CommonServices.GetAttachmentToLibrary(
             DocumentLibraray.RecruitmentAdvertisementDocument,
-            op.JobCode
+            op.JobCode,
           ),
           CommonServices.GetAttachmentToLibrary(
             DocumentLibraray.ONAMSignedStampDocuments,
-            op.JobCode
+            op.JobCode,
           ),
         ]);
 
@@ -464,7 +457,7 @@ const getCandidateListData = (): CandidateItem[] => {
         ];
         let JobUniqueValueResponse = await getVRRDetails.GetJobUniqueDataValue(
           JobCodeFilter,
-          "and"
+          "and",
         );
         if (
           JobUniqueValueResponse.status === ResponeStatus.SUCCESS &&
@@ -515,7 +508,7 @@ const getCandidateListData = (): CandidateItem[] => {
     const CommentsList = await getVRRDetails.GetCommentsData(
       props.EmployeeList,
       Conditions,
-      filterConditions
+      filterConditions,
     );
     if (CommentsList.status === 200) {
       setCommentsData(CommentsList.data);
@@ -791,8 +784,8 @@ const getCandidateListData = (): CandidateItem[] => {
                       value={
                         data.DateRequried
                           ? new Date(data.DateRequried)
-                            .toLocaleDateString("en-GB")
-                            .replace(/\//g, "-")
+                              .toLocaleDateString("en-GB")
+                              .replace(/\//g, "-")
                           : ""
                       }
                       disabled={true}
@@ -890,7 +883,7 @@ const getCandidateListData = (): CandidateItem[] => {
                           value={
                             Attachment.PositionDocument.ViewJobAdvertisement
                           }
-                        // mandatory={true}
+                          // mandatory={true}
                         />
                         <ReuseButton
                           Style={{
@@ -961,7 +954,7 @@ const getCandidateListData = (): CandidateItem[] => {
                   currentPage={candidateListPage}
                   pageSize={5}
                   totalItems={CandidateData?.length || 0}
-                //  totalItems={candidateList.length}
+                  //  totalItems={candidateList.length}
                   onPageChange={handleCandidateListPageChange}
                   onCardClick={handleCandidateCardClick}
                 />
@@ -971,7 +964,6 @@ const getCandidateListData = (): CandidateItem[] => {
         </Card>
       ),
     },
-   
   ];
   const back_fn = () => {
     props.navigation("/RecurimentProcess", {

@@ -410,8 +410,13 @@ export default class OfferLetterService implements IOfferLetterService {
                         FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.DocumentName.toString()}`],
                         Datas: AttachFile,
                     });
-
                 } else if (DocumentName.DocumentName === DocumentFolderName.ProofOfDocument) {
+                    response = await SPServices.addDocLibFiles({
+                        FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                        FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`],
+                        Datas: AttachFile,
+                    });
+                } else if (DocumentName.DocumentName === DocumentFolderName.BGVProofOfDocument) {
                     response = await SPServices.addDocLibFiles({
                         FilePath: DocumentLibraray.HRMSCareerPortalCandidateCV,
                         FolderNames: [`${DocumentName.ProfileID.toString()}`, `${DocumentName.RequestID.toString()}`, `${DocumentName.DocumentName.toString()}`],

@@ -242,7 +242,19 @@ export default class GetPortalJobs implements IGetPortalJobs {
           return textA.localeCompare(textB);
         });
         // console.log(getOptAnswers, "getOptAnswers");
-        let AgenName = op?.profile?.profileXAgent?.agentCode === agentCode.RecruitmentHR ? RoleName.RecruitmentHR : op?.profile?.profileXAgent?.agent?.name;
+        // let AgenName = op?.profile?.profileXAgent === null ? op?.profile?.kcsaEmployees ? "Internal Employee" :op?.profile?.profileXAgent?.agentCode === agentCode.RecruitmentHR ? RoleName.RecruitmentHR : op?.profile?.profileXAgent?.agent?.name;
+        let profileXAgent = op?.profile?.profileXAgent;
+
+        let AgenName =
+          !profileXAgent || (Array.isArray(profileXAgent) && profileXAgent.length === 0)
+            ? op?.profile?.kcsaEmployees
+              ? "Internal Employee"
+              : ""
+            : profileXAgent?.agentCode === agentCode.RecruitmentHR
+              ? RoleName.RecruitmentHR
+              : profileXAgent?.agent?.name || "";
+
+
         let IdentityID = ProofIdentity.data?.filter((item) => item?.value === op?.profile?.identityTypeId)
         let familyDetails = op?.profile?.familyDetails?.map((item: any) => {
           let code = getcountryCode(CountryCode?.data ?? [], item?.contactNumber)
@@ -314,6 +326,8 @@ export default class GetPortalJobs implements IGetPortalJobs {
           op?.profile?.profileDetailLanguages?.map(
             (item: { language: string }) => item.language
           ) || [];
+        const [years, months] = op?.profile?.totalYearOfExperiance.split("-");
+        const formattedExperience = `${years} years ${months} months`;
         let ContactNumber = getcountryCode(CountryCode?.data ?? [], op?.profile?.contactNumber1)
         let GetProfileDahboard: CandidateProfile = {
           CandidateID: op?.jobRequestId,
@@ -332,7 +346,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
           NatioCode: op?.profile?.nationality?.value,
           Gender: op?.profile?.gender?.displayText ? op?.profile?.gender?.displayText : op?.profile?.genderId,
           HighestQualification: op?.profile?.education?.displayText,
-          ExperienceMining: totalExperienceYears,
+          ExperienceMining: op?.profile?.profileXAgent ? formattedExperience : totalExperienceYears,
           ExperRelatedfield: op?.profile?.releventExperience,
           Status: op?.workflowStatus?.displayText,
           StatusId: op?.workflowStatusId,
@@ -553,6 +567,7 @@ export default class GetPortalJobs implements IGetPortalJobs {
         jobCode: item.jobCode,
         options: item.options,
         answers: item.answers,
+        createdBy: item.createdBy,
       }));
 
       const response = await QuestionnaireApi.PostQuestionnaire(UpsertQuestions);

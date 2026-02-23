@@ -88,7 +88,6 @@ export const getTotalAppliedCount = async (
 ) => {
   const counts = await Promise.all(
     getJobAppiledCount.map(async (item) => {
-      // 1. Build JobCode filter
       const jobCodeFilter = [
         {
           FilterKey: "JobCodeId",

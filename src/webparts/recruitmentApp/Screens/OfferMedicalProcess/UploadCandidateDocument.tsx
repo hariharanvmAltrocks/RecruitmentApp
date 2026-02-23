@@ -30,6 +30,7 @@ import {
 } from "../../utilities/Config";
 import {
   alertPropsData,
+  AutoCompleteItem,
   ComplianceCheck,
   ComplianceCheckDRC,
   OnboardingChecklist,
@@ -89,6 +90,7 @@ import Labelheader from "../../components/LabelHeader";
 import BGVComments, { BGVComment } from "../../components/BGVComments";
 import ToolTipTable from "../ScreenComponent/ToolTipTable";
 import { Label } from "@fluentui/react";
+import CustomAutoComplete from "../../components/CustomAutoComplete";
 
 type ValidationError = {
   OfferLetterDoc: boolean;
@@ -104,6 +106,7 @@ type ValidationError = {
   PaymentDocs: boolean;
   WorkpermitDoc: boolean;
   BGVStatusProcess: boolean;
+  BGVProofAttachment: boolean;
   BGVComments: boolean;
 };
 
@@ -257,6 +260,7 @@ const UploadCandidateDocument = (props: any) => {
       PaymentDocs: false,
       WorkpermitDoc: false,
       BGVStatusProcess: false,
+      BGVProofAttachment: false,
       BGVComments: false,
     });
   const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
@@ -281,6 +285,7 @@ const UploadCandidateDocument = (props: any) => {
   const [DotAfricaComments, setDotAfricaComments] = useState<
     BGVComment[] | undefined
   >([]);
+  const [rejectflag, setRejectFlag] = useState<boolean>(false);
 
   const fetchBGVStatus = async () => {
     setIsLoading(true);
@@ -314,6 +319,8 @@ const UploadCandidateDocument = (props: any) => {
                     : item.status?.trim().toLowerCase() ===
                           DotAfricaStatus.skipped.trim().toLowerCase() ||
                         item.status?.trim().toLowerCase() ===
+                          DotAfricaStatus.skiped.trim().toLowerCase() ||
+                        item.status?.trim().toLowerCase() ===
                           DotAfricaStatus.error.trim().toLowerCase() ||
                         item.status?.trim().toLowerCase() ===
                           DotAfricaStatus.cancelled.trim().toLowerCase()
@@ -327,7 +334,11 @@ const UploadCandidateDocument = (props: any) => {
                 item.status?.trim().toLowerCase() ===
                   DotAfricaStatus.skipped.trim().toLowerCase() ||
                 item.status?.trim().toLowerCase() ===
-                  DotAfricaStatus.error.trim().toLowerCase(),
+                  DotAfricaStatus.skiped.trim().toLowerCase() ||
+                item.status?.trim().toLowerCase() ===
+                  DotAfricaStatus.error.trim().toLowerCase() ||
+                item.status?.trim().toLowerCase() ===
+                  DotAfricaStatus.cancelled.trim().toLowerCase(),
             )
             .map((item: any) => ({
               BGVCode: item.bgTypeCode,
@@ -356,6 +367,8 @@ const UploadCandidateDocument = (props: any) => {
                   item.status?.trim().toLowerCase() ===
                     DotAfricaStatus.skipped.trim().toLowerCase() ||
                   item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.skiped.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
                     DotAfricaStatus.error.trim().toLowerCase() ||
                   item.status?.trim().toLowerCase() ===
                     DotAfricaStatus.cancelled.trim().toLowerCase(),
@@ -367,11 +380,14 @@ const UploadCandidateDocument = (props: any) => {
                   item.status?.trim().toLowerCase() ===
                     DotAfricaStatus.skipped.trim().toLowerCase() ||
                   item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.skipped.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
                     DotAfricaStatus.error.trim().toLowerCase() ||
                   item.status?.trim().toLowerCase() ===
                     DotAfricaStatus.cancelled.trim().toLowerCase() ||
                   false,
               );
+            setRejectFlag(true);
 
             if (allCompleted || IDCTYpeStatus || RejectStatus) {
               let matchedData: any;
@@ -380,31 +396,38 @@ const UploadCandidateDocument = (props: any) => {
                   ID: props.stateValue.ID,
                   ActionId: WorkflowAction.Approved,
                 };
-              } else if (IDCTYpeStatus) {
-                // matchedData = {
-                //   ID: rowData?.ID,
-                //   ActionId: WorkflowAction.Revert,
-                // };
-              } else if (!IDCTYpeStatus && RejectStatus) {
-                matchedData = {
-                  ID: props.stateValue.ID,
-                  ActionId: WorkflowAction.Reject,
-                };
               }
-              let UpdateData = await OfferLetterServices.UpdateStatusInSpfxlist(
-                [matchedData],
-              );
-              if (UpdateData.status === ResponeStatus.SUCCESS) {
-                if (allCompleted) {
-                  // const BGVResult = mappedArray.map((item: any) => ({
-                  //   [item.Key]: item.Value,
-                  // }));
+              // else if (IDCTYpeStatus) {
+              // matchedData = {
+              //   ID: rowData?.ID,
+              //   ActionId: WorkflowAction.Revert,
+              // };
+              // } else if (!IDCTYpeStatus && RejectStatus) {
+              //   matchedData = {
+              //     ID: props.stateValue.ID,
+              //     ActionId: WorkflowAction.Reject,
+              //   };
+              // }
+              if (matchedData) {
+                let UpdateData =
+                  await OfferLetterServices.UpdateStatusInSpfxlist([
+                    matchedData,
+                  ]);
+                if (UpdateData.status === ResponeStatus.SUCCESS) {
+                  if (allCompleted) {
+                    // const BGVResult = mappedArray.map((item: any) => ({
+                    //   [item.Key]: item.Value,
+                    // }));
 
-                  let datas = {
-                    ID: props.stateValue.rowData?.CandidateDetails.CandidateID,
-                    BackgroundChecksResults: JSON.stringify(mappedObj) ?? [],
-                  };
-                  await getVRRDetails.InsertRecruitmentCandidateDetails(datas);
+                    let datas = {
+                      ID: props.stateValue.rowData?.CandidateDetails
+                        .CandidateID,
+                      BackgroundChecksResults: JSON.stringify(mappedObj) ?? [],
+                    };
+                    await getVRRDetails.InsertRecruitmentCandidateDetails(
+                      datas,
+                    );
+                  }
                 }
               }
             }
@@ -900,15 +923,18 @@ const UploadCandidateDocument = (props: any) => {
         }));
       }
       if (props.stateValue?.StatusId === StatusId.PendingDOTAficaVerification) {
-        let BGVProcessOption = props.EmployeeList.map((item: any) => ({
-          key: item.Email,
-          text: `${item?.FirstName || ""} ${item?.MiddleName || ""} ${
-            item?.LastName || ""
-          }`,
-        }));
+        // let BGVProcessOption = props.EmployeeList.map((item: any) => ({
+        //   key: item.Email,
+        //   text: `${item?.FirstName || ""} ${item?.MiddleName || ""} ${
+        //     item?.LastName || ""
+        //   }`,
+        // }));
+        let COIOptions = await GetPortalJobsService.GetCOIProfileOption(
+          item?.RecruitmentDetails,
+        );
         setData((prev) => ({
           ...prev,
-          BGVStatusProcessOption: BGVProcessOption,
+          BGVStatusProcessOption: COIOptions.data ?? [],
         }));
         await fetchBGVStatus();
       }
@@ -1306,30 +1332,30 @@ const UploadCandidateDocument = (props: any) => {
     setOBCheckListTab(newTab);
   };
 
-  // const handleAutoComplete = async (
-  //   value: AutoCompleteItem | null,
-  //   item: string
-  // ) => {
-  //   setData((prevState) => ({
-  //     ...prevState,
-  //     [item]: value || { key: 0, text: "" },
-  //   }));
-  //   setValidationErrors((prevState) => ({
-  //     ...prevState,
-  //     [item]: false,
-  //   }));
-  // };
+  const handleAutoComplete = async (
+    value: AutoCompleteItem | null,
+    item: string,
+  ) => {
+    setData((prevState) => ({
+      ...prevState,
+      [item]: value || { key: 0, text: "" },
+    }));
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      [item]: false,
+    }));
+  };
 
-  // const handleInputChange = async (value: string | null, item: string) => {
-  //   setData((prevState) => ({
-  //     ...prevState,
-  //     [item]: value || { key: 0, text: "" },
-  //   }));
-  //   setValidationErrors((prevState) => ({
-  //     ...prevState,
-  //     [item]: false,
-  //   }));
-  // };
+  const handleInputChange = async (value: string | null, item: string) => {
+    setData((prevState) => ({
+      ...prevState,
+      [item]: value || { key: 0, text: "" },
+    }));
+    setValidationErrors((prevState) => ({
+      ...prevState,
+      [item]: false,
+    }));
+  };
 
   const Reinitiate_BGV = () => {
     const ReinitiateBGVAlert = {
@@ -1915,140 +1941,6 @@ const UploadCandidateDocument = (props: any) => {
                   <></>
                 )}
 
-                {/* {props.stateValue?.StatusId ===
-                  StatusId.PendingDOTAficaVerification && (
-                  <>
-                    <Card
-                      variant="outlined"
-                      sx={{
-                        boxShadow: "0px 7px 4px 3px #d3d3d3",
-                        borderRadius: "10px",
-                        marginTop: "2%",
-                        overflow: "visible",
-                      }}
-                    >
-                      <CardContent>
-                        <>
-                          <div className="ms-Grid-row">
-                            <div
-                              style={{
-                                display: "flex",
-                                marginTop: "1% ",
-                                marginLeft: "1%",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  minWidth: 85,
-                                  fontWeight: "bold",
-                                  fontFamily: '"Roboto", sans-serif',
-                                  fontSize: "17px",
-                                }}
-                              >
-                                {labelNames.BGVLabels.BGVConsultedLabel}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg4">
-                              <CustomAutoComplete
-                                label={
-                                  labelNames.CandidateDetails.ConsultedWith
-                                }
-                                options={data.BGVStatusProcessOption}
-                                value={data.BGVStatusProcess}
-                                disabled={false}
-                                mandatory={true}
-                                onChange={(item) =>
-                                  handleAutoComplete(item, "BGVStatusProcess")
-                                }
-                                error={validationErrors.BGVStatusProcess}
-                              />
-                            </div>
-                            <div className="ms-Grid-col ms-lg2">
-                              <div
-                                className="ms-Grid-row"
-                                style={{ marginLeft: "2px" }}
-                              >
-                                <CustomLabel
-                                  value={
-                                    labelNames.CandidateDetails.ProofDiscussion
-                                  }
-                                  // mandatory={true}
-                                />
-                                <AttachmentButton
-                                  label="Upload"
-                                  iconName="CloudUpload"
-                                  iconNameHover="CloudUpload"
-                                  allowMultiple={false}
-                                  AttachState={(newAttachment: any) => {
-                                    let attachment: IDocFiles[] =
-                                      newAttachment.map((item: any) => {
-                                        return {
-                                          name: item.name,
-                                          content: item.file,
-                                          type: "New",
-                                          url: item.Url,
-                                        };
-                                      });
-                                    // const attachments = [
-                                    //   ...(InterviewedLevel.COIAttachment ||
-                                    //     []),
-                                    //   ...attachment,
-                                    // ];
-                                    handleDocument(
-                                      "BGVProofAttachment",
-                                      attachment
-                                    );
-                                  }}
-                                  // mandatory={true}
-                                  // error={validationErrors.COIAttachment}
-                                  Style={{
-                                    backgroundColor:
-                                      ColorCode.ButtonColorCode.ButtonColor,
-                                    color: "white",
-                                  }}
-                                  fileformat=".doc,.pdf,.docx,.png"
-                                />
-                              </div>
-                            </div>
-                            <div
-                              className="ms-Grid-col ms-lg4"
-                              style={{ marginTop: "2%" }}
-                            >
-                              <CustomViewAttachment
-                                Attachment={data.BGVProofAttachment ?? []}
-                                StateValue={"BGVProofAttachment"}
-                                handleDelete={(index, fileState) =>
-                                  handleDelete(index, fileState)
-                                }
-                                webUrl={props.webURL}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-lg12">
-                              <CustomTextArea
-                                label={labelNames.CommanLabel.Comments}
-                                value={data.BGVComments}
-                                error={validationErrors.BGVComments}
-                                onChange={(value) =>
-                                  handleInputChange("BGVComments", value)
-                                }
-                                disabled={false}
-                                mandatory={true}
-                              />
-                            </div>
-                          </div>
-                        </>
-                      </CardContent>
-                    </Card>
-
-                   
-                  </>
-                )} */}
-
                 {props.stateValue?.ButtonAction === ButtonAction.Initiated ||
                 props.stateValue?.StatusId ===
                   StatusId.PendingBGdocuploadedbycandidate ? (
@@ -2130,6 +2022,155 @@ const UploadCandidateDocument = (props: any) => {
                     </div>
                   </>
                 )}
+
+                {props.stateValue?.StatusId ===
+                  StatusId.PendingDOTAficaVerification &&
+                  rejectflag && (
+                    <>
+                      <Card
+                        variant="outlined"
+                        sx={{
+                          boxShadow: "0px 7px 4px 3px #d3d3d3",
+                          borderRadius: "10px",
+                          marginTop: "2%",
+                          overflow: "visible",
+                        }}
+                      >
+                        <CardContent>
+                          <>
+                            <div className="ms-Grid-row">
+                              <div
+                                style={{
+                                  display: "flex",
+                                  marginTop: "1% ",
+                                  marginLeft: "1%",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    minWidth: 85,
+                                    fontWeight: "bold",
+                                    fontFamily: '"Roboto", sans-serif',
+                                    fontSize: "17px",
+                                  }}
+                                >
+                                  {labelNames.BGVLabels.BGVConsultedLabel}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="ms-Grid-row">
+                              <div className="ms-Grid-col ms-lg4">
+                                <CustomAutoComplete
+                                  label={
+                                    labelNames.CandidateDetails.ConsultedWith
+                                  }
+                                  options={data.BGVStatusProcessOption}
+                                  value={data.BGVStatusProcess}
+                                  disabled={false}
+                                  mandatory={true}
+                                  onChange={(item) =>
+                                    handleAutoComplete(item, "BGVStatusProcess")
+                                  }
+                                  error={validationErrors.BGVStatusProcess}
+                                />
+                              </div>
+                              <div className="ms-Grid-col ms-lg2">
+                                <div
+                                  className="ms-Grid-row"
+                                  style={{ marginLeft: "2px" }}
+                                >
+                                  <CustomLabel
+                                    value={
+                                      labelNames.CandidateDetails
+                                        .ProofDiscussion
+                                    }
+                                    mandatory={true}
+                                  />
+                                  <AttachmentButton
+                                    label="Upload"
+                                    iconName="CloudUpload"
+                                    iconNameHover="CloudUpload"
+                                    allowMultiple={false}
+                                    AttachState={(newAttachment: any) => {
+                                      let attachment: IDocFiles[] =
+                                        newAttachment.map((item: any) => {
+                                          return {
+                                            name: item.name,
+                                            content: item.file,
+                                            type: "New",
+                                            url: item.Url,
+                                          };
+                                        });
+                                      // const attachments = [
+                                      //   ...(InterviewedLevel.COIAttachment ||
+                                      //     []),
+                                      //   ...attachment,
+                                      // ];
+                                      handleDocument(
+                                        "BGVProofAttachment",
+                                        attachment,
+                                      );
+                                    }}
+                                    mandatory={true}
+                                    error={validationErrors.BGVProofAttachment}
+                                    Style={{
+                                      backgroundColor:
+                                        ColorCode.ButtonColorCode.ButtonColor,
+                                      color: "white",
+                                    }}
+                                    fileformat=".doc,.pdf,.docx,.png"
+                                  />
+                                </div>
+                              </div>
+                              <div
+                                className="ms-Grid-col ms-lg4"
+                                style={{ marginTop: "2%" }}
+                              >
+                                <CustomViewAttachment
+                                  Attachment={data.BGVProofAttachment ?? []}
+                                  StateValue={"BGVProofAttachment"}
+                                  handleDelete={(index, fileState) =>
+                                    handleDelete(index, fileState)
+                                  }
+                                  webUrl={props.webURL}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="ms-Grid-row">
+                              <div className="ms-Grid-col ms-lg12">
+                                <CustomTextArea
+                                  label={labelNames.CommanLabel.Reason}
+                                  value={data.BGVComments}
+                                  error={validationErrors.BGVComments}
+                                  onChange={(value) =>
+                                    handleInputChange("BGVComments", value)
+                                  }
+                                  disabled={false}
+                                  mandatory={true}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="ms-Grid-row">
+                              <div className="ms-Grid-col ms-lg12">
+                                <CustomRadioGroup
+                                  label={RadioBtnLabel.BGVConfirmPopup}
+                                  value={data.RadioAction}
+                                  options={["Yes", "No"]}
+                                  error={validationErrors.RadioAction}
+                                  mandatory={true}
+                                  onChange={(item) =>
+                                    handleRadioChange("RadioAction", item)
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </>
+                        </CardContent>
+                      </Card>
+                    </>
+                  )}
 
                 {props.stateValue?.StatusId ===
                   StatusId.PendingHROfferInitiate &&
@@ -2745,6 +2786,9 @@ const UploadCandidateDocument = (props: any) => {
       PaymentReview: false,
       PaymentDocs: false,
       WorkpermitDoc: false,
+      BGVStatusProcess: false,
+      BGVProofAttachment: false,
+      BGVComments: false,
     };
     if (
       props.stateValue?.StatusId === StatusId.PendingHRReviewBGCheck &&
@@ -2784,8 +2828,6 @@ const UploadCandidateDocument = (props: any) => {
     ) {
       errors.RadioAction = !IsValid(data.RadioAction);
     }
-    errors.comments = !IsValid(data.comments);
-    errors.checkbox = !IsValid(data.Checkbox);
 
     if (
       props.CurrentRoleID.includes(RoleID.FinanceDepartment) &&
@@ -2798,6 +2840,18 @@ const UploadCandidateDocument = (props: any) => {
       data.PaymentReview === "Yes"
     ) {
       errors.PaymentDocs = !IsValid(data.PaymentDocs);
+    }
+
+    if (
+      props.stateValue?.StatusId === StatusId.PendingDOTAficaVerification &&
+      rejectflag
+    ) {
+      errors.BGVStatusProcess = !IsValid(data.BGVStatusProcess.text);
+      errors.BGVProofAttachment = !IsValid(data.BGVProofAttachment);
+      errors.BGVComments = !IsValid(data.BGVComments);
+    } else {
+      errors.comments = !IsValid(data.comments);
+      errors.checkbox = !IsValid(data.Checkbox);
     }
 
     setValidationErrors((prevState) => ({
@@ -3287,6 +3341,44 @@ const UploadCandidateDocument = (props: any) => {
               }
             }
             break;
+          case StatusId.PendingDOTAficaVerification:
+            {
+              if (rejectflag) {
+                if (btnAction === ButtonAction.Submit) {
+                  SuccessMsg = RecuritmentHRMsg.ReviewOfferLetterInitEC;
+                  ActionID = WorkflowAction.Approved;
+
+                  const BGVProofDocument = {
+                    ProfileID: data?.ProfileID,
+                    RequestID: data?.jobRequestID,
+                    DocumentName: DocumentFolderName.BGVProofOfDocument,
+                    UnsignedDoc: "",
+                  };
+                  DocumentResponse =
+                    await OfferLetterServices.UploadCandidateDocument(
+                      BGVProofDocument,
+                      data.WorkpermitDoc,
+                    );
+                } else if (btnAction === ButtonAction.Revert) {
+                  workflowStatusValue =
+                    workflowStatusApi.RevertedBacktoCandidateforreuploadDocs;
+                  // SuccessMsg = RecuritmentHRMsg.RevertDOTAficaVerification;
+                  ActionID = WorkflowAction.Revert;
+                  const BGVProofDocument = {
+                    ProfileID: data?.ProfileID,
+                    RequestID: data?.jobRequestID,
+                    DocumentName: DocumentFolderName.BGVProofOfDocument,
+                    UnsignedDoc: "",
+                  };
+                  DocumentResponse =
+                    await OfferLetterServices.UploadCandidateDocument(
+                      BGVProofDocument,
+                      data.WorkpermitDoc,
+                    );
+                }
+              }
+            }
+            break;
           default:
             workflowStatusValue = "";
             SuccessMsg = "";
@@ -3399,6 +3491,21 @@ const UploadCandidateDocument = (props: any) => {
               await OfferLetterServices.UpdateStatusInSpfxlist(Obj);
 
             if (UpdateStatus.status === ResponeStatus.SUCCESS) {
+              if (
+                props.stateValue?.StatusId ===
+                  StatusId.PendingDOTAficaVerification &&
+                rejectflag
+              ) {
+                let datas = {
+                  ID: props.stateValue.rowData?.CandidateDetails.CandidateID,
+                  BackgroundChecksResults:
+                    JSON.stringify(BGVerifiedStatus) ?? [],
+                  BGVConsultedWith: data.BGVStatusProcess.text,
+                  BGVComments: data.BGVComments,
+                };
+                await getVRRDetails.InsertRecruitmentCandidateDetails(datas);
+              }
+
               const SuccessAlert = {
                 Message: SuccessMsg,
                 Type: HRMSAlertOptions.Success,
@@ -3617,6 +3724,21 @@ const UploadCandidateDocument = (props: any) => {
           {
             label: ButtonAction.ReInitiate,
             onClick: () => Reinitiate_BGV(),
+          },
+        ];
+      } else if (
+        props.stateValue?.StatusId === StatusId.PendingDOTAficaVerification &&
+        rejectflag
+      ) {
+        const action =
+          data.RadioAction === "Yes"
+            ? ButtonAction.Submit
+            : ButtonAction.Reject;
+
+        return [
+          {
+            label: action,
+            onClick: () => Submit_fn(action),
           },
         ];
       } else {

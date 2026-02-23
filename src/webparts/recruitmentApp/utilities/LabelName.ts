@@ -25,6 +25,7 @@ export const labelNames = {
     },
     CommanLabel: {
         Comments: "Comments",
+        Reason: "Reason",
     },
     CandidateDetails: {
         ApplicantName: "Applicant Name",
@@ -53,11 +54,11 @@ export const labelNames = {
         Grade: "Grade",
         CountryOfResidency: "Country Of Residency",
         ResidencyCountry: "Are you Resident in that country?",
-        InterviewDateLevel1: "Interview Date -  level 1",
-        InterviewTimeLevel1: "Interview Time - Level 1",
+        InterviewDateLevel1: "Interview StartDate -  level 1",
+        InterviewTimeLevel1: "Interview EndDate - Level 1",
         MeetingLinkLevel1: "Meeting Link for Interview  - Level  1",
-        InterviewDateLevel2: "Interviewed Date-Level 2",
-        InterviewTimeLevel2: "Interview Time-Level 2",
+        InterviewDateLevel2: "Interviewed StartDate-Level 2",
+        InterviewTimeLevel2: "Interview EndDate-Level 2",
         MeetingLinkLevel2: "Meeting Link for Interview - Level  2",
         InterviewPanelMembersLevel1: "Interview Panel Members - Level 1",
         InterviewPanelMembersLevel2: "Interview Panel Members - Level 2",
@@ -65,6 +66,9 @@ export const labelNames = {
         Level1CandidateLabel: "Does the candidate fit for the vacant position ? (Level 1)",
         Level2CandidateLabel: "Does the candidate fit for the vacant position ? (Level 2)",
         ReviewProfileFeedback: "Review Profile Feedback - HR",
+        RoomDetails: "RoomDetails",
+        MeetingRoom: "Meeting Room",
+        MeetingRooml2: "Meeting Room for Level 2 Interview",
         DateInterview: "Date of Interview",
         NofInterviewLevel: "No of Interview Level's",
         InterviewPanelLevel1: "Interview Panel Level 1",
@@ -348,7 +352,8 @@ export const RadioBtnLabel = {
     PaymentReview: "Has the Work Permit payment been verified ?",
     BGVNational: "Are the background documents verified ?",
     BGVStatusProcess: "Are you sure you want Move the candidate to Resi Process",
-    JobBasedVerification: "For this Job Title, what types of background verification are required?"
+    JobBasedVerification: "For this Job Title, what types of background verification are required?",
+    BGVConfirmPopup: "Do you wish to proceed with this action ?",
 }
 
 export const EmailTemplateCodes = {
@@ -522,6 +527,7 @@ export const DotAfricaStatus = {
     Completed: "completed",
     Confirmed: "Confirmed",
     skipped: "skipped",
+    skiped: "skiped",
     pending: "pending",
     error: "error",
     cancelled: "cancelled",
@@ -555,4 +561,9 @@ export const tabValue = {
     tab1: "tab1",
     tab2: "tab2",
     tab3: "tab3"
+}
+
+export const QuestionCreatedBy = {
+    LM: "LM",
+    HR: "HR"
 }

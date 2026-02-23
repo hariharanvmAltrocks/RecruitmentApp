@@ -197,6 +197,14 @@ export type GetJobUniqueKey = {
   JobUniqueKey: string;
   IsActive: string;
 }
+
+export type CareerPortalLink = {
+  CareerPortalLink: string;
+  MeetingUrl: string;
+  MeetingCode: string;
+}
+
+
 export type IRecruitmentService = {
   GetJobTitleInNPEP(
     Filter: any[],
@@ -312,7 +320,7 @@ export type IRecruitmentService = {
   GetCareerPortalIntergLink(
     filterParam: any,
     filterConditions: any
-  ): Promise<ApiResponse<string>>;
+  ): Promise<ApiResponse<CareerPortalLink>>;
   GetVacancyDetails(filterParam: any, filterConditions: any, ModalDropDown: any): Promise<ApiResponse<DataSyncToRecruitmentResponse[] | null>>;
   GetCountApprovedList(
     FilterData: IFilter[],

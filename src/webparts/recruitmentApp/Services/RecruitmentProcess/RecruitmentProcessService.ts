@@ -1,6 +1,7 @@
 import { Choices, DataFrom, DocumentLibraray, InOperator, InterviewLevels, ListNames, Nationality, ResponeStatus, RoleID, RoleName, StatusId, count, workflowStatusApi } from "../../utilities/Config";
 import SPServices from "../SPService/SPServices";
 import {
+  CareerPortalLink,
   CommentsData,
   DataSyncToRecruitmentResponse,
   GetJobUniqueKey,
@@ -165,7 +166,7 @@ export default class RecruitmentService implements IRecruitmentService {
         const getReviewProfileCount = res.filter(
           (item) =>
             item.StatusId === StatusId.RecruitmentInProgress &&
-            item.AssignLineManager === CurrentUserID,
+            item.LineManager === CurrentUserID,
         );
 
         const ReviewProfile = await getTotalAppliedCount(
@@ -186,7 +187,7 @@ export default class RecruitmentService implements IRecruitmentService {
         const getScoreCount = res.filter(
           (item) =>
             item.StatusId === StatusId.RecruitmentInProgress &&
-            item.AssignHOD === userEmail,
+            item.HOD === userEmail,
         );
 
         const ScoreCard = await getScoreCardCount(getScoreCount);
@@ -2175,6 +2176,7 @@ export default class RecruitmentService implements IRecruitmentService {
                 key: item.LineManagerId,
                 Role: RoleName.LineManager,
                 text: String(UserName.data),
+                Email: item.LineManager.EMail
               });
             }
             if (item?.HODId && item?.HOD?.EMail) {
@@ -2183,6 +2185,7 @@ export default class RecruitmentService implements IRecruitmentService {
                 key: item.HODId,
                 Role: RoleName.HOD,
                 text: String(UserName.data),
+                Email: item.HOD.EMail
               });
             }
             if (item?.EXCOId && item?.EXCO?.EMail) {
@@ -2191,6 +2194,7 @@ export default class RecruitmentService implements IRecruitmentService {
                 key: item.EXCOId,
                 Role: RoleName.EXCO,
                 text: String(UserName.data),
+                Email: item.EXCO.EMail
               });
             }
             if (AssignHR) {
@@ -2199,6 +2203,7 @@ export default class RecruitmentService implements IRecruitmentService {
                 key: AssignHR.key,
                 Role: RoleName.RecruitmentHR,
                 text: String(UserName.data),
+                Email: AssignHR.text
               });
             }
           }
@@ -2209,7 +2214,8 @@ export default class RecruitmentService implements IRecruitmentService {
                 key: item?.InterviewPanel?.Id,
                 Role: RoleName.InterviewPanel,
                 text: String(UserName.data),
-                Levels: item?.InterviewLevel
+                Levels: item?.InterviewLevel,
+                Email: item.InterviewPanel?.EMail
               }
             }));
 
@@ -2230,6 +2236,7 @@ export default class RecruitmentService implements IRecruitmentService {
               return {
                 key: item?.key,
                 text: item?.text,
+                Email: item?.Email
               };
             });
           } else if (StatusID === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
@@ -2246,6 +2253,7 @@ export default class RecruitmentService implements IRecruitmentService {
               return {
                 key: item?.key,
                 text: item?.text,
+                Email: item?.Email
               };
             });
           } else if (StatusID === StatusId.InterviewScheduled || StatusID === StatusId.InterviewScheduledforLevel2) {
@@ -2819,8 +2827,8 @@ export default class RecruitmentService implements IRecruitmentService {
   async GetCareerPortalIntergLink(
     filterParam: any,
     filterConditions: any
-  ): Promise<ApiResponse<string>> {
-    let GridResult: string = ""
+  ): Promise<ApiResponse<CareerPortalLink>> {
+    let GridResult: CareerPortalLink
     try {
       const res = await SPServices.SPReadItems({
         Listname: ListNames.RecruitmentCareerPortalLink,
@@ -2829,11 +2837,20 @@ export default class RecruitmentService implements IRecruitmentService {
         FilterCondition: filterConditions,
         Topcount: count.Topcount,
       });
+      GridResult = {
+        CareerPortalLink: "",
+        MeetingUrl: "",
+        MeetingCode: ""
+      }
       if (res.length > 0) {
         //  = await Promise.all(
         res.map((item) => {
-          GridResult = item?.CareerPortalLink;
-          return item?.CareerPortalLink;
+          GridResult = {
+            CareerPortalLink: item?.CareerPortalLink,
+            MeetingUrl: item?.MeetingUrl,
+            MeetingCode: item?.MeetingCode
+          }
+          return GridResult;
         })
         // );
       }
@@ -2845,7 +2862,7 @@ export default class RecruitmentService implements IRecruitmentService {
     } catch (error) {
       console.error("Error fetching data in GetRecruitmentDetails:", error);
       return {
-        data: "",
+        data: {} as CareerPortalLink,
         status: 500,
         message: "Error fetching data from GetRecruitmentDetails",
       };
