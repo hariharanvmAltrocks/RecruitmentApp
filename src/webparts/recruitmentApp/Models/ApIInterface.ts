@@ -71,6 +71,9 @@ export type GetProfileByJobCode = {
     createdOn: Date | undefined,
     applicationStatusId: string,
     applicationStatus: string
+    TotalItems?: number;
+    createdBy?: string;
+    tblProfilesKcsas?: any[];
 }
 
 export type PreviousEmployer = {
