@@ -20,7 +20,7 @@ export const fetchRooms = async (): Promise<ApiResponse<IRoom[]>> => {
             `api/GetRooms`,
             {
                 params: {
-                    code: MeetingCode,  //"G0r2jGUElBdacIOZfcoGxFid_Hu4ReaypulXOIy5oaneAzFuR_0-9g==",
+                    code: MeetingCode,
                 },
                 headers: {
                     Accept: "application/json",
