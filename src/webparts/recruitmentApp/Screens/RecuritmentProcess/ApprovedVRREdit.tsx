@@ -673,6 +673,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                 .map((check: any, index: number) => ({
                   id: String(index + 1),
                   label: check.displayText || "Unnamed Check",
+                  key: check.reference,
                 }));
 
               setBVGVerification((prev) => ({
@@ -1226,15 +1227,11 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           errors.Comments = !IsValid(Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
           if (formState.Nationality === Nationality.Expatriate) {
-            errors.BVGVerification = !IsValid(
-              BVGVerification.checkboxBGVOption &&
-                BVGVerification.checkboxBGVOption.length > 0 &&
-                BVGVerification.checkboxBGVOption[0]?.checked,
+            const isChecked = BVGVerification.checkboxBGVOption?.some(
+              (option) => option.checked,
             );
+            errors.BVGVerification = !isChecked;
           }
-
-          // errors.ValidFrom = !IsValid(advDetails.ValidFrom);  // ONEM Page Validition for Valid from and Valid To Changes
-          // errors.ValidTo = !IsValid(advDetails.ValidTo);
         }
         break;
       }

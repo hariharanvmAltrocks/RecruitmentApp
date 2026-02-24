@@ -12,6 +12,8 @@ export type VerifiedCheck = {
 export type MandatoryCheck = {
   id: string;
   label: string;
+  key: string;
+  checked: boolean;
 };
 
 // export type RawVerificationCheck = {

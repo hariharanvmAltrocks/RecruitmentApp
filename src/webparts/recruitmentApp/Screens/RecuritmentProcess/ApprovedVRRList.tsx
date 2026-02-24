@@ -81,7 +81,6 @@ const RecruitmentProcess = (props: any) => {
       setActiveTab("tab1");
     }
     let TabDetails: any;
-    debugger;
     if (props.CurrentRoleID.includes(RoleID.InterviewPanel)) {
       TabDetails = (props.TabDetails[0] ?? []).filter(
         (tab: any) => tab.TabName !== TabName.Evaluation,
@@ -91,7 +90,7 @@ const RecruitmentProcess = (props: any) => {
     }
     setTabNameData(TabDetails);
     void fetchData(TabDetails);
-  }, [TabNameData]);
+  }, [TabNameData, props.stateValue]);
 
   const getTabLabel = (tab: any) => {
     switch (tab.TabName) {
