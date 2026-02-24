@@ -19,6 +19,7 @@ import {
   DocumentLibraray,
   HRMSAlertOptions,
   ListNames,
+  Nationality,
   NationalityCode,
   Notes,
   RecuritmentHRMsg,
@@ -74,15 +75,15 @@ import {
   ButtonAction,
   CheckboxContent,
   labelNames,
-  RadioBtnLabel,
 } from "../../utilities/LabelName";
-import CheckboxGroup, {
-  CheckboxGroupOption,
-} from "../../components/CustomCheckboxGroup";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { UpsertBGV } from "../../Models/ApIInterface";
+import VerificationCard, {
+  MandatoryCheck,
+} from "./VerificationCard/VerificationCard";
+import { CheckboxGroupOption } from "../../components/CustomCheckboxGroup";
 // import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills } from "../../Models/ApIInterface";
 
 export type roleSpeKnowledgeValidationErrors = {
@@ -309,6 +310,7 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   const [BVGVerification, setBVGVerification] = useState<BGVState>({
     checkboxBGV: [],
     checkboxBGVOption: [],
+    mantoryChecks: [],
   });
   // Commented out this section because the client mentioned that the Recruitment HR did not upload
   // the Role Profile and Grading Document. This functionality will remain disabled until those documents
@@ -635,12 +637,20 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           ) {
             try {
               const res = await laborHireService.GetBGVerificationType();
-              const BGVOPtions = res.data.map((item: any, index: number) => ({
-                id: index + 1,
-                key: item?.reference,
-                description: item?.displayText,
-                checked: false,
-              }));
+              let BGVOPtions: CheckboxGroupOption[] = res.data
+                .filter((check: any) => !check.isDefault)
+                .map((item: any, index: number) => ({
+                  id: index + 1,
+                  key: item?.reference,
+                  description: item?.displayText,
+                  checked: item?.isDefault,
+                }));
+              // const BGVOPtions = res.data.map((item: any, index: number) => ({
+              //   id: index + 1,
+              //   key: item?.reference,
+              //   description: item?.displayText,
+              //   checked: item?.isDefault,
+              // }));
               const RoleBGV = (
                 Array.isArray(items.JobBasedBGVVerification)
                   ? items.JobBasedBGVVerification
@@ -654,14 +664,23 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     id: index + 1,
                     key: data.reference,
                     description: data.displayText,
-                    checked: item.isActive,
+                    checked: item?.isDefault,
                   })),
               );
+
+              let mandatoryChecks: MandatoryCheck[] = res.data
+                .filter((check: any) => check.isDefault)
+                .map((check: any, index: number) => ({
+                  id: String(index + 1),
+                  label: check.displayText || "Unnamed Check",
+                  key: check.reference,
+                }));
 
               setBVGVerification((prev) => ({
                 ...prev,
                 checkboxBGVOption: BGVOPtions,
                 checkboxBGV: RoleBGV,
+                mantoryChecks: mandatoryChecks,
               }));
               // console.log(res, "res");
             } catch (error) {
@@ -1207,13 +1226,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           );
           errors.Comments = !IsValid(Comments);
           errors.Checkboxalidation = !IsValid(Checkbox);
-          errors.BVGVerification = !IsValid(
-            BVGVerification.checkboxBGV &&
-              BVGVerification.checkboxBGV.length > 0 &&
-              BVGVerification.checkboxBGV[0]?.checked,
-          );
-          // errors.ValidFrom = !IsValid(advDetails.ValidFrom);  // ONEM Page Validition for Valid from and Valid To Changes
-          // errors.ValidTo = !IsValid(advDetails.ValidTo);
+          if (formState.Nationality === Nationality.Expatriate) {
+            const isChecked = BVGVerification.checkboxBGVOption?.some(
+              (option) => option.checked,
+            );
+            errors.BVGVerification = !isChecked;
+          }
         }
         break;
       }
@@ -1475,13 +1493,25 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     item.key === formState.DepartmentID,
                 );
                 let UpsertBGVData: UpsertBGV[] =
-                  BVGVerification.checkboxBGV.map((item) => ({
-                    jobCode: formState.JobCode,
-                    verificationType: item.key,
-                    department: DepartmentCode.code,
-                    nationality: NationalityCode.SouthAfrica,
-                    isActive: item.checked ?? false,
-                  }));
+                  BVGVerification.checkboxBGVOption
+                    .filter((item) => item.checked === true)
+                    .map((item) => {
+                      return {
+                        jobCode: formState.JobCode,
+                        verificationType: item.key,
+                        department: DepartmentCode.code,
+                        nationality: NationalityCode.SouthAfrica,
+                        isActive: item.checked ?? false,
+                      };
+                    }) || [];
+                // let UpsertBGVData: UpsertBGV[] =
+                //   BVGVerification.checkboxBGV.map((item) => ({
+                //     jobCode: formState.JobCode,
+                //     verificationType: item.key,
+                //     department: DepartmentCode.code,
+                //     nationality: NationalityCode.SouthAfrica,
+                //     isActive: item.checked ?? false,
+                //   }));
                 const UpsertBGV =
                   await laborHireService.UpsertBGVJobMaster(UpsertBGVData);
 
@@ -2060,21 +2090,16 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   //   }));
   // };
 
-  // const options = [
-  //   { id: 1, label: BGVDocumentName.NL },
-  //   { id: 2, label: BGVDocumentName.TC },
-  //   { id: 3, label: BGVDocumentName.SC },
-  //   { id: 4, label: BGVDocumentName.SETA },
-  //   { id: 5, label: BGVDocumentName.ITC },
-  //   { id: 6, label: BGVDocumentName.DMC },
-  //   { id: 7, label: BGVDocumentName.PS },
-  // ];
-
-  const handleCheckboxGroup = (value: CheckboxGroupOption[]) => {
+  const handleToggleCheck = (id: string) => {
     setBVGVerification((prevState) => ({
       ...prevState,
-      checkboxBGV: value,
+      checkboxBGVOption: prevState.checkboxBGVOption.map((check) =>
+        String(check.id) === String(id)
+          ? { ...check, checked: !check.checked }
+          : check,
+      ),
     }));
+
     setValidationError((prevState) => ({
       ...prevState,
       BVGVerification: false,
@@ -2781,9 +2806,27 @@ const ApprovedVRREdit: React.FC = (props: any) => {
               </div>
 
               {props.stateValue?.StatusId ===
-                StatusId.PendingwithHRLeadtouploadONEMsigneddoc && (
-                <>
-                  <CheckboxGroup
+                StatusId.PendingwithHRLeadtouploadONEMsigneddoc &&
+                formState.Nationality === Nationality.Expatriate && (
+                  <>
+                    <VerificationCard
+                      mandatoryChecks={BVGVerification.mantoryChecks}
+                      VerificationChecks={BVGVerification.checkboxBGVOption}
+                      onToggleOption={handleToggleCheck}
+                    />
+                    {validationErrors.BVGVerification && (
+                      <p
+                        style={{
+                          marginTop: 5,
+                          color: "red",
+                          fontSize: 12,
+                          marginLeft: 0,
+                        }}
+                      >
+                        Field is Required
+                      </p>
+                    )}
+                    {/* <CheckboxGroup
                     label={RadioBtnLabel.JobBasedVerification}
                     value={BVGVerification.checkboxBGV}
                     options={BVGVerification.checkboxBGVOption}
@@ -2791,9 +2834,9 @@ const ApprovedVRREdit: React.FC = (props: any) => {
                     multiple={true}
                     mandatory={true}
                     error={validationErrors.BVGVerification}
-                  />
-                </>
-              )}
+                  /> */}
+                  </>
+                )}
 
               {((currentRoleID === RoleID.HOD &&
                 props.stateValue?.StatusId ===

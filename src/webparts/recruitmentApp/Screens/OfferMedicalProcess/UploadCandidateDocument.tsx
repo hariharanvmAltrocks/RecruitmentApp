@@ -1346,7 +1346,7 @@ const UploadCandidateDocument = (props: any) => {
     }));
   };
 
-  const handleInputChange = async (value: string | null, item: string) => {
+  const handleInputChange = async (item: string, value: string | null) => {
     setData((prevState) => ({
       ...prevState,
       [item]: value || { key: 0, text: "" },
@@ -3357,7 +3357,7 @@ const UploadCandidateDocument = (props: any) => {
                   DocumentResponse =
                     await OfferLetterServices.UploadCandidateDocument(
                       BGVProofDocument,
-                      data.WorkpermitDoc,
+                      data.BGVProofAttachment,
                     );
                 } else if (btnAction === ButtonAction.Revert) {
                   workflowStatusValue =
@@ -3373,7 +3373,7 @@ const UploadCandidateDocument = (props: any) => {
                   DocumentResponse =
                     await OfferLetterServices.UploadCandidateDocument(
                       BGVProofDocument,
-                      data.WorkpermitDoc,
+                      data.BGVProofAttachment,
                     );
                 }
               }

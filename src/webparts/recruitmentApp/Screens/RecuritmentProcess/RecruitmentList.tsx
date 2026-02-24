@@ -49,6 +49,7 @@ import {
   ExternalUserType,
   InterviewDate,
   JobAdvertAlertMsg,
+  PositionStatus,
 } from "../../utilities/LabelName";
 import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
 import { getBaseFilters, getRecruitmentFiltersByTab } from "./CommanFilter";
@@ -333,11 +334,14 @@ const RecruitmentList = (props: any) => {
         Operator: "eq",
         FilterValue: rowData.DepartmentId,
       },
-      // {
-      //   FilterKey: "PositionIDStatus",
-      //   Operator: "eq",
-      //   FilterValue: "Vacant",
-      // },
+      {
+        FilterKey: "PositionIDStatus",
+        Operator: "in",
+        FilterValue: [
+          PositionStatus.RecruitmentInitiator,
+          PositionStatus.RecruitmentInProgress,
+        ],
+      },
     ];
     const response = await getVRRDetails.GetPositionIDData(
       filterConditions,
@@ -464,30 +468,30 @@ const RecruitmentList = (props: any) => {
         }
         if (!isTooltipStatus && currentTab != TabName.UploadONEMDoc) {
           return (
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                <div style={{ width: "24px", marginLeft: "-14%" }}>
-              <ToolTipButton
-                Title=""
-                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-                Rowdata={rowData}
-                ApproverData={pendingInfo}
-                onHover={() => handleHover(rowData.StatusId, rowData)}
-              />
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ width: "24px", marginLeft: "-14%" }}>
+                <ToolTipButton
+                  Title=""
+                  CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                  Rowdata={rowData}
+                  ApproverData={pendingInfo}
+                  onHover={() => handleHover(rowData.StatusId, rowData)}
+                />
               </div>
-             <div style={{ flex: 1 }}>
-            <span>{rowData.Status}</span>
-          </div>
+              <div style={{ flex: 1 }}>
+                <span>{rowData.Status}</span>
+              </div>
             </div>
           );
         }
-                      return (
-  <div style={{ display: "flex", alignItems: "center" }}>
-    <div style={{ width: "24px", marginLeft: "-14%" }}></div>
-    <div style={{ flex: 1 }}>
-      <span>{rowData.Status}</span>
-    </div>
-  </div>
-);
+        return (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ width: "24px", marginLeft: "-14%" }}></div>
+            <div style={{ flex: 1 }}>
+              <span>{rowData.Status}</span>
+            </div>
+          </div>
+        );
       },
     },
     {
@@ -671,17 +675,19 @@ const RecruitmentList = (props: any) => {
         : rowData.StatusId === StatusId.InterviewScheduledforLevel2
           ? "/RecurimentProcess/HodViewScorecard"
           : "";
-    const today = new Date();
+    // const today = new Date();
     // const todayDateStr = today.toISOString().split("T")[0];
-    const interviewDateStr = moment(
-      rowData.InterviewDateTime,
-      "DD-MMM-YYYY hh:mm A",
-    ).format("YYYY-MM-DD");
-    const todayDateStr = moment(today).format("YYYY-MM-DD");
+    // const interviewDateStr = moment(
+    //   rowData.InterviewDateTime,
+    //   "DD-MMM-YYYY hh:mm A",
+    // ).format("YYYY-MM-DD");
+    // const todayDateStr = moment(today).format("YYYY-MM-DD");
     // const InterviewDate = new Date(rowData.InterviewDateTime)
     //   .toISOString()
     //   .split("T")[0];
-    if (todayDateStr >= interviewDateStr) {
+    const interviewDate = moment(rowData.InterviewDateTime, "YYYY-MM-DD");
+    const today = moment().startOf("day");
+    if (today.isSameOrAfter(interviewDate)) {
       props.navigation(navigationPath, {
         state: {
           ID: rowData?.ID,
@@ -696,10 +702,7 @@ const RecruitmentList = (props: any) => {
         },
       });
     } else {
-      const formattedDate = moment(
-        `${interviewDateStr}`,
-        "YYYY-MM-DD HH:mm",
-      ).format("DD-MMM-YYYY hh:mm A");
+      const formattedDate = moment(interviewDate).format("DD-MMM-YYYY");
 
       const ValidationMsg = InterviewDate(formattedDate);
       let ValidationError = {
@@ -757,20 +760,20 @@ const RecruitmentList = (props: any) => {
       sortable: false,
       body: (rowData: any) => {
         return (
-             <div style={{ display: "flex", alignItems: "center" }}>
-         <div style={{ width: "24px", marginLeft: "-14%" }}>
-            <ToolTipButton
-              Title=""
-              CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-              Rowdata={rowData}
-              ApproverData={pendingInfo}
-              onHover={() =>
-                handleHoverInterviewPanel(rowData.StatusId, rowData)
-              }
-            />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ width: "24px", marginLeft: "-14%" }}>
+              <ToolTipButton
+                Title=""
+                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                Rowdata={rowData}
+                ApproverData={pendingInfo}
+                onHover={() =>
+                  handleHoverInterviewPanel(rowData.StatusId, rowData)
+                }
+              />
             </div>
             <div style={{ flex: 1 }}>
-            <span>{rowData.Status}</span>
+              <span>{rowData.Status}</span>
             </div>
           </div>
         );
@@ -1466,10 +1469,15 @@ const RecruitmentList = (props: any) => {
               visible: true,
               ButtonAction: async (userClickedOK: boolean) => {
                 if (userClickedOK) {
-                  props.navigation("/RecurimentProcess");
+                  props.navigation("/RecurimentProcess", {
+                    state: {
+                      TabName: props.TabDetails.TabName,
+                      tab: "tab1",
+                    },
+                  });
                   setAlertPopupOpen(false);
                   setIsLoading(false);
-                  // await fetchData();
+                  await fetchData(props.TabDetails.TabName);
                 }
               },
             };
