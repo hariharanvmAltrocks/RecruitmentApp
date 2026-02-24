@@ -184,50 +184,57 @@ function ViewQuestionCheckbox({
                         >
                           Expected Answer
                         </strong>
-                        <div>{q.expectedAnswer?.join(", ")}</div>
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: (Array.isArray(q.expectedAnswer) ? q.expectedAnswer.join(", ") : q.expectedAnswer || "").replace(/^<p>|<\/p>$/gi, "")
+                          }}
+                        />
                       </div>
                     </div>
 
                     {q.questionFr && (
-                     <div>
-  <span
-    style={{
-      fontSize: 12,
-      color: "#6b7280",
-      display: "block",
-      marginBottom: "8px",
-    }}
-  >
-    QUESTION FRANÇAISE
-  </span>
+                      <div>
+                        <span
+                          style={{
+                            fontSize: 12,
+                            color: "#6b7280",
+                            display: "block",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          QUESTION FRANÇAISE
+                        </span>
 
-  <div
-    style={{
-      fontWeight: 600,
-      marginBottom: "12px",
-      lineHeight: "1.6",
-    }}
-    dangerouslySetInnerHTML={{
-      __html: q.questionFr
-        ?.replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
-        .trim(),
-    }}
-  />
+                        <div
+                          style={{
+                            fontWeight: 600,
+                            marginBottom: "12px",
+                            lineHeight: "1.6",
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html: q.questionFr
+                              ?.replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
+                              .trim(),
+                          }}
+                        />
 
-  <div
-    style={{
-      backgroundColor: "#f8fafc",
-      padding: "12px",
-      borderRadius: "6px",
-    }}
-  >
-    <strong style={{ display: "block", marginBottom: "4px" }}>
-      Expected Answer
-    </strong>
-    <div>{q.expectedAnswerFr?.join(", ")}</div>
-  </div>
-</div>
-
+                        <div
+                          style={{
+                            backgroundColor: "#f8fafc",
+                            padding: "12px",
+                            borderRadius: "6px",
+                          }}
+                        >
+                          <strong style={{ display: "block", marginBottom: "4px" }}>
+                            Expected Answer
+                          </strong>
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: (Array.isArray(q.expectedAnswerFr) ? q.expectedAnswerFr.join(", ") : q.expectedAnswerFr || "").replace(/^<p>|<\/p>$/gi, "")
+                            }}
+                          />
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>

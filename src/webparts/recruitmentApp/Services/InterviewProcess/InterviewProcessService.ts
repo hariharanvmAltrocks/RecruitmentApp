@@ -301,7 +301,8 @@ export default class InterviewProcessService
             CandidateResumeLink: resumeLink,
             ConflictsOfInterest: item?.ConflictsOfInterest,
             disability: item?.Disability,
-            disabilityReason: item?.DisabilityDetails
+            disabilityReason: item?.DisabilityDetails,
+            NationalityCode: item?.NationalityCode
           };
         })
       );
