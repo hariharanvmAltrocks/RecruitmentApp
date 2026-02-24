@@ -1,4 +1,5 @@
 import { CheckboxGroupOption } from "../components/CustomCheckboxGroup";
+import { MandatoryCheck } from "../Screens/RecuritmentProcess/VerificationCard/VerificationCard";
 import { OptionRow } from "../Screens/ReviewProfile/InterviewQuesEdit";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 import { AutoCompleteItem } from "./Screens";
@@ -293,8 +294,8 @@ export type InterviewQues = {
   Disqualification?: any;
 };
 export type InterviewQuesEdit = {
-EnglishQuestion: InterviewQues;
-FrenchQuestion: InterviewQues;
+  EnglishQuestion: InterviewQues;
+  FrenchQuestion: InterviewQues;
 }
 
 export type CandidatedCVDetails = {
@@ -409,4 +410,5 @@ export type tabCount = {
 export type BGVState = {
   checkboxBGV: CheckboxGroupOption[];
   checkboxBGVOption: CheckboxGroupOption[];
+  mantoryChecks: MandatoryCheck[];
 }
