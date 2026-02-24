@@ -478,7 +478,8 @@ const DocumentDashboard = (props: any) => {
         );
         if (isTooltipStatus) {
           return (
-            <div style={{ marginLeft: "-11.1%" }}>
+               <div style={{ display: "flex", alignItems: "center" }}>
+               <div style={{ width: "24px", marginLeft: "-14%" }}>
               <ToolTipButton
                 Title=""
                 CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
@@ -487,11 +488,22 @@ const DocumentDashboard = (props: any) => {
                 onHover={() => handleHover(rowData.StatusId, rowData)}
                 BGDocs={true}
               />
-              <span>{rowData.Status}</span>
+              </div>
+              <div style={{ flex: 1 }}>
+            <span>{rowData.Status}</span>
+          </div>
             </div>
           );
         }
-        return <span>{rowData.Status}</span>;
+        // return <span>{rowData.Status}</span>;
+                       return (
+  <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{ width: "24px", marginLeft: "-14%" }}></div>
+    <div style={{ flex: 1 }}>
+      <span>{rowData.Status}</span>
+    </div>
+  </div>
+);
       },
     },
     {

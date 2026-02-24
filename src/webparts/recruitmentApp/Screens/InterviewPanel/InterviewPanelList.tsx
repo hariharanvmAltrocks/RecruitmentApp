@@ -254,7 +254,7 @@ const InterviewPanelList = (props: any) => {
               onHover={() => handleHover(rowData.StatusId, rowData)}
             />
             </div>
-               <div style={{ flex: 1 }}>
+            <div style={{ flex: 1 }}>
             <span>{rowData.Status}</span>
           </div>
           </div>
