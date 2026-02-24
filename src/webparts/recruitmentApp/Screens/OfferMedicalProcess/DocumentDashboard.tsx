@@ -1,42 +1,327 @@
 import * as React from "react";
-import TabsComponent from "../../components/TabsComponent ";
 import "../../App.css";
-import { TabName, tabType, Choices, RoleID } from "../../utilities/Config";
+import {
+  TabName,
+  StatusId,
+  Choices,
+  workflowStatusApi,
+  RoleID,
+  WorkflowAction,
+} from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
-import { Card, CardContent } from "@mui/material";
-import { TabDetails } from "../../Models/Master";
-import { OfferLetterServices } from "../../Services/ServiceExport";
-import { tabcountBGV } from "../../Services/InitiateOfferLetter/IOfferLetterService";
-import { tabStyle } from "../../components/TabMerge";
-import { IFilter } from "../../Services/SPService/ISPServicesProps";
-import DocumentDashboard from "./DocumentDashboard";
+import { StatusDetails } from "../../Models/Master";
+import {
+  GetPortalJobsService,
+  laborHireService,
+  OfferLetterServices,
+} from "../../Services/ServiceExport";
+import { DataSyncToResiProcess } from "../../Services/InitiateOfferLetter/IOfferLetterService";
+import PostRecrutimentDataTable from "../../components/PostRecrutimentDataTable";
+import {
+  ButtonAction,
+  DotAfricaStatus,
+  DotTooltipStatus,
+  EmployeementCategory,
+} from "../../utilities/LabelName";
+import ToolTipButton from "../../components/Tooltip";
+import { useEffect } from "react";
 
-const UploadOfferDocumentList = (props: any) => {
+const DocumentDashboard = (props: any) => {
+  const [data, setData] = React.useState<DataSyncToResiProcess[]>([]);
+  const [rows, setRows] = React.useState<number>(5);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [activeTab, setActiveTab] = React.useState<string>("");
-  const [pendingcount, setPendingCount] = React.useState<tabcountBGV>({
-    BGVCount: 0,
-    LabourHireCount: 0,
-    KCSACount: 0,
+  const [pendingInfo, setPendingInfo] = React.useState<any>(null);
+  const [pagination, setPagination] = React.useState({
+    first: 0,
+    rows: rows,
+    totalPages: 1,
   });
-  const [TabNameData, setTabNameData] = React.useState<TabDetails[]>([]);
 
-<<<<<<< HEAD
-  const OfferLettertabs = React.useRef("");
+  const [IsIDCSSkipped, setIsIDCSSkipped] = React.useState<any[]>([]);
+  const [currentTab, setCurrentTab] = React.useState<string>("");
 
-  React.useEffect(() => {
-    if (props.stateValue) {
-      OfferLettertabs.current = props.stateValue?.TabNames;
-      setActiveTab(props.stateValue?.tab);
-    } else {
-      if (!OfferLettertabs.current) {
-        if (props.TabDetails[0]) {
-          OfferLettertabs.current = props.TabDetails[0]?.[0]?.TabName ?? "";
-        }
-      }
-      setActiveTab("tab1");
+  const IsActionIcon_fn = async (
+    statusId: number,
+    rowData: any,
+  ): Promise<boolean> => {
+    try {
+      const res = await laborHireService.CheckBGVerification(
+        rowData?.CandidateDetails?.JobRequestID,
+      );
+
+      const IDCTYpeStatus = res.data[0]?.bgVerification
+        // ?.filter((bgItem: any) => bgItem.bgTypeCode === "IDCS")
+        ?.every(
+          (bgItem: any) =>
+            bgItem.status?.trim().toLowerCase() ===
+              DotAfricaStatus.skipped.toLowerCase() ||
+            bgItem.status?.trim().toLowerCase() ===
+              DotAfricaStatus.skiped.toLowerCase() ||
+            bgItem.status?.trim().toLowerCase() ===
+              DotAfricaStatus.error.toLowerCase() ||
+            bgItem.status?.trim().toLowerCase() ===
+              DotAfricaStatus.cancelled.toLowerCase(),
+        );
+
+      return !!IDCTYpeStatus;
+    } catch (error) {
+      console.log("Candidate details fetch failed", error);
+      return false;
     }
-  }, []);
+  };
+
+  const UpdateListPortal = async () => {
+    const filters = [
+      {
+        FilterKey: "ItemCreated",
+        Operator: "eq",
+        FilterValue: Choices.No,
+      },
+    ];
+
+    if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+      filters.push({
+        FilterKey: "RecruitmentHR",
+        Operator: "eq",
+        FilterValue: props.userDetails[0]?.EmailId,
+      });
+    }
+    const items = await OfferLetterServices.fetchResiCandidateDetails(
+      filters,
+      "and",
+    );
+    let FilterDataCareerportal: any[] = [];
+    FilterDataCareerportal = items.data.filter(
+      (item) =>
+        item.StatusID === StatusId.PendingBGdocuploadedbycandidate ||
+        item.StatusID === StatusId.PendingCandidateOfferLetterUpload ||
+        item.StatusID === StatusId.PendingCandidateWorkPermitreleatedDoc ||
+        item.StatusID === StatusId.PendingCandidateEmploymentContractUpload ||
+        item.StatusID === StatusId.PendingLabourHireOfferRelease ||
+        item.StatusID === StatusId.PendingLabourhireWPPayment ||
+        item.StatusID === StatusId.PendingLHWorkPermitProcess ||
+        item.StatusID === StatusId.PendingLHECRelease,
+    );
+
+    let FilterData = FilterDataCareerportal.map(
+      (item) => item?.CandidateDetails?.JobRequestID,
+    );
+    let UpdatedStatus =
+      await GetPortalJobsService.GetJobRequestData(FilterData);
+    const getStatusById = (UpdatedStatus?.data?.data ?? []).map(
+      (item: { jobRequestId: any; workflowStatusId: any }) => {
+        let matchedRes: any = null;
+        matchedRes = FilterDataCareerportal.find(
+          (res: any) =>
+            res?.CandidateDetails?.JobRequestID === String(item.jobRequestId) &&
+            [
+              workflowStatusApi.UploadedtheCandidateBGVDocs,
+              workflowStatusApi.CandidateuploadedtheSignedOfferLetter,
+              res.RecruitmentDetails.EmploymentCategory ===
+              EmployeementCategory.KCSAEmployee
+                ? workflowStatusApi.CandidateUploadedcandidatepersonalDocs
+                : "",
+              workflowStatusApi.UploadedthesignedEmployementcontractform,
+              workflowStatusApi.PendingLabourHireOfferRelease,
+              workflowStatusApi.PendingLabourhireWPPayment,
+              workflowStatusApi.PendingLHWorkPermitProcess,
+              workflowStatusApi.PendingLHECRelease,
+            ].includes(item.workflowStatusId),
+        );
+
+        const Offerdecline = FilterDataCareerportal.find(
+          (res: any) =>
+            res?.CandidateDetails?.JobRequestID === String(item.jobRequestId) &&
+            [
+              workflowStatusApi.Offerdecline,
+              workflowStatusApi.SysytmeDecline,
+            ].includes(item.workflowStatusId),
+        );
+
+        if (Offerdecline) {
+          return {
+            ...item,
+            ID: Offerdecline.ID,
+            ActionId: WorkflowAction.Decline,
+          };
+        }
+
+        if (matchedRes) {
+          return {
+            ...item,
+            ID: matchedRes.ID,
+            ActionId: WorkflowAction.Approved,
+          };
+        }
+
+        return null;
+      },
+    );
+    let nullChecked = getStatusById.filter(
+      (item: any) => item !== null && item !== undefined,
+    );
+    if (nullChecked.length > 0) {
+      await OfferLetterServices.UpdateStatusInSpfxlist(nullChecked);
+    }
+  };
+
+  const fetchData = async (tab: string) => {
+    setIsLoading(true);
+    try {
+      let response: any;
+      let filterConditions = [];
+      let Conditions = "and";
+      switch (tab) {
+        case TabName.BackgroundVerification:
+          filterConditions.push({
+            FilterKey: "StatusId",
+            Operator: "in",
+            FilterValue: [
+              StatusId.PendingHRBGVInitiation,
+              StatusId.PendingHRReviewBGCheck,
+              StatusId.PendingDOTAficaVerification,
+            ],
+          });
+          break;
+        case TabName.OfferLetterKSCA:
+          filterConditions.push({
+            FilterKey: "StatusId",
+            Operator: "in",
+            FilterValue: [
+              StatusId.PendingHROfferInitiate,
+              StatusId.PendingHRReviewOfferWorkPermitInit,
+              StatusId.PendingHRReviewWorkpermitDocs,
+              StatusId.WorkPermitAcknowledgedContractUploaded,
+              StatusId.PendingHREmploymentContractVerification,
+              StatusId.PendingHRpreonboardingchecklist,
+              StatusId.PendingHRReviewOfferanduploadEmployementContract,
+            ],
+          });
+          break;
+        case TabName.OfferLetterLabourHire:
+          if (props.CurrentRoleID.includes(RoleID.FinanceDepartment)) {
+            filterConditions.push({
+              FilterKey: "StatusId",
+              Operator: "eq",
+              FilterValue: StatusId.PendingFinancePaymentReview,
+            });
+          } else {
+            filterConditions.push({
+              FilterKey: "StatusId",
+              Operator: "in",
+              FilterValue: [
+                StatusId.PendingHROfferInitiate,
+                StatusId.PendingHROfferReview,
+                StatusId.PendingHRReviewOfferWorkPermitInit,
+                StatusId.PendingHRReviewOfferuploadEmploymentInit,
+                StatusId.PendingHREmploymentContractInit,
+                StatusId.PendingHREmploymentContractReview,
+                StatusId.PendingHREmploymentContractVerification,
+                StatusId.PendingHRpreonboardingchecklist,
+              ],
+            });
+          }
+
+          break;
+        case TabName.MySubmission:
+          filterConditions.push({
+            FilterKey: "StatusId",
+            Operator: "in",
+            FilterValue: [
+              StatusId.PendingDOTAficaVerification,
+              StatusId.PendingBGdocuploadedbycandidate,
+              StatusId.PendingCandidateOfferLetterUpload,
+              StatusId.PendingCandidateWorkPermitreleatedDoc,
+              StatusId.PendingCandidateEmploymentContractUpload,
+              StatusId.PendingLabourHireOfferRelease,
+              StatusId.PendingLHWorkPermitProcess,
+              // StatusId.PendingCandidateOfferLetterUpload,
+              StatusId.PendingLabourhireWPPayment,
+              StatusId.PendingCandidateEmploymentContractUpload,
+              StatusId.PendingLHECRelease,
+              StatusId.PendingwithTAforMedicalScreening,
+              StatusId.OnboardingProcessinitiatedforDRC,
+              StatusId.OnboardingProcessinitiatedforExpat,
+              StatusId.PendingFinancePaymentReview,
+              StatusId.RESIProcessInitiatedforDRC,
+              StatusId.RESIProcessInitiatedforExpatriate,
+              StatusId.BackgroundCheckVerificationFailed,
+              StatusId.RESProcessInitiated,
+              StatusId.FailedmedicalscreeningUnfit,
+            ],
+          });
+          break;
+      }
+
+      filterConditions.push({
+        FilterKey: "ItemCreated",
+        Operator: "eq",
+        FilterValue: Choices.No,
+      });
+      if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
+        filterConditions.push({
+          FilterKey: "RecruitmentHR",
+          Operator: "eq",
+          FilterValue: props.userDetails[0]?.EmailId,
+        });
+      }
+
+      const respons = await OfferLetterServices.fetchResiCandidateDetails(
+        filterConditions,
+        Conditions,
+      );
+      response = respons.data;
+
+      let categoryresponse: any;
+      if (tab === TabName.OfferLetterLabourHire) {
+        categoryresponse = response.filter(
+          (item: any) =>
+            item.RecruitmentDetails?.EmploymentCategory ===
+            EmployeementCategory.LaborhireContractor,
+        );
+      } else if (tab === TabName.OfferLetterKSCA) {
+        categoryresponse = response.filter(
+          (item: any) =>
+            item.RecruitmentDetails?.EmploymentCategory ===
+            EmployeementCategory.KCSAEmployee,
+        );
+      } else {
+        categoryresponse = response;
+      }
+      setData(categoryresponse);
+      const PendingDotAfrica = categoryresponse.filter(
+        (item: any) => item.StatusID === StatusId.PendingDOTAficaVerification,
+      );
+
+      const getRequestIDs = await Promise.all(
+        PendingDotAfrica.map(async (item: any) => {
+          const ActionStatus = await IsActionIcon_fn(item.StatusID, item);
+
+          return {
+            requestID: item?.CandidateDetails?.JobRequestID,
+            IsActionIcon: ActionStatus,
+          };
+        }),
+      );
+      console.log("getRequestIDs", getRequestIDs);
+      setIsIDCSSkipped(getRequestIDs);
+      void UpdateListPortal();
+    } catch (error) {
+      console.log("GetVacancyDetails doesn't fetch the data", error);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (props.stateValue) {
+      setCurrentTab(props.stateValue?.TabName);
+    } else {
+      if (props?.TabDetails?.TabName) {
+        setCurrentTab(props.TabDetails.TabName);
+      }
+    }
+    void fetchData(props.TabDetails.TabName);
+  }, [props.TabDetails.TabName]);
 
   const handleHover = async (statusId: number, rowData: any) => {
     try {
@@ -57,6 +342,7 @@ const UploadOfferDocumentList = (props: any) => {
                     ? DotTooltipStatus.Passed
                     : [
                           DotAfricaStatus.skipped,
+                          DotAfricaStatus.skiped,
                           DotAfricaStatus.error,
                           DotAfricaStatus.cancelled,
                         ]
@@ -151,34 +437,6 @@ const UploadOfferDocumentList = (props: any) => {
     }
   };
 
-  const IsActionIcon_fn = async (
-    statusId: number,
-    rowData: any,
-  ): Promise<boolean> => {
-    try {
-      const res = await laborHireService.CheckBGVerification(
-        rowData?.CandidateDetails?.JobRequestID,
-      );
-
-      const IDCTYpeStatus = res.data[0]?.bgVerification
-        ?.filter((bgItem: any) => bgItem.bgTypeCode === "IDCS")
-        ?.every(
-          (bgItem: any) =>
-            bgItem.status?.trim().toLowerCase() ===
-              DotAfricaStatus.skipped.toLowerCase() ||
-            bgItem.status?.trim().toLowerCase() ===
-              DotAfricaStatus.error.toLowerCase() ||
-            bgItem.status?.trim().toLowerCase() ===
-              DotAfricaStatus.cancelled.toLowerCase(),
-        );
-
-      return !!IDCTYpeStatus;
-    } catch (error) {
-      console.log("Candidate details fetch failed", error);
-      return false;
-    }
-  };
-
   const columnConfig = (
     tab: string,
     ButtonActions: number,
@@ -220,19 +478,7 @@ const UploadOfferDocumentList = (props: any) => {
         );
         if (isTooltipStatus) {
           return (
-            // <div style={{ marginLeft: "-11.1%" }}>
-            //   <ToolTipButton
-            //     Title=""
-            //     CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-            //     Rowdata={rowData}
-            //     ApproverData={pendingInfo}
-            //     onHover={() => handleHover(rowData.StatusId, rowData)}
-            //     BGDocs={true}
-            //   />
-            //   <span>{rowData.Status}</span>
-            // </div>
-              <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ width: "24px", marginLeft: "-14%" }}>
+            <div style={{ marginLeft: "-11.1%" }}>
               <ToolTipButton
                 Title=""
                 CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
@@ -241,22 +487,11 @@ const UploadOfferDocumentList = (props: any) => {
                 onHover={() => handleHover(rowData.StatusId, rowData)}
                 BGDocs={true}
               />
-              </div>
-                 <div style={{ flex: 1 }}>
               <span>{rowData.Status}</span>
-            </div>
             </div>
           );
         }
-        // return <span>{rowData.Status}</span>;
-                return (
-  <div style={{ display: "flex", alignItems: "center" }}>
-    <div style={{ width: "24px", marginLeft: "-14%" }}></div>
-    <div style={{ flex: 1 }}>
-      <span>{rowData.Status}</span>
-    </div>
-  </div>
-);
+        return <span>{rowData.Status}</span>;
       },
     },
     {
@@ -329,7 +564,7 @@ const UploadOfferDocumentList = (props: any) => {
               rowData?.StatusID ===
                 StatusId.OnboardingProcessinitiatedforExpat ||
               rowData?.StatusID === StatusId.PendingwithTAforMedicalScreening ||
-              OfferLettertabs.current === TabName.MySubmission ? (
+              currentTab === TabName.MySubmission ? (
               <>
                 <img
                   src={require("../../assets/Viewicon.svg")}
@@ -476,100 +711,63 @@ const UploadOfferDocumentList = (props: any) => {
     }
   }
 
-  const pendingCount = async () => {
-=======
-  const fetchData = async (TabDetails: TabDetails[]) => {
->>>>>>> origin/Dev-Release
-    setIsLoading(true);
-    try {
-      let FilterCondition: IFilter[] = [];
-      FilterCondition.push({
-        FilterKey: "ItemCreated",
-        Operator: "eq",
-        FilterValue: Choices.No,
-      });
-
-      if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-        FilterCondition.push({
-          FilterKey: "RecruitmentHR",
-          Operator: "eq",
-          FilterValue: props.userDetails[0]?.EmailId,
-        });
-      }
-
-      const PendingCount = await OfferLetterServices.GetBVGCandidateCount(
-        FilterCondition,
-        "and",
-        props.CurrentRoleID,
-      );
-      setPendingCount(PendingCount.data);
-    } catch (error) {
-      console.log("Error in pendingcountTabs", error);
-    }
-    setIsLoading(false);
+  const handleRefresh = (tab: string) => {
+    void fetchData(tab);
   };
 
-  React.useEffect(() => {
-    if (props.stateValue) {
-      setActiveTab(props.stateValue?.tab);
-    } else {
-      setActiveTab("tab1");
-    }
-    let TabDetails: any;
-    TabDetails = props.TabDetails[0] ?? [];
-    setTabNameData(TabDetails);
-    void fetchData(TabDetails);
-  }, [TabNameData]);
+  const onPageChange = (event: any) => {
+    // setFirst(event.first);
+    setPagination({
+      first: event.first,
+      rows: event.rows,
+      totalPages: event.totalPages,
+    });
+    setRows(event.rows);
+    // let PageItem = event.rows * event.totalPages;
+    // void fetchData(activeTab);
+  };
 
-  const getTabLabel = (tab: any) => {
-    switch (tab.TabName) {
+  const renderTable = (
+    TabNames: string,
+    TabValue: string,
+    StatusData: StatusDetails[],
+  ) => {
+    let Action: any;
+    if (StatusData) {
+      Action = StatusData.filter((item) => item.Action);
+    }
+    switch (TabNames) {
       case TabName.BackgroundVerification:
-        return tabStyle(tab.TabName, pendingcount.BGVCount);
       case TabName.OfferLetterKSCA:
-        return tabStyle(tab.TabName, pendingcount.KCSACount);
       case TabName.OfferLetterLabourHire:
-        return tabStyle(tab.TabName, pendingcount.LabourHireCount);
+      case TabName.MySubmission:
+        return (
+          <PostRecrutimentDataTable
+            data={data ?? []}
+            columns={columnConfig(TabValue, Action[0]?.ActionId?.[0], TabNames)}
+            rows={rows}
+            onPageChange={onPageChange}
+            handleRefresh={() => handleRefresh(TabNames)}
+            pagination={pagination}
+          />
+        );
       default:
-        return tab.TabName;
+        return null;
     }
-  };
-
-  const tabs = TabNameData.map((tab: TabDetails) => ({
-    label: getTabLabel(tab),
-    value: tab.Value,
-    content: (
-      <Card
-        variant="outlined"
-        sx={{ boxShadow: "0px 2px 4px 3px #d3d3d3", marginTop: "2%" }}
-      >
-        <CardContent>
-          <div>
-            {tab && <>{<DocumentDashboard {...props} TabDetails={tab} />}</>}
-          </div>
-        </CardContent>
-      </Card>
-    ),
-  }));
-
-  const handleTabChange = (newTab: string) => {
-    setActiveTab(newTab);
   };
 
   return (
     <>
       <CustomLoader isLoading={isLoading}>
         <React.Fragment>
-          <div className="menu-card">
-            <TabsComponent
-              tabs={tabs}
-              initialTab={activeTab}
-              tabtype={tabType.Dashboard}
-              onTabChange={handleTabChange}
-            />
-          </div>
+          {renderTable(
+            props?.TabDetails?.TabName,
+            props?.TabDetails?.Value,
+            props?.TabDetails?.StatusDetails,
+          )}
         </React.Fragment>
       </CustomLoader>
     </>
   );
 };
-export default UploadOfferDocumentList;
+export default DocumentDashboard;

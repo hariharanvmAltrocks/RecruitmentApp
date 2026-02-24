@@ -395,7 +395,7 @@ export type ValidationErrors = {
 };
 
 export type tabCount = {
-  AssignHRCount: number;
+  AssignHRCount?: number;
   UploadONEMCount: number;
   UploadAdvertisementCount: number;
   AssignAgencyCount: number;
@@ -403,7 +403,7 @@ export type tabCount = {
   ReviewHODCount: number;
   lineManagerInterviewCount: number;
   HODReviewScoreCount: number;
-  EvaluationCount: number;
+  EvaluationCount?: number;
   advertExtensionCount: number;
   ReviewProfileCount: number;
   ReviewScoreCardCount: number;

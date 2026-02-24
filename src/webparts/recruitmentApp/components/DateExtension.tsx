@@ -19,7 +19,7 @@ import { toDate } from "./TabMerge";
 import CustomAlert from "./CustomAlert/CustomAlert";
 import { alertPropsData } from "../Models/Screens";
 
-interface AssignPositionDialogProps {
+interface DateExtensionProps {
   RecuritmentData: DataSyncToRecruitmentResponse;
   onClose: () => void;
   ModelDropDown: any;
@@ -36,7 +36,7 @@ export const DateExtension = ({
   ModelDropDown,
   AlertpopupSuccess,
   setIsLoading,
-}: AssignPositionDialogProps) => {
+}: DateExtensionProps) => {
   const todaydate = new Date();
   const [Level1Date, setLevel1Date] = React.useState<DateState>({
     StartDate: undefined,

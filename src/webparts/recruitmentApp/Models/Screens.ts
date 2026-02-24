@@ -14,6 +14,7 @@ export type InterviewPanelItem = {
   text: string;
   Role: string;
   Levels?: string;
+  Email: string;
 };
 
 export type InterviewPanelMember = {

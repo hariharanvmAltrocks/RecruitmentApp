@@ -22,11 +22,7 @@ import {
 
 import SearchableDataTable from "../../components/CustomDataTable";
 import { StatusDetails, TabDetails } from "../../Models/Master";
-import {
-  getInterviewPanelCount,
-  getTotalAppliedCount,
-  tabStyle,
-} from "../../components/TabMerge";
+import { tabStyle } from "../../components/TabMerge";
 import ToolTipButton from "../../components/Tooltip";
 import {
   ActionName,
@@ -37,6 +33,10 @@ import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
 import { alertPropsData } from "../../Models/Screens";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
 import * as moment from "moment";
+import {
+  getInterviewPanelCount,
+  getTotalAppliedCount,
+} from "../RecuritmentProcess/CommanFilter";
 
 type tabPendingCount = {
   ReviewPrfileCount: number;
@@ -439,17 +439,19 @@ const ReviewProfileList = (props: any) => {
         : rowData.StatusId === StatusId.InterviewScheduledforLevel2
           ? "/ReviewProfileList/HodViewScorecard"
           : "";
-    const today = new Date();
-    // const todayDateStr = today.toISOString().split("T")[0];
-    const interviewDateStr = moment(
-      rowData.InterviewDateTime,
-      "DD-MMM-YYYY hh:mm A",
-    ).format("YYYY-MM-DD");
-    const todayDateStr = moment(today).format("YYYY-MM-DD");
-    // const InterviewDate = new Date(rowData.InterviewDateTime)
-    //   .toISOString()
-    //   .split("T")[0];
-    if (todayDateStr >= interviewDateStr) {
+    // const today = new Date();
+    // // const todayDateStr = today.toISOString().split("T")[0];
+    // const interviewDateStr = moment(
+    //   rowData.InterviewDateTime,
+    //   "DD-MMM-YYYY hh:mm A",
+    // ).format("YYYY-MM-DD");
+    // const todayDateStr = moment(today).format("YYYY-MM-DD");
+    // // const InterviewDate = new Date(rowData.InterviewDateTime)
+    // //   .toISOString()
+    // //   .split("T")[0];
+    const interviewDate = moment(rowData.InterviewDateTime, "YYYY-MM-DD");
+    const today = moment().startOf("day");
+    if (today.isSameOrAfter(interviewDate)) {
       props.navigation(navigationPath, {
         state: {
           ID: rowData?.ID,
@@ -464,10 +466,7 @@ const ReviewProfileList = (props: any) => {
         },
       });
     } else {
-      const formattedDate = moment(
-        `${interviewDateStr}`,
-        "YYYY-MM-DD HH:mm",
-      ).format("DD-MMM-YYYY hh:mm A");
+      const formattedDate = moment(interviewDate).format("DD-MMM-YYYY");
 
       const ValidationMsg = InterviewDate(formattedDate);
       let ValidationError = {
@@ -508,7 +507,7 @@ const ReviewProfileList = (props: any) => {
     },
     {
       field: "InterviewDateTime",
-      header: "Interview Date & Time",
+      header: "Interview Date",
       sortable: true,
     },
     // {
@@ -608,7 +607,7 @@ const ReviewProfileList = (props: any) => {
                 },
                 tab,
                 TabName,
-                ButtonAction.View,
+                ButtonAction.Edit,
               );
               return;
             } else if (
@@ -633,7 +632,7 @@ const ReviewProfileList = (props: any) => {
                 },
                 tab,
                 TabName,
-                ButtonAction.View,
+                ButtonAction.Edit,
               );
               return;
             }
@@ -795,11 +794,8 @@ const ReviewProfileList = (props: any) => {
         const InterviewQuestionCount = recrutimentData.data.filter(
           (item) =>
             item.StatusId ===
-              StatusId.PendingwithHRandLMtocreateinterviewQuestion ||
-            (item.StatusId ===
-              StatusId.PendingwithLMcreateDisqualificationQuestion &&
-              item.AssignLineManager === props.userDetails[0]?.EmailId),
-          // (item.AssignEMail === props.userDetails[0]?.EmailId ||
+              StatusId.PendingwithHRandLMtocreateinterviewQuestion &&
+            item.AssignEMail === props.userDetails[0]?.EmailId,
         );
 
         const getJobAppiledCount = recrutimentData.data.filter(

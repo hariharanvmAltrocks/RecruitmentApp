@@ -1,0 +1,26 @@
+.dtp-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 280px;
+}
+
+.dtp-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151; /* gray-700 */
+}
+
+.dtp-input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db; /* gray-300 */
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.dtp-input:focus {
+  border-color: #2563eb; /* blue-600 */
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}

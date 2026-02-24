@@ -57,7 +57,11 @@ import ViewQuestionCheckbox, {
 } from "../ScreenComponent/ViewQuestionCheckbox";
 import CustomLabel from "../../components/CustomLabel";
 import { Label } from "@fluentui/react";
-import { ButtonAction, ValidationAction } from "../../utilities/LabelName";
+import {
+  ButtonAction,
+  QuestionCreatedBy,
+  ValidationAction,
+} from "../../utilities/LabelName";
 import { normalizeQuestion } from "../../components/TabMerge";
 
 type InterviewQuesValidationError = {
@@ -118,7 +122,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     ExpectedAnswer: "",
     Catogry:
       props?.stateValue?.StatusId ===
-        StatusId?.PendingwithHRandLMtocreateinterviewQuestion
+      StatusId?.PendingwithHRandLMtocreateinterviewQuestion
         ? CatogryOptionCode.InterviewPanel
         : CatogryOptionCode.CareerPortalCandidate,
     Disqualification: "",
@@ -215,7 +219,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   //   }));
   // };
 
-  const handleOptionChange = (index: number, newVal: string, lang: "en" | "fr" = "en") => {
+  const handleOptionChange = (
+    index: number,
+    newVal: string,
+    lang: "en" | "fr" = "en",
+  ) => {
     if (newVal.length > 155) {
       setOptionsType((prev) => {
         const updated = [...prev];
@@ -256,7 +264,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   };
   const removeValidationIfNeeded = (updatedOptions: typeof OptionsType) => {
     const hasCorrectAnswer = updatedOptions.some(
-      (opt) => opt.isCorrect && opt.text.trim() !== ""
+      (opt) => opt.isCorrect && opt.text.trim() !== "",
     );
 
     setValidationError((prev) => ({
@@ -268,7 +276,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const handleSelectCorrectAnswer = (index: number) => {
     setOptionsType((prev) => {
       const updatedOptions = prev.map((opt, i) =>
-        i === index ? { ...opt, isCorrect: !opt.isCorrect } : opt
+        i === index ? { ...opt, isCorrect: !opt.isCorrect } : opt,
       );
 
       removeValidationIfNeeded(updatedOptions);
@@ -327,7 +335,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
       question.options = updatedOptions;
       question.CareerportalAnswer = updatedOptions.filter(
-        (opt) => opt.isCorrect
+        (opt) => opt.isCorrect,
       );
 
       updated[qIndex] = question;
@@ -366,7 +374,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   // Drop down
   const handleAutoComplete = async (
     field: string,
-    value: { key: number; text: string } | null
+    value: { key: number; text: string } | null,
   ) => {
     setInterviewQuesData((prev) => {
       let updatedData = { ...prev, [field]: value };
@@ -560,11 +568,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     const currentQuestion = normalizeQuestion(InterviewQuesData.Question);
 
     const duplicatedInReuse = resuequestionnaire.some(
-      (qs) => normalizeQuestion(qs.question) === currentQuestion
+      (qs) => normalizeQuestion(qs.question) === currentQuestion,
     );
 
     const duplicatedInNew = newquestionnaire.some(
-      (qs) => normalizeQuestion(qs.question) === currentQuestion
+      (qs) => normalizeQuestion(qs.question) === currentQuestion,
     );
 
     if (currentQuestion !== "" && duplicatedInReuse && duplicatedInNew) {
@@ -590,7 +598,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       StatusId.PendingwithLMcreateDisqualificationQuestion;
 
     const customAnswerType = getMasterData.QueType.find(
-      (q) => q.text === displayTextOptionCode.CustomAnswer
+      (q) => q.text === displayTextOptionCode.CustomAnswer,
     );
     const questionType: AutoCompleteItem = shouldValidateQuestionType
       ? InterviewQuesData.QuestionType
@@ -612,7 +620,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     }
 
     const correctAnswers = OptionsType.filter((opt) => opt.isCorrect).map(
-      (opt, i) => ({ key: i, text: opt.text, textFr: opt.textFr })
+      (opt, i) => ({ key: i, text: opt.text, textFr: opt.textFr }),
     );
     const questionData: ViewQuestion = {
       id:
@@ -628,7 +636,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       CareerportalAnswer: correctAnswers,
       options:
         questionType.text === displayTextOptionCode.MultiAnswer ||
-          questionType.text === displayTextOptionCode.SingleAnswer
+        questionType.text === displayTextOptionCode.SingleAnswer
           ? [...OptionsType]
           : undefined,
       Disqualification: InterviewQuesData.Disqualification || "",
@@ -688,34 +696,34 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const handleQuestionFieldChange = (
     qIndex: number,
     field: string,
-    value: any
+    value: any,
   ) => {
     setresuequestionnaire((prev) =>
       prev.map((q, i) =>
         i === qIndex
           ? {
-            ...q,
-            [field]: value,
-            options:
-              field === "questionType" &&
+              ...q,
+              [field]: value,
+              options:
+                field === "questionType" &&
                 (value?.text === displayTextOptionCode.MultiAnswer ||
                   value?.text === displayTextOptionCode.SingleAnswer)
-                ? [
-                  {
-                    key: 0,
-                    text: "",
-                    textFr: "",
-                    isCorrect: false,
-                    textvalidation: false,
-                    textvalidationFr: false,
-                  },
-                ]
-                : field === "questionType"
-                  ? []
-                  : q.options,
-          }
-          : q
-      )
+                  ? [
+                      {
+                        key: 0,
+                        text: "",
+                        textFr: "",
+                        isCorrect: false,
+                        textvalidation: false,
+                        textvalidationFr: false,
+                      },
+                    ]
+                  : field === "questionType"
+                    ? []
+                    : q.options,
+            }
+          : q,
+      ),
     );
   };
 
@@ -723,7 +731,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     qIndex: number,
     optIndex: number,
     newVal: string,
-    lang: "en" | "fr" = "en"
+    lang: "en" | "fr" = "en",
   ) => {
     setresuequestionnaire((prev) => {
       const updated = [...prev];
@@ -788,11 +796,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   const handleCommonRadioChange = (
     index: number,
     field: string,
-    value: string
+    value: string,
   ) => {
     setresuequestionnaire((prevQuestions) => {
       const updatedQuestions = prevQuestions.map((q, i) =>
-        i === index ? { ...q, [field]: value } : q
+        i === index ? { ...q, [field]: value } : q,
       );
 
       return updatedQuestions;
@@ -854,7 +862,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   // DisQualification
   const handleIsDisqualificationChange = async (
     key: keyof InterviewQues,
-    value: string
+    value: string,
   ) => {
     if (value) {
       setInterviewQuesData((prevState) => ({
@@ -873,7 +881,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         ...prev,
         Catogry:
           props.stateValue.StatusId ===
-            StatusId?.PendingwithHRandLMtocreateinterviewQuestion
+          StatusId?.PendingwithHRandLMtocreateinterviewQuestion
             ? CatogryOptionCode.InterviewPanel
             : CatogryOptionCode.CareerPortalCandidate,
       }));
@@ -908,13 +916,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
     async function fetchMaster() {
       setIsLoading(true);
       const CategoryData = await GetPortalJobsService.GetAllMaster(
-        CategoryID.QuestionCategory
+        CategoryID.QuestionCategory,
       );
       // const ScopeData = await GetPortalJobsService.GetAllMaster(
       //   CategoryID.QuestionScopes
       // );
       const QuestionType = await GetPortalJobsService.GetAllMaster(
-        CategoryID.QuestionType
+        CategoryID.QuestionType,
       );
       if (
         CategoryData.status === ResponeStatus.SUCCESS
@@ -928,7 +936,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           text: opt.displayText,
         }));
         let categoryOptionVal: string[] = CategoryOption.map(
-          (item) => item.text
+          (item) => item.text,
         );
 
         const ScopeOption: AutoCompleteItem[] = (props.Department ?? [])
@@ -961,17 +969,21 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           }));
 
         const Departments = ScopeOption.filter(
-          (item) => item.text === props.stateValue?.Department
+          (item) => item.text === props.stateValue?.Department,
         );
         const DepartmentCode = props.Department.filter(
-          (item: any) => item.text === props.stateValue?.Department
+          (item: any) => item.text === props.stateValue?.Department,
         );
+        debugger;
         const category = CategoryOption.find(
-          (cat) => cat.text === InterviewQuesData.Catogry
+          (cat) => cat.text === InterviewQuesData.Catogry,
         );
         const obj: getQuestionById = {
           discipline: String(DepartmentCode[0]?.code || ""),
           category: String(category?.key),
+          createdBy: props.CurrentRoleID.includes(RoleID.LineManager)
+            ? QuestionCreatedBy.LM
+            : QuestionCreatedBy.HR,
         };
         const res = await GetPortalJobsService.GetQuestionaireByScope(obj);
         if (res.status === ResponeStatus.SUCCESS) {
@@ -1052,10 +1064,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   useEffect(() => {
     const existingQuestions = resuequestionnaire.filter(
-      (q) => q.Type === DataType.Existing
+      (q) => q.Type === DataType.Existing,
     ); // Example property
     const newQuestions = resuequestionnaire.filter(
-      (q) => q.Type === DataType.New
+      (q) => q.Type === DataType.New,
     );
     setNewquestionnaire(newQuestions);
     setExistingquestionnaire(existingQuestions);
@@ -1118,16 +1130,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           let updatedQuestionnaire: ViewQuestion[] = [];
           if (Type === DataType.Existing) {
             updatedQuestionnaire = resuequestionnaire.filter(
-              (item) => item.id !== id
+              (item) => item.id !== id,
             );
           } else if (Type === DataType.New) {
             const existingCount = resuequestionnaire.filter(
-              (item) => item.Type === DataType.Existing
+              (item) => item.Type === DataType.Existing,
             ).length;
 
             const nextQuestionId = existingCount + id;
             updatedQuestionnaire = resuequestionnaire.filter(
-              (item) => item.id !== nextQuestionId
+              (item) => item.id !== nextQuestionId,
             );
           }
           // const updatedQuestionnaire = resuequestionnaire.filter(
@@ -1143,7 +1155,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                 header: "Q" + incrementedIndex,
                 HeaderLabel: `Question ${incrementedIndex}`,
               };
-            }
+            },
           );
 
           setresuequestionnaire(questionList);
@@ -1337,7 +1349,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           }}
                         >
                           {props?.stateValue?.StatusId ===
-                            StatusId.PendingwithLMcreateDisqualificationQuestion
+                          StatusId.PendingwithLMcreateDisqualificationQuestion
                             ? "Career Portal Candidate Questionnaires"
                             : "Interview Questionnaires"}
                         </Label>
@@ -1387,14 +1399,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           <Button
                             variant="contained"
                             sx={{
-                              backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                              backgroundColor:
+                                ColorCode.ButtonColorCode.ButtonColor,
                               textTransform: "none",
                               borderRadius: "4px",
                               fontSize: "14px",
                               fontWeight: 500,
                               boxShadow: "none",
                               "&:hover": {
-                                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                                backgroundColor:
+                                  ColorCode.ButtonColorCode.ButtonColor,
                               },
                             }}
                             onClick={getFetchQuestion}
@@ -1405,14 +1419,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                           <Button
                             variant="contained"
                             sx={{
-                              backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                              backgroundColor:
+                                ColorCode.ButtonColorCode.ButtonColor,
                               textTransform: "none",
                               borderRadius: "4px",
                               fontSize: "14px",
                               fontWeight: 500,
                               boxShadow: "none",
                               "&:hover": {
-                                backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                                backgroundColor:
+                                  ColorCode.ButtonColorCode.ButtonColor,
                               },
                             }}
                             onClick={handleNewQuestion}
@@ -1422,7 +1438,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         </Box>
                       </Box>
                     </CardContent>
-
                   </Card>
                 </Box>
 
@@ -1649,9 +1664,14 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                           mt: 1,
                                         }}
                                       >
-
                                         <Box>
-                                          <Typography sx={{ fontSize: 12, color: "#6b7280", mb: 0.5 }}>
+                                          <Typography
+                                            sx={{
+                                              fontSize: 12,
+                                              color: "#6b7280",
+                                              mb: 0.5,
+                                            }}
+                                          >
                                             QUESTION ENGLISH
                                           </Typography>
 
@@ -1659,7 +1679,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                             sx={{ fontWeight: 600 }}
                                             dangerouslySetInnerHTML={{
                                               __html: q.question
-                                                ?.replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
+                                                ?.replace(
+                                                  /<p>|<\/p>|<br\s*\/?>/gi,
+                                                  "",
+                                                )
                                                 .trim(),
                                             }}
                                           />
@@ -1684,7 +1707,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                         {/* FRENCH */}
                                         {q.questionFr && (
                                           <Box>
-                                            <Typography sx={{ fontSize: 12, color: "#6b7280", mb: 0.5 }}>
+                                            <Typography
+                                              sx={{
+                                                fontSize: 12,
+                                                color: "#6b7280",
+                                                mb: 0.5,
+                                              }}
+                                            >
                                               QUESTION FRANÇAISE
                                             </Typography>
 
@@ -1692,7 +1721,10 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                               sx={{ fontWeight: 600 }}
                                               dangerouslySetInnerHTML={{
                                                 __html: q.questionFr
-                                                  ?.replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
+                                                  ?.replace(
+                                                    /<p>|<\/p>|<br\s*\/?>/gi,
+                                                    "",
+                                                  )
                                                   .trim(),
                                               }}
                                             />
@@ -1707,8 +1739,12 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                             >
                                               <strong>Expected Answer</strong>
                                               <Typography>
-                                                {Array.isArray(q.expectedAnswerFr)
-                                                  ? q.expectedAnswerFr.join(", ")
+                                                {Array.isArray(
+                                                  q.expectedAnswerFr,
+                                                )
+                                                  ? q.expectedAnswerFr.join(
+                                                      ", ",
+                                                    )
                                                   : q.expectedAnswerFr}
                                               </Typography>
                                             </Box>
@@ -1717,16 +1753,27 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                       </Box>
 
                                       {/* REMOVE BUTTON */}
-                                      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "flex-end",
+                                          mt: 2,
+                                        }}
+                                      >
                                         <Button
                                           variant="contained"
                                           sx={{
-                                            backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
+                                            backgroundColor:
+                                              ColorCode.ButtonColorCode
+                                                .ButtonColor,
                                             textTransform: "none",
                                           }}
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            handleRemoveQuestionnaire(index, DataType.Existing);
+                                            handleRemoveQuestionnaire(
+                                              index,
+                                              DataType.Existing,
+                                            );
                                           }}
                                         >
                                           Remove
@@ -1735,8 +1782,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                     </>
                                   )}
                                 </AccordionDetails>
-
-
                               </Accordion>
                             </Box>
                           );
@@ -1827,32 +1872,40 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                       <>
                                         {props?.stateValue?.StatusId ===
                                           StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                                            <Box sx={{ marginTop: "-25px" }}>
-                                              <div className="ms-Grid-row">
-                                                <div className="ms-Grid-col ms-lg5">
-                                                  <CustomAutoComplete
-                                                    label="Type of Question"
-                                                    options={
-                                                      getMasterData.QueType
-                                                    }
-                                                    value={q.questionType}
-                                                    onChange={(val) =>
-                                                      handleQuestionFieldChange(
-                                                        Totalindex - 1,
-                                                        "questionType",
-                                                        val
-                                                      )
-                                                    }
-                                                    disabled={false}
-                                                    mandatory={true}
-                                                  />
-                                                </div>
+                                          <Box sx={{ marginTop: "-25px" }}>
+                                            <div className="ms-Grid-row">
+                                              <div className="ms-Grid-col ms-lg5">
+                                                <CustomAutoComplete
+                                                  label="Type of Question"
+                                                  options={
+                                                    getMasterData.QueType
+                                                  }
+                                                  value={q.questionType}
+                                                  onChange={(val) =>
+                                                    handleQuestionFieldChange(
+                                                      Totalindex - 1,
+                                                      "questionType",
+                                                      val,
+                                                    )
+                                                  }
+                                                  disabled={false}
+                                                  mandatory={true}
+                                                />
                                               </div>
-                                            </Box>
-                                          )}
+                                            </div>
+                                          </Box>
+                                        )}
 
                                         {/* Bilingual Question Section - Side by Side with Visual Enhancements */}
-                                        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 2, width: "100%" }}>
+                                        <Box
+                                          sx={{
+                                            display: "grid",
+                                            gridTemplateColumns: "1fr 1fr",
+                                            gap: 2,
+                                            mb: 2,
+                                            width: "100%",
+                                          }}
+                                        >
                                           {/* English Question Section */}
                                           <Box
                                             sx={{
@@ -1872,7 +1925,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                   handleQuestionFieldChange(
                                                     index,
                                                     "question",
-                                                    val
+                                                    val,
                                                   )
                                                 }
                                                 mandatory={true}
@@ -1899,7 +1952,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                   handleQuestionFieldChange(
                                                     index,
                                                     "questionFr",
-                                                    val
+                                                    val,
                                                   )
                                                 }
                                                 mandatory={true}
@@ -1910,7 +1963,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
                                         {q?.questionType?.text ===
                                           displayTextOptionCode.MultiAnswer ||
-                                          q?.questionType?.text ===
+                                        q?.questionType?.text ===
                                           displayTextOptionCode.SingleAnswer ? (
                                           <Box sx={{ mb: 2 }}>
                                             {q.options?.map(
@@ -1939,7 +1992,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       Option {optIndex + 1} *
                                                     </Typography>
 
-                                                    <div style={{ display: "flex", gap: 8, width: "77%" }}>
+                                                    <div
+                                                      style={{
+                                                        display: "flex",
+                                                        gap: 8,
+                                                        width: "77%",
+                                                      }}
+                                                    >
                                                       <div style={{ flex: 1 }}>
                                                         <CustomInput
                                                           label="Option (EN)"
@@ -1949,7 +2008,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                               Totalindex - 1,
                                                               optIndex,
                                                               val,
-                                                              "en"
+                                                              "en",
                                                             )
                                                           }
                                                         />
@@ -1957,13 +2016,15 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       <div style={{ flex: 1 }}>
                                                         <CustomInput
                                                           label="Option (FR)"
-                                                          value={option.textFr || ""}
+                                                          value={
+                                                            option.textFr || ""
+                                                          }
                                                           onChange={(val) =>
                                                             handleQuestionOptionChange(
                                                               Totalindex - 1,
                                                               optIndex,
                                                               val,
-                                                              "fr"
+                                                              "fr",
                                                             )
                                                           }
                                                         />
@@ -1993,7 +2054,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                       onClick={() =>
                                                         handleAnswerSelection(
                                                           Totalindex - 1,
-                                                          optIndex
+                                                          optIndex,
                                                         )
                                                       }
                                                     >
@@ -2016,69 +2077,68 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                                     >
                                                       {q.options!.length >
                                                         1 && (
-                                                          <Button
-                                                            variant="contained"
-                                                            sx={{
-
+                                                        <Button
+                                                          variant="contained"
+                                                          sx={{
+                                                            backgroundColor:
+                                                              ColorCode
+                                                                .ButtonColorCode
+                                                                .ButtonColor,
+                                                            color: "white",
+                                                            minWidth: 40,
+                                                            "&:hover": {
                                                               backgroundColor:
                                                                 ColorCode
                                                                   .ButtonColorCode
                                                                   .ButtonColor,
-                                                              color: "white",
-                                                              minWidth: 40,
-                                                              "&:hover": {
-                                                                backgroundColor:
-                                                                  ColorCode
-                                                                    .ButtonColorCode
-                                                                    .ButtonColor,
-                                                              },
+                                                            },
+                                                          }}
+                                                          onClick={() =>
+                                                            handleQuestionDeleteRow(
+                                                              Totalindex - 1,
+                                                              optIndex,
+                                                            )
+                                                          }
+                                                        >
+                                                          <DeleteOutlineIcon
+                                                            sx={{
+                                                              fontSize: 20,
                                                             }}
-                                                            onClick={() =>
-                                                              handleQuestionDeleteRow(
-                                                                Totalindex - 1,
-                                                                optIndex
-                                                              )
-                                                            }
-                                                          >
-                                                            <DeleteOutlineIcon
-                                                              sx={{
-                                                                fontSize: 20,
-                                                              }}
-                                                            />
-                                                          </Button>
-                                                        )}
+                                                          />
+                                                        </Button>
+                                                      )}
                                                       {optIndex ===
                                                         q.options!.length -
-                                                        1 && (
-                                                          <Button
-                                                            variant="contained"
-                                                            sx={{
+                                                          1 && (
+                                                        <Button
+                                                          variant="contained"
+                                                          sx={{
+                                                            backgroundColor:
+                                                              ColorCode
+                                                                .ButtonColorCode
+                                                                .ButtonColor,
+                                                            color: "white",
+                                                            minWidth: 40,
+                                                            "&:hover": {
                                                               backgroundColor:
                                                                 ColorCode
                                                                   .ButtonColorCode
                                                                   .ButtonColor,
-                                                              color: "white",
-                                                              minWidth: 40,
-                                                              "&:hover": {
-                                                                backgroundColor:
-                                                                  ColorCode
-                                                                    .ButtonColorCode
-                                                                    .ButtonColor,
-                                                              },
-                                                            }}
-                                                            onClick={() =>
-                                                              handleQuestionAddRow(
-                                                                Totalindex - 1
-                                                              )
-                                                            }
-                                                          >
-                                                            <AddIcon />
-                                                          </Button>
-                                                        )}
+                                                            },
+                                                          }}
+                                                          onClick={() =>
+                                                            handleQuestionAddRow(
+                                                              Totalindex - 1,
+                                                            )
+                                                          }
+                                                        >
+                                                          <AddIcon />
+                                                        </Button>
+                                                      )}
                                                     </Box>
                                                   </Box>
                                                 );
-                                              }
+                                              },
                                             )}
                                           </Box>
                                         ) : props?.stateValue?.StatusId ===
@@ -2107,22 +2167,22 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
                                         {props?.stateValue?.StatusId ===
                                           StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                                            <Box sx={{ mb: 2, width: "50%" }}>
-                                              <CustomRadioGroup
-                                                label="Disqualification Question?"
-                                                value={q.Disqualification ?? "NO"}
-                                                onChange={(val) =>
-                                                  handleCommonRadioChange(
-                                                    Totalindex - 1,
-                                                    "Disqualification",
-                                                    val
-                                                  )
-                                                }
-                                                mandatory={true}
-                                                options={isDisqualificationOption}
-                                              />
-                                            </Box>
-                                          )}
+                                          <Box sx={{ mb: 2, width: "50%" }}>
+                                            <CustomRadioGroup
+                                              label="Disqualification Question?"
+                                              value={q.Disqualification ?? "NO"}
+                                              onChange={(val) =>
+                                                handleCommonRadioChange(
+                                                  Totalindex - 1,
+                                                  "Disqualification",
+                                                  val,
+                                                )
+                                              }
+                                              mandatory={true}
+                                              options={isDisqualificationOption}
+                                            />
+                                          </Box>
+                                        )}
 
                                         <Box
                                           sx={{
@@ -2133,7 +2193,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                           <Button
                                             variant="contained"
                                             sx={{
-
                                               backgroundColor:
                                                 ColorCode.ButtonColorCode
                                                   .ButtonColor,
@@ -2151,7 +2210,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                               e.stopPropagation();
                                               handleRemoveQuestionnaire(
                                                 index,
-                                                DataType.New
+                                                DataType.New,
                                               );
                                             }}
                                           >
@@ -2181,7 +2240,15 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       borderColor: "#5f5f5f",
                     }}
                   >
-                    <Box sx={{ display: "flex", gap: 2, alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 2,
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        mb: 2,
+                      }}
+                    >
                       <Typography
                         variant="subtitle1"
                         fontWeight="medium"
@@ -2198,21 +2265,21 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
                       {props?.stateValue?.StatusId ===
                         StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                          <Box sx={{ minWidth: 280 }}>
-                            <CustomAutoComplete
-                              label="Type of Question"
-                              options={getMasterData.QueType}
-                              value={InterviewQuesData.QuestionType}
-                              onChange={(val) => {
-                                void handleAutoComplete("QuestionType", val);
-                                setExpandedQuestionIndex(null);
-                              }}
-                              disabled={false}
-                              mandatory={true}
-                              error={ValidationError.QuestionType}
-                            />
-                          </Box>
-                        )}
+                        <Box sx={{ minWidth: 280 }}>
+                          <CustomAutoComplete
+                            label="Type of Question"
+                            options={getMasterData.QueType}
+                            value={InterviewQuesData.QuestionType}
+                            onChange={(val) => {
+                              void handleAutoComplete("QuestionType", val);
+                              setExpandedQuestionIndex(null);
+                            }}
+                            disabled={false}
+                            mandatory={true}
+                            error={ValidationError.QuestionType}
+                          />
+                        </Box>
+                      )}
                     </Box>
 
                     <>
@@ -2239,7 +2306,15 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                       )} */}
 
                       {/* Bilingual Question Section - Side by Side with Fixed Width */}
-                      <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 2, width: "100%" }}>
+                      <Box
+                        sx={{
+                          display: "grid",
+                          gridTemplateColumns: "1fr 1fr",
+                          gap: 2,
+                          mb: 2,
+                          width: "100%",
+                        }}
+                      >
                         {/* English Question Section */}
                         <Box
                           sx={{
@@ -2445,7 +2520,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         displayTextOptionCode.MultiAnswer,
                         displayTextOptionCode.SingleAnswer,
                       ].includes(
-                        InterviewQuesData.QuestionType?.text?.trim() || ""
+                        InterviewQuesData.QuestionType?.text?.trim() || "",
                       ) ? (
                         <Box sx={{ mb: 3 }}>
                           {OptionsType && OptionsType.length > 0 ? (
@@ -2465,12 +2540,23 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                   >
                                     <Typography
                                       variant="body1"
-                                      sx={{ minWidth: 80, marginTop: 0, textAlign: "right", pr: 1 }}
+                                      sx={{
+                                        minWidth: 80,
+                                        marginTop: 0,
+                                        textAlign: "right",
+                                        pr: 1,
+                                      }}
                                     >
                                       Option {index + 1} *
                                     </Typography>
 
-                                    <div style={{ display: "flex", gap: 8, width: "77%" }}>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        gap: 8,
+                                        width: "77%",
+                                      }}
+                                    >
                                       <div style={{ flex: 1 }}>
                                         <CustomInput
                                           label="Option (EN)"
@@ -2489,7 +2575,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                               marginLeft: 0,
                                             }}
                                           >
-                                            English input is too long. Please reduce to 155 characters or fewer.
+                                            English input is too long. Please
+                                            reduce to 155 characters or fewer.
                                           </p>
                                         )}
                                         {option.fieldValidation && (
@@ -2523,7 +2610,8 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                               marginLeft: 0,
                                             }}
                                           >
-                                            French input is too long. Please reduce to 155 characters or fewer.
+                                            French input is too long. Please
+                                            reduce to 155 characters or fewer.
                                           </p>
                                         )}
                                         {option.fieldValidationFr && (
@@ -2557,7 +2645,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                           ? "0px 0px 5px rgba(0, 128, 0, 0.5)"
                                           : "0px 0px 5px rgba(0, 0, 0, 0.2)",
                                         transition: "all 0.3s ease-in-out",
-                                        marginTop: option.textvalidation || option.textvalidationFr ? 0 : "3%",
+                                        marginTop:
+                                          option.textvalidation ||
+                                          option.textvalidationFr
+                                            ? 0
+                                            : "3%",
                                       }}
                                       onClick={() =>
                                         handleAnswerSelections(index)
@@ -2586,14 +2678,17 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                       sx={{
                                         display: "flex",
                                         gap: 1,
-                                        marginTop: option.textvalidation || option.textvalidationFr ? 0 : "3%",
+                                        marginTop:
+                                          option.textvalidation ||
+                                          option.textvalidationFr
+                                            ? 0
+                                            : "3%",
                                       }}
                                     >
                                       {OptionsType.length > 1 && (
                                         <Button
                                           variant="contained"
                                           sx={{
-
                                             backgroundColor:
                                               ColorCode.ButtonColorCode
                                                 .ButtonColor,
@@ -2618,7 +2713,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                         <Button
                                           variant="contained"
                                           sx={{
-
                                             backgroundColor:
                                               ColorCode.ButtonColorCode
                                                 .ButtonColor,
@@ -2680,22 +2774,22 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
                       {props?.stateValue?.StatusId ===
                         StatusId.PendingwithLMcreateDisqualificationQuestion && (
-                          <Box sx={{ mb: 2, width: "50%" }}>
-                            <CustomRadioGroup
-                              label="Is this a disqualification question?"
-                              value={InterviewQuesData?.Disqualification ?? ""}
-                              options={isDisqualificationOption}
-                              error={ValidationError.Disqualification}
-                              mandatory={true}
-                              onChange={(value) =>
-                                handleIsDisqualificationChange(
-                                  "Disqualification",
-                                  value
-                                )
-                              }
-                            />
-                          </Box>
-                        )}
+                        <Box sx={{ mb: 2, width: "50%" }}>
+                          <CustomRadioGroup
+                            label="Is this a disqualification question?"
+                            value={InterviewQuesData?.Disqualification ?? ""}
+                            options={isDisqualificationOption}
+                            error={ValidationError.Disqualification}
+                            mandatory={true}
+                            onChange={(value) =>
+                              handleIsDisqualificationChange(
+                                "Disqualification",
+                                value,
+                              )
+                            }
+                          />
+                        </Box>
+                      )}
                     </>
 
                     <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
@@ -2705,7 +2799,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         onClick={() =>
                           handleSaveQuestion(
                             resuequestionnaire.length + 1,
-                            OptionsType.length
+                            OptionsType.length,
                           )
                         }
                         sx={{
@@ -2763,7 +2857,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           {
             tabName:
               InterviewQuesData.Catogry ===
-                CatogryOptionCode.CareerPortalCandidate
+              CatogryOptionCode.CareerPortalCandidate
                 ? TabName.CareerPortal
                 : TabName.InterviewPanel,
           },
@@ -2956,12 +3050,15 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         text = text.replace(/\u00A0|&nbsp;/g, " ").trim();
         return text;
       } catch (e) {
-        return (html || "").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
+        return (html || "")
+          .replace(/<[^>]*>/g, "")
+          .replace(/&nbsp;/g, " ")
+          .trim();
       }
     };
 
     const newQuestionsToValidate = resuequestionnaire.filter(
-      (q) => q.Type === DataType.New
+      (q) => q.Type === DataType.New,
     );
 
     for (const nq of newQuestionsToValidate) {
@@ -3048,11 +3145,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
         // Check if all options have EN filled
         if (
-          nq.options.some(
-            (opt: any) =>
-              !opt.text ||
-              opt.text.trim() === ""
-          )
+          nq.options.some((opt: any) => !opt.text || opt.text.trim() === "")
         ) {
           setIsLoading(false);
           setAlertPopupOpen(true);
@@ -3069,11 +3162,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
         // Check if all options have FR filled
         if (
-          nq.options.some(
-            (opt: any) =>
-              !opt.textFr ||
-              opt.textFr.trim() === ""
-          )
+          nq.options.some((opt: any) => !opt.textFr || opt.textFr.trim() === "")
         ) {
           setIsLoading(false);
           setAlertPopupOpen(true);
@@ -3103,7 +3192,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           return;
         }
       } else {
-        if (!nq.expectedAnswer || (typeof nq.expectedAnswer === "string" && nq.expectedAnswer.trim() === "")) {
+        if (
+          !nq.expectedAnswer ||
+          (typeof nq.expectedAnswer === "string" &&
+            nq.expectedAnswer.trim() === "")
+        ) {
           setIsLoading(false);
           setAlertPopupOpen(true);
           setalertProps({
@@ -3140,11 +3233,11 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       ];
       let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
         JobCodeFilter,
-        "and"
+        "and",
       );
       let QuestionValue: UpsertQuestions[] = QuestionairesData.map((item) => {
         const category = getMasterData.category.find(
-          (cat) => cat.text === InterviewQuesData.Catogry
+          (cat) => cat.text === InterviewQuesData.Catogry,
         );
 
         // Initialize variables
@@ -3185,7 +3278,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   : decodeBase64(item.expectedAnswer),
               optionFr:
                 item?.Type === DataType.Existing
-                  ? decodeBase64(item.expectedAnswer?.[0] || item.expectedAnswer[0])
+                  ? decodeBase64(
+                      item.expectedAnswer?.[0] || item.expectedAnswer[0],
+                    )
                   : decodeBase64(item.expectedAnswer || item.expectedAnswer),
               sequence: 1,
             },
@@ -3199,7 +3294,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   : decodeBase64(item.expectedAnswer),
               optionFr:
                 item?.Type === DataType.Existing
-                  ? decodeBase64(item.expectedAnswerFr?.[0] || item.expectedAnswerFr[0])
+                  ? decodeBase64(
+                      item.expectedAnswerFr?.[0] || item.expectedAnswerFr[0],
+                    )
                   : decodeBase64(item.expectedAnswerFr || item.expectedAnswer),
             },
           ];
@@ -3222,7 +3319,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           questionTypeId: questionTypeId,
           isQualifier:
             InterviewQuesData.Catogry ===
-              CatogryOptionCode.CareerPortalCandidate
+            CatogryOptionCode.CareerPortalCandidate
               ? 1
               : 0,
           isAnswerValidate: item.Disqualification === "No" ? 0 : 1,
@@ -3230,14 +3327,16 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           jobCode: JobUniqueValue.data[0]?.JobUniqueKey,
           options: OptionsValue,
           answers: answerValue,
+          createdBy: props.CurrentRoleID.includes(RoleID.LineManager)
+            ? QuestionCreatedBy.LM
+            : QuestionCreatedBy.HR,
         };
       });
 
       console.log("Mapped QuestionValue to send to API:", QuestionValue);
 
-      const response = await GetPortalJobsService.UpsertQuestions(
-        QuestionValue
-      );
+      const response =
+        await GetPortalJobsService.UpsertQuestions(QuestionValue);
 
       if (response.status === ResponeStatus.SUCCESS) {
         if (
@@ -3274,7 +3373,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         const SuccessAlert = {
           Message:
             InterviewQuesData.Catogry ===
-              CatogryOptionCode.CareerPortalCandidate
+            CatogryOptionCode.CareerPortalCandidate
               ? RecuritmentHRMsg.CareerportalSuccessMsg
               : RecuritmentHRMsg.InterviewQuestionSuccessMsg,
           Type: HRMSAlertOptions.Success,
@@ -3360,7 +3459,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
 
   const handleCheckbox = (id: number, value: boolean) => {
     setQuestionnaire((prevState) =>
-      questionnaire.map((q) => (q.id === id ? { ...q, Checked: value } : q))
+      questionnaire.map((q) => (q.id === id ? { ...q, Checked: value } : q)),
     );
   };
 
@@ -3390,7 +3489,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       },
     }));
     const filteredResueQuestionnaire = resuequestionnaire.filter(
-      (item) => item.Type !== DataType.Existing
+      (item) => item.Type !== DataType.Existing,
     );
 
     const QuestionairesData = [
@@ -3420,7 +3519,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           expectedAnswer: item.expectedAnswer,
           expectedAnswerFr: item.expectedAnswerFr,
         };
-      }
+      },
     );
 
     setresuequestionnaire(questionList);
@@ -3466,13 +3565,13 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                   additionalButtons={[
                     ...(resuequestionnaire.length > 0
                       ? [
-                        {
-                          label: ButtonAction.Submit,
-                          onClick: async () => {
-                            await Submit_fn();
+                          {
+                            label: ButtonAction.Submit,
+                            onClick: async () => {
+                              await Submit_fn();
+                            },
                           },
-                        },
-                      ]
+                        ]
                       : []),
                   ]}
                 />

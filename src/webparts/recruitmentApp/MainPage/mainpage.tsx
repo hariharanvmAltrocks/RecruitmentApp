@@ -8,22 +8,20 @@ import ApprovedVRREdit from "../Screens/RecuritmentProcess/ApprovedVRREdit";
 import { userInfo } from "../utilities/RoleContext";
 import CommanFieldTemplate from "../components/CommanFieldTemplate";
 import CommanTemplate from "../components/CommanTemplate";
-import AssignInterviewPanel from "../Screens/RecuritmentProcess/AssignInterviewPanel";
 import InterviewPanelList from "../Screens/InterviewPanel/InterviewPanelList";
 import InterviewPanelEdit from "../Screens/InterviewPanel/InterviewPanelEdit";
-import CandidateList from "../Screens/RecuritmentProcess/CandidateList";
+import CandidateList from "../Screens/ReviewScoreCard/CandidateList";
 import ReviewProfileList from "../Screens/ReviewProfile/ReviewProfileList";
 import ReviewCandidateList from "../Screens/ReviewProfile/ReviewCandidateList";
 import ViewCandidateDetails from "../Screens/ReviewProfile/ViewCandidateDetails";
-import HodViewScorecard from "../Screens/RecuritmentProcess/HodViewScorecard";
 import InterviewQuesEdit from "../Screens/ReviewProfile/InterviewQuesEdit";
-import ReviewProfileEdit from "../Screens/ReviewProfile/ReviewProfileEdit";
 import UploadCandidateCV from "../Screens/UploadCandidateCV/UploadCandidateCV";
 import UploadCandidateList from "../Screens/UploadCandidateCV/UploadCandidateList";
 import UploadOfferDocumentList from "../Screens/OfferMedicalProcess/UploadOfferDocumentList";
 import UploadCandidateDocument from "../Screens/OfferMedicalProcess/UploadCandidateDocument";
 import AdminPanelDashboard from "../Screens/AdminPanel/AdminPanelDashboard";
 import AdminPanelPage from "../Screens/AdminPanel/NewAdminPanelPage";
+import HodViewScorecard from "../Screens/ReviewScoreCard/HodViewScorecard";
 
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();
@@ -113,10 +111,7 @@ export default function MainPage(props: any) {
                   path="/ReviewProfileList/ReviewCandidateList/ViewCandidateDetails"
                   element={<ViewCandidateDetails {...props} {...masterData} />}
                 />
-                <Route
-                  path="/RecurimentProcess/AssignInterviewPanel"
-                  element={<AssignInterviewPanel {...props} {...masterData} />}
-                />
+
                 <Route
                   path="/InterviewPanelList"
                   element={
@@ -171,11 +166,6 @@ export default function MainPage(props: any) {
                   path="/ReviewProfileList/InterviewQuesEdit"
                   element={<InterviewQuesEdit {...props} {...masterData} />}
                 />
-                <Route
-                  path="/ReviewProfileList/ReviewProfileEdit"
-                  element={<ReviewProfileEdit {...props} {...masterData} />}
-                />
-
                 {/* Upload CV */}
                 <Route
                   path="/RecurimentProcess/UploadCandidateList/UploadCandidateCV"
