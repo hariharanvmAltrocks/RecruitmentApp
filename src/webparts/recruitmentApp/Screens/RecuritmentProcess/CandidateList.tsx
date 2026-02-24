@@ -203,7 +203,13 @@ const CandidateList = (props: any) => {
       field: "Status",
       header: "Status",
       sortable: false,
-      body: (rowData: any) => <span>{rowData.Status}</span>,
+      // body: (rowData: any) => <span>{rowData.Status}</span>,
+         body: (rowData: any) => <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{ width: "24px", marginLeft: "-14%" }}></div>
+    <div style={{ flex: 1 }}>
+      <span>{rowData.Status}</span>
+    </div>
+  </div>
     },
     {
       field: "Action",

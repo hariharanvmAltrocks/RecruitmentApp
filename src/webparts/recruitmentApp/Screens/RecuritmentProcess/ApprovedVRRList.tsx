@@ -472,7 +472,7 @@ const RecruitmentProcess = (props: any) => {
       field: "Status",
       header: "Status",
       fieldName: "Status",
-      style: { width: "18%" },
+      // style: { width: "20%" },
       sortable: true,
       body: (rowData: any) => {
         let isTooltipStatus: any;
@@ -504,20 +504,44 @@ const RecruitmentProcess = (props: any) => {
           !isTooltipStatus &&
           storedStringRef.current != TabName.UploadONEMDoc
         ) {
-          return (
-            <div>
-              <ToolTipButton
-                Title=""
-                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-                Rowdata={rowData}
-                ApproverData={pendingInfo}
-                onHover={() => handleHover(rowData.StatusId, rowData)}
-              />
-              <span>{rowData.Status}</span>
-            </div>
-          );
+          // return (
+          //   <div>
+          //     <ToolTipButton
+          //       Title=""
+          //       CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+          //       Rowdata={rowData}
+          //       ApproverData={pendingInfo}
+          //       onHover={() => handleHover(rowData.StatusId, rowData)}
+          //     />
+          //     <span>{rowData.Status}</span>
+          //   </div>
+          // );
+                    return (
+  <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{ width: "24px", marginLeft: "-14%" }}>
+      <ToolTipButton
+        Title=""
+        CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+        Rowdata={rowData}
+        ApproverData={pendingInfo}
+        onHover={() => handleHover(rowData.StatusId, rowData)}
+      />
+    </div>
+    <div style={{ flex: 1 }}>
+      <span>{rowData.Status}</span>
+    </div>
+  </div>
+);
         }
-        return <span>{rowData.Status}</span>;
+        // return <span>{rowData.Status}</span>;
+        return (
+  <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{ width: "24px", marginLeft: "-14%" }}></div>
+    <div style={{ flex: 1 }}>
+      <span>{rowData.Status}</span>
+    </div>
+  </div>
+);
       },
     },
     {
@@ -783,11 +807,11 @@ const RecruitmentProcess = (props: any) => {
     {
       field: "Status",
       header: "Status",
-      style: { width: "20%" },
       sortable: false,
       body: (rowData: any) => {
         return (
-          <div>
+          <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ width: "24px", marginLeft: "-14%" }}>
             <ToolTipButton
               Title=""
               CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
@@ -797,8 +821,11 @@ const RecruitmentProcess = (props: any) => {
                 handleHoverInterviewPanel(rowData.StatusId, rowData)
               }
             />
-            <span>{rowData.Status}</span>
-          </div>
+                  </div>
+             <div style={{ flex: 1 }}>
+          <span>{rowData.Status}</span>
+        </div>
+            </div>
         );
         // return <span>{rowData.Status}</span>;
       },

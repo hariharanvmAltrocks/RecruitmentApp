@@ -138,6 +138,7 @@ export type CandidateData = {
   AdvertisementDocument: any[];
   ShortlistedValue: string;
   // LevelofInterviewed: string;
+  NationalityCode?: string;
 };
 
 export type ScoreCardData = {
@@ -191,6 +192,7 @@ export type ScoreCardData = {
   ConflictsOfInterest: string;
   disability: string;
   disabilityReason: string;
+  NationalityCode?: string;
 };
 
 export type QualificationValue = {

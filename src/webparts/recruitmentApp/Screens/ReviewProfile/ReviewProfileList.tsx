@@ -315,7 +315,8 @@ const ReviewProfileList = (props: any) => {
 
         if (!isTooltipStatus) {
           return (
-            <div>
+           <div style={{ display: "flex", alignItems: "center" }}>
+             <div style={{ width: "24px", marginLeft: "-14%" }}>
               <ToolTipButton
                 Title=""
                 CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
@@ -323,11 +324,22 @@ const ReviewProfileList = (props: any) => {
                 ApproverData={pendingInfo}
                 onHover={() => handleHover(rowData.StatusId, rowData)}
               />
+              </div>
+              <div style={{ flex: 1 }}>
               <span>{rowData.Status}</span>
             </div>
+               </div>
           );
         }
-        return <span>{rowData.Status}</span>;
+        // return <span>{rowData.Status}</span>;
+                return (
+  <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{ width: "24px", marginLeft: "-14%" }}></div>
+    <div style={{ flex: 1 }}>
+      <span>{rowData.Status}</span>
+    </div>
+  </div>
+);
       },
     },
     {
@@ -509,11 +521,11 @@ const ReviewProfileList = (props: any) => {
     {
       field: "Status",
       header: "Status",
-      style: { width: "20%" },
       sortable: false,
       body: (rowData: any) => {
         return (
-          <div>
+           <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ width: "24px" }}>
             <ToolTipButton
               Title=""
               CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
@@ -523,8 +535,11 @@ const ReviewProfileList = (props: any) => {
                 handleHoverInterviewPanel(rowData.StatusId, rowData)
               }
             />
+            </div>
+            <div style={{ flex: 1 }}>
             <span>{rowData.Status}</span>
           </div>
+           </div>
         );
         // return <span>{rowData.Status}</span>;
       },

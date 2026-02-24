@@ -14,6 +14,7 @@ import {
   RoleProfileMaster,
   ResponeStatus,
   workflowStatusApi,
+  StatusId,
 } from "../../utilities/Config";
 import CustomLoader from "../../Services/Loader/CustomLoader";
 import {
@@ -1074,13 +1075,14 @@ useEffect(() => {
                     />
                   </div>
                 </div>
-
-                <div style={{ position: "relative" }}>
-                  {iscandidateLoading && (
-                    <div className="loader-overlay">
-                      <CustomLoader isLoading={true} />
-                    </div>
-                  )}
+             { props.stateValue?.StatusId ===
+                      StatusId.RecruitmentInProgress&& (
+                  <div style={{ position: "relative" }}>
+                    {iscandidateLoading && (
+                      <div className="loader-overlay">
+                        <CustomLoader isLoading={true} />
+                      </div>
+                    )}
 
                   <CandidateList
                     candidates={getCandidateListData()}
@@ -1091,6 +1093,7 @@ useEffect(() => {
                     onCardClick={handleCandidateCardClick}
                   />
                 </div>
+                )}
               </div>
             )}
           </CardContent>
