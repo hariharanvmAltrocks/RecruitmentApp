@@ -95,7 +95,15 @@ const UploadCandidateList = (props: any) => {
       fieldName: "Status",
       sortable: false,
       body: (rowData: any) => {
-        return <span>{rowData.Status}</span>;
+        // return <span>{rowData.Status}</span>;
+                return (
+  <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{ width: "24px", marginLeft: "-14%" }}></div>
+    <div style={{ flex: 1 }}>
+      <span>{rowData.Status}</span>
+    </div>
+  </div>
+);
       },
     },
     {

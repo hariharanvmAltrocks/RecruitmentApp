@@ -341,27 +341,52 @@ const ReviewCandidateList = (props: any) => {
           props.stateValue?.TabNames === TabName.ReviewProfile &&
           props.CurrentRoleID.includes(RoleID.RecruitmentHR)
         ) {
-          return (
-            <div>
-              <ToolTipButton
-                Title=""
-                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-                Rowdata={rowData}
-                ApproverData={pendingInfo}
-                onHover={() => handleHover(rowData.workflowStatusId, rowData)}
-              />
-              <span>
-                {rowData.applicationStatusId ===
-                ApplicationStatusId.ApplicationSuspended ? (
-                  <span style={{ color: "red" }}>
-                    {rowData.applicationStatus}
-                  </span>
-                ) : (
-                  <span> {rowData.Status}</span>
-                )}
-              </span>
-            </div>
-          );
+          // return (
+          //   <div>
+          //     <ToolTipButton
+          //       Title=""
+          //       CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+          //       Rowdata={rowData}
+          //       ApproverData={pendingInfo}
+          //       onHover={() => handleHover(rowData.workflowStatusId, rowData)}
+          //     />
+          //     <span>
+          //       {rowData.applicationStatusId ===
+          //       ApplicationStatusId.ApplicationSuspended ? (
+          //         <span style={{ color: "red" }}>
+          //           {rowData.applicationStatus}
+          //         </span>
+          //       ) : (
+          //         <span> {rowData.Status}</span>
+          //       )}
+          //     </span>
+          //   </div>
+          // );
+      return (
+  <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ width: "24px", marginLeft: "-14%" }}>
+      <ToolTipButton
+        Title=""
+        CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+        Rowdata={rowData}
+        ApproverData={pendingInfo}
+        onHover={() => handleHover(rowData.workflowStatusId, rowData)}
+      />
+    </div>
+    <div style={{ flex: 1 }}>
+      {rowData.applicationStatusId ===
+      ApplicationStatusId.ApplicationSuspended ? (
+        <span style={{ color: "red" }}>
+          {rowData.applicationStatus}
+        </span>
+      ) : (
+        <span>{rowData.Status}</span>
+      )}
+    </div>
+
+  </div>
+);
+      
         }
         return (
           <span>

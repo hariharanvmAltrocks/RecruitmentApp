@@ -24,6 +24,7 @@ import {
   ResponeStatus,
   Choices,
   RoleName,
+  NationalityCode,
 } from "../../utilities/Config";
 import { QuestionItem, ScoreCardData } from "../../Models/RecuritmentVRR";
 import IsValid from "../../components/Validation";
@@ -126,6 +127,7 @@ const InterviewPanelEdit = (props: any) => {
     ConflictsOfInterest: "",
     disability: "",
     disabilityReason: "",
+    NationalityCode:"",
   });
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -318,6 +320,7 @@ const InterviewPanelEdit = (props: any) => {
           ConflictsOfInterest: op?.ConflictsOfInterest,
           disability: op?.disability,
           disabilityReason: op?.disabilityReason,
+          NationalityCode: op?.NationalityCode,
         }));
         if (questionnaire.length === 0) {
           let JobCodeFilter = [
@@ -1297,8 +1300,8 @@ const InterviewPanelEdit = (props: any) => {
                   <div className="ms-Grid-col ms-lg4">
                     <CustomAutoComplete
                       label={
-                        CandidateData.Nationality === "Congolese (DRC)"
-                          ? "Congolese"
+                        CandidateData.NationalityCode === NationalityCode.Nationals
+                          ? "Congolese Experience"
                           : "Expat Experience"
                       }
                       value={CandidateData.ExpatExperienceCongolese}

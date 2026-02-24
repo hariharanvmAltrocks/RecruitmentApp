@@ -139,6 +139,7 @@ export type CandidateData = {
   AdvertisementDocument: any[];
   ShortlistedValue: string;
   // LevelofInterviewed: string;
+  NationalityCode?: string;
 };
 
 export type ScoreCardData = {
@@ -192,6 +193,7 @@ export type ScoreCardData = {
   ConflictsOfInterest: string;
   disability: string;
   disabilityReason: string;
+  NationalityCode?: string;
 };
 
 export type QualificationValue = {
@@ -292,6 +294,7 @@ export type InterviewQues = {
   // OptionsType?: { text: string }[];
   OptionsType?: AutoCompleteItem;
   Disqualification?: any;
+  ExpectedAnswerFr?: string;
 };
 export type InterviewQuesEdit = {
   EnglishQuestion: InterviewQues;

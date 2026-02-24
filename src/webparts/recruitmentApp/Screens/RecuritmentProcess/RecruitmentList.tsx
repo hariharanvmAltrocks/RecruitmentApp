@@ -438,7 +438,7 @@ const RecruitmentList = (props: any) => {
       field: "Status",
       header: "Status",
       fieldName: "Status",
-      style: { width: "18%" },
+      // style: { width: "18%" },
       sortable: true,
       body: (rowData: any) => {
         let isTooltipStatus: any;
@@ -468,19 +468,30 @@ const RecruitmentList = (props: any) => {
         }
         if (!isTooltipStatus && currentTab != TabName.UploadONEMDoc) {
           return (
-            <div style={{ marginLeft: "-15%" }}>
-              <ToolTipButton
-                Title=""
-                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-                Rowdata={rowData}
-                ApproverData={pendingInfo}
-                onHover={() => handleHover(rowData.StatusId, rowData)}
-              />
-              <span>{rowData.Status}</span>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ width: "24px", marginLeft: "-14%" }}>
+                <ToolTipButton
+                  Title=""
+                  CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                  Rowdata={rowData}
+                  ApproverData={pendingInfo}
+                  onHover={() => handleHover(rowData.StatusId, rowData)}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <span>{rowData.Status}</span>
+              </div>
             </div>
           );
         }
-        return <span>{rowData.Status}</span>;
+        return (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ width: "24px", marginLeft: "-14%" }}></div>
+            <div style={{ flex: 1 }}>
+              <span>{rowData.Status}</span>
+            </div>
+          </div>
+        );
       },
     },
     {
@@ -745,21 +756,25 @@ const RecruitmentList = (props: any) => {
     {
       field: "Status",
       header: "Status",
-      style: { width: "20%" },
+      // style: { width: "20%" },
       sortable: false,
       body: (rowData: any) => {
         return (
-          <div>
-            <ToolTipButton
-              Title=""
-              CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-              Rowdata={rowData}
-              ApproverData={pendingInfo}
-              onHover={() =>
-                handleHoverInterviewPanel(rowData.StatusId, rowData)
-              }
-            />
-            <span>{rowData.Status}</span>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ width: "24px", marginLeft: "-14%" }}>
+              <ToolTipButton
+                Title=""
+                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                Rowdata={rowData}
+                ApproverData={pendingInfo}
+                onHover={() =>
+                  handleHoverInterviewPanel(rowData.StatusId, rowData)
+                }
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <span>{rowData.Status}</span>
+            </div>
           </div>
         );
         // return <span>{rowData.Status}</span>;
