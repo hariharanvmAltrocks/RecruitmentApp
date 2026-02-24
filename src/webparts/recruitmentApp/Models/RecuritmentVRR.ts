@@ -293,6 +293,7 @@ export type InterviewQues = {
   // OptionsType?: { text: string }[];
   OptionsType?: AutoCompleteItem;
   Disqualification?: any;
+  ExpectedAnswerFr?: string;
 };
 export type InterviewQuesEdit = {
 EnglishQuestion: InterviewQues;

@@ -69,6 +69,7 @@ type InterviewQuesValidationError = {
   OptionsType: string | boolean;
   Catogry: boolean;
   Disqualification: boolean;
+    ExpectedAnswerFr: boolean;
 };
 
 export type OptionRow = {
@@ -122,6 +123,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         : CatogryOptionCode.CareerPortalCandidate,
     Disqualification: "",
     CareerportalAnswer: [],
+      ExpectedAnswerFr: "",
   });
 
   // Separate state for English and French questions
@@ -148,6 +150,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       OptionsType: false,
       Catogry: false,
       Disqualification: false,
+        ExpectedAnswerFr: false, 
     });
 
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
@@ -508,6 +511,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       QuestionType?.text === displayTextOptionCode.SingleAnswer;
 
     if (isMCQ) {
+
       const filledOptions = OptionsType.filter((opt) => opt.text.trim() !== "");
       const selectedOptions = filledOptions.filter((opt) => opt.isCorrect);
 
@@ -523,6 +527,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       }
     } else {
       if (!ExpectedAnswer) errors.ExpectedAnswer = true;
+      if (!InterviewQuesData.ExpectedAnswerFr) errors.ExpectedAnswerFr = true;
     }
 
     if (shouldValidateQuestionType && !Disqualification) {
@@ -619,6 +624,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       question: EnglishQuestion || InterviewQuesData.Question,
       questionFr: FrenchQuestion || InterviewQuesData.Question,
       expectedAnswer: InterviewQuesData.ExpectedAnswer,
+     expectedAnswerFr: InterviewQuesData.ExpectedAnswerFr, 
       CareerportalAnswer: correctAnswers,
       options:
         questionType.text === displayTextOptionCode.MultiAnswer ||
@@ -659,6 +665,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       QuestionType: { key: 0, text: "" },
       Question: "",
       ExpectedAnswer: "",
+      ExpectedAnswerFr: "",
       Disqualification: "",
       Catogry: prev.Catogry,
       CareerportalAnswer: [],
@@ -2076,20 +2083,26 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                           </Box>
                                         ) : props?.stateValue?.StatusId ===
                                           StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
-                                          <Box sx={{ mb: 2 }}>
-                                            <RichTextEditor
-                                              label="Expected Answer"
-                                              value={q.expectedAnswer || ""}
-                                              onChange={(val) =>
-                                                handleQuestionFieldChange(
-                                                  index,
-                                                  "expectedAnswer",
-                                                  val
-                                                )
-                                              }
-                                              mandatory={true}
-                                            />
-                                          </Box>
+                                          <>
+                                            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 2, width: "100%" }}>
+                                              <Box sx={{ width: "100%", overflow: "hidden" }}>
+                                                <RichTextEditor
+                                                  label="Expected Answer (English)"
+                                                  value={q.expectedAnswer || ""}
+                                                  onChange={(val) => handleQuestionFieldChange(index, "expectedAnswer", val)}
+                                                  mandatory={true}
+                                                />
+                                              </Box>
+                                              <Box sx={{ width: "100%", overflow: "hidden" }}>
+                                                <RichTextEditor
+                                                  label="Expected Answer (French)"
+                                                  value={q.expectedAnswerFr || ""}
+                                                  onChange={(val) => handleQuestionFieldChange(index, "expectedAnswerFr", val)}
+                                                  mandatory={true}
+                                                />
+                                              </Box>
+                                            </Box>
+                                          </>
                                         ) : null}
 
                                         {props?.stateValue?.StatusId ===
@@ -2643,16 +2656,25 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         </Box>
                       ) : props?.stateValue?.StatusId ===
                         StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
-                        <Box sx={{ mb: 2 }}>
-                          <RichTextEditor
-                            label="Expected Answer"
-                            value={InterviewQuesData.ExpectedAnswer}
-                            onChange={(val) =>
-                              handleRichTextEditor(val, "ExpectedAnswer")
-                            }
-                            mandatory={true}
-                            error={ValidationError.ExpectedAnswer}
-                          />
+                        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 2, width: "100%" }}>
+                          <Box sx={{ width: "100%", overflow: "hidden" }}>
+                            <RichTextEditor
+                              label="Expected Answer (English)"
+                              value={InterviewQuesData.ExpectedAnswer}
+                              onChange={(val) => handleRichTextEditor(val, "ExpectedAnswer")}
+                              mandatory={true}
+                              error={ValidationError.ExpectedAnswer}
+                            />
+                          </Box>
+                          <Box sx={{ width: "100%", overflow: "hidden" }}>
+                            <RichTextEditor
+                              label="Expected Answer (French)"
+                              value={InterviewQuesData.ExpectedAnswerFr || ""}
+                              onChange={(val) => handleRichTextEditor(val, "ExpectedAnswerFr")}
+                              mandatory={true}
+                              error={ValidationError.ExpectedAnswerFr}
+                            />
+                          </Box>
                         </Box>
                       ) : null}
 
@@ -2969,6 +2991,36 @@ const InterviewQuesEdit: React.FC = (props: any) => {
           Type: HRMSAlertOptions.Error,
           visible: true,
           ButtonAction: async (userClickedOK: boolean) => {
+            setAlertPopupOpen(false);
+          },
+        });
+        return;
+      }
+
+      // Validate Expected Answer (English)
+      if (!nq.expectedAnswer || nq.expectedAnswer.trim() === "") {
+        setIsLoading(false);
+        setAlertPopupOpen(true);
+        setalertProps({
+          Message: `${label}\n\nThe Expected Answer (English) field cannot be empty. Please enter a value before submitting.`,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async () => {
+            setAlertPopupOpen(false);
+          },
+        });
+        return;
+      }
+
+      // Validate Expected Answer (French)
+      if (!nq.expectedAnswerFr || nq.expectedAnswerFr.trim() === "") {
+        setIsLoading(false);
+        setAlertPopupOpen(true);
+        setalertProps({
+          Message: `${label}\n\nThe Expected Answer (French) field cannot be empty. Please enter a value before submitting.`,
+          Type: HRMSAlertOptions.Error,
+          visible: true,
+          ButtonAction: async () => {
             setAlertPopupOpen(false);
           },
         });
