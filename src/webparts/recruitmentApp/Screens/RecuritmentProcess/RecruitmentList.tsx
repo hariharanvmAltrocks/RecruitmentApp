@@ -1,1961 +1,435 @@
+// src/pages/RecruitmentList.tsx
 import * as React from "react";
+import { useCallback, useState } from "react";
+import CheckboxDataTable from "../../components/CheckboxDataTable";
+import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
+import CustomLoader from "../../Services/Loader/CustomLoader";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
+import CustomDialogbox from "../../components/CustomDialogbox";
+import { DateExtension } from "../../components/DateExtension";
+import {
+  AssignRecuritmentHR,
+  FormDataType,
+} from "../ScreenComponent/AssignRecuritmentHR";
+import * as moment from "moment";
+import { useRecruitmentData } from "./Hooks/useRecruitmentData";
+import { JobAdvertAlertMsg } from "../../utilities/LabelName";
+import {
+  HRMSAlertOptions,
+  ListNames,
+  RecuritmentHRMsg,
+  ResponeStatus,
+  RoleID,
+  StatusId,
+  TabName,
+  WorkflowAction,
+} from "../../utilities/Config";
+import { useRecruitmentColumns } from "./Hooks/useRecruitmentColumns";
 import SearchableDataTable from "../../components/CustomDataTable";
-import "../../App.css";
 import {
   CommonServices,
   GetPortalJobsService,
   getVRRDetails,
 } from "../../Services/ServiceExport";
 import {
-  RoleID,
-  StatusId,
-  TabName,
-  HRMSAlertOptions,
-  ListNames,
-  RecuritmentHRMsg,
-  WorkflowAction,
-  ResponeStatus,
-  ColorCode,
-  ActionIcon,
-  InterviewLevels,
-  RoleName,
-} from "../../utilities/Config";
-import CustomLoader from "../../Services/Loader/CustomLoader";
-import { AutoCompleteItem } from "../../Models/Screens";
-import { JobCodeTilte } from "../../Models/RecuritmentVRR";
-import {
-  DataSyncToRecruitmentResponse,
   InsertComments,
   PostRecuritmentData,
 } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
-import CustomAlert from "../../components/CustomAlert/CustomAlert";
-import { alertPropsData } from "../../Models/Screens";
-import { jobsXAgents, profileXagent } from "../../Models/ApIInterface";
-import CustomDialogbox from "../../components/CustomDialogbox";
-import { DateExtension } from "../../components/DateExtension";
-import {
-  AssignHRData,
-  AssignRecuritmentHR,
-} from "../ScreenComponent/AssignRecuritmentHR";
-import IsValid from "../../components/Validation";
-import { StatusDetails } from "../../Models/Master";
-import CheckboxDataTable from "../../components/CheckboxDataTable";
-import * as moment from "moment";
-import ReuseButton from "../../components/ReuseButton";
-import ToolTipButton from "../../components/Tooltip";
-import {
-  ActionName,
-  ButtonAction,
-  ExternalUserType,
-  InterviewDate,
-  JobAdvertAlertMsg,
-  PositionStatus,
-} from "../../utilities/LabelName";
-import InterviewPanelDataTable from "../../components/InterviewPanelDataTable";
-import { getBaseFilters, getRecruitmentFiltersByTab } from "./CommanFilter";
-import { useEffect } from "react";
-
-export type formValidation = {
-  Comments: boolean;
-  AssignRecruitmentHR: boolean;
-  AssignRecruitmentAgencies: boolean;
-};
+import { jobsXAgents } from "../../Models/ApIInterface";
+import { AutoCompleteItem } from "../../Models/Screens";
+import { useAssignOptions } from "./Hooks/useAssignOptions";
 
 const RecruitmentList = (props: any) => {
-  const [data, setData] = React.useState<DataSyncToRecruitmentResponse[]>([]);
-  const [selectedrowdata, setSelectedrowdata] = React.useState<
-    DataSyncToRecruitmentResponse[]
-  >([]);
-  // const [RecruitmentDetails, setRecruitmentDetails] = React.useState<any[]>([]);
-  const [rows, setRows] = React.useState<number>(5);
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [AssignHR, setAssignHR] = React.useState<boolean>(false);
-  const [AssignHRData, setAssignHRData] = React.useState<AssignHRData>({
-    AssignRecruitmentHR: { key: 0, text: "" },
-    AssignRecruitmentAgencies: [],
-    Comments: "",
+  const [rows, setRows] = useState<number>(5);
+
+  const { data, isLoading, jobCodeTitles, refreshData } =
+    useRecruitmentData(props);
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [isAssignDialogOpen, setAssignDialogOpen] = useState<boolean>(false);
+  const [isDateDialogOpen, setDateDialogOpen] = useState<boolean>(false);
+  const [dialogRowData, setDialogRowData] = useState<any>(null);
+  const [alertInfo, setAlertInfo] = useState({
+    open: false,
+    message: "",
+    type: "",
+    buttonAction: undefined as (() => void) | undefined,
   });
-  const [allJobData, setJobCodeTitle] = React.useState<JobCodeTilte[]>([
-    {
-      JobTitle: "",
-      JobCode: " ",
-      ID: 0,
-      JobCodeId: 0,
-    },
-  ]);
-  const [selectedJobCodes, setSelectedJobCodes] = React.useState<
-    JobCodeTilte[]
-  >([]);
-  const [AlertPopupOpen, setAlertPopupOpen] = React.useState<boolean>(false);
-  const [alertProps, setalertProps] = React.useState<alertPropsData>({
-    Message: "",
-    Type: "",
-    ButtonAction: null,
-    visible: false,
-  });
-  const [DatePopup, setDatePopup] = React.useState<boolean>(false);
-  const [validationErrors, setValidationErrors] =
-    React.useState<formValidation>({
-      Comments: false,
-      AssignRecruitmentHR: false,
-      AssignRecruitmentAgencies: false,
-    });
 
-  const [pendingInfo, setPendingInfo] = React.useState<any>(null);
-  const [positionIDs, setPositionIDs] = React.useState<any>(null);
-  const [AssignRecruitmentHROption, setAssignRecruitmentHROption] =
-    React.useState<AutoCompleteItem[]>([]);
-  const [AssignRecruitmentAgenciesOption, setAssignRecruitmentAgenciesOption] =
-    React.useState<AutoCompleteItem[]>([]);
-  const [currentTab, setCurrentTab] = React.useState<string>("");
-  // const storedStringRef = React.useRef("");
+  console.log(jobCodeTitles, "JobCodeTitle");
 
-  const fetchHRAgencyDetails = async (Nationality: string) => {
-    try {
-      const GetADGruopUserID = await CommonServices.GetMasterData(
-        ListNames.HRMSRecruitmentUserRole,
-      );
-      let ADGroupIDs = GetADGruopUserID.data?.filter(
-        (item: any) => item.ID === RoleID.RecruitmentHR,
-      );
-      const [HRMSExternalAgents, AssignRecurtimentHROption] = await Promise.all(
-        [
-          CommonServices.GetMasterData(ListNames.HRMSExternalAgents),
-          CommonServices.GetADgruopsEmailIDs(ADGroupIDs[0]?.ADGroupID),
-        ],
-      );
-      let ExternalAgent = HRMSExternalAgents.data?.filter(
-        (nat) =>
-          nat.Nationality === Nationality &&
-          nat.UserType === ExternalUserType.Agent,
-      );
-      const agentsOptions: AutoCompleteItem[] =
-        ExternalAgent?.map((item: any) => ({
-          key: item.Id,
-          text: item.AgentName,
-        })) ?? [];
-      setAssignRecruitmentAgenciesOption(agentsOptions);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-      if (
-        AssignRecurtimentHROption.status === 200 &&
-        AssignRecurtimentHROption.data
-      ) {
-        setAssignRecruitmentHROption(AssignRecurtimentHROption.data);
-      } else {
-        console.error(
-          AssignRecurtimentHROption.data?.message ??
-            "Error fetching HR group emails",
-        );
-      }
-    } catch (error) {
-      console.error("Initialization error:", error);
-    }
+  const clearSelection = useCallback(() => {
+    setSelectedRows([]);
+  }, []);
+
+  const showAlert = (message: string, type: string, onAction?: () => void) => {
+    setAlertInfo({ open: true, message, type, buttonAction: onAction });
   };
 
-  const handleHover = async (statusId: number, rowData: any) => {
-    let pendingName: any[] = [];
-    switch (statusId) {
-      case StatusId.ReadyforRecruitmentProcess:
-        pendingName = [
-          (
-            await getVRRDetails.GetADGroupUsers(
-              rowData.AssignHRLead,
-              "RecruitmentHRLead",
-            )
-          ).data,
-        ];
-        break;
-      case StatusId.PendingwithHRLeadtoAssignRecruitmentHR:
-        pendingName = [
-          (
-            await getVRRDetails.GetADGroupUsers(
-              rowData.AssignEMail,
-              "RecruitmentHR",
-            )
-          ).data,
-        ];
-        break;
-      case StatusId.PendingwithRecruitmentHRtouploadAdv:
-        pendingName = [
-          (
-            await getVRRDetails.GetADGroupUsers(
-              rowData.AssignEMail,
-              "RecruitmentHR",
-            )
-          ).data,
-        ];
-        break;
-      case StatusId.PendingwithLineManagereviewAdv:
-        pendingName = [
-          (
-            await getVRRDetails.GetADGroupUsers(
-              rowData.AssignLineManager,
-              "LineManager",
-            )
-          ).data,
-        ];
-        break;
-      case StatusId.PendingwithLMcreateDisqualificationQuestion:
-        pendingName = [
-          (
-            await getVRRDetails.GetADGroupUsers(
-              rowData.AssignLineManager,
-              "LineManager",
-            )
-          ).data,
-        ];
-        break;
-      case StatusId.PendingwithHODtoreviewAdv:
-        pendingName = [
-          (await getVRRDetails.GetADGroupUsers(rowData.AssignHOD, "HOD")).data,
-        ];
-        break;
-      case StatusId.PendingwithHRLeadtouploadONEMsigneddoc:
-        pendingName = [
-          (await getVRRDetails.GetADGroupUsers(rowData.AssignHRLead, "HRLead"))
-            .data,
-        ];
-        break;
+  const {
+    hrOptions,
+    agencyOptions,
+    fetchAgencyOptions,
+    isLoading: areOptionsLoading,
+  } = useAssignOptions();
 
-      case StatusId.PendingwithHRandLMtocreateinterviewQuestion:
-        pendingName = [
-          {
-            Key: RoleName?.RecruitmentHR,
-            Value:
-              rowData?.QuestionByHR === "Yes"
-                ? ActionName.Completed
-                : ActionName.Pending,
-          },
-          {
-            Key: RoleName?.LineManager,
-            Value:
-              rowData?.QuestionByLM === "Yes"
-                ? ActionName.Completed
-                : ActionName.Pending,
-          },
-        ];
-        break;
-      case StatusId.RecruitmentInProgress: {
-        let Tooltipdata =
-          await getVRRDetails.GetInterviewPanelTooltiData(rowData);
-        let GradeLevel = await CommonServices.GetGradeLevel(
-          rowData?.PatersonGrade,
-        );
+  const constructAgentDetails = async (
+    selectedJob: any,
+    agencies: AutoCompleteItem[],
+  ) => {
+    const { data: allAgents } = await CommonServices.GetMasterData(
+      ListNames.HRMSExternalAgents,
+    );
 
-        if (Tooltipdata?.data && Tooltipdata.data[0]?.LineManager) {
-          pendingName = [
-            {
-              Key: Tooltipdata.data[0].LineManager.Role,
-              Value: Tooltipdata.data[0].LineManager.Name,
-            },
-            {
-              Key: Tooltipdata.data[0].HOD.Role,
-              Value: Tooltipdata.data[0].HOD.Name,
-            },
-            {
-              Key: Tooltipdata.data[0].HR.Role,
-              Value: Tooltipdata.data[0].HR.Name,
-            },
-          ];
+    const matchedAgents = allAgents.filter((agent: { Id: number }) =>
+      agencies.some((item) => item.key === agent.Id),
+    );
 
-          if (GradeLevel.data[0]?.Level === InterviewLevels.Level2) {
-            pendingName.push({
-              Key: Tooltipdata.data[0].Exco.Role,
-              Value: Tooltipdata.data[0].Exco.Name,
-            });
-          }
-        } else {
-          pendingName = [{ Key: "N/A", Value: "No matching group" }];
-        }
-        break;
-      }
-      case StatusId.InterviewScheduled:
-      case StatusId.InterviewScheduledforLevel2:
+    const agentDetails: jobsXAgents[] = matchedAgents.map((item: any) => ({
+      agentId: item.AgentCode,
+    }));
+
+    const jobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
+      [
         {
-          let pendingName: any[] = [];
-          let Levels =
-            statusId === StatusId.InterviewScheduled
-              ? InterviewLevels.Level1
-              : InterviewLevels.Level2;
-          let data = await getVRRDetails.GetEvalutionActionData([
-            {
-              FilterKey: "CandidateID/Id",
-              Operator: "eq",
-              FilterValue: rowData.ID,
-            },
-            {
-              FilterKey: "InterviewLevel",
-              Operator: "eq",
-              FilterValue: Levels,
-            },
-          ]);
-          pendingName = data.data;
-          setPendingInfo(pendingName);
-        }
-        break;
-      default:
-        pendingName = [{ Key: "N/A", Value: "No matching group" }];
-        break;
-    }
-    setPendingInfo(pendingName);
-  };
-
-  const handleHoverInterviewPanel = async (statusId: number, rowData: any) => {
-    let pendingName: any[] = [];
-    let Levels =
-      statusId === StatusId.InterviewScheduled
-        ? InterviewLevels.Level1
-        : InterviewLevels.Level2;
-    let data = await getVRRDetails.GetEvalutionActionData([
-      {
-        FilterKey: "CandidateID/Id",
-        Operator: "eq",
-        FilterValue: rowData.ID,
-      },
-      {
-        FilterKey: "InterviewLevel",
-        Operator: "eq",
-        FilterValue: Levels,
-      },
-    ]);
-    pendingName = data.data;
-    setPendingInfo(pendingName);
-  };
-
-  const handlePositionHover = async (rowData: any) => {
-    const filterConditions = [
-      {
-        FilterKey: "JobCode",
-        Operator: "eq",
-        FilterValue: rowData.JobCodeId,
-      },
-      {
-        FilterKey: "Department",
-        Operator: "eq",
-        FilterValue: rowData.DepartmentId,
-      },
-      {
-        FilterKey: "PositionIDStatus",
-        Operator: "in",
-        FilterValue: [
-          PositionStatus.RecruitmentInitiator,
-          PositionStatus.RecruitmentInProgress,
-        ],
-      },
-    ];
-    const response = await getVRRDetails.GetPositionIDData(
-      filterConditions,
+          FilterKey: "JobCodeId",
+          Operator: "eq",
+          FilterValue: selectedJob?.JobCodeId,
+        },
+        { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+      ],
       "and",
     );
-    setPositionIDs(response.data);
+
+    const jobUniqueData = jobUniqueValue.data[0]?.JobUniqueKey || "";
+
+    return {
+      jobCode: jobUniqueData,
+      jobsXAgents: agentDetails,
+    };
   };
 
-  function handleAlert(Level: string) {
-    let CancelAlert = {
-      Message:
-        Level === InterviewLevels.Level1
-          ? RecuritmentHRMsg.InterviewScoredAlready
-          : RecuritmentHRMsg.InterviewScoreCommentsAlready,
-      Type: HRMSAlertOptions.Error,
-      visible: true,
-      ButtonAction: async (userClickedOK: boolean) => {
-        if (userClickedOK) {
-          setAlertPopupOpen(false);
-        }
-      },
-    };
-    setAlertPopupOpen(true);
-    setalertProps(CancelAlert);
-    setIsLoading(false);
-  }
+  const handleAssignSubmit = useCallback(
+    async (formData: FormDataType) => {
+      setIsSubmitting(true);
+      let allOperationsSucceeded = true;
 
-  const columnConfig = (
-    tab: string,
-    ButtonActions: number,
-    TabNames: string,
-  ) => [
-    {
-      field: "Checkbox",
-      header: "",
-      sortable: false,
-    },
-    {
-      field: "JobCode",
-      header: "Job Code",
-      sortable: true,
-    },
-    ...(TabNames === TabName.ReviewProfile ||
-    TabNames === TabName.ReviewScorecard
-      ? [
-          {
-            field: "JobAppliedCount",
-            header: "Job Applied Count",
-            sortable: true,
-          },
-        ]
-      : []),
-    {
-      field: "JobTitleEnglish",
-      header: "Job Title",
-      sortable: true,
-    },
-    // {
-    //   field: "BusinessUnitCode",
-    //   header: "BusinessUnit Code",
-    //   sortable: true,
-    // },
-    {
-      field: "NumberOfPersonNeeded",
-      header: "No. of Vacant Positions",
-      sortable: true,
-      body: (rowData: any) => {
-        return (
-          <div>
-            <ToolTipButton
-              Title=""
-              CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-              Rowdata={rowData}
-              ApproverData={positionIDs}
-              onHover={() => handlePositionHover(rowData)}
-              TooltipHeader={"Position IDs"}
-            />
-            <span>{rowData.NumberOfPersonNeeded}</span>
-          </div>
-        );
-      },
-    },
-    {
-      field: "Type",
-      header: "Position Request",
-      sortable: true,
-    },
-    {
-      field: "Nationality",
-      header: "Nationality",
-      sortable: true,
-    },
-    {
-      field: "Status",
-      header: "Status",
-      fieldName: "Status",
-      // style: { width: "18%" },
-      sortable: true,
-      body: (rowData: any) => {
-        let isTooltipStatus: any;
-        if (props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)) {
-          isTooltipStatus = [
-            StatusId.ReadyforRecruitmentProcess,
-            // StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
-            // StatusId.RecruitmentInProgress,
-          ].includes(rowData.StatusId);
-        } else if (props.CurrentRoleID.includes(RoleID.LineManager)) {
-          isTooltipStatus = [
-            StatusId.ReadyforRecruitmentProcess,
-            StatusId.PendingwithLMcreateDisqualificationQuestion,
-            StatusId.PendingwithLineManagereviewAdv,
-          ].includes(rowData.StatusId);
-        } else {
-          isTooltipStatus = [
-            StatusId.ReadyforRecruitmentProcess,
-            StatusId.PendingwithRecruitmentHRtouploadAdv,
-            StatusId.PendingwithLineManagereviewAdv,
-            StatusId.PendingwithHRandLMtocreateinterviewQuestion,
-            StatusId.PendingwithLMcreateDisqualificationQuestion,
-            StatusId.PendingwithHODtoreviewAdv,
-            StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
-            // StatusId.RecruitmentInProgress,
-          ].includes(rowData.StatusId);
-        }
-        if (!isTooltipStatus && currentTab != TabName.UploadONEMDoc) {
-          return (
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <div style={{ width: "24px", marginLeft: "-14%" }}>
-                <ToolTipButton
-                  Title=""
-                  CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-                  Rowdata={rowData}
-                  ApproverData={pendingInfo}
-                  onHover={() => handleHover(rowData.StatusId, rowData)}
-                />
-              </div>
-              <div style={{ flex: 1 }}>
-                <span>{rowData.Status}</span>
-              </div>
-            </div>
+      try {
+        const isHRLead = props.CurrentRoleID.includes(RoleID.RecruitmentHRLead);
+        for (const selectedJob of selectedRows) {
+          const correspondingJob = data.find(
+            (item: any) => item.ID === selectedJob.ID,
           );
+          if (!correspondingJob) continue;
+          if (isHRLead) {
+            if (!formData.assignRecruitmentHR?.key) {
+              showAlert(
+                "Recruitment HR is not selected.",
+                HRMSAlertOptions.Error,
+              );
+              allOperationsSucceeded = false;
+              break;
+            }
+
+            const UserIDbyEmail = await CommonServices.getUserIDByEmail(
+              formData.assignRecruitmentHR.key,
+            );
+
+            const recruitmentValue: PostRecuritmentData = {
+              Data: {
+                BusinessUnitCodeId: correspondingJob.BusinessUnitCodeId,
+                Nationality: correspondingJob.Nationality,
+                EmploymentCategory: correspondingJob.EmploymentCategory,
+                DepartmentId: correspondingJob.DepartmentId,
+                SubDepartmentId: correspondingJob.SubDepartmentId,
+                SectionId: correspondingJob.SectionId,
+                DepartmentCodeId: correspondingJob.DepartmentCodeId,
+                NumberOfPersonNeeded: Number(
+                  correspondingJob.NumberOfPersonNeeded,
+                ),
+                EnterNumberOfMonths:
+                  correspondingJob.EnterNumberOfMonths ?? "0",
+                TypeOfContract: correspondingJob.TypeOfContract,
+                DateRequried: correspondingJob?.DateRequried ?? null,
+                StatusId: StatusId.PendingwithHRLeadtoAssignRecruitmentHR,
+                ActionId: WorkflowAction.Approved,
+                JobCodeId: correspondingJob.JobCodeId,
+                AreaofWork: correspondingJob.AreaofWork,
+                AssignedHR: UserIDbyEmail.data,
+                RecruitmentHRLead: props.CurrentUserEmailId,
+                DataFrom: correspondingJob.Type ?? "",
+                Location: correspondingJob.Location ?? "",
+              },
+              PositionData: {
+                PatersonGradeId: correspondingJob.PatersonGradeId ?? 0,
+                DRCGradeId: correspondingJob.DRCGradeId ?? 0,
+                JobTitleEnglishId: correspondingJob.JobTitleEnglishId ?? 0,
+                JobTitleFrenchId: correspondingJob.JobTitleFrenchId ?? 0,
+              },
+              CommentsList: {
+                RoleId:
+                  props.TabDetails?.TabName === TabName.AssignRecuritmentHR
+                    ? RoleID.RecruitmentHRLead
+                    : RoleID.RecruitmentHR,
+                RecruitmentIDId: 0,
+                Comments: formData.comments ?? "",
+              },
+              updatePreList: {
+                ID: selectedJob.ID ?? 0,
+                ActionId: WorkflowAction.Approved,
+                ItemCreated: "Yes",
+                IsDataSyncToRecruitment: "No",
+              },
+            };
+
+            const response =
+              await getVRRDetails.InsertRecruitmentDpt(recruitmentValue);
+            if (response.status !== ResponeStatus.SUCCESS) {
+              allOperationsSucceeded = false;
+              break;
+            }
+          } else {
+            if (formData.assignRecruitmentAgencies.length === 0) {
+              showAlert("No agencies selected.", HRMSAlertOptions.Error);
+              allOperationsSucceeded = false;
+              break;
+            }
+            const agentDetailsPayload = await constructAgentDetails(
+              selectedJob,
+              formData.assignRecruitmentAgencies,
+            );
+            const upsertResponse =
+              await GetPortalJobsService.UpsertAgenciesJobs(
+                agentDetailsPayload,
+              );
+
+            if (upsertResponse.status !== ResponeStatus.SUCCESS) {
+              allOperationsSucceeded = false;
+              break;
+            }
+
+            const recruitmentID: number = correspondingJob.ID;
+            const agencyData = formData.assignRecruitmentAgencies.map(
+              (agency) => ({
+                key: agency.key,
+                text: agency.text,
+                RecruitmentID: recruitmentID,
+              }),
+            );
+
+            const insertAgencyResponse =
+              await getVRRDetails.InsertExternalAgencyDetails(
+                agencyData,
+                recruitmentID,
+              );
+            if (insertAgencyResponse.status !== ResponeStatus.SUCCESS) {
+              allOperationsSucceeded = false;
+              break;
+            }
+
+            const commentsData: InsertComments = {
+              RoleId: RoleID.RecruitmentHR,
+              RecruitmentIDId: recruitmentID,
+              Comments: formData.comments,
+            };
+
+            const insertCommentsResponse =
+              await getVRRDetails.InsertCommentsList(commentsData);
+            if (insertCommentsResponse.status !== ResponeStatus.SUCCESS) {
+              allOperationsSucceeded = false;
+              break;
+            }
+          }
         }
-        return (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ width: "24px", marginLeft: "-14%" }}></div>
-            <div style={{ flex: 1 }}>
-              <span>{rowData.Status}</span>
-            </div>
-          </div>
-        );
-      },
+
+        if (allOperationsSucceeded) {
+          showAlert("Successfully assigned!", HRMSAlertOptions.Success, () => {
+            setAssignDialogOpen(false);
+            clearSelection();
+            refreshData();
+          });
+        } else {
+          showAlert("Failed to assign recruitment.", HRMSAlertOptions.Error);
+        }
+      } catch (error) {
+        console.error("A critical error occurred during submission:", error);
+        showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
+      } finally {
+        setIsSubmitting(false);
+      }
     },
-    {
-      field: "Action",
-      header: "Action",
-      sortable: false,
-      style:
-        TabNames === TabName.AdvertExtension
-          ? { width: "13%" }
-          : { width: "8%" },
-      body: (rowData: any) => {
-        return (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems:
-                TabNames === TabName.AdvertExtension ? "left" : "center",
-              justifyContent:
-                TabNames === TabName.AdvertExtension ? "left" : "center",
-              gap: "10px", // slightly more space for small screens
-              flexWrap: "wrap", // allow wrapping on smaller screens
-            }}
-          >
-            {ButtonActions === ActionIcon.Edit ? (
-              <>
-                <img
-                  src={require("../../assets/Editbutton.svg")}
-                  alt="Stamp Icon"
-                  onClick={() =>
-                    handleRedirectView(
-                      rowData,
-                      tab,
-                      TabNames,
-                      ButtonAction.Edit,
-                    )
-                  }
-                  style={{
-                    width: "50%", // scales with font size
-                    height: "auto",
-                    maxWidth: "40px", // limit maximum size
-                    cursor: "pointer",
-                  }}
-                />
-              </>
-            ) : ButtonActions === ActionIcon.Upload ? (
-              <>
-                <img
-                  src={require("../../assets/UploadIcon.svg")}
-                  alt="Stamp Icon"
-                  style={{
-                    width: "50%", // scales with font size
-                    height: "auto",
-                    maxWidth: "40px", // limit maximum size
-                    cursor: "pointer",
-                  }}
-                  onClick={() =>
-                    handleRedirectView(
-                      rowData,
-                      tab,
-                      TabNames,
-                      ButtonAction.Upload,
-                    )
-                  }
-                />
-              </>
-            ) : (
-              <>
-                <img
-                  src={require("../../assets/Viewicon.svg")}
-                  alt="Stamp Icon"
-                  style={{
-                    width: "50%", // scales with font size
-                    height: "auto",
-                    maxWidth:
-                      TabNames === TabName.AdvertExtension ? "29px" : "40px", // limit maximum size
-                    cursor: "pointer",
-                  }}
-                  onClick={() =>
-                    handleRedirectView(
-                      rowData,
-                      tab,
-                      TabNames,
-                      ButtonAction.View,
-                    )
-                  }
-                />
-              </>
-            )}
-            {TabNames === TabName.AdvertExtension && (
-              <>
-                <img
-                  src={require("../../assets/AddDate.svg")}
-                  alt="Stamp Icon"
-                  style={{
-                    width: "50%",
-                    height: "auto",
-                    maxWidth: "29px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    const today = new Date();
-                    // today.setDate(today.getDate() + 1); // Add 1 day
-                    today.setHours(0, 0, 0, 0); // Normalize to midnight
+    [props.CurrentRoleID, selectedRows, data, refreshData, clearSelection],
+  );
 
-                    const {
-                      JobPostingEndDate,
-                      JobPostingFirstExtensionEndDate,
-                      JobPostingSecondExtensionEndDate,
-                    } = rowData || {};
+  const closeAlert = () => setAlertInfo({ ...alertInfo, open: false });
 
-                    let JobValidation = false;
-
-                    let comparisonDate = null;
-
-                    if (JobPostingSecondExtensionEndDate) {
-                      comparisonDate = new Date(
-                        JobPostingSecondExtensionEndDate,
-                      );
-                    } else if (JobPostingFirstExtensionEndDate) {
-                      comparisonDate = new Date(
-                        JobPostingFirstExtensionEndDate,
-                      );
-                    } else if (JobPostingEndDate) {
-                      comparisonDate = new Date(JobPostingEndDate);
-                    }
-
-                    if (comparisonDate) {
-                      comparisonDate.setHours(0, 0, 0, 0); // Normalize time
-                      JobValidation = today >= comparisonDate; // <-- reversed comparison
-                    }
-
-                    if (!JobValidation) {
-                      const Dateformat = JobPostingSecondExtensionEndDate
-                        ? moment(JobPostingSecondExtensionEndDate).format(
-                            "DD/MM/YYYY",
-                          )
-                        : JobPostingFirstExtensionEndDate
-                          ? moment(JobPostingFirstExtensionEndDate).format(
-                              "DD/MM/YYYY",
-                            )
-                          : moment(JobPostingEndDate).format("DD/MM/YYYY");
-                      const JobExpiredMsg = JobAdvertAlertMsg(Dateformat);
-                      const SuccessAlert = {
-                        Message: JobExpiredMsg,
-                        Type: HRMSAlertOptions.Error,
-                        visible: true,
-                        ButtonAction: async (userClickedOK: boolean) => {
-                          if (userClickedOK) {
-                            setAlertPopupOpen(false);
-                          }
-                        },
-                      };
-
-                      setAlertPopupOpen(true);
-                      setalertProps(SuccessAlert);
-                    } else {
-                      let selectedData = [rowData];
-                      setSelectedrowdata(selectedData);
-                      setDatePopup(true);
-                    }
-                  }}
-                />
-              </>
-            )}
-          </div>
-        );
-      },
-    },
-  ];
-
-  function handleRedirect(
-    rowData: any,
-    tab: string,
-    TabName: string,
-    ButtonAction: string,
-  ) {
-    let navigationPath =
-      rowData?.StatusId === StatusId.InterviewScheduled
-        ? "/RecurimentProcess/InterviewPanelList/InterviewPanelEdit"
-        : rowData.StatusId === StatusId.InterviewScheduledforLevel2
-          ? "/RecurimentProcess/HodViewScorecard"
-          : "";
-    const interviewDate = moment.utc(rowData.InterviewDateTime).startOf("day");
-    const today = moment.utc().startOf("day");
-    if (today.isSameOrAfter(interviewDate, "day")) {
-      props.navigation(navigationPath, {
+  const handleRedirectView = useCallback(
+    (rowData: any, buttonAction: string) => {
+      console.log("Redirecting for:", rowData.ID, "with action:", buttonAction);
+      props.navigate("/RecurimentProcess/ApprovedVRREdit", {
         state: {
           ID: rowData?.ID,
-          tab: tab,
-          StatusId: rowData?.StatusId,
-          Status: rowData?.Status,
-          TabName: TabName,
-          ButtonAction,
-          RecruitmentID: rowData?.RecruitmentID,
-          InterviewLevel: rowData?.InterviewLevel,
-          JobCodeID: rowData?.JobCodeID,
+          TabName: props.TabDetails.TabName,
+          buttonAction,
         },
       });
-    } else {
-      const formattedDate = moment(interviewDate).format("DD-MMM-YYYY");
-
-      const ValidationMsg = InterviewDate(formattedDate);
-      let ValidationError = {
-        Message: ValidationMsg,
-        Type: HRMSAlertOptions.Error,
-        visible: true,
-        ButtonAction: async (userClickedOK: boolean) => {
-          if (userClickedOK) {
-            setAlertPopupOpen(false);
-          }
-        },
-      };
-      setAlertPopupOpen(true);
-      setalertProps(ValidationError);
-      setIsLoading(false);
-    }
-  }
-
-  const CandidateConfig = (
-    tab: string,
-    ButtonActions: number,
-    TabName: string,
-  ) => [
-    {
-      field: "SNO",
-      header: "S.No",
-      sortable: true,
     },
-    {
-      field: "ApplicantName",
-      header: "ApplicantName",
-      sortable: true,
-    },
-    {
-      field: "PositionTitle",
-      header: "Position Title",
-      sortable: true,
-    },
-    {
-      field: "InterviewDateTime",
-      header: "Interview Date",
-      sortable: true,
-    },
-    // {
-    //   field: "JobGrade",
-    //   header: "JobGrade",
-    //   sortable: true,
-    // },
-    { field: "InterviewLevel", header: "Interview Levels", sortable: true },
-    { field: "Grade", header: "Grade", sortable: true },
-    {
-      field: "Status",
-      header: "Status",
-      // style: { width: "20%" },
-      sortable: false,
-      body: (rowData: any) => {
-        return (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ width: "24px", marginLeft: "-14%" }}>
-              <ToolTipButton
-                Title=""
-                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-                Rowdata={rowData}
-                ApproverData={pendingInfo}
-                onHover={() =>
-                  handleHoverInterviewPanel(rowData.StatusId, rowData)
-                }
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <span>{rowData.Status}</span>
-            </div>
-          </div>
-        );
-        // return <span>{rowData.Status}</span>;
-      },
-    },
+    [props.navigate, props.TabDetails.TabName],
+  );
 
-    {
-      field: "Action",
-      header: "Action",
-      sortable: false,
-      style: { width: "8%" },
-      body: (rowData: any) => {
-        const checkIsScoreSheetUploaded = async () => {
-          try {
-            const [interviewPanelResponse, currentUserResponse] =
-              await Promise.all([
-                CommonServices.GetMasterData(
-                  ListNames.HRMSInterviewPanelDetails,
-                ),
-                CommonServices.getUserGuidByEmail(props.CurrentUserEmailId),
-              ]);
-
-            const currentUserKey = currentUserResponse.data?.key?.toString();
-            if (!currentUserKey) {
-              return;
-            }
-            if (
-              !interviewPanelResponse?.data ||
-              interviewPanelResponse.data.length === 0
-            ) {
-              return;
-            }
-
-            const candidatePanels = interviewPanelResponse.data.filter(
-              (panel) =>
-                panel.CandidateIDId?.toString() === rowData.ID?.toString(),
-            );
-
-            if (candidatePanels.length === 0) {
-              return;
-            }
-
-            const userPanels = candidatePanels.filter((panel) =>
-              panel.InterviewPanelStringId?.includes(currentUserKey),
-            );
-
-            if (userPanels.length === 0) {
-              return;
-            }
-            if (rowData.StatusId === StatusId.InterviewScheduled) {
-              const isLevelbasedFiltered = userPanels.filter(
-                (item) => item.InterviewLevel === InterviewLevels.Level1,
-              );
-
-              const isScoreSheetUploaded = isLevelbasedFiltered.some(
-                (panel) => panel.IsScoreSheetUploaded === "Yes",
-              );
-              if (isScoreSheetUploaded) {
-                handleAlert(InterviewLevels.Level1);
-                return;
-              }
-              handleRedirect(
-                {
-                  ...rowData,
-                  InterviewLevel: rowData?.InterviewLevel,
-                  RecruitmentID: rowData?.RecruitmentID,
-                },
-                tab,
-                TabName,
-                ButtonAction.Edit,
-              );
-              return;
-            } else if (
-              rowData.StatusId === StatusId.InterviewScheduledforLevel2
-            ) {
-              const isLevelbasedFiltered = userPanels.filter(
-                (item) => item.InterviewLevel === InterviewLevels.Level2,
-              );
-
-              const isScoreSheetUploaded = isLevelbasedFiltered.some(
-                (panel) => panel.IsScoreSheetUploaded === "Yes",
-              );
-              if (isScoreSheetUploaded) {
-                handleAlert(InterviewLevels.Level2);
-                return;
-              }
-              handleRedirect(
-                {
-                  ...rowData,
-                  InterviewLevel: rowData?.InterviewLevel,
-                  RecruitmentID: rowData?.RecruitmentID,
-                },
-                tab,
-                TabName,
-                ButtonAction.Edit,
-              );
-              return;
-            }
-          } catch (error) {}
-        };
-        return (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "10px", // slightly more space for small screens
-              flexWrap: "wrap", // allow wrapping on smaller screens
-            }}
-          >
-            <img
-              src={require("../../assets/Viewicon.svg")}
-              alt="Stamp Icon"
-              style={{
-                width: "50%", // scales with font size
-                height: "auto",
-                maxWidth: "40px", // limit maximum size
-                cursor: "pointer",
-              }}
-              onClick={checkIsScoreSheetUploaded}
-            />
-          </div>
-        );
-      },
-    },
-  ];
-
-  async function handleRedirectView(
-    rowData: any,
-    tab: string,
-    TabNames: string,
-    ButtonAction: string,
-  ) {
-    switch (TabNames) {
-      case TabName.AssignRecuritmentHR:
-      case TabName.UploadONEMDoc:
-      case TabName.UploadAdvertisement:
-      case TabName.AssignAgencies:
-      case TabName.ReviewJobAdvertisement:
-        props.navigation("/RecurimentProcess/ApprovedVRREdit", {
-          state: {
-            type: rowData?.Type,
-            ID: rowData?.ID,
-            AssignedHRId: rowData?.AssignedHRId,
-            tab,
-            StatusId: rowData?.StatusId,
-            Status: rowData?.Status,
-            TabName: TabNames,
-            ButtonAction,
-          },
-        });
-        break;
-
-      case TabName.MySubmission:
-      case TabName.AdvertExtension:
-        props.navigation("/RecurimentProcess/ApprovedVRRView", {
-          state: {
-            ID: rowData?.ID,
-            AssignedHR: rowData?.AssignedHR,
-            tab,
-            StatusId: rowData?.StatusId,
-            Status: rowData?.Status,
-            TabName: TabNames,
-            ButtonAction,
-          },
-        });
-        break;
-
-      case TabName.ReviewScorecard:
-        props.navigation("/RecurimentProcess/HodScoreCard/CandidateList", {
-          state: {
-            ID: rowData?.ID.toString().trim(),
-            tab,
-            StatusId: rowData?.StatusId,
-            Status: rowData?.Status,
-            TabName: TabNames,
-            ButtonAction,
-            JobCode: rowData?.JobCode?.toString().trim(),
-            JobCodeID: rowData?.JobCodeId,
-            Department: rowData?.DepartmentId,
-            NoOfPosition: rowData?.NumberOfPersonNeeded,
-          },
-        });
-        break;
-
-      case TabName.InterviewQuestion:
-        props.navigation("/RecurimentProcess/InterviewQuesEdit", {
-          state: {
-            ID: rowData?.ID,
-            AssignedHRId: rowData?.AssignedHRId,
-            tab: "tab2",
-            StatusId: rowData?.StatusId,
-            Status: rowData?.Status,
-            JobTitleInEnglish: rowData.JobTitleEnglish,
-            Department: rowData.Department,
-            JobCode: rowData.JobCode,
-            JobCodeID: rowData?.JobCodeId,
-            TabNames,
-            ButtonAction,
-          },
-        });
-        break;
-
-      case TabName.ReviewProfile:
-        props.navigation("/RecurimentProcess/ReviewCandidateList", {
-          state: {
-            ID: rowData?.ID,
-            JobCode: rowData?.JobCode,
-            JobCodeID: rowData?.JobCodeId,
-            tab,
-            StatusId: rowData?.StatusId,
-            Status: rowData?.Status,
-            TabNames,
-            ButtonAction,
-          },
-        });
-        break;
-      case TabName.UploadCV:
-        props.navigation("/RecurimentProcess/UploadCandidateList", {
-          state: {
-            ID: rowData?.ID,
-            JobCode: rowData?.JobCode,
-            JobCodeId: rowData?.JobCodeId,
-            JobTitle: rowData?.JobTitleEnglish,
-            tab,
-            StatusId: rowData?.StatusId,
-            Status: rowData?.Status,
-            TabName: TabNames,
-            ButtonAction,
-          },
-        });
-        break;
-
-      default:
-        // optional: handle unknown TabName
-        console.warn("Unknown TabName:", TabNames);
-        break;
-    }
-  }
-
-  const fetchEvaluationData = async () => {
-    const res = await getVRRDetails.GetcountInEvalution(
-      props.CurrentUserEmailId,
-      props.EmployeeList,
-    );
-
-    if (res.status === ResponeStatus.SUCCESS) {
-      setData(res.data);
-    }
-  };
-
-  const fetchRecruitmentData = async (filters: any[], jobFilter: string[]) => {
-    const res = await getVRRDetails.GetRecruitmentDetails(
-      filters,
-      "and",
-      jobFilter,
-    );
-
-    if (res.status !== 200) return;
-
-    let data = res.data;
-
-    if (currentTab === TabName.UploadCV) {
-      const today = moment().format("YYYY-MM-DD");
-      data = data.filter((item) => {
-        const endDate =
-          item.JobPostingSecondExtensionEndDate ||
-          item.JobPostingFirstExtensionEndDate ||
-          item.JobPostingEndDate;
-        return endDate && moment(endDate).format("YYYY-MM-DD") >= today;
-      });
-    }
-
-    setData(data);
-
-    const jobCodes = Array.from(
-      new Map(
-        data.map((i) => [
-          i.ID,
-          {
-            ID: i.ID,
-            JobCode: i.JobCode,
-            JobTitle: i.JobTitleEnglish,
-            Nationality: i.Nationality,
-            JobCodeId: i.JobCodeId,
-          },
-        ]),
-      ).values(),
-    );
-
-    setJobCodeTitle(jobCodes);
-  };
-
-  const fetchData = async (tab: string) => {
-    setIsLoading(true);
-    try {
-      // const tab = currentTab;
-
-      if (tab === TabName.Evaluation) {
-        await fetchEvaluationData();
-        return;
-      }
-
-      if (
-        props.CurrentRoleID.includes(RoleID.RecruitmentHRLead) &&
-        tab === TabName.AssignRecuritmentHR
-      ) {
-        let res = await getVRRDetails.GetJobTitleInNPEP(
-          getBaseFilters(),
-          "and",
-          props,
-        );
-        setData(res.data);
-        return;
-      }
-
-      const { filters, jobAppliedFilter } = getRecruitmentFiltersByTab(
-        props,
-        tab,
+  const openDateExtensionDialog = useCallback((rowData: any) => {
+    const comparisonDate =
+      rowData.JobPostingSecondExtensionEndDate ||
+      rowData.JobPostingFirstExtensionEndDate ||
+      rowData.JobPostingEndDate;
+    if (comparisonDate && moment().isBefore(moment(comparisonDate))) {
+      showAlert(
+        JobAdvertAlertMsg(moment(comparisonDate).format("DD/MM/YYYY")),
+        HRMSAlertOptions.Error,
       );
-      await fetchRecruitmentData(filters, jobAppliedFilter);
-    } catch (err) {
-      console.error("fetchData error", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (props.stateValue) {
-      setCurrentTab(props.stateValue?.TabName);
     } else {
-      if (props?.TabDetails?.TabName) {
-        setCurrentTab(props.TabDetails.TabName);
-      }
+      setDialogRowData(rowData);
+      setDateDialogOpen(true);
     }
-    void fetchData(props.TabDetails.TabName);
-  }, [props.TabDetails.TabName]);
+  }, []);
 
-  const handleRefresh = (tab: string, tabValue: string) => {
-    void fetchData(tab);
-    props.navigation("/RecurimentProcess", {
-      state: {
-        TabName: tab,
-        tab: tabValue,
-      },
-    });
-  };
+  const handleSelectionChange = useCallback(
+    (selectedItems: any[]) => {
+      const checkedItems = selectedItems.filter((item) => item.Checked);
+      const selectedJobCodes = checkedItems.map((item) => ({
+        ID: item.ID,
+        JobCode: item.JobCode,
+        JobCodeId: item.JobCodeId,
+        Nationality: item.Nationality,
+      }));
+      setSelectedRows(selectedJobCodes);
+      const firstNationality = checkedItems[0]?.Nationality ?? null;
+      fetchAgencyOptions(firstNationality);
+    },
+    [fetchAgencyOptions, setSelectedRows],
+  );
 
-  const onPageChange = (event: any) => {
-    // setFirst(event.first);
-    setRows(event.rows);
-  };
+  const handleAssignClick = useCallback(() => {
+    if (selectedRows.length === 0) {
+      return showAlert(
+        RecuritmentHRMsg.RecruitmentErrorMsg,
+        HRMSAlertOptions.Error,
+      );
+    }
+    const firstNationality = selectedRows[0].Nationality;
+    if (!selectedRows.every((row) => row.Nationality === firstNationality)) {
+      return showAlert(
+        RecuritmentHRMsg.NationalityMsgError,
+        HRMSAlertOptions.Error,
+      );
+    }
+    setAssignDialogOpen(true);
+  }, [selectedRows]);
 
-  const handleCancel = () => {
-    setIsLoading(false);
-    let CancelAlert = {
-      Message: RecuritmentHRMsg.RecuritmentHRMsgCancel,
-      Type: HRMSAlertOptions.Confirmation,
-      visible: true,
-      ButtonAction: async (userClickedOK: boolean) => {
-        if (userClickedOK) {
-          setAssignHR(false);
-          setAssignHRData((prevState) => ({
-            ...prevState,
-            AssignRecruitmentHR: { key: 0, text: "" },
-            AssignRecruitmentAgencies: [],
-            Comments: "",
-          }));
-          setData((prevData) =>
-            prevData.map((item) => ({
-              ...item,
-              Checked: false,
-            })),
-          );
+  const columns = useRecruitmentColumns(
+    props.TabDetails,
+    handleRedirectView,
+    openDateExtensionDialog,
+  );
 
-          setSelectedJobCodes([]);
-
-          setValidationErrors((prevErrors) => ({
-            ...prevErrors,
-            AssignRecruitmentHR: false,
-            AssignRecruitmentAgencies: false,
-            Comments: false,
-          }));
-          setAlertPopupOpen(false);
-        } else {
-          setAlertPopupOpen(false);
-        }
-      },
+  const renderTable = () => {
+    const { TabName: tabName } = props.TabDetails;
+    const commonProps = {
+      data,
+      columns,
+      rows,
+      onPageChange: (e: any) => setRows(e.rows),
+      handleRefresh: refreshData,
+      MasterData: props,
     };
 
-    setAlertPopupOpen(true);
-    setalertProps(CancelAlert);
-    setIsLoading(false);
-  };
-
-  const handleAutoComplete = async (value: AutoCompleteItem | null) => {
-    const defaultValue = { key: 0, text: "" };
-
-    if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-      setAssignHRData((prevState) => ({
-        ...prevState,
-        AssignRecruitmentAgencies: value ? [value] : [defaultValue],
-      }));
-      setValidationErrors((prevState) => ({
-        ...prevState,
-        AssignRecruitmentAgencies: false,
-      }));
-    } else {
-      setAssignHRData((prevState) => ({
-        ...prevState,
-        AssignRecruitmentHR: value || defaultValue,
-      }));
-      setValidationErrors((prevState) => ({
-        ...prevState,
-        AssignRecruitmentHR: false,
-      }));
-    }
-  };
-
-  const handleAgencyChange = (value: AutoCompleteItem[]) => {
-    if (value.length > 0) {
-      setAssignHRData((prevState) => ({
-        ...prevState,
-        AssignRecruitmentAgencies: value,
-      }));
-      setValidationErrors((prevState) => ({
-        ...prevState,
-        AssignRecruitmentAgencies: false,
-      }));
-    } else {
-      setAssignHRData((prevState) => ({
-        ...prevState,
-        AssignRecruitmentAgencies: [],
-      }));
-      setValidationErrors((prevState) => ({
-        ...prevState,
-        AssignRecruitmentAgencies: true,
-      }));
-    }
-  };
-
-  const handleCheckbox = async (item: any[]) => {
-    const selectedJobCodes = item
-      .filter((currentItem) => currentItem.Checked)
-      .map((currentItem) => {
-        const JobTitle = props.JobInEnglishList.find(
-          (job: { JobCode: string; text: string }) =>
-            job.JobCode === currentItem.JobCode,
-        );
-
-        return {
-          ID: currentItem.ID,
-          JobCode: currentItem.JobCode,
-          JobCodeId: currentItem.JobCodeId,
-          JobTitle: JobTitle ? JobTitle.text : "",
-          Nationality: currentItem.Nationality,
-        };
-      });
-    setSelectedJobCodes(selectedJobCodes);
-    await fetchHRAgencyDetails(selectedJobCodes[0]?.Nationality);
-  };
-
-  const onSelectAllChange = async (item: any[]) => {
-    const selectedJobCodes = item
-      .filter((item) => item.Checked)
-      .map((item) => {
-        const JobTitle = props.JobInEnglishList.find(
-          (job: { JobCode: string; text: string }) =>
-            job.JobCode === item.JobCode,
-        );
-
-        return {
-          ID: item.ID,
-          JobCode: item.JobCode,
-          JobCodeId: item.JobCodeId,
-          JobTitle: JobTitle ? JobTitle.text : "",
-          Nationality: item.Nationality,
-        };
-      });
-    setSelectedJobCodes(selectedJobCodes);
-    await fetchHRAgencyDetails(selectedJobCodes[0]?.Nationality);
-  };
-
-  const handleInputChangeTextArea = (value: string) => {
-    setAssignHRData((prevState) => ({
-      ...prevState,
-      Comments: value,
-    }));
-    setValidationErrors((prevState) => ({
-      ...prevState,
-      Comments: false,
-    }));
-  };
-
-  //AssignButton function for AssignHR
-  const AssignBtn_fn = async () => {
-    const isItemSelected = selectedJobCodes.length > 0;
-    const allSameNationality = selectedJobCodes.every(
-      (item: any) => item.Nationality === selectedJobCodes[0]?.Nationality,
-    );
-    // console.log(allSameNationality, "allSameNationality");
-    if (allSameNationality) {
-    }
-    if (isItemSelected && allSameNationality) {
-      let IDs = selectedJobCodes.map((item) => item.ID);
-      let filterConditions = [];
-      let Conditions = "and";
-      filterConditions.push({
-        FilterKey: "RecruitmentID",
-        Operator: "in",
-        FilterValue: IDs,
-      });
-      await getVRRDetails.GetAssignAgentDetail(filterConditions, Conditions);
-      // console.log(AssignAgencies, "Agencies.");
-
-      setAssignHR(true);
-    } else {
-      let CancelAlert = {
-        // Message: RecuritmentHRMsg.RecruitmentErrorMsg,
-        Message: props.CurrentRoleID.includes(RoleID.RecruitmentHR)
-          ? RecuritmentHRMsg.AgenciesErrorMsg
-          : !allSameNationality
-            ? RecuritmentHRMsg.NationalityMsgError
-            : RecuritmentHRMsg.RecruitmentErrorMsg,
-        Type: HRMSAlertOptions.Error,
-        visible: true,
-        ButtonAction: async (userClickedOK: boolean) => {
-          if (userClickedOK) {
-            setAlertPopupOpen(false);
-          }
-        },
-      };
-
-      setAlertPopupOpen(true);
-      setalertProps(CancelAlert);
-      setIsLoading(false);
-    }
-  };
-
-  const Validation = (): boolean => {
-    let errors = {
-      AssignRecruitmentHR: false,
-      Comments: false,
-      AssignRecruitmentAgencies: false,
-    };
-    if (props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)) {
-      errors.AssignRecruitmentHR = !IsValid(
-        AssignHRData.AssignRecruitmentHR.text,
-      );
-      errors.Comments = !IsValid(AssignHRData.Comments);
-    } else if (props.CurrentRoleID.includes(RoleID.RecruitmentHR)) {
-      errors.AssignRecruitmentAgencies = !IsValid(
-        AssignHRData.AssignRecruitmentAgencies[0]?.text,
-      );
-      errors.Comments = !IsValid(AssignHRData.Comments);
-    }
-
-    setValidationErrors((prevState) => ({
-      ...prevState,
-      ...errors,
-    }));
-
-    return Object.values(errors).some((error) => error);
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const IsVaild = !Validation();
-      if (IsVaild) {
-        setAssignHR(false);
-        setIsLoading(true);
-        if (selectedJobCodes.length > 0) {
-          let ResponseStatusCode;
-          for (const selectedJob of selectedJobCodes) {
-            const correspondingJob = data.find(
-              (item: any) => item.ID === selectedJob.ID,
-            );
-            if (correspondingJob) {
-              let UserIDbyEmail = await CommonServices.getUserIDByEmail(
-                AssignHRData.AssignRecruitmentHR.key,
-              );
-
-              const RecruitmentValue: PostRecuritmentData = {
-                Data: {
-                  BusinessUnitCodeId: correspondingJob.BusinessUnitCodeId,
-                  Nationality: correspondingJob.Nationality,
-                  EmploymentCategory: correspondingJob.EmploymentCategory,
-                  DepartmentId: correspondingJob.DepartmentId,
-                  SubDepartmentId: correspondingJob.SubDepartmentId,
-                  SectionId: correspondingJob.SectionId,
-                  DepartmentCodeId: correspondingJob.DepartmentCodeId,
-                  NumberOfPersonNeeded: Number(
-                    correspondingJob.NumberOfPersonNeeded,
-                  ),
-                  EnterNumberOfMonths:
-                    correspondingJob.EnterNumberOfMonths ?? "0",
-                  TypeOfContract: correspondingJob.TypeOfContract,
-                  DateRequried: correspondingJob?.DateRequried ?? null,
-                  StatusId: StatusId.PendingwithHRLeadtoAssignRecruitmentHR,
-                  ActionId: WorkflowAction.Approved,
-                  JobCodeId: correspondingJob.JobCodeId,
-                  AreaofWork: correspondingJob.AreaofWork,
-                  AssignedHR: UserIDbyEmail.data,
-                  RecruitmentHRLead: props.CurrentUserEmailId,
-                  DataFrom: correspondingJob.Type ?? "",
-                  Location: correspondingJob.Location ?? "",
-                },
-                PositionData: {
-                  PatersonGradeId: correspondingJob.PatersonGradeId ?? 0,
-                  DRCGradeId: correspondingJob.DRCGradeId ?? 0,
-                  JobTitleEnglishId: correspondingJob.JobTitleEnglishId ?? 0,
-                  JobTitleFrenchId: correspondingJob.JobTitleFrenchId ?? 0,
-                },
-                CommentsList: {
-                  RoleId:
-                    currentTab === TabName.AssignRecuritmentHR
-                      ? RoleID.RecruitmentHRLead
-                      : RoleID.RecruitmentHR,
-                  RecruitmentIDId: 0,
-                  Comments: AssignHRData.Comments,
-                },
-                updatePreList: {
-                  ID: selectedJob.ID ?? 0,
-                  ActionId: WorkflowAction.Approved,
-                  ItemCreated: "Yes",
-                  IsDataSyncToRecruitment: "No",
-                },
-              };
-
-              const response =
-                await getVRRDetails.InsertRecruitmentDpt(RecruitmentValue);
-              ResponseStatusCode = response.status;
-              if (response.status === ResponeStatus.SUCCESS) {
-                setAssignHRData((prevState) => ({
-                  ...prevState,
-                  AssignRecruitmentHR: { key: 0, text: "" },
-                  Comments: "",
-                }));
-                setData((prevData) =>
-                  prevData.map((item) => ({
-                    ...item,
-                    Checked: false,
-                  })),
-                );
-                setSelectedJobCodes([]);
-
-                setAssignHRData((prevState) => ({
-                  ...prevState,
-                  AssignRecruitmentAgencies: [],
-                  Comments: "",
-                }));
-                setData((prevData) =>
-                  prevData.map((item) => ({
-                    ...item,
-                    Checked: false,
-                  })),
-                );
-                setSelectedJobCodes([]);
-              } else {
-                let APIErrorAlert = {
-                  Message: RecuritmentHRMsg.APIErrorMsg,
-                  Type: HRMSAlertOptions.Error,
-                  visible: true,
-                  ButtonAction: async (userClickedOK: boolean) => {
-                    if (userClickedOK) {
-                      setAlertPopupOpen(false);
-                      setIsLoading(false);
-                      setAssignHRData((prevState) => ({
-                        ...prevState,
-                        AssignRecruitmentAgencies: [],
-                        Comments: "",
-                      }));
-                      setData((prevData) =>
-                        prevData.map((item) => ({
-                          ...item,
-                          Checked: false,
-                        })),
-                      );
-                      setSelectedJobCodes([]);
-                    }
-                  },
-                };
-                setAlertPopupOpen(true);
-                setIsLoading(true);
-                setalertProps(APIErrorAlert);
-              }
-            }
-          }
-          if (ResponseStatusCode === ResponeStatus.SUCCESS) {
-            let SuccessAlert = {
-              Message:
-                selectedJobCodes.length === 1
-                  ? RecuritmentHRMsg.SingleHRSuccessMsg
-                  : RecuritmentHRMsg.HRSuccess,
-              Type: HRMSAlertOptions.Success,
-              visible: true,
-              ButtonAction: async (userClickedOK: boolean) => {
-                if (userClickedOK) {
-                  props.navigation("/RecurimentProcess", {
-                    state: {
-                      TabName: props.TabDetails.TabName,
-                      tab: "tab1",
-                    },
-                  });
-                  setAlertPopupOpen(false);
-                  setIsLoading(false);
-                  await fetchData(props.TabDetails.TabName);
-                }
-              },
-            };
-            setAlertPopupOpen(true);
-            setIsLoading(true);
-            setalertProps(SuccessAlert);
-          }
-        }
-      }
-    } catch (error) {
-      console.log("failed Insert Recruitment Data ", error);
-    } finally {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-    }
-  };
-
-  const handleAgencySubmit = async () => {
-    try {
-      const IsVaild = !Validation();
-      if (IsVaild) {
-        setAssignHR(false);
-        setIsLoading(true);
-        if (selectedJobCodes.length > 0) {
-          let ResponseStatusCode;
-          for (const selectedJob of selectedJobCodes) {
-            const correspondingJob = data.find(
-              (item) => item.ID === selectedJob.ID,
-            );
-            const HRMSExternalAgents = await CommonServices.GetMasterData(
-              ListNames.HRMSExternalAgents,
-            );
-            let matchedAgents = HRMSExternalAgents.data.filter(
-              (data: { Id: number }) =>
-                AssignHRData.AssignRecruitmentAgencies.some(
-                  (item) => item.key === data.Id,
-                ),
-            );
-
-            let agentDetails: jobsXAgents[] = matchedAgents.map((item: any) => {
-              AssignHRData.AssignRecruitmentAgencies.filter(
-                (data) => data.key === item.Id,
-              );
-              return {
-                agentId: item.AgentCode,
-                // isSuspended: 1,
-              };
-            });
-            let JobCodeFilter = [
-              {
-                FilterKey: "JobCodeId",
-                Operator: "eq",
-                FilterValue: selectedJob?.JobCodeId,
-              },
-              { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
-            ];
-            let JobUniqueValue = await getVRRDetails.GetJobUniqueDataValue(
-              JobCodeFilter,
-              "and",
-            );
-            let JobUniquedata = JobUniqueValue.data[0]?.JobUniqueKey || "";
-            const AgentDetails: profileXagent = {
-              jobCode: JobUniquedata,
-              jobsXAgents: agentDetails,
-            };
-            await GetPortalJobsService.UpsertAgenciesJobs(AgentDetails)
-              .then(async (res) => {
-                if (res.status === ResponeStatus.SUCCESS) {
-                  ResponseStatusCode = res.status;
-                  if (correspondingJob) {
-                    const recruitmentID: number = correspondingJob.ID;
-
-                    const agencyIDs =
-                      AssignHRData.AssignRecruitmentAgencies.map(
-                        (agency) => agency.key,
-                      );
-
-                    if (agencyIDs.length === 0) {
-                      return;
-                    }
-                    const agencyData = agencyIDs.map((agencyID) => ({
-                      key: agencyID,
-                      text:
-                        AssignHRData.AssignRecruitmentAgencies.find(
-                          (agency) => agency.key === agencyID,
-                        )?.text || AssignHRData.AssignRecruitmentHR.text,
-                      RecruitmentID: recruitmentID,
-                    }));
-
-                    const response =
-                      await getVRRDetails.InsertExternalAgencyDetails(
-                        agencyData,
-                        recruitmentID,
-                      );
-
-                    if (response.status === ResponeStatus.SUCCESS) {
-                      const commentsData: InsertComments = {
-                        RoleId:
-                          currentTab === TabName.AssignRecuritmentHR
-                            ? RoleID.RecruitmentHRLead
-                            : RoleID.RecruitmentHR,
-                        RecruitmentIDId: recruitmentID,
-                        Comments: AssignHRData.Comments,
-                      };
-
-                      await getVRRDetails.InsertCommentsList(commentsData);
-                      ResponseStatusCode = response.status;
-                      try {
-                        // await SPServices.SPUpdateItem({
-                        //   Listname: ListNames.HRMSRecruitmentDptDetails,
-                        //   RequestJSON: { Action: WorkflowAction.Approved },
-                        //   ID: recruitmentID,
-                        // });
-                      } catch (updateError) {
-                        console.error(updateError);
-                      }
-
-                      setAssignHRData((prevState) => ({
-                        ...prevState,
-                        AssignRecruitmentAgencies: [],
-                        Comments: "",
-                      }));
-                      setData((prevData) =>
-                        prevData.map((item) => ({
-                          ...item,
-                          Checked: false,
-                        })),
-                      );
-                      setSelectedJobCodes([]);
-                    }
-                  } else {
-                    console.log(
-                      `No corresponding job found for RecruitmentID/VRRId: ${selectedJob.ID}`,
-                    );
-                  }
-                } else {
-                  let ApiErrorMsg = {
-                    Message: RecuritmentHRMsg.APIErrorMsg,
-                    Type: HRMSAlertOptions.Error,
-                    visible: true,
-                    ButtonAction: async (userClickedOK: boolean) => {
-                      if (userClickedOK) {
-                        setAlertPopupOpen(false);
-                        setIsLoading(false);
-                        setAssignHRData((prevState) => ({
-                          ...prevState,
-                          AssignRecruitmentAgencies: [],
-                          Comments: "",
-                        }));
-                        setData((prevData) =>
-                          prevData.map((item) => ({
-                            ...item,
-                            Checked: false,
-                          })),
-                        );
-                        setSelectedJobCodes([]);
-                      }
-                    },
-                  };
-                  setIsLoading(true);
-                  setAlertPopupOpen(true);
-                  setalertProps(ApiErrorMsg);
-                }
-              })
-              .catch((error) => {
-                console.log("Candidate details doesn't fetch the data", error);
-              });
-          }
-          if (ResponseStatusCode === ResponeStatus.SUCCESS) {
-            let CancelAlert = {
-              Message:
-                selectedJobCodes.length === 1
-                  ? RecuritmentHRMsg.SingleAgencyMsg
-                  : RecuritmentHRMsg.AgencySucess,
-              Type: HRMSAlertOptions.Success,
-              visible: true,
-              ButtonAction: async (userClickedOK: boolean) => {
-                if (userClickedOK) {
-                  setAlertPopupOpen(false);
-                  setIsLoading(false);
-                  // await fetchData();
-                }
-              },
-            };
-            setIsLoading(true);
-            setAlertPopupOpen(true);
-            setalertProps(CancelAlert);
-          } else {
-          }
-        }
-      }
-    } catch (error) {
-      console.log("failed Insert Agency Data ", error);
-    } finally {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-    }
-  };
-
-  const renderTable = (
-    TabNames: string,
-    TabValue: string,
-    StatusData: StatusDetails[],
-  ) => {
-    let Action: any;
-    // let StatusID: any;
-    if (StatusData) {
-      Action = StatusData.filter((item) => item.Action);
-      // StatusID = StatusData.filter((item) => item.StatusId);
-    }
-
-    switch (TabNames) {
+    switch (tabName) {
       case TabName.AssignRecuritmentHR:
       case TabName.AssignAgencies:
         return (
           <CheckboxDataTable
-            data={data}
-            columns={columnConfig(
-              TabValue,
-              Number(Action[0]?.Action?.[0]),
-              TabNames,
-            )}
-            rows={rows}
-            onPageChange={(event) => onPageChange(event)}
-            handleRefresh={() => handleRefresh(TabNames, TabValue)}
-            handleSelectedRow={handleCheckbox}
-            onSelectAllRow={onSelectAllChange}
-            handleAssignBtn={AssignBtn_fn}
-            AssignBtnValidation={false}
-            MasterData={props || {}}
+            {...commonProps}
+            handleSelectedRow={handleSelectionChange}
+            onSelectAllRow={handleSelectionChange}
+            handleAssignBtn={handleAssignClick}
             assignLabel={
               props.CurrentRoleID.includes(RoleID.RecruitmentHR)
                 ? "Assign Agencies"
                 : "Assign HR"
             }
-          />
-        );
-
-      case TabName.UploadONEMDoc:
-      case TabName.MySubmission:
-      case TabName.UploadAdvertisement:
-      case TabName.ReviewJobAdvertisement:
-      case TabName.ReviewScorecard:
-      case TabName.InterviewQuestion:
-      case TabName.ReviewProfile:
-      case TabName.AdvertExtension:
-      case TabName.UploadCV:
-        return (
-          <SearchableDataTable
-            data={data}
-            columns={columnConfig(TabValue, Action[0]?.ActionId?.[0], TabNames)}
-            rows={rows}
-            onPageChange={(event) => onPageChange(event)}
-            handleRefresh={() => handleRefresh(TabNames, TabValue)}
-            MasterData={props}
+            AssignBtnValidation={false}
           />
         );
       case TabName.Evaluation:
-        return (
-          <InterviewPanelDataTable
-            data={data}
-            columns={CandidateConfig(
-              TabValue,
-              Number(Action[0]?.Action?.[0]),
-              TabNames,
-            )}
-            rows={rows}
-            onPageChange={onPageChange}
-            handleRefresh={() => handleRefresh(TabNames, TabValue)}
-          />
-        );
+        return <InterviewPanelDataTable {...commonProps} />;
       default:
-        return null;
+        return <SearchableDataTable {...commonProps} />;
     }
-  };
-
-  const AlertpopupSuccess = (msg: string) => {
-    setDatePopup(false);
-    setIsLoading(true);
-    if (msg === HRMSAlertOptions.Success) {
-      let SuccessAlert = {
-        Message: RecuritmentHRMsg.AdvertExtendsionSuccessMsg,
-        Type: HRMSAlertOptions.Success,
-        visible: true,
-        ButtonAction: async (userClickedOK: boolean) => {
-          if (userClickedOK) {
-            setAlertPopupOpen(false);
-          }
-        },
-      };
-
-      setAlertPopupOpen(true);
-      setalertProps(SuccessAlert);
-      setIsLoading(false);
-    } else {
-      let APIError = {
-        Message: RecuritmentHRMsg.APIErrorMsg,
-        Type: HRMSAlertOptions.Error,
-        visible: true,
-        ButtonAction: async (userClickedOK: boolean) => {
-          if (userClickedOK) {
-            // props.navigation("/RecurimentProcess");
-            setAlertPopupOpen(false);
-          }
-        },
-      };
-
-      setAlertPopupOpen(true);
-      setalertProps(APIError);
-      setIsLoading(false);
-    }
-    setIsLoading(false);
   };
 
   return (
     <>
-      <CustomLoader isLoading={isLoading}>
-        <React.Fragment>
-          {renderTable(
-            props?.TabDetails?.TabName,
-            props?.TabDetails?.Value,
-            props?.TabDetails?.StatusDetails,
-          )}
-        </React.Fragment>
-      </CustomLoader>
-      {AlertPopupOpen ? (
-        <CustomAlert {...alertProps} onClose={() => setAlertPopupOpen(false)} />
-      ) : null}
-      {DatePopup && (
-        <>
-          <CustomDialogbox
-            Style={{
-              width: "40vw",
-              height: "28vw",
-              padding: "0px",
-              overflowX: "hidden",
-            }}
-            visible={DatePopup}
-            header={
-              <div
-                style={{
-                  textAlign: "center",
-                  width: "100%",
-                }}
-              >
-                <h2
-                  style={{
-                    color: "white",
-                    fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
-                    -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                    // textDecoration: "underline",
-                    // textUnderlineOffset: "6px",
-                  }}
-                >
-                  {"Advertisement Extension"}
-                </h2>
-              </div>
-            }
-            children={
-              <DateExtension
-                RecuritmentData={selectedrowdata[0]}
-                onClose={() => setDatePopup(false)}
-                ModelDropDown={props}
-                AlertpopupSuccess={(msg) => AlertpopupSuccess(msg)}
-                setIsLoading={setIsLoading}
-              />
-            }
-            onClose={() => setDatePopup(false)}
-          />
-        </>
-      )}
-      {AssignHR ? (
-        <>
-          <div>
-            <CustomDialogbox
-              Style={{
-                width: "45vw",
-                height: "35vw",
-                padding: "0px",
-                overflowX: "hidden",
-              }}
-              visible={AssignHR}
-              children={
-                <AssignRecuritmentHR
-                  jobCodes={allJobData}
-                  selectedJobCodes={selectedJobCodes}
-                  onSelectAllChange={() => onSelectAllChange}
-                  onRowChange={() => handleCheckbox}
-                  CurrentRole={props.CurrentRoleID}
-                  onClose={handleCancel}
-                  AssignedHRId={props.stateValue?.AssignedHRId}
-                  validationErrors={validationErrors}
-                  ValueData={AssignHRData}
-                  AssignRecruitmentHROption={AssignRecruitmentHROption}
-                  AssignRecruitmentAgenciesOption={
-                    AssignRecruitmentAgenciesOption
-                  }
-                  handleAutoComplete={(item) => handleAutoComplete(item)}
-                  handleAgencyChange={(item: AutoCompleteItem[]) =>
-                    handleAgencyChange(item)
-                  }
-                  handleInputChangeTextArea={(item: string) =>
-                    handleInputChangeTextArea(item)
-                  }
-                  AssignHRSubmit={
-                    props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)
-                      ? () => handleSubmit()
-                      : () => handleAgencySubmit()
-                  }
-                />
-              }
-              onClose={() => setAssignHR(false)}
-              header={
-                <div
-                  style={{
-                    textAlign: "center",
-                    width: "100%",
-                  }}
-                >
-                  <h2
-                    style={{
-                      color: "white",
-                      fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
-                    -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
-                      // textDecoration: "underline",
-                      // textUnderlineOffset: "6px",
-                    }}
-                  >
-                    {props.CurrentRoleID.includes(RoleID.RecruitmentHR)
-                      ? "Assign Agencies"
-                      : "Assign Recruitment HR"}
-                  </h2>
-                </div>
-              }
-              footer={
-                <div
-                  className="ms-Grid-row"
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    padding: "10px 0",
-                    gap: "33px",
-                  }}
-                >
-                  <ReuseButton
-                    label="Cancel"
-                    onClick={() => handleCancel()}
-                    Style={{
-                      backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                      color: "white",
-                      width: "50%",
-                    }}
-                  />
+      <CustomLoader isLoading={isLoading}>{renderTable()}</CustomLoader>
 
-                  <ReuseButton
-                    label="Assign"
-                    onClick={async () => {
-                      if (
-                        props.CurrentRoleID.includes(RoleID.RecruitmentHRLead)
-                      ) {
-                        await handleSubmit();
-                      } else {
-                        await handleAgencySubmit();
-                      }
-                    }}
-                    Style={{
-                      backgroundColor: ColorCode.ButtonColorCode.ButtonColor,
-                      color: "white",
-                      width: "50%",
-                    }}
-                  />
-                </div>
-              }
-            />
-          </div>
-        </>
-      ) : (
-        <></>
+      {alertInfo.open && (
+        <CustomAlert
+          Message={alertInfo.message}
+          Type={alertInfo.type}
+          ButtonAction={alertInfo.buttonAction || closeAlert}
+          onClose={closeAlert}
+          visible={false}
+        />
+      )}
+
+      {isDateDialogOpen && (
+        <CustomDialogbox
+          visible={isDateDialogOpen}
+          onClose={() => setDateDialogOpen(false)}
+          header="Advertisement Extension"
+        >
+          <DateExtension
+            RecuritmentData={dialogRowData}
+            onClose={() => setDateDialogOpen(false)}
+            ModelDropDown={props}
+            AlertpopupSuccess={(msgType: string) =>
+              showAlert(
+                msgType === "Success"
+                  ? RecuritmentHRMsg.AdvertExtendsionSuccessMsg
+                  : RecuritmentHRMsg.APIErrorMsg,
+                msgType === "Success"
+                  ? HRMSAlertOptions.Success
+                  : HRMSAlertOptions.Error,
+              )
+            }
+            setIsLoading={() => {}}
+          />
+        </CustomDialogbox>
+      )}
+
+      {isAssignDialogOpen && (
+        <CustomDialogbox
+          visible={isAssignDialogOpen}
+          onClose={() => !isSubmitting && setAssignDialogOpen(false)}
+          header={
+            props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+              ? "Assign Agencies"
+              : "Assign Recruitment HR"
+          }
+        >
+          <AssignRecuritmentHR
+            selectedJobCodes={selectedRows}
+            currentRole={props.CurrentRoleID}
+            assignRecruitmentHROption={hrOptions}
+            assignRecruitmentAgenciesOption={agencyOptions}
+            onClose={() => setAssignDialogOpen(false)}
+            onSubmit={handleAssignSubmit}
+            isLoading={isSubmitting || areOptionsLoading}
+          />
+        </CustomDialogbox>
       )}
     </>
   );
 };
+
 export default RecruitmentList;

@@ -24,7 +24,7 @@ export type ICommonService = {
   getUserIDByEmail(
     userId: number
   ): Promise<ApiResponse<any | null>>;
-  GetMasterData(ListName: string): Promise<ApiResponse<any[]>>;
+  GetMasterData(ListName: string, Filter?: any[]): Promise<ApiResponse<any[]>>;
   GetGradeLevel(PatersonGrade: string): Promise<ApiResponse<any | null>>;
   GetAttachmentLink(
     PositionCode: string,

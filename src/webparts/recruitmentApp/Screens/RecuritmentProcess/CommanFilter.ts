@@ -225,3 +225,32 @@ export const getScoreCardCount = async (
 
   return totalCount;
 };
+
+export const calculateValidTo = (startDate: Date, daysToAdd: number): Date => {
+  let validToDate = new Date(startDate);
+  let addedDays = 0;
+
+  while (addedDays < daysToAdd) {
+    validToDate.setDate(validToDate.getDate() + 1);
+
+    if (validToDate.getDay() === 0) {
+      continue;
+    }
+
+    addedDays++;
+  }
+
+  if (validToDate.getDay() === 0) {
+    validToDate.setDate(validToDate.getDate() + 1);
+  }
+
+  return validToDate;
+};
+
+export const mapToAdvOption = (items: any[]): any[] => {
+  return (items || []).map(item => ({
+    key: item.key ?? item.id ?? 0,
+    text: item.text ?? item.label ?? item.value ?? ""
+  }));
+};
+

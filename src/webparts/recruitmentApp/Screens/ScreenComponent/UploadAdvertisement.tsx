@@ -6,7 +6,6 @@ import {
   TechnicalSkills,
 } from "../../Models/RecuritmentVRR";
 import { IDocFiles } from "../../Services/SPService/ISPServicesProps";
-import { formValidationEdit } from "../RecuritmentProcess/ApprovedVRREdit";
 import RichTextEditor from "../../components/CustomRichTextEditor";
 import CustomAutoComplete from "../../components/CustomAutoComplete";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
@@ -35,6 +34,7 @@ import CustomDialogbox from "../../components/CustomDialogbox";
 import IsValid from "../../components/Validation";
 import { MasterData } from "../../Models/Master";
 import { labelNames } from "../../utilities/LabelName";
+import { ValidationErrorsType } from "../RecuritmentProcess/EditHooks/useVrrFormState";
 
 type ValidationErrors = {
   masterdata_En: boolean;
@@ -47,7 +47,7 @@ type masterdata = {
 };
 interface AssignPositionDialogProps {
   advDetails: AdvDetails;
-  validationErrors: formValidationEdit;
+  validationErrors: ValidationErrorsType;
   handleFileAttachment: (type: string, item: IDocFiles[]) => void;
   handleRichTextEditor: (item: string, type: string) => void;
   handleAutoComplete: (item: AutoCompleteItem | null, type: string) => void;
@@ -58,7 +58,7 @@ interface AssignPositionDialogProps {
     item: AutoCompleteItem | null,
     key: string,
     index: number,
-    type: string
+    type: string,
   ) => void;
   handleAddRow: (type: string, index: number) => void;
   handleDeleteRow: (index: number, type: string) => void;
@@ -191,13 +191,13 @@ export const UploadAdvertisement = ({
         Value === RoleDescriptionData.Qualification
           ? ListNames.HRMSQualification
           : Value === RoleDescriptionData.RoleSpeKnowledge
-          ? ListNames.HRMSRoleSpecificKnowlegeMaster
-          : Value === RoleDescriptionData.TechnicalSkill
-          ? ListNames.HRMSTechnicalSkills
-          : "";
+            ? ListNames.HRMSRoleSpecificKnowlegeMaster
+            : Value === RoleDescriptionData.TechnicalSkill
+              ? ListNames.HRMSTechnicalSkills
+              : "";
       category = {
         id: Number(
-          CategoryID[masterFieldMap[Value]?.label as keyof typeof CategoryID]
+          CategoryID[masterFieldMap[Value]?.label as keyof typeof CategoryID],
         ),
         name: Value,
       };
@@ -258,7 +258,7 @@ export const UploadAdvertisement = ({
             setalertProps(APIError);
             setIsLoading(false);
           }
-        }
+        },
       );
 
       setaddmasterBtn(false);
@@ -507,7 +507,7 @@ export const UploadAdvertisement = ({
                         label="Add"
                         onClick={async () => {
                           void InsertMasterData(
-                            RoleDescriptionData.Qualification
+                            RoleDescriptionData.Qualification,
                           );
                         }}
                         spacing={4}
@@ -568,7 +568,7 @@ export const UploadAdvertisement = ({
                           item,
                           "RoleSpeKnowledge",
                           index,
-                          "RoleSpeKnowledgeValue"
+                          "RoleSpeKnowledgeValue",
                         )
                       }
                       error={
@@ -595,7 +595,7 @@ export const UploadAdvertisement = ({
                           item,
                           "RequiredLevel",
                           index,
-                          "RoleSpeKnowledgeValue"
+                          "RoleSpeKnowledgeValue",
                         )
                       }
                       error={
@@ -621,7 +621,7 @@ export const UploadAdvertisement = ({
                               onClick={() =>
                                 handleDeleteRow(
                                   index,
-                                  RoleDescription.RoleSpeKnowledgeValue
+                                  RoleDescription.RoleSpeKnowledgeValue,
                                 )
                               }
                               iconName="Delete"
@@ -632,7 +632,7 @@ export const UploadAdvertisement = ({
                               onClick={() =>
                                 handleAddRow(
                                   RoleDescription.RoleSpeKnowledgeValue,
-                                  index
+                                  index,
                                 )
                               }
                               iconName="Add"
@@ -644,7 +644,7 @@ export const UploadAdvertisement = ({
                             onClick={() =>
                               handleAddRow(
                                 RoleDescription.RoleSpeKnowledgeValue,
-                                index
+                                index,
                               )
                             }
                             iconName="Add"
@@ -668,7 +668,7 @@ export const UploadAdvertisement = ({
                     onClick={() =>
                       AddMasterData_fn(
                         RoleDescriptionData.RoleSpeKnowledge,
-                        "Role Knowledge"
+                        "Role Knowledge",
                       )
                     }
                     disabled={!IsEnglish}
@@ -700,7 +700,7 @@ export const UploadAdvertisement = ({
                           item,
                           "TechnicalSkills",
                           index,
-                          "TechnicalSkillValue"
+                          "TechnicalSkillValue",
                         )
                       }
                       error={
@@ -729,7 +729,7 @@ export const UploadAdvertisement = ({
                           item,
                           "LevelProficiency",
                           index,
-                          "TechnicalSkillValue"
+                          "TechnicalSkillValue",
                         )
                       }
                       error={
@@ -755,7 +755,7 @@ export const UploadAdvertisement = ({
                               onClick={() =>
                                 handleDeleteRow(
                                   index,
-                                  RoleDescription.TechnicalSkillValue
+                                  RoleDescription.TechnicalSkillValue,
                                 )
                               }
                               iconName="Delete"
@@ -770,7 +770,7 @@ export const UploadAdvertisement = ({
                               onClick={() =>
                                 handleAddRow(
                                   RoleDescription.TechnicalSkillValue,
-                                  index
+                                  index,
                                 )
                               }
                               iconName="Add"
@@ -786,7 +786,7 @@ export const UploadAdvertisement = ({
                             onClick={() =>
                               handleAddRow(
                                 RoleDescription.TechnicalSkillValue,
-                                index
+                                index,
                               )
                             }
                             iconName="Add"
@@ -817,7 +817,7 @@ export const UploadAdvertisement = ({
                     onClick={() =>
                       AddMasterData_fn(
                         RoleDescriptionData.TechnicalSkill,
-                        "Technical Skills"
+                        "Technical Skills",
                       )
                     }
                     disabled={!IsEnglish}
@@ -871,7 +871,7 @@ export const UploadAdvertisement = ({
                 options={MasterData.EmployeeList.filter(
                   (item) =>
                     item?.JobTitle ===
-                    advDetails?.JobTitleofFunctionalManager?.text
+                    advDetails?.JobTitleofFunctionalManager?.text,
                 ).map((item) => ({
                   key: item.key,
                   text:
@@ -933,7 +933,7 @@ export const UploadAdvertisement = ({
                 options={MasterData.EmployeeList.filter(
                   (item) =>
                     item?.JobTitle ===
-                    advDetails?.JobTitleofLineManagerSupervisor?.text
+                    advDetails?.JobTitleofLineManagerSupervisor?.text,
                 ).map((item) => ({
                   key: item.key,
                   text:

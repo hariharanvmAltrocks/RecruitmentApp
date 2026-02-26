@@ -277,11 +277,12 @@ export default class CommonService implements ICommonService {
     }
   };
 
-  GetMasterData = async (ListName: string): Promise<ApiResponse<any[]>> => {
+  GetMasterData = async (ListName: string, Filter?: any[]): Promise<ApiResponse<any[]>> => {
     try {
       const listItems: any[] = await SPServices.SPReadItems({
         Listname: ListName,
         Select: "*",
+        Filter: Filter || [],
       });
       return {
         data: listItems,
