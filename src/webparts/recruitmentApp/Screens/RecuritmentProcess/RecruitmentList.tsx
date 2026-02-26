@@ -675,19 +675,9 @@ const RecruitmentList = (props: any) => {
         : rowData.StatusId === StatusId.InterviewScheduledforLevel2
           ? "/RecurimentProcess/HodViewScorecard"
           : "";
-    // const today = new Date();
-    // const todayDateStr = today.toISOString().split("T")[0];
-    // const interviewDateStr = moment(
-    //   rowData.InterviewDateTime,
-    //   "DD-MMM-YYYY hh:mm A",
-    // ).format("YYYY-MM-DD");
-    // const todayDateStr = moment(today).format("YYYY-MM-DD");
-    // const InterviewDate = new Date(rowData.InterviewDateTime)
-    //   .toISOString()
-    //   .split("T")[0];
-    const interviewDate = moment(rowData.InterviewDateTime, "YYYY-MM-DD");
-    const today = moment().startOf("day");
-    if (today.isSameOrAfter(interviewDate)) {
+    const interviewDate = moment.utc(rowData.InterviewDateTime).startOf("day");
+    const today = moment.utc().startOf("day");
+    if (today.isSameOrAfter(interviewDate, "day")) {
       props.navigation(navigationPath, {
         state: {
           ID: rowData?.ID,
@@ -1115,8 +1105,14 @@ const RecruitmentList = (props: any) => {
     void fetchData(props.TabDetails.TabName);
   }, [props.TabDetails.TabName]);
 
-  const handleRefresh = (tab: string) => {
+  const handleRefresh = (tab: string, tabValue: string) => {
     void fetchData(tab);
+    props.navigation("/RecurimentProcess", {
+      state: {
+        TabName: tab,
+        tab: tabValue,
+      },
+    });
   };
 
   const onPageChange = (event: any) => {
@@ -1704,7 +1700,7 @@ const RecruitmentList = (props: any) => {
             )}
             rows={rows}
             onPageChange={(event) => onPageChange(event)}
-            handleRefresh={() => handleRefresh(TabNames)}
+            handleRefresh={() => handleRefresh(TabNames, TabValue)}
             handleSelectedRow={handleCheckbox}
             onSelectAllRow={onSelectAllChange}
             handleAssignBtn={AssignBtn_fn}
@@ -1733,7 +1729,7 @@ const RecruitmentList = (props: any) => {
             columns={columnConfig(TabValue, Action[0]?.ActionId?.[0], TabNames)}
             rows={rows}
             onPageChange={(event) => onPageChange(event)}
-            handleRefresh={() => handleRefresh(TabNames)}
+            handleRefresh={() => handleRefresh(TabNames, TabValue)}
             MasterData={props}
           />
         );
@@ -1748,7 +1744,7 @@ const RecruitmentList = (props: any) => {
             )}
             rows={rows}
             onPageChange={onPageChange}
-            handleRefresh={() => handleRefresh(TabNames)}
+            handleRefresh={() => handleRefresh(TabNames, TabValue)}
           />
         );
       default:

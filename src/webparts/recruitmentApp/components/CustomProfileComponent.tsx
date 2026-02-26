@@ -59,7 +59,7 @@ function CustomProfileComponent({
             marginTop: "4px",
           }}
         >
-          ({Department?.split("-")[1] ?? ""})
+          {/* ({Department?.split("-")[1] ?? ""}) */}
         </p>
       </div>
     </div>

@@ -315,31 +315,31 @@ const ReviewProfileList = (props: any) => {
 
         if (!isTooltipStatus) {
           return (
-           <div style={{ display: "flex", alignItems: "center" }}>
-             <div style={{ width: "24px", marginLeft: "-14%" }}>
-              <ToolTipButton
-                Title=""
-                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-                Rowdata={rowData}
-                ApproverData={pendingInfo}
-                onHover={() => handleHover(rowData.StatusId, rowData)}
-              />
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ width: "24px", marginLeft: "-14%" }}>
+                <ToolTipButton
+                  Title=""
+                  CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                  Rowdata={rowData}
+                  ApproverData={pendingInfo}
+                  onHover={() => handleHover(rowData.StatusId, rowData)}
+                />
               </div>
               <div style={{ flex: 1 }}>
-              <span>{rowData.Status}</span>
+                <span>{rowData.Status}</span>
+              </div>
             </div>
-               </div>
           );
         }
         // return <span>{rowData.Status}</span>;
-                return (
-  <div style={{ display: "flex", alignItems: "center" }}>
-    <div style={{ width: "24px", marginLeft: "-14%" }}></div>
-    <div style={{ flex: 1 }}>
-      <span>{rowData.Status}</span>
-    </div>
-  </div>
-);
+        return (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ width: "24px", marginLeft: "-14%" }}></div>
+            <div style={{ flex: 1 }}>
+              <span>{rowData.Status}</span>
+            </div>
+          </div>
+        );
       },
     },
     {
@@ -433,25 +433,17 @@ const ReviewProfileList = (props: any) => {
     TabName: string,
     ButtonAction: string,
   ) {
-    let navigationPath =
+    // 1. Determine Navigation Path
+    const navigationPath =
       rowData?.StatusId === StatusId.InterviewScheduled
         ? "/ReviewProfileList/InterviewPanelList/InterviewPanelEdit"
         : rowData.StatusId === StatusId.InterviewScheduledforLevel2
           ? "/ReviewProfileList/HodViewScorecard"
           : "";
-    // const today = new Date();
-    // // const todayDateStr = today.toISOString().split("T")[0];
-    // const interviewDateStr = moment(
-    //   rowData.InterviewDateTime,
-    //   "DD-MMM-YYYY hh:mm A",
-    // ).format("YYYY-MM-DD");
-    // const todayDateStr = moment(today).format("YYYY-MM-DD");
-    // // const InterviewDate = new Date(rowData.InterviewDateTime)
-    // //   .toISOString()
-    // //   .split("T")[0];
-    const interviewDate = moment(rowData.InterviewDateTime, "YYYY-MM-DD");
-    const today = moment().startOf("day");
-    if (today.isSameOrAfter(interviewDate)) {
+
+    const interviewDate = moment.utc(rowData.InterviewDateTime).startOf("day");
+    const today = moment.utc().startOf("day");
+    if (today.isSameOrAfter(interviewDate, "day")) {
       props.navigation(navigationPath, {
         state: {
           ID: rowData?.ID,
@@ -466,10 +458,12 @@ const ReviewProfileList = (props: any) => {
         },
       });
     } else {
-      const formattedDate = moment(interviewDate).format("DD-MMM-YYYY");
-
+      // 4. Handle Future Date Error
+      const formattedDate = interviewDate.format("DD-MMM-YYYY");
       const ValidationMsg = InterviewDate(formattedDate);
-      let ValidationError = {
+
+      setAlertPopupOpen(true);
+      setalertProps({
         Message: ValidationMsg,
         Type: HRMSAlertOptions.Error,
         visible: true,
@@ -478,9 +472,7 @@ const ReviewProfileList = (props: any) => {
             setAlertPopupOpen(false);
           }
         },
-      };
-      setAlertPopupOpen(true);
-      setalertProps(ValidationError);
+      });
       setIsLoading(false);
     }
   }
@@ -523,22 +515,22 @@ const ReviewProfileList = (props: any) => {
       sortable: false,
       body: (rowData: any) => {
         return (
-           <div style={{ display: "flex", alignItems: "center" }}>
-        <div style={{ width: "24px" }}>
-            <ToolTipButton
-              Title=""
-              CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
-              Rowdata={rowData}
-              ApproverData={pendingInfo}
-              onHover={() =>
-                handleHoverInterviewPanel(rowData.StatusId, rowData)
-              }
-            />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ width: "24px" }}>
+              <ToolTipButton
+                Title=""
+                CurrentMenuId={props.ModalDropDown?.CurrentMenuId}
+                Rowdata={rowData}
+                ApproverData={pendingInfo}
+                onHover={() =>
+                  handleHoverInterviewPanel(rowData.StatusId, rowData)
+                }
+              />
             </div>
             <div style={{ flex: 1 }}>
-            <span>{rowData.Status}</span>
+              <span>{rowData.Status}</span>
+            </div>
           </div>
-           </div>
         );
         // return <span>{rowData.Status}</span>;
       },

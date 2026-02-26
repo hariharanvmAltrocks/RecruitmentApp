@@ -126,59 +126,59 @@ export default class GetPortalJobs implements IGetPortalJobs {
   //   }
   // }
 
-async getCandidateDetailsInJobCode(
-  FilterValue: FilterItem
-): Promise<ApiResponse<GetProfileByJobCode[]>> {
-  try {
-    const res = await getProfileData.GetProfileByJobCode(FilterValue);
+  async getCandidateDetailsInJobCode(
+    FilterValue: FilterItem
+  ): Promise<ApiResponse<GetProfileByJobCode[]>> {
+    try {
+      const res = await getProfileData.GetProfileByJobCode(FilterValue);
 
-    if (!res?.data?.data) {
-      return {
-        data: [],
-        status: 200,
-        message: "No candidate data",
-      };
-    }
-
-    const totalItems = res.data.pagination?.totalItems || 0;
-
-    const mappedData: GetProfileByJobCode[] = res.data.data.map(
-      (item: any, index: number) => {
-        const JobCode = item?.jobCode?.split("-")[0];
-
+      if (!res?.data?.data) {
         return {
-          SNO: index + 1,
-          CandidateID: item?.jobRequestId,
-          ApplicantName: item?.applicantName,
-          PositionTitle: item?.jobTitle?.displayText,
-          JobCode: JobCode,
-          Status: item?.workflowStatus?.displayText,
-          workflowStatusId: item?.workflowStatusId,
-          createdOn: moment(item?.createdOn).format("DD/MM/YYYY"),
-          TotalItems: totalItems,
-          applicationStatusId: item?.applicationStatusId,
-          applicationStatus: item?.applicationStatus?.displayText,
-          createdBy: item?.createdBy,
-          tblProfilesKcsas: item?.tblProfilesKcsas || [],
+          data: [],
+          status: 200,
+          message: "No candidate data",
         };
       }
-    );
-// console.log("Mapped Candidate Data:", mappedData);
-    return {
-      data: mappedData,
-      status: 200,
-      message: "Get Candidate details",
-    };
-  } catch (error) {
-    console.error("Error Get Candidate details:", error);
 
-    return {
-      data: [],
-      status: 500,
-      message: "Error Get Candidate details",
-    };
+      const totalItems = res.data.pagination?.totalItems || 0;
+
+      const mappedData: GetProfileByJobCode[] = res.data.data.map(
+        (item: any, index: number) => {
+          const JobCode = item?.jobCode?.split("-")[0];
+
+          return {
+            SNO: index + 1,
+            CandidateID: item?.jobRequestId,
+            ApplicantName: item?.applicantName,
+            PositionTitle: item?.jobTitle?.displayText,
+            JobCode: JobCode,
+            Status: item?.workflowStatus?.displayText,
+            workflowStatusId: item?.workflowStatusId,
+            createdOn: moment(item?.createdOn).format("DD/MM/YYYY"),
+            TotalItems: totalItems,
+            applicationStatusId: item?.applicationStatusId,
+            applicationStatus: item?.applicationStatus?.displayText,
+            createdBy: item?.createdBy,
+            tblProfilesKcsas: item?.tblProfilesKcsas || [],
+          };
+        }
+      );
+      // console.log("Mapped Candidate Data:", mappedData);
+      return {
+        data: mappedData,
+        status: 200,
+        message: "Get Candidate details",
+      };
+    } catch (error) {
+      console.error("Error Get Candidate details:", error);
+
+      return {
+        data: [],
+        status: 500,
+        message: "Error Get Candidate details",
+      };
+    }
   }
-}
 
   async getCandidateProfile(CandidateID: string, EmployeeList?: any[], RecrutimentData?: DataSyncToRecruitmentResponse): Promise<ApiResponse<CandidateProfile[] | null>> {
     try {
@@ -303,9 +303,9 @@ async getCandidateDetailsInJobCode(
 
         let AgenName =
           !profileXAgent || (Array.isArray(profileXAgent) && profileXAgent.length === 0)
-            ? op?.profile?.kcsaEmployees
-              ? "Internal Employee"
-              : ""
+            ? op?.profile?.kcsaEmployees && op?.profile?.kcsaEmployees.length === 0
+              ? "Candidate"
+              : "Internal Employee"
             : profileXAgent?.agentCode === agentCode.RecruitmentHR
               ? RoleName.RecruitmentHR
               : profileXAgent?.agent?.name || "";
@@ -382,7 +382,7 @@ async getCandidateDetailsInJobCode(
           op?.profile?.profileDetailLanguages?.map(
             (item: { language: string }) => item.language
           ) || [];
-        const [years, months] = op?.profile?.totalYearOfExperiance.split("-");
+        const [years, months] = (op?.profile?.totalYearOfExperiance ?? "0-0").split("-");
         const formattedExperience = `${years} years ${months} months`;
         let ContactNumber = getcountryCode(CountryCode?.data ?? [], op?.profile?.contactNumber1)
         let GetProfileDahboard: CandidateProfile = {

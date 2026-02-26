@@ -73,7 +73,7 @@ type InterviewQuesValidationError = {
   OptionsType: string | boolean;
   Catogry: boolean;
   Disqualification: boolean;
-    ExpectedAnswerFr: boolean;
+  ExpectedAnswerFr: boolean;
 };
 
 export type OptionRow = {
@@ -127,7 +127,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         : CatogryOptionCode.CareerPortalCandidate,
     Disqualification: "",
     CareerportalAnswer: [],
-      ExpectedAnswerFr: "",
+    ExpectedAnswerFr: "",
   });
 
   // Separate state for English and French questions
@@ -154,7 +154,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       OptionsType: false,
       Catogry: false,
       Disqualification: false,
-        ExpectedAnswerFr: false, 
+      ExpectedAnswerFr: false,
     });
 
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
@@ -519,7 +519,6 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       QuestionType?.text === displayTextOptionCode.SingleAnswer;
 
     if (isMCQ) {
-
       const filledOptions = OptionsType.filter((opt) => opt.text.trim() !== "");
       const selectedOptions = filledOptions.filter((opt) => opt.isCorrect);
 
@@ -632,7 +631,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       question: EnglishQuestion || InterviewQuesData.Question,
       questionFr: FrenchQuestion || InterviewQuesData.Question,
       expectedAnswer: InterviewQuesData.ExpectedAnswer,
-     expectedAnswerFr: InterviewQuesData.ExpectedAnswerFr, 
+      expectedAnswerFr: InterviewQuesData.ExpectedAnswerFr,
       CareerportalAnswer: correctAnswers,
       options:
         questionType.text === displayTextOptionCode.MultiAnswer ||
@@ -2144,20 +2143,52 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                         ) : props?.stateValue?.StatusId ===
                                           StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
                                           <>
-                                            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 2, width: "100%" }}>
-                                              <Box sx={{ width: "100%", overflow: "hidden" }}>
+                                            <Box
+                                              sx={{
+                                                display: "grid",
+                                                gridTemplateColumns: "1fr 1fr",
+                                                gap: 2,
+                                                mb: 2,
+                                                width: "100%",
+                                              }}
+                                            >
+                                              <Box
+                                                sx={{
+                                                  width: "100%",
+                                                  overflow: "hidden",
+                                                }}
+                                              >
                                                 <RichTextEditor
                                                   label="Expected Answer (English)"
                                                   value={q.expectedAnswer || ""}
-                                                  onChange={(val) => handleQuestionFieldChange(index, "expectedAnswer", val)}
+                                                  onChange={(val) =>
+                                                    handleQuestionFieldChange(
+                                                      index,
+                                                      "expectedAnswer",
+                                                      val,
+                                                    )
+                                                  }
                                                   mandatory={true}
                                                 />
                                               </Box>
-                                              <Box sx={{ width: "100%", overflow: "hidden" }}>
+                                              <Box
+                                                sx={{
+                                                  width: "100%",
+                                                  overflow: "hidden",
+                                                }}
+                                              >
                                                 <RichTextEditor
                                                   label="Expected Answer (French)"
-                                                  value={q.expectedAnswerFr || ""}
-                                                  onChange={(val) => handleQuestionFieldChange(index, "expectedAnswerFr", val)}
+                                                  value={
+                                                    q.expectedAnswerFr || ""
+                                                  }
+                                                  onChange={(val) =>
+                                                    handleQuestionFieldChange(
+                                                      index,
+                                                      "expectedAnswerFr",
+                                                      val,
+                                                    )
+                                                  }
                                                   mandatory={true}
                                                 />
                                               </Box>
@@ -2750,12 +2781,22 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         </Box>
                       ) : props?.stateValue?.StatusId ===
                         StatusId.PendingwithHRandLMtocreateinterviewQuestion ? (
-                        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 2, width: "100%" }}>
+                        <Box
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "1fr 1fr",
+                            gap: 2,
+                            mb: 2,
+                            width: "100%",
+                          }}
+                        >
                           <Box sx={{ width: "100%", overflow: "hidden" }}>
                             <RichTextEditor
                               label="Expected Answer (English)"
                               value={InterviewQuesData.ExpectedAnswer}
-                              onChange={(val) => handleRichTextEditor(val, "ExpectedAnswer")}
+                              onChange={(val) =>
+                                handleRichTextEditor(val, "ExpectedAnswer")
+                              }
                               mandatory={true}
                               error={ValidationError.ExpectedAnswer}
                             />
@@ -2764,7 +2805,9 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                             <RichTextEditor
                               label="Expected Answer (French)"
                               value={InterviewQuesData.ExpectedAnswerFr || ""}
-                              onChange={(val) => handleRichTextEditor(val, "ExpectedAnswerFr")}
+                              onChange={(val) =>
+                                handleRichTextEditor(val, "ExpectedAnswerFr")
+                              }
                               mandatory={true}
                               error={ValidationError.ExpectedAnswerFr}
                             />
@@ -3094,34 +3137,39 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         return;
       }
 
-      // Validate Expected Answer (English)
-      if (!nq.expectedAnswer || nq.expectedAnswer.trim() === "") {
-        setIsLoading(false);
-        setAlertPopupOpen(true);
-        setalertProps({
-          Message: `${label}\n\nThe Expected Answer (English) field cannot be empty. Please enter a value before submitting.`,
-          Type: HRMSAlertOptions.Error,
-          visible: true,
-          ButtonAction: async () => {
-            setAlertPopupOpen(false);
-          },
-        });
-        return;
-      }
+      if (
+        props?.stateValue?.StatusId ===
+        StatusId.PendingwithHRandLMtocreateinterviewQuestion
+      ) {
+        // Validate Expected Answer (English)
+        if (!nq.expectedAnswer || nq.expectedAnswer.trim() === "") {
+          setIsLoading(false);
+          setAlertPopupOpen(true);
+          setalertProps({
+            Message: `${label}\n\nThe Expected Answer (English) field cannot be empty. Please enter a value before submitting.`,
+            Type: HRMSAlertOptions.Error,
+            visible: true,
+            ButtonAction: async () => {
+              setAlertPopupOpen(false);
+            },
+          });
+          return;
+        }
 
-      // Validate Expected Answer (French)
-      if (!nq.expectedAnswerFr || nq.expectedAnswerFr.trim() === "") {
-        setIsLoading(false);
-        setAlertPopupOpen(true);
-        setalertProps({
-          Message: `${label}\n\nThe Expected Answer (French) field cannot be empty. Please enter a value before submitting.`,
-          Type: HRMSAlertOptions.Error,
-          visible: true,
-          ButtonAction: async () => {
-            setAlertPopupOpen(false);
-          },
-        });
-        return;
+        // Validate Expected Answer (French)
+        if (!nq.expectedAnswerFr || nq.expectedAnswerFr.trim() === "") {
+          setIsLoading(false);
+          setAlertPopupOpen(true);
+          setalertProps({
+            Message: `${label}\n\nThe Expected Answer (French) field cannot be empty. Please enter a value before submitting.`,
+            Type: HRMSAlertOptions.Error,
+            visible: true,
+            ButtonAction: async () => {
+              setAlertPopupOpen(false);
+            },
+          });
+          return;
+        }
       }
 
       const qTypeText = nq?.questionType?.text || "";
@@ -3144,38 +3192,38 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         }
 
         // Check if all options have EN filled
-        if (
-          nq.options.some((opt: any) => !opt.text || opt.text.trim() === "")
-        ) {
-          setIsLoading(false);
-          setAlertPopupOpen(true);
-          setalertProps({
-            Message: `${label}\n\nSome answer options are missing English text. Please ensure all options have English text filled in.`,
-            Type: HRMSAlertOptions.Error,
-            visible: true,
-            ButtonAction: async (userClickedOK: boolean) => {
-              setAlertPopupOpen(false);
-            },
-          });
-          return;
-        }
+        // if (
+        //   nq.options.some((opt: any) => !opt.text || opt.text.trim() === "")
+        // ) {
+        //   setIsLoading(false);
+        //   setAlertPopupOpen(true);
+        //   setalertProps({
+        //     Message: `${label}\n\nSome answer options are missing English text. Please ensure all options have English text filled in.`,
+        //     Type: HRMSAlertOptions.Error,
+        //     visible: true,
+        //     ButtonAction: async (userClickedOK: boolean) => {
+        //       setAlertPopupOpen(false);
+        //     },
+        //   });
+        //   return;
+        // }
 
-        // Check if all options have FR filled
-        if (
-          nq.options.some((opt: any) => !opt.textFr || opt.textFr.trim() === "")
-        ) {
-          setIsLoading(false);
-          setAlertPopupOpen(true);
-          setalertProps({
-            Message: `${label}\n\nSome answer options are missing French text. Please ensure all options have French text filled in.`,
-            Type: HRMSAlertOptions.Error,
-            visible: true,
-            ButtonAction: async (userClickedOK: boolean) => {
-              setAlertPopupOpen(false);
-            },
-          });
-          return;
-        }
+        // // Check if all options have FR filled
+        // if (
+        //   nq.options.some((opt: any) => !opt.textFr || opt.textFr.trim() === "")
+        // ) {
+        //   setIsLoading(false);
+        //   setAlertPopupOpen(true);
+        //   setalertProps({
+        //     Message: `${label}\n\nSome answer options are missing French text. Please ensure all options have French text filled in.`,
+        //     Type: HRMSAlertOptions.Error,
+        //     visible: true,
+        //     ButtonAction: async (userClickedOK: boolean) => {
+        //       setAlertPopupOpen(false);
+        //     },
+        //   });
+        //   return;
+        // }
 
         // Check if at least one correct answer is selected
         if (!nq.options.some((opt: any) => opt.isCorrect)) {

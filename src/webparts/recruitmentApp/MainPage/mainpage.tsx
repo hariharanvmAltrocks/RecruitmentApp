@@ -31,7 +31,7 @@ export default function MainPage(props: any) {
   const toggleSideNav = () => {
     setIsExpanded((prevState: any) => !prevState);
   };
-  console.log("Recruitment-App(23-Feb-2026) V-1.7");
+  console.log("Recruitment-App(26-Feb-2026) V-1.7");
 
   return (
     <div className="mainPage">
