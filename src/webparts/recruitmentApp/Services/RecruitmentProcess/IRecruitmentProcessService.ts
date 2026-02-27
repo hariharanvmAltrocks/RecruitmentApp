@@ -1,4 +1,4 @@
-import { tabCount } from "../../Models/RecuritmentVRR";
+import { ReviewProfiletabCount, tabCount } from "../../Models/RecuritmentVRR";
 import { AutoCompleteItem, InterviewPanelMember, tooltipInterviewPanel } from "../../Models/Screens";
 import { IFilter } from "../SPService/ISPServicesProps";
 
@@ -334,4 +334,8 @@ export type IRecruitmentService = {
     filterParam: any,
     filterConditions: any
   ): Promise<ApiResponse<string>>;
+  GetReviewProfileCount(
+    FilterData: IFilter[],
+    CurrentUserID: string,
+  ): Promise<ApiResponse<ReviewProfiletabCount>>
 };

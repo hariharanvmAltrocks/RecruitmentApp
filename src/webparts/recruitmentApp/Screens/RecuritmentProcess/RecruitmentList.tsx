@@ -265,13 +265,18 @@ const RecruitmentList = (props: any) => {
   const closeAlert = () => setAlertInfo({ ...alertInfo, open: false });
 
   const handleRedirectView = useCallback(
-    (rowData: any, buttonAction: string) => {
+    (rowData: any, buttonAction: string, tab: string) => {
       console.log("Redirecting for:", rowData.ID, "with action:", buttonAction);
-      props.navigate("/RecurimentProcess/ApprovedVRREdit", {
+      props.navigation("/RecurimentProcess/ApprovedVRREdit", {
         state: {
           ID: rowData?.ID,
           TabName: props.TabDetails.TabName,
           buttonAction,
+          type: rowData?.Type,
+          AssignedHRId: rowData?.AssignedHRId,
+          tab,
+          StatusId: rowData?.StatusId,
+          Status: rowData?.Status,
         },
       });
     },
@@ -305,7 +310,7 @@ const RecruitmentList = (props: any) => {
       }));
       setSelectedRows(selectedJobCodes);
       const firstNationality = checkedItems[0]?.Nationality ?? null;
-      fetchAgencyOptions(firstNationality);
+      void fetchAgencyOptions(firstNationality);
     },
     [fetchAgencyOptions, setSelectedRows],
   );

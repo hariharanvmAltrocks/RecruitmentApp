@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useVrrFormState } from './useVrrFormState';
 import { CommonServices, getVRRDetails } from '../../../Services/ServiceExport';
 import { DataSyncToRecruitmentResponse } from '../../../Services/RecruitmentProcess/IRecruitmentProcessService';
-import { DocumentLibraray, RoleProfileMaster } from '../../../utilities/Config';
+import { Choices, DocumentLibraray, RoleProfileMaster, StatusId, TabName } from '../../../utilities/Config';
 import { useMasterData } from './useMasterData';
 import { mapToAdvOption } from '../CommanFilter';
 
@@ -78,11 +78,29 @@ export const useVrrData = (stateValue: any, props: any, form: VrrFormHook) => {
             setIsLoading(true);
             setError(null);
             try {
+
                 const filterConditionsRecruitment = [{ FilterKey: "ID", Operator: "eq", FilterValue: stateValue?.ID }];
-
-                // This logic is directly from your original file
-                const response = await getVRRDetails.GetRecruitmentDetails(filterConditionsRecruitment, "");
-
+                let filterConditions = [];
+                //   let Conditions = "and";
+                filterConditions.push({
+                    FilterKey: "StatusId",
+                    Operator: "eq",
+                    FilterValue: StatusId.ReadyforRecruitmentProcess,
+                });
+                filterConditions.push({
+                    FilterKey: "IsDataSyncToRecruitment",
+                    Operator: "eq",
+                    FilterValue: Choices.Yes,
+                });
+                filterConditions.push({
+                    FilterKey: "ItemCreated",
+                    Operator: "eq",
+                    FilterValue: Choices.No,
+                });
+                let response: any
+                if (stateValue.TabName == TabName.AssignRecuritmentHR) {
+                    response = await getVRRDetails.GetRecruitmentDetails(filterConditionsRecruitment, "");
+                }
                 if (response && response.data && response.data.length > 0) {
                     const op: DataSyncToRecruitmentResponse = response.data[0];
                     const BUName = props?.BusinessUnitCodeAllColumn.find((item: any) => item.key === op?.BusinessUnitCodeId) || {};
@@ -128,8 +146,6 @@ export const useVrrData = (stateValue: any, props: any, form: VrrFormHook) => {
                         AdvertisementDocument: AdvertismentDocment.data || [],
                         OnamSignedStampsDocument: OnamSignedStampsDocment.data || [],
                     }));
-
-                    // Fetch dependent data
                     await fetchRoleProfileData(op.JobCodeId);
                 } else {
                     throw new Error("No recruitment details found.");

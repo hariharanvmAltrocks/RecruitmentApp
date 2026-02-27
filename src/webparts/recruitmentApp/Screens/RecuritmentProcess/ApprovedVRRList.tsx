@@ -18,7 +18,6 @@ export type formValidation = {
 };
 
 const RecruitmentProcess = (props: any) => {
-  // const [data, setData] = React.useState<DataSyncToRecruitmentResponse[]>([]);
   const [activeTab, setActiveTab] = React.useState<string>("");
   const [pendingcount, setPendingCount] = React.useState<tabCount>({
     AssignHRCount: 0,
@@ -121,7 +120,7 @@ const RecruitmentProcess = (props: any) => {
   };
 
   const tabs = TabNameData.map((tab: TabDetails) => ({
-    label: getTabLabel(tab), //  `${tab.TabName} (${data.length})`,
+    label: getTabLabel(tab),
     value: tab.Value,
     content: (
       <Card

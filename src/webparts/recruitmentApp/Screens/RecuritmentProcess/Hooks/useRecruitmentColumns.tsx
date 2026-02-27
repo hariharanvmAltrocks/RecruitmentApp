@@ -11,7 +11,7 @@ export const useRecruitmentColumns = (
     buttonAction: string,
     tabValue?: string,
   ) => void,
-  openDateExtensionDialog: (rowData: any) => void,
+  openDateExtensionDialog?: (rowData: any) => void,
 ) => {
   const TabNames = tabDetails?.TabName;
   const TabValue = tabDetails?.Value;
@@ -86,13 +86,14 @@ export const useRecruitmentColumns = (
                   }
                 />
               )}
-            {TabNames === TabName.AdvertExtension && (
-              <img
-                src={require("../../../assets/AddDate.svg")}
-                alt="Extend Date"
-                onClick={() => openDateExtensionDialog(rowData)}
-              />
-            )}
+            {openDateExtensionDialog &&
+              TabNames === TabName.AdvertExtension && (
+                <img
+                  src={require("../../../assets/AddDate.svg")}
+                  alt="Extend Date"
+                  onClick={() => openDateExtensionDialog(rowData)}
+                />
+              )}
           </div>
         ),
       },

@@ -410,6 +410,14 @@ export type tabCount = {
   ReviewScoreCardCount: number;
 }
 
+export type ReviewProfiletabCount = {
+  Interviewquestion: number;
+  ReviewProfileCount: number;
+  EvaluationCount: number;
+  InterviewPanelCount: number;
+}
+
+
 export type BGVState = {
   checkboxBGV: CheckboxGroupOption[];
   checkboxBGVOption: CheckboxGroupOption[];

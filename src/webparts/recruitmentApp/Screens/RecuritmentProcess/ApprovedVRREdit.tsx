@@ -53,22 +53,24 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   );
   const pageLoading = isVrrDataLoading || isMasterDataLoading;
 
-  const showAlert = (Message: string, Type: string, onAction?: () => void) => {
-    setAlertProps({
-      visible: true,
-      Message,
-      Type,
-      ButtonAction: (confirmed: boolean) => onAction?.(),
-    });
-  };
+  // const showAlert = (Message: string, Type: string, onAction?: () => void) => {
+  //   setAlertProps({
+  //     visible: true,
+  //     Message,
+  //     Type,
+  //     ButtonAction: (confirmed: boolean) => onAction?.(),
+  //   });
+  // };
 
-  React.useEffect(() => {
-    if (dataError) {
-      showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
+  // React.useEffect(() => {
+  //   if (dataError) {
+  //     showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
 
-      console.error("API Error Details:", dataError);
-    }
-  }, [dataError, showAlert]);
+  //     console.error("API Error Details:", dataError);
+  //   }
+  // }, [dataError, showAlert]);
+
+  console.log(dataError);
 
   const handlePreview = () => {
     setPreviewOpen(true);

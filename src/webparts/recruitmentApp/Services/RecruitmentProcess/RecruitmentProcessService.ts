@@ -10,7 +10,7 @@ import {
   JobCodeData,
   PostRecuritmentData,
 } from "./IRecruitmentProcessService";
-import { CandidateData, QualificationValue, RoleSpecKnowledge, tabCount } from "../../Models/RecuritmentVRR";
+import { CandidateData, QualificationValue, ReviewProfiletabCount, RoleSpecKnowledge, tabCount } from "../../Models/RecuritmentVRR";
 import { sp } from "@pnp/sp/presets/all";
 import { CommonServices, GetPortalJobsService, getVRRDetails, InterviewServices } from "../ServiceExport";
 import { IDocFiles, IFilter } from "../SPService/ISPServicesProps";
@@ -243,6 +243,124 @@ export default class RecruitmentService implements IRecruitmentService {
       console.error("GetCountApprovedList error:", error);
       return {
         data: {} as tabCount,
+        status: 500,
+        message: "Error fetching count details",
+      };
+    }
+  }
+
+  async GetReviewProfileCount(
+    FilterData: IFilter[],
+    CurrentUserID: string,
+  ): Promise<ApiResponse<ReviewProfiletabCount>> {
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentDptDetails,
+        Select:
+          "*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,BusinessUnitCode/BusineesUnitCode,AssignedHR/Title",
+        Filter: FilterData,
+        FilterCondition: "and",
+        Expand:
+          "Department,SubDepartment,Section,DepartmentCode,Status,Action,JobCode,BusinessUnitCode",
+        Orderby: "ID",
+        Orderbydecorasc: true,
+        Topcount: count.Topcount,
+      });
+
+      let EvaluationCount = 0;
+
+      const userResponse = await CommonServices.getUserGuidByEmail(CurrentUserID);
+      const panelUserId = userResponse?.data?.key;
+
+      const candidates = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Select: "ID",
+        Filter: [
+          {
+            FilterKey: "StatusId",
+            Operator: "in",
+            FilterValue: [
+              StatusId.InterviewScheduled,
+              StatusId.InterviewScheduledforLevel2,
+            ],
+          },
+          {
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: Choices.No,
+          },
+        ],
+        FilterCondition: "and",
+      });
+
+      const candidateIds = candidates.map((c: any) => c.ID);
+
+      const panelItems = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSInterviewPanelDetails,
+        Select: "ID,CandidateID/ID",
+        Expand: "CandidateID",
+        Filter: [
+          {
+            FilterKey: "InterviewPanelId",
+            Operator: "eq",
+            FilterValue: panelUserId,
+          },
+          {
+            FilterKey: "CandidateID",
+            Operator: "in",
+            FilterValue: candidateIds,
+          },
+        ],
+        FilterCondition: "and",
+      });
+      EvaluationCount = panelItems.length;
+
+      const getReviewProfileCount = res.filter(
+        (item) =>
+          item.StatusId === StatusId.RecruitmentInProgress &&
+          item.LineManager === CurrentUserID,
+      );
+
+      const ReviewProfile = await getTotalAppliedCount(
+        getReviewProfileCount,
+        [
+          workflowStatusApi.LineManagerL1Pending,
+          workflowStatusApi.LineManagerL2Pending,
+          workflowStatusApi.LineManagerLevel1OnHold,
+          workflowStatusApi.LineManagerLevel2OnHold,
+        ],
+      );
+
+      const InterviewPanel = await getTotalAppliedCount(
+        getReviewProfileCount,
+        [
+          workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+        ],
+      );
+      let ReviewProfileCount = ReviewProfile
+
+
+      const data: ReviewProfiletabCount = {
+
+        Interviewquestion: res.filter(
+          i => i.StatusId === StatusId.PendingwithHRandLMtocreateinterviewQuestion &&
+            i.AssignedHR === CurrentUserID
+        ).length,
+        ReviewProfileCount: ReviewProfileCount,
+        EvaluationCount: EvaluationCount,
+        InterviewPanelCount: InterviewPanel
+
+      };
+
+      return {
+        data,
+        status: 200,
+        message: "Counts fetched successfully",
+      };
+    } catch (error) {
+      console.error("GetCountApprovedList error:", error);
+      return {
+        data: {} as ReviewProfiletabCount,
         status: 500,
         message: "Error fetching count details",
       };
