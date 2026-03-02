@@ -2,6 +2,7 @@ import { FilterItem } from "../../Models/ApIInterface";
 import { DataSyncToRecruitmentResponse } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
 import { GetPortalJobsService, getVRRDetails } from "../../Services/ServiceExport";
 import { Choices, RoleID, StatusId, TabName, workflowStatusApi } from "../../utilities/Config";
+import { ButtonAction, EmployeementCategory } from "../../utilities/LabelName";
 
 export const getBaseFilters = () => ([
   { FilterKey: "StatusId", Operator: "eq", FilterValue: StatusId.ReadyforRecruitmentProcess },
@@ -224,4 +225,67 @@ export const getScoreCardCount = async (
   const totalCount = counts.reduce((sum, count) => sum + count, 0);
 
   return totalCount;
+};
+
+export const getActionConfig = (
+  rowData: any,
+  isMySubmission: boolean,
+  isIDCSFailed: boolean
+) => {
+  if (isMySubmission) {
+    return { action: ButtonAction.View, icon: require("../../assets/Viewicon.svg") };
+  }
+
+  const status = rowData?.StatusID;
+  const employmentCategory =
+    rowData?.RecruitmentDetails?.EmploymentCategory;
+
+  const uploadStatuses = [
+    StatusId.WorkPermitAcknowledgedContractUploaded,
+    StatusId.PendingHRReviewOfferanduploadEmployementContract,
+  ];
+
+  const viewStatuses = [
+    StatusId.PendingBGdocuploadedbycandidate,
+    StatusId.PendingCandidateOfferLetterUpload,
+    StatusId.PendingCandidateWorkPermitreleatedDoc,
+    StatusId.PendingCandidateEmploymentContractUpload,
+    StatusId.PendingLabourHireOfferRelease,
+    StatusId.PendingLabourhireWPPayment,
+    StatusId.PendingLHWorkPermitProcess,
+    StatusId.PendingLHECRelease,
+    StatusId.OnboardingProcessinitiatedforDRC,
+    StatusId.OnboardingProcessinitiatedforExpat,
+    StatusId.PendingwithTAforMedicalScreening,
+    StatusId.RESIProcessInitiatedforDRC,
+    StatusId.RESIProcessInitiatedforExpatriate
+  ];
+
+  if (
+    (status === StatusId.PendingHROfferInitiate &&
+      employmentCategory === EmployeementCategory.KCSAEmployee) ||
+    uploadStatuses.includes(status)
+  ) {
+    return { action: ButtonAction.Upload, icon: require("../../assets/UploadIcon.svg")};
+  }
+
+  if (viewStatuses.includes(status)) {
+    return { action: ButtonAction.View, icon: require("../../assets/Viewicon.svg")};
+  }
+
+  if (
+    status === StatusId.PendingHRBGVInitiation ||
+    status === StatusId.PendingHROfferInitiate
+  ) {
+    return { action: ButtonAction.Initiated, icon: require("../../assets/Editbutton.svg") };
+  }
+
+  if (status === StatusId.PendingDOTAficaVerification) {
+    return {
+      action: ButtonAction.View,
+      icon: require("../../assets/Editbutton.svg")  //isIDCSFailed ? require("../../assets/Editbutton.svg") : require("../../assets/Viewicon.svg"),
+    };
+  }
+
+  return { action: ButtonAction.Review, icon: require("../../assets/Review.svg")};
 };

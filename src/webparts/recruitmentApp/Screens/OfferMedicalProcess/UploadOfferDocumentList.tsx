@@ -61,7 +61,7 @@ const UploadOfferDocumentList = (props: any) => {
     TabDetails = props.TabDetails[0] ?? [];
     setTabNameData(TabDetails);
     void fetchData(TabDetails);
-  }, [TabNameData]);
+  }, [TabNameData, props.stateValue]);
 
   const getTabLabel = (tab: any) => {
     switch (tab.TabName) {

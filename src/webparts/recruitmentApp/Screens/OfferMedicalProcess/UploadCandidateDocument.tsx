@@ -387,7 +387,7 @@ const UploadCandidateDocument = (props: any) => {
                     DotAfricaStatus.cancelled.trim().toLowerCase() ||
                   false,
               );
-            setRejectFlag(true);
+            setRejectFlag(RejectStatus);
 
             if (allCompleted || IDCTYpeStatus || RejectStatus) {
               let matchedData: any;
@@ -1377,7 +1377,7 @@ const UploadCandidateDocument = (props: any) => {
                   props.navigation("/UploadOfferDocumentList", {
                     state: {
                       ID: props.stateValue?.ID,
-                      TabNames: props.stateValue?.TabName,
+                      TabName: props.stateValue?.TabName,
                       ButtonAction: ButtonAction.View,
                       JobCode: props.stateValue?.JobCode,
                       tab: props.stateValue?.tab,
@@ -2419,7 +2419,7 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                 )}
 
-                {props.CurrentRoleID.includes(RoleID.FinanceDepartment) &&
+                {/* {props.CurrentRoleID.includes(RoleID.FinanceDepartment) &&
                 props.stateValue?.StatusId ===
                   StatusId.PendingFinancePaymentReview ? (
                   <div className="ms-Grid-row">
@@ -2438,9 +2438,9 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                 ) : (
                   <></>
-                )}
+                )} */}
 
-                {props.stateValue?.StatusId ===
+                {/* {props.stateValue?.StatusId ===
                   StatusId.PendingFinancePaymentReview &&
                 data.PaymentReview === "Yes" ? (
                   <>
@@ -2495,7 +2495,7 @@ const UploadCandidateDocument = (props: any) => {
                   </>
                 ) : (
                   <></>
-                )}
+                )} */}
 
                 {/* {(props.stateValue?.StatusId ===
                   StatusId.PendingHRBGVInitiation ||
@@ -2833,13 +2833,13 @@ const UploadCandidateDocument = (props: any) => {
       props.CurrentRoleID.includes(RoleID.FinanceDepartment) &&
       props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview
     ) {
-      errors.PaymentReview = !IsValid(data.PaymentReview);
+      // errors.PaymentReview = !IsValid(data.PaymentReview);
     }
     if (
       props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview &&
       data.PaymentReview === "Yes"
     ) {
-      errors.PaymentDocs = !IsValid(data.PaymentDocs);
+      // errors.PaymentDocs = !IsValid(data.PaymentDocs);
     }
 
     if (
@@ -2947,7 +2947,7 @@ const UploadCandidateDocument = (props: any) => {
                   props.navigation("/UploadOfferDocumentList", {
                     state: {
                       ID: props.stateValue?.ID,
-                      TabNames: props.stateValue?.TabName,
+                      TabName: props.stateValue?.TabName,
                       ButtonAction: ButtonAction.View,
                       JobCode: props.stateValue?.JobCode,
                       tab: props.stateValue?.tab,
@@ -2976,7 +2976,7 @@ const UploadCandidateDocument = (props: any) => {
                 props.navigation("/UploadOfferDocumentList", {
                   state: {
                     ID: props.stateValue?.ID,
-                    TabNames: props.stateValue?.TabName,
+                    TabName: props.stateValue?.TabName,
                     ButtonAction: ButtonAction.View,
                     JobCode: props.stateValue?.JobCode,
                     tab: props.stateValue?.tab,
@@ -3188,31 +3188,35 @@ const UploadCandidateDocument = (props: any) => {
           }
           case StatusId.PendingFinancePaymentReview: {
             if (btnAction === ButtonAction.Review) {
-              DocumentData = {
-                ProfileID: data?.ProfileID,
-                RequestID: data?.jobRequestID,
-                DocumentName: DocumentFolderName.ProofOfDocument,
-                UnsignedDoc: "",
-              };
-              let PaymentProofDocs = [...data.PaymentDocs];
-              DocumentResponse =
-                await OfferLetterServices.UploadCandidateDocument(
-                  DocumentData,
-                  PaymentProofDocs,
-                );
+              // DocumentData = {
+              //   ProfileID: data?.ProfileID,
+              //   RequestID: data?.jobRequestID,
+              //   DocumentName: DocumentFolderName.ProofOfDocument,
+              //   UnsignedDoc: "",
+              // };
+              // let PaymentProofDocs = [...data.PaymentDocs];
+              // DocumentResponse =
+              //   await OfferLetterServices.UploadCandidateDocument(
+              //     DocumentData,
+              //     PaymentProofDocs,
+              //   );
               workflowStatusValue =
                 workflowStatusApi.PendingFinancePaymentReview;
               SuccessMsg = RecuritmentHRMsg.FinancePaymentReviewMsg;
               ActionID = WorkflowAction.Approved;
-            } else if (btnAction === ButtonAction.Revert) {
-              // workflowStatusValue =
-              //   workflowStatusApi.RevertedBacktopaymentReview;
-              SuccessMsg = RecuritmentHRMsg.RevertedFinancePaymentMsg;
-              ActionID = WorkflowAction.Revert;
               DocumentResponse = {
                 status: ResponeStatus.SUCCESS,
               };
-            }
+            } 
+            // else if (btnAction === ButtonAction.Revert) {
+            //   // workflowStatusValue =
+            //   //   workflowStatusApi.RevertedBacktopaymentReview;
+            //   SuccessMsg = RecuritmentHRMsg.RevertedFinancePaymentMsg;
+            //   ActionID = WorkflowAction.Revert;
+            //   DocumentResponse = {
+            //     status: ResponeStatus.SUCCESS,
+            //   };
+            // }
 
             break;
           }
@@ -3443,12 +3447,14 @@ const UploadCandidateDocument = (props: any) => {
             data.NationalityCode != NationalityCode.Nationals
           ) {
             CandidateDatas.ConsentFormPath = ""; //DocumentResponse.data[0]?.content;
-          } else if (
-            props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview
-          ) {
-            CandidateDatas.proofOfPaymentPath =
-              DocumentResponse.data[0]?.content;
-          } else if (
+          }
+          //  else if (
+          //   props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview
+          // ) {
+          //   CandidateDatas.proofOfPaymentPath =
+          //     DocumentResponse.data[0]?.content;
+          // } 
+          else if (
             props.stateValue?.StatusId ===
             StatusId.PendingHREmploymentContractInit
           ) {
@@ -3515,7 +3521,7 @@ const UploadCandidateDocument = (props: any) => {
                     props.navigation("/UploadOfferDocumentList", {
                       state: {
                         ID: props.stateValue?.ID,
-                        TabNames: props.stateValue?.TabName,
+                        TabName: props.stateValue?.TabName,
                         ButtonAction: ButtonAction.View,
                         JobCode: props.stateValue?.JobCode,
                         tab: props.stateValue?.tab,
@@ -3543,7 +3549,7 @@ const UploadCandidateDocument = (props: any) => {
                     props.navigation("/UploadOfferDocumentList", {
                       state: {
                         ID: props.stateValue?.ID,
-                        TabNames: props.stateValue?.TabName,
+                        TabName: props.stateValue?.TabName,
                         ButtonAction: ButtonAction.View,
                         JobCode: props.stateValue?.JobCode,
                         tab: props.stateValue?.tab,
@@ -3571,7 +3577,7 @@ const UploadCandidateDocument = (props: any) => {
                   props.navigation("/UploadOfferDocumentList", {
                     state: {
                       ID: props.stateValue?.ID,
-                      TabNames: props.stateValue?.TabName,
+                      TabName: props.stateValue?.TabName,
                       ButtonAction: ButtonAction.View,
                       JobCode: props.stateValue?.JobCode,
                       tab: props.stateValue?.tab,
@@ -3681,7 +3687,7 @@ const UploadCandidateDocument = (props: any) => {
           props.navigation("/UploadOfferDocumentList", {
             state: {
               ID: props.stateValue?.ID,
-              TabNames: props.stateValue?.TabName,
+              TabName: props.stateValue?.TabName,
               ButtonAction: ButtonAction.View,
               JobCode: props.stateValue?.JobCode,
               tab: props.stateValue?.tab,
@@ -3704,7 +3710,7 @@ const UploadCandidateDocument = (props: any) => {
     props.navigation("/UploadOfferDocumentList", {
       state: {
         ID: props.stateValue?.ID,
-        TabNames: props.stateValue?.TabName,
+        TabName: props.stateValue?.TabName,
         ButtonAction: ButtonAction.View,
         JobCode: props.stateValue?.JobCode,
         tab: props.stateValue?.tab,
@@ -3782,19 +3788,12 @@ const UploadCandidateDocument = (props: any) => {
       ];
     }
 
-    if (data.PaymentReview) {
-      const action =
-        data.PaymentReview === "Yes"
-          ? ButtonAction.Review
-          : props.stateValue?.StatusId === StatusId.PendingHRReviewBGCheck &&
-              data.NationalityCode === NationalityCode.Nationals
-            ? ButtonAction.Reject
-            : ButtonAction.Revert;
-
+    if (props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview) {
+     
       return [
         {
-          label: action,
-          onClick: () => Submit_fn(action),
+          label: ButtonAction.Submit,
+          onClick: () => Submit_fn(ButtonAction.Review),
         },
       ];
     }

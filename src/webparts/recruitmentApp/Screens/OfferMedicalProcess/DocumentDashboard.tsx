@@ -18,13 +18,13 @@ import {
 import { DataSyncToResiProcess } from "../../Services/InitiateOfferLetter/IOfferLetterService";
 import PostRecrutimentDataTable from "../../components/PostRecrutimentDataTable";
 import {
-  ButtonAction,
   DotAfricaStatus,
   DotTooltipStatus,
   EmployeementCategory,
 } from "../../utilities/LabelName";
 import ToolTipButton from "../../components/Tooltip";
 import { useEffect } from "react";
+import { getActionConfig } from "../RecuritmentProcess/CommanFilter";
 
 const DocumentDashboard = (props: any) => {
   const [data, setData] = React.useState<DataSyncToResiProcess[]>([]);
@@ -511,182 +511,44 @@ const DocumentDashboard = (props: any) => {
       header: "Action",
       sortable: false,
       style: { width: "8%" },
-      body: (rowData: any) => {
-        console.log(IsIDCSSkipped, "IsIDCSSkipped");
-        let ActionIcon = IsIDCSSkipped.filter(
-          (item: any) =>
-            item.requestID === rowData?.CandidateDetails?.JobRequestID,
-        );
-        console.log(ActionIcon, "ActionIcon");
-        let IsIDCSFailed =
-          ActionIcon.length > 0 ? ActionIcon[0]?.IsActionIcon : false;
-        return (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "10px", // slightly more space for small screens
-              flexWrap: "wrap", // allow wrapping on smaller screens
-            }}
-          >
-            {/* {ButtonActions === ActionIcon.Upload  */}
-            {(rowData?.StatusID === StatusId.PendingHROfferInitiate &&
-              rowData?.RecruitmentDetails?.EmploymentCategory ===
-                EmployeementCategory.KCSAEmployee) ||
-            rowData?.StatusID ===
-              StatusId.WorkPermitAcknowledgedContractUploaded ||
-            rowData?.StatusID ===
-              StatusId.PendingHRReviewOfferanduploadEmployementContract ? (
-              <>
-                <img
-                  src={require("../../assets/UploadIcon.svg")}
-                  alt="Stamp Icon"
-                  style={{
-                    width: "50%",
-                    height: "auto",
-                    maxWidth: "40px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() =>
-                    handleRedirectView(
-                      rowData,
-                      tab,
-                      TabNames,
-                      ButtonAction.Upload,
-                    )
-                  }
-                />
-              </>
-            ) : // ButtonActions === ActionIcon.View
-            rowData?.StatusID === StatusId.PendingBGdocuploadedbycandidate ||
-              rowData?.StatusID ===
-                StatusId.PendingCandidateOfferLetterUpload ||
-              rowData?.StatusID ===
-                StatusId.PendingCandidateWorkPermitreleatedDoc ||
-              rowData?.StatusID ===
-                StatusId.PendingCandidateEmploymentContractUpload ||
-              rowData?.StatusID === StatusId.PendingLabourHireOfferRelease ||
-              rowData?.StatusID === StatusId.PendingLabourhireWPPayment ||
-              rowData?.StatusID === StatusId.PendingLHWorkPermitProcess ||
-              rowData?.StatusID === StatusId.PendingLHECRelease ||
-              // rowData?.StatusID === StatusId.PendingDOTAficaVerification ||
-              rowData?.StatusID === StatusId.OnboardingProcessinitiatedforDRC ||
-              rowData?.StatusID ===
-                StatusId.OnboardingProcessinitiatedforExpat ||
-              rowData?.StatusID === StatusId.PendingwithTAforMedicalScreening ||
-              currentTab === TabName.MySubmission ? (
-              <>
-                <img
-                  src={require("../../assets/Viewicon.svg")}
-                  alt="Stamp Icon"
-                  style={{
-                    width: "50%",
-                    height: "auto",
-                    maxWidth: "40px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() =>
-                    handleRedirectView(
-                      rowData,
-                      tab,
-                      TabNames,
-                      ButtonAction.View,
-                    )
-                  }
-                />
-              </>
-            ) : rowData?.StatusID === StatusId.PendingHRBGVInitiation ||
-              rowData?.StatusID === StatusId.PendingHROfferInitiate ? (
-              <>
-                <img
-                  src={require("../../assets/Editbutton.svg")}
-                  alt="Stamp Icon"
-                  style={{
-                    width: "50%",
-                    height: "auto",
-                    maxWidth: "40px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() =>
-                    handleRedirectView(
-                      rowData,
-                      tab,
-                      TabNames,
-                      ButtonAction.Initiated,
-                    )
-                  }
-                />
-              </>
-            ) : IsIDCSFailed &&
-              rowData?.StatusID === StatusId.PendingDOTAficaVerification ? (
-              <>
-                <img
-                  src={require("../../assets/Editbutton.svg")}
-                  alt="Stamp Icon"
-                  style={{
-                    width: "50%",
-                    height: "auto",
-                    maxWidth: "40px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() =>
-                    handleRedirectView(
-                      rowData,
-                      tab,
-                      TabNames,
-                      ButtonAction.View,
-                    )
-                  }
-                />
-              </>
-            ) : !IsIDCSFailed &&
-              rowData?.StatusID === StatusId.PendingDOTAficaVerification ? (
-              <>
-                <img
-                  src={require("../../assets/Viewicon.svg")}
-                  alt="Stamp Icon"
-                  style={{
-                    width: "50%",
-                    height: "auto",
-                    maxWidth: "40px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() =>
-                    handleRedirectView(
-                      rowData,
-                      tab,
-                      TabNames,
-                      ButtonAction.View,
-                    )
-                  }
-                />
-              </>
-            ) : (
-              <img
-                src={require("../../assets/Review.svg")}
-                alt="Stamp Icon"
-                style={{
-                  width: "50%",
-                  height: "auto",
-                  maxWidth: "40px",
-                  cursor: "pointer",
-                }}
-                onClick={() =>
-                  handleRedirectView(
-                    rowData,
-                    tab,
-                    TabNames,
-                    ButtonAction.Review,
-                  )
-                }
-              />
-            )}
-          </div>
-        );
-      },
-    },
+     body: (rowData: any) => {
+  const isMySubmission = currentTab === TabName.MySubmission;
+
+  const isIDCSFailed =
+    IsIDCSSkipped.some(
+      (item: any) =>
+        item.requestID === rowData?.CandidateDetails?.JobRequestID &&
+        item.IsActionIcon
+    );
+
+  const { action, icon } = getActionConfig(
+    rowData,
+    isMySubmission,
+    isIDCSFailed
+  );
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <img
+        src={icon}
+        alt="Action Icon"
+        style={{
+          maxWidth: "40px",
+          cursor: "pointer",
+        }}
+        onClick={() =>
+          handleRedirectView(rowData, tab, TabNames, action)
+        }
+      />
+    </div>
+  );
+}
+  },
   ];
 
   async function handleRedirectView(
@@ -723,8 +585,14 @@ const DocumentDashboard = (props: any) => {
     }
   }
 
-  const handleRefresh = (tab: string) => {
+  const handleRefresh = (tab: string, tabValue: string) => {
     void fetchData(tab);
+     props.navigation("/UploadOfferDocumentList", {
+          state: {
+            TabName: tab,
+            tab: tabValue,
+          },
+        });
   };
 
   const onPageChange = (event: any) => {
@@ -759,7 +627,7 @@ const DocumentDashboard = (props: any) => {
             columns={columnConfig(TabValue, Action[0]?.ActionId?.[0], TabNames)}
             rows={rows}
             onPageChange={onPageChange}
-            handleRefresh={() => handleRefresh(TabNames)}
+            handleRefresh={() => handleRefresh(TabNames,TabValue)}
             pagination={pagination}
           />
         );

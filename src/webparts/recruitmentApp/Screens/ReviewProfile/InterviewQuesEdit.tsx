@@ -3307,15 +3307,15 @@ const InterviewQuesEdit: React.FC = (props: any) => {
         if (category?.text === CatogryOptionCode.CareerPortalCandidate) {
           OptionsValue =
             item.options?.map((opt, index) => ({
-              optionEn: opt.text,
-              optionFr: opt.textFr || opt.text,
+              optionEn: decodeBase64(opt.text),
+              optionFr: decodeBase64(opt.textFr ?? opt.text),
               sequence: index + 1,
             })) || [];
 
           answerValue =
             item.CareerportalAnswer?.map((ans) => ({
-              optionEn: ans.text,
-              optionFr: ans.textFr || ans.text,
+              optionEn: decodeBase64(ans.text),
+              optionFr: decodeBase64(ans.textFr ?? ans.text),
             })) || [];
         } else {
           OptionsValue = [
