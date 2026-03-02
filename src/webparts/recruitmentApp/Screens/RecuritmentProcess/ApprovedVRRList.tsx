@@ -27,7 +27,7 @@ const RecruitmentProcess = (props: any) => {
     ReviewLineManagerCount: 0,
     ReviewHODCount: 0,
     lineManagerInterviewCount: 0,
-    HODReviewScoreCount: 0,
+    HODReviewScoreCount: 0, 
     EvaluationCount: 0,
     advertExtensionCount: 0,
     ReviewProfileCount: 0,
