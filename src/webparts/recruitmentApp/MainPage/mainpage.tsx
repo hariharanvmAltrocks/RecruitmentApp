@@ -14,7 +14,6 @@ import CandidateList from "../Screens/ReviewScoreCard/CandidateList";
 import ReviewProfileList from "../Screens/ReviewProfile/ReviewProfileList";
 import ReviewCandidateList from "../Screens/ReviewProfile/ReviewCandidateList";
 import ViewCandidateDetails from "../Screens/ReviewProfile/ViewCandidateDetails";
-import InterviewQuesEdit from "../Screens/ReviewProfile/InterviewQuesEdit";
 import UploadCandidateCV from "../Screens/UploadCandidateCV/UploadCandidateCV";
 import UploadCandidateList from "../Screens/UploadCandidateCV/UploadCandidateList";
 import UploadOfferDocumentList from "../Screens/OfferMedicalProcess/UploadOfferDocumentList";
@@ -22,6 +21,7 @@ import UploadCandidateDocument from "../Screens/OfferMedicalProcess/UploadCandid
 import AdminPanelDashboard from "../Screens/AdminPanel/AdminPanelDashboard";
 import AdminPanelPage from "../Screens/AdminPanel/NewAdminPanelPage";
 import HodViewScorecard from "../Screens/ReviewScoreCard/HodViewScorecard";
+import InterviewQuesEdit from "../Screens/InterviewQuestion/Interviewquesedit";
 
 export default function MainPage(props: any) {
   const { roleID, userRole, masterData, ADGroupData } = userInfo();

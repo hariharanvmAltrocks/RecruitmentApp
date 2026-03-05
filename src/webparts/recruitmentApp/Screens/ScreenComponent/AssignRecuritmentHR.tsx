@@ -13,6 +13,8 @@ import ReuseButton from "../../components/ReuseButton";
 
 export interface AssignRecuritmentHRProps {
   selectedJobCodes: JobCodeTilte[];
+  onSelectAllChange?: (value: boolean) => void;
+  onRowChange?: (value: boolean, rowIndex: number) => void;
   currentRole: number[];
   assignRecruitmentHROption: AutoCompleteItem[];
   assignRecruitmentAgenciesOption: AutoCompleteItem[];
@@ -35,6 +37,8 @@ const AssignRecuritmentHR: React.FC<AssignRecuritmentHRProps> = React.memo(
     assignRecruitmentAgenciesOption,
     onClose,
     onSubmit,
+    onSelectAllChange,
+    onRowChange,
     isLoading = false,
   }) => {
     const [formData, setFormData] = useState<FormDataType>({
@@ -72,7 +76,7 @@ const AssignRecuritmentHR: React.FC<AssignRecuritmentHRProps> = React.memo(
 
     const handleSubmit = useCallback(async () => {
       if (validateForm()) {
-        await onSubmit(formData); // Pass the component's internal state to the parent's submit function
+        await onSubmit(formData); 
       }
     }, [validateForm, onSubmit, formData]);
 
@@ -80,16 +84,16 @@ const AssignRecuritmentHR: React.FC<AssignRecuritmentHRProps> = React.memo(
     const isHRRole = currentRole.includes(RoleID.RecruitmentHR);
 
     return (
-      // 3. RESPONSIVE LAYOUT: Using Stack for clean, responsive vertical layout.
-      <Stack tokens={{ childrenGap: 20 }} style={{ padding: "24px" }}>
+      <div style={{ marginLeft: "12%", width: "78%" }}>
+        <Stack tokens={{ childrenGap: 20 }} style={{ padding: "24px" }}>
         <Stack.Item>
           <JobCodeSelector
-            jobCodes={selectedJobCodes} // Note: This component might need a review too.
-            selectedJobCodes={selectedJobCodes}
-            onSelectAllChange={function (value: boolean): void {
-              throw new Error("Function not implemented.");
-            }}
-          />
+              jobCodes={selectedJobCodes}
+              selectedJobCodes={selectedJobCodes}
+              // onSelectAllChange={onSelectAllChange}
+              onRowChange={onRowChange} onSelectAllChange={function (value: boolean): void {
+                throw new Error("Function not implemented.");
+              } }          />
           <span
             style={{
               color: "red",
@@ -154,7 +158,6 @@ const AssignRecuritmentHR: React.FC<AssignRecuritmentHRProps> = React.memo(
           />
         </Stack.Item>
 
-        {/* Footer is now part of the component, managed by the parent dialog */}
         <Stack
           horizontal
           horizontalAlign="center"
@@ -183,8 +186,9 @@ const AssignRecuritmentHR: React.FC<AssignRecuritmentHRProps> = React.memo(
           />
         </Stack>
       </Stack>
+      </div>
     );
   },
-);
+);  
 
 export { AssignRecuritmentHR };

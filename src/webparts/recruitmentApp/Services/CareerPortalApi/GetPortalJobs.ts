@@ -6,12 +6,13 @@ import { EmailService, GetJobRequestData, getProfileData, GetStateByCountryApi, 
 import { CommonServices, GetPortalJobsService } from "../ServiceExport";
 import SPServices from "../SPService/SPServices";
 import { CandidateDetails, COIAttach, DocumentValue, IGetPortalJobs, RescheduledCandidate, UpsertDocument } from "./IGetPortalJobs";
-import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
+
 import { IDocFiles } from "../SPService/ISPServicesProps";
 import { CommentsData, DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
 import { quesContentId } from "../../utilities/LabelName";
 import { calculateTotalExperienceYears, getcountryCode } from "../../components/TabMerge";
 import { AutoCompleteItem } from "../../Models/Screens";
+import { ViewQuestion } from "../../Screens/InterviewQuestion/Hooks/Interviewtypes";
 
 export default class GetPortalJobs implements IGetPortalJobs {
   async UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>> {

@@ -14,6 +14,8 @@ export const getRecruitmentFiltersByTab = (props: any, tab: string) => {
   let jobAppliedFilter: string[] = [];
 
   const userEmail = props.userDetails[0]?.EmailId;
+let isLMUsers = props.CurrentRoleID.includes(RoleID.LineManager) || props.CurrentRoleID.includes(RoleID.HOD);
+let isHODUser = props.CurrentRoleID.includes(RoleID.HOD);
 
   switch (tab) {
     case TabName.UploadONEMDoc:
@@ -35,6 +37,17 @@ export const getRecruitmentFiltersByTab = (props: any, tab: string) => {
       break;
 
     case TabName.InterviewQuestion:
+      if(props.CurrentRoleID.includes(RoleID.RecruitmentHR)){
+        filters.push(
+        { FilterKey: "StatusId", Operator: "eq", FilterValue: StatusId.PendingwithHRandLMtocreateinterviewQuestion},
+         { FilterKey: "AssignedHR", Operator: "eq", FilterValue: userEmail }
+      );
+      }else if(props.CurrentRoleID.includes(RoleID.LineManager)){
+         filters.push(
+        { FilterKey: "StatusId", Operator: "in", FilterValue: [StatusId.PendingwithHRandLMtocreateinterviewQuestion,StatusId.PendingwithLMcreateDisqualificationQuestion]},
+         { FilterKey: "LineManager", Operator: "eq", FilterValue: userEmail }
+      );
+      }
       filters.push(
         { FilterKey: "StatusId", Operator: "in", FilterValue: [StatusId.PendingwithHRandLMtocreateinterviewQuestion, StatusId.PendingwithLMcreateDisqualificationQuestion] },
       );
@@ -43,35 +56,43 @@ export const getRecruitmentFiltersByTab = (props: any, tab: string) => {
     case TabName.ReviewScorecard:
       filters.push(
         { FilterKey: "StatusId", Operator: "eq", FilterValue: StatusId.RecruitmentInProgress },
+        { FilterKey: isLMUsers ? "LineManager":isHODUser ? "HOD" : "", Operator: "eq", FilterValue: userEmail }
       );
       break;
-
+      
     case TabName.ReviewProfile:
       filters.push(
         { FilterKey: "StatusId", Operator: "eq", FilterValue: StatusId.RecruitmentInProgress },
-        { FilterKey: "LineManager", Operator: "eq", FilterValue: userEmail }
+        { FilterKey: isLMUsers ? "LineManager":isHODUser ? "HOD" : "", Operator: "eq", FilterValue: userEmail }
       );
-      jobAppliedFilter = [
+      if(props.CurrentRoleID.includes(RoleID.RecruitmentHR)){
+        jobAppliedFilter = [workflowStatusApi.HRPending];
+      }else if(props.CurrentRoleID.includes(RoleID.LineManager)){
+        jobAppliedFilter = [
         workflowStatusApi.LineManagerL1Pending,
         workflowStatusApi.LineManagerL2Pending,
         workflowStatusApi.LineManagerLevel1OnHold,
         workflowStatusApi.LineManagerLevel2OnHold,
       ];
+      }
+      
       break;
 
     case TabName.ReviewJobAdvertisement:
-      if (props.CurrentRoleID.includes(RoleID.LineManager)) {
-        filters.push(
+      filters.push(
           { FilterKey: "StatusId", Operator: "eq", FilterValue: StatusId.PendingwithLineManagereviewAdv },
-          { FilterKey: "LineManager", Operator: "eq", FilterValue: userEmail }
+          { FilterKey: isLMUsers ? "LineManager":isHODUser ? "HOD" : "" , Operator: "eq", FilterValue: userEmail }
         );
-      } else if (props.CurrentRoleID.includes(RoleID.HOD)) {
-        filters.push(
-          { FilterKey: "StatusId", Operator: "eq", FilterValue: StatusId.PendingwithHODtoreviewAdv },
-          { FilterKey: "HOD", Operator: "eq", FilterValue: userEmail }
-        );
-      }
       break;
+
+     case TabName.AssignInterviewPanel:
+      filters.push(
+        { FilterKey: "StatusId", Operator: "eq", FilterValue: StatusId.RecruitmentInProgress },
+        { FilterKey: isLMUsers ? "LineManager":isHODUser ? "HOD" : "", Operator: "eq", FilterValue: userEmail }
+      );
+      jobAppliedFilter = [ workflowStatusApi.PendingRecruitmentHRscheduleInterview];
+      break;
+
   }
 
   filters.push({ FilterKey: "ItemCreated", Operator: "eq", FilterValue: Choices.No });

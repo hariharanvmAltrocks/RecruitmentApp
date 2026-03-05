@@ -4,7 +4,7 @@ import * as moment from "moment";
 import { ResponeStatus, RoleID, TabName } from "../../../utilities/Config";
 import { getVRRDetails } from "../../../Services/ServiceExport";
 
-export const useRecruitmentData = (props: any) => {
+export const useRecruitmentData = (props: any, refreshPath: string) => {
   const { CurrentUserEmailId, EmployeeList, CurrentRoleID, TabDetails } = props;
   const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -93,6 +93,13 @@ export const useRecruitmentData = (props: any) => {
 
   const refreshData = () => {
     void fetchData(currentTab);
+
+     props.navigation(refreshPath, {
+           state: {
+             TabName: props.TabDetails.TabName,
+             tab: props.TabDetails.Value,
+           },
+         });
   };
 
   return { data, isLoading, jobCodeTitles, refreshData, setData };

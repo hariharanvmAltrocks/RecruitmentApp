@@ -21,11 +21,15 @@ import AdvertisementDetailsTab from "./EditHooks/AdvertisementDetailsTab";
 import { useVrrData } from "./EditHooks/useVrrData";
 import AdvertReviewTab from "./EditHooks/AdvertReviewTab";
 import { CommentsData } from "../../Services/RecruitmentProcess/IRecruitmentProcessService";
+import { handleHRLeadProcess, handleHRProcess, updateMainRecord } from "./EditHooks/SaveData";
 
 const ApprovedVRREdit: React.FC = (props: any) => {
-  const { stateValue, navigation } = props;
-
+  const { stateValue, navigation, userDetails, EmployeeList, webURL } = props;
   const form = useVrrFormState();
+  const { 
+    validateandSubmit, 
+    NextValidation, 
+  } = form;
   const { isLoading: isMasterDataLoading } = useMasterData();
   const { isLoading: isVrrDataLoading, error: dataError } = useVrrData(
     stateValue,
@@ -46,39 +50,33 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   const [isCommentsOpen, setCommentsOpen] = useState(false);
   const [isViewed, setIsViewed] = useState(false);
   const [advTab, setAdvTab] = useState(0);
+  const [isMainComOpen, setMainComOpen] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const currentRoleID = useMemo(
     () => GetStatusIdRoles(stateValue?.StatusId) ?? 0,
     [stateValue?.StatusId],
   );
-  const pageLoading = isVrrDataLoading || isMasterDataLoading;
+  const pageLoading = isVrrDataLoading || isMasterDataLoading || isLoading;
 
-  // const showAlert = (Message: string, Type: string, onAction?: () => void) => {
-  //   setAlertProps({
-  //     visible: true,
-  //     Message,
-  //     Type,
-  //     ButtonAction: (confirmed: boolean) => onAction?.(),
-  //   });
-  // };
-
-  // React.useEffect(() => {
-  //   if (dataError) {
-  //     showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
-
-  //     console.error("API Error Details:", dataError);
-  //   }
-  // }, [dataError, showAlert]);
+const showAlert = (visible: boolean, Message?: string, Type?: string, onAction?: (confirmed: boolean) => void) => {
+    setAlertProps({
+        visible,
+        Message: Message ?? "",
+        Type: Type ?? HRMSAlertOptions.Error,
+        ButtonAction: (confirmed: boolean) => {
+            setAlertProps(prev => ({ ...prev, visible: false }));
+            if (onAction) onAction(confirmed);
+        },
+    });
+};
 
   console.log(dataError);
 
-  const handlePreview = () => {
-    setPreviewOpen(true);
-  };
-
   const handleOpenComments = useCallback(async () => {
+    setMainComOpen(false);
     const CommentsList = await getVRRDetails.GetCommentsData(
-      props.EmployeeList,
+    EmployeeList,
       "",
       [
         {
@@ -92,7 +90,13 @@ const ApprovedVRREdit: React.FC = (props: any) => {
       setCommentsData(CommentsList.data);
     }
     setCommentsOpen(true);
-  }, [stateValue.ID, props.EmployeeList]);
+  }, [stateValue.ID, EmployeeList]);
+
+    const handleAdvertClick = useCallback(async () => {
+   setIsViewed(true);
+                  setMainComOpen(false);
+                  setPreviewOpen(true);
+  }, [isViewed]);
 
   const handleCancel = () => {
     setAlertProps({
@@ -110,11 +114,72 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     });
   };
 
-  const handleSubmit = async () => {
-    // await validateAndSubmit(currentRoleID, (alertOptions) => {
-    //     setAlertProps({ ...alertOptions, visible: true });
-    // });
+    const handlePreview = () => {
+     const hasErrors = validateandSubmit(currentRoleID, stateValue?.StatusId , activeTab);
+     if(hasErrors){
+setPreviewOpen(true);
+    setMainComOpen(false);
+     }else{
+        showAlert(
+    true, 
+    RecuritmentHRMsg.FormValidationMsg, 
+    HRMSAlertOptions.Error,
+    (confirmed: boolean) => {
+        if (confirmed) {
+            showAlert(false)
+        } 
+    }
+  )
+  }
+}
+
+const handleSubmit = async () => {
+  const finalize = (msg: string, type = HRMSAlertOptions.Success) => {
+    setIsLoading(false);
+    showAlert(true, msg, type, (confirmed: boolean) => {
+      if (confirmed && type === HRMSAlertOptions.Success) {
+        navigation("/RecurimentProcess", {
+          state: { TabName: stateValue?.TabName, tab: stateValue?.tab },
+        });
+      }
+    });
   };
+
+  const hasErrors = validateandSubmit(currentRoleID, stateValue?.StatusId, stateValue?.tab);
+
+  if (hasErrors) {
+    finalize(RecuritmentHRMsg.FormValidationMsg, HRMSAlertOptions.Error);
+    return;
+  }
+  try {
+    setIsLoading(true);
+    
+    switch (currentRoleID) {
+      case RoleID.RecruitmentHRLead:
+        if (stateValue?.StatusId === StatusId.PendingwithHRLeadtouploadONEMsigneddoc) {
+          await handleHRLeadProcess(form, props, currentRoleID, finalize);
+        }
+        break;
+
+      case RoleID.RecruitmentHR:
+        await handleHRProcess(form, props, currentRoleID, finalize);
+        break;
+
+      case RoleID.HOD:
+      case RoleID.LineManager:
+        await updateMainRecord(form, props, currentRoleID);
+        finalize(currentRoleID === RoleID.HOD ? RecuritmentHRMsg.ApprovedMsg : RecuritmentHRMsg.AdvertisementReveiwMsg);
+        break;
+
+      default:
+        setIsLoading(false);
+        break;
+    }
+  } catch (error) {
+    console.error("Submit Error:", error);
+    finalize(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
+  }
+};
 
   const tabs = useMemo(() => {
     const items = [
@@ -126,9 +191,12 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             form={form}
             currentRoleID={currentRoleID}
             stateValue={stateValue}
-            webURL={props.webURL}
-            userDetails={props.useDetails}
-          />
+            webURL={webURL}
+            userDetails={userDetails}
+            handleComments={handleOpenComments} 
+            props={props} 
+            handleAdvertClick= {handleAdvertClick}
+           />
         ),
       },
     ];
@@ -149,8 +217,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             setAdvTab={setAdvTab}
             currentRoleID={currentRoleID}
             stateValue={stateValue}
-            webURL={props.webURL}
-            userDetails={props.useDetails}
+            webURL={webURL}
+            userDetails={userDetails}
             handleComments={handleOpenComments}
           />
         ),
@@ -168,13 +236,19 @@ const ApprovedVRREdit: React.FC = (props: any) => {
   const getActionButtons = useMemo(() => {
     if (
       currentRoleID === RoleID.RecruitmentHR &&
-      stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv
+      stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtouploadAdv &&
+      !form.advDetails.JobcodeChecked
     ) {
       return [
         { label: ButtonAction.Preview, onClick: handlePreview },
         ...(isViewed
           ? [{ label: ButtonAction.Submit, onClick: handleSubmit }]
           : []),
+      ];
+    }
+     if (isViewed) {
+      return [
+          { label: ButtonAction.Submit, onClick: handleSubmit }
       ];
     }
     if (
@@ -189,8 +263,19 @@ const ApprovedVRREdit: React.FC = (props: any) => {
     return [];
   }, [currentRoleID, stateValue?.StatusId, isViewed, handleSubmit]);
 
+  const tabNameData = useMemo(() => {
+  const base = props.stateValue?.TabName ? [{ tabName: props.stateValue.TabName }] : [];
+  const activeIndex = tabs.findIndex((t) => t.value === activeTab);
+  const trail = tabs
+    .slice(0, activeIndex + 1)
+    .map((t) => ({ tabName: t.label }));
+  return [...base, ...trail].filter((item) => item.tabName);
+}, [activeTab, tabs, props.stateValue?.TabName]);
+
   return (
     <>
+     {isMainComOpen ? ( 
+      <>
       <CustomLoader isLoading={pageLoading}>
         <div className="menu-card">
           <BreadcrumbsComponent
@@ -202,6 +287,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
             initialItem={activeTab}
             onBreadcrumbChange={setActiveTab}
             handleCancel={handleCancel}
+             TabName={tabNameData}
+             ValidationError={() => NextValidation(activeTab)}
             JobValue={{
               JobTitle: form.formState.JobNameInEnglish,
               JobCode: form.formState.JobCode,
@@ -215,8 +302,8 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           {activeTabContent}
         </div>
       </CustomLoader>
-
-      {isPreviewOpen && (
+      </>
+     ) : isPreviewOpen ? (
         <PreviewScreen
           data={form.advDetails}
           RoleSpec={form.roleSpeKnowledgeValue}
@@ -228,17 +315,16 @@ const ApprovedVRREdit: React.FC = (props: any) => {
           Ok_btnfn={() => {
             setPreviewOpen(false);
             setIsViewed(true);
+            setMainComOpen(true)
           }}
         />
-      )}
-
-      {isCommentsOpen && (
+      ) : isCommentsOpen && (
         <CommanComments
           Comments={commentsData}
-          onClose={() => setCommentsOpen(false)}
+          onClose={() => {setCommentsOpen(false) ; setMainComOpen(true)}}
         />
       )}
-
+    
       {alertProps.visible && (
         <CustomAlert
           {...alertProps}

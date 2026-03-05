@@ -1,4 +1,4 @@
-// src/pages/RecruitmentList.tsx
+
 import * as React from "react";
 import { useCallback, useState } from "react";
 import CheckboxDataTable from "../../components/CheckboxDataTable";
@@ -38,12 +38,13 @@ import {
 import { jobsXAgents } from "../../Models/ApIInterface";
 import { AutoCompleteItem } from "../../Models/Screens";
 import { useAssignOptions } from "./Hooks/useAssignOptions";
+import { NavigationPath } from "../NavigationPath/navigationPath";
 
 const RecruitmentList = (props: any) => {
   const [rows, setRows] = useState<number>(5);
 
   const { data, isLoading, jobCodeTitles, refreshData } =
-    useRecruitmentData(props);
+    useRecruitmentData(props, NavigationPath.PreSelection);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [isAssignDialogOpen, setAssignDialogOpen] = useState<boolean>(false);
   const [isDateDialogOpen, setDateDialogOpen] = useState<boolean>(false);
@@ -54,6 +55,7 @@ const RecruitmentList = (props: any) => {
     type: "",
     buttonAction: undefined as (() => void) | undefined,
   });
+  const [isLoadings, setIsLoading] = useState<boolean>(false)
 
   console.log(jobCodeTitles, "JobCodeTitle");
 
@@ -66,6 +68,8 @@ const RecruitmentList = (props: any) => {
   const showAlert = (message: string, type: string, onAction?: () => void) => {
     setAlertInfo({ open: true, message, type, buttonAction: onAction });
   };
+  const closeAlert = () => setAlertInfo({ ...alertInfo, open: false });
+
 
   const {
     hrOptions,
@@ -112,6 +116,7 @@ const RecruitmentList = (props: any) => {
 
   const handleAssignSubmit = useCallback(
     async (formData: FormDataType) => {
+      setIsLoading(true);
       setIsSubmitting(true);
       let allOperationsSucceeded = true;
 
@@ -244,30 +249,38 @@ const RecruitmentList = (props: any) => {
         }
 
         if (allOperationsSucceeded) {
-          showAlert("Successfully assigned!", HRMSAlertOptions.Success, () => {
-            setAssignDialogOpen(false);
-            clearSelection();
-            refreshData();
-          });
+          showAlert(selectedRows.length === 1
+            ? RecuritmentHRMsg.SingleHRSuccessMsg
+            : RecuritmentHRMsg.HRSuccess, HRMSAlertOptions.Success, () => {
+              setAssignDialogOpen(false);
+              clearSelection();
+              refreshData();
+              closeAlert();
+            });
         } else {
-          showAlert("Failed to assign recruitment.", HRMSAlertOptions.Error);
+          showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error, () => {
+            closeAlert();
+          });
         }
       } catch (error) {
         console.error("A critical error occurred during submission:", error);
         showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
       } finally {
         setIsSubmitting(false);
+        setIsLoading(false);
       }
     },
     [props.CurrentRoleID, selectedRows, data, refreshData, clearSelection],
   );
 
-  const closeAlert = () => setAlertInfo({ ...alertInfo, open: false });
 
   const handleRedirectView = useCallback(
     (rowData: any, buttonAction: string, tab: string) => {
       console.log("Redirecting for:", rowData.ID, "with action:", buttonAction);
-      props.navigation("/RecurimentProcess/ApprovedVRREdit", {
+      const basePath = props.TabDetails?.TabName === TabName.MySubmission
+        ? "/RecurimentProcess/ApprovedVRRView"
+        : props.TabDetails?.TabName === TabName.InterviewQuestion ? "/RecurimentProcess/InterviewQuesEdit" : "/RecurimentProcess/ApprovedVRREdit";
+      props.navigation(basePath, {
         state: {
           ID: rowData?.ID,
           TabName: props.TabDetails.TabName,
@@ -277,6 +290,10 @@ const RecruitmentList = (props: any) => {
           tab,
           StatusId: rowData?.StatusId,
           Status: rowData?.Status,
+          JobTitleInEnglish: rowData.JobTitleEnglish,
+          Department: rowData.Department,
+          JobCode: rowData.JobCode,
+          JobCodeID: rowData?.JobCodeId,
         },
       });
     },
@@ -304,6 +321,7 @@ const RecruitmentList = (props: any) => {
       const checkedItems = selectedItems.filter((item) => item.Checked);
       const selectedJobCodes = checkedItems.map((item) => ({
         ID: item.ID,
+        JobTitle: item.JobTitleEnglish,
         JobCode: item.JobCode,
         JobCodeId: item.JobCodeId,
         Nationality: item.Nationality,
@@ -375,7 +393,7 @@ const RecruitmentList = (props: any) => {
 
   return (
     <>
-      <CustomLoader isLoading={isLoading}>{renderTable()}</CustomLoader>
+      <CustomLoader isLoading={isLoading ?? isLoadings}>{renderTable()}</CustomLoader>
 
       {alertInfo.open && (
         <CustomAlert
@@ -383,7 +401,7 @@ const RecruitmentList = (props: any) => {
           Type={alertInfo.type}
           ButtonAction={alertInfo.buttonAction || closeAlert}
           onClose={closeAlert}
-          visible={false}
+          visible={alertInfo.open}
         />
       )}
 
@@ -407,7 +425,7 @@ const RecruitmentList = (props: any) => {
                   : HRMSAlertOptions.Error,
               )
             }
-            setIsLoading={() => {}}
+            setIsLoading={() => { }}
           />
         </CustomDialogbox>
       )}
@@ -416,10 +434,33 @@ const RecruitmentList = (props: any) => {
         <CustomDialogbox
           visible={isAssignDialogOpen}
           onClose={() => !isSubmitting && setAssignDialogOpen(false)}
+          Style={{
+            width: "45vw",
+            height: "38vw",
+            padding: "0px",
+            overflowX: "hidden",
+          }}
           header={
-            props.CurrentRoleID.includes(RoleID.RecruitmentHR)
-              ? "Assign Agencies"
-              : "Assign Recruitment HR"
+            <div
+              style={{
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              <h2
+                style={{
+                  color: "white",
+                  fontFamily: `"Segoe UI", "Segoe UI Web (West European)", "Segoe UI", 
+                    -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+                  // textDecoration: "underline",
+                  // textUnderlineOffset: "6px",
+                }}
+              >
+                {props.CurrentRoleID.includes(RoleID.RecruitmentHR)
+                  ? "Assign Agencies"
+                  : "Assign Recruitment HR"}
+              </h2>
+            </div>
           }
         >
           <AssignRecuritmentHR
@@ -430,6 +471,7 @@ const RecruitmentList = (props: any) => {
             onClose={() => setAssignDialogOpen(false)}
             onSubmit={handleAssignSubmit}
             isLoading={isSubmitting || areOptionsLoading}
+          // onSelectAllChange={(value) =>handleSelectionChange(value)}
           />
         </CustomDialogbox>
       )}

@@ -1,7 +1,7 @@
 import { AdvertisementDetails, CandidateProfile, CheckMyCandidate, COIType, FilterItem, GetAllMaster, GetMasterByCountry, GetProfileByFilter, GetProfileByJobCode, getQuestionById, profileXagent, sendEmail, UpsertMasters, UpsertProfile, UpsertQuestions, WorkflowJson } from "../../Models/ApIInterface";
 import { CommanQuestion, QuestionItem } from "../../Models/RecuritmentVRR";
 import { AutoCompleteItem } from "../../Models/Screens";
-import { ViewQuestion } from "../../Screens/ScreenComponent/ViewQuestionCheckbox";
+import { ViewQuestion } from "../../Screens/InterviewQuestion/Hooks/Interviewtypes";
 import { DataSyncToRecruitmentResponse } from "../RecruitmentProcess/IRecruitmentProcessService";
 import { IDocFiles } from "../SPService/ISPServicesProps";
 

@@ -7,27 +7,26 @@ import LabelHeaderComponents from "../../components/TitleHeader";
 import ReuseButton from "../../components/ReuseButton";
 import { ColorCode } from "../../utilities/Config";
 import { ButtonAction } from "../../utilities/LabelName";
-import { AutoCompleteItem } from "../../Models/Screens";
-import { OptionRow } from "../ReviewProfile/InterviewQuesEdit";
+import { ViewQuestion } from "../InterviewQuestion/Hooks/Interviewtypes";
 
-export type ViewQuestion = {
-  scope?: string;
-  id: number;
-  Checked: boolean;
-  header?: string;
-  HeaderLabel?: string;
-  discipline: AutoCompleteItem;
-  questionType: AutoCompleteItem;
-  question: string;
-  questionFr?: string;
-  expectedAnswer: any;
-  options?: OptionRow[];
-  Disqualification: string;
-  CareerportalAnswer: OptionRow[];
-  Type?: string;
-  expectedAnswerFr?: any;
+// export type ViewQuestion = {
+//   scope?: string;
+//   id: number;
+//   Checked: boolean;
+//   header?: string;
+//   HeaderLabel?: string;
+//   discipline: AutoCompleteItem;
+//   questionType: AutoCompleteItem;
+//   question: string;
+//   questionFr?: string;
+//   expectedAnswer: any;
+//   options?: OptionRow[];
+//   Disqualification: string;
+//   CareerportalAnswer: OptionRow[];
+//   Type?: string;
+//   expectedAnswerFr?: any;
   
-};
+// };
 
 interface FormFields {
   questionnaire: ViewQuestion[];
@@ -115,7 +114,7 @@ function ViewQuestionCheckbox({
                   >
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <SignatureCheckbox
-                        checked={q.Checked}
+                        checked={q.Checked ?? false}
                         onChange={(value) => handleCheckbox(q.id, value)}
                       />
                       <strong

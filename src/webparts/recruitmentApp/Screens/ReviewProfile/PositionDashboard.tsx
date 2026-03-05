@@ -10,9 +10,10 @@ import * as moment from "moment";
 import { useRecruitmentData } from "../RecuritmentProcess/Hooks/useRecruitmentData";
 import { useRecruitmentColumns } from "../RecuritmentProcess/Hooks/useRecruitmentColumns";
 import { useCallback, useState } from "react";
+import { NavigationPath } from "../NavigationPath/navigationPath";
 
 const PositionDashboard = (props: any) => {
-  const { data, isLoading, refreshData } = useRecruitmentData(props);
+  const { data, isLoading, refreshData } = useRecruitmentData(props,NavigationPath.PostSelection);
 
   const [rows, setRows] = useState<number>(5);
   const [alertInfo, setAlertInfo] = useState({

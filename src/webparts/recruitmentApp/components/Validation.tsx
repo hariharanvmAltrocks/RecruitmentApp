@@ -7,7 +7,7 @@ export default function IsValid(data: any) {
     return false;
   } else if (!data) {
     return false;
-  } else if (0) {
+  } else if (Array.isArray(data) && data.length === 0) {
     return false;
   } else if (typeof data === "string" && data.trim() === "") {
     return false;

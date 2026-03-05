@@ -16,7 +16,7 @@ export const useRecruitmentColumns = (
   const TabNames = tabDetails?.TabName;
   const TabValue = tabDetails?.Value;
   const ButtonActions =
-    tabDetails?.StatusDetails?.[0]?.Action?.[0] ?? ActionIcon.View;
+    tabDetails?.StatusDetails?.[0]?.ActionId?.[0] ?? ActionIcon.View;
 
   return useMemo(() => {
     const columns = [

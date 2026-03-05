@@ -4,6 +4,7 @@ import { AutoCompleteItem } from '../../../Models/Screens';
 import { calculateValidTo } from '../CommanFilter';
 import { IDocFiles } from '../../../Services/SPService/ISPServicesProps';
 import IsValid from '../../../components/Validation';
+import { Nationality, RoleID, StatusId } from '../../../utilities/Config';
 
 
 const todaydate = new Date();
@@ -25,7 +26,7 @@ const initialAdvDetailsState: AdvDetails = {
     YearofExperience: " ",
     PreferredExperience: "",
     ValidFrom: todaydate,
-    ValidTo: undefined,
+    ValidTo: calculateValidTo(todaydate, 13),
     FunctionType: "",
     JobFunctionalType: { key: 0, text: "" },
     JobFunctionalTypeOption: [],
@@ -94,7 +95,7 @@ export type ValidationErrorsType = {
     TotalExperience: boolean;
     ExperienceinMiningIndustry: boolean;
     addMasterQualification: boolean;
-    Checkboxalidation: boolean;
+    isSignatureChecked: boolean;
     ValidFrom: boolean;
     ValidTo: boolean;
     JobFunctionalType: boolean;
@@ -128,7 +129,7 @@ const initialValidationErrors: ValidationErrorsType = {
     TotalExperience: false,
     ExperienceinMiningIndustry: false,
     addMasterQualification: false,
-    Checkboxalidation: false,
+    isSignatureChecked: false,
     ValidFrom: false,
     ValidTo: false,
     JobFunctionalType: false,
@@ -156,7 +157,8 @@ export const useVrrFormState = () => {
     const [isSignatureChecked, setSignatureChecked] = useState<boolean>(false);
     const [experienceValidationError, setExperienceValidationError] = useState<boolean>(false);
 
-    // --- GENERIC UPDATERS ---
+
+    
 
     const clearError = (field: string) => {
         setValidationErrors((prev: any) => ({ ...prev, [field]: false }));
@@ -171,8 +173,6 @@ export const useVrrFormState = () => {
         setAdvDetails(prev => ({ ...prev, [field]: value }));
         clearError(field as string);
     }, []);
-
-    // --- SPECIFIC HANDLERS ---
 
     const handleDateChange = useCallback((date: Date | null, field: keyof AdvDetails) => {
         setAdvDetails((prev) => {
@@ -202,7 +202,6 @@ export const useVrrFormState = () => {
     }, []);
 
     const handleRichTextEditor = useCallback((value: string, field: string, currentTab: number) => {
-        // Tab 1 is French
         const targetField = currentTab === 1 ? `${field}_fr` : field;
         setAdvDetails(prev => ({ ...prev, [targetField]: value }));
         clearError(targetField);
@@ -210,8 +209,6 @@ export const useVrrFormState = () => {
 
     const handleAutoComplete = useCallback((item: AutoCompleteItem | null, field: string, currentTab: number) => {
         let targetField = field;
-
-        // Handle logic for managers mapping and French translations
         if (currentTab === 1) {
             if (field === "JobTitleofFunctionalManager") targetField = "JobTilteFunctionalManager_fr";
             if (field === "JobTitleofLineManagerSupervisor") targetField = "JobTitleofLineManagerSupervisor_fr";
@@ -235,7 +232,6 @@ export const useVrrFormState = () => {
         const setter = type === 'role' ? setRoleSpeKnowledgeValue : setTechnicalSkillValue;
         setter((prev: any) => prev.map((row: any, i: number) => i === index ? { ...row, [field]: item } : row));
 
-        // Clear specific row error if needed
         setValidationErrors((prev: any) => {
             const errKey = type === 'role' ? 'RoleSpeKnowledgeValidation' : 'technicalSkillsKnowledge';
             const newErrors = [...(prev[errKey] || [])];
@@ -294,7 +290,7 @@ export const useVrrFormState = () => {
                 setValidationErrors((prevErrors: { technicalSkillsKnowledge: any; }) => ({ ...prevErrors, technicalSkillsKnowledge: [...prevErrors.technicalSkillsKnowledge, { TechnicalSkills: false, LevelProficiency: false }] }));
             }
         }
-    }, [roleSpeKnowledgeValue, technicalSkillValue]); // Add dependencies
+    }, [roleSpeKnowledgeValue, technicalSkillValue]); 
 
     const handleDeleteRow = useCallback((type: 'role' | 'skill', index: number) => {
         if (type === 'role') {
@@ -320,11 +316,116 @@ export const useVrrFormState = () => {
         }));
     }, []);
 
+     const handlecheckChanges = useCallback((
+        value: boolean,
+        StateValue: string,
+    ) => {
+        setSignatureChecked(value);
+        setValidationErrors((prevState: any) => ({
+            ...prevState,
+            [StateValue]: false,
+        }));
+    }, []);
+
+       const validateandSubmit = useCallback((currentRoleID: number, statusId: number, currentTab: string) => {
+        let errors: ValidationErrorsType = { ...initialValidationErrors };
+        const { AssignRecruitmentHR, Comments, OnamSignedStampsAttchment, Nationality: nation, AdvertisementDocument } = formState;
+        const isCheckValid = isSignatureChecked;
+
+        switch (currentRoleID) {
+            case RoleID.RecruitmentHRLead:
+                errors.Comments = !IsValid(Comments);
+                errors.isSignatureChecked = !isCheckValid;
+                if (currentTab === "tab1") {
+                    errors.AssignRecruitmentHR = !IsValid(AssignRecruitmentHR.text);
+                } else if (currentTab === "tab2") {
+                    errors.OnamSignedStampsAttchment = !IsValid(OnamSignedStampsAttchment);
+                    if (nation === Nationality.Expatriate) {
+                        errors.BVGVerification = !bvgVerification.checkboxBGVOption?.some(opt => opt.checked);
+                    }
+                }
+                break;
+
+            case RoleID.RecruitmentHR:
+                if (statusId === StatusId.PendingwithRecruitmentHRtouploadAdv) {
+                    errors.Comments = !IsValid(Comments);
+                    errors.isSignatureChecked = !isCheckValid;
+
+                    // Ad Attachment check
+                    if (AdvertisementDocument.length === 0) {
+                        errors.AdvertisementAttachement = !IsValid(advDetails.AdvertisementAttachement);
+                    }
+
+                    if (!advDetails.JobcodeChecked) {
+                        errors.MinQualification = !IsValid(qualificationValue.MinQualification[0]?.text);
+                        errors.PrefeQualification = !IsValid(qualificationValue.PrefeQualification[0]?.text);
+                        errors.RolePurpose = !IsValid(advDetails.RolePurpose);
+                        errors.JobDescription = !IsValid(advDetails.JobDescription);
+                        errors.RolePurpose_fr = !IsValid(advDetails.RolePurpose_fr);
+                        errors.JobDescription_fr = !IsValid(advDetails.JobDescription_fr);
+                        errors.ExperienceinMiningIndustry = !IsValid(advDetails.ExperienceinMiningIndustry.text);
+                        errors.TotalExperience = !IsValid(advDetails.TotalExperience.text);
+                        errors.JobFunctionalType = !IsValid(advDetails.JobFunctionalType.text);
+                        errors.JobTitleofFunctionalManager = !IsValid(advDetails.JobTitleofFunctionalManager.text);
+                        errors.FunctionalManagerName = !IsValid(advDetails.FunctionalManagerName);
+                        errors.JobTitleofLineManagerSupervisor = !IsValid(advDetails.JobTitleofLineManagerSupervisor.text);
+                        errors.LineManagerSupervisorName = !IsValid(advDetails.LineManagerSupervisorName);
+
+                        // Validate every row in dynamic arrays
+                        errors.RoleSpeKnowledgeValidation = roleSpeKnowledgeValue.map(row => ({
+                            RoleSpeKnowledge: !IsValid(row.RoleSpeKnowledge.text),
+                            RequiredLevel: !IsValid(row.RequiredLevel.text)
+                        }));
+                        errors.technicalSkillsKnowledge = technicalSkillValue.map(row => ({
+                            TechnicalSkills: !IsValid(row.TechnicalSkills.text),
+                            LevelProficiency: !IsValid(row.LevelProficiency.text)
+                        }));
+                    }
+                }
+                break;
+
+            case RoleID.HOD:
+            case RoleID.LineManager:
+                if (currentTab === "tab1") {
+                    errors.Comments = !IsValid(Comments);
+                    errors.isSignatureChecked = !isCheckValid;
+                }
+                break;
+        }
+
+        setValidationErrors(errors);
+
+        const hasStaticErrors = (Object.keys(errors) as Array<keyof ValidationErrorsType>).some(key => 
+            typeof errors[key] === 'boolean' && errors[key] === true
+        );
+        const hasKnowledgeErrors = errors.RoleSpeKnowledgeValidation.some(e => e.RoleSpeKnowledge || e.RequiredLevel);
+        const hasSkillErrors = errors.technicalSkillsKnowledge.some(e => e.TechnicalSkills || e.LevelProficiency);
+
+        return hasStaticErrors || hasKnowledgeErrors || hasSkillErrors;
+    }, [formState, advDetails, qualificationValue, roleSpeKnowledgeValue, technicalSkillValue, bvgVerification, isSignatureChecked]);
+
+  
+    const NextValidation = useCallback((tab: string): boolean => {
+        let tabErrors = {
+            AdvertisementAttachement: false,
+            RoleProfile: false,
+            Grading: false,
+        };
+
+        if (tab === "tab1") {
+            if (formState.AdvertisementDocument.length === 0) {
+                tabErrors.AdvertisementAttachement = IsValid(advDetails.AdvertisementAttachement);
+            }
+        }
+
+        setValidationErrors((prev: any) => ({ ...prev, ...tabErrors }));
+        return Object.values(tabErrors).some(err => err === true);
+    }, [formState.AdvertisementDocument, advDetails.AdvertisementAttachement]);
 
     return {
         formState, advDetails, qualificationValue, roleSpeKnowledgeValue, technicalSkillValue,
-        validationErrors, bvgVerification, isSignatureChecked, experienceValidationError,
-        setFormState, setAdvDetails, setValidationErrors, setSignatureChecked,
+        validationErrors, bvgVerification, isSignatureChecked, experienceValidationError, 
+        setFormState, setAdvDetails, setValidationErrors, setSignatureChecked,setBvgVerification,
         // Methods
         handleFormStateChange,
         handleAdvDetailsChange,
@@ -339,6 +440,7 @@ export const useVrrFormState = () => {
         handleAddRow,
         handleDeleteRow,
         handleInputChangeTextArea,
+        handlecheckChanges,
 
         setQualificationValue,
         setRoleSpeKnowledgeValue,
@@ -356,6 +458,9 @@ export const useVrrFormState = () => {
 
         handleAutoCompleterow: (item: AutoCompleteItem | null, key: string, index: number, stateKey: string) =>
             handleDynamicRowUpdate(stateKey === 'TechnicalSkillValue' ? 'skill' : 'role', index, key, item),
+
+         validateandSubmit,
+        NextValidation
     };
 };
 export type VrrFormHook = ReturnType<typeof useVrrFormState>;

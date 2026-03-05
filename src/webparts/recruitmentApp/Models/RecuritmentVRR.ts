@@ -1,6 +1,6 @@
 import { CheckboxGroupOption } from "../components/CustomCheckboxGroup";
+import { OptionRow } from "../Screens/InterviewQuestion/Hooks/Interviewtypes";
 import { MandatoryCheck } from "../Screens/RecuritmentProcess/VerificationCard/VerificationCard";
-import { OptionRow } from "../Screens/ReviewProfile/InterviewQuesEdit";
 import { IDocFiles } from "../Services/SPService/ISPServicesProps";
 import { AutoCompleteItem } from "./Screens";
 
