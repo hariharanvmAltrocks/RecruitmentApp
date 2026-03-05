@@ -157,8 +157,8 @@ const ActionSection: React.FC<Props> = React.memo(
                   alignItems: "center",
                 }}
                 label="VIEW"
-                imgSrc={require("../../assets/viewSubmision-white.svg")}
-                imgSrcHover={require("../../assets/viewSubmision-white.svg")}
+                imgSrc={require("../../../assets/viewSubmision-white.svg")}
+                imgSrcHover={require("../../../assets/viewSubmision-white.svg")}
                 imgAlt="View"
                 imgAltHover="Hovered View"
                 onClick={onViewComments}

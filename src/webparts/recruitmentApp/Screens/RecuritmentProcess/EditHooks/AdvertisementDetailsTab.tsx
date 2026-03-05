@@ -16,6 +16,8 @@ import CustomLabel from "../../../components/CustomLabel";
 import ReuseButton from "../../../components/ReuseButton";
 import CustomSignature from "../../../components/CustomSignature";
 
+
+
 interface AdvertisementDetailsTabProps {
   form: VrrFormHook;
   MasterData: MasterData;
@@ -39,6 +41,17 @@ const AdvertisementDetailsTab: React.FC<AdvertisementDetailsTabProps> = ({
   userDetails,
   handleComments,
 }) => {
+
+  const styles = {
+  errorNote: {
+    color: "red",
+    marginTop: "8px",
+    display: "block",
+    fontFamily: "sans-serif",
+    fontSize: "13px",
+  },
+} as const;
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setAdvTab(newValue);
   };
@@ -202,14 +215,6 @@ const AdvertisementDetailsTab: React.FC<AdvertisementDetailsTabProps> = ({
   );
 };
 
-const styles = {
-  errorNote: {
-    color: "red",
-    marginTop: "8px",
-    display: "block",
-    fontFamily: "sans-serif",
-    fontSize: "13px",
-  },
-} as const;
+
 
 export default AdvertisementDetailsTab;

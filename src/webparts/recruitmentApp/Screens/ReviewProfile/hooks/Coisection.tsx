@@ -72,8 +72,8 @@ const COISection: React.FC<Props> = React.memo(
             <div className="ms-Grid-col ms-lg4">
               <CustomAutoComplete
                 label={labelNames.CandidateDetails.ConsultedWith}
-                options={COIProfileLabelOption}
-                value={COIProfileLabel}
+                options={COIProfileLabelOption.map(item => ({ ...item, key: typeof item.key === 'string' ? parseInt(item.key) : item.key }))}
+                value={COIProfileLabel ? { ...COIProfileLabel, key: typeof COIProfileLabel.key === 'string' ? parseInt(COIProfileLabel.key) : COIProfileLabel.key } : null}
                 disabled={!isEditable}
                 mandatory={isEditable}
                 onChange={(item) => onAutoComplete(item, "COIProfileLabel")}
@@ -109,7 +109,7 @@ const COISection: React.FC<Props> = React.memo(
                 </div>
                 <div className="ms-Grid-col ms-lg4" style={{ marginTop: "2%" }}>
                   <CustomViewAttachment
-                    Attachment={COIAttachment ?? []}
+                    Attachment={(COIAttachment ?? []).map(item => ({ ...item, type: item.type || "" }))}
                     StateValue="COIAttachment"
                     handleDelete={(idx, stateKey) => onDelete(idx, stateKey)}
                     webUrl={webURL}

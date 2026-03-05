@@ -54,7 +54,7 @@ export const useMasterData = () => {
             }
         };
 
-        fetchAllMasterData();
+       void fetchAllMasterData();
     }, []);
 
     return { ...options, isLoading };
