@@ -1,0 +1,1 @@
+{"version":3,"file":"apimodels.js","sourceRoot":"","sources":["../../../../src/webparts/recrutimentApp/models/apimodels.ts"],"names":[],"mappings":"","sourcesContent":["export type ApiResponse<T> = {\r\n    data: T;\r\n    status: number;\r\n    message: string;\r\n    totalRecords?:number;\r\n}"]}

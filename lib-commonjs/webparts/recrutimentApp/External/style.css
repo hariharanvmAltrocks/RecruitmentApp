@@ -1,0 +1,106 @@
+#workbenchPageContent {
+  max-width: 100%;
+}
+
+.content_3f3fd3c2,
+.CanvasZone {
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+
+/* site navigation & header hidden */
+[data-automationid=SiteHeader] {
+  display: none !important;
+}
+
+[role=listbox] .ms-CommandBar {
+  display: none !important;
+}
+
+#spCommandBar {
+  display: none !important;
+}
+
+#sp-appBar {
+  display: none !important;
+}
+
+[data-automationid=ShyHeader] {
+  display: none !important;
+}
+
+.pagination .ms-Button {
+  border: none !important;
+  background: none !important;
+  min-width: 0 !important;
+  padding: 5px !important;
+}
+
+.pagination .ms-Button.ms-Button--primary .ms-Button-label {
+  color: rgb(47, 195, 249);
+}
+
+.alertify-notifier .ajs-message.ajs-success {
+  background: #03787c;
+  color: #fff;
+  border: 1px solid #fff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-box-shadow: -2px 10px 10px -10px rgba(255, 255, 255, 1);
+  -moz-box-shadow: -2px 10px 10px -10px rgba(255, 255, 255, 1);
+  box-shadow: -2px 10px 10px -10px rgba(255, 255, 255, 1);
+}
+
+.alertify-notifier .ajs-message.ajs-error {
+  background: #faa332;
+  color: #fff;
+  border: 1px solid #fff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-box-shadow: -2px 10px 10px -10px rgba(255, 255, 255, 1);
+  -moz-box-shadow: -2px 10px 10px -10px rgba(255, 255, 255, 1);
+  box-shadow: -2px 10px 10px -10px rgba(255, 255, 255, 1);
+}
+
+/* Side bar hide */
+[data-automation-id=CanvasZone] > div {
+  min-width: 101% !important;
+  /* min-width: 101% !important; */
+  max-width: 101% !important;
+  /* display: flex !important; */
+  padding: 0;
+}
+
+[data-automation-id=CanvasSection] > div {
+  margin: 0 !important;
+}
+
+.e_a_50a7110f {
+  width: 33% !important;
+  padding: 0 !important;
+}
+
+.g_a_50a7110f {
+  width: 66% !important;
+}
+
+/*new Add*/
+.h_a_50a7110f {
+  width: 100% !important;
+  margin: 0 auto !important;
+}
+
+@media only screen and (min-width: 900px) {
+  .mainContent {
+    width: 100% !important;
+    flex-direction: column !important;
+  }
+  [data-automation-id=CanvasLayout] {
+    width: 100% !important;
+  }
+  /* .SPPageChrome-app,
+  .SPPageChrome-app > div {
+    min-width: 100%;
+  } */
+}
+#SuiteNavPlaceholder {
+  display: none !important;
+}

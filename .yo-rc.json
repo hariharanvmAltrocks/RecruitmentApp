@@ -1,19 +1,17 @@
 {
   "@microsoft/generator-sharepoint": {
+    "useGulp": false,
     "plusBeta": false,
     "isCreatingSolution": true,
-    "nodeVersion": "16.14.0",
-    "sdksVersions": {
-      "@microsoft/microsoft-graph-client": "3.0.2",
-      "@microsoft/teams-js": "2.24.0"
-    },
-    "version": "1.20.0",
-    "libraryName": "recruitment-app",
-    "libraryId": "f03c3e84-f20f-4b99-a054-0cd30355f53f",
+    "nodeVersion": "22.22.0",
+    "sdksVersions": {},
+    "version": "1.22.2",
+    "libraryName": "recrutiment-app",
+    "libraryId": "e8c4a654-4040-4559-b1dd-165db4384c3a",
     "environment": "spo",
     "packageManager": "npm",
-    "solutionName": "RecruitmentApp",
-    "solutionShortDescription": "RecruitmentApp description",
+    "solutionName": "RecrutimentApp",
+    "solutionShortDescription": "RecrutimentApp description",
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
     "componentType": "webpart"

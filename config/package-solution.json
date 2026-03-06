@@ -1,8 +1,8 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "recruitment-app-client-side-solution",
-    "id": "f03c3e84-f20f-4b99-a054-0cd30355f53f",
+    "name": "recrutiment-app-client-side-solution",
+    "id": "e8c4a654-4040-4559-b1dd-165db4384c3a",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
@@ -12,14 +12,14 @@
       "websiteUrl": "",
       "privacyUrl": "",
       "termsOfUseUrl": "",
-      "mpnId": "Undefined-1.20.0"
+      "mpnId": "Undefined-1.22.2"
     },
     "metadata": {
       "shortDescription": {
-        "default": "RecruitmentApp description"
+        "default": "RecrutimentApp description"
       },
       "longDescription": {
-        "default": "RecruitmentApp description"
+        "default": "RecrutimentApp description"
       },
       "screenshotPaths": [],
       "videoUrl": "",
@@ -27,14 +27,14 @@
     },
     "features": [
       {
-        "title": "recruitment-app Feature",
-        "description": "The feature that activates elements of the recruitment-app solution.",
-        "id": "e83746dc-93fa-4c72-9a84-09a113c4dbed",
+        "title": "recrutiment-app Feature",
+        "description": "The feature that activates elements of the recrutiment-app solution.",
+        "id": "4c4f55e6-d47c-4f31-acba-fcfabf150546",
         "version": "1.0.0.0"
       }
     ]
   },
   "paths": {
-    "zippedPackage": "solution/recruitment-app.sppkg"
+    "zippedPackage": "solution/recrutiment-app.sppkg"
   }
 }
