@@ -9,7 +9,7 @@ import {
 } from "react";
 
 import "@pnp/sp/webs";
-import "@pnp/sp/site-users/web";        
+import "@pnp/sp/site-users/web";
 import { getSP } from "../../services/SPService/spservice";
 import { masterService } from "../../services/ServiceExport";
 import { ResponeStatus } from "../ApiConfig";
@@ -82,54 +82,6 @@ async function fetchAllRoles(): Promise<UserRoleData[]> {
 }
 
 
-// async function checkGroupMembership(
-//   groupId: string,
-//   userEmail: string,
-//   roleRecord: UserRoleData
-// ): Promise<UserRoleData | null> {
-//   try {
-//     const graphClient = GraphService.getGraphClient();
-//     const response = await graphClient.api(`/groups/${groupId}/members`).get() as {
-//       value: { userPrincipalName?: string }[];
-//     };
-//     const members = response.value ?? [];
-
-//    const isMember = members.some((m: any) => {
-//   const graphEmail =  m.mail?.toLowerCase().trim();
-//     // m.userPrincipalName?.toLowerCase().trim() ||
-   
-
-//   return graphEmail === userEmail.toLowerCase().trim();
-// });
-
-//     return isMember ? roleRecord : null;
-//   } catch (err) {
-//     console.error(`[RoleProvider] Group membership check failed for ${groupId}:`, err);
-//     return null;
-//   }
-// }
-
-
-// async function resolveUserRoles(
-//   allRoles: UserRoleData[],
-//   userEmail: string
-// ): Promise<ResolvedRole[]> {
-//   const checks = allRoles
-//     .filter((r) => r.ADGroupID && r.ADGroupID !== "0")
-//     .map((r) => checkGroupMembership(r.ADGroupID, userEmail, r));
-
-//   const results = await Promise.all(checks);
-
-//   return results
-//     .filter((r): r is UserRoleData => r !== null)
-//     .map((r) => ({
-//       ID: r.ID,
-//       RoleTitle: r.RoleTitle,
-//       ADGroupID: r.ADGroupID,
-//       EmailId: userEmail,
-//     }));
-// }
-
 async function checkUserRoles(allRoles: UserRoleData[]): Promise<UserRoleData | null> {
 
   const graphClient = GraphService.getGraphClient();
@@ -160,8 +112,8 @@ async function checkUserRoles(allRoles: UserRoleData[]): Promise<UserRoleData | 
 
 
 async function initApiUrls(): Promise<boolean> {
-  const result = await masterService.GetCareerPortalIntergLink([],"and");
-  const urls: ApiUrls = result.data || result;
+  const result = await masterService.GetCareerPortalIntergLink([], "and");
+  const urls: ApiUrls = result.data || (result as unknown as ApiUrls);
 
   localStorage.setItem("CareerPortalLink", urls.CareerPortalLink);
   localStorage.setItem("MeetingCode", urls.MeetingCode);
@@ -177,22 +129,52 @@ function buildADGroupData(
   userName: string
 ): ADGroupData {
   return {
-    roleIDs:    resolvedRoles.map((r) => r.ID),
+    roleIDs: resolvedRoles.map((r) => r.ID),
     userName,
-    userRole:   resolvedRoles.map((r) => r.RoleTitle),
+    userRole: resolvedRoles.map((r) => r.RoleTitle),
     ADGroupIDs: resolvedRoles.map((r) => r.ADGroupID),
     RoleDetails: resolvedRoles,
   };
 }
 
 const NoRoleScreen = (): JSX.Element => (
-  <div className="mainPage flex">
-    <Sidebar />
+  <div className="flex min-h-screen relative bg-gray-100">
+    <div className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity"></div>
 
-    <div className="w-[85%] flex flex-col items-center justify-center min-h-full">
-      <h3 className="title">
-        You are not assigned to any AD Group for HRMS
-      </h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border-t-4 border-amber-500">
+        <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div className="sm:flex sm:items-start">
+            <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 sm:mx-0 sm:h-12 sm:w-12">
+              <svg className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3 className="text-xl font-semibold leading-6 text-gray-900">
+                Warning: Access Restricted
+              </h3>
+              <div className="mt-3">
+                <p className="text-sm text-gray-500 mb-2">
+                  <span className="font-semibold text-gray-700">You are not assigned to any AD Group for Recruitment App.</span>
+                </p>
+                {/* <p className="text-sm text-gray-500">
+                  Please contact your IT support or system administrator to request access to this application.
+                </p> */}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            className="inline-flex w-full justify-center rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-amber-500 sm:ml-3 sm:w-auto transition-colors "
+            onClick={() => window.location.reload()}
+          >
+            Refresh Page
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 );
@@ -224,10 +206,10 @@ const ErrorScreen = ({ message }: { message: string }): JSX.Element => (
 const Sidebar = (): JSX.Element => (
   <div className="w-[15%]">
     <div className="overflow-hidden flex flex-col justify-between rounded-r-[30px] transition-all duration-1000 bg-[#597b98] h-[90vh] w-full">
-      
+
       <div>
         <div className="flex justify-center items-center h-[68px] p-[3px] bg-white rounded-tr-[14px] rounded-br-[14px] w-[90%] my-[20px] transition-all duration-1000">
-          
+
           {/* eslint-disable-next-line @typescript-eslint/no-var-requires */}
           <img
             className="h-[76px] w-[84%] object-contain"
@@ -301,12 +283,12 @@ export const RoleProvider = ({
   const ADGroupData = buildADGroupData(state.resolvedRoles, state.userName);
 
   const contextValue: RoleContextType = {
-    roleIDs:          ADGroupData.roleIDs,
-    userName:         state.userName,
-    userRole:         ADGroupData.userRole,
+    roleIDs: ADGroupData.roleIDs,
+    userName: state.userName,
+    userRole: ADGroupData.userRole,
     ADGroupData,
-    isLoading:        state.isLoading,
-    error:            state.error,
+    isLoading: state.isLoading,
+    error: state.error,
     showRoleSelector,
     setShowRoleSelector,
   };

@@ -1,0 +1,73 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var react_1 = tslib_1.__importDefault(require("react"));
+var lucide_react_1 = require("lucide-react");
+var framer_motion_1 = require("framer-motion");
+var cn_1 = require("../../utilities/cn");
+var TrackerTable = function (_a) {
+    var data = _a.data, activeMetric = _a.activeMetric, selectedMetric = _a.selectedMetric, onRowClick = _a.onRowClick;
+    return (react_1.default.createElement("div", { className: "bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden" },
+        react_1.default.createElement("div", { className: "p-6 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10" },
+            react_1.default.createElement("div", null,
+                react_1.default.createElement("h2", { className: "text-lg font-bold text-slate-800" }, "My Tracker"),
+                react_1.default.createElement("p", { className: "text-xs text-slate-400 mt-1" },
+                    "Showing ",
+                    react_1.default.createElement("span", { className: "text-slate-900 font-bold" }, selectedMetric.value),
+                    " results for",
+                    ' ',
+                    react_1.default.createElement("span", { className: "text-blue-600 font-bold" }, selectedMetric.label))),
+            react_1.default.createElement("button", { className: "text-blue-600 hover:underline text-sm font-bold" }, "View All Tasks")),
+        react_1.default.createElement("div", { className: "overflow-x-auto" },
+            react_1.default.createElement("table", { className: "w-full text-left border-collapse" },
+                react_1.default.createElement("thead", null,
+                    react_1.default.createElement("tr", { className: "bg-slate-50/50" }, activeMetric === 'pos-mapping' ? (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement("th", { className: "px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest" },
+                            "Job Code ",
+                            react_1.default.createElement(lucide_react_1.ArrowUpDown, { size: 10, className: "inline ml-1" })),
+                        react_1.default.createElement("th", { className: "px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest" },
+                            "Job Title ",
+                            react_1.default.createElement(lucide_react_1.ArrowUpDown, { size: 10, className: "inline ml-1" })),
+                        react_1.default.createElement("th", { className: "px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest" },
+                            "BusinessUnit Code ",
+                            react_1.default.createElement(lucide_react_1.ArrowUpDown, { size: 10, className: "inline ml-1" })),
+                        react_1.default.createElement("th", { className: "px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest" },
+                            "Position Request ",
+                            react_1.default.createElement(lucide_react_1.ArrowUpDown, { size: 10, className: "inline ml-1" })),
+                        react_1.default.createElement("th", { className: "px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest" },
+                            "Nationality ",
+                            react_1.default.createElement(lucide_react_1.ArrowUpDown, { size: 10, className: "inline ml-1" })),
+                        react_1.default.createElement("th", { className: "px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest" }, "Status"),
+                        react_1.default.createElement("th", { className: "px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center" }, "Action"))) : (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement("th", { className: "px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest" }, "Job Title"),
+                        react_1.default.createElement("th", { className: "px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center" }, "Vacancies"),
+                        react_1.default.createElement("th", { className: "px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest" }, "Request Date"),
+                        react_1.default.createElement("th", { className: "px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest" }, "Status"),
+                        react_1.default.createElement("th", { className: "px-6 py-4" }))))),
+                react_1.default.createElement("tbody", { className: "divide-y divide-slate-100" },
+                    react_1.default.createElement(framer_motion_1.AnimatePresence, null, data.slice(0, selectedMetric.value > 7 ? 7 : selectedMetric.value).map(function (row, idx) { return (react_1.default.createElement(framer_motion_1.motion.tr, { key: "".concat(activeMetric, "-").concat(row.id), initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 }, transition: { duration: 0.2, delay: idx * 0.05 }, onClick: function () { return onRowClick(row); }, className: "hover:bg-slate-50/80 transition-colors group cursor-pointer" }, activeMetric === 'pos-mapping' ? (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement("td", { className: "px-6 py-4 text-sm font-bold text-slate-700" }, row.jobCode),
+                        react_1.default.createElement("td", { className: "px-6 py-4 text-sm font-bold text-slate-700" }, row.title),
+                        react_1.default.createElement("td", { className: "px-6 py-4 text-sm font-medium text-slate-500" }, row.buCode),
+                        react_1.default.createElement("td", { className: "px-6 py-4 text-sm font-medium text-slate-500" }, row.posRequest),
+                        react_1.default.createElement("td", { className: "px-6 py-4 text-sm font-medium text-slate-500" }, row.nationality),
+                        react_1.default.createElement("td", { className: "px-6 py-4" },
+                            react_1.default.createElement("span", { className: "inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border bg-blue-50 text-blue-600 border-blue-100" }, "Recruitment In Progress")),
+                        react_1.default.createElement("td", { className: "px-6 py-4 text-center" },
+                            react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16, className: "text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all mx-auto" })))) : (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement("td", { className: "px-6 py-4" },
+                            react_1.default.createElement("div", { className: "font-bold text-sm text-slate-700" }, row.title),
+                            react_1.default.createElement("div", { className: "text-[10px] text-slate-400 font-medium mt-0.5 uppercase tracking-wider" },
+                                "Job Code: ",
+                                row.jobCode)),
+                        react_1.default.createElement("td", { className: "px-6 py-4 text-center" },
+                            react_1.default.createElement("span", { className: "text-sm font-bold text-slate-600" }, row.vacancies.toString().padStart(2, '0'))),
+                        react_1.default.createElement("td", { className: "px-6 py-4" },
+                            react_1.default.createElement("span", { className: "text-sm font-medium text-slate-500" }, row.date)),
+                        react_1.default.createElement("td", { className: "px-6 py-4" },
+                            react_1.default.createElement("span", { className: (0, cn_1.cn)('inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border', selectedMetric.bgColor, selectedMetric.color, selectedMetric.color.replace('text-', 'border-').replace('500', '100')) }, selectedMetric.label)),
+                        react_1.default.createElement("td", { className: "px-6 py-4 text-right" },
+                            react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16, className: "text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" })))))); })))))));
+};
+exports.default = TrackerTable;
+//# sourceMappingURL=TrackerTable.js.map

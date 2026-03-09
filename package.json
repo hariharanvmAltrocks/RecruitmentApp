@@ -6,10 +6,12 @@
     "node": ">=22.14.0 < 23.0.0"
   },
   "scripts": {
+    "build:tailwind": "node scripts/build-tailwind.js",
     "build": "heft test --clean --production && heft package-solution --production",
     "start": "heft start --clean",
     "clean": "heft clean",
-    "eject-webpack": "heft eject-webpack"
+    "eject-webpack": "heft eject-webpack",
+    "serve": "npx fast-serve"
   },
   "dependencies": {
     "@fluentui/react": "^8.106.4",
@@ -26,9 +28,14 @@
     "@pnp/odata": "^2.15.0",
     "@pnp/sp": "^4.18.0",
     "axios": "^1.13.6",
+    "clsx": "^2.1.1",
+    "framer-motion": "^6.5.1",
+    "lucide-react": "^0.263.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "react-router-dom": "^6.30.3",
+    "react-router-dom": "^6.3.0",
+    "recharts": "^2.15.4",
+    "tailwind-merge": "^3.5.0",
     "tslib": "2.3.1"
   },
   "devDependencies": {
@@ -49,7 +56,9 @@
     "eslint": "8.57.1",
     "eslint-plugin-react-hooks": "4.3.0",
     "postcss": "^8.5.8",
-    "tailwindcss": "^3.4.14",
+    "postcss-loader": "^8.2.1",
+    "spfx-fast-serve": "^4.0.2",
+    "tailwindcss": "^3.4.13",
     "typescript": "~5.8.0"
   },
   "overrides": {

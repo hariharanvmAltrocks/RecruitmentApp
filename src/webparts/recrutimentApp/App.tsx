@@ -5,6 +5,8 @@ import { RoleProvider } from "./utilities/hooks/RoleContext";
 import { useState } from "react";
 import { IRecrutimentAppProps } from "./components/IRecrutimentAppProps";
 import RecrutimentApp from "./components/RecrutimentApp/RecrutimentApp";
+import "./External/tailwind.css"
+import { MenuDataProvider } from "./utilities/hooks/MenuDataContext";
 
 const FaviconSetter: React.FC<{ webURL: string }> = ({ webURL }) => {
   React.useEffect(() => {
@@ -30,12 +32,14 @@ const App: React.FC<IRecrutimentAppProps> = (props) => {
 
   return (
     <RoleProvider>
-      <FaviconSetter webURL={props.webURL} />
-      <div className="app">
-        <React.Suspense fallback={<div>Loading...</div>}>
-          <RecrutimentApp {...props} />
-        </React.Suspense>
-      </div>
+      <MenuDataProvider>
+        <FaviconSetter webURL={props.webURL} />
+        <div className="app">
+          <React.Suspense fallback={<div>Loading...</div>}>
+            <RecrutimentApp {...props} {...state} {...navigate} />
+          </React.Suspense>
+        </div>
+      </MenuDataProvider>
     </RoleProvider>
   );
 };

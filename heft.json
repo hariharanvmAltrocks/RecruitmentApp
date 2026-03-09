@@ -1,0 +1,4 @@
+{
+  "extends": "@microsoft/spfx-web-build-rig/profiles/web-app.json",
+  "webpackConfigurationPath": "./config/webpack.extend.js"
+}

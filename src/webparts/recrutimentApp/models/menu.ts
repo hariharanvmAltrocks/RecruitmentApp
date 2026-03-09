@@ -1,62 +1,62 @@
 export type ISharePointMenuItem = {
-    MenuID: number;
-    MenuIsActive: boolean;
-    MenuActiveIcon: string;
-    MenuInactiveIcon: string;
-    MenuLabel: string;
-    MenuPath: string;
+  MenuID: number;
+  MenuIsActive: boolean;
+  MenuActiveIcon: string;
+  MenuInactiveIcon: string;
+  MenuLabel: string;
+  MenuPath: string;
 };
 
 export type ISharePointMenuItemAccess = {
-    MenuIdId: number;
-    RoleIdId: number;
-    IsActive: string;
+  MenuIdId: number;
+  RoleIdId: number;
+  IsActive: string;
 
 };
 
 export type MenuResponse = {
-    Id: number;
-    DisplayName: string;
-    Path: string;
-    Icon: string;
-    ActiveIcon: string;
-    ParentId: number;
-    Sort: number;
-    IsActive: boolean;
-    SubMenu?: MenuResponse;
-    Tab?: ITab;
-    Action?: IAction;
-    Status?: IStatus;
-    Children?: MenuResponse[];
-    TabDetails?: any[]
+  Id: number;
+  DisplayName: string;
+  Path: string;
+  Icon: string;
+  ActiveIcon: string;
+  ParentId: number;
+  Sort: number;
+  IsActive: boolean;
+  SubMenu?: MenuResponse;
+  Tab?: ITab;
+  Action?: IAction;
+  Status?: IStatus;
+  Children?: MenuResponse[];
+  TabDetails?: any[];
 }
 
 interface ITab {
-    key: string;
-    text: string;
-    sorting: string;
+  key: string;
+  text: string;
+  sorting: string;
 }
 
 interface IAction {
-    key: number;
-    text: string;
+  key: number;
+  text: string;
 }
 interface IStatus {
-    key: number;
-    text: string;
+  key: number;
+  text: string;
 }
 
 
 export type MenuDetailsResponse = {
-    data: MenuResponse[];
-    status: number;
-    message: string;
+  data: MenuResponse[];
+  status: number;
+  message: string;
 };
 
 export type UserAccessDetailsResponse = {
-    data: ISharePointMenuItemAccess[];
-    status: number;
-    message: string;
+  data: ISharePointMenuItemAccess[];
+  status: number;
+  message: string;
 };
 
 
@@ -83,9 +83,9 @@ export const mockMenuData = [
       Children: [],
       TabDetails: [
         { TabName: "Job Advertisement", Value: " ", StatusDetails: [{}] },
-        { TabName: "Assign Agencies",   Value: " ", StatusDetails: [{}] },
-        { TabName: "Upload CV",         Value: " ", StatusDetails: [{}] },
-        { TabName: "My Submission",     Value: " ", StatusDetails: [{}] },
+        { TabName: "Assign Agencies", Value: " ", StatusDetails: [{}] },
+        { TabName: "Upload CV", Value: " ", StatusDetails: [{}] },
+        { TabName: "My Submission", Value: " ", StatusDetails: [{}] },
       ],
     },
     Children: [
@@ -101,9 +101,9 @@ export const mockMenuData = [
         Children: [],
         TabDetails: [
           { TabName: "Job Advertisement", Value: " ", StatusDetails: [{}] },
-          { TabName: "Assign Agencies",   Value: " ", StatusDetails: [{}] },
-          { TabName: "Upload CV",         Value: " ", StatusDetails: [{}] },
-          { TabName: "My Submission",     Value: " ", StatusDetails: [{}] },
+          { TabName: "Assign Agencies", Value: " ", StatusDetails: [{}] },
+          { TabName: "Upload CV", Value: " ", StatusDetails: [{}] },
+          { TabName: "My Submission", Value: " ", StatusDetails: [{}] },
         ],
       },
       {
@@ -186,8 +186,8 @@ export const mockMenuData = [
     TabDetails: [
       { TabName: "Background Verification", Value: " ", StatusDetails: [{}] },
       { TabName: "Offer Letter - Labour Hire", Value: " ", StatusDetails: [{}] },
-      { TabName: "Offer Letter - KCSA",        Value: " ", StatusDetails: [{}] },
-      { TabName: "My Submission",              Value: " ", StatusDetails: [{}] },
+      { TabName: "Offer Letter - KCSA", Value: " ", StatusDetails: [{}] },
+      { TabName: "My Submission", Value: " ", StatusDetails: [{}] },
     ],
   },
 
@@ -218,9 +218,9 @@ export const mockMenuData = [
         IsActive: true,
         Children: [],
         TabDetails: [
-          { TabName: "ID Documents",   Value: " ", StatusDetails: [{}] },
-          { TabName: "Contracts",      Value: " ", StatusDetails: [{}] },
-          { TabName: "Bank Details",   Value: " ", StatusDetails: [{}] },
+          { TabName: "ID Documents", Value: " ", StatusDetails: [{}] },
+          { TabName: "Contracts", Value: " ", StatusDetails: [{}] },
+          { TabName: "Bank Details", Value: " ", StatusDetails: [{}] },
         ],
       },
       {
@@ -235,7 +235,7 @@ export const mockMenuData = [
         Children: [],
         TabDetails: [
           { TabName: "Equipment Request", Value: " ", StatusDetails: [{}] },
-          { TabName: "Access Rights",     Value: " ", StatusDetails: [{}] },
+          { TabName: "Access Rights", Value: " ", StatusDetails: [{}] },
         ],
       },
       {
@@ -271,9 +271,9 @@ export const mockMenuData = [
     SubMenu: null,
     Children: [],
     TabDetails: [
-      { TabName: "Monthly Summary",  Value: " ", StatusDetails: [{}] },
+      { TabName: "Monthly Summary", Value: " ", StatusDetails: [{}] },
       { TabName: "Headcount Report", Value: " ", StatusDetails: [{}] },
-      { TabName: "Audit Log",        Value: " ", StatusDetails: [{}] },
+      { TabName: "Audit Log", Value: " ", StatusDetails: [{}] },
     ],
   },
 ];

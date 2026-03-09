@@ -67,45 +67,6 @@ function fetchAllRoles() {
         });
     });
 }
-// async function checkGroupMembership(
-//   groupId: string,
-//   userEmail: string,
-//   roleRecord: UserRoleData
-// ): Promise<UserRoleData | null> {
-//   try {
-//     const graphClient = GraphService.getGraphClient();
-//     const response = await graphClient.api(`/groups/${groupId}/members`).get() as {
-//       value: { userPrincipalName?: string }[];
-//     };
-//     const members = response.value ?? [];
-//    const isMember = members.some((m: any) => {
-//   const graphEmail =  m.mail?.toLowerCase().trim();
-//     // m.userPrincipalName?.toLowerCase().trim() ||
-//   return graphEmail === userEmail.toLowerCase().trim();
-// });
-//     return isMember ? roleRecord : null;
-//   } catch (err) {
-//     console.error(`[RoleProvider] Group membership check failed for ${groupId}:`, err);
-//     return null;
-//   }
-// }
-// async function resolveUserRoles(
-//   allRoles: UserRoleData[],
-//   userEmail: string
-// ): Promise<ResolvedRole[]> {
-//   const checks = allRoles
-//     .filter((r) => r.ADGroupID && r.ADGroupID !== "0")
-//     .map((r) => checkGroupMembership(r.ADGroupID, userEmail, r));
-//   const results = await Promise.all(checks);
-//   return results
-//     .filter((r): r is UserRoleData => r !== null)
-//     .map((r) => ({
-//       ID: r.ID,
-//       RoleTitle: r.RoleTitle,
-//       ADGroupID: r.ADGroupID,
-//       EmailId: userEmail,
-//     }));
-// }
 function checkUserRoles(allRoles) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
         var graphClient, groupIds, response_1, matchedRole, error_1;
@@ -168,10 +129,22 @@ function buildADGroupData(resolvedRoles, userName) {
         RoleDetails: resolvedRoles,
     };
 }
-var NoRoleScreen = function () { return (React.createElement("div", { className: "mainPage flex" },
-    React.createElement(Sidebar, null),
-    React.createElement("div", { className: "w-[85%] flex flex-col items-center justify-center min-h-full" },
-        React.createElement("h3", { className: "title" }, "You are not assigned to any AD Group for HRMS")))); };
+var NoRoleScreen = function () { return (React.createElement("div", { className: "flex min-h-screen relative bg-gray-100" },
+    React.createElement("div", { className: "fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity" }),
+    React.createElement("div", { className: "fixed inset-0 z-50 flex items-center justify-center p-4" },
+        React.createElement("div", { className: "relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border-t-4 border-amber-500" },
+            React.createElement("div", { className: "bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4" },
+                React.createElement("div", { className: "sm:flex sm:items-start" },
+                    React.createElement("div", { className: "mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 sm:mx-0 sm:h-12 sm:w-12" },
+                        React.createElement("svg", { className: "h-6 w-6 text-amber-600", fill: "none", viewBox: "0 0 24 24", strokeWidth: "1.5", stroke: "currentColor", "aria-hidden": "true" },
+                            React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }))),
+                    React.createElement("div", { className: "mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left" },
+                        React.createElement("h3", { className: "text-xl font-semibold leading-6 text-gray-900" }, "Warning: Access Restricted"),
+                        React.createElement("div", { className: "mt-3" },
+                            React.createElement("p", { className: "text-sm text-gray-500 mb-2" },
+                                React.createElement("span", { className: "font-semibold text-gray-700" }, "You are not assigned to any AD Group for Recruitment App.")))))),
+            React.createElement("div", { className: "bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6" },
+                React.createElement("button", { type: "button", className: "inline-flex w-full justify-center rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-amber-500 sm:ml-3 sm:w-auto transition-colors ", onClick: function () { return window.location.reload(); } }, "Refresh Page")))))); };
 var ErrorScreen = function (_a) {
     var message = _a.message;
     return (React.createElement("div", { className: "mainPage" },

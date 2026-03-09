@@ -7,6 +7,8 @@ var react_router_dom_1 = require("react-router-dom");
 require("office-ui-fabric-core/dist/css/fabric.css");
 var RoleContext_1 = require("./utilities/hooks/RoleContext");
 var RecrutimentApp_1 = tslib_1.__importDefault(require("./components/RecrutimentApp/RecrutimentApp"));
+require("./External/tailwind.css");
+var MenuDataContext_1 = require("./utilities/hooks/MenuDataContext");
 var FaviconSetter = function (_a) {
     var webURL = _a.webURL;
     React.useEffect(function () {
@@ -25,10 +27,11 @@ var App = function (props) {
     var state = location.state;
     var navigate = (0, react_router_dom_1.useNavigate)();
     return (React.createElement(RoleContext_1.RoleProvider, null,
-        React.createElement(FaviconSetter, { webURL: props.webURL }),
-        React.createElement("div", { className: "app" },
-            React.createElement(React.Suspense, { fallback: React.createElement("div", null, "Loading...") },
-                React.createElement(RecrutimentApp_1.default, tslib_1.__assign({}, props))))));
+        React.createElement(MenuDataContext_1.MenuDataProvider, null,
+            React.createElement(FaviconSetter, { webURL: props.webURL }),
+            React.createElement("div", { className: "app" },
+                React.createElement(React.Suspense, { fallback: React.createElement("div", null, "Loading...") },
+                    React.createElement(RecrutimentApp_1.default, tslib_1.__assign({}, props, state, navigate)))))));
 };
 function AppWrapper(props) {
     return (React.createElement(react_router_dom_1.HashRouter, null,

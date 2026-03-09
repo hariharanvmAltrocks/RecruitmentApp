@@ -22,7 +22,7 @@ import App from './App';
 import { initSP } from './services/SPService/spservice';
 import GraphService from './services/GraphService/GraphService';
 import "./External/style.css"
-import "./External/tailwind.css";
+import "./External/tailwind.css"
 
 export interface IRecrutimentAppWebPartProps {
   description: string;

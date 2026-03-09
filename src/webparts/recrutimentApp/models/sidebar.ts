@@ -22,6 +22,7 @@ export interface ChildMenuItem {
   IsActive?: boolean;
   Children: ChildMenuItem[];
   TabDetails: TabDetail[];
+  iconType?: string; // Dynamic icon type: 'search', 'person', 'document', 'chart', 'building', 'bell'
 }
 
 export interface MenuItem {
@@ -39,6 +40,7 @@ export interface MenuItem {
   Status?: { key: number | null; text: string | null };
   Tab?: { key: number; text: string; sorting: number | null };
   SubMenu?: ChildMenuItem | null;
+  iconType?: string; // Dynamic icon type: 'search', 'person', 'document', 'chart', 'building', 'bell'
 }
 
 

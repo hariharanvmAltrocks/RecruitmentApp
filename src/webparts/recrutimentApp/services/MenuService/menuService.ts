@@ -5,15 +5,15 @@ import { IMenuService } from "./IMenu";
 
 export default class MenuService implements IMenuService {
 
-    async getSwitchUserMatrix(RoleID: any): Promise<MenuDetailsResponse> {
+    async getSwitchUserMatrix(RoleID: number[]): Promise<MenuDetailsResponse> {
         try {
             let Conditions = "";
             let FilterConditions: any[] = [];
-            let RoleIDs = RoleID.map((role: any) => Number(role.ID))
+            // let RoleIDs = RoleID.map((role: any) => Number(role.ID))
             FilterConditions.push({
                 FilterKey: "RoleId",
                 Operator: "in",
-                FilterValue: RoleIDs, // Change accordingly if the value should be different
+                FilterValue: RoleID, // Change accordingly if the value should be different
             });
             FilterConditions.push({
                 FilterKey: "IsActive",

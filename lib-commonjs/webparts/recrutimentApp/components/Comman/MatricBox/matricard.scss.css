@@ -1,0 +1,90 @@
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 160px;
+  flex: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+.metric-card:hover {
+  border-color: #bfdbfe;
+}
+.metric-card--active {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+}
+.metric-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.metric-card__icon {
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.metric-card__status {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.metric-card .status-critical {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.metric-card .status-active {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.metric-card .status-default {
+  background: #f1f5f9;
+  color: #64748b;
+}
+.metric-card__content {
+  margin-top: auto;
+}
+.metric-card__value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+}
+.metric-card__label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 4px;
+  line-height: 1.2;
+}
+
+@media (max-width: 480px) {
+  .metric-card {
+    padding: 14px;
+  }
+}
+/* Tablet */
+@media (min-width: 768px) {
+  .metric-card {
+    padding: 16px;
+  }
+}
+/* Laptop */
+@media (min-width: 1024px) {
+  .metric-card {
+    padding: 18px;
+  }
+}
+/* Large Desktop */
+@media (min-width: 1440px) {
+  .metric-card {
+    padding: 20px;
+  }
+}

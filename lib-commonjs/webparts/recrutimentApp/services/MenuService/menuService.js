@@ -8,18 +8,18 @@ var MenuService = /** @class */ (function () {
     }
     MenuService.prototype.getSwitchUserMatrix = function (RoleID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var Conditions, FilterConditions, RoleIDs, getjsonUserRole, items, returnData, returnData1, MenuSortData, error_1;
+            var Conditions, FilterConditions, getjsonUserRole, items, returnData, returnData1, MenuSortData, error_1;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 4, , 5]);
                         Conditions = "";
                         FilterConditions = [];
-                        RoleIDs = RoleID.map(function (role) { return Number(role.ID); });
+                        // let RoleIDs = RoleID.map((role: any) => Number(role.ID))
                         FilterConditions.push({
                             FilterKey: "RoleId",
                             Operator: "in",
-                            FilterValue: RoleIDs, // Change accordingly if the value should be different
+                            FilterValue: RoleID, // Change accordingly if the value should be different
                         });
                         FilterConditions.push({
                             FilterKey: "IsActive",
