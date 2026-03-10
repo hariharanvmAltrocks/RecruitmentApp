@@ -1034,6 +1034,7 @@ export default class RecruitmentService implements IRecruitmentService {
           }
         }
       }
+      GridResult.sort((a, b) => b.ID - a.ID);
       return {
         data: GridResult,
         status: 200,

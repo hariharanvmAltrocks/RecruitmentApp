@@ -38,12 +38,14 @@ export const getRecruitmentFiltersByTab = (props: any, tab: string) => {
     case TabName.InterviewQuestion:
       filters.push(
         { FilterKey: "StatusId", Operator: "in", FilterValue: [StatusId.PendingwithHRandLMtocreateinterviewQuestion, StatusId.PendingwithLMcreateDisqualificationQuestion] },
+         { FilterKey: "LineManager", Operator: "eq", FilterValue: userEmail }
       );
       break;
 
     case TabName.ReviewScorecard:
       filters.push(
         { FilterKey: "StatusId", Operator: "eq", FilterValue: StatusId.RecruitmentInProgress },
+        { FilterKey: "HOD", Operator: "eq", FilterValue: userEmail }
       );
       break;
 
