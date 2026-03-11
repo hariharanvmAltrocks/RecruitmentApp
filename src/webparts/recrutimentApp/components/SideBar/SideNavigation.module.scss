@@ -1,10 +1,33 @@
 .sidebar {
-    width: 256px;
+    width: 240px;
     background: #ffffff;
     border-right: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
+    transition: width 0.3s ease;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    &.collapsed {
+        width: 80px;
+
+        .logoTitle,
+        .label,
+        .chevron {
+            display: none;
+        }
+
+        .sidebarItem {
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .submenu {
+            display: none; // Disable expanding submenu when fully collapsed in icon-only mode
+        }
+    }
 }
 
 .logoSection {
@@ -13,6 +36,7 @@
     align-items: center;
     gap: 12px;
     border-bottom: 1px solid #f1f5f9;
+    min-height: 80px; // ensure header remains same height if collapsed
 }
 
 .logoIcon {
@@ -25,6 +49,7 @@
     justify-content: center;
     color: white;
     box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    flex-shrink: 0;
 }
 
 .logoImg {
@@ -37,11 +62,15 @@
     font-weight: bold;
     font-size: 18px;
     color: #1e293b;
+    white-space: nowrap;
 }
 
 .nav {
     margin-top: 16px;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .sidebarItem {
@@ -52,30 +81,83 @@
     cursor: pointer;
     transition: all 0.2s ease;
     color: #64748b;
+    margin: 0 8px;
+    border-radius: 8px;
 
     &:hover {
         background: #f8fafc;
         color: #334155;
     }
-}
 
-.active {
-    background: #eff6ff;
-    color: #2563eb;
-    border-right: 4px solid #2563eb;
+    &.active {
+        background: #eff6ff;
+        color: #2563eb;
+    }
 }
 
 .icon {
-    width: 20px;
-    height: 20px;
-    transition: transform 0.2s ease;
-}
-
-.sidebarItem:hover .icon {
-    transform: scale(1.1);
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    flex-shrink: 0;
 }
 
 .label {
     font-weight: 500;
     font-size: 14px;
+    flex: 1;
+    white-space: nowrap;
+}
+
+.chevron {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+    color: #94a3b8;
+
+    &.open {
+        transform: rotate(180deg);
+    }
+}
+
+.submenu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 2px;
+    margin-bottom: 4px;
+    overflow: hidden;
+
+    .sidebarItem {
+        padding-left: 48px;
+        font-size: 13px;
+        
+        .icon {
+            // Optional: Make submenu icon size smaller if it's there
+            width: 20px;
+            height: 20px;
+        }
+    }
+}
+
+/* Tablet / Mobile scaling */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 80px;
+
+        .logoTitle,
+        .label,
+        .chevron {
+            display: none;
+        }
+
+        .sidebarItem {
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .submenu {
+            display: none;
+        }
+    }
 }

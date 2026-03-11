@@ -4,6 +4,7 @@ var tslib_1 = require("tslib");
 var framer_motion_1 = require("framer-motion");
 var react_1 = tslib_1.__importDefault(require("react"));
 var cn_1 = require("../../../utilities/cn");
+var lucide_react_1 = require("lucide-react");
 require("./matricard.scss");
 var MetricCard = function (_a) {
     var metric = _a.metric, active = _a.active, onClick = _a.onClick;
@@ -18,7 +19,9 @@ var MetricCard = function (_a) {
                         : "status-default") }, metric.status)),
         react_1.default.createElement("div", { className: "metric-card__content" },
             react_1.default.createElement("div", { className: "metric-card__value" }, metric.value.toString().padStart(2, "0")),
-            react_1.default.createElement("div", { className: "metric-card__label" }, metric.label))));
+            react_1.default.createElement("div", { className: "metric-card__footer" },
+                react_1.default.createElement("div", { className: "metric-card__label" }, metric.label),
+                metric.showArrow && (react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16, className: "metric-card__arrow" }))))));
 };
 exports.default = MetricCard;
 //# sourceMappingURL=matric.js.map

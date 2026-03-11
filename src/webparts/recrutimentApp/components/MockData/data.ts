@@ -5,15 +5,27 @@ import {
 import { Metric, TrackerRow, PriorityData, UrgentTask, JobAdvertDetail, EvaluationRow, Candidate } from '../../models';
 
 export const METRICS: Metric[] = [
-  { id: 'hod-review', label: 'Pending Advert Review', value: 12, status: 'ACTIVE', icon: UserCheck, color: 'text-orange-500', bgColor: 'bg-orange-50' },
-  { id: 'pending-evaluation', label: 'Pending Evaluation', value: 5, status: 'PENDING', icon: Activity, color: 'text-amber-500', bgColor: 'bg-amber-50' },
-  { id: 'pos-mapping', label: 'Pending Position ID', value: 8, status: 'CRITICAL', icon: ClipboardList, color: 'text-red-500', bgColor: 'bg-red-50' },
-  { id: 'interviews', label: 'Interviews Scheduled', value: 45, status: 'SCHEDULED', icon: Calendar, color: 'text-blue-500', bgColor: 'bg-blue-50' },
-  { id: 'tracking', label: 'Interview Tracking', value: 18, status: 'ON-GOING', icon: Activity, color: 'text-emerald-500', bgColor: 'bg-emerald-50' },
-  { id: 'offers-released', label: 'Offer Letters Released', value: 15, status: 'OUTBOUND', icon: FileText, color: 'text-indigo-500', bgColor: 'bg-indigo-50' },
-  { id: 'offers-accepted', label: 'Offers Accepted', value: 12, status: 'SUCCESS', icon: CheckCircle2, color: 'text-green-500', bgColor: 'bg-green-50' },
-  { id: 'offers-rejected', label: 'Offers Rejected', value: 3, status: 'LOST', icon: XCircle, color: 'text-rose-500', bgColor: 'bg-rose-50' },
-  { id: 'onboarded', label: 'Candidates Onboarded', value: 10, status: 'WELCOME', icon: UserPlus, color: 'text-blue-600', bgColor: 'bg-blue-50' },
+  { id: 'hod-review', label: 'Pending Advert Review', value: 12, status: 'ACTIVE', icon: UserCheck, color: 'text-orange-500', bgColor: 'bg-orange-50', showArrow: true },
+  { id: 'pending-evaluation', label: 'Pending Evaluation', value: 5, status: 'PENDING', icon: Activity, color: 'text-amber-500', bgColor: 'bg-amber-50', showArrow: true },
+  { id: 'pos-mapping', label: 'Pending Position ID', value: 8, status: 'CRITICAL', icon: ClipboardList, color: 'text-red-500', bgColor: 'bg-red-50', showArrow: true },
+  { id: 'interviews', label: 'Interviews Scheduled', value: 45, status: 'SCHEDULED', icon: Calendar, color: 'text-blue-500', bgColor: 'bg-blue-50', showArrow: false },
+  { id: 'tracking', label: 'Interview Tracking', value: 18, status: 'ON-GOING', icon: Activity, color: 'text-emerald-500', bgColor: 'bg-emerald-50', showArrow: false },
+  { id: 'offers-released', label: 'Offer Letters Released', value: 15, status: 'OUTBOUND', icon: FileText, color: 'text-indigo-500', bgColor: 'bg-indigo-50', showArrow: false },
+  { id: 'offers-accepted', label: 'Offers Accepted', value: 12, status: 'SUCCESS', icon: CheckCircle2, color: 'text-green-500', bgColor: 'bg-green-50', showArrow: false },
+  { id: 'offers-rejected', label: 'Offers Rejected', value: 3, status: 'LOST', icon: XCircle, color: 'text-rose-500', bgColor: 'bg-rose-50', showArrow: false },
+  { id: 'onboarded', label: 'Candidates Onboarded', value: 10, status: 'WELCOME', icon: UserPlus, color: 'text-blue-600', bgColor: 'bg-blue-50', showArrow: false },
+];
+
+export const METRIC_CONFIG = [
+  { id: 'hod-review', label: 'Pending Advert Review', status: 'ACTIVE', icon: UserCheck, color: 'text-orange-500', bgColor: 'bg-orange-50' },
+  { id: 'pending-evaluation', label: 'Pending Evaluation', status: 'PENDING', icon: Activity, color: 'text-amber-500', bgColor: 'bg-amber-50' },
+  { id: 'pos-mapping', label: 'Pending Position ID', status: 'CRITICAL', icon: ClipboardList, color: 'text-red-500', bgColor: 'bg-red-50' },
+  { id: 'interviews', label: 'Interviews Scheduled', status: 'SCHEDULED', icon: Calendar, color: 'text-blue-500', bgColor: 'bg-blue-50' },
+  { id: 'tracking', label: 'Interview Tracking', status: 'ON-GOING', icon: Activity, color: 'text-emerald-500', bgColor: 'bg-emerald-50' },
+  { id: 'offers-released', label: 'Offer Letters Released', status: 'OUTBOUND', icon: FileText, color: 'text-indigo-500', bgColor: 'bg-indigo-50' },
+  { id: 'offers-accepted', label: 'Offers Accepted', status: 'SUCCESS', icon: CheckCircle2, color: 'text-green-500', bgColor: 'bg-green-50' },
+  { id: 'offers-rejected', label: 'Offers Rejected', status: 'LOST', icon: XCircle, color: 'text-rose-500', bgColor: 'bg-rose-50' },
+  { id: 'onboarded', label: 'Candidates Onboarded', status: 'WELCOME', icon: UserPlus, color: 'text-blue-600', bgColor: 'bg-blue-50' }
 ];
 
 

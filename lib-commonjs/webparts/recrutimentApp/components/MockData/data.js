@@ -1,17 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CANDIDATE_SELECTION_DATA = exports.EVALUATION_DATA = exports.ADVERT_REVIEW_DATA = exports.URGENT_TASKS = exports.PRIORITY_DATA = exports.TRACKER_DATA = exports.METRICS = void 0;
+exports.CANDIDATE_SELECTION_DATA = exports.EVALUATION_DATA = exports.ADVERT_REVIEW_DATA = exports.URGENT_TASKS = exports.PRIORITY_DATA = exports.TRACKER_DATA = exports.METRIC_CONFIG = exports.METRICS = void 0;
 var lucide_react_1 = require("lucide-react");
 exports.METRICS = [
-    { id: 'hod-review', label: 'Pending Advert Review', value: 12, status: 'ACTIVE', icon: lucide_react_1.UserCheck, color: 'text-orange-500', bgColor: 'bg-orange-50' },
-    { id: 'pending-evaluation', label: 'Pending Evaluation', value: 5, status: 'PENDING', icon: lucide_react_1.Activity, color: 'text-amber-500', bgColor: 'bg-amber-50' },
-    { id: 'pos-mapping', label: 'Pending Position ID', value: 8, status: 'CRITICAL', icon: lucide_react_1.ClipboardList, color: 'text-red-500', bgColor: 'bg-red-50' },
-    { id: 'interviews', label: 'Interviews Scheduled', value: 45, status: 'SCHEDULED', icon: lucide_react_1.Calendar, color: 'text-blue-500', bgColor: 'bg-blue-50' },
-    { id: 'tracking', label: 'Interview Tracking', value: 18, status: 'ON-GOING', icon: lucide_react_1.Activity, color: 'text-emerald-500', bgColor: 'bg-emerald-50' },
-    { id: 'offers-released', label: 'Offer Letters Released', value: 15, status: 'OUTBOUND', icon: lucide_react_1.FileText, color: 'text-indigo-500', bgColor: 'bg-indigo-50' },
-    { id: 'offers-accepted', label: 'Offers Accepted', value: 12, status: 'SUCCESS', icon: lucide_react_1.CheckCircle2, color: 'text-green-500', bgColor: 'bg-green-50' },
-    { id: 'offers-rejected', label: 'Offers Rejected', value: 3, status: 'LOST', icon: lucide_react_1.XCircle, color: 'text-rose-500', bgColor: 'bg-rose-50' },
-    { id: 'onboarded', label: 'Candidates Onboarded', value: 10, status: 'WELCOME', icon: lucide_react_1.UserPlus, color: 'text-blue-600', bgColor: 'bg-blue-50' },
+    { id: 'hod-review', label: 'Pending Advert Review', value: 12, status: 'ACTIVE', icon: lucide_react_1.UserCheck, color: 'text-orange-500', bgColor: 'bg-orange-50', showArrow: true },
+    { id: 'pending-evaluation', label: 'Pending Evaluation', value: 5, status: 'PENDING', icon: lucide_react_1.Activity, color: 'text-amber-500', bgColor: 'bg-amber-50', showArrow: true },
+    { id: 'pos-mapping', label: 'Pending Position ID', value: 8, status: 'CRITICAL', icon: lucide_react_1.ClipboardList, color: 'text-red-500', bgColor: 'bg-red-50', showArrow: true },
+    { id: 'interviews', label: 'Interviews Scheduled', value: 45, status: 'SCHEDULED', icon: lucide_react_1.Calendar, color: 'text-blue-500', bgColor: 'bg-blue-50', showArrow: false },
+    { id: 'tracking', label: 'Interview Tracking', value: 18, status: 'ON-GOING', icon: lucide_react_1.Activity, color: 'text-emerald-500', bgColor: 'bg-emerald-50', showArrow: false },
+    { id: 'offers-released', label: 'Offer Letters Released', value: 15, status: 'OUTBOUND', icon: lucide_react_1.FileText, color: 'text-indigo-500', bgColor: 'bg-indigo-50', showArrow: false },
+    { id: 'offers-accepted', label: 'Offers Accepted', value: 12, status: 'SUCCESS', icon: lucide_react_1.CheckCircle2, color: 'text-green-500', bgColor: 'bg-green-50', showArrow: false },
+    { id: 'offers-rejected', label: 'Offers Rejected', value: 3, status: 'LOST', icon: lucide_react_1.XCircle, color: 'text-rose-500', bgColor: 'bg-rose-50', showArrow: false },
+    { id: 'onboarded', label: 'Candidates Onboarded', value: 10, status: 'WELCOME', icon: lucide_react_1.UserPlus, color: 'text-blue-600', bgColor: 'bg-blue-50', showArrow: false },
+];
+exports.METRIC_CONFIG = [
+    { id: 'hod-review', label: 'Pending Advert Review', status: 'ACTIVE', icon: lucide_react_1.UserCheck, color: 'text-orange-500', bgColor: 'bg-orange-50' },
+    { id: 'pending-evaluation', label: 'Pending Evaluation', status: 'PENDING', icon: lucide_react_1.Activity, color: 'text-amber-500', bgColor: 'bg-amber-50' },
+    { id: 'pos-mapping', label: 'Pending Position ID', status: 'CRITICAL', icon: lucide_react_1.ClipboardList, color: 'text-red-500', bgColor: 'bg-red-50' },
+    { id: 'interviews', label: 'Interviews Scheduled', status: 'SCHEDULED', icon: lucide_react_1.Calendar, color: 'text-blue-500', bgColor: 'bg-blue-50' },
+    { id: 'tracking', label: 'Interview Tracking', status: 'ON-GOING', icon: lucide_react_1.Activity, color: 'text-emerald-500', bgColor: 'bg-emerald-50' },
+    { id: 'offers-released', label: 'Offer Letters Released', status: 'OUTBOUND', icon: lucide_react_1.FileText, color: 'text-indigo-500', bgColor: 'bg-indigo-50' },
+    { id: 'offers-accepted', label: 'Offers Accepted', status: 'SUCCESS', icon: lucide_react_1.CheckCircle2, color: 'text-green-500', bgColor: 'bg-green-50' },
+    { id: 'offers-rejected', label: 'Offers Rejected', status: 'LOST', icon: lucide_react_1.XCircle, color: 'text-rose-500', bgColor: 'bg-rose-50' },
+    { id: 'onboarded', label: 'Candidates Onboarded', status: 'WELCOME', icon: lucide_react_1.UserPlus, color: 'text-blue-600', bgColor: 'bg-blue-50' }
 ];
 exports.TRACKER_DATA = [
     { id: '1', jobCode: 'SEN-100', title: 'Senior Mining Engineer - Mining', vacancies: 1, date: '2024-05-01', status: 'Pending Advert Review', buCode: 'A1011103000', posRequest: 'New Position Request', nationality: 'Expatriate' },

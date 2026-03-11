@@ -11,3 +11,7 @@ export const count = {
   Topcount: 1000,
   CamelQuery: 5000,
 };
+export const Choices = {
+  Yes: "Yes",
+  No: "No"
+}

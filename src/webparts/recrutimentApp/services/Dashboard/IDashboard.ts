@@ -1,0 +1,74 @@
+import { TrackerRow } from "../../models";
+import { ApiResponse } from "../../models/apimodels";
+
+export type DataSyncToRecruitmentResponse = {
+    ID: number,
+    RecordID: number,
+    BusinessUnitCode: string,
+    BusinessUnitCodeId: number,
+    BusinessUnitName: string;
+    BusinessUnitDescription: string;
+    Nationality: string,
+    DepartmentId: number;
+    Department: string,
+    SubDepartment: string,
+    SubDepartmentId: number,
+    Section: string,
+    SectionId: number,
+    DepartmentCodeId: number,
+    DepartmentCode: string,
+    EmploymentCategory: string,
+    TypeOfContract: string,
+    NumberOfPersonNeeded: string,
+    EnterNumberOfMonths: string,
+    AreaofWork: string,
+    DateRequried: Date | undefined,
+    Type: string,
+    Status: string,
+    StatusId: number,
+    Action: string,
+    ActionTypeId: number,
+    Location: string,
+
+    JobCodeId: number,
+    JobCode: string,
+    JobTitleEnglish: string,
+    JobTitleFrench: string,
+    PatersonGrade: string,
+    DRCGrade: string,
+    JobTitleEnglishId: number,
+    JobTitleFrenchId: number,
+    PatersonGradeId: number,
+    DRCGradeId: number,
+
+    Checked: boolean,
+
+    VacancyConfirmed: string;
+    RecruitmentAuthorised: string;
+    IsPayrollEmailed: string;
+    AssignedHR: string;
+    AssignedHRId: number;
+    AssignLineManager: string;
+    AssignLineManagerId: number;
+    AssignHOD: string;
+    ReasonForVacancy: string;
+
+    JobPostingStartDate: string | undefined,
+    JobPostingEndDate: string | undefined,
+    JobPostingFirstExtensionEndDate: string | undefined,
+    JobPostingSecondExtensionEndDate: string | undefined,
+
+    AssignEMail: string,
+    AssignHRLead?: string;
+    QuestionByHR: string;
+    QuestionByLM: string;
+    JobAppliedCount: string;
+    ReviewScoreCount?: string;
+}
+
+export type IDashboard = {
+    GetRecruitmentDetails(
+        filterParam: any,
+        filterConditions: any,
+    ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
+};

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import React from 'react';
 import { Metric } from '../../../models';
 import { cn } from '../../../utilities/cn';
+import { ChevronRight } from "lucide-react";
 import './matricard.scss';
 
 interface MetricCardProps {
@@ -43,11 +44,17 @@ const MetricCard: React.FC<MetricCardProps> = ({ metric, active, onClick }) => (
         {metric.value.toString().padStart(2, "0")}
       </div>
 
-      <div className="metric-card__label">
-        {metric.label}
+      <div className="metric-card__footer">
+        <div className="metric-card__label">
+          {metric.label}
+        </div>
+
+        {metric.showArrow && (
+          <ChevronRight size={16} className="metric-card__arrow" />
+        )}
       </div>
     </div>
   </motion.div>
 );
 
-export default MetricCard; 
+export default MetricCard;

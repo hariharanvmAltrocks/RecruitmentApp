@@ -8,6 +8,7 @@ export interface Metric {
   icon: LucideIcon;
   color: string;
   bgColor: string;
+  showArrow: boolean;
 }
 
 export interface TrackerRow {

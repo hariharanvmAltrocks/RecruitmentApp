@@ -9,6 +9,7 @@
 
 .metrics-grid {
     display: grid;
+    /* Default for mobile */
     grid-template-columns: repeat(1, 1fr);
     gap: 16px;
     margin-bottom: 32px;
@@ -20,22 +21,12 @@
 
     /* Tablet */
     @media (min-width: 768px) {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    /* Laptop */
+    /* Laptop & Desktop */
     @media (min-width: 1024px) {
-        grid-template-columns: repeat(4, 1fr);
-    }
-
-    /* Desktop */
-    @media (min-width: 1280px) {
-        grid-template-columns: repeat(6, 1fr);
-    }
-
-    /* Large Screens */
-    @media (min-width: 1600px) {
-        grid-template-columns: repeat(8, 1fr);
+        grid-template-columns: repeat(5, 1fr);
     }
 }
 
@@ -44,39 +35,54 @@
 ========================= */
 
 .dashboard-layout {
-    display: flex;
+    display: grid;
     gap: 32px;
+    width: 100%;
 
-    /* Mobile layout */
-    @media (max-width: 992px) {
-        flex-direction: column;
+    /* Default (Mobile First): Stack everything. Urgent stays at top */
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        "urgent"
+        "priority"
+        "tracker";
+
+    @media (min-width: 768px) {
         gap: 20px;
     }
-}
 
-/* =========================
-   Main Tracker Section
-========================= */
+    /* Laptop & Desktop */
+    @media (min-width: 1024px) {
+        /* Desktop balanced grid: Tracker left, priority and urgent side elements */
+        grid-template-columns: 2fr 1fr;
+        grid-template-areas:
+            "tracker priority"
+            "tracker urgent";
+    }
 
-.dashboard-main {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
+    /* Ensure children fit to grid areas */
+    .tracker-panel {
+        grid-area: tracker;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        min-width: 0;
+    }
 
-/* =========================
-   Right Sidebar Widgets
-========================= */
+    .priority-panel {
+        grid-area: priority;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        height: 100%;
+        min-width: 0;
+    }
 
-.dashboard-sidebar {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-
-    /* Mobile widgets full width */
-    @media (max-width: 992px) {
-        width: 100%;
+    .urgent-panel {
+        grid-area: urgent;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        height: 100%;
+        min-width: 0;
     }
 }

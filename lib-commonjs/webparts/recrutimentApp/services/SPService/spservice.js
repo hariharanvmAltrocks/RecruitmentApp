@@ -323,8 +323,43 @@ var SPGetChoices = function (params) { return tslib_1.__awaiter(void 0, void 0, 
  *   responseData: [{ Title: "Task A" }, { Title: "Task B" }]
  * });
  */
+var batchGet = function (queries) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+    var _a, batchedSP_1, execute, results_1, promises, error_2;
+    return tslib_1.__generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 3, , 4]);
+                _a = (0, exports.getSP)().batched(), batchedSP_1 = _a[0], execute = _a[1];
+                results_1 = {};
+                promises = queries.map(function (q) {
+                    var _a;
+                    var filterStr = _buildODataFilter(q.Filter, "and");
+                    var request = (_a = batchedSP_1.web.lists
+                        .getByTitle(q.ListName)
+                        .items
+                        .filter(filterStr))
+                        .select.apply(_a, q.select);
+                    return request().then(function (r) {
+                        results_1[q.StateValue] = r.length;
+                    });
+                });
+                return [4 /*yield*/, execute()];
+            case 1:
+                _b.sent();
+                return [4 /*yield*/, Promise.all(promises)];
+            case 2:
+                _b.sent();
+                return [2 /*return*/, results_1];
+            case 3:
+                error_2 = _b.sent();
+                console.error("batchInsert failed:", error_2);
+                return [2 /*return*/, {}];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
 var batchInsert = function (params) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-    var _a, batchedSP, execute, list_1, promises, error_2;
+    var _a, batchedSP, execute, list_1, promises, error_3;
     return tslib_1.__generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -340,8 +375,8 @@ var batchInsert = function (params) { return tslib_1.__awaiter(void 0, void 0, v
                 _b.sent();
                 return [2 /*return*/, true];
             case 3:
-                error_2 = _b.sent();
-                console.error("batchInsert failed:", error_2);
+                error_3 = _b.sent();
+                console.error("batchInsert failed:", error_3);
                 return [2 /*return*/, false];
             case 4: return [2 /*return*/];
         }
@@ -357,7 +392,7 @@ var batchInsert = function (params) { return tslib_1.__awaiter(void 0, void 0, v
  * });
  */
 var batchUpdate = function (params) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-    var _a, batchedSP, execute, list_2, promises, error_3;
+    var _a, batchedSP, execute, list_2, promises, error_4;
     return tslib_1.__generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -376,8 +411,8 @@ var batchUpdate = function (params) { return tslib_1.__awaiter(void 0, void 0, v
                 _b.sent();
                 return [2 /*return*/, true];
             case 3:
-                error_3 = _b.sent();
-                console.error("batchUpdate failed:", error_3);
+                error_4 = _b.sent();
+                console.error("batchUpdate failed:", error_4);
                 return [2 /*return*/, false];
             case 4: return [2 /*return*/];
         }
@@ -393,7 +428,7 @@ var batchUpdate = function (params) { return tslib_1.__awaiter(void 0, void 0, v
  * });
  */
 var batchDelete = function (params) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-    var _a, batchedSP, execute, list_3, promises, error_4;
+    var _a, batchedSP, execute, list_3, promises, error_5;
     return tslib_1.__generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -412,8 +447,8 @@ var batchDelete = function (params) { return tslib_1.__awaiter(void 0, void 0, v
                 _b.sent();
                 return [2 /*return*/, true];
             case 3:
-                error_4 = _b.sent();
-                console.error("batchDelete failed:", error_4);
+                error_5 = _b.sent();
+                console.error("batchDelete failed:", error_5);
                 return [2 /*return*/, false];
             case 4: return [2 /*return*/];
         }
@@ -692,6 +727,7 @@ var SPServices = {
     SPGetAttachments: SPGetAttachments,
     SPDeleteAttachments: SPDeleteAttachments,
     SPGetChoices: SPGetChoices,
+    batchGet: batchGet,
     batchInsert: batchInsert,
     batchUpdate: batchUpdate,
     batchDelete: batchDelete,

@@ -1,7 +1,7 @@
 export interface IFilter {
   FilterKey: string;
   Operator: string;
-  FilterValue: string | string[];
+  FilterValue: string | string[] | number | number[] | boolean | boolean[];
 }
 
 export interface IListItems {
@@ -109,4 +109,17 @@ export interface IItemAddResult {
 // update() always resolves to { etag: string | undefined }
 export interface IItemUpdateResult {
   etag: string | undefined;
+}
+
+export interface BatchInsertParams {
+  ListName: string;
+  responseData: Record<string, unknown>[];
+}
+
+export interface BatchQuery {
+  StateValue: string;
+  ListName: string;
+  Filter?: IFilter[];
+  Select?: string[];
+  FilterCondition?: string;
 }

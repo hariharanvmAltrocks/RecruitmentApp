@@ -11,7 +11,7 @@ import "@pnp/sp/site-groups/web";
 import "@pnp/sp/batching";
 
 import { spfi, SPFI, SPFx } from "@pnp/sp";
-import { IAddDocLibFiles, IAddList, IAttachDelete, ICAMLFilter, ICAMLQuery, IDetailsListGroup, IDocFiles, IFilter, IGetDocLibFiles, IItemAddResult, IItemUpdateResult, IListItems, IListItemUsingId, ISPAttachment, ISPList, ISPListChoiceField, IUpdateList } from "./Ispservice";
+import { BatchQuery, IAddDocLibFiles, IAddList, IAttachDelete, ICAMLFilter, ICAMLQuery, IDetailsListGroup, IDocFiles, IFilter, IGetDocLibFiles, IItemAddResult, IItemUpdateResult, IListItems, IListItemUsingId, ISPAttachment, ISPList, ISPListChoiceField, IUpdateList } from "./Ispservice";
 
 
 let _sp: SPFI;
@@ -31,15 +31,15 @@ export const getSP = (): SPFI => {
 
 
 const _formatInputs = (data: IListItems): Required<IListItems> => ({
-  Listname:        data.Listname,
-  Filter:          data.Filter          ?? [],
-  Select:          data.Select          ?? "*",
-  Topcount:        data.Topcount        ?? 5000,
-  Orderby:         data.Orderby         ?? "ID",
-  Expand:          data.Expand          ?? "",
+  Listname: data.Listname,
+  Filter: data.Filter ?? [],
+  Select: data.Select ?? "*",
+  Topcount: data.Topcount ?? 5000,
+  Orderby: data.Orderby ?? "ID",
+  Expand: data.Expand ?? "",
   Orderbydecorasc: data.Orderbydecorasc ?? true,
-  PageCount:       data.PageCount       ?? 10,
-  PageNumber:      data.PageNumber      ?? 1,
+  PageCount: data.PageCount ?? 10,
+  PageNumber: data.PageNumber ?? 1,
   FilterCondition: data.FilterCondition ?? "and",
 });
 
@@ -52,7 +52,7 @@ const _buildODataFilter = (filters: IFilter[], filterCondition: string): string 
   for (const f of filters) {
     if (!f.FilterKey) continue;
 
-    const op     = f.Operator.toLowerCase();
+    const op = f.Operator.toLowerCase();
     const values = Array.isArray(f.FilterValue) ? f.FilterValue : [f.FilterValue];
 
     if (["eq", "ne", "gt", "lt", "ge", "le"].includes(op)) {
@@ -296,6 +296,37 @@ const SPGetChoices = async (params: ISPListChoiceField): Promise<unknown> => {
  *   responseData: [{ Title: "Task A" }, { Title: "Task B" }]
  * });
  */
+const batchGet = async (queries: BatchQuery[]): Promise<Record<string, number>> => {
+  try {
+    const [batchedSP, execute] = getSP().batched();
+
+    const results: Record<string, number> = {};
+    const promises = queries.map((q: any) => {
+
+      const filterStr = _buildODataFilter(q.Filter, "and");
+
+      let request = batchedSP.web.lists
+        .getByTitle(q.ListName)
+        .items
+        .filter(filterStr)
+        .select(...q.select);
+
+      return request().then(r => {
+        results[q.StateValue] = r.length;
+      });
+
+    });
+
+    await execute();
+    await Promise.all(promises);
+
+    return results;
+  } catch (error) {
+    console.error("batchInsert failed:", error);
+    return {};
+  }
+};
+
 const batchInsert = async (params: {
   ListName: string;
   responseData: Record<string, unknown>[];
@@ -427,7 +458,7 @@ const SPDetailsListGroupItems = (
   }
 
   return unique.map((ur) => {
-    const key   = ur[params.Column];
+    const key = ur[params.Column];
     const count = indexed.filter((r) => r[params.Column] === key).length;
     return { key, name: key, startIndex: ur.__idx, count };
   });
@@ -450,9 +481,9 @@ const getDocLibFiles = async (params: IGetDocLibFiles): Promise<IDocFiles[]> => 
       .files();
 
     return files.map((f) => ({
-      name:    f.Name,
+      name: f.Name,
       content: f.ServerRelativeUrl,
-      type:    "Inlist" as const,
+      type: "Inlist" as const,
     }));
   } catch (err) {
     console.error("getDocLibFiles error:", err);
@@ -482,7 +513,7 @@ const addDocLibFiles = async (params: IAddDocLibFiles): Promise<IDocFiles[]> => 
   let currentPath = params.FilePath;
 
   const toDelete = params.Datas.filter((f) => f.type === "Delete");
-  const toAdd    = params.Datas.filter((f) => f.type === "New");
+  const toAdd = params.Datas.filter((f) => f.type === "New");
 
   // Create sub-folder hierarchy.
   if (params.FolderNames.length) {
@@ -524,21 +555,21 @@ const addDocLibFiles = async (params: IAddDocLibFiles): Promise<IDocFiles[]> => 
 // ─── CAML Query ──────────────────────────────────────────────────────────────
 
 const _formatCamlQuery = (params: ICAMLQuery): Required<ICAMLQuery> => ({
-  Listname:        params.Listname,
-  Select:          params.Select          ?? [],
-  Filter:          params.Filter          ?? [],
+  Listname: params.Listname,
+  Select: params.Select ?? [],
+  Filter: params.Filter ?? [],
   FilterCondition: params.FilterCondition ?? "AND",
-  Topcount:        params.Topcount        ?? 5000,
-  Orderby:         params.Orderby         ?? "ID",
+  Topcount: params.Topcount ?? 5000,
+  Orderby: params.Orderby ?? "ID",
   Orderbydecorasc: params.Orderbydecorasc ?? true,
-  Expand:          params.Expand          ?? [],
+  Expand: params.Expand ?? [],
 });
 
 const _buildCAMLCondition = (filter: ICAMLFilter): string => {
-  const condOp     = filter.condition ?? "Eq";
-  const isLookup   = filter.type === "Lookup";
-  const values     = Array.isArray(filter.value) ? filter.value : [filter.value];
-  const fieldType  = isLookup ? "Integer" : filter.type;
+  const condOp = filter.condition ?? "Eq";
+  const isLookup = filter.type === "Lookup";
+  const values = Array.isArray(filter.value) ? filter.value : [filter.value];
+  const fieldType = isLookup ? "Integer" : filter.type;
   const lookupAttr = isLookup ? ' LookupId="TRUE"' : "";
 
   if (values.length > 1) {
@@ -580,7 +611,7 @@ const SPReadItemsCamelQuery = async (rawParams: ICAMLQuery): Promise<unknown[]> 
   }
 
   const viewFieldsXml = params.Select.map((f) => {
-    const fieldName  = f.includes("/") ? f.split("/")[0] : f;
+    const fieldName = f.includes("/") ? f.split("/")[0] : f;
     const lookupAttr = f.includes("/") ? ' LookupId="TRUE"' : "";
     return `<FieldRef Name="${fieldName}"${lookupAttr} />`;
   }).join("");
@@ -631,6 +662,7 @@ const SPServices = {
   SPGetAttachments,
   SPDeleteAttachments,
   SPGetChoices,
+  batchGet,
   batchInsert,
   batchUpdate,
   batchDelete,

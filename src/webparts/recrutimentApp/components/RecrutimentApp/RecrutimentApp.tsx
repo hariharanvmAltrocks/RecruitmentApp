@@ -8,8 +8,7 @@ export default function RecrutimentApp(props: IRecrutimentAppProps) {
 
   const { roleIDs } = useRoleContext();
   const [activeMenuID, setactiveMenuID] = useState<number>(0);
-  console.log(activeMenuID, "activeMenuID");
-
+  console.log(activeMenuID, "activeMenuID")
   return (
     <>
       <MainLayout
