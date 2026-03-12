@@ -2312,7 +2312,8 @@ export default class RecruitmentService implements IRecruitmentService {
 
   async GetcountInEvalution(
     CurrentUser: string,
-    EmployeeList: any[]
+    EmployeeList: any[],
+    RoleIDs: number[]
   ): Promise<ApiResponse<any[]>> {
 
     let result: any[] = [];
@@ -2346,6 +2347,21 @@ export default class RecruitmentService implements IRecruitmentService {
           message: "Current user panel ID not found",
         };
       }
+      const RoleNames = RoleIDs.includes(RoleID.LineManager) && RoleIDs.includes(RoleID.HOD) ? "LineManager"  :RoleIDs.includes(RoleID.RecruitmentHR) ? "AssignedHR" : RoleIDs.includes(RoleID.LineManager) ? "LineManager" : RoleIDs.includes(RoleID.HOD) ? "HOD" : "";
+      const vrrResponse =
+                await getVRRDetails.GetRecruitmentDetails(
+                  [
+                    {
+                      FilterKey: RoleNames,
+                      Operator: "in",
+                      FilterValue: CurrentUser,
+                    },
+                  ],
+                  ""
+                );
+
+              const vrrData = vrrResponse?.data.map((item: any) => item.ID) || [];
+
 
 
       const statusFilters: any[] = [
@@ -2356,6 +2372,11 @@ export default class RecruitmentService implements IRecruitmentService {
             StatusId.InterviewScheduled,
             StatusId.InterviewScheduledforLevel2,
           ],
+        },
+        {
+          FilterKey: "RecruitmentID",
+          Operator: "in",
+          FilterValue: vrrData,
         },
         {
           FilterKey: "ItemCreated",

@@ -723,11 +723,6 @@ const ReviewProfileList = (props: any) => {
             Operator: "eq",
             FilterValue: props.userDetails[0]?.EmailId,
           });
-          filterConditionsRecuritment.push({
-  FilterKey: "LineManager",
-  Operator: "eq",
-  FilterValue: props.userDetails[0]?.EmailId,
-});
           break;
       }
       // if (props.CurrentRoleID.includes(RoleID.LineManager)) {
@@ -755,6 +750,7 @@ const ReviewProfileList = (props: any) => {
         data = await getVRRDetails.GetcountInEvalution(
           props.CurrentUserEmailId,
           props.EmployeeList,
+          props.CurrentRoleID
         );
       } else {
         data = await getVRRDetails.GetRecruitmentDetails(
@@ -814,6 +810,7 @@ const ReviewProfileList = (props: any) => {
         const Evalution = await getVRRDetails.GetcountInEvalution(
           props.CurrentUserEmailId,
           props.EmployeeList,
+          props.CurrentRoleID
         );
 
         let InterviewPanelCount = InterviewPanel1Count + InterviewPanel2Count;

@@ -1255,9 +1255,29 @@ export default class GetPortalJobs implements IGetPortalJobs {
   ): Promise<ApiResponse<any>> => {
     try {
       let response;
-      response = (await SPServices.getDocLibFiles({
+      const getLatestFile = (files: any[] = []): any[] => {
+                if (!files.length) return [];
+
+                const latest = files.reduce((latest, current) => {
+                    const currDate = new Date(
+                        current?.TimeLastModified || current?.Modified || current?.Created
+                    );
+                    const latestDate = new Date(
+                        latest?.TimeLastModified || latest?.Modified || latest?.Created
+                    );
+
+                    return currDate > latestDate ? current : latest;
+                });
+
+                return [latest];
+            };
+
+            const files = (await SPServices.getDocLibFiles({
         FilePath: `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${DocumentName.RequestID}/${DocumentName.DocumentName}`,
       })) as IDocFiles[];
+
+            let getFile = getLatestFile(files)
+       response = getFile
 
       return {
         data: response,

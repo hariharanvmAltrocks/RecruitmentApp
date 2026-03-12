@@ -448,24 +448,7 @@ const RecruitmentList = (props: any) => {
             // StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
             // StatusId.RecruitmentInProgress,
           ].includes(rowData.StatusId);
-        } else if (props.CurrentRoleID.includes(RoleID.LineManager)) {
-          isTooltipStatus = [
-            StatusId.ReadyforRecruitmentProcess,
-            StatusId.PendingwithLMcreateDisqualificationQuestion,
-            StatusId.PendingwithLineManagereviewAdv,
-          ].includes(rowData.StatusId);
-        } else {
-          isTooltipStatus = [
-            StatusId.ReadyforRecruitmentProcess,
-            StatusId.PendingwithRecruitmentHRtouploadAdv,
-            StatusId.PendingwithLineManagereviewAdv,
-            StatusId.PendingwithHRandLMtocreateinterviewQuestion,
-            StatusId.PendingwithLMcreateDisqualificationQuestion,
-            StatusId.PendingwithHODtoreviewAdv,
-            StatusId.PendingwithHRLeadtouploadONEMsigneddoc,
-            // StatusId.RecruitmentInProgress,
-          ].includes(rowData.StatusId);
-        }
+        } 
         if (!isTooltipStatus && currentTab != TabName.UploadONEMDoc) {
           return (
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -1010,6 +993,7 @@ const RecruitmentList = (props: any) => {
     const res = await getVRRDetails.GetcountInEvalution(
       props.CurrentUserEmailId,
       props.EmployeeList,
+      props.CurrentRoleID
     );
 
     if (res.status === ResponeStatus.SUCCESS) {

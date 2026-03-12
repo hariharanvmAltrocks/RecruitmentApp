@@ -27,6 +27,11 @@ export const InterviewScheduleCard: React.FC<any> = (props) => {
             error={props.panelError}
             mandatory={!props.PanelDisabled}
           />
+            {props.panelValue.length < 3 && (
+          <p style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}>
+            Please select at least 3 panel members
+          </p>
+        )}
         </div>
       </div>
 

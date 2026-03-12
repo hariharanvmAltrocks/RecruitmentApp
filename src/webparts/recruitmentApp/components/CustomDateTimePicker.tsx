@@ -125,14 +125,6 @@ const CommonDateTimeRangePicker: React.FC<any> = ({
     }
   };
 
-  // const isMidnight = (date?: Date) =>
-  //   !!date && date.getHours() === 0 && date.getMinutes() === 0;
-
-  // const WORK_START = 9;
-  // const WORK_END = 18;
-
-  // const isOutsideWorkingHours = (date?: Date) =>
-  //   !!date && (date.getHours() < WORK_START || date.getHours() >= WORK_END);
 
   const isValidDate = (d: any) => d instanceof Date && !isNaN(d.getTime());
 
@@ -149,10 +141,12 @@ const CommonDateTimeRangePicker: React.FC<any> = ({
     isValidDate(endDate) &&
     endDate.getTime() <= startDate.getTime();
 
-  return (
-    <div className={teamsStyles.dateTimeContainer}>
-      <div style={{ minWidth: "150px" }}>
-        <div className={teamsStyles.fieldLabel}>
+ return (
+    <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+
+      {/* Date Field */}
+      <div style={{ width: "11%" }}>
+        <div style={{ fontSize: "12px", color: "#605e5c", fontWeight: 600, marginBottom: "4px" }}>
           Date {mandatory && <span style={{ color: "red" }}> *</span>}
         </div>
         <DatePicker
@@ -168,15 +162,15 @@ const CommonDateTimeRangePicker: React.FC<any> = ({
           }
         />
         {error && (
-          <p
-            style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}
-          >
+          <p style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}>
             Field is Required
           </p>
         )}
       </div>
+
+      {/* Time Range Field */}
       <div>
-        <div className={teamsStyles.fieldLabel}>
+        <div style={{ fontSize: "12px", color: "#605e5c", fontWeight: 600, marginBottom: "4px" }}>
           Time Range {mandatory && <span style={{ color: "red" }}> *</span>}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -185,12 +179,7 @@ const CommonDateTimeRangePicker: React.FC<any> = ({
             selectedKey={start ? startKey : undefined}
             placeholder="Start"
             onChange={(_, o) => handleTimeChange("start", o)}
-            styles={{
-              root: { width: 110 },
-              dropdownItemsWrapper: {
-                maxHeight: 185,
-              },
-            }}
+            styles={{ root: { width: 110 }, dropdownItemsWrapper: { maxHeight: 185 } }}
             disabled={disabled}
           />
           <span style={{ color: "#605e5c" }}>-</span>
@@ -199,47 +188,25 @@ const CommonDateTimeRangePicker: React.FC<any> = ({
             selectedKey={end ? endKey : undefined}
             placeholder="End"
             onChange={(_, o) => handleTimeChange("end", o)}
-            styles={{
-              root: { width: 110 },
-              dropdownItemsWrapper: {
-                maxHeight: 185,
-              },
-            }}
+            styles={{ root: { width: 110 }, dropdownItemsWrapper: { maxHeight: 185 } }}
             disabled={disabled}
           />
         </div>
-        {/* {isMidnightError && (
-          <p
-            style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}
-          >
-            Start and End time cannot be 12:00 AM.
-          </p>
-        )} */}
 
-        {isInvalidRange && (
-          <p
-            style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}
-          >
-            End time must be greater than Start time.
-          </p>
-        )}
-
-        {isLessThan30Minutes && (
-          <p
-            style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}
-          >
-            Time range must be at least 30 minutes.
-          </p>
-        )}
-
-        {/* {isWorkingHoursError && (
-          <p
-            style={{ marginTop: 5, color: "red", fontSize: 12, marginLeft: 0 }}
-          >
-            Please select time within working hours (9:00 AM – 6:00 PM).
-          </p>
-        )} */}
+        {/* Stable error area — minHeight prevents layout shift */}
+        <div style={{ minHeight: "20px", marginTop: 4 }}>
+          {isInvalidRange ? (
+            <p style={{ margin: 0, color: "red", fontSize: 12 }}>
+              End time must be greater than Start time.
+            </p>
+          ) : isLessThan30Minutes ? (
+            <p style={{ margin: 0, color: "red", fontSize: 12 }}>
+              Time range must be at least 30 minutes.
+            </p>
+          ) : null}
+        </div>
       </div>
+
     </div>
   );
 };
