@@ -1567,8 +1567,9 @@ const UploadCandidateDocument = (props: any) => {
               )),
             )}
           </div>
-
-          <div className="ms-Grid-row">
+          {btnEnable && ( 
+            <>
+             <div className="ms-Grid-row">
             <div
               className="ms-Grid-col ms-lg12"
               style={{ marginBottom: "7px" }}
@@ -1619,6 +1620,9 @@ const UploadCandidateDocument = (props: any) => {
               />
             </div>
           </div>
+            </>
+          )}
+         
         </>
       ),
     },
@@ -2275,55 +2279,6 @@ const UploadCandidateDocument = (props: any) => {
                   <></>
                 )}
 
-                {props.stateValue.StatusId ===
-                  StatusId.PendingHRReviewOfferanduploadEmployementContract && (
-                  <>
-                    <div className="ms-Grid-col ms-lg4">
-                      <CustomLabel
-                        value={Attachment.PositionDocument.EmployementDoc}
-                        mandatory={true}
-                      />
-                      <AttachmentButton
-                        label="Upload"
-                        iconName="CloudUpload"
-                        iconNameHover="CloudUpload"
-                        allowMultiple={false}
-                        AttachState={(newAttachment: any) => {
-                          let attachment: IDocFiles[] = newAttachment.map(
-                            (item: any) => {
-                              return {
-                                name: item.name,
-                                content: item.file,
-                                type: "New",
-                                url: item.Url,
-                              };
-                            },
-                          );
-                          // const attachments = [
-                          //   ...(data.EmployementDoc || []),
-                          //   ...attachment,
-                          // ];
-                          handleDocument("EmployementDoc", attachment);
-                        }}
-                        mandatory={true}
-                        error={validationErrors.EmployementDoc}
-                        Style={{
-                          backgroundColor:
-                            ColorCode.ButtonColorCode.ButtonColor,
-                          color: "white",
-                        }}
-                        fileformat=".pdf"
-                      />
-                      <CustomViewAttachment
-                        Attachment={data.EmployementDoc ?? []}
-                        StateValue={"EmployementDoc"}
-                        handleDelete={(index, fileState) =>
-                          handleDelete(index, fileState)
-                        }
-                      />
-                    </div>
-                  </>
-                )}
 
                 {props.stateValue?.StatusId ===
                   StatusId.WorkPermitAcknowledgedContractUploaded && (
@@ -2440,9 +2395,9 @@ const UploadCandidateDocument = (props: any) => {
                   <></>
                 )} */}
 
-                {/* {props.stateValue?.StatusId ===
-                  StatusId.PendingFinancePaymentReview &&
-                data.PaymentReview === "Yes" ? (
+                {props.stateValue?.StatusId ===
+                  StatusId.PendingFinancePaymentReview 
+               ? (
                   <>
                     <div className="ms-Grid-row">
                       <div className="ms-Grid-col ms-lg3">
@@ -2495,7 +2450,7 @@ const UploadCandidateDocument = (props: any) => {
                   </>
                 ) : (
                   <></>
-                )} */}
+                )}
 
                 {/* {(props.stateValue?.StatusId ===
                   StatusId.PendingHRBGVInitiation ||
@@ -2556,6 +2511,56 @@ const UploadCandidateDocument = (props: any) => {
                   </div>
                 ) : (
                   <></>
+                )}
+
+                  {props.stateValue.StatusId ===
+                  StatusId.PendingHRReviewOfferanduploadEmployementContract && data.RadioAction === "Yes" && (
+                  <>
+                    <div className="ms-Grid-col ms-lg4">
+                      <CustomLabel
+                        value={Attachment.PositionDocument.EmployementDoc}
+                        mandatory={true}
+                      />
+                      <AttachmentButton
+                        label="Upload"
+                        iconName="CloudUpload"
+                        iconNameHover="CloudUpload"
+                        allowMultiple={false}
+                        AttachState={(newAttachment: any) => {
+                          let attachment: IDocFiles[] = newAttachment.map(
+                            (item: any) => {
+                              return {
+                                name: item.name,
+                                content: item.file,
+                                type: "New",
+                                url: item.Url,
+                              };
+                            },
+                          );
+                          // const attachments = [
+                          //   ...(data.EmployementDoc || []),
+                          //   ...attachment,
+                          // ];
+                          handleDocument("EmployementDoc", attachment);
+                        }}
+                        mandatory={true}
+                        error={validationErrors.EmployementDoc}
+                        Style={{
+                          backgroundColor:
+                            ColorCode.ButtonColorCode.ButtonColor,
+                          color: "white",
+                        }}
+                        fileformat=".pdf"
+                      />
+                      <CustomViewAttachment
+                        Attachment={data.EmployementDoc ?? []}
+                        StateValue={"EmployementDoc"}
+                        handleDelete={(index, fileState) =>
+                          handleDelete(index, fileState)
+                        }
+                      />
+                    </div>
+                  </>
                 )}
 
                 {data.RadioAction === "Yes" &&
@@ -2812,7 +2817,7 @@ const UploadCandidateDocument = (props: any) => {
       errors.WorkpermitDoc = !IsValid(data.WorkpermitDoc);
     } else if (
       props.stateValue?.StatusId ===
-      StatusId.PendingHRReviewOfferanduploadEmployementContract
+      StatusId.PendingHRReviewOfferanduploadEmployementContract &&  data.RadioAction === "Yes"
     ) {
       errors.EmployementDoc = !IsValid(data.EmployementDoc);
     }
@@ -2836,10 +2841,9 @@ const UploadCandidateDocument = (props: any) => {
       // errors.PaymentReview = !IsValid(data.PaymentReview);
     }
     if (
-      props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview &&
-      data.PaymentReview === "Yes"
+      props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview 
     ) {
-      // errors.PaymentDocs = !IsValid(data.PaymentDocs);
+      errors.PaymentDocs = !IsValid(data.PaymentDocs);
     }
 
     if (
@@ -2876,7 +2880,8 @@ const UploadCandidateDocument = (props: any) => {
     setIsLoading(true);
     try {
       const isValid = !Validation();
-      if (isValid) {
+      const ValidationCheck = BtnAction === ButtonAction.Submit ? isValid : true;
+      if (ValidationCheck) {
         let ChecklistValue = {
           BackgroundChecks:
             checklistStatus["Background Checks"] === StatusBarValue.Completed
@@ -3043,7 +3048,22 @@ const UploadCandidateDocument = (props: any) => {
             break;
           case StatusId.PendingHRReviewBGCheck:
             {
-              if (btnAction === ButtonAction.Review) {
+             
+              if (btnAction === ButtonAction.Review ) {
+                 if(props.stateValue.rowData?.CandidateDetails?.NationalityCode ===
+      NationalityCode.Nationals) {
+        workflowStatusValue = workflowStatusApi.initiatetheBGVProcess;
+         SuccessMsg =
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingHRReviewBGCheck &&
+                  data.NationalityCode === NationalityCode.Nationals
+                    ? RecuritmentHRMsg.BGReviewedMsg
+                    : RecuritmentHRMsg.BGReviewinitBGV;
+                ActionID = WorkflowAction.Approved;
+                DocumentResponse = {
+                  status: ResponeStatus.SUCCESS,
+                };
+      } else {
                 DocumentData = {
                   ProfileID: data?.ProfileID,
                   RequestID: data?.jobRequestID,
@@ -3068,6 +3088,7 @@ const UploadCandidateDocument = (props: any) => {
                 // DocumentResponse = {
                 //   status: ResponeStatus.SUCCESS,
                 // };
+      }
               } else if (btnAction === ButtonAction.Revert) {
                 workflowStatusValue =
                   workflowStatusApi.RevetedBacktoBGVDocuments;
@@ -3188,25 +3209,25 @@ const UploadCandidateDocument = (props: any) => {
           }
           case StatusId.PendingFinancePaymentReview: {
             if (btnAction === ButtonAction.Review) {
-              // DocumentData = {
-              //   ProfileID: data?.ProfileID,
-              //   RequestID: data?.jobRequestID,
-              //   DocumentName: DocumentFolderName.ProofOfDocument,
-              //   UnsignedDoc: "",
-              // };
-              // let PaymentProofDocs = [...data.PaymentDocs];
-              // DocumentResponse =
-              //   await OfferLetterServices.UploadCandidateDocument(
-              //     DocumentData,
-              //     PaymentProofDocs,
-              //   );
+              DocumentData = {
+                ProfileID: data?.ProfileID,
+                RequestID: data?.jobRequestID,
+                DocumentName: DocumentFolderName.ProofOfDocument,
+                UnsignedDoc: "",
+              };
+              let PaymentProofDocs = [...data.PaymentDocs];
+              DocumentResponse =
+                await OfferLetterServices.UploadCandidateDocument(
+                  DocumentData,
+                  PaymentProofDocs,
+                );
               workflowStatusValue =
                 workflowStatusApi.PendingFinancePaymentReview;
               SuccessMsg = RecuritmentHRMsg.FinancePaymentReviewMsg;
               ActionID = WorkflowAction.Approved;
-              DocumentResponse = {
-                status: ResponeStatus.SUCCESS,
-              };
+              // DocumentResponse = {
+              //   status: ResponeStatus.SUCCESS,
+              // };
             } 
             // else if (btnAction === ButtonAction.Revert) {
             //   // workflowStatusValue =
@@ -3306,7 +3327,8 @@ const UploadCandidateDocument = (props: any) => {
             break;
           case StatusId.PendingHRReviewOfferanduploadEmployementContract:
             {
-              DocumentData = {
+                if (btnAction === ButtonAction.Review) { 
+                   DocumentData = {
                 ProfileID: data?.ProfileID,
                 RequestID: data?.jobRequestID,
                 DocumentName: DocumentFolderName.EmploymentContractForm,
@@ -3322,6 +3344,15 @@ const UploadCandidateDocument = (props: any) => {
                 workflowStatusApi.PendingwithCandidatetosignEmployementContract;
               SuccessMsg = RecuritmentHRMsg.EmploymentContractMsg;
               ActionID = WorkflowAction.Approved;
+                }else if (btnAction === ButtonAction.Revert) {
+                   workflowStatusValue =
+                  workflowStatusApi.RevertedBacktoCandidateforreuploadofferLetter;
+                SuccessMsg = RecuritmentHRMsg.RevertedOfferLetter;
+                ActionID = WorkflowAction.Revert;
+                DocumentResponse = {
+                  status: ResponeStatus.SUCCESS,
+                };
+                }
             }
             break;
           case StatusId.PendingHRReviewOfferuploadEmploymentInit:
@@ -3448,12 +3479,12 @@ const UploadCandidateDocument = (props: any) => {
           ) {
             CandidateDatas.ConsentFormPath = ""; //DocumentResponse.data[0]?.content;
           }
-          //  else if (
-          //   props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview
-          // ) {
-          //   CandidateDatas.proofOfPaymentPath =
-          //     DocumentResponse.data[0]?.content;
-          // } 
+           else if (
+            props.stateValue?.StatusId === StatusId.PendingFinancePaymentReview
+          ) {
+            CandidateDatas.proofOfPaymentPath =
+              DocumentResponse.data[0]?.content;
+          } 
           else if (
             props.stateValue?.StatusId ===
             StatusId.PendingHREmploymentContractInit
@@ -3465,7 +3496,7 @@ const UploadCandidateDocument = (props: any) => {
               WorkPermitDocs[0]?.data[0]?.content;
           } else if (
             props.stateValue?.StatusId ===
-            StatusId.PendingHRReviewOfferanduploadEmployementContract
+            StatusId.PendingHRReviewOfferanduploadEmployementContract && data.RadioAction === "Yes"
           ) {
             CandidateDatas.EmpContractLatterPath =
               DocumentResponse.data[0]?.content;
