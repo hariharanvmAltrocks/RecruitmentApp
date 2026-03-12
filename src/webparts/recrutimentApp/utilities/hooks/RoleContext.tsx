@@ -82,7 +82,7 @@ async function fetchAllRoles(): Promise<UserRoleData[]> {
 }
 
 
-async function checkUserRoles(allRoles: UserRoleData[]): Promise<UserRoleData | null> {
+async function checkUserRoles(allRoles: UserRoleData[]): Promise<UserRoleData[] | null> {
 
   const graphClient = GraphService.getGraphClient();
 
@@ -98,11 +98,18 @@ async function checkUserRoles(allRoles: UserRoleData[]): Promise<UserRoleData | 
       .api("/me/checkMemberGroups")
       .post({ groupIds });
 
-    const matchedRole = allRoles.find((role) =>
-      response.value.includes(role.ADGroupID)
-    );
+    const groupSet = new Set(response.value);
 
-    return matchedRole ?? null;
+    const matchedRole = allRoles
+      .filter(role => groupSet.has(role.ADGroupID))
+      .map(res => ({
+        ID: res.ID,
+        RoleTitle: res.RoleTitle,
+        ADGroupID: res.ADGroupID,
+        EmailId: ""
+      }));
+
+    return matchedRole.length ? matchedRole : null;
 
   } catch (error) {
     console.error("Group membership check failed:", error);
@@ -134,6 +141,7 @@ function buildADGroupData(
     userRole: resolvedRoles.map((r) => r.RoleTitle),
     ADGroupIDs: resolvedRoles.map((r) => r.ADGroupID),
     RoleDetails: resolvedRoles,
+    EmailId: resolvedRoles.map((r) => r.EmailId)
   };
 }
 
@@ -254,13 +262,13 @@ export const RoleProvider = ({
 
         const allRoles = await fetchAllRoles();
         const resolved = await checkUserRoles(allRoles);
-        const resolvedRoles = resolved ? [{
-          ID: resolved.ID,
-          RoleTitle: resolved.RoleTitle,
-          ADGroupID: resolved.ADGroupID,
-          EmailId: email,
-        }] : [];
-        dispatch({ type: "SET_RESOLVED_ROLES", roles: resolvedRoles });
+        const resolvedRoles = resolved?.map(res => ({
+          ID: res.ID,
+          RoleTitle: res.RoleTitle,
+          ADGroupID: res.ADGroupID,
+          EmailId: email
+        }));
+        dispatch({ type: "SET_RESOLVED_ROLES", roles: resolvedRoles && resolvedRoles.length > 0 ? resolvedRoles : [] });
       })(),
     ]);
 

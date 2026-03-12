@@ -36,7 +36,7 @@ var Tracker = function (_a) {
                     react_1.default.createElement("td", null, row.Type),
                     react_1.default.createElement("td", null,
                         react_1.default.createElement("span", { className: "status" }, row.Status)),
-                    react_1.default.createElement("td", { className: "arrow" }, ["hod-review", "pending-evaluation", "pos-mapping"].includes(activeMetric) && react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16 })))); }))))));
+                    react_1.default.createElement("td", { className: "arrow" }, (selectedMetric === null || selectedMetric === void 0 ? void 0 : selectedMetric.showArrow) && react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16 })))); }))))));
 };
 exports.default = Tracker;
 //# sourceMappingURL=Tracker.js.map

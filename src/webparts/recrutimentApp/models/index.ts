@@ -1,16 +1,5 @@
 import { LucideIcon } from 'lucide-react';
 
-export interface Metric {
-  id: string;
-  label: string;
-  value: number;
-  status: string;
-  icon: LucideIcon;
-  color: string;
-  bgColor: string;
-  showArrow: boolean;
-}
-
 export interface TrackerRow {
   id: string;
   jobCode: string;

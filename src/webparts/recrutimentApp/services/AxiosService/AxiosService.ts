@@ -18,18 +18,18 @@ AxiosInstance.interceptors.request.use(
         const tokenPayload = JSON.parse(atob(tokenParts[1]));
         const tokenExpiration = tokenPayload.exp * 1000;
 
-        if (Date.now() > tokenExpiration) {
-          const res = await axios.post<{ tokens: { jwtToken: string } }>(
-            `${ApiUrls}/hrms/InternalSignIn`,
-            {},
-            AuthorizationHeader
-          );
+        // if (Date.now() > tokenExpiration) {
+        const res = await axios.post<{ tokens: { jwtToken: string } }>(
+          `${ApiUrls}/hrms/InternalSignIn`,
+          {},
+          AuthorizationHeader
+        );
 
-          token = res?.data?.tokens?.jwtToken;
-          setToken(token);
-        }
+        token = res?.data?.tokens?.jwtToken;
+        setToken(token);
+        // }
 
-        config.headers.Authorization = `Bearer ${token}`;
+        // config.headers.Authorization = `Bearer ${token}`;
       } catch (error) {
         console.error("Token Refresh Failed:", error);
         throw new Error("Token refresh failed");

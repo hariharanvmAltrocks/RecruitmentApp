@@ -1,0 +1,1 @@
+{"version":3,"file":"fieldmodels.js","sourceRoot":"","sources":["../../../../src/webparts/recrutimentApp/models/fieldmodels.ts"],"names":[],"mappings":"","sourcesContent":["export type AutoCompleteItem = {\r\n    key: number;\r\n    text: string;\r\n};"]}

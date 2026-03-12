@@ -17,32 +17,28 @@ AxiosInstance.interceptors.request.use(function (config) { return tslib_1.__awai
         switch (_c.label) {
             case 0:
                 token = (0, TokenContext_1.getToken)();
-                if (!token) return [3 /*break*/, 6];
+                if (!token) return [3 /*break*/, 5];
                 _c.label = 1;
             case 1:
-                _c.trys.push([1, 4, , 5]);
+                _c.trys.push([1, 3, , 4]);
                 tokenParts = token.split(".");
                 tokenPayload = JSON.parse(atob(tokenParts[1]));
                 tokenExpiration = tokenPayload.exp * 1000;
-                if (!(Date.now() > tokenExpiration)) return [3 /*break*/, 3];
                 return [4 /*yield*/, axios_1.default.post("".concat(ApiUrls, "/hrms/InternalSignIn"), {}, axiosConfig_1.AuthorizationHeader)];
             case 2:
                 res = _c.sent();
                 token = (_b = (_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.tokens) === null || _b === void 0 ? void 0 : _b.jwtToken;
                 (0, TokenContext_1.setToken)(token);
-                _c.label = 3;
+                return [3 /*break*/, 4];
             case 3:
-                config.headers.Authorization = "Bearer ".concat(token);
-                return [3 /*break*/, 5];
-            case 4:
                 error_1 = _c.sent();
                 console.error("Token Refresh Failed:", error_1);
                 throw new Error("Token refresh failed");
-            case 5: return [3 /*break*/, 7];
-            case 6:
+            case 4: return [3 /*break*/, 6];
+            case 5:
                 console.warn("No token available, request may fail.");
-                _c.label = 7;
-            case 7: return [2 /*return*/, config];
+                _c.label = 6;
+            case 6: return [2 /*return*/, config];
         }
     });
 }); }, function (error) { return Promise.reject(error); });

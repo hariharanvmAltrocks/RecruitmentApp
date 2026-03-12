@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import React from 'react';
-import { Metric } from '../../../models';
 import { cn } from '../../../utilities/cn';
 import { ChevronRight } from "lucide-react";
 import './matricard.scss';
+import { Metric } from '../../../models/IDashboard';
 
 interface MetricCardProps {
   metric: Metric;

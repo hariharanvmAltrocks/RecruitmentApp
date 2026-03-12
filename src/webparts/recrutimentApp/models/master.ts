@@ -159,8 +159,13 @@ export type StatusDetails = {
     StatusId: string;
 }
 export type CareerPortalLink = {
-  CareerPortalLink: string;
-  MeetingUrl: string;
-  MeetingCode: string;
+    CareerPortalLink: string;
+    MeetingUrl: string;
+    MeetingCode: string;
+}
+
+export type ITabdetails = {
+    ID: number;
+    LabeName: string;
 }
 

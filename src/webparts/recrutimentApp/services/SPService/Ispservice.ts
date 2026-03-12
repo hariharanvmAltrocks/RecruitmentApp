@@ -117,7 +117,7 @@ export interface BatchInsertParams {
 }
 
 export interface BatchQuery {
-  StateValue: string;
+  StateValue: number;
   ListName: string;
   Filter?: IFilter[];
   Select?: string[];

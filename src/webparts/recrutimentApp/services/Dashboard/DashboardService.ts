@@ -1,10 +1,13 @@
 import moment from "moment";
-import { TrackerRow } from "../../models";
 import { ApiResponse } from "../../models/apimodels";
 import { count, InOperator } from "../../utilities/ApiConfig";
-import { ListNames } from "../../utilities/Config";
+import { ListNames, RoleID, workflowStatusApi } from "../../utilities/Config";
 import SPServices from "../SPService/spservice";
 import { DataSyncToRecruitmentResponse, IDashboard } from "./IDashboard";
+import { BatchQuery } from "../SPService/Ispservice";
+import { getProfileData } from "../AxiosService/CareerPortalAPI";
+import { ExternalApiCountItem, ExternalApiParams, Metric, MetricConfig } from "../../models/IDashboard";
+import { MatricColums } from "../../components/Screens/Dashboard/metricColumns.config";
 
 export default class DashboardService implements IDashboard {
 
@@ -33,10 +36,6 @@ export default class DashboardService implements IDashboard {
                     message: "No records found"
                 };
             }
-
-            /* -------------------------
-               STEP 1 : Map main records
-            --------------------------*/
 
             const GridResult: DataSyncToRecruitmentResponse[] = res.map((item: any, index: number) => ({
                 ID: item.ID,
@@ -122,7 +121,10 @@ export default class DashboardService implements IDashboard {
                 QuestionByLM: item?.QuestionByLM ?? "",
 
                 JobAppliedCount: "0",
-                ReviewScoreCount: "0"
+                ReviewScoreCount: "0",
+
+                ModifiedDate: item?.Modified ? moment(item.Modified).format("YYYY-MM-DD") : undefined,
+                CreatedDate: item?.Created ? moment(item.Created).format("YYYY-MM-DD") : undefined
             }));
 
 
@@ -200,4 +202,134 @@ export default class DashboardService implements IDashboard {
 
         }
     }
+
+
+    async GetDashboardCount(
+        queries: BatchQuery[],
+        currentRoleID: number[]
+    ): Promise<ApiResponse<Metric[]>> {
+
+        try {
+            const metricConfigs = MatricColums(currentRoleID);
+            if (!metricConfigs?.length) {
+                return { data: [], status: 200, message: "No metrics configured for this role" };
+            }
+
+            // const [spCounts, portalJobCodeMap] = await Promise.all([
+            //     SPServices.batchGet(queries),
+            //     this._fetchPortalJobCodeMap(queries),
+            // ]);
+
+            const spCounts = await SPServices.batchGet(queries);
+
+            const externalMetrics = metricConfigs.filter((m: any) => m.externalApi);
+
+            const externalCountMap = await this._fetchExternalCounts(
+                externalMetrics,
+                spCounts,
+                new Map()
+            );
+
+            const metrics: Metric[] = metricConfigs.map((config) => {
+                const hasExternalCount = externalCountMap.has(String(config.id));
+                const spCount = (spCounts[config.id] as any[])?.length ?? 0;
+
+                const value = hasExternalCount
+                    ? (externalCountMap.get(String(config.id)) ?? 0) + spCount
+                    : spCount;
+
+                return {
+                    ...config,
+                    value,
+                    showArrow: config.showArrow || hasExternalCount,
+                };
+            });
+
+            return { data: metrics, status: 200, message: "Dashboard counts fetched successfully" };
+
+        } catch (error) {
+            console.error("GetDashboardCount error:", error);
+            return { data: [], status: 500, message: "Error fetching dashboard counts" };
+        }
+    }
+
+
+    private async _fetchPortalJobCodeMap(
+        queries: BatchQuery[]
+    ): Promise<Map<number, string>> {
+
+        return new Map();
+    }
+
+
+    private async _fetchExternalCounts(
+        externalMetrics: MetricConfig[],
+        spCounts: Record<string, any[]>,
+        _portalJobCodeMap: Map<number, string>
+    ): Promise<Map<string, number>> {
+
+        const result = new Map<string, number>();
+        if (!externalMetrics.length) return result;
+
+        const allJobCodeIds = Array.from(
+            new Set(
+                externalMetrics.flatMap((m) =>
+                    (spCounts[m.id] ?? []).map((item: any) => item.JobCodeId).filter(Boolean)
+                )
+            )
+        );
+
+        if (!allJobCodeIds.length) return result;
+
+        const portalItems = await SPServices.SPReadItems({
+            Listname: ListNames.RecruitAppCareerPortalIntegration,
+            Select: `*,JobCode/JobCode`,
+            Filter: [{ FilterKey: "JobCodeId", Operator: "in", FilterValue: allJobCodeIds }],
+            FilterCondition: "and",
+            Expand: `JobCode`,
+            Topcount: count.Topcount,
+            Orderby: "ID",
+            Orderbydecorasc: true,
+        });
+
+        const jobCodeIdToUniqueKey = new Map<number, string>(
+            portalItems.map((item: any) => [item.JobCodeId, item.JobUniqueKey])
+        );
+
+        await Promise.all(
+            externalMetrics.map(async (metric) => {
+                const jobCodeIds: number[] = (spCounts[metric.id] ?? [])
+                    .map((item: any) => item.JobCodeId)
+                    .filter(Boolean);
+
+                const jobUniqueKeys = jobCodeIds
+                    .map((id) => jobCodeIdToUniqueKey.get(id))
+                    .filter((key): key is string => !!key);
+
+                if (!jobUniqueKeys.length) {
+                    result.set(String(metric.id), 0);
+                    return;
+                }
+
+                const params: ExternalApiParams = {
+                    jobCode: jobUniqueKeys,
+                    workflowStausId: metric.externalApi!.workflowStatuses,
+                };
+                try {
+                    const response = await getProfileData.GetJobAppliedCount(params);
+                    const total: number = (response?.data ?? []).reduce(
+                        (sum: number, item: ExternalApiCountItem) => sum + (item.count ?? 0),
+                        0
+                    );
+
+                    result.set(String(metric.id), total);
+                } catch (error) {
+                    result.set(String(metric.id), 0);
+                }
+            })
+        );
+
+        return result;
+    }
+
 };

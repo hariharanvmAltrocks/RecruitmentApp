@@ -507,6 +507,53 @@ var MasterService = /** @class */ (function () {
             });
         });
     };
+    MasterService.prototype.GetTabDetails = function (filterParam, filterConditions) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var GridResult, res, error_3;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentTabMaster,
+                                Select: "*",
+                                Filter: filterParam,
+                                FilterCondition: filterConditions,
+                                Topcount: ApiConfig_1.count.Topcount,
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        GridResult = {
+                            ID: 0,
+                            LabeName: ""
+                        };
+                        if (res.length > 0) {
+                            res.map(function (item) {
+                                GridResult = {
+                                    ID: item.ID,
+                                    LabeName: item.TabName
+                                };
+                                return GridResult;
+                            });
+                        }
+                        return [2 /*return*/, {
+                                data: GridResult,
+                                status: 200,
+                                message: "GetRecruitmentDetails fetched successfully",
+                            }];
+                    case 2:
+                        error_3 = _a.sent();
+                        console.error("Error fetching data in GetRecruitmentDetails:", error_3);
+                        return [2 /*return*/, {
+                                data: {},
+                                status: 500,
+                                message: "Error fetching data from GetRecruitmentDetails",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     return MasterService;
 }());
 exports.default = MasterService;

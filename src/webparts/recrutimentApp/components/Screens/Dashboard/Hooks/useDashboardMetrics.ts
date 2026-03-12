@@ -1,45 +1,34 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Metric } from "../../../../models";
 import SPServices from "../../../../services/SPService/spservice";
-import { getRoleBasedFilters } from "./useFilterMatricCard";
-import { METRICS } from "../../../MockData/data";
 import { RoleID } from "../../../../utilities/Config";
+import { getRoleBasedFilters } from "../metricColumns.config";
+import { Metric } from "../../../../models/IDashboard";
+import { DashboardServices } from "../../../../services/ServiceExport";
+import { useRoleContext } from "../../../../utilities/hooks/RoleContext";
+import { ResponeStatus } from "../../../../utilities/ApiConfig";
 
 export const useDashboardMetrics = () => {
-
+    const { roleIDs, ADGroupData } = useRoleContext();
     const [metrics, setMetrics] = useState<Metric[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
-    // ✅ Build queries once
+    console.log(ADGroupData.EmailId, "EmailId");
+
+
     const queries = useMemo(() => {
-        return getRoleBasedFilters(RoleID.LineManager);
-    }, []);
+        return getRoleBasedFilters(roleIDs);
+    }, [roleIDs]);
 
-    const mergeMetrics = useCallback(
-        (dbData: Record<string, number> = {}): Metric[] => {
-
-            return METRICS.map((metric) => ({
-                ...metric,
-                value: Number(dbData?.[metric.id] ?? 0)
-            }));
-
-        },
-        []
-    );
 
     const fetchMetrics = useCallback(async () => {
 
         try {
 
             setLoading(true);
-
-            const data = await SPServices.batchGet(queries);
-
-            console.log("DB Data:", data);
-
-            const mergedMetrics = mergeMetrics(data);
-
-            setMetrics(mergedMetrics);
+            let data = await DashboardServices.GetDashboardCount(queries, roleIDs)
+            if (data.status == ResponeStatus.SUCCESS) {
+                setMetrics(data.data);
+            }
 
         } catch (error) {
 
@@ -51,7 +40,7 @@ export const useDashboardMetrics = () => {
 
         }
 
-    }, [queries, mergeMetrics]);
+    }, [queries]);
 
     useEffect(() => {
 

@@ -69,7 +69,7 @@ function fetchAllRoles() {
 }
 function checkUserRoles(allRoles) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var graphClient, groupIds, response_1, matchedRole, error_1;
+        var graphClient, groupIds, response, groupSet_1, matchedRole, error_1;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -86,11 +86,17 @@ function checkUserRoles(allRoles) {
                             .api("/me/checkMemberGroups")
                             .post({ groupIds: groupIds })];
                 case 2:
-                    response_1 = _a.sent();
-                    matchedRole = allRoles.find(function (role) {
-                        return response_1.value.includes(role.ADGroupID);
-                    });
-                    return [2 /*return*/, matchedRole !== null && matchedRole !== void 0 ? matchedRole : null];
+                    response = _a.sent();
+                    groupSet_1 = new Set(response.value);
+                    matchedRole = allRoles
+                        .filter(function (role) { return groupSet_1.has(role.ADGroupID); })
+                        .map(function (res) { return ({
+                        ID: res.ID,
+                        RoleTitle: res.RoleTitle,
+                        ADGroupID: res.ADGroupID,
+                        EmailId: ""
+                    }); });
+                    return [2 /*return*/, matchedRole.length ? matchedRole : null];
                 case 3:
                     error_1 = _a.sent();
                     console.error("Group membership check failed:", error_1);
@@ -127,6 +133,7 @@ function buildADGroupData(resolvedRoles, userName) {
         userRole: resolvedRoles.map(function (r) { return r.RoleTitle; }),
         ADGroupIDs: resolvedRoles.map(function (r) { return r.ADGroupID; }),
         RoleDetails: resolvedRoles,
+        EmailId: resolvedRoles.map(function (r) { return r.EmailId; })
     };
 }
 var NoRoleScreen = function () { return (React.createElement("div", { className: "flex min-h-screen relative bg-gray-100" },
@@ -197,13 +204,13 @@ var RoleProvider = function (_a) {
                                             return [4 /*yield*/, checkUserRoles(allRoles)];
                                         case 3:
                                             resolved = _b.sent();
-                                            resolvedRoles = resolved ? [{
-                                                    ID: resolved.ID,
-                                                    RoleTitle: resolved.RoleTitle,
-                                                    ADGroupID: resolved.ADGroupID,
-                                                    EmailId: email,
-                                                }] : [];
-                                            dispatch({ type: "SET_RESOLVED_ROLES", roles: resolvedRoles });
+                                            resolvedRoles = resolved === null || resolved === void 0 ? void 0 : resolved.map(function (res) { return ({
+                                                ID: res.ID,
+                                                RoleTitle: res.RoleTitle,
+                                                ADGroupID: res.ADGroupID,
+                                                EmailId: email
+                                            }); });
+                                            dispatch({ type: "SET_RESOLVED_ROLES", roles: resolvedRoles && resolvedRoles.length > 0 ? resolvedRoles : [] });
                                             return [2 /*return*/];
                                     }
                                 });

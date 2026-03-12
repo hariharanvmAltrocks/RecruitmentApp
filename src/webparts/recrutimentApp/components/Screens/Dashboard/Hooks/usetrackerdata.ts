@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { TrackerRow } from "../../../../models";
 import { StatusId } from "../../../../utilities/Config";
 import { DashboardServices } from "../../../../services/ServiceExport";
-import { Choices } from "../../../../utilities/ApiConfig";
+import { Choices, ResponeStatus } from "../../../../utilities/ApiConfig";
 import { DataSyncToRecruitmentResponse } from "../../../../services/Dashboard/IDashboard";
+import { MetricQueryConfig } from "../metricColumns.config";
 
-export const useTrackerData = (MatricID: string) => {
+export const useTrackerData = (MatricID: number) => {
 
     const [trackerData, setTrackerData] = useState<DataSyncToRecruitmentResponse[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -14,33 +15,12 @@ export const useTrackerData = (MatricID: string) => {
         try {
             setLoading(true);
 
-            const Filter: any[] = [];
             const condition = "and";
-
-            switch (MatricID) {
-                case "hod-review":
-                    Filter.push({
-                        FilterKey: "StatusId",
-                        Operator: "eq",
-                        FilterValue: StatusId.PendingwithHODtoreviewAdv,
-                    });
-                    break;
-
-                default:
-                    Filter.push({
-                        FilterKey: "ItemCreated",
-                        Operator: "eq",
-                        FilterValue: Choices.No,
-                    });
+            const Filter = MetricQueryConfig[MatricID]
+            const res = await DashboardServices.GetRecruitmentDetails(Filter.Filter[0], condition);
+            if (res.status == ResponeStatus.SUCCESS) {
+                setTrackerData(res.data || []);
             }
-            Filter.push({
-                FilterKey: "ItemCreated",
-                Operator: "eq",
-                FilterValue: Choices.No,
-            });
-            debugger;
-            const res = await DashboardServices.GetRecruitmentDetails(Filter, condition);
-            setTrackerData(res.data || []);
 
         } catch (error) {
             console.error("Dashboard metrics error", error);
@@ -53,7 +33,7 @@ export const useTrackerData = (MatricID: string) => {
     useEffect(() => {
         if (!MatricID) return;
         fetchtrackerData();
-    }, [fetchtrackerData]);
+    }, [MatricID, fetchtrackerData]);
 
     return {
         trackerData,

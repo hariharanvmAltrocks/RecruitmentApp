@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { RotateCcw } from 'lucide-react';
 import { TrackerRow } from '../../../models';
-import { METRICS, PRIORITY_DATA, TRACKER_DATA, URGENT_TASKS } from '../../MockData/data';
 import { motion } from 'framer-motion';
 import MetricCard from '../../Comman/MatricBox/matric';
 import './Dashboard.scss';
@@ -12,58 +10,37 @@ import PriorityWidget from '../../Comman/PriorityWidget/PriorityWidget';
 import UrgentWidget from '../../Comman/UrgentWidget/UrgentWidget';
 import { useUrgentTasks } from './Hooks/useUrgentTasks';
 import { DataSyncToRecruitmentResponse } from '../../../services/Dashboard/IDashboard';
+import { priorityValues, totalPriority } from './metricColumns.config';
 
 interface DashboardProps {
-  onRowClick: (row: TrackerRow) => void;
+  props: any
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ onRowClick }) => {
-  const [activeMetric, setActiveMetric] = useState<string>("");
-  const [trackerRowData, setTrackerRowData] = useState<DataSyncToRecruitmentResponse[]>([]);
-  const martics = useDashboardMetrics()
-  console.log(martics);
-  const trackdata = useTrackerData(martics.metrics[0]?.id)
-  console.log(trackdata, "trackdata");
+const Dashboard: React.FC<DashboardProps> = (props) => {
+  const [activeMetric, setActiveMetric] = useState<number>(0);
 
+  const martics = useDashboardMetrics();
 
+  // ✅ Hook always called at top level — reacts to activeMetric changes automatically
+  const { trackerData, loading } = useTrackerData(activeMetric);
+
+  // ✅ Set initial active metric once metrics are loaded
   useEffect(() => {
     if (martics.metrics.length > 0 && !activeMetric) {
       setActiveMetric(martics.metrics[0].id);
     }
-    if (trackdata.trackerData.length > 0) {
-      setTrackerRowData(trackdata.trackerData)
-    }
-  }, [martics.metrics, trackdata.trackerData]);
+  }, [martics.metrics]);
 
   const { urgentTasks } = useUrgentTasks();
 
-  console.log(activeMetric, "Active");
-
-
-  const onMetricChange = (id: string) => {
+  // ✅ Just update state — useTrackerData re-fetches automatically via its own useEffect
+  const onMetricChange = (id: number) => {
     setActiveMetric(id);
   };
 
-  const selectedMetric = martics.metrics.find(m => m.id === activeMetric) || martics.metrics[0];
-
-  const hodReviewsValue = martics.metrics.find(m => m.id === 'hod-review')?.value || 0;
-  const posMappingValue = martics.metrics.find(m => m.id === 'pos-mapping')?.value || 0;
-  const totalPriority = hodReviewsValue + posMappingValue;
-
-  const priorityData = [
-    {
-      name: 'HOD Reviews',
-      value: hodReviewsValue,
-      percent: totalPriority > 0 ? Math.round((hodReviewsValue / totalPriority) * 100) : 0,
-      color: '#3B82F6'
-    },
-    {
-      name: 'Position Mapping',
-      value: posMappingValue,
-      percent: totalPriority > 0 ? Math.round((posMappingValue / totalPriority) * 100) : 0,
-      color: '#F59E0B'
-    }
-  ];
+  const selectedMetric = martics.metrics.find(m => m.id === activeMetric) ?? martics.metrics[0];
+  const priorityData = priorityValues(martics.metrics);
+  const total = totalPriority(martics.metrics);
 
   return (
     <motion.div
@@ -88,22 +65,20 @@ const Dashboard: React.FC<DashboardProps> = ({ onRowClick }) => {
       <div className="dashboard-layout">
         <div className="tracker-panel">
           <Tracker
-            rows={trackerRowData}
+            rows={trackerData}              // ✅ always in sync with activeMetric
             selectedMetric={selectedMetric}
             activeMetric={activeMetric}
-          // onRowClick={onRowClick}
           />
         </div>
 
         <div className="priority-panel">
-          <PriorityWidget data={priorityData} total={totalPriority} />
+          <PriorityWidget data={priorityData} total={total} />
         </div>
 
         <div className="urgent-panel">
           <UrgentWidget tasks={urgentTasks} />
         </div>
       </div>
-
     </motion.div>
   );
 };

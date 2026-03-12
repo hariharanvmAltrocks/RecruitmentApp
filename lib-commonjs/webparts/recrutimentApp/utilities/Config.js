@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StatusId = exports.RoleID = exports.DocumentLibraray = exports.ListNames = void 0;
+exports.ApplicationStatusId = exports.workflowStatusApi = exports.StatusId = exports.RoleID = exports.DocumentLibraray = exports.ListNames = void 0;
 exports.ListNames = {
     HRMSSageList: "HRMS_Sage_List",
     HRMSGradeMaster: "HRMS_Grade_Master",
@@ -64,6 +64,7 @@ exports.ListNames = {
     //Resi
     HRMSRESIDRCDetails: "HRMSRESIDRCDetails",
     HRMSRESIExpatDetails: "HRMSRESIExpatDetails",
+    HRMSRecruitmentTabMaster: "HRMSRecruitmentTabMaster"
 };
 exports.DocumentLibraray = {
     InterviewPanelCandidateCV: "HRMSRecruitmentCandidateCV",
@@ -87,11 +88,11 @@ exports.RoleID = {
     FinanceDepartment: 8
 };
 exports.StatusId = {
-    PendingwithHRLeadtoAssignRecruitmentHR: 68,
-    PendingwithRecruitmentHRtouploadAdv: 2,
-    PendingwithHODtoreviewAdv: 26,
-    PendingwithHRLeadtouploadONEMsigneddoc: 118,
-    PendingwithRecruitmentHRtoAssignExternalAgency: 119,
+    PendingAssignHR: 68,
+    PendingUploadAdvert: 2,
+    PendingReviewAdvertHOD: 26,
+    PendingUploadONEM: 118,
+    PendingAssignAgencies: 119,
     RecruitmentInProgress: 28,
     PendingwithHODtoselectthecandidate: 121,
     Selected: 122,
@@ -99,9 +100,9 @@ exports.StatusId = {
     InterviewScheduled: 40,
     Completed: 13,
     ReadyforRecruitmentProcess: 155,
-    PendingwithHRandLMtocreateinterviewQuestion: 124,
+    PendingInterviewquestion: 124,
     PendingwithLineManagereviewAdv: 125,
-    PendingwithLMcreateDisqualificationQuestion: 126,
+    PendingCareerPortalque: 126,
     OnHoldbyHOD: 123,
     RejectedbyHOD: 15,
     PendingwithHODtoselectthecandidateLevel2: 127,
@@ -169,6 +170,62 @@ exports.StatusId = {
     CandidateRejectedbyHODLevel2: 168,
     BackgroundCheckVerificationFailed: 180,
     RESProcessInitiated: 143,
-    FailedmedicalscreeningUnfit: 156
+    FailedmedicalscreeningUnfit: 156,
+    offerdecline: 27,
+    onboardingInProcess: 46
+};
+exports.workflowStatusApi = {
+    HRPending: "WS01",
+    LineManagerL1Pending: "WS02",
+    LineManagerL2Pending: "WS03",
+    InterviewScheduled: "WS04",
+    pendingHODSelection: "WS05",
+    CandidateSelectedIPanel: "WS06",
+    CandidateOnHoldIPanel: "WS07",
+    CandidateRejectedIPanel: "WS08",
+    PendingRecruitmentHRscheduleInterview: "WS09",
+    HRRejected: "WS10",
+    HROnHold: "WS11",
+    LineManagerLevel1OnHold: "WS12",
+    LineManagerLevel2OnHold: "WS13",
+    LineManagerLevel1Rejected: "WS14",
+    LineManagerLevel2Rejected: "WS15",
+    // post Recrutiment
+    PendingCandidateUploadBGVDocs: "WS37",
+    UploadedtheCandidateBGVDocs: "WS38",
+    initiatetheBGVProcess: "WS39",
+    Offerdecline: "WS25",
+    SysytmeDecline: "WS26",
+    // KCSA
+    Pendingwithcandidatetosignofferletter: "WS16",
+    CandidateuploadedtheSignedOfferLetter: "WS17",
+    PendingwithCandidatetouploadotherDocuments: "WS18",
+    CandidateUploadedcandidatepersonalDocs: "WS19",
+    PendingwithCandidatetosignEmployementContract: "WS20",
+    UploadedthesignedEmployementcontractform: "WS21",
+    // Labor Hire
+    PendingHROfferInitiate: "WS27",
+    PendingLabourHireOfferRelease: "WS28",
+    PendingLabourhireWPPayment: "WS29",
+    PendingFinancePaymentReview: "WS30",
+    PendingLHWorkPermitProcess: "WS31",
+    PendingHREmploymentContractInit: "WS32",
+    PendingLHECRelease: "WS33",
+    OnboardingInprogress: "WS36",
+    RevertedBacktoCandidateforreuploadofferLetter: "WS22",
+    RevertedBacktoCandidateforreuploadDocs: "WS23",
+    RevertedBacktoCandidateforreuploadEmploymentContract: "WS24",
+    RevertedtheLabourHireOfferRelease: "WS34",
+    RevertedtheLabourHireEmployementContract: "WS35",
+    RevetedBacktoBGVDocuments: "WS40"
+};
+exports.ApplicationStatusId = {
+    ApplicationSubmitted: "AS01",
+    ApplicationInProgress: "AS02",
+    InterviewScheduled: "AS03",
+    InterviewCompleted: "AS04",
+    Selected: "AS05",
+    ApplicationRejected: "AS06",
+    ApplicationSuspended: "AS00"
 };
 //# sourceMappingURL=Config.js.map

@@ -5,6 +5,8 @@ var moment_1 = tslib_1.__importDefault(require("moment"));
 var ApiConfig_1 = require("../../utilities/ApiConfig");
 var Config_1 = require("../../utilities/Config");
 var spservice_1 = tslib_1.__importDefault(require("../SPService/spservice"));
+var CareerPortalAPI_1 = require("../AxiosService/CareerPortalAPI");
+var metricColumns_config_1 = require("../../components/Screens/Dashboard/metricColumns.config");
 var DashboardService = /** @class */ (function () {
     function DashboardService() {
     }
@@ -93,7 +95,9 @@ var DashboardService = /** @class */ (function () {
                                 QuestionByHR: (_6 = item === null || item === void 0 ? void 0 : item.QuestionByHR) !== null && _6 !== void 0 ? _6 : "",
                                 QuestionByLM: (_7 = item === null || item === void 0 ? void 0 : item.QuestionByLM) !== null && _7 !== void 0 ? _7 : "",
                                 JobAppliedCount: "0",
-                                ReviewScoreCount: "0"
+                                ReviewScoreCount: "0",
+                                ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified) ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD") : undefined,
+                                CreatedDate: (item === null || item === void 0 ? void 0 : item.Created) ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD") : undefined
                             });
                         });
                         ids = GridResult.map(function (x) { return x.ID; });
@@ -162,6 +166,120 @@ var DashboardService = /** @class */ (function () {
                                 message: "Error fetching data"
                             }];
                     case 7: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DashboardService.prototype.GetDashboardCount = function (queries, currentRoleID) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var metricConfigs, spCounts_1, externalMetrics, externalCountMap_1, metrics, error_2;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        metricConfigs = (0, metricColumns_config_1.MatricColums)(currentRoleID);
+                        if (!(metricConfigs === null || metricConfigs === void 0 ? void 0 : metricConfigs.length)) {
+                            return [2 /*return*/, { data: [], status: 200, message: "No metrics configured for this role" }];
+                        }
+                        return [4 /*yield*/, spservice_1.default.batchGet(queries)];
+                    case 1:
+                        spCounts_1 = _a.sent();
+                        externalMetrics = metricConfigs.filter(function (m) { return m.externalApi; });
+                        return [4 /*yield*/, this._fetchExternalCounts(externalMetrics, spCounts_1, new Map())];
+                    case 2:
+                        externalCountMap_1 = _a.sent();
+                        metrics = metricConfigs.map(function (config) {
+                            var _a, _b, _c;
+                            var hasExternalCount = externalCountMap_1.has(String(config.id));
+                            var spCount = (_b = (_a = spCounts_1[config.id]) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0;
+                            var value = hasExternalCount
+                                ? ((_c = externalCountMap_1.get(String(config.id))) !== null && _c !== void 0 ? _c : 0) + spCount
+                                : spCount;
+                            return tslib_1.__assign(tslib_1.__assign({}, config), { value: value, showArrow: config.showArrow || hasExternalCount });
+                        });
+                        return [2 /*return*/, { data: metrics, status: 200, message: "Dashboard counts fetched successfully" }];
+                    case 3:
+                        error_2 = _a.sent();
+                        console.error("GetDashboardCount error:", error_2);
+                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching dashboard counts" }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DashboardService.prototype._fetchPortalJobCodeMap = function (queries) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, new Map()];
+            });
+        });
+    };
+    DashboardService.prototype._fetchExternalCounts = function (externalMetrics, spCounts, _portalJobCodeMap) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var result, allJobCodeIds, portalItems, jobCodeIdToUniqueKey;
+            var _this = this;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        result = new Map();
+                        if (!externalMetrics.length)
+                            return [2 /*return*/, result];
+                        allJobCodeIds = Array.from(new Set(externalMetrics.flatMap(function (m) { var _a; return ((_a = spCounts[m.id]) !== null && _a !== void 0 ? _a : []).map(function (item) { return item.JobCodeId; }).filter(Boolean); })));
+                        if (!allJobCodeIds.length)
+                            return [2 /*return*/, result];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.RecruitAppCareerPortalIntegration,
+                                Select: "*,JobCode/JobCode",
+                                Filter: [{ FilterKey: "JobCodeId", Operator: "in", FilterValue: allJobCodeIds }],
+                                FilterCondition: "and",
+                                Expand: "JobCode",
+                                Topcount: ApiConfig_1.count.Topcount,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 1:
+                        portalItems = _a.sent();
+                        jobCodeIdToUniqueKey = new Map(portalItems.map(function (item) { return [item.JobCodeId, item.JobUniqueKey]; }));
+                        return [4 /*yield*/, Promise.all(externalMetrics.map(function (metric) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var jobCodeIds, jobUniqueKeys, params, response, total, error_3;
+                                var _a, _b;
+                                return tslib_1.__generator(this, function (_c) {
+                                    switch (_c.label) {
+                                        case 0:
+                                            jobCodeIds = ((_a = spCounts[metric.id]) !== null && _a !== void 0 ? _a : [])
+                                                .map(function (item) { return item.JobCodeId; })
+                                                .filter(Boolean);
+                                            jobUniqueKeys = jobCodeIds
+                                                .map(function (id) { return jobCodeIdToUniqueKey.get(id); })
+                                                .filter(function (key) { return !!key; });
+                                            if (!jobUniqueKeys.length) {
+                                                result.set(String(metric.id), 0);
+                                                return [2 /*return*/];
+                                            }
+                                            params = {
+                                                jobCode: jobUniqueKeys,
+                                                workflowStausId: metric.externalApi.workflowStatuses,
+                                            };
+                                            _c.label = 1;
+                                        case 1:
+                                            _c.trys.push([1, 3, , 4]);
+                                            return [4 /*yield*/, CareerPortalAPI_1.getProfileData.GetJobAppliedCount(params)];
+                                        case 2:
+                                            response = _c.sent();
+                                            total = ((_b = response === null || response === void 0 ? void 0 : response.data) !== null && _b !== void 0 ? _b : []).reduce(function (sum, item) { var _a; return sum + ((_a = item.count) !== null && _a !== void 0 ? _a : 0); }, 0);
+                                            result.set(String(metric.id), total);
+                                            return [3 /*break*/, 4];
+                                        case 3:
+                                            error_3 = _c.sent();
+                                            result.set(String(metric.id), 0);
+                                            return [3 /*break*/, 4];
+                                        case 4: return [2 /*return*/];
+                                    }
+                                });
+                            }); }))];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/, result];
                 }
             });
         });

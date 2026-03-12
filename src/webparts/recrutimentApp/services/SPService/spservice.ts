@@ -296,14 +296,15 @@ const SPGetChoices = async (params: ISPListChoiceField): Promise<unknown> => {
  *   responseData: [{ Title: "Task A" }, { Title: "Task B" }]
  * });
  */
-const batchGet = async (queries: BatchQuery[]): Promise<Record<string, number>> => {
+const batchGet = async (queries: BatchQuery[]): Promise<Record<number, any>> => {
   try {
     const [batchedSP, execute] = getSP().batched();
 
-    const results: Record<string, number> = {};
+    const results: Record<number, any> = {};
     const promises = queries.map((q: any) => {
 
-      const filterStr = _buildODataFilter(q.Filter, "and");
+      const flatFilters = q.Filter.flat();
+      const filterStr = _buildODataFilter(flatFilters, q.FilterCondition ?? "and");
 
       let request = batchedSP.web.lists
         .getByTitle(q.ListName)
@@ -312,7 +313,7 @@ const batchGet = async (queries: BatchQuery[]): Promise<Record<string, number>> 
         .select(...q.select);
 
       return request().then(r => {
-        results[q.StateValue] = r.length;
+        results[q.StateValue] = r;
       });
 
     });

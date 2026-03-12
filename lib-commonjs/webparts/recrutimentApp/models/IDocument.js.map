@@ -1,0 +1,1 @@
+{"version":3,"file":"IDocument.js","sourceRoot":"","sources":["../../../../src/webparts/recrutimentApp/models/IDocument.ts"],"names":[],"mappings":";;;AAAa,QAAA,iBAAiB,GAAG;IAC7B,OAAO,EAAE,SAAS;IAClB,WAAW,EAAE,aAAa;CAC7B,CAAC","sourcesContent":["export const RoleProfileMaster = {\r\n    Grading: \"Grading\",\r\n    RoleProfile: \"RoleProfile\",\r\n};"]}

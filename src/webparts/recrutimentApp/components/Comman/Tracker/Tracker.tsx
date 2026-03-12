@@ -6,7 +6,7 @@ import { DataSyncToRecruitmentResponse } from "../../../services/Dashboard/IDash
 interface Props {
     rows: DataSyncToRecruitmentResponse[];
     selectedMetric: any;
-    activeMetric: string;
+    activeMetric: number;
     onRowClick?: (row: DataSyncToRecruitmentResponse) => void;
 }
 
@@ -59,9 +59,7 @@ const Tracker: React.FC<Props> = ({
                                 </td>
 
                                 <td className="arrow">
-                                    {["hod-review", "pending-evaluation", "pos-mapping"].includes(
-                                        activeMetric
-                                    ) && <ChevronRight size={16} />}
+                                    {selectedMetric?.showArrow && <ChevronRight size={16} />}
                                 </td>
                             </tr>
                         ))}

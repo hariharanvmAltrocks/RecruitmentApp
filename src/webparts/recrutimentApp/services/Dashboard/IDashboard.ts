@@ -1,5 +1,6 @@
-import { TrackerRow } from "../../models";
 import { ApiResponse } from "../../models/apimodels";
+import { Metric } from "../../models/IDashboard";
+import { BatchQuery } from "../SPService/Ispservice";
 
 export type DataSyncToRecruitmentResponse = {
     ID: number,
@@ -64,6 +65,8 @@ export type DataSyncToRecruitmentResponse = {
     QuestionByLM: string;
     JobAppliedCount: string;
     ReviewScoreCount?: string;
+    ModifiedDate: string | undefined;
+    CreatedDate: string | undefined
 }
 
 export type IDashboard = {
@@ -71,4 +74,8 @@ export type IDashboard = {
         filterParam: any,
         filterConditions: any,
     ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
+    GetDashboardCount(
+        queries: BatchQuery[],
+        CurrentRoleID: number[]
+    ): Promise<ApiResponse<Metric[]>>;
 };
