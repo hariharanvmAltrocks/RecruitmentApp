@@ -3048,7 +3048,22 @@ const UploadCandidateDocument = (props: any) => {
             break;
           case StatusId.PendingHRReviewBGCheck:
             {
-              if (btnAction === ButtonAction.Review) {
+             
+              if (btnAction === ButtonAction.Review ) {
+                 if(props.stateValue.rowData?.CandidateDetails?.NationalityCode ===
+      NationalityCode.Nationals) {
+        workflowStatusValue = workflowStatusApi.initiatetheBGVProcess;
+         SuccessMsg =
+                  props.stateValue?.StatusId ===
+                    StatusId.PendingHRReviewBGCheck &&
+                  data.NationalityCode === NationalityCode.Nationals
+                    ? RecuritmentHRMsg.BGReviewedMsg
+                    : RecuritmentHRMsg.BGReviewinitBGV;
+                ActionID = WorkflowAction.Approved;
+                DocumentResponse = {
+                  status: ResponeStatus.SUCCESS,
+                };
+      } else {
                 DocumentData = {
                   ProfileID: data?.ProfileID,
                   RequestID: data?.jobRequestID,
@@ -3073,6 +3088,7 @@ const UploadCandidateDocument = (props: any) => {
                 // DocumentResponse = {
                 //   status: ResponeStatus.SUCCESS,
                 // };
+      }
               } else if (btnAction === ButtonAction.Revert) {
                 workflowStatusValue =
                   workflowStatusApi.RevetedBacktoBGVDocuments;
