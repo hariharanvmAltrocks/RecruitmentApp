@@ -723,6 +723,11 @@ const ReviewProfileList = (props: any) => {
             Operator: "eq",
             FilterValue: props.userDetails[0]?.EmailId,
           });
+          filterConditionsRecuritment.push({
+  FilterKey: "LineManager",
+  Operator: "eq",
+  FilterValue: props.userDetails[0]?.EmailId,
+});
           break;
       }
       // if (props.CurrentRoleID.includes(RoleID.LineManager)) {

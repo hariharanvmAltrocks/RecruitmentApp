@@ -275,7 +275,7 @@ export const ActionName = {
 
 export const PositionStatus = {
     Vacant: "Vacant",
-    RecruitmentInitiator: "Recruitment Initiated",
+    RecruitmentInitiator: "Recruitment Initiator",
     Filled: "Filled",
     RecruitmentInProgress: "Recruitment InProgress"
 }

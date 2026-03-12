@@ -69,6 +69,7 @@ type InterviewQuesValidationError = {
   QuestionNumber: boolean;
   Disciplines: boolean;
   Question: boolean;
+  QuestionFr: boolean;
   ExpectedAnswer: boolean;
   OptionsType: string | boolean;
   Catogry: boolean;
@@ -155,6 +156,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       Catogry: false,
       Disqualification: false,
       ExpectedAnswerFr: false,
+      QuestionFr: false,
     });
 
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
@@ -454,7 +456,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
   // Language-specific handler for French question
   const handleFrenchQuestion = (value: string) => {
     setFrenchQuestion(value);
-    setValidationError((prev) => ({ ...prev, Question: false }));
+    setValidationError((prev) => ({ ...prev, QuestionFr: false }));
   };
 
   const handleToggleExpand = (index: number) => {
@@ -474,7 +476,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       QuestionNumber: { key: 0, text: "" },
       QuestionType: { key: 0, text: "" },
       Question: "",
-      ExpectedAnswer: "",
+      // ExpectedAnswer: "",
       Disqualification: "",
       Catogry: prev.Catogry,
       CareerportalAnswer: [],
@@ -512,6 +514,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
       errors.QuestionType = true;
     const activeQuestion = EnglishQuestion || Question;
     if (!activeQuestion) errors.Question = true;
+    if (!FrenchQuestion) errors.QuestionFr = true;
     if (!Catogry) errors.Catogry = true;
 
     const isMCQ =
@@ -1695,11 +1698,20 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                             }}
                                           >
                                             <strong>Expected Answer</strong>
-                                            <Typography>
-                                              {Array.isArray(q.expectedAnswer)
-                                                ? q.expectedAnswer.join(", ")
-                                                : q.expectedAnswer}
-                                            </Typography>
+                                            <Typography
+                                              dangerouslySetInnerHTML={{
+                                                __html: Array.isArray(
+                                                  q.expectedAnswer,
+                                                )
+                                                  ? q.expectedAnswer.join(", ")
+                                                  : (q.expectedAnswer || "")
+                                                      .replace(
+                                                        /<p>|<\/p>|<br\s*\/?>/gi,
+                                                        "",
+                                                      )
+                                                      .trim(),
+                                              }}
+                                            />
                                           </Box>
                                         </Box>
 
@@ -1737,15 +1749,23 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                                               }}
                                             >
                                               <strong>Expected Answer</strong>
-                                              <Typography>
-                                                {Array.isArray(
-                                                  q.expectedAnswerFr,
-                                                )
-                                                  ? q.expectedAnswerFr.join(
-                                                      ", ",
-                                                    )
-                                                  : q.expectedAnswerFr}
-                                              </Typography>
+                                              <strong>Expected Answer</strong>
+                                              <Typography
+                                                dangerouslySetInnerHTML={{
+                                                  __html: Array.isArray(
+                                                    q.expectedAnswerFr,
+                                                  )
+                                                    ? q.expectedAnswerFr.join(
+                                                        ", ",
+                                                      )
+                                                    : (q.expectedAnswerFr || "")
+                                                        .replace(
+                                                          /<p>|<\/p>|<br\s*\/?>/gi,
+                                                          "",
+                                                        )
+                                                        .trim(),
+                                                }}
+                                              />
                                             </Box>
                                           </Box>
                                         )}
@@ -2371,10 +2391,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                         {/* French Question Section */}
                         <Box
                           sx={{
-                            // p: 2,
-                            // border: "1px solid #e0e0e0",
                             borderRadius: "4px",
-                            // backgroundColor: "#f9f9f9",
                             width: "100%",
                             overflow: "hidden",
                           }}
@@ -2385,7 +2402,7 @@ const InterviewQuesEdit: React.FC = (props: any) => {
                               value={FrenchQuestion}
                               onChange={handleFrenchQuestion}
                               mandatory={true}
-                              error={ValidationError.Question}
+                              error={ValidationError.QuestionFr}
                             />
                           </Box>
                         </Box>
