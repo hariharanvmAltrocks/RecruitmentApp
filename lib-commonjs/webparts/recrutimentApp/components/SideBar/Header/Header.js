@@ -6,12 +6,14 @@ var lucide_react_1 = require("lucide-react");
 var react_router_dom_1 = require("react-router-dom");
 require("./Header.scss");
 var menuUtils_1 = require("../menuUtils");
+var ThemeContext_1 = require("../../../theme/ThemeContext");
 var Header = function (_a) {
     var _b, _c;
     var user = _a.user, menuData = _a.menuData, onToggleSidebar = _a.onToggleSidebar, onLogout = _a.onLogout;
     var pathname = (0, react_router_dom_1.useLocation)().pathname;
+    var theme = (0, ThemeContext_1.useTheme)();
     var breadcrumbs = (0, react_1.useMemo)(function () { return (0, menuUtils_1.findBreadcrumbPath)(menuData, pathname); }, [menuData, pathname]);
-    return (react_1.default.createElement("header", { className: "header" },
+    return (react_1.default.createElement("header", { className: "header", style: { background: theme.headerColor } },
         react_1.default.createElement("div", { className: "header-container" },
             react_1.default.createElement("div", { className: "header-left" },
                 react_1.default.createElement("button", { onClick: onToggleSidebar, className: "menu-btn" },

@@ -69,13 +69,42 @@ export type DataSyncToRecruitmentResponse = {
     CreatedDate: string | undefined
 }
 
+export type DashboardData = {
+    ID: number,
+    RecordID: number,
+    BusinessUnitCode: string,
+    Nationality: string,
+    NumberOfPersonNeeded: string,
+    Type: string,
+    Status: string,
+    StatusId: number,
+    JobCode: string,
+    JobTitleEnglish: string,
+     ModifiedDate: string | undefined;
+    CreatedDate: string | undefined
+}
+
 export type IDashboard = {
     GetRecruitmentDetails(
         filterParam: any,
         filterConditions: any,
-    ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
+    ): Promise<ApiResponse<DashboardData[]>>;
     GetDashboardCount(
         queries: BatchQuery[],
         CurrentRoleID: number[]
     ): Promise<ApiResponse<Metric[]>>;
+    GetNPAEPVRRDetails(
+      filterParam: any,
+      filterConditions: any
+    ): Promise<ApiResponse<DashboardData[]>>;
+     GetCandidateDetails(
+            filterParam: any,
+            filterConditions: any
+        ): Promise<ApiResponse<DashboardData[]>>;
+        GetSelectedCandidate(
+        filterParam: any,
+        filterConditions: any
+    ): Promise<ApiResponse<DashboardData[]>> ;
+    
+
 };

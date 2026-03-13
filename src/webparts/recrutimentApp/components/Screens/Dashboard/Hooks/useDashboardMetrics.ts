@@ -1,6 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import SPServices from "../../../../services/SPService/spservice";
-import { RoleID } from "../../../../utilities/Config";
 import { getRoleBasedFilters } from "../metricColumns.config";
 import { Metric } from "../../../../models/IDashboard";
 import { DashboardServices } from "../../../../services/ServiceExport";
@@ -25,8 +23,8 @@ export const useDashboardMetrics = () => {
         try {
 
             setLoading(true);
-            let data = await DashboardServices.GetDashboardCount(queries, roleIDs)
-            if (data.status == ResponeStatus.SUCCESS) {
+            const data = await DashboardServices.GetDashboardCount(queries, roleIDs)
+            if (data.status === ResponeStatus.SUCCESS) {
                 setMetrics(data.data);
             }
 
@@ -46,7 +44,7 @@ export const useDashboardMetrics = () => {
 
         if (!queries.length) return;
 
-        fetchMetrics();
+        void fetchMetrics();
 
     }, [fetchMetrics, queries]);
 

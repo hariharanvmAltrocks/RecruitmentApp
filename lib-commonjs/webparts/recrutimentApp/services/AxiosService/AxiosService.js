@@ -11,7 +11,7 @@ var AxiosInstance = axios_1.default.create({
     timeout: 10000000
 });
 AxiosInstance.interceptors.request.use(function (config) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-    var token, tokenParts, tokenPayload, tokenExpiration, res, error_1;
+    var token, tokenParts, res, error_1;
     var _a, _b;
     return tslib_1.__generator(this, function (_c) {
         switch (_c.label) {
@@ -22,8 +22,6 @@ AxiosInstance.interceptors.request.use(function (config) { return tslib_1.__awai
             case 1:
                 _c.trys.push([1, 3, , 4]);
                 tokenParts = token.split(".");
-                tokenPayload = JSON.parse(atob(tokenParts[1]));
-                tokenExpiration = tokenPayload.exp * 1000;
                 return [4 /*yield*/, axios_1.default.post("".concat(ApiUrls, "/hrms/InternalSignIn"), {}, axiosConfig_1.AuthorizationHeader)];
             case 2:
                 res = _c.sent();

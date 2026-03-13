@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var MenuDataContext_1 = require("../../../../utilities/hooks/MenuDataContext");
-var Config_1 = require("../../../../utilities/Config");
 var useFilterMatricCard = function () {
     var menuData = (0, MenuDataContext_1.useMenuData)().menuData;
     var tabDetails = (0, react_1.useMemo)(function () {
@@ -21,18 +20,6 @@ var useFilterMatricCard = function () {
     }, [menuData]);
     return { tabDetails: tabDetails };
 };
-var TAB_LIST_MAP = {
-    "Review Job Advertistment": Config_1.ListNames.HRMSRecruitmentDptDetails,
-    "Review Score card": Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    "Evaluation": Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    "Interviews Scheduled": Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    "Interview Tracking": Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    "Offer Letters Released": Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
-    "Offers Accepted": Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
-    "Offers Rejected": Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
-    "Candidates Onboarded": Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
-};
-var IGNORE_TABS = ["My Submission", "Advert Extension"];
 // const buildQueriesFromTabs = (
 //     tabDetails: any[],
 //     additionalFilters: any[] = []

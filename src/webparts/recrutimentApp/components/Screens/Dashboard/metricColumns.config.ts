@@ -9,7 +9,7 @@ import { MatricID } from '../../../utilities/ConditionConfig';
 const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
 
     [MatricID.AssignHr]: {
-        label: 'Pending Advert Review',
+        label: 'Pending HR Assignment',
         status: 'ACTIVE',
         icon: UserCheck,
         color: '#f97316',
@@ -285,7 +285,7 @@ export const MetricQueryConfig: Record<number, Omit<FilterQuery, "StateValue">> 
             StatusFilter(StatusId.ReadyforRecruitmentProcess),
             ...DataSyncFilter
         ],
-        select: DEFAULT_SELECT
+        select: ["Id"]
     },
 
     [MatricID.UploadONEM]: {

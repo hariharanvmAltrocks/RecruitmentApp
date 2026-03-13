@@ -258,3 +258,9 @@ export const ApplicationStatusId = {
   ApplicationRejected: "AS06",
   ApplicationSuspended: "AS00"
 }
+
+export const DataFrom = {
+  NewPosition: "New Position",
+  ExistingPosition: "Existing Position",
+  VacancyRecruitmentProcess: "Vacancy Requirement Process"
+}

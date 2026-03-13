@@ -306,7 +306,7 @@ const batchGet = async (queries: BatchQuery[]): Promise<Record<number, any>> => 
       const flatFilters = q.Filter.flat();
       const filterStr = _buildODataFilter(flatFilters, q.FilterCondition ?? "and");
 
-      let request = batchedSP.web.lists
+      const request = batchedSP.web.lists
         .getByTitle(q.ListName)
         .items
         .filter(filterStr)
@@ -634,7 +634,7 @@ const SPReadItemsCamelQuery = async (rawParams: ICAMLQuery): Promise<unknown[]> 
   const expandFields = params.Expand.join(",");
   if (expandFields && camlResults.length) {
     const idFilter = camlResults
-      .map((i) => `ID eq ${i["ID"] as number}`)
+      .map((i) => `ID eq ${i.ID as number}`)
       .join(" or ");
 
     return sp.web.lists

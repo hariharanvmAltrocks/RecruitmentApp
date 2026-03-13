@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApplicationStatusId = exports.workflowStatusApi = exports.StatusId = exports.RoleID = exports.DocumentLibraray = exports.ListNames = void 0;
+exports.DataFrom = exports.ApplicationStatusId = exports.workflowStatusApi = exports.StatusId = exports.RoleID = exports.DocumentLibraray = exports.ListNames = void 0;
 exports.ListNames = {
     HRMSSageList: "HRMS_Sage_List",
     HRMSGradeMaster: "HRMS_Grade_Master",
@@ -227,5 +227,10 @@ exports.ApplicationStatusId = {
     Selected: "AS05",
     ApplicationRejected: "AS06",
     ApplicationSuspended: "AS00"
+};
+exports.DataFrom = {
+    NewPosition: "New Position",
+    ExistingPosition: "Existing Position",
+    VacancyRecruitmentProcess: "Vacancy Requirement Process"
 };
 //# sourceMappingURL=Config.js.map

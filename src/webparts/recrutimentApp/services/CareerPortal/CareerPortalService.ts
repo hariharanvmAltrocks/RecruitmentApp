@@ -17,7 +17,7 @@ import { calculateTotalExperienceYears, getcountryCode } from "../../components/
 export default class CareerPortalService implements Icareerportal {
     async UpsertJobs(data: AdvertisementDetails): Promise<ApiResponse<any | null>> {
         try {
-            let AdvertisementDetails: AdvertisementDetails = {
+            const AdvertisementDetails: AdvertisementDetails = {
                 jobCode: data?.jobCode,
                 noOfPositions: data?.noOfPositions,
                 validFrom: data?.validFrom,
@@ -57,7 +57,7 @@ export default class CareerPortalService implements Icareerportal {
 
     async UpsertAgenciesJobs(data: profileXagent): Promise<ApiResponse<any | null>> {
         try {
-            let AgentDetails: profileXagent = {
+            const AgentDetails: profileXagent = {
                 jobCode: data?.jobCode,
                 jobsXAgents: data?.jobsXAgents
             }
@@ -183,7 +183,7 @@ export default class CareerPortalService implements Icareerportal {
 
     async getCandidateProfile(CandidateID: string, EmployeeList?: any[], RecrutimentData?: DataSyncToRecruitmentResponse): Promise<ApiResponse<CandidateProfile[] | null>> {
         try {
-            let GetProfileByJobCodeData: CandidateProfile[] = [];
+            const GetProfileByJobCodeData: CandidateProfile[] = [];
             await getProfileData.getCandidateProfile(CandidateID).then(async (res) => {
                 const op = res.data.data;
                 const [
@@ -205,7 +205,7 @@ export default class CareerPortalService implements Icareerportal {
                     return options.Email?.toLowerCase() === RecrutimentData?.AssignLineManager;
                 });
 
-                let CommentsData: CommentsData[] = op?.profileJobsComments.map((item: any, index: number) => {
+                const CommentsData: CommentsData[] = op?.profileJobsComments.map((item: any, index: number) => {
                     let updatedData: CommentsData;
 
                     if (item?.createdBy === RoleName.RecruitmentHR || item?.createdBy === "Recrutiment HR") {
@@ -252,19 +252,19 @@ export default class CareerPortalService implements Icareerportal {
 
 
 
-                let CandidateCV = await CommonServices.GetDocumentinUrl(
+                const CandidateCV = await CommonServices.GetDocumentinUrl(
                     op?.document?.filePath
                 );
-                let BusinessLinkPath = op?.profile?.profileDetailAttachments.filter(
+                const BusinessLinkPath = op?.profile?.profileDetailAttachments.filter(
                     (item: any) => item.attachmentTypeCoe === "PA01"
                 );
-                let BusinessDocument = await CommonServices.GetDocumentinUrl(
+                const BusinessDocument = await CommonServices.GetDocumentinUrl(
                     BusinessLinkPath[0]?.document?.filePath
                 );
-                let FamilyLinkPath = op?.profile?.profileDetailAttachments.filter(
+                const FamilyLinkPath = op?.profile?.profileDetailAttachments.filter(
                     (item: any) => item.attachmentTypeCoe === "PA02"
                 );
-                let FamilyDocument = await CommonServices.GetDocumentinUrl(
+                const FamilyDocument = await CommonServices.GetDocumentinUrl(
                     FamilyLinkPath[0]?.document?.filePath
                 );
 
@@ -279,7 +279,7 @@ export default class CareerPortalService implements Icareerportal {
 
 
 
-                let profileExperiance = Array.isArray(op?.profile?.profileDetailExperiences) && op.profile.profileDetailExperiences.length > 0
+                const profileExperiance = Array.isArray(op?.profile?.profileDetailExperiences) && op.profile.profileDetailExperiences.length > 0
                     ? op.profile.profileDetailExperiences[op.profile.profileDetailExperiences.length - 1]
                     : undefined;
                 const dob = new Date(new Date(op?.profile?.dob));
@@ -292,16 +292,16 @@ export default class CareerPortalService implements Icareerportal {
                 if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
                     age--;
                 }
-                let getOptAnswers = op?.profile?.profileXOptAnswers.filter((item: { question: { scopeId: string; }; }) => item.question?.scopeId === "S7").sort((a: any, b: any) => {
+                const getOptAnswers = op?.profile?.profileXOptAnswers.filter((item: { question: { scopeId: string; }; }) => item.question?.scopeId === "S7").sort((a: any, b: any) => {
                     const textA = typeof a.text === "string" ? a.text : "";
                     const textB = typeof b.text === "string" ? b.text : "";
                     return textA.localeCompare(textB);
                 });
                 // console.log(getOptAnswers, "getOptAnswers");
                 // let AgenName = op?.profile?.profileXAgent === null ? op?.profile?.kcsaEmployees ? "Internal Employee" :op?.profile?.profileXAgent?.agentCode === agentCode.RecruitmentHR ? RoleName.RecruitmentHR : op?.profile?.profileXAgent?.agent?.name;
-                let profileXAgent = op?.profile?.profileXAgent;
+                const profileXAgent = op?.profile?.profileXAgent;
 
-                let AgenName =
+                const AgenName =
                     !profileXAgent || (Array.isArray(profileXAgent) && profileXAgent.length === 0)
                         ? op?.profile?.kcsaEmployees && op?.profile?.kcsaEmployees.length === 0
                             ? "Candidate"
@@ -311,9 +311,9 @@ export default class CareerPortalService implements Icareerportal {
                             : profileXAgent?.agent?.name || "";
 
 
-                let IdentityID = ProofIdentity.data?.filter((item) => item?.value === op?.profile?.identityTypeId)
-                let familyDetails = op?.profile?.familyDetails?.map((item: any) => {
-                    let code = getcountryCode(CountryCode?.data ?? [], item?.contactNumber)
+                const IdentityID = ProofIdentity.data?.filter((item) => item?.value === op?.profile?.identityTypeId)
+                const familyDetails = op?.profile?.familyDetails?.map((item: any) => {
+                    const code = getcountryCode(CountryCode?.data ?? [], item?.contactNumber)
                     return {
                         "name": item?.name,
                         // "age": item?.age,
@@ -322,8 +322,8 @@ export default class CareerPortalService implements Icareerportal {
                         "contactNumber": code,
                     }
                 });
-                let emergencyContacts = op?.profile?.emergencyContacts?.map((item: any) => {
-                    let code = getcountryCode(CountryCode?.data ?? [], item?.contactNumber)
+                const emergencyContacts = op?.profile?.emergencyContacts?.map((item: any) => {
+                    const code = getcountryCode(CountryCode?.data ?? [], item?.contactNumber)
                     return {
                         "name": item?.contactName,
                         // "age": item?.age,
@@ -332,13 +332,13 @@ export default class CareerPortalService implements Icareerportal {
                         "contactNumber": code,
                     }
                 });
-                let employeeReferenceDetail = {
+                const employeeReferenceDetail = {
                     "empId": op?.profile?.employeeReferenceDetails?.empId,
                     "empName": op?.profile?.employeeReferenceDetails?.empName,
                     "empEmail": op?.profile?.employeeReferenceDetails?.empEmail,
                     "company": op?.profile?.employeeReferenceDetails?.company,
                 };
-                let companyDetails = {
+                const companyDetails = {
                     "operation": op?.profile?.profileDetailEmploymentHistory?.workedOperation,
                     "role": op?.profile?.profileDetailEmploymentHistory?.workRole,
                     "region": op?.profile?.profileDetailEmploymentHistory?.territory,
@@ -369,9 +369,9 @@ export default class CareerPortalService implements Icareerportal {
                 }
 
                 const JobCode = op?.jobCode?.split('-')[0];
-                let willingRelocated = getOptAnswers.filter((item: any) => item.question?.quesContentId === quesContentId.WillingRelocate)
-                let code = getcountryCode(CountryCode?.data ?? [], profileExperiance?.refMobile)
-                let PreviousEmployer = {
+                const willingRelocated = getOptAnswers.filter((item: any) => item.question?.quesContentId === quesContentId.WillingRelocate)
+                const code = getcountryCode(CountryCode?.data ?? [], profileExperiance?.refMobile)
+                const PreviousEmployer = {
                     name: profileExperiance?.refName,
                     Designation: profileExperiance?.refDesignationDetail?.displayText,
                     Email: profileExperiance?.refEmail,
@@ -384,8 +384,8 @@ export default class CareerPortalService implements Icareerportal {
                     ) || [];
                 const [years, months] = (op?.profile?.totalYearOfExperiance ?? "0-0").split("-");
                 const formattedExperience = `${years} years ${months} months`;
-                let ContactNumber = getcountryCode(CountryCode?.data ?? [], op?.profile?.contactNumber1)
-                let GetProfileDahboard: CandidateProfile = {
+                const ContactNumber = getcountryCode(CountryCode?.data ?? [], op?.profile?.contactNumber1)
+                const GetProfileDahboard: CandidateProfile = {
                     CandidateID: op?.jobRequestId,
                     profileID: op?.profileId,
                     JobCode: JobCode,
@@ -509,7 +509,7 @@ export default class CareerPortalService implements Icareerportal {
         InterviewPanel: any
     ): Promise<ApiResponse<any | null>> {
         try {
-            let response: any = await SPServices.SPAddItem({
+            const response: any = await SPServices.SPAddItem({
                 Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
                 RequestJSON: CandidateDetails,
             });
@@ -549,7 +549,7 @@ export default class CareerPortalService implements Icareerportal {
         CandidateId: number
     ): Promise<ApiResponse<any | null>> {
         try {
-            let insertedRecords: any[] = [];
+            const insertedRecords: any[] = [];
 
             for (const item of InterviewPanel) {
                 const JobDetailsInsert = {
@@ -584,7 +584,7 @@ export default class CareerPortalService implements Icareerportal {
 
     async UpsertMaster(data: UpsertMasters[]): Promise<ApiResponse<any | null>> {
         try {
-            let MasterDetails: UpsertMasters[] = data.map((item) => ({
+            const MasterDetails: UpsertMasters[] = data.map((item) => ({
                 displayText: item.displayText,
                 displayText_fr: item.displayText_fr,
                 category: item.category,
@@ -611,7 +611,7 @@ export default class CareerPortalService implements Icareerportal {
 
     async UpsertQuestions(data: UpsertQuestions[]): Promise<ApiResponse<any | null>> {
         try {
-            let UpsertQuestions: UpsertQuestions[] = data.map((item) => ({
+            const UpsertQuestions: UpsertQuestions[] = data.map((item) => ({
                 questionEn: item.questionEn,
                 questionFr: item.questionFr,
                 scopeId: item.scopeId,
@@ -751,7 +751,7 @@ export default class CareerPortalService implements Icareerportal {
                     return null;
                 }
 
-                let options = item?.question?.questionXOptions.map((item: any) => {
+                const options = item?.question?.questionXOptions.map((item: any) => {
                     return {
                         key: item?.questionId,
                         text: item?.optContent?.contentEn,
@@ -760,7 +760,7 @@ export default class CareerPortalService implements Icareerportal {
                     };
                 });
 
-                let CareerportalAnswer = item?.question?.questionXAnswers?.map((item: any, index: number) => {
+                const CareerportalAnswer = item?.question?.questionXAnswers?.map((item: any, index: number) => {
                     return {
                         key: index,
                         text: item?.optContent?.contentEn,
@@ -900,7 +900,7 @@ export default class CareerPortalService implements Icareerportal {
     async UpsertProfile(data: UpsertProfile, Document: UpsertDocument, jobCode: string): Promise<ApiResponse<any | null>> {
         try {
             let response: any
-            let UpsertProfile: UpsertProfile[] = [{
+            const UpsertProfile: UpsertProfile[] = [{
                 contactNumber1: data.contactNumber1,
                 contactNumber2: data.contactNumber1,
                 dob: data.dob,
@@ -937,7 +937,7 @@ export default class CareerPortalService implements Icareerportal {
             const UpsertData = await UploadCandidateCVData.UpsertProfile(UpsertProfile);
             if (UpsertData.status === ResponeStatus.SUCCESS) {
 
-                let CandidateCV = await CareerPotalServices.UpsertDocumentUpload({
+                const CandidateCV = await CareerPotalServices.UpsertDocumentUpload({
                     DocumentTypeEnum: "0",
                     DocumentTypeName: "CV",
                     JobCode: jobCode,
@@ -973,7 +973,7 @@ export default class CareerPortalService implements Icareerportal {
                 }
 
                 if (CandidateCV.status === ResponeStatus.SUCCESS && FamilyLink.status === ResponeStatus.SUCCESS && BusinessLink.status === ResponeStatus.SUCCESS) {
-                    let JobAppiledData: jobsApplied[] = [{
+                    const JobAppiledData: jobsApplied[] = [{
                         applicationStatusId: "AS02",
                         jobRequestId: 0,
                         jobCode: jobCode,
@@ -981,7 +981,7 @@ export default class CareerPortalService implements Icareerportal {
                         isSuspended: 0,
                         documentId: CandidateCV.data.data.documentId
                     }]
-                    let profileCurrentPosition = data.profileDetailExperiences.map((item) => {
+                    const profileCurrentPosition = data.profileDetailExperiences.map((item) => {
                         return ({
                             ...item,
                             profileId: UpsertData.data.data[0].profileId,
@@ -1072,7 +1072,7 @@ export default class CareerPortalService implements Icareerportal {
 
     async CheckMyCandidateAppliedJobs(data: CheckMyCandidate): Promise<ApiResponse<any | null>> {
         try {
-            let CheckCandidate: CheckMyCandidate = {
+            const CheckCandidate: CheckMyCandidate = {
                 Email: data?.Email,
                 JobCode: data?.JobCode
             }
@@ -1100,9 +1100,9 @@ export default class CareerPortalService implements Icareerportal {
         try {
             let GetProfileByJobCodeData: GetProfileByJobCode[] = []
             await UploadCandidateCVData.GetCandiateForJobs(JobCode, FilterValue).then((res) => {
-                let TotalItems = res?.data?.pagination?.totalItems;
+                const TotalItems = res?.data?.pagination?.totalItems;
                 GetProfileByJobCodeData = res.data.data.map((item: any, index: number) => {
-                    let createdon = item?.createdOn ? new Date(item.createdOn) : new Date(item?.appliedDate)
+                    const createdon = item?.createdOn ? new Date(item.createdOn) : new Date(item?.appliedDate)
                     return {
                         SNO: index + 1,
                         CandidateID: item?.jobRequestId,
@@ -1163,14 +1163,14 @@ export default class CareerPortalService implements Icareerportal {
     async GetQuestionByJobCode(jobCode: string): Promise<ApiResponse<CommanQuestion[] | null>> {
         try {
             const response = await UploadCandidateCVData.GetQuestionByJobCode(jobCode);
-            let getQueAnswers = response.data.data.jobCommonQuestions.filter((item: any) => item?.scopeId === "S7").sort((a: any, b: any) => {
+            const getQueAnswers = response.data.data.jobCommonQuestions.filter((item: any) => item?.scopeId === "S7").sort((a: any, b: any) => {
                 const textA = typeof a.text === "string" ? a.text : "";
                 const textB = typeof b.text === "string" ? b.text : "";
                 return textA.localeCompare(textB);
             });
             const GetQuestionnaire: CommanQuestion[] = getQueAnswers.map((item: any, index: number) => {
                 const incrementedIndex = index + 1;
-                let OptionContent = item.questionXOptions.map((items: any) => {
+                const OptionContent = item.questionXOptions.map((items: any) => {
                     return {
                         optContentId: items.optContentId,
                         optContent: items?.optContent?.contentEn,
@@ -1254,8 +1254,7 @@ export default class CareerPortalService implements Icareerportal {
         DocumentName: COIAttach,
     ): Promise<ApiResponse<any>> => {
         try {
-            let response;
-            response = (await SPServices.getDocLibFiles({
+            const response = (await SPServices.getDocLibFiles({
                 FilePath: `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${DocumentName.RequestID}/${DocumentName.DocumentName}`,
             })) as IDocFiles[];
 
@@ -1343,7 +1342,7 @@ export default class CareerPortalService implements Icareerportal {
     async GetCOIProfileOption(
         data: DataSyncToRecruitmentResponse,
     ): Promise<ApiResponse<AutoCompleteItem[] | null>> {
-        let GetItem: AutoCompleteItem[] = [];
+        const GetItem: AutoCompleteItem[] = [];
         try {
             await SPServices.SPReadItems({
                 Listname: ListNames.JDEDataMapping,
@@ -1362,16 +1361,16 @@ export default class CareerPortalService implements Icareerportal {
                     for (const item of res) {
                         if (item?.LineManagerId && item?.LineManager?.EMail) {
                             // const COIOptions:AutoCompleteItem[] = []
-                            let UserName = await CommonServices.GetUserName(item.LineManager.EMail);
-                            let LineManager: AutoCompleteItem = {
+                            const UserName = await CommonServices.GetUserName(item.LineManager.EMail);
+                            const LineManager: AutoCompleteItem = {
                                 key: item.LineManager.EMail,
                                 text: String(UserName.data)
                             }
                             GetItem.push(LineManager)
                         }
                         if (item?.HODId && item?.HOD?.EMail) {
-                            let UserName = await CommonServices.GetUserName(item?.HOD?.EMail);
-                            let HOD = {
+                            const UserName = await CommonServices.GetUserName(item?.HOD?.EMail);
+                            const HOD = {
                                 key: item?.HOD?.EMail,
                                 text: String(UserName.data)
                             }

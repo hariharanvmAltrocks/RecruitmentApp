@@ -73,7 +73,7 @@ export type GetProfileByFilter = {
 }
 export type FilterItem = {
     jobCode: string;
-    workflowStausId: String[];
+    workflowStausId: string[];
     pagination: GetProfileByFilter
 }
 

@@ -1,5 +1,5 @@
 import { ApiResponse } from "../../models/apimodels";
-import { CareerPortalLink, ITabdetails, MasterDataResponseDetails, UserRoleResponseDetails } from "../../models/master";
+import { CareerPortalLink, ITabdetails, UserRoleResponseDetails } from "../../models/master";
 
 export type IMasterService = {
     userRole(): Promise<UserRoleResponseDetails>;

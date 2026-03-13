@@ -1,8 +1,5 @@
 import { useMemo } from "react";
 import { useMenuData } from "../../../../utilities/hooks/MenuDataContext";
-import { ListNames, RoleID, StatusId } from "../../../../utilities/Config";
-import { MatricID } from "../../../../utilities/ConditionConfig";
-import { Choices } from "../../../../utilities/ApiConfig";
 
 const useFilterMatricCard = () => {
 
@@ -33,22 +30,7 @@ const useFilterMatricCard = () => {
     }, [menuData]);
 
     return { tabDetails };
-
 };
-
-const TAB_LIST_MAP: Record<string, string> = {
-    "Review Job Advertistment": ListNames.HRMSRecruitmentDptDetails,
-    "Review Score card": ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    "Evaluation": ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    "Interviews Scheduled": ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    "Interview Tracking": ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    "Offer Letters Released": ListNames.HRMSSelectedCandidateDetailsByHOD,
-    "Offers Accepted": ListNames.HRMSSelectedCandidateDetailsByHOD,
-    "Offers Rejected": ListNames.HRMSSelectedCandidateDetailsByHOD,
-    "Candidates Onboarded": ListNames.HRMSSelectedCandidateDetailsByHOD,
-};
-
-const IGNORE_TABS = ["My Submission", "Advert Extension"];
 
 // const buildQueriesFromTabs = (
 //     tabDetails: any[],

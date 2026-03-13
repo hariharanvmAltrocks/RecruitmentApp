@@ -9,7 +9,7 @@ var ApiConfig_1 = require("../../../utilities/ApiConfig");
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
 var BASE_METRICS = (_a = {},
     _a[ConditionConfig_1.MatricID.AssignHr] = {
-        label: 'Pending Advert Review',
+        label: 'Pending HR Assignment',
         status: 'ACTIVE',
         icon: lucide_react_1.UserCheck,
         color: '#f97316',
@@ -241,7 +241,7 @@ exports.MetricQueryConfig = (_b = {},
         Filter: tslib_1.__spreadArray([
             StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess)
         ], DataSyncFilter, true),
-        select: DEFAULT_SELECT
+        select: ["Id"]
     },
     _b[ConditionConfig_1.MatricID.UploadONEM] = {
         ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,

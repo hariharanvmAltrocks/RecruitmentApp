@@ -38,7 +38,7 @@ const Tracker: React.FC<Props> = ({
                             <th>Vacancies</th>
                             <th>Request Date</th>
                             <th>Status</th>
-                            <th></th>
+                            <th />
                         </tr>
                     </thead>
 

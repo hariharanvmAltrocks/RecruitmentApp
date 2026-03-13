@@ -15,8 +15,7 @@ AxiosInstance.interceptors.request.use(
     if (token) {
       try {
         const tokenParts = token.split(".");
-        const tokenPayload = JSON.parse(atob(tokenParts[1]));
-        const tokenExpiration = tokenPayload.exp * 1000;
+        // const tokenPayload = JSON.parse(atob(tokenParts[1]));
 
         // if (Date.now() > tokenExpiration) {
         const res = await axios.post<{ tokens: { jwtToken: string } }>(

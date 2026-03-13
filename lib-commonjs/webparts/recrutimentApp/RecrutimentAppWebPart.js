@@ -101,7 +101,7 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
             this.domElement.style.setProperty('--linkHovered', semanticColors.linkHovered || null);
             this.domElement.style.setProperty('--primaryColor', '#0078d4');
             this.domElement.style.setProperty('--secondaryColor', '#ff8c00');
-            this.domElement.style.setProperty('--fontFamily', '"Segoe UI", sans-serif');
+            this.domElement.style.setProperty('--fontFamily', 'Inter", ui-sans-serif, system-ui, sans-serif');
         }
     };
     RecrutimentAppWebPart.prototype.onDispose = function () {

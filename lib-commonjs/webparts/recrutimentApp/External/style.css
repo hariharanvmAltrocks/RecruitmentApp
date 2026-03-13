@@ -69,3 +69,20 @@
 /* #workbenchCommandBar {
   display: none !important;
 } */
+:global {
+  .ms-Fabric,
+  [class*=RecrutimentAppWrapper] {
+    font-family: var(--app-font-family, "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif) !important;
+  }
+  div, span, p, h1, h2, h3, h4, h5, h6, a, button, input {
+    font-family: var(--app-font-family, "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif) !important;
+  }
+  #workbenchPageContent,
+  .CanvasComponent,
+  .ControlZone {
+    max-width: 100% !important;
+  }
+  #workbenchCommandBar {
+    display: none !important;
+  }
+}

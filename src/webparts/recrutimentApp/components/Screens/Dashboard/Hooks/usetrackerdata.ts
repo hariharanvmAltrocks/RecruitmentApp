@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { TrackerRow } from "../../../../models";
-import { StatusId } from "../../../../utilities/Config";
 import { DashboardServices } from "../../../../services/ServiceExport";
-import { Choices, ResponeStatus } from "../../../../utilities/ApiConfig";
+import { ResponeStatus } from "../../../../utilities/ApiConfig";
 import { DataSyncToRecruitmentResponse } from "../../../../services/Dashboard/IDashboard";
 import { MetricQueryConfig } from "../metricColumns.config";
+import { ListNames } from "../../../../utilities/Config";
 
 export const useTrackerData = (MatricID: number) => {
 
@@ -17,9 +16,25 @@ export const useTrackerData = (MatricID: number) => {
 
             const condition = "and";
             const Filter = MetricQueryConfig[MatricID]
-            const res = await DashboardServices.GetRecruitmentDetails(Filter.Filter[0], condition);
-            if (res.status == ResponeStatus.SUCCESS) {
-                setTrackerData(res.data || []);
+            console.log(Filter);
+            let response: any;
+            switch (Filter.ListName){
+                case ListNames.HRMSNewPositionRequest: 
+                response = await DashboardServices.GetNPAEPVRRDetails(Filter.Filter, condition);
+                break;
+                case ListNames.HRMSRecruitmentDptDetails: 
+                response = await DashboardServices.GetRecruitmentDetails(Filter.Filter, condition);
+                break;
+                case ListNames.HRMSRecruitmentCandidatePersonalDetails:
+                response = await DashboardServices.GetCandidateDetails(Filter.Filter, condition);
+                break;
+                case ListNames.HRMSSelectedCandidateDetailsByHOD:
+                response = await DashboardServices.GetSelectedCandidate(Filter.Filter, condition);
+                break;
+            }
+            
+            if (response.status === ResponeStatus.SUCCESS) {
+                setTrackerData(response.data);
             }
 
         } catch (error) {
@@ -32,7 +47,7 @@ export const useTrackerData = (MatricID: number) => {
 
     useEffect(() => {
         if (!MatricID) return;
-        fetchtrackerData();
+        void fetchtrackerData();
     }, [MatricID, fetchtrackerData]);
 
     return {

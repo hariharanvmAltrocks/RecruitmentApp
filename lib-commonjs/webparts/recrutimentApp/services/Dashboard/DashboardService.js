@@ -10,169 +10,9 @@ var metricColumns_config_1 = require("../../components/Screens/Dashboard/metricC
 var DashboardService = /** @class */ (function () {
     function DashboardService() {
     }
-    DashboardService.prototype.GetRecruitmentDetails = function (filterParam, filterConditions) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var res, GridResult, ids, idChunks, _loop_1, _i, idChunks_1, chunk, error_1;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 6, , 7]);
-                        return [4 /*yield*/, spservice_1.default.SPReadItems({
-                                Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
-                                Select: "*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,JobCode/ID,BusinessUnitCode/BusineesUnitCode,AssignedHR/Title",
-                                Filter: filterParam,
-                                FilterCondition: filterConditions,
-                                Expand: "Department,SubDepartment,Section,DepartmentCode,Status,Action,JobCode,BusinessUnitCode",
-                                Topcount: ApiConfig_1.count.Topcount,
-                                Orderby: "ID",
-                                Orderbydecorasc: true
-                            })];
-                    case 1:
-                        res = _a.sent();
-                        if (!res.length) {
-                            return [2 /*return*/, {
-                                    data: [],
-                                    status: 200,
-                                    message: "No records found"
-                                }];
-                        }
-                        GridResult = res.map(function (item, index) {
-                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7;
-                            return ({
-                                ID: item.ID,
-                                RecordID: index + 1,
-                                BusinessUnitCode: (_b = (_a = item === null || item === void 0 ? void 0 : item.BusinessUnitCode) === null || _a === void 0 ? void 0 : _a.BusineesUnitCode) !== null && _b !== void 0 ? _b : "",
-                                BusinessUnitCodeId: (_c = item === null || item === void 0 ? void 0 : item.BusinessUnitCodeId) !== null && _c !== void 0 ? _c : "",
-                                BusinessUnitName: "",
-                                BusinessUnitDescription: "",
-                                Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
-                                Department: (_e = (_d = item === null || item === void 0 ? void 0 : item.Department) === null || _d === void 0 ? void 0 : _d.DepartmentName) !== null && _e !== void 0 ? _e : "",
-                                DepartmentId: item === null || item === void 0 ? void 0 : item.DepartmentId,
-                                SubDepartment: (_g = (_f = item === null || item === void 0 ? void 0 : item.SubDepartment) === null || _f === void 0 ? void 0 : _f.SubDepTitle) !== null && _g !== void 0 ? _g : "",
-                                SubDepartmentId: item === null || item === void 0 ? void 0 : item.SubDepartmentId,
-                                Section: (_j = (_h = item === null || item === void 0 ? void 0 : item.Section) === null || _h === void 0 ? void 0 : _h.SectionName) !== null && _j !== void 0 ? _j : "",
-                                SectionId: item === null || item === void 0 ? void 0 : item.SectionId,
-                                DepartmentCodeId: item === null || item === void 0 ? void 0 : item.DepartmentCodeId,
-                                DepartmentCode: (_l = (_k = item === null || item === void 0 ? void 0 : item.DepartmentCode) === null || _k === void 0 ? void 0 : _k.DptCode) !== null && _l !== void 0 ? _l : "",
-                                EmploymentCategory: item === null || item === void 0 ? void 0 : item.EmploymentCategory,
-                                TypeOfContract: item === null || item === void 0 ? void 0 : item.TypeOfContract,
-                                NumberOfPersonNeeded: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded,
-                                EnterNumberOfMonths: item === null || item === void 0 ? void 0 : item.EnterNumberOfMonths,
-                                AreaofWork: item === null || item === void 0 ? void 0 : item.AreaofWork,
-                                DateRequried: (_m = item === null || item === void 0 ? void 0 : item.DateRequried) !== null && _m !== void 0 ? _m : "",
-                                Type: (_o = item === null || item === void 0 ? void 0 : item.DataFrom) !== null && _o !== void 0 ? _o : "",
-                                Status: (_q = (_p = item === null || item === void 0 ? void 0 : item.Status) === null || _p === void 0 ? void 0 : _p.StatusDescription) !== null && _q !== void 0 ? _q : "",
-                                StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
-                                Action: (_s = (_r = item === null || item === void 0 ? void 0 : item.Action) === null || _r === void 0 ? void 0 : _r.Action) !== null && _s !== void 0 ? _s : "",
-                                ActionTypeId: (_t = item === null || item === void 0 ? void 0 : item.ActionId) !== null && _t !== void 0 ? _t : "",
-                                Location: (_u = item === null || item === void 0 ? void 0 : item.Location) !== null && _u !== void 0 ? _u : "",
-                                JobCodeId: (_w = (_v = item === null || item === void 0 ? void 0 : item.JobCode) === null || _v === void 0 ? void 0 : _v.ID) !== null && _w !== void 0 ? _w : 0,
-                                JobCode: (_y = (_x = item === null || item === void 0 ? void 0 : item.JobCode) === null || _x === void 0 ? void 0 : _x.JobCode) !== null && _y !== void 0 ? _y : "",
-                                JobTitleEnglish: "",
-                                JobTitleFrench: "",
-                                PatersonGrade: "",
-                                DRCGrade: "",
-                                JobTitleEnglishId: 0,
-                                JobTitleFrenchId: 0,
-                                PatersonGradeId: 0,
-                                DRCGradeId: 0,
-                                Checked: false,
-                                VacancyConfirmed: (_z = item === null || item === void 0 ? void 0 : item.VacancyConfirmed) !== null && _z !== void 0 ? _z : "",
-                                RecruitmentAuthorised: (_0 = item === null || item === void 0 ? void 0 : item.RecruitmentAuthorised) !== null && _0 !== void 0 ? _0 : "",
-                                IsPayrollEmailed: (_1 = item === null || item === void 0 ? void 0 : item.IsPayrollEmailed) !== null && _1 !== void 0 ? _1 : "",
-                                AssignedHR: "",
-                                AssignedHRId: 0,
-                                AssignLineManager: (_2 = item === null || item === void 0 ? void 0 : item.LineManager) !== null && _2 !== void 0 ? _2 : "",
-                                AssignLineManagerId: (_3 = item === null || item === void 0 ? void 0 : item.AssignLineManagerId) !== null && _3 !== void 0 ? _3 : 0,
-                                ReasonForVacancy: (_4 = item === null || item === void 0 ? void 0 : item.ReasonForVacancy) !== null && _4 !== void 0 ? _4 : "",
-                                JobPostingStartDate: (item === null || item === void 0 ? void 0 : item.JobPostingStartDate) ? (0, moment_1.default)(item.JobPostingStartDate).format("YYYY-MM-DD") : undefined,
-                                JobPostingEndDate: (item === null || item === void 0 ? void 0 : item.JobPostingEndDate) ? (0, moment_1.default)(item.JobPostingEndDate).format("YYYY-MM-DD") : undefined,
-                                JobPostingFirstExtensionEndDate: (item === null || item === void 0 ? void 0 : item.JobPostingFirstExtensionEndDate) ? (0, moment_1.default)(item.JobPostingFirstExtensionEndDate).format("YYYY-MM-DD") : undefined,
-                                JobPostingSecondExtensionEndDate: (item === null || item === void 0 ? void 0 : item.JobPostingSecondExtensionEndDate) ? (0, moment_1.default)(item.JobPostingSecondExtensionEndDate).format("YYYY-MM-DD") : undefined,
-                                AssignEMail: item === null || item === void 0 ? void 0 : item.AssignedHR,
-                                AssignHOD: item === null || item === void 0 ? void 0 : item.HOD,
-                                AssignHRLead: (_5 = item === null || item === void 0 ? void 0 : item.RecruitmentHRLead) !== null && _5 !== void 0 ? _5 : "",
-                                QuestionByHR: (_6 = item === null || item === void 0 ? void 0 : item.QuestionByHR) !== null && _6 !== void 0 ? _6 : "",
-                                QuestionByLM: (_7 = item === null || item === void 0 ? void 0 : item.QuestionByLM) !== null && _7 !== void 0 ? _7 : "",
-                                JobAppliedCount: "0",
-                                ReviewScoreCount: "0",
-                                ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified) ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD") : undefined,
-                                CreatedDate: (item === null || item === void 0 ? void 0 : item.Created) ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD") : undefined
-                            });
-                        });
-                        ids = GridResult.map(function (x) { return x.ID; });
-                        idChunks = spservice_1.default.ArraySpiltInOperator(ids, ApiConfig_1.InOperator.arraysize);
-                        _loop_1 = function (chunk) {
-                            var resdata, positionMap;
-                            return tslib_1.__generator(this, function (_b) {
-                                switch (_b.label) {
-                                    case 0: return [4 /*yield*/, spservice_1.default.SPReadItems({
-                                            Listname: Config_1.ListNames.HRMSRecruitmentPositionDetails,
-                                            Select: "*,JobTitleEnglish/JobTitleInEnglish,DRCGrade/DRCGrade,PatersonGrade/PatersonGrade,JobTitleFrench/JobTitleInFrench",
-                                            Expand: "JobTitleEnglish,DRCGrade,PatersonGrade,JobTitleFrench",
-                                            Filter: [{ FilterKey: "RecruitmentID", Operator: "in", FilterValue: chunk }],
-                                            Topcount: ApiConfig_1.count.Topcount
-                                        })];
-                                    case 1:
-                                        resdata = _b.sent();
-                                        positionMap = new Map();
-                                        resdata.forEach(function (r) {
-                                            positionMap.set(r.RecruitmentIDId, r);
-                                        });
-                                        /* -------------------------
-                                           STEP 4 : Merge data
-                                        --------------------------*/
-                                        GridResult.forEach(function (item) {
-                                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-                                            var pos = positionMap.get(item.ID);
-                                            if (!pos)
-                                                return;
-                                            item.JobTitleEnglish = (_b = (_a = pos === null || pos === void 0 ? void 0 : pos.JobTitleEnglish) === null || _a === void 0 ? void 0 : _a.JobTitleInEnglish) !== null && _b !== void 0 ? _b : "";
-                                            item.JobTitleEnglishId = (_c = pos === null || pos === void 0 ? void 0 : pos.JobTitleEnglishId) !== null && _c !== void 0 ? _c : 0;
-                                            item.JobTitleFrench = (_e = (_d = pos === null || pos === void 0 ? void 0 : pos.JobTitleFrench) === null || _d === void 0 ? void 0 : _d.JobTitleInFrench) !== null && _e !== void 0 ? _e : "";
-                                            item.JobTitleFrenchId = (_f = pos === null || pos === void 0 ? void 0 : pos.JobTitleFrenchId) !== null && _f !== void 0 ? _f : 0;
-                                            item.PatersonGrade = (_h = (_g = pos === null || pos === void 0 ? void 0 : pos.PatersonGrade) === null || _g === void 0 ? void 0 : _g.PatersonGrade) !== null && _h !== void 0 ? _h : "";
-                                            item.PatersonGradeId = (_j = pos === null || pos === void 0 ? void 0 : pos.PatersonGradeId) !== null && _j !== void 0 ? _j : 0;
-                                            item.DRCGrade = (_l = (_k = pos === null || pos === void 0 ? void 0 : pos.DRCGrade) === null || _k === void 0 ? void 0 : _k.DRCGrade) !== null && _l !== void 0 ? _l : "";
-                                            item.DRCGradeId = (_m = pos === null || pos === void 0 ? void 0 : pos.DRCGradeId) !== null && _m !== void 0 ? _m : 0;
-                                        });
-                                        return [2 /*return*/];
-                                }
-                            });
-                        };
-                        _i = 0, idChunks_1 = idChunks;
-                        _a.label = 2;
-                    case 2:
-                        if (!(_i < idChunks_1.length)) return [3 /*break*/, 5];
-                        chunk = idChunks_1[_i];
-                        return [5 /*yield**/, _loop_1(chunk)];
-                    case 3:
-                        _a.sent();
-                        _a.label = 4;
-                    case 4:
-                        _i++;
-                        return [3 /*break*/, 2];
-                    case 5: return [2 /*return*/, {
-                            data: GridResult,
-                            status: 200,
-                            message: "GetRecruitmentDetails fetched successfully"
-                        }];
-                    case 6:
-                        error_1 = _a.sent();
-                        console.error("Error fetching data:", error_1);
-                        return [2 /*return*/, {
-                                data: [],
-                                status: 500,
-                                message: "Error fetching data"
-                            }];
-                    case 7: return [2 /*return*/];
-                }
-            });
-        });
-    };
     DashboardService.prototype.GetDashboardCount = function (queries, currentRoleID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var metricConfigs, spCounts_1, externalMetrics, externalCountMap_1, metrics, error_2;
+            var metricConfigs, spCounts_1, externalMetrics, externalCountMap_1, metrics, error_1;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -199,18 +39,11 @@ var DashboardService = /** @class */ (function () {
                         });
                         return [2 /*return*/, { data: metrics, status: 200, message: "Dashboard counts fetched successfully" }];
                     case 3:
-                        error_2 = _a.sent();
-                        console.error("GetDashboardCount error:", error_2);
+                        error_1 = _a.sent();
+                        console.error("GetDashboardCount error:", error_1);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching dashboard counts" }];
                     case 4: return [2 /*return*/];
                 }
-            });
-        });
-    };
-    DashboardService.prototype._fetchPortalJobCodeMap = function (queries) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            return tslib_1.__generator(this, function (_a) {
-                return [2 /*return*/, new Map()];
             });
         });
     };
@@ -241,12 +74,12 @@ var DashboardService = /** @class */ (function () {
                         portalItems = _a.sent();
                         jobCodeIdToUniqueKey = new Map(portalItems.map(function (item) { return [item.JobCodeId, item.JobUniqueKey]; }));
                         return [4 /*yield*/, Promise.all(externalMetrics.map(function (metric) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var jobCodeIds, jobUniqueKeys, params, response, total, error_3;
-                                var _a, _b;
-                                return tslib_1.__generator(this, function (_c) {
-                                    switch (_c.label) {
+                                var jobCodeIds, jobUniqueKeys, params, response, total, _a;
+                                var _b, _c;
+                                return tslib_1.__generator(this, function (_d) {
+                                    switch (_d.label) {
                                         case 0:
-                                            jobCodeIds = ((_a = spCounts[metric.id]) !== null && _a !== void 0 ? _a : [])
+                                            jobCodeIds = ((_b = spCounts[metric.id]) !== null && _b !== void 0 ? _b : [])
                                                 .map(function (item) { return item.JobCodeId; })
                                                 .filter(Boolean);
                                             jobUniqueKeys = jobCodeIds
@@ -260,17 +93,17 @@ var DashboardService = /** @class */ (function () {
                                                 jobCode: jobUniqueKeys,
                                                 workflowStausId: metric.externalApi.workflowStatuses,
                                             };
-                                            _c.label = 1;
+                                            _d.label = 1;
                                         case 1:
-                                            _c.trys.push([1, 3, , 4]);
+                                            _d.trys.push([1, 3, , 4]);
                                             return [4 /*yield*/, CareerPortalAPI_1.getProfileData.GetJobAppliedCount(params)];
                                         case 2:
-                                            response = _c.sent();
-                                            total = ((_b = response === null || response === void 0 ? void 0 : response.data) !== null && _b !== void 0 ? _b : []).reduce(function (sum, item) { var _a; return sum + ((_a = item.count) !== null && _a !== void 0 ? _a : 0); }, 0);
+                                            response = _d.sent();
+                                            total = ((_c = response === null || response === void 0 ? void 0 : response.data) !== null && _c !== void 0 ? _c : []).reduce(function (sum, item) { var _a; return sum + ((_a = item.count) !== null && _a !== void 0 ? _a : 0); }, 0);
                                             result.set(String(metric.id), total);
                                             return [3 /*break*/, 4];
                                         case 3:
-                                            error_3 = _c.sent();
+                                            _a = _d.sent();
                                             result.set(String(metric.id), 0);
                                             return [3 /*break*/, 4];
                                         case 4: return [2 /*return*/];
@@ -284,8 +117,268 @@ var DashboardService = /** @class */ (function () {
             });
         });
     };
+    DashboardService.prototype.GetRecruitmentDetails = function (filterParam, filterConditions) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var res, GridResult, error_2;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
+                                Select: "*,Status/StatusDescription,JobCode/JobCode,JobCode/ID,JobCode/JobTitleInEnglish,BusinessUnitCode/BusineesUnitCode",
+                                Filter: filterParam,
+                                FilterCondition: filterConditions,
+                                Expand: "Status,JobCode,BusinessUnitCode",
+                                Topcount: ApiConfig_1.count.Topcount,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        if (!res.length) {
+                            return [2 /*return*/, { data: [], status: 200, message: "No records found" }];
+                        }
+                        GridResult = res.map(function (item, index) {
+                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+                            return ({
+                                ID: item.ID,
+                                RecordID: index + 1,
+                                BusinessUnitCode: (_b = (_a = item === null || item === void 0 ? void 0 : item.BusinessUnitCode) === null || _a === void 0 ? void 0 : _a.BusineesUnitCode) !== null && _b !== void 0 ? _b : "",
+                                Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
+                                NumberOfPersonNeeded: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded,
+                                Type: (_c = item === null || item === void 0 ? void 0 : item.DataFrom) !== null && _c !== void 0 ? _c : "",
+                                Status: (_e = (_d = item === null || item === void 0 ? void 0 : item.Status) === null || _d === void 0 ? void 0 : _d.StatusDescription) !== null && _e !== void 0 ? _e : "",
+                                StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
+                                JobCodeId: (_g = (_f = item === null || item === void 0 ? void 0 : item.JobCode) === null || _f === void 0 ? void 0 : _f.ID) !== null && _g !== void 0 ? _g : 0,
+                                JobCode: (_j = (_h = item === null || item === void 0 ? void 0 : item.JobCode) === null || _h === void 0 ? void 0 : _h.JobCode) !== null && _j !== void 0 ? _j : "",
+                                JobTitleEnglish: (_l = (_k = item === null || item === void 0 ? void 0 : item.JobCode) === null || _k === void 0 ? void 0 : _k.JobTitleInEnglish) !== null && _l !== void 0 ? _l : "",
+                                ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
+                                    ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
+                                    : undefined,
+                                CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
+                                    ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
+                                    : undefined,
+                            });
+                        });
+                        return [2 /*return*/, {
+                                data: GridResult,
+                                status: 200,
+                                message: "GetRecruitmentDetails fetched successfully",
+                            }];
+                    case 2:
+                        error_2 = _a.sent();
+                        console.error("Error fetching GetRecruitmentDetails:", error_2);
+                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DashboardService.prototype.fetchRecruitmentByLookup = function (listName, filterParam, filterConditions) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var res, ids, recruitmentFilter, error_3;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: listName,
+                                Select: "*,RecruitmentID/Id",
+                                Filter: filterParam,
+                                FilterCondition: filterConditions,
+                                Expand: "RecruitmentID",
+                                Topcount: ApiConfig_1.count.Topcount,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        if (!res.length) {
+                            return [2 /*return*/, { data: [], status: 200, message: "No records found" }];
+                        }
+                        ids = res
+                            .map(function (item) { var _a; return (_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id; })
+                            .filter(Boolean);
+                        if (!ids.length) {
+                            return [2 /*return*/, { data: [], status: 200, message: "No linked recruitment records found" }];
+                        }
+                        recruitmentFilter = [
+                            { FilterKey: "ID", Operator: "in", FilterValue: ids },
+                        ];
+                        return [4 /*yield*/, this.GetRecruitmentDetails(recruitmentFilter, filterConditions)];
+                    case 2: return [2 /*return*/, _a.sent()];
+                    case 3:
+                        error_3 = _a.sent();
+                        console.error("Error fetching from ".concat(listName, ":"), error_3);
+                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DashboardService.prototype.GetCandidateDetails = function (filterParam, filterConditions) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, this.fetchRecruitmentByLookup(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, filterParam, filterConditions)];
+            });
+        });
+    };
+    DashboardService.prototype.GetSelectedCandidate = function (filterParam, filterConditions) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, this.fetchRecruitmentByLookup(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, filterParam, filterConditions)];
+            });
+        });
+    };
+    DashboardService.prototype.GetNPAEPVRRDetails = function (filterParam, filterConditions) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_4;
+            var _b, _c;
+            return tslib_1.__generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _d.trys.push([0, 3, , 4]);
+                        queries = [
+                            {
+                                StateValue: 1,
+                                ListName: Config_1.ListNames.HRMSAdditionalHeadCountForExisitingPosition,
+                                Filter: filterParam,
+                                FilterCondition: filterConditions,
+                                Select: ["*", "Status/StatusDescription", "BusinessUnitCode/BusineesUnitCode"],
+                                Expand: ["Status", "BusinessUnitCode"],
+                            },
+                            {
+                                StateValue: 2,
+                                ListName: Config_1.ListNames.HRMSNewPositionRequest,
+                                Filter: filterParam,
+                                FilterCondition: filterConditions,
+                                Select: ["*", "BusinessUnitCode/BusineesUnitCode", "Status/StatusDescription"],
+                                Expand: ["Status", "BusinessUnitCode"],
+                            },
+                            {
+                                StateValue: 3,
+                                ListName: Config_1.ListNames.HRMSVacancyReplacementRequest,
+                                Filter: filterParam,
+                                FilterCondition: filterConditions,
+                                Select: [
+                                    "*",
+                                    "BusinessUnitCode/BusineesUnitCode",
+                                    "Status/StatusDescription",
+                                    "JobCode/JobCode",
+                                    "JobCode/JobTitleInEnglish",
+                                    "JobCode/ID",
+                                ],
+                                Expand: ["Status", "Action", "JobCode", "BusinessUnitCode"],
+                            },
+                        ];
+                        return [4 /*yield*/, spservice_1.default.batchGet(queries)];
+                    case 1:
+                        batchRes = _d.sent();
+                        if (!batchRes || !Object.keys(batchRes).length) {
+                            return [2 /*return*/, { data: [], status: 200, message: "No records found" }];
+                        }
+                        additionalExistingItems = batchRes[1] || [];
+                        newPositionItems = batchRes[2] || [];
+                        vacancyItems = batchRes[3] || [];
+                        additionalIds = additionalExistingItems.map(function (i) { return i.ID; }).filter(Boolean);
+                        newPositionIds = newPositionItems.map(function (i) { return i.ID; }).filter(Boolean);
+                        return [4 /*yield*/, Promise.all([
+                                additionalIds.length > 0
+                                    ? this.GetPositionDetails([{ FilterKey: "LookupIDId", Operator: "in", FilterValue: additionalIds }], undefined, Config_1.ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails)
+                                    : Promise.resolve({ data: [], status: 200, message: "" }),
+                                newPositionIds.length > 0
+                                    ? this.GetPositionDetails([{ FilterKey: "PositionRequestID", Operator: "in", FilterValue: newPositionIds }], undefined, Config_1.ListNames.HRMSNewPositionRequestPositionDetails)
+                                    : Promise.resolve({ data: [], status: 200, message: "" }),
+                            ])];
+                    case 2:
+                        _a = _d.sent(), additionalPositionRes = _a[0], newPositionRes = _a[1];
+                        additionalPositionMap_1 = new Map(((_b = additionalPositionRes.data) !== null && _b !== void 0 ? _b : []).map(function (d) { return [d.parentId, d]; }));
+                        newPositionMap_1 = new Map(((_c = newPositionRes.data) !== null && _c !== void 0 ? _c : []).map(function (d) { return [d.parentId, d]; }));
+                        mapCommonFields_1 = function (item, index) {
+                            var _a, _b, _c, _d;
+                            return ({
+                                ID: item.ID,
+                                RecordID: index + 1,
+                                BusinessUnitCode: (_b = (_a = item === null || item === void 0 ? void 0 : item.BusinessUnitCode) === null || _a === void 0 ? void 0 : _a.BusineesUnitCode) !== null && _b !== void 0 ? _b : "",
+                                Status: (_d = (_c = item === null || item === void 0 ? void 0 : item.Status) === null || _c === void 0 ? void 0 : _c.StatusDescription) !== null && _d !== void 0 ? _d : "",
+                                ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
+                                    ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
+                                    : undefined,
+                                CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
+                                    ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
+                                    : undefined,
+                            });
+                        };
+                        additionalExistingResult = additionalExistingItems.map(function (item, index) {
+                            var _a, _b, _c, _d, _e;
+                            var pos = additionalPositionMap_1.get(item.ID);
+                            return tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.ExistingPosition, JobCode: (_a = pos === null || pos === void 0 ? void 0 : pos.jobCode) !== null && _a !== void 0 ? _a : "", JobTitleEnglish: (_b = pos === null || pos === void 0 ? void 0 : pos.title) !== null && _b !== void 0 ? _b : "", JobTitleFrench: (_c = pos === null || pos === void 0 ? void 0 : pos.JobTitleFrench) !== null && _c !== void 0 ? _c : "", PatersonGrade: (_d = pos === null || pos === void 0 ? void 0 : pos.PatersonGrade) !== null && _d !== void 0 ? _d : "", DRCGrade: (_e = pos === null || pos === void 0 ? void 0 : pos.DRCGrade) !== null && _e !== void 0 ? _e : "" });
+                        });
+                        newPositionResult = newPositionItems.map(function (item, index) {
+                            var _a, _b, _c, _d, _e;
+                            var pos = newPositionMap_1.get(item.ID);
+                            return tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.NewPosition, JobCode: (_a = pos === null || pos === void 0 ? void 0 : pos.jobCode) !== null && _a !== void 0 ? _a : "", JobTitleEnglish: (_b = pos === null || pos === void 0 ? void 0 : pos.title) !== null && _b !== void 0 ? _b : "", JobTitleFrench: (_c = pos === null || pos === void 0 ? void 0 : pos.JobTitleFrench) !== null && _c !== void 0 ? _c : "", PatersonGrade: (_d = pos === null || pos === void 0 ? void 0 : pos.PatersonGrade) !== null && _d !== void 0 ? _d : "", DRCGrade: (_e = pos === null || pos === void 0 ? void 0 : pos.DRCGrade) !== null && _e !== void 0 ? _e : "" });
+                        });
+                        vacancyResult = vacancyItems.map(function (item, index) {
+                            var _a, _b, _c, _d, _e, _f;
+                            return (tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.VacancyRecruitmentProcess, JobCodeId: (_b = (_a = item === null || item === void 0 ? void 0 : item.JobCode) === null || _a === void 0 ? void 0 : _a.ID) !== null && _b !== void 0 ? _b : 0, JobCode: (_d = (_c = item === null || item === void 0 ? void 0 : item.JobCode) === null || _c === void 0 ? void 0 : _c.JobCode) !== null && _d !== void 0 ? _d : "", JobTitleEnglish: (_f = (_e = item === null || item === void 0 ? void 0 : item.JobCode) === null || _e === void 0 ? void 0 : _e.JobTitleInEnglish) !== null && _f !== void 0 ? _f : "" }));
+                        });
+                        GridResult = tslib_1.__spreadArray(tslib_1.__spreadArray(tslib_1.__spreadArray([], additionalExistingResult, true), newPositionResult, true), vacancyResult, true).map(function (item, index) { return (tslib_1.__assign(tslib_1.__assign({}, item), { RecordID: index + 1 })); });
+                        return [2 /*return*/, {
+                                data: GridResult,
+                                status: 200,
+                                message: "GetNPAEPVRRDetails fetched successfully",
+                            }];
+                    case 3:
+                        error_4 = _d.sent();
+                        console.error("Error fetching GetNPAEPVRRDetails:", error_4);
+                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DashboardService.prototype.GetPositionDetails = function (Filter, filterConditions, ListName) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var resdata, result, error_5;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: ListName,
+                                Select: "*,JobTitleEnglish/JobTitleInEnglish,JobTitleEnglish/JobCode,DRCGrade/DRCGrade,PatersonGrade/PatersonGrade,JobTitleFrench/JobTitleInFrench",
+                                Filter: Filter,
+                                FilterCondition: filterConditions,
+                                Expand: "JobTitleEnglish,DRCGrade,JobTitleFrench,PatersonGrade",
+                                Topcount: ApiConfig_1.count.Topcount,
+                            })];
+                    case 1:
+                        resdata = _a.sent();
+                        result = resdata.map(function (item, index) {
+                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+                            return ({
+                                parentId: (_b = (_a = item === null || item === void 0 ? void 0 : item.LookupIDId) !== null && _a !== void 0 ? _a : item === null || item === void 0 ? void 0 : item.PositionRequestIDId) !== null && _b !== void 0 ? _b : 0,
+                                id: index + 1,
+                                title: (_d = (_c = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _c === void 0 ? void 0 : _c.JobTitleInEnglish) !== null && _d !== void 0 ? _d : "",
+                                jobCode: (_f = (_e = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _e === void 0 ? void 0 : _e.JobCode) !== null && _f !== void 0 ? _f : "",
+                                DRCGrade: (_h = (_g = item === null || item === void 0 ? void 0 : item.DRCGrade) === null || _g === void 0 ? void 0 : _g.DRCGrade) !== null && _h !== void 0 ? _h : "",
+                                PatersonGrade: (_k = (_j = item === null || item === void 0 ? void 0 : item.PatersonGrade) === null || _j === void 0 ? void 0 : _j.PatersonGrade) !== null && _k !== void 0 ? _k : "",
+                                JobTitleFrench: (_m = (_l = item === null || item === void 0 ? void 0 : item.JobTitleFrench) === null || _l === void 0 ? void 0 : _l.JobTitleInFrench) !== null && _m !== void 0 ? _m : "",
+                            });
+                        });
+                        return [2 /*return*/, { data: result, status: 200, message: "GetPositionDetails fetched successfully" }];
+                    case 2:
+                        error_5 = _a.sent();
+                        console.error("GetPositionDetails error:", error_5);
+                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching position details" }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     return DashboardService;
 }());
 exports.default = DashboardService;
-;
 //# sourceMappingURL=DashboardService.js.map

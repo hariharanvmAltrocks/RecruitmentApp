@@ -702,7 +702,7 @@ var SPReadItemsCamelQuery = function (rawParams) { return tslib_1.__awaiter(void
                 expandFields = params.Expand.join(",");
                 if (expandFields && camlResults.length) {
                     idFilter = camlResults
-                        .map(function (i) { return "ID eq ".concat(i["ID"]); })
+                        .map(function (i) { return "ID eq ".concat(i.ID); })
                         .join(" or ");
                     return [2 /*return*/, sp.web.lists
                             .getByTitle(params.Listname)

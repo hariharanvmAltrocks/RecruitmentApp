@@ -50,7 +50,7 @@ export const useUrgentTasks = () => {
                     type: type
                 }
             })
-            if (res.status == ResponeStatus.SUCCESS) {
+            if (res.status === ResponeStatus.SUCCESS) {
                 setUrgentTasks(UrgentTask)
             }
 
@@ -63,7 +63,7 @@ export const useUrgentTasks = () => {
     }, []);
 
     useEffect(() => {
-        fetchUrgentTasks();
+        void fetchUrgentTasks();
     }, [fetchUrgentTasks]);
 
     return {

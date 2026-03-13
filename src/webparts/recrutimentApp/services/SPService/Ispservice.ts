@@ -121,5 +121,9 @@ export interface BatchQuery {
   ListName: string;
   Filter?: IFilter[];
   Select?: string[];
+  Expand?: string[];
+  Orderby?: string;
+  Orderbydecorasc?: boolean;
+  Topcount?: number;
   FilterCondition?: string;
 }

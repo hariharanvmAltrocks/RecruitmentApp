@@ -147,7 +147,7 @@ function buildADGroupData(
 
 const NoRoleScreen = (): JSX.Element => (
   <div className="flex min-h-screen relative bg-gray-100">
-    <div className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity"></div>
+    <div className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity" />
 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border-t-4 border-amber-500">
@@ -187,30 +187,6 @@ const NoRoleScreen = (): JSX.Element => (
   </div>
 );
 
-const ErrorScreen = ({ message }: { message: string }): JSX.Element => (
-  <div className="mainPage">
-    <Sidebar />
-    <div
-      style={{
-        width: "85%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100%",
-        gap: "12px",
-      }}
-    >
-      <h3 className="title" style={{ color: "#c0392b" }}>
-        Initialisation Error
-      </h3>
-      <p style={{ color: "#7f8c8d", fontSize: "14px", maxWidth: "480px", textAlign: "center" }}>
-        {message}
-      </p>
-    </div>
-  </div>
-);
-
 const Sidebar = (): JSX.Element => (
   <div className="w-[15%]">
     <div className="overflow-hidden flex flex-col justify-between rounded-r-[30px] transition-all duration-1000 bg-[#597b98] h-[90vh] w-full">
@@ -236,6 +212,29 @@ const Sidebar = (): JSX.Element => (
   </div>
 );
 
+const ErrorScreen = ({ message }: { message: string }): JSX.Element => (
+  <div className="mainPage">
+    <Sidebar />
+    <div
+      style={{
+        width: "85%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100%",
+        gap: "12px",
+      }}
+    >
+      <h3 className="title" style={{ color: "#c0392b" }}>
+        Initialisation Error
+      </h3>
+      <p style={{ color: "#7f8c8d", fontSize: "14px", maxWidth: "480px", textAlign: "center" }}>
+        {message}
+      </p>
+    </div>
+  </div>
+);
 
 export const RoleProvider = ({
   children,

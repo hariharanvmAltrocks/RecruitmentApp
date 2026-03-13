@@ -25,7 +25,7 @@ var useDashboardMetrics = function () {
                     return [4 /*yield*/, ServiceExport_1.DashboardServices.GetDashboardCount(queries, roleIDs)];
                 case 1:
                     data = _a.sent();
-                    if (data.status == ApiConfig_1.ResponeStatus.SUCCESS) {
+                    if (data.status === ApiConfig_1.ResponeStatus.SUCCESS) {
                         setMetrics(data.data);
                     }
                     return [3 /*break*/, 4];
@@ -43,7 +43,7 @@ var useDashboardMetrics = function () {
     (0, react_1.useEffect)(function () {
         if (!queries.length)
             return;
-        fetchMetrics();
+        void fetchMetrics();
     }, [fetchMetrics, queries]);
     var memoizedMetrics = (0, react_1.useMemo)(function () { return metrics; }, [metrics]);
     return {

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { TrackerRow } from '../../../models';
 import { motion } from 'framer-motion';
 import MetricCard from '../../Comman/MatricBox/matric';
 import './Dashboard.scss';
@@ -9,7 +8,6 @@ import Tracker from '../../Comman/Tracker/Tracker';
 import PriorityWidget from '../../Comman/PriorityWidget/PriorityWidget';
 import UrgentWidget from '../../Comman/UrgentWidget/UrgentWidget';
 import { useUrgentTasks } from './Hooks/useUrgentTasks';
-import { DataSyncToRecruitmentResponse } from '../../../services/Dashboard/IDashboard';
 import { priorityValues, totalPriority } from './metricColumns.config';
 
 interface DashboardProps {
@@ -21,10 +19,8 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
   const martics = useDashboardMetrics();
 
-  // ✅ Hook always called at top level — reacts to activeMetric changes automatically
-  const { trackerData, loading } = useTrackerData(activeMetric);
+  const { trackerData } = useTrackerData(activeMetric);
 
-  // ✅ Set initial active metric once metrics are loaded
   useEffect(() => {
     if (martics.metrics.length > 0 && !activeMetric) {
       setActiveMetric(martics.metrics[0].id);
@@ -33,7 +29,6 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
   const { urgentTasks } = useUrgentTasks();
 
-  // ✅ Just update state — useTrackerData re-fetches automatically via its own useEffect
   const onMetricChange = (id: number) => {
     setActiveMetric(id);
   };
@@ -65,7 +60,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
       <div className="dashboard-layout">
         <div className="tracker-panel">
           <Tracker
-            rows={trackerData}              // ✅ always in sync with activeMetric
+            rows={trackerData}             
             selectedMetric={selectedMetric}
             activeMetric={activeMetric}
           />

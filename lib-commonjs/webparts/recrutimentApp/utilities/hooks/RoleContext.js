@@ -152,6 +152,12 @@ var NoRoleScreen = function () { return (React.createElement("div", { className:
                                 React.createElement("span", { className: "font-semibold text-gray-700" }, "You are not assigned to any AD Group for Recruitment App.")))))),
             React.createElement("div", { className: "bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6" },
                 React.createElement("button", { type: "button", className: "inline-flex w-full justify-center rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-amber-500 sm:ml-3 sm:w-auto transition-colors ", onClick: function () { return window.location.reload(); } }, "Refresh Page")))))); };
+var Sidebar = function () { return (React.createElement("div", { className: "w-[15%]" },
+    React.createElement("div", { className: "overflow-hidden flex flex-col justify-between rounded-r-[30px] transition-all duration-1000 bg-[#597b98] h-[90vh] w-full" },
+        React.createElement("div", null,
+            React.createElement("div", { className: "flex justify-center items-center h-[68px] p-[3px] bg-white rounded-tr-[14px] rounded-br-[14px] w-[90%] my-[20px] transition-all duration-1000" },
+                React.createElement("img", { className: "h-[76px] w-[84%] object-contain", src: require("../../assets/komoa-logo-name.png"), alt: "HRMS Logo" }))),
+        React.createElement("div", { className: "text-white text-[15px] self-center mb-[10px]" }, "Version-1.3")))); };
 var ErrorScreen = function (_a) {
     var message = _a.message;
     return (React.createElement("div", { className: "mainPage" },
@@ -168,12 +174,6 @@ var ErrorScreen = function (_a) {
             React.createElement("h3", { className: "title", style: { color: "#c0392b" } }, "Initialisation Error"),
             React.createElement("p", { style: { color: "#7f8c8d", fontSize: "14px", maxWidth: "480px", textAlign: "center" } }, message))));
 };
-var Sidebar = function () { return (React.createElement("div", { className: "w-[15%]" },
-    React.createElement("div", { className: "overflow-hidden flex flex-col justify-between rounded-r-[30px] transition-all duration-1000 bg-[#597b98] h-[90vh] w-full" },
-        React.createElement("div", null,
-            React.createElement("div", { className: "flex justify-center items-center h-[68px] p-[3px] bg-white rounded-tr-[14px] rounded-br-[14px] w-[90%] my-[20px] transition-all duration-1000" },
-                React.createElement("img", { className: "h-[76px] w-[84%] object-contain", src: require("../../assets/komoa-logo-name.png"), alt: "HRMS Logo" }))),
-        React.createElement("div", { className: "text-white text-[15px] self-center mb-[10px]" }, "Version-1.3")))); };
 var RoleProvider = function (_a) {
     var children = _a.children;
     var _b = (0, react_1.useReducer)(providerReducer, initialState), state = _b[0], dispatch = _b[1];

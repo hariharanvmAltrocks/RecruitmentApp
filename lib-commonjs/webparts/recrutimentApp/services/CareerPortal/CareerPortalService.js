@@ -56,7 +56,6 @@ var CareerPortalService = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        response = void 0;
                         return [4 /*yield*/, spservice_1.default.getDocLibFiles({
                                 FilePath: "".concat(Config_1.DocumentLibraray.HRMSCareerPortalCandidateCV, "/").concat(DocumentName.RequestID, "/").concat(DocumentName.DocumentName),
                             })];

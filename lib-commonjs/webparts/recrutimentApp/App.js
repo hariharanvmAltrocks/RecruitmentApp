@@ -9,6 +9,7 @@ var RoleContext_1 = require("./utilities/hooks/RoleContext");
 var RecrutimentApp_1 = tslib_1.__importDefault(require("./components/RecrutimentApp/RecrutimentApp"));
 require("./External/tailwind.css");
 var MenuDataContext_1 = require("./utilities/hooks/MenuDataContext");
+var ThemeContext_1 = require("./theme/ThemeContext");
 var FaviconSetter = function (_a) {
     var webURL = _a.webURL;
     React.useEffect(function () {
@@ -22,19 +23,36 @@ var FaviconSetter = function (_a) {
     }, [webURL]);
     return null;
 };
+var FontLoader = function () {
+    React.useEffect(function () {
+        var linkId = "app-theme-font";
+        if (document.getElementById(linkId)) {
+            return;
+        }
+        var link = document.createElement("link");
+        link.id = linkId;
+        link.rel = "stylesheet";
+        link.href = "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap";
+        document.head.appendChild(link);
+    }, []);
+    return null;
+};
 var App = function (props) {
     var location = (0, react_router_dom_1.useLocation)();
     var state = location.state;
     var navigate = (0, react_router_dom_1.useNavigate)();
+    var themeVars = (0, ThemeContext_1.useThemeVars)();
     return (React.createElement(RoleContext_1.RoleProvider, null,
         React.createElement(MenuDataContext_1.MenuDataProvider, null,
             React.createElement(FaviconSetter, { webURL: props.webURL }),
-            React.createElement("div", { className: "app" },
+            React.createElement(FontLoader, null),
+            React.createElement("div", { className: "app", style: themeVars },
                 React.createElement(React.Suspense, { fallback: React.createElement("div", null, "Loading...") },
                     React.createElement(RecrutimentApp_1.default, tslib_1.__assign({}, props, state, navigate)))))));
 };
 function AppWrapper(props) {
     return (React.createElement(react_router_dom_1.HashRouter, null,
-        React.createElement(App, tslib_1.__assign({}, props))));
+        React.createElement(ThemeContext_1.ThemeProvider, null,
+            React.createElement(App, tslib_1.__assign({}, props)))));
 }
 //# sourceMappingURL=App.js.map

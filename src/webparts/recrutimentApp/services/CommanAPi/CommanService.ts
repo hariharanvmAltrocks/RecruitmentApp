@@ -265,7 +265,7 @@ export default class CommonService implements ICommonService {
                         extractedPath.substring(0, extractedPath.lastIndexOf("/")) || "";
 
                     try {
-                        let FileData = (await SPServices.getDocLibFiles({
+                        const FileData = (await SPServices.getDocLibFiles({
                             FilePath: `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${folderPath}`,
                         })) as IDocFiles[];
 
@@ -344,10 +344,10 @@ export default class CommonService implements ICommonService {
                     Operator: email
                 }]
             });
-            let UserName = listItems.find((emp: any) => {
+            const UserName = listItems.find((emp: any) => {
                 return emp.EmailId?.toLowerCase() === email?.toLowerCase();
             });
-            let UserRoleName = `${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || ""}`
+            const UserRoleName = `${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || ""}`
             return {
                 data: UserRoleName,
                 status: 200,
@@ -380,7 +380,7 @@ async function getUserGuidByEmail(email: string) {
                 Operator: email
             }]
         });
-        let UserName = listItems.find((emp: any) => {
+        const UserName = listItems.find((emp: any) => {
             return emp.EmailId?.toLowerCase() === email?.toLowerCase();
         });
         // console.log(UserName, "UserName");

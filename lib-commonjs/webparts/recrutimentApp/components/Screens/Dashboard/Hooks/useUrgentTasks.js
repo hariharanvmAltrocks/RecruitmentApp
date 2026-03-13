@@ -44,7 +44,7 @@ var useUrgentTasks = function () {
                             type: type
                         };
                     });
-                    if (res.status == ApiConfig_1.ResponeStatus.SUCCESS) {
+                    if (res.status === ApiConfig_1.ResponeStatus.SUCCESS) {
                         setUrgentTasks(UrgentTask);
                     }
                     return [3 /*break*/, 4];
@@ -60,7 +60,7 @@ var useUrgentTasks = function () {
         });
     }); }, []);
     (0, react_1.useEffect)(function () {
-        fetchUrgentTasks();
+        void fetchUrgentTasks();
     }, [fetchUrgentTasks]);
     return {
         urgentTasks: urgentTasks,

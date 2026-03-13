@@ -16,16 +16,13 @@ var Dashboard = function (props) {
     var _a;
     var _b = (0, react_1.useState)(0), activeMetric = _b[0], setActiveMetric = _b[1];
     var martics = (0, useDashboardMetrics_1.useDashboardMetrics)();
-    // ✅ Hook always called at top level — reacts to activeMetric changes automatically
-    var _c = (0, usetrackerdata_1.useTrackerData)(activeMetric), trackerData = _c.trackerData, loading = _c.loading;
-    // ✅ Set initial active metric once metrics are loaded
+    var trackerData = (0, usetrackerdata_1.useTrackerData)(activeMetric).trackerData;
     (0, react_1.useEffect)(function () {
         if (martics.metrics.length > 0 && !activeMetric) {
             setActiveMetric(martics.metrics[0].id);
         }
     }, [martics.metrics]);
     var urgentTasks = (0, useUrgentTasks_1.useUrgentTasks)().urgentTasks;
-    // ✅ Just update state — useTrackerData re-fetches automatically via its own useEffect
     var onMetricChange = function (id) {
         setActiveMetric(id);
     };

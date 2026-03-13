@@ -9,9 +9,8 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 import * as strings from 'RecrutimentAppWebPartStrings';
-import RecrutimentApp from './components/RecrutimentApp/RecrutimentApp';
 import { IRecrutimentAppProps } from './components/IRecrutimentAppProps';
-import { SPFI, spfi, SPFx } from "@pnp/sp"; 
+import { SPFI } from "@pnp/sp"; 
 import "@pnp/sp/lists";                     
 import "@pnp/sp/items";  
 import "@pnp/sp/site-users/web";
@@ -112,7 +111,7 @@ protected async onInit(): Promise<void> {
       this.domElement.style.setProperty('--linkHovered', semanticColors.linkHovered || null);
       this.domElement.style.setProperty('--primaryColor', '#0078d4');
 this.domElement.style.setProperty('--secondaryColor', '#ff8c00');
-this.domElement.style.setProperty('--fontFamily', '"Segoe UI", sans-serif');
+this.domElement.style.setProperty('--fontFamily', 'Inter", ui-sans-serif, system-ui, sans-serif');
     }
 
   }

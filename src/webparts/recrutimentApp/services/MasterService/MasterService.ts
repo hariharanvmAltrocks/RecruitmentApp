@@ -1,5 +1,5 @@
 import { ApiResponse } from "../../models/apimodels";
-import { UserRoleResponseDetails, MasterDataResponseDetails, MasterData, CareerPortalLink, ITabdetails } from "../../models/master";
+import { UserRoleResponseDetails, CareerPortalLink, ITabdetails } from "../../models/master";
 import { count, ResponeStatus } from "../../utilities/ApiConfig";
 import { ListNames } from "../../utilities/Config";
 import SPServices from "../SPService/spservice";
