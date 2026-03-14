@@ -134,6 +134,7 @@ function buildADGroupData(
     userRole: resolvedRoles.map((r) => r.RoleTitle),
     ADGroupIDs: resolvedRoles.map((r) => r.ADGroupID),
     RoleDetails: resolvedRoles,
+    EmailId: resolvedRoles.map((r) => r.EmailId )
   };
 }
 

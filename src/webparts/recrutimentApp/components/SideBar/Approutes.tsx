@@ -1,6 +1,8 @@
 import React from 'react';
 import Dashboard from '../Screens/Dashboard/Dashboard';
 import { Route, Routes } from 'react-router-dom';
+import RecruitmentProcess from '../Screens/SelectionProcess/RecruitmentProcess';
+
 interface AppRoutesProps {
   props: any
 }
@@ -8,6 +10,7 @@ interface AppRoutesProps {
 const AppRoutes: React.FC<AppRoutesProps> = ({ props }) => (
   <Routes>
     <Route path="/Dashboard" element={<Dashboard {...props} />} />
+    <Route path="/RecurimentProcess" element={<RecruitmentProcess {...props} />} />
   </Routes>
 );
 

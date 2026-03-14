@@ -127,6 +127,7 @@ function buildADGroupData(resolvedRoles, userName) {
         userRole: resolvedRoles.map(function (r) { return r.RoleTitle; }),
         ADGroupIDs: resolvedRoles.map(function (r) { return r.ADGroupID; }),
         RoleDetails: resolvedRoles,
+        EmailId: resolvedRoles.map(function (r) { return r.EmailId; })
     };
 }
 var NoRoleScreen = function () { return (React.createElement("div", { className: "flex min-h-screen relative bg-gray-100" },

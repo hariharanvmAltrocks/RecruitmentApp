@@ -1,6 +1,34 @@
 import { AuthorizationHeader } from "./axiosConfig";
 import AxiosInstance from "./AxiosService";
+export type UpsertQuestions = {
+    questionEn: string;
+    questionFr: string;
+    scopeId: string;
+    categoryId: string;
+    questionTypeId: string;
+    isQualifier: number;
+    isAnswerValidate: number;
+    sequence: number;
+    jobCode: string;
+    options: optionsValue[];
+    answers: answersValue[];
+    createdBy: string;
+}
+export type optionsValue = {
+    optionEn: string,
+    optionFr: string,
+    sequence: number
+}
 
+export type answersValue = {
+    optionEn: string,
+    optionFr: string
+}
+export type getQuestionById = {
+    discipline: string,
+    category?: string,
+    createdBy: string,
+}
 export const InternalSign = {
     InternalSignIn: async function () {
         return await AxiosInstance.post(
@@ -61,25 +89,25 @@ export const InternalSign = {
 //     },
 // }
 
-// export const QuestionnaireApi = {
-//     PostQuestionnaire: async function (params: UpsertQuestions[]) {
-//         return await AxiosInstance.post(
-//             `/hrms/UpsertQuestions`, params
-//         );
-//     },
-//     GetQuestionnaire: async function (JobCode: string) {
-//         return await AxiosInstance.get(
-//             `/hrms/GetInterviewPanelQuestionsByJobCode?jobCode=${JobCode}`
-//         );
-//     },
-//     GetQuestionaireByScope: async function (params: getQuestionById) {
-//         return AxiosInstance.post(
-//             `/hrms/GetQuestionsBank`, params
-//             ,
-//         );
-//     }
+export const QuestionnaireApi = {
+    PostQuestionnaire: async function (params: UpsertQuestions[]) {
+        return await AxiosInstance.post(
+            `/hrms/UpsertQuestions`, params
+        );
+    },
+    GetQuestionnaire: async function (JobCode: string) {
+        return await AxiosInstance.get(
+            `/hrms/GetInterviewPanelQuestionsByJobCode?jobCode=${JobCode}`
+        );
+    },
+    GetQuestionaireByScope: async function (params: getQuestionById) {
+        return AxiosInstance.post(
+            `/hrms/GetQuestionsBank`, params
+            ,
+        );
+    }
 
-// }
+}
 
 // export const GetStateByCountryApi = {
 //     GetCountryApi: async function () {

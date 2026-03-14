@@ -18,6 +18,7 @@ export type ADGroupData = {
   userRole: string[];
   ADGroupIDs: string[];
   RoleDetails: ResolvedRole[];
+  EmailId:string[]
 }
 
 export type ApiUrls = {

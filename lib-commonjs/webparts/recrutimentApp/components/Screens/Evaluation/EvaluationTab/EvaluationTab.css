@@ -1,0 +1,240 @@
+@charset "UTF-8";
+/* EvaluationTab.css – matches Candidate Evaluations screenshot */
+/* ── Wrapper ──────────────────────────────────────────────────────────────── */
+.eval-wrapper {
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ── Alert ────────────────────────────────────────────────────────────────── */
+.eval-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.eval-alert--error {
+  background: #fff0f0;
+  border: 1px solid #f5c6c6;
+  color: #c0392b;
+}
+
+.eval-alert--success {
+  background: #f0fff4;
+  border: 1px solid #b2dfdb;
+  color: #1b5e20;
+}
+
+.eval-alert--warning {
+  background: #fffde7;
+  border: 1px solid #fff176;
+  color: #f57f17;
+}
+
+.eval-alert__close {
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  padding: 4px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  color: inherit;
+  margin-left: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Loading ──────────────────────────────────────────────────────────────── */
+.eval-loader {
+  text-align: center;
+  padding: 60px;
+  color: #9e9e9e;
+  font-size: 15px;
+}
+
+/* ── Card ─────────────────────────────────────────────────────────────────── */
+.eval-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  padding: 28px 32px;
+}
+
+/* ── Card header ──────────────────────────────────────────────────────────── */
+.eval-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.eval-card__title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a2b4a;
+  margin: 0;
+}
+
+.eval-card__back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: #4a7fa5;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.eval-card__back-btn:hover {
+  color: #1565c0;
+}
+
+/* ── Table wrapper ────────────────────────────────────────────────────────── */
+.eval-table-wrapper {
+  overflow-x: auto;
+}
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+.eval-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* thead */
+.eval-table thead tr {
+  border-bottom: 2px solid #e8edf2;
+}
+
+.eval-table th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #8a9bb0;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+
+.sort-icon {
+  font-size: 10px;
+  color: #c5cdd6;
+  margin-left: 3px;
+}
+
+/* tbody rows */
+.eval-table tbody tr {
+  border-bottom: 1px solid #f0f3f7;
+  transition: background 0.15s;
+}
+
+.eval-table tbody tr:hover {
+  background: #f7fafd;
+}
+
+.eval-table td {
+  padding: 14px 14px;
+  color: #3d5166;
+  vertical-align: middle;
+}
+
+/* ── Column-specific styles ───────────────────────────────────────────────── */
+/* Applicant Name – bold dark */
+.eval-col-name {
+  font-weight: 700;
+  color: #1a2b4a;
+  white-space: nowrap;
+}
+
+/* Position Title – blue medium */
+.eval-col-position {
+  color: #1565c0;
+  font-weight: 500;
+}
+
+/* Interview Date */
+.eval-col-date {
+  white-space: nowrap;
+  color: #3d5166;
+}
+
+/* Interview Level */
+.eval-col-level {
+  white-space: nowrap;
+}
+
+/* Grade – bold blue */
+.eval-col-grade span {
+  font-weight: 700;
+  color: #1565c0;
+}
+
+/* Attachments */
+.eval-col-attachments {
+  cursor: pointer;
+}
+
+.attach-icon {
+  font-size: 15px;
+  margin-right: 4px;
+  color: #4a7fa5;
+}
+
+.attach-count {
+  font-weight: 600;
+  color: #4a7fa5;
+  font-size: 13px;
+}
+
+/* Status badge – blue dot + text */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2196f3;
+  flex-shrink: 0;
+}
+
+/* EVALUATE button */
+.evaluate-btn {
+  background: #1565c0;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.evaluate-btn:hover {
+  background: #0d47a1;
+}
+
+.evaluate-btn:active {
+  background: #083378;
+}
+
+/* Empty state */
+.eval-table__empty {
+  text-align: center;
+  padding: 60px;
+  color: #b0bec5;
+  font-size: 15px;
+}

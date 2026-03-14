@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InternalSign = void 0;
+exports.QuestionnaireApi = exports.InternalSign = void 0;
 var tslib_1 = require("tslib");
 var axiosConfig_1 = require("./axiosConfig");
 var AxiosService_1 = tslib_1.__importDefault(require("./AxiosService"));
@@ -65,24 +65,35 @@ exports.InternalSign = {
 //         );
 //     },
 // }
-// export const QuestionnaireApi = {
-//     PostQuestionnaire: async function (params: UpsertQuestions[]) {
-//         return await AxiosInstance.post(
-//             `/hrms/UpsertQuestions`, params
-//         );
-//     },
-//     GetQuestionnaire: async function (JobCode: string) {
-//         return await AxiosInstance.get(
-//             `/hrms/GetInterviewPanelQuestionsByJobCode?jobCode=${JobCode}`
-//         );
-//     },
-//     GetQuestionaireByScope: async function (params: getQuestionById) {
-//         return AxiosInstance.post(
-//             `/hrms/GetQuestionsBank`, params
-//             ,
-//         );
-//     }
-// }
+exports.QuestionnaireApi = {
+    PostQuestionnaire: function (params) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, AxiosService_1.default.post("/hrms/UpsertQuestions", params)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    },
+    GetQuestionnaire: function (JobCode) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, AxiosService_1.default.get("/hrms/GetInterviewPanelQuestionsByJobCode?jobCode=".concat(JobCode))];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    },
+    GetQuestionaireByScope: function (params) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, AxiosService_1.default.post("/hrms/GetQuestionsBank", params)];
+            });
+        });
+    }
+};
 // export const GetStateByCountryApi = {
 //     GetCountryApi: async function () {
 //         return await AxiosInstance.get(
