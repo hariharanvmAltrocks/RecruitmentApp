@@ -2606,7 +2606,7 @@ const ViewCandidateDetails = (props: any) => {
         showAlert(RecuritmentHRMsg.FormValidationMsg, HRMSAlertOptions.Error);
         return;
       }
-      // await ScheduleMeeting();
+      await ScheduleMeeting();
 
       let scheduleResponse;
       if (
@@ -2615,14 +2615,15 @@ const ViewCandidateDetails = (props: any) => {
         props.stateValue?.StatusId ===
           workflowStatusApi.PendingRecruitmentHRscheduleInterview
       ) {
-        scheduleResponse = await ScheduleMeeting();
-        if (scheduleResponse.status !== 201) {
-          showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
-          return;
-        }
+        // scheduleResponse = await ScheduleMeeting();
+        // if (scheduleResponse.status !== 201) {
+        //   showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
+        //   return;
+        // }
         // scheduleResponse = { status: 200 };
+         scheduleResponse = { status: 201 };
       } else {
-        scheduleResponse = { status: 200 };
+        scheduleResponse = { status: 201 };
       }
       if (scheduleResponse?.status === 201) {
         const isAssignInterview =

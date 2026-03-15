@@ -1,0 +1,127 @@
+:root {
+  --vc-primary: #2563eb;
+  --vc-primary-bg: #eff6ff;
+  --vc-border: #e5e7eb;
+  --vc-border-hover: #93c5fd;
+  --vc-text-main: #1f2937;
+  --vc-text-muted: #6b7280;
+  --vc-bg-card: #ffffff;
+  --vc-bg-disabled: #f3f4f6;
+}
+
+.vc-card-container {
+  font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  max-width: 900px;
+  background-color: var(--vc-bg-card);
+  border: 1px solid var(--vc-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  /* margin: 20px auto; */
+  overflow: hidden;
+  margin-top: 2%;
+}
+
+.vc-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--vc-border);
+}
+
+.vc-title {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--vc-text-main);
+  font-weight: 600;
+}
+
+.vc-required-asterisk {
+  color: #ef4444;
+}
+
+.vc-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 0.875rem;
+  color: var(--vc-text-muted);
+}
+
+.vc-body {
+  padding: 24px;
+}
+
+.vc-section {
+  margin-bottom: 32px;
+}
+
+.vc-section:last-child {
+  margin-bottom: 0;
+}
+
+.vc-section-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vc-text-muted);
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.vc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.vc-option {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid var(--vc-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--vc-bg-card);
+  user-select: none;
+}
+
+.vc-option.interactive:hover {
+  border-color: var(--vc-border-hover);
+  background-color: #f8fafc;
+}
+
+.vc-option.interactive.checked {
+  border-color: var(--vc-primary);
+  background-color: var(--vc-primary-bg);
+}
+
+.vc-option.disabled {
+  background-color: var(--vc-bg-disabled);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.vc-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-right: 12px;
+  accent-color: var(--vc-primary);
+  cursor: inherit;
+}
+
+.vc-label-text {
+  font-size: 0.95rem;
+  color: var(--vc-text-main);
+  font-weight: 500;
+}
+
+.vc-option.disabled .vc-label-text {
+  color: var(--vc-text-muted);
+}
+
+.vc-badge {
+  margin-left: auto;
+  font-size: 0.75rem;
+  background-color: #e5e7eb;
+  padding: 2px 8px;
+  border-radius: 12px;
+  color: var(--vc-text-muted);
+  font-weight: 600;
+}
