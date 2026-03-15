@@ -9,6 +9,8 @@ var NormalDataTable_1 = require("./Components/DataTable/NormalDataTable");
 var useAssignMembers_1 = require("./Hooks/useAssignMembers");
 var useRecruitmentDetails_1 = require("./Hooks/useRecruitmentDetails");
 var useTabDetails_1 = require("./Hooks/useTabDetails");
+var AdvertReviewDrawer_1 = require("./AdvertReviewDrawer/AdvertReviewDrawer");
+var useStateFromManage_1 = require("./AdvertReviewDrawer/StateManage/useStateFromManage");
 require("./RecruitmentTable.scss");
 var AssignHRPopup = react_1.default.lazy(function () { return Promise.resolve().then(function () { return tslib_1.__importStar(require("./Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
     default: module.AssignHRPopup,
@@ -19,9 +21,10 @@ var RecruitmentTable = function () {
     var _c = (0, react_1.useState)("mySubmission"), activeTabKey = _c[0], setActiveTabKey = _c[1];
     var _d = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey), items = _d.items, tableLoading = _d.loading;
     var _e = (0, useAssignMembers_1.useAssignMembers)(), members = _e.members, membersLoading = _e.loading;
-    var _f = (0, react_1.useState)([]), selectedIds = _f[0], setSelectedIds = _f[1];
-    var _g = (0, react_1.useState)(""), selectedMemberId = _g[0], setSelectedMemberId = _g[1];
-    var _h = (0, react_1.useState)(false), isPopupOpen = _h[0], setIsPopupOpen = _h[1];
+    var _f = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _f.drawerOpen, selectedJobId = _f.selectedJobId, advertLanguage = _f.advertLanguage, reviewerComments = _f.reviewerComments, acknowledgementCheckbox = _f.acknowledgementCheckbox, loadingState = _f.loadingState, openDrawer = _f.openDrawer, closeDrawer = _f.closeDrawer, setAdvertLanguage = _f.setAdvertLanguage, setComments = _f.setComments, toggleAcknowledgement = _f.toggleAcknowledgement, setLoadingState = _f.setLoadingState;
+    var _g = (0, react_1.useState)([]), selectedIds = _g[0], setSelectedIds = _g[1];
+    var _h = (0, react_1.useState)(""), selectedMemberId = _h[0], setSelectedMemberId = _h[1];
+    var _j = (0, react_1.useState)(false), isPopupOpen = _j[0], setIsPopupOpen = _j[1];
     (0, react_1.useEffect)(function () {
         if (!tabs.length) {
             return;
@@ -50,7 +53,8 @@ var RecruitmentTable = function () {
         var message = "".concat(actionLabel, " action clicked for ").concat(item.jobCode);
         // eslint-disable-next-line no-console
         console.info(message);
-    }, [activeTab === null || activeTab === void 0 ? void 0 : activeTab.actionMode]);
+        openDrawer(item.id);
+    }, [activeTab === null || activeTab === void 0 ? void 0 : activeTab.actionMode, openDrawer]);
     var handleOpenPopup = (0, react_1.useCallback)(function () {
         setIsPopupOpen(true);
     }, []);
@@ -88,7 +92,8 @@ var RecruitmentTable = function () {
                     "Execute Assignment",
                     react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16 }))))),
         isPopupOpen && (react_1.default.createElement(react_1.Suspense, { fallback: null },
-            react_1.default.createElement(AssignHRPopup, { isOpen: isPopupOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: handleClosePopup, onConfirm: handleConfirmAssignment })))));
+            react_1.default.createElement(AssignHRPopup, { isOpen: isPopupOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: handleClosePopup, onConfirm: handleConfirmAssignment }))),
+        react_1.default.createElement(AdvertReviewDrawer_1.AdvertReviewDrawer, { drawerOpen: drawerOpen, selectedJobId: selectedJobId, advertLanguage: advertLanguage, reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: closeDrawer, onLanguageChange: setAdvertLanguage, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState })));
 };
 exports.RecruitmentTable = RecruitmentTable;
 //# sourceMappingURL=RecruitmentTable.js.map

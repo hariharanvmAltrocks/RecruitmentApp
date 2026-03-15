@@ -5,6 +5,8 @@ import { NormalDataTable } from "./Components/DataTable/NormalDataTable";
 import { useAssignMembers } from "./Hooks/useAssignMembers";
 import { useRecruitmentDetails } from "./Hooks/useRecruitmentDetails";
 import { useTabDetails } from "./Hooks/useTabDetails";
+import { AdvertReviewDrawer } from "./AdvertReviewDrawer/AdvertReviewDrawer";
+import { useStateFromManage } from "./AdvertReviewDrawer/StateManage/useStateFromManage";
 import {
   AssignmentPayload,
   HrMember,
@@ -23,6 +25,20 @@ export const RecruitmentTable: React.FC = () => {
   const [activeTabKey, setActiveTabKey] = useState<RecruitmentTabKey>("mySubmission");
   const { items, loading: tableLoading } = useRecruitmentDetails(activeTabKey);
   const { members, loading: membersLoading } = useAssignMembers();
+  const {
+    drawerOpen,
+    selectedJobId,
+    advertLanguage,
+    reviewerComments,
+    acknowledgementCheckbox,
+    loadingState,
+    openDrawer,
+    closeDrawer,
+    setAdvertLanguage,
+    setComments,
+    toggleAcknowledgement,
+    setLoadingState,
+  } = useStateFromManage();
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedMemberId, setSelectedMemberId] = useState<string>("");
@@ -73,7 +89,8 @@ export const RecruitmentTable: React.FC = () => {
     const message = `${actionLabel} action clicked for ${item.jobCode}`;
     // eslint-disable-next-line no-console
     console.info(message);
-  }, [activeTab?.actionMode]);
+    openDrawer(item.id);
+  }, [activeTab?.actionMode, openDrawer]);
 
   const handleOpenPopup = useCallback(() => {
     setIsPopupOpen(true);
@@ -192,6 +209,20 @@ export const RecruitmentTable: React.FC = () => {
           />
         </Suspense>
       )}
+
+      <AdvertReviewDrawer
+        drawerOpen={drawerOpen}
+        selectedJobId={selectedJobId}
+        advertLanguage={advertLanguage}
+        reviewerComments={reviewerComments}
+        acknowledgementCheckbox={acknowledgementCheckbox}
+        loadingState={loadingState}
+        onClose={closeDrawer}
+        onLanguageChange={setAdvertLanguage}
+        onCommentsChange={setComments}
+        onToggleAcknowledgement={toggleAcknowledgement}
+        setLoadingState={setLoadingState}
+      />
     </section>
   );
 };
