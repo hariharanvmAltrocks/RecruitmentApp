@@ -1,3 +1,7 @@
+@import "../../../styles/theme";
+@import "../../../styles/variables";
+@import "../../../styles/responsive";
+
 .dashboard {
     width: 100%;
     padding: 10px;
@@ -8,10 +12,10 @@
 ========================= */
 
 .metrics-grid {
-    display: grid;
+    display: ruby;
     /* Default for mobile */
-    grid-template-columns: repeat(1, 1fr);
-    gap: 16px;
+    // grid-template-columns: repeat(1, 1fr);
+    // gap: 16px;
     margin-bottom: 32px;
 
     /* Mobile Large */
@@ -27,6 +31,10 @@
     /* Laptop & Desktop */
     @media (min-width: 1024px) {
         grid-template-columns: repeat(5, 1fr);
+    }
+
+    @media (min-width: 1440px) {
+        grid-template-columns: repeat(8, 1fr);
     }
 }
 

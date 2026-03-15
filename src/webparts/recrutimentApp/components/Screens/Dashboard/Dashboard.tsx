@@ -9,6 +9,10 @@ import PriorityWidget from '../../Comman/PriorityWidget/PriorityWidget';
 import UrgentWidget from '../../Comman/UrgentWidget/UrgentWidget';
 import { useUrgentTasks } from './Hooks/useUrgentTasks';
 import { priorityValues, totalPriority } from './metricColumns.config';
+import { useNavigate } from 'react-router';
+import { useStateHooks } from '../../RecrutimentApp/useStateHooks';
+import { DashboardData } from '../../../services/Dashboard/IDashboard';
+import { MetricConfig } from '../../../models/IDashboard';
 
 interface DashboardProps {
   props: any
@@ -17,7 +21,9 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = (props) => {
   const [activeMetric, setActiveMetric] = useState<number>(0);
 
+  const navigate = useNavigate();
   const martics = useDashboardMetrics();
+  const { setactiveMenuID, setNavigationPath, setActiveTab, navigationPath } = useStateHooks();
 
   const { trackerData } = useTrackerData(activeMetric);
 
@@ -29,8 +35,15 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
   const { urgentTasks } = useUrgentTasks();
 
-  const onMetricChange = (id: number) => {
-    setActiveMetric(id);
+  const onMetricChange = (data: MetricConfig) => {
+    setActiveMetric(data.id);
+    setNavigationPath(data.path);
+    setactiveMenuID(data.menuId);
+    setActiveTab(data.TabValue);
+  };
+
+    const onTrackerChange = (row: DashboardData) => {
+      navigate(navigationPath);
   };
 
   const selectedMetric = martics.metrics.find(m => m.id === activeMetric) ?? martics.metrics[0];
@@ -52,26 +65,55 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
             key={metric.id}
             metric={metric}
             active={activeMetric === metric.id}
-            onClick={() => onMetricChange(metric.id)}
+            onClick={() => onMetricChange(metric)}
           />
         ))}
       </div>
 
       <div className="dashboard-layout">
         <div className="tracker-panel">
-          <Tracker
+          <motion.div
+      className="dashboard"
+      key="dashboard"
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Tracker
             rows={trackerData}             
             selectedMetric={selectedMetric}
             activeMetric={activeMetric}
+            onRowClick = {(row) => onTrackerChange(row)}
           />
+    </motion.div>
+          
         </div>
 
         <div className="priority-panel">
+          <motion.div
+      className="dashboard"
+      key="dashboard"
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.3 }}
+    >
           <PriorityWidget data={priorityData} total={total} />
+
+    </motion.div>
         </div>
 
         <div className="urgent-panel">
+           <motion.div
+      className="dashboard"
+      key="dashboard"
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.3 }}>
           <UrgentWidget tasks={urgentTasks} />
+      </motion.div>
         </div>
       </div>
     </motion.div>

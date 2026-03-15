@@ -120,8 +120,8 @@ export interface BatchQuery {
   StateValue: number;
   ListName: string;
   Filter?: IFilter[];
-  Select?: string[];
-  Expand?: string[];
+  select?: string[];
+  expand?: string[];
   Orderby?: string;
   Orderbydecorasc?: boolean;
   Topcount?: number;

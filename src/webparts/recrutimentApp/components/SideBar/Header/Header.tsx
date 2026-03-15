@@ -4,6 +4,7 @@ import { useLocation, Link } from 'react-router-dom';
 import './Header.scss';
 import { findBreadcrumbPath } from '../menuUtils';
 import { useTheme } from '../../../theme/ThemeContext';
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface HeaderProps {
   user: any;
@@ -29,11 +30,11 @@ const Header: React.FC<HeaderProps> = ({ user, menuData, onToggleSidebar, onLogo
 
           <div className="breadcrumb-section">
             <h1 className="page-title">
-              {breadcrumbs[breadcrumbs.length - 1]?.DisplayName || "Recruitment Process"}
+              {breadcrumbs[breadcrumbs.length - 1]?.DisplayName || strings.AppTitle}
             </h1>
 
             <nav className="breadcrumbs">
-              <Link to="/">Home</Link>
+              <Link to="/">{strings.HomeLabel}</Link>
 
               {breadcrumbs.map((crumb, idx) => (
                 <React.Fragment key={crumb.Id}>
@@ -70,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ user, menuData, onToggleSidebar, onLogo
               </div>
 
               <button onClick={onLogout} className="logout-btn">
-                <LogOut size={14} /> Logout
+                <LogOut size={14} /> {strings.LogoutLabel}
               </button>
             </div>
           </div>

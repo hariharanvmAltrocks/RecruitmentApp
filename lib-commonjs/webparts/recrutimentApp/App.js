@@ -10,6 +10,7 @@ var RecrutimentApp_1 = tslib_1.__importDefault(require("./components/Recrutiment
 require("./External/tailwind.css");
 var MenuDataContext_1 = require("./utilities/hooks/MenuDataContext");
 var ThemeContext_1 = require("./theme/ThemeContext");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var FaviconSetter = function (_a) {
     var webURL = _a.webURL;
     React.useEffect(function () {
@@ -47,7 +48,7 @@ var App = function (props) {
             React.createElement(FaviconSetter, { webURL: props.webURL }),
             React.createElement(FontLoader, null),
             React.createElement("div", { className: "app", style: themeVars },
-                React.createElement(React.Suspense, { fallback: React.createElement("div", null, "Loading...") },
+                React.createElement(React.Suspense, { fallback: React.createElement("div", null, strings.LoadingLabel) },
                     React.createElement(RecrutimentApp_1.default, tslib_1.__assign({}, props, state, navigate)))))));
 };
 function AppWrapper(props) {

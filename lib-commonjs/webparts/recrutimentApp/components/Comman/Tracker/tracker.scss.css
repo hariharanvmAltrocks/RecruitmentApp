@@ -1,5 +1,5 @@
 .tracker {
-  background: #fff;
+  background: #ffffff;
   border-radius: 16px;
   border: 1px solid #e2e8f0;
   overflow: hidden;
@@ -14,7 +14,7 @@
 .tracker__header h2 {
   font-size: 18px;
   font-weight: 700;
-  color: #1e293b;
+  color: #0f172a;
 }
 .tracker__header p {
   font-size: 12px;
@@ -59,11 +59,11 @@
 .tracker__table tbody tr td {
   padding: 16px 20px;
   font-size: 14px;
-  color: #475569;
+  color: #334155;
 }
 .tracker__table tbody tr .title {
   font-weight: 700;
-  color: #1e293b;
+  color: #0f172a;
 }
 .tracker__table tbody tr .jobcode {
   font-size: 11px;
@@ -73,7 +73,7 @@
   text-align: center;
 }
 .tracker__table tbody tr .status {
-  background: #eff6ff;
+  background: #dbeafe;
   color: #2563eb;
   padding: 4px 10px;
   border-radius: 999px;

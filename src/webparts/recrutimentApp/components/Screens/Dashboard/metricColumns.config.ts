@@ -3,17 +3,23 @@ import { ListNames, RoleID, StatusId, workflowStatusApi } from '../../../utiliti
 import { Choices } from '../../../utilities/ApiConfig';
 import { Metric, MetricConfig } from '../../../models/IDashboard';
 import { PriorityData } from '../../Comman/PriorityWidget/PriorityWidget';
-import { MatricID } from '../../../utilities/ConditionConfig';
+import { MatricID, menuID } from '../../../utilities/ConditionConfig';
 
 
-const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
+const BASE_METRICS: Record<number, Omit<MetricConfig, 'id' | 'showArrow'>> = {
 
     [MatricID.AssignHr]: {
         label: 'Pending HR Assignment',
         status: 'ACTIVE',
         icon: UserCheck,
         color: '#f97316',
-        bgColor: '#fff7ed'
+        bgColor: '#fff7ed',
+        statusColor: '#3b82f6', 
+    statusBg: '#eff6ff',
+    iconType:"hr",
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.JobAdvert]: {
@@ -21,7 +27,13 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'ACTIVE',
         icon: UserCheck,
         color: '#ea580c',
-        bgColor: '#ffedd5'
+        bgColor: '#ffedd5',
+         statusColor: '#64748b',
+    statusBg: '#f1f5f9',
+     iconType:"onem",
+      path: "/RecruitmentTable",
+     menuId: menuID.PreSelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.AdvertReviewLM]: {
@@ -29,7 +41,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'ACTIVE',
         icon: UserCheck,
         color: '#fb923c',
-        bgColor: '#fff7ed'
+        bgColor: '#fff7ed',
+        statusColor: '#ef4444',
+    statusBg: '#fee2e2',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.AdvertReviewHOD]: {
@@ -37,7 +54,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'ACTIVE',
         icon: UserCheck,
         color: '#fdba74',
-        bgColor: '#fff7ed'
+        bgColor: '#fff7ed',
+        statusColor: '#64748b',
+    statusBg: '#f1f5f9',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.UploadONEM]: {
@@ -45,7 +67,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'PENDING',
         icon: Activity,
         color: '#f59e0b',
-        bgColor: '#fffbeb'
+        bgColor: '#fffbeb',
+         statusColor: '#64748b',
+    statusBg: '#f1f5f9',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab2"
     },
 
     [MatricID.Evalution]: {
@@ -53,7 +80,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'PENDING',
         icon: Activity,
         color: '#d97706',
-        bgColor: '#fef3c7'
+        bgColor: '#fef3c7',
+        statusColor: '#ef4444',
+    statusBg: '#fee2e2',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.ReviewScoreCard]: {
@@ -61,7 +93,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'CRITICAL',
         icon: ClipboardList,
         color: '#ef4444',
-        bgColor: '#fef2f2'
+        bgColor: '#fef2f2',
+        statusColor: '#64748b',
+    statusBg: '#f1f5f9',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.interviewSchedule]: {
@@ -69,7 +106,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'SCHEDULED',
         icon: Calendar,
         color: '#3b82f6',
-        bgColor: '#eff6ff'
+        bgColor: '#eff6ff',
+        statusColor: '#3b82f6', 
+    statusBg: '#eff6ff',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.interviewTracker]: {
@@ -77,7 +119,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'ON-GOING',
         icon: Activity,
         color: '#10b981',
-        bgColor: '#ecfdf5'
+        bgColor: '#ecfdf5',
+        statusColor: '#ef4444',
+    statusBg: '#fee2e2',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.OfferRelease]: {
@@ -85,7 +132,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'OUTBOUND',
         icon: FileText,
         color: '#6366f1',
-        bgColor: '#eef2ff'
+        bgColor: '#eef2ff',
+        statusColor: '#3b82f6', // Active badge is blue
+    statusBg: '#eff6ff',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.OfferAccepted]: {
@@ -93,7 +145,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'SUCCESS',
         icon: CheckCircle2,
         color: '#22c55e',
-        bgColor: '#f0fdf4'
+        bgColor: '#f0fdf4',
+        statusColor: '#64748b',
+    statusBg: '#f1f5f9',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.OfferRejected]: {
@@ -101,7 +158,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'LOST',
         icon: XCircle,
         color: '#f43f5e',
-        bgColor: '#fff1f2'
+        bgColor: '#fff1f2',
+         statusColor: '#64748b',
+    statusBg: '#f1f5f9',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.Onbording]: {
@@ -109,7 +171,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'WELCOME',
         icon: UserPlus,
         color: '#2563eb',
-        bgColor: '#eff6ff'
+        bgColor: '#eff6ff',
+        statusColor: '#ef4444',
+    statusBg: '#fee2e2',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.ReviewProfile]: {
@@ -117,7 +184,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'PENDING',
         icon: Activity,
         color: '#f59e0b',
-        bgColor: '#fffbeb'
+        bgColor: '#fffbeb',
+        statusColor: '#3b82f6', // Active badge is blue
+    statusBg: '#eff6ff',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     },
 
     [MatricID.AssignInterviewPanel]: {
@@ -125,7 +197,12 @@ const BASE_METRICS: Record<string, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         status: 'PENDING',
         icon: Activity,
         color: '#fbbf24',
-        bgColor: '#fefce8'
+        bgColor: '#fefce8',
+         statusColor: '#64748b',
+    statusBg: '#f1f5f9',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
     }
 };
 
@@ -269,24 +346,49 @@ const DataSyncFilter = [
         FilterKey: "IsDataSyncToRecruitment",
         Operator: "eq",
         FilterValue: Choices.Yes
-    },
-    {
-        FilterKey: "ItemCreated",
-        Operator: "eq",
-        FilterValue: Choices.No
     }
+    // {
+    //     FilterKey: "ItemCreated",
+    //     Operator: "eq",
+    //     FilterValue: Choices.No
+    // }
+    //  {
+    //     FilterKey: "StatusId",
+    //     Operator: "eq",
+    //     FilterValue: StatusId.ReadyforRecruitmentProcess
+    // }
 ];
 
-export const MetricQueryConfig: Record<number, Omit<FilterQuery, "StateValue">> = {
+type SingleQuery = Omit<FilterQuery, "StateValue">;
 
-    [MatricID.AssignHr]: {
-        ListName: ListNames.HRMSNewPositionRequest,
-        Filter: [
-            StatusFilter(StatusId.ReadyforRecruitmentProcess),
-            ...DataSyncFilter
-        ],
-        select: ["Id"]
-    },
+export const MetricQueryConfig: Record<number, SingleQuery | SingleQuery[]> = {
+
+    [MatricID.AssignHr]: [
+        {
+            ListName: ListNames.HRMSNewPositionRequest,
+            Filter: [
+                StatusFilter(StatusId.ReadyforRecruitmentProcess),
+                ...DataSyncFilter
+            ],
+            select: ["Id"]
+        },
+        {
+            ListName: ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails,
+            Filter: [
+                StatusFilter(StatusId.ReadyforRecruitmentProcess),
+                ...DataSyncFilter
+            ],
+            select: ["Id"]
+        },
+        {
+            ListName: ListNames.HRMSVacancyReplacementRequest,
+            Filter: [
+                StatusFilter(StatusId.ReadyforRecruitmentProcess),
+                ...DataSyncFilter
+            ],
+            select: ["Id"]
+        }
+    ],
 
     [MatricID.UploadONEM]: {
         ListName: ListNames.HRMSRecruitmentDptDetails,
@@ -432,10 +534,18 @@ export const getRoleBasedFilters = (roles: number[]): FilterQuery[] => {
         metrics.forEach(metric => metricSet.add(metric));
     });
 
-    return Array.from(metricSet).map(metricId => ({
-        StateValue: metricId,
-        ...MetricQueryConfig[metricId]
-    }));
+    const result: FilterQuery[] = [];
+    Array.from(metricSet).forEach(metricId => {
+        const config = MetricQueryConfig[metricId];
+        if (Array.isArray(config)) {
+            config.forEach(cfg => {
+                result.push({ StateValue: metricId, ...cfg });
+            });
+        } else {
+            result.push({ StateValue: metricId, ...config });
+        }
+    });
+    return result;
 
 };
 
@@ -454,7 +564,8 @@ export const priorityValues = (matrixs: Metric[]): PriorityData[] => {
             name: m.label,
             value: m.value,
             percent: total > 0 ? Math.round((m.value / total) * 100) : 0,
-            color: m.color
+            color: m.color,
+            iconType: 'hr'
         }));
 };
 

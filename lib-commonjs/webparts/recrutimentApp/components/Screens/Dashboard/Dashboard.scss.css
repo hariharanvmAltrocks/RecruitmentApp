@@ -7,10 +7,8 @@
    Metrics Grid
 ========================= */
 .metrics-grid {
-  display: grid;
+  display: ruby;
   /* Default for mobile */
-  grid-template-columns: repeat(1, 1fr);
-  gap: 16px;
   margin-bottom: 32px;
   /* Mobile Large */
   /* Tablet */
@@ -29,6 +27,11 @@
 @media (min-width: 1024px) {
   .metrics-grid {
     grid-template-columns: repeat(5, 1fr);
+  }
+}
+@media (min-width: 1440px) {
+  .metrics-grid {
+    grid-template-columns: repeat(8, 1fr);
   }
 }
 

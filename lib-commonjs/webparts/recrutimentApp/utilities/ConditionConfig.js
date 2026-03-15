@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
+exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
 exports.MatricID = {
     AssignHr: 1,
     UploadONEM: 2,
@@ -69,5 +69,13 @@ exports.ListEmailName = {
     LM: "LineManager",
     HOD: "HOD",
     HRLead: "RecruitmentHRLead"
+};
+exports.menuID = {
+    Dashboard: 1,
+    SelectionProcess: 27,
+    PreSelectionProcess: 30,
+    PostSelectionProcess: 31,
+    ReviewProfile: 32,
+    RecrutimentTable: 28,
 };
 //# sourceMappingURL=ConditionConfig.js.map

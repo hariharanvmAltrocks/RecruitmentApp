@@ -1,13 +1,13 @@
 import React from "react";
 import "./tracker.scss";
 import { ChevronRight } from "lucide-react";
-import { DataSyncToRecruitmentResponse } from "../../../services/Dashboard/IDashboard";
+import { DashboardData } from "../../../services/Dashboard/IDashboard";
 
 interface Props {
-    rows: DataSyncToRecruitmentResponse[];
+    rows: DashboardData[];
     selectedMetric: any;
     activeMetric: number;
-    onRowClick?: (row: DataSyncToRecruitmentResponse) => void;
+    onRowClick?: (row: DashboardData) => void;
 }
 
 const Tracker: React.FC<Props> = ({

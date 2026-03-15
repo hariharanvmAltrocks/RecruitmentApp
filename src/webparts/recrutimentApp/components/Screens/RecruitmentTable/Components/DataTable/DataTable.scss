@@ -1,0 +1,165 @@
+@import "../../../../../styles/theme";
+@import "../../../../../styles/variables";
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  &__head {
+    background: $secondary-color;
+  }
+
+  &__head-row {
+    th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: $text-subtle;
+      padding: 16px 20px;
+      text-align: left;
+    }
+  }
+
+  &__row {
+    border-top: 1px solid $border-light;
+    transition: background $transition-base;
+
+    &:hover {
+      background: #f8fbff;
+    }
+  }
+
+  &__row--selected {
+    background: #f3f7ff;
+  }
+
+  &__cell {
+    padding: 18px 20px;
+    font-size: 14px;
+    color: $text-secondary;
+    vertical-align: middle;
+  }
+
+  &__cell--muted {
+    color: $text-muted;
+  }
+
+  &__cell--count {
+    font-weight: 700;
+    color: $text-primary;
+  }
+
+  &__cell--actions {
+    text-align: right;
+    width: 80px;
+  }
+
+  &__job-title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  &__job-dept {
+    font-size: 12px;
+    color: $text-subtle;
+    font-weight: 500;
+  }
+
+  &__status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .status-badge {
+    @extend .data-table__status-badge;
+  }
+
+  &__action-btn {
+    border: 1px solid $border-base;
+    background: $white;
+    color: $primary-color;
+    border-radius: 10px;
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all $transition-base;
+    font-size: 12px;
+    font-weight: 600;
+
+    &:hover {
+      border-color: $primary-color;
+      box-shadow: $shadow-sm;
+    }
+  }
+
+  &__action-icon {
+    color: $text-subtle;
+  }
+
+  &__checkbox-cell {
+    width: 48px;
+  }
+
+  &__checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1px solid #cbd5f5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: $white;
+    cursor: pointer;
+    transition: all $transition-base;
+  }
+
+  &__checkbox--checked {
+    background: $primary-color;
+    border-color: $primary-color;
+    color: $white;
+  }
+
+  &__skeleton {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: data-table-shimmer 1.4s infinite;
+  }
+
+  &__skeleton--title {
+    width: 180px;
+    height: 14px;
+  }
+
+  &__skeleton--subtitle {
+    width: 100px;
+    height: 10px;
+  }
+
+  &__skeleton--short {
+    width: 60px;
+  }
+}
+
+@keyframes data-table-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

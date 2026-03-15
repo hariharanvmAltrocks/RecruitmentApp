@@ -10,10 +10,16 @@ export interface MetricConfig {
     icon: LucideIcon;
     color: string;
     bgColor: string;
+    statusColor: string,
+    statusBg: string,
     showArrow: boolean;
     externalApi?: {
         workflowStatuses: string[];
     };
+     iconType?: string;
+     path: string;
+     menuId: number;
+     TabValue: string;
 }
 
 export interface Metric extends MetricConfig {

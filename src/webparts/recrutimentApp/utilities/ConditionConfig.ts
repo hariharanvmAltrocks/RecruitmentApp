@@ -73,3 +73,12 @@ export const ListEmailName = {
     HOD: "HOD",
     HRLead: "RecruitmentHRLead"
 }
+
+export const menuID = {
+    Dashboard: 1,
+    SelectionProcess: 27,
+    PreSelectionProcess: 30,
+    PostSelectionProcess: 31,
+    ReviewProfile: 32,
+    RecrutimentTable: 28,
+}

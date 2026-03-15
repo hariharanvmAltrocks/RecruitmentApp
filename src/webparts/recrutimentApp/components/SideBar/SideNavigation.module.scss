@@ -1,7 +1,10 @@
+@import "../../styles/theme";
+@import "../../styles/variables";
+
 .sidebar {
     width: 240px;
-    background: var(--app-sidenav-color);
-    border-right: 1px solid #e2e8f0;
+    background: $side-nav-color;
+    border-right: 1px solid $border-base;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
@@ -35,20 +38,20 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid $border-light;
     min-height: 80px; // ensure header remains same height if collapsed
 }
 
 .logoIcon {
     width: 40px;
     height: 40px;
-    background: var(--app-primary-color);
+    background: $white;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 10px 15px -3px $primary-shadow;
     flex-shrink: 0;
 }
 
@@ -61,7 +64,7 @@
 .logoTitle {
     font-weight: bold;
     font-size: 18px;
-    color: var(--app-primary-color);
+    color: $text-primary;
     white-space: nowrap;
 }
 
@@ -80,18 +83,19 @@
     padding: 12px 16px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: #64748b;
+    color: $text-muted;
     margin: 0 8px;
     border-radius: 8px;
 
     &:hover {
-        background: var(--app-secondary-color);
-        color: var(--app-primary-color);
+        background: $secondary-color;
+        color: $primary-color;
     }
 
     &.active {
-        background: var(--app-secondary-color);
-        color: var(--app-primary-color);
+        background: $secondary-color;
+        color: $primary-color;
+        font-weight: bold;
     }
 }
 
@@ -103,8 +107,8 @@
 }
 
 .label {
-    font-weight: 500;
-    font-size: 14px;
+    // font-weight: 500;
+    font-size: 17px;
     flex: 1;
     white-space: nowrap;
 }
@@ -113,7 +117,7 @@
     width: 16px;
     height: 16px;
     transition: transform 0.3s ease;
-    color: #94a3b8;
+    color: $text-subtle;
 
     &.open {
         transform: rotate(180deg);

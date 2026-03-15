@@ -13,105 +13,182 @@ var BASE_METRICS = (_a = {},
         status: 'ACTIVE',
         icon: lucide_react_1.UserCheck,
         color: '#f97316',
-        bgColor: '#fff7ed'
+        bgColor: '#fff7ed',
+        statusColor: '#3b82f6',
+        statusBg: '#eff6ff',
+        iconType: "hr",
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.JobAdvert] = {
         label: 'Pending Advert Upload',
         status: 'ACTIVE',
         icon: lucide_react_1.UserCheck,
         color: '#ea580c',
-        bgColor: '#ffedd5'
+        bgColor: '#ffedd5',
+        statusColor: '#64748b',
+        statusBg: '#f1f5f9',
+        iconType: "onem",
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.PreSelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.AdvertReviewLM] = {
         label: 'Pending Advert Review',
         status: 'ACTIVE',
         icon: lucide_react_1.UserCheck,
         color: '#fb923c',
-        bgColor: '#fff7ed'
+        bgColor: '#fff7ed',
+        statusColor: '#ef4444',
+        statusBg: '#fee2e2',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.AdvertReviewHOD] = {
         label: 'Pending Advert Review',
         status: 'ACTIVE',
         icon: lucide_react_1.UserCheck,
         color: '#fdba74',
-        bgColor: '#fff7ed'
+        bgColor: '#fff7ed',
+        statusColor: '#64748b',
+        statusBg: '#f1f5f9',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.UploadONEM] = {
         label: 'Pending Upload ONEM',
         status: 'PENDING',
         icon: lucide_react_1.Activity,
         color: '#f59e0b',
-        bgColor: '#fffbeb'
+        bgColor: '#fffbeb',
+        statusColor: '#64748b',
+        statusBg: '#f1f5f9',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab2"
     },
     _a[ConditionConfig_1.MatricID.Evalution] = {
         label: 'Pending Evaluation',
         status: 'PENDING',
         icon: lucide_react_1.Activity,
         color: '#d97706',
-        bgColor: '#fef3c7'
+        bgColor: '#fef3c7',
+        statusColor: '#ef4444',
+        statusBg: '#fee2e2',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.ReviewScoreCard] = {
         label: 'Pending Position ID',
         status: 'CRITICAL',
         icon: lucide_react_1.ClipboardList,
         color: '#ef4444',
-        bgColor: '#fef2f2'
+        bgColor: '#fef2f2',
+        statusColor: '#64748b',
+        statusBg: '#f1f5f9',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.interviewSchedule] = {
         label: 'Interviews Scheduled',
         status: 'SCHEDULED',
         icon: lucide_react_1.Calendar,
         color: '#3b82f6',
-        bgColor: '#eff6ff'
+        bgColor: '#eff6ff',
+        statusColor: '#3b82f6',
+        statusBg: '#eff6ff',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.interviewTracker] = {
         label: 'Interview Tracking',
         status: 'ON-GOING',
         icon: lucide_react_1.Activity,
         color: '#10b981',
-        bgColor: '#ecfdf5'
+        bgColor: '#ecfdf5',
+        statusColor: '#ef4444',
+        statusBg: '#fee2e2',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.OfferRelease] = {
         label: 'Offer Letters Released',
         status: 'OUTBOUND',
         icon: lucide_react_1.FileText,
         color: '#6366f1',
-        bgColor: '#eef2ff'
+        bgColor: '#eef2ff',
+        statusColor: '#3b82f6', // Active badge is blue
+        statusBg: '#eff6ff',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.OfferAccepted] = {
         label: 'Offers Accepted',
         status: 'SUCCESS',
         icon: lucide_react_1.CheckCircle2,
         color: '#22c55e',
-        bgColor: '#f0fdf4'
+        bgColor: '#f0fdf4',
+        statusColor: '#64748b',
+        statusBg: '#f1f5f9',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.OfferRejected] = {
         label: 'Offers Rejected',
         status: 'LOST',
         icon: lucide_react_1.XCircle,
         color: '#f43f5e',
-        bgColor: '#fff1f2'
+        bgColor: '#fff1f2',
+        statusColor: '#64748b',
+        statusBg: '#f1f5f9',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.Onbording] = {
         label: 'Candidates Onboarded',
         status: 'WELCOME',
         icon: lucide_react_1.UserPlus,
         color: '#2563eb',
-        bgColor: '#eff6ff'
+        bgColor: '#eff6ff',
+        statusColor: '#ef4444',
+        statusBg: '#fee2e2',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.ReviewProfile] = {
         label: 'Review Profile',
         status: 'PENDING',
         icon: lucide_react_1.Activity,
         color: '#f59e0b',
-        bgColor: '#fffbeb'
+        bgColor: '#fffbeb',
+        statusColor: '#3b82f6', // Active badge is blue
+        statusBg: '#eff6ff',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = {
         label: 'Assign Interview Panel',
         status: 'PENDING',
         icon: lucide_react_1.Activity,
         color: '#fbbf24',
-        bgColor: '#fefce8'
+        bgColor: '#fefce8',
+        statusColor: '#64748b',
+        statusBg: '#f1f5f9',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab1"
     },
     _a);
 var buildCol = function (id, overrides) {
@@ -228,21 +305,42 @@ var DataSyncFilter = [
         FilterKey: "IsDataSyncToRecruitment",
         Operator: "eq",
         FilterValue: ApiConfig_1.Choices.Yes
-    },
-    {
-        FilterKey: "ItemCreated",
-        Operator: "eq",
-        FilterValue: ApiConfig_1.Choices.No
     }
+    // {
+    //     FilterKey: "ItemCreated",
+    //     Operator: "eq",
+    //     FilterValue: Choices.No
+    // }
+    //  {
+    //     FilterKey: "StatusId",
+    //     Operator: "eq",
+    //     FilterValue: StatusId.ReadyforRecruitmentProcess
+    // }
 ];
 exports.MetricQueryConfig = (_b = {},
-    _b[ConditionConfig_1.MatricID.AssignHr] = {
-        ListName: Config_1.ListNames.HRMSNewPositionRequest,
-        Filter: tslib_1.__spreadArray([
-            StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess)
-        ], DataSyncFilter, true),
-        select: ["Id"]
-    },
+    _b[ConditionConfig_1.MatricID.AssignHr] = [
+        {
+            ListName: Config_1.ListNames.HRMSNewPositionRequest,
+            Filter: tslib_1.__spreadArray([
+                StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess)
+            ], DataSyncFilter, true),
+            select: ["Id"]
+        },
+        {
+            ListName: Config_1.ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails,
+            Filter: tslib_1.__spreadArray([
+                StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess)
+            ], DataSyncFilter, true),
+            select: ["Id"]
+        },
+        {
+            ListName: Config_1.ListNames.HRMSVacancyReplacementRequest,
+            Filter: tslib_1.__spreadArray([
+                StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess)
+            ], DataSyncFilter, true),
+            select: ["Id"]
+        }
+    ],
     _b[ConditionConfig_1.MatricID.UploadONEM] = {
         ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
         Filter: [StatusFilter(Config_1.StatusId.PendingUploadONEM)],
@@ -363,7 +461,19 @@ var getRoleBasedFilters = function (roles) {
         var metrics = RoleMetricFilters[role] || [];
         metrics.forEach(function (metric) { return metricSet.add(metric); });
     });
-    return Array.from(metricSet).map(function (metricId) { return (tslib_1.__assign({ StateValue: metricId }, exports.MetricQueryConfig[metricId])); });
+    var result = [];
+    Array.from(metricSet).forEach(function (metricId) {
+        var config = exports.MetricQueryConfig[metricId];
+        if (Array.isArray(config)) {
+            config.forEach(function (cfg) {
+                result.push(tslib_1.__assign({ StateValue: metricId }, cfg));
+            });
+        }
+        else {
+            result.push(tslib_1.__assign({ StateValue: metricId }, config));
+        }
+    });
+    return result;
 };
 exports.getRoleBasedFilters = getRoleBasedFilters;
 var totalPriority = function (matrixs) {
@@ -380,7 +490,8 @@ var priorityValues = function (matrixs) {
         name: m.label,
         value: m.value,
         percent: total > 0 ? Math.round((m.value / total) * 100) : 0,
-        color: m.color
+        color: m.color,
+        iconType: 'hr'
     }); });
 };
 exports.priorityValues = priorityValues;

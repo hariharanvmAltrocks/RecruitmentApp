@@ -310,7 +310,8 @@ const batchGet = async (queries: BatchQuery[]): Promise<Record<number, any>> => 
         .getByTitle(q.ListName)
         .items
         .filter(filterStr)
-        .select(...q.select);
+        .select(...q.select ?? ["*"])
+        .expand(q.expand ?? []);
 
       return request().then(r => {
         results[q.StateValue] = r;

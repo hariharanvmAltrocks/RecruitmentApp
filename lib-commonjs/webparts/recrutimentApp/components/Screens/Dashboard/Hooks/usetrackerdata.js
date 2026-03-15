@@ -11,7 +11,7 @@ var useTrackerData = function (MatricID) {
     var _a = (0, react_1.useState)([]), trackerData = _a[0], setTrackerData = _a[1];
     var _b = (0, react_1.useState)(false), loading = _b[0], setLoading = _b[1];
     var fetchtrackerData = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var condition, Filter, response, _a, error_1;
+        var condition, Filter, response, filterObj, _a, error_1;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -21,7 +21,8 @@ var useTrackerData = function (MatricID) {
                     Filter = metricColumns_config_1.MetricQueryConfig[MatricID];
                     console.log(Filter);
                     response = void 0;
-                    _a = Filter.ListName;
+                    filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
+                    _a = filterObj.ListName;
                     switch (_a) {
                         case Config_1.ListNames.HRMSNewPositionRequest: return [3 /*break*/, 1];
                         case Config_1.ListNames.HRMSRecruitmentDptDetails: return [3 /*break*/, 3];
@@ -29,24 +30,24 @@ var useTrackerData = function (MatricID) {
                         case Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD: return [3 /*break*/, 7];
                     }
                     return [3 /*break*/, 9];
-                case 1: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetNPAEPVRRDetails(Filter.Filter, condition)];
+                case 1: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetNPAEPVRRDetails(filterObj.Filter[0], condition)];
                 case 2:
                     response = _b.sent();
                     return [3 /*break*/, 9];
-                case 3: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(Filter.Filter, condition)];
+                case 3: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filterObj.Filter[0], condition)];
                 case 4:
                     response = _b.sent();
                     return [3 /*break*/, 9];
-                case 5: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetCandidateDetails(Filter.Filter, condition)];
+                case 5: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filterObj.Filter[0], condition)];
                 case 6:
                     response = _b.sent();
                     return [3 /*break*/, 9];
-                case 7: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(Filter.Filter, condition)];
+                case 7: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(filterObj.Filter[0], condition)];
                 case 8:
                     response = _b.sent();
                     return [3 /*break*/, 9];
                 case 9:
-                    if (response.status === ApiConfig_1.ResponeStatus.SUCCESS) {
+                    if (response && response.status === ApiConfig_1.ResponeStatus.SUCCESS) {
                         setTrackerData(response.data);
                     }
                     return [3 /*break*/, 12];

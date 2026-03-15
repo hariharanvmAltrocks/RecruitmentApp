@@ -255,23 +255,23 @@ async GetNPAEPVRRDetails(
         ListName: ListNames.HRMSAdditionalHeadCountForExisitingPosition,
         Filter: filterParam,
         FilterCondition: filterConditions,
-        Select: ["*", "Status/StatusDescription", "BusinessUnitCode/BusineesUnitCode"],
-        Expand: ["Status", "BusinessUnitCode"],
+        select: ["*", "Status/StatusDescription", "BusinessUnitCode/BusineesUnitCode"],
+        expand: ["Status", "BusinessUnitCode"],
       },
       {
         StateValue: 2,
         ListName: ListNames.HRMSNewPositionRequest,
         Filter: filterParam,
         FilterCondition: filterConditions,
-        Select: ["*", "BusinessUnitCode/BusineesUnitCode", "Status/StatusDescription"],
-        Expand: ["Status", "BusinessUnitCode"],
+        select: ["*", "BusinessUnitCode/BusineesUnitCode", "Status/StatusDescription"],
+        expand: ["Status", "BusinessUnitCode"],
       },
       {
         StateValue: 3,
         ListName: ListNames.HRMSVacancyReplacementRequest,
         Filter: filterParam,
         FilterCondition: filterConditions,
-        Select: [
+        select: [
           "*",
           "BusinessUnitCode/BusineesUnitCode",
           "Status/StatusDescription",
@@ -279,7 +279,7 @@ async GetNPAEPVRRDetails(
           "JobCode/JobTitleInEnglish",
           "JobCode/ID",
         ],
-        Expand: ["Status", "Action", "JobCode", "BusinessUnitCode"],
+        expand: ["Status", "JobCode", "BusinessUnitCode"],
       },
     ];
 
@@ -325,6 +325,7 @@ async GetNPAEPVRRDetails(
       ID: item.ID,
       RecordID: index + 1,
       BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode ?? "",
+      NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
       Status: item?.Status?.StatusDescription ?? "",
       ModifiedDate: item?.Modified
         ? moment(item.Modified).format("YYYY-MM-DD")

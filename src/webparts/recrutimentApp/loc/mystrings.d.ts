@@ -11,6 +11,10 @@ declare interface IRecrutimentAppWebPartStrings {
   AppOfficeEnvironment: string;
   AppOutlookEnvironment: string;
   UnknownEnvironment: string;
+  AppTitle: string;
+  HomeLabel: string;
+  LogoutLabel: string;
+  LoadingLabel: string;
 }
 
 declare module 'RecrutimentAppWebPartStrings' {

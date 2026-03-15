@@ -1,6 +1,9 @@
+@import "../../../styles/theme";
+@import "../../../styles/variables";
+
 .header {
-    background: var(--app-header-color);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+    background: $header-bg-color;
+    border-bottom: 1px solid $border-base;
     padding: 16px 32px;
     position: sticky;
     top: 0;
@@ -24,14 +27,14 @@
 .menu-btn {
     display: none;
     padding: 8px;
-    color: var(--app-primary-color);
+    color: $primary-color;
     border-radius: 8px;
     border: none;
     background: transparent;
     cursor: pointer;
 
     &:hover {
-        background: var(--app-secondary-color);
+        background: $secondary-color;
     }
 }
 
@@ -43,7 +46,7 @@
 .page-title {
     font-size: 24px;
     font-weight: 700;
-    color: var(--app-primary-color);
+    color: $header-text-color;
     line-height: 1.2;
 }
 
@@ -55,7 +58,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #94a3b8;
+    color: $text-subtle;
     margin-top: 2px;
 
     a {
@@ -64,16 +67,16 @@
         transition: color 0.2s;
 
         &:hover {
-            color: var(--app-primary-color);
+            color: $primary-color;
         }
 
         &.active {
-            color: var(--app-primary-color);
+            color: $primary-color;
         }
     }
 
     .crumb-icon {
-        color: #cbd5f5;
+        color: $text-subtle;
     }
 }
 
@@ -88,11 +91,11 @@
     padding: 8px;
     border: none;
     background: transparent;
-    color: var(--app-primary-color);
+    color: $text-subtle;
     cursor: pointer;
 
     &:hover {
-        color: var(--app-primary-color);
+        color: $primary-color;
     }
 }
 
@@ -102,15 +105,15 @@
     right: 8px;
     width: 8px;
     height: 8px;
-    background: var(--app-secondary-color);
+    background: $danger;
     border-radius: 50%;
-    border: 2px solid var(--app-header-color);
+    border: 2px solid $header-bg-color;
 }
 
 .divider {
     width: 1px;
     height: 32px;
-    background: #e2e8f0;
+    background: $border-base;
 }
 
 .user-profile {
@@ -126,13 +129,13 @@
 .user-name {
     font-size: 14px;
     font-weight: 700;
-    color: var(--app-primary-color);
+    color: $text-secondary;
 }
 
 .user-role {
     font-size: 10px;
     text-transform: uppercase;
-    color: #94a3b8;
+    color: $text-subtle;
     font-weight: 700;
     margin-top: 2px;
 }
@@ -149,11 +152,11 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: var(--app-secondary-color);
+    background: $secondary-color;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--app-primary-color);
+    color: $primary-color;
     font-weight: 700;
     border: 2px solid white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -164,13 +167,13 @@
     position: absolute;
     bottom: -40px;
     right: 0;
-    background: var(--app-button-color);
-    border: 1px solid var(--app-button-color);
+    background: $button-color;
+    border: 1px solid $button-color;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     padding: 6px 12px;
     border-radius: 8px;
     font-size: 12px;
-    color: #ffffff;
+    color: $white;
     display: flex;
     align-items: center;
     gap: 6px;

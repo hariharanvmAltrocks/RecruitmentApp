@@ -7,6 +7,7 @@ import RecrutimentApp from "./components/RecrutimentApp/RecrutimentApp";
 import "./External/tailwind.css"
 import { MenuDataProvider } from "./utilities/hooks/MenuDataContext";
 import { ThemeProvider, useThemeVars } from "./theme/ThemeContext";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 const FaviconSetter: React.FC<{ webURL: string }> = ({ webURL }) => {
   React.useEffect(() => {
@@ -54,7 +55,7 @@ const App: React.FC<IRecrutimentAppProps> = (props) => {
         <FaviconSetter webURL={props.webURL} />
         <FontLoader />
         <div className="app" style={themeVars}>
-          <React.Suspense fallback={<div>Loading...</div>}>
+          <React.Suspense fallback={<div>{strings.LoadingLabel}</div>}>
             <RecrutimentApp {...props} {...state} {...navigate} />
           </React.Suspense>
         </div>

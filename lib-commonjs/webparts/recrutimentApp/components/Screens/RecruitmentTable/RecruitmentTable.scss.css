@@ -1,0 +1,144 @@
+.recruitment-table {
+  font-family: var(--app-font-family, "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif);
+  color: #0f172a;
+}
+.recruitment-table__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.recruitment-table__header-text h2 {
+  font-size: 24px;
+  margin: 0 0 8px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.recruitment-table__header-text p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+.recruitment-table__tabs {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.recruitment-table__tab {
+  border: 1px solid #f1f5f9;
+  background: #ffffff;
+  color: #64748b;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.recruitment-table__tab:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+.recruitment-table__tab--active {
+  border-color: #2563eb;
+  color: #2563eb;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.15);
+}
+.recruitment-table__tabs-loading {
+  font-size: 12px;
+  color: #94a3b8;
+  padding: 10px 0;
+}
+.recruitment-table__table-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.assignment-bar {
+  position: sticky;
+  bottom: 16px;
+  margin-top: 24px;
+  background: #0f172a;
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
+}
+.assignment-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.assignment-bar__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.assignment-bar__count {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #cbd5f5;
+}
+.assignment-bar__count strong {
+  font-size: 20px;
+  color: #ffffff;
+  letter-spacing: 0;
+}
+.assignment-bar__count span {
+  font-size: 10px;
+}
+.assignment-bar__controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.assignment-bar__select {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  min-width: 200px;
+}
+.assignment-bar__select option {
+  color: #0f172a;
+}
+.assignment-bar__button {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.assignment-bar__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.assignment-bar__button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}

@@ -15,25 +15,29 @@ export const useTrackerData = (MatricID: number) => {
             setLoading(true);
 
             const condition = "and";
-            const Filter = MetricQueryConfig[MatricID]
+            const Filter = MetricQueryConfig[MatricID];
             console.log(Filter);
             let response: any;
-            switch (Filter.ListName){
-                case ListNames.HRMSNewPositionRequest: 
-                response = await DashboardServices.GetNPAEPVRRDetails(Filter.Filter, condition);
-                break;
-                case ListNames.HRMSRecruitmentDptDetails: 
-                response = await DashboardServices.GetRecruitmentDetails(Filter.Filter, condition);
-                break;
+
+            // Handle Filter being an array or object
+            const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
+
+            switch (filterObj.ListName) {
+                case ListNames.HRMSNewPositionRequest:
+                    response = await DashboardServices.GetNPAEPVRRDetails(filterObj.Filter[0], condition);
+                    break;
+                case ListNames.HRMSRecruitmentDptDetails:
+                    response = await DashboardServices.GetRecruitmentDetails(filterObj.Filter[0], condition);
+                    break;
                 case ListNames.HRMSRecruitmentCandidatePersonalDetails:
-                response = await DashboardServices.GetCandidateDetails(Filter.Filter, condition);
-                break;
+                    response = await DashboardServices.GetCandidateDetails(filterObj.Filter[0], condition);
+                    break;
                 case ListNames.HRMSSelectedCandidateDetailsByHOD:
-                response = await DashboardServices.GetSelectedCandidate(Filter.Filter, condition);
-                break;
+                    response = await DashboardServices.GetSelectedCandidate(filterObj.Filter[0], condition);
+                    break;
             }
-            
-            if (response.status === ResponeStatus.SUCCESS) {
+
+            if (response && response.status === ResponeStatus.SUCCESS) {
                 setTrackerData(response.data);
             }
 
@@ -42,7 +46,6 @@ export const useTrackerData = (MatricID: number) => {
         } finally {
             setLoading(false);
         }
-
     }, [MatricID]);
 
     useEffect(() => {

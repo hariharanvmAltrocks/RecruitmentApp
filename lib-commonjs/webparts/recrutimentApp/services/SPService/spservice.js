@@ -333,14 +333,14 @@ var batchGet = function (queries) { return tslib_1.__awaiter(void 0, void 0, voi
                 results_1 = {};
                 promises = queries.map(function (q) {
                     var _a;
-                    var _b;
+                    var _b, _c, _d;
                     var flatFilters = q.Filter.flat();
                     var filterStr = _buildODataFilter(flatFilters, (_b = q.FilterCondition) !== null && _b !== void 0 ? _b : "and");
                     var request = (_a = batchedSP_1.web.lists
                         .getByTitle(q.ListName)
                         .items
                         .filter(filterStr))
-                        .select.apply(_a, q.select);
+                        .select.apply(_a, (_c = q.select) !== null && _c !== void 0 ? _c : ["*"]).expand((_d = q.expand) !== null && _d !== void 0 ? _d : []);
                     return request().then(function (r) {
                         results_1[q.StateValue] = r;
                     });
