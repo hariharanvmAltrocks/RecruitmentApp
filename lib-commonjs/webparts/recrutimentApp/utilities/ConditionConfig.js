@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
+exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
 exports.MatricID = {
     AssignHr: 1,
     UploadONEM: 2,
@@ -77,5 +77,13 @@ exports.menuID = {
     PostSelectionProcess: 31,
     ReviewProfile: 32,
     RecrutimentTable: 28,
+};
+exports.Nationality = {
+    Nationals: "Nationals (Congolese)",
+    Expatriate: "Expatriate",
+};
+exports.NationalityCode = {
+    Nationals: "N0",
+    SouthAfrica: "N154",
 };
 //# sourceMappingURL=ConditionConfig.js.map

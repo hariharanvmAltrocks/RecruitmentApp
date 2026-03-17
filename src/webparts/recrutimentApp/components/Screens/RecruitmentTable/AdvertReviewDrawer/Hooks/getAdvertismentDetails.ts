@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RecruitmentServices } from "../../../../../services/ServiceExport";
+import { CheckboxGroupOption, MandatoryCheck } from "../../Components/BGVerification/BGVerification";
 
 export interface AdvertLanguageDetails {
   description: string;
@@ -23,10 +24,22 @@ export interface UseAdvertismentDetailsOptions {
   enabled?: boolean;
 }
 
+export interface IBGVData  {
+  checkboxBGVOption: CheckboxGroupOption[],
+                checkboxBGV: any[],
+                mantoryChecks:MandatoryCheck[],
+} 
+
 export const useAdvertismentDetails = (selectedJobCode: number | null, options?: UseAdvertismentDetailsOptions) => {
   const [data, setData] = useState<AdvertismentDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const enabled = options?.enabled ?? true;
+
+  const [BGVValue, setBGVValue] = useState<IBGVData>({
+      checkboxBGVOption: [],
+                  checkboxBGV: [],
+                  mantoryChecks: [],
+    })
 
   // const mockMap = useMemo(
   //   () => ({
@@ -49,6 +62,54 @@ export const useAdvertismentDetails = (selectedJobCode: number | null, options?:
   //   }) as Record<string, AdvertismentDetails>,
   //   []
   // );
+  
+    const fetchBVData = async (response: any) => {
+       try {
+                const res = await RecruitmentServices.GetBGVerificationType();
+                let BGVOPtions: CheckboxGroupOption[] = res.data
+                  .filter((check: any) => !check.isDefault)
+                  .map((item: any, index: number) => ({
+                    id: index + 1,
+                    key: item?.reference,
+                    description: item?.displayText,
+                    checked: item?.isDefault,
+                  }));
+                  let RoleProfileRes = response.data ?? []
+  const rawVerification = RoleProfileRes?.JobBasedBGVVerification;
+  const verificationList = Array.isArray(rawVerification) ? rawVerification : [];
+  
+  const resData = res?.data ?? [];
+  
+  const RoleBGV = verificationList.flatMap((item: any, index: number) =>
+    resData
+      .filter((data: any) => data.reference === item.verificationType)
+      .map((data: any) => ({
+        id: index + 1,
+        key: data.reference,
+        description: data.displayText,
+        checked: !!item?.isDefault, 
+      }))
+  );
+  
+                let mandatoryChecks: MandatoryCheck[] = res.data
+                  .filter((check: any) => check.isDefault)
+                  .map((check: any, index: number) => ({
+                    id: String(index + 1),
+                    label: check.displayText || "Unnamed Check",
+                    key: check.reference,
+                  }));
+  
+               setBGVValue((prev) => ({
+                  ...prev,
+                  checkboxBGVOption: BGVOPtions,
+                  checkboxBGV: RoleBGV,
+                  mantoryChecks: mandatoryChecks,
+                }));
+                // console.log(res, "res");
+              } catch (error) {
+                console.error("Error in OpenComments:", error);
+              }
+    }
 
   useEffect(() => {
     if (!selectedJobCode || !enabled) {
@@ -60,7 +121,7 @@ export const useAdvertismentDetails = (selectedJobCode: number | null, options?:
     setLoading(true);
     const timer = setTimeout(async () => {
       try {
-        const filterConditions = [{ FilterKey: "JobCode", Operator: "eq", FilterValue: selectedJobCode }];
+        const filterConditions = [{ FilterKey: "JobCode/ID", Operator: "eq", FilterValue: selectedJobCode }];
         const response = await RecruitmentServices.GetHRMSRecruitmentRoleProfileDetails(filterConditions, "");
 
         if (response.status === 200 && response.data && response.data.length > 0) {
@@ -99,7 +160,11 @@ export const useAdvertismentDetails = (selectedJobCode: number | null, options?:
           };
 
           setData(mappedData);
+
+          void fetchBVData(response.data)
         }
+          void fetchBVData(response.data)
+
       } catch (error) {
         console.error("Error fetching job details:", error);
       }
@@ -110,5 +175,14 @@ export const useAdvertismentDetails = (selectedJobCode: number | null, options?:
     return () => clearTimeout(timer);
   }, [selectedJobCode, enabled]);
 
-  return { data, loading };
+    const handleBvgToggle = useCallback((id: string) => {
+        setBGVValue(prev => ({
+            ...prev,
+            checkboxBGVOption: prev.checkboxBGVOption.map(check =>
+                String(check.id) === String(id) ? { ...check, checked: !check.checked } : check
+            )
+        }));
+    }, [BGVValue]);
+
+  return { data, BGVValue, loading, handleBvgToggle };
 };

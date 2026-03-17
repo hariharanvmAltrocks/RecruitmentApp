@@ -11,9 +11,7 @@ var SidebarItem = function (_a) {
     var hasChildren = item.Children && item.Children.length > 0;
     var isActive = activeMenuID === item.Id;
     var isParentOfActive = (_b = item.Children) === null || _b === void 0 ? void 0 : _b.some(function (child) { return child.Id === activeMenuID; });
-    // Highlight if the item itself is active OR if any of its children are active
     var shouldHighlight = isActive || isParentOfActive;
-    // Determine icon source based on highlighting
     var currentIcon = shouldHighlight && item.ActiveIcon ? item.ActiveIcon : item.Icon;
     var handleClick = function (e) {
         e.stopPropagation();

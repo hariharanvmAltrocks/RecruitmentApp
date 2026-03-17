@@ -6,6 +6,7 @@ import SPServices, { getSP } from "../SPService/spservice";
 import { BatchQuery } from "../SPService/Ispservice";
 import { _mapRecruitmentItems } from "./mapItems";
 import { DataSyncToRecruitmentResponse, IRecruitmentService, PostRecuritmentData, QualificationValue, RoleSpecKnowledge } from "./IRecruitmentService";
+import { BGverification } from "../AxiosService/CareerPortalAPI";
 
 export default class RecruitmentService implements IRecruitmentService {
 
@@ -213,10 +214,10 @@ async GetRecruitmentDetails(
   try {
     const res: any[] = await SPServices.SPReadItems({
       Listname: ListNames.HRMSRecruitmentDptDetails,
-      Select:  `*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,JobCode/ID,BusinessUnitCode/BusineesUnitCode,AssignedHR/Title`,
+      Select:  `*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,JobCode/ID,BusinessUnitCode/BusineesUnitCode`,
       Filter: filterParam,
       FilterCondition: filterConditions,
-      Expand: `Department,SubDepartment,Section,DepartmentCode,Status,Action,JobCode,BusinessUnitCode,AssignedHR`,
+      Expand: `Department,SubDepartment,Section,DepartmentCode,Status,Action,JobCode,BusinessUnitCode`,
       Topcount: count.Topcount,
       Orderby: "ID",
       Orderbydecorasc: true,
@@ -242,16 +243,16 @@ async GetRecruitmentDetails(
     ]);
 
     const positionMap = new Map<number, any>(
-      (positionRes.data ?? []).map((pos) => [pos.parentId, pos])
+      (positionRes.data ?? []).map((pos) => [pos.ID, pos])
     );
 
     for (const item of GridResult) {
       const pos = positionMap.get(item.ID);
       if (pos) {
         item.JobTitleEnglish = pos.title          ?? "";
-        item.JobTitleEnglishId = pos.titleId        ?? 0;
+        item.JobTitleEnglishId = pos.titleID        ?? 0;
         item.JobCode = pos.jobCode                ?? "";
-        item.JobCodeId = pos.jobCodeId            ?? 0;
+        item.JobCodeId = pos.JobCodeId            ?? 0;
         item.JobTitleFrench  = pos.JobTitleFrench ?? "";
         item.JobTitleFrenchId = pos.JobTitleFrenchId ?? 0;
         item.PatersonGrade   = pos.PatersonGrade  ?? "";
@@ -353,7 +354,7 @@ async GetPositionDetails(
     });
 
     const result = resdata.map((item: any, index: number) => ({
-      parentId: item?.LookupIDId ?? item?.PositionRequestIDId ?? 0,
+      ID: item?.LookupIDId ?? item?.PositionRequestIDId ?? item?.RecruitmentIDId ?? 0,
       id: index + 1,
       title: item?.JobTitleEnglish?.JobTitleInEnglish ?? "",
       titleID: item?.JobTitleEnglishId ?? 0,
@@ -695,5 +696,26 @@ async GetHRMSRecruitmentRoleProfileDetails(
     };
   }
 }
+
+    async GetBGVerificationType(): Promise<ApiResponse<any | null>> {
+        try {
+            const response = await BGverification.GetBGVerificationType();
+            return {
+                data: response.data,
+                status: response.status,
+                message: response.data.message,
+            };
+        } catch (error) {
+            console.error(
+                "Error inserting data into AdvertisementDetails:",
+                error
+            );
+            return {
+                data: [],
+                status: 500,
+                message: "Error inserting data into AdvertisementDetails",
+            };
+        }
+    }
 
 }

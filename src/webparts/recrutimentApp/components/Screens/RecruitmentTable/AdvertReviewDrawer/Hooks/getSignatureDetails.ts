@@ -47,7 +47,7 @@ export const useSignatureDetails = () => {
         const data = response.data;
         const mappedData : SignatureDetails = {
           reviewerName: data.FirstName + " " + data.MiddleName+ " "+ data.LastName,
-          reviewerInitial: data.LastName,
+          reviewerInitial: data.LastName.charAt(0).toUpperCase(),
           jobTitleEN: data.JopTitleEnglish || "",
           jobTitleFR: data.JopTitleFrench || "",
         }

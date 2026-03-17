@@ -47,7 +47,7 @@ var useSignatureDetails = function () {
                             data_1 = response.data;
                             mappedData = {
                                 reviewerName: data_1.FirstName + " " + data_1.MiddleName + " " + data_1.LastName,
-                                reviewerInitial: data_1.LastName,
+                                reviewerInitial: data_1.LastName.charAt(0).toUpperCase(),
                                 jobTitleEN: data_1.JopTitleEnglish || "",
                                 jobTitleFR: data_1.JopTitleFrench || "",
                             };

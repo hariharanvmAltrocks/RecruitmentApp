@@ -9,6 +9,11 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
     var _b = (0, react_1.useState)(null), data = _b[0], setData = _b[1];
     var _c = (0, react_1.useState)(false), loading = _c[0], setLoading = _c[1];
     var enabled = (_a = options === null || options === void 0 ? void 0 : options.enabled) !== null && _a !== void 0 ? _a : true;
+    var _d = (0, react_1.useState)({
+        checkboxBGVOption: [],
+        checkboxBGV: [],
+        mantoryChecks: [],
+    }), BGVValue = _d[0], setBGVValue = _d[1];
     // const mockMap = useMemo(
     //   () => ({
     //     "JOB-001": {
@@ -30,6 +35,55 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
     //   }) as Record<string, AdvertismentDetails>,
     //   []
     // );
+    var fetchBVData = function (response) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        var res, BGVOPtions_1, RoleProfileRes, rawVerification, verificationList, resData_1, RoleBGV_1, mandatoryChecks_1, error_1;
+        var _a, _b;
+        return tslib_1.__generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    _c.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, ServiceExport_1.RecruitmentServices.GetBGVerificationType()];
+                case 1:
+                    res = _c.sent();
+                    BGVOPtions_1 = res.data
+                        .filter(function (check) { return !check.isDefault; })
+                        .map(function (item, index) { return ({
+                        id: index + 1,
+                        key: item === null || item === void 0 ? void 0 : item.reference,
+                        description: item === null || item === void 0 ? void 0 : item.displayText,
+                        checked: item === null || item === void 0 ? void 0 : item.isDefault,
+                    }); });
+                    RoleProfileRes = (_a = response.data) !== null && _a !== void 0 ? _a : [];
+                    rawVerification = RoleProfileRes === null || RoleProfileRes === void 0 ? void 0 : RoleProfileRes.JobBasedBGVVerification;
+                    verificationList = Array.isArray(rawVerification) ? rawVerification : [];
+                    resData_1 = (_b = res === null || res === void 0 ? void 0 : res.data) !== null && _b !== void 0 ? _b : [];
+                    RoleBGV_1 = verificationList.flatMap(function (item, index) {
+                        return resData_1
+                            .filter(function (data) { return data.reference === item.verificationType; })
+                            .map(function (data) { return ({
+                            id: index + 1,
+                            key: data.reference,
+                            description: data.displayText,
+                            checked: !!(item === null || item === void 0 ? void 0 : item.isDefault),
+                        }); });
+                    });
+                    mandatoryChecks_1 = res.data
+                        .filter(function (check) { return check.isDefault; })
+                        .map(function (check, index) { return ({
+                        id: String(index + 1),
+                        label: check.displayText || "Unnamed Check",
+                        key: check.reference,
+                    }); });
+                    setBGVValue(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { checkboxBGVOption: BGVOPtions_1, checkboxBGV: RoleBGV_1, mantoryChecks: mandatoryChecks_1 })); });
+                    return [3 /*break*/, 3];
+                case 2:
+                    error_1 = _c.sent();
+                    console.error("Error in OpenComments:", error_1);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
+            }
+        });
+    }); };
     (0, react_1.useEffect)(function () {
         if (!selectedJobCode || !enabled) {
             setData(null);
@@ -38,13 +92,13 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
         }
         setLoading(true);
         var timer = setTimeout(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-            var filterConditions, response, items, mappedData, error_1;
+            var filterConditions, response, items, mappedData, error_2;
             var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
             return tslib_1.__generator(this, function (_o) {
                 switch (_o.label) {
                     case 0:
                         _o.trys.push([0, 2, , 3]);
-                        filterConditions = [{ FilterKey: "JobCode", Operator: "eq", FilterValue: selectedJobCode }];
+                        filterConditions = [{ FilterKey: "JobCode/ID", Operator: "eq", FilterValue: selectedJobCode }];
                         return [4 /*yield*/, ServiceExport_1.RecruitmentServices.GetHRMSRecruitmentRoleProfileDetails(filterConditions, "")];
                     case 1:
                         response = _o.sent();
@@ -82,11 +136,13 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                                 },
                             };
                             setData(mappedData);
+                            void fetchBVData(response.data);
                         }
+                        void fetchBVData(response.data);
                         return [3 /*break*/, 3];
                     case 2:
-                        error_1 = _o.sent();
-                        console.error("Error fetching job details:", error_1);
+                        error_2 = _o.sent();
+                        console.error("Error fetching job details:", error_2);
                         return [3 /*break*/, 3];
                     case 3:
                         setLoading(false);
@@ -96,7 +152,12 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
         }); }, 700);
         return function () { return clearTimeout(timer); };
     }, [selectedJobCode, enabled]);
-    return { data: data, loading: loading };
+    var handleBvgToggle = (0, react_1.useCallback)(function (id) {
+        setBGVValue(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { checkboxBGVOption: prev.checkboxBGVOption.map(function (check) {
+                return String(check.id) === String(id) ? tslib_1.__assign(tslib_1.__assign({}, check), { checked: !check.checked }) : check;
+            }) })); });
+    }, [BGVValue]);
+    return { data: data, BGVValue: BGVValue, loading: loading, handleBvgToggle: handleBvgToggle };
 };
 exports.useAdvertismentDetails = useAdvertismentDetails;
 //# sourceMappingURL=getAdvertismentDetails.js.map

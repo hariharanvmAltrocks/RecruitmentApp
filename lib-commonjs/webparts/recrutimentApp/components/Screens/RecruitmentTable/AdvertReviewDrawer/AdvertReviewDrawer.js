@@ -16,6 +16,9 @@ var RequiredAttachments_1 = require("../Components/RequiredAttachments");
 var ReviewCommentSignature_1 = require("../Components/ReviewCommentSignature");
 var UploadDocument_1 = require("../Components/UploadDocument");
 var ValidationSummary_1 = require("../Components/ValidationSummary");
+var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
+var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
+var BGVerification_1 = tslib_1.__importDefault(require("../Components/BGVerification/BGVerification"));
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return (react_1.default.createElement("div", { className: "advert-review-drawer__skeleton", style: { width: width, height: height } }));
@@ -23,11 +26,12 @@ var SkeletonBlock = function (_a) {
 var AdvertReviewDrawer = function (_a) {
     var _b, _c;
     var drawerOpen = _a.drawerOpen, selectedJobId = _a.selectedJobId, selectedJobCode = _a.selectedJobCode, selectedType = _a.selectedType, advertLanguage = _a.advertLanguage, reviewerComments = _a.reviewerComments, acknowledgementCheckbox = _a.acknowledgementCheckbox, loadingState = _a.loadingState, onClose = _a.onClose, onLanguageChange = _a.onLanguageChange, onCommentsChange = _a.onCommentsChange, onToggleAcknowledgement = _a.onToggleAcknowledgement, setLoadingState = _a.setLoadingState;
+    var MatricID = (0, UIStateContext_1.useUIState)().MatricID;
     var _d = (0, getPositionDetails_1.usePositionDetails)(selectedJobId, selectedType), positionDetails = _d.data, positionLoading = _d.loading;
     var _e = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _e.data, signatureLoading = _e.loading;
     var jobCodeId = (_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeID) !== null && _b !== void 0 ? _b : 0;
     var jobCode = (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.jobCode) !== null && _c !== void 0 ? _c : selectedJobCode;
-    var _f = (0, getAdvertismentDetails_1.useAdvertismentDetails)(jobCodeId, { enabled: !!jobCodeId }), advertDetails = _f.data, advertLoading = _f.loading;
+    var _f = (0, getAdvertismentDetails_1.useAdvertismentDetails)(jobCodeId, { enabled: !!jobCodeId }), advertDetails = _f.data, BGVData = _f.BGVValue, handleBvgToggle = _f.handleBvgToggle, advertLoading = _f.loading;
     var _g = (0, getAttachmentDetails_1.useAttachmentDetails)(jobCode, { enabled: !!jobCode }), attachments = _g.data, attachmentLoading = _g.loading;
     var isLoading = positionLoading || advertLoading || attachmentLoading || signatureLoading;
     var _h = (0, react_1.useState)([]), uploadDocument = _h[0], setUploadDocument = _h[1];
@@ -36,6 +40,12 @@ var AdvertReviewDrawer = function (_a) {
     var uploadValid = uploadDocument.length > 0;
     var checkboxValid = acknowledgementCheckbox;
     var canApprove = commentValid && uploadValid && checkboxValid;
+    var mandatoryValid = Array.isArray(BGVData.mantoryChecks) &&
+        BGVData.mantoryChecks.length > 0 &&
+        BGVData.mantoryChecks.every(function (c) { return c.checked; });
+    var optionValid = Array.isArray(BGVData.checkboxBGVOption) &&
+        BGVData.checkboxBGVOption.some(function (o) { return o.checked; });
+    var bgvValid = mandatoryValid && optionValid;
     (0, react_1.useEffect)(function () {
         if (loadingState !== isLoading) {
             setLoadingState(isLoading);
@@ -60,7 +70,7 @@ var AdvertReviewDrawer = function (_a) {
     }, [onClose]);
     var handleApprove = (0, react_1.useCallback)(function () {
         setShowValidation(true);
-        if (!canApprove) {
+        if (!canApprove && !bgvValid) {
             return;
         }
         // TODO: Add approve action here
@@ -85,11 +95,14 @@ var AdvertReviewDrawer = function (_a) {
                 react_1.default.createElement(AdvertLanguageToggle_1.AdvertLanguageToggle, { advertLanguage: advertLanguage, advertContent: advertContent, isLoading: isLoading, onLanguageChange: onLanguageChange }),
                 react_1.default.createElement(RequiredAttachments_1.RequiredAttachments, { attachments: attachments, isLoading: isLoading }),
                 react_1.default.createElement(UploadDocument_1.UploadDocument, { multiple: false, acceptedFormats: ".pdf", label: "Upload JobAdvert", required: true, onChange: function (file) { return setUploadDocument(file); } }),
+                MatricID == 2 && (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.nationality) === ConditionConfig_1.Nationality.Expatriate && (react_1.default.createElement("div", { style: { marginTop: "20px" } },
+                    react_1.default.createElement(BGVerification_1.default, { mandatoryChecks: BGVData.mantoryChecks, VerificationChecks: BGVData.checkboxBGVOption, onToggleOption: handleBvgToggle }))),
                 react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement })),
             react_1.default.createElement(ValidationSummary_1.ValidationSummary, { show: showValidation && !canApprove, messages: [
                     { key: "upload", text: "Upload document is required.", valid: uploadValid },
                     { key: "comment", text: "Reviewer comment is required.", valid: commentValid },
                     { key: "checkbox", text: "Please acknowledge before approving.", valid: checkboxValid },
+                    { key: "BGVVerification", text: "Please Choose the BGV Verification", valid: optionValid }
                 ] }),
             react_1.default.createElement("div", { className: "advert-review-drawer__footer" },
                 react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__history", title: "View History" },

@@ -31,10 +31,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   const isActive = activeMenuID === item.Id;
   const isParentOfActive = item.Children?.some(child => child.Id === activeMenuID);
   
-  // Highlight if the item itself is active OR if any of its children are active
   const shouldHighlight = isActive || isParentOfActive;
   
-  // Determine icon source based on highlighting
   const currentIcon = shouldHighlight && item.ActiveIcon ? item.ActiveIcon : item.Icon;
 
   const handleClick = (e: React.MouseEvent) => {

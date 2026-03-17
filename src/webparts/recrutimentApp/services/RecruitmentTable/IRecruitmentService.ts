@@ -156,4 +156,5 @@ GetHRMSRecruitmentRoleProfileDetails(
   filterParam: any[],
   filterConditions: any
 ): Promise<ApiResponse<any | null>> ;
+GetBGVerificationType(): Promise<ApiResponse<any | null>>;
 };

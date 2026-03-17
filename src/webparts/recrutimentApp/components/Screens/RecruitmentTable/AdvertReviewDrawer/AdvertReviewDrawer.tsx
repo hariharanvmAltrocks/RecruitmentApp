@@ -13,6 +13,9 @@ import { RequiredAttachments } from "../Components/RequiredAttachments";
 import { ReviewCommentSignature } from "../Components/ReviewCommentSignature";
 import { UploadDocument, UploadedFile } from "../Components/UploadDocument";
 import { ValidationSummary } from "../Components/ValidationSummary";
+import { MatricID, Nationality } from "../../../../utilities/ConditionConfig";
+import { useUIState } from "../../../RecrutimentApp/UIStateContext";
+import BGVerification from "../Components/BGVerification/BGVerification";
 
 export interface AdvertReviewDrawerProps {
   drawerOpen: boolean;
@@ -49,13 +52,15 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   onToggleAcknowledgement,
   setLoadingState,
 }) => {
-  const { data: positionDetails, loading: positionLoading } = usePositionDetails(selectedJobId, selectedType);
+
+  const {MatricID} = useUIState();
+  const { data: positionDetails,  loading: positionLoading } = usePositionDetails(selectedJobId, selectedType);
   const { data: signatureDetails, loading: signatureLoading } = useSignatureDetails();
 
   const jobCodeId = positionDetails?.JobCodeID ?? 0;
   const jobCode = positionDetails?.jobCode ?? selectedJobCode;
 
-  const { data: advertDetails, loading: advertLoading } = useAdvertismentDetails(jobCodeId, { enabled: !!jobCodeId });
+  const { data: advertDetails,BGVValue: BGVData,handleBvgToggle: handleBvgToggle, loading: advertLoading } = useAdvertismentDetails(jobCodeId, { enabled: !!jobCodeId });
   const { data: attachments, loading: attachmentLoading } = useAttachmentDetails(jobCode, { enabled: !!jobCode });
 
   const isLoading = positionLoading || advertLoading || attachmentLoading || signatureLoading;
@@ -67,6 +72,19 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   const uploadValid = uploadDocument.length > 0;
   const checkboxValid = acknowledgementCheckbox;
   const canApprove = commentValid && uploadValid && checkboxValid;
+
+
+  const mandatoryValid =
+  Array.isArray(BGVData.mantoryChecks) &&
+  BGVData.mantoryChecks.length > 0 &&
+  BGVData.mantoryChecks.every((c) => c.checked);
+
+const optionValid =
+  Array.isArray(BGVData.checkboxBGVOption) &&
+  BGVData.checkboxBGVOption.some((o) => o.checked);
+
+const bgvValid = mandatoryValid && optionValid; 
+
 
   useEffect(() => {
     if (loadingState !== isLoading) {
@@ -97,7 +115,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
 
   const handleApprove = useCallback(() => {
     setShowValidation(true);
-    if (!canApprove) {
+    if (!canApprove && !bgvValid ) {
       return;
     }
 
@@ -171,6 +189,16 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                 onChange={(file: UploadedFile[]) => setUploadDocument(file)}
               />
 
+               {MatricID == 2 && positionDetails?.nationality === Nationality.Expatriate && (
+          <div style={{ marginTop: "20px" }}>
+            <BGVerification
+              mandatoryChecks={BGVData.mantoryChecks}
+              VerificationChecks={BGVData.checkboxBGVOption}
+              onToggleOption={handleBvgToggle}
+            />
+          </div>
+        )}
+
               <ReviewCommentSignature
                 reviewerComments={reviewerComments}
                 acknowledgementCheckbox={acknowledgementCheckbox}
@@ -187,6 +215,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                 { key: "upload", text: "Upload document is required.", valid: uploadValid },
                 { key: "comment", text: "Reviewer comment is required.", valid: commentValid },
                 { key: "checkbox", text: "Please acknowledge before approving.", valid: checkboxValid },
+                { key: "BGVVerification", text: "Please Choose the BGV Verification", valid: optionValid }
               ]}
             />
 

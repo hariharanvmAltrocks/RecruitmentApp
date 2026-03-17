@@ -1,0 +1,472 @@
+// ─── Design Tokens ───────────────────────────────────────────────────────────
+$font-stack: "DM Sans", "Segoe UI", system-ui, sans-serif;
+
+// Blue ramp
+$blue-50:  #eff6ff;
+$blue-100: #dbeafe;
+$blue-200: #bfdbfe;
+$blue-300: #93c5fd;
+$blue-400: #60a5fa;
+$blue-500: #3b82f6;
+$blue-600: #2563eb;
+$blue-700: #1d4ed8;
+
+// Slate ramp
+$slate-50:  #f8fafc;
+$slate-100: #f1f5f9;
+$slate-200: #e2e8f0;
+$slate-300: #cbd5e1;
+$slate-400: #94a3b8;
+$slate-500: #64748b;
+$slate-600: #475569;
+$slate-700: #334155;
+$slate-800: #1e293b;
+$slate-900: #0f172a;
+
+// Green ramp
+$green-50:  #f0fdf4;
+$green-100: #dcfce7;
+$green-500: #22c55e;
+$green-600: #16a34a;
+$green-700: #15803d;
+
+// Red
+$red-500: #ef4444;
+
+// Indigo accent
+$indigo-400: #818cf8;
+
+// ─── Radii ───────────────────────────────────────────────────────────────────
+$radius-sm:   5px;
+$radius-md:   8px;
+$radius-lg:   12px;
+$radius-xl:   16px;
+$radius-2xl:  20px;
+$radius-full: 9999px;
+
+// ─── Shadows ─────────────────────────────────────────────────────────────────
+$shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-md:   0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+$shadow-blue: 0 0 0 3px rgba(37, 99, 235, 0.14);
+
+// ─── Transitions ─────────────────────────────────────────────────────────────
+$ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+$ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+
+$transition-fast:   all 0.15s $ease-standard;
+$transition-normal: all 0.22s $ease-standard;
+$transition-spring: all 0.28s $ease-spring;
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CARD CONTAINER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.vc-card-container {
+  font-family: $font-stack;
+  max-width: 920px;
+  background: #fff;
+  border: 1px solid $slate-200;
+  border-radius: $radius-2xl;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-top: 2%;
+  position: relative;
+
+  // Top gradient accent bar
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, $blue-600, $blue-400, $indigo-400);
+    border-radius: $radius-2xl $radius-2xl 0 0;
+    z-index: 1;
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// HEADER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.vc-header {
+  padding: 22px 26px 20px;
+  border-bottom: 1px solid $slate-100;
+  background: linear-gradient(135deg, #fff 55%, $blue-50 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.vc-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: $slate-900;
+  letter-spacing: -0.018em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  // Shield icon via CSS mask
+  &::before {
+    content: "";
+    display: block;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    background-color: $blue-600;
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z'/%3E%3C/svg%3E");
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+  }
+}
+
+.vc-required-asterisk {
+  color: $red-500;
+  font-size: 1.05rem;
+  margin-left: 1px;
+}
+
+.vc-subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: $slate-500;
+  padding-left: 28px; // visually align under title text (icon 20px + gap 8px)
+  line-height: 1.5;
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BODY
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.vc-body {
+  padding: 24px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SECTION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.vc-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vc-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $slate-400;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+
+  // Full-width hairline divider
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: $slate-100;
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// GRID
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.vc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  gap: 10px;
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// OPTION CARD
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.vc-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 14px;
+  border: 1.5px solid $slate-200;
+  border-radius: $radius-lg;
+  cursor: pointer;
+  transition: $transition-normal;
+  background: #fff;
+  user-select: none;
+  overflow: hidden;
+
+  // Shimmer sweep on hover
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 35%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 65%
+    );
+    transform: translateX(-120%);
+    transition: transform 0.55s $ease-standard;
+    pointer-events: none;
+  }
+
+
+  // ── Disabled / Mandatory ─────────────────────────────────────────────────
+  &.disabled {
+    background: $slate-50;
+    border-color: $slate-200;
+    cursor: not-allowed;
+    opacity: 0.88;
+
+    .vc-label-text {
+      color: $slate-500;
+    }
+
+    .vc-custom-checkbox {
+      background: $slate-200;
+      border-color: $slate-300;
+
+      // Always-visible checkmark for mandatory items
+      &::after {
+        opacity: 1;
+        transform: rotate(45deg) scale(1);
+        border-color: $slate-400;
+      }
+    }
+  }
+
+
+  // ── Interactive / Optional ───────────────────────────────────────────────
+  &.interactive {
+    &:hover {
+      border-color: $blue-300;
+      background: $blue-50;
+      box-shadow: $shadow-sm;
+      transform: translateY(-1px);
+
+      // Trigger shimmer
+      &::after {
+        transform: translateX(120%);
+      }
+
+      .vc-custom-checkbox {
+        border-color: $blue-400;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: none;
+      transition-duration: 0.08s;
+    }
+  }
+
+
+  // ── Checked State ────────────────────────────────────────────────────────
+  &.interactive.checked {
+    border-color: $blue-500;
+    background: $blue-50;
+    box-shadow: $shadow-blue, $shadow-sm;
+
+    .vc-label-text {
+      color: $blue-700;
+      font-weight: 600;
+    }
+
+    .vc-custom-checkbox {
+      background: $blue-600;
+      border-color: $blue-600;
+      transform: scale(1.05);
+
+      &::after {
+        opacity: 1;
+        transform: rotate(45deg) scale(1);
+        border-color: #fff;
+      }
+    }
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// NATIVE CHECKBOX (visually hidden, kept for a11y)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.vc-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+
+  // Keyboard focus ring — surfaces on the parent card
+  &:focus-visible + .vc-checkbox-wrap .vc-custom-checkbox {
+    outline: 2px solid $blue-500;
+    outline-offset: 2px;
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CUSTOM CHECKBOX VISUAL
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.vc-checkbox-wrap {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vc-custom-checkbox {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: $radius-sm;
+  border: 1.8px solid $slate-300;
+  background: #fff;
+  transition: $transition-spring;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // CSS-drawn checkmark (border-trick)
+  &::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    width: 5px;
+    height: 9px;
+    border-right: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    transform: rotate(45deg) scale(0.4);
+    transform-origin: center;
+    opacity: 0;
+    transition: $transition-spring;
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LABEL TEXT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.vc-label-text {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: $slate-700;
+  line-height: 1.4;
+  transition: color 0.15s $ease-standard;
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// REQUIRED BADGE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.vc-badge {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: $radius-full;
+  background: $green-50;
+  color: $green-700;
+  border: 1px solid $green-100;
+  white-space: nowrap;
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FOOTER / SELECTION COUNTER  (optional — add .vc-footer in TSX if desired)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.vc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 26px 14px;
+  border-top: 1px solid $slate-100;
+  background: $slate-50;
+
+  .vc-footer-text {
+    font-size: 0.8rem;
+    color: $slate-500;
+
+    strong {
+      color: $slate-800;
+      font-weight: 600;
+    }
+  }
+
+  .vc-footer-clear {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: $blue-600;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+
+    &:hover {
+      color: $blue-700;
+      text-decoration: underline;
+    }
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RESPONSIVE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+@media (max-width: 640px) {
+  .vc-header {
+    padding: 18px 18px 16px;
+  }
+
+  .vc-body {
+    padding: 18px 18px 20px;
+    gap: 22px;
+  }
+
+  .vc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vc-footer {
+    padding: 10px 18px 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

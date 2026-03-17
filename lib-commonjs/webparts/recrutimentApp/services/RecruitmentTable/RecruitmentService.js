@@ -5,6 +5,7 @@ var ApiConfig_1 = require("../../utilities/ApiConfig");
 var Config_1 = require("../../utilities/Config");
 var spservice_1 = tslib_1.__importStar(require("../SPService/spservice"));
 var mapItems_1 = require("./mapItems");
+var CareerPortalAPI_1 = require("../AxiosService/CareerPortalAPI");
 var RecruitmentService = /** @class */ (function () {
     function RecruitmentService() {
     }
@@ -153,10 +154,10 @@ var RecruitmentService = /** @class */ (function () {
                         _o.trys.push([0, 3, , 4]);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
-                                Select: "*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,JobCode/ID,BusinessUnitCode/BusineesUnitCode,AssignedHR/Title",
+                                Select: "*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,JobCode/ID,BusinessUnitCode/BusineesUnitCode",
                                 Filter: filterParam,
                                 FilterCondition: filterConditions,
-                                Expand: "Department,SubDepartment,Section,DepartmentCode,Status,Action,JobCode,BusinessUnitCode,AssignedHR",
+                                Expand: "Department,SubDepartment,Section,DepartmentCode,Status,Action,JobCode,BusinessUnitCode",
                                 Topcount: ApiConfig_1.count.Topcount,
                                 Orderby: "ID",
                                 Orderbydecorasc: true,
@@ -176,15 +177,15 @@ var RecruitmentService = /** @class */ (function () {
                             ])];
                     case 2:
                         _a = _o.sent(), GridResult = _a[0], positionRes = _a[1];
-                        positionMap = new Map(((_b = positionRes.data) !== null && _b !== void 0 ? _b : []).map(function (pos) { return [pos.parentId, pos]; }));
+                        positionMap = new Map(((_b = positionRes.data) !== null && _b !== void 0 ? _b : []).map(function (pos) { return [pos.ID, pos]; }));
                         for (_i = 0, GridResult_1 = GridResult; _i < GridResult_1.length; _i++) {
                             item = GridResult_1[_i];
                             pos = positionMap.get(item.ID);
                             if (pos) {
                                 item.JobTitleEnglish = (_c = pos.title) !== null && _c !== void 0 ? _c : "";
-                                item.JobTitleEnglishId = (_d = pos.titleId) !== null && _d !== void 0 ? _d : 0;
+                                item.JobTitleEnglishId = (_d = pos.titleID) !== null && _d !== void 0 ? _d : 0;
                                 item.JobCode = (_e = pos.jobCode) !== null && _e !== void 0 ? _e : "";
-                                item.JobCodeId = (_f = pos.jobCodeId) !== null && _f !== void 0 ? _f : 0;
+                                item.JobCodeId = (_f = pos.JobCodeId) !== null && _f !== void 0 ? _f : 0;
                                 item.JobTitleFrench = (_g = pos.JobTitleFrench) !== null && _g !== void 0 ? _g : "";
                                 item.JobTitleFrenchId = (_h = pos.JobTitleFrenchId) !== null && _h !== void 0 ? _h : 0;
                                 item.PatersonGrade = (_j = pos.PatersonGrade) !== null && _j !== void 0 ? _j : "";
@@ -281,22 +282,22 @@ var RecruitmentService = /** @class */ (function () {
                     case 1:
                         resdata = _a.sent();
                         result = resdata.map(function (item, index) {
-                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
+                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u;
                             return ({
-                                parentId: (_b = (_a = item === null || item === void 0 ? void 0 : item.LookupIDId) !== null && _a !== void 0 ? _a : item === null || item === void 0 ? void 0 : item.PositionRequestIDId) !== null && _b !== void 0 ? _b : 0,
+                                ID: (_c = (_b = (_a = item === null || item === void 0 ? void 0 : item.LookupIDId) !== null && _a !== void 0 ? _a : item === null || item === void 0 ? void 0 : item.PositionRequestIDId) !== null && _b !== void 0 ? _b : item === null || item === void 0 ? void 0 : item.RecruitmentIDId) !== null && _c !== void 0 ? _c : 0,
                                 id: index + 1,
-                                title: (_d = (_c = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _c === void 0 ? void 0 : _c.JobTitleInEnglish) !== null && _d !== void 0 ? _d : "",
-                                titleID: (_e = item === null || item === void 0 ? void 0 : item.JobTitleEnglishId) !== null && _e !== void 0 ? _e : 0,
-                                jobCode: (_g = (_f = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _f === void 0 ? void 0 : _f.JobCode) !== null && _g !== void 0 ? _g : "",
-                                JobCodeId: (_h = item === null || item === void 0 ? void 0 : item.JobTitleEnglishId) !== null && _h !== void 0 ? _h : 0,
-                                DRCGrade: (_k = (_j = item === null || item === void 0 ? void 0 : item.DRCGrade) === null || _j === void 0 ? void 0 : _j.DRCGrade) !== null && _k !== void 0 ? _k : "",
-                                DRCGradeId: (_l = item === null || item === void 0 ? void 0 : item.DRCGradeId) !== null && _l !== void 0 ? _l : 0,
-                                PatersonGrade: (_o = (_m = item === null || item === void 0 ? void 0 : item.PatersonGrade) === null || _m === void 0 ? void 0 : _m.PatersonGrade) !== null && _o !== void 0 ? _o : "",
-                                PatersonGradeId: (_p = item === null || item === void 0 ? void 0 : item.PatersonGradeId) !== null && _p !== void 0 ? _p : 0,
-                                JobTitleFrench: (_r = (_q = item === null || item === void 0 ? void 0 : item.JobTitleFrench) === null || _q === void 0 ? void 0 : _q.JobTitleInFrench) !== null && _r !== void 0 ? _r : "",
-                                JobTitleFrenchId: (_s = item === null || item === void 0 ? void 0 : item.JobTitleFrenchId) !== null && _s !== void 0 ? _s : 0,
+                                title: (_e = (_d = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _d === void 0 ? void 0 : _d.JobTitleInEnglish) !== null && _e !== void 0 ? _e : "",
+                                titleID: (_f = item === null || item === void 0 ? void 0 : item.JobTitleEnglishId) !== null && _f !== void 0 ? _f : 0,
+                                jobCode: (_h = (_g = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _g === void 0 ? void 0 : _g.JobCode) !== null && _h !== void 0 ? _h : "",
+                                JobCodeId: (_j = item === null || item === void 0 ? void 0 : item.JobTitleEnglishId) !== null && _j !== void 0 ? _j : 0,
+                                DRCGrade: (_l = (_k = item === null || item === void 0 ? void 0 : item.DRCGrade) === null || _k === void 0 ? void 0 : _k.DRCGrade) !== null && _l !== void 0 ? _l : "",
+                                DRCGradeId: (_m = item === null || item === void 0 ? void 0 : item.DRCGradeId) !== null && _m !== void 0 ? _m : 0,
+                                PatersonGrade: (_p = (_o = item === null || item === void 0 ? void 0 : item.PatersonGrade) === null || _o === void 0 ? void 0 : _o.PatersonGrade) !== null && _p !== void 0 ? _p : "",
+                                PatersonGradeId: (_q = item === null || item === void 0 ? void 0 : item.PatersonGradeId) !== null && _q !== void 0 ? _q : 0,
+                                JobTitleFrench: (_s = (_r = item === null || item === void 0 ? void 0 : item.JobTitleFrench) === null || _r === void 0 ? void 0 : _r.JobTitleInFrench) !== null && _s !== void 0 ? _s : "",
+                                JobTitleFrenchId: (_t = item === null || item === void 0 ? void 0 : item.JobTitleFrenchId) !== null && _t !== void 0 ? _t : 0,
                                 ActualVacantPosition: ListName === Config_1.ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails
-                                    ? (_t = item === null || item === void 0 ? void 0 : item.ActualVacantPosition) !== null && _t !== void 0 ? _t : 0
+                                    ? (_u = item === null || item === void 0 ? void 0 : item.ActualVacantPosition) !== null && _u !== void 0 ? _u : 0
                                     : "",
                             });
                         });
@@ -605,6 +606,34 @@ var RecruitmentService = /** @class */ (function () {
                                 data: [],
                                 status: 500,
                                 message: "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    RecruitmentService.prototype.GetBGVerificationType = function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var response, error_7;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, CareerPortalAPI_1.BGverification.GetBGVerificationType()];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                data: response.data,
+                                status: response.status,
+                                message: response.data.message,
+                            }];
+                    case 2:
+                        error_7 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_7);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error inserting data into AdvertisementDetails",
                             }];
                     case 3: return [2 /*return*/];
                 }

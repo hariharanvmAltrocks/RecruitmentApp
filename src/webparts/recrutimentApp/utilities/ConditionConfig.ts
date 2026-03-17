@@ -82,3 +82,13 @@ export const menuID = {
     ReviewProfile: 32,
     RecrutimentTable: 28,
 }
+
+export const Nationality = {
+  Nationals: "Nationals (Congolese)",
+  Expatriate: "Expatriate",
+};
+
+export const NationalityCode = {
+  Nationals: "N0",
+  SouthAfrica: "N154",
+};
