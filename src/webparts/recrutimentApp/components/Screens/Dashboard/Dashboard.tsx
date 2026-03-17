@@ -10,9 +10,9 @@ import UrgentWidget from '../../Comman/UrgentWidget/UrgentWidget';
 import { useUrgentTasks } from './Hooks/useUrgentTasks';
 import { priorityValues, totalPriority } from './metricColumns.config';
 import { useNavigate } from 'react-router';
-import { useStateHooks } from '../../RecrutimentApp/useStateHooks';
 import { DashboardData } from '../../../services/Dashboard/IDashboard';
 import { MetricConfig } from '../../../models/IDashboard';
+import { useUIState } from '../../RecrutimentApp/UIStateContext';
 
 interface DashboardProps {
   props: any
@@ -23,13 +23,17 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
   const navigate = useNavigate();
   const martics = useDashboardMetrics();
-  const { setactiveMenuID, setNavigationPath, setActiveTab, navigationPath } = useStateHooks();
+  const { setActiveMenuID, setNavigationPath, setActiveTab, navigationPath, setMatricID } = useUIState();
 
   const { trackerData } = useTrackerData(activeMetric);
 
   useEffect(() => {
     if (martics.metrics.length > 0 && !activeMetric) {
       setActiveMetric(martics.metrics[0].id);
+       setNavigationPath(martics.metrics[0].path);
+    setActiveMenuID(martics.metrics[0].menuId);
+     setActiveTab(martics.metrics[0].TabValue);
+     setMatricID(martics.metrics[0].id);
     }
   }, [martics.metrics]);
 
@@ -38,8 +42,9 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
   const onMetricChange = (data: MetricConfig) => {
     setActiveMetric(data.id);
     setNavigationPath(data.path);
-    setactiveMenuID(data.menuId);
+    setActiveMenuID(data.menuId);
     setActiveTab(data.TabValue);
+    setMatricID(data.id);
   };
 
     const onTrackerChange = (row: DashboardData) => {

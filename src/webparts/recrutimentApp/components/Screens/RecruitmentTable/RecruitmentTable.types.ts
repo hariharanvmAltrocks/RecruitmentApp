@@ -1,8 +1,14 @@
-export type RecruitmentTabKey = "mySubmission" | "assignRecruitmentHR" | "uploadOnemDoc";
+export type RecruitmentTabKey = "tab1" | "tab2" | "tab3" | "tab4" | "tab5" | "tab6";
 
 export type TableMode = "normal" | "checkbox";
 
-export type TableActionMode = "view" | "upload";
+export type TableActionMode = "View" | "Upload";
+
+export interface TableAction   { 
+   View: "View";
+    Upload: "Upload";
+
+}
 
 export interface TabItem {
   key: RecruitmentTabKey;
@@ -10,10 +16,12 @@ export interface TabItem {
   description: string;
   tableMode: TableMode;
   actionMode: TableActionMode;
+  matricId: number;
 }
 
 export interface RecruitmentItem {
   id: string;
+  ItemID: number;
   jobCode: string;
   title: string;
   department: string;
@@ -24,7 +32,7 @@ export interface RecruitmentItem {
 }
 
 export interface HrMember {
-  id: string;
+  id: number;
   name: string;
   role: string;
   initials: string;
@@ -35,3 +43,4 @@ export interface AssignmentPayload {
   member: HrMember | null;
   comments: string;
 }
+

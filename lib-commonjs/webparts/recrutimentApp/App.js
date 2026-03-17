@@ -11,6 +11,7 @@ require("./External/tailwind.css");
 var MenuDataContext_1 = require("./utilities/hooks/MenuDataContext");
 var ThemeContext_1 = require("./theme/ThemeContext");
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
+var UIStateContext_1 = require("./components/RecrutimentApp/UIStateContext");
 var FaviconSetter = function (_a) {
     var webURL = _a.webURL;
     React.useEffect(function () {
@@ -43,13 +44,14 @@ var App = function (props) {
     var state = location.state;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var themeVars = (0, ThemeContext_1.useThemeVars)();
-    return (React.createElement(RoleContext_1.RoleProvider, null,
-        React.createElement(MenuDataContext_1.MenuDataProvider, null,
-            React.createElement(FaviconSetter, { webURL: props.webURL }),
-            React.createElement(FontLoader, null),
-            React.createElement("div", { className: "app", style: themeVars },
-                React.createElement(React.Suspense, { fallback: React.createElement("div", null, strings.LoadingLabel) },
-                    React.createElement(RecrutimentApp_1.default, tslib_1.__assign({}, props, state, navigate)))))));
+    return (React.createElement(UIStateContext_1.UIProvider, null,
+        React.createElement(RoleContext_1.RoleProvider, null,
+            React.createElement(MenuDataContext_1.MenuDataProvider, null,
+                React.createElement(FaviconSetter, { webURL: props.webURL }),
+                React.createElement(FontLoader, null),
+                React.createElement("div", { className: "app", style: themeVars },
+                    React.createElement(React.Suspense, { fallback: React.createElement("div", null, strings.LoadingLabel) },
+                        React.createElement(RecrutimentApp_1.default, tslib_1.__assign({}, props, state, navigate))))))));
 };
 function AppWrapper(props) {
     return (React.createElement(react_router_dom_1.HashRouter, null,

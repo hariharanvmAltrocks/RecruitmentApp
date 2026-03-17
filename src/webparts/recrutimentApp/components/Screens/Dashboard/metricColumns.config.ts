@@ -302,7 +302,14 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
             default:
                 roleColumns = [];
         }
-
+       if (
+    roles.includes(RoleID.LineManager) &&
+    roles.includes(RoleID.HOD)
+  ) {
+    roleColumns = roleColumns.filter(
+      (col) => col.id !== MatricID.AdvertReviewHOD
+    );
+  }
         columns.push(...roleColumns);
     });
 
@@ -330,7 +337,7 @@ const DEFAULT_SELECT = ["Id", "JobCodeId"];
 
 const StatusFilter = (status: number | number[]) => [
     {
-        FilterKey: "StatusId",
+        FilterKey: "StatusId", 
         Operator: Array.isArray(status) ? "in" : "eq",
         FilterValue: status
     },
@@ -372,14 +379,14 @@ export const MetricQueryConfig: Record<number, SingleQuery | SingleQuery[]> = {
             ],
             select: ["Id"]
         },
-        {
-            ListName: ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails,
-            Filter: [
-                StatusFilter(StatusId.ReadyforRecruitmentProcess),
-                ...DataSyncFilter
-            ],
-            select: ["Id"]
-        },
+        // {
+        //     ListName: ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails,
+        //     Filter: [
+        //         StatusFilter(StatusId.ReadyforRecruitmentProcess),
+        //         ...DataSyncFilter
+        //     ],
+        //     select: ["Id"]
+        // },
         {
             ListName: ListNames.HRMSVacancyReplacementRequest,
             Filter: [
@@ -525,28 +532,43 @@ const RoleMetricFilters: Record<number, number[]> = {
 
 };
 
+
 export const getRoleBasedFilters = (roles: number[]): FilterQuery[] => {
 
-    const metricSet = new Set<number>();
+  const metricSet = new Set<number>();
 
-    roles.forEach(role => {
-        const metrics = RoleMetricFilters[role] || [];
-        metrics.forEach(metric => metricSet.add(metric));
-    });
+  roles.forEach(role => {
+    const metrics = RoleMetricFilters[role] || [];
+    metrics.forEach(metric => metricSet.add(metric));
+  });
 
-    const result: FilterQuery[] = [];
-    Array.from(metricSet).forEach(metricId => {
-        const config = MetricQueryConfig[metricId];
-        if (Array.isArray(config)) {
-            config.forEach(cfg => {
-                result.push({ StateValue: metricId, ...cfg });
-            });
-        } else {
-            result.push({ StateValue: metricId, ...config });
-        }
-    });
-    return result;
+  let result: FilterQuery[] = [];
 
+  Array.from(metricSet).forEach(metricId => {
+    const config = MetricQueryConfig[metricId];
+
+    if (Array.isArray(config)) {
+      config.forEach(cfg => {
+        result.push({ StateValue: metricId, ...cfg });
+      });
+    } else {
+      result.push({ StateValue: metricId, ...config });
+    }
+  });
+
+  const hasBothRoles =
+    roles.includes(RoleID.LineManager) &&
+    roles.includes(RoleID.HOD);
+
+  if (hasBothRoles) {
+    result = result.filter(
+      (item) => item.StateValue !== MatricID.AdvertReviewHOD
+    );
+  }
+
+  console.log(result, "Result");
+
+  return result;
 };
 
 export const totalPriority = (matrixs: Metric[]) => {

@@ -72,6 +72,11 @@
   }
 }
 
+.assignment {
+  display: flex;
+  justify-content: center;
+
+  
 .assignment-bar {
   position: sticky;
   bottom: 16px;
@@ -140,7 +145,8 @@
   }
 
   &__select option {
-    color: $text-primary;
+    color: $white;
+    background-color: $text-primary;
   }
 
   &__button {
@@ -167,3 +173,6 @@
     }
   }
 }
+}
+
+

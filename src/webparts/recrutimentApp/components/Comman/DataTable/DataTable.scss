@@ -1,9 +1,10 @@
-@import "../../../../../styles/theme";
-@import "../../../../../styles/variables";
+@import "../../../styles/theme";
+@import "../../../styles/variables";
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 720px;
 
   &__head {
     background: $secondary-color;
@@ -18,6 +19,24 @@
       padding: 16px 20px;
       text-align: left;
     }
+  }
+
+  &__head-cell {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $text-subtle;
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 700;
+  }
+
+  &__head-cell--center {
+    text-align: center;
+  }
+
+  &__head-cell--right {
+    text-align: right;
   }
 
   &__row {
@@ -40,6 +59,14 @@
     vertical-align: middle;
   }
 
+  &__cell--center {
+    text-align: center;
+  }
+
+  &__cell--right {
+    text-align: right;
+  }
+
   &__cell--muted {
     color: $text-muted;
   }
@@ -52,6 +79,12 @@
   &__cell--actions {
     text-align: right;
     width: 80px;
+  }
+
+  &__cell--mobile-hidden {
+    @media (max-width: 900px) {
+      display: none;
+    }
   }
 
   &__job-title {
@@ -114,8 +147,8 @@
   }
 
   &__checkbox {
-    width: 18px;
-    height: 18px;
+    width: 25px;
+    height: 25px;
     border-radius: 5px;
     border: 1px solid #cbd5f5;
     display: inline-flex;
@@ -130,6 +163,13 @@
     background: $primary-color;
     border-color: $primary-color;
     color: $white;
+  }
+
+  &__empty {
+    text-align: center;
+    color: $text-subtle;
+    padding: 32px 20px;
+    font-size: 13px;
   }
 
   &__skeleton {
@@ -153,6 +193,88 @@
   &__skeleton--short {
     width: 60px;
   }
+}
+
+.data-table__wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table__pagination {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: $text-muted;
+  font-size: 12px;
+}
+
+.data-table__pagination-summary {
+  font-weight: 600;
+  color: $text-subtle;
+}
+
+.data-table__pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: $secondary-color;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid $border-base;
+}
+
+.data-table__page-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: $text-muted;
+}
+
+.data-table__page-select {
+  border: 1px solid $border-base;
+  background: $white;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: $text-secondary;
+}
+
+.data-table__page-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.data-table__page-btn {
+  border: 1px solid $border-base;
+  background: $white;
+  color: $text-secondary;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  &:hover:enabled {
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.data-table__page-indicator {
+  font-weight: 600;
+  color: $text-muted;
 }
 
 @keyframes data-table-shimmer {

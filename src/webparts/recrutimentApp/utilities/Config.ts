@@ -102,6 +102,7 @@ export const RoleID = {
 };
 
 export const StatusId = {
+  HRLeadtoAssignRecruitmentHR: 68,
   PendingAssignHR: 68,
   PendingUploadAdvert: 2,
   PendingReviewAdvertHOD: 26,
@@ -263,4 +264,21 @@ export const DataFrom = {
   NewPosition: "New Position",
   ExistingPosition: "Existing Position",
   VacancyRecruitmentProcess: "Vacancy Requirement Process"
+}
+
+export const WorkflowAction = {
+  Approved: 1,
+  Reject: 2,
+  Revert: 3,
+  Transfer: 4,
+  Submitted: 5,
+  Closed: 6,
+  ReSubmitted: 7,
+  OnHold: 10,
+  Decline: 12
+};
+
+export const ExternalUserType = {
+    Agent: "Agent",
+    LabourHire: "Labour Hire",
 }

@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { Check, Eye, Minus } from "lucide-react";
-import { RecruitmentItem, TableActionMode } from "../../RecruitmentTable.types";
-import "./DataTable.scss";
+import { RecruitmentItem, TableActionMode } from "../../Screens/RecruitmentTable/RecruitmentTable.types";
+import "../../Screens/RecruitmentTable/Components/DataTable/DataTable.scss";
 
 interface CheckboxDataTableProps {
   items: RecruitmentItem[];
@@ -50,11 +50,11 @@ const CheckboxRow = memo(({ item, isSelected, onToggle, actionMode, onAction }: 
           className="data-table__action-btn"
           onClick={() => onAction(item)}
           type="button"
-          aria-label={actionMode === "upload" ? "Upload document" : "View vacancy"}
+          aria-label={actionMode === "Upload" ? "Upload document" : "View vacancy"}
         >
           <Eye size={16} />
-          {actionMode === "upload" ? "Upload" : "View"}
-        </button>
+          {actionMode === "View"}
+        </button> 
       </td>
     </tr>
   );

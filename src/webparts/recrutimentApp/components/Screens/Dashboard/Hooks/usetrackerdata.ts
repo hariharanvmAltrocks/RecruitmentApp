@@ -24,7 +24,7 @@ export const useTrackerData = (MatricID: number) => {
 
             switch (filterObj.ListName) {
                 case ListNames.HRMSNewPositionRequest:
-                    response = await DashboardServices.GetNPAEPVRRDetails(filterObj.Filter[0], condition);
+                    response = await DashboardServices.GetNPAEPVRRDetails(filterObj.Filter, condition);
                     break;
                 case ListNames.HRMSRecruitmentDptDetails:
                     response = await DashboardServices.GetRecruitmentDetails(filterObj.Filter[0], condition);

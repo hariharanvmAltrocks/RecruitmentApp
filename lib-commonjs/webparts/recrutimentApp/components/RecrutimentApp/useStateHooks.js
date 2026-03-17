@@ -1,19 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useStateHooks = void 0;
-var react_1 = require("react");
-var useStateHooks = function () {
-    var _a = (0, react_1.useState)(0), activeMenuID = _a[0], setactiveMenuID = _a[1];
-    var _b = (0, react_1.useState)(""), navigationPath = _b[0], setNavigationPath = _b[1];
+exports.useUIState = exports.UIProvider = void 0;
+var tslib_1 = require("tslib");
+var react_1 = tslib_1.__importStar(require("react"));
+var UIContext = (0, react_1.createContext)(null);
+var UIProvider = function (_a) {
+    var children = _a.children;
+    var _b = (0, react_1.useState)(0), activeMenuID = _b[0], setActiveMenuID = _b[1];
     var _c = (0, react_1.useState)(""), activeTab = _c[0], setActiveTab = _c[1];
-    return {
-        activeMenuID: activeMenuID,
-        setactiveMenuID: setactiveMenuID,
-        navigationPath: navigationPath,
-        setNavigationPath: setNavigationPath,
-        activeTab: activeTab,
-        setActiveTab: setActiveTab
-    };
+    var _d = (0, react_1.useState)(""), navigationPath = _d[0], setNavigationPath = _d[1];
+    return (react_1.default.createElement(UIContext.Provider, { value: {
+            activeMenuID: activeMenuID,
+            activeTab: activeTab,
+            navigationPath: navigationPath,
+            setActiveMenuID: setActiveMenuID,
+            setActiveTab: setActiveTab,
+            setNavigationPath: setNavigationPath
+        } }, children));
 };
-exports.useStateHooks = useStateHooks;
+exports.UIProvider = UIProvider;
+var useUIState = function () {
+    var context = (0, react_1.useContext)(UIContext);
+    if (!context)
+        throw new Error("useUIState must be used inside UIProvider");
+    return context;
+};
+exports.useUIState = useUIState;
 //# sourceMappingURL=useStateHooks.js.map

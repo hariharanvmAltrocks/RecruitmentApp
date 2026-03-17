@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { DashboardServices, RecruitmentServices } from "../../../../../services/ServiceExport";
+import { ResponeStatus } from "../../../../../utilities/ApiConfig";
+import { useUIState } from "../../../../RecrutimentApp/UIStateContext";
+import { MetricQueryConfig } from "../../../Dashboard/metricColumns.config";
+import { ListNames } from "../../../../../utilities/Config";
 
 export interface PositionDetails {
-  jobId: string;
+  jobId: number;
   jobTitle: string;
   jobCode: string;
   department: string;
@@ -10,7 +15,7 @@ export interface PositionDetails {
   subDepartment: string;
   section: string;
   deptCode: string;
-  reportsTo: string;
+  reportsTo?: string;
   areaOfWork: string;
   nationality: string;
   patersonGrade: string;
@@ -19,50 +24,14 @@ export interface PositionDetails {
   contractType: string;
   numberOfPersons: number;
   dateRequired: string;
+  JobCodeID: number;
 }
 
-const buildMockPosition = (jobId: string): PositionDetails => ({
-  jobId,
-  jobTitle: "Head of Mining",
-  jobCode: "MIN-001",
-  department: "Mining Operations",
-  buCode: "BU-OPS",
-  buName: "Operations",
-  subDepartment: "Open Pit",
-  section: "Drilling",
-  deptCode: "DEPT-MIN",
-  reportsTo: "VP Operations",
-  areaOfWork: "Kilimanjaro Site",
-  nationality: "Open",
-  patersonGrade: "D5",
-  drcGrade: "G12",
-  employmentCategory: "Permanent",
-  contractType: "Full-time",
-  numberOfPersons: 2,
-  dateRequired: "2026-04-01",
-});
-
-export const usePositionDetails = (jobId: string | null) => {
+export const usePositionDetails = (jobId: number | null,type: string) => {
   const [data, setData] = useState<PositionDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const mockMap = useMemo(() => ({
-    "JOB-001": {
-      ...buildMockPosition("JOB-001"),
-      jobTitle: "HOD - Mining",
-      jobCode: "HOD-MIN",
-      department: "Mining",
-      areaOfWork: "Kolwezi Site",
-    },
-    "JOB-002": {
-      ...buildMockPosition("JOB-002"),
-      jobTitle: "Senior Geologist",
-      jobCode: "GEO-204",
-      department: "Exploration",
-      areaOfWork: "Lubumbashi",
-      numberOfPersons: 1,
-    },
-  }), []);
+  const {MatricID} = useUIState();
 
   useEffect(() => {
     if (!jobId) {
@@ -72,13 +41,61 @@ export const usePositionDetails = (jobId: string | null) => {
     }
 
     setLoading(true);
-    const timer = setTimeout(() => {
-      setData(mockMap[jobId] ?? buildMockPosition(jobId));
-      setLoading(false);
+    const timer = setTimeout(async () => {
+
+         const Filter = MetricQueryConfig[MatricID];
+              const condition = "and";
+                        let response: any;
+                       const IDFilter = [
+       { FilterKey: "ID", Operator: "in", FilterValue: jobId },
+       ] 
+              if(MatricID != 0){
+                           
+      
+       const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
+      
+                        switch (filterObj.ListName) {
+                            case ListNames.HRMSNewPositionRequest:
+                                response = await RecruitmentServices.GetNPAEPVRRDetails(IDFilter, condition,type);
+                                break;
+                            case ListNames.HRMSRecruitmentDptDetails:
+                                response = await RecruitmentServices.GetRecruitmentDetails(IDFilter, condition);
+                                break;
+                        }
+              }else {
+                response = await RecruitmentServices.GetRecruitmentDetails(IDFilter, condition);
+              }
+      if(response.status === ResponeStatus.SUCCESS){
+        const data = response.data[0];
+        let mappedData: PositionDetails = {
+          jobId: data.RecordID,
+          jobTitle: data.JobTitleEnglish,
+          jobCode: data.JobCode,
+          department: data.Department,
+          buCode: data.BusinessUnitCode,
+          buName:  "sadasdasdasd",//data.BusinessUnitName,
+          subDepartment: data.SubDepartment,
+          section: data.Section,
+          deptCode: data.DepartmentCode,
+          // reportsTo: data.ReportsTo,
+          areaOfWork: data.AreaofWork,
+           nationality: data.Nationality,
+  patersonGrade: data.PatersonGrade,
+  drcGrade: data.DRCGrade,
+  employmentCategory: data.EmploymentCategory,
+  contractType: data.TypeOfContract,
+  numberOfPersons: Number(data.NumberOfPersonNeeded),
+  dateRequired: String(data.DateRequried),
+          JobCodeID: data.JobCodeId,
+        };
+        setData(mappedData);
+        setLoading(false);
+        return;
+      }
     }, 650);
 
     return () => clearTimeout(timer);
-  }, [jobId, mockMap]);
+  }, [jobId, MatricID, type]);
 
   return { data, loading };
 };

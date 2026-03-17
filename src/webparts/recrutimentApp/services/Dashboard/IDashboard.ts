@@ -73,6 +73,7 @@ export type DashboardData = {
     ID: number,
     RecordID: number,
     BusinessUnitCode: string,
+    Department: string,
     Nationality: string,
     NumberOfPersonNeeded: string,
     Type: string,

@@ -58,7 +58,11 @@
   overflow: hidden;
 }
 
-.assignment-bar {
+.assignment {
+  display: flex;
+  justify-content: center;
+}
+.assignment .assignment-bar {
   position: sticky;
   bottom: 16px;
   margin-top: 24px;
@@ -72,12 +76,12 @@
   gap: 16px;
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
 }
-.assignment-bar__left {
+.assignment .assignment-bar__left {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.assignment-bar__icon {
+.assignment .assignment-bar__icon {
   width: 36px;
   height: 36px;
   border-radius: 12px;
@@ -86,7 +90,7 @@
   align-items: center;
   justify-content: center;
 }
-.assignment-bar__count {
+.assignment .assignment-bar__count {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -95,21 +99,21 @@
   letter-spacing: 0.08em;
   color: #cbd5f5;
 }
-.assignment-bar__count strong {
+.assignment .assignment-bar__count strong {
   font-size: 20px;
   color: #ffffff;
   letter-spacing: 0;
 }
-.assignment-bar__count span {
+.assignment .assignment-bar__count span {
   font-size: 10px;
 }
-.assignment-bar__controls {
+.assignment .assignment-bar__controls {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
-.assignment-bar__select {
+.assignment .assignment-bar__select {
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
@@ -118,10 +122,11 @@
   font-size: 12px;
   min-width: 200px;
 }
-.assignment-bar__select option {
-  color: #0f172a;
+.assignment .assignment-bar__select option {
+  color: #ffffff;
+  background-color: #0f172a;
 }
-.assignment-bar__button {
+.assignment .assignment-bar__button {
   background: #2563eb;
   color: #ffffff;
   border: none;
@@ -135,10 +140,10 @@
   cursor: pointer;
   transition: transform 0.2s ease;
 }
-.assignment-bar__button:disabled {
+.assignment .assignment-bar__button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-.assignment-bar__button:hover:not(:disabled) {
+.assignment .assignment-bar__button:hover:not(:disabled) {
   transform: translateY(-1px);
 }

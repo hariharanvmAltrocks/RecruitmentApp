@@ -1,3 +1,6 @@
+import { MatricID } from "../../utilities/ConditionConfig";
+import { StatusId } from "../../utilities/Config";
+
 export function calculateTotalExperienceYears(experiences: any[]) {
     let totalMonths = 0;
 
@@ -36,3 +39,20 @@ export function getcountryCode(Code: any[], refMobile: string) {
     if (!country) return null;
     return `${country.id}-${mobileNumber}`;
 }
+
+export const findMatricID = (statusID: number): number => {
+  switch (statusID) {
+    case StatusId.ReadyforRecruitmentProcess:
+      return MatricID.AssignHr; 
+    case  StatusId.PendingUploadONEM:
+      return MatricID.UploadONEM; 
+    case StatusId.PendingUploadAdvert:
+      return MatricID.JobAdvert;
+    case StatusId.PendingReviewAdvertHOD:
+      return MatricID.AdvertReviewHOD;
+    case StatusId.PendingwithLineManagereviewAdv:
+      return MatricID.AdvertReviewLM;
+    default:
+      return 0; 
+  }
+};

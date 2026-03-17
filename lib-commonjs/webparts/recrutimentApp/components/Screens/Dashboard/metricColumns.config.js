@@ -275,6 +275,10 @@ var MatricColums = function (roles) {
             default:
                 roleColumns = [];
         }
+        if (roles.includes(Config_1.RoleID.LineManager) &&
+            roles.includes(Config_1.RoleID.HOD)) {
+            roleColumns = roleColumns.filter(function (col) { return col.id !== ConditionConfig_1.MatricID.AdvertReviewHOD; });
+        }
         columns.push.apply(columns, roleColumns);
     });
     // remove duplicates
@@ -326,13 +330,14 @@ exports.MetricQueryConfig = (_b = {},
             ], DataSyncFilter, true),
             select: ["Id"]
         },
-        {
-            ListName: Config_1.ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails,
-            Filter: tslib_1.__spreadArray([
-                StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess)
-            ], DataSyncFilter, true),
-            select: ["Id"]
-        },
+        // {
+        //     ListName: ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails,
+        //     Filter: [
+        //         StatusFilter(StatusId.ReadyforRecruitmentProcess),
+        //         ...DataSyncFilter
+        //     ],
+        //     select: ["Id"]
+        // },
         {
             ListName: Config_1.ListNames.HRMSVacancyReplacementRequest,
             Filter: tslib_1.__spreadArray([
@@ -473,6 +478,12 @@ var getRoleBasedFilters = function (roles) {
             result.push(tslib_1.__assign({ StateValue: metricId }, config));
         }
     });
+    var hasBothRoles = roles.includes(Config_1.RoleID.LineManager) &&
+        roles.includes(Config_1.RoleID.HOD);
+    if (hasBothRoles) {
+        result = result.filter(function (item) { return item.StateValue !== ConditionConfig_1.MatricID.AdvertReviewHOD; });
+    }
+    console.log(result, "Result");
     return result;
 };
 exports.getRoleBasedFilters = getRoleBasedFilters;

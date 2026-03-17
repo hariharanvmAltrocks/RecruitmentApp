@@ -334,7 +334,7 @@ var batchGet = function (queries) { return tslib_1.__awaiter(void 0, void 0, voi
                 promises = queries.map(function (q) {
                     var _a;
                     var _b, _c, _d;
-                    var flatFilters = q.Filter.flat();
+                    var flatFilters = q.Filter && q.Filter.flat() || [];
                     var filterStr = _buildODataFilter(flatFilters, (_b = q.FilterCondition) !== null && _b !== void 0 ? _b : "and");
                     var request = (_a = batchedSP_1.web.lists
                         .getByTitle(q.ListName)
@@ -342,7 +342,12 @@ var batchGet = function (queries) { return tslib_1.__awaiter(void 0, void 0, voi
                         .filter(filterStr))
                         .select.apply(_a, (_c = q.select) !== null && _c !== void 0 ? _c : ["*"]).expand((_d = q.expand) !== null && _d !== void 0 ? _d : []);
                     return request().then(function (r) {
-                        results_1[q.StateValue] = r;
+                        console.log(r, "data");
+                        if (!results_1[q.StateValue]) {
+                            results_1[q.StateValue] = [];
+                        }
+                        // concat results
+                        results_1[q.StateValue] = tslib_1.__spreadArray(tslib_1.__spreadArray([], results_1[q.StateValue], true), r, true);
                     });
                 });
                 return [4 /*yield*/, execute()];
@@ -714,7 +719,7 @@ var SPReadItemsCamelQuery = function (rawParams) { return tslib_1.__awaiter(void
         }
     });
 }); };
-// ─── Default Export ───────────────────────────────────────────────────────────
+// ── SPServices.ts ─────────────────────────────────────────────────────────
 var SPServices = {
     initSP: exports.initSP,
     getSP: exports.getSP,

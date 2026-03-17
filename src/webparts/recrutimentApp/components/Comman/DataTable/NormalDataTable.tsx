@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { Eye, Upload } from "lucide-react";
-import { RecruitmentItem, TableActionMode } from "../../RecruitmentTable.types";
-import "./DataTable.scss";
+import { RecruitmentItem, TableActionMode } from "../../Screens/RecruitmentTable/RecruitmentTable.types";
+import "../../Screens/RecruitmentTable/Components/DataTable/DataTable.scss";
 
 interface NormalDataTableProps {
   items: RecruitmentItem[];
@@ -35,10 +35,10 @@ const NormalDataRow = memo(({ item, actionMode, onAction }: NormalDataRowProps) 
           className="data-table__action-btn"
           onClick={() => onAction(item)}
           type="button"
-          aria-label={actionMode === "upload" ? "Upload document" : "View vacancy"}
+          aria-label={actionMode === "Upload" ? "Upload document" : "View vacancy"}
         >
-          {actionMode === "upload" ? <Upload size={16} /> : <Eye size={16} />}
-          {actionMode === "upload" ? "Upload" : "View"}
+          {actionMode === "Upload" ? <Upload size={16} /> : <Eye size={16} />}
+          {actionMode === "Upload" ? "Upload" : "View"}
         </button>
       </td>
     </tr>

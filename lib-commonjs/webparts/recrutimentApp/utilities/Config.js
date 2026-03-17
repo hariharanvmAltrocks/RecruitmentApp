@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DataFrom = exports.ApplicationStatusId = exports.workflowStatusApi = exports.StatusId = exports.RoleID = exports.DocumentLibraray = exports.ListNames = void 0;
+exports.ExternalUserType = exports.WorkflowAction = exports.DataFrom = exports.ApplicationStatusId = exports.workflowStatusApi = exports.StatusId = exports.RoleID = exports.DocumentLibraray = exports.ListNames = void 0;
 exports.ListNames = {
     HRMSSageList: "HRMS_Sage_List",
     HRMSGradeMaster: "HRMS_Grade_Master",
@@ -88,6 +88,7 @@ exports.RoleID = {
     FinanceDepartment: 8
 };
 exports.StatusId = {
+    HRLeadtoAssignRecruitmentHR: 68,
     PendingAssignHR: 68,
     PendingUploadAdvert: 2,
     PendingReviewAdvertHOD: 26,
@@ -232,5 +233,20 @@ exports.DataFrom = {
     NewPosition: "New Position",
     ExistingPosition: "Existing Position",
     VacancyRecruitmentProcess: "Vacancy Requirement Process"
+};
+exports.WorkflowAction = {
+    Approved: 1,
+    Reject: 2,
+    Revert: 3,
+    Transfer: 4,
+    Submitted: 5,
+    Closed: 6,
+    ReSubmitted: 7,
+    OnHold: 10,
+    Decline: 12
+};
+exports.ExternalUserType = {
+    Agent: "Agent",
+    LabourHire: "Labour Hire",
 };
 //# sourceMappingURL=Config.js.map

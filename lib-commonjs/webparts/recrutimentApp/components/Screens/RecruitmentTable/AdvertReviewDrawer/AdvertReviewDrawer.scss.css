@@ -382,6 +382,11 @@
   font-size: 11px;
   color: #334155;
 }
+.advert-review-drawer__attachment-version:hover {
+  border-color: #2563eb;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+  color: #2563eb;
+}
 .advert-review-drawer__attachment-lang {
   width: 26px;
   height: 26px;
@@ -609,4 +614,202 @@
     gap: 16px;
     align-items: flex-start;
   }
+}
+.attachment-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.attachment-viewer__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 16, 24, 0.65);
+  backdrop-filter: blur(2px);
+  animation: attachmentFadeIn 180ms ease-out;
+}
+
+.attachment-viewer__panel {
+  position: relative;
+  margin: 4vh auto;
+  width: min(998px, 55vw);
+  height: min(760px, 88vh);
+  background: #0f172a;
+  color: #f8fafc;
+  border-radius: 16px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: attachmentScaleIn 200ms ease-out;
+}
+
+.attachment-viewer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(120deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.08));
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.attachment-viewer__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.attachment-viewer__title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.attachment-viewer__subtitle {
+  font-size: 12px;
+  color: #cbd5f5;
+}
+
+.attachment-viewer__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.attachment-viewer__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+  background: #e2e8f0;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.attachment-viewer__button--ghost {
+  background: transparent;
+  color: #e2e8f0;
+  border: 1px solid rgba(226, 232, 240, 0.4);
+}
+
+.attachment-viewer__body {
+  position: relative;
+  flex: 1;
+  background: #0b1120;
+}
+
+.attachment-viewer__iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.attachment-viewer__loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  color: #e2e8f0;
+  background: rgba(15, 23, 42, 0.7);
+  z-index: 1;
+}
+
+.attachment-viewer__spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid rgba(226, 232, 240, 0.25);
+  border-top-color: #e2e8f0;
+  animation: spin 0.8s linear infinite;
+}
+
+.advert-review-drawer__attachment-label--link {
+  background: none;
+  border: none;
+  font-size: 10px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: stretch;
+}
+.advert-review-drawer__attachment-label--link:hover {
+  color: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+
+@media (max-width: 768px) {
+  .attachment-viewer__panel {
+    width: 94vw;
+    height: 90vh;
+    border-radius: 12px;
+  }
+  .attachment-viewer__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .attachment-viewer__actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+@keyframes attachmentFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes attachmentScaleIn {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.advert-review-drawer__validation {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  display: grid;
+  gap: 8px;
+}
+
+.advert-review-drawer__validation-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #f87171;
+  font-size: 13px;
+}
+
+.advert-review-drawer__validation-message {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border-left: 3px solid rgba(239, 68, 68, 0.85);
+  color: #fecaca;
+  font-size: 12px;
+  line-height: 1.4;
 }

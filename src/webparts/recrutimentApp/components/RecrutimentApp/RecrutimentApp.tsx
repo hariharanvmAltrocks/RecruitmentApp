@@ -3,20 +3,20 @@ import MainLayout from './MainLayout';
 import AppRoutes from '../SideBar/Approutes';
 import { IRecrutimentAppProps } from '../IRecrutimentAppProps';
 import { useRoleContext } from '../../utilities/hooks/RoleContext';
-import { useStateHooks } from './useStateHooks';
+import { useUIState } from './UIStateContext';
 
 export default function RecrutimentApp(props: IRecrutimentAppProps) {
 
   const { roleIDs } = useRoleContext();
 
-  const { activeMenuID, setactiveMenuID } = useStateHooks();
+  const { activeMenuID, setActiveMenuID } = useUIState();
 
   return (
     <>
       <MainLayout
         RoleID={roleIDs}
         activeMenuID={activeMenuID}
-        setactiveMenuID={setactiveMenuID}
+        setactiveMenuID={setActiveMenuID}
       >
         <AppRoutes
           props={props}

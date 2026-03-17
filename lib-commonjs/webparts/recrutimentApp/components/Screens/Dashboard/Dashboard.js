@@ -13,25 +13,30 @@ var UrgentWidget_1 = tslib_1.__importDefault(require("../../Comman/UrgentWidget/
 var useUrgentTasks_1 = require("./Hooks/useUrgentTasks");
 var metricColumns_config_1 = require("./metricColumns.config");
 var react_router_1 = require("react-router");
-var useStateHooks_1 = require("../../RecrutimentApp/useStateHooks");
+var UIStateContext_1 = require("../../RecrutimentApp/UIStateContext");
 var Dashboard = function (props) {
     var _a;
     var _b = (0, react_1.useState)(0), activeMetric = _b[0], setActiveMetric = _b[1];
     var navigate = (0, react_router_1.useNavigate)();
     var martics = (0, useDashboardMetrics_1.useDashboardMetrics)();
-    var _c = (0, useStateHooks_1.useStateHooks)(), setactiveMenuID = _c.setactiveMenuID, setNavigationPath = _c.setNavigationPath, setActiveTab = _c.setActiveTab, navigationPath = _c.navigationPath;
+    var _c = (0, UIStateContext_1.useUIState)(), setActiveMenuID = _c.setActiveMenuID, setNavigationPath = _c.setNavigationPath, setActiveTab = _c.setActiveTab, navigationPath = _c.navigationPath, setMatricID = _c.setMatricID;
     var trackerData = (0, usetrackerdata_1.useTrackerData)(activeMetric).trackerData;
     (0, react_1.useEffect)(function () {
         if (martics.metrics.length > 0 && !activeMetric) {
             setActiveMetric(martics.metrics[0].id);
+            setNavigationPath(martics.metrics[0].path);
+            setActiveMenuID(martics.metrics[0].menuId);
+            setActiveTab(martics.metrics[0].TabValue);
+            setMatricID(martics.metrics[0].id);
         }
     }, [martics.metrics]);
     var urgentTasks = (0, useUrgentTasks_1.useUrgentTasks)().urgentTasks;
     var onMetricChange = function (data) {
         setActiveMetric(data.id);
         setNavigationPath(data.path);
-        setactiveMenuID(data.menuId);
+        setActiveMenuID(data.menuId);
         setActiveTab(data.TabValue);
+        setMatricID(data.id);
     };
     var onTrackerChange = function (row) {
         navigate(navigationPath);

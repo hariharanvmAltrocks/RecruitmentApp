@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { userInfo } from "../../../../../utilities/hooks/RoleContext";
+import { masterService } from "../../../../../services/ServiceExport";
 
 export interface SignatureDetails {
   reviewerName: string;
@@ -7,40 +9,57 @@ export interface SignatureDetails {
   jobTitleFR: string;
 }
 
-export const useSignatureDetails = (jobId: string | null) => {
+export const useSignatureDetails = () => {
   const [data, setData] = useState<SignatureDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const { ADGroupData } = userInfo();
+  const emailId = ADGroupData?.EmailId?.[0];
 
-  const mockMap = useMemo(() => ({
-    "JOB-001": {
-      reviewerName: "Jackson Mulenga",
-      reviewerInitial: "JM",
-      jobTitleEN: "HOD - Mining",
-      jobTitleFR: "Chef de département - Mines",
-    },
-    "JOB-002": {
-      reviewerName: "Alisha Nsimba",
-      reviewerInitial: "AN",
-      jobTitleEN: "Senior Geologist",
-      jobTitleFR: "Géologue principal",
-    },
-  }), []);
+  // const mockMap = useMemo(() => ({
+  //   "JOB-001": {
+  //     reviewerName: "Jackson Mulenga",
+  //     reviewerInitial: "JM",
+  //     jobTitleEN: "HOD - Mining",
+  //     jobTitleFR: "Chef de dï¿½partement - Mines",
+  //   },
+  //   "JOB-002": {
+  //     reviewerName: "Alisha Nsimba",
+  //     reviewerInitial: "AN",
+  //     jobTitleEN: "Senior Geologist",
+  //     jobTitleFR: "Gï¿½ologue principal",
+  //   },
+  // }) as { [key: string]: SignatureDetails }, []);
 
   useEffect(() => {
-    if (!jobId) {
+    if (!emailId) {
       setData(null);
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    const timer = setTimeout(() => {
-      setData(mockMap[jobId] ?? mockMap["JOB-001"]);
+    const timer = setTimeout(async () => {
+      const Filter =[
+        { FilterKey: "EmailId", Operator: "eq", FilterValue: emailId }
+      ]
+      const response = await masterService.GetUserDetails(Filter, "and");
+      if(response.status === 200 && response.data){
+        const data = response.data;
+        const mappedData : SignatureDetails = {
+          reviewerName: data.FirstName + " " + data.MiddleName+ " "+ data.LastName,
+          reviewerInitial: data.LastName,
+          jobTitleEN: data.JopTitleEnglish || "",
+          jobTitleFR: data.JopTitleFrench || "",
+        }
+        setData(mappedData) 
       setLoading(false);
+      }
     }, 550);
 
     return () => clearTimeout(timer);
-  }, [jobId, mockMap]);
+  }, [emailId]);
 
   return { data, loading };
 };
+
+

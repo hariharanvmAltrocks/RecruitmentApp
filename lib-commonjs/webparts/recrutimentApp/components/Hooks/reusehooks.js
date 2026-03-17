@@ -1,7 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.findMatricID = void 0;
 exports.calculateTotalExperienceYears = calculateTotalExperienceYears;
 exports.getcountryCode = getcountryCode;
+var ConditionConfig_1 = require("../../utilities/ConditionConfig");
+var Config_1 = require("../../utilities/Config");
 function calculateTotalExperienceYears(experiences) {
     var totalMonths = 0;
     experiences.forEach(function (exp) {
@@ -34,4 +37,21 @@ function getcountryCode(Code, refMobile) {
         return null;
     return "".concat(country.id, "-").concat(mobileNumber);
 }
+var findMatricID = function (statusID) {
+    switch (statusID) {
+        case Config_1.StatusId.ReadyforRecruitmentProcess:
+            return ConditionConfig_1.MatricID.AssignHr;
+        case Config_1.StatusId.PendingUploadONEM:
+            return ConditionConfig_1.MatricID.UploadONEM;
+        case Config_1.StatusId.PendingUploadAdvert:
+            return ConditionConfig_1.MatricID.JobAdvert;
+        case Config_1.StatusId.PendingReviewAdvertHOD:
+            return ConditionConfig_1.MatricID.AdvertReviewHOD;
+        case Config_1.StatusId.PendingwithLineManagereviewAdv:
+            return ConditionConfig_1.MatricID.AdvertReviewLM;
+        default:
+            return 0;
+    }
+};
+exports.findMatricID = findMatricID;
 //# sourceMappingURL=reusehooks.js.map

@@ -8,9 +8,12 @@ import { IMasterService } from "./MasterService/IMasterService";
 import MasterService from "./MasterService/MasterService";
 import { IMenuService } from "./MenuService/IMenu";
 import MenuService from "./MenuService/menuService";
+import { IRecruitmentService } from "./RecruitmentTable/IRecruitmentService";
+import RecruitmentService from "./RecruitmentTable/RecruitmentService";
 
 export const masterService: IMasterService = new MasterService();
 export const menuService: IMenuService = new MenuService();
 export const DashboardServices: IDashboard = new DashboardService();
 export const CommonServices: ICommonService = new CommonService();
 export const CareerPotalServices: Icareerportal = new CareerPortalService();
+export const RecruitmentServices: IRecruitmentService = new RecruitmentService(); 

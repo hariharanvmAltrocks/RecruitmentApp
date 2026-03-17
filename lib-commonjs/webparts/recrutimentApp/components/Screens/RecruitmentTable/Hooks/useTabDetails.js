@@ -4,37 +4,44 @@ exports.useTabDetails = void 0;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
 var MenuDataContext_1 = require("../../../../utilities/hooks/MenuDataContext");
-var useStateHooks_1 = require("../../../RecrutimentApp/useStateHooks");
-var mockTabs = [
-    {
-        key: "mySubmission",
-        label: "My Submission",
-        description: "Requests submitted by you",
-        tableMode: "normal",
-        actionMode: "view",
-    },
-    {
-        key: "assignRecruitmentHR",
-        label: "Assign Recruitment HR",
-        description: "Assign an HR partner to vacancies",
-        tableMode: "checkbox",
-        actionMode: "view",
-    },
-    {
-        key: "uploadOnemDoc",
-        label: "Upload ONEM Doc",
-        description: "Attach ONEM documentation",
-        tableMode: "normal",
-        actionMode: "upload",
-    },
-];
+var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
+var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
+var Config_1 = require("../../../../utilities/Config");
+var reusehooks_1 = require("../../../Hooks/reusehooks");
+// const mockTabs: TabItem[] = [
+//   {
+//     key: "mySubmission",
+//     label: "My Submission",
+//     description: "Requests submitted by you",
+//     tableMode: "normal",
+//     actionMode: "view",
+//   },
+//   {
+//     key: "assignRecruitmentHR",
+//     label: "Assign Recruitment HR",
+//     description: "Assign an HR partner to vacancies",
+//     tableMode: "checkbox",
+//     actionMode: "view",
+//   },
+//   {
+//     key: "uploadOnemDoc",
+//     label: "Upload ONEM Doc",
+//     description: "Attach ONEM documentation",
+//     tableMode: "normal",
+//     actionMode: "upload",
+//   },
+// ];
 var getTabDetails = function (items) {
     var _a;
-    return (_a = items === null || items === void 0 ? void 0 : items.map(function (item, index) { return (tslib_1.__assign(tslib_1.__assign({}, item), { Value: "tab".concat(index + 1) })); })) !== null && _a !== void 0 ? _a : [];
+    return (_a = items === null || items === void 0 ? void 0 : items.map(function (item, index) {
+        var _a, _b;
+        return (tslib_1.__assign(tslib_1.__assign({}, item), { Value: "tab".concat(index + 1), MatricID: (0, reusehooks_1.findMatricID)(Number((_b = (_a = item.StatusDetails) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.StatusId)) }));
+    })) !== null && _a !== void 0 ? _a : [];
 };
 var useTabDetails = function () {
     var menuData = (0, MenuDataContext_1.useMenuData)().menuData;
-    var activeMenuID = (0, useStateHooks_1.useStateHooks)().activeMenuID;
+    var activeMenuID = (0, UIStateContext_1.useUIState)().activeMenuID;
+    var roleIDs = (0, RoleContext_1.useRoleContext)().roleIDs;
     var _a = (0, react_1.useState)([]), tabs = _a[0], setTabs = _a[1];
     var _b = (0, react_1.useState)(true), loading = _b[0], setLoading = _b[1];
     (0, react_1.useEffect)(function () {
@@ -53,8 +60,31 @@ var useTabDetails = function () {
                     acc.push.apply(acc, getTabDetails(match.TabDetails));
                 return acc;
             }, [])) !== null && _a !== void 0 ? _a : [];
-            console.log(selectedTabDetails);
-            setTabs(mockTabs);
+            var normalize = function (value) { return value.replace(/\s+/g, "").toLowerCase(); };
+            var orderedTabDetails = tslib_1.__spreadArray([], selectedTabDetails, true);
+            var mySubmissionIndex = orderedTabDetails.findIndex(function (tab) { var _a; return normalize((_a = tab.TabName) !== null && _a !== void 0 ? _a : "") === "mysubmission"; });
+            if (mySubmissionIndex > 0) {
+                var mySubmission = orderedTabDetails.splice(mySubmissionIndex, 1)[0];
+                orderedTabDetails.unshift(mySubmission);
+            }
+            var HRLead = roleIDs === null || roleIDs === void 0 ? void 0 : roleIDs.includes(Config_1.RoleID.RecruitmentHRLead);
+            var HR = roleIDs === null || roleIDs === void 0 ? void 0 : roleIDs.includes(Config_1.RoleID.RecruitmentHR);
+            var mappedTabs = orderedTabDetails.map(function (tab) {
+                var _a, _b, _c;
+                return ({
+                    key: tab.Value,
+                    label: tab.TabName,
+                    description: tab.TabName,
+                    tableMode: ((HRLead && tab.Value === "tab1") || (HR && tab.Value === "tab2"))
+                        ? "checkbox"
+                        : "normal",
+                    actionMode: (Array.isArray((_a = tab.StatusDetails[0]) === null || _a === void 0 ? void 0 : _a.Action)
+                        ? (_b = tab.StatusDetails[0]) === null || _b === void 0 ? void 0 : _b.Action[0]
+                        : (_c = tab.StatusDetails[0]) === null || _c === void 0 ? void 0 : _c.Action),
+                    matricId: tab.MatricID,
+                });
+            });
+            setTabs(mappedTabs);
             setLoading(false);
         }, 0);
         return function () {

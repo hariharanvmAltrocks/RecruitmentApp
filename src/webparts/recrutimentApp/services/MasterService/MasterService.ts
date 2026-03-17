@@ -1,5 +1,5 @@
 import { ApiResponse } from "../../models/apimodels";
-import { UserRoleResponseDetails, CareerPortalLink, ITabdetails } from "../../models/master";
+import { UserRoleResponseDetails, CareerPortalLink, ITabdetails, IUserDetails } from "../../models/master";
 import { count, ResponeStatus } from "../../utilities/ApiConfig";
 import { ListNames } from "../../utilities/Config";
 import SPServices from "../SPService/spservice";
@@ -553,6 +553,79 @@ export default class MasterService implements IMasterService {
     }
   }
 
+    async GetUserDetails(
+    filterParam: any,
+    filterConditions: any
+  ): Promise<ApiResponse<IUserDetails>> {
+    let GridResult: IUserDetails = {
+      ID: 0,
+      EmailId: "",
+      DepartmentId: 0,
+      CurrentPosition: "",
+      DepartmentName: "",
+      FirstName: "",
+      MiddleName: "",
+      LastName: "",
+      JopTitleEnglish: "",
+      JopTitleFrench: "",
+      DRCGrade: "",
+      PatersonGrade: "",
+      BusinessAddress: "",
+      HomeAddress: "",
+      ContactNumber: "",
+      BusinessUnitCode: "",
+      BusinessUnitID: 0,
+      Nationality: ""
+    }
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSSageList,
+        Select: `*,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench,Department/DepartmentName,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade`,
+        Expand: "JobTitleInEnglish,JobTitleInFrench,Department,PatersonGrade,DRCGrade",
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Topcount: count.Topcount,
+      });
+      
+      if (res.length > 0) {
+        res.map((item: any) => {
+          GridResult = {
+            ID: item.ID,
+            EmailId: item.EmailId,
+            DepartmentId: item.DepartmentId,
+            CurrentPosition: item.CurrentPosition,
+            DepartmentName: item.Department?.DepartmentName,
+            FirstName: item.FirstName,
+            MiddleName: item.MiddleName,
+            LastName: item.LastName,
+            JopTitleEnglish: item.JobTitleInEnglish?.JobTitleInEnglish,
+            JopTitleFrench: item.JobTitleInFrench?.JobTitleInFrench,
+            DRCGrade: item.DRCGrade?.DRCGrade,
+            PatersonGrade: item.PatersonGrade?.PatersonGrade,
+            BusinessAddress: item.BusinessAddress,
+            HomeAddress: item.HomeAddress,
+            ContactNumber: item.ContactNumber,
+            BusinessUnitCode: item.BusinessUnitCode,
+            BusinessUnitID: item.BusinessUnitID,
+            Nationality: item.Nationality
+          }
+          return GridResult;
+        })
+      }
+      return {
+        data: GridResult,
+        status: 200,
+        message: "GetRecruitmentDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching data in GetRecruitmentDetails:", error);
+      return {
+        data: {} as IUserDetails,
+        status: 500,
+        message: "Error fetching data from GetRecruitmentDetails",
+      };
+    }
+  }
 
 
 }

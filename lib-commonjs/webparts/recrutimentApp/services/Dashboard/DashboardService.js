@@ -126,10 +126,10 @@ var DashboardService = /** @class */ (function () {
                         _a.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
-                                Select: "*,Status/StatusDescription,JobCode/JobCode,JobCode/ID,JobCode/JobTitleInEnglish,BusinessUnitCode/BusineesUnitCode",
+                                Select: "*,Status/StatusDescription,JobCode/JobCode,JobCode/ID,JobCode/JobTitleInEnglish,BusinessUnitCode/BusineesUnitCode,Department/DepartmentName",
                                 Filter: filterParam,
                                 FilterCondition: filterConditions,
-                                Expand: "Status,JobCode,BusinessUnitCode",
+                                Expand: "Status,JobCode,BusinessUnitCode,Department",
                                 Topcount: ApiConfig_1.count.Topcount,
                                 Orderby: "ID",
                                 Orderbydecorasc: true,
@@ -140,7 +140,7 @@ var DashboardService = /** @class */ (function () {
                             return [2 /*return*/, { data: [], status: 200, message: "No records found" }];
                         }
                         GridResult = res.map(function (item, index) {
-                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
                             return ({
                                 ID: item.ID,
                                 RecordID: index + 1,
@@ -159,6 +159,7 @@ var DashboardService = /** @class */ (function () {
                                 CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
                                     ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
                                     : undefined,
+                                Department: (_o = (_m = item === null || item === void 0 ? void 0 : item.Department) === null || _m === void 0 ? void 0 : _m.DepartmentName) !== null && _o !== void 0 ? _o : "",
                             });
                         });
                         return [2 /*return*/, {
@@ -245,16 +246,16 @@ var DashboardService = /** @class */ (function () {
                                 ListName: Config_1.ListNames.HRMSAdditionalHeadCountForExisitingPosition,
                                 Filter: filterParam,
                                 FilterCondition: filterConditions,
-                                select: ["*", "Status/StatusDescription", "BusinessUnitCode/BusineesUnitCode"],
-                                expand: ["Status", "BusinessUnitCode"],
+                                select: ["*", "Status/StatusDescription", "BusinessUnitCode/BusineesUnitCode", "Department/DepartmentName"],
+                                expand: ["Status", "BusinessUnitCode", "Department"],
                             },
                             {
                                 StateValue: 2,
                                 ListName: Config_1.ListNames.HRMSNewPositionRequest,
                                 Filter: filterParam,
                                 FilterCondition: filterConditions,
-                                select: ["*", "BusinessUnitCode/BusineesUnitCode", "Status/StatusDescription"],
-                                expand: ["Status", "BusinessUnitCode"],
+                                select: ["*", "BusinessUnitCode/BusineesUnitCode", "Status/StatusDescription", "Department/DepartmentName"],
+                                expand: ["Status", "BusinessUnitCode", "Department"],
                             },
                             {
                                 StateValue: 3,
@@ -268,8 +269,9 @@ var DashboardService = /** @class */ (function () {
                                     "JobCode/JobCode",
                                     "JobCode/JobTitleInEnglish",
                                     "JobCode/ID",
+                                    "Department/DepartmentName"
                                 ],
-                                expand: ["Status", "JobCode", "BusinessUnitCode"],
+                                expand: ["Status", "JobCode", "BusinessUnitCode", "Department"],
                             },
                         ];
                         return [4 /*yield*/, spservice_1.default.batchGet(queries)];
@@ -296,7 +298,7 @@ var DashboardService = /** @class */ (function () {
                         additionalPositionMap_1 = new Map(((_b = additionalPositionRes.data) !== null && _b !== void 0 ? _b : []).map(function (d) { return [d.parentId, d]; }));
                         newPositionMap_1 = new Map(((_c = newPositionRes.data) !== null && _c !== void 0 ? _c : []).map(function (d) { return [d.parentId, d]; }));
                         mapCommonFields_1 = function (item, index) {
-                            var _a, _b, _c, _d;
+                            var _a, _b, _c, _d, _e, _f;
                             return ({
                                 ID: item.ID,
                                 RecordID: index + 1,
@@ -309,6 +311,7 @@ var DashboardService = /** @class */ (function () {
                                 CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
                                     ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
                                     : undefined,
+                                Department: (_f = (_e = item === null || item === void 0 ? void 0 : item.Department) === null || _e === void 0 ? void 0 : _e.DepartmentName) !== null && _f !== void 0 ? _f : "",
                             });
                         };
                         additionalExistingResult = additionalExistingItems.map(function (item, index) {

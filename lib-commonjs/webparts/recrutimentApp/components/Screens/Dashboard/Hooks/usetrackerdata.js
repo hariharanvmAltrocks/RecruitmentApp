@@ -30,7 +30,7 @@ var useTrackerData = function (MatricID) {
                         case Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD: return [3 /*break*/, 7];
                     }
                     return [3 /*break*/, 9];
-                case 1: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetNPAEPVRRDetails(filterObj.Filter[0], condition)];
+                case 1: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetNPAEPVRRDetails(filterObj.Filter, condition)];
                 case 2:
                     response = _b.sent();
                     return [3 /*break*/, 9];

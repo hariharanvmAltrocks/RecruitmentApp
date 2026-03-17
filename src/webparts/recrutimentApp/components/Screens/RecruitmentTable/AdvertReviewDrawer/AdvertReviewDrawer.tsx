@@ -1,33 +1,24 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Activity,
-  Calendar,
-  CheckCircle2,
-  ChevronRight,
-  ClipboardList,
-  Download,
-  FileCheck,
-  FileText,
-  Globe,
-  History,
-  LayoutDashboard,
-  MessageSquare,
-  Paperclip,
-  UserCheck,
-  Users,
-  X,
-} from "lucide-react";
+import { CheckCircle2, FileCheck, History, X } from "lucide-react";
 import { usePositionDetails } from "./Hooks/getPositionDetails";
 import { useAdvertismentDetails } from "./Hooks/getAdvertismentDetails";
 import { useAttachmentDetails } from "./Hooks/getAttachmentDetails";
 import { useSignatureDetails } from "./Hooks/getSignatureDetails";
 import { AdvertLanguage } from "./StateManage/useStateFromManage";
 import "./AdvertReviewDrawer.scss";
+import { PositionFramework } from "../Components/PositionFramework";
+import { AdvertLanguageToggle } from "../Components/AdvertLanguageToggle";
+import { RequiredAttachments } from "../Components/RequiredAttachments";
+import { ReviewCommentSignature } from "../Components/ReviewCommentSignature";
+import { UploadDocument, UploadedFile } from "../Components/UploadDocument";
+import { ValidationSummary } from "../Components/ValidationSummary";
 
 export interface AdvertReviewDrawerProps {
   drawerOpen: boolean;
-  selectedJobId: string | null;
+  selectedJobId: number | null;
+  selectedJobCode: string;
+  selectedType: string;
   advertLanguage: AdvertLanguage;
   reviewerComments: string;
   acknowledgementCheckbox: boolean;
@@ -39,22 +30,6 @@ export interface AdvertReviewDrawerProps {
   setLoadingState: (value: boolean) => void;
 }
 
-interface InfoFieldProps {
-  label: string;
-  value?: string | number | null;
-  icon?: React.ElementType;
-}
-
-const InfoField: React.FC<InfoFieldProps> = ({ label, value, icon: Icon }) => (
-  <div className="advert-review-drawer__info-field">
-    <div className="advert-review-drawer__info-label">
-      {Icon && <Icon size={12} />}
-      <span>{label}</span>
-    </div>
-    <div className="advert-review-drawer__info-value">{value ?? "-"}</div>
-  </div>
-);
-
 const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({ width = "100%", height = "14px" }) => (
   <div className="advert-review-drawer__skeleton" style={{ width, height }} />
 );
@@ -62,6 +37,8 @@ const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({ width = 
 export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   drawerOpen,
   selectedJobId,
+  selectedJobCode,
+  selectedType,
   advertLanguage,
   reviewerComments,
   acknowledgementCheckbox,
@@ -72,12 +49,24 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   onToggleAcknowledgement,
   setLoadingState,
 }) => {
-  const { data: positionDetails, loading: positionLoading } = usePositionDetails(selectedJobId);
-  const { data: advertDetails, loading: advertLoading } = useAdvertismentDetails(selectedJobId);
-  const { data: attachments, loading: attachmentLoading } = useAttachmentDetails(selectedJobId);
-  const { data: signatureDetails, loading: signatureLoading } = useSignatureDetails(selectedJobId);
+  const { data: positionDetails, loading: positionLoading } = usePositionDetails(selectedJobId, selectedType);
+  const { data: signatureDetails, loading: signatureLoading } = useSignatureDetails();
+
+  const jobCodeId = positionDetails?.JobCodeID ?? 0;
+  const jobCode = positionDetails?.jobCode ?? selectedJobCode;
+
+  const { data: advertDetails, loading: advertLoading } = useAdvertismentDetails(jobCodeId, { enabled: !!jobCodeId });
+  const { data: attachments, loading: attachmentLoading } = useAttachmentDetails(jobCode, { enabled: !!jobCode });
 
   const isLoading = positionLoading || advertLoading || attachmentLoading || signatureLoading;
+
+  const [uploadDocument, setUploadDocument] = useState<UploadedFile[]>([]);
+  const [showValidation, setShowValidation] = useState(false);
+
+  const commentValid = reviewerComments.trim().length > 0;
+  const uploadValid = uploadDocument.length > 0;
+  const checkboxValid = acknowledgementCheckbox;
+  const canApprove = commentValid && uploadValid && checkboxValid;
 
   useEffect(() => {
     if (loadingState !== isLoading) {
@@ -93,74 +82,27 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     return advertLanguage === "EN" ? advertDetails.english : advertDetails.french;
   }, [advertDetails, advertLanguage]);
 
-  const headerMeta = useMemo(() => ({
-    title: positionDetails?.jobTitle ?? "",
-    code: positionDetails?.jobCode ?? "",
-    department: positionDetails?.department ?? "",
-  }), [positionDetails]);
+  const headerMeta = useMemo(
+    () => ({
+      title: positionDetails?.jobTitle ?? "",
+      code: positionDetails?.jobCode ?? "",
+      department: positionDetails?.department ?? "",
+    }),
+    [positionDetails]
+  );
 
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
 
-  const attachmentCards = useMemo(() => (
-    attachments.map((doc, index) => (
-      <div key={`${doc.title}-${index}`} className="advert-review-drawer__attachment-card">
-        <div className="advert-review-drawer__attachment-header">
-          <div className={`advert-review-drawer__attachment-type advert-review-drawer__attachment-type--${doc.type.toLowerCase()}`}>
-            <FileText size={14} />
-            <span>{doc.type}</span>
-          </div>
-          <div className="advert-review-drawer__attachment-meta">
-            <div className="advert-review-drawer__attachment-title" title={doc.title}>{doc.title}</div>
-            <div className="advert-review-drawer__attachment-tag">Recruitment</div>
-          </div>
-        </div>
+  const handleApprove = useCallback(() => {
+    setShowValidation(true);
+    if (!canApprove) {
+      return;
+    }
 
-        <div className="advert-review-drawer__attachment-body">
-          {doc.versions.map((version, idx) => (
-            <div key={`${version.lang}-${idx}`} className="advert-review-drawer__attachment-version">
-              <div className={`advert-review-drawer__attachment-lang advert-review-drawer__attachment-lang--${version.lang.toLowerCase()}`}>
-                {version.lang}
-              </div>
-              <div className="advert-review-drawer__attachment-info">
-                <div className="advert-review-drawer__attachment-label">{version.label}</div>
-                <div className="advert-review-drawer__attachment-size">{version.size}</div>
-              </div>
-              <Download size={12} />
-            </div>
-          ))}
-        </div>
-      </div>
-    ))
-  ), [attachments]);
-
-  const responsibilitiesList = useMemo(() => (
-    advertContent?.responsibilities.map((item, index) => (
-      <li key={`${item}-${index}`} className="advert-review-drawer__list-item">
-        <span className="advert-review-drawer__list-dot" />
-        {item}
-      </li>
-    ))
-  ), [advertContent]);
-
-  const qualificationsList = useMemo(() => (
-    advertContent?.qualifications.map((item, index) => (
-      <li key={`${item}-${index}`} className="advert-review-drawer__list-item advert-review-drawer__list-item--muted">
-        <span className="advert-review-drawer__list-dot advert-review-drawer__list-dot--muted" />
-        {item}
-      </li>
-    ))
-  ), [advertContent]);
-
-  const experienceList = useMemo(() => (
-    advertContent?.experience.map((item, index) => (
-      <li key={`${item}-${index}`} className="advert-review-drawer__list-item advert-review-drawer__list-item--muted">
-        <span className="advert-review-drawer__list-dot advert-review-drawer__list-dot--muted" />
-        {item}
-      </li>
-    ))
-  ), [advertContent]);
+    // TODO: Add approve action here
+  }, [canApprove]);
 
   return (
     <AnimatePresence>
@@ -210,224 +152,44 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
             </div>
 
             <div className="advert-review-drawer__content">
-              <section className="advert-review-drawer__section advert-review-drawer__section--frame">
-                <div className="advert-review-drawer__section-header">
-                  <h3>
-                    <span className="advert-review-drawer__section-indicator" />
-                    Position Framework
-                  </h3>
-                  <span className="advert-review-drawer__ref">REF: {headerMeta.code || "-"}</span>
-                </div>
+              <PositionFramework positionDetails={positionDetails} isLoading={isLoading} headerCode={headerMeta.code} />
 
-                {isLoading ? (
-                  <div className="advert-review-drawer__grid">
-                    {Array.from({ length: 8 }).map((_, idx) => (
-                      <div key={`skeleton-${idx}`} className="advert-review-drawer__info-field">
-                        <SkeletonBlock width="120px" />
-                        <SkeletonBlock width="180px" />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="advert-review-drawer__group">
-                    <h4 className="advert-review-drawer__group-title">
-                      <Users size={12} />
-                      Organizational Alignment
-                    </h4>
-                    <div className="advert-review-drawer__grid">
-                      <InfoField label="BU Code" value={positionDetails?.buCode} icon={FileText} />
-                      <InfoField label="BU Name" value={positionDetails?.buName} icon={LayoutDashboard} />
-                      <InfoField label="Department" value={positionDetails?.department} icon={Users} />
-                      <InfoField label="Sub Department" value={positionDetails?.subDepartment} icon={ChevronRight} />
-                      <InfoField label="Section" value={positionDetails?.section} icon={ChevronRight} />
-                      <InfoField label="Dept Code" value={positionDetails?.deptCode} icon={FileText} />
-                      <InfoField label="Reports To" value={positionDetails?.reportsTo} icon={UserCheck} />
-                      <InfoField label="Area of Work" value={positionDetails?.areaOfWork} icon={Globe} />
-                    </div>
+              <AdvertLanguageToggle
+                advertLanguage={advertLanguage}
+                advertContent={advertContent}
+                isLoading={isLoading}
+                onLanguageChange={onLanguageChange}
+              />
 
-                    <div className="advert-review-drawer__divider" />
+              <RequiredAttachments attachments={attachments} isLoading={isLoading} />
 
-                    <h4 className="advert-review-drawer__group-title">
-                      <ClipboardList size={12} />
-                      Position Classification
-                    </h4>
-                    <div className="advert-review-drawer__grid">
-                      <InfoField label="Nationality" value={positionDetails?.nationality} icon={Globe} />
-                      <InfoField label="Paterson Grade" value={positionDetails?.patersonGrade} icon={Activity} />
-                      <InfoField label="DRC Grade" value={positionDetails?.drcGrade} icon={Activity} />
-                      <InfoField label="Employment Category" value={positionDetails?.employmentCategory} icon={UserCheck} />
-                      <InfoField label="Type of Contract" value={positionDetails?.contractType} icon={FileCheck} />
-                      <InfoField label="No of Person(s)" value={positionDetails?.numberOfPersons} icon={Users} />
-                      <InfoField label="Date Required" value={positionDetails?.dateRequired} icon={Calendar} />
-                    </div>
-                  </div>
-                )}
-              </section>
+              <UploadDocument
+                multiple={false}
+                acceptedFormats={".pdf"}
+                label={"Upload JobAdvert"}
+                required={true}
+                onChange={(file: UploadedFile[]) => setUploadDocument(file)}
+              />
 
-              <div className="advert-review-drawer__section advert-review-drawer__section--toggle">
-                <div className="advert-review-drawer__toggle-label">
-                  <Globe size={14} />
-                  Advert Language
-                </div>
-                <div className="advert-review-drawer__toggle">
-                  <button
-                    type="button"
-                    className={`advert-review-drawer__toggle-button ${advertLanguage === "EN" ? "is-active" : ""}`.trim()}
-                    onClick={() => onLanguageChange("EN")}
-                  >
-                    English
-                  </button>
-                  <button
-                    type="button"
-                    className={`advert-review-drawer__toggle-button ${advertLanguage === "FR" ? "is-active" : ""}`.trim()}
-                    onClick={() => onLanguageChange("FR")}
-                  >
-                    French
-                  </button>
-                </div>
-              </div>
-
-              <section className="advert-review-drawer__section">
-                <h3 className="advert-review-drawer__section-title">
-                  <FileText size={12} />
-                  Job Description ({advertLanguage})
-                </h3>
-                {isLoading ? (
-                  <SkeletonBlock height="72px" />
-                ) : (
-                  <p className="advert-review-drawer__description">{advertContent?.description}</p>
-                )}
-              </section>
-
-              <section className="advert-review-drawer__section">
-                <h3 className="advert-review-drawer__section-title">
-                  <CheckCircle2 size={12} />
-                  Key Responsibilities ({advertLanguage})
-                </h3>
-                {isLoading ? (
-                  <div className="advert-review-drawer__list">
-                    <SkeletonBlock width="80%" />
-                    <SkeletonBlock width="60%" />
-                    <SkeletonBlock width="70%" />
-                  </div>
-                ) : (
-                  <ul className="advert-review-drawer__list">{responsibilitiesList}</ul>
-                )}
-              </section>
-
-              <div className="advert-review-drawer__grid advert-review-drawer__grid--split">
-                <section className="advert-review-drawer__section">
-                  <h3 className="advert-review-drawer__section-title">
-                    <UserCheck size={12} />
-                    Qualifications ({advertLanguage})
-                  </h3>
-                  {isLoading ? (
-                    <div className="advert-review-drawer__list">
-                      <SkeletonBlock width="70%" />
-                      <SkeletonBlock width="55%" />
-                    </div>
-                  ) : (
-                    <ul className="advert-review-drawer__list">{qualificationsList}</ul>
-                  )}
-                </section>
-                <section className="advert-review-drawer__section">
-                  <h3 className="advert-review-drawer__section-title">
-                    <Activity size={12} />
-                    Experience ({advertLanguage})
-                  </h3>
-                  {isLoading ? (
-                    <div className="advert-review-drawer__list">
-                      <SkeletonBlock width="65%" />
-                      <SkeletonBlock width="50%" />
-                    </div>
-                  ) : (
-                    <ul className="advert-review-drawer__list">{experienceList}</ul>
-                  )}
-                </section>
-              </div>
-
-              <section className="advert-review-drawer__section">
-                <div className="advert-review-drawer__section-header advert-review-drawer__section-header--plain">
-                  <h3>
-                    <Paperclip size={12} />
-                    Required Attachments
-                  </h3>
-                </div>
-                {isLoading ? (
-                  <div className="advert-review-drawer__attachments">
-                    {Array.from({ length: 3 }).map((_, idx) => (
-                      <div key={`attachment-skeleton-${idx}`} className="advert-review-drawer__attachment-card">
-                        <div className="advert-review-drawer__attachment-header">
-                          <SkeletonBlock width="60%" />
-                        </div>
-                        <div className="advert-review-drawer__attachment-body">
-                          <SkeletonBlock width="80%" />
-                          <SkeletonBlock width="65%" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="advert-review-drawer__attachments">{attachmentCards}</div>
-                )}
-              </section>
-
-              <section className="advert-review-drawer__section advert-review-drawer__section--comments">
-                <h3 className="advert-review-drawer__section-title">
-                  <MessageSquare size={12} />
-                  Reviewer Comments
-                </h3>
-                <textarea
-                  className="advert-review-drawer__textarea"
-                  placeholder="Add your feedback or notes here..."
-                  value={reviewerComments}
-                  onChange={(event) => onCommentsChange(event.target.value)}
-                />
-
-                <div className="advert-review-drawer__signature">
-                  <label className="advert-review-drawer__acknowledge">
-                    <span className={`advert-review-drawer__checkbox ${acknowledgementCheckbox ? "is-checked" : ""}`.trim()}>
-                      <input
-                        type="checkbox"
-                        checked={acknowledgementCheckbox}
-                        onChange={onToggleAcknowledgement}
-                      />
-                      <CheckCircle2 size={12} />
-                    </span>
-                    <span>
-                      I hereby acknowledge that I have reviewed the job advertisement details and attachments, and I confirm that the
-                      information is accurate and ready for publication.
-                    </span>
-                  </label>
-
-                  <div className="advert-review-drawer__signature-details">
-                    <div className="advert-review-drawer__avatar">
-                      {isLoading ? "" : (signatureDetails?.reviewerInitial ?? "JD")}
-                    </div>
-                    <div className="advert-review-drawer__signature-meta">
-                      <div>
-                        <div className="advert-review-drawer__signature-label">Reviewer Name</div>
-                        <div className="advert-review-drawer__signature-value">
-                          {isLoading ? <SkeletonBlock width="120px" /> : signatureDetails?.reviewerName}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="advert-review-drawer__signature-label">Job Title (EN)</div>
-                        <div className="advert-review-drawer__signature-value">
-                          {isLoading ? <SkeletonBlock width="140px" /> : signatureDetails?.jobTitleEN}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="advert-review-drawer__signature-label">Job Title (FR)</div>
-                        <div className="advert-review-drawer__signature-value">
-                          {isLoading ? <SkeletonBlock width="160px" /> : signatureDetails?.jobTitleFR}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
+              <ReviewCommentSignature
+                reviewerComments={reviewerComments}
+                acknowledgementCheckbox={acknowledgementCheckbox}
+                signatureDetails={signatureDetails}
+                isLoading={isLoading}
+                onCommentsChange={onCommentsChange}
+                onToggleAcknowledgement={onToggleAcknowledgement}
+              />
             </div>
+
+             <ValidationSummary
+              show={showValidation && !canApprove}
+              messages={[
+                { key: "upload", text: "Upload document is required.", valid: uploadValid },
+                { key: "comment", text: "Reviewer comment is required.", valid: commentValid },
+                { key: "checkbox", text: "Please acknowledge before approving.", valid: checkboxValid },
+              ]}
+            />
+
 
             <div className="advert-review-drawer__footer">
               <button type="button" className="advert-review-drawer__history" title="View History">
@@ -439,8 +201,9 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                 </button>
                 <button
                   type="button"
-                  className={`advert-review-drawer__button advert-review-drawer__button--primary ${acknowledgementCheckbox ? "" : "is-disabled"}`.trim()}
-                  disabled={!acknowledgementCheckbox}
+                  className={`advert-review-drawer__button advert-review-drawer__button--primary ${canApprove ? "" : "is-disabled"}`.trim()}
+                  disabled={isLoading}
+                  onClick={handleApprove}
                 >
                   <CheckCircle2 size={16} />
                   Approve Advert

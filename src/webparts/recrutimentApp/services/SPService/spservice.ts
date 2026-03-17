@@ -184,7 +184,7 @@ const SPReadItems = async (params: IListItems): Promise<unknown[]> => {
       .expand(p.Expand)
       .orderBy(p.Orderby, p.Orderbydecorasc)
       .top(pageSize)
-      .skip(skip)();   // ✅ correct method
+      .skip(skip)();   
 
     allItems = [...allItems, ...items];
 
@@ -303,7 +303,7 @@ const batchGet = async (queries: BatchQuery[]): Promise<Record<number, any>> => 
     const results: Record<number, any> = {};
     const promises = queries.map((q: any) => {
 
-      const flatFilters = q.Filter.flat();
+      const flatFilters =   q.Filter && q.Filter.flat() || [];
       const filterStr = _buildODataFilter(flatFilters, q.FilterCondition ?? "and");
 
       const request = batchedSP.web.lists
@@ -313,8 +313,16 @@ const batchGet = async (queries: BatchQuery[]): Promise<Record<number, any>> => 
         .select(...q.select ?? ["*"])
         .expand(q.expand ?? []);
 
-      return request().then(r => {
-        results[q.StateValue] = r;
+       return request().then(r => {
+        console.log(r,"data");
+
+        if (!results[q.StateValue]) {
+          results[q.StateValue] = [];
+        }
+
+        // concat results
+        results[q.StateValue] = [...results[q.StateValue], ...r];
+
       });
 
     });
@@ -337,7 +345,6 @@ const batchInsert = async (params: {
     const [batchedSP, execute] = getSP().batched();
     const list = batchedSP.web.lists.getByTitle(params.ListName);
 
-    // Queue operations — must happen BEFORE execute().
     const promises = params.responseData.map((data) => list.items.add(data));
 
     await execute();
@@ -648,7 +655,8 @@ const SPReadItemsCamelQuery = async (rawParams: ICAMLQuery): Promise<unknown[]> 
   return camlResults;
 };
 
-// ─── Default Export ───────────────────────────────────────────────────────────
+// ── SPServices.ts ─────────────────────────────────────────────────────────
+
 
 const SPServices = {
   initSP,

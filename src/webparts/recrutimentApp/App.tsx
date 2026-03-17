@@ -8,6 +8,7 @@ import "./External/tailwind.css"
 import { MenuDataProvider } from "./utilities/hooks/MenuDataContext";
 import { ThemeProvider, useThemeVars } from "./theme/ThemeContext";
 import * as strings from 'RecrutimentAppWebPartStrings';
+import { UIProvider } from "./components/RecrutimentApp/UIStateContext";
 
 const FaviconSetter: React.FC<{ webURL: string }> = ({ webURL }) => {
   React.useEffect(() => {
@@ -50,7 +51,8 @@ const App: React.FC<IRecrutimentAppProps> = (props) => {
   const themeVars = useThemeVars();
 
   return (
-    <RoleProvider>
+    <UIProvider>
+       <RoleProvider>
       <MenuDataProvider>
         <FaviconSetter webURL={props.webURL} />
         <FontLoader />
@@ -61,6 +63,8 @@ const App: React.FC<IRecrutimentAppProps> = (props) => {
         </div>
       </MenuDataProvider>
     </RoleProvider>
+    </UIProvider>
+   
   );
 };
 

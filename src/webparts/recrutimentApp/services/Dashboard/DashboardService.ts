@@ -137,10 +137,10 @@ async GetRecruitmentDetails(
   try {
     const res: any[] = await SPServices.SPReadItems({
       Listname: ListNames.HRMSRecruitmentDptDetails,
-      Select: `*,Status/StatusDescription,JobCode/JobCode,JobCode/ID,JobCode/JobTitleInEnglish,BusinessUnitCode/BusineesUnitCode`,
+      Select: `*,Status/StatusDescription,JobCode/JobCode,JobCode/ID,JobCode/JobTitleInEnglish,BusinessUnitCode/BusineesUnitCode,Department/DepartmentName`,
       Filter: filterParam,
       FilterCondition: filterConditions,
-      Expand: `Status,JobCode,BusinessUnitCode`,
+      Expand: `Status,JobCode,BusinessUnitCode,Department`,
       Topcount: count.Topcount,
       Orderby: "ID",
       Orderbydecorasc: true,
@@ -168,6 +168,7 @@ async GetRecruitmentDetails(
       CreatedDate: item?.Created
         ? moment(item.Created).format("YYYY-MM-DD")
         : undefined,
+      Department: item?.Department?.DepartmentName ?? "",
     }));
 
     return {
@@ -255,16 +256,16 @@ async GetNPAEPVRRDetails(
         ListName: ListNames.HRMSAdditionalHeadCountForExisitingPosition,
         Filter: filterParam,
         FilterCondition: filterConditions,
-        select: ["*", "Status/StatusDescription", "BusinessUnitCode/BusineesUnitCode"],
-        expand: ["Status", "BusinessUnitCode"],
+        select: ["*", "Status/StatusDescription", "BusinessUnitCode/BusineesUnitCode", "Department/DepartmentName"],
+        expand: ["Status", "BusinessUnitCode", "Department"],
       },
       {
         StateValue: 2,
         ListName: ListNames.HRMSNewPositionRequest,
         Filter: filterParam,
         FilterCondition: filterConditions,
-        select: ["*", "BusinessUnitCode/BusineesUnitCode", "Status/StatusDescription"],
-        expand: ["Status", "BusinessUnitCode"],
+        select: ["*", "BusinessUnitCode/BusineesUnitCode", "Status/StatusDescription", "Department/DepartmentName"],
+        expand: ["Status", "BusinessUnitCode", "Department"],
       },
       {
         StateValue: 3,
@@ -278,8 +279,9 @@ async GetNPAEPVRRDetails(
           "JobCode/JobCode",
           "JobCode/JobTitleInEnglish",
           "JobCode/ID",
+          "Department/DepartmentName"
         ],
-        expand: ["Status", "JobCode", "BusinessUnitCode"],
+        expand: ["Status", "JobCode", "BusinessUnitCode", "Department"],
       },
     ];
 
@@ -333,6 +335,7 @@ async GetNPAEPVRRDetails(
       CreatedDate: item?.Created
         ? moment(item.Created).format("YYYY-MM-DD")
         : undefined,
+        Department: item?.Department?.DepartmentName ?? "",
     });
 
     const additionalExistingResult: DashboardData[] = additionalExistingItems.map(
@@ -346,6 +349,7 @@ async GetNPAEPVRRDetails(
           JobTitleFrench: pos?.JobTitleFrench ?? "",
           PatersonGrade: pos?.PatersonGrade ?? "",
           DRCGrade: pos?.DRCGrade ?? "",
+          
         } as DashboardData;
       }
     );

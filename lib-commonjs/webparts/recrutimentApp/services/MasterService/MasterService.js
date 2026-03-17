@@ -554,6 +554,89 @@ var MasterService = /** @class */ (function () {
             });
         });
     };
+    MasterService.prototype.GetUserDetails = function (filterParam, filterConditions) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var GridResult, res, error_4;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        GridResult = {
+                            ID: 0,
+                            EmailId: "",
+                            DepartmentId: 0,
+                            CurrentPosition: "",
+                            DepartmentName: "",
+                            FirstName: "",
+                            MiddleName: "",
+                            LastName: "",
+                            JopTitleEnglish: "",
+                            JopTitleFrench: "",
+                            DRCGrade: "",
+                            PatersonGrade: "",
+                            BusinessAddress: "",
+                            HomeAddress: "",
+                            ContactNumber: "",
+                            BusinessUnitCode: "",
+                            BusinessUnitID: 0,
+                            Nationality: ""
+                        };
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSSageList,
+                                Select: "*,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench,Department/DepartmentName,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade",
+                                Expand: "JobTitleInEnglish,JobTitleInFrench,Department,PatersonGrade,DRCGrade",
+                                Filter: filterParam,
+                                FilterCondition: filterConditions,
+                                Topcount: ApiConfig_1.count.Topcount,
+                            })];
+                    case 2:
+                        res = _a.sent();
+                        if (res.length > 0) {
+                            res.map(function (item) {
+                                var _a, _b, _c, _d, _e;
+                                GridResult = {
+                                    ID: item.ID,
+                                    EmailId: item.EmailId,
+                                    DepartmentId: item.DepartmentId,
+                                    CurrentPosition: item.CurrentPosition,
+                                    DepartmentName: (_a = item.Department) === null || _a === void 0 ? void 0 : _a.DepartmentName,
+                                    FirstName: item.FirstName,
+                                    MiddleName: item.MiddleName,
+                                    LastName: item.LastName,
+                                    JopTitleEnglish: (_b = item.JobTitleInEnglish) === null || _b === void 0 ? void 0 : _b.JobTitleInEnglish,
+                                    JopTitleFrench: (_c = item.JobTitleInFrench) === null || _c === void 0 ? void 0 : _c.JobTitleInFrench,
+                                    DRCGrade: (_d = item.DRCGrade) === null || _d === void 0 ? void 0 : _d.DRCGrade,
+                                    PatersonGrade: (_e = item.PatersonGrade) === null || _e === void 0 ? void 0 : _e.PatersonGrade,
+                                    BusinessAddress: item.BusinessAddress,
+                                    HomeAddress: item.HomeAddress,
+                                    ContactNumber: item.ContactNumber,
+                                    BusinessUnitCode: item.BusinessUnitCode,
+                                    BusinessUnitID: item.BusinessUnitID,
+                                    Nationality: item.Nationality
+                                };
+                                return GridResult;
+                            });
+                        }
+                        return [2 /*return*/, {
+                                data: GridResult,
+                                status: 200,
+                                message: "GetRecruitmentDetails fetched successfully",
+                            }];
+                    case 3:
+                        error_4 = _a.sent();
+                        console.error("Error fetching data in GetRecruitmentDetails:", error_4);
+                        return [2 /*return*/, {
+                                data: {},
+                                status: 500,
+                                message: "Error fetching data from GetRecruitmentDetails",
+                            }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
     return MasterService;
 }());
 exports.default = MasterService;

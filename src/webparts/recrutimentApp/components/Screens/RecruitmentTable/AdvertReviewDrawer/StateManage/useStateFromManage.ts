@@ -4,12 +4,12 @@ export type AdvertLanguage = "EN" | "FR";
 
 export interface DrawerStateManager {
   drawerOpen: boolean;
-  selectedJobId: string | null;
+  selectedJobId: number | null;
   advertLanguage: AdvertLanguage;
   reviewerComments: string;
   acknowledgementCheckbox: boolean;
   loadingState: boolean;
-  openDrawer: (jobId: string) => void;
+  openDrawer: (jobId: number) => void;
   closeDrawer: () => void;
   setAdvertLanguage: (language: AdvertLanguage) => void;
   setComments: (value: string) => void;
@@ -19,13 +19,13 @@ export interface DrawerStateManager {
 
 export const useStateFromManage = (): DrawerStateManager => {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const [advertLanguage, setAdvertLanguageState] = useState<AdvertLanguage>("EN");
   const [reviewerComments, setReviewerComments] = useState<string>("");
   const [acknowledgementCheckbox, setAcknowledgementCheckbox] = useState<boolean>(false);
   const [loadingState, setLoadingState] = useState<boolean>(false);
 
-  const openDrawer = useCallback((jobId: string) => {
+  const openDrawer = useCallback((jobId: number) => {
     setSelectedJobId(jobId);
     setDrawerOpen(true);
   }, []);
