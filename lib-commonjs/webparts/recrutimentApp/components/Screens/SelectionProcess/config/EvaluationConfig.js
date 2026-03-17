@@ -9,20 +9,21 @@ exports.EvalListNames = {
     HRMSCandidateScoreCard: "HRMSCandidateScoreCard",
 };
 exports.EvalStatusId = {
-    InterviewScheduled: 16,
-    InterviewScheduledforLevel2: 20,
+    InterviewScheduled: 40,
+    InterviewScheduledforLevel2: 129,
 };
 exports.InterviewLevels = {
     Level1: "Level 1",
     Level2: "Level 2",
     Level3: "Level 3",
-    Levels2: "Level 1 & 2"
+    Levels2: "Level 1 & 2",
 };
 exports.EvalRoleID = {
-    HOD: "HOD",
-    LineManager: "LineManager",
-    InterviewPanel: "InterviewPanel",
-    RecruitmentHR: "RecruitmentHR",
+    RecruitmentHRLead: 1,
+    RecruitmentHR: 2,
+    HOD: 3,
+    LineManager: 4,
+    InterviewPanel: 5,
 };
 exports.EvalNavigationPaths = {
     HODLevel1: "/RecurimentProcess/InterviewPanelList/InterviewPanelEdit",
@@ -37,8 +38,8 @@ exports.EvalAlertOptions = {
     Success: "Success",
 };
 exports.EvalMessages = {
-    InterviewScoredAlready: "You have already submitted the interview score for this candidate.",
-    InterviewScoreCommentsAlready: "You have already submitted the interview comments for this candidate.",
+    InterviewScoredAlready: "The scorecard for the candidate has already been submitted.",
+    InterviewScoreCommentsAlready: "The scorecard for the candidate comments has already been submitted.",
 };
 exports.EvalUIConfig = {
     SkeletonRowCount: 5,

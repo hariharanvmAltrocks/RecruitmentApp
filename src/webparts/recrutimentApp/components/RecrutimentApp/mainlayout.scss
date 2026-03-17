@@ -24,6 +24,12 @@
         flex: 1;
         overflow-y: auto;
         padding: 24px;
+        
+        /* UPDATED: Remove padding when form is open */
+        &.form-open {
+            padding: 0 !important;
+            background: #f4f6f9; 
+        }
     }
 }
 
@@ -35,6 +41,8 @@
     .main-layout {
         .layout-main {
             padding: 20px;
+            /* UPDATED */
+            &.form-open { padding: 0 !important; }
         }
     }
 }
@@ -62,6 +70,8 @@
 
         .layout-main {
             padding: 16px;
+            /* UPDATED */
+            &.form-open { padding: 0 !important; }
         }
     }
 }
@@ -74,6 +84,8 @@
     .main-layout {
         .layout-main {
             padding: 12px;
+            /* UPDATED */
+            &.form-open { padding: 0 !important; }
         }
     }
 }

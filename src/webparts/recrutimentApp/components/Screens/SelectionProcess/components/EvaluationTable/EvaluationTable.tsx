@@ -10,29 +10,30 @@ type SortKey = keyof Pick<EvaluationCandidate, "applicantName" | "positionTitle"
 interface EvaluationTableProps {
   rows: TableRow[];
   tooltipData: TooltipEntry[] | null;
-  currentRoleID: string[];
+  currentRoleID: number[];                              
   navigation: (path: string, options?: any) => void;
   tabValue: string;
   onHover: (statusId: number | string, candidateID: number) => void;
   onEvaluate: (row: EvaluationCandidate) => Promise<ScoreSheetResult>;
   onShowAlert: (msg: string, type: string) => void;
   onRefresh: () => void;
+  onOpenForm: (row: EvaluationCandidate) => void;       
 }
 
-const EvaluationTable: React.FC<EvaluationTableProps> = ({ rows, tooltipData, currentRoleID, navigation, tabValue, onHover, onEvaluate, onShowAlert, onRefresh }) => {
+const EvaluationTable: React.FC<EvaluationTableProps> = ({ rows, tooltipData, currentRoleID, navigation, tabValue, onHover, onEvaluate, onShowAlert, onRefresh, onOpenForm }) => {
   const [sortKey, setSortKey] = useState<SortKey>(EvalUIConfig.DefaultSortKey);
   const [sortDir, setSortDir] = useState<"asc"|"desc">(EvalUIConfig.DefaultSortDir);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [loadingId, setLoadingId] = useState<number | null>(null);
   
-  // Pagination State
+
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 5;
 
   const handleSort = (key: SortKey) => {
     setSortDir((d) => sortKey === key ? (d === "asc" ? "desc" : "asc") : "asc");
     setSortKey(key);
-    setCurrentPage(1); // Reset to page 1 when sorting changes
+    setCurrentPage(1); 
   };
 
   const sortedRows = [...rows].sort((a, b) => {
@@ -42,7 +43,6 @@ const EvaluationTable: React.FC<EvaluationTableProps> = ({ rows, tooltipData, cu
     return sortDir === "asc" ? va.localeCompare(vb) : vb.localeCompare(va);
   });
 
-  // Pagination Logic
   const totalPages = Math.ceil(sortedRows.length / ITEMS_PER_PAGE) || 1;
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const startIndex = (safeCurrentPage - 1) * ITEMS_PER_PAGE;
@@ -91,22 +91,7 @@ const EvaluationTable: React.FC<EvaluationTableProps> = ({ rows, tooltipData, cu
         onShowAlert(msg, EvalAlertOptions.Error);
         return;
       }
-
-      const path = getNavigationPath(row.statusId);
-      if (!path) return;
-      
-      navigation(path, { 
-        state: { 
-          ID: row.id, 
-          tab: tabValue, 
-          StatusId: row.statusId, 
-          Status: row.status, 
-          TabName: "Evaluation", 
-          RecruitmentID: row.recruitmentID, 
-          InterviewLevel: row.interviewLevel, 
-          JobCodeID: row.jobCodeID 
-        } 
-      });
+      onOpenForm(row);
     } catch (error) {
       console.error("Evaluation error:", error);
     } finally {

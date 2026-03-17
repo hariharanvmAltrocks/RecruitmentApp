@@ -7,18 +7,17 @@ var EvaluationConfig_1 = require("../../config/EvaluationConfig");
 var useEvaluationData_1 = require("../../hooks/useEvaluationData");
 var moment_1 = tslib_1.__importDefault(require("moment"));
 var EvaluationTable = function (_a) {
-    var rows = _a.rows, tooltipData = _a.tooltipData, currentRoleID = _a.currentRoleID, navigation = _a.navigation, tabValue = _a.tabValue, onHover = _a.onHover, onEvaluate = _a.onEvaluate, onShowAlert = _a.onShowAlert, onRefresh = _a.onRefresh;
+    var rows = _a.rows, tooltipData = _a.tooltipData, currentRoleID = _a.currentRoleID, navigation = _a.navigation, tabValue = _a.tabValue, onHover = _a.onHover, onEvaluate = _a.onEvaluate, onShowAlert = _a.onShowAlert, onRefresh = _a.onRefresh, onOpenForm = _a.onOpenForm;
     var _b = (0, react_1.useState)(EvaluationConfig_1.EvalUIConfig.DefaultSortKey), sortKey = _b[0], setSortKey = _b[1];
     var _c = (0, react_1.useState)(EvaluationConfig_1.EvalUIConfig.DefaultSortDir), sortDir = _c[0], setSortDir = _c[1];
     var _d = (0, react_1.useState)(null), hoveredId = _d[0], setHoveredId = _d[1];
     var _e = (0, react_1.useState)(null), loadingId = _e[0], setLoadingId = _e[1];
-    // Pagination State
     var _f = (0, react_1.useState)(1), currentPage = _f[0], setCurrentPage = _f[1];
     var ITEMS_PER_PAGE = 5;
     var handleSort = function (key) {
         setSortDir(function (d) { return sortKey === key ? (d === "asc" ? "desc" : "asc") : "asc"; });
         setSortKey(key);
-        setCurrentPage(1); // Reset to page 1 when sorting changes
+        setCurrentPage(1);
     };
     var sortedRows = tslib_1.__spreadArray([], rows, true).sort(function (a, b) {
         var _a, _b;
@@ -28,7 +27,6 @@ var EvaluationTable = function (_a) {
         var vb = String((_b = b[sortKey]) !== null && _b !== void 0 ? _b : "");
         return sortDir === "asc" ? va.localeCompare(vb) : vb.localeCompare(va);
     });
-    // Pagination Logic
     var totalPages = Math.ceil(sortedRows.length / ITEMS_PER_PAGE) || 1;
     var safeCurrentPage = Math.min(currentPage, totalPages);
     var startIndex = (safeCurrentPage - 1) * ITEMS_PER_PAGE;
@@ -57,7 +55,7 @@ var EvaluationTable = function (_a) {
         return "";
     };
     var handleEvaluateClick = function (row) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var today, interviewDate, displayDate, result, msg, path, error_1;
+        var today, interviewDate, displayDate, result, msg, error_1;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -82,21 +80,7 @@ var EvaluationTable = function (_a) {
                         onShowAlert(msg, EvaluationConfig_1.EvalAlertOptions.Error);
                         return [2 /*return*/];
                     }
-                    path = getNavigationPath(row.statusId);
-                    if (!path)
-                        return [2 /*return*/];
-                    navigation(path, {
-                        state: {
-                            ID: row.id,
-                            tab: tabValue,
-                            StatusId: row.statusId,
-                            Status: row.status,
-                            TabName: "Evaluation",
-                            RecruitmentID: row.recruitmentID,
-                            InterviewLevel: row.interviewLevel,
-                            JobCodeID: row.jobCodeID
-                        }
-                    });
+                    onOpenForm(row);
                     return [3 /*break*/, 5];
                 case 3:
                     error_1 = _a.sent();

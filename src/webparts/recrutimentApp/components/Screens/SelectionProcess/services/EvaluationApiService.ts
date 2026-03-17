@@ -5,20 +5,12 @@ import { ListNames, StatusId } from "../../../../utilities/Config";
 
 import SPServices from "../../../../services/SPService/spservice";
 import CommonService from "../CommonServices/CommonServices";
-
-// Import the GetPortalJobs class from your QuestionnaireApi file
 import GetPortalJobs from "./QuestionnaireApi/QuestionnaireApi";
 
 const commonServiceInstance = new CommonService();
-
-// Instantiate the class so you can use its methods!
 const questionnaireService = new GetPortalJobs();
 
 export const evaluationService = {
-
-  // ==========================================
-  // DASHBOARD METHODS
-  // ==========================================
 
   async getCurrentUserGuid(email: string): Promise<string | null> {
     try {
@@ -41,7 +33,7 @@ export const evaluationService = {
         Expand: EvalQueryConfig.InterviewPanel.Expand,
         Filter: [{ FilterKey: "InterviewPanelId", Operator: "eq", FilterValue: userGuid }],
       });
-      return listItems ?? [];
+      return listItems || [];
     } catch (e) {
       return [];
     }
@@ -62,7 +54,7 @@ export const evaluationService = {
         ],
         Topcount: 5000 
       });
-      return listItems ?? [];
+      return listItems || [];
     } catch (e) {
       return [];
     }
@@ -77,7 +69,7 @@ export const evaluationService = {
         Expand: "JobCode",
         Filter: [{ FilterKey: "ID", Operator: "eq", FilterValue: recruitmentID }]
       });
-      jobCodeID = dptRes?.[0]?.JobCodeId ?? dptRes?.[0]?.JobCode?.ID ?? 0;
+      jobCodeID = dptRes?.[0]?.JobCodeId || dptRes?.[0]?.JobCode?.ID || 0;
       
       const posRes: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentPositionDetails, 
@@ -86,7 +78,7 @@ export const evaluationService = {
         Filter: [{ FilterKey: "RecruitmentID", Operator: "eq", FilterValue: recruitmentID }]
       });
       
-      grade = posRes?.[0]?.PatersonGrade?.PatersonGrade ?? posRes?.[0]?.PatersonGrade ?? "";
+      grade = posRes?.[0]?.PatersonGrade?.PatersonGrade || posRes?.[0]?.PatersonGrade || "";
 
       if (grade) {
         await SPServices.SPReadItems({
@@ -95,7 +87,7 @@ export const evaluationService = {
           Filter: [{ FilterKey: "PatersonGrade", Operator: "eq", FilterValue: grade }],
         }).then((data: any) => {
           if (data && data.length > 0) {
-            level = data[0]?.Levels ?? "";
+            level = data[0]?.Levels || "";
           }
         });
       }
@@ -155,89 +147,169 @@ export const evaluationService = {
     }
   },
 
-  // ==========================================
-  // EVALUATION FORM METHODS (Scorecard View)
-  // ==========================================
-
- async getEvaluationFormData(candidateId: number, recruitmentId: number, currentUserEmail: string) {
+  async getEvaluationFormData(candidateId: number, recruitmentId: number, currentUserEmail: string) {
     try {
-      // 1. Fetch Candidate Details - Added : any[]
       const candidateRes: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Select: "*", 
         Filter: [{ FilterKey: "ID", Operator: "eq", FilterValue: candidateId }],
       });
-      
-      // ADDED : any to bypass the '{}' type error
       const candidate: any = candidateRes[0] || {};
-
-      // 2. Fetch Interview Panel Members - Added : any[]
       const panelRes: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSInterviewPanelDetails,
-        Select: "ID,InterviewPanel/Id,InterviewPanel/Title,InterviewLevel,IsScoreSheetUploaded",
+        Select: "ID,InterviewPanel/Id,InterviewPanel/Title,InterviewPanel/EMail,InterviewLevel,IsScoreSheetUploaded",
         Expand: "InterviewPanel",
         Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateId }],
       });
 
       const currentUserGuid = await this.getCurrentUserGuid(currentUserEmail);
-      
-      // ADDED : any to prevent TypeScript from complaining about the properties
       const currentUserPanel: any = panelRes.find((p: any) => String(p.InterviewPanel?.Id) === String(currentUserGuid));
+      const panelEmails = panelRes.map((p: any) => p.InterviewPanel?.EMail).filter(Boolean);
+      const uniqueEmails = panelEmails.filter((value: any, index: number, self: any[]) => self.indexOf(value) === index);
+      let emailToNameMap: Record<string, string> = {};
 
-      // 3. Fetch JobCode string to use in Questionnaire API - Added : any[]
+      if (uniqueEmails.length > 0) {
+        try {
+          await Promise.all(uniqueEmails.map(async (email: string) => {
+            const sageRes = await SPServices.SPReadItems({
+              Listname: ListNames.HRMSSageList,
+              Select: "EmailId, FirstName, LastName, MiddleName",
+              Filter: [{ FilterKey: "EmailId", Operator: "eq", FilterValue: email }]
+            });
+            if (sageRes && sageRes.length > 0) {
+              const item: any = sageRes[0];
+              const fName = item.FirstName || "";
+              const mName = item.MiddleName || "";
+              const lName = item.LastName || "";
+              const fullName = (fName + " " + mName + " " + lName).trim();
+              if (fullName) {
+                emailToNameMap[email.toLowerCase()] = fullName;
+              }
+            }
+          }));
+        } catch (err) {
+          console.warn("Could not fetch panel details from Sage List", err);
+        }
+      }
+      const formattedPanelMembers = panelRes.map((p: any) => {
+        const email = p.InterviewPanel?.EMail?.toLowerCase() || "";
+        return emailToNameMap[email] || p.InterviewPanel?.Title || "Unknown";
+      }).filter(Boolean);
+
+      console.log("====== EVALUATION FORM: INTERVIEW PANEL TITLES (Fetched from Sage List) ======");
+      console.log(formattedPanelMembers);
+      let reviewerName = "";
+      let jobTitleEn = "—";
+      let jobTitleFr = "—";
+      try {
+        const sageRes: any[] = await SPServices.SPReadItems({
+          Listname: ListNames.HRMSSageList,
+          Select: "*,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench",
+          Expand: "JobTitleInEnglish,JobTitleInFrench",
+          Filter: [{ FilterKey: "EmailId", Operator: "eq", FilterValue: currentUserEmail }],
+        });
+        if (sageRes && sageRes.length > 0) {
+          const sageUser: any = sageRes[0];
+          const fName = sageUser.FirstName || "";
+          const mName = sageUser.MiddleName || "";
+          const lName = sageUser.LastName || "";
+          reviewerName = (fName + " " + mName + " " + lName).trim();
+          jobTitleEn = sageUser.JobTitleInEnglish?.JobTitleInEnglish || "—";
+          jobTitleFr = sageUser.JobTitleInFrench?.JobTitleInFrench || "—";
+        }
+      } catch (err) {
+        console.warn("Could not fetch reviewer details from Sage List", err);
+      }
       const dptRes: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentDptDetails, 
-        Select: "*,JobCode/JobCode",
+        Select: "*,JobCode/JobCode,JobCode/ID",
         Expand: "JobCode",
         Filter: [{ FilterKey: "ID", Operator: "eq", FilterValue: recruitmentId }]
       });
-      const jobCodeString = dptRes?.[0]?.JobCode?.JobCode ?? "";
+      const jobCodeId = dptRes?.[0]?.JobCodeId ?? dptRes?.[0]?.JobCode?.ID ?? 0;
 
-      // 4. Fetch Questions using your imported class instance
-      let questions: any[] = [];
-      if (jobCodeString) {
+      let jobUniqueKey = "";
+      if (jobCodeId) {
         try {
-          // Calling the method from the instantiated class
-          const qResponse = await questionnaireService.getQuestionnaire(jobCodeString);
-          if (qResponse?.data) {
-            questions = qResponse.data; 
-          }
-        } catch (err) {
-          console.error("Error fetching questionnaires from API:", err);
-        }
+          const integrationRes: any[] = await SPServices.SPReadItems({
+            Listname: ListNames.RecruitAppCareerPortalIntegration,
+            Select: "*",
+            Filter: [
+              { FilterKey: "JobCodeId", Operator: "eq", FilterValue: jobCodeId },
+              { FilterKey: "IsActive",  Operator: "eq", FilterValue: 1 },
+            ],
+            FilterCondition: "and",
+          });
+          jobUniqueKey = integrationRes?.[0]?.JobUniqueKey || "";
+        } catch (err) {}
+      }
+
+      let questions: any[] = [];
+      if (jobUniqueKey) {
+        try {
+          const qResponse = await questionnaireService.getQuestionnaire(jobUniqueKey);
+          if (qResponse?.data) questions = qResponse.data; 
+        } catch (err) {}
       }
 
       return {
         success: true,
         candidateData: candidate,
-        panelMembers: panelRes.map((p: any) => p.InterviewPanel?.Title).filter(Boolean),
+        panelMembers: formattedPanelMembers,
         currentUserPanelId: currentUserPanel?.ID || null,
         questions: questions,
+        currentUserGuid: currentUserGuid,
+        reviewerName: reviewerName,
+        jobTitleEn: jobTitleEn,
+        jobTitleFr: jobTitleFr,
       };
     } catch (error) {
-      console.error("Error fetching evaluation form data:", error);
       return { success: false, candidateData: null, panelMembers: [], currentUserPanelId: null, questions: [] };
     }
   },
 
-  async submitScorecard(payload: any, panelId: number) {
+  async submitScorecard(payload: any, panelId: number, roleId: number, interviewPersonNameId: string) {
     try {
-      const scoreCardResponse = await SPServices.SPAddItem({
+      const spPayload = {
+        RelevantQualification:          String(payload.Qualifications  || ""),
+        ReleventExperience:             String(payload.Experience      || ""),
+        Knowledge:                      String(payload.Knowledge       || ""),
+        EnergyLevel:                    String(payload.EnergyLevel     || ""),
+        MeetJobRequirement:             String(payload.JobRequirements || ""),
+        ContributeTowardsCultureRequried: String(payload.CultureFit      || ""),
+        Experience:                     String(payload.ExpatLocal      || ""),
+        OtherCriteriaScore:             String(payload.OtherCriteria   || ""),
+        ConsiderForEmployment:          payload.Recommendation === "Consider for Employment" ? "Yes" : "No",
+        OverAllEvaluationFeedback:      payload.OverallFeedback || "",
+        RecruitmentIDId:                payload.RecruitmentIDId,
+        InterviewPanelIDId:             panelId,
+        QuestionJson:                   payload.QuestionScores || "[]",
+        RoleId:                         roleId ? Number(roleId) : null,
+        InterviewPersonNameId:          interviewPersonNameId ? Number(interviewPersonNameId) : null,
+      };
+
+      console.log("====== SUBMIT DEBUG: PAYLOAD SENT TO SP ======");
+      console.log("Payload mapped to SP columns:", spPayload);
+
+      const scoreCardResponse: any = await SPServices.SPAddItem({
         Listname: ListNames.HRMSCandidateScoreCard,
-        RequestJSON: payload,
+        RequestJSON: spPayload,
       });
 
-      if (scoreCardResponse?.data?.ID) {
+      const newItemId = scoreCardResponse?.ID || scoreCardResponse?.Id || scoreCardResponse?.data?.ID || scoreCardResponse?.data?.Id;
+
+      if (newItemId) {
         await SPServices.SPUpdateItem({
           Listname: ListNames.HRMSInterviewPanelDetails,
           RequestJSON: { IsScoreSheetUploaded: "Yes" },
           ID: panelId,
         });
         return { success: true, message: "Scorecard submitted successfully!" };
+      } else {
+        return { success: false, message: "Failed to submit scorecard." };
       }
-      return { success: false, message: "Failed to submit scorecard." };
     } catch (error) {
-      console.error("Error submitting scorecard:", error);
+      console.error("====== SUBMIT DEBUG: CATCH ERROR ======", error);
       return { success: false, message: "An error occurred while submitting." };
     }
   }
@@ -247,25 +319,24 @@ export const EvaluationServiceHelper = {
   buildRow(candidate: any, grade: string, level: string, jobCodeID: number): EvaluationCandidate {
     const rawDate = candidate?.InterviewDateLevel2 || candidate?.InterviewDate || "";
     const formattedLevel = level === InterviewLevels.Level2 ? InterviewLevels.Levels2 : level;
-    
-    // Formatting the date to DD/MM/YYYY for the UI
     const interviewDateTime = rawDate ? moment(rawDate).format("DD/MM/YYYY") : "";
     
+    const fName = candidate.FristName || "";
+    const lName = candidate.LastName || "";
+
     return {
       id: candidate.ID,
-      applicantName: `${candidate.FristName ?? ""} ${candidate.LastName ?? ""}`.trim(),
-      positionTitle: candidate.PositionTitle ?? "",
-      // Display format
+      applicantName: (fName + " " + lName).trim(),
+      positionTitle: candidate.PositionTitle || "",
       interviewDate: interviewDateTime, 
-      // Raw string format for Logic sorting/comparing
-      interviewDateTime: rawDate,       
+      interviewDateTime: rawDate,      
       interviewLevel: formattedLevel,
       grade,
       gradeLabel: "",
-      attachments: candidate.CandidateCVDoc?.length ?? 0,
-      status: candidate.Status?.StatusDescription ?? candidate.Status ?? "",
-      statusId: candidate.StatusId ?? candidate.Status?.ID ?? candidate.Status?.Id ?? "", 
-      recruitmentID: candidate.RecruitmentID?.ID ?? candidate.RecruitmentID ?? "",
+      attachments: candidate.CandidateCVDoc?.length || 0,
+      status: candidate.Status?.StatusDescription || candidate.Status || "",
+      statusId: candidate.StatusId || candidate.Status?.ID || candidate.Status?.Id || "", 
+      recruitmentID: candidate.RecruitmentID?.ID || candidate.RecruitmentID || "",
       jobCodeID,
     };
   }

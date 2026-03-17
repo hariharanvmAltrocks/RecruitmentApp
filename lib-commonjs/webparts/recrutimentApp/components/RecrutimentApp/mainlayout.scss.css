@@ -22,6 +22,11 @@
   flex: 1;
   overflow-y: auto;
   padding: 24px;
+  /* UPDATED: Remove padding when form is open */
+}
+.main-layout .layout-main.form-open {
+  padding: 0 !important;
+  background: #f4f6f9;
 }
 
 /* =========================
@@ -30,6 +35,10 @@
 @media (max-width: 1024px) {
   .main-layout .layout-main {
     padding: 20px;
+    /* UPDATED */
+  }
+  .main-layout .layout-main.form-open {
+    padding: 0 !important;
   }
 }
 /* =========================
@@ -52,6 +61,10 @@
   }
   .main-layout .layout-main {
     padding: 16px;
+    /* UPDATED */
+  }
+  .main-layout .layout-main.form-open {
+    padding: 0 !important;
   }
 }
 /* =========================
@@ -60,5 +73,9 @@
 @media (max-width: 480px) {
   .main-layout .layout-main {
     padding: 12px;
+    /* UPDATED */
+  }
+  .main-layout .layout-main.form-open {
+    padding: 0 !important;
   }
 }

@@ -4,11 +4,11 @@
   background: #fff;
   border-radius: 12px;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   padding: 28px 32px;
 }
 
-/* ── Header ───────────────────────────────────────────────────────────────── */
+/* ── Header ──────────────────────────────────────────────────────────────── */
 .header {
   display: flex;
   align-items: center;
@@ -37,11 +37,15 @@
   padding: 6px 10px;
   border-radius: 6px;
   transition: color 0.15s, background 0.15s;
-  &:hover { color: #2563eb; background: #eff6ff; }
 }
 
-/* ── Inline alert ─────────────────────────────────────────────────────────── */
-.alert {
+.backBtn:hover {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+/* ── Alert banner — flat class names, no dynamic lookup ─────────────────── */
+.alertBanner {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -50,16 +54,33 @@
   border-radius: 8px;
   margin-bottom: 16px;
   font-size: 13px;
+  font-weight: 500;
   animation: slideDown 0.2s ease;
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.Error  { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
-.Success{ background: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a; }
+/* These are explicit flat classes — never looked up dynamically */
+.alertBannerError {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+.alertBannerSuccess {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
+}
 
 .alertClose {
   background: none;
@@ -68,5 +89,8 @@
   font-size: 14px;
   color: inherit;
   opacity: 0.7;
-  &:hover { opacity: 1; }
+}
+
+.alertClose:hover {
+  opacity: 1;
 }

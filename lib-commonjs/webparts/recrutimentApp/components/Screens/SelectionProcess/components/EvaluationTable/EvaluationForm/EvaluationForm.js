@@ -1,270 +1,389 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
-var react_1 = tslib_1.__importStar(require("react"));
-var react_router_dom_1 = require("react-router-dom");
+var React = tslib_1.__importStar(require("react"));
 var EvaluationForm_module_scss_1 = tslib_1.__importDefault(require("./EvaluationForm.module.scss"));
-var EvaluationApiService_1 = require("../../../services/EvaluationApiService");
 var RoleContext_1 = require("../../../../../../utilities/hooks/RoleContext");
-var COMPETENCY_FIELDS = [
-    { key: "qualifications", label: "Qualifications" },
-    { key: "experience", label: "Experience" },
-    { key: "knowledge", label: "Knowledge" },
-    { key: "energyLevel", label: "Energy Level" },
-    { key: "jobRequirements", label: "Job Requirements" },
-    { key: "cultureFit", label: "Culture Fit" },
-    { key: "expatLocal", label: "Expat/Local" },
-    { key: "otherCriteria", label: "Other Criteria" },
+var EvaluationApiService_1 = require("../../../services/EvaluationApiService");
+var ScoreRating = [
+    { key: 1, text: "Not Acceptable" },
+    { key: 2, text: "Acceptable" },
+    { key: 3, text: "Excellent" },
 ];
-var EvaluationForm = function () {
-    var _a;
-    var location = (0, react_router_dom_1.useLocation)();
-    var navigate = (0, react_router_dom_1.useNavigate)();
-    var ADGroupData = (0, RoleContext_1.useRoleContext)().ADGroupData;
-    var currentUserEmail = ((_a = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _a === void 0 ? void 0 : _a[0]) || "";
-    var currentUserName = "Current User";
-    var jobTitleEn = "HOD - Mining";
-    var jobTitleFr = "Chef de département - Mines";
-    // Data passed from EvaluationTable row click
-    var _b = location.state || {}, candidateId = _b.ID, RecruitmentID = _b.RecruitmentID, InterviewLevel = _b.InterviewLevel, passedGrade = _b.grade;
-    var _c = (0, react_1.useState)(true), loading = _c[0], setLoading = _c[1];
-    var _d = (0, react_1.useState)({}), candidateInfo = _d[0], setCandidateInfo = _d[1];
-    var _e = (0, react_1.useState)([]), panelMembers = _e[0], setPanelMembers = _e[1];
-    var _f = (0, react_1.useState)([]), questions = _f[0], setQuestions = _f[1];
-    var _g = (0, react_1.useState)(null), currentUserPanelId = _g[0], setCurrentUserPanelId = _g[1];
-    var _h = (0, react_1.useState)({}), questionScores = _h[0], setQuestionScores = _h[1];
-    var _j = (0, react_1.useState)({
-        qualifications: 0, experience: 0, knowledge: 0, energyLevel: 0,
-        jobRequirements: 0, cultureFit: 0, expatLocal: 0, otherCriteria: 0
-    }), competencies = _j[0], setCompetencies = _j[1];
-    var _k = (0, react_1.useState)(null), recommendation = _k[0], setRecommendation = _k[1];
-    var _l = (0, react_1.useState)(""), feedback = _l[0], setFeedback = _l[1];
-    var _m = (0, react_1.useState)(false), acknowledged = _m[0], setAcknowledged = _m[1];
-    (0, react_1.useEffect)(function () {
-        if (!candidateId) {
-            navigate("/Dashboard");
-            return;
-        }
-        fetchFormData();
-    }, [candidateId]);
-    var fetchFormData = function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var res;
-        return tslib_1.__generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    setLoading(true);
-                    return [4 /*yield*/, EvaluationApiService_1.evaluationService.getEvaluationFormData(candidateId, RecruitmentID, currentUserEmail)];
-                case 1:
-                    res = _a.sent();
-                    if (res.success) {
-                        setCandidateInfo(res.candidateData);
-                        setPanelMembers(res.panelMembers);
-                        setQuestions(res.questions);
-                        setCurrentUserPanelId(res.currentUserPanelId);
-                    }
-                    else {
-                        alert("Error loading candidate data.");
-                    }
-                    setLoading(false);
-                    return [2 /*return*/];
-            }
+var SCORECARD_FIELDS = [
+    { key: "Qualifications", label: "QUALIFICATIONS", icon: "📄" },
+    { key: "Experience", label: "EXPERIENCE", icon: "📈" },
+    { key: "Knowledge", label: "KNOWLEDGE", icon: "🧩" },
+    { key: "EnergyLevel", label: "ENERGY LEVEL", icon: "⚡" },
+    { key: "JobRequirements", label: "JOB REQUIREMENTS", icon: "⏱" },
+    { key: "CultureFit", label: "CULTURE FIT", icon: "👥" },
+    { key: "ExpatLocal", label: "EXPAT/LOCAL", icon: "🌐" },
+    { key: "OtherCriteria", label: "OTHER CRITERIA", icon: "📄" },
+];
+var EvaluationForm = function (_a) {
+    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+    var candidateId = _a.candidateId, recruitmentId = _a.recruitmentId, interviewLevel = _a.interviewLevel, grade = _a.grade, onBack = _a.onBack, currentRoleIDs = _a.currentRoleIDs;
+    var _p = (0, RoleContext_1.useRoleContext)(), ADGroupData = _p.ADGroupData, userName = _p.userName;
+    var currentUserEmail = (_c = (_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _b === void 0 ? void 0 : _b[0]) !== null && _c !== void 0 ? _c : "";
+    var _q = React.useState(true), loading = _q[0], setLoading = _q[1];
+    var _r = React.useState(false), submitting = _r[0], setSubmitting = _r[1];
+    var _s = React.useState(""), alertMsg = _s[0], setAlertMsg = _s[1];
+    var _t = React.useState(""), alertType = _t[0], setAlertType = _t[1];
+    var _u = React.useState(null), candidateData = _u[0], setCandidateData = _u[1];
+    var _v = React.useState([]), panelMembers = _v[0], setPanelMembers = _v[1];
+    var _w = React.useState(null), currentUserPanelId = _w[0], setCurrentUserPanelId = _w[1];
+    var _x = React.useState(""), reviewerName = _x[0], setReviewerName = _x[1];
+    var _y = React.useState(null), currentUserGuid = _y[0], setCurrentUserGuid = _y[1];
+    var _z = React.useState("—"), jobTitleEn = _z[0], setJobTitleEn = _z[1];
+    var _0 = React.useState("—"), jobTitleFr = _0[0], setJobTitleFr = _0[1];
+    var _1 = React.useState([]), questionnaire = _1[0], setQuestionnaire = _1[1];
+    var _2 = React.useState({}), ratingErrors = _2[0], setRatingErrors = _2[1];
+    var _3 = React.useState(Object.fromEntries(SCORECARD_FIELDS.map(function (f) { return [f.key, null]; }))), scorecard = _3[0], setScorecard = _3[1];
+    var _4 = React.useState({}), scorecardErrors = _4[0], setScorecardErrors = _4[1];
+    var _5 = React.useState(null), recommendation = _5[0], setRecommendation = _5[1];
+    var _6 = React.useState(false), recError = _6[0], setRecError = _6[1];
+    var _7 = React.useState(""), overallFeedback = _7[0], setOverallFeedback = _7[1];
+    var _8 = React.useState(false), feedbackError = _8[0], setFeedbackError = _8[1];
+    var _9 = React.useState(false), acknowledged = _9[0], setAcknowledged = _9[1];
+    var _10 = React.useState(false), ackError = _10[0], setAckError = _10[1];
+    React.useEffect(function () {
+        (function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+            var result;
+            var _a, _b, _c;
+            return tslib_1.__generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        setLoading(true);
+                        return [4 /*yield*/, EvaluationApiService_1.evaluationService.getEvaluationFormData(candidateId, recruitmentId, currentUserEmail)];
+                    case 1:
+                        result = _d.sent();
+                        if (result.success) {
+                            setCandidateData(result.candidateData);
+                            setPanelMembers((_a = result.panelMembers) !== null && _a !== void 0 ? _a : []);
+                            setCurrentUserPanelId(result.currentUserPanelId);
+                            setReviewerName(result.reviewerName || userName || "—");
+                            setJobTitleEn(result.jobTitleEn || "—");
+                            setJobTitleFr(result.jobTitleFr || "—");
+                            setCurrentUserGuid((_b = result.currentUserGuid) !== null && _b !== void 0 ? _b : null);
+                            setQuestionnaire(((_c = result.questions) !== null && _c !== void 0 ? _c : []).map(function (q, idx) {
+                                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+                                return ({
+                                    id: (_b = (_a = q.ID) !== null && _a !== void 0 ? _a : q.id) !== null && _b !== void 0 ? _b : idx,
+                                    question: (_f = (_e = (_d = (_c = q.Question) !== null && _c !== void 0 ? _c : q.question) !== null && _d !== void 0 ? _d : q.header) !== null && _e !== void 0 ? _e : q.Title) !== null && _f !== void 0 ? _f : "",
+                                    answer: (_k = (_j = (_h = (_g = q.ExpectedResponse) !== null && _g !== void 0 ? _g : q.expectedResponse) !== null && _h !== void 0 ? _h : q.Answer) !== null && _j !== void 0 ? _j : q.answer) !== null && _k !== void 0 ? _k : "",
+                                    rating: null,
+                                });
+                            }));
+                        }
+                        setLoading(false);
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    }, []);
+    var cleanHTML = function (text) {
+        if (text === void 0) { text = ""; }
+        return text.replace(/<p>/gi, "").replace(/<\/p>/gi, "").replace(/<br\s*\/?>/gi, "").trim();
+    };
+    var handleRatingChange = function (id, value) {
+        setQuestionnaire(function (prev) {
+            return prev.map(function (q) { var _a; return q.id === id ? tslib_1.__assign(tslib_1.__assign({}, q), { rating: (_a = value === null || value === void 0 ? void 0 : value.key) !== null && _a !== void 0 ? _a : null }) : q; });
         });
-    }); };
-    var handleCompetencyChange = function (key, value) {
-        setCompetencies(function (prev) {
+        if (value)
+            setRatingErrors(function (prev) {
+                var _a;
+                return (tslib_1.__assign(tslib_1.__assign({}, prev), (_a = {}, _a[id] = false, _a)));
+            });
+    };
+    var handleScorecardChange = function (key, value) {
+        setScorecard(function (prev) {
             var _a;
             return (tslib_1.__assign(tslib_1.__assign({}, prev), (_a = {}, _a[key] = value, _a)));
         });
-    };
-    var handleQuestionScore = function (index, score) {
-        setQuestionScores(function (prev) {
+        setScorecardErrors(function (prev) {
             var _a;
-            return (tslib_1.__assign(tslib_1.__assign({}, prev), (_a = {}, _a[index] = score, _a)));
+            return (tslib_1.__assign(tslib_1.__assign({}, prev), (_a = {}, _a[key] = false, _a)));
         });
     };
-    var isFormValid = function () {
-        var allCompetenciesScored = Object.values(competencies).every(function (val) { return val > 0; });
-        var allQuestionsScored = questions.length === 0 || Object.keys(questionScores).length === questions.length;
-        return allCompetenciesScored && allQuestionsScored && recommendation !== null && feedback.trim() !== "" && acknowledged;
+    var showAlert = function (msg, type) {
+        setAlertMsg(msg);
+        setAlertType(type);
+    };
+    var hideAlert = function () {
+        setAlertMsg("");
+        setAlertType("");
     };
     var handleSubmit = function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var payload, result;
+        var valid, newRatingErrors, newScorecardErrors, payload, roleIdToSave, result;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!isFormValid()) {
-                        alert("Please fill all mandatory fields, scores, and check the acknowledgment.");
+                    valid = true;
+                    newRatingErrors = {};
+                    questionnaire.forEach(function (q) {
+                        if (q.rating === null) {
+                            newRatingErrors[q.id] = true;
+                            valid = false;
+                        }
+                    });
+                    setRatingErrors(newRatingErrors);
+                    newScorecardErrors = {};
+                    SCORECARD_FIELDS.forEach(function (f) {
+                        if (scorecard[f.key] === null) {
+                            newScorecardErrors[f.key] = true;
+                            valid = false;
+                        }
+                    });
+                    setScorecardErrors(newScorecardErrors);
+                    if (!recommendation) {
+                        setRecError(true);
+                        valid = false;
+                    }
+                    else {
+                        setRecError(false);
+                    }
+                    if (!overallFeedback.trim()) {
+                        setFeedbackError(true);
+                        valid = false;
+                    }
+                    else {
+                        setFeedbackError(false);
+                    }
+                    if (!acknowledged) {
+                        setAckError(true);
+                        valid = false;
+                    }
+                    else {
+                        setAckError(false);
+                    }
+                    if (!valid) {
+                        showAlert("Please complete all required fields before submitting.", "error");
                         return [2 /*return*/];
                     }
                     if (!currentUserPanelId) {
-                        alert("You are not assigned as a panel member for this candidate.");
+                        showAlert("Could not identify your panel entry. Please contact HR.", "error");
                         return [2 /*return*/];
                     }
-                    setLoading(true);
+                    setSubmitting(true);
                     payload = {
-                        InterviewPanelIDId: currentUserPanelId,
-                        RecruitmentIDId: RecruitmentID,
-                        RelevantQualification: String(competencies.qualifications),
-                        ReleventExperience: String(competencies.experience),
-                        Knowledge: String(competencies.knowledge),
-                        EnergyLevel: String(competencies.energyLevel),
-                        MeetJobRequirement: String(competencies.jobRequirements),
-                        ContributeTowardsCultureRequried: String(competencies.cultureFit),
-                        Experience: String(competencies.expatLocal),
-                        OtherCriteriaScore: String(competencies.otherCriteria),
-                        ConsiderForEmployment: recommendation === "Consider" ? "Yes" : "No",
-                        OverAllEvaluationFeedback: feedback,
+                        RecruitmentIDId: recruitmentId,
+                        Qualifications: scorecard.Qualifications,
+                        Experience: scorecard.Experience,
+                        Knowledge: scorecard.Knowledge,
+                        EnergyLevel: scorecard.EnergyLevel,
+                        JobRequirements: scorecard.JobRequirements,
+                        CultureFit: scorecard.CultureFit,
+                        ExpatLocal: scorecard.ExpatLocal,
+                        OtherCriteria: scorecard.OtherCriteria,
+                        Recommendation: recommendation === "consider" ? "Consider for Employment" : "Do Not Consider",
+                        OverallFeedback: overallFeedback,
+                        QuestionScores: JSON.stringify(questionnaire.map(function (q) { return ({ id: q.id, rating: q.rating }); })),
                     };
-                    return [4 /*yield*/, EvaluationApiService_1.evaluationService.submitScorecard(payload, currentUserPanelId)];
+                    roleIdToSave = currentRoleIDs.includes(4) ? 4 : (currentRoleIDs[0] || 0);
+                    return [4 /*yield*/, EvaluationApiService_1.evaluationService.submitScorecard(payload, currentUserPanelId, roleIdToSave, currentUserGuid || "")];
                 case 1:
                     result = _a.sent();
-                    setLoading(false);
+                    setSubmitting(false);
                     if (result.success) {
-                        alert(result.message);
-                        navigate("/Dashboard");
+                        showAlert(result.message, "success");
+                        setTimeout(function () { return onBack(); }, 1600);
                     }
                     else {
-                        alert(result.message);
+                        showAlert(result.message, "error");
                     }
                     return [2 /*return*/];
             }
         });
     }); };
-    if (loading)
-        return react_1.default.createElement("div", { style: { padding: 40, textAlign: 'center', color: '#64748b' } }, "Loading Evaluation Form...");
-    return (react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.page },
-        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.breadcrumb },
-            react_1.default.createElement("span", null, "HOME"),
-            " ",
-            react_1.default.createElement("span", { className: EvaluationForm_module_scss_1.default.sep }, ">"),
-            react_1.default.createElement("span", { onClick: function () { return navigate("/Dashboard"); }, style: { cursor: "pointer" } }, "DASHBOARD"),
-            " ",
-            react_1.default.createElement("span", { className: EvaluationForm_module_scss_1.default.sep }, ">"),
-            react_1.default.createElement("span", null, "CANDIDATE EVALUATIONS"),
-            " ",
-            react_1.default.createElement("span", { className: EvaluationForm_module_scss_1.default.sep }, ">"),
-            react_1.default.createElement("span", { className: EvaluationForm_module_scss_1.default.active }, "EVALUATION FORM")),
-        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.container },
-            react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.sidebar },
-                react_1.default.createElement("h3", null, "CANDIDATE INFO"),
-                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                    react_1.default.createElement("label", null, "Applicant Name"),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.valueBox }, candidateInfo === null || candidateInfo === void 0 ? void 0 :
-                        candidateInfo.FristName,
-                        " ", candidateInfo === null || candidateInfo === void 0 ? void 0 :
-                        candidateInfo.LastName)),
-                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                    react_1.default.createElement("label", null, "Nationality"),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.valueBox }, (candidateInfo === null || candidateInfo === void 0 ? void 0 : candidateInfo.Nationality) || "N/A")),
-                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                    react_1.default.createElement("label", null, "Gender"),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.valueBox }, (candidateInfo === null || candidateInfo === void 0 ? void 0 : candidateInfo.Gender) || "N/A")),
-                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                    react_1.default.createElement("label", null, "Qualification"),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.valueBox }, (candidateInfo === null || candidateInfo === void 0 ? void 0 : candidateInfo.Qualification) || "N/A")),
-                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.rowGrid },
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                        react_1.default.createElement("label", null, "Mining Exp."),
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.valueBox }, (candidateInfo === null || candidateInfo === void 0 ? void 0 : candidateInfo.TotalYearOfExperiance) || "0")),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                        react_1.default.createElement("label", null, "Related Exp."),
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.valueBox }, (candidateInfo === null || candidateInfo === void 0 ? void 0 : candidateInfo.ReleventExperience) || "0"))),
-                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.rowGrid },
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                        react_1.default.createElement("label", null, "Interview Date"),
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.valueBox }, (candidateInfo === null || candidateInfo === void 0 ? void 0 : candidateInfo.InterviewDate) ? new Date(candidateInfo.InterviewDate).toISOString().split('T')[0] : "N/A")),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                        react_1.default.createElement("label", null, "Levels"),
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.valueBox }, InterviewLevel || "Level 1"))),
-                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.rowGrid },
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                        react_1.default.createElement("label", null, "Grade"),
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.valueBox }, passedGrade || "N/A")),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                        react_1.default.createElement("label", null, "Conflicts"),
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.valueBox }, (candidateInfo === null || candidateInfo === void 0 ? void 0 : candidateInfo.ConflictsOfInterest) ? "Yes" : "No"))),
-                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                    react_1.default.createElement("label", null, "Disability"),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.valueBox }, (candidateInfo === null || candidateInfo === void 0 ? void 0 : candidateInfo.Disability) || "No")),
-                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.infoGroup },
-                    react_1.default.createElement("label", null, "Interview Panel"),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.panelList }, panelMembers.map(function (name, idx) { return (react_1.default.createElement("div", { key: idx, className: EvaluationForm_module_scss_1.default.panelItem },
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.avatar }, idx + 1),
-                        name)); })))),
-            react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.mainContent },
-                questions.length > 0 && (react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.section },
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.sectionHeader },
-                        react_1.default.createElement("h2", null, "INTERVIEW QUESTIONNAIRES"),
-                        react_1.default.createElement("div", { style: { fontSize: 11, color: '#64748b', fontWeight: 600 } },
-                            "RATING GUIDE: ",
-                            react_1.default.createElement("span", { style: { color: '#10b981' } }, "\u25CF 3 - Excellent"),
-                            " \u00A0 ",
-                            react_1.default.createElement("span", { style: { color: '#3b82f6' } }, "\u25CF 2 - Acceptable"),
-                            " \u00A0 ",
-                            react_1.default.createElement("span", { style: { color: '#ef4444' } }, "\u25CF 1 - Not Acceptable"))),
-                    questions.map(function (q, index) { return (react_1.default.createElement("div", { key: index, className: EvaluationForm_module_scss_1.default.questionCard },
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.qHeader },
-                            react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.qNum },
-                                "Q",
-                                index + 1),
-                            react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.qText }, q.question || "Question text not provided.")),
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.expectedResponse },
-                            react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.erTitle }, "\u2713 EXPECTED RESPONSE GUIDE"),
-                            react_1.default.createElement("div", null, q.answer || "Look for key indicators relevant to the question.")),
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.ratingArea },
-                            react_1.default.createElement("div", null,
-                                react_1.default.createElement("span", { className: EvaluationForm_module_scss_1.default.ratingLabel },
-                                    "PANEL RATING ",
-                                    react_1.default.createElement("span", null, "*")),
-                                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.ratingButtons },
-                                    react_1.default.createElement("button", { type: "button", className: questionScores[index] === 1 ? EvaluationForm_module_scss_1.default.activeNotAcceptable : "", onClick: function () { return handleQuestionScore(index, 1); } }, "Not Acceptable"),
-                                    react_1.default.createElement("button", { type: "button", className: questionScores[index] === 2 ? EvaluationForm_module_scss_1.default.activeAcceptable : "", onClick: function () { return handleQuestionScore(index, 2); } }, "Acceptable"),
-                                    react_1.default.createElement("button", { type: "button", className: questionScores[index] === 3 ? EvaluationForm_module_scss_1.default.activeExcellent : "", onClick: function () { return handleQuestionScore(index, 3); } }, "Excellent"))),
-                            react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.scoreDisplay },
-                                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.scoreLabel }, "SCORE"),
-                                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.scoreValue },
-                                    questionScores[index] || 0,
-                                    react_1.default.createElement("span", null, "/3")))))); }))),
-                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.section },
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.sectionHeader },
-                        react_1.default.createElement("h2", null, "SCORECARD DETAILS")),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.competencyGrid }, COMPETENCY_FIELDS.map(function (comp) { return (react_1.default.createElement("div", { key: comp.key, className: EvaluationForm_module_scss_1.default.compItem },
-                        react_1.default.createElement("label", null,
-                            comp.label,
-                            " ",
-                            react_1.default.createElement("span", null, "*")),
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.scaleOptions }, [1, 2, 3, 4, 5].map(function (num) { return (react_1.default.createElement("button", { key: num, type: "button", className: "".concat(EvaluationForm_module_scss_1.default.scaleBtn, " ").concat(competencies[comp.key] === num ? EvaluationForm_module_scss_1.default.selected : ""), onClick: function () { return handleCompetencyChange(comp.key, num); } }, num)); })))); })),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.feedbackGrid },
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.recGroup },
-                            react_1.default.createElement("label", null,
-                                "RECOMMENDATION ",
-                                react_1.default.createElement("span", null, "*")),
-                            react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.recBtns },
-                                react_1.default.createElement("button", { type: "button", className: recommendation === "Consider" ? EvaluationForm_module_scss_1.default.activeConsider : "", onClick: function () { return setRecommendation("Consider"); } }, "\u2713 Consider for Employment"),
-                                react_1.default.createElement("button", { type: "button", className: recommendation === "DoNotConsider" ? EvaluationForm_module_scss_1.default.activeDoNot : "", onClick: function () { return setRecommendation("DoNotConsider"); } }, "\u2715 Do Not Consider"))),
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.feedGroup },
-                            react_1.default.createElement("label", null,
-                                "OVERALL EVALUATION FEEDBACK ",
-                                react_1.default.createElement("span", null, "*")),
-                            react_1.default.createElement("textarea", { value: feedback, onChange: function (e) { return setFeedback(e.target.value); }, placeholder: "Enter overall feedback..." }))),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.ackBox },
-                        react_1.default.createElement("input", { type: "checkbox", checked: acknowledged, onChange: function (e) { return setAcknowledged(e.target.checked); } }),
-                        react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.ackContent },
-                            react_1.default.createElement("p", null, "I hereby acknowledge that I have completed the candidate evaluation and scorecard entry, and I confirm that the scores and feedback provided are accurate."),
-                            react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.reviewerBlock },
-                                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.reviewerAvatar }, currentUserName.charAt(0).toUpperCase()),
-                                react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.reviewerDetails },
-                                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.reviewerNameGroup },
-                                        react_1.default.createElement("span", null, "REVIEWER NAME"),
-                                        react_1.default.createElement("h4", null, currentUserName)),
-                                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.reviewerJobGroup },
-                                        react_1.default.createElement("span", null, "JOB TITLE (EN)"),
-                                        react_1.default.createElement("h4", null, jobTitleEn),
-                                        react_1.default.createElement("span", { className: EvaluationForm_module_scss_1.default.frTitle }, "JOB TITLE (FR)"),
-                                        react_1.default.createElement("h4", null, jobTitleFr)))))),
-                    react_1.default.createElement("div", { className: EvaluationForm_module_scss_1.default.footerActions },
-                        react_1.default.createElement("button", { type: "button", className: EvaluationForm_module_scss_1.default.cancelBtn, onClick: function () { return navigate("/Dashboard"); } }, "Cancel"),
-                        react_1.default.createElement("button", { type: "button", className: EvaluationForm_module_scss_1.default.submitBtn, onClick: handleSubmit, disabled: !isFormValid() || loading }, loading ? "Submitting..." : "Submit Evaluation")))))));
+    if (loading) {
+        return (React.createElement("div", { className: EvaluationForm_module_scss_1.default.loadingPage },
+            React.createElement("div", { className: EvaluationForm_module_scss_1.default.spinner }),
+            React.createElement("p", { className: EvaluationForm_module_scss_1.default.loadingText }, "Loading evaluation form\u2026")));
+    }
+    var candidateName = candidateData
+        ? "".concat((_d = candidateData.FristName) !== null && _d !== void 0 ? _d : "").concat(candidateData.MiddleName ? " " + candidateData.MiddleName : "", " ").concat((_e = candidateData.LastName) !== null && _e !== void 0 ? _e : "").trim()
+        : "—";
+    var userInitial = (reviewerName || "J").charAt(0).toUpperCase();
+    var interviewDateDisplay = (candidateData === null || candidateData === void 0 ? void 0 : candidateData.InterviewDateLevel2) || (candidateData === null || candidateData === void 0 ? void 0 : candidateData.InterviewDate)
+        ? (candidateData.InterviewDateLevel2 || candidateData.InterviewDate).split("T")[0]
+        : "—";
+    var alertClass = [
+        EvaluationForm_module_scss_1.default.alert,
+        alertType === "error" ? EvaluationForm_module_scss_1.default.alertError : "",
+        alertType === "success" ? EvaluationForm_module_scss_1.default.alertSuccess : "",
+    ].filter(Boolean).join(" ");
+    return (React.createElement("div", { className: EvaluationForm_module_scss_1.default.root },
+        alertMsg && (React.createElement("div", { className: alertClass },
+            React.createElement("span", null, alertMsg),
+            React.createElement("button", { className: EvaluationForm_module_scss_1.default.alertClose, onClick: hideAlert }, "\u2715"))),
+        React.createElement("div", { className: EvaluationForm_module_scss_1.default.layout },
+            React.createElement("aside", { className: EvaluationForm_module_scss_1.default.leftPanel },
+                React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftHeader },
+                    React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftAccent }),
+                    React.createElement("span", { className: EvaluationForm_module_scss_1.default.leftTitle }, "CANDIDATE INFO"),
+                    React.createElement("button", { className: EvaluationForm_module_scss_1.default.refreshBtn, title: "Refresh", onClick: function () { return window.location.reload(); } },
+                        React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+                            React.createElement("path", { d: "M23 4v6h-6" }),
+                            React.createElement("path", { d: "M1 20v-6h6" }),
+                            React.createElement("path", { d: "M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" })))),
+                React.createElement("div", { style: { paddingTop: 8 } },
+                    React.createElement(LeftField, { icon: "\uD83D\uDC64", label: "APPLICANT NAME", value: candidateName }),
+                    React.createElement(LeftField, { icon: "\uD83C\uDF10", label: "NATIONALITY", value: (_f = candidateData === null || candidateData === void 0 ? void 0 : candidateData.Nationality) !== null && _f !== void 0 ? _f : "—" }),
+                    React.createElement(LeftField, { icon: "\uD83D\uDC64", label: "GENDER", value: (_g = candidateData === null || candidateData === void 0 ? void 0 : candidateData.Gender) !== null && _g !== void 0 ? _g : "—" }),
+                    React.createElement(LeftField, { icon: "\uD83D\uDCC4", label: "QUALIFICATION", value: (_h = candidateData === null || candidateData === void 0 ? void 0 : candidateData.Qualification) !== null && _h !== void 0 ? _h : "—" }),
+                    React.createElement("div", { className: EvaluationForm_module_scss_1.default.twoCol },
+                        React.createElement(LeftField, { icon: "\uD83D\uDCC8", label: "MINING EXP.", value: (_j = candidateData === null || candidateData === void 0 ? void 0 : candidateData.TotalYearOfExperiance) !== null && _j !== void 0 ? _j : "—" }),
+                        React.createElement(LeftField, { icon: "\uD83D\uDCC8", label: "RELATED EXP.", value: (_k = candidateData === null || candidateData === void 0 ? void 0 : candidateData.ReleventExperience) !== null && _k !== void 0 ? _k : "—" })),
+                    React.createElement("div", { className: EvaluationForm_module_scss_1.default.twoCol },
+                        React.createElement(LeftField, { icon: "\uD83D\uDCC5", label: "INTERVIEW DATE", value: interviewDateDisplay }),
+                        React.createElement(LeftField, { icon: "\uD83D\uDD32", label: "LEVELS", value: interviewLevel !== null && interviewLevel !== void 0 ? interviewLevel : "—" })),
+                    React.createElement("div", { className: EvaluationForm_module_scss_1.default.twoCol },
+                        React.createElement(LeftField, { icon: "\uD83D\uDCC8", label: "GRADE", value: grade || "—" }),
+                        React.createElement(LeftField, { icon: "\u26A0\uFE0F", label: "CONFLICTS", value: (_l = candidateData === null || candidateData === void 0 ? void 0 : candidateData.ConflictsOfInterest) !== null && _l !== void 0 ? _l : "—" })),
+                    React.createElement(LeftField, { icon: "\u267F", label: "DISABILITY", value: (_o = (_m = candidateData === null || candidateData === void 0 ? void 0 : candidateData.disability) !== null && _m !== void 0 ? _m : candidateData === null || candidateData === void 0 ? void 0 : candidateData.Disability) !== null && _o !== void 0 ? _o : "—" }),
+                    panelMembers.length > 0 && (React.createElement("div", { className: EvaluationForm_module_scss_1.default.panelSection },
+                        React.createElement("div", { className: EvaluationForm_module_scss_1.default.panelHeader },
+                            React.createElement("span", { className: EvaluationForm_module_scss_1.default.panelHeaderIcon }, "\uD83D\uDC65"),
+                            React.createElement("span", { className: EvaluationForm_module_scss_1.default.panelHeaderLabel }, "INTERVIEW PANEL")),
+                        panelMembers.map(function (name, i) { return (React.createElement("div", { key: i, className: EvaluationForm_module_scss_1.default.panelRow },
+                            React.createElement("span", { className: EvaluationForm_module_scss_1.default.panelBadge }, i + 1),
+                            React.createElement("span", { className: EvaluationForm_module_scss_1.default.panelName }, name))); }))))),
+            React.createElement("main", { className: EvaluationForm_module_scss_1.default.rightPanel },
+                questionnaire.length > 0 && (React.createElement("section", null,
+                    React.createElement("div", { className: EvaluationForm_module_scss_1.default.sectionTitle },
+                        React.createElement("div", { className: EvaluationForm_module_scss_1.default.sectionAccentOrange }),
+                        React.createElement("div", null,
+                            React.createElement("h2", { className: EvaluationForm_module_scss_1.default.sectionH2 }, "INTERVIEW QUESTIONNAIRES"),
+                            React.createElement("p", { className: EvaluationForm_module_scss_1.default.sectionSub }, "Technical & Behavioral Assessment")),
+                        React.createElement("div", { className: EvaluationForm_module_scss_1.default.ratingGuide },
+                            React.createElement("span", { className: EvaluationForm_module_scss_1.default.ratingGuideLabel }, "RATING GUIDE:"),
+                            React.createElement("span", { className: EvaluationForm_module_scss_1.default.dot, style: { background: "#22c55e" } }),
+                            React.createElement("span", { className: EvaluationForm_module_scss_1.default.guideItem },
+                                "3 - ",
+                                React.createElement("b", null, "Excellent")),
+                            React.createElement("span", { className: EvaluationForm_module_scss_1.default.dot, style: { background: "#3b82f6" } }),
+                            React.createElement("span", { className: EvaluationForm_module_scss_1.default.guideItem },
+                                "2 - ",
+                                React.createElement("b", null, "Acceptable")),
+                            React.createElement("span", { className: EvaluationForm_module_scss_1.default.dot, style: { background: "#ef4444" } }),
+                            React.createElement("span", { className: EvaluationForm_module_scss_1.default.guideItem },
+                                "1 - ",
+                                React.createElement("b", null, "Not Acceptable")))),
+                    questionnaire.map(function (q, idx) {
+                        var _a;
+                        var cardClass = [
+                            EvaluationForm_module_scss_1.default.qCard,
+                            ratingErrors[q.id] ? EvaluationForm_module_scss_1.default.qCardError : "",
+                        ].filter(Boolean).join(" ");
+                        return (React.createElement("div", { key: q.id, className: cardClass },
+                            React.createElement("div", { className: EvaluationForm_module_scss_1.default.qTop },
+                                React.createElement("span", { className: EvaluationForm_module_scss_1.default.qBadge },
+                                    "Q",
+                                    idx + 1),
+                                React.createElement("p", { className: EvaluationForm_module_scss_1.default.qText, dangerouslySetInnerHTML: { __html: cleanHTML(q.question) } })),
+                            q.answer && (React.createElement("div", { className: EvaluationForm_module_scss_1.default.guideBox },
+                                React.createElement("div", { className: EvaluationForm_module_scss_1.default.guideBoxHeader },
+                                    React.createElement("span", { className: EvaluationForm_module_scss_1.default.guideCheck }, "\u2705"),
+                                    React.createElement("span", { className: EvaluationForm_module_scss_1.default.guideBoxLabel }, "EXPECTED RESPONSE GUIDE"),
+                                    React.createElement("span", { className: EvaluationForm_module_scss_1.default.guideBoxIcon }, "\uD83D\uDCCB")),
+                                React.createElement("p", { className: EvaluationForm_module_scss_1.default.guideBoxText, dangerouslySetInnerHTML: { __html: cleanHTML(q.answer) } }))),
+                            React.createElement("div", { className: EvaluationForm_module_scss_1.default.qBottom },
+                                React.createElement("div", null,
+                                    React.createElement("p", { className: EvaluationForm_module_scss_1.default.panelRatingLabel },
+                                        "PANEL RATING ",
+                                        React.createElement("span", { className: EvaluationForm_module_scss_1.default.req }, "*"),
+                                        ratingErrors[q.id] && (React.createElement("span", { className: EvaluationForm_module_scss_1.default.fieldErr }, " \u2014 This field is required"))),
+                                    React.createElement("div", { className: EvaluationForm_module_scss_1.default.ratingBtnRow }, ScoreRating.map(function (_a) {
+                                        var key = _a.key, text = _a.text;
+                                        var btnClass = [
+                                            EvaluationForm_module_scss_1.default.ratingBtn,
+                                            q.rating === key && key === 3 ? EvaluationForm_module_scss_1.default.ratingExcellent : "",
+                                            q.rating === key && key === 2 ? EvaluationForm_module_scss_1.default.ratingAcceptable : "",
+                                            q.rating === key && key === 1 ? EvaluationForm_module_scss_1.default.ratingNotAcceptable : "",
+                                        ].filter(Boolean).join(" ");
+                                        return (React.createElement("button", { key: key, className: btnClass, onClick: function () { return handleRatingChange(q.id, { key: key, text: text }); } }, text));
+                                    }))),
+                                React.createElement("div", { className: EvaluationForm_module_scss_1.default.scoreDisplay },
+                                    React.createElement("span", { className: EvaluationForm_module_scss_1.default.scoreLabel }, "SCORE"),
+                                    React.createElement("span", { className: EvaluationForm_module_scss_1.default.scoreNum }, (_a = q.rating) !== null && _a !== void 0 ? _a : 0,
+                                        React.createElement("span", { className: EvaluationForm_module_scss_1.default.scoreMax }, "/3"))))));
+                    }))),
+                React.createElement("section", { style: { marginTop: questionnaire.length > 0 ? 16 : 0 } },
+                    React.createElement("div", { className: EvaluationForm_module_scss_1.default.sectionTitle },
+                        React.createElement("div", { className: EvaluationForm_module_scss_1.default.sectionAccentGreen }),
+                        React.createElement("div", null,
+                            React.createElement("h2", { className: EvaluationForm_module_scss_1.default.sectionH2 }, "SCORECARD DETAILS"),
+                            React.createElement("p", { className: EvaluationForm_module_scss_1.default.sectionSub }, "Core Competency Assessment (1-5 Scale)"))),
+                    React.createElement("div", { className: EvaluationForm_module_scss_1.default.scorecardCard },
+                        React.createElement("div", { className: EvaluationForm_module_scss_1.default.scorecardGrid }, SCORECARD_FIELDS.map(function (field) {
+                            var lblClass = [
+                                EvaluationForm_module_scss_1.default.scorecardFieldLabel,
+                                scorecardErrors[field.key] ? EvaluationForm_module_scss_1.default.errLabel : "",
+                            ].filter(Boolean).join(" ");
+                            return (React.createElement("div", { key: field.key, className: EvaluationForm_module_scss_1.default.scorecardField },
+                                React.createElement("p", { className: lblClass },
+                                    field.icon,
+                                    " ",
+                                    field.label,
+                                    " ",
+                                    React.createElement("span", { className: EvaluationForm_module_scss_1.default.req }, "*"),
+                                    scorecardErrors[field.key] && (React.createElement("span", { className: EvaluationForm_module_scss_1.default.fieldErr }, " \u2014 Required"))),
+                                React.createElement("div", { className: EvaluationForm_module_scss_1.default.fiveRow }, [1, 2, 3, 4, 5].map(function (n) {
+                                    var btnClass = [
+                                        EvaluationForm_module_scss_1.default.fiveBtn,
+                                        scorecard[field.key] === n ? EvaluationForm_module_scss_1.default.fiveBtnActive : "",
+                                    ].filter(Boolean).join(" ");
+                                    return (React.createElement("button", { key: n, className: btnClass, onClick: function () { return handleScorecardChange(field.key, n); } }, n));
+                                }))));
+                        })),
+                        React.createElement("div", { className: EvaluationForm_module_scss_1.default.recRow },
+                            React.createElement("div", { className: EvaluationForm_module_scss_1.default.recLeft },
+                                React.createElement("p", { className: [EvaluationForm_module_scss_1.default.scorecardFieldLabel, recError ? EvaluationForm_module_scss_1.default.errLabel : ""].filter(Boolean).join(" ") },
+                                    "RECOMMENDATION ",
+                                    React.createElement("span", { className: EvaluationForm_module_scss_1.default.req }, "*"),
+                                    recError && React.createElement("span", { className: EvaluationForm_module_scss_1.default.fieldErr }, " \u2014 Required")),
+                                React.createElement("div", { className: EvaluationForm_module_scss_1.default.recBtnRow },
+                                    React.createElement("button", { className: [EvaluationForm_module_scss_1.default.recBtn, recommendation === "consider" ? EvaluationForm_module_scss_1.default.recBtnActive : ""].filter(Boolean).join(" "), onClick: function () { setRecommendation("consider"); setRecError(false); } },
+                                        recommendation === "consider" && React.createElement("span", { style: { fontSize: 14 } }, "\u2705"),
+                                        "Consider for Employment"),
+                                    React.createElement("button", { className: [EvaluationForm_module_scss_1.default.recBtn, recommendation === "doNotConsider" ? EvaluationForm_module_scss_1.default.recBtnDeny : ""].filter(Boolean).join(" "), onClick: function () { setRecommendation("doNotConsider"); setRecError(false); } }, "\u2715 Do Not Consider"))),
+                            React.createElement("div", { className: EvaluationForm_module_scss_1.default.recRight },
+                                React.createElement("p", { className: [EvaluationForm_module_scss_1.default.scorecardFieldLabel, feedbackError ? EvaluationForm_module_scss_1.default.errLabel : ""].filter(Boolean).join(" ") },
+                                    "OVERALL EVALUATION FEEDBACK ",
+                                    React.createElement("span", { className: EvaluationForm_module_scss_1.default.req }, "*"),
+                                    feedbackError && React.createElement("span", { className: EvaluationForm_module_scss_1.default.fieldErr }, " \u2014 Required")),
+                                React.createElement("textarea", { className: [EvaluationForm_module_scss_1.default.feedbackArea, feedbackError ? EvaluationForm_module_scss_1.default.inputErr : ""].filter(Boolean).join(" "), rows: 4, value: overallFeedback, onChange: function (e) {
+                                        setOverallFeedback(e.target.value);
+                                        if (e.target.value.trim())
+                                            setFeedbackError(false);
+                                    }, placeholder: "Enter your overall evaluation feedback here\u2026" }))),
+                        React.createElement("div", { className: [EvaluationForm_module_scss_1.default.ackBox, ackError ? EvaluationForm_module_scss_1.default.ackBoxErr : ""].filter(Boolean).join(" ") },
+                            React.createElement("label", { className: EvaluationForm_module_scss_1.default.ackRow },
+                                React.createElement("input", { type: "checkbox", checked: acknowledged, onChange: function (e) { setAcknowledged(e.target.checked); if (e.target.checked)
+                                        setAckError(false); }, className: EvaluationForm_module_scss_1.default.ackChk }),
+                                React.createElement("span", { className: EvaluationForm_module_scss_1.default.ackText }, "I hereby acknowledge that I have completed the candidate evaluation and scorecard entry, and I confirm that the scores and feedback provided are accurate.")),
+                            React.createElement("div", { className: EvaluationForm_module_scss_1.default.reviewerCard },
+                                React.createElement("div", { className: EvaluationForm_module_scss_1.default.reviewerAvatar }, userInitial),
+                                React.createElement("div", { className: EvaluationForm_module_scss_1.default.reviewerInfo },
+                                    React.createElement("div", { className: EvaluationForm_module_scss_1.default.reviewerCol },
+                                        React.createElement("p", { className: EvaluationForm_module_scss_1.default.reviewerMeta }, "REVIEWER NAME"),
+                                        React.createElement("p", { className: EvaluationForm_module_scss_1.default.reviewerVal }, reviewerName)),
+                                    React.createElement("div", { className: EvaluationForm_module_scss_1.default.reviewerCol },
+                                        React.createElement("p", { className: EvaluationForm_module_scss_1.default.reviewerMeta }, "JOB TITLE (EN)"),
+                                        React.createElement("p", { className: EvaluationForm_module_scss_1.default.reviewerVal }, jobTitleEn),
+                                        React.createElement("p", { className: EvaluationForm_module_scss_1.default.reviewerMeta, style: { marginTop: 12 } }, "JOB TITLE (FR)"),
+                                        React.createElement("p", { className: EvaluationForm_module_scss_1.default.reviewerVal }, jobTitleFr))))))),
+                React.createElement("div", { className: EvaluationForm_module_scss_1.default.footer },
+                    React.createElement("button", { className: EvaluationForm_module_scss_1.default.cancelBtn, onClick: onBack, disabled: submitting }, "Cancel"),
+                    React.createElement("button", { className: EvaluationForm_module_scss_1.default.submitBtn, onClick: handleSubmit, disabled: submitting || !acknowledged }, submitting ? "Submitting…" : "+ Submit Evaluation"))))));
+};
+var LeftField = function (_a) {
+    var icon = _a.icon, label = _a.label, value = _a.value;
+    return (React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldWrapper },
+        React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldLabelRow },
+            icon && React.createElement("span", { className: EvaluationForm_module_scss_1.default.leftFieldIcon }, icon),
+            React.createElement("span", { className: EvaluationForm_module_scss_1.default.leftFieldLabel }, label)),
+        React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldValueBox }, value || "—")));
 };
 exports.default = EvaluationForm;
 //# sourceMappingURL=EvaluationForm.js.map

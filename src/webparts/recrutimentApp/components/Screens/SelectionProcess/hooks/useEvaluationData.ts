@@ -40,8 +40,6 @@ export function useEvaluationData(currentUserEmail: string, employeeList: any[])
       setRows([]);
       return;
     }
-
-    // Extract candidate IDs robustly mapping to SP expanded object
     const candidateIDs = Array.from(
       new Set(
         panels.map((p: any) => p.CandidateID?.ID ?? p.CandidateId ?? p.CandidateIDId).filter(Boolean)
@@ -68,8 +66,6 @@ export function useEvaluationData(currentUserEmail: string, employeeList: any[])
     );
 
     console.log(" STEP 6: Formatted Candidates (Before Filter):", settled);
-
-    // Exact matching filter logic
     const finalRows = (settled.filter(Boolean) as EvaluationCandidate[]).filter((c) => {
       console.log(` Evaluating Candidate: ${c.applicantName} (ID: ${c.id}, StatusId: ${c.statusId})`);
 
