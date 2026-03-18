@@ -53,7 +53,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   setLoadingState,
 }) => {
 
-  const {MatricID} = useUIState();
+ const { MatricID: metricId } = useUIState();
   const { data: positionDetails,  loading: positionLoading } = usePositionDetails(selectedJobId, selectedType);
   const { data: signatureDetails, loading: signatureLoading } = useSignatureDetails();
 
@@ -181,15 +181,18 @@ const bgvValid = mandatoryValid && optionValid;
 
               <RequiredAttachments attachments={attachments} isLoading={isLoading} />
 
-              <UploadDocument
+              {metricId == MatricID.UploadONEM || metricId == MatricID.JobAdvert  && (
+                <UploadDocument
                 multiple={false}
                 acceptedFormats={".pdf"}
-                label={"Upload JobAdvert"}
+                label={metricId == MatricID.UploadONEM ? "Upload JobAdvert" : "Upload Advert"}
                 required={true}
                 onChange={(file: UploadedFile[]) => setUploadDocument(file)}
               />
+              )}
+              
 
-               {MatricID == 2 && positionDetails?.nationality === Nationality.Expatriate && (
+               {metricId == MatricID.UploadONEM && positionDetails?.nationality === Nationality.Expatriate && (
           <div style={{ marginTop: "20px" }}>
             <BGVerification
               mandatoryChecks={BGVData.mantoryChecks}
@@ -219,8 +222,8 @@ const bgvValid = mandatoryValid && optionValid;
               ]}
             />
 
-
-            <div className="advert-review-drawer__footer">
+            {metricId == MatricID.UploadONEM || metricId == MatricID.JobAdvert || metricId == MatricID.AdvertReviewHOD || metricId == MatricID.AdvertReviewLM && (
+               <div className="advert-review-drawer__footer">
               <button type="button" className="advert-review-drawer__history" title="View History">
                 <History size={18} />
               </button>
@@ -239,6 +242,8 @@ const bgvValid = mandatoryValid && optionValid;
                 </button>
               </div>
             </div>
+            ) }
+           
           </motion.div>
         </div>
       )}

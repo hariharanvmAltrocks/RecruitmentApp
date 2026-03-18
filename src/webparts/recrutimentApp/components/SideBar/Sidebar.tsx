@@ -54,7 +54,14 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
           <img src={currentIcon} alt={item.DisplayName} className={styles.icon} />
         )}
 
-        <span className={styles.label}>{item.DisplayName}</span>
+        <span className={styles.labelWrap}>
+          <span className={styles.label} title={item.DisplayName}>
+            {item.DisplayName}
+          </span>
+          <span className={styles.labelTooltip} role="tooltip">
+            {item.DisplayName}
+          </span>
+        </span>
 
         {hasChildren && (
           <ChevronDown 
@@ -130,6 +137,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
     setactiveMenuID(id);
     navigate(path);
   };
+console.log(sortedMenu,"sortedMenu");
 
   return (
     <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ""}`}>

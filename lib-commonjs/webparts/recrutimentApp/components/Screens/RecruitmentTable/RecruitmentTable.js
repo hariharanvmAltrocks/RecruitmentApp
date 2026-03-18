@@ -17,33 +17,39 @@ var ServiceExport_1 = require("../../../services/ServiceExport");
 var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
 var ApiConfig_1 = require("../../../utilities/ApiConfig");
 var SuccessToast_1 = require("../../Comman/Toast/SuccessToast");
+var Tabs_1 = tslib_1.__importDefault(require("../../Comman/Tabs/Tabs"));
+var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
+var react_router_dom_1 = require("react-router-dom");
 var AssignHRPopup = react_1.default.lazy(function () { return Promise.resolve().then(function () { return tslib_1.__importStar(require("./Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
     default: module.AssignHRPopup,
 }); }); });
 var RecruitmentTable = function () {
     var _a;
     var _b = (0, useTabDetails_1.useTabDetails)(), tabs = _b.tabs, tabsLoading = _b.loading;
-    var _c = (0, react_1.useState)("tab1"), activeTabKey = _c[0], setActiveTabKey = _c[1];
+    var activeTab = (0, UIStateContext_1.useUIState)().activeTab;
+    var navigate = (0, react_router_dom_1.useNavigate)();
+    var _c = (0, react_1.useState)(activeTab), activeTabKey = _c[0], setActiveTabKey = _c[1];
     var _d = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey), items = _d.items, tableLoading = _d.loading;
-    var setMatricID = (0, UIStateContext_1.useUIState)().setMatricID;
-    var _e = (0, RoleContext_1.userInfo)(), roleIDs = _e.roleIDs, ADGroupData = _e.ADGroupData;
-    var _f = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _f.drawerOpen, selectedJobId = _f.selectedJobId, advertLanguage = _f.advertLanguage, reviewerComments = _f.reviewerComments, acknowledgementCheckbox = _f.acknowledgementCheckbox, loadingState = _f.loadingState, openDrawer = _f.openDrawer, closeDrawer = _f.closeDrawer, setAdvertLanguage = _f.setAdvertLanguage, setComments = _f.setComments, toggleAcknowledgement = _f.toggleAcknowledgement, setLoadingState = _f.setLoadingState;
-    var _g = (0, react_1.useState)([]), selectedIds = _g[0], setSelectedIds = _g[1];
-    var _h = (0, react_1.useState)(0), selectedMemberId = _h[0], setSelectedMemberId = _h[1];
-    var _j = (0, react_1.useState)(false), isPopupOpen = _j[0], setIsPopupOpen = _j[1];
-    var _k = (0, react_1.useState)(10), pageSize = _k[0], setPageSize = _k[1];
-    var _l = (0, react_1.useState)(1), currentPage = _l[0], setCurrentPage = _l[1];
-    var _m = (0, react_1.useState)(false), isopenDrawer = _m[0], setIsopenDrawer = _m[1];
-    var _o = (0, react_1.useState)(""), selectedType = _o[0], setSelectedType = _o[1];
-    var _p = (0, react_1.useState)(""), selectedNationality = _p[0], setSelectedNationality = _p[1];
-    var _q = (0, react_1.useState)(false), isToastOpen = _q[0], setIsToastOpen = _q[1];
-    var _r = (0, react_1.useState)({
+    var _e = (0, UIStateContext_1.useUIState)(), matricID = _e.MatricID, setMatricID = _e.setMatricID;
+    var _f = (0, RoleContext_1.userInfo)(), roleIDs = _f.roleIDs, ADGroupData = _f.ADGroupData;
+    var _g = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _g.drawerOpen, selectedJobId = _g.selectedJobId, advertLanguage = _g.advertLanguage, reviewerComments = _g.reviewerComments, acknowledgementCheckbox = _g.acknowledgementCheckbox, loadingState = _g.loadingState, openDrawer = _g.openDrawer, closeDrawer = _g.closeDrawer, setAdvertLanguage = _g.setAdvertLanguage, setComments = _g.setComments, toggleAcknowledgement = _g.toggleAcknowledgement, setLoadingState = _g.setLoadingState;
+    var _h = (0, react_1.useState)([]), selectedIds = _h[0], setSelectedIds = _h[1];
+    var _j = (0, react_1.useState)(0), selectedMemberId = _j[0], setSelectedMemberId = _j[1];
+    var _k = (0, react_1.useState)(false), isPopupOpen = _k[0], setIsPopupOpen = _k[1];
+    var _l = (0, react_1.useState)(10), pageSize = _l[0], setPageSize = _l[1];
+    var _m = (0, react_1.useState)(1), currentPage = _m[0], setCurrentPage = _m[1];
+    var _o = (0, react_1.useState)(false), isopenDrawer = _o[0], setIsopenDrawer = _o[1];
+    var _p = (0, react_1.useState)(""), selectedType = _p[0], setSelectedType = _p[1];
+    var _q = (0, react_1.useState)(""), selectedNationality = _q[0], setSelectedNationality = _q[1];
+    var _r = (0, react_1.useState)(false), isToastOpen = _r[0], setIsToastOpen = _r[1];
+    var _s = (0, react_1.useState)({
         title: "",
         message: "",
-    }), toastprops = _r[0], setToastProps = _r[1];
+    }), toastprops = _s[0], setToastProps = _s[1];
+    var _t = (0, react_1.useState)(false), isQuestiontab = _t[0], setIsQuestionTab = _t[1];
     var selectedItems = (0, react_1.useMemo)(function () { return items.filter(function (item) { return selectedIds.includes(item.id); }); }, [items, selectedIds]);
     var selectedJobCode = (0, react_1.useMemo)(function () { var _a; return selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.jobCode : ""; }, [selectedItems]);
-    var _s = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _s.members, membersLoading = _s.loading;
+    var _u = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _u.members, membersLoading = _u.loading;
     (0, react_1.useEffect)(function () {
         if (!tabs.length) {
             return;
@@ -53,7 +59,7 @@ var RecruitmentTable = function () {
             setActiveTabKey(tabs[0].key);
         }
     }, [activeTabKey, tabs]);
-    var activeTab = (0, react_1.useMemo)(function () { return tabs.find(function (tab) { return tab.key === activeTabKey; }); }, [activeTabKey, tabs]);
+    var activeTabs = (0, react_1.useMemo)(function () { return tabs.find(function (tab) { return tab.key === activeTabKey; }); }, [activeTabKey, tabs]);
     var selectedMember = (0, react_1.useMemo)(function () { var _a; return (_a = members.find(function (member) { return member.id === selectedMemberId; })) !== null && _a !== void 0 ? _a : null; }, [members, selectedMemberId]);
     var handleTabChange = (0, react_1.useCallback)(function (tab) {
         setActiveTabKey(tab.key);
@@ -88,9 +94,15 @@ var RecruitmentTable = function () {
         });
     }, [paginatedItems, selectedIds]);
     var handleAction = (0, react_1.useCallback)(function (item) {
-        var actionLabel = (activeTab === null || activeTab === void 0 ? void 0 : activeTab.actionMode) === "Upload" ? "Upload" : "View";
+        var actionLabel = (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.actionMode) === "Upload" ? "Upload" : "View";
         var message = "".concat(actionLabel, " action clicked for ").concat(item.jobCode);
-        console.info(message);
+        if (matricID == ConditionConfig_1.MatricID.InterviewQuestionHR || matricID == ConditionConfig_1.MatricID.InterviewQuestionLM) {
+            setIsQuestionTab(true);
+            navigate("/QuestionCreation");
+        }
+        else if (matricID == ConditionConfig_1.MatricID.ReviewProfile || matricID == ConditionConfig_1.MatricID.AssignInterviewPanel || matricID == ConditionConfig_1.MatricID.ReviewScoreCard) {
+            navigate("/QuestionCreation");
+        }
         openDrawer(item.ItemID);
         setIsopenDrawer(true);
         setSelectedType(item.requestType);
@@ -102,7 +114,7 @@ var RecruitmentTable = function () {
             message: "Are you sure you want cancel",
             autoDismissDuration: 45
         });
-    }, [activeTab === null || activeTab === void 0 ? void 0 : activeTab.actionMode, openDrawer]);
+    }, [activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.actionMode, openDrawer]);
     var handleOpenPopup = (0, react_1.useCallback)(function () {
         setIsPopupOpen(true);
     }, []);
@@ -267,8 +279,8 @@ var RecruitmentTable = function () {
             }
         });
     }); }, [roleIDs, ADGroupData, setLoadingState]);
-    var showAssignmentBar = (activeTab === null || activeTab === void 0 ? void 0 : activeTab.tableMode) === "checkbox" && selectedIds.length > 0;
-    var actionMode = (_a = activeTab === null || activeTab === void 0 ? void 0 : activeTab.actionMode) !== null && _a !== void 0 ? _a : "View";
+    var showAssignmentBar = (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.tableMode) === "checkbox" && selectedIds.length > 0;
+    var actionMode = (_a = activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.actionMode) !== null && _a !== void 0 ? _a : "View";
     var columns = (0, react_1.useMemo)(function () { return [
         {
             id: "jobCode",
@@ -322,10 +334,9 @@ var RecruitmentTable = function () {
     ]; }, [actionMode, handleAction]);
     return (react_1.default.createElement("section", { className: "recruitment-table" },
         react_1.default.createElement("div", { className: "recruitment-table__tabs" },
-            (tabsLoading ? [] : tabs).map(function (tab) { return (react_1.default.createElement("button", { key: tab.key, className: "recruitment-table__tab ".concat(tab.key === activeTabKey ? "recruitment-table__tab--active" : "").trim(), type: "button", onClick: function () { return handleTabChange(tab); } }, tab.label)); }),
-            tabsLoading && (react_1.default.createElement("div", { className: "recruitment-table__tabs-loading" }, "Loading tabs..."))),
+            react_1.default.createElement(Tabs_1.default, { tabs: tabs, activeKey: activeTabKey, onChange: handleTabChange, loading: tabsLoading, variant: "boxed" })),
         react_1.default.createElement("div", { className: "recruitment-table__table-card" },
-            react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, enableCheckbox: (activeTab === null || activeTab === void 0 ? void 0 : activeTab.tableMode) === "checkbox", selectedRowIds: selectedIds, getRowId: function (item) { return item.id; }, onToggleRow: handleToggleRow, onToggleAll: handleToggleAll, pageSize: pageSize, currentPage: currentPage, totalCount: totalCount, onPageChange: setCurrentPage, onPageSizeChange: function (size) {
+            react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, enableCheckbox: (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.tableMode) === "checkbox", selectedRowIds: selectedIds, getRowId: function (item) { return item.id; }, onToggleRow: handleToggleRow, onToggleAll: handleToggleAll, pageSize: pageSize, currentPage: currentPage, totalCount: totalCount, onPageChange: setCurrentPage, onPageSizeChange: function (size) {
                     setPageSize(size);
                     setCurrentPage(1);
                 }, loading: tableLoading })),

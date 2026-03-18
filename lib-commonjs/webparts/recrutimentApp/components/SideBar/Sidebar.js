@@ -25,7 +25,9 @@ var SidebarItem = function (_a) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("div", { onClick: handleClick, className: "".concat(SideNavigation_module_scss_1.default.sidebarItem, " ").concat(shouldHighlight ? SideNavigation_module_scss_1.default.active : "") },
             currentIcon && (react_1.default.createElement("img", { src: currentIcon, alt: item.DisplayName, className: SideNavigation_module_scss_1.default.icon })),
-            react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.label }, item.DisplayName),
+            react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.labelWrap },
+                react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.label, title: item.DisplayName }, item.DisplayName),
+                react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.labelTooltip, role: "tooltip" }, item.DisplayName)),
             hasChildren && (react_1.default.createElement(lucide_react_1.ChevronDown, { className: "".concat(SideNavigation_module_scss_1.default.chevron, " ").concat(isExpanded ? SideNavigation_module_scss_1.default.open : "") }))),
         hasChildren && isExpanded && (react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.submenu }, item.Children.map(function (child) { return (react_1.default.createElement(SidebarItem, { key: child.Id, item: child, activeMenuID: activeMenuID, onSelectCallback: onSelectCallback })); })))));
 };
@@ -65,6 +67,7 @@ var SideNavigation = function (_a) {
         setactiveMenuID(id);
         navigate(path);
     };
+    console.log(sortedMenu, "sortedMenu");
     return (react_1.default.createElement("aside", { className: "".concat(SideNavigation_module_scss_1.default.sidebar, " ").concat(isCollapsed ? SideNavigation_module_scss_1.default.collapsed : "") },
         react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.logoSection },
             react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.logoIcon },

@@ -178,17 +178,18 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.fetchRecruitmentByLookup = function (listName, filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var res, ids, recruitmentFilter, error_3;
+            var GridResult, res, ids, recruitmentFilter, DeptDetails_1, error_3;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
+                        GridResult = [];
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: listName,
-                                Select: "*,RecruitmentID/Id",
+                                Select: "*,Status/StatusDescription,RecruitmentID/Id",
                                 Filter: filterParam,
                                 FilterCondition: filterConditions,
-                                Expand: "RecruitmentID",
+                                Expand: "RecruitmentID,Status",
                                 Topcount: ApiConfig_1.count.Topcount,
                                 Orderby: "ID",
                                 Orderbydecorasc: true,
@@ -208,7 +209,34 @@ var DashboardService = /** @class */ (function () {
                             { FilterKey: "ID", Operator: "in", FilterValue: ids },
                         ];
                         return [4 /*yield*/, this.GetRecruitmentDetails(recruitmentFilter, filterConditions)];
-                    case 2: return [2 /*return*/, _a.sent()];
+                    case 2:
+                        DeptDetails_1 = _a.sent();
+                        if (listName === Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails) {
+                            GridResult = res.map(function (item) {
+                                var _a, _b;
+                                var deptDetails = DeptDetails_1.data.filter(function (dpt) { var _a; return dpt.ID === ((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id); });
+                                return {
+                                    ApplicantName: "".concat(item.FirstName || "", " ").concat(item.MiddleName || "", " ").concat(item.LastName || "").trim(),
+                                    PositionTitle: item === null || item === void 0 ? void 0 : item.PositionTitle,
+                                    JobGrade: item === null || item === void 0 ? void 0 : item.JobGrade,
+                                    Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
+                                    Status: (_b = (_a = item === null || item === void 0 ? void 0 : item.Status) === null || _a === void 0 ? void 0 : _a.StatusDescription) !== null && _b !== void 0 ? _b : "",
+                                    StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
+                                    InterviewDate: (item === null || item === void 0 ? void 0 : item.InterviewDate)
+                                        ? (0, moment_1.default)(item.InterviewDate).format("YYYY-MM-DD")
+                                        : undefined,
+                                    ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
+                                        ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
+                                        : undefined,
+                                    CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
+                                        ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
+                                        : undefined,
+                                    DeptDetails: deptDetails, // optional if needed
+                                };
+                            });
+                        }
+                        else if (listName === Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails) { }
+                        return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
                     case 3:
                         error_3 = _a.sent();
                         console.error("Error fetching from ".concat(listName, ":"), error_3);
@@ -220,21 +248,156 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetCandidateDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var GridResult, res, ids, recruitmentFilter, DeptDetails_2, error_4;
             return tslib_1.__generator(this, function (_a) {
-                return [2 /*return*/, this.fetchRecruitmentByLookup(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, filterParam, filterConditions)];
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        GridResult = [];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                Select: "*,Status/StatusDescription,RecruitmentID/Id",
+                                Filter: filterParam,
+                                FilterCondition: filterConditions,
+                                Expand: "RecruitmentID,Status",
+                                Topcount: ApiConfig_1.count.Topcount,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        if (!res.length) {
+                            return [2 /*return*/, { data: [], status: 200, message: "No records found" }];
+                        }
+                        ids = res
+                            .map(function (item) { var _a; return (_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id; })
+                            .filter(Boolean);
+                        if (!ids.length) {
+                            return [2 /*return*/, { data: [], status: 200, message: "No linked recruitment records found" }];
+                        }
+                        recruitmentFilter = [
+                            { FilterKey: "ID", Operator: "in", FilterValue: ids },
+                        ];
+                        return [4 /*yield*/, this.GetRecruitmentDetails(recruitmentFilter, filterConditions)];
+                    case 2:
+                        DeptDetails_2 = _a.sent();
+                        GridResult = res.map(function (item) {
+                            var _a, _b;
+                            var deptDetails = DeptDetails_2.data.filter(function (dpt) { var _a; return dpt.ID === ((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id); });
+                            return {
+                                ApplicantName: "".concat(item.FirstName || "", " ").concat(item.MiddleName || "", " ").concat(item.LastName || "").trim(),
+                                PositionTitle: item === null || item === void 0 ? void 0 : item.PositionTitle,
+                                JobGrade: item === null || item === void 0 ? void 0 : item.JobGrade,
+                                Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
+                                Status: (_b = (_a = item === null || item === void 0 ? void 0 : item.Status) === null || _a === void 0 ? void 0 : _a.StatusDescription) !== null && _b !== void 0 ? _b : "",
+                                StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
+                                InterviewDate: (item === null || item === void 0 ? void 0 : item.InterviewDate)
+                                    ? (0, moment_1.default)(item.InterviewDate).format("YYYY-MM-DD")
+                                    : undefined,
+                                ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
+                                    ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
+                                    : undefined,
+                                CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
+                                    ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
+                                    : undefined,
+                                DeptDetails: deptDetails, // optional if needed
+                            };
+                        });
+                        return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
+                    case 3:
+                        error_4 = _a.sent();
+                        console.error("Error fetching from Candidate details:", error_4);
+                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
+                    case 4: return [2 /*return*/];
+                }
             });
         });
     };
     DashboardService.prototype.GetSelectedCandidate = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var GridResult, res, ids, candidateIds, recruitmentFilter, candidateFilter, DeptDetails, getCandidateDetails, deptMap_1, candidateMap_1, error_5;
             return tslib_1.__generator(this, function (_a) {
-                return [2 /*return*/, this.fetchRecruitmentByLookup(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, filterParam, filterConditions)];
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 4, , 5]);
+                        GridResult = [];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
+                                Select: "*,Status/StatusDescription,RecruitmentID/Id,CandidateID/ID",
+                                Filter: filterParam,
+                                FilterCondition: filterConditions,
+                                Expand: "RecruitmentID,Status,CandidateID",
+                                Topcount: ApiConfig_1.count.Topcount,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        if (!res.length) {
+                            return [2 /*return*/, { data: [], status: 200, message: "No records found" }];
+                        }
+                        ids = res
+                            .map(function (item) { var _a; return (_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id; })
+                            .filter(Boolean);
+                        candidateIds = res
+                            .map(function (item) { var _a; return (_a = item.CandidateID) === null || _a === void 0 ? void 0 : _a.ID; })
+                            .filter(Boolean);
+                        if (!ids.length) {
+                            return [2 /*return*/, {
+                                    data: [],
+                                    status: 200,
+                                    message: "No linked recruitment records found",
+                                }];
+                        }
+                        recruitmentFilter = [
+                            { FilterKey: "ID", Operator: "in", FilterValue: ids },
+                        ];
+                        candidateFilter = [
+                            { FilterKey: "ID", Operator: "in", FilterValue: candidateIds },
+                        ];
+                        return [4 /*yield*/, this.GetRecruitmentDetails(recruitmentFilter, filterConditions)];
+                    case 2:
+                        DeptDetails = _a.sent();
+                        return [4 /*yield*/, this.GetCandidateDetails(candidateFilter, filterConditions)];
+                    case 3:
+                        getCandidateDetails = _a.sent();
+                        deptMap_1 = new Map(DeptDetails.data.map(function (d) { return [d.ID, d]; }));
+                        candidateMap_1 = new Map(getCandidateDetails.data.map(function (c) { return [c.ID, c]; }));
+                        // ✅ Main mapping
+                        GridResult = res.map(function (item) {
+                            var _a, _b, _c, _d, _e;
+                            var deptDetails = deptMap_1.get((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id);
+                            var candidate = candidateMap_1.get((_b = item.CandidateID) === null || _b === void 0 ? void 0 : _b.ID);
+                            return {
+                                ApplicantName: (_c = candidate === null || candidate === void 0 ? void 0 : candidate.ApplicantName) !== null && _c !== void 0 ? _c : "",
+                                PositionTitle: candidate === null || candidate === void 0 ? void 0 : candidate.PositionTitle,
+                                JobGrade: candidate === null || candidate === void 0 ? void 0 : candidate.JobGrade,
+                                Nationality: candidate === null || candidate === void 0 ? void 0 : candidate.Nationality,
+                                Status: (_e = (_d = item === null || item === void 0 ? void 0 : item.Status) === null || _d === void 0 ? void 0 : _d.StatusDescription) !== null && _e !== void 0 ? _e : "",
+                                StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
+                                PositionID: item === null || item === void 0 ? void 0 : item.PositionID,
+                                ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
+                                    ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
+                                    : undefined,
+                                CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
+                                    ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
+                                    : undefined,
+                                DeptDetails: deptDetails !== null && deptDetails !== void 0 ? deptDetails : null,
+                            };
+                        });
+                        return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
+                    case 4:
+                        error_5 = _a.sent();
+                        console.error("Error fetching from Candidate details:", error_5);
+                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
+                    case 5: return [2 /*return*/];
+                }
             });
         });
     };
     DashboardService.prototype.GetNPAEPVRRDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_4;
+            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_6;
             var _b, _c;
             return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
@@ -305,6 +468,7 @@ var DashboardService = /** @class */ (function () {
                                 BusinessUnitCode: (_b = (_a = item === null || item === void 0 ? void 0 : item.BusinessUnitCode) === null || _a === void 0 ? void 0 : _a.BusineesUnitCode) !== null && _b !== void 0 ? _b : "",
                                 NumberOfPersonNeeded: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded,
                                 Status: (_d = (_c = item === null || item === void 0 ? void 0 : item.Status) === null || _c === void 0 ? void 0 : _c.StatusDescription) !== null && _d !== void 0 ? _d : "",
+                                Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
                                 ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
                                     ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
                                     : undefined,
@@ -335,8 +499,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetNPAEPVRRDetails fetched successfully",
                             }];
                     case 3:
-                        error_4 = _d.sent();
-                        console.error("Error fetching GetNPAEPVRRDetails:", error_4);
+                        error_6 = _d.sent();
+                        console.error("Error fetching GetNPAEPVRRDetails:", error_6);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 4: return [2 /*return*/];
                 }
@@ -345,7 +509,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetPositionDetails = function (Filter, filterConditions, ListName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var resdata, result, error_5;
+            var resdata, result, error_7;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -374,8 +538,8 @@ var DashboardService = /** @class */ (function () {
                         });
                         return [2 /*return*/, { data: result, status: 200, message: "GetPositionDetails fetched successfully" }];
                     case 2:
-                        error_5 = _a.sent();
-                        console.error("GetPositionDetails error:", error_5);
+                        error_7 = _a.sent();
+                        console.error("GetPositionDetails error:", error_7);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching position details" }];
                     case 3: return [2 /*return*/];
                 }

@@ -4,8 +4,11 @@ export const MatricID = {
     JobAdvert: 3,
     ReviewProfile: 4,
     AssignInterviewPanel: 5,
-    InterviewQuestion: 6,
-    Evalution: 7,
+    InterviewQuestionHR: 6,
+    EvalutionHR: 7,
+    EvalutionHOD: 7,
+    EvalutionLM: 7,
+    EvalutionEXCO: 7,
     ReviewScoreCard: 8,
     OfferRelease: 9,
     OfferAccepted: 10,
@@ -14,7 +17,8 @@ export const MatricID = {
     interviewSchedule: 13,
     interviewTracker: 14,
     AdvertReviewLM: 15,
-    AdvertReviewHOD: 16
+    AdvertReviewHOD: 16,
+    InterviewQuestionLM: 17
 };
 
 export const RoleName = {

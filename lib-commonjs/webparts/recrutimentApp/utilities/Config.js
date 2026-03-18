@@ -97,13 +97,13 @@ exports.StatusId = {
     RecruitmentInProgress: 28,
     PendingwithHODtoselectthecandidate: 121,
     Selected: 122,
-    PendingInterviewQuestionwithLineManagerandHR: 39,
+    InterviewQustionHRLM: 39,
     InterviewScheduled: 40,
     Completed: 13,
     ReadyforRecruitmentProcess: 155,
     PendingInterviewquestion: 124,
     PendingwithLineManagereviewAdv: 125,
-    PendingCareerPortalque: 126,
+    CareerPortalQuestions: 126,
     OnHoldbyHOD: 123,
     RejectedbyHOD: 15,
     PendingwithHODtoselectthecandidateLevel2: 127,
@@ -173,7 +173,8 @@ exports.StatusId = {
     RESProcessInitiated: 143,
     FailedmedicalscreeningUnfit: 156,
     offerdecline: 27,
-    onboardingInProcess: 46
+    onboardingInProcess: 46,
+    Onboarded: 157
 };
 exports.workflowStatusApi = {
     HRPending: "WS01",

@@ -22,6 +22,19 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, 'id' | 'showArrow'>> = {
      TabValue: "tab1"
     },
 
+    [MatricID.UploadONEM]: {
+        label: 'Pending Upload ONEM',
+        status: 'PENDING',
+        icon: Activity,
+        color: '#f59e0b',
+        bgColor: '#fffbeb',
+         statusColor: '#64748b',
+    statusBg: '#f1f5f9',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab2"
+    },
+
     [MatricID.JobAdvert]: {
         label: 'Pending Advert Upload',
         status: 'ACTIVE',
@@ -34,6 +47,58 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, 'id' | 'showArrow'>> = {
       path: "/RecruitmentTable",
      menuId: menuID.PreSelectionProcess,
      TabValue: "tab1"
+    },
+
+     [MatricID.ReviewProfile]: {
+        label: 'Review Profile',
+        status: 'PENDING',
+        icon: Activity,
+        color: '#f59e0b',
+        bgColor: '#fffbeb',
+        statusColor: '#3b82f6', // Active badge is blue
+    statusBg: '#eff6ff',
+     path: "/RecruitmentTable",
+     menuId: menuID.PostSelectionProcess,
+     TabValue: "tab1"
+    },
+
+    [MatricID.AssignInterviewPanel]: {
+        label: 'Assign Interview Panel',
+        status: 'PENDING',
+        icon: Activity,
+        color: '#fbbf24',
+        bgColor: '#fefce8',
+         statusColor: '#64748b',
+    statusBg: '#f1f5f9',
+     path: "/RecruitmentTable",
+     menuId: menuID.PostSelectionProcess,
+     TabValue: "tab2"
+    },
+
+         [MatricID.InterviewQuestionHR]: {
+        label: 'Pending InterviewQuestion',
+        status: 'CRITICAL',
+        icon: ClipboardList,
+        color: '#ef4444',
+        bgColor: '#fef2f2',
+        statusColor: '#64748b',
+    statusBg: '#f1f5f9',
+     path: "/RecruitmentTable",
+     menuId: menuID.PostSelectionProcess,
+     TabValue: "tab3"
+    },
+
+     [MatricID.EvalutionHR]: {
+        label: 'Pending Evaluation',
+        status: 'PENDING',
+        icon: Activity,
+        color: '#d97706',
+        bgColor: '#fef3c7',
+        statusColor: '#ef4444',
+    statusBg: '#fee2e2',
+     path: "/RecruitmentTable",
+     menuId: menuID.PostSelectionProcess,
+     TabValue: "tab4"
     },
 
     [MatricID.AdvertReviewLM]: {
@@ -49,6 +114,31 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, 'id' | 'showArrow'>> = {
      TabValue: "tab1"
     },
 
+        [MatricID.InterviewQuestionLM]: {
+        label: 'Pending Create Minimum Criteria Question',
+        status: 'PENDING',
+        icon: Activity,
+        color: '#10b981',
+        bgColor: '#ecfdf5',
+        statusColor: '#ef4444',
+    statusBg: '#fee2e2',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab2"
+    },
+      [MatricID.EvalutionLM]: {
+        label: 'Pending Evaluation',
+        status: 'PENDING',
+        icon: Activity,
+        color: '#d97706',
+        bgColor: '#fef3c7',
+        statusColor: '#ef4444',
+    statusBg: '#fee2e2',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab4"
+    },
+
     [MatricID.AdvertReviewHOD]: {
         label: 'Pending Advert Review',
         status: 'ACTIVE',
@@ -57,32 +147,6 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         bgColor: '#fff7ed',
         statusColor: '#64748b',
     statusBg: '#f1f5f9',
-     path: "/RecruitmentTable",
-     menuId: menuID.SelectionProcess,
-     TabValue: "tab1"
-    },
-
-    [MatricID.UploadONEM]: {
-        label: 'Pending Upload ONEM',
-        status: 'PENDING',
-        icon: Activity,
-        color: '#f59e0b',
-        bgColor: '#fffbeb',
-         statusColor: '#64748b',
-    statusBg: '#f1f5f9',
-     path: "/RecruitmentTable",
-     menuId: menuID.SelectionProcess,
-     TabValue: "tab2"
-    },
-
-    [MatricID.Evalution]: {
-        label: 'Pending Evaluation',
-        status: 'PENDING',
-        icon: Activity,
-        color: '#d97706',
-        bgColor: '#fef3c7',
-        statusColor: '#ef4444',
-    statusBg: '#fee2e2',
      path: "/RecruitmentTable",
      menuId: menuID.SelectionProcess,
      TabValue: "tab1"
@@ -98,7 +162,19 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, 'id' | 'showArrow'>> = {
     statusBg: '#f1f5f9',
      path: "/RecruitmentTable",
      menuId: menuID.SelectionProcess,
-     TabValue: "tab1"
+     TabValue: "tab2"
+    },
+     [MatricID.EvalutionLM]: {
+        label: 'Pending Evaluation',
+        status: 'PENDING',
+        icon: Activity,
+        color: '#d97706',
+        bgColor: '#fef3c7',
+        statusColor: '#ef4444',
+    statusBg: '#fee2e2',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab3"
     },
 
     [MatricID.interviewSchedule]: {
@@ -109,6 +185,19 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, 'id' | 'showArrow'>> = {
         bgColor: '#eff6ff',
         statusColor: '#3b82f6', 
     statusBg: '#eff6ff',
+     path: "/RecruitmentTable",
+     menuId: menuID.SelectionProcess,
+     TabValue: "tab1"
+    },
+
+      [MatricID.EvalutionEXCO]: {
+        label: 'Pending Evaluation',
+        status: 'PENDING',
+        icon: Activity,
+        color: '#d97706',
+        bgColor: '#fef3c7',
+        statusColor: '#ef4444',
+    statusBg: '#fee2e2',
      path: "/RecruitmentTable",
      menuId: menuID.SelectionProcess,
      TabValue: "tab1"
@@ -179,31 +268,6 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, 'id' | 'showArrow'>> = {
      TabValue: "tab1"
     },
 
-    [MatricID.ReviewProfile]: {
-        label: 'Review Profile',
-        status: 'PENDING',
-        icon: Activity,
-        color: '#f59e0b',
-        bgColor: '#fffbeb',
-        statusColor: '#3b82f6', // Active badge is blue
-    statusBg: '#eff6ff',
-     path: "/RecruitmentTable",
-     menuId: menuID.SelectionProcess,
-     TabValue: "tab1"
-    },
-
-    [MatricID.AssignInterviewPanel]: {
-        label: 'Assign Interview Panel',
-        status: 'PENDING',
-        icon: Activity,
-        color: '#fbbf24',
-        bgColor: '#fefce8',
-         statusColor: '#64748b',
-    statusBg: '#f1f5f9',
-     path: "/RecruitmentTable",
-     menuId: menuID.SelectionProcess,
-     TabValue: "tab1"
-    }
 };
 
 const buildCol = (id: number, overrides: Partial<MetricConfig> = {}): MetricConfig => ({
@@ -227,7 +291,6 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
                 roleColumns = [
                     buildCol(MatricID.AssignHr, { showArrow: true }),
                     buildCol(MatricID.UploadONEM, { showArrow: true }),
-                    buildCol(MatricID.Evalution, { showArrow: false }),
                     buildCol(MatricID.ReviewScoreCard, { showArrow: false }),
                     buildCol(MatricID.interviewSchedule, { showArrow: false }),
                     buildCol(MatricID.interviewTracker, { showArrow: false }),
@@ -249,14 +312,14 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
                         showArrow: false,
                         externalApi: { workflowStatuses: [workflowStatusApi.PendingRecruitmentHRscheduleInterview] },
                     }),
-                    buildCol(MatricID.Evalution, { showArrow: true }),
-                    buildCol(MatricID.ReviewScoreCard, { showArrow: true }),
-                    buildCol(MatricID.interviewSchedule, { showArrow: true }),
-                    buildCol(MatricID.interviewTracker, { showArrow: true }),
-                    buildCol(MatricID.OfferRelease, { showArrow: true }),
-                    buildCol(MatricID.OfferAccepted, { showArrow: true }),
-                    buildCol(MatricID.OfferRejected, { showArrow: true }),
-                    buildCol(MatricID.Onbording, { showArrow: true }),
+                    buildCol(MatricID.EvalutionHR, { showArrow: true }),
+                    buildCol(MatricID.InterviewQuestionHR, {showArrow: true}),
+                    buildCol(MatricID.interviewSchedule, { showArrow: false }),
+                    buildCol(MatricID.interviewTracker, { showArrow: false }),
+                    buildCol(MatricID.OfferRelease, { showArrow: false }),
+                    buildCol(MatricID.OfferAccepted, { showArrow: false }),
+                    buildCol(MatricID.OfferRejected, { showArrow: false }),
+                    buildCol(MatricID.Onbording, { showArrow: false }),
                 ];
                 break;
 
@@ -274,10 +337,11 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
                             ],
                         },
                     }),
-                    buildCol(MatricID.Evalution, { showArrow: true }),
-                    buildCol(MatricID.ReviewScoreCard, { showArrow: true }),
-                    buildCol(MatricID.interviewSchedule, { showArrow: true }),
-                    buildCol(MatricID.interviewTracker, { showArrow: true }),
+                    buildCol(MatricID.InterviewQuestionLM, {showArrow: true}),
+                    buildCol(MatricID.EvalutionLM, { showArrow: true }),
+                    buildCol(MatricID.ReviewScoreCard, { showArrow: false }),
+                    buildCol(MatricID.interviewSchedule, { showArrow: false }),
+                    buildCol(MatricID.interviewTracker, { showArrow: false }),
                     buildCol(MatricID.OfferRelease, { showArrow: false }),
                     buildCol(MatricID.OfferAccepted, { showArrow: false }),
                     buildCol(MatricID.OfferRejected, { showArrow: false }),
@@ -288,8 +352,20 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
             case RoleID.HOD:
                 roleColumns = [
                     buildCol(MatricID.AdvertReviewHOD, { showArrow: true }),
-                    buildCol(MatricID.Evalution, { showArrow: true }),
+                    buildCol(MatricID.EvalutionHOD, { showArrow: true }),
                     buildCol(MatricID.ReviewScoreCard, { showArrow: true }),
+                    buildCol(MatricID.interviewSchedule, { showArrow: false }),
+                    buildCol(MatricID.interviewTracker, { showArrow: false }),
+                    buildCol(MatricID.OfferRelease, { showArrow: false }),
+                    buildCol(MatricID.OfferAccepted, { showArrow: false }),
+                    buildCol(MatricID.OfferRejected, { showArrow: false }),
+                    buildCol(MatricID.Onbording, { showArrow: false }),
+                ];
+                break;
+            
+             case RoleID.RecruitmentAppExternalAgency:
+                roleColumns = [
+                    buildCol(MatricID.EvalutionEXCO, { showArrow: true }),
                     buildCol(MatricID.interviewSchedule, { showArrow: false }),
                     buildCol(MatricID.interviewTracker, { showArrow: false }),
                     buildCol(MatricID.OfferRelease, { showArrow: false }),
@@ -406,8 +482,7 @@ export const MetricQueryConfig: Record<number, SingleQuery | SingleQuery[]> = {
     [MatricID.JobAdvert]: {
         ListName: ListNames.HRMSRecruitmentDptDetails,
         Filter: [
-            StatusFilter(StatusId.PendingUploadAdvert),
-            ...DataSyncFilter
+            StatusFilter(StatusId.PendingUploadAdvert)
         ],
         select: DEFAULT_SELECT
     },
@@ -420,13 +495,40 @@ export const MetricQueryConfig: Record<number, SingleQuery | SingleQuery[]> = {
         select: DEFAULT_SELECT
     },
 
-    [MatricID.Evalution]: {
+    [MatricID.EvalutionHR]: {
         ListName: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Filter: [
             StatusFilter([
                 StatusId.InterviewScheduled,
                 StatusId.InterviewScheduledforLevel2
             ])
+        ],
+        select: DEFAULT_SELECT
+    },
+
+    [MatricID.EvalutionLM]: {
+        ListName: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Filter: [
+            StatusFilter(StatusId.InterviewScheduled)
+        ],
+        select: DEFAULT_SELECT
+    },
+
+    [MatricID.EvalutionHOD]: {
+        ListName: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Filter: [
+            StatusFilter([
+                StatusId.InterviewScheduled,
+                StatusId.InterviewScheduledforLevel2
+            ])
+        ],
+        select: DEFAULT_SELECT
+    },
+
+     [MatricID.EvalutionEXCO]: {
+        ListName: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Filter: [
+            StatusFilter(StatusId.InterviewScheduledforLevel2)
         ],
         select: DEFAULT_SELECT
     },
@@ -438,20 +540,20 @@ export const MetricQueryConfig: Record<number, SingleQuery | SingleQuery[]> = {
     },
 
     [MatricID.OfferAccepted]: {
-        ListName: ListNames.HRMSRecruitmentDptDetails,
+        ListName: ListNames.HRMSSelectedCandidateDetailsByHOD,
         Filter: [StatusFilter(StatusId.PendingHROfferReview)],
         select: DEFAULT_SELECT
     },
 
     [MatricID.OfferRejected]: {
-        ListName: ListNames.HRMSRecruitmentDptDetails,
+        ListName: ListNames.HRMSSelectedCandidateDetailsByHOD,
         Filter: [StatusFilter(StatusId.offerdecline)],
         select: DEFAULT_SELECT
     },
 
     [MatricID.Onbording]: {
-        ListName: ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter(StatusId.onboardingInProcess)],
+        ListName: ListNames.HRMSSelectedCandidateDetailsByHOD,
+        Filter: [StatusFilter(StatusId.Onboarded)],
         select: DEFAULT_SELECT
     },
 
@@ -485,6 +587,41 @@ export const MetricQueryConfig: Record<number, SingleQuery | SingleQuery[]> = {
         select: DEFAULT_SELECT
     },
 
+     [MatricID.InterviewQuestionHR]: {
+        ListName: ListNames.HRMSRecruitmentDptDetails,
+        Filter: [StatusFilter(StatusId.PendingInterviewquestion)],
+        select: DEFAULT_SELECT
+    },
+    [MatricID.InterviewQuestionLM]: {
+        ListName: ListNames.HRMSRecruitmentDptDetails,
+        Filter: StatusFilter([
+                StatusId.PendingInterviewquestion,
+                StatusId.CareerPortalQuestions
+            ]),
+        select: DEFAULT_SELECT
+    },
+    [MatricID.interviewSchedule]: {
+         ListName: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Filter: [
+            StatusFilter([
+                StatusId.InterviewScheduled,
+                StatusId.InterviewScheduledforLevel2
+            ])
+        ],
+        select: DEFAULT_SELECT
+    },
+    [MatricID.interviewTracker]: {
+         ListName: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Filter: [
+            StatusFilter([
+                StatusId.InterviewScheduled,
+                StatusId.InterviewScheduledforLevel2
+            ])
+        ],
+        select: DEFAULT_SELECT
+    },
+
+
 };
 
 const RoleMetricFilters: Record<number, number[]> = {
@@ -492,6 +629,9 @@ const RoleMetricFilters: Record<number, number[]> = {
     [RoleID.RecruitmentHRLead]: [
         MatricID.AssignHr,
         MatricID.UploadONEM,
+          MatricID.ReviewScoreCard,
+          MatricID.interviewSchedule,
+          MatricID.interviewTracker,
         MatricID.OfferRelease,
         MatricID.OfferAccepted,
         MatricID.OfferRejected,
@@ -502,7 +642,8 @@ const RoleMetricFilters: Record<number, number[]> = {
         MatricID.JobAdvert,
         MatricID.ReviewProfile,
         MatricID.AssignInterviewPanel,
-        MatricID.Evalution,
+        MatricID.InterviewQuestionHR,
+        MatricID.EvalutionHR,
         MatricID.OfferRelease,
         MatricID.OfferAccepted,
         MatricID.OfferRejected,
@@ -511,8 +652,9 @@ const RoleMetricFilters: Record<number, number[]> = {
 
     [RoleID.LineManager]: [
         MatricID.AdvertReviewLM,
-        MatricID.Evalution,
+        MatricID.EvalutionLM,
         MatricID.ReviewProfile,
+        MatricID.InterviewQuestionLM,
         MatricID.OfferRelease,
         MatricID.OfferAccepted,
         MatricID.OfferRejected,
@@ -522,8 +664,16 @@ const RoleMetricFilters: Record<number, number[]> = {
     [RoleID.HOD]: [
         MatricID.AdvertReviewHOD,
         MatricID.ReviewScoreCard,
-        MatricID.Evalution,
+        MatricID.EvalutionHOD,
         MatricID.ReviewProfile,
+        MatricID.OfferRelease,
+        MatricID.OfferAccepted,
+        MatricID.OfferRejected,
+        MatricID.Onbording
+    ],
+
+     [RoleID.RecruitmentAppExternalAgency]: [
+        MatricID.EvalutionEXCO,
         MatricID.OfferRelease,
         MatricID.OfferAccepted,
         MatricID.OfferRejected,

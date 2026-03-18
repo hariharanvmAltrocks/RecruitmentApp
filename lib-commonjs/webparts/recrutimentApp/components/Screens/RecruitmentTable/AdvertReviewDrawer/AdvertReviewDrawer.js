@@ -26,7 +26,7 @@ var SkeletonBlock = function (_a) {
 var AdvertReviewDrawer = function (_a) {
     var _b, _c;
     var drawerOpen = _a.drawerOpen, selectedJobId = _a.selectedJobId, selectedJobCode = _a.selectedJobCode, selectedType = _a.selectedType, advertLanguage = _a.advertLanguage, reviewerComments = _a.reviewerComments, acknowledgementCheckbox = _a.acknowledgementCheckbox, loadingState = _a.loadingState, onClose = _a.onClose, onLanguageChange = _a.onLanguageChange, onCommentsChange = _a.onCommentsChange, onToggleAcknowledgement = _a.onToggleAcknowledgement, setLoadingState = _a.setLoadingState;
-    var MatricID = (0, UIStateContext_1.useUIState)().MatricID;
+    var metricId = (0, UIStateContext_1.useUIState)().MatricID;
     var _d = (0, getPositionDetails_1.usePositionDetails)(selectedJobId, selectedType), positionDetails = _d.data, positionLoading = _d.loading;
     var _e = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _e.data, signatureLoading = _e.loading;
     var jobCodeId = (_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeID) !== null && _b !== void 0 ? _b : 0;
@@ -94,8 +94,8 @@ var AdvertReviewDrawer = function (_a) {
                 react_1.default.createElement(PositionFramework_1.PositionFramework, { positionDetails: positionDetails, isLoading: isLoading, headerCode: headerMeta.code }),
                 react_1.default.createElement(AdvertLanguageToggle_1.AdvertLanguageToggle, { advertLanguage: advertLanguage, advertContent: advertContent, isLoading: isLoading, onLanguageChange: onLanguageChange }),
                 react_1.default.createElement(RequiredAttachments_1.RequiredAttachments, { attachments: attachments, isLoading: isLoading }),
-                react_1.default.createElement(UploadDocument_1.UploadDocument, { multiple: false, acceptedFormats: ".pdf", label: "Upload JobAdvert", required: true, onChange: function (file) { return setUploadDocument(file); } }),
-                MatricID == 2 && (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.nationality) === ConditionConfig_1.Nationality.Expatriate && (react_1.default.createElement("div", { style: { marginTop: "20px" } },
+                metricId == ConditionConfig_1.MatricID.UploadONEM || metricId == ConditionConfig_1.MatricID.JobAdvert && (react_1.default.createElement(UploadDocument_1.UploadDocument, { multiple: false, acceptedFormats: ".pdf", label: metricId == ConditionConfig_1.MatricID.UploadONEM ? "Upload JobAdvert" : "Upload Advert", required: true, onChange: function (file) { return setUploadDocument(file); } })),
+                metricId == ConditionConfig_1.MatricID.UploadONEM && (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.nationality) === ConditionConfig_1.Nationality.Expatriate && (react_1.default.createElement("div", { style: { marginTop: "20px" } },
                     react_1.default.createElement(BGVerification_1.default, { mandatoryChecks: BGVData.mantoryChecks, VerificationChecks: BGVData.checkboxBGVOption, onToggleOption: handleBvgToggle }))),
                 react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement })),
             react_1.default.createElement(ValidationSummary_1.ValidationSummary, { show: showValidation && !canApprove, messages: [
@@ -104,14 +104,14 @@ var AdvertReviewDrawer = function (_a) {
                     { key: "checkbox", text: "Please acknowledge before approving.", valid: checkboxValid },
                     { key: "BGVVerification", text: "Please Choose the BGV Verification", valid: optionValid }
                 ] }),
-            react_1.default.createElement("div", { className: "advert-review-drawer__footer" },
+            metricId == ConditionConfig_1.MatricID.UploadONEM || metricId == ConditionConfig_1.MatricID.JobAdvert || metricId == ConditionConfig_1.MatricID.AdvertReviewHOD || metricId == ConditionConfig_1.MatricID.AdvertReviewLM && (react_1.default.createElement("div", { className: "advert-review-drawer__footer" },
                 react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__history", title: "View History" },
                     react_1.default.createElement(lucide_react_1.History, { size: 18 })),
                 react_1.default.createElement("div", { className: "advert-review-drawer__footer-actions" },
                     react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button", onClick: handleClose }, "Cancel"),
                     react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button advert-review-drawer__button--primary ".concat(canApprove ? "" : "is-disabled").trim(), disabled: isLoading, onClick: handleApprove },
                         react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 16 }),
-                        "Approve Advert"))))))));
+                        "Approve Advert")))))))));
 };
 exports.AdvertReviewDrawer = AdvertReviewDrawer;
 //# sourceMappingURL=AdvertReviewDrawer.js.map

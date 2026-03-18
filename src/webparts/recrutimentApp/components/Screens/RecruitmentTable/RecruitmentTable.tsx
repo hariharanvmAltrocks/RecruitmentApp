@@ -21,6 +21,9 @@ import { PostRecuritmentData } from "../../../services/RecruitmentTable/IRecruit
 import { userInfo } from "../../../utilities/hooks/RoleContext";
 import { ResponeStatus } from "../../../utilities/ApiConfig";
 import { IToast, SuccessToast } from "../../Comman/Toast/SuccessToast";
+import Tabs from "../../Comman/Tabs/Tabs";
+import { MatricID } from "../../../utilities/ConditionConfig";
+import { useNavigate } from "react-router-dom";
 
 const AssignHRPopup = React.lazy(() => import("./Components/AssignHRPopup/AssignHRPopup").then((module) => ({
   default: module.AssignHRPopup,
@@ -28,10 +31,12 @@ const AssignHRPopup = React.lazy(() => import("./Components/AssignHRPopup/Assign
 
 export const RecruitmentTable: React.FC = () => {
   const { tabs, loading: tabsLoading } = useTabDetails();
-  const [activeTabKey, setActiveTabKey] = useState<RecruitmentTabKey>("tab1");
+  const { activeTab } = useUIState();
+  const navigate = useNavigate();
+  const [activeTabKey, setActiveTabKey] = useState<RecruitmentTabKey>(activeTab as RecruitmentTabKey);
   const { items, loading: tableLoading } = useRecruitmentDetails(activeTabKey);
-  const {setMatricID} = useUIState();
-  const {roleIDs, ADGroupData} = userInfo();
+  const { MatricID: matricID, setMatricID } = useUIState();
+  const { roleIDs, ADGroupData } = userInfo();
   const {
     drawerOpen,
     selectedJobId,
@@ -55,21 +60,22 @@ export const RecruitmentTable: React.FC = () => {
   const [isopenDrawer, setIsopenDrawer] = useState<boolean>(false);
   const [selectedType, setSelectedType] = useState<string>("");
   const [selectedNationality, setSelectedNationality] = useState<string>("");
-  const [isToastOpen , setIsToastOpen] = useState<boolean>(false);
+  const [isToastOpen, setIsToastOpen] = useState<boolean>(false);
   const [toastprops, setToastProps] = useState<IToast>({
-      title: "",
-      message: "",
+    title: "",
+    message: "",
   });
+  const [isQuestiontab, setIsQuestionTab] =useState<boolean>(false);
 
 
-   const selectedItems: RecruitmentItem[] = useMemo(
+  const selectedItems: RecruitmentItem[] = useMemo(
     () => items.filter((item) => selectedIds.includes(item.id)),
     [items, selectedIds]
   );
 
   const selectedJobCode = useMemo(
-    () => selectedItems.length === 1 ? selectedItems[0]?.jobCode : "" 
-  , [selectedItems]);
+    () => selectedItems.length === 1 ? selectedItems[0]?.jobCode : ""
+    , [selectedItems]);
 
 
   const { members, loading: membersLoading } = useAssignMembers(selectedNationality);
@@ -85,18 +91,18 @@ export const RecruitmentTable: React.FC = () => {
     }
   }, [activeTabKey, tabs]);
 
-  const activeTab: TabItem | undefined = useMemo(
+  const activeTabs: TabItem | undefined = useMemo(
     () => tabs.find((tab) => tab.key === activeTabKey),
     [activeTabKey, tabs]
   );
 
- 
+
 
   const selectedMember: HrMember | null = useMemo(
     () => members.find((member) => member.id === selectedMemberId) ?? null,
     [members, selectedMemberId]
   );
-  
+
 
   const handleTabChange = useCallback((tab) => {
     setActiveTabKey(tab.key);
@@ -104,7 +110,7 @@ export const RecruitmentTable: React.FC = () => {
     setSelectedMemberId(0);
     setCurrentPage(1);
     setMatricID(tab.matricId);
-    
+
   }, []);
 
   const handleToggleRow = useCallback((id: string) => {
@@ -139,34 +145,42 @@ export const RecruitmentTable: React.FC = () => {
   }, [paginatedItems, selectedIds]);
 
   const handleAction = useCallback((item: RecruitmentItem) => {
-    const actionLabel = activeTab?.actionMode === "Upload" ? "Upload" : "View";
+    const actionLabel = activeTabs?.actionMode === "Upload" ? "Upload" : "View";
     const message = `${actionLabel} action clicked for ${item.jobCode}`;
-    console.info(message);
+    if(matricID == MatricID.InterviewQuestionHR || matricID == MatricID.InterviewQuestionLM){
+       setIsQuestionTab(true);
+       navigate("/QuestionCreation")
+    }else if (matricID == MatricID.ReviewProfile || matricID == MatricID.AssignInterviewPanel || matricID == MatricID.ReviewScoreCard){
+      navigate("/QuestionCreation")
+    }
     openDrawer(item.ItemID);
     setIsopenDrawer(true);
     setSelectedType(item.requestType);
     setSelectedNationality(item.nationality);
     setIsToastOpen(true);
-  setToastProps({
-     type: "warning",
+    setToastProps({
+      type: "warning",
       title: "Warning",
       message: "Are you sure you want cancel",
       autoDismissDuration: 45
-  });
-  }, [activeTab?.actionMode, openDrawer]);
+    });
+
+
+
+  }, [activeTabs?.actionMode, openDrawer]);
 
   const handleOpenPopup = useCallback(() => {
     setIsPopupOpen(true);
   }, []);
 
   const handleClosePopup = useCallback(() => {
-  setIsToastOpen(true);
-  setToastProps({
-     type: "warning",
+    setIsToastOpen(true);
+    setToastProps({
+      type: "warning",
       title: "Warning",
       message: "Are you sure you want cancel",
       autoDismissDuration: 45
-  });
+    });
     setIsPopupOpen(false);
   }, []);
 
@@ -206,172 +220,172 @@ export const RecruitmentTable: React.FC = () => {
   //   };
   // };
 
-const handleConfirmAssignment = useCallback(async (payload: AssignmentPayload) => {
+  const handleConfirmAssignment = useCallback(async (payload: AssignmentPayload) => {
 
-  try {
-    const isHRLead = roleIDs.includes(RoleID.RecruitmentHRLead);
+    try {
+      const isHRLead = roleIDs.includes(RoleID.RecruitmentHRLead);
 
-    const userIDResult = isHRLead
-      ? await CommonServices.getUserIDByEmail(Number(payload.member?.id) ?? 0)
-      : null;
+      const userIDResult = isHRLead
+        ? await CommonServices.getUserIDByEmail(Number(payload.member?.id) ?? 0)
+        : null;
 
-    // if (isHRLead && !userIDResult?.data) {
-    //   showAlert("Failed to resolve HR user ID.", HRMSAlertOptions.Error);
-    //   return;
-    // }
+      // if (isHRLead && !userIDResult?.data) {
+      //   showAlert("Failed to resolve HR user ID.", HRMSAlertOptions.Error);
+      //   return;
+      // }
 
-    const vacancyDetailResults = await Promise.all(
-      payload.vacancies.map((vacancy) => {
-        const filter = [{
-          FilterName: "ID",
-          FilterOperator: "eq",
-          FilterValue: vacancy.ItemID,
-        }];
-        return RecruitmentServices.GetNPAEPVRRDetails(filter, "and", vacancy.requestType)
-          .then((res) => ({
-            vacancy,
-            jobDetail: res.data?.[0] ?? null,
-          }));
-      })
-    );
-
-    const unresolved = vacancyDetailResults.filter((r) => !r.jobDetail);
-    if (unresolved.length) {
-      console.warn("Unresolved job details:", unresolved);
-      // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
-      return;
-    }
-
-    if (isHRLead) {
-      const batchPayloads: PostRecuritmentData[] = vacancyDetailResults.map(
-        ({ vacancy, jobDetail }) => ({
-          Data: {
-            BusinessUnitCodeId:      jobDetail!.BusinessUnitCodeId,
-            Nationality:             jobDetail!.Nationality,
-            EmploymentCategory:      jobDetail!.EmploymentCategory,
-            DepartmentId:            jobDetail!.DepartmentId,
-            SubDepartmentId:         jobDetail!.SubDepartmentId,
-            SectionId:               jobDetail!.SectionId,
-            DepartmentCodeId:        jobDetail!.DepartmentCodeId,
-            NumberOfPersonNeeded:    Number(jobDetail!.NumberOfPersonNeeded),
-            EnterNumberOfMonths:     jobDetail!.EnterNumberOfMonths ?? "0",
-            TypeOfContract:          jobDetail!.TypeOfContract,
-            DateRequried:            jobDetail!.DateRequried ?? null,
-            StatusId:                StatusId.HRLeadtoAssignRecruitmentHR,
-            ActionId:                WorkflowAction.Approved,
-            JobCodeId:               jobDetail!.JobCodeId,
-            AreaofWork:              jobDetail!.AreaofWork,
-            AssignedHR:              userIDResult!.data,
-            RecruitmentHRLead:       Array.isArray(ADGroupData.EmailId) ? (ADGroupData.EmailId[0] ?? "") : (ADGroupData.EmailId ?? ""),
-            DataFrom:                jobDetail!.Type ?? "",
-            Location:                jobDetail!.Location ?? "",
-          },
-          PositionData: {
-            PatersonGradeId:   jobDetail!.PatersonGradeId   ?? 0,
-            DRCGradeId:        jobDetail!.DRCGradeId        ?? 0,
-            JobTitleEnglishId: jobDetail!.JobTitleEnglishId ?? 0,
-            JobTitleFrenchId:  jobDetail!.JobTitleFrenchId  ?? 0,
-          },
-          CommentsList: {
-            RoleId: roleIDs[0],
-            RecruitmentIDId: 0,           
-            Comments:        payload.comments ?? "",
-          },
-          updatePreList: {
-            ID:                      vacancy.ItemID ?? 0,
-            ActionId:                WorkflowAction.Approved,
-            ItemCreated:             "Yes",
-            IsDataSyncToRecruitment: "No",
-          },
+      const vacancyDetailResults = await Promise.all(
+        payload.vacancies.map((vacancy) => {
+          const filter = [{
+            FilterName: "ID",
+            FilterOperator: "eq",
+            FilterValue: vacancy.ItemID,
+          }];
+          return RecruitmentServices.GetNPAEPVRRDetails(filter, "and", vacancy.requestType)
+            .then((res) => ({
+              vacancy,
+              jobDetail: res.data?.[0] ?? null,
+            }));
         })
       );
 
-      const batchResponse = await RecruitmentServices.InsertRecruitmentDptBatch(batchPayloads);
-
-      if (batchResponse.status !== ResponeStatus.SUCCESS) {
-        // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error, closeAlert);
+      const unresolved = vacancyDetailResults.filter((r) => !r.jobDetail);
+      if (unresolved.length) {
+        console.warn("Unresolved job details:", unresolved);
+        // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
         return;
       }
 
-    } else {
-      // if (!formData.assignRecruitmentAgencies.length) {
+      if (isHRLead) {
+        const batchPayloads: PostRecuritmentData[] = vacancyDetailResults.map(
+          ({ vacancy, jobDetail }) => ({
+            Data: {
+              BusinessUnitCodeId: jobDetail!.BusinessUnitCodeId,
+              Nationality: jobDetail!.Nationality,
+              EmploymentCategory: jobDetail!.EmploymentCategory,
+              DepartmentId: jobDetail!.DepartmentId,
+              SubDepartmentId: jobDetail!.SubDepartmentId,
+              SectionId: jobDetail!.SectionId,
+              DepartmentCodeId: jobDetail!.DepartmentCodeId,
+              NumberOfPersonNeeded: Number(jobDetail!.NumberOfPersonNeeded),
+              EnterNumberOfMonths: jobDetail!.EnterNumberOfMonths ?? "0",
+              TypeOfContract: jobDetail!.TypeOfContract,
+              DateRequried: jobDetail!.DateRequried ?? null,
+              StatusId: StatusId.HRLeadtoAssignRecruitmentHR,
+              ActionId: WorkflowAction.Approved,
+              JobCodeId: jobDetail!.JobCodeId,
+              AreaofWork: jobDetail!.AreaofWork,
+              AssignedHR: userIDResult!.data,
+              RecruitmentHRLead: Array.isArray(ADGroupData.EmailId) ? (ADGroupData.EmailId[0] ?? "") : (ADGroupData.EmailId ?? ""),
+              DataFrom: jobDetail!.Type ?? "",
+              Location: jobDetail!.Location ?? "",
+            },
+            PositionData: {
+              PatersonGradeId: jobDetail!.PatersonGradeId ?? 0,
+              DRCGradeId: jobDetail!.DRCGradeId ?? 0,
+              JobTitleEnglishId: jobDetail!.JobTitleEnglishId ?? 0,
+              JobTitleFrenchId: jobDetail!.JobTitleFrenchId ?? 0,
+            },
+            CommentsList: {
+              RoleId: roleIDs[0],
+              RecruitmentIDId: 0,
+              Comments: payload.comments ?? "",
+            },
+            updatePreList: {
+              ID: vacancy.ItemID ?? 0,
+              ActionId: WorkflowAction.Approved,
+              ItemCreated: "Yes",
+              IsDataSyncToRecruitment: "No",
+            },
+          })
+        );
+
+        const batchResponse = await RecruitmentServices.InsertRecruitmentDptBatch(batchPayloads);
+
+        if (batchResponse.status !== ResponeStatus.SUCCESS) {
+          // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error, closeAlert);
+          return;
+        }
+
+      } else {
+        // if (!formData.assignRecruitmentAgencies.length) {
         // showAlert("No agencies selected.", HRMSAlertOptions.Error);
         // return;
-      // }
+        // }
 
-      // const agencyResults = await Promise.all(
-      //   vacancyDetailResults.map(async ({ vacancy, jobDetail }) => {
-      //     const recruitmentID = jobDetail!.ID as number;
+        // const agencyResults = await Promise.all(
+        //   vacancyDetailResults.map(async ({ vacancy, jobDetail }) => {
+        //     const recruitmentID = jobDetail!.ID as number;
 
-      //     const agentDetailsPayload = await constructAgentDetails(
-      //       vacancy,
-      //       payload.member?.id,
-      //     );
+        //     const agentDetailsPayload = await constructAgentDetails(
+        //       vacancy,
+        //       payload.member?.id,
+        //     );
 
-      //     const [upsertRes, agencyRes] = await Promise.all([
-      //       GetPortalJobsService.UpsertAgenciesJobs(agentDetailsPayload),
-      //       getVRRDetails.InsertExternalAgencyDetails(
-      //         formData.assignRecruitmentAgencies.map((agency) => ({
-      //           key:           agency.key,
-      //           text:          agency.text,
-      //           RecruitmentID: recruitmentID,
-      //         })),
-      //         recruitmentID
-      //       ),
-      //     ]);
+        //     const [upsertRes, agencyRes] = await Promise.all([
+        //       GetPortalJobsService.UpsertAgenciesJobs(agentDetailsPayload),
+        //       getVRRDetails.InsertExternalAgencyDetails(
+        //         formData.assignRecruitmentAgencies.map((agency) => ({
+        //           key:           agency.key,
+        //           text:          agency.text,
+        //           RecruitmentID: recruitmentID,
+        //         })),
+        //         recruitmentID
+        //       ),
+        //     ]);
 
-      //     if (
-      //       upsertRes.status  !== ResponeStatus.SUCCESS ||
-      //       agencyRes.status  !== ResponeStatus.SUCCESS
-      //     ) {
-      //       return false;
-      //     }
+        //     if (
+        //       upsertRes.status  !== ResponeStatus.SUCCESS ||
+        //       agencyRes.status  !== ResponeStatus.SUCCESS
+        //     ) {
+        //       return false;
+        //     }
 
-      //     const commentsRes = await getVRRDetails.InsertCommentsList({
-      //       RoleId:          RoleID.RecruitmentHR,
-      //       RecruitmentIDId: recruitmentID,
-      //       Comments:        formData.comments,
-      //     });
+        //     const commentsRes = await getVRRDetails.InsertCommentsList({
+        //       RoleId:          RoleID.RecruitmentHR,
+        //       RecruitmentIDId: recruitmentID,
+        //       Comments:        formData.comments,
+        //     });
 
-      //     return commentsRes.status === ResponeStatus.SUCCESS;
-      //   })
+        //     return commentsRes.status === ResponeStatus.SUCCESS;
+        //   })
+        // );
+
+        // if (agencyResults.some((r) => r === false)) {
+        //   showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error, closeAlert);
+        //   return;
+        // }
+      }
+
+      // ── 6. Success ─────────────────────────────────────────────────────────
+      // showAlert(
+      //   payload.vacancies.length === 1
+      //     ? RecuritmentHRMsg.SingleHRSuccessMsg
+      //     : RecuritmentHRMsg.HRSuccess,
+      //   HRMSAlertOptions.Success,
+      //   () => {
+      //     setAssignDialogOpen(false);
+      //     clearSelection();
+      //     refreshData();
+      //     closeAlert();
+      //   }
       // );
 
-      // if (agencyResults.some((r) => r === false)) {
-      //   showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error, closeAlert);
-      //   return;
-      // }
+      setIsPopupOpen(false);
+      setSelectedIds([]);
+      setSelectedMemberId(0);
+
+    } catch (error) {
+      console.error("Critical error during submission:", error);
+      // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
+    } finally {
+      // setLoadingState(false);
     }
-
-    // ── 6. Success ─────────────────────────────────────────────────────────
-    // showAlert(
-    //   payload.vacancies.length === 1
-    //     ? RecuritmentHRMsg.SingleHRSuccessMsg
-    //     : RecuritmentHRMsg.HRSuccess,
-    //   HRMSAlertOptions.Success,
-    //   () => {
-    //     setAssignDialogOpen(false);
-    //     clearSelection();
-    //     refreshData();
-    //     closeAlert();
-    //   }
-    // );
-
-    setIsPopupOpen(false);
-    setSelectedIds([]);
-    setSelectedMemberId(0);
-  
-  } catch (error) {
-    console.error("Critical error during submission:", error);
-    // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
-  } finally {
-    // setLoadingState(false);
-  }
-}, [roleIDs, ADGroupData, setLoadingState]);
+  }, [roleIDs, ADGroupData, setLoadingState]);
 
 
-  const showAssignmentBar = activeTab?.tableMode === "checkbox" && selectedIds.length > 0;
-  const actionMode = activeTab?.actionMode ?? "View";
+  const showAssignmentBar = activeTabs?.tableMode === "checkbox" && selectedIds.length > 0;
+  const actionMode = activeTabs?.actionMode ?? "View";
   const columns: DataTableColumn<RecruitmentItem>[] = useMemo(
     () => [
       {
@@ -448,28 +462,21 @@ const handleConfirmAssignment = useCallback(async (payload: AssignmentPayload) =
       </header> */}
 
       <div className="recruitment-table__tabs">
-        {(tabsLoading ? [] : tabs).map((tab) => (
-          <button
-            key={tab.key}
-            className={`recruitment-table__tab ${tab.key === activeTabKey ? "recruitment-table__tab--active" : ""}`.trim()}
-            type="button"
-            onClick={() => handleTabChange(tab)}
-          >
-            {tab.label}
-          </button>
-        ))}
-        {tabsLoading && (
-          <div className="recruitment-table__tabs-loading">
-            Loading tabs...
-          </div>
-        )}
+
+        <Tabs
+          tabs={tabs}
+          activeKey={activeTabKey}
+          onChange={handleTabChange}
+          loading={tabsLoading}
+          variant="boxed"
+        />
       </div>
 
       <div className="recruitment-table__table-card">
         <DataTable
           columns={columns}
           data={paginatedItems}
-          enableCheckbox={activeTab?.tableMode === "checkbox"}
+          enableCheckbox={activeTabs?.tableMode === "checkbox"}
           selectedRowIds={selectedIds}
           getRowId={(item) => item.id}
           onToggleRow={handleToggleRow}
@@ -484,47 +491,47 @@ const handleConfirmAssignment = useCallback(async (payload: AssignmentPayload) =
           }}
           loading={tableLoading}
         />
-      </div>      
+      </div>
 
       {showAssignmentBar && (
         <div className="assignment">
-           <div className="assignment-bar">
-          <div className="assignment-bar__left">
-            <div className="assignment-bar__icon">
-              <Users size={18} />
+          <div className="assignment-bar">
+            <div className="assignment-bar__left">
+              <div className="assignment-bar__icon">
+                <Users size={18} />
+              </div>
+              <div className="assignment-bar__count">
+                <strong>{selectedIds.length}</strong>
+                <span>Vacancies Selected</span>
+              </div>
             </div>
-            <div className="assignment-bar__count">
-              <strong>{selectedIds.length}</strong>
-              <span>Vacancies Selected</span>
+
+            <div className="assignment-bar__controls">
+              <select
+                className="assignment-bar__select"
+                value={selectedMemberId}
+                onChange={(event) => setSelectedMemberId(Number(event.target.value))}
+                disabled={membersLoading}
+              >
+                <option value="">Choose HR member</option>
+                {members.map((member) => (
+                  <option key={member.id} value={member.id}>
+                    {member.name} - {member.role}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                className="assignment-bar__button"
+                type="button"
+                onClick={handleOpenPopup}
+                disabled={!selectedMemberId}
+              >
+                Execute Assignment
+                <ChevronRight size={16} />
+              </button>
             </div>
           </div>
-
-          <div className="assignment-bar__controls">
-            <select
-              className="assignment-bar__select"
-              value={selectedMemberId}
-              onChange={(event) => setSelectedMemberId(Number(event.target.value))}
-              disabled={membersLoading}
-            >
-              <option value="">Choose HR member</option>
-              {members.map((member) => (
-                <option key={member.id} value={member.id}>
-                  {member.name} - {member.role}
-                </option>
-              ))}
-            </select>
-
-            <button
-              className="assignment-bar__button"
-              type="button"
-              onClick={handleOpenPopup}
-              disabled={!selectedMemberId}
-            >
-              Execute Assignment
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
         </div>
       )}
 
@@ -539,35 +546,35 @@ const handleConfirmAssignment = useCallback(async (payload: AssignmentPayload) =
           />
         </Suspense>
       )}
-{isopenDrawer&& (
+      {isopenDrawer && (
 
-      <AdvertReviewDrawer
-        drawerOpen={drawerOpen}
-        selectedJobId={selectedJobId}
-        selectedJobCode={selectedJobCode}
-        selectedType={selectedType}
-        advertLanguage={advertLanguage}
-        reviewerComments={reviewerComments}
-        acknowledgementCheckbox={acknowledgementCheckbox}
-        loadingState={loadingState}
-        onClose={closeDrawer}
-        onLanguageChange={setAdvertLanguage}
-        onCommentsChange={setComments}
-        onToggleAcknowledgement={toggleAcknowledgement}
-        setLoadingState={setLoadingState}     />
-)}
+        <AdvertReviewDrawer
+          drawerOpen={drawerOpen}
+          selectedJobId={selectedJobId}
+          selectedJobCode={selectedJobCode}
+          selectedType={selectedType}
+          advertLanguage={advertLanguage}
+          reviewerComments={reviewerComments}
+          acknowledgementCheckbox={acknowledgementCheckbox}
+          loadingState={loadingState}
+          onClose={closeDrawer}
+          onLanguageChange={setAdvertLanguage}
+          onCommentsChange={setComments}
+          onToggleAcknowledgement={toggleAcknowledgement}
+          setLoadingState={setLoadingState} />
+      )}
 
-{isToastOpen && (
-  <SuccessToast
+      {isToastOpen && (
+        <SuccessToast
           show={isToastOpen}
           type={toastprops.type}
-title={toastprops.title} 
-           message={toastprops.message}
-           autoDismiss ={ toastprops.autoDismiss}
-           autoDismissDuration={toastprops.autoDismissDuration}
+          title={toastprops.title}
+          message={toastprops.message}
+          autoDismiss={toastprops.autoDismiss}
+          autoDismissDuration={toastprops.autoDismissDuration}
           onClose={() => setIsToastOpen(false)}
-           />
-)}
+        />
+      )}
     </section>
   );
 };

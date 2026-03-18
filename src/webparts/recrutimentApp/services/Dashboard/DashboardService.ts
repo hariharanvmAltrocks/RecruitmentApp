@@ -8,6 +8,7 @@ import { BatchQuery } from "../SPService/Ispservice";
 import { getProfileData } from "../AxiosService/CareerPortalAPI";
 import { ExternalApiCountItem, ExternalApiParams, Metric, MetricConfig } from "../../models/IDashboard";
 import { MatricColums } from "../../components/Screens/Dashboard/metricColumns.config";
+import { Nationality } from "../../utilities/ConditionConfig";
 
 export default class DashboardService implements IDashboard {
 
@@ -186,14 +187,16 @@ private async fetchRecruitmentByLookup(
   listName: string,
   filterParam: any,
   filterConditions: any
-): Promise<ApiResponse<DashboardData[]>> {
+): Promise<ApiResponse<any[]>> {
   try {
+    let GridResult: any[] = [];
+
     const res: any[] = await SPServices.SPReadItems({
       Listname: listName,
-      Select: `*,RecruitmentID/Id`,
+      Select: `*,Status/StatusDescription,RecruitmentID/Id`,
       Filter: filterParam,
       FilterCondition: filterConditions,
-      Expand: `RecruitmentID`,
+      Expand: `RecruitmentID,Status`,
       Topcount: count.Topcount,
       Orderby: "ID",
       Orderbydecorasc: true,
@@ -215,7 +218,46 @@ private async fetchRecruitmentByLookup(
       { FilterKey: "ID", Operator: "in", FilterValue: ids },
     ];
 
-    return await this.GetRecruitmentDetails(recruitmentFilter, filterConditions);
+    let DeptDetails = await this.GetRecruitmentDetails(
+      recruitmentFilter,
+      filterConditions
+    );
+
+    if (listName === ListNames.HRMSRecruitmentCandidatePersonalDetails) {
+      GridResult = res.map((item) => {
+        const deptDetails = DeptDetails.data.filter(
+          (dpt) => dpt.ID === item.RecruitmentID?.Id
+        );
+
+        return {
+          ApplicantName:
+            `${item.FirstName || ""} ${item.MiddleName || ""} ${item.LastName || ""}`.trim(),
+
+          PositionTitle: item?.PositionTitle,
+          JobGrade: item?.JobGrade,
+          Nationality: item?.Nationality,
+
+          Status: item?.Status?.StatusDescription ?? "",
+          StatusId: item?.StatusId,
+
+          InterviewDate: item?.InterviewDate
+            ? moment(item.InterviewDate).format("YYYY-MM-DD")
+            : undefined,
+
+          ModifiedDate: item?.Modified
+            ? moment(item.Modified).format("YYYY-MM-DD")
+            : undefined,
+
+          CreatedDate: item?.Created
+            ? moment(item.Created).format("YYYY-MM-DD")
+            : undefined,
+
+          DeptDetails: deptDetails, // optional if needed
+        };
+      });
+    }else if(listName === ListNames.HRMSRecruitmentCandidatePersonalDetails){}
+
+    return { data: GridResult, status: 200, message: "Success" };
 
   } catch (error) {
     console.error(`Error fetching from ${listName}:`, error);
@@ -226,23 +268,178 @@ private async fetchRecruitmentByLookup(
 async GetCandidateDetails(
   filterParam: any,
   filterConditions: any
-): Promise<ApiResponse<DashboardData[]>> {
-  return this.fetchRecruitmentByLookup(
-    ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    filterParam,
-    filterConditions
-  );
+): Promise<ApiResponse<any[]>> {
+   try {
+    let GridResult: any[] = [];
+
+    const res: any[] = await SPServices.SPReadItems({
+      Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+      Select: `*,Status/StatusDescription,RecruitmentID/Id`,
+      Filter: filterParam,
+      FilterCondition: filterConditions,
+      Expand: `RecruitmentID,Status`,
+      Topcount: count.Topcount,
+      Orderby: "ID",
+      Orderbydecorasc: true,
+    });
+
+    if (!res.length) {
+      return { data: [], status: 200, message: "No records found" };
+    }
+
+    const ids: number[] = res
+      .map((item: any) => item.RecruitmentID?.Id)
+      .filter(Boolean);
+
+    if (!ids.length) {
+      return { data: [], status: 200, message: "No linked recruitment records found" };
+    }
+
+    const recruitmentFilter = [
+      { FilterKey: "ID", Operator: "in", FilterValue: ids },
+    ];
+
+    let DeptDetails = await this.GetRecruitmentDetails(
+      recruitmentFilter,
+      filterConditions
+    );
+     GridResult = res.map((item) => {
+        const deptDetails = DeptDetails.data.filter(
+          (dpt) => dpt.ID === item.RecruitmentID?.Id
+        );
+
+        return {
+          ApplicantName:
+            `${item.FirstName || ""} ${item.MiddleName || ""} ${item.LastName || ""}`.trim(),
+
+          PositionTitle: item?.PositionTitle,
+          JobGrade: item?.JobGrade,
+          Nationality: item?.Nationality,
+
+          Status: item?.Status?.StatusDescription ?? "",
+          StatusId: item?.StatusId,
+
+          InterviewDate: item?.InterviewDate
+            ? moment(item.InterviewDate).format("YYYY-MM-DD")
+            : undefined,
+
+          ModifiedDate: item?.Modified
+            ? moment(item.Modified).format("YYYY-MM-DD")
+            : undefined,
+
+          CreatedDate: item?.Created
+            ? moment(item.Created).format("YYYY-MM-DD")
+            : undefined,
+
+          DeptDetails: deptDetails, // optional if needed
+        };
+      });
+
+    return { data: GridResult, status: 200, message: "Success" };
+   }catch (error) {
+    console.error(`Error fetching from Candidate details:`, error);
+    return { data: [], status: 500, message: "Error fetching data" };
+  }
 }
 
 async GetSelectedCandidate(
   filterParam: any,
   filterConditions: any
 ): Promise<ApiResponse<DashboardData[]>> {
-  return this.fetchRecruitmentByLookup(
-    ListNames.HRMSSelectedCandidateDetailsByHOD,
-    filterParam,
-    filterConditions
-  );
+  try {
+    let GridResult: any[] = [];
+
+    const res: any[] = await SPServices.SPReadItems({
+      Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
+      Select: `*,Status/StatusDescription,RecruitmentID/Id,CandidateID/ID`,
+      Filter: filterParam,
+      FilterCondition: filterConditions,
+      Expand: `RecruitmentID,Status,CandidateID`,
+      Topcount: count.Topcount,
+      Orderby: "ID",
+      Orderbydecorasc: true,
+    });
+
+    if (!res.length) {
+      return { data: [], status: 200, message: "No records found" };
+    }
+
+    const ids: number[] = res
+      .map((item) => item.RecruitmentID?.Id)
+      .filter(Boolean);
+
+    const candidateIds: number[] = res
+      .map((item) => item.CandidateID?.ID)
+      .filter(Boolean);
+
+    if (!ids.length) {
+      return {
+        data: [],
+        status: 200,
+        message: "No linked recruitment records found",
+      };
+    }
+
+    const recruitmentFilter = [
+      { FilterKey: "ID", Operator: "in", FilterValue: ids },
+    ];
+
+    const candidateFilter = [
+      { FilterKey: "ID", Operator: "in", FilterValue: candidateIds },
+    ];
+
+    const DeptDetails = await this.GetRecruitmentDetails(
+      recruitmentFilter,
+      filterConditions
+    );
+
+    const getCandidateDetails = await this.GetCandidateDetails(
+      candidateFilter,
+      filterConditions
+    );
+
+    // ✅ Convert to Map (FAST lookup)
+    const deptMap = new Map(
+      DeptDetails.data.map((d) => [d.ID, d])
+    );
+
+    const candidateMap = new Map(
+      getCandidateDetails.data.map((c) => [c.ID, c])
+    );
+
+    // ✅ Main mapping
+    GridResult = res.map((item) => {
+      const deptDetails = deptMap.get(item.RecruitmentID?.Id);
+      const candidate = candidateMap.get(item.CandidateID?.ID);
+
+      return {
+        ApplicantName: candidate?.ApplicantName ?? "",
+        PositionTitle: candidate?.PositionTitle,
+        JobGrade: candidate?.JobGrade,
+        Nationality: candidate?.Nationality,
+
+        Status: item?.Status?.StatusDescription ?? "",
+        StatusId: item?.StatusId,
+        PositionID: item?.PositionID,
+
+        ModifiedDate: item?.Modified
+          ? moment(item.Modified).format("YYYY-MM-DD")
+          : undefined,
+
+        CreatedDate: item?.Created
+          ? moment(item.Created).format("YYYY-MM-DD")
+          : undefined,
+
+        DeptDetails: deptDetails ?? null,
+      };
+    });
+
+    return { data: GridResult, status: 200, message: "Success" };
+
+  } catch (error) {
+    console.error(`Error fetching from Candidate details:`, error);
+    return { data: [], status: 500, message: "Error fetching data" };
+  }
 }
 
 async GetNPAEPVRRDetails(
@@ -329,6 +526,7 @@ async GetNPAEPVRRDetails(
       BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode ?? "",
       NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
       Status: item?.Status?.StatusDescription ?? "",
+      Nationality:item?.Nationality,
       ModifiedDate: item?.Modified
         ? moment(item.Modified).format("YYYY-MM-DD")
         : undefined,
