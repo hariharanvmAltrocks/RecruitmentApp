@@ -6,6 +6,9 @@ import { useFetchQuestionBank } from "./Hooks/fetchQuestionbank";
 import { motion } from "framer-motion";
 import { InterviewQuestion } from "./Component/InterviewQuestion";
 import { CreateMinimumCriteriaQuestion, PreparedCriteriaSet } from "./Component/skeleton/CreateMinimumCriteriaQuestion";
+import { SuccessToast } from "../../Comman/Toast/SuccessToast";
+import { useToast } from "../../Hooks/useToast";
+import { useNavigate } from "react-router-dom";
 
 interface QuestionCreationProps {
   job: Job;
@@ -25,6 +28,8 @@ const DEFAULT_NEW_QUESTION = (): Partial<Question> => ({
 
 const QuestionCreation: React.FC = () => {
   const { questionBank, loading } = useFetchQuestionBank();
+   const { toast, closeToast, showSuccess,showError,showWarning, showConfirm} = useToast();
+     const navigate = useNavigate();
 
   const [preparedQuestions, setPreparedQuestions] = useState<Question[]>([]);
   const [newQuestion, setNewQuestion] = useState<Partial<Question>>(DEFAULT_NEW_QUESTION());
@@ -62,11 +67,13 @@ const QuestionCreation: React.FC = () => {
   };
 
   const onBack = () => {
-
+ navigate("/RecruitmentTable");
   }
 
   const handleSave = () => {
-    (preparedQuestions)
+    // (preparedQuestions)
+    showSuccess("Question Creation Successfully")
+    navigate("/RecruitmentTable");
   };
 
   const preparedIds = preparedQuestions.filter((q) => q.fromBank).map((q) => q.id);
@@ -149,7 +156,20 @@ const QuestionCreation: React.FC = () => {
           />
         </div>
       </div>
+      {toast.open && (
+        <SuccessToast
+          show={toast.open}
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          autoDismiss={toast.autoDismiss}
+          autoDismissDuration={toast.autoDismissDuration}
+          onClose={closeToast}
+          // onAction={toast.buttonAction}
+        />
+      )}
     </motion.div>
+    
   );
 };
 

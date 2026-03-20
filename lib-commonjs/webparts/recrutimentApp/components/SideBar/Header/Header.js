@@ -9,7 +9,7 @@ var menuUtils_1 = require("../menuUtils");
 var ThemeContext_1 = require("../../../theme/ThemeContext");
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var Header = function (_a) {
-    var _b, _c;
+    var _b;
     var user = _a.user, menuData = _a.menuData, onToggleSidebar = _a.onToggleSidebar, onLogout = _a.onLogout;
     var pathname = (0, react_router_dom_1.useLocation)().pathname;
     var theme = (0, ThemeContext_1.useTheme)();
@@ -20,7 +20,7 @@ var Header = function (_a) {
                 react_1.default.createElement("button", { onClick: onToggleSidebar, className: "menu-btn" },
                     react_1.default.createElement(lucide_react_1.Menu, { size: 22 })),
                 react_1.default.createElement("div", { className: "breadcrumb-section" },
-                    react_1.default.createElement("h1", { className: "page-title" }, ((_b = breadcrumbs[breadcrumbs.length - 1]) === null || _b === void 0 ? void 0 : _b.DisplayName) || strings.AppTitle),
+                    react_1.default.createElement("h1", { className: "page-title" }, strings.AppTitle),
                     react_1.default.createElement("nav", { className: "breadcrumbs" },
                         react_1.default.createElement(react_router_dom_1.Link, { to: "/" }, strings.HomeLabel),
                         breadcrumbs.map(function (crumb, idx) { return (react_1.default.createElement(react_1.default.Fragment, { key: crumb.Id },
@@ -36,7 +36,7 @@ var Header = function (_a) {
                         react_1.default.createElement("p", { className: "user-name" }, user || "Jackson"),
                         react_1.default.createElement("p", { className: "user-role" }, (user === null || user === void 0 ? void 0 : user.role) || "HOD - Mining")),
                     react_1.default.createElement("div", { className: "avatar-wrapper" },
-                        react_1.default.createElement("div", { className: "avatar" }, ((_c = user === null || user === void 0 ? void 0 : user.name) === null || _c === void 0 ? void 0 : _c.charAt(0)) || "J"),
+                        react_1.default.createElement("div", { className: "avatar" }, ((_b = user === null || user === void 0 ? void 0 : user.name) === null || _b === void 0 ? void 0 : _b.charAt(0)) || "J"),
                         react_1.default.createElement("button", { onClick: onLogout, className: "logout-btn" },
                             react_1.default.createElement(lucide_react_1.LogOut, { size: 14 }),
                             " ",

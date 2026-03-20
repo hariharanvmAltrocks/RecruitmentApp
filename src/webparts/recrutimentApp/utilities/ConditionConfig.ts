@@ -96,3 +96,10 @@ export const NationalityCode = {
   Nationals: "N0",
   SouthAfrica: "N154",
 };
+
+export const TabNames = {
+    ReviewProfile: "Review Profile",
+    AssignInterviewPanel: "Assign Interview Panel",
+    ReviewScorecard: "Review Score card"
+
+}

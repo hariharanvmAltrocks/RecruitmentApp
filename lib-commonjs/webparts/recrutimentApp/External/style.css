@@ -66,16 +66,22 @@
 .ControlZone {
   max-width: 100% !important;
 } */
-/* #workbenchCommandBar {
+#workbenchCommandBar {
   display: none !important;
-} */
+}
+
+/* @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap'); */
+:root {
+  --app-font-family: "Inter", "Segoe UI", sans-serif;
+}
+
 :global {
   .ms-Fabric,
   [class*=RecrutimentAppWrapper] {
-    font-family: var(--app-font-family, "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif) !important;
+    font-family: var(--app-font-family) !important;
   }
   div, span, p, h1, h2, h3, h4, h5, h6, a, button, input {
-    font-family: var(--app-font-family, "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif) !important;
+    font-family: var(--app-font-family) !important;
   }
   #workbenchPageContent,
   .CanvasComponent,

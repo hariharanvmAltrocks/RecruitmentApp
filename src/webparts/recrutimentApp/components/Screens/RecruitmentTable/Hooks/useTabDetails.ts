@@ -44,7 +44,7 @@ const getTabDetails = (items: any[] | undefined): TabDetails[] =>
   items?.map((item: any, index: number) => ({
     ...item,
     Value: `tab${index + 1}`,
-    MatricID: findMatricID(Number(item.StatusDetails?.[0]?.StatusId)) 
+    MatricID: findMatricID(Number(item.StatusDetails?.[0]?.StatusId),item.TabName) 
   })) ?? [];
 
 export const useTabDetails = (): UseTabDetailsResult => {

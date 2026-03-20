@@ -2,17 +2,19 @@ import { useCallback, useEffect, useState } from "react";
 import { RecruitmentServices } from "../../../../../services/ServiceExport";
 import { CheckboxGroupOption, MandatoryCheck } from "../../Components/BGVerification/BGVerification";
 
-export interface AdvertLanguageDetails {
-  description: string;
-  responsibilities: string[];
-  qualifications: string[];
-  PrefeQualification: string[];
-  experience: string[];
-  RoleSpecificKnowledge: string[];
-  TechnicalSkills: string[];
-  JobFunctionalType: string[];
-  JobBasedBGVVerification: string[];
-}
+  export interface AdvertLanguageDetails {
+    description: string;
+    responsibilities: string[];
+    qualifications: string[];
+    PrefeQualification: string[];
+    experience: string[];
+    RoleSpecificKnowledge: string[];
+    RequiredLevel: string[];
+    TechnicalSkills: string[];
+    LevelProficiency: string[];
+    JobFunctionalType: string[];
+    JobBasedBGVVerification: string[];
+  }
 
 export interface AdvertismentDetails {
   jobId: string;
@@ -131,30 +133,38 @@ export const useAdvertismentDetails = (selectedJobCode: number | null, options?:
             jobId: selectedJobCode.toString(),
             english: {
               description: items?.JobDescription || "",
-              responsibilities: JSON.parse(items?.RoleProfile || "[]") || [],
+              responsibilities: [items?.RolePurpose],
               qualifications: items?.qualificationValue?.MinQualification.map((q: any) => q.text) || [],
               PrefeQualification: items?.qualificationValue?.PrefeQualification.map((q: any) => q.text) || [],
               experience: [
-                items?.YearofExperience ? `${items.YearofExperience} years of experience` : "",
-                items?.PreferredExperience ? `Preferred: ${items.PreferredExperience.ExperienceInYearRange} years` : "",
+                items?.TotalExperience ? `${items.TotalExperience.text} of experience` : "",
+                items?.ExperienceinMiningIndustry ? `Preferred: ${items.ExperienceinMiningIndustry.text} ` : "",
               ].filter(Boolean),
-              RoleSpecificKnowledge: items?.RoleSpeKnowledgeValue?.map((k: any) => k.text) || [],
-              TechnicalSkills: items?.TechnicalSkillValue?.map((t: any) => t.text) || [],
-              JobFunctionalType: items?.JobFunctionalType?.text || "",
+              RoleSpecificKnowledge: items?.RoleSpeKnowledgeValue?.map((k: any) => k.RoleSpeKnowledge.text) || [],
+              RequiredLevel: items?.RoleSpeKnowledgeValue?.map((k: any) => k.RequiredLevel.text) || [],
+              TechnicalSkills: items?.TechnicalSkillValue?.map((t: any) => t.TechnicalSkills.text) || [],
+              LevelProficiency: items?.TechnicalSkillValue?.map((t: any) => t.LevelProficiency.text) || [],
+              JobFunctionalType: items?.JobFunctionalType?.text
+    ? [items.JobFunctionalType.text]
+    : [],
               JobBasedBGVVerification: items?.JobBasedBGVVerification?.map((v: any) => v.text) || [],
             },
             french: {
               description: items?.JobDescription_fr || "",
-              responsibilities: JSON.parse(items?.RoleProfile || "[]") || [],
+              responsibilities: [items?.RolePurpose_fr],
               qualifications: items?.qualificationValue?.MinQualification_fr.map((q: any) => q.text) || [],
-              PrefeQualification: items?.qualificationValue?.PrefeQualification.map((q: any) => q.text) || [],
+              PrefeQualification: items?.qualificationValue?.PrefeQualification_fr.map((q: any) => q.text) || [],
               experience: [
-                items?.YearofExperience ? `${items.YearofExperience} ans d'expérience` : "",
-                items?.PreferredExperience ? `Préféré: ${items.PreferredExperience.ExperienceInYearRange} ans` : "",
+                items?.YearofExperience ? `${items.YearofExperience.text} ans d'expérience` : "",
+                items?.PreferredExperience ? `Préféré: ${items.PreferredExperience.ExperienceInYearRange.text} ans` : "",
               ].filter(Boolean),
-              RoleSpecificKnowledge: items?.RoleSpeKnowledgeValue?.map((k: any) => k.text) || [],
-              TechnicalSkills: items?.TechnicalSkillValue?.map((t: any) => t.text) || [],
-              JobFunctionalType: items?.JobFunctionalType?.text || "",
+              RoleSpecificKnowledge: items?.RoleSpeKnowledgeValue?.map((k: any) => k.RoleSpeKnowledge_fr.text) || [],
+              RequiredLevel: items?.RoleSpeKnowledgeValue?.map((k: any) => k.RequiredLevel_fr.text) || [],
+              TechnicalSkills: items?.TechnicalSkillValue?.map((t: any) => t.TechnicalSkills_fr.text) || [],
+              LevelProficiency: items?.TechnicalSkillValue?.map((t: any) => t.LevelProficiency_fr.text) || [],
+              JobFunctionalType: items?.JobFunctionalType_fr?.text
+    ? [items.JobFunctionalType_fr.text]
+    : [],
               JobBasedBGVVerification: items?.JobBasedBGVVerification?.map((v: any) => v.text) || [],
             },
           };

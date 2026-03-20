@@ -36,4 +36,13 @@ export type ICommonService = {
     GetUserName(
         email: string
     ): Promise<ApiResponse<any | null>>;
+    uploadAttachmentToLibrary (
+    PositionCode: string,
+    AttachFile: IDocFiles[],
+    Listname: string
+  ): Promise<ApiResponse<any>>;
+  PostCommanDataInsert(
+    obj: any,
+    ListName: string
+  ): Promise<ApiResponse<any>>;
 };

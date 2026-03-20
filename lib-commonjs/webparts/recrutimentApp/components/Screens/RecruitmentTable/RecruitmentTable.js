@@ -20,6 +20,7 @@ var SuccessToast_1 = require("../../Comman/Toast/SuccessToast");
 var Tabs_1 = tslib_1.__importDefault(require("../../Comman/Tabs/Tabs"));
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
 var react_router_dom_1 = require("react-router-dom");
+var useToast_1 = require("../../Hooks/useToast");
 var AssignHRPopup = react_1.default.lazy(function () { return Promise.resolve().then(function () { return tslib_1.__importStar(require("./Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
     default: module.AssignHRPopup,
 }); }); });
@@ -41,15 +42,11 @@ var RecruitmentTable = function () {
     var _o = (0, react_1.useState)(false), isopenDrawer = _o[0], setIsopenDrawer = _o[1];
     var _p = (0, react_1.useState)(""), selectedType = _p[0], setSelectedType = _p[1];
     var _q = (0, react_1.useState)(""), selectedNationality = _q[0], setSelectedNationality = _q[1];
-    var _r = (0, react_1.useState)(false), isToastOpen = _r[0], setIsToastOpen = _r[1];
-    var _s = (0, react_1.useState)({
-        title: "",
-        message: "",
-    }), toastprops = _s[0], setToastProps = _s[1];
-    var _t = (0, react_1.useState)(false), isQuestiontab = _t[0], setIsQuestionTab = _t[1];
+    var Submitted = (0, react_1.useRef)(false);
+    var _r = (0, useToast_1.useToast)(), toast = _r.toast, closeToast = _r.closeToast, showSuccess = _r.showSuccess, showError = _r.showError, showWarning = _r.showWarning, showConfirm = _r.showConfirm;
     var selectedItems = (0, react_1.useMemo)(function () { return items.filter(function (item) { return selectedIds.includes(item.id); }); }, [items, selectedIds]);
     var selectedJobCode = (0, react_1.useMemo)(function () { var _a; return selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.jobCode : ""; }, [selectedItems]);
-    var _u = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _u.members, membersLoading = _u.loading;
+    var _s = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _s.members, membersLoading = _s.loading;
     (0, react_1.useEffect)(function () {
         if (!tabs.length) {
             return;
@@ -97,85 +94,44 @@ var RecruitmentTable = function () {
         var actionLabel = (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.actionMode) === "Upload" ? "Upload" : "View";
         var message = "".concat(actionLabel, " action clicked for ").concat(item.jobCode);
         if (matricID == ConditionConfig_1.MatricID.InterviewQuestionHR || matricID == ConditionConfig_1.MatricID.InterviewQuestionLM) {
-            setIsQuestionTab(true);
             navigate("/QuestionCreation");
         }
         else if (matricID == ConditionConfig_1.MatricID.ReviewProfile || matricID == ConditionConfig_1.MatricID.AssignInterviewPanel || matricID == ConditionConfig_1.MatricID.ReviewScoreCard) {
-            navigate("/QuestionCreation");
+            navigate("/CandidateTable");
         }
         openDrawer(item.ItemID);
         setIsopenDrawer(true);
         setSelectedType(item.requestType);
         setSelectedNationality(item.nationality);
-        setIsToastOpen(true);
-        setToastProps({
-            type: "warning",
-            title: "Warning",
-            message: "Are you sure you want cancel",
-            autoDismissDuration: 45
-        });
     }, [activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.actionMode, openDrawer]);
     var handleOpenPopup = (0, react_1.useCallback)(function () {
         setIsPopupOpen(true);
     }, []);
     var handleClosePopup = (0, react_1.useCallback)(function () {
-        setIsToastOpen(true);
-        setToastProps({
-            type: "warning",
-            title: "Warning",
-            message: "Are you sure you want cancel",
-            autoDismissDuration: 45
-        });
         setIsPopupOpen(false);
     }, []);
-    //  const constructAgentDetails = async (
-    //   selectedJob: any,
-    //   agencies: AutoCompleteItem[],
-    // ) => {
-    //   const { data: allAgents } = await CommonServices.GetMasterData(
-    //     ListNames.HRMSExternalAgents,
-    //   );
-    //   const matchedAgents = allAgents.filter((agent: { Id: number }) =>
-    //     agencies.some((item) => item.key === agent.Id),
-    //   );
-    //   const agentDetails: jobsXAgents[] = matchedAgents.map((item: any) => ({
-    //     agentId: item.AgentCode,
-    //   }));
-    //   const jobUniqueValue = await RecruitmentServices.GetJobUniqueDataValue(
-    //     [
-    //       {
-    //         FilterKey: "JobCodeId",
-    //         Operator: "eq",
-    //         FilterValue: selectedJob?.JobCodeId,
-    //       },
-    //       { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
-    //     ],
-    //     "and",
-    //   );
-    //   const jobUniqueData = jobUniqueValue.data[0]?.JobUniqueKey || "";
-    //   return {
-    //     jobCode: jobUniqueData,
-    //     jobsXAgents: agentDetails,
-    //   };
-    // };
     var handleConfirmAssignment = (0, react_1.useCallback)(function (payload) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var isHRLead, userIDResult_1, _a, vacancyDetailResults, unresolved, batchPayloads, batchResponse, error_1;
         var _b, _c;
         return tslib_1.__generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    _d.trys.push([0, 7, 8, 9]);
-                    isHRLead = roleIDs.includes(Config_1.RoleID.RecruitmentHRLead);
-                    if (!isHRLead) return [3 /*break*/, 2];
-                    return [4 /*yield*/, ServiceExport_1.CommonServices.getUserIDByEmail((_c = Number((_b = payload.member) === null || _b === void 0 ? void 0 : _b.id)) !== null && _c !== void 0 ? _c : 0)];
+                    Submitted.current = true;
+                    _d.label = 1;
                 case 1:
-                    _a = _d.sent();
-                    return [3 /*break*/, 3];
+                    _d.trys.push([1, 8, 9, 10]);
+                    isHRLead = roleIDs.includes(Config_1.RoleID.RecruitmentHRLead);
+                    if (!isHRLead) return [3 /*break*/, 3];
+                    return [4 /*yield*/, ServiceExport_1.CommonServices.getUserIDByEmail((_c = Number((_b = payload.member) === null || _b === void 0 ? void 0 : _b.id)) !== null && _c !== void 0 ? _c : 0)];
                 case 2:
-                    _a = null;
-                    _d.label = 3;
+                    _a = _d.sent();
+                    return [3 /*break*/, 4];
                 case 3:
+                    _a = null;
+                    _d.label = 4;
+                case 4:
                     userIDResult_1 = _a;
+                    if (!isHRLead) return [3 /*break*/, 7];
                     return [4 /*yield*/, Promise.all(payload.vacancies.map(function (vacancy) {
                             var filter = [{
                                     FilterName: "ID",
@@ -191,7 +147,7 @@ var RecruitmentTable = function () {
                                 });
                             });
                         }))];
-                case 4:
+                case 5:
                     vacancyDetailResults = _d.sent();
                     unresolved = vacancyDetailResults.filter(function (r) { return !r.jobDetail; });
                     if (unresolved.length) {
@@ -199,7 +155,6 @@ var RecruitmentTable = function () {
                         // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
                         return [2 /*return*/];
                     }
-                    if (!isHRLead) return [3 /*break*/, 6];
                     batchPayloads = vacancyDetailResults.map(function (_a) {
                         var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
                         var vacancy = _a.vacancy, jobDetail = _a.jobDetail;
@@ -245,14 +200,20 @@ var RecruitmentTable = function () {
                         });
                     });
                     return [4 /*yield*/, ServiceExport_1.RecruitmentServices.InsertRecruitmentDptBatch(batchPayloads)];
-                case 5:
-                    batchResponse = _d.sent();
-                    if (batchResponse.status !== ApiConfig_1.ResponeStatus.SUCCESS) {
-                        // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error, closeAlert);
-                        return [2 /*return*/];
-                    }
-                    return [3 /*break*/, 6];
                 case 6:
+                    batchResponse = _d.sent();
+                    if (batchResponse.status === ApiConfig_1.ResponeStatus.SUCCESS) {
+                        setIsPopupOpen(false);
+                        setSelectedIds([]);
+                        setSelectedMemberId(0);
+                        showSuccess("Assign HR Successfully");
+                        navigate("/RecruitmentTable");
+                    }
+                    else {
+                        showError("Something went wrong. Please try again.");
+                    }
+                    return [3 /*break*/, 7];
+                case 7:
                     // ── 6. Success ─────────────────────────────────────────────────────────
                     // showAlert(
                     //   payload.vacancies.length === 1
@@ -269,13 +230,13 @@ var RecruitmentTable = function () {
                     setIsPopupOpen(false);
                     setSelectedIds([]);
                     setSelectedMemberId(0);
-                    return [3 /*break*/, 9];
-                case 7:
+                    return [3 /*break*/, 10];
+                case 8:
                     error_1 = _d.sent();
                     console.error("Critical error during submission:", error_1);
-                    return [3 /*break*/, 9];
-                case 8: return [7 /*endfinally*/];
-                case 9: return [2 /*return*/];
+                    return [3 /*break*/, 10];
+                case 9: return [7 /*endfinally*/];
+                case 10: return [2 /*return*/];
             }
         });
     }); }, [roleIDs, ADGroupData, setLoadingState]);
@@ -361,7 +322,7 @@ var RecruitmentTable = function () {
         isPopupOpen && (react_1.default.createElement(react_1.Suspense, { fallback: null },
             react_1.default.createElement(AssignHRPopup, { isOpen: isPopupOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: handleClosePopup, onConfirm: handleConfirmAssignment }))),
         isopenDrawer && (react_1.default.createElement(AdvertReviewDrawer_1.AdvertReviewDrawer, { drawerOpen: drawerOpen, selectedJobId: selectedJobId, selectedJobCode: selectedJobCode, selectedType: selectedType, advertLanguage: advertLanguage, reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: closeDrawer, onLanguageChange: setAdvertLanguage, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState })),
-        isToastOpen && (react_1.default.createElement(SuccessToast_1.SuccessToast, { show: isToastOpen, type: toastprops.type, title: toastprops.title, message: toastprops.message, autoDismiss: toastprops.autoDismiss, autoDismissDuration: toastprops.autoDismissDuration, onClose: function () { return setIsToastOpen(false); } }))));
+        toast.open && (react_1.default.createElement(SuccessToast_1.SuccessToast, { show: toast.open, type: toast.type, title: toast.title, message: toast.message, autoDismiss: toast.autoDismiss, autoDismissDuration: toast.autoDismissDuration, onClose: closeToast }))));
 };
 exports.RecruitmentTable = RecruitmentTable;
 //# sourceMappingURL=RecruitmentTable.js.map

@@ -1,8 +1,23 @@
 import React, { useMemo } from "react";
-import { Activity, CheckCircle2, FileText, Globe, UserCheck } from "lucide-react";
+import {
+  Activity,
+  Award,
+  BookOpen,
+  Briefcase,
+  CheckCircle2,
+  FileText,
+  Globe,
+  Layers,
+  Shield,
+  Star,
+  TrendingUp,
+  UserCheck,
+  Wrench,
+  Zap,
+} from "lucide-react";
 import { AdvertLanguage } from "../AdvertReviewDrawer/StateManage/useStateFromManage";
 import { AdvertLanguageDetails } from "../AdvertReviewDrawer/Hooks/getAdvertismentDetails";
-import "../RecruitmentTable.scss"
+import "../RecruitmentTable.scss";
 
 export interface AdvertLanguageToggleProps {
   advertLanguage: AdvertLanguage;
@@ -11,51 +26,152 @@ export interface AdvertLanguageToggleProps {
   onLanguageChange: (language: AdvertLanguage) => void;
 }
 
-const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({ width = "100%", height = "14px" }) => (
+// ─── Skeleton ────────────────────────────────────────────────────────────────
+const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
+  width = "100%",
+  height = "14px",
+}) => (
   <div className="advert-review-drawer__skeleton" style={{ width, height }} />
 );
 
+const SkeletonList: React.FC<{ lines?: number }> = ({ lines = 3 }) => (
+  <div className="advert-review-drawer__list">
+    {Array.from({ length: lines }).map((_, i) => (
+      <SkeletonBlock
+        key={i}
+        width={`${60 + (i % 3) * 10}%`}
+      />
+    ))}
+  </div>
+);
+
+// ─── Strip HTML helper ────────────────────────────────────────────────────────
+const stripHtml = (html: string | null | undefined): string => {
+  if (!html) return "";
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  return doc.body.textContent?.trim() ?? "";
+};
+
+// ─── Section component ────────────────────────────────────────────────────────
+interface SectionProps {
+  title: string;
+  icon: React.ReactNode;
+  isLoading: boolean;
+  skeletonLines?: number;
+  children: React.ReactNode;
+  isEmpty?: boolean;
+}
+
+const Section: React.FC<SectionProps> = ({
+  title,
+  icon,
+  isLoading,
+  skeletonLines = 3,
+  children,
+  isEmpty = false,
+}) => {
+  if (!isLoading && isEmpty) return null;
+
+  return (
+    <section className="advert-review-drawer__section">
+      <h3 className="advert-review-drawer__section-title">
+        {icon}
+        {title}
+      </h3>
+      {isLoading ? <SkeletonList lines={skeletonLines} /> : children}
+    </section>
+  );
+};
+
+// ─── List renderer ────────────────────────────────────────────────────────────
+const renderList = (
+  items: string[] | null | undefined,
+  muted = false
+): React.ReactNode => {
+  if (!items || items.length === 0) return null;
+
+  return (
+    <ul className="advert-review-drawer__list">
+      {items.map((item, index) => (
+        <li
+          key={`${item}-${index}`}
+          className={`advert-review-drawer__list-item${muted ? " advert-review-drawer__list-item--muted" : ""}`}
+        >
+          <span
+            className={`advert-review-drawer__list-dot${muted ? " advert-review-drawer__list-dot--muted" : ""}`}
+          />
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
   advertLanguage,
   advertContent,
   isLoading,
   onLanguageChange,
 }) => {
+  // ── Memoised list nodes ──────────────────────────────────────────────────
   const responsibilitiesList = useMemo(
-    () =>
-      advertContent?.responsibilities.map((item, index) => (
-        <li key={`${item}-${index}`} className="advert-review-drawer__list-item">
-          <span className="advert-review-drawer__list-dot" />
-          {item}
-        </li>
-      )),
-    [advertContent]
+    () => renderList(advertContent?.responsibilities),
+    [advertContent?.responsibilities]
   );
 
   const qualificationsList = useMemo(
-    () =>
-      advertContent?.qualifications.map((item, index) => (
-        <li key={`${item}-${index}`} className="advert-review-drawer__list-item advert-review-drawer__list-item--muted">
-          <span className="advert-review-drawer__list-dot advert-review-drawer__list-dot--muted" />
-          {item}
-        </li>
-      )),
-    [advertContent]
+    () => renderList(advertContent?.qualifications, true),
+    [advertContent?.qualifications]
+  );
+
+  const preferredQualificationsList = useMemo(
+    () => renderList(advertContent?.PrefeQualification, true),
+    [advertContent?.PrefeQualification]
   );
 
   const experienceList = useMemo(
-    () =>
-      advertContent?.experience.map((item, index) => (
-        <li key={`${item}-${index}`} className="advert-review-drawer__list-item advert-review-drawer__list-item--muted">
-          <span className="advert-review-drawer__list-dot advert-review-drawer__list-dot--muted" />
-          {item}
-        </li>
-      )),
-    [advertContent]
+    () => renderList(advertContent?.experience, true),
+    [advertContent?.experience]
   );
+
+  const roleSpecificKnowledgeList = useMemo(
+    () => renderList(advertContent?.RoleSpecificKnowledge, true),
+    [advertContent?.RoleSpecificKnowledge]
+  );
+
+  const requiredLevelList = useMemo(
+    () => renderList(advertContent?.RequiredLevel, true),
+    [advertContent?.RequiredLevel]
+  );
+
+  const technicalSkillsList = useMemo(
+    () => renderList(advertContent?.TechnicalSkills, true),
+    [advertContent?.TechnicalSkills]
+  );
+
+  const levelProficiencyList = useMemo(
+    () => renderList(advertContent?.LevelProficiency, true),
+    [advertContent?.LevelProficiency]
+  );
+
+  const jobFunctionalTypeList = useMemo(
+    () => renderList(advertContent?.JobFunctionalType, true),
+    [advertContent?.JobFunctionalType]
+  );
+
+  const jobBGVList = useMemo(
+    () => renderList(advertContent?.JobBasedBGVVerification, true),
+    [advertContent?.JobBasedBGVVerification]
+  );
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+  const isEmpty = (arr: string[] | null | undefined) =>
+    !arr || arr.length === 0;
 
   return (
     <>
+      {/* ── Language Toggle ─────────────────────────────────────────────── */}
       <div className="advert-review-drawer__section advert-review-drawer__section--toggle">
         <div className="advert-review-drawer__toggle-label">
           <Globe size={14} />
@@ -79,6 +195,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
         </div>
       </div>
 
+      {/* ── Job Description ─────────────────────────────────────────────── */}
       <section className="advert-review-drawer__section">
         <h3 className="advert-review-drawer__section-title">
           <FileText size={12} />
@@ -87,55 +204,126 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
         {isLoading ? (
           <SkeletonBlock height="72px" />
         ) : (
-          <p className="advert-review-drawer__description">{advertContent?.description}</p>
+          <p className="advert-review-drawer__description">
+            {advertContent?.description || "—"}
+          </p>
         )}
       </section>
 
-      <section className="advert-review-drawer__section">
-        <h3 className="advert-review-drawer__section-title">
-          <CheckCircle2 size={12} />
-          Key Responsibilities ({advertLanguage})
-        </h3>
-        {isLoading ? (
-          <div className="advert-review-drawer__list">
-            <SkeletonBlock width="80%" />
-            <SkeletonBlock width="60%" />
-            <SkeletonBlock width="70%" />
-          </div>
-        ) : (
-          <ul className="advert-review-drawer__list">{responsibilitiesList}</ul>
-        )}
-      </section>
+      {/* ── Key Responsibilities ─────────────────────────────────────────── */}
+      <Section
+        title={`Key Responsibilities (${advertLanguage})`}
+        icon={<CheckCircle2 size={12} />}
+        isLoading={isLoading}
+        isEmpty={isEmpty(advertContent?.responsibilities)}
+      >
+        {responsibilitiesList}
+      </Section>
 
+       {/* Preferred Total Experience */}
+        <Section
+          title={`Preferred Total Experience (${advertLanguage})`}
+          icon={<Activity size={12} />}
+          isLoading={isLoading}
+          skeletonLines={2}
+          isEmpty={isEmpty(advertContent?.experience)}
+        >
+          {experienceList}
+        </Section>
+
+      {/* ── Grid sections ────────────────────────────────────────────────── */}
       <div className="advert-review-drawer__grid advert-review-drawer__grid--split">
-        <section className="advert-review-drawer__section">
-          <h3 className="advert-review-drawer__section-title">
-            <UserCheck size={12} />
-            Qualifications ({advertLanguage})
-          </h3>
-          {isLoading ? (
-            <div className="advert-review-drawer__list">
-              <SkeletonBlock width="70%" />
-              <SkeletonBlock width="55%" />
-            </div>
-          ) : (
-            <ul className="advert-review-drawer__list">{qualificationsList}</ul>
-          )}
-        </section>
-        <section className="advert-review-drawer__section">
-          <h3 className="advert-review-drawer__section-title">
-            <Activity size={12} />
-            Experience ({advertLanguage})
-          </h3>
-          {isLoading ? (
-            <div className="advert-review-drawer__list">
-              <SkeletonBlock width="65%" />
-              <SkeletonBlock width="50%" />
-            </div>
-          ) : (
-            <ul className="advert-review-drawer__list">{experienceList}</ul>
-          )}
-        </section>
+
+       
+
+        {/* Minimum Qualification */}
+        <Section
+          title={`Minimum Qualification (${advertLanguage})`}
+          icon={<Award size={12} />}
+          isLoading={isLoading}
+          skeletonLines={2}
+          isEmpty={isEmpty(advertContent?.qualifications)}
+        >
+          {qualificationsList}
+        </Section>
+
+        {/* Preferred Qualification */}
+        <Section
+          title={`Preferred Qualification (${advertLanguage})`}
+          icon={<Star size={12} />}
+          isLoading={isLoading}
+          skeletonLines={2}
+          isEmpty={isEmpty(advertContent?.PrefeQualification)}
+        >
+          {preferredQualificationsList}
+        </Section>
+
+        {/* Role Specific Knowledge */}
+        <Section
+          title={`Role Specific Knowledge (${advertLanguage})`}
+          icon={<BookOpen size={12} />}
+          isLoading={isLoading}
+          skeletonLines={2}
+          isEmpty={isEmpty(advertContent?.RoleSpecificKnowledge)}
+        >
+          {roleSpecificKnowledgeList}
+        </Section>
+
+        {/* Required Level */}
+        <Section
+          title={`Required Level (${advertLanguage})`}
+          icon={<TrendingUp size={12} />}
+          isLoading={isLoading}
+          skeletonLines={2}
+          isEmpty={isEmpty(advertContent?.RequiredLevel)}
+        >
+          {requiredLevelList}
+        </Section>
+
+        {/* Technical Skills */}
+        <Section
+          title={`Technical Skills - Ability to Apply Knowledge (${advertLanguage})`}
+          icon={<Wrench size={12} />}
+          isLoading={isLoading}
+          skeletonLines={2}
+          isEmpty={isEmpty(advertContent?.TechnicalSkills)}
+        >
+          {technicalSkillsList}
+        </Section>
+
+        {/* Level of Proficiency */}
+        <Section
+          title={`Level of Proficiency (${advertLanguage})`}
+          icon={<Zap size={12} />}
+          isLoading={isLoading}
+          skeletonLines={2}
+          isEmpty={isEmpty(advertContent?.LevelProficiency)}
+        >
+          {levelProficiencyList}
+        </Section>
+
+        {/* Job Functional Type */}
+        <Section
+          title={`Job Functional Type (${advertLanguage})`}
+          icon={<Briefcase size={12} />}
+          isLoading={isLoading}
+          skeletonLines={2}
+          isEmpty={isEmpty(advertContent?.JobFunctionalType)}
+        >
+          {jobFunctionalTypeList}
+        </Section>
+
+        {/* Job Based BGV Verification */}
+        {/* <Section
+          title={`Job Based BGV Verification (${advertLanguage})`}
+          icon={<Shield size={12} />}
+          isLoading={isLoading}
+          skeletonLines={2}
+          isEmpty={isEmpty(advertContent?.JobBasedBGVVerification)}
+        >
+          {jobBGVList}
+        </Section> */}
+
       </div>
     </>
   );

@@ -119,7 +119,7 @@ export const useAssignMembers = (Nationality: string | null): UseAssignMembersRe
             throw new Error( "Failed to fetch HR group emails.");
           }
       }else {
-        fetchAgencyOptions(Nationality);
+        void fetchAgencyOptions(Nationality);
       }
        
       setLoading(false);

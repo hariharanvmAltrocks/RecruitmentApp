@@ -1,4 +1,4 @@
-import { MatricID } from "../../utilities/ConditionConfig";
+import { MatricID, TabNames } from "../../utilities/ConditionConfig";
 import { StatusId } from "../../utilities/Config";
 
 export function calculateTotalExperienceYears(experiences: any[]) {
@@ -40,7 +40,7 @@ export function getcountryCode(Code: any[], refMobile: string) {
     return `${country.id}-${mobileNumber}`;
 }
 
-export const findMatricID = (statusID: number): number => {
+export const findMatricID = (statusID: number,TabName: string): number  => {
   switch (statusID) {
     case StatusId.ReadyforRecruitmentProcess:
       return MatricID.AssignHr; 
@@ -52,6 +52,20 @@ export const findMatricID = (statusID: number): number => {
       return MatricID.AdvertReviewHOD;
     case StatusId.PendingwithLineManagereviewAdv:
       return MatricID.AdvertReviewLM;
+    case StatusId.PendingInterviewquestion:
+      return MatricID.InterviewQuestionHR;
+    case StatusId.CareerPortalQuestions:
+      return MatricID.InterviewQuestionLM
+    case StatusId.RecruitmentInProgress:
+       if(TabName === TabNames.ReviewProfile){
+         return MatricID.ReviewProfile;
+       }else if (TabName === TabNames.AssignInterviewPanel){
+        return MatricID.AssignInterviewPanel;
+       }else if (TabName === TabNames.ReviewScorecard){
+         return MatricID.ReviewScoreCard;
+       }else{
+        return 0;
+       }
     default:
       return 0; 
   }

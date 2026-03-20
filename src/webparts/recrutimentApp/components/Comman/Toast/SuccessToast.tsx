@@ -13,6 +13,7 @@ import "./SuccessToast.scss";
 export type ToastType = "success" | "warning" | "error" | "info" | "confirmation";
 
 export interface IToast {
+  open?: boolean;
   type?: ToastType;
   title: string;
   message: string;

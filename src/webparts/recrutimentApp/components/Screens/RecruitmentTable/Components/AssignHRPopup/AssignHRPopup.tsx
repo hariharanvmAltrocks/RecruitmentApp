@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react";
-import { BadgeCheck, Send, X } from "lucide-react";
+import React, { useCallback, useMemo, useState } from "react";
+import { BadgeCheck, Loader2, Send, X } from "lucide-react";
 import { AssignmentPayload, HrMember, RecruitmentItem } from "../../RecruitmentTable.types";
 import "./AssignHRPopup.scss";
 
@@ -18,15 +18,31 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
   onClose,
   onConfirm,
 }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [comments, setComments] = useState<string>("");
+  const [commentsTouched, setCommentsTouched] = useState<boolean>(false);
+  const isCommentsValid = useMemo(() => comments.trim().length > 0, [comments]);
+  const showCommentsError = commentsTouched && !isCommentsValid;
 
-  const handleConfirm = useCallback(() => {
-    onConfirm({
+  const handleConfirm = useCallback(async () => {
+    if (isSubmitting) {
+      return;
+    }
+    if (!isCommentsValid) {
+      setCommentsTouched(true);
+      return;
+    }
+    setIsSubmitting(true);
+     try {
+    await onConfirm({
       vacancies: selectedItems,
       member: assignedMember,
       comments,
     });
-  }, [comments, onConfirm, assignedMember, selectedItems]);
+  } finally {
+    setIsSubmitting(false); 
+  }
+  }, [comments, onConfirm, assignedMember, selectedItems, isSubmitting, isCommentsValid]);
 
   if (!isOpen) {
     return null;
@@ -79,21 +95,40 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
             placeholder="Enter specific instructions for the assigned HR member..."
             value={comments}
             onChange={(event) => setComments(event.target.value)}
+            onBlur={() => setCommentsTouched(true)}
+            disabled={isSubmitting}
           />
+          {/* {showCommentsError && (
+            <div className="modal-popup__error">Comments are required.</div>
+          )} */}
         </div>
 
         <div className="modal-popup__footer">
-          <button className="modal-popup__btn modal-popup__btn--ghost" type="button" onClick={onClose}>
+          <button
+            className="modal-popup__btn modal-popup__btn--ghost"
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
             Cancel
           </button>
           <button
             className="modal-popup__btn modal-popup__btn--primary"
             type="button"
-            disabled={!assignedMember || selectedItems.length === 0}
+            disabled={isSubmitting || !isCommentsValid}
             onClick={handleConfirm}
           >
-            <Send size={16} style={{ marginRight: 8 }} />
-            Confirm &amp; Send
+            {isSubmitting ? (
+              <>
+                <Loader2 size={16} className="modal-popup__spinner" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send size={16} style={{ marginRight: 8 }} />
+                Confirm &amp; Send
+              </>
+            )}
           </button>
         </div>
       </div>

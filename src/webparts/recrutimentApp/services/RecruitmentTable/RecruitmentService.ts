@@ -1,12 +1,16 @@
 import moment from "moment";
 import { ApiResponse } from "../../models/apimodels";
 import { count, InOperator, ResponeStatus } from "../../utilities/ApiConfig";
-import { DataFrom, ListNames } from "../../utilities/Config";
+import { DataFrom, DocumentLibraray, ListNames } from "../../utilities/Config";
 import SPServices, { getSP } from "../SPService/spservice";
 import { BatchQuery } from "../SPService/Ispservice";
 import { _mapRecruitmentItems } from "./mapItems";
-import { DataSyncToRecruitmentResponse, IRecruitmentService, PostRecuritmentData, QualificationValue, RoleSpecKnowledge } from "./IRecruitmentService";
+import { DataSyncToRecruitmentResponse, IDptData, InsertComments, IRecruitmentService, PostRecuritmentData, QualificationValue, RoleSpecKnowledge, stripHtml } from "./IRecruitmentService";
 import { BGverification } from "../AxiosService/CareerPortalAPI";
+import { AdvertisementDetails, Descriptions, MinAndPreferedQualifications, RoleAndTechSkills, UpsertBGV } from "../../models/Icareerportal";
+import { CareerPotalServices, CommonServices } from "../ServiceExport";
+import { Nationality } from "../../utilities/ConditionConfig";
+import { AddCalculateDate } from "../../components/Hooks/dateConfigfn";
 
 export default class RecruitmentService implements IRecruitmentService {
 
@@ -97,10 +101,10 @@ async GetNPAEPVRRDetails(
     ]);
 
     const additionalPositionMap = new Map<number, any>(
-      (additionalPositionRes.data ?? []).map((d: any) => [d.parentId, d])
+      (additionalPositionRes.data ?? []).map((d: any) => [d.ID, d])
     );
     const newPositionMap = new Map<number, any>(
-      (newPositionRes.data ?? []).map((d: any) => [d.parentId, d])
+      (newPositionRes.data ?? []).map((d: any) => [d.ID, d])
     );
 
     const mapCommonFields = (item: any, index: number): Partial<DataSyncToRecruitmentResponse> => ({
@@ -378,7 +382,6 @@ async GetPositionDetails(
   }
 }
 
-// ── RecruitmentServices.ts ────────────────────────────────────────────────
 
 async InsertRecruitmentDptBatch(
   payloads: PostRecuritmentData[]
@@ -423,7 +426,7 @@ async InsertRecruitmentDptBatch(
       Promise.all(updatePromises),      
     ]);
 
-    const failedIndex = mainResults.findIndex((res) => !res?.data?.ID);
+    const failedIndex = mainResults.findIndex((res) => !res?.ID);
     if (failedIndex !== -1) {
       return {
         data:    [],
@@ -433,7 +436,7 @@ async InsertRecruitmentDptBatch(
     }
 
     const enriched = mainResults.map((res, index) => ({
-      insertedID: res.data.ID as number,
+      insertedID: res.ID as number,
       payload:    payloads[index],
     }));
 
@@ -498,32 +501,32 @@ async GetHRMSRecruitmentRoleProfileDetails(
       {
         ListName: ListNames.HRMSRoleSpecificKnowlegeMaster,
         select: ["*"],
-        StateValue: 1
+        StateValue: BATCH_IDX.ROLE_KNOWLEDGE
       },
       {
         ListName: ListNames.HRMSLevelOfProficiency,
         select: ["*"],
-        StateValue: 2
+        StateValue: BATCH_IDX.LEVEL_PROFICIENCY
       },
       {
         ListName: ListNames.HRMSTechnicalSkills,
         select: ["*"],
-        StateValue: 3
+        StateValue: BATCH_IDX.TECHNICAL_SKILLS
       },
       {
         ListName: ListNames.HRMSExperienceMaster,
         select: ["*"],
-        StateValue: 4
+        StateValue: BATCH_IDX.EXPERIENCE
       },
       {
         ListName: ListNames.HRMSQualification,
         select: ["*"],
-        StateValue: 5
+        StateValue: BATCH_IDX.QUALIFICATION
       },
       {
         ListName: ListNames.HRMSJobTitleFunctionType,
         select: ["*"],
-        StateValue: 6
+        StateValue: BATCH_IDX.FUNCTION_TYPE
       },
     ];
 
@@ -664,12 +667,12 @@ async GetHRMSRecruitmentRoleProfileDetails(
       return {
         ID: item.ID,
         RecruitmentID:              item?.RecruitmentID?.ID || "",
-        RolePurpose:                item.RoleProfile || "",
-        JobDescription:             item.JobDescription || "",
-        RolePurpose_fr:             item.RoleProfileFrench || "",
-        JobDescription_fr:          item.JobDescriptionFrench || "",
-        TotalExperience:            { key: item.TotalPreferredExperience?.ID, text: experienceMap.get(item.TotalPreferredExperience?.ID) || "" },
-        ExperienceinMiningIndustry: { key: item.PreferredExperience?.ID,      text: experienceMap.get(item.PreferredExperience?.ID) || "" },
+        RolePurpose:                stripHtml(item.RoleProfile) || "",
+        JobDescription:             stripHtml(item.JobDescription) || "",
+        RolePurpose_fr:             stripHtml(item.RoleProfileFrench) || "",
+        JobDescription_fr:          stripHtml(item.JobDescriptionFrench) || "",
+        TotalExperience:            { key: item.TotalPreferredExperience?.ID, text: item.TotalPreferredExperience?.ExperienceInYearRange || "" },
+        ExperienceinMiningIndustry: { key: item.PreferredExperience?.ID,      text: item.PreferredExperience?.ExperienceInYearRange || "" },
         RoleSpeKnowledgeValue:      RoleSpeKnowledge,
         TechnicalSkillValue:        TechnicalSkills,
         qualificationValue:         qualificationValue,
@@ -700,6 +703,248 @@ async GetHRMSRecruitmentRoleProfileDetails(
     async GetBGVerificationType(): Promise<ApiResponse<any | null>> {
         try {
             const response = await BGverification.GetBGVerificationType();
+            return {
+                data: response.data,
+                status: response.status,
+                message: response.data.message,
+            };
+        } catch (error) {
+            console.error(
+                "Error inserting data into AdvertisementDetails:",
+                error
+            );
+            return {
+                data: [],
+                status: 500,
+                message: "Error inserting data into AdvertisementDetails",
+            };
+        }
+    }
+
+      async PostCommentsData(
+    obj: InsertComments
+  ): Promise<ApiResponse<InsertComments | null>> {
+    try {
+      await SPServices.SPAddItem({
+        Listname: ListNames.HRMSRecruitmentComments,
+        RequestJSON: obj,
+      });
+
+      return {
+        data: null,
+        status: 200,
+        message: "Data Submitted successfully",
+      };
+    } catch (error) {
+      console.error("Error posting user data:", error);
+      return {
+        data: null,
+        status: 400,
+        message: "Error On Posting Data",
+      };
+    }
+  }
+
+  async UploadAdvertisementInPortal(
+  Filter: any[],
+  Condition: string,
+  RecuritmentDetails: IDptData,
+  IsActive: number,
+  IsExtened: number,
+  JobBasedBGVVerification?: string
+): Promise<ApiResponse<null>> {
+  try {
+
+    const ROLE_PROFILE = 0;
+    const JOB_PORTAL   = 1;
+
+    const queries: BatchQuery[] = [
+      {
+        StateValue: ROLE_PROFILE,
+        ListName: ListNames.HRMSRecruitmentRoleProfileDetails,
+        Filter: Filter,
+        FilterCondition: Condition || "",
+        select: [
+          "*",
+          "JobDescription",
+          "RoleProfile",
+          "TotalPreferredExperience/ExperienceInYearRange",
+          "PreferredExperience/ExperienceInYearRange",
+          "FunctionType/Code",
+          "JobCode/JobCode",
+        ],
+        expand: [
+          "PreferredExperience",
+          "TotalPreferredExperience",
+          "FunctionType",
+          "JobCode",
+        ],
+      },
+      {
+        StateValue: JOB_PORTAL,
+        ListName: ListNames.RecruitAppCareerPortalIntegration,
+        Filter: [
+          { FilterKey: "JobCodeId", Operator: "eq", FilterValue: RecuritmentDetails.JobCodeId },
+          { FilterKey: "IsActive",  Operator: "eq", FilterValue: 1 },
+        ],
+        FilterCondition: "and",
+        select: ["*"],
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      },
+    ];
+
+    const batchRes: Record<number, any[]> = await SPServices.batchGet(queries);
+
+    const roleProfileList = batchRes[ROLE_PROFILE] ?? [];
+    const jobPortalList   = batchRes[JOB_PORTAL]   ?? [];
+if( JobBasedBGVVerification){
+   await SPServices.SPUpdateItem({
+          Listname: ListNames.HRMSRecruitmentRoleProfileDetails,
+          RequestJSON: {
+            JobBasedBGVVerification: JobBasedBGVVerification,
+          },
+           ID: jobPortalList[0].ID
+        })
+}
+    
+
+    if (roleProfileList.length === 0) {
+      return { data: null, status: 400, message: "No role profile data found" };
+    }
+
+    if (jobPortalList.length === 0) {
+      return { data: null, status: 400, message: "No portal job data found" };
+    }
+
+    const data           = roleProfileList[0];
+    const jobUniqueKey   = jobPortalList[0].JobUniqueKey;
+
+    const roleSpecificKnowledge: any[] = data.RoleSpecificKnowledgeJson
+      ? JSON.parse(data.RoleSpecificKnowledgeJson)
+      : [];
+
+    const technicalSkill: any[] = data.TechnicalSkillsKnowledgeJson
+      ? JSON.parse(data.TechnicalSkillsKnowledgeJson)
+      : [];
+
+    const roleSpecificSkills: RoleAndTechSkills[] = roleSpecificKnowledge.map(
+      (item: any) => ({
+        skillId: String(item.RoleSpeKnowledge || ""),
+        levelId: String(item.RequiredLevel    || ""),
+      })
+    );
+
+    const technicalSkills: RoleAndTechSkills[] = technicalSkill.map(
+      (item: any) => ({
+        skillId: String(item.TechnicalSkills  || ""),
+        levelId: String(item.LevelProficiency || ""),
+      })
+    );
+
+    const Roleandtechnical: RoleAndTechSkills[] = [
+      ...roleSpecificSkills,
+      ...technicalSkills,
+    ];
+
+    const minQualifications: MinAndPreferedQualifications[] = data.Qualification
+      ? JSON.parse(data.Qualification).map((item: any) => ({
+          qualification: item.MinQualification,
+          type: 0,
+        }))
+      : [];
+
+    const preferredQualifications: MinAndPreferedQualifications[] =
+      data.PreferredQualification
+        ? JSON.parse(data.PreferredQualification).map((item: any) => ({
+            qualification: item.PrefeQualification,
+            type: 1,
+          }))
+        : [];
+
+    const MinAndPreferedQualification: MinAndPreferedQualifications[] = [
+      ...minQualifications,
+      ...preferredQualifications,
+    ];
+
+    const decodeBase64 = (str: string): string => {
+      const utf8Bytes = new TextEncoder().encode(str);
+      const binary    = String.fromCharCode.apply(null, Array.from(utf8Bytes));
+      return btoa(binary);
+    };
+
+    const Description: Descriptions = {
+      jobTitle:       RecuritmentDetails.JobTitleEnglish,
+      jobShortSummary: decodeBase64(data.RoleProfile    || ""),
+      jobSummary:      decodeBase64(data.JobDescription || ""),
+    };
+
+    const DescriptionFr: Descriptions = {
+      jobTitle:        RecuritmentDetails.JobTitleFrench,
+      jobShortSummary: decodeBase64(data.RoleProfileFrench      || ""),
+      jobSummary:      decodeBase64(data.JobDescriptionFrench   || ""),
+    };
+
+    const onamdocpathfile = await CommonServices.GetAttachmentLink(
+      RecuritmentDetails.JobCode,
+      DocumentLibraray.ONAMSignedStampDocuments
+    );
+
+    const onemdocPath = String(onamdocpathfile.data);
+
+    // const DepartmentCode = MasterData.Department.find(
+    //   (item: { text: string }) => item.text === RecuritmentDetails.Department
+    // );
+
+    const FilterDept = [{ FilterKey: "DepartmentId", Operator: "eq", FilterValue: RecuritmentDetails.DepartmentID },]
+    const DepartmentData = await CommonServices.GetMasterData(ListNames.HRMSDepartment,FilterDept )
+    console.log(DepartmentData,"DepartmentData");
+    
+    const NationalityValue =
+      RecuritmentDetails.Nationality === Nationality.Nationals
+        ? "Congolese"
+        : RecuritmentDetails.Nationality;
+const todaydate = new Date();
+        const vaildFrom = todaydate
+        const VaildTo = AddCalculateDate(todaydate, 13)
+
+    const advertisementDetails: AdvertisementDetails = {
+      jobCode:        jobUniqueKey,
+      isActive:       IsActive,
+      noOfPositions:  String(RecuritmentDetails?.NumberOfPersonNeeded),
+      validFrom:      vaildFrom  ?? null,
+      validTo:        VaildTo    ?? null,
+      employmentType: "Full Time",
+      departmentId:   DepartmentData.data[0]?.Code          || "",
+      role:           null,
+      functionId:     String(data.FunctionType?.Code || ""),
+      onemdocPath:    onemdocPath                   ?? "",
+      experience:     String(data.TotalPreferredExperience?.ExperienceInYearRange || ""),
+      nationality:    NationalityValue,
+      Descriptions_en:              Description,
+      Descriptions_fr:              DescriptionFr,
+      RoleAndTechSkills:            Roleandtechnical,
+      MinAndPreferedQualifications: MinAndPreferedQualification,
+      IsExtened:                    IsExtened,
+    };
+
+    const response = await CareerPotalServices.UpsertJobs(advertisementDetails);
+
+    if (response.status === ResponeStatus.SUCCESS) {
+      return { data: null, status: 200, message: "Advertisement posted successfully" };
+    }
+
+    return { data: null, status: 500, message: "Error while posting advertisement details" };
+
+  } catch (error) {
+    console.error("Error posting advertisement data:", error);
+    return { data: null, status: 400, message: "Error On Posting Data" };
+  }
+}
+
+async UpsertBGVJobMaster(UpsertData: UpsertBGV[]): Promise<ApiResponse<any | null>> {
+        try {
+            const response = await BGverification.UpsertBGVJobMaster(UpsertData);
             return {
                 data: response.data,
                 status: response.status,

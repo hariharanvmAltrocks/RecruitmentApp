@@ -30,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({ user, menuData, onToggleSidebar, onLogo
 
           <div className="breadcrumb-section">
             <h1 className="page-title">
-              {breadcrumbs[breadcrumbs.length - 1]?.DisplayName || strings.AppTitle}
+              {strings.AppTitle }
             </h1>
 
             <nav className="breadcrumbs">

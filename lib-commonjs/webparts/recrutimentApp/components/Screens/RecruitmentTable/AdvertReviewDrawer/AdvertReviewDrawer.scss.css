@@ -813,3 +813,8 @@
   font-size: 12px;
   line-height: 1.4;
 }
+
+.modal-popup__spinner {
+  margin-right: 8px;
+  animation: modal-popup-spin 0.9s linear infinite;
+}

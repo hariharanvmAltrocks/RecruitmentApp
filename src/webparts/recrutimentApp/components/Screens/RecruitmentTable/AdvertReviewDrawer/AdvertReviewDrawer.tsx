@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircle2, FileCheck, History, X } from "lucide-react";
-import { usePositionDetails } from "./Hooks/getPositionDetails";
+import { CheckCircle2, FileCheck, History, Loader2, Send, X } from "lucide-react";
+import { PositionDetails, usePositionDetails } from "./Hooks/getPositionDetails";
 import { useAdvertismentDetails } from "./Hooks/getAdvertismentDetails";
 import { useAttachmentDetails } from "./Hooks/getAttachmentDetails";
 import { useSignatureDetails } from "./Hooks/getSignatureDetails";
@@ -16,6 +16,15 @@ import { ValidationSummary } from "../Components/ValidationSummary";
 import { MatricID, Nationality } from "../../../../utilities/ConditionConfig";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
 import BGVerification from "../Components/BGVerification/BGVerification";
+import { userInfo } from "../../../../utilities/hooks/RoleContext";
+import { RoleID } from "../../../../utilities/Config";
+import { useUpdateMainRecord } from "./Hooks/SaveHooks/useUpdateMainRecord";
+import { useHRLeadProcess } from "./Hooks/SaveHooks/useHRLeadProcess";
+import { useHRProcess } from "./Hooks/SaveHooks/useHRProcess";
+import { useToast } from "../../../Hooks/useToast";
+import { IDocFiles } from "../../../../services/SPService/Ispservice";
+import { IDptData } from "../../../../services/RecruitmentTable/IRecruitmentService";
+import { useNavigate } from "react-router-dom";
 
 export interface AdvertReviewDrawerProps {
   drawerOpen: boolean;
@@ -52,38 +61,63 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   onToggleAcknowledgement,
   setLoadingState,
 }) => {
-
- const { MatricID: metricId } = useUIState();
-  const { data: positionDetails,  loading: positionLoading } = usePositionDetails(selectedJobId, selectedType);
+ const { toast, closeToast, showSuccess,showError,showWarning, showConfirm} = useToast();
+  const { MatricID: metricId } = useUIState();
+  const { roleIDs } = userInfo();
+    const navigate = useNavigate();
+  const { data: positionDetails, loading: positionLoading } = usePositionDetails(selectedJobId, selectedType);
   const { data: signatureDetails, loading: signatureLoading } = useSignatureDetails();
 
-  const jobCodeId = positionDetails?.JobCodeID ?? 0;
-  const jobCode = positionDetails?.jobCode ?? selectedJobCode;
+  const jobCodeId = positionDetails?.JobCodeId ?? 0;
+  const jobCode = positionDetails?.JobCode ?? selectedJobCode;
 
-  const { data: advertDetails,BGVValue: BGVData,handleBvgToggle: handleBvgToggle, loading: advertLoading } = useAdvertismentDetails(jobCodeId, { enabled: !!jobCodeId });
+  const { data: advertDetails, BGVValue: BGVData, handleBvgToggle: handleBvgToggle, loading: advertLoading } = useAdvertismentDetails(jobCodeId, { enabled: !!jobCodeId });
   const { data: attachments, loading: attachmentLoading } = useAttachmentDetails(jobCode, { enabled: !!jobCode });
 
   const isLoading = positionLoading || advertLoading || attachmentLoading || signatureLoading;
 
   const [uploadDocument, setUploadDocument] = useState<UploadedFile[]>([]);
   const [showValidation, setShowValidation] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const commentValid = reviewerComments.trim().length > 0;
   const uploadValid = uploadDocument.length > 0;
   const checkboxValid = acknowledgementCheckbox;
   const canApprove = commentValid && uploadValid && checkboxValid;
+ const roleID = roleIDs.includes(RoleID.LineManager,RoleID.HOD)? RoleID.LineManager : roleIDs[0]
+ const document : IDocFiles[] = uploadDocument.map((item)=> {
+  return {
+     name: item.name,
+  content: item.fileContent,
+  type: "New"
+  }
+ })
+ const formData:IDptData ={
+  ID: positionDetails?.RecordID ?? 0,
+  JobCodeId: positionDetails?.JobCodeId ?? 0,
+  JobCode: positionDetails?.JobCode ?? "",
+  JobTitleEnglish: positionDetails?.JobTitleEnglish ?? "",
+  JobTitleFrench: positionDetails?.JobTitleFrench ?? "",
+  DepartmentID: positionDetails?.DepartmentId ?? 0,
+  Nationality: positionDetails?.Nationality ?? "",
+  NumberOfPersonNeeded: positionDetails?.NumberOfPersonNeeded ?? "",
+  Dptcode:positionDetails?.DepartmentCode ?? ""
+ }
+  const { updateMainRecord }    = useUpdateMainRecord(formData, roleID);
+const { handleHRLeadProcess } = useHRLeadProcess(formData, RoleID.RecruitmentHRLead,document,BGVData.checkboxBGVOption);
+const { handleHRProcess }     = useHRProcess(formData, RoleID.RecruitmentHR,document);
 
 
   const mandatoryValid =
-  Array.isArray(BGVData.mantoryChecks) &&
-  BGVData.mantoryChecks.length > 0 &&
-  BGVData.mantoryChecks.every((c) => c.checked);
+    Array.isArray(BGVData.mantoryChecks) &&
+    BGVData.mantoryChecks.length > 0 &&
+    BGVData.mantoryChecks.every((c) => c.checked);
 
-const optionValid =
-  Array.isArray(BGVData.checkboxBGVOption) &&
-  BGVData.checkboxBGVOption.some((o) => o.checked);
+  const optionValid =
+    Array.isArray(BGVData.checkboxBGVOption) &&
+    BGVData.checkboxBGVOption.some((o) => o.checked);
 
-const bgvValid = mandatoryValid && optionValid; 
+  const bgvValid = mandatoryValid && optionValid;
 
 
   useEffect(() => {
@@ -102,9 +136,9 @@ const bgvValid = mandatoryValid && optionValid;
 
   const headerMeta = useMemo(
     () => ({
-      title: positionDetails?.jobTitle ?? "",
-      code: positionDetails?.jobCode ?? "",
-      department: positionDetails?.department ?? "",
+      title: positionDetails?.JobTitleEnglish ?? "",
+      code: positionDetails?.JobCode ?? "",
+      department: positionDetails?.Department ?? "",
     }),
     [positionDetails]
   );
@@ -113,14 +147,57 @@ const bgvValid = mandatoryValid && optionValid;
     onClose();
   }, [onClose]);
 
-  const handleApprove = useCallback(() => {
+  const handleApprove = useCallback(async () => {
     setShowValidation(true);
-    if (!canApprove && !bgvValid ) {
+     if (isSubmitting) {
       return;
     }
+    if (!canApprove && !bgvValid) {
+      return;
+    }
+      setIsSubmitting(true);
+    const finalize = (msg: string) => {
+      showSuccess(msg);
+       navigate("/RecruitmentTable");
+    }
+    if(roleIDs.includes(RoleID.RecruitmentHRLead)){
+       if(metricId === MatricID.UploadONEM){
+         await handleHRLeadProcess(finalize);
+       }
+     }else if(roleIDs.includes(RoleID.RecruitmentHR)){
+      await handleHRProcess(finalize);
 
-    // TODO: Add approve action here
-  }, [canApprove]);
+     } else if (roleIDs.includes(RoleID.HOD,RoleID.LineManager)){
+        await updateMainRecord();
+     }
+       setIsSubmitting(false);
+     
+  }, [canApprove, bgvValid]);
+
+    let mappedData: PositionDetails | null = null;
+    if (positionDetails) {
+      mappedData = {
+        jobId: positionDetails.RecordID,
+        jobTitle: positionDetails.JobTitleEnglish,
+        jobCode: positionDetails.JobCode,
+        department: positionDetails.Department,
+        buCode: positionDetails.BusinessUnitCode,
+        buName:  "sadasdasdasd",//data.BusinessUnitName,
+        subDepartment: positionDetails.SubDepartment,
+        section: positionDetails.Section,
+        deptCode: positionDetails.DepartmentCode,
+        // reportsTo: data.ReportsTo,
+        areaOfWork: positionDetails.AreaofWork,
+        nationality: positionDetails.Nationality,
+        patersonGrade: positionDetails.PatersonGrade,
+        drcGrade: positionDetails.DRCGrade,
+        employmentCategory: positionDetails.EmploymentCategory,
+        contractType: positionDetails.TypeOfContract,
+        numberOfPersons: Number(positionDetails.NumberOfPersonNeeded),
+        dateRequired: String(positionDetails.DateRequried),
+        JobCodeID: positionDetails.JobCodeId,
+      };
+    }
 
   return (
     <AnimatePresence>
@@ -170,7 +247,7 @@ const bgvValid = mandatoryValid && optionValid;
             </div>
 
             <div className="advert-review-drawer__content">
-              <PositionFramework positionDetails={positionDetails} isLoading={isLoading} headerCode={headerMeta.code} />
+              <PositionFramework positionDetails={mappedData} isLoading={isLoading} headerCode={headerMeta.code} />
 
               <AdvertLanguageToggle
                 advertLanguage={advertLanguage}
@@ -181,69 +258,91 @@ const bgvValid = mandatoryValid && optionValid;
 
               <RequiredAttachments attachments={attachments} isLoading={isLoading} />
 
-              {metricId == MatricID.UploadONEM || metricId == MatricID.JobAdvert  && (
-                <UploadDocument
-                multiple={false}
-                acceptedFormats={".pdf"}
-                label={metricId == MatricID.UploadONEM ? "Upload JobAdvert" : "Upload Advert"}
-                required={true}
-                onChange={(file: UploadedFile[]) => setUploadDocument(file)}
-              />
+              {[
+                MatricID.UploadONEM,
+                MatricID.JobAdvert,
+              ].includes(metricId)
+                && (
+                  <UploadDocument
+                    multiple={false}
+                    acceptedFormats={".pdf"}
+                    label={metricId == MatricID.UploadONEM ? "Upload JobAdvert" : "Upload Advert"}
+                    required={true}
+                    onChange={(file: UploadedFile[]) => setUploadDocument(file)}
+                  />
+                )}
+
+
+              {metricId == MatricID.UploadONEM && positionDetails?.Nationality === Nationality.Expatriate && (
+                <div style={{ marginTop: "20px" }}>
+                  <BGVerification
+                    mandatoryChecks={BGVData.mantoryChecks}
+                    VerificationChecks={BGVData.checkboxBGVOption}
+                    onToggleOption={handleBvgToggle}
+                  />
+                </div>
               )}
-              
 
-               {metricId == MatricID.UploadONEM && positionDetails?.nationality === Nationality.Expatriate && (
-          <div style={{ marginTop: "20px" }}>
-            <BGVerification
-              mandatoryChecks={BGVData.mantoryChecks}
-              VerificationChecks={BGVData.checkboxBGVOption}
-              onToggleOption={handleBvgToggle}
-            />
-          </div>
-        )}
+              {metricId !== 0 &&
+                [
+                  MatricID.UploadONEM,
+                  MatricID.JobAdvert,
+                  MatricID.AdvertReviewHOD,
+                  MatricID.AdvertReviewLM,
+                ].includes(metricId) && (<>
+                  <ReviewCommentSignature
+                    reviewerComments={reviewerComments}
+                    acknowledgementCheckbox={acknowledgementCheckbox}
+                    signatureDetails={signatureDetails}
+                    isLoading={isLoading}
+                    onCommentsChange={onCommentsChange}
+                    onToggleAcknowledgement={onToggleAcknowledgement}
+                  />
 
-              <ReviewCommentSignature
-                reviewerComments={reviewerComments}
-                acknowledgementCheckbox={acknowledgementCheckbox}
-                signatureDetails={signatureDetails}
-                isLoading={isLoading}
-                onCommentsChange={onCommentsChange}
-                onToggleAcknowledgement={onToggleAcknowledgement}
-              />
+                  <ValidationSummary
+                    show={showValidation && !canApprove}
+                    messages={[
+                      { key: "upload", text: "Upload document is required.", valid: uploadValid },
+                      { key: "comment", text: "Reviewer comment is required.", valid: commentValid },
+                      { key: "checkbox", text: "Please acknowledge before approving.", valid: checkboxValid },
+                      { key: "BGVVerification", text: "Please Choose the BGV Verification", valid: optionValid }
+                    ]}
+                  />
+
+                  <div className="advert-review-drawer__footer">
+                    <button type="button" className="advert-review-drawer__history" title="View History">
+                      <History size={18} />
+                    </button>
+                    <div className="advert-review-drawer__footer-actions">
+                      <button type="button" className="advert-review-drawer__button" onClick={handleClose}>
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        className={`advert-review-drawer__button advert-review-drawer__button--primary ${canApprove ? "" : "is-disabled"}`.trim()}
+                        disabled={isLoading}
+                        onClick={handleApprove}
+                      >
+                        <CheckCircle2 size={16} />
+                         {isSubmitting ? (
+              <>
+                <Loader2 size={16} className="modal-popup__spinner" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send size={16} style={{ marginRight: 8 }} />
+                Submit  
+              </>
+            )}
+                      </button>
+                    </div>
+                  </div>
+                </>
+
+                )}
             </div>
 
-             <ValidationSummary
-              show={showValidation && !canApprove}
-              messages={[
-                { key: "upload", text: "Upload document is required.", valid: uploadValid },
-                { key: "comment", text: "Reviewer comment is required.", valid: commentValid },
-                { key: "checkbox", text: "Please acknowledge before approving.", valid: checkboxValid },
-                { key: "BGVVerification", text: "Please Choose the BGV Verification", valid: optionValid }
-              ]}
-            />
-
-            {metricId == MatricID.UploadONEM || metricId == MatricID.JobAdvert || metricId == MatricID.AdvertReviewHOD || metricId == MatricID.AdvertReviewLM && (
-               <div className="advert-review-drawer__footer">
-              <button type="button" className="advert-review-drawer__history" title="View History">
-                <History size={18} />
-              </button>
-              <div className="advert-review-drawer__footer-actions">
-                <button type="button" className="advert-review-drawer__button" onClick={handleClose}>
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className={`advert-review-drawer__button advert-review-drawer__button--primary ${canApprove ? "" : "is-disabled"}`.trim()}
-                  disabled={isLoading}
-                  onClick={handleApprove}
-                >
-                  <CheckCircle2 size={16} />
-                  Approve Advert
-                </button>
-              </div>
-            </div>
-            ) }
-           
           </motion.div>
         </div>
       )}

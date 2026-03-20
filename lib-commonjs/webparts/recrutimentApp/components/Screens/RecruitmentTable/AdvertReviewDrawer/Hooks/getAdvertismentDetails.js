@@ -93,46 +93,54 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
         setLoading(true);
         var timer = setTimeout(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
             var filterConditions, response, items, mappedData, error_2;
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-            return tslib_1.__generator(this, function (_o) {
-                switch (_o.label) {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+            return tslib_1.__generator(this, function (_s) {
+                switch (_s.label) {
                     case 0:
-                        _o.trys.push([0, 2, , 3]);
+                        _s.trys.push([0, 2, , 3]);
                         filterConditions = [{ FilterKey: "JobCode/ID", Operator: "eq", FilterValue: selectedJobCode }];
                         return [4 /*yield*/, ServiceExport_1.RecruitmentServices.GetHRMSRecruitmentRoleProfileDetails(filterConditions, "")];
                     case 1:
-                        response = _o.sent();
+                        response = _s.sent();
                         if (response.status === 200 && response.data && response.data.length > 0) {
                             items = response.data[0];
                             mappedData = {
                                 jobId: selectedJobCode.toString(),
                                 english: {
                                     description: (items === null || items === void 0 ? void 0 : items.JobDescription) || "",
-                                    responsibilities: JSON.parse((items === null || items === void 0 ? void 0 : items.RoleProfile) || "[]") || [],
+                                    responsibilities: [items === null || items === void 0 ? void 0 : items.RolePurpose],
                                     qualifications: ((_a = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _a === void 0 ? void 0 : _a.MinQualification.map(function (q) { return q.text; })) || [],
                                     PrefeQualification: ((_b = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _b === void 0 ? void 0 : _b.PrefeQualification.map(function (q) { return q.text; })) || [],
                                     experience: [
-                                        (items === null || items === void 0 ? void 0 : items.YearofExperience) ? "".concat(items.YearofExperience, " years of experience") : "",
-                                        (items === null || items === void 0 ? void 0 : items.PreferredExperience) ? "Preferred: ".concat(items.PreferredExperience.ExperienceInYearRange, " years") : "",
+                                        (items === null || items === void 0 ? void 0 : items.TotalExperience) ? "".concat(items.TotalExperience.text, " of experience") : "",
+                                        (items === null || items === void 0 ? void 0 : items.ExperienceinMiningIndustry) ? "Preferred: ".concat(items.ExperienceinMiningIndustry.text, " ") : "",
                                     ].filter(Boolean),
-                                    RoleSpecificKnowledge: ((_c = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _c === void 0 ? void 0 : _c.map(function (k) { return k.text; })) || [],
-                                    TechnicalSkills: ((_d = items === null || items === void 0 ? void 0 : items.TechnicalSkillValue) === null || _d === void 0 ? void 0 : _d.map(function (t) { return t.text; })) || [],
-                                    JobFunctionalType: ((_e = items === null || items === void 0 ? void 0 : items.JobFunctionalType) === null || _e === void 0 ? void 0 : _e.text) || "",
-                                    JobBasedBGVVerification: ((_f = items === null || items === void 0 ? void 0 : items.JobBasedBGVVerification) === null || _f === void 0 ? void 0 : _f.map(function (v) { return v.text; })) || [],
+                                    RoleSpecificKnowledge: ((_c = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _c === void 0 ? void 0 : _c.map(function (k) { return k.RoleSpeKnowledge.text; })) || [],
+                                    RequiredLevel: ((_d = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _d === void 0 ? void 0 : _d.map(function (k) { return k.RequiredLevel.text; })) || [],
+                                    TechnicalSkills: ((_e = items === null || items === void 0 ? void 0 : items.TechnicalSkillValue) === null || _e === void 0 ? void 0 : _e.map(function (t) { return t.TechnicalSkills.text; })) || [],
+                                    LevelProficiency: ((_f = items === null || items === void 0 ? void 0 : items.TechnicalSkillValue) === null || _f === void 0 ? void 0 : _f.map(function (t) { return t.LevelProficiency.text; })) || [],
+                                    JobFunctionalType: ((_g = items === null || items === void 0 ? void 0 : items.JobFunctionalType) === null || _g === void 0 ? void 0 : _g.text)
+                                        ? [items.JobFunctionalType.text]
+                                        : [],
+                                    JobBasedBGVVerification: ((_h = items === null || items === void 0 ? void 0 : items.JobBasedBGVVerification) === null || _h === void 0 ? void 0 : _h.map(function (v) { return v.text; })) || [],
                                 },
                                 french: {
                                     description: (items === null || items === void 0 ? void 0 : items.JobDescription_fr) || "",
-                                    responsibilities: JSON.parse((items === null || items === void 0 ? void 0 : items.RoleProfile) || "[]") || [],
-                                    qualifications: ((_g = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _g === void 0 ? void 0 : _g.MinQualification_fr.map(function (q) { return q.text; })) || [],
-                                    PrefeQualification: ((_h = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _h === void 0 ? void 0 : _h.PrefeQualification.map(function (q) { return q.text; })) || [],
+                                    responsibilities: [items === null || items === void 0 ? void 0 : items.RolePurpose_fr],
+                                    qualifications: ((_j = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _j === void 0 ? void 0 : _j.MinQualification_fr.map(function (q) { return q.text; })) || [],
+                                    PrefeQualification: ((_k = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _k === void 0 ? void 0 : _k.PrefeQualification_fr.map(function (q) { return q.text; })) || [],
                                     experience: [
-                                        (items === null || items === void 0 ? void 0 : items.YearofExperience) ? "".concat(items.YearofExperience, " ans d'exp\u00E9rience") : "",
-                                        (items === null || items === void 0 ? void 0 : items.PreferredExperience) ? "Pr\u00E9f\u00E9r\u00E9: ".concat(items.PreferredExperience.ExperienceInYearRange, " ans") : "",
+                                        (items === null || items === void 0 ? void 0 : items.YearofExperience) ? "".concat(items.YearofExperience.text, " ans d'exp\u00E9rience") : "",
+                                        (items === null || items === void 0 ? void 0 : items.PreferredExperience) ? "Pr\u00E9f\u00E9r\u00E9: ".concat(items.PreferredExperience.ExperienceInYearRange.text, " ans") : "",
                                     ].filter(Boolean),
-                                    RoleSpecificKnowledge: ((_j = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _j === void 0 ? void 0 : _j.map(function (k) { return k.text; })) || [],
-                                    TechnicalSkills: ((_k = items === null || items === void 0 ? void 0 : items.TechnicalSkillValue) === null || _k === void 0 ? void 0 : _k.map(function (t) { return t.text; })) || [],
-                                    JobFunctionalType: ((_l = items === null || items === void 0 ? void 0 : items.JobFunctionalType) === null || _l === void 0 ? void 0 : _l.text) || "",
-                                    JobBasedBGVVerification: ((_m = items === null || items === void 0 ? void 0 : items.JobBasedBGVVerification) === null || _m === void 0 ? void 0 : _m.map(function (v) { return v.text; })) || [],
+                                    RoleSpecificKnowledge: ((_l = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _l === void 0 ? void 0 : _l.map(function (k) { return k.RoleSpeKnowledge_fr.text; })) || [],
+                                    RequiredLevel: ((_m = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _m === void 0 ? void 0 : _m.map(function (k) { return k.RequiredLevel_fr.text; })) || [],
+                                    TechnicalSkills: ((_o = items === null || items === void 0 ? void 0 : items.TechnicalSkillValue) === null || _o === void 0 ? void 0 : _o.map(function (t) { return t.TechnicalSkills_fr.text; })) || [],
+                                    LevelProficiency: ((_p = items === null || items === void 0 ? void 0 : items.TechnicalSkillValue) === null || _p === void 0 ? void 0 : _p.map(function (t) { return t.LevelProficiency_fr.text; })) || [],
+                                    JobFunctionalType: ((_q = items === null || items === void 0 ? void 0 : items.JobFunctionalType_fr) === null || _q === void 0 ? void 0 : _q.text)
+                                        ? [items.JobFunctionalType_fr.text]
+                                        : [],
+                                    JobBasedBGVVerification: ((_r = items === null || items === void 0 ? void 0 : items.JobBasedBGVVerification) === null || _r === void 0 ? void 0 : _r.map(function (v) { return v.text; })) || [],
                                 },
                             };
                             setData(mappedData);
@@ -141,7 +149,7 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                         void fetchBVData(response.data);
                         return [3 /*break*/, 3];
                     case 2:
-                        error_2 = _o.sent();
+                        error_2 = _s.sent();
                         console.error("Error fetching job details:", error_2);
                         return [3 /*break*/, 3];
                     case 3:

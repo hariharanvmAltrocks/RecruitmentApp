@@ -8,14 +8,41 @@ require("./AssignHRPopup.scss");
 var AssignHRPopup = function (_a) {
     var _b, _c, _d;
     var isOpen = _a.isOpen, selectedItems = _a.selectedItems, assignedMember = _a.assignedMember, onClose = _a.onClose, onConfirm = _a.onConfirm;
-    var _e = (0, react_1.useState)(""), comments = _e[0], setComments = _e[1];
-    var handleConfirm = (0, react_1.useCallback)(function () {
-        onConfirm({
-            vacancies: selectedItems,
-            member: assignedMember,
-            comments: comments,
+    var _e = (0, react_1.useState)(false), isSubmitting = _e[0], setIsSubmitting = _e[1];
+    var _f = (0, react_1.useState)(""), comments = _f[0], setComments = _f[1];
+    var _g = (0, react_1.useState)(false), commentsTouched = _g[0], setCommentsTouched = _g[1];
+    var isCommentsValid = (0, react_1.useMemo)(function () { return comments.trim().length > 0; }, [comments]);
+    var showCommentsError = commentsTouched && !isCommentsValid;
+    var handleConfirm = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        return tslib_1.__generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (isSubmitting) {
+                        return [2 /*return*/];
+                    }
+                    if (!isCommentsValid) {
+                        setCommentsTouched(true);
+                        return [2 /*return*/];
+                    }
+                    setIsSubmitting(true);
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, , 3, 4]);
+                    return [4 /*yield*/, onConfirm({
+                            vacancies: selectedItems,
+                            member: assignedMember,
+                            comments: comments,
+                        })];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 4];
+                case 3:
+                    setIsSubmitting(false);
+                    return [7 /*endfinally*/];
+                case 4: return [2 /*return*/];
+            }
         });
-    }, [comments, onConfirm, assignedMember, selectedItems]);
+    }); }, [comments, onConfirm, assignedMember, selectedItems, isSubmitting, isCommentsValid]);
     if (!isOpen) {
         return null;
     }
@@ -42,12 +69,14 @@ var AssignHRPopup = function (_a) {
                         react_1.default.createElement("div", { className: "modal-popup__assignee-role" }, (_d = assignedMember === null || assignedMember === void 0 ? void 0 : assignedMember.role) !== null && _d !== void 0 ? _d : "Select a member to proceed")))),
             react_1.default.createElement("div", { className: "modal-popup__section" },
                 react_1.default.createElement("div", { className: "modal-popup__section-title" }, "Instructions / Comments for Staff"),
-                react_1.default.createElement("textarea", { className: "modal-popup__input", placeholder: "Enter specific instructions for the assigned HR member...", value: comments, onChange: function (event) { return setComments(event.target.value); } })),
+                react_1.default.createElement("textarea", { className: "modal-popup__input", placeholder: "Enter specific instructions for the assigned HR member...", value: comments, onChange: function (event) { return setComments(event.target.value); }, onBlur: function () { return setCommentsTouched(true); }, disabled: isSubmitting })),
             react_1.default.createElement("div", { className: "modal-popup__footer" },
-                react_1.default.createElement("button", { className: "modal-popup__btn modal-popup__btn--ghost", type: "button", onClick: onClose }, "Cancel"),
-                react_1.default.createElement("button", { className: "modal-popup__btn modal-popup__btn--primary", type: "button", disabled: !assignedMember || selectedItems.length === 0, onClick: handleConfirm },
+                react_1.default.createElement("button", { className: "modal-popup__btn modal-popup__btn--ghost", type: "button", onClick: onClose, disabled: isSubmitting }, "Cancel"),
+                react_1.default.createElement("button", { className: "modal-popup__btn modal-popup__btn--primary", type: "button", disabled: isSubmitting || !isCommentsValid, onClick: handleConfirm }, isSubmitting ? (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement(lucide_react_1.Loader2, { size: 16, className: "modal-popup__spinner" }),
+                    "Sending...")) : (react_1.default.createElement(react_1.default.Fragment, null,
                     react_1.default.createElement(lucide_react_1.Send, { size: 16, style: { marginRight: 8 } }),
-                    "Confirm & Send")))));
+                    "Confirm & Send")))))));
 };
 exports.AssignHRPopup = AssignHRPopup;
 //# sourceMappingURL=AssignHRPopup.js.map

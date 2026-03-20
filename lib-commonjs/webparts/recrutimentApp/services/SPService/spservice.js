@@ -189,10 +189,10 @@ var SPReadItems = function (params) { return tslib_1.__awaiter(void 0, void 0, v
                         .filter(filterStr)
                         .expand(p.Expand)
                         .orderBy(p.Orderby, p.Orderbydecorasc)
-                        .top(pageSize)
-                        .skip(skip)()];
+                        .top(pageSize)()];
             case 2:
                 items = _a.sent();
+                // .skip(skip)();   
                 allItems = tslib_1.__spreadArray(tslib_1.__spreadArray([], allItems, true), items, true);
                 if (items.length < pageSize) {
                     hasMore = false;

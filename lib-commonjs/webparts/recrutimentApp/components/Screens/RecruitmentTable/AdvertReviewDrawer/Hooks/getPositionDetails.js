@@ -20,7 +20,7 @@ var usePositionDetails = function (jobId, type) {
         }
         setLoading(true);
         var timer = setTimeout(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-            var Filter, condition, response, IDFilter, filterObj, _a, data_1, mappedData;
+            var Filter, condition, response, IDFilter, filterObj, _a, data_1;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -53,28 +53,7 @@ var usePositionDetails = function (jobId, type) {
                     case 8:
                         if (response.status === ApiConfig_1.ResponeStatus.SUCCESS) {
                             data_1 = response.data[0];
-                            mappedData = {
-                                jobId: data_1.RecordID,
-                                jobTitle: data_1.JobTitleEnglish,
-                                jobCode: data_1.JobCode,
-                                department: data_1.Department,
-                                buCode: data_1.BusinessUnitCode,
-                                buName: "sadasdasdasd", //data.BusinessUnitName,
-                                subDepartment: data_1.SubDepartment,
-                                section: data_1.Section,
-                                deptCode: data_1.DepartmentCode,
-                                // reportsTo: data.ReportsTo,
-                                areaOfWork: data_1.AreaofWork,
-                                nationality: data_1.Nationality,
-                                patersonGrade: data_1.PatersonGrade,
-                                drcGrade: data_1.DRCGrade,
-                                employmentCategory: data_1.EmploymentCategory,
-                                contractType: data_1.TypeOfContract,
-                                numberOfPersons: Number(data_1.NumberOfPersonNeeded),
-                                dateRequired: String(data_1.DateRequried),
-                                JobCodeID: data_1.JobCodeId,
-                            };
-                            setData(mappedData);
+                            setData(data_1);
                             setLoading(false);
                             return [2 /*return*/];
                         }

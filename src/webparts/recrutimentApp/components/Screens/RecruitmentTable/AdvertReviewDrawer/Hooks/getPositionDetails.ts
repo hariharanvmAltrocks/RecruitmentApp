@@ -4,6 +4,7 @@ import { ResponeStatus } from "../../../../../utilities/ApiConfig";
 import { useUIState } from "../../../../RecrutimentApp/UIStateContext";
 import { MetricQueryConfig } from "../../../Dashboard/metricColumns.config";
 import { ListNames } from "../../../../../utilities/Config";
+import { DataSyncToRecruitmentResponse } from "../../../../../services/RecruitmentTable/IRecruitmentService";
 
 export interface PositionDetails {
   jobId: number;
@@ -28,7 +29,7 @@ export interface PositionDetails {
 }
 
 export const usePositionDetails = (jobId: number | null,type: string) => {
-  const [data, setData] = useState<PositionDetails | null>(null);
+  const [data, setData] = useState<DataSyncToRecruitmentResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const {MatricID} = useUIState();
@@ -67,28 +68,7 @@ export const usePositionDetails = (jobId: number | null,type: string) => {
               }
       if(response.status === ResponeStatus.SUCCESS){
         const data = response.data[0];
-        let mappedData: PositionDetails = {
-          jobId: data.RecordID,
-          jobTitle: data.JobTitleEnglish,
-          jobCode: data.JobCode,
-          department: data.Department,
-          buCode: data.BusinessUnitCode,
-          buName:  "sadasdasdasd",//data.BusinessUnitName,
-          subDepartment: data.SubDepartment,
-          section: data.Section,
-          deptCode: data.DepartmentCode,
-          // reportsTo: data.ReportsTo,
-          areaOfWork: data.AreaofWork,
-           nationality: data.Nationality,
-  patersonGrade: data.PatersonGrade,
-  drcGrade: data.DRCGrade,
-  employmentCategory: data.EmploymentCategory,
-  contractType: data.TypeOfContract,
-  numberOfPersons: Number(data.NumberOfPersonNeeded),
-  dateRequired: String(data.DateRequried),
-          JobCodeID: data.JobCodeId,
-        };
-        setData(mappedData);
+        setData(data);
         setLoading(false);
         return;
       }

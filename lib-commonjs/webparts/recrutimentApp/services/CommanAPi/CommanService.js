@@ -7,8 +7,44 @@ var spservice_1 = tslib_1.__importStar(require("../SPService/spservice"));
 var CommonService = /** @class */ (function () {
     function CommonService() {
         var _this = this;
-        this.uploadRoleProfileMaster = function (PositionCode, DocumentName, AttachFile, Listname) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+        this.uploadAttachmentToLibrary = function (PositionCode, AttachFile, Listname) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var error_1;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        if (!(AttachFile.length > 0)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, spservice_1.default.addDocLibFiles({
+                                FilePath: Listname,
+                                FolderNames: ["".concat(PositionCode.toString())],
+                                Datas: AttachFile,
+                            })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                data: "Successfully Replaced Document",
+                                status: 200,
+                                message: "Attachment replaced successfully",
+                            }];
+                    case 2: return [2 /*return*/, {
+                            data: null,
+                            status: 400,
+                            message: "No attachments provided",
+                        }];
+                    case 3:
+                        error_1 = _a.sent();
+                        console.error("Error during file replacement process:", error_1);
+                        return [2 /*return*/, {
+                                data: null,
+                                status: 500,
+                                message: "Error during file replacement: ".concat(error_1),
+                            }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.uploadRoleProfileMaster = function (PositionCode, DocumentName, AttachFile, Listname) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+            var error_2;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -32,8 +68,8 @@ var CommonService = /** @class */ (function () {
                             message: "No attachments provided",
                         }];
                     case 3:
-                        error_1 = _a.sent();
-                        console.error("Error during file replacement process:", error_1);
+                        error_2 = _a.sent();
+                        console.error("Error during file replacement process:", error_2);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 500,
@@ -44,7 +80,7 @@ var CommonService = /** @class */ (function () {
             });
         }); };
         this.GetAttachmentLink = function (PositionCode, Listname) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var sp, attachmentsLibrary, rootFolder, folderUrl, error_2;
+            var sp, attachmentsLibrary, rootFolder, folderUrl, error_3;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -67,8 +103,8 @@ var CommonService = /** @class */ (function () {
                             message: "No attachments provided",
                         }];
                     case 3:
-                        error_2 = _a.sent();
-                        console.error(" Error during file replacement process:", error_2);
+                        error_3 = _a.sent();
+                        console.error(" Error during file replacement process:", error_3);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 500,
@@ -79,7 +115,7 @@ var CommonService = /** @class */ (function () {
             });
         }); };
         this.GetAttachmentToLibrary = function (listName, JobCode, RoleProfile, ProfileID) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var response, basePath, EnglishFiles, FrenchFiles, RoleProfileFiles, error_3;
+            var response, basePath, EnglishFiles, FrenchFiles, RoleProfileFiles, error_4;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -142,8 +178,8 @@ var CommonService = /** @class */ (function () {
                             message: "Attachments retrieved successfully",
                         }];
                     case 13:
-                        error_3 = _a.sent();
-                        console.log("Error getting attachments:", error_3);
+                        error_4 = _a.sent();
+                        console.log("Error getting attachments:", error_4);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -154,7 +190,7 @@ var CommonService = /** @class */ (function () {
             });
         }); };
         this.GetADgruopsEmailIDs = function (ADGroupID) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var graphClient, response, members, userDetailsPromises, userDetails, validUserDetails, error_4;
+            var graphClient, response, members, userDetailsPromises, userDetails, validUserDetails, error_5;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -179,8 +215,8 @@ var CommonService = /** @class */ (function () {
                                 message: "ADGroups retrieved successfully",
                             }];
                     case 3:
-                        error_4 = _a.sent();
-                        console.error("Error checking user in groups:", error_4);
+                        error_5 = _a.sent();
+                        console.error("Error checking user in groups:", error_5);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -191,7 +227,7 @@ var CommonService = /** @class */ (function () {
             });
         }); };
         this.getUserGuidByEmail = function (email) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var sp, user, UserID, error_5;
+            var sp, user, UserID, error_6;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -210,8 +246,8 @@ var CommonService = /** @class */ (function () {
                                 message: "ADGroups retrieved successfully",
                             }];
                     case 2:
-                        error_5 = _a.sent();
-                        console.error("Error fetching user ID by email: ", error_5);
+                        error_6 = _a.sent();
+                        console.error("Error fetching user ID by email: ", error_6);
                         // Return null in case of an error
                         return [2 /*return*/, {
                                 data: null,
@@ -223,7 +259,7 @@ var CommonService = /** @class */ (function () {
             });
         }); };
         this.getUserIDByEmail = function (userId) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var sp, user, UserID, error_6;
+            var sp, user, UserID, error_7;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -239,8 +275,8 @@ var CommonService = /** @class */ (function () {
                                 message: "ADGroups retrieved successfully",
                             }];
                     case 2:
-                        error_6 = _a.sent();
-                        console.error("Error fetching user ID by email: ", error_6);
+                        error_7 = _a.sent();
+                        console.error("Error fetching user ID by email: ", error_7);
                         // Return null in case of an error
                         return [2 /*return*/, {
                                 data: null,
@@ -252,7 +288,7 @@ var CommonService = /** @class */ (function () {
             });
         }); };
         this.GetMasterData = function (ListName, Filter) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var listItems, error_7;
+            var listItems, error_8;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -270,8 +306,8 @@ var CommonService = /** @class */ (function () {
                                 message: "HRMSRecruitmentCandidateDetails fetched successfully",
                             }];
                     case 2:
-                        error_7 = _a.sent();
-                        console.error("Error fetching data HRMSRecruitmentCandidateDetails:", error_7);
+                        error_8 = _a.sent();
+                        console.error("Error fetching data HRMSRecruitmentCandidateDetails:", error_8);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -282,7 +318,7 @@ var CommonService = /** @class */ (function () {
             });
         }); };
         this.GetDocumentinUrl = function (url) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var filteredFiles, extractedPath, folderPath, FileData, fileName_1, error_8, error_9;
+            var filteredFiles, extractedPath, folderPath, FileData, fileName_1, error_9, error_10;
             var _a;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
@@ -310,8 +346,8 @@ var CommonService = /** @class */ (function () {
                         }
                         return [3 /*break*/, 4];
                     case 3:
-                        error_8 = _b.sent();
-                        console.error("Error fetching document library files:", error_8);
+                        error_9 = _b.sent();
+                        console.error("Error fetching document library files:", error_9);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, {
                             data: filteredFiles,
@@ -319,8 +355,8 @@ var CommonService = /** @class */ (function () {
                             message: "HRMSRecruitmentCandidateDetails fetched successfully",
                         }];
                     case 5:
-                        error_9 = _b.sent();
-                        console.error("Error fetching data HRMSRecruitmentCandidateDetails:", error_9);
+                        error_10 = _b.sent();
+                        console.error("Error fetching data HRMSRecruitmentCandidateDetails:", error_10);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -331,7 +367,7 @@ var CommonService = /** @class */ (function () {
             });
         }); };
         this.GetUserName = function (email) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var listItems, UserName, UserRoleName, error_10;
+            var listItems, UserName, UserRoleName, error_11;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -358,8 +394,8 @@ var CommonService = /** @class */ (function () {
                                 message: "ADGroups retrieved successfully",
                             }];
                     case 2:
-                        error_10 = _a.sent();
-                        console.error("Error fetching user ID by email: ", error_10);
+                        error_11 = _a.sent();
+                        console.error("Error fetching user ID by email: ", error_11);
                         // Return null in case of an error
                         return [2 /*return*/, {
                                 data: null,
@@ -373,7 +409,7 @@ var CommonService = /** @class */ (function () {
     }
     CommonService.prototype.GetGradeLevel = function (PatersonGrade) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var op_1, error_11;
+            var op_1, error_12;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -406,10 +442,41 @@ var CommonService = /** @class */ (function () {
                             message: "HRMSGradeMaster Fetched successfully",
                         }];
                     case 3:
-                        error_11 = _a.sent();
-                        console.error("Error HRMSGradeMaster:", error_11);
-                        throw error_11;
+                        error_12 = _a.sent();
+                        console.error("Error HRMSGradeMaster:", error_12);
+                        throw error_12;
                     case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CommonService.prototype.PostCommanDataInsert = function (obj, ListName) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var response, error_13;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPAddItem({
+                                Listname: ListName,
+                                RequestJSON: obj,
+                            })];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                data: response.data,
+                                status: 200,
+                                message: "Data Submitted successfully",
+                            }];
+                    case 2:
+                        error_13 = _a.sent();
+                        console.error("Error posting user data:", error_13);
+                        return [2 /*return*/, {
+                                data: null,
+                                status: 400,
+                                message: "Error On Posting Data",
+                            }];
+                    case 3: return [2 /*return*/];
                 }
             });
         });
@@ -419,7 +486,7 @@ var CommonService = /** @class */ (function () {
 exports.default = CommonService;
 function getUserGuidByEmail(email) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var sp, user, listItems, UserName, error_12;
+        var sp, user, listItems, UserName, error_14;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -449,8 +516,8 @@ function getUserGuidByEmail(email) {
                             text: "".concat((UserName === null || UserName === void 0 ? void 0 : UserName.FirstName) || "", " ").concat((UserName === null || UserName === void 0 ? void 0 : UserName.MiddleName) || "", " ").concat((UserName === null || UserName === void 0 ? void 0 : UserName.LastName) || ""),
                         }];
                 case 3:
-                    error_12 = _a.sent();
-                    console.error("Error fetching user ID by email: ", error_12);
+                    error_14 = _a.sent();
+                    console.error("Error fetching user ID by email: ", error_14);
                     return [2 /*return*/, null];
                 case 4: return [2 /*return*/];
             }

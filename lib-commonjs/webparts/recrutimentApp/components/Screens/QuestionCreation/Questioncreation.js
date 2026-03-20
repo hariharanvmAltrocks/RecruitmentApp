@@ -8,6 +8,9 @@ var fetchQuestionbank_1 = require("./Hooks/fetchQuestionbank");
 var framer_motion_1 = require("framer-motion");
 var InterviewQuestion_1 = require("./Component/InterviewQuestion");
 var CreateMinimumCriteriaQuestion_1 = require("./Component/skeleton/CreateMinimumCriteriaQuestion");
+var SuccessToast_1 = require("../../Comman/Toast/SuccessToast");
+var useToast_1 = require("../../Hooks/useToast");
+var react_router_dom_1 = require("react-router-dom");
 var DEFAULT_NEW_QUESTION = function () { return ({
     type: "single",
     questionEn: "",
@@ -20,9 +23,11 @@ var DEFAULT_NEW_QUESTION = function () { return ({
 var QuestionCreation = function () {
     var _a, _b;
     var _c = (0, fetchQuestionbank_1.useFetchQuestionBank)(), questionBank = _c.questionBank, loading = _c.loading;
-    var _d = (0, react_1.useState)([]), preparedQuestions = _d[0], setPreparedQuestions = _d[1];
-    var _e = (0, react_1.useState)(DEFAULT_NEW_QUESTION()), newQuestion = _e[0], setNewQuestion = _e[1];
-    var _f = (0, react_1.useState)(""), searchQuery = _f[0], setSearchQuery = _f[1];
+    var _d = (0, useToast_1.useToast)(), toast = _d.toast, closeToast = _d.closeToast, showSuccess = _d.showSuccess, showError = _d.showError, showWarning = _d.showWarning, showConfirm = _d.showConfirm;
+    var navigate = (0, react_router_dom_1.useNavigate)();
+    var _e = (0, react_1.useState)([]), preparedQuestions = _e[0], setPreparedQuestions = _e[1];
+    var _f = (0, react_1.useState)(DEFAULT_NEW_QUESTION()), newQuestion = _f[0], setNewQuestion = _f[1];
+    var _g = (0, react_1.useState)(""), searchQuery = _g[0], setSearchQuery = _g[1];
     var handleAddFromBank = function (q) {
         var alreadyAdded = preparedQuestions.some(function (pq) { return pq.id === q.id && pq.fromBank; });
         if (!alreadyAdded) {
@@ -50,9 +55,12 @@ var QuestionCreation = function () {
         setPreparedQuestions(function (prev) { return prev.filter(function (q) { return q.id !== id; }); });
     };
     var onBack = function () {
+        navigate("/RecruitmentTable");
     };
     var handleSave = function () {
-        (preparedQuestions);
+        // (preparedQuestions)
+        showSuccess("Question Creation Successfully");
+        navigate("/RecruitmentTable");
     };
     var preparedIds = preparedQuestions.filter(function (q) { return q.fromBank; }).map(function (q) { return q.id; });
     var job = {
@@ -92,7 +100,8 @@ var QuestionCreation = function () {
                 react_1.default.createElement(InterviewQuestion_1.InterviewQuestion, { questionBank: questionBank, loading: loading, preparedQuestionIds: preparedIds, searchQuery: searchQuery, onSearchChange: setSearchQuery, onAddFromBank: handleAddFromBank })),
             react_1.default.createElement("div", { className: "qc__col qc__col--right" },
                 react_1.default.createElement(CreateMinimumCriteriaQuestion_1.CreateMinimumCriteriaQuestion, { newQuestion: newQuestion, onChange: setNewQuestion, onAdd: handleAddNew, onClear: function () { return setNewQuestion(DEFAULT_NEW_QUESTION()); } }),
-                react_1.default.createElement(CreateMinimumCriteriaQuestion_1.PreparedCriteriaSet, { questions: preparedQuestions, onRemove: handleRemovePrepared })))));
+                react_1.default.createElement(CreateMinimumCriteriaQuestion_1.PreparedCriteriaSet, { questions: preparedQuestions, onRemove: handleRemovePrepared }))),
+        toast.open && (react_1.default.createElement(SuccessToast_1.SuccessToast, { show: toast.open, type: toast.type, title: toast.title, message: toast.message, autoDismiss: toast.autoDismiss, autoDismissDuration: toast.autoDismissDuration, onClose: closeToast }))));
 };
 exports.default = QuestionCreation;
 //# sourceMappingURL=Questioncreation.js.map

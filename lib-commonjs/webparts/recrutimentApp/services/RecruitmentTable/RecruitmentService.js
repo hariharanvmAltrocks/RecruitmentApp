@@ -5,7 +5,11 @@ var ApiConfig_1 = require("../../utilities/ApiConfig");
 var Config_1 = require("../../utilities/Config");
 var spservice_1 = tslib_1.__importStar(require("../SPService/spservice"));
 var mapItems_1 = require("./mapItems");
+var IRecruitmentService_1 = require("./IRecruitmentService");
 var CareerPortalAPI_1 = require("../AxiosService/CareerPortalAPI");
+var ServiceExport_1 = require("../ServiceExport");
+var ConditionConfig_1 = require("../../utilities/ConditionConfig");
+var dateConfigfn_1 = require("../../components/Hooks/dateConfigfn");
 var RecruitmentService = /** @class */ (function () {
     function RecruitmentService() {
     }
@@ -81,8 +85,8 @@ var RecruitmentService = /** @class */ (function () {
                             ])];
                     case 2:
                         _a = _d.sent(), additionalPositionRes = _a[0], newPositionRes = _a[1];
-                        additionalPositionMap_1 = new Map(((_b = additionalPositionRes.data) !== null && _b !== void 0 ? _b : []).map(function (d) { return [d.parentId, d]; }));
-                        newPositionMap_1 = new Map(((_c = newPositionRes.data) !== null && _c !== void 0 ? _c : []).map(function (d) { return [d.parentId, d]; }));
+                        additionalPositionMap_1 = new Map(((_b = additionalPositionRes.data) !== null && _b !== void 0 ? _b : []).map(function (d) { return [d.ID, d]; }));
+                        newPositionMap_1 = new Map(((_c = newPositionRes.data) !== null && _c !== void 0 ? _c : []).map(function (d) { return [d.ID, d]; }));
                         mapCommonFields_1 = function (item, index) {
                             var _a, _b, _c, _d, _e, _f;
                             return ({
@@ -311,7 +315,6 @@ var RecruitmentService = /** @class */ (function () {
             });
         });
     };
-    // ── RecruitmentServices.ts ────────────────────────────────────────────────
     RecruitmentService.prototype.InsertRecruitmentDptBatch = function (payloads) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _a, batchedSP1_1, execute1, mainPromises, updatePromises, mainResults, failedIndex, enriched, _b, batchedSP2_1, execute2, positionPromises, commentPromises, error_5;
@@ -354,7 +357,7 @@ var RecruitmentService = /** @class */ (function () {
                             ])];
                     case 2:
                         mainResults = (_c.sent())[0];
-                        failedIndex = mainResults.findIndex(function (res) { var _a; return !((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.ID); });
+                        failedIndex = mainResults.findIndex(function (res) { return !(res === null || res === void 0 ? void 0 : res.ID); });
                         if (failedIndex !== -1) {
                             return [2 /*return*/, {
                                     data: [],
@@ -363,7 +366,7 @@ var RecruitmentService = /** @class */ (function () {
                                 }];
                         }
                         enriched = mainResults.map(function (res, index) { return ({
-                            insertedID: res.data.ID,
+                            insertedID: res.ID,
                             payload: payloads[index],
                         }); });
                         _b = (0, spservice_1.getSP)().batched(), batchedSP2_1 = _b[0], execute2 = _b[1];
@@ -414,7 +417,7 @@ var RecruitmentService = /** @class */ (function () {
     };
     RecruitmentService.prototype.GetHRMSRecruitmentRoleProfileDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var BATCH_IDX, masterQueries, _a, batchRes, listItems, roleKnowledgeMaster, levelProficiencyMaster, technicalSkillsMaster, experienceMaster, qualificationMaster, functionTypeMaster, roleKnowledgeMap_1, levelProficiencyMap_1, technicalSkillsMap_1, qualificationMap_1, experienceMap_1, functionTypeMap_1, formattedItems, error_6;
+            var BATCH_IDX, masterQueries, _a, batchRes, listItems, roleKnowledgeMaster, levelProficiencyMaster, technicalSkillsMaster, experienceMaster, qualificationMaster, functionTypeMaster, roleKnowledgeMap_1, levelProficiencyMap_1, technicalSkillsMap_1, qualificationMap_1, experienceMap, functionTypeMap_1, formattedItems, error_6;
             var _b, _c, _d, _e, _f, _g;
             return tslib_1.__generator(this, function (_h) {
                 switch (_h.label) {
@@ -432,32 +435,32 @@ var RecruitmentService = /** @class */ (function () {
                             {
                                 ListName: Config_1.ListNames.HRMSRoleSpecificKnowlegeMaster,
                                 select: ["*"],
-                                StateValue: 1
+                                StateValue: BATCH_IDX.ROLE_KNOWLEDGE
                             },
                             {
                                 ListName: Config_1.ListNames.HRMSLevelOfProficiency,
                                 select: ["*"],
-                                StateValue: 2
+                                StateValue: BATCH_IDX.LEVEL_PROFICIENCY
                             },
                             {
                                 ListName: Config_1.ListNames.HRMSTechnicalSkills,
                                 select: ["*"],
-                                StateValue: 3
+                                StateValue: BATCH_IDX.TECHNICAL_SKILLS
                             },
                             {
                                 ListName: Config_1.ListNames.HRMSExperienceMaster,
                                 select: ["*"],
-                                StateValue: 4
+                                StateValue: BATCH_IDX.EXPERIENCE
                             },
                             {
                                 ListName: Config_1.ListNames.HRMSQualification,
                                 select: ["*"],
-                                StateValue: 5
+                                StateValue: BATCH_IDX.QUALIFICATION
                             },
                             {
                                 ListName: Config_1.ListNames.HRMSJobTitleFunctionType,
                                 select: ["*"],
-                                StateValue: 6
+                                StateValue: BATCH_IDX.FUNCTION_TYPE
                             },
                         ];
                         return [4 /*yield*/, Promise.all([
@@ -508,7 +511,7 @@ var RecruitmentService = /** @class */ (function () {
                             };
                             return acc;
                         }, {});
-                        experienceMap_1 = new Map(experienceMaster.map(function (exp) { return [exp.ID, exp.ExperienceInYearRange]; }));
+                        experienceMap = new Map(experienceMaster.map(function (exp) { return [exp.ID, exp.ExperienceInYearRange]; }));
                         functionTypeMap_1 = functionTypeMaster.reduce(function (acc, item) {
                             acc[item.ID] = {
                                 en: item.FunctionType,
@@ -580,12 +583,12 @@ var RecruitmentService = /** @class */ (function () {
                             return {
                                 ID: item.ID,
                                 RecruitmentID: ((_c = item === null || item === void 0 ? void 0 : item.RecruitmentID) === null || _c === void 0 ? void 0 : _c.ID) || "",
-                                RolePurpose: item.RoleProfile || "",
-                                JobDescription: item.JobDescription || "",
-                                RolePurpose_fr: item.RoleProfileFrench || "",
-                                JobDescription_fr: item.JobDescriptionFrench || "",
-                                TotalExperience: { key: (_d = item.TotalPreferredExperience) === null || _d === void 0 ? void 0 : _d.ID, text: experienceMap_1.get((_e = item.TotalPreferredExperience) === null || _e === void 0 ? void 0 : _e.ID) || "" },
-                                ExperienceinMiningIndustry: { key: (_f = item.PreferredExperience) === null || _f === void 0 ? void 0 : _f.ID, text: experienceMap_1.get((_g = item.PreferredExperience) === null || _g === void 0 ? void 0 : _g.ID) || "" },
+                                RolePurpose: (0, IRecruitmentService_1.stripHtml)(item.RoleProfile) || "",
+                                JobDescription: (0, IRecruitmentService_1.stripHtml)(item.JobDescription) || "",
+                                RolePurpose_fr: (0, IRecruitmentService_1.stripHtml)(item.RoleProfileFrench) || "",
+                                JobDescription_fr: (0, IRecruitmentService_1.stripHtml)(item.JobDescriptionFrench) || "",
+                                TotalExperience: { key: (_d = item.TotalPreferredExperience) === null || _d === void 0 ? void 0 : _d.ID, text: ((_e = item.TotalPreferredExperience) === null || _e === void 0 ? void 0 : _e.ExperienceInYearRange) || "" },
+                                ExperienceinMiningIndustry: { key: (_f = item.PreferredExperience) === null || _f === void 0 ? void 0 : _f.ID, text: ((_g = item.PreferredExperience) === null || _g === void 0 ? void 0 : _g.ExperienceInYearRange) || "" },
                                 RoleSpeKnowledgeValue: RoleSpeKnowledge,
                                 TechnicalSkillValue: TechnicalSkills,
                                 qualificationValue: qualificationValue,
@@ -630,6 +633,228 @@ var RecruitmentService = /** @class */ (function () {
                     case 2:
                         error_7 = _a.sent();
                         console.error("Error inserting data into AdvertisementDetails:", error_7);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error inserting data into AdvertisementDetails",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    RecruitmentService.prototype.PostCommentsData = function (obj) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var error_8;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPAddItem({
+                                Listname: Config_1.ListNames.HRMSRecruitmentComments,
+                                RequestJSON: obj,
+                            })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                data: null,
+                                status: 200,
+                                message: "Data Submitted successfully",
+                            }];
+                    case 2:
+                        error_8 = _a.sent();
+                        console.error("Error posting user data:", error_8);
+                        return [2 /*return*/, {
+                                data: null,
+                                status: 400,
+                                message: "Error On Posting Data",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    RecruitmentService.prototype.UploadAdvertisementInPortal = function (Filter, Condition, RecuritmentDetails, IsActive, IsExtened, JobBasedBGVVerification) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var ROLE_PROFILE, JOB_PORTAL, queries, batchRes, roleProfileList, jobPortalList, data, jobUniqueKey, roleSpecificKnowledge, technicalSkill, roleSpecificSkills, technicalSkills, Roleandtechnical, minQualifications, preferredQualifications, MinAndPreferedQualification, decodeBase64, Description, DescriptionFr, onamdocpathfile, onemdocPath, FilterDept, DepartmentData, NationalityValue, todaydate, vaildFrom, VaildTo, advertisementDetails, response, error_9;
+            var _a, _b, _c, _d, _e;
+            return tslib_1.__generator(this, function (_f) {
+                switch (_f.label) {
+                    case 0:
+                        _f.trys.push([0, 7, , 8]);
+                        ROLE_PROFILE = 0;
+                        JOB_PORTAL = 1;
+                        queries = [
+                            {
+                                StateValue: ROLE_PROFILE,
+                                ListName: Config_1.ListNames.HRMSRecruitmentRoleProfileDetails,
+                                Filter: Filter,
+                                FilterCondition: Condition || "",
+                                select: [
+                                    "*",
+                                    "JobDescription",
+                                    "RoleProfile",
+                                    "TotalPreferredExperience/ExperienceInYearRange",
+                                    "PreferredExperience/ExperienceInYearRange",
+                                    "FunctionType/Code",
+                                    "JobCode/JobCode",
+                                ],
+                                expand: [
+                                    "PreferredExperience",
+                                    "TotalPreferredExperience",
+                                    "FunctionType",
+                                    "JobCode",
+                                ],
+                            },
+                            {
+                                StateValue: JOB_PORTAL,
+                                ListName: Config_1.ListNames.RecruitAppCareerPortalIntegration,
+                                Filter: [
+                                    { FilterKey: "JobCodeId", Operator: "eq", FilterValue: RecuritmentDetails.JobCodeId },
+                                    { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
+                                ],
+                                FilterCondition: "and",
+                                select: ["*"],
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            },
+                        ];
+                        return [4 /*yield*/, spservice_1.default.batchGet(queries)];
+                    case 1:
+                        batchRes = _f.sent();
+                        roleProfileList = (_a = batchRes[ROLE_PROFILE]) !== null && _a !== void 0 ? _a : [];
+                        jobPortalList = (_b = batchRes[JOB_PORTAL]) !== null && _b !== void 0 ? _b : [];
+                        if (!JobBasedBGVVerification) return [3 /*break*/, 3];
+                        return [4 /*yield*/, spservice_1.default.SPUpdateItem({
+                                Listname: Config_1.ListNames.HRMSRecruitmentRoleProfileDetails,
+                                RequestJSON: {
+                                    JobBasedBGVVerification: JobBasedBGVVerification,
+                                },
+                                ID: jobPortalList[0].ID
+                            })];
+                    case 2:
+                        _f.sent();
+                        _f.label = 3;
+                    case 3:
+                        if (roleProfileList.length === 0) {
+                            return [2 /*return*/, { data: null, status: 400, message: "No role profile data found" }];
+                        }
+                        if (jobPortalList.length === 0) {
+                            return [2 /*return*/, { data: null, status: 400, message: "No portal job data found" }];
+                        }
+                        data = roleProfileList[0];
+                        jobUniqueKey = jobPortalList[0].JobUniqueKey;
+                        roleSpecificKnowledge = data.RoleSpecificKnowledgeJson
+                            ? JSON.parse(data.RoleSpecificKnowledgeJson)
+                            : [];
+                        technicalSkill = data.TechnicalSkillsKnowledgeJson
+                            ? JSON.parse(data.TechnicalSkillsKnowledgeJson)
+                            : [];
+                        roleSpecificSkills = roleSpecificKnowledge.map(function (item) { return ({
+                            skillId: String(item.RoleSpeKnowledge || ""),
+                            levelId: String(item.RequiredLevel || ""),
+                        }); });
+                        technicalSkills = technicalSkill.map(function (item) { return ({
+                            skillId: String(item.TechnicalSkills || ""),
+                            levelId: String(item.LevelProficiency || ""),
+                        }); });
+                        Roleandtechnical = tslib_1.__spreadArray(tslib_1.__spreadArray([], roleSpecificSkills, true), technicalSkills, true);
+                        minQualifications = data.Qualification
+                            ? JSON.parse(data.Qualification).map(function (item) { return ({
+                                qualification: item.MinQualification,
+                                type: 0,
+                            }); })
+                            : [];
+                        preferredQualifications = data.PreferredQualification
+                            ? JSON.parse(data.PreferredQualification).map(function (item) { return ({
+                                qualification: item.PrefeQualification,
+                                type: 1,
+                            }); })
+                            : [];
+                        MinAndPreferedQualification = tslib_1.__spreadArray(tslib_1.__spreadArray([], minQualifications, true), preferredQualifications, true);
+                        decodeBase64 = function (str) {
+                            var utf8Bytes = new TextEncoder().encode(str);
+                            var binary = String.fromCharCode.apply(null, Array.from(utf8Bytes));
+                            return btoa(binary);
+                        };
+                        Description = {
+                            jobTitle: RecuritmentDetails.JobTitleEnglish,
+                            jobShortSummary: decodeBase64(data.RoleProfile || ""),
+                            jobSummary: decodeBase64(data.JobDescription || ""),
+                        };
+                        DescriptionFr = {
+                            jobTitle: RecuritmentDetails.JobTitleFrench,
+                            jobShortSummary: decodeBase64(data.RoleProfileFrench || ""),
+                            jobSummary: decodeBase64(data.JobDescriptionFrench || ""),
+                        };
+                        return [4 /*yield*/, ServiceExport_1.CommonServices.GetAttachmentLink(RecuritmentDetails.JobCode, Config_1.DocumentLibraray.ONAMSignedStampDocuments)];
+                    case 4:
+                        onamdocpathfile = _f.sent();
+                        onemdocPath = String(onamdocpathfile.data);
+                        FilterDept = [{ FilterKey: "DepartmentId", Operator: "eq", FilterValue: RecuritmentDetails.DepartmentID },];
+                        return [4 /*yield*/, ServiceExport_1.CommonServices.GetMasterData(Config_1.ListNames.HRMSDepartment, FilterDept)];
+                    case 5:
+                        DepartmentData = _f.sent();
+                        console.log(DepartmentData, "DepartmentData");
+                        NationalityValue = RecuritmentDetails.Nationality === ConditionConfig_1.Nationality.Nationals
+                            ? "Congolese"
+                            : RecuritmentDetails.Nationality;
+                        todaydate = new Date();
+                        vaildFrom = todaydate;
+                        VaildTo = (0, dateConfigfn_1.AddCalculateDate)(todaydate, 13);
+                        advertisementDetails = {
+                            jobCode: jobUniqueKey,
+                            isActive: IsActive,
+                            noOfPositions: String(RecuritmentDetails === null || RecuritmentDetails === void 0 ? void 0 : RecuritmentDetails.NumberOfPersonNeeded),
+                            validFrom: vaildFrom !== null && vaildFrom !== void 0 ? vaildFrom : null,
+                            validTo: VaildTo !== null && VaildTo !== void 0 ? VaildTo : null,
+                            employmentType: "Full Time",
+                            departmentId: ((_c = DepartmentData.data[0]) === null || _c === void 0 ? void 0 : _c.Code) || "",
+                            role: null,
+                            functionId: String(((_d = data.FunctionType) === null || _d === void 0 ? void 0 : _d.Code) || ""),
+                            onemdocPath: onemdocPath !== null && onemdocPath !== void 0 ? onemdocPath : "",
+                            experience: String(((_e = data.TotalPreferredExperience) === null || _e === void 0 ? void 0 : _e.ExperienceInYearRange) || ""),
+                            nationality: NationalityValue,
+                            Descriptions_en: Description,
+                            Descriptions_fr: DescriptionFr,
+                            RoleAndTechSkills: Roleandtechnical,
+                            MinAndPreferedQualifications: MinAndPreferedQualification,
+                            IsExtened: IsExtened,
+                        };
+                        return [4 /*yield*/, ServiceExport_1.CareerPotalServices.UpsertJobs(advertisementDetails)];
+                    case 6:
+                        response = _f.sent();
+                        if (response.status === ApiConfig_1.ResponeStatus.SUCCESS) {
+                            return [2 /*return*/, { data: null, status: 200, message: "Advertisement posted successfully" }];
+                        }
+                        return [2 /*return*/, { data: null, status: 500, message: "Error while posting advertisement details" }];
+                    case 7:
+                        error_9 = _f.sent();
+                        console.error("Error posting advertisement data:", error_9);
+                        return [2 /*return*/, { data: null, status: 400, message: "Error On Posting Data" }];
+                    case 8: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    RecruitmentService.prototype.UpsertBGVJobMaster = function (UpsertData) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var response, error_10;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, CareerPortalAPI_1.BGverification.UpsertBGVJobMaster(UpsertData)];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                data: response.data,
+                                status: response.status,
+                                message: response.data.message,
+                            }];
+                    case 2:
+                        error_10 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_10);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,

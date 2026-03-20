@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronRight, Eye, Filter, Upload, Users } from "lucide-react";
 import { useAssignMembers } from "./Hooks/useAssignMembers";
 import { useRecruitmentDetails } from "./Hooks/useRecruitmentDetails";
@@ -24,6 +24,7 @@ import { IToast, SuccessToast } from "../../Comman/Toast/SuccessToast";
 import Tabs from "../../Comman/Tabs/Tabs";
 import { MatricID } from "../../../utilities/ConditionConfig";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../Hooks/useToast";
 
 const AssignHRPopup = React.lazy(() => import("./Components/AssignHRPopup/AssignHRPopup").then((module) => ({
   default: module.AssignHRPopup,
@@ -60,13 +61,9 @@ export const RecruitmentTable: React.FC = () => {
   const [isopenDrawer, setIsopenDrawer] = useState<boolean>(false);
   const [selectedType, setSelectedType] = useState<string>("");
   const [selectedNationality, setSelectedNationality] = useState<string>("");
-  const [isToastOpen, setIsToastOpen] = useState<boolean>(false);
-  const [toastprops, setToastProps] = useState<IToast>({
-    title: "",
-    message: "",
-  });
-  const [isQuestiontab, setIsQuestionTab] =useState<boolean>(false);
 
+  const Submitted = useRef<boolean>(false);
+  const { toast, closeToast, showSuccess,showError,showWarning, showConfirm} = useToast();
 
   const selectedItems: RecruitmentItem[] = useMemo(
     () => items.filter((item) => selectedIds.includes(item.id)),
@@ -148,80 +145,26 @@ export const RecruitmentTable: React.FC = () => {
     const actionLabel = activeTabs?.actionMode === "Upload" ? "Upload" : "View";
     const message = `${actionLabel} action clicked for ${item.jobCode}`;
     if(matricID == MatricID.InterviewQuestionHR || matricID == MatricID.InterviewQuestionLM){
-       setIsQuestionTab(true);
        navigate("/QuestionCreation")
     }else if (matricID == MatricID.ReviewProfile || matricID == MatricID.AssignInterviewPanel || matricID == MatricID.ReviewScoreCard){
-      navigate("/QuestionCreation")
+      navigate("/CandidateTable")
     }
     openDrawer(item.ItemID);
     setIsopenDrawer(true);
     setSelectedType(item.requestType);
     setSelectedNationality(item.nationality);
-    setIsToastOpen(true);
-    setToastProps({
-      type: "warning",
-      title: "Warning",
-      message: "Are you sure you want cancel",
-      autoDismissDuration: 45
-    });
-
-
-
   }, [activeTabs?.actionMode, openDrawer]);
 
   const handleOpenPopup = useCallback(() => {
     setIsPopupOpen(true);
   }, []);
 
-  const handleClosePopup = useCallback(() => {
-    setIsToastOpen(true);
-    setToastProps({
-      type: "warning",
-      title: "Warning",
-      message: "Are you sure you want cancel",
-      autoDismissDuration: 45
-    });
+    const handleClosePopup = useCallback(() => {
     setIsPopupOpen(false);
   }, []);
 
-  //  const constructAgentDetails = async (
-  //   selectedJob: any,
-  //   agencies: AutoCompleteItem[],
-  // ) => {
-  //   const { data: allAgents } = await CommonServices.GetMasterData(
-  //     ListNames.HRMSExternalAgents,
-  //   );
-
-  //   const matchedAgents = allAgents.filter((agent: { Id: number }) =>
-  //     agencies.some((item) => item.key === agent.Id),
-  //   );
-
-  //   const agentDetails: jobsXAgents[] = matchedAgents.map((item: any) => ({
-  //     agentId: item.AgentCode,
-  //   }));
-
-  //   const jobUniqueValue = await RecruitmentServices.GetJobUniqueDataValue(
-  //     [
-  //       {
-  //         FilterKey: "JobCodeId",
-  //         Operator: "eq",
-  //         FilterValue: selectedJob?.JobCodeId,
-  //       },
-  //       { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
-  //     ],
-  //     "and",
-  //   );
-
-  //   const jobUniqueData = jobUniqueValue.data[0]?.JobUniqueKey || "";
-
-  //   return {
-  //     jobCode: jobUniqueData,
-  //     jobsXAgents: agentDetails,
-  //   };
-  // };
-
   const handleConfirmAssignment = useCallback(async (payload: AssignmentPayload) => {
-
+        Submitted.current = true
     try {
       const isHRLead = roleIDs.includes(RoleID.RecruitmentHRLead);
 
@@ -229,12 +172,8 @@ export const RecruitmentTable: React.FC = () => {
         ? await CommonServices.getUserIDByEmail(Number(payload.member?.id) ?? 0)
         : null;
 
-      // if (isHRLead && !userIDResult?.data) {
-      //   showAlert("Failed to resolve HR user ID.", HRMSAlertOptions.Error);
-      //   return;
-      // }
-
-      const vacancyDetailResults = await Promise.all(
+      if (isHRLead) {
+           const vacancyDetailResults = await Promise.all(
         payload.vacancies.map((vacancy) => {
           const filter = [{
             FilterName: "ID",
@@ -255,8 +194,6 @@ export const RecruitmentTable: React.FC = () => {
         // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
         return;
       }
-
-      if (isHRLead) {
         const batchPayloads: PostRecuritmentData[] = vacancyDetailResults.map(
           ({ vacancy, jobDetail }) => ({
             Data: {
@@ -302,11 +239,15 @@ export const RecruitmentTable: React.FC = () => {
 
         const batchResponse = await RecruitmentServices.InsertRecruitmentDptBatch(batchPayloads);
 
-        if (batchResponse.status !== ResponeStatus.SUCCESS) {
-          // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error, closeAlert);
-          return;
-        }
-
+      if (batchResponse.status === ResponeStatus.SUCCESS) {
+  setIsPopupOpen(false);      
+  setSelectedIds([]);
+  setSelectedMemberId(0);
+  showSuccess("Assign HR Successfully");  
+   navigate("/RecruitmentTable");
+} else {
+  showError("Something went wrong. Please try again.");
+}
       } else {
         // if (!formData.assignRecruitmentAgencies.length) {
         // showAlert("No agencies selected.", HRMSAlertOptions.Error);
@@ -462,7 +403,6 @@ export const RecruitmentTable: React.FC = () => {
       </header> */}
 
       <div className="recruitment-table__tabs">
-
         <Tabs
           tabs={tabs}
           activeKey={activeTabKey}
@@ -564,17 +504,18 @@ export const RecruitmentTable: React.FC = () => {
           setLoadingState={setLoadingState} />
       )}
 
-      {isToastOpen && (
-        <SuccessToast
-          show={isToastOpen}
-          type={toastprops.type}
-          title={toastprops.title}
-          message={toastprops.message}
-          autoDismiss={toastprops.autoDismiss}
-          autoDismissDuration={toastprops.autoDismissDuration}
-          onClose={() => setIsToastOpen(false)}
-        />
-      )}
+     {toast.open && (
+  <SuccessToast
+    show={toast.open}
+    type={toast.type}
+    title={toast.title}
+    message={toast.message}
+    autoDismiss={toast.autoDismiss}
+    autoDismissDuration={toast.autoDismissDuration}
+    onClose={closeToast}
+    // onAction={toast.buttonAction}
+  />
+)}
     </section>
   );
 };

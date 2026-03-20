@@ -52,8 +52,8 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
           <div className="candidate-modal__title">
             <div className="candidate-modal__title-icon">CR</div>
             <div>
-              <span className="candidate-modal__breadcrumb">Candidate Selection • Evaluation Preview</span>
-              <h2>Candidate Evaluation Review</h2>
+              <span className="candidate-modal__breadcrumb">Review Profile / Candidate Details</span>
+              <h2>Candidate Profile Review</h2>
               <div className="candidate-modal__meta">
                 <span className="candidate-modal__chip">{data?.jobCode ?? "FIN003"}</span>
                 <span>{data?.jobTitle ?? "Senior Mining Engineer"}</span>

@@ -109,7 +109,7 @@ var useAssignMembers = function (Nationality) {
                     case 3: throw new Error("Failed to fetch HR group emails.");
                     case 4: return [3 /*break*/, 6];
                     case 5:
-                        fetchAgencyOptions(Nationality);
+                        void fetchAgencyOptions(Nationality);
                         _b.label = 6;
                     case 6:
                         setLoading(false);

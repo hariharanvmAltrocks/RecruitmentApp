@@ -88,7 +88,7 @@ export const useRecruitmentDetails = (activeTabKey: RecruitmentTabKey): UseRecru
   const [items, setItems] = useState<RecruitmentItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const { MatricID } = useUIState();
+  const { MatricID: matricID } = useUIState();
 
   
   useEffect(() => {
@@ -99,11 +99,11 @@ export const useRecruitmentDetails = (activeTabKey: RecruitmentTabKey): UseRecru
       if (!isMounted) {
         return;
       }
-        const Filter = MetricQueryConfig[MatricID];
+        const Filter = MetricQueryConfig[matricID];
         const condition = "and";
                   let response: any;
                  
-        if(MatricID != 0){
+        if(matricID != 0){
 const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
 
                   switch (filterObj.ListName) {
@@ -111,6 +111,7 @@ const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
                           response = await DashboardServices.GetNPAEPVRRDetails(filterObj.Filter, condition);
                           break;
                       case ListNames.HRMSRecruitmentDptDetails:
+                        //  if(matricID === Ma)
                           response = await DashboardServices.GetRecruitmentDetails(filterObj.Filter[0], condition);
                           break;
                       case ListNames.HRMSRecruitmentCandidatePersonalDetails:
@@ -143,7 +144,7 @@ const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
       isMounted = false;
       clearTimeout(timer);
     };
-  }, [MatricID]);
+  }, [matricID]);
 
   const memoizedItems = useMemo(() => items, [items]);
 

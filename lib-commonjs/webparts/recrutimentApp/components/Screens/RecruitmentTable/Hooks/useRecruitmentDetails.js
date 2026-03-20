@@ -82,7 +82,7 @@ var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
 var useRecruitmentDetails = function (activeTabKey) {
     var _a = (0, react_1.useState)([]), items = _a[0], setItems = _a[1];
     var _b = (0, react_1.useState)(true), loading = _b[0], setLoading = _b[1];
-    var MatricID = (0, UIStateContext_1.useUIState)().MatricID;
+    var matricID = (0, UIStateContext_1.useUIState)().MatricID;
     (0, react_1.useEffect)(function () {
         var isMounted = true;
         setLoading(true);
@@ -95,9 +95,9 @@ var useRecruitmentDetails = function (activeTabKey) {
                         if (!isMounted) {
                             return [2 /*return*/];
                         }
-                        Filter = metricColumns_config_1.MetricQueryConfig[MatricID];
+                        Filter = metricColumns_config_1.MetricQueryConfig[matricID];
                         condition = "and";
-                        if (!(MatricID != 0)) return [3 /*break*/, 10];
+                        if (!(matricID != 0)) return [3 /*break*/, 10];
                         filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
                         _a = filterObj.ListName;
                         switch (_a) {
@@ -113,6 +113,7 @@ var useRecruitmentDetails = function (activeTabKey) {
                         return [3 /*break*/, 9];
                     case 3: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filterObj.Filter[0], condition)];
                     case 4:
+                        //  if(matricID === Ma)
                         response = _d.sent();
                         return [3 /*break*/, 9];
                     case 5: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filterObj.Filter[0], condition)];
@@ -153,7 +154,7 @@ var useRecruitmentDetails = function (activeTabKey) {
             isMounted = false;
             clearTimeout(timer);
         };
-    }, [MatricID]);
+    }, [matricID]);
     var memoizedItems = (0, react_1.useMemo)(function () { return items; }, [items]);
     return {
         items: memoizedItems,

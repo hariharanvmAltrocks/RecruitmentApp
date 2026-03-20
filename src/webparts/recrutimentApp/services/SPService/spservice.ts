@@ -183,8 +183,8 @@ const SPReadItems = async (params: IListItems): Promise<unknown[]> => {
       .filter(filterStr)
       .expand(p.Expand)
       .orderBy(p.Orderby, p.Orderbydecorasc)
-      .top(pageSize)
-      .skip(skip)();   
+      .top(pageSize)();
+      // .skip(skip)();   
 
     allItems = [...allItems, ...items];
 

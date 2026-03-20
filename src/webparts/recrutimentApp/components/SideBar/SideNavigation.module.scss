@@ -126,8 +126,8 @@
 
 .labelTooltip {
     position: absolute;
-    top: 50%;
-    left: calc(100% + 10px);
+    // top: 50%;
+    // left: calc(100% + 10px);
     transform: translateY(-50%);
     background: #0f172a;
     color: #ffffff;
@@ -140,6 +140,7 @@
     box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
     transition: opacity 0.2s ease, transform 0.2s ease;
     z-index: 20;
+    bottom: 19%;
 }
 
 .sidebarItem:hover .labelTooltip {
