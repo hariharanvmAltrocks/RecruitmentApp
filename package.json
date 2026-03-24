@@ -1,11 +1,13 @@
 {
-  "name": "recrutiment-app",
+  "name": "recruitment-app",
   "version": "0.0.1",
   "private": true,
   "engines": {
     "node": ">=22.14.0 < 23.0.0"
   },
   "scripts": {
+    "prestart": "npm run build:tailwind",
+    "prebuild": "npm run build:tailwind",
     "build:tailwind": "node scripts/build-tailwind.js",
     "build": "heft test --clean --production && heft package-solution --production",
     "start": "heft start --clean",

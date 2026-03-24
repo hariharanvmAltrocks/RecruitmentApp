@@ -68,7 +68,7 @@ var AdvertReviewDrawer = function (_a) {
         DepartmentID: (_j = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DepartmentId) !== null && _j !== void 0 ? _j : 0,
         Nationality: (_k = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.Nationality) !== null && _k !== void 0 ? _k : "",
         NumberOfPersonNeeded: (_l = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.NumberOfPersonNeeded) !== null && _l !== void 0 ? _l : "",
-        Dptcode: (_m = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DepartmentCode) !== null && _m !== void 0 ? _m : ""
+        Dptcode: (_m = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DeptCode) !== null && _m !== void 0 ? _m : ""
     };
     var updateMainRecord = (0, useUpdateMainRecord_1.useUpdateMainRecord)(formData, roleID).updateMainRecord;
     var handleHRLeadProcess = (0, useHRLeadProcess_1.useHRLeadProcess)(formData, Config_1.RoleID.RecruitmentHRLead, document, BGVData.checkboxBGVOption).handleHRLeadProcess;

@@ -487,14 +487,6 @@ export const MetricQueryConfig: Record<number, SingleQuery | SingleQuery[]> = {
         select: DEFAULT_SELECT
     },
 
-    [MatricID.AssignInterviewPanel]: {
-        ListName: ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [
-            StatusFilter(StatusId.PendingwithHODtoselectthecandidateLevel2)
-        ],
-        select: DEFAULT_SELECT
-    },
-
     [MatricID.EvalutionHR]: {
         ListName: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Filter: [
@@ -578,6 +570,14 @@ export const MetricQueryConfig: Record<number, SingleQuery | SingleQuery[]> = {
     [MatricID.ReviewProfile]: {
         ListName: ListNames.HRMSRecruitmentDptDetails,
         Filter: [StatusFilter(StatusId.RecruitmentInProgress)],
+        select: DEFAULT_SELECT
+    },
+
+     [MatricID.AssignInterviewPanel]: {
+        ListName: ListNames.HRMSRecruitmentDptDetails,
+        Filter: [
+            StatusFilter(StatusId.RecruitmentInProgress)
+        ],
         select: DEFAULT_SELECT
     },
 

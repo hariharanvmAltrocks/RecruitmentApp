@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
 import { Question } from "../QuestionCreation.types";
+import { getQuestionById } from "../../../../models/Icareerportal";
+import { userInfo } from "../../../../utilities/hooks/RoleContext";
+import { RoleID, StatusId } from "../../../../utilities/Config";
+import { QuestionCreatedBy } from "../../../../utilities/ConditionConfig";
+import { QuestionService } from "../../../../services/ServiceExport";
 
 const MOCK_QUESTION_BANK: Question[] = [
   {
@@ -64,17 +69,52 @@ export interface UseFetchQuestionBankResult {
   error: string | null;
 }
 
-export const useFetchQuestionBank = (): UseFetchQuestionBankResult => {
+export const useFetchQuestionBank = (discipline: string, statusId: number, enable: boolean = true): UseFetchQuestionBankResult => {
   const [questionBank, setQuestionBank] = useState<Question[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const {roleIDs} = userInfo();
 
   useEffect(() => {
-    // Simulate API call delay
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
+        if (!enable || !discipline || !statusId) return;
+        let categoryId = statusId === StatusId.CareerPortalQuestions ? "C1" : "C2"
+       const obj: getQuestionById = {
+          discipline: String(discipline),
+          category: String(categoryId),
+          createdBy: roleIDs.includes(RoleID.LineManager)
+            ? QuestionCreatedBy.LM
+            : QuestionCreatedBy.HR,
+        };
+        const res = await QuestionService.GetQuestionaireByScope(obj);
+    
+    let questionbank = res.data?.map((item) => {
+      let option = item.options?.map((item) => {
+        return {
+          id: item.key,
+          textEn: item.text,
+          textFr: item.textFr,
+          isCorrect: item.isCorrect
+        }
+      })
+      let answer = option?.filter((item) => item.isCorrect)
+      return{
+        id: item.id,
+        type: item.Type,
+        questionEn: item.question,
+        questionFr: item.questionFr,
+        options: option,
+        scopeId: item.scope,
+        questionTypeId: item.questionType,
+        isQualifier: item.Disqualification,
+        answers: answer,
+        createdBy: item.createdBy
+      }
+    })
+
       try {
         setQuestionBank(MOCK_QUESTION_BANK);
-        setLoading(false);
+        setLoading(false);    
       } catch {
         setError("Failed to load question bank.");
         setLoading(false);
@@ -82,7 +122,7 @@ export const useFetchQuestionBank = (): UseFetchQuestionBankResult => {
     }, 800);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [enable]);
 
-  return { questionBank, loading, error };
+  return { questionBank, loading, error ,};
 };

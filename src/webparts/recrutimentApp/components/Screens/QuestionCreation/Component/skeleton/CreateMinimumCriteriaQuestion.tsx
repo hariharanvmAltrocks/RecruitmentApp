@@ -13,6 +13,7 @@ interface CreatePanelProps {
   onChange: (q: Partial<Question>) => void;
   onAdd: () => void;
   onClear: () => void;
+  isCareerPortal: boolean;
 }
 
 export const CreateMinimumCriteriaQuestion: React.FC<CreatePanelProps> = ({
@@ -20,6 +21,7 @@ export const CreateMinimumCriteriaQuestion: React.FC<CreatePanelProps> = ({
   onChange,
   onAdd,
   onClear,
+  isCareerPortal
 }) => {
   const toggleOptionCorrect = (optionId: string) => {
     if (!newQuestion.options) return;
@@ -73,10 +75,11 @@ export const CreateMinimumCriteriaQuestion: React.FC<CreatePanelProps> = ({
       <div className="qc-composer__header">
         <h3 className="qc-composer__title">
           <span className="qc-composer__title-bar" />
-          Create Minimum Criteria
+          {isCareerPortal ? "Create Minimum Criteria" : "Create Interview Question"}
         </h3>
-
-        <div className="qc-composer__type-toggle">
+        {isCareerPortal && (
+          <>
+           <div className="qc-composer__type-toggle">
           <button
             className={`qc-composer__type-btn ${newQuestion.type === "single" ? "qc-composer__type-btn--active" : ""}`}
             onClick={() => onChange({ ...newQuestion, type: "single" })}
@@ -90,6 +93,9 @@ export const CreateMinimumCriteriaQuestion: React.FC<CreatePanelProps> = ({
             Multiple Choice
           </button>
         </div>
+          </>
+        )}
+       
       </div>
 
       <div className="qc-composer__body">
@@ -118,13 +124,17 @@ export const CreateMinimumCriteriaQuestion: React.FC<CreatePanelProps> = ({
           </div>
         </div>
 
-        <div className="qc-composer__options-section">
+{isCareerPortal ? (
+  <>
+   <div className="qc-composer__options-section">
           <div className="qc-composer__options-header">
             <span className="qc-composer__options-label">Answer Options</span>
             <button className="qc-composer__add-option" onClick={addOption}>
               <Plus size={11} /> Add Option
             </button>
           </div>
+
+
 
           <AnimatePresence>
             {newQuestion.options?.map((opt) => (
@@ -188,6 +198,36 @@ export const CreateMinimumCriteriaQuestion: React.FC<CreatePanelProps> = ({
             <Plus size={13} /> Add to Criteria Set
           </button>
         </div>
+  </>
+): (
+  <>
+   <div className="qc-composer__questions-grid">
+          <div className="qc-composer__field">
+            <label className="qc-composer__label qc-composer__label--en">
+              <Globe size={11} /> English Answer
+            </label>
+            <textarea
+              className="qc-composer__textarea"
+              placeholder="Enter question in English..."
+              value={newQuestion.interviewQu ?? ""}
+              onChange={(e) => onChange({ ...newQuestion, interviewQu: e.target.value })}
+            />
+          </div>
+          <div className="qc-composer__field">
+            <label className="qc-composer__label qc-composer__label--fr">
+              <Globe size={11} /> French Answer
+            </label>
+            <textarea
+              className="qc-composer__textarea qc-composer__textarea--italic"
+              placeholder="Saisir la question en français..."
+              value={newQuestion.interviewFr ?? ""}
+              onChange={(e) => onChange({ ...newQuestion, interviewFr: e.target.value })}
+            />
+          </div>
+        </div>
+  </>
+)}
+       
       </div>
     </div>
   );

@@ -429,13 +429,6 @@ exports.MetricQueryConfig = (_b = {},
         ],
         select: DEFAULT_SELECT
     },
-    _b[ConditionConfig_1.MatricID.AssignInterviewPanel] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [
-            StatusFilter(Config_1.StatusId.PendingwithHODtoselectthecandidateLevel2)
-        ],
-        select: DEFAULT_SELECT
-    },
     _b[ConditionConfig_1.MatricID.EvalutionHR] = {
         ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Filter: [
@@ -508,6 +501,13 @@ exports.MetricQueryConfig = (_b = {},
     _b[ConditionConfig_1.MatricID.ReviewProfile] = {
         ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
         Filter: [StatusFilter(Config_1.StatusId.RecruitmentInProgress)],
+        select: DEFAULT_SELECT
+    },
+    _b[ConditionConfig_1.MatricID.AssignInterviewPanel] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
+        Filter: [
+            StatusFilter(Config_1.StatusId.RecruitmentInProgress)
+        ],
         select: DEFAULT_SELECT
     },
     _b[ConditionConfig_1.MatricID.ReviewScoreCard] = {

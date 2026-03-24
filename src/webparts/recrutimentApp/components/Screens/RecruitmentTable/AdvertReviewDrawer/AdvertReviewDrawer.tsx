@@ -101,7 +101,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   DepartmentID: positionDetails?.DepartmentId ?? 0,
   Nationality: positionDetails?.Nationality ?? "",
   NumberOfPersonNeeded: positionDetails?.NumberOfPersonNeeded ?? "",
-  Dptcode:positionDetails?.DepartmentCode ?? ""
+  Dptcode:positionDetails?.DeptCode ?? ""
  }
   const { updateMainRecord }    = useUpdateMainRecord(formData, roleID);
 const { handleHRLeadProcess } = useHRLeadProcess(formData, RoleID.RecruitmentHRLead,document,BGVData.checkboxBGVOption);

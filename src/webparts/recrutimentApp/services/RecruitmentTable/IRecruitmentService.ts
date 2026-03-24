@@ -18,6 +18,7 @@ export type DataSyncToRecruitmentResponse = {
   SectionId: number,
   DepartmentCodeId: number,
   DepartmentCode: string,
+  DeptCode: string,
   EmploymentCategory: string,
   TypeOfContract: string,
   NumberOfPersonNeeded: string,

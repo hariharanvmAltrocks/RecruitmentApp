@@ -7,8 +7,8 @@ var lucide_react_1 = require("lucide-react");
 var framer_motion_1 = require("framer-motion");
 require("../../Questioncreation.scss");
 var CreateMinimumCriteriaQuestion = function (_a) {
-    var _b, _c, _d, _e;
-    var newQuestion = _a.newQuestion, onChange = _a.onChange, onAdd = _a.onAdd, onClear = _a.onClear;
+    var _b, _c, _d, _e, _f, _g;
+    var newQuestion = _a.newQuestion, onChange = _a.onChange, onAdd = _a.onAdd, onClear = _a.onClear, isCareerPortal = _a.isCareerPortal;
     var toggleOptionCorrect = function (optionId) {
         if (!newQuestion.options)
             return;
@@ -48,10 +48,11 @@ var CreateMinimumCriteriaQuestion = function (_a) {
         react_1.default.createElement("div", { className: "qc-composer__header" },
             react_1.default.createElement("h3", { className: "qc-composer__title" },
                 react_1.default.createElement("span", { className: "qc-composer__title-bar" }),
-                "Create Minimum Criteria"),
-            react_1.default.createElement("div", { className: "qc-composer__type-toggle" },
-                react_1.default.createElement("button", { className: "qc-composer__type-btn ".concat(newQuestion.type === "single" ? "qc-composer__type-btn--active" : ""), onClick: function () { return onChange(tslib_1.__assign(tslib_1.__assign({}, newQuestion), { type: "single" })); } }, "Single Choice"),
-                react_1.default.createElement("button", { className: "qc-composer__type-btn ".concat(newQuestion.type === "multiple" ? "qc-composer__type-btn--active" : ""), onClick: function () { return onChange(tslib_1.__assign(tslib_1.__assign({}, newQuestion), { type: "multiple" })); } }, "Multiple Choice"))),
+                isCareerPortal ? "Create Minimum Criteria" : "Create Interview Question"),
+            isCareerPortal && (react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement("div", { className: "qc-composer__type-toggle" },
+                    react_1.default.createElement("button", { className: "qc-composer__type-btn ".concat(newQuestion.type === "single" ? "qc-composer__type-btn--active" : ""), onClick: function () { return onChange(tslib_1.__assign(tslib_1.__assign({}, newQuestion), { type: "single" })); } }, "Single Choice"),
+                    react_1.default.createElement("button", { className: "qc-composer__type-btn ".concat(newQuestion.type === "multiple" ? "qc-composer__type-btn--active" : ""), onClick: function () { return onChange(tslib_1.__assign(tslib_1.__assign({}, newQuestion), { type: "multiple" })); } }, "Multiple Choice"))))),
         react_1.default.createElement("div", { className: "qc-composer__body" },
             react_1.default.createElement("div", { className: "qc-composer__questions-grid" },
                 react_1.default.createElement("div", { className: "qc-composer__field" },
@@ -64,24 +65,36 @@ var CreateMinimumCriteriaQuestion = function (_a) {
                         react_1.default.createElement(lucide_react_1.Globe, { size: 11 }),
                         " French Question"),
                     react_1.default.createElement("textarea", { className: "qc-composer__textarea qc-composer__textarea--italic", placeholder: "Saisir la question en fran\u00E7ais...", value: (_d = newQuestion.questionFr) !== null && _d !== void 0 ? _d : "", onChange: function (e) { return onChange(tslib_1.__assign(tslib_1.__assign({}, newQuestion), { questionFr: e.target.value })); } }))),
-            react_1.default.createElement("div", { className: "qc-composer__options-section" },
-                react_1.default.createElement("div", { className: "qc-composer__options-header" },
-                    react_1.default.createElement("span", { className: "qc-composer__options-label" }, "Answer Options"),
-                    react_1.default.createElement("button", { className: "qc-composer__add-option", onClick: addOption },
-                        react_1.default.createElement(lucide_react_1.Plus, { size: 11 }),
-                        " Add Option")),
-                react_1.default.createElement(framer_motion_1.AnimatePresence, null, (_e = newQuestion.options) === null || _e === void 0 ? void 0 : _e.map(function (opt) { return (react_1.default.createElement(framer_motion_1.motion.div, { key: opt.id, className: "qc-composer__option-row", initial: { opacity: 0, height: 0 }, animate: { opacity: 1, height: "auto" }, exit: { opacity: 0, height: 0 }, transition: { duration: 0.2 } },
-                    react_1.default.createElement("button", { className: "qc-composer__option-check ".concat(opt.isCorrect ? "qc-composer__option-check--active" : ""), onClick: function () { return toggleOptionCorrect(opt.id); } }, newQuestion.type === "single" ? (opt.isCorrect ? react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 22 }) : react_1.default.createElement(lucide_react_1.Circle, { size: 22 })) : (opt.isCorrect ? react_1.default.createElement(lucide_react_1.CheckSquare, { size: 22 }) : react_1.default.createElement(lucide_react_1.Square, { size: 22 }))),
-                    react_1.default.createElement("div", { className: "qc-composer__option-inputs" },
-                        react_1.default.createElement("input", { type: "text", className: "qc-composer__option-input", placeholder: "Option (English)", value: opt.textEn, onChange: function (e) { return updateOptionText(opt.id, "textEn", e.target.value); } }),
-                        react_1.default.createElement("input", { type: "text", className: "qc-composer__option-input qc-composer__option-input--italic", placeholder: "Option (Fran\u00E7ais)", value: opt.textFr, onChange: function (e) { return updateOptionText(opt.id, "textFr", e.target.value); } })),
-                    react_1.default.createElement("button", { className: "qc-composer__option-remove", onClick: function () { return removeOption(opt.id); }, title: "Remove option" },
-                        react_1.default.createElement(lucide_react_1.X, { size: 14 })))); }))),
-            react_1.default.createElement("div", { className: "qc-composer__footer" },
-                react_1.default.createElement("button", { className: "qc-composer__clear-btn", onClick: onClear }, "Clear All"),
-                react_1.default.createElement("button", { className: "qc-composer__submit-btn ".concat(!canAdd ? "qc-composer__submit-btn--disabled" : ""), onClick: onAdd, disabled: !canAdd },
-                    react_1.default.createElement(lucide_react_1.Plus, { size: 13 }),
-                    " Add to Criteria Set")))));
+            isCareerPortal ? (react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement("div", { className: "qc-composer__options-section" },
+                    react_1.default.createElement("div", { className: "qc-composer__options-header" },
+                        react_1.default.createElement("span", { className: "qc-composer__options-label" }, "Answer Options"),
+                        react_1.default.createElement("button", { className: "qc-composer__add-option", onClick: addOption },
+                            react_1.default.createElement(lucide_react_1.Plus, { size: 11 }),
+                            " Add Option")),
+                    react_1.default.createElement(framer_motion_1.AnimatePresence, null, (_e = newQuestion.options) === null || _e === void 0 ? void 0 : _e.map(function (opt) { return (react_1.default.createElement(framer_motion_1.motion.div, { key: opt.id, className: "qc-composer__option-row", initial: { opacity: 0, height: 0 }, animate: { opacity: 1, height: "auto" }, exit: { opacity: 0, height: 0 }, transition: { duration: 0.2 } },
+                        react_1.default.createElement("button", { className: "qc-composer__option-check ".concat(opt.isCorrect ? "qc-composer__option-check--active" : ""), onClick: function () { return toggleOptionCorrect(opt.id); } }, newQuestion.type === "single" ? (opt.isCorrect ? react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 22 }) : react_1.default.createElement(lucide_react_1.Circle, { size: 22 })) : (opt.isCorrect ? react_1.default.createElement(lucide_react_1.CheckSquare, { size: 22 }) : react_1.default.createElement(lucide_react_1.Square, { size: 22 }))),
+                        react_1.default.createElement("div", { className: "qc-composer__option-inputs" },
+                            react_1.default.createElement("input", { type: "text", className: "qc-composer__option-input", placeholder: "Option (English)", value: opt.textEn, onChange: function (e) { return updateOptionText(opt.id, "textEn", e.target.value); } }),
+                            react_1.default.createElement("input", { type: "text", className: "qc-composer__option-input qc-composer__option-input--italic", placeholder: "Option (Fran\u00E7ais)", value: opt.textFr, onChange: function (e) { return updateOptionText(opt.id, "textFr", e.target.value); } })),
+                        react_1.default.createElement("button", { className: "qc-composer__option-remove", onClick: function () { return removeOption(opt.id); }, title: "Remove option" },
+                            react_1.default.createElement(lucide_react_1.X, { size: 14 })))); }))),
+                react_1.default.createElement("div", { className: "qc-composer__footer" },
+                    react_1.default.createElement("button", { className: "qc-composer__clear-btn", onClick: onClear }, "Clear All"),
+                    react_1.default.createElement("button", { className: "qc-composer__submit-btn ".concat(!canAdd ? "qc-composer__submit-btn--disabled" : ""), onClick: onAdd, disabled: !canAdd },
+                        react_1.default.createElement(lucide_react_1.Plus, { size: 13 }),
+                        " Add to Criteria Set")))) : (react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement("div", { className: "qc-composer__questions-grid" },
+                    react_1.default.createElement("div", { className: "qc-composer__field" },
+                        react_1.default.createElement("label", { className: "qc-composer__label qc-composer__label--en" },
+                            react_1.default.createElement(lucide_react_1.Globe, { size: 11 }),
+                            " English Answer"),
+                        react_1.default.createElement("textarea", { className: "qc-composer__textarea", placeholder: "Enter question in English...", value: (_f = newQuestion.interviewQu) !== null && _f !== void 0 ? _f : "", onChange: function (e) { return onChange(tslib_1.__assign(tslib_1.__assign({}, newQuestion), { interviewQu: e.target.value })); } })),
+                    react_1.default.createElement("div", { className: "qc-composer__field" },
+                        react_1.default.createElement("label", { className: "qc-composer__label qc-composer__label--fr" },
+                            react_1.default.createElement(lucide_react_1.Globe, { size: 11 }),
+                            " French Answer"),
+                        react_1.default.createElement("textarea", { className: "qc-composer__textarea qc-composer__textarea--italic", placeholder: "Saisir la question en fran\u00E7ais...", value: (_g = newQuestion.interviewFr) !== null && _g !== void 0 ? _g : "", onChange: function (e) { return onChange(tslib_1.__assign(tslib_1.__assign({}, newQuestion), { interviewFr: e.target.value })); } }))))))));
 };
 exports.CreateMinimumCriteriaQuestion = CreateMinimumCriteriaQuestion;
 var PreparedCriteriaSet = function (_a) {

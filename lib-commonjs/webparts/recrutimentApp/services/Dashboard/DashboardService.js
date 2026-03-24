@@ -7,6 +7,8 @@ var Config_1 = require("../../utilities/Config");
 var spservice_1 = tslib_1.__importDefault(require("../SPService/spservice"));
 var CareerPortalAPI_1 = require("../AxiosService/CareerPortalAPI");
 var metricColumns_config_1 = require("../../components/Screens/Dashboard/metricColumns.config");
+var ConditionConfig_1 = require("../../utilities/ConditionConfig");
+var ServiceExport_1 = require("../ServiceExport");
 var DashboardService = /** @class */ (function () {
     function DashboardService() {
     }
@@ -305,10 +307,11 @@ var DashboardService = /** @class */ (function () {
     DashboardService.prototype.GetCandidateDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var GridResult, res, ids, recruitmentFilter, DeptDetails_1, error_3;
+            var _this = this;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
+                        _a.trys.push([0, 4, , 5]);
                         GridResult = [];
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
@@ -337,34 +340,57 @@ var DashboardService = /** @class */ (function () {
                         return [4 /*yield*/, this.GetRecruitmentDetails(recruitmentFilter, filterConditions)];
                     case 2:
                         DeptDetails_1 = _a.sent();
-                        GridResult = res.map(function (item) {
-                            var _a, _b;
-                            var deptDetails = DeptDetails_1.data.filter(function (dpt) { var _a; return dpt.ID === ((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id); });
-                            return {
-                                ApplicantName: "".concat(item.FirstName || "", " ").concat(item.MiddleName || "", " ").concat(item.LastName || "").trim(),
-                                PositionTitle: item === null || item === void 0 ? void 0 : item.PositionTitle,
-                                JobGrade: item === null || item === void 0 ? void 0 : item.JobGrade,
-                                Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
-                                Status: (_b = (_a = item === null || item === void 0 ? void 0 : item.Status) === null || _a === void 0 ? void 0 : _a.StatusDescription) !== null && _b !== void 0 ? _b : "",
-                                StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
-                                InterviewDate: (item === null || item === void 0 ? void 0 : item.InterviewDate)
-                                    ? (0, moment_1.default)(item.InterviewDate).format("YYYY-MM-DD")
-                                    : undefined,
-                                ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
-                                    ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
-                                    : undefined,
-                                CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
-                                    ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
-                                    : undefined,
-                                DeptDetails: deptDetails, // optional if needed
-                            };
-                        });
-                        return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
+                        return [4 /*yield*/, Promise.all(res.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var deptDetails, GradeLevel, err_1;
+                                var _a, _b;
+                                return tslib_1.__generator(this, function (_c) {
+                                    switch (_c.label) {
+                                        case 0:
+                                            deptDetails = DeptDetails_1.data.filter(function (dpt) { var _a; return dpt.ID === ((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id); });
+                                            _c.label = 1;
+                                        case 1:
+                                            _c.trys.push([1, 3, , 4]);
+                                            return [4 /*yield*/, ServiceExport_1.masterService.GetGradeLevel(item === null || item === void 0 ? void 0 : item.JobGrade)];
+                                        case 2:
+                                            GradeLevel = _c.sent();
+                                            return [3 /*break*/, 4];
+                                        case 3:
+                                            err_1 = _c.sent();
+                                            console.error("GradeLevel API failed:", err_1);
+                                            GradeLevel = { data: [] }; // fallback
+                                            return [3 /*break*/, 4];
+                                        case 4: return [2 /*return*/, {
+                                                ID: item.ID,
+                                                RecordID: index + 1,
+                                                ApplicantName: "".concat(item.FirstName || "", " ").concat(item.MiddleName || "", " ").concat(item.LastName || "").trim(),
+                                                PositionTitle: item === null || item === void 0 ? void 0 : item.PositionTitle,
+                                                JobGrade: item === null || item === void 0 ? void 0 : item.JobGrade,
+                                                Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
+                                                interviewLevels: (GradeLevel === null || GradeLevel === void 0 ? void 0 : GradeLevel.data) || [],
+                                                Status: (_b = (_a = item === null || item === void 0 ? void 0 : item.Status) === null || _a === void 0 ? void 0 : _a.StatusDescription) !== null && _b !== void 0 ? _b : "",
+                                                StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
+                                                InterviewDate: (item === null || item === void 0 ? void 0 : item.InterviewDate)
+                                                    ? (0, moment_1.default)(item.InterviewDate).format("YYYY-MM-DD")
+                                                    : undefined,
+                                                ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
+                                                    ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
+                                                    : undefined,
+                                                CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
+                                                    ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
+                                                    : undefined,
+                                                DeptDetails: deptDetails,
+                                            }];
+                                    }
+                                });
+                            }); }))];
                     case 3:
+                        GridResult = _a.sent();
+                        return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
+                    case 4:
                         error_3 = _a.sent();
                         console.error("Error fetching from Candidate details:", error_3);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
-                    case 4: return [2 /*return*/];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
@@ -598,6 +624,63 @@ var DashboardService = /** @class */ (function () {
                         console.error("GetPositionDetails error:", error_6);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching position details" }];
                     case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DashboardService.prototype.EvalutionValidation = function (data) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_7;
+            var _a;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, ServiceExport_1.CommonServices.getUserGuidByEmail(data.currentEmailID)];
+                    case 1:
+                        getCurrentUserId = _b.sent();
+                        levelFilter = data.statusId === Config_1.StatusId.InterviewScheduled
+                            ? ConditionConfig_1.InterviewLevel.Level1
+                            : ConditionConfig_1.InterviewLevel.Level2;
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
+                                Select: "IsScoreSheetUploaded",
+                                Filter: [
+                                    {
+                                        FilterKey: "CandidateIDId",
+                                        Operator: "eq",
+                                        FilterValue: data.ID,
+                                    },
+                                    {
+                                        FilterKey: "InterviewPanelId",
+                                        Operator: "eq",
+                                        FilterValue: Number((_a = getCurrentUserId.data) === null || _a === void 0 ? void 0 : _a.key),
+                                    },
+                                    {
+                                        FilterKey: "InterviewLevel",
+                                        Operator: "eq",
+                                        FilterValue: levelFilter,
+                                    },
+                                ],
+                                Topcount: 1
+                            })];
+                    case 2:
+                        resdata = _b.sent();
+                        IsSubmitted = true;
+                        return [2 /*return*/, {
+                                data: IsSubmitted,
+                                status: 200,
+                                message: "Validation success",
+                            }];
+                    case 3:
+                        error_7 = _b.sent();
+                        console.error("EvalutionValidation error:", error_7);
+                        return [2 /*return*/, {
+                                data: false,
+                                status: 500,
+                                message: "Error fetching validation",
+                            }];
+                    case 4: return [2 /*return*/];
                 }
             });
         });

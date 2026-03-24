@@ -1,0 +1,15 @@
+.scorecard {
+  position: relative;
+  overflow: hidden;
+}
+
+.scorecard::after {
+  content: '';
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 120px;
+  height: 120px;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 999px;
+}

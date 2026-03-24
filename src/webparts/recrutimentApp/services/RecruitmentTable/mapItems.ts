@@ -18,6 +18,7 @@ export const _mapRecruitmentItems = (res: any[]): DataSyncToRecruitmentResponse[
     SectionId:                      item.SectionId,
     DepartmentCodeId:               item.DepartmentCodeId,
     DepartmentCode:                 item.DepartmentCode?.DptCode              ?? "",
+    DeptCode:                       item.Department?.Code                     ?? "",
     EmploymentCategory:             item.EmploymentCategory,
     TypeOfContract:                 item.TypeOfContract,
     NumberOfPersonNeeded:           item.NumberOfPersonNeeded,

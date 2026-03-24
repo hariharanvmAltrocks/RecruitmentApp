@@ -190,3 +190,7 @@ export type IUserDetails = {
     BusinessUnitID: number;
     Nationality: string;
 }
+
+export type IJobGrade = {
+    GradeLevel : string;
+}

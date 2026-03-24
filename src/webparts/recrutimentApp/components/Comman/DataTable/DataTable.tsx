@@ -78,6 +78,8 @@ export const DataTable = <T,>({
   const rangeStart = totalCount === 0 ? 0 : (safeCurrentPage - 1) * pageSize + 1;
   const rangeEnd = Math.min(safeCurrentPage * pageSize, totalCount);
 
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
   const handlePrev = () => {
     if (safeCurrentPage > 1) {
       onPageChange(safeCurrentPage - 1);
@@ -206,49 +208,77 @@ export const DataTable = <T,>({
       </table>
 
       <div className="data-table__pagination">
-        <div className="data-table__pagination-summary">
-          {totalCount === 0 ? "No records" : `Showing ${rangeStart}-${rangeEnd} of ${totalCount}`}
-        </div>
-        <div className="data-table__pagination-controls">
-          <div className="data-table__page-size">
-            <span>Rows per page</span>
-            <select
-              className="data-table__page-select"
-              value={pageSize}
-              onChange={(event) => onPageSizeChange?.(Number(event.target.value))}
-              disabled={!onPageSizeChange}
-            >
-              {pageSizeOptions.map((size) => (
-                <option key={`page-size-${size}`} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="data-table__page-nav">
-            <button
-              className="data-table__page-btn"
-              type="button"
-              onClick={handlePrev}
-              disabled={safeCurrentPage <= 1}
-            >
-              Previous
-            </button>
-            <span className="data-table__page-indicator">
-              Page {safeCurrentPage} of {totalPages}
-            </span>
-            <button
-              className="data-table__page-btn"
-              type="button"
-              onClick={handleNext}
-              disabled={safeCurrentPage >= totalPages}
-            >
-              Next
-            </button>
-          </div>
-        </div>
+      {/* Left: summary text */}
+      <div className="data-table__pagination-summary">
+        {totalCount === 0 ? (
+          "No records"
+        ) : (
+          <>
+            Showing <strong>{rangeStart}</strong> to <strong>{rangeEnd}</strong> of{" "}
+            <strong>{totalCount}</strong> results
+          </>
+        )}
       </div>
+
+      {onPageSizeChange && (
+  <div className="data-table__page-size">
+    <span className="data-table__page-size-label">Rows per page</span>
+    <div className="data-table__page-size-group">
+      {pageSizeOptions.map((size) => (
+        <button
+          key={size}
+          type="button"
+          className={`data-table__page-size-btn ${
+            size === pageSize ? "data-table__page-size-btn--active" : ""
+          }`}
+          onClick={() => {
+            onPageSizeChange(size);
+            onPageChange(1);
+          }}
+        >
+          {size}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+ 
+      <div className="data-table__pagination-controls">
+        {/* Prev arrow */}
+        <button
+          className="data-table__page-arrow"
+          type="button"
+          onClick={handlePrev}
+          disabled={safeCurrentPage <= 1}
+          aria-label="Previous page"
+        >
+          ‹
+        </button>
+ 
+        {pages.map((page) => (
+          <button
+            key={page}
+            type="button"
+            className={`data-table__page-number ${
+              page === safeCurrentPage ? "data-table__page-number--active" : ""
+            }`}
+            onClick={() => onPageChange(page)}
+          >
+            {page}
+          </button>
+        ))}
+ 
+        <button
+          className="data-table__page-arrow"
+          type="button"
+          onClick={handleNext}
+          disabled={safeCurrentPage >= totalPages}
+          aria-label="Next page"
+        >
+          ›
+        </button>
+      </div>
+    </div>
     </div>
   );
 };

@@ -218,7 +218,7 @@ async GetRecruitmentDetails(
   try {
     const res: any[] = await SPServices.SPReadItems({
       Listname: ListNames.HRMSRecruitmentDptDetails,
-      Select:  `*,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,JobCode/ID,BusinessUnitCode/BusineesUnitCode`,
+      Select:  `*,Department/DepartmentName,Department/Code,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Status/StatusDescription,Action/Action,JobCode/JobCode,JobCode/ID,BusinessUnitCode/BusineesUnitCode`,
       Filter: filterParam,
       FilterCondition: filterConditions,
       Expand: `Department,SubDepartment,Section,DepartmentCode,Status,Action,JobCode,BusinessUnitCode`,

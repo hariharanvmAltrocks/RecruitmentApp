@@ -7,6 +7,7 @@ var ServiceExport_1 = require("../../../../services/ServiceExport");
 var Config_1 = require("../../../../utilities/Config");
 var metricColumns_config_1 = require("../../Dashboard/metricColumns.config");
 var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
+var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 // const mockRecruitmentItems: RecruitmentItem[] = [
 //   {
 //     id: "vac-1",
@@ -88,9 +89,9 @@ var useRecruitmentDetails = function (activeTabKey) {
         setLoading(true);
         var timer = setTimeout(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
             var Filter, condition, response, filterObj, _a, mappedItems;
-            var _b, _c;
-            return tslib_1.__generator(this, function (_d) {
-                switch (_d.label) {
+            var _b, _c, _d, _e;
+            return tslib_1.__generator(this, function (_f) {
+                switch (_f.label) {
                     case 0:
                         if (!isMounted) {
                             return [2 /*return*/];
@@ -109,41 +110,58 @@ var useRecruitmentDetails = function (activeTabKey) {
                         return [3 /*break*/, 9];
                     case 1: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetNPAEPVRRDetails(filterObj.Filter, condition)];
                     case 2:
-                        response = _d.sent();
+                        response = _f.sent();
                         return [3 /*break*/, 9];
                     case 3: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filterObj.Filter[0], condition)];
                     case 4:
                         //  if(matricID === Ma)
-                        response = _d.sent();
+                        response = _f.sent();
                         return [3 /*break*/, 9];
                     case 5: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filterObj.Filter[0], condition)];
                     case 6:
-                        response = _d.sent();
+                        response = _f.sent();
                         return [3 /*break*/, 9];
                     case 7: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(filterObj.Filter[0], condition)];
                     case 8:
-                        response = _d.sent();
+                        response = _f.sent();
                         return [3 /*break*/, 9];
                     case 9: return [3 /*break*/, 12];
                     case 10: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails([], condition)];
                     case 11:
-                        response = _d.sent();
-                        _d.label = 12;
+                        response = _f.sent();
+                        _f.label = 12;
                     case 12:
-                        mappedItems = (_c = (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.map(function (item) {
-                            var _a;
-                            return ({
+                        if (matricID === ConditionConfig_1.MatricID.EvalutionHR) {
+                            mappedItems = (_c = (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.map(function (item) { return ({
                                 id: item.RecordID,
                                 ItemID: item.ID,
-                                jobCode: item.JobCode,
-                                title: (_a = item.JobTitleEnglish) !== null && _a !== void 0 ? _a : "",
-                                department: item.Department,
-                                count: item.NumberOfPersonNeeded,
-                                requestType: item.Type,
-                                nationality: item.Nationality,
+                                applicantName: item.ApplicantName,
+                                title: item.PositionTitle,
+                                nationlity: item.Nationality,
+                                interviewDate: item.InterviewDate,
+                                interviewLevels: item.interviewLevels,
+                                grade: item.JobGrade,
                                 status: item.Status,
-                            });
-                        })) !== null && _c !== void 0 ? _c : [];
+                                statusId: item.StatusId
+                            }); })) !== null && _c !== void 0 ? _c : [];
+                        }
+                        else {
+                            mappedItems = (_e = (_d = response === null || response === void 0 ? void 0 : response.data) === null || _d === void 0 ? void 0 : _d.map(function (item) {
+                                var _a;
+                                return ({
+                                    id: item.RecordID,
+                                    ItemID: item.ID,
+                                    jobCode: item.JobCode,
+                                    title: (_a = item.JobTitleEnglish) !== null && _a !== void 0 ? _a : "",
+                                    department: item.Department,
+                                    count: item.NumberOfPersonNeeded,
+                                    requestType: item.Type,
+                                    nationality: item.Nationality,
+                                    status: item.Status,
+                                    statusId: item.StatusId
+                                });
+                            })) !== null && _e !== void 0 ? _e : [];
+                        }
                         setItems(mappedItems);
                         setLoading(false);
                         return [2 /*return*/];

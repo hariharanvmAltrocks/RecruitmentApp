@@ -1,0 +1,8 @@
+.questionCard {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.questionCard:hover {
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.06);
+}

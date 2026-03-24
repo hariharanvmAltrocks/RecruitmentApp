@@ -206,6 +206,13 @@
   font-size: 13px;
   font-weight: 600;
   color: #0f172a;
+  border: 1px solid #c5bfbf;
+  background-color: white;
+  padding: 6%;
+  border-radius: 9px;
+}
+.advert-review-drawer__info-value:hover {
+  transform: translateY(-2px) translateZ(0px);
 }
 .advert-review-drawer__divider {
   height: 1px;

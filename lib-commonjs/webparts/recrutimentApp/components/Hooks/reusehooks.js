@@ -53,6 +53,9 @@ var findMatricID = function (statusID, TabName) {
             return ConditionConfig_1.MatricID.InterviewQuestionHR;
         case Config_1.StatusId.CareerPortalQuestions:
             return ConditionConfig_1.MatricID.InterviewQuestionLM;
+        case Config_1.StatusId.InterviewScheduled:
+        case Config_1.StatusId.InterviewScheduledforLevel2:
+            return ConditionConfig_1.MatricID.EvalutionHR;
         case Config_1.StatusId.RecruitmentInProgress:
             if (TabName === ConditionConfig_1.TabNames.ReviewProfile) {
                 return ConditionConfig_1.MatricID.ReviewProfile;

@@ -637,6 +637,51 @@ var MasterService = /** @class */ (function () {
             });
         });
     };
+    MasterService.prototype.GetGradeLevel = function (gradeId) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var GridResult_1, error_5;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        GridResult_1 = {
+                            GradeLevel: ""
+                        };
+                        if (!gradeId) return [3 /*break*/, 2];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSGradeMaster,
+                                Select: "*",
+                                Filter: [
+                                    {
+                                        FilterKey: "DRCGrade",
+                                        Operator: "eq",
+                                        FilterValue: gradeId,
+                                    },
+                                ],
+                            }).then(function (data) {
+                                GridResult_1 = data[0].Levels;
+                            })];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [2 /*return*/, {
+                            data: GridResult_1,
+                            status: 200,
+                            message: "GetRecruitmentDetails fetched successfully",
+                        }];
+                    case 3:
+                        error_5 = _a.sent();
+                        console.error("Error fetching data in GetRecruitmentDetails:", error_5);
+                        return [2 /*return*/, {
+                                data: {},
+                                status: 500,
+                                message: "Error fetching data from GetRecruitmentDetails",
+                            }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
     return MasterService;
 }());
 exports.default = MasterService;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
+exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
 exports.MatricID = {
     AssignHr: 1,
     UploadONEM: 2,
@@ -9,9 +9,9 @@ exports.MatricID = {
     AssignInterviewPanel: 5,
     InterviewQuestionHR: 6,
     EvalutionHR: 7,
-    EvalutionHOD: 7,
-    EvalutionLM: 7,
-    EvalutionEXCO: 7,
+    EvalutionHOD: 18,
+    EvalutionLM: 19,
+    EvalutionEXCO: 20,
     ReviewScoreCard: 8,
     OfferRelease: 9,
     OfferAccepted: 10,
@@ -94,5 +94,14 @@ exports.TabNames = {
     ReviewProfile: "Review Profile",
     AssignInterviewPanel: "Assign Interview Panel",
     ReviewScorecard: "Review Score card"
+};
+exports.InterviewLevel = {
+    Level1: "Level 1",
+    Level2: "Level 2",
+    Level3: "Level 3"
+};
+exports.QuestionCreatedBy = {
+    LM: "LM",
+    HR: "HR"
 };
 //# sourceMappingURL=ConditionConfig.js.map

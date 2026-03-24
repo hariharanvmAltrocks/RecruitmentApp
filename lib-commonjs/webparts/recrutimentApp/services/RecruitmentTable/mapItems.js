@@ -5,7 +5,7 @@ var tslib_1 = require("tslib");
 var moment_1 = tslib_1.__importDefault(require("moment"));
 var _mapRecruitmentItems = function (res) {
     return res.map(function (item, index) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11;
         return ({
             ID: item.ID,
             RecordID: index + 1,
@@ -22,20 +22,21 @@ var _mapRecruitmentItems = function (res) {
             SectionId: item.SectionId,
             DepartmentCodeId: item.DepartmentCodeId,
             DepartmentCode: (_l = (_k = item.DepartmentCode) === null || _k === void 0 ? void 0 : _k.DptCode) !== null && _l !== void 0 ? _l : "",
+            DeptCode: (_o = (_m = item.Department) === null || _m === void 0 ? void 0 : _m.Code) !== null && _o !== void 0 ? _o : "",
             EmploymentCategory: item.EmploymentCategory,
             TypeOfContract: item.TypeOfContract,
             NumberOfPersonNeeded: item.NumberOfPersonNeeded,
             EnterNumberOfMonths: item.EnterNumberOfMonths,
             AreaofWork: item.AreaofWork,
-            DateRequried: (_m = item.DateRequried) !== null && _m !== void 0 ? _m : "",
-            Type: (_o = item.DataFrom) !== null && _o !== void 0 ? _o : "",
-            Status: (_q = (_p = item.Status) === null || _p === void 0 ? void 0 : _p.StatusDescription) !== null && _q !== void 0 ? _q : "",
+            DateRequried: (_p = item.DateRequried) !== null && _p !== void 0 ? _p : "",
+            Type: (_q = item.DataFrom) !== null && _q !== void 0 ? _q : "",
+            Status: (_s = (_r = item.Status) === null || _r === void 0 ? void 0 : _r.StatusDescription) !== null && _s !== void 0 ? _s : "",
             StatusId: item.StatusId,
-            Action: (_s = (_r = item.Action) === null || _r === void 0 ? void 0 : _r.Action) !== null && _s !== void 0 ? _s : "",
-            ActionTypeId: (_t = item.ActionId) !== null && _t !== void 0 ? _t : "",
-            Location: (_u = item.Location) !== null && _u !== void 0 ? _u : "",
-            JobCodeId: (_w = (_v = item.JobCode) === null || _v === void 0 ? void 0 : _v.ID) !== null && _w !== void 0 ? _w : 0,
-            JobCode: (_y = (_x = item.JobCode) === null || _x === void 0 ? void 0 : _x.JobCode) !== null && _y !== void 0 ? _y : "",
+            Action: (_u = (_t = item.Action) === null || _t === void 0 ? void 0 : _t.Action) !== null && _u !== void 0 ? _u : "",
+            ActionTypeId: (_v = item.ActionId) !== null && _v !== void 0 ? _v : "",
+            Location: (_w = item.Location) !== null && _w !== void 0 ? _w : "",
+            JobCodeId: (_y = (_x = item.JobCode) === null || _x === void 0 ? void 0 : _x.ID) !== null && _y !== void 0 ? _y : 0,
+            JobCode: (_0 = (_z = item.JobCode) === null || _z === void 0 ? void 0 : _z.JobCode) !== null && _0 !== void 0 ? _0 : "",
             // Filled after position fetch
             JobTitleEnglish: "",
             JobTitleFrench: "",
@@ -46,14 +47,14 @@ var _mapRecruitmentItems = function (res) {
             PatersonGradeId: 0,
             DRCGradeId: 0,
             Checked: false,
-            VacancyConfirmed: (_z = item.VacancyConfirmed) !== null && _z !== void 0 ? _z : "",
-            RecruitmentAuthorised: (_0 = item.RecruitmentAuthorised) !== null && _0 !== void 0 ? _0 : "",
-            IsPayrollEmailed: (_1 = item.IsPayrollEmailed) !== null && _1 !== void 0 ? _1 : "",
+            VacancyConfirmed: (_1 = item.VacancyConfirmed) !== null && _1 !== void 0 ? _1 : "",
+            RecruitmentAuthorised: (_2 = item.RecruitmentAuthorised) !== null && _2 !== void 0 ? _2 : "",
+            IsPayrollEmailed: (_3 = item.IsPayrollEmailed) !== null && _3 !== void 0 ? _3 : "",
             AssignedHR: " ",
             AssignedHRId: 0,
-            AssignLineManager: (_2 = item.LineManager) !== null && _2 !== void 0 ? _2 : "",
-            AssignLineManagerId: (_3 = item.AssignLineManagerId) !== null && _3 !== void 0 ? _3 : 0,
-            ReasonForVacancy: (_4 = item.ReasonForVacancy) !== null && _4 !== void 0 ? _4 : "",
+            AssignLineManager: (_4 = item.LineManager) !== null && _4 !== void 0 ? _4 : "",
+            AssignLineManagerId: (_5 = item.AssignLineManagerId) !== null && _5 !== void 0 ? _5 : 0,
+            ReasonForVacancy: (_6 = item.ReasonForVacancy) !== null && _6 !== void 0 ? _6 : "",
             JobPostingStartDate: item.JobPostingStartDate
                 ? (0, moment_1.default)(item.JobPostingStartDate).format("YYYY-MM-DD")
                 : undefined,
@@ -68,11 +69,11 @@ var _mapRecruitmentItems = function (res) {
                 : undefined,
             AssignEMail: item.AssignedHR,
             AssignHOD: item.HOD,
-            AssignHRLead: (_5 = item.RecruitmentHRLead) !== null && _5 !== void 0 ? _5 : "",
-            QuestionByHR: (_6 = item.QuestionByHR) !== null && _6 !== void 0 ? _6 : "",
-            QuestionByLM: (_7 = item.QuestionByLM) !== null && _7 !== void 0 ? _7 : "",
-            ModifiedDate: (_8 = item.ModifiedDate) !== null && _8 !== void 0 ? _8 : "",
-            CreatedDate: (_9 = item.CreatedDate) !== null && _9 !== void 0 ? _9 : "",
+            AssignHRLead: (_7 = item.RecruitmentHRLead) !== null && _7 !== void 0 ? _7 : "",
+            QuestionByHR: (_8 = item.QuestionByHR) !== null && _8 !== void 0 ? _8 : "",
+            QuestionByLM: (_9 = item.QuestionByLM) !== null && _9 !== void 0 ? _9 : "",
+            ModifiedDate: (_10 = item.ModifiedDate) !== null && _10 !== void 0 ? _10 : "",
+            CreatedDate: (_11 = item.CreatedDate) !== null && _11 !== void 0 ? _11 : "",
         });
     });
 };

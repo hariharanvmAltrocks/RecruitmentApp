@@ -81,8 +81,18 @@ export type DashboardData = {
     StatusId: number,
     JobCode: string,
     JobTitleEnglish: string,
-     ModifiedDate: string | undefined;
+    ModifiedDate: string | undefined;
     CreatedDate: string | undefined
+}
+
+export type IEvaluValidate = {
+    ID: number
+    currentEmailID: string;
+    statusId: number;
+}
+
+export interface IInterviewPanel {
+  IsScoreSheetUploaded?: string;
 }
 
 export type IDashboard = {
@@ -95,17 +105,18 @@ export type IDashboard = {
         CurrentRoleID: number[]
     ): Promise<ApiResponse<Metric[]>>;
     GetNPAEPVRRDetails(
-      filterParam: any,
-      filterConditions: any
-    ): Promise<ApiResponse<DashboardData[]>>;
-     GetCandidateDetails(
-            filterParam: any,
-            filterConditions: any
-        ): Promise<ApiResponse<DashboardData[]>>;
-        GetSelectedCandidate(
         filterParam: any,
         filterConditions: any
-    ): Promise<ApiResponse<DashboardData[]>> ;
-    
-
+    ): Promise<ApiResponse<DashboardData[]>>;
+    GetCandidateDetails(
+        filterParam: any,
+        filterConditions: any
+    ): Promise<ApiResponse<DashboardData[]>>;
+    GetSelectedCandidate(
+        filterParam: any,
+        filterConditions: any
+    ): Promise<ApiResponse<DashboardData[]>>;
+    EvalutionValidation(
+        data: IEvaluValidate
+    ): Promise<ApiResponse<boolean>>
 };

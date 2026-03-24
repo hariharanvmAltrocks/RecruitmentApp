@@ -55,7 +55,10 @@ export const findMatricID = (statusID: number,TabName: string): number  => {
     case StatusId.PendingInterviewquestion:
       return MatricID.InterviewQuestionHR;
     case StatusId.CareerPortalQuestions:
-      return MatricID.InterviewQuestionLM
+      return MatricID.InterviewQuestionLM;
+    case StatusId.InterviewScheduled:
+    case StatusId.InterviewScheduledforLevel2:
+      return MatricID.EvalutionHR;
     case StatusId.RecruitmentInProgress:
        if(TabName === TabNames.ReviewProfile){
          return MatricID.ReviewProfile;

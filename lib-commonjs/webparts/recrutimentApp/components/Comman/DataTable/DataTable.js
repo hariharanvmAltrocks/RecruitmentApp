@@ -28,6 +28,7 @@ var DataTable = function (_a) {
     var safeCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
     var rangeStart = totalCount === 0 ? 0 : (safeCurrentPage - 1) * pageSize + 1;
     var rangeEnd = Math.min(safeCurrentPage * pageSize, totalCount);
+    var pages = Array.from({ length: totalPages }, function (_, i) { return i + 1; });
     var handlePrev = function () {
         if (safeCurrentPage > 1) {
             onPageChange(safeCurrentPage - 1);
@@ -90,19 +91,25 @@ var DataTable = function (_a) {
                             })));
                     }))),
         react_1.default.createElement("div", { className: "data-table__pagination" },
-            react_1.default.createElement("div", { className: "data-table__pagination-summary" }, totalCount === 0 ? "No records" : "Showing ".concat(rangeStart, "-").concat(rangeEnd, " of ").concat(totalCount)),
+            react_1.default.createElement("div", { className: "data-table__pagination-summary" }, totalCount === 0 ? ("No records") : (react_1.default.createElement(react_1.default.Fragment, null,
+                "Showing ",
+                react_1.default.createElement("strong", null, rangeStart),
+                " to ",
+                react_1.default.createElement("strong", null, rangeEnd),
+                " of",
+                " ",
+                react_1.default.createElement("strong", null, totalCount),
+                " results"))),
+            onPageSizeChange && (react_1.default.createElement("div", { className: "data-table__page-size" },
+                react_1.default.createElement("span", { className: "data-table__page-size-label" }, "Rows per page"),
+                react_1.default.createElement("div", { className: "data-table__page-size-group" }, pageSizeOptions.map(function (size) { return (react_1.default.createElement("button", { key: size, type: "button", className: "data-table__page-size-btn ".concat(size === pageSize ? "data-table__page-size-btn--active" : ""), onClick: function () {
+                        onPageSizeChange(size);
+                        onPageChange(1);
+                    } }, size)); })))),
             react_1.default.createElement("div", { className: "data-table__pagination-controls" },
-                react_1.default.createElement("div", { className: "data-table__page-size" },
-                    react_1.default.createElement("span", null, "Rows per page"),
-                    react_1.default.createElement("select", { className: "data-table__page-select", value: pageSize, onChange: function (event) { return onPageSizeChange === null || onPageSizeChange === void 0 ? void 0 : onPageSizeChange(Number(event.target.value)); }, disabled: !onPageSizeChange }, pageSizeOptions.map(function (size) { return (react_1.default.createElement("option", { key: "page-size-".concat(size), value: size }, size)); }))),
-                react_1.default.createElement("div", { className: "data-table__page-nav" },
-                    react_1.default.createElement("button", { className: "data-table__page-btn", type: "button", onClick: handlePrev, disabled: safeCurrentPage <= 1 }, "Previous"),
-                    react_1.default.createElement("span", { className: "data-table__page-indicator" },
-                        "Page ",
-                        safeCurrentPage,
-                        " of ",
-                        totalPages),
-                    react_1.default.createElement("button", { className: "data-table__page-btn", type: "button", onClick: handleNext, disabled: safeCurrentPage >= totalPages }, "Next"))))));
+                react_1.default.createElement("button", { className: "data-table__page-arrow", type: "button", onClick: handlePrev, disabled: safeCurrentPage <= 1, "aria-label": "Previous page" }, "\u2039"),
+                pages.map(function (page) { return (react_1.default.createElement("button", { key: page, type: "button", className: "data-table__page-number ".concat(page === safeCurrentPage ? "data-table__page-number--active" : ""), onClick: function () { return onPageChange(page); } }, page)); }),
+                react_1.default.createElement("button", { className: "data-table__page-arrow", type: "button", onClick: handleNext, disabled: safeCurrentPage >= totalPages, "aria-label": "Next page" }, "\u203A")))));
 };
 exports.DataTable = DataTable;
 //# sourceMappingURL=DataTable.js.map

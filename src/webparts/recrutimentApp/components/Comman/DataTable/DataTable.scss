@@ -200,81 +200,102 @@
   overflow-x: auto;
 }
 
+// Pagination — matches screenshot:
+// LEFT: "Showing 1 to 5 of 10 results"
+// RIGHT: < 1 2 >  (active page = filled blue pill)
+
 .data-table__pagination {
   margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  color: $text-muted;
-  font-size: 12px;
-}
-
-.data-table__pagination-summary {
-  font-weight: 600;
-  color: $text-subtle;
-}
-
-.data-table__pagination-controls {
+  padding: 12px 4px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: space-between;   // summary left, controls right
   flex-wrap: wrap;
-  justify-content: center;
-  background: $secondary-color;
-  padding: 10px 16px;
-  border-radius: 999px;
-  border: 1px solid $border-base;
-}
-
-.data-table__page-size {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
+  gap: 12px;
+  font-size: 13px;
   color: $text-muted;
 }
 
-.data-table__page-select {
-  border: 1px solid $border-base;
-  background: $white;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 12px;
-  color: $text-secondary;
+// "Showing 1 to 5 of 10 results"
+.data-table__pagination-summary {
+  font-size: 13px;
+  color: $text-muted;
+  font-weight: 400;
+
+  strong {
+    font-weight: 700;
+    color: $text-primary;
+  }
 }
 
-.data-table__page-nav {
+// Wrapper for arrow + page numbers
+.data-table__pagination-controls {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
-.data-table__page-btn {
+// Shared base for arrows and numbered buttons
+%page-btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  border-radius: 50%;
   border: 1px solid $border-base;
   background: $white;
-  color: $text-secondary;
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   transition: all $transition-base;
+  color: $text-secondary;
+  line-height: 1;
+  padding: 0;
 
-  &:hover:enabled {
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// < and > arrow buttons — border-less, just the chevron
+.data-table__page-arrow {
+  @extend %page-btn-base;
+  border-color: $border-base;
+  font-size: 18px;
+  color: $text-muted;
+
+  &:hover:not(:disabled) {
     border-color: $primary-color;
     color: $primary-color;
   }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
 }
 
-.data-table__page-indicator {
-  font-weight: 600;
-  color: $text-muted;
+// Numbered page buttons
+.data-table__page-number {
+  @extend %page-btn-base;
+  border-color: transparent;
+  background: transparent;
+
+  &:hover:not(.data-table__page-number--active) {
+    border-color: $border-base;
+    color: $primary-color;
+  }
+
+  // Active page: solid blue filled circle — matches screenshot
+  &--active {
+    background: $primary-color;
+    border-color: $primary-color;
+    color: $white;
+    font-weight: 700;
+    pointer-events: none;
+
+    &:hover {
+      background: $primary-color;
+    }
+  }
 }
 
 @keyframes data-table-shimmer {
@@ -285,3 +306,54 @@
     background-position: 200% 0;
   }
 }
+
+.data-table__page-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.data-table__page-size-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: $text-muted;
+  white-space: nowrap;
+}
+
+.data-table__page-size-group {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid $border-base;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.data-table__page-size-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-secondary;
+  background: $white;
+  border: none;
+  border-right: 1px solid $border-base;
+  cursor: pointer;
+  transition: all $transition-base;
+  line-height: 1;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover:not(.data-table__page-size-btn--active) {
+    background: $secondary-color;
+    color: $primary-color;
+  }
+
+  // Active: filled blue — matches your existing pagination active style
+  &--active {
+    background: $primary-color;
+    color: $white;
+    pointer-events: none;
+  }
+}
+

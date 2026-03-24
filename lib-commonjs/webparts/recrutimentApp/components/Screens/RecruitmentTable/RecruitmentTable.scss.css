@@ -147,3 +147,32 @@
 .assignment .assignment-bar__button:hover:not(:disabled) {
   transform: translateY(-1px);
 }
+
+.submission-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.submission-header__title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+.submission-header__button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.2s ease;
+  border: 0px;
+  background-color: white;
+}
+.submission-header__button:hover {
+  color: #2563eb;
+}

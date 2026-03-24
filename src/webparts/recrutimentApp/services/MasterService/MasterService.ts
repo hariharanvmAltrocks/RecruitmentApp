@@ -1,5 +1,5 @@
 import { ApiResponse } from "../../models/apimodels";
-import { UserRoleResponseDetails, CareerPortalLink, ITabdetails, IUserDetails } from "../../models/master";
+import { UserRoleResponseDetails, CareerPortalLink, ITabdetails, IUserDetails, IJobGrade } from "../../models/master";
 import { count, ResponeStatus } from "../../utilities/ApiConfig";
 import { ListNames } from "../../utilities/Config";
 import SPServices from "../SPService/spservice";
@@ -621,6 +621,41 @@ export default class MasterService implements IMasterService {
       console.error("Error fetching data in GetRecruitmentDetails:", error);
       return {
         data: {} as IUserDetails,
+        status: 500,
+        message: "Error fetching data from GetRecruitmentDetails",
+      };
+    }
+  }
+
+    async GetGradeLevel(gradeId: string): Promise<ApiResponse<IJobGrade>> {
+    try {
+       let GridResult: IJobGrade = {
+        GradeLevel : ""
+       };
+      if (gradeId) {
+        await SPServices.SPReadItems({
+          Listname: ListNames.HRMSGradeMaster,
+          Select: "*",
+          Filter: [
+            {
+              FilterKey: "DRCGrade",
+              Operator: "eq",
+              FilterValue: gradeId,
+            },
+          ],
+        }).then((data: any) => {
+          GridResult = data[0].Levels 
+        });
+      }
+      return {
+        data: GridResult,
+        status: 200,
+        message: "GetRecruitmentDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching data in GetRecruitmentDetails:", error);
+      return {
+        data: {} as IJobGrade,
         status: 500,
         message: "Error fetching data from GetRecruitmentDetails",
       };

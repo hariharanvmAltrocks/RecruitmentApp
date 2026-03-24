@@ -9,6 +9,8 @@ import { CreateMinimumCriteriaQuestion, PreparedCriteriaSet } from "./Component/
 import { SuccessToast } from "../../Comman/Toast/SuccessToast";
 import { useToast } from "../../Hooks/useToast";
 import { useNavigate } from "react-router-dom";
+import { usePositionDetails } from "../RecruitmentTable/AdvertReviewDrawer/Hooks/getPositionDetails";
+import { StatusId } from "../../../utilities/Config";
 
 interface QuestionCreationProps {
   job: Job;
@@ -26,8 +28,16 @@ const DEFAULT_NEW_QUESTION = (): Partial<Question> => ({
   ],
 });
 
-const QuestionCreation: React.FC = () => {
-  const { questionBank, loading } = useFetchQuestionBank();
+const QuestionCreation: React.FC = (props: any) => {
+   const { data: positionDetails,loading: positionLoading} = usePositionDetails(props.ID, "");
+   const deptCode = positionDetails?.DeptCode;
+const statusId = positionDetails?.StatusId;
+   const shouldFetch = !!deptCode && !!statusId;
+ const { questionBank, loading } = useFetchQuestionBank(
+  shouldFetch ? deptCode : "",
+  shouldFetch ? statusId : 0,
+  !positionLoading
+);
    const { toast, closeToast, showSuccess,showError,showWarning, showConfirm} = useToast();
      const navigate = useNavigate();
 
@@ -72,6 +82,8 @@ const QuestionCreation: React.FC = () => {
 
   const handleSave = () => {
     // (preparedQuestions)
+    console.log(preparedQuestions,"preparedQuestions");
+    
     showSuccess("Question Creation Successfully")
     navigate("/RecruitmentTable");
   };
@@ -79,10 +91,10 @@ const QuestionCreation: React.FC = () => {
   const preparedIds = preparedQuestions.filter((q) => q.fromBank).map((q) => q.id);
 
   const job = {
-    jobCode: "SOQ001",
-    jobTitle: "Senior Executive",
-    buCode: "110011010101",
-    nationality: "Expatriate"
+    jobCode: positionDetails?.JobCode,
+    jobTitle: positionDetails?.JobTitleEnglish,
+    buCode: positionDetails?.BusinessUnitCode,
+    nationality: positionDetails?.Nationality
   }
 
   return (
@@ -148,6 +160,7 @@ const QuestionCreation: React.FC = () => {
             onChange={setNewQuestion}
             onAdd={handleAddNew}
             onClear={() => setNewQuestion(DEFAULT_NEW_QUESTION())}
+            isCareerPortal={positionDetails?.StatusId === StatusId.CareerPortalQuestions ? true : false}
           />
 
           <PreparedCriteriaSet

@@ -1,5 +1,5 @@
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronRight, Eye, Filter, Upload, Users } from "lucide-react";
+import { ChevronRight, Eye, Filter, RotateCcw, Upload, Users } from "lucide-react";
 import { useAssignMembers } from "./Hooks/useAssignMembers";
 import { useRecruitmentDetails } from "./Hooks/useRecruitmentDetails";
 import { useTabDetails } from "./Hooks/useTabDetails";
@@ -16,7 +16,7 @@ import "./RecruitmentTable.scss";
 import { DataTable, DataTableColumn } from "../../Comman/DataTable/DataTable";
 import { useUIState } from "../../RecrutimentApp/UIStateContext";
 import { DataFrom, ListNames, RoleID, StatusId, WorkflowAction } from "../../../utilities/Config";
-import { CommonServices, RecruitmentServices } from "../../../services/ServiceExport";
+import { CommonServices, DashboardServices, RecruitmentServices } from "../../../services/ServiceExport";
 import { PostRecuritmentData } from "../../../services/RecruitmentTable/IRecruitmentService";
 import { userInfo } from "../../../utilities/hooks/RoleContext";
 import { ResponeStatus } from "../../../utilities/ApiConfig";
@@ -25,6 +25,8 @@ import Tabs from "../../Comman/Tabs/Tabs";
 import { MatricID } from "../../../utilities/ConditionConfig";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../Hooks/useToast";
+import { useRecruitmentColumns } from "./config";
+import { IEvaluValidate } from "../../../services/Dashboard/IDashboard";
 
 const AssignHRPopup = React.lazy(() => import("./Components/AssignHRPopup/AssignHRPopup").then((module) => ({
   default: module.AssignHRPopup,
@@ -56,14 +58,16 @@ export const RecruitmentTable: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedMemberId, setSelectedMemberId] = useState<number>(0);
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [pageSize, setPageSize] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isopenDrawer, setIsopenDrawer] = useState<boolean>(false);
   const [selectedType, setSelectedType] = useState<string>("");
   const [selectedNationality, setSelectedNationality] = useState<string>("");
 
+  const ActiveTabName = useRef<string>(tabs[0]?.label)
+
   const Submitted = useRef<boolean>(false);
-  const { toast, closeToast, showSuccess,showError,showWarning, showConfirm} = useToast();
+  const { toast, closeToast, showSuccess,showError} = useToast();
 
   const selectedItems: RecruitmentItem[] = useMemo(
     () => items.filter((item) => selectedIds.includes(item.id)),
@@ -74,6 +78,12 @@ export const RecruitmentTable: React.FC = () => {
     () => selectedItems.length === 1 ? selectedItems[0]?.jobCode : ""
     , [selectedItems]);
 
+    useEffect(() => {
+  if (tabs.length > 0 && !ActiveTabName.current) {
+    ActiveTabName.current = tabs[0]?.label ?? "";
+      setMatricID(tabs[0].matricId);
+  }
+}, [tabs]);
 
   const { members, loading: membersLoading } = useAssignMembers(selectedNationality);
 
@@ -107,7 +117,7 @@ export const RecruitmentTable: React.FC = () => {
     setSelectedMemberId(0);
     setCurrentPage(1);
     setMatricID(tab.matricId);
-
+    ActiveTabName.current = tab.description
   }, []);
 
   const handleToggleRow = useCallback((id: string) => {
@@ -121,6 +131,8 @@ export const RecruitmentTable: React.FC = () => {
     return items.slice(start, start + pageSize);
   }, [currentPage, items, pageSize]);
 
+  console.log(tabs,"TABSS");
+  
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
@@ -141,19 +153,51 @@ export const RecruitmentTable: React.FC = () => {
     });
   }, [paginatedItems, selectedIds]);
 
-  const handleAction = useCallback((item: RecruitmentItem) => {
-    const actionLabel = activeTabs?.actionMode === "Upload" ? "Upload" : "View";
-    const message = `${actionLabel} action clicked for ${item.jobCode}`;
-    if(matricID == MatricID.InterviewQuestionHR || matricID == MatricID.InterviewQuestionLM){
-       navigate("/QuestionCreation")
-    }else if (matricID == MatricID.ReviewProfile || matricID == MatricID.AssignInterviewPanel || matricID == MatricID.ReviewScoreCard){
-      navigate("/CandidateTable")
+ const handleAction = useCallback(
+  async (item: RecruitmentItem) => {
+    const { ItemID, jobCode, statusId, requestType, nationality } = item;
+    if (matricID === MatricID.EvalutionHR) {
+      // const data: IEvaluValidate = {
+      //   ID: ItemID,
+      //   currentEmailID: ADGroupData.EmailId[0],
+      //   statusId,
+      // };
+
+      // const res = await DashboardServices.EvalutionValidation(data);
+
+      // if (!res.data) {
+      //   showError("Already Submitted");
+      //   return;
+      // }
+
+      navigate("/Evalution");
+      return;
     }
-    openDrawer(item.ItemID);
+
+    const routeMap: Record<number, string> = {
+      [MatricID.InterviewQuestionHR]: "/QuestionCreation",
+      [MatricID.InterviewQuestionLM]: "/QuestionCreation",
+      [MatricID.ReviewProfile]: "/CandidateTable",
+      [MatricID.AssignInterviewPanel]: "/CandidateTable",
+      [MatricID.ReviewScoreCard]: "/CandidateTable",
+    };
+
+    const route = routeMap[matricID];
+
+    if (route) {
+      navigate(route,{
+        state: {
+          ID: item.ItemID,
+        }
+      });
+    }
+    openDrawer(ItemID);
     setIsopenDrawer(true);
-    setSelectedType(item.requestType);
-    setSelectedNationality(item.nationality);
-  }, [activeTabs?.actionMode, openDrawer]);
+    setSelectedType(requestType);
+    setSelectedNationality(nationality);
+  },
+  [matricID, activeTabs?.actionMode, openDrawer, navigate]
+);
 
   const handleOpenPopup = useCallback(() => {
     setIsPopupOpen(true);
@@ -247,71 +291,7 @@ export const RecruitmentTable: React.FC = () => {
    navigate("/RecruitmentTable");
 } else {
   showError("Something went wrong. Please try again.");
-}
-      } else {
-        // if (!formData.assignRecruitmentAgencies.length) {
-        // showAlert("No agencies selected.", HRMSAlertOptions.Error);
-        // return;
-        // }
-
-        // const agencyResults = await Promise.all(
-        //   vacancyDetailResults.map(async ({ vacancy, jobDetail }) => {
-        //     const recruitmentID = jobDetail!.ID as number;
-
-        //     const agentDetailsPayload = await constructAgentDetails(
-        //       vacancy,
-        //       payload.member?.id,
-        //     );
-
-        //     const [upsertRes, agencyRes] = await Promise.all([
-        //       GetPortalJobsService.UpsertAgenciesJobs(agentDetailsPayload),
-        //       getVRRDetails.InsertExternalAgencyDetails(
-        //         formData.assignRecruitmentAgencies.map((agency) => ({
-        //           key:           agency.key,
-        //           text:          agency.text,
-        //           RecruitmentID: recruitmentID,
-        //         })),
-        //         recruitmentID
-        //       ),
-        //     ]);
-
-        //     if (
-        //       upsertRes.status  !== ResponeStatus.SUCCESS ||
-        //       agencyRes.status  !== ResponeStatus.SUCCESS
-        //     ) {
-        //       return false;
-        //     }
-
-        //     const commentsRes = await getVRRDetails.InsertCommentsList({
-        //       RoleId:          RoleID.RecruitmentHR,
-        //       RecruitmentIDId: recruitmentID,
-        //       Comments:        formData.comments,
-        //     });
-
-        //     return commentsRes.status === ResponeStatus.SUCCESS;
-        //   })
-        // );
-
-        // if (agencyResults.some((r) => r === false)) {
-        //   showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error, closeAlert);
-        //   return;
-        // }
-      }
-
-      // ── 6. Success ─────────────────────────────────────────────────────────
-      // showAlert(
-      //   payload.vacancies.length === 1
-      //     ? RecuritmentHRMsg.SingleHRSuccessMsg
-      //     : RecuritmentHRMsg.HRSuccess,
-      //   HRMSAlertOptions.Success,
-      //   () => {
-      //     setAssignDialogOpen(false);
-      //     clearSelection();
-      //     refreshData();
-      //     closeAlert();
-      //   }
-      // );
-
+}}
       setIsPopupOpen(false);
       setSelectedIds([]);
       setSelectedMemberId(0);
@@ -327,71 +307,13 @@ export const RecruitmentTable: React.FC = () => {
 
   const showAssignmentBar = activeTabs?.tableMode === "checkbox" && selectedIds.length > 0;
   const actionMode = activeTabs?.actionMode ?? "View";
-  const columns: DataTableColumn<RecruitmentItem>[] = useMemo(
-    () => [
-      {
-        id: "jobCode",
-        header: "Job Code",
-        accessor: "jobCode",
-        cellClassName: "data-table__cell--muted",
-      },
-      {
-        id: "title",
-        header: "Job Title & Dept",
-        render: (item) => (
-          <div className="data-table__job-title">
-            <span>{item.title}</span>
-            <span className="data-table__job-dept">{item.department}</span>
-          </div>
-        ),
-      },
-      {
-        id: "count",
-        header: "Count",
-        render: (item) => String(item.count).padStart(2, "0"),
-        cellClassName: "data-table__cell--count",
-        align: "center",
-        hideOnMobile: true,
-      },
-      {
-        id: "requestType",
-        header: "Request Type",
-        accessor: "requestType",
-        cellClassName: "data-table__cell--muted",
-        hideOnMobile: true,
-      },
-      {
-        id: "nationality",
-        header: "Nationality",
-        accessor: "nationality",
-        cellClassName: "data-table__cell--muted",
-        hideOnMobile: true,
-      },
-      {
-        id: "status",
-        header: "Status",
-        render: (item) => <span className="data-table__status-badge status-badge">{item.status}</span>,
-      },
-      {
-        id: "actions",
-        header: "Actions",
-        align: "right",
-        cellClassName: "data-table__cell--actions",
-        render: (item) => (
-          <button
-            className="data-table__action-btn"
-            onClick={() => handleAction(item)}
-            type="button"
-            aria-label={actionMode === "Upload" ? "Upload document" : "View vacancy"}
-          >
-            {actionMode === "Upload" ? <Upload size={16} /> : <Eye size={16} />}
-            {actionMode === "Upload" ? "Upload" : "View"}
-          </button>
-        ),
-      },
-    ],
-    [actionMode, handleAction]
-  );
+
+
+  const columns = useRecruitmentColumns({
+  role: matricID === MatricID.EvalutionHR ? "evaluation" : "default",
+  actionMode: activeTabs?.actionMode ?? "View",
+  onAction: handleAction,
+});
 
   return (
     <section className="recruitment-table">
@@ -413,6 +335,18 @@ export const RecruitmentTable: React.FC = () => {
       </div>
 
       <div className="recruitment-table__table-card">
+       <div className="submission-header">
+  <h2 className="submission-header__title">{ActiveTabName.current }</h2>
+
+  <button 
+    onClick={() => navigate("/Dashboard")}
+    className="submission-header__button"
+  >
+    <RotateCcw size={14} />
+    Back to Dashboard
+  </button>
+</div>
+
         <DataTable
           columns={columns}
           data={paginatedItems}

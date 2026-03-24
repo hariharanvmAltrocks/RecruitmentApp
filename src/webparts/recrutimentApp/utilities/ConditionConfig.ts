@@ -6,9 +6,9 @@ export const MatricID = {
     AssignInterviewPanel: 5,
     InterviewQuestionHR: 6,
     EvalutionHR: 7,
-    EvalutionHOD: 7,
-    EvalutionLM: 7,
-    EvalutionEXCO: 7,
+    EvalutionHOD: 18,
+    EvalutionLM: 19,
+    EvalutionEXCO: 20,
     ReviewScoreCard: 8,
     OfferRelease: 9,
     OfferAccepted: 10,
@@ -101,5 +101,15 @@ export const TabNames = {
     ReviewProfile: "Review Profile",
     AssignInterviewPanel: "Assign Interview Panel",
     ReviewScorecard: "Review Score card"
+}
 
+export const InterviewLevel ={
+   Level1: "Level 1",
+   Level2: "Level 2",
+   Level3: "Level 3"
+}
+
+export const QuestionCreatedBy = {
+    LM: "LM",
+    HR: "HR"
 }

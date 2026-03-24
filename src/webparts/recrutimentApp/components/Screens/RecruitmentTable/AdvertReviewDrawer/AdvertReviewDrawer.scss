@@ -237,6 +237,13 @@
     font-size: 13px;
     font-weight: 600;
     color: $text-primary;
+    border: 1px solid #c5bfbf;
+    background-color: white;
+    padding: 6%;
+    border-radius: 9px;
+    &:hover {
+      transform: translateY(-2px) translateZ(0px);
+    }
   }
 
   &__divider {

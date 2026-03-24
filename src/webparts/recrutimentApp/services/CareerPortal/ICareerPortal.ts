@@ -139,6 +139,7 @@ export interface ViewQuestion {
     header?: string;
     scope?: string;
     questionNumber?: { key: number; text: string };
+    createdBy?: string
 }
 
 export type Icareerportal = {

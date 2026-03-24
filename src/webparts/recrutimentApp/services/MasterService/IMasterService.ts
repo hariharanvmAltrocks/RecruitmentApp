@@ -1,5 +1,5 @@
 import { ApiResponse } from "../../models/apimodels";
-import { CareerPortalLink, ITabdetails, IUserDetails, UserRoleResponseDetails } from "../../models/master";
+import { CareerPortalLink, IJobGrade, ITabdetails, IUserDetails, UserRoleResponseDetails } from "../../models/master";
 
 export type IMasterService = {
     userRole(): Promise<UserRoleResponseDetails>;
@@ -7,4 +7,5 @@ export type IMasterService = {
     GetCareerPortalIntergLink(filterParam: any, filterConditions: any): Promise<ApiResponse<CareerPortalLink>>;
     GetTabDetails(filterParam: any, filterConditions: any): Promise<ApiResponse<ITabdetails>>;
     GetUserDetails(filterParam: any, filterConditions: any ): Promise<ApiResponse<IUserDetails>>;
+    GetGradeLevel(gradeId: string): Promise<ApiResponse<IJobGrade>>;
 };

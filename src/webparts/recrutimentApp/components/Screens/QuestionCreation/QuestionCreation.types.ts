@@ -16,6 +16,8 @@ export interface Question {
   questionFr: string;
   options: Option[];
   fromBank?: boolean;
+  interviewQu?: string;
+  interviewFr?: string;
 }
 
 export interface Job {

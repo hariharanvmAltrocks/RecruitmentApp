@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { RecruitmentItem, RecruitmentTabKey } from "../RecruitmentTable.types";
+import { EvalutionItem, RecruitmentItem, RecruitmentTabKey } from "../RecruitmentTable.types";
 import { DashboardServices } from "../../../../services/ServiceExport";
 import { ListNames } from "../../../../utilities/Config";
 import { MetricQueryConfig } from "../../Dashboard/metricColumns.config";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
+import { MatricID } from "../../../../utilities/ConditionConfig";
 
 interface UseRecruitmentDetailsResult {
   items: RecruitmentItem[];
@@ -85,7 +86,7 @@ interface UseRecruitmentDetailsResult {
 // ];
 
 export const useRecruitmentDetails = (activeTabKey: RecruitmentTabKey): UseRecruitmentDetailsResult => {
-  const [items, setItems] = useState<RecruitmentItem[]>([]);
+  const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const { MatricID: matricID } = useUIState();
@@ -124,7 +125,22 @@ const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
         }else {
           response = await DashboardServices.GetRecruitmentDetails([], condition);
         }
-                  const mappedItems: RecruitmentItem[] = response?.data?.map((item: any) => ({
+         let mappedItems: any[]
+        if(matricID === MatricID.EvalutionHR){
+          mappedItems  = response?.data?.map((item: any) => ({
+               id: item.RecordID,
+                    ItemID: item.ID,
+                   applicantName: item.ApplicantName,
+                        title: item.PositionTitle,
+                        nationlity: item.Nationality,
+                        interviewDate: item.InterviewDate,
+                        interviewLevels: item.interviewLevels,
+                        grade: item.JobGrade,
+                        status: item.Status,
+                        statusId: item.StatusId
+                  })) ?? [];
+        }else {
+             mappedItems = response?.data?.map((item: any) => ({
                     id: item.RecordID,
                     ItemID: item.ID,
                     jobCode: item.JobCode,
@@ -134,8 +150,10 @@ const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
                     requestType: item.Type,
                     nationality: item.Nationality,
                     status: item.Status,
+                     statusId: item.StatusId
                   })) ?? [];
-
+           
+        }
       setItems(mappedItems);
       setLoading(false);
     }, 1100);

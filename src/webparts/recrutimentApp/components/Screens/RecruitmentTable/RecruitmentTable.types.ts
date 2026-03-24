@@ -29,6 +29,20 @@ export interface RecruitmentItem {
   requestType: string;
   nationality: string;
   status: string;
+  statusId: number
+}
+
+export interface EvalutionItem {
+  id: string;
+  ItemID: number;
+  applicantName: string;
+  title: string;
+  nationlity: string;
+  interviewDate: string;
+  interviewLevels: number;
+  grade: string;
+  status: string;
+  statusId: number
 }
 
 export interface HrMember {

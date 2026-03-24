@@ -1,15 +1,16 @@
 import moment from "moment";
 import { ApiResponse } from "../../models/apimodels";
 import { count, InOperator } from "../../utilities/ApiConfig";
-import { DataFrom, ListNames } from "../../utilities/Config";
+import { DataFrom, ListNames, StatusId } from "../../utilities/Config";
 import SPServices from "../SPService/spservice";
-import { DashboardData, DataSyncToRecruitmentResponse, IDashboard } from "./IDashboard";
+import { DashboardData, DataSyncToRecruitmentResponse, IDashboard, IEvaluValidate, IInterviewPanel } from "./IDashboard";
 import { BatchQuery } from "../SPService/Ispservice";
 import { getProfileData } from "../AxiosService/CareerPortalAPI";
 import { ExternalApiCountItem, ExternalApiParams, Metric, MetricConfig } from "../../models/IDashboard";
 import { MatricColums } from "../../components/Screens/Dashboard/metricColumns.config";
-import { Nationality } from "../../utilities/ConditionConfig";
+import { InterviewLevel, Nationality } from "../../utilities/ConditionConfig";
 import { FilterItem, GetProfileByJobCode } from "../../models/Icareerportal";
+import { CommonServices, masterService } from "../ServiceExport";
 
 export default class DashboardService implements IDashboard {
 
@@ -372,37 +373,52 @@ async GetCandidateDetails(
       recruitmentFilter,
       filterConditions
     );
-     GridResult = res.map((item) => {
-        const deptDetails = DeptDetails.data.filter(
-          (dpt) => dpt.ID === item.RecruitmentID?.Id
-        );
+   GridResult = await Promise.all(
+  res.map(async (item, index) => {
+    const deptDetails = DeptDetails.data.filter(
+      (dpt) => dpt.ID === item.RecruitmentID?.Id
+    );
 
-        return {
-          ApplicantName:
-            `${item.FirstName || ""} ${item.MiddleName || ""} ${item.LastName || ""}`.trim(),
+    let GradeLevel;
+    try {
+      GradeLevel = await masterService.GetGradeLevel(item?.JobGrade);
+    } catch (err) {
+      console.error("GradeLevel API failed:", err);
+      GradeLevel = { data: [] }; // fallback
+    }
 
-          PositionTitle: item?.PositionTitle,
-          JobGrade: item?.JobGrade,
-          Nationality: item?.Nationality,
+    return {
+      ID: item.ID,
+      RecordID: index + 1,
 
-          Status: item?.Status?.StatusDescription ?? "",
-          StatusId: item?.StatusId,
+      ApplicantName:
+        `${item.FirstName || ""} ${item.MiddleName || ""} ${item.LastName || ""}`.trim(),
 
-          InterviewDate: item?.InterviewDate
-            ? moment(item.InterviewDate).format("YYYY-MM-DD")
-            : undefined,
+      PositionTitle: item?.PositionTitle,
+      JobGrade: item?.JobGrade,
+      Nationality: item?.Nationality,
 
-          ModifiedDate: item?.Modified
-            ? moment(item.Modified).format("YYYY-MM-DD")
-            : undefined,
+      interviewLevels: GradeLevel?.data || [],
 
-          CreatedDate: item?.Created
-            ? moment(item.Created).format("YYYY-MM-DD")
-            : undefined,
+      Status: item?.Status?.StatusDescription ?? "",
+      StatusId: item?.StatusId,
 
-          DeptDetails: deptDetails, // optional if needed
-        };
-      });
+      InterviewDate: item?.InterviewDate
+        ? moment(item.InterviewDate).format("YYYY-MM-DD")
+        : undefined,
+
+      ModifiedDate: item?.Modified
+        ? moment(item.Modified).format("YYYY-MM-DD")
+        : undefined,
+
+      CreatedDate: item?.Created
+        ? moment(item.Created).format("YYYY-MM-DD")
+        : undefined,
+
+      DeptDetails: deptDetails,
+    };
+  })
+);
 
     return { data: GridResult, status: 200, message: "Success" };
    }catch (error) {
@@ -695,4 +711,61 @@ async GetPositionDetails(
     return { data: [], status: 500, message: "Error fetching position details" };
   }
 }
+
+async EvalutionValidation(
+  data: IEvaluValidate
+): Promise<ApiResponse<boolean>> {
+  try {
+    const getCurrentUserId = await CommonServices.getUserGuidByEmail(
+      data.currentEmailID
+    );
+
+    const levelFilter =
+      data.statusId === StatusId.InterviewScheduled
+        ? InterviewLevel.Level1
+        : InterviewLevel.Level2;
+
+    const resdata = await SPServices.SPReadItems({
+      Listname: ListNames.HRMSInterviewPanelDetails,
+      Select: "IsScoreSheetUploaded", 
+      Filter: [
+        {
+          FilterKey: "CandidateIDId",
+          Operator: "eq",
+          FilterValue: data.ID,
+        },
+        {
+          FilterKey: "InterviewPanelId",
+          Operator: "eq",
+          FilterValue: Number(getCurrentUserId.data?.key),
+        },
+        {
+          FilterKey: "InterviewLevel",
+          Operator: "eq",
+          FilterValue: levelFilter,
+        },
+      ],
+      Topcount: 1
+    })as IInterviewPanel[];
+
+  //  const [firstItem] = resdata;
+
+// const IsSubmitted = firstItem?.IsScoreSheetUploaded === "Yes";
+const IsSubmitted = true
+    return {
+      data: IsSubmitted,
+      status: 200,
+      message: "Validation success",
+    };
+  } catch (error) {
+    console.error("EvalutionValidation error:", error);
+
+    return {
+      data: false, 
+      status: 500,
+      message: "Error fetching validation",
+    };
+  }
+}
+
 }
