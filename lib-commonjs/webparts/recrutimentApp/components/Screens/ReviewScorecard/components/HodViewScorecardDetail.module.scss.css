@@ -1,0 +1,139 @@
+.mainLayout {
+  display: flex;
+  height: 92vh;
+  background-color: #f4f7fa;
+  gap: 20px;
+  padding: 20px;
+}
+
+.sidebar {
+  width: 280px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+.sidebar .sidebarHeader {
+  margin-bottom: 30px;
+}
+.sidebar .sidebarHeader h3 {
+  color: #0b5394;
+  margin: 0;
+  font-size: 1.2rem;
+}
+.sidebar .sidebarHeader p {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.navItem {
+  padding: 14px 18px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+.navItem.active {
+  background: #0b5394;
+  color: #ffffff;
+}
+.navItem:hover:not(.active) {
+  background: #f1f5f9;
+}
+
+.contentCard {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.dynamicGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.inputBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.inputBox label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+.inputBox input {
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #1e293b;
+  font-size: 14px;
+}
+.inputBox input:focus {
+  border-color: #0b5394;
+  outline: none;
+}
+
+.modernTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+.modernTable th {
+  text-align: left;
+  background: #f8fafc;
+  padding: 15px;
+  color: #64748b;
+  font-size: 13px;
+  border-bottom: 2px solid #e2e8f0;
+}
+.modernTable td {
+  padding: 15px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+}
+
+.actionBtn {
+  background: #0b5394;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.statusPill {
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.backButton {
+  margin-top: auto;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.backButton:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}

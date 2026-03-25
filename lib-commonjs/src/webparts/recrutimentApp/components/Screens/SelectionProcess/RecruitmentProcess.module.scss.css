@@ -1,0 +1,86 @@
+.page {
+  padding: 24px 32px;
+  box-sizing: border-box;
+  height: 100%;
+  background: #f5f6fa;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.pageFormOpen {
+  padding: 0 !important;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.crumb {
+  color: #9ca3af;
+  cursor: pointer;
+  transition: color 0.12s;
+}
+.crumb:hover {
+  color: #2563eb;
+}
+
+.sep {
+  color: #d1d5db;
+}
+
+.current {
+  color: #1e2a4a;
+  font-weight: 600;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e2a4a;
+  margin: 0 0 24px;
+}
+
+.tabBar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.tabBtn {
+  padding: 9px 22px;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tabBtn:hover {
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+.active {
+  border-color: #2563eb !important;
+  color: #2563eb !important;
+  font-weight: 600;
+  background: #fff;
+}
+
+.placeholder {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 56px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+}

@@ -1,10 +1,20 @@
 "use strict";
+// ============================================================
+// components/Screens/SelectionProcess/RecruitmentProcess.tsx
+//
+// Updated from new code structure.
+// "Review Scorecard" tab now renders ReviewScorecardTab instead
+// of the placeholder. All other tabs unchanged.
+// isFormOpen bubbles to MainLayout to hide sidebar + remove padding.
+// ============================================================
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
 var react_router_dom_1 = require("react-router-dom");
 var RecruitmentProcess_module_scss_1 = tslib_1.__importDefault(require("./RecruitmentProcess.module.scss"));
 var EvaluationTab_1 = tslib_1.__importDefault(require("./tabs/EvaluationTab/EvaluationTab"));
+var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
+var Reviewscorecardtab_1 = tslib_1.__importDefault(require("./tabs/EvaluationTab/Reviewscorecardtab/Reviewscorecardtab"));
 var TABS = [
     { id: "my-submission", label: "My Submission" },
     { id: "review-advert", label: "Review Advert" },
@@ -15,28 +25,27 @@ var RecruitmentProcess = function (props) {
     var _a, _b;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var location = (0, react_router_dom_1.useLocation)();
+    var ADGroupData = (0, RoleContext_1.useRoleContext)().ADGroupData;
     var defaultTab = (_b = (_a = location.state) === null || _a === void 0 ? void 0 : _a.defaultTab) !== null && _b !== void 0 ? _b : "my-submission";
     var _c = (0, react_1.useState)(defaultTab), activeTab = _c[0], setActiveTab = _c[1];
     var _d = (0, react_1.useState)(false), isFormOpen = _d[0], setIsFormOpen = _d[1];
+    // Bubbles form-open state up to MainLayout (hides sidebar, removes padding)
     var handleFormStateChange = function (isOpen) {
-        try {
-            setIsFormOpen(isOpen);
-            if (props.onFormStateChange) {
-                props.onFormStateChange(isOpen);
-            }
-        }
-        catch (error) {
-            console.error("Error toggling form state:", error);
-        }
+        setIsFormOpen(isOpen);
+        if (props.onFormStateChange)
+            props.onFormStateChange(isOpen);
     };
     var renderContent = function () {
-        var _a, _b;
+        var _a, _b, _c, _d, _e, _f, _g;
         switch (activeTab) {
             case "Evaluation":
                 return (react_1.default.createElement(EvaluationTab_1.default, { employeeList: (_a = props.EmployeeList) !== null && _a !== void 0 ? _a : [], onFormStateChange: handleFormStateChange }));
+            // ── NEW: Review Scorecard tab ─────────────────────────
+            case "review-scorecard":
+                return (react_1.default.createElement(Reviewscorecardtab_1.default, { employeeList: (_b = props.EmployeeList) !== null && _b !== void 0 ? _b : [], userDetails: (_d = (_c = props.userDetails) !== null && _c !== void 0 ? _c : ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.RoleDetails) !== null && _d !== void 0 ? _d : [], CurrentUserEmailId: (_f = (_e = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _e === void 0 ? void 0 : _e[0]) !== null && _f !== void 0 ? _f : "", onFormStateChange: handleFormStateChange }));
             default:
-                return (react_1.default.createElement("div", { className: RecruitmentProcess_module_scss_1.default.placeholder }, (_b = TABS.find(function (t) { return t.id === activeTab; })) === null || _b === void 0 ? void 0 :
-                    _b.label,
+                return (react_1.default.createElement("div", { className: RecruitmentProcess_module_scss_1.default.placeholder }, (_g = TABS.find(function (t) { return t.id === activeTab; })) === null || _g === void 0 ? void 0 :
+                    _g.label,
                     " \u2014 coming soon."));
         }
     };

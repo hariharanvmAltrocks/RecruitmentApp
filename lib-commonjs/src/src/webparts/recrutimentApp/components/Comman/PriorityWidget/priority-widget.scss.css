@@ -1,0 +1,185 @@
+@charset "UTF-8";
+.priority-widget {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.priority-widget .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.priority-widget .header h3 {
+  font-size: 13px;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+.priority-widget .header h3::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #3B82F6;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+.priority-widget .header .manage-btn {
+  background: none;
+  border: none;
+  color: #3B82F6;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.priority-widget .header .manage-btn:hover {
+  background: #eff6ff;
+}
+.priority-widget .priority-circle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+@media (max-width: 640px) {
+  .priority-widget .priority-circle-wrapper {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+.priority-widget .circular-chart-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+.priority-widget .circular-chart-container .circular-chart {
+  display: block;
+  margin: 0 auto;
+  max-width: 80%;
+  max-height: 250px;
+}
+.priority-widget .circular-chart-container .circle-bg {
+  fill: none;
+  stroke: #f1f5f9;
+  stroke-width: 4.8;
+}
+.priority-widget .circular-chart-container .circle {
+  fill: none;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+}
+.priority-widget .circular-chart-container .total-count {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.priority-widget .circular-chart-container .total-count .count {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1;
+}
+.priority-widget .circular-chart-container .total-count .label {
+  font-size: 9px;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: 2px;
+}
+.priority-widget .list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-grow: 1;
+  width: 100%;
+}
+.priority-widget .item {
+  display: flex;
+  flex-direction: column;
+}
+.priority-widget .item .top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 2px;
+}
+.priority-widget .item .top .item-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.priority-widget .item .top .item-name .icon-bolt {
+  font-size: 14px;
+}
+.priority-widget .item .top .item-percent {
+  color: #64748b;
+  font-weight: 600;
+}
+.priority-widget .item .label {
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.priority-widget .item .bar {
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.priority-widget .item .bar .fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.5s ease-out;
+}
+.priority-widget .process-btn {
+  margin-top: auto;
+  width: 100%;
+  background: #0f172a;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+.priority-widget .process-btn::before {
+  content: "⚡";
+  color: #F59E0B;
+  font-size: 16px;
+}
+.priority-widget .process-btn:hover {
+  background: #1e293b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
+}
+.priority-widget .process-btn:active {
+  transform: translateY(0);
+}

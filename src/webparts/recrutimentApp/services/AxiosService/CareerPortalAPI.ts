@@ -29,6 +29,20 @@ export type getQuestionById = {
     category?: string,
     createdBy: string,
 }
+export type WorkflowJson = {
+    workflowStatus: string,
+    jobRequestId: number,
+    comments: string,
+    actionBy: string,
+    hrComments?: string,
+    OfferLatterPath?: string,
+    EmpContractLatterPath?: string,
+    ConsentFormPath?: string,
+    HrUserId?: string,
+    HrUserEmail?: string,
+    proofOfPaymentPath?: string,
+    signedWorkPermitPath?: string
+}
 export const InternalSign = {
     InternalSignIn: async function () {
         return await AxiosInstance.post(
@@ -37,29 +51,29 @@ export const InternalSign = {
     }
 }
 
-// export const getProfileData = {
-//     GetProfileByJobCode: async function (params: any) {
-//         return await AxiosInstance.post(
-//             `/hrms/GetProfileByJobCode?jobCode`, params
-//         );
-//     },
-//     GetJobAppliedCount: async function (params: string[]) {
-//         return await AxiosInstance.post(
-//             '/hrms/GetJobAppliedCount', params
-//         )
-//     },
-//     getCandidateProfile: async function (id: any) {
-//         return await AxiosInstance.post(
-//             `/hrms/GetMyJobsById?id=${id}`,
-//         );
-//     },
-//     UpdateCandidateStatus: async function (params: WorkflowJson) {
-//         return await AxiosInstance.post(
-//             `/hrms/UpdateWorkflowStatus`, params
-//         );
-//     }
+export const getProfileData = {
+    GetProfileByJobCode: async function (params: any) {
+        return await AxiosInstance.post(
+            `/hrms/GetProfileByJobCode?jobCode`, params
+        );
+    },
+    GetJobAppliedCount: async function (params: string[]) {
+        return await AxiosInstance.post(
+            '/hrms/GetJobAppliedCount', params
+        )
+    },
+    getCandidateProfile: async function (id: any) {
+        return await AxiosInstance.post(
+            `/hrms/GetMyJobsById?id=${id}`,
+        );
+    },
+    UpdateCandidateStatus: async function (params: WorkflowJson) {
+        return await AxiosInstance.post(
+            `/hrms/UpdateWorkflowStatus`, params
+        );
+    }
 
-// };
+};
 
 // export const postAdveDetails = {
 //     postUpsertJobs: async function (params: AdvertisementDetails) {

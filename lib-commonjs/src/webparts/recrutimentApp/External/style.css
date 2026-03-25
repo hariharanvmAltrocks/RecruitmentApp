@@ -1,0 +1,71 @@
+#workbenchPageContent {
+  max-width: 100%;
+}
+
+.content_3f3fd3c2,
+.CanvasZone {
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+
+/* site navigation & header hidden */
+[data-automationid=SiteHeader] {
+  display: none !important;
+}
+
+[role=listbox] .ms-CommandBar {
+  display: none !important;
+}
+
+#spCommandBar {
+  display: none !important;
+}
+
+#sp-appBar {
+  display: none !important;
+}
+
+[data-automationid=ShyHeader] {
+  display: none !important;
+}
+
+/* Side bar hide */
+[data-automation-id=CanvasZone] > div {
+  min-width: 101% !important;
+  /* min-width: 101% !important; */
+  max-width: 101% !important;
+  /* display: flex !important; */
+  padding: 0;
+}
+
+[data-automation-id=CanvasSection] > div {
+  margin: 0 !important;
+}
+
+.e_a_50a7110f {
+  width: 33% !important;
+  padding: 0 !important;
+}
+
+.g_a_50a7110f {
+  width: 66% !important;
+}
+
+/*new Add*/
+.h_a_50a7110f {
+  width: 100% !important;
+  margin: 0 auto !important;
+}
+
+#SuiteNavPlaceholder {
+  display: none !important;
+}
+
+/* #workbenchPageContent,
+.CanvasComponent,
+.ControlZone {
+  max-width: 100% !important;
+} */
+/* #workbenchCommandBar {
+  display: none !important;
+} */

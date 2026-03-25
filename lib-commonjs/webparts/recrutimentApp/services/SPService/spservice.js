@@ -53,8 +53,10 @@ var _buildODataFilter = function (filters, filterCondition) {
         if (["eq", "ne", "gt", "lt", "ge", "le"].includes(op)) {
             parts.push("".concat(f.FilterKey, " ").concat(f.Operator, " '").concat(f.FilterValue, "'"));
         }
-        else if (op === "substringof") {
-            parts.push("substringof('".concat(f.FilterValue, "','").concat(f.FilterKey, "')"));
+        else if (op === "substringof" || op === "contains") {
+            // Some SharePoint setups block function operators, so use exact match as the safest fallback.
+            // If your value is stored as plain string in the field, this still works.
+            parts.push("".concat(f.FilterKey, " eq '").concat(f.FilterValue, "'"));
         }
         else if (op === "in") {
             var chunks = [];

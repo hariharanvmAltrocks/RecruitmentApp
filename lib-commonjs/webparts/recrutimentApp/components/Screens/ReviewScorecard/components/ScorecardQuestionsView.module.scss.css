@@ -1,0 +1,131 @@
+.qaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: slideUp 0.3s ease-out;
+}
+
+.qaHeader {
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 10px;
+}
+.qaHeader h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.qaBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-height: 65vh;
+  overflow-y: auto;
+  padding-right: 10px;
+  /* Scrollbar Styling */
+}
+.qaBody::-webkit-scrollbar {
+  width: 5px;
+}
+.qaBody::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.qaBody::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.questionCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.questionTitle {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.questionTitle .qNumber {
+  background: #0b5394;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 4px;
+  min-width: 32px;
+  text-align: center;
+}
+.questionTitle p {
+  margin: 0;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.5;
+}
+
+.answerBox {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 12px 15px;
+  border-left: 3px solid #10b981;
+}
+.answerBox strong {
+  display: block;
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  letter-spacing: 0.025em;
+}
+.answerBox p {
+  margin: 0;
+  color: #334155;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.qaFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.closeBtn {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.closeBtn:hover {
+  background: #f1f5f9;
+  color: #0b5394;
+  border-color: #0b5394;
+}
+
+.noData {
+  text-align: center;
+  padding: 50px;
+  background: #f8fafc;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  color: #94a3b8;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

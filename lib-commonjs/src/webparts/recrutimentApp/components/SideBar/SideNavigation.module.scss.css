@@ -1,0 +1,150 @@
+.sidebar {
+  width: 240px;
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: width 0.3s ease;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.sidebar.collapsed {
+  width: 80px;
+}
+.sidebar.collapsed .logoTitle,
+.sidebar.collapsed .label,
+.sidebar.collapsed .chevron {
+  display: none;
+}
+.sidebar.collapsed .sidebarItem {
+  justify-content: center;
+  padding: 12px;
+}
+.sidebar.collapsed .submenu {
+  display: none;
+}
+
+.logoSection {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  min-height: 80px;
+}
+
+.logoIcon {
+  width: 40px;
+  height: 40px;
+  background: #f4f7ff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+  flex-shrink: 0;
+}
+
+.logoImg {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.logoTitle {
+  font-weight: bold;
+  font-size: 18px;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.nav {
+  margin-top: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebarItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #64748b;
+  margin: 0 8px;
+  border-radius: 8px;
+}
+.sidebarItem:hover {
+  background: #f8fafc;
+  color: #334155;
+}
+.sidebarItem.active {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.label {
+  font-weight: 500;
+  font-size: 14px;
+  flex: 1;
+  white-space: nowrap;
+}
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+  color: #94a3b8;
+}
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+.submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+  overflow: hidden;
+}
+.submenu .sidebarItem {
+  padding-left: 48px;
+  font-size: 13px;
+}
+.submenu .sidebarItem .icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Tablet / Mobile scaling */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 80px;
+  }
+  .sidebar .logoTitle,
+  .sidebar .label,
+  .sidebar .chevron {
+    display: none;
+  }
+  .sidebar .sidebarItem {
+    justify-content: center;
+    padding: 12px;
+  }
+  .sidebar .submenu {
+    display: none;
+  }
+}

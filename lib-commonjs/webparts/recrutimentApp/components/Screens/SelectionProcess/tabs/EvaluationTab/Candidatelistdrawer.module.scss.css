@@ -1,0 +1,279 @@
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 1100px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px 18px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e8f0fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px;
+}
+
+.jobInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.jobCode {
+  color: #1a73e8;
+  font-weight: 700;
+}
+
+.jobDot {
+  color: #9ca3af;
+}
+
+.jobTitle {
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.closeBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #4b5563;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.closeBtn:hover {
+  background: #f3f4f6;
+}
+
+.tableWrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 4px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: #9ca3af;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.row {
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.row:hover {
+  background: #f8faff;
+}
+
+.rowSelected {
+  background: #eef4ff;
+}
+
+.row td {
+  padding: 14px 16px;
+  color: #1f2937;
+  vertical-align: middle;
+}
+
+.sno {
+  font-weight: 600;
+  color: #9ca3af;
+  width: 50px;
+}
+
+.nameCell {
+  font-weight: 600;
+}
+
+.posCell {
+  color: #4b5563;
+}
+
+.gpaBadge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.statusTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #d97706;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+}
+
+.editBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.editBtn:hover {
+  background: #f9fafb;
+  color: #1a73e8;
+  border-color: #1a73e8;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.loadingWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #1a73e8;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.footerInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.footerBtns {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cancelBtn {
+  padding: 10px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #4b5563;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.cancelBtn:hover {
+  background: #f9fafb;
+}
+
+.confirmBtn {
+  padding: 10px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: #4b5563;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.confirmBtn:hover:not(.confirmBtnOff) {
+  background: #1f2937;
+}
+
+.confirmBtnOff {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

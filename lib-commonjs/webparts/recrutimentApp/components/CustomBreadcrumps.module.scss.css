@@ -1,0 +1,143 @@
+.wrapper {
+  padding: 16px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.breadcrumbNames {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.breadcrumbText {
+  color: #333947;
+  font-weight: 600;
+}
+
+.separator {
+  color: #94a3b8;
+}
+
+.rightRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.agency {
+  font-size: 0.86rem;
+  color: #0f172a;
+  background-color: #e2e8f0;
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.cancelBtn {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #475569;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.jobRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.jobValueText {
+  font-size: 0.9rem;
+  color: #1e293b;
+  padding: 4px 8px;
+  background-color: #f8fafc;
+  border-radius: 5px;
+  border: 1px solid #e2e8f0;
+}
+
+.tabRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.tabList {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tabButton {
+  font-size: 0.86rem;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #1e293b;
+}
+
+.tabActive {
+  background-color: #0f62ff;
+  color: white;
+  border-color: #0f62ff;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actionButton {
+  background-color: #0f62ff;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.controlRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.searchInput,
+.selectInput {
+  height: 34px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 0 10px;
+  font-size: 0.9rem;
+}
+
+.expandedFlag {
+  margin-left: auto;
+  color: #0f62ff;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.contentArea {
+  padding-top: 10px;
+}

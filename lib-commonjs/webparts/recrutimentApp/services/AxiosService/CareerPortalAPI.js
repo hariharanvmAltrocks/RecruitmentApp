@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.QuestionnaireApi = exports.InternalSign = void 0;
+exports.QuestionnaireApi = exports.getProfileData = exports.InternalSign = void 0;
 var tslib_1 = require("tslib");
 var axiosConfig_1 = require("./axiosConfig");
 var AxiosService_1 = tslib_1.__importDefault(require("./AxiosService"));
@@ -16,28 +16,48 @@ exports.InternalSign = {
         });
     }
 };
-// export const getProfileData = {
-//     GetProfileByJobCode: async function (params: any) {
-//         return await AxiosInstance.post(
-//             `/hrms/GetProfileByJobCode?jobCode`, params
-//         );
-//     },
-//     GetJobAppliedCount: async function (params: string[]) {
-//         return await AxiosInstance.post(
-//             '/hrms/GetJobAppliedCount', params
-//         )
-//     },
-//     getCandidateProfile: async function (id: any) {
-//         return await AxiosInstance.post(
-//             `/hrms/GetMyJobsById?id=${id}`,
-//         );
-//     },
-//     UpdateCandidateStatus: async function (params: WorkflowJson) {
-//         return await AxiosInstance.post(
-//             `/hrms/UpdateWorkflowStatus`, params
-//         );
-//     }
-// };
+exports.getProfileData = {
+    GetProfileByJobCode: function (params) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, AxiosService_1.default.post("/hrms/GetProfileByJobCode?jobCode", params)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    },
+    GetJobAppliedCount: function (params) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, AxiosService_1.default.post('/hrms/GetJobAppliedCount', params)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    },
+    getCandidateProfile: function (id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, AxiosService_1.default.post("/hrms/GetMyJobsById?id=".concat(id))];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    },
+    UpdateCandidateStatus: function (params) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, AxiosService_1.default.post("/hrms/UpdateWorkflowStatus", params)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    }
+};
 // export const postAdveDetails = {
 //     postUpsertJobs: async function (params: AdvertisementDetails) {
 //         return await AxiosInstance.post(
