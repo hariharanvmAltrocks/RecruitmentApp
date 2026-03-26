@@ -13,7 +13,8 @@ var EvaluationTable = function (_a) {
     var _d = (0, react_1.useState)(null), hoveredId = _d[0], setHoveredId = _d[1];
     var _e = (0, react_1.useState)(null), loadingId = _e[0], setLoadingId = _e[1];
     var _f = (0, react_1.useState)(1), currentPage = _f[0], setCurrentPage = _f[1];
-    var ITEMS_PER_PAGE = 5;
+    var _g = (0, react_1.useState)(5), pageSize = _g[0], setPageSize = _g[1];
+    var ITEMS_PER_PAGE = pageSize;
     var handleSort = function (key) {
         setSortDir(function (d) { return sortKey === key ? (d === "asc" ? "desc" : "asc") : "asc"; });
         setSortKey(key);
@@ -36,6 +37,23 @@ var EvaluationTable = function (_a) {
     };
     var handleNextPage = function () {
         setCurrentPage(function (prev) { return Math.min(prev + 1, totalPages); });
+    };
+    var getPageButtons = function () {
+        var maxButtons = 5;
+        if (totalPages <= maxButtons)
+            return Array.from({ length: totalPages }, function (_, i) { return i + 1; });
+        var pages = [];
+        var current = safeCurrentPage;
+        if (current <= 3) {
+            pages.push(1, 2, 3, "ellipsis", totalPages);
+        }
+        else if (current >= totalPages - 2) {
+            pages.push(1, "ellipsis", totalPages - 2, totalPages - 1, totalPages);
+        }
+        else {
+            pages.push(1, "ellipsis", current - 1, current, current + 1, "ellipsis", totalPages);
+        }
+        return pages;
     };
     var getNavigationPath = function (statusId) {
         if (statusId === EvaluationConfig_1.EvalStatusId.InterviewScheduled) {
@@ -138,26 +156,26 @@ var EvaluationTable = function (_a) {
                                 react_1.default.createElement("span", { className: "".concat(EvaluationTable_module_scss_1.default.badge, " ").concat(entry.Value === "Completed" ? EvaluationTable_module_scss_1.default.completed : EvaluationTable_module_scss_1.default.pending) }, entry.Value))); }))) : null)),
                     react_1.default.createElement("td", null,
                         react_1.default.createElement("div", { className: EvaluationTable_module_scss_1.default.actionCell },
-                            react_1.default.createElement("img", { src: require("../../../../../assets/Viewicon.svg"), alt: "View", className: "".concat(EvaluationTable_module_scss_1.default.viewIcon, " ").concat(loadingId === row.id ? EvaluationTable_module_scss_1.default.loading : ""), onClick: function () { return handleEvaluateClick(row); } }))))); }),
+                            react_1.default.createElement("button", { className: "".concat(EvaluationTable_module_scss_1.default.evaluateBtn, " ").concat(loadingId === row.id ? EvaluationTable_module_scss_1.default.loading : ""), onClick: function () { return handleEvaluateClick(row); }, disabled: loadingId === row.id }, loadingId === row.id ? "LOADING..." : "EVALUATE"))))); }),
                 paginatedRows.length === 0 && (react_1.default.createElement("tr", null,
                     react_1.default.createElement("td", { colSpan: 7, className: EvaluationTable_module_scss_1.default.empty }, "No candidates found."))))),
-        sortedRows.length > 0 && !(0, useEvaluationData_1.isSkeleton)(sortedRows[0]) && (react_1.default.createElement("div", { className: EvaluationTable_module_scss_1.default.pagination },
-            react_1.default.createElement("span", { className: EvaluationTable_module_scss_1.default.pageInfo },
+        sortedRows.length > 0 && !(0, useEvaluationData_1.isSkeleton)(sortedRows[0]) && (react_1.default.createElement("div", { className: EvaluationTable_module_scss_1.default.paginationBar },
+            react_1.default.createElement("div", { className: EvaluationTable_module_scss_1.default.paginationInfo },
                 "Showing ",
-                startIndex + 1,
+                react_1.default.createElement("strong", null, startIndex + 1),
                 " to ",
-                Math.min(startIndex + ITEMS_PER_PAGE, sortedRows.length),
+                react_1.default.createElement("strong", null, Math.min(startIndex + ITEMS_PER_PAGE, sortedRows.length)),
                 " of ",
-                sortedRows.length,
-                " entries"),
-            react_1.default.createElement("div", { className: EvaluationTable_module_scss_1.default.pageControls },
-                react_1.default.createElement("button", { onClick: handlePrevPage, disabled: safeCurrentPage === 1, className: EvaluationTable_module_scss_1.default.pageBtn }, "Prev"),
-                react_1.default.createElement("span", { className: EvaluationTable_module_scss_1.default.pageNumbers },
-                    "Page ",
-                    safeCurrentPage,
-                    " of ",
-                    totalPages),
-                react_1.default.createElement("button", { onClick: handleNextPage, disabled: safeCurrentPage === totalPages, className: EvaluationTable_module_scss_1.default.pageBtn }, "Next"))))));
+                react_1.default.createElement("strong", null, sortedRows.length),
+                " results",
+                react_1.default.createElement("span", { className: EvaluationTable_module_scss_1.default.showEntries },
+                    "SHOW",
+                    react_1.default.createElement("select", { value: pageSize, onChange: function (e) { setPageSize(Number(e.target.value)); setCurrentPage(1); } }, [5, 10, 20, 50].map(function (s) { return react_1.default.createElement("option", { key: s, value: s }, s); })),
+                    "ENTRIES")),
+            react_1.default.createElement("div", { className: EvaluationTable_module_scss_1.default.paginationControls },
+                react_1.default.createElement("button", { className: "".concat(EvaluationTable_module_scss_1.default.pageBtn, " ").concat(safeCurrentPage <= 1 ? EvaluationTable_module_scss_1.default.disabled : ""), disabled: safeCurrentPage <= 1, onClick: function () { return setCurrentPage(safeCurrentPage - 1); } }, "\u2039"),
+                getPageButtons().map(function (page, i) { return page === "ellipsis" ? (react_1.default.createElement("span", { key: "ellipsis-".concat(i), className: EvaluationTable_module_scss_1.default.ellipsis }, "...")) : (react_1.default.createElement("button", { key: page, className: "".concat(EvaluationTable_module_scss_1.default.pageBtn, " ").concat(page === safeCurrentPage ? EvaluationTable_module_scss_1.default.activePage : ""), onClick: function () { return setCurrentPage(page); } }, page)); }),
+                react_1.default.createElement("button", { className: "".concat(EvaluationTable_module_scss_1.default.pageBtn, " ").concat(safeCurrentPage >= totalPages ? EvaluationTable_module_scss_1.default.disabled : ""), disabled: safeCurrentPage >= totalPages, onClick: function () { return setCurrentPage(safeCurrentPage + 1); } }, "\u203A"))))));
 };
 exports.default = EvaluationTable;
 //# sourceMappingURL=EvaluationTable.js.map

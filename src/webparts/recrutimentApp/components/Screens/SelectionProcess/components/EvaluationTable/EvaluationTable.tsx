@@ -25,10 +25,10 @@ const EvaluationTable: React.FC<EvaluationTableProps> = ({ rows, tooltipData, cu
   const [sortDir, setSortDir] = useState<"asc"|"desc">(EvalUIConfig.DefaultSortDir);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [loadingId, setLoadingId] = useState<number | null>(null);
-  
 
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 5;
+  const [pageSize, setPageSize] = useState(5);
+  const ITEMS_PER_PAGE = pageSize;
 
   const handleSort = (key: SortKey) => {
     setSortDir((d) => sortKey === key ? (d === "asc" ? "desc" : "asc") : "asc");
@@ -54,6 +54,24 @@ const EvaluationTable: React.FC<EvaluationTableProps> = ({ rows, tooltipData, cu
 
   const handleNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+  const getPageButtons = (): Array<number | "ellipsis"> => {
+    const maxButtons = 5;
+    if (totalPages <= maxButtons) return Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    const pages: Array<number | "ellipsis"> = [];
+    const current = safeCurrentPage;
+
+    if (current <= 3) {
+      pages.push(1, 2, 3, "ellipsis", totalPages);
+    } else if (current >= totalPages - 2) {
+      pages.push(1, "ellipsis", totalPages - 2, totalPages - 1, totalPages);
+    } else {
+      pages.push(1, "ellipsis", current - 1, current, current + 1, "ellipsis", totalPages);
+    }
+
+    return pages;
   };
 
   const getNavigationPath = (statusId: number | string): string => {
@@ -152,7 +170,13 @@ const EvaluationTable: React.FC<EvaluationTableProps> = ({ rows, tooltipData, cu
                 </td>
                 <td>
                   <div className={styles.actionCell}>
-                    <img src={require("../../../../../assets/Viewicon.svg")} alt="View" className={`${styles.viewIcon} ${loadingId === (row as EvaluationCandidate).id ? styles.loading : ""}`} onClick={() => handleEvaluateClick(row as EvaluationCandidate)} />
+                    <button
+                      className={`${styles.evaluateBtn} ${loadingId === (row as EvaluationCandidate).id ? styles.loading : ""}`}
+                      onClick={() => handleEvaluateClick(row as EvaluationCandidate)}
+                      disabled={loadingId === (row as EvaluationCandidate).id}
+                    >
+                      {loadingId === (row as EvaluationCandidate).id ? "LOADING..." : "EVALUATE"}
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -163,28 +187,25 @@ const EvaluationTable: React.FC<EvaluationTableProps> = ({ rows, tooltipData, cu
       </table>
 
       {sortedRows.length > 0 && !isSkeleton(sortedRows[0]) && (
-        <div className={styles.pagination}>
-          <span className={styles.pageInfo}>
-            Showing {startIndex + 1} to {Math.min(startIndex + ITEMS_PER_PAGE, sortedRows.length)} of {sortedRows.length} entries
-          </span>
-          <div className={styles.pageControls}>
-            <button 
-              onClick={handlePrevPage} 
-              disabled={safeCurrentPage === 1}
-              className={styles.pageBtn}
-            >
-              Prev
-            </button>
-            <span className={styles.pageNumbers}>
-              Page {safeCurrentPage} of {totalPages}
+        <div className={styles.paginationBar}>
+          <div className={styles.paginationInfo}>
+            Showing <strong>{startIndex + 1}</strong> to <strong>{Math.min(startIndex + ITEMS_PER_PAGE, sortedRows.length)}</strong> of <strong>{sortedRows.length}</strong> results
+            <span className={styles.showEntries}>
+              SHOW
+              <select value={pageSize} onChange={e => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}>
+                {[5, 10, 20, 50].map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+              ENTRIES
             </span>
-            <button 
-              onClick={handleNextPage} 
-              disabled={safeCurrentPage === totalPages}
-              className={styles.pageBtn}
-            >
-              Next
-            </button>
+          </div>
+          <div className={styles.paginationControls}>
+            <button className={`${styles.pageBtn} ${safeCurrentPage <= 1 ? styles.disabled : ""}`} disabled={safeCurrentPage <= 1} onClick={() => setCurrentPage(safeCurrentPage - 1)}>‹</button>
+            {getPageButtons().map((page, i) => page === "ellipsis" ? (
+              <span key={`ellipsis-${i}`} className={styles.ellipsis}>...</span>
+            ) : (
+              <button key={page} className={`${styles.pageBtn} ${page === safeCurrentPage ? styles.activePage : ""}`} onClick={() => setCurrentPage(page)}>{page}</button>
+            ))}
+            <button className={`${styles.pageBtn} ${safeCurrentPage >= totalPages ? styles.disabled : ""}`} disabled={safeCurrentPage >= totalPages} onClick={() => setCurrentPage(safeCurrentPage + 1)}>›</button>
           </div>
         </div>
       )}
