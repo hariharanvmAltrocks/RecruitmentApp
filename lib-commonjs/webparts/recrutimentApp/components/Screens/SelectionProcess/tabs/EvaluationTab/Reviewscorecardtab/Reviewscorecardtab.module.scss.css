@@ -1135,6 +1135,21 @@
   letter-spacing: 0.05em;
 }
 
+.breadcrumbLink {
+  border: none;
+  background: none;
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0;
+}
+
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+
 .mBreadcrumbActive {
   color: #2563eb;
 }

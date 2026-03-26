@@ -243,7 +243,7 @@ const JobListTable: React.FC<any> = ({
 }) => (
   <div className={styles.card}>
     <div className={styles.cardHeader}>
-      <h2>Review Scorecards</h2>
+      <h2>Review Score Card</h2>
       <button onClick={onBack} className={styles.backButton}><RotateCcw size={14} /> BACK TO DASHBOARD</button>
     </div>
     <div className={styles.tableContainer}>
@@ -619,14 +619,14 @@ const CandidateReviewModal: React.FC<{
         <div className={styles.mHeader}>
           <div className={styles.mHeaderLeft}>
             <div className={styles.mBreadcrumb}>
-              <span>CANDIDATE SELECTION</span>
+              <span>Candidate Selection</span>
               <ChevronRight size={11} />
-              <span className={styles.mBreadcrumbActive}>EVALUATION PREVIEW</span>
+              <span className={styles.mBreadcrumbActive}>Candidate Selection REVIEW SCORE CARD</span>
             </div>
             <div className={styles.mTitleRow}>
               <div className={styles.mIconBox}><Users size={20} /></div>
               <div>
-                <h2 className={styles.mTitle}>Candidate Evaluation Review</h2>
+                <h2 className={styles.mTitle}>Candidate Selection Review Score Card</h2>
                 <p className={styles.mSubtitle}>
                   <span className={styles.mJobCode}>{job?.jobCode || "—"}</span>
                   <span className={styles.mDot}>›</span>

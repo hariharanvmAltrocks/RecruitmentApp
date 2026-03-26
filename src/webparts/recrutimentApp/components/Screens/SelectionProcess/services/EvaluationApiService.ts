@@ -951,12 +951,13 @@ export const evaluationService = {
 
       // ── STEP 2: Fetch scorecards for this candidate ───────────────────────
       // Old getCandidateScoreCard uses: InterviewPanelID/CandidateID/ID eq candidateID
+      
       const scoreItems: any[] = await SPServices.SPReadItems({
+        
         Listname: ListNames.HRMSCandidateScoreCard,
         Select:   "InterviewPanelID/ID, Feedback, OverAllEvaluationFeedback, Role/RoleTitle, InterviewPersonName/Title, Author/Title, Author/EMail, Created, QuestionJson, RecruitmentID/ID",
         Expand:   "InterviewPanelID, Role, InterviewPersonName, Author, RecruitmentID",
-        FilterCondition: "and",
-        Filter: [
+        FilterCondition: [
           {
             FilterKey: "InterviewPanelID/CandidateID/ID",
             Operator:  "eq",

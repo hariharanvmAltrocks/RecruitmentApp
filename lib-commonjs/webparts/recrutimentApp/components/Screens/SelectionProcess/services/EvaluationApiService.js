@@ -1162,8 +1162,7 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSCandidateScoreCard,
                                 Select: "InterviewPanelID/ID, Feedback, OverAllEvaluationFeedback, Role/RoleTitle, InterviewPersonName/Title, Author/Title, Author/EMail, Created, QuestionJson, RecruitmentID/ID",
                                 Expand: "InterviewPanelID, Role, InterviewPersonName, Author, RecruitmentID",
-                                FilterCondition: "and",
-                                Filter: [
+                                FilterCondition: [
                                     {
                                         FilterKey: "InterviewPanelID/CandidateID/ID",
                                         Operator: "eq",
