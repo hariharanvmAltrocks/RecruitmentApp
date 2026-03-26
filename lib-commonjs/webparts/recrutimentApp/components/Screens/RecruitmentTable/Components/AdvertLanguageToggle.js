@@ -73,7 +73,7 @@ var AdvertLanguageToggle = function (_a) {
                 "Job Description (",
                 advertLanguage,
                 ")"),
-            isLoading ? (react_1.default.createElement(SkeletonBlock, { height: "72px" })) : (react_1.default.createElement("p", { className: "advert-review-drawer__description" }, (advertContent === null || advertContent === void 0 ? void 0 : advertContent.description) || "—"))),
+            isLoading ? (react_1.default.createElement(SkeletonBlock, { height: "72px" })) : (react_1.default.createElement("p", { className: "advert-review-drawer__description" }, (advertContent === null || advertContent === void 0 ? void 0 : advertContent.description) || ""))),
         react_1.default.createElement(Section, { title: "Key Responsibilities (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 12 }), isLoading: isLoading, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.responsibilities) }, responsibilitiesList),
         react_1.default.createElement(Section, { title: "Preferred Total Experience (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Activity, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.experience) }, experienceList),
         react_1.default.createElement("div", { className: "advert-review-drawer__grid advert-review-drawer__grid--split" },
