@@ -79,7 +79,6 @@ var Header = function (_a) {
     var user = _a.user, menuData = _a.menuData, onToggleSidebar = _a.onToggleSidebar, onLogout = _a.onLogout, isFormOpen = _a.isFormOpen;
     var pathname = (0, react_router_dom_1.useLocation)().pathname;
     var breadcrumbs = (0, react_1.useMemo)(function () { return (0, menuUtils_1.findBreadcrumbPath)(menuData, pathname); }, [menuData, pathname]);
-    // Form-ஐ Close செய்ய Custom Event அனுப்புகிறோம்
     var handleCloseForm = function (e) {
         e.preventDefault();
         window.dispatchEvent(new Event("close-evaluation-form"));

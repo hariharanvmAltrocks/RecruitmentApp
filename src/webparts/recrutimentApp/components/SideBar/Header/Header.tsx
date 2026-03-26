@@ -98,8 +98,6 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ user, menuData, onToggleSidebar, onLogout, isFormOpen }) => {
   const { pathname } = useLocation();
   const breadcrumbs = useMemo(() => findBreadcrumbPath(menuData, pathname), [menuData, pathname]);
-
-  // Form-ஐ Close செய்ய Custom Event அனுப்புகிறோம்
   const handleCloseForm = (e: React.MouseEvent) => {
     e.preventDefault();
     window.dispatchEvent(new Event("close-evaluation-form"));
@@ -126,8 +124,7 @@ const Header: React.FC<HeaderProps> = ({ user, menuData, onToggleSidebar, onLogo
                 
                 <Link to="/Dashboard">DASHBOARD</Link>
                 <ChevronRight size={10} strokeWidth={3} className="crumb-icon" />
-                
-                {/* PUTHITHU: Reload-க்கு பதிலாக Custom Event Trigger செய்கிறோம் */}
+              
                 <Link to="#" onClick={handleCloseForm}>
                   CANDIDATE EVALUATIONS
                 </Link>
