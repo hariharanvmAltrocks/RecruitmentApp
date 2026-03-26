@@ -591,64 +591,75 @@ exports.evaluationService = {
     // ─────────────────────────────────────────────────────────────
     updateCandidateStatusFull: function (params) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var candidateId, hodDecision, comments, currentUserEmail, currentRoleId, gpa, positionId, isLevel2, jobCodeID, recruitmentID, statusId, currentUserGuid_2, matchingPanels, userPanels, _i, userPanels_1, panel, allPanels, level2Panels, uploadedCount, workflowStatus, wfErr_1, actionId, newStatusId, error_4;
+            var candidateId, hodDecision, comments, currentUserEmail, currentRoleId, gpa, positionId, isLevel2, jobCodeID, recruitmentID, statusId, currentUserGuid_2, interviewLevel2, level, _2, matchingPanels, userPanels, _i, userPanels_1, panel, allPanels, level2Panels, uploadedCount, interviewLevel, level, _3, workflowStatus, wfErr_1, actionId, newStatusId, error_4;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         candidateId = params.candidateId, hodDecision = params.hodDecision, comments = params.comments, currentUserEmail = params.currentUserEmail, currentRoleId = params.currentRoleId, gpa = params.gpa, positionId = params.positionId, isLevel2 = params.isLevel2, jobCodeID = params.jobCodeID, recruitmentID = params.recruitmentID, statusId = params.statusId;
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 21, , 22]);
+                        _a.trys.push([1, 29, , 30]);
                         return [4 /*yield*/, this.getCurrentUserGuid(currentUserEmail)];
                     case 2:
                         currentUserGuid_2 = _a.sent();
-                        if (!(statusId === Config_1.StatusId.InterviewScheduledforLevel2)) return [3 /*break*/, 12];
-                        // Step 1: Insert or Update Level2 scorecard comment
-                        return [4 /*yield*/, _insertOrUpdateLevel2Comment(candidateId, currentRoleId, comments)];
+                        if (!(statusId === Config_1.StatusId.InterviewScheduledforLevel2)) return [3 /*break*/, 16];
+                        interviewLevel2 = "";
+                        _a.label = 3;
                     case 3:
-                        // Step 1: Insert or Update Level2 scorecard comment
+                        _a.trys.push([3, 5, , 6]);
+                        return [4 /*yield*/, exports.evaluationService.getGradeAndLevel(recruitmentID)];
+                    case 4:
+                        level = (_a.sent()).level;
+                        interviewLevel2 = level || "";
+                        return [3 /*break*/, 6];
+                    case 5:
+                        _2 = _a.sent();
+                        return [3 /*break*/, 6];
+                    case 6: return [4 /*yield*/, _insertOrUpdateLevel2Comment(candidateId, currentRoleId, comments, interviewLevel2)];
+                    case 7:
                         _a.sent();
-                        if (!currentUserGuid_2) return [3 /*break*/, 8];
+                        if (!currentUserGuid_2) return [3 /*break*/, 12];
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
-                                Select: "ID,InterviewPanel/Id,InterviewLevel",
-                                Expand: "InterviewPanel",
+                                Select: "ID,InterviewPanel/Id,InterviewLevel,CandidateID/ID",
+                                Expand: "InterviewPanel,CandidateID",
                                 Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateId }],
                             })];
-                    case 4:
+                    case 8:
                         matchingPanels = _a.sent();
                         userPanels = matchingPanels.filter(function (p) {
-                            var _a, _b;
+                            var _a, _b, _c, _d, _e, _f;
                             return ((_b = (_a = p.InterviewPanel) === null || _a === void 0 ? void 0 : _a.Id) === null || _b === void 0 ? void 0 : _b.toString()) === currentUserGuid_2 &&
-                                p.CandidateID === candidateId;
+                                // CandidateID is expanded — compare using the ID sub-field
+                                ((_f = (_d = (_c = p.CandidateID) === null || _c === void 0 ? void 0 : _c.ID) !== null && _d !== void 0 ? _d : (_e = p.CandidateID) === null || _e === void 0 ? void 0 : _e.Id) !== null && _f !== void 0 ? _f : p.CandidateIDId) === candidateId;
                         });
                         _i = 0, userPanels_1 = userPanels;
-                        _a.label = 5;
-                    case 5:
-                        if (!(_i < userPanels_1.length)) return [3 /*break*/, 8];
+                        _a.label = 9;
+                    case 9:
+                        if (!(_i < userPanels_1.length)) return [3 /*break*/, 12];
                         panel = userPanels_1[_i];
                         return [4 /*yield*/, spservice_1.default.SPUpdateItem({
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                                 RequestJSON: { IsScoreSheetUploaded: "Yes" },
                                 ID: panel.ID,
                             })];
-                    case 6:
+                    case 10:
                         _a.sent();
-                        _a.label = 7;
-                    case 7:
+                        _a.label = 11;
+                    case 11:
                         _i++;
-                        return [3 /*break*/, 5];
-                    case 8: return [4 /*yield*/, spservice_1.default.SPReadItems({
+                        return [3 /*break*/, 9];
+                    case 12: return [4 /*yield*/, spservice_1.default.SPReadItems({
                             Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                             Select: "ID,InterviewLevel,IsScoreSheetUploaded,CandidateID/Id",
                             Expand: "CandidateID",
                             Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateId }],
                         })];
-                    case 9:
+                    case 13:
                         allPanels = _a.sent();
                         level2Panels = allPanels.filter(function (p) { return p.InterviewLevel === EvaluationConfig_1.InterviewLevels.Level2; });
                         uploadedCount = level2Panels.filter(function (p) { return p.IsScoreSheetUploaded === "Yes"; }).length;
-                        if (!(uploadedCount === level2Panels.length && level2Panels.length > 0)) return [3 /*break*/, 11];
+                        if (!(uploadedCount === level2Panels.length && level2Panels.length > 0)) return [3 /*break*/, 15];
                         return [4 /*yield*/, spservice_1.default.SPUpdateItem({
                                 Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
                                 RequestJSON: {
@@ -658,28 +669,36 @@ exports.evaluationService = {
                                 },
                                 ID: candidateId,
                             })];
-                    case 10:
+                    case 14:
                         _a.sent();
-                        _a.label = 11;
-                    case 11: return [2 /*return*/, { success: true, message: "Level 2 scorecard comment submitted successfully." }];
-                    case 12: 
-                    // ── BRANCH 2: Level 1 / HOD decision ─────────────────────────────────
-                    // Step 1: Insert or Update Level1 comment
-                    return [4 /*yield*/, _insertOrUpdateLevel1Comment(candidateId, currentRoleId, comments)];
-                    case 13:
-                        // ── BRANCH 2: Level 1 / HOD decision ─────────────────────────────────
-                        // Step 1: Insert or Update Level1 comment
+                        _a.label = 15;
+                    case 15: return [2 /*return*/, { success: true, message: "Level 2 scorecard comment submitted successfully." }];
+                    case 16:
+                        interviewLevel = "";
+                        _a.label = 17;
+                    case 17:
+                        _a.trys.push([17, 19, , 20]);
+                        return [4 /*yield*/, exports.evaluationService.getGradeAndLevel(recruitmentID)];
+                    case 18:
+                        level = (_a.sent()).level;
+                        interviewLevel = level || "";
+                        return [3 /*break*/, 20];
+                    case 19:
+                        _3 = _a.sent();
+                        return [3 /*break*/, 20];
+                    case 20: return [4 /*yield*/, _insertOrUpdateLevel1Comment(candidateId, currentRoleId, comments, interviewLevel)];
+                    case 21:
                         _a.sent();
-                        if (!positionId) return [3 /*break*/, 15];
+                        if (!positionId) return [3 /*break*/, 23];
                         return [4 /*yield*/, _assignPositionID({
                                 positionId: positionId,
                                 candidateId: candidateId,
                                 recruitmentID: recruitmentID,
                             })];
-                    case 14:
+                    case 22:
                         _a.sent();
-                        _a.label = 15;
-                    case 15:
+                        _a.label = 23;
+                    case 23:
                         workflowStatus = "";
                         switch (hodDecision) {
                             case "Yes":
@@ -692,9 +711,9 @@ exports.evaluationService = {
                                 workflowStatus = "OnHold";
                                 break;
                         }
-                        _a.label = 16;
-                    case 16:
-                        _a.trys.push([16, 18, , 19]);
+                        _a.label = 24;
+                    case 24:
+                        _a.trys.push([24, 26, , 27]);
                         // Mirrors old code: getProfileData.UpdateCandidateStatus
                         return [4 /*yield*/, CareerPortalAPI_1.getProfileData.UpdateCandidateStatus({
                                 workflowStatus: workflowStatus,
@@ -702,15 +721,15 @@ exports.evaluationService = {
                                 comments: comments,
                                 actionBy: "HOD",
                             })];
-                    case 17:
+                    case 25:
                         // Mirrors old code: getProfileData.UpdateCandidateStatus
                         _a.sent();
-                        return [3 /*break*/, 19];
-                    case 18:
+                        return [3 /*break*/, 27];
+                    case 26:
                         wfErr_1 = _a.sent();
                         console.warn("[updateCandidateStatusFull] WorkflowApi call failed (non-fatal):", wfErr_1);
-                        return [3 /*break*/, 19];
-                    case 19:
+                        return [3 /*break*/, 27];
+                    case 27:
                         actionId = 0;
                         newStatusId = statusId;
                         switch (hodDecision) {
@@ -760,14 +779,14 @@ exports.evaluationService = {
                                     OthersInterviewed: "No",
                                 },
                             })];
-                    case 20:
+                    case 28:
                         _a.sent();
                         return [2 /*return*/, { success: true, message: "Candidate status updated successfully." }];
-                    case 21:
+                    case 29:
                         error_4 = _a.sent();
                         console.error("[updateCandidateStatusFull] error:", error_4);
                         return [2 /*return*/, { success: false, message: (error_4 === null || error_4 === void 0 ? void 0 : error_4.message) || "An error occurred." }];
-                    case 22: return [2 /*return*/];
+                    case 30: return [2 /*return*/];
                 }
             });
         });
@@ -962,11 +981,11 @@ exports.evaluationService = {
     fetchScoreData: function (candidateID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var panels, results, _i, _a, p, sc, s, e_11;
-            var _b;
-            return tslib_1.__generator(this, function (_c) {
-                switch (_c.label) {
+            var _b, _c;
+            return tslib_1.__generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        _c.trys.push([0, 6, , 7]);
+                        _d.trys.push([0, 6, , 7]);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                                 Select: "ID,InterviewPanel/Id,InterviewPanel/Title,InterviewLevel",
@@ -974,10 +993,10 @@ exports.evaluationService = {
                                 Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateID }],
                             })];
                     case 1:
-                        panels = _c.sent();
+                        panels = _d.sent();
                         results = [];
                         _i = 0, _a = (panels || []);
-                        _c.label = 2;
+                        _d.label = 2;
                     case 2:
                         if (!(_i < _a.length)) return [3 /*break*/, 5];
                         p = _a[_i];
@@ -987,9 +1006,22 @@ exports.evaluationService = {
                                 Filter: [{ FilterKey: "InterviewPanelIDId", Operator: "eq", FilterValue: p.ID }],
                             })];
                     case 3:
-                        sc = _c.sent();
+                        sc = _d.sent();
                         if (sc === null || sc === void 0 ? void 0 : sc.length) {
                             s = sc[0];
+                            // DEBUG: verify panel score values coming from API for this panel member
+                            console.log("[fetchScoreData] candidateID:", candidateID, "panelID:", p.ID, "panelName:", (_b = p.InterviewPanel) === null || _b === void 0 ? void 0 : _b.Title);
+                            console.log("[fetchScoreData] raw scorecard response:", s);
+                            console.log("[fetchScoreData] mapped score values:", {
+                                RelevantQualification: s.RelevantQualification || "0",
+                                ReleventExperience: s.ReleventExperience || "0",
+                                Knowledge: s.Knowledge || "0",
+                                EnergyLevel: s.EnergyLevel || "0",
+                                MeetJobRequirement: s.MeetJobRequirement || "0",
+                                ContributeTowardsCultureRequried: s.ContributeTowardsCultureRequried || "0",
+                                Experience: s.Experience || "0",
+                                OtherCriteriaScore: s.OtherCriteriaScore || "0",
+                            });
                             results.push({
                                 InterviewPanelID: p.ID,
                                 RelevantQualification: s.RelevantQualification || "0",
@@ -1003,17 +1035,17 @@ exports.evaluationService = {
                                 ConsiderForEmployment: s.ConsiderForEmployment || "",
                                 OverAllEvaluationFeedback: s.OverAllEvaluationFeedback || "",
                                 QuestionJson: _parseJson(s.QuestionJson),
-                                InterviewPersonName: ((_b = p.InterviewPanel) === null || _b === void 0 ? void 0 : _b.Title) || "",
+                                InterviewPersonName: ((_c = p.InterviewPanel) === null || _c === void 0 ? void 0 : _c.Title) || "",
                                 CreatedDate: s.Created || "",
                             });
                         }
-                        _c.label = 4;
+                        _d.label = 4;
                     case 4:
                         _i++;
                         return [3 /*break*/, 2];
                     case 5: return [2 /*return*/, results];
                     case 6:
-                        e_11 = _c.sent();
+                        e_11 = _d.sent();
                         console.error("[fetchScoreData] error", e_11);
                         return [2 /*return*/, []];
                     case 7: return [2 /*return*/];
@@ -1088,51 +1120,202 @@ exports.evaluationService = {
             });
         });
     },
+    // ─────────────────────────────────────────────────────────────────────────
+    // fetchComments
+    //
+    // MIRRORS old HodViewScorecard OpenComments() exactly:
+    //
+    // Level 1 source: HRMSCandidateScoreCard (joined through InterviewPanel)
+    //   Old code: InterviewServices.getInterviewPanelDetails(filterConditions, "", candidateID, EmployeeList)
+    //   → internally calls getCandidateScoreCard which filters by:
+    //       InterviewPanelID/CandidateID/ID eq candidateID
+    //   → maps: Feedback → comments, OverAllEvaluationFeedback, Role.RoleTitle → RoleName
+    //           Author → Name, JobTitleInEnglish, JobTitleInFrench, Department (from EmployeeList)
+    //
+    // Level 2 source: HRMSCandidateLevel2ScoreCard
+    //   Old code: InterviewServices.getCandidateLevel2ScoreCardData(...)
+    //   → filters by CandidateIDId eq candidateID
+    //   → maps: Comments → comments, Role.RoleTitle → RoleName, Author → Name
+    //
+    // Image 3 shows: "Submitted by Recruitment HR" → "Overall Feedback Level 1" → value
+    // This "Overall Feedback Level 1" = HRMSCandidateScoreCard.OverAllEvaluationFeedback
+    // "Feedback Level 1" = HRMSCandidateScoreCard.Feedback
+    // ─────────────────────────────────────────────────────────────────────────
     fetchComments: function (candidateID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var filter, _a, l1, l2, toEntry, e_13;
-            return tslib_1.__generator(this, function (_b) {
-                switch (_b.label) {
+            var panelItems, scoreItems, scorecardMap_1, authorEmails, emailToEmployee_1, _4, level1, seen, _i, _a, panel, panelID, scoreCard, authorEmail, employee, firstName, middleName, lastName, fullName, jobTitleEn, jobTitleFr, department, l2Items, l2AuthorEmails, l2EmailToEmployee_1, _5, level2, e_13;
+            var _this = this;
+            var _b, _c, _d;
+            return tslib_1.__generator(this, function (_e) {
+                switch (_e.label) {
                     case 0:
-                        _b.trys.push([0, 2, , 3]);
-                        filter = [{ FilterKey: "CandidateIDId", Operator: "eq", FilterValue: candidateID }];
-                        return [4 /*yield*/, Promise.all([
-                                spservice_1.default.SPReadItems({
-                                    Listname: Config_1.ListNames.HRMSRecruitmentCandidateComments,
-                                    Select: "*,Author/Title,Author/EMail",
-                                    Expand: "Author",
-                                    Filter: filter,
-                                }),
-                                spservice_1.default.SPReadItems({
-                                    Listname: Config_1.ListNames.HRMSCandidateLevel2ScoreCard,
-                                    Select: "*",
-                                    Filter: filter,
-                                }),
-                            ])];
+                        _e.trys.push([0, 12, , 13]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
+                                Select: "ID, CandidateID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail",
+                                Expand: "InterviewPanel, CandidateID",
+                                Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateID }],
+                            }).catch(function () { return []; })];
                     case 1:
-                        _a = _b.sent(), l1 = _a[0], l2 = _a[1];
-                        toEntry = function (item) {
-                            var _a;
-                            return ({
-                                Id: item.ID,
-                                Name: item.Name || ((_a = item.Author) === null || _a === void 0 ? void 0 : _a.Title) || "",
-                                JobTitleInEnglish: item.JobTitleInEnglish || "",
-                                JobTitleInFrench: item.JobTitleInFrench || "",
-                                Department: item.Department || "",
-                                Date: item.Created,
-                                RoleName: item.RoleName || "",
-                                comments: item.Comments || "",
-                                OverAllEvaluationFeedback: item.OverAllEvaluationFeedback || "",
-                            });
-                        };
-                        return [2 /*return*/, {
-                                level1: (l1 || []).map(toEntry),
-                                level2: (l2 || []).map(toEntry),
-                            }];
+                        panelItems = _e.sent();
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSCandidateScoreCard,
+                                Select: "InterviewPanelID/ID, Feedback, OverAllEvaluationFeedback, Role/RoleTitle, InterviewPersonName/Title, Author/Title, Author/EMail, Created, QuestionJson, RecruitmentID/ID",
+                                Expand: "InterviewPanelID, Role, InterviewPersonName, Author, RecruitmentID",
+                                FilterCondition: [
+                                    {
+                                        FilterKey: "InterviewPanelID/CandidateID/ID",
+                                        Operator: "eq",
+                                        FilterValue: candidateID,
+                                    },
+                                ],
+                            }).catch(function () { return []; })];
                     case 2:
-                        e_13 = _b.sent();
+                        scoreItems = _e.sent();
+                        scorecardMap_1 = new Map();
+                        (scoreItems || []).forEach(function (sc) {
+                            var _a;
+                            var pid = ((_a = sc.InterviewPanelID) === null || _a === void 0 ? void 0 : _a.ID) || 0;
+                            if (pid)
+                                scorecardMap_1.set(pid, sc);
+                        });
+                        authorEmails = Array.from(new Set((scoreItems || [])
+                            .map(function (sc) { var _a; return (_a = sc.Author) === null || _a === void 0 ? void 0 : _a.EMail; })
+                            .filter(Boolean)));
+                        emailToEmployee_1 = {};
+                        if (!(authorEmails.length > 0)) return [3 /*break*/, 6];
+                        _e.label = 3;
+                    case 3:
+                        _e.trys.push([3, 5, , 6]);
+                        return [4 /*yield*/, Promise.all(authorEmails.map(function (email) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var sage;
+                                return tslib_1.__generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                                Listname: Config_1.ListNames.HRMSSageList,
+                                                Select: "EmailId, FirstName, MiddleName, LastName, JobTitle, JobTitleInEnglish, JobTitleInFrench, Department, DepartmentName",
+                                                Filter: [{ FilterKey: "EmailId", Operator: "eq", FilterValue: email }],
+                                            })];
+                                        case 1:
+                                            sage = _a.sent();
+                                            if (sage === null || sage === void 0 ? void 0 : sage.length)
+                                                emailToEmployee_1[email.toLowerCase()] = sage[0];
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }))];
+                    case 4:
+                        _e.sent();
+                        return [3 /*break*/, 6];
+                    case 5:
+                        _4 = _e.sent();
+                        return [3 /*break*/, 6];
+                    case 6:
+                        level1 = [];
+                        seen = new Set();
+                        for (_i = 0, _a = (panelItems || []); _i < _a.length; _i++) {
+                            panel = _a[_i];
+                            panelID = panel.ID;
+                            scoreCard = scorecardMap_1.get(panelID);
+                            if (!scoreCard)
+                                continue;
+                            if (seen.has(panelID))
+                                continue;
+                            seen.add(panelID);
+                            authorEmail = (((_b = scoreCard.Author) === null || _b === void 0 ? void 0 : _b.EMail) || "").toLowerCase();
+                            employee = emailToEmployee_1[authorEmail];
+                            firstName = (employee === null || employee === void 0 ? void 0 : employee.FirstName) || "";
+                            middleName = (employee === null || employee === void 0 ? void 0 : employee.MiddleName) || "";
+                            lastName = (employee === null || employee === void 0 ? void 0 : employee.LastName) || "";
+                            fullName = [firstName, middleName, lastName].filter(Boolean).join(" ").trim()
+                                || ((_c = scoreCard.Author) === null || _c === void 0 ? void 0 : _c.Title) || "";
+                            jobTitleEn = (employee === null || employee === void 0 ? void 0 : employee.JobTitleInEnglish) || (employee === null || employee === void 0 ? void 0 : employee.JobTitle) || "";
+                            jobTitleFr = (employee === null || employee === void 0 ? void 0 : employee.JobTitleInFrench) || "";
+                            department = (employee === null || employee === void 0 ? void 0 : employee.DepartmentName) || (employee === null || employee === void 0 ? void 0 : employee.Department) || "";
+                            level1.push({
+                                Id: panelID,
+                                Name: fullName,
+                                JobTitleInEnglish: jobTitleEn,
+                                JobTitleInFrench: jobTitleFr,
+                                Department: department,
+                                Date: scoreCard.Created || null,
+                                // RoleName: old code uses Role?.RoleTitle from scorecard
+                                RoleName: ((_d = scoreCard.Role) === null || _d === void 0 ? void 0 : _d.RoleTitle) || "",
+                                // comments = Feedback field (NOT Comments field) from HRMSCandidateScoreCard
+                                comments: scoreCard.Feedback || "",
+                                OverAllEvaluationFeedback: scoreCard.OverAllEvaluationFeedback || "",
+                                Level: "Level 1",
+                            });
+                        }
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSCandidateLevel2ScoreCard,
+                                Select: "ID, CandidateID/ID, CandidateID/Title, Comments, Role/ID, Role/RoleTitle, Level, Author/Title, Author/EMail, Created",
+                                Expand: "CandidateID, Role, Author",
+                                Filter: [{ FilterKey: "CandidateIDId", Operator: "eq", FilterValue: candidateID }],
+                            }).catch(function () { return []; })];
+                    case 7:
+                        l2Items = _e.sent();
+                        l2AuthorEmails = Array.from(new Set((l2Items || []).map(function (i) { var _a; return (_a = i.Author) === null || _a === void 0 ? void 0 : _a.EMail; }).filter(Boolean)));
+                        l2EmailToEmployee_1 = tslib_1.__assign({}, emailToEmployee_1);
+                        if (!(l2AuthorEmails.length > 0)) return [3 /*break*/, 11];
+                        _e.label = 8;
+                    case 8:
+                        _e.trys.push([8, 10, , 11]);
+                        return [4 /*yield*/, Promise.all(l2AuthorEmails
+                                .filter(function (e) { return !l2EmailToEmployee_1[e.toLowerCase()]; })
+                                .map(function (email) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var sage;
+                                return tslib_1.__generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                                Listname: Config_1.ListNames.HRMSSageList,
+                                                Select: "EmailId, FirstName, MiddleName, LastName, JobTitle, JobTitleInEnglish, JobTitleInFrench, Department, DepartmentName",
+                                                Filter: [{ FilterKey: "EmailId", Operator: "eq", FilterValue: email }],
+                                            })];
+                                        case 1:
+                                            sage = _a.sent();
+                                            if (sage === null || sage === void 0 ? void 0 : sage.length)
+                                                l2EmailToEmployee_1[email.toLowerCase()] = sage[0];
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }))];
+                    case 9:
+                        _e.sent();
+                        return [3 /*break*/, 11];
+                    case 10:
+                        _5 = _e.sent();
+                        return [3 /*break*/, 11];
+                    case 11:
+                        level2 = (l2Items || []).map(function (item) {
+                            var _a, _b, _c;
+                            var authorEmail = (((_a = item.Author) === null || _a === void 0 ? void 0 : _a.EMail) || "").toLowerCase();
+                            var employee = l2EmailToEmployee_1[authorEmail];
+                            var firstName = (employee === null || employee === void 0 ? void 0 : employee.FirstName) || "";
+                            var middleName = (employee === null || employee === void 0 ? void 0 : employee.MiddleName) || "";
+                            var lastName = (employee === null || employee === void 0 ? void 0 : employee.LastName) || "";
+                            var fullName = [firstName, middleName, lastName].filter(Boolean).join(" ").trim()
+                                || ((_b = item.Author) === null || _b === void 0 ? void 0 : _b.Title) || "";
+                            return {
+                                Id: item.ID,
+                                Name: fullName,
+                                JobTitleInEnglish: (employee === null || employee === void 0 ? void 0 : employee.JobTitleInEnglish) || (employee === null || employee === void 0 ? void 0 : employee.JobTitle) || "",
+                                JobTitleInFrench: (employee === null || employee === void 0 ? void 0 : employee.JobTitleInFrench) || "",
+                                Department: (employee === null || employee === void 0 ? void 0 : employee.DepartmentName) || (employee === null || employee === void 0 ? void 0 : employee.Department) || "",
+                                Date: item.Created || null,
+                                RoleName: ((_c = item.Role) === null || _c === void 0 ? void 0 : _c.RoleTitle) || "",
+                                comments: item.Comments || "",
+                                OverAllEvaluationFeedback: "",
+                                Level: "Level 2",
+                            };
+                        });
+                        console.log("[fetchComments] candidateID:", candidateID, "level1 count:", level1.length, "level2 count:", level2.length, "level1:", level1, "level2:", level2);
+                        return [2 /*return*/, { level1: level1, level2: level2 }];
+                    case 12:
+                        e_13 = _e.sent();
+                        console.error("[fetchComments] error:", e_13);
                         return [2 /*return*/, { level1: [], level2: [] }];
-                    case 3: return [2 /*return*/];
+                    case 13: return [2 /*return*/];
                 }
             });
         });
@@ -1206,9 +1389,10 @@ function _parseJson(raw) {
     }
 }
 // Mirrors old insertOrUpdateCandidateCommentLevel1()
-function _insertOrUpdateLevel1Comment(candidateId, roleId, comments) {
-    return tslib_1.__awaiter(this, void 0, void 0, function () {
+function _insertOrUpdateLevel1Comment(candidateId_1, roleId_1, comments_1) {
+    return tslib_1.__awaiter(this, arguments, void 0, function (candidateId, roleId, comments, level) {
         var existing, match, e_15;
+        if (level === void 0) { level = ""; }
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -1220,11 +1404,17 @@ function _insertOrUpdateLevel1Comment(candidateId, roleId, comments) {
                         })];
                 case 1:
                     existing = _a.sent();
-                    match = existing.find(function (item) { return item.CandidateID === candidateId && item.RoleId === roleId; });
+                    match = existing.find(function (item) {
+                        var _a;
+                        return (item.CandidateIDId === candidateId ||
+                            ((_a = item.CandidateID) === null || _a === void 0 ? void 0 : _a.ID) === candidateId ||
+                            item.CandidateID === candidateId) &&
+                            item.RoleId === roleId;
+                    });
                     if (!match) return [3 /*break*/, 3];
                     return [4 /*yield*/, spservice_1.default.SPUpdateItem({
                             Listname: Config_1.ListNames.HRMSRecruitmentCandidateComments,
-                            RequestJSON: { Comments: comments },
+                            RequestJSON: { Comments: comments, Level: level },
                             ID: match.ID,
                         })];
                 case 2:
@@ -1236,6 +1426,7 @@ function _insertOrUpdateLevel1Comment(candidateId, roleId, comments) {
                             CandidateIDId: candidateId,
                             Comments: comments,
                             RoleId: roleId,
+                            Level: level,
                         },
                     })];
                 case 4:
@@ -1252,9 +1443,10 @@ function _insertOrUpdateLevel1Comment(candidateId, roleId, comments) {
     });
 }
 // Mirrors old insertOrUpdateLevel2ScorecardComment()
-function _insertOrUpdateLevel2Comment(candidateId, roleId, comments) {
-    return tslib_1.__awaiter(this, void 0, void 0, function () {
+function _insertOrUpdateLevel2Comment(candidateId_1, roleId_1, comments_1) {
+    return tslib_1.__awaiter(this, arguments, void 0, function (candidateId, roleId, comments, level) {
         var existing, match, e_16;
+        if (level === void 0) { level = ""; }
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -1270,7 +1462,7 @@ function _insertOrUpdateLevel2Comment(candidateId, roleId, comments) {
                     if (!match) return [3 /*break*/, 3];
                     return [4 /*yield*/, spservice_1.default.SPUpdateItem({
                             Listname: Config_1.ListNames.HRMSCandidateLevel2ScoreCard,
-                            RequestJSON: { Comments: comments },
+                            RequestJSON: { Comments: comments, Level: level },
                             ID: match.ID,
                         })];
                 case 2:
@@ -1282,6 +1474,7 @@ function _insertOrUpdateLevel2Comment(candidateId, roleId, comments) {
                             CandidateIDId: candidateId,
                             Comments: comments,
                             RoleId: roleId,
+                            Level: level,
                         },
                     })];
                 case 4:

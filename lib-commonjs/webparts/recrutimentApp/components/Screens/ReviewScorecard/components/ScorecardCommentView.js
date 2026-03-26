@@ -11,8 +11,7 @@ var ScorecardCommentView = function (_a) {
             React.createElement("h3", null, "Justification History")),
         React.createElement("div", { className: ScorecardCommentView_module_scss_1.default.list }, allComments.length > 0 ? (allComments.map(function (c, i) { return (React.createElement("div", { key: i, className: ScorecardCommentView_module_scss_1.default.commentCard },
             React.createElement("div", { className: ScorecardCommentView_module_scss_1.default.row },
-                React.createElement("span", { className: ScorecardCommentView_module_scss_1.default.role }, c.RoleName),
-                React.createElement("span", { className: ScorecardCommentView_module_scss_1.default.date }, c.Date ? new Date(c.Date).toLocaleString() : "")),
+                React.createElement("span", { className: ScorecardCommentView_module_scss_1.default.role }, c.RoleName),                React.createElement("span", { style: { fontSize: "0.75rem", color: "#475569", fontWeight: 600, marginRight: "8px" } }, c.Level || c.InterviewLevel || "Unknown level"),                React.createElement("span", { className: ScorecardCommentView_module_scss_1.default.date }, c.Date ? new Date(c.Date).toLocaleString() : "")),
             React.createElement("p", { className: ScorecardCommentView_module_scss_1.default.text }, c.comments))); })) : (React.createElement("p", { className: ScorecardCommentView_module_scss_1.default.empty }, "No justifications found.")))));
 };
 exports.default = ScorecardCommentView;

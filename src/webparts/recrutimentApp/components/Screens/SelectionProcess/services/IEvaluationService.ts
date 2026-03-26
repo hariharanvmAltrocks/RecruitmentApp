@@ -69,6 +69,7 @@ export interface CommentEntry {
   RoleName:                 string;
   comments:                 string;
   OverAllEvaluationFeedback?: string;
+  Level?:                   string;  // "Level 1" | "Level 2" — used by comment view
 }
 
 // Position ID option for the HOD "Assign Position ID" dropdown

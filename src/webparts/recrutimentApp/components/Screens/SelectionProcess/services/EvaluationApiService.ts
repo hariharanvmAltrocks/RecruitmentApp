@@ -503,21 +503,28 @@ export const evaluationService = {
       if (statusId === StatusId.InterviewScheduledforLevel2) {
 
         // Step 1: Insert or Update Level2 scorecard comment
-        await _insertOrUpdateLevel2Comment(candidateId, currentRoleId, comments);
+        // Fetch interviewLevel to save in Level field (mirrors old InterviewedLevel.Levels)
+        let interviewLevel2 = "";
+        try {
+          const { level } = await evaluationService.getGradeAndLevel(recruitmentID);
+          interviewLevel2 = level || "";
+        } catch (_) {}
+        await _insertOrUpdateLevel2Comment(candidateId, currentRoleId, comments, interviewLevel2);
 
         // Step 2: Mark current user's InterviewPanel row IsScoreSheetUploaded=Yes
         if (currentUserGuid) {
           const matchingPanels: any[] = await SPServices.SPReadItems({
             Listname: ListNames.HRMSInterviewPanelDetails,
-            Select:   "ID,InterviewPanel/Id,InterviewLevel",
-            Expand:   "InterviewPanel",
+            Select:   "ID,InterviewPanel/Id,InterviewLevel,CandidateID/ID",
+            Expand:   "InterviewPanel,CandidateID",
             Filter:   [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateId }],
           });
 
           const userPanels = matchingPanels.filter(
             (p: any) =>
               p.InterviewPanel?.Id?.toString() === currentUserGuid &&
-              p.CandidateID === candidateId
+              // CandidateID is expanded — compare using the ID sub-field
+              (p.CandidateID?.ID ?? p.CandidateID?.Id ?? p.CandidateIDId) === candidateId
           );
 
           for (const panel of userPanels) {
@@ -562,7 +569,13 @@ export const evaluationService = {
       // ── BRANCH 2: Level 1 / HOD decision ─────────────────────────────────
 
       // Step 1: Insert or Update Level1 comment
-      await _insertOrUpdateLevel1Comment(candidateId, currentRoleId, comments);
+      // Also fetch interviewLevel to save in the Level field (mirrors old InterviewedLevel.Levels)
+      let interviewLevel = "";
+      try {
+        const { level } = await evaluationService.getGradeAndLevel(recruitmentID);
+        interviewLevel = level || "";
+      } catch (_) {}
+      await _insertOrUpdateLevel1Comment(candidateId, currentRoleId, comments, interviewLevel);
 
       // Step 2: Assign Position ID if provided
       if (positionId) {
@@ -820,6 +833,21 @@ export const evaluationService = {
         });
         if (sc?.length) {
           const s = sc[0];
+
+          // DEBUG: verify panel score values coming from API for this panel member
+          console.log("[fetchScoreData] candidateID:", candidateID, "panelID:", p.ID, "panelName:", p.InterviewPanel?.Title);
+          console.log("[fetchScoreData] raw scorecard response:", s);
+          console.log("[fetchScoreData] mapped score values:", {
+            RelevantQualification:            s.RelevantQualification || "0",
+            ReleventExperience:               s.ReleventExperience || "0",
+            Knowledge:                        s.Knowledge || "0",
+            EnergyLevel:                      s.EnergyLevel || "0",
+            MeetJobRequirement:               s.MeetJobRequirement || "0",
+            ContributeTowardsCultureRequried: s.ContributeTowardsCultureRequried || "0",
+            Experience:                       s.Experience || "0",
+            OtherCriteriaScore:               s.OtherCriteriaScore || "0",
+          });
+
           results.push({
             InterviewPanelID:                 p.ID,
             RelevantQualification:            s.RelevantQualification            || "0",
@@ -889,40 +917,186 @@ export const evaluationService = {
     }
   },
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // fetchComments
+  //
+  // MIRRORS old HodViewScorecard OpenComments() exactly:
+  //
+  // Level 1 source: HRMSCandidateScoreCard (joined through InterviewPanel)
+  //   Old code: InterviewServices.getInterviewPanelDetails(filterConditions, "", candidateID, EmployeeList)
+  //   → internally calls getCandidateScoreCard which filters by:
+  //       InterviewPanelID/CandidateID/ID eq candidateID
+  //   → maps: Feedback → comments, OverAllEvaluationFeedback, Role.RoleTitle → RoleName
+  //           Author → Name, JobTitleInEnglish, JobTitleInFrench, Department (from EmployeeList)
+  //
+  // Level 2 source: HRMSCandidateLevel2ScoreCard
+  //   Old code: InterviewServices.getCandidateLevel2ScoreCardData(...)
+  //   → filters by CandidateIDId eq candidateID
+  //   → maps: Comments → comments, Role.RoleTitle → RoleName, Author → Name
+  //
+  // Image 3 shows: "Submitted by Recruitment HR" → "Overall Feedback Level 1" → value
+  // This "Overall Feedback Level 1" = HRMSCandidateScoreCard.OverAllEvaluationFeedback
+  // "Feedback Level 1" = HRMSCandidateScoreCard.Feedback
+  // ─────────────────────────────────────────────────────────────────────────
   async fetchComments(candidateID: number): Promise<{ level1: CommentEntry[]; level2: CommentEntry[] }> {
     try {
-      const filter = [{ FilterKey: "CandidateIDId", Operator: "eq", FilterValue: candidateID }];
-      const [l1, l2] = await Promise.all([
-        SPServices.SPReadItems({
-          Listname: ListNames.HRMSRecruitmentCandidateComments,
-          Select:   "*,Author/Title,Author/EMail",
-          Expand:   "Author",
-          Filter:   filter,
-        }),
-        SPServices.SPReadItems({
-          Listname: ListNames.HRMSCandidateLevel2ScoreCard,
-          Select:   "*",
-          Filter:   filter,
-        }),
-      ]);
+      // ── STEP 1: Fetch InterviewPanel rows for this candidate ──────────────
+      // (same as old getInterviewPanelDetails filter)
+      const panelItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSInterviewPanelDetails,
+        Select:   "ID, CandidateID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail",
+        Expand:   "InterviewPanel, CandidateID",
+        Filter:   [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateID }],
+      }).catch(() => []);
 
-      const toEntry = (item: any): CommentEntry => ({
-        Id:                       item.ID,
-        Name:                     item.Name || item.Author?.Title || "",
-        JobTitleInEnglish:        item.JobTitleInEnglish || "",
-        JobTitleInFrench:         item.JobTitleInFrench  || "",
-        Department:               item.Department        || "",
-        Date:                     item.Created,
-        RoleName:                 item.RoleName          || "",
-        comments:                 item.Comments          || "",
-        OverAllEvaluationFeedback: item.OverAllEvaluationFeedback || "",
+      // ── STEP 2: Fetch scorecards for this candidate ───────────────────────
+      // Old getCandidateScoreCard uses: InterviewPanelID/CandidateID/ID eq candidateID
+      const scoreItems: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSCandidateScoreCard,
+        Select:   "InterviewPanelID/ID, Feedback, OverAllEvaluationFeedback, Role/RoleTitle, InterviewPersonName/Title, Author/Title, Author/EMail, Created, QuestionJson, RecruitmentID/ID",
+        Expand:   "InterviewPanelID, Role, InterviewPersonName, Author, RecruitmentID",
+        FilterCondition: [
+          {
+            FilterKey: "InterviewPanelID/CandidateID/ID",
+            Operator:  "eq",
+            FilterValue: candidateID,
+          },
+        ],
+      }).catch(() => []);
+
+      // ── STEP 3: Build scorecard map by InterviewPanelID ──────────────────
+      const scorecardMap = new Map<number, any>();
+      (scoreItems || []).forEach((sc: any) => {
+        const pid = sc.InterviewPanelID?.ID || 0;
+        if (pid) scorecardMap.set(pid, sc);
       });
 
-      return {
-        level1: (l1 || []).map(toEntry),
-        level2: (l2 || []).map(toEntry),
-      };
+      // ── STEP 4: Enrich panel items with scorecard data ────────────────────
+      // Also fetch Sage list names for Author emails (same as old EmployeeList lookup)
+      const authorEmails: string[] = Array.from(new Set(
+        (scoreItems || [])
+          .map((sc: any) => sc.Author?.EMail)
+          .filter(Boolean)
+      ));
+
+      const emailToEmployee: Record<string, any> = {};
+      if (authorEmails.length > 0) {
+        try {
+          await Promise.all(
+            authorEmails.map(async (email: string) => {
+              const sage: any[] = await SPServices.SPReadItems({
+                Listname: ListNames.HRMSSageList,
+                Select:   "EmailId, FirstName, MiddleName, LastName, JobTitle, JobTitleInEnglish, JobTitleInFrench, Department, DepartmentName",
+                Filter:   [{ FilterKey: "EmailId", Operator: "eq", FilterValue: email }],
+              });
+              if (sage?.length) emailToEmployee[email.toLowerCase()] = sage[0];
+            })
+          );
+        } catch (_) {}
+      }
+
+      // ── STEP 5: Build Level 1 entries from HRMSCandidateScoreCard ─────────
+      // One entry per InterviewPanel row that has a matching scorecard
+      const level1: CommentEntry[] = [];
+      const seen = new Set<number>();
+      for (const panel of (panelItems || [])) {
+        const panelID  = panel.ID;
+        const scoreCard = scorecardMap.get(panelID);
+        if (!scoreCard) continue;
+        if (seen.has(panelID)) continue;
+        seen.add(panelID);
+
+        const authorEmail  = (scoreCard.Author?.EMail || "").toLowerCase();
+        const employee     = emailToEmployee[authorEmail];
+
+        const firstName    = employee?.FirstName  || "";
+        const middleName   = employee?.MiddleName || "";
+        const lastName     = employee?.LastName   || "";
+        const fullName     = [firstName, middleName, lastName].filter(Boolean).join(" ").trim()
+                              || scoreCard.Author?.Title || "";
+
+        const jobTitleEn   = employee?.JobTitleInEnglish || employee?.JobTitle || "";
+        const jobTitleFr   = employee?.JobTitleInFrench  || "";
+        const department   = employee?.DepartmentName    || employee?.Department || "";
+
+        level1.push({
+          Id:                       panelID,
+          Name:                     fullName,
+          JobTitleInEnglish:        jobTitleEn,
+          JobTitleInFrench:         jobTitleFr,
+          Department:               department,
+          Date:                     scoreCard.Created || null,
+          // RoleName: old code uses Role?.RoleTitle from scorecard
+          RoleName:                 scoreCard.Role?.RoleTitle || "",
+          // comments = Feedback field (NOT Comments field) from HRMSCandidateScoreCard
+          comments:                 scoreCard.Feedback || "",
+          OverAllEvaluationFeedback: scoreCard.OverAllEvaluationFeedback || "",
+          Level:                    "Level 1",
+        });
+      }
+
+      // ── STEP 6: Fetch Level 2 comments from HRMSCandidateLevel2ScoreCard ──
+      // Old code: getCandidateLevel2ScoreCardData with CandidateIDId filter
+      const l2Items: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSCandidateLevel2ScoreCard,
+        Select:   "ID, CandidateID/ID, CandidateID/Title, Comments, Role/ID, Role/RoleTitle, Level, Author/Title, Author/EMail, Created",
+        Expand:   "CandidateID, Role, Author",
+        Filter:   [{ FilterKey: "CandidateIDId", Operator: "eq", FilterValue: candidateID }],
+      }).catch(() => []);
+
+      // Enrich Level 2 with employee data
+      const l2AuthorEmails: string[] = Array.from(new Set(
+        (l2Items || []).map((i: any) => i.Author?.EMail).filter(Boolean)
+      ));
+      const l2EmailToEmployee: Record<string, any> = { ...emailToEmployee };
+      if (l2AuthorEmails.length > 0) {
+        try {
+          await Promise.all(
+            l2AuthorEmails
+              .filter((e: string) => !l2EmailToEmployee[e.toLowerCase()])
+              .map(async (email: string) => {
+                const sage: any[] = await SPServices.SPReadItems({
+                  Listname: ListNames.HRMSSageList,
+                  Select:   "EmailId, FirstName, MiddleName, LastName, JobTitle, JobTitleInEnglish, JobTitleInFrench, Department, DepartmentName",
+                  Filter:   [{ FilterKey: "EmailId", Operator: "eq", FilterValue: email }],
+                });
+                if (sage?.length) l2EmailToEmployee[email.toLowerCase()] = sage[0];
+              })
+          );
+        } catch (_) {}
+      }
+
+      const level2: CommentEntry[] = (l2Items || []).map((item: any) => {
+        const authorEmail = (item.Author?.EMail || "").toLowerCase();
+        const employee    = l2EmailToEmployee[authorEmail];
+
+        const firstName   = employee?.FirstName  || "";
+        const middleName  = employee?.MiddleName || "";
+        const lastName    = employee?.LastName   || "";
+        const fullName    = [firstName, middleName, lastName].filter(Boolean).join(" ").trim()
+                             || item.Author?.Title || "";
+
+        return {
+          Id:                       item.ID,
+          Name:                     fullName,
+          JobTitleInEnglish:        employee?.JobTitleInEnglish || employee?.JobTitle || "",
+          JobTitleInFrench:         employee?.JobTitleInFrench  || "",
+          Department:               employee?.DepartmentName    || employee?.Department || "",
+          Date:                     item.Created || null,
+          RoleName:                 item.Role?.RoleTitle || "",
+          comments:                 item.Comments || "",
+          OverAllEvaluationFeedback: "",
+          Level:                    "Level 2",
+        };
+      });
+
+      console.log("[fetchComments] candidateID:", candidateID,
+        "level1 count:", level1.length, "level2 count:", level2.length,
+        "level1:", level1, "level2:", level2);
+
+      return { level1, level2 };
     } catch (e) {
+      console.error("[fetchComments] error:", e);
       return { level1: [], level2: [] };
     }
   },
@@ -987,7 +1161,8 @@ function _parseJson(raw: any): Record<string, number>[] {
 async function _insertOrUpdateLevel1Comment(
   candidateId:  number,
   roleId:       number,
-  comments:     string
+  comments:     string,
+  level:        string = ""
 ): Promise<void> {
   try {
     const existing: any[] = await SPServices.SPReadItems({
@@ -996,14 +1171,19 @@ async function _insertOrUpdateLevel1Comment(
       Filter:   [{ FilterKey: "CandidateIDId", Operator: "eq", FilterValue: candidateId }],
     });
 
+    // CandidateIDId is the raw lookup ID stored by SP; CandidateID expands to the item
     const match = existing.find(
-      (item: any) => item.CandidateID === candidateId && item.RoleId === roleId
+      (item: any) =>
+        (item.CandidateIDId === candidateId ||
+          item.CandidateID?.ID === candidateId ||
+          item.CandidateID === candidateId) &&
+        item.RoleId === roleId
     );
 
     if (match) {
       await SPServices.SPUpdateItem({
         Listname:    ListNames.HRMSRecruitmentCandidateComments,
-        RequestJSON: { Comments: comments },
+        RequestJSON: { Comments: comments, Level: level },
         ID:          match.ID,
       });
     } else {
@@ -1013,6 +1193,7 @@ async function _insertOrUpdateLevel1Comment(
           CandidateIDId: candidateId,
           Comments:      comments,
           RoleId:        roleId,
+          Level:         level,
         },
       });
     }
@@ -1025,7 +1206,8 @@ async function _insertOrUpdateLevel1Comment(
 async function _insertOrUpdateLevel2Comment(
   candidateId: number,
   roleId:      number,
-  comments:    string
+  comments:    string,
+  level:       string = ""
 ): Promise<void> {
   try {
     const existing: any[] = await SPServices.SPReadItems({
@@ -1041,7 +1223,7 @@ async function _insertOrUpdateLevel2Comment(
     if (match) {
       await SPServices.SPUpdateItem({
         Listname:    ListNames.HRMSCandidateLevel2ScoreCard,
-        RequestJSON: { Comments: comments },
+        RequestJSON: { Comments: comments, Level: level },
         ID:          match.ID,
       });
     } else {
@@ -1051,6 +1233,7 @@ async function _insertOrUpdateLevel2Comment(
           CandidateIDId: candidateId,
           Comments:      comments,
           RoleId:        roleId,
+          Level:         level,
         },
       });
     }

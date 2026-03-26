@@ -10,9 +10,7 @@ var Reviewscorecardtab_module_scss_1 = tslib_1.__importDefault(require("./Review
 var EvaluationApiService_1 = require("../../../services/EvaluationApiService");
 var RoleContext_1 = require("../../../../../../utilities/hooks/RoleContext");
 var Config_1 = require("../../../../../../utilities/Config");
-var QuestionnaireApi_1 = tslib_1.__importDefault(require("../../../services/QuestionnaireApi/QuestionnaireApi"));
-var questionnaireService = new QuestionnaireApi_1.default();
-// ─── canEdit / canView helpers (mirrors old CandidateList.tsx) ────────────────
+// ─── Status helpers ───────────────────────────────────────────────────────────
 var EDITABLE_STATUS_IDS = [
     Config_1.StatusId.OnHoldbyHOD,
     Config_1.StatusId.PendingwithHODtoselectthecandidate,
@@ -27,29 +25,49 @@ var VIEW_ONLY_STATUS_IDS = [
     Config_1.StatusId.CandidateRejectedbyHODLevel1,
     Config_1.StatusId.CandidateRejectedbyHODLevel2,
 ];
-// Whether Position ID field should be visible (mirrors old HodViewScorecard condition)
+// Mirrors old HodViewScorecard conditional rendering for AssignPositionID.
+// Show when:
+//   a) decision is "Yes" AND statusId is NOT Level2/CandidateOnHoldLevel1/Selected
+//   b) OR statusId is PendingwithHODtoAssignPositionID (regardless of decision)
+//   c) OR statusId is Selected (HOD can still assign/view)
 var shouldShowPositionId = function (statusId, hodDecision) {
-    var level2Pending = statusId === Config_1.StatusId.PendingwithHODtoselectthecandidateLevel2;
-    var alreadyOnHoldL1 = statusId === Config_1.StatusId.CandidateOnHoldbyHODLevel1;
-    var alreadySelected = statusId === Config_1.StatusId.Selected;
-    // Mirrors old: actionValue.CandidateStatus === "Yes" &&
-    //   statusId != PendingwithHODtoselectthecandidateLevel2 &&
-    //   statusId != CandidateOnHoldbyHODLevel1 &&
-    //   statusId != Selected
-    if (hodDecision === "Yes" && !level2Pending && !alreadyOnHoldL1 && !alreadySelected)
-        return true;
-    // Mirrors old: statusId === Selected (show even when already selected)
     if (statusId === Config_1.StatusId.PendingwithHODtoAssignPositionID)
+        return true;
+    if (statusId === Config_1.StatusId.Selected)
+        return true;
+    if (hodDecision === "Yes" &&
+        statusId !== Config_1.StatusId.PendingwithHODtoselectthecandidateLevel2 &&
+        statusId !== Config_1.StatusId.CandidateOnHoldbyHODLevel1)
         return true;
     return false;
 };
-// ─── isLevel2 helper ─────────────────────────────────────────────────────────
 var isLevel2Status = function (statusId) {
     return statusId === Config_1.StatusId.PendingwithHODtoAssignPositionID ||
         statusId === Config_1.StatusId.InterviewScheduledforLevel2 ||
         statusId === Config_1.StatusId.PendingwithHODtoselectthecandidateLevel2 ||
         statusId === Config_1.StatusId.CandidateOnHoldbyHODLevel2;
 };
+// ─── Score criteria definitions (mirrors old transformScoreData) ──────────────
+var SCORE_CRITERIA = [
+    { field: "RelevantQualification", label: "Qualification (Relevant)" },
+    { field: "ReleventExperience", label: "Experience (Relevant)" },
+    { field: "Knowledge", label: "Knowledge" },
+    { field: "EnergyLevel", label: "Energy Level" },
+    { field: "MeetJobRequirement", label: "Meets All Job Requirements" },
+    { field: "ContributeTowardsCultureRequried", label: "Will Contribute to Culture Required" },
+    { field: "Experience", label: "Experience" },
+    { field: "OtherCriteriaScore", label: "Other Criteria Recognized by Panel" },
+];
+var SCORECARD_BAR_LABELS = [
+    { key: "RelevantQualification", label: "QUALIFICATIONS" },
+    { key: "ReleventExperience", label: "EXPERIENCE" },
+    { key: "Knowledge", label: "KNOWLEDGE" },
+    { key: "EnergyLevel", label: "ENERGY" },
+    { key: "MeetJobRequirement", label: "REQUIREMENTS" },
+    { key: "ContributeTowardsCultureRequried", label: "CULTURE" },
+    { key: "Experience", label: "EXPAT" },
+    { key: "OtherCriteriaScore", label: "OTHER" },
+];
 // ─────────────────────────────────────────────────────────────────────────────
 // ReviewScorecardTab
 // ─────────────────────────────────────────────────────────────────────────────
@@ -93,7 +111,7 @@ var ReviewScorecardTab = function (_a) {
         });
     }); };
     var handleReviewCandidate = function (candidate) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var evalData, source_1, getField, normalizeDate, candidateWithData, err_1;
+        var evalData, source_1, getField, normalizeDate, err_1;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -112,39 +130,17 @@ var ReviewScorecardTab = function (_a) {
                             var _a, _b;
                             if (acc)
                                 return acc;
-                            var rawValue = (_b = (_a = source_1[key]) !== null && _a !== void 0 ? _a : source_1[key.toLowerCase()]) !== null && _b !== void 0 ? _b : source_1[key.toUpperCase()];
-                            return rawValue !== undefined && rawValue !== null ? rawValue : "";
+                            var v = (_b = (_a = source_1[key]) !== null && _a !== void 0 ? _a : source_1[key.toLowerCase()]) !== null && _b !== void 0 ? _b : source_1[key.toUpperCase()];
+                            return v !== undefined && v !== null ? v : "";
                         }, "");
                     };
                     normalizeDate = function (value) {
                         if (!value)
                             return "";
-                        var parsed = (0, moment_1.default)(value);
-                        return parsed.isValid() ? parsed.format("YYYY-MM-DD") : (typeof value === "string" ? value : "");
+                        var p = (0, moment_1.default)(value);
+                        return p.isValid() ? p.format("YYYY-MM-DD") : (typeof value === "string" ? value : "");
                     };
-                    candidateWithData = tslib_1.__assign(tslib_1.__assign({}, candidate), { nationality: candidate.nationality || getField(["Nationality"]) || "—", gender: candidate.gender || getField(["Gender"]) || "—", qualification: getField(["HighestRelevantQualification", "Qualification"]) || "—", totalWorkExperience: getField(["TotalYearOfExperiance", "TotalWorkExperience"]) || "—", relevantExperience: getField(["ReleventExperience", "RelevantExperience"]) || "—", interviewDate: candidate.interviewDate ||
-                            normalizeDate(getField(["InterviewDate", "InterviewDateLevel2"])) || "—", interviewLevel: candidate.interviewLevel || getField(["InterviewLevel"]) || "—", grade: getField(["Grade", "JobGrade"]) || "—", conflicts: getField(["ConflictsOfInterest"]) || "—", disability: getField(["Disability", "disability"]) || "—", panelMembers: evalData.panelMembers || [], reviewerName: evalData.reviewerName || effectiveUserEmail || "", jobTitleEn: evalData.jobTitleEn || candidate.jobTitle || candidate.positionTitle || source_1.JobTitle || source_1.PositionTitle || "—", jobTitleFr: evalData.jobTitleFr || source_1.JobTitleFr || candidate.positionTitle || "—", 
-                        // Pass raw candidateData so modal can reference SP columns directly
-                        _raw: source_1 });
-                    console.log("[TAB] handleReviewCandidate debug", {
-                        currentUserEmail: effectiveUserEmail,
-                        candidateId: candidate.id,
-                        candidateName: candidate.fullName,
-                        candidateFirstName: candidate.firstName || (candidate.fullName || "").split(" ")[0] || "—",
-                        candidateLastName: candidate.lastName || (candidate.fullName || "").split(" ").slice(1).join(" ") || "—",
-                        jobTitleEn: candidateWithData.jobTitleEn,
-                        jobTitleFr: candidateWithData.jobTitleFr,
-                        sourceFields: {
-                            candidateData: source_1,
-                            evalData: {
-                                reviewerName: evalData.reviewerName,
-                                panelMembers: evalData.panelMembers,
-                                jobTitleEn: evalData.jobTitleEn,
-                                jobTitleFr: evalData.jobTitleFr,
-                            }
-                        }
-                    });
-                    setReviewingCandidateData(candidateWithData);
+                    setReviewingCandidateData(tslib_1.__assign(tslib_1.__assign({}, candidate), { nationality: candidate.nationality || getField(["Nationality"]) || "—", gender: candidate.gender || getField(["Gender"]) || "—", qualification: getField(["HighestRelevantQualification", "Qualification"]) || "—", totalWorkExperience: getField(["TotalYearOfExperiance", "TotalWorkExperience"]) || "—", relevantExperience: getField(["ReleventExperience", "RelevantExperience"]) || "—", interviewDate: candidate.interviewDate || normalizeDate(getField(["InterviewDate", "InterviewDateLevel2"])) || "—", interviewLevel: candidate.interviewLevel || getField(["InterviewLevel"]) || "—", grade: getField(["Grade", "JobGrade"]) || "—", conflicts: getField(["ConflictsOfInterest"]) || "—", disability: getField(["Disability", "disability"]) || "—", panelMembers: evalData.panelMembers || [], reviewerName: evalData.reviewerName || effectiveUserEmail || "", jobTitleEn: evalData.jobTitleEn || candidate.jobTitle || candidate.positionTitle || source_1.JobTitle || "—", jobTitleFr: evalData.jobTitleFr || source_1.JobTitleFr || "—", _raw: source_1 }));
                     return [3 /*break*/, 5];
                 case 3:
                     err_1 = _a.sent();
@@ -159,19 +155,14 @@ var ReviewScorecardTab = function (_a) {
             }
         });
     }); };
-    var filteredJobRows = React.useMemo(function () {
-        return jobRows.filter(function (job) {
-            var matchSearch = searchTerm === "" ||
-                Object.values(job).some(function (val) { return String(val).toLowerCase().includes(searchTerm.toLowerCase()); });
-            var matchPos = positionRequestFilter === "" || job.positionRequest === positionRequestFilter;
-            var matchNat = nationalityFilter === "" || job.nationality === nationalityFilter;
-            var matchJob = jobCodeFilter === "" || job.jobCode === jobCodeFilter;
-            return matchSearch && matchPos && matchNat && matchJob;
-        });
-    }, [jobRows, searchTerm, positionRequestFilter, nationalityFilter, jobCodeFilter]);
-    var totalPages = React.useMemo(function () {
-        return Math.max(1, Math.ceil(filteredJobRows.length / pageSize));
-    }, [filteredJobRows.length, pageSize]);
+    var filteredJobRows = React.useMemo(function () { return jobRows.filter(function (job) {
+        var matchSearch = searchTerm === "" || Object.values(job).some(function (val) { return String(val).toLowerCase().includes(searchTerm.toLowerCase()); });
+        var matchPos = positionRequestFilter === "" || job.positionRequest === positionRequestFilter;
+        var matchNat = nationalityFilter === "" || job.nationality === nationalityFilter;
+        var matchJob = jobCodeFilter === "" || job.jobCode === jobCodeFilter;
+        return matchSearch && matchPos && matchNat && matchJob;
+    }); }, [jobRows, searchTerm, positionRequestFilter, nationalityFilter, jobCodeFilter]);
+    var totalPages = React.useMemo(function () { return Math.max(1, Math.ceil(filteredJobRows.length / pageSize)); }, [filteredJobRows.length, pageSize]);
     var paginatedJobRows = React.useMemo(function () {
         var start = (currentPage - 1) * pageSize;
         return filteredJobRows.slice(start, start + pageSize);
@@ -181,7 +172,7 @@ var ReviewScorecardTab = function (_a) {
             setCurrentPage(totalPages);
     }, [currentPage, totalPages]);
     var openSelection = function (job) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var cands, _a, grade, level, enriched;
+        var cands, _a, grade, level;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -194,16 +185,12 @@ var ReviewScorecardTab = function (_a) {
                     return [4 /*yield*/, EvaluationApiService_1.evaluationService.getGradeAndLevel(job.recruitmentID)];
                 case 2:
                     _a = _b.sent(), grade = _a.grade, level = _a.level;
-                    enriched = cands.map(function (c) { return (tslib_1.__assign(tslib_1.__assign({}, c), { grade: c.grade || grade, interviewLevel: c.interviewLevel || level })); });
-                    setCandidates(enriched);
+                    setCandidates(cands.map(function (c) { return (tslib_1.__assign(tslib_1.__assign({}, c), { grade: c.grade || grade, interviewLevel: c.interviewLevel || level })); }));
                     return [2 /*return*/];
             }
         });
     }); };
-    var closeSelection = function () {
-        setIsSelectionOpen(false);
-        onFormStateChange === null || onFormStateChange === void 0 ? void 0 : onFormStateChange(false);
-    };
+    var closeSelection = function () { setIsSelectionOpen(false); onFormStateChange === null || onFormStateChange === void 0 ? void 0 : onFormStateChange(false); };
     var handleRefreshCandidates = function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var refreshed, _a, grade, level;
         return tslib_1.__generator(this, function (_b) {
@@ -225,29 +212,23 @@ var ReviewScorecardTab = function (_a) {
     return (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.container },
         React.createElement(JobListTable, { jobRows: paginatedJobRows, totalItems: filteredJobRows.length, currentPage: currentPage, totalPages: totalPages, pageSize: pageSize, onPageChange: setCurrentPage, onPageSizeChange: function (size) { setPageSize(size); setCurrentPage(1); }, searchTerm: searchTerm, onSearch: setSearchTerm, positionRequestFilter: positionRequestFilter, onPositionRequestFilter: setPositionRequestFilter, nationalityFilter: nationalityFilter, onNationalityFilter: setNationalityFilter, jobCodeFilter: jobCodeFilter, onJobCodeFilter: setJobCodeFilter, onSelectJob: openSelection, onBack: function () { return navigate("/Dashboard"); }, loading: loading }),
         React.createElement(framer_motion_1.AnimatePresence, null, isSelectionOpen && selectedJob && (React.createElement(CandidateSelectionDrawer, { job: selectedJob, candidates: candidates, onClose: closeSelection, onReviewCandidate: handleReviewCandidate }))),
-        React.createElement(framer_motion_1.AnimatePresence, null, reviewingCandidate && (React.createElement(CandidateReviewModal, { candidate: reviewingCandidate, candidateData: reviewingCandidateData, job: selectedJob, interviewQuestions: interviewQuestions, fetchingQuestions: fetchingQuestions, currentUserEmail: effectiveUserEmail, currentRoleId: roleId, reviewingCandidateData: reviewingCandidateData, userInitial: userInitial, onClose: function () {
-                setReviewingCandidate(null);
-                setReviewingCandidateData(null);
-                setInterviewQuestions([]);
-            }, onSubmit: function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-                return tslib_1.__generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, handleRefreshCandidates()];
-                        case 1:
-                            _a.sent();
-                            setReviewingCandidate(null);
-                            setReviewingCandidateData(null);
-                            setInterviewQuestions([]);
-                            return [2 /*return*/];
-                    }
-                });
-            }); } })))));
+        React.createElement(framer_motion_1.AnimatePresence, null, reviewingCandidate && (React.createElement(CandidateReviewModal, { candidate: reviewingCandidate, candidateData: reviewingCandidateData, job: selectedJob, interviewQuestions: interviewQuestions, fetchingQuestions: fetchingQuestions, currentUserEmail: effectiveUserEmail, currentRoleId: roleId, reviewingCandidateData: reviewingCandidateData, userInitial: userInitial, onClose: function () { setReviewingCandidate(null); setReviewingCandidateData(null); setInterviewQuestions([]); }, onSubmit: function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () { return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, handleRefreshCandidates()];
+                    case 1:
+                        _a.sent();
+                        setReviewingCandidate(null);
+                        setReviewingCandidateData(null);
+                        setInterviewQuestions([]);
+                        return [2 /*return*/];
+                }
+            }); }); } })))));
 };
 // ─────────────────────────────────────────────────────────────────────────────
 // JobListTable
 // ─────────────────────────────────────────────────────────────────────────────
 var JobListTable = function (_a) {
-    var jobRows = _a.jobRows, totalItems = _a.totalItems, currentPage = _a.currentPage, totalPages = _a.totalPages, pageSize = _a.pageSize, onPageChange = _a.onPageChange, onPageSizeChange = _a.onPageSizeChange, searchTerm = _a.searchTerm, onSearch = _a.onSearch, positionRequestFilter = _a.positionRequestFilter, onPositionRequestFilter = _a.onPositionRequestFilter, nationalityFilter = _a.nationalityFilter, onNationalityFilter = _a.onNationalityFilter, jobCodeFilter = _a.jobCodeFilter, onJobCodeFilter = _a.onJobCodeFilter, onSelectJob = _a.onSelectJob, onBack = _a.onBack, loading = _a.loading;
+    var jobRows = _a.jobRows, totalItems = _a.totalItems, currentPage = _a.currentPage, totalPages = _a.totalPages, pageSize = _a.pageSize, onPageChange = _a.onPageChange, onPageSizeChange = _a.onPageSizeChange, onSelectJob = _a.onSelectJob, onBack = _a.onBack, loading = _a.loading;
     return (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.card },
         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.cardHeader },
             React.createElement("h2", null, "Review Scorecards"),
@@ -261,7 +242,7 @@ var JobListTable = function (_a) {
                         ["Job Code", "Job Title", "Business Unit Code", "Position Request", "Nationality", "Status"].map(function (h) { return (React.createElement("th", { key: h },
                             h,
                             " ",
-                            React.createElement(lucide_react_1.ArrowUpDown, { size: 10, className: "inline ml-1" }))); }),
+                            React.createElement(lucide_react_1.ArrowUpDown, { size: 10 }))); }),
                         React.createElement("th", { className: Reviewscorecardtab_module_scss_1.default.center }, "Action"))),
                 React.createElement("tbody", null, loading ? (React.createElement("tr", null,
                     React.createElement("td", { colSpan: 7, className: Reviewscorecardtab_module_scss_1.default.noData }, "Loading..."))) : jobRows.length === 0 ? (React.createElement("tr", null,
@@ -284,14 +265,13 @@ var JobListTable = function (_a) {
                 " to",
                 " ",
                 React.createElement("strong", null, Math.min(currentPage * pageSize, totalItems)),
-                " of",
-                " ",
+                " of ",
                 React.createElement("strong", null, totalItems),
                 " results \u00A0",
                 React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.showEntries },
                     "SHOW",
                     " ",
-                    React.createElement("select", { value: pageSize, onChange: function (e) { return onPageSizeChange(Number(e.target.value)); } }, [5, 10, 20, 50].map(function (size) { return React.createElement("option", { key: size, value: size }, size); })),
+                    React.createElement("select", { value: pageSize, onChange: function (e) { return onPageSizeChange(Number(e.target.value)); } }, [5, 10, 20, 50].map(function (s) { return React.createElement("option", { key: s, value: s }, s); })),
                     " ",
                     "ENTRIES")),
             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.paginationControls },
@@ -321,7 +301,7 @@ var CandidateSelectionDrawer = function (_a) {
                         React.createElement(lucide_react_1.Users, { size: 24 })),
                     React.createElement("div", null,
                         React.createElement("h2", null,
-                            "Candidate Selection",
+                            "Candidate Selection ",
                             pendingCount > 0 && React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.badge }, pendingCount)),
                         React.createElement("p", null,
                             job.jobCode,
@@ -346,6 +326,12 @@ var CandidateSelectionDrawer = function (_a) {
                             React.createElement("td", { colSpan: 8, className: Reviewscorecardtab_module_scss_1.default.noData }, "No candidates found."))) : (candidates.map(function (cand, idx) {
                             var canEdit = EDITABLE_STATUS_IDS.includes(cand.statusId);
                             var canView = VIEW_ONLY_STATUS_IDS.includes(cand.statusId);
+                            console.log("Candidate row", {
+                                id: cand.id,
+                                name: cand.fullName,
+                                statusId: cand.statusId,
+                                interviewLevel: cand.interviewLevel,
+                            });
                             return (React.createElement("tr", { key: cand.id },
                                 React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted, style: { fontWeight: 'bold' } }, idx + 1),
                                 React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.jobTitle }, cand.fullName),
@@ -357,11 +343,11 @@ var CandidateSelectionDrawer = function (_a) {
                                 React.createElement("td", null,
                                     React.createElement("span", { className: "".concat(Reviewscorecardtab_module_scss_1.default.statusBadgeText, " ").concat(getStatusBadgeClass(cand.statusId)) }, cand.status || "—")),
                                 React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.center },
-                                    canEdit && (React.createElement("button", { onClick: function () { return onReviewCandidate(cand); }, className: Reviewscorecardtab_module_scss_1.default.iconButton, title: "Edit" },
-                                        React.createElement(lucide_react_1.Pencil, { size: 16 }))),
-                                    canView && (React.createElement("button", { onClick: function () { return onReviewCandidate(cand); }, className: Reviewscorecardtab_module_scss_1.default.iconButton, title: "View" },
-                                        React.createElement(lucide_react_1.Eye, { size: 16 }))),
-                                    !canEdit && !canView && (React.createElement("span", { style: { color: "#94a3b8", fontSize: "0.75rem" } }, "\u2014")))));
+                                    canEdit && React.createElement("button", { onClick: function () { return onReviewCandidate(cand); }, className: Reviewscorecardtab_module_scss_1.default.iconButton, title: "Edit" },
+                                        React.createElement(lucide_react_1.Pencil, { size: 16 })),
+                                    canView && React.createElement("button", { onClick: function () { return onReviewCandidate(cand); }, className: Reviewscorecardtab_module_scss_1.default.iconButton, title: "View" },
+                                        React.createElement(lucide_react_1.Eye, { size: 16 })),
+                                    !canEdit && !canView && React.createElement("span", { style: { color: "#94a3b8", fontSize: "0.75rem" } }, "\u2014"))));
                         })))))),
             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.drawerFooter },
                 React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.footerHint },
@@ -372,32 +358,31 @@ var CandidateSelectionDrawer = function (_a) {
                     React.createElement("button", { className: Reviewscorecardtab_module_scss_1.default.confirmBtn, disabled: true }, "CONFIRM SELECTION"))))));
 };
 // ─────────────────────────────────────────────────────────────────────────────
-// CandidateReviewModal
+// CandidateReviewModal — Panel Member Tabs + Scorecard Section Tabs
 // ─────────────────────────────────────────────────────────────────────────────
 var CandidateReviewModal = function (_a) {
-    var _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var _b, _c, _d, _e, _f, _g, _h;
     var candidate = _a.candidate, candidateData = _a.candidateData, job = _a.job, interviewQuestions = _a.interviewQuestions, fetchingQuestions = _a.fetchingQuestions, currentUserEmail = _a.currentUserEmail, currentRoleId = _a.currentRoleId, reviewingCandidateData = _a.reviewingCandidateData, userInitial = _a.userInitial, onClose = _a.onClose, onSubmit = _a.onSubmit;
-    // ── State ──────────────────────────────────────────────────────────────────
-    var _l = React.useState([]), scoreData = _l[0], setScoreData = _l[1];
-    var _m = React.useState(true), loadingScore = _m[0], setLoadingScore = _m[1];
-    // HOD Decision state
+    // ── Score & tab state ──────────────────────────────────────────────────────
+    var _j = React.useState([]), scoreData = _j[0], setScoreData = _j[1];
+    var _k = React.useState(true), loadingScore = _k[0], setLoadingScore = _k[1];
+    // Panel member tab (index of active panel member = 0,1,2...)
+    var _l = React.useState(0), activePanelTab = _l[0], setActivePanelTab = _l[1];
+    var _m = React.useState("questions"), activeScorecardTab = _m[0], setActiveScorecardTab = _m[1];
+    // HOD Decision
     var _o = React.useState(""), hodDecision = _o[0], setHodDecision = _o[1];
     var _p = React.useState(""), decisionComment = _p[0], setDecisionComment = _p[1];
-    var _q = React.useState(false), confirmed = _q[0], setConfirmed = _q[1]; // checkbox
-    // Position ID
+    var _q = React.useState(false), confirmed = _q[0], setConfirmed = _q[1];
     var _r = React.useState([]), positionOptions = _r[0], setPositionOptions = _r[1];
     var _s = React.useState(null), selectedPositionId = _s[0], setSelectedPositionId = _s[1];
     var _t = React.useState(""), selectedPositionText = _t[0], setSelectedPositionText = _t[1];
-    // Submission state
     var _u = React.useState(""), submitError = _u[0], setSubmitError = _u[1];
     var _v = React.useState(false), submitting = _v[0], setSubmitting = _v[1];
     var _w = React.useState(""), successMessage = _w[0], setSuccessMessage = _w[1];
-    // Validation errors
     var _x = React.useState(false), posErr = _x[0], setPosErr = _x[1];
     var _y = React.useState(false), commentErr = _y[0], setCommentErr = _y[1];
     var _z = React.useState(false), decisionErr = _z[0], setDecisionErr = _z[1];
     var _0 = React.useState(false), checkboxErr = _0[0], setCheckboxErr = _0[1];
-    // Comments modal
     var _1 = React.useState(false), showComments = _1[0], setShowComments = _1[1];
     var _2 = React.useState([]), level1Comments = _2[0], setLevel1Comments = _2[1];
     var _3 = React.useState([]), level2Comments = _3[0], setLevel2Comments = _3[1];
@@ -406,25 +391,27 @@ var CandidateReviewModal = function (_a) {
     var canEdit = EDITABLE_STATUS_IDS.includes(candidate.statusId);
     var isLevel2 = isLevel2Status(candidate.statusId);
     var feedbackLabel = isLevel2 ? "Feedback - Level 2" : "Feedback - Level 1";
-    React.useEffect(function () {
-        var _a, _b;
-        console.log("[MODAL] CandidateReviewModal open", {
-            currentUserEmail: currentUserEmail,
-            currentRoleId: currentRoleId,
-            candidateId: candidate.id,
-            candidateName: candidate.fullName,
-            candidateFirstName: ((_a = candidate.fullName) === null || _a === void 0 ? void 0 : _a.split(" ")[0]) || "—",
-            candidateLastName: ((_b = candidate.fullName) === null || _b === void 0 ? void 0 : _b.split(" ").slice(1).join(" ")) || "—",
-            jobTitleEn: (reviewingCandidateData === null || reviewingCandidateData === void 0 ? void 0 : reviewingCandidateData.jobTitleEn) || "—",
-            jobTitleFr: (reviewingCandidateData === null || reviewingCandidateData === void 0 ? void 0 : reviewingCandidateData.jobTitleFr) || "—",
-            fetchedCandidateData: candidateData,
-        });
-    }, [candidate.id, currentUserEmail, currentRoleId, candidate.fullName, reviewingCandidateData, candidateData]);
+    // Panel members: prefer reviewingCandidateData.panelMembers, fallback to scoreData names
+    var panelMembers = React.useMemo(function () {
+        var fromRev = (reviewingCandidateData === null || reviewingCandidateData === void 0 ? void 0 : reviewingCandidateData.panelMembers) || [];
+        var fromCand = (candidateData === null || candidateData === void 0 ? void 0 : candidateData.panelMembers) || [];
+        if (fromRev.length > 0)
+            return fromRev;
+        if (fromCand.length > 0)
+            return fromCand;
+        return scoreData.map(function (s, i) { return s.InterviewPersonName || "Interviewer ".concat(i + 1); });
+    }, [reviewingCandidateData, candidateData, scoreData]);
+    // Active panel scorecard (changes when activePanelTab changes)
+    var activeScore = scoreData[activePanelTab] || null;
     // ── Load score data ────────────────────────────────────────────────────────
     React.useEffect(function () {
         setLoadingScore(true);
-        EvaluationApiService_1.evaluationService.fetchScoreData(candidate.id)
-            .then(function (d) { setScoreData(d); setLoadingScore(false); });
+        EvaluationApiService_1.evaluationService.fetchScoreData(candidate.id).then(function (d) {
+            setScoreData(d);
+            setLoadingScore(false);
+            if (activePanelTab >= d.length && d.length > 0)
+                setActivePanelTab(0);
+        });
     }, [candidate.id]);
     // ── Load position options ──────────────────────────────────────────────────
     React.useEffect(function () {
@@ -435,10 +422,9 @@ var CandidateReviewModal = function (_a) {
         EvaluationApiService_1.evaluationService.fetchPositionOptions(job.jobCodeID, job.department)
             .then(setPositionOptions).catch(function () { return setPositionOptions([]); });
     }, [job === null || job === void 0 ? void 0 : job.jobCodeID, job === null || job === void 0 ? void 0 : job.department]);
-    // ── PREPOPULATE on View (already submitted values) ─────────────────────────
-    // When canEdit=false (view mode) OR canEdit=true with existing submission
+    // ── Prepopulate ────────────────────────────────────────────────────────────
     React.useEffect(function () {
-        var prepopulate = function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        (function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
             var existing, sid, e_1;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
@@ -448,31 +434,19 @@ var CandidateReviewModal = function (_a) {
                     case 1:
                         existing = _a.sent();
                         if (existing) {
-                            // Prepopulate comment
                             if (existing.comments)
                                 setDecisionComment(existing.comments);
                             sid = candidate.statusId;
-                            if (sid === Config_1.StatusId.Selected ||
-                                sid === Config_1.StatusId.PendingwithHODtoAssignPositionID ||
-                                sid === Config_1.StatusId.CandidateOnHoldbyHODLevel1) {
+                            if ([Config_1.StatusId.Selected, Config_1.StatusId.PendingwithHODtoAssignPositionID, Config_1.StatusId.CandidateOnHoldbyHODLevel1].includes(sid))
                                 setHodDecision("Yes");
-                            }
-                            else if (sid === Config_1.StatusId.OnHoldbyHOD ||
-                                sid === Config_1.StatusId.CandidateOnHoldbyHODLevel2) {
+                            else if ([Config_1.StatusId.OnHoldbyHOD, Config_1.StatusId.CandidateOnHoldbyHODLevel2].includes(sid))
                                 setHodDecision("On Hold");
-                            }
-                            else if (sid === Config_1.StatusId.RejectedbyHOD ||
-                                sid === Config_1.StatusId.CandidateRejectedbyHODLevel1 ||
-                                sid === Config_1.StatusId.CandidateRejectedbyHODLevel2) {
+                            else if ([Config_1.StatusId.RejectedbyHOD, Config_1.StatusId.CandidateRejectedbyHODLevel1, Config_1.StatusId.CandidateRejectedbyHODLevel2].includes(sid))
                                 setHodDecision("No");
-                            }
-                            // Prepopulate position (if stored)
-                            if (existing.positionId) {
+                            if (existing.positionId)
                                 setSelectedPositionId(existing.positionId);
-                            }
-                            if (existing.positionText) {
+                            if (existing.positionText)
                                 setSelectedPositionText(existing.positionText);
-                            }
                         }
                         return [3 /*break*/, 3];
                     case 2:
@@ -482,10 +456,9 @@ var CandidateReviewModal = function (_a) {
                     case 3: return [2 /*return*/];
                 }
             });
-        }); };
-        prepopulate();
+        }); })();
     }, [candidate.id, candidate.statusId, currentRoleId, isLevel2]);
-    // ── View comments ──────────────────────────────────────────────────────────
+    // ── Comments ───────────────────────────────────────────────────────────────
     var handleViewComments = function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var data, e_2;
         return tslib_1.__generator(this, function (_a) {
@@ -499,12 +472,13 @@ var CandidateReviewModal = function (_a) {
                     return [4 /*yield*/, EvaluationApiService_1.evaluationService.fetchComments(candidate.id)];
                 case 2:
                     data = _a.sent();
+                    console.log("[handleViewComments] fetched comments from API:", data);
                     setLevel1Comments(data.level1 || []);
                     setLevel2Comments(data.level2 || []);
                     return [3 /*break*/, 4];
                 case 3:
                     e_2 = _a.sent();
-                    console.error(e_2);
+                    console.error("[handleViewComments] error fetching comments", e_2);
                     return [3 /*break*/, 4];
                 case 4:
                     setLoadingComments(false);
@@ -515,52 +489,42 @@ var CandidateReviewModal = function (_a) {
     // ── Validation ─────────────────────────────────────────────────────────────
     var validate = function () {
         var valid = true;
-        // Decision is always required when canEdit
         if (!hodDecision) {
             setDecisionErr(true);
-            setSubmitError("Please select a decision (Yes / No / On Hold).");
+            setSubmitError("Please select a decision.");
             valid = false;
         }
-        else {
+        else
             setDecisionErr(false);
-        }
-        // Comment is always required
         if (!decisionComment.trim()) {
             setCommentErr(true);
             valid = false;
         }
-        else {
+        else
             setCommentErr(false);
-        }
-        // Checkbox confirmation required
         if (!confirmed) {
             setCheckboxErr(true);
             valid = false;
         }
-        else {
+        else
             setCheckboxErr(false);
-        }
-        // Position ID required when decision=Yes and conditions match
         if (hodDecision === "Yes" && shouldShowPositionId(candidate.statusId, "Yes")) {
             if (!selectedPositionId) {
                 setPosErr(true);
                 valid = false;
             }
-            else {
+            else
                 setPosErr(false);
-            }
         }
-        else {
+        else
             setPosErr(false);
-        }
-        if (!valid && !submitError) {
+        if (!valid && !submitError)
             setSubmitError("Please fill in all required fields.");
-        }
         return valid;
     };
     // ── Submit ─────────────────────────────────────────────────────────────────
     var handleDecisionSubmit = function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var result, decisionMsg, e_3;
+        var result, msg, e_3;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -579,10 +543,12 @@ var CandidateReviewModal = function (_a) {
                             currentRoleId: currentRoleId,
                             gpa: candidate.gpa || "",
                             positionId: selectedPositionId,
-                            isLevel2: isLevel2,
+                            // HOD decisions always use Branch 2 (Level 1/HOD path).
+                            // Branch 1 (isLevel2=true) is only for InterviewPanel scorecard submission
+                            // at InterviewScheduledforLevel2 status — not applicable here.
+                            isLevel2: false,
                             jobCodeID: candidate.jobCodeID || (job === null || job === void 0 ? void 0 : job.jobCodeID) || 0,
-                            recruitmentID: candidate.recruitmentID,
-                            statusId: candidate.statusId,
+                            recruitmentID: candidate.recruitmentID, statusId: candidate.statusId,
                         })];
                 case 2:
                     result = _a.sent();
@@ -591,15 +557,10 @@ var CandidateReviewModal = function (_a) {
                         setSubmitting(false);
                         return [2 /*return*/];
                     }
-                    decisionMsg = hodDecision === "Yes" ? "✓ Candidate SELECTED successfully" :
-                        hodDecision === "No" ? "✓ Candidate REJECTED successfully" :
-                            "✓ Candidate put ON HOLD successfully";
-                    setSuccessMessage(decisionMsg);
-                    setSubmitError("");
-                    setTimeout(function () {
-                        setSuccessMessage("");
-                        onSubmit();
-                    }, 1200);
+                    msg = hodDecision === "Yes" ? "✓ Candidate SELECTED successfully" :
+                        hodDecision === "No" ? "✓ Candidate REJECTED successfully" : "✓ Candidate put ON HOLD successfully";
+                    setSuccessMessage(msg);
+                    setTimeout(function () { setSuccessMessage(""); onSubmit(); }, 1200);
                     return [3 /*break*/, 4];
                 case 3:
                     e_3 = _a.sent();
@@ -611,7 +572,6 @@ var CandidateReviewModal = function (_a) {
         });
     }); };
     // ── Helpers ────────────────────────────────────────────────────────────────
-    var primaryScore = scoreData.length > 0 ? scoreData[0] : null;
     var ratingLabel = function (score) {
         if (score >= 3)
             return { text: "".concat(score, " - EXCELLENT"), color: "#16a34a", bg: "#f0fdf4" };
@@ -619,18 +579,66 @@ var CandidateReviewModal = function (_a) {
             return { text: "".concat(score, " - ACCEPTABLE"), color: "#2563eb", bg: "#eff6ff" };
         return { text: "".concat(score, " - NOT ACCEPTABLE"), color: "#ef4444", bg: "#fef2f2" };
     };
-    var SCORECARD_LABELS = [
-        { key: "RelevantQualification", label: "QUALIFICATIONS" },
-        { key: "ReleventExperience", label: "EXPERIENCE" },
-        { key: "Knowledge", label: "KNOWLEDGE" },
-        { key: "EnergyLevel", label: "ENERGY" },
-        { key: "MeetJobRequirement", label: "REQUIREMENTS" },
-        { key: "ContributeTowardsCultureRequried", label: "CULTURE" },
-        { key: "Experience", label: "EXPAT" },
-        { key: "OtherCriteriaScore", label: "OTHER" },
-    ];
+    // Parse QuestionJson for the active panel tab
+    var activeQuestionJson = React.useMemo(function () {
+        if (!(activeScore === null || activeScore === void 0 ? void 0 : activeScore.QuestionJson))
+            return [];
+        if (Array.isArray(activeScore.QuestionJson))
+            return activeScore.QuestionJson;
+        try {
+            return JSON.parse(activeScore.QuestionJson);
+        }
+        catch (_a) {
+            return [];
+        }
+    }, [activeScore]);
+    // Question evaluation table: all panels × all questions
+    var questionTableData = React.useMemo(function () {
+        var qMap = {};
+        scoreData.forEach(function (score, i) {
+            var qJson = Array.isArray(score.QuestionJson) ? score.QuestionJson :
+                (function () { try {
+                    return JSON.parse(score.QuestionJson || "[]");
+                }
+                catch (_a) {
+                    return [];
+                } })();
+            qJson.forEach(function (q) {
+                var key = Object.keys(q)[0];
+                if (!qMap[key])
+                    qMap[key] = { criteria: key };
+                qMap[key]["panel_".concat(i)] = q[key];
+            });
+        });
+        return Object.values(qMap);
+    }, [scoreData]);
+    // Overall score table: all panels × all criteria
+    var overallTableData = React.useMemo(function () {
+        var rows = SCORE_CRITERIA.map(function (_a) {
+            var field = _a.field, label = _a.label;
+            var row = { criteria: label, total: 0 };
+            scoreData.forEach(function (s, i) {
+                var val = Number(s[field]) || 0;
+                row["panel_".concat(i)] = val;
+                row.total += val;
+            });
+            return row;
+        });
+        var totalRow = { criteria: "Total", total: 0 };
+        scoreData.forEach(function (_, i) {
+            var sum = rows.reduce(function (acc, row) {
+                var v = row["panel_".concat(i)];
+                return typeof v === "number" ? acc + v : acc;
+            }, 0);
+            totalRow["panel_".concat(i)] = "".concat(sum, " / 40");
+        });
+        totalRow.total = rows.reduce(function (acc, row) { return acc + (typeof row.total === "number" ? row.total : 0); }, 0);
+        rows.push(totalRow);
+        return rows;
+    }, [scoreData]);
     var formattedDate = (function () {
-        var d = (candidateData === null || candidateData === void 0 ? void 0 : candidateData.InterviewDate) || (candidateData === null || candidateData === void 0 ? void 0 : candidateData.InterviewDateLevel2) || candidate.interviewDate || "";
+        var _a, _b;
+        var d = ((_a = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _a === void 0 ? void 0 : _a.InterviewDate) || ((_b = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _b === void 0 ? void 0 : _b.InterviewDateLevel2) || candidate.interviewDate || "";
         return d ? d.split("T")[0] : "—";
     })();
     var nationLabel = (function () {
@@ -641,14 +649,6 @@ var CandidateReviewModal = function (_a) {
             return "LOCAL";
         return (candidate.nationality || "").toUpperCase() || "—";
     })();
-    var panelMembers = ((_b = reviewingCandidateData === null || reviewingCandidateData === void 0 ? void 0 : reviewingCandidateData.panelMembers) === null || _b === void 0 ? void 0 : _b.length) > 0
-        ? reviewingCandidateData.panelMembers
-        : ((_c = candidateData === null || candidateData === void 0 ? void 0 : candidateData.panelMembers) === null || _c === void 0 ? void 0 : _c.length) > 0
-            ? candidateData.panelMembers
-            : [];
-    var interviewerNames = panelMembers.length > 0
-        ? panelMembers
-        : scoreData.map(function (s, i) { return s.InterviewPersonName || "Interviewer ".concat(i + 1); });
     var MField = function (_a) {
         var label = _a.label, value = _a.value;
         return (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mfField },
@@ -672,11 +672,7 @@ var CandidateReviewModal = function (_a) {
                             React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.mSubtitle },
                                 React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mJobCode }, (job === null || job === void 0 ? void 0 : job.jobCode) || "—"),
                                 React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mDot }, "\u203A"),
-                                React.createElement("span", null, (reviewingCandidateData === null || reviewingCandidateData === void 0 ? void 0 : reviewingCandidateData.jobTitleEn) || candidate.positionTitle || "—")),
-                            React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.mSubtitle },
-                                React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mJobCode }, "FR:"),
-                                React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mDot }, "\u203A"),
-                                React.createElement("span", null, (reviewingCandidateData === null || reviewingCandidateData === void 0 ? void 0 : reviewingCandidateData.jobTitleFr) || candidate.positionTitle || "—"))))),
+                                React.createElement("span", null, (reviewingCandidateData === null || reviewingCandidateData === void 0 ? void 0 : reviewingCandidateData.jobTitleEn) || candidate.positionTitle || "—"))))),
                 React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mHeaderRight },
                     React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mGpa },
                         React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mGpaLabel }, "OVERALL GPA"),
@@ -688,182 +684,172 @@ var CandidateReviewModal = function (_a) {
                     React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCandidateName }, candidate.fullName),
                     React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCandidateType }, nationLabel),
                     React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFieldList },
-                        React.createElement(MField, { label: "NATIONALITY", value: ((_d = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _d === void 0 ? void 0 : _d.Nationality) || candidate.nationality || "—" }),
-                        React.createElement(MField, { label: "GENDER", value: ((_e = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _e === void 0 ? void 0 : _e.Gender) || candidate.gender || "—" }),
-                        React.createElement(MField, { label: "QUALIFICATION", value: ((_f = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _f === void 0 ? void 0 : _f.Qualification) || "—" }),
+                        React.createElement(MField, { label: "NATIONALITY", value: ((_b = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _b === void 0 ? void 0 : _b.Nationality) || candidate.nationality || "—" }),
+                        React.createElement(MField, { label: "GENDER", value: ((_c = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _c === void 0 ? void 0 : _c.Gender) || candidate.gender || "—" }),
+                        React.createElement(MField, { label: "QUALIFICATION", value: ((_d = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _d === void 0 ? void 0 : _d.Qualification) || "—" }),
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mTwoCol },
-                            React.createElement(MField, { label: "MINING EXP.", value: ((_g = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _g === void 0 ? void 0 : _g.TotalYearOfExperiance) || "—" }),
-                            React.createElement(MField, { label: "RELATED EXP.", value: ((_h = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _h === void 0 ? void 0 : _h.ReleventExperience) || "—" })),
+                            React.createElement(MField, { label: "MINING EXP.", value: ((_e = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _e === void 0 ? void 0 : _e.TotalYearOfExperiance) || "—" }),
+                            React.createElement(MField, { label: "RELATED EXP.", value: ((_f = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _f === void 0 ? void 0 : _f.ReleventExperience) || "—" })),
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mTwoCol },
                             React.createElement(MField, { label: "INTERVIEW DATE", value: formattedDate }),
                             React.createElement(MField, { label: "LEVELS", value: candidate.interviewLevel || "—" })),
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mTwoCol },
                             React.createElement(MField, { label: "GRADE", value: candidate.grade || "—" }),
-                            React.createElement(MField, { label: "CONFLICTS", value: ((_j = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _j === void 0 ? void 0 : _j.ConflictsOfInterest) || "—" })),
-                        React.createElement(MField, { label: "DISABILITY", value: ((_k = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _k === void 0 ? void 0 : _k.Disability) || "—" })),
-                    (candidateData === null || candidateData === void 0 ? void 0 : candidateData.panelMembers) && candidateData.panelMembers.length > 0 && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mPanelSection },
+                            React.createElement(MField, { label: "CONFLICTS", value: ((_g = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _g === void 0 ? void 0 : _g.ConflictsOfInterest) || "—" })),
+                        React.createElement(MField, { label: "DISABILITY", value: ((_h = candidateData === null || candidateData === void 0 ? void 0 : candidateData._raw) === null || _h === void 0 ? void 0 : _h.Disability) || "—" })),
+                    panelMembers.length > 0 && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mPanelSection },
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mPanelHeader },
                             React.createElement(lucide_react_1.Users, { size: 12, color: "#2563eb" }),
                             React.createElement("span", null, "INTERVIEW PANEL")),
-                        candidateData.panelMembers.map(function (name, i) { return (React.createElement("div", { key: i, className: Reviewscorecardtab_module_scss_1.default.mPanelRow },
+                        panelMembers.map(function (name, i) { return (React.createElement("div", { key: i, className: Reviewscorecardtab_module_scss_1.default.mPanelRow },
                             React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mPanelBadge }, i + 1),
                             React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mPanelName }, name))); })))),
                 React.createElement("main", { className: Reviewscorecardtab_module_scss_1.default.mRight },
-                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSection },
+                    !loadingScore && scoreData.length > 0 && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.panelTabBar }, scoreData.map(function (s, i) {
+                        var name = panelMembers[i] || s.InterviewPersonName || "Interviewer ".concat(i + 1);
+                        return (React.createElement("button", { key: i, className: "".concat(Reviewscorecardtab_module_scss_1.default.panelTab, " ").concat(activePanelTab === i ? Reviewscorecardtab_module_scss_1.default.panelTabActive : ""), onClick: function () { return setActivePanelTab(i); } },
+                            React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.panelTabNum }, i + 1),
+                            React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.panelTabName }, name)));
+                    }))),
+                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.scorecardTabBar },
+                        React.createElement("button", { className: "".concat(Reviewscorecardtab_module_scss_1.default.scorecardTab, " ").concat(activeScorecardTab === "questions" ? Reviewscorecardtab_module_scss_1.default.scorecardTabActive : ""), onClick: function () { return setActiveScorecardTab("questions"); } },
+                            React.createElement(lucide_react_1.HelpCircle, { size: 14 }),
+                            " Interview Questionnaires"),
+                        React.createElement("button", { className: "".concat(Reviewscorecardtab_module_scss_1.default.scorecardTab, " ").concat(activeScorecardTab === "qEval" ? Reviewscorecardtab_module_scss_1.default.scorecardTabActive : ""), onClick: function () { return setActiveScorecardTab("qEval"); } },
+                            React.createElement(lucide_react_1.BarChart2, { size: 14 }),
+                            " Question Evaluation Scorecard"),
+                        React.createElement("button", { className: "".concat(Reviewscorecardtab_module_scss_1.default.scorecardTab, " ").concat(activeScorecardTab === "overall" ? Reviewscorecardtab_module_scss_1.default.scorecardTabActive : ""), onClick: function () { return setActiveScorecardTab("overall"); } },
+                            React.createElement(lucide_react_1.BarChart2, { size: 14 }),
+                            " Overall Evaluation Scorecard")),
+                    activeScorecardTab === "questions" && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSection },
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionHeader },
                             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionBar, style: { background: "#f97316" } }),
                             React.createElement("div", null,
                                 React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionTitle }, "INTERVIEW QUESTIONNAIRES"),
-                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionSub }, "Panel Assessment Results"))),
+                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionSub },
+                                    "Panel Assessment Results",
+                                    panelMembers[activePanelTab] ? " \u2014 ".concat(panelMembers[activePanelTab]) : ""))),
                         fetchingQuestions ? (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mNoData }, "Loading questions\u2026")) : interviewQuestions && interviewQuestions.length > 0 ? (interviewQuestions.map(function (q, idx) {
-                            var _a;
-                            var qScore = ((_a = primaryScore === null || primaryScore === void 0 ? void 0 : primaryScore.QuestionJson) === null || _a === void 0 ? void 0 : _a[idx])
-                                ? Number(Object.values(primaryScore.QuestionJson[idx])[0] || 0) : 0;
+                            // Score from ACTIVE PANEL TAB's QuestionJson
+                            var qScore = activeQuestionJson[idx]
+                                ? Number(Object.values(activeQuestionJson[idx])[0] || 0) : 0;
                             var rl = ratingLabel(qScore);
                             var answerText = (q.answer || q.response || q.value || q.selectedOption || "")
-                                .replace(/<p>|<\/p>|<br\s*\/?\>/gi, "")
-                                .trim();
+                                .replace(/<p>|<\/p>|<br\s*\/?\>/gi, "").trim();
                             return (React.createElement("div", { key: idx, className: Reviewscorecardtab_module_scss_1.default.mQCard },
                                 React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mQTop },
                                     React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mQBadge },
                                         "Q",
                                         idx + 1),
-                                    React.createElement("div", null,
+                                    React.createElement("div", { style: { flex: 1 } },
                                         React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.mQText, dangerouslySetInnerHTML: {
                                                 __html: (q.question || "").replace(/<p>|<\/p>|<br\s*\/?\>/gi, "").trim()
                                             } }),
-                                        answerText ? React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.mQAnswer },
+                                        answerText && (React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.mQAnswer },
                                             React.createElement("strong", null, "Answer:"),
                                             " ",
-                                            answerText) : null)),
+                                            answerText)))),
                                 React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mQBottom },
                                     React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } },
                                         React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mRatingLabel }, "RATING:"),
-                                        React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mRatingBadge, style: { color: rl.color, background: rl.bg, border: "1px solid ".concat(rl.color, "33") } }, rl.text)),
+                                        React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mRatingBadge, style: {
+                                                color: rl.color, background: rl.bg, border: "1px solid ".concat(rl.color, "33")
+                                            } }, rl.text)),
                                     React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mScoreDisplay },
                                         React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mScoreLabel }, "SCORE"),
                                         React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mScoreNum },
                                             qScore,
                                             React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mScoreMax }, "/3"))))));
-                        })) : (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mNoData }, "No questions found for this job."))),
-                    !loadingScore && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSection },
-                        React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionHeader },
-                            React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionBar, style: { background: "#22c55e" } }),
-                            React.createElement("div", null,
-                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionTitle }, "SCORECARD DETAILS"),
-                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionSub }, "Core Competency Assessment (1\u20135 Scale)"))),
-                        primaryScore ? (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mScoreCard },
-                            React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mScoreGrid }, SCORECARD_LABELS.map(function (_a) {
-                                var key = _a.key, label = _a.label;
-                                var val = Number(primaryScore[key] || 0);
-                                return (React.createElement("div", { key: key, className: Reviewscorecardtab_module_scss_1.default.mScoreItem },
-                                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mScoreRow },
-                                        React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mScoreFieldLabel }, label),
-                                        React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mScoreFieldVal },
-                                            val,
-                                            "/5")),
-                                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mProgressBar },
-                                        React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mProgressFill, style: { width: "".concat((val / 5) * 100, "%") } }))));
-                            })),
-                            React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecFeedbackRow },
-                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecCol },
-                                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecLabel }, "PANEL RECOMMENDATION"),
-                                    primaryScore.ConsiderForEmployment === "Yes" ? (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecBadgeYes },
-                                        React.createElement(lucide_react_1.CheckCircle2, { size: 14 }),
-                                        " Consider for Employment")) : (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecBadgeNo },
-                                        React.createElement(lucide_react_1.X, { size: 14 }),
-                                        " Do Not Consider"))),
-                                primaryScore.OverAllEvaluationFeedback && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFeedbackCol },
-                                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecLabel }, "OVERALL EVALUATION FEEDBACK"),
-                                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFeedbackText },
-                                        "\"",
-                                        primaryScore.OverAllEvaluationFeedback,
-                                        "\"")))))) : (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mNoData }, "No scorecard data available.")))),
-                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSection },
+                        })) : (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mNoData }, "No questions found for this job.")),
+                        !loadingScore && activeScore && (React.createElement("div", { style: { marginTop: "1.5rem" } },
+                            React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionHeader },
+                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionBar, style: { background: "#22c55e" } }),
+                                React.createElement("div", null,
+                                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionTitle }, "SCORECARD DETAILS"),
+                                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionSub }, "Core Competency Assessment (1\u20135 Scale)"))),
+                            React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mScoreCard },
+                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mScoreGrid }, SCORECARD_BAR_LABELS.map(function (_a) {
+                                    var key = _a.key, label = _a.label;
+                                    var val = Number(activeScore[key] || 0);
+                                    return (React.createElement("div", { key: key, className: Reviewscorecardtab_module_scss_1.default.mScoreItem },
+                                        React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mScoreRow },
+                                            React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mScoreFieldLabel }, label),
+                                            React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mScoreFieldVal },
+                                                val,
+                                                "/5")),
+                                        React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mProgressBar },
+                                            React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mProgressFill, style: { width: "".concat((val / 5) * 100, "%") } }))));
+                                })),
+                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecFeedbackRow },
+                                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecCol },
+                                        React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecLabel }, "PANEL RECOMMENDATION"),
+                                        activeScore.ConsiderForEmployment === "Yes" ? (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecBadgeYes },
+                                            React.createElement(lucide_react_1.CheckCircle2, { size: 14 }),
+                                            " Consider for Employment")) : (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecBadgeNo },
+                                            React.createElement(lucide_react_1.X, { size: 14 }),
+                                            " Do Not Consider"))),
+                                    activeScore.OverAllEvaluationFeedback && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFeedbackCol },
+                                        React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mRecLabel }, "OVERALL EVALUATION FEEDBACK"),
+                                        React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFeedbackText },
+                                            "\"",
+                                            activeScore.OverAllEvaluationFeedback,
+                                            "\""))))))))),
+                    activeScorecardTab === "qEval" && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSection },
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionHeader },
                             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionBar, style: { background: "#6366f1" } }),
                             React.createElement("div", null,
                                 React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionTitle }, "QUESTION EVALUATION SCORECARD"),
-                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionSub }, "Panel-wise Question Scores"))),
+                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionSub }, "Panel-wise Question Scores \u2014 All Interviewers"))),
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.tableScroll },
                             React.createElement("table", { className: Reviewscorecardtab_module_scss_1.default.scoreTable },
                                 React.createElement("thead", null,
                                     React.createElement("tr", null,
                                         React.createElement("th", null, "Criteria"),
-                                        interviewerNames.map(function (name, i) { return (React.createElement("th", { key: i }, "Interviewer ".concat(i + 1, " (").concat(name && name.trim() ? name : "—", ")"))); }))),
-                                React.createElement("tbody", null, (function () {
-                                    var qMap = {};
-                                    scoreData.forEach(function (score, i) {
-                                        if (score.QuestionJson) {
-                                            score.QuestionJson.forEach(function (q) {
-                                                var key = Object.keys(q)[0];
-                                                if (!qMap[key])
-                                                    qMap[key] = { criteria: key };
-                                                qMap[key]["i".concat(i)] = q[key];
-                                            });
-                                        }
-                                    });
-                                    return Object.values(qMap).map(function (row, idx) { return (React.createElement("tr", { key: idx },
-                                        React.createElement("td", null, row.criteria),
-                                        scoreData.map(function (_, j) {
-                                            var _a;
-                                            return (React.createElement("td", { key: j }, (_a = row["i".concat(j)]) !== null && _a !== void 0 ? _a : "—"));
-                                        }))); });
-                                })())))),
-                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSection },
+                                        scoreData.map(function (s, i) { return (React.createElement("th", { key: i },
+                                            "Interviewer ",
+                                            i + 1,
+                                            React.createElement("br", null),
+                                            React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.interviewerName },
+                                                "(",
+                                                panelMembers[i] || s.InterviewPersonName || "—",
+                                                ")"))); }))),
+                                React.createElement("tbody", null, questionTableData.length === 0 ? (React.createElement("tr", null,
+                                    React.createElement("td", { colSpan: scoreData.length + 1, className: Reviewscorecardtab_module_scss_1.default.noData }, "No question data available."))) : (questionTableData.map(function (row, idx) { return (React.createElement("tr", { key: idx, className: idx % 2 === 0 ? Reviewscorecardtab_module_scss_1.default.stripedRow : "" },
+                                    React.createElement("td", null,
+                                        React.createElement("strong", null, row.criteria)),
+                                    scoreData.map(function (_, j) {
+                                        var _a;
+                                        return (React.createElement("td", { key: j }, (_a = row["panel_".concat(j)]) !== null && _a !== void 0 ? _a : "—"));
+                                    }))); }))))))),
+                    activeScorecardTab === "overall" && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSection },
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionHeader },
                             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionBar, style: { background: "#22c55e" } }),
                             React.createElement("div", null,
                                 React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionTitle }, "OVERALL EVALUATION SCORECARD"),
-                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionSub }, "Core Criteria Scores"))),
+                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSectionSub }, "Core Criteria Scores \u2014 All Interviewers"))),
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.tableScroll },
                             React.createElement("table", { className: Reviewscorecardtab_module_scss_1.default.scoreTable },
                                 React.createElement("thead", null,
                                     React.createElement("tr", null,
                                         React.createElement("th", null, "Criteria"),
-                                        interviewerNames.map(function (name, i) { return (React.createElement("th", { key: i }, "Interviewer ".concat(i + 1, " (").concat(name && name.trim() ? name : "—", ")"))); }),
+                                        scoreData.map(function (s, i) { return (React.createElement("th", { key: i },
+                                            "Interviewer ",
+                                            i + 1,
+                                            React.createElement("br", null),
+                                            React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.interviewerName },
+                                                "(",
+                                                panelMembers[i] || s.InterviewPersonName || "—",
+                                                ")"))); }),
                                         React.createElement("th", null, "Total"))),
-                                React.createElement("tbody", null, (function () {
-                                    var criteriaList = [
-                                        { field: "RelevantQualification", label: "Qualification (Relevant)" },
-                                        { field: "ReleventExperience", label: "Experience (Relevant)" },
-                                        { field: "Knowledge", label: "Knowledge" },
-                                        { field: "EnergyLevel", label: "Energy Level" },
-                                        { field: "MeetJobRequirement", label: "Meets All Job Requirements" },
-                                        { field: "ContributeTowardsCultureRequried", label: "Will Contribute to Culture" },
-                                        { field: "Experience", label: "Experience" },
-                                        { field: "OtherCriteriaScore", label: "Other Criteria" },
-                                    ];
-                                    var rows = criteriaList.map(function (_a, idx) {
-                                        var field = _a.field, label = _a.label;
-                                        var row = { criteria: label, total: 0 };
-                                        scoreData.forEach(function (s, j) {
-                                            var val = Number(s[field]) || 0;
-                                            row["interviewer_".concat(j + 1)] = val;
-                                            row.total += val;
-                                        });
-                                        return row;
-                                    });
-                                    // Total row
-                                    var totalRow = { criteria: "Total", total: 0 };
-                                    scoreData.forEach(function (_, i) {
-                                        var sum = rows.reduce(function (acc, row) {
-                                            var v = row["interviewer_".concat(i + 1)];
-                                            return typeof v === "number" ? acc + v : acc;
-                                        }, 0);
-                                        totalRow["interviewer_".concat(i + 1)] = "".concat(sum, " / 40");
-                                    });
-                                    totalRow.total = rows.reduce(function (acc, row) { return acc + (row.total || 0); }, 0);
-                                    rows.push(totalRow);
-                                    return rows.map(function (row, idx) { return (React.createElement("tr", { key: idx, className: row.criteria === "Total" ? Reviewscorecardtab_module_scss_1.default.totalRow : idx % 2 === 0 ? Reviewscorecardtab_module_scss_1.default.stripedRow : "" },
-                                        React.createElement("td", null,
-                                            React.createElement("strong", null, row.criteria)),
-                                        scoreData.map(function (_, j) {
-                                            var _a;
-                                            return (React.createElement("td", { key: j }, (_a = row["interviewer_".concat(j + 1)]) !== null && _a !== void 0 ? _a : "—"));
-                                        }),
-                                        React.createElement("td", null, row.total))); });
-                                })())))),
+                                React.createElement("tbody", null, overallTableData.map(function (row, idx) { return (React.createElement("tr", { key: idx, className: row.criteria === "Total" ? Reviewscorecardtab_module_scss_1.default.totalRow : idx % 2 === 0 ? Reviewscorecardtab_module_scss_1.default.stripedRow : "" },
+                                    React.createElement("td", null,
+                                        React.createElement("strong", null, row.criteria)),
+                                    scoreData.map(function (_, j) {
+                                        var _a;
+                                        return (React.createElement("td", { key: j }, (_a = row["panel_".concat(j)]) !== null && _a !== void 0 ? _a : "—"));
+                                    }),
+                                    React.createElement("td", null,
+                                        React.createElement("strong", null, row.total)))); })))))),
                     canEdit && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mDecisionCard },
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mDecisionHeader },
                             React.createElement(lucide_react_1.Zap, { size: 22, color: "#f59e0b", fill: "#f59e0b" }),
@@ -880,16 +866,8 @@ var CandidateReviewModal = function (_a) {
                             React.createElement("button", { className: "".concat(Reviewscorecardtab_module_scss_1.default.mDCard, " ").concat(hodDecision === "On Hold" ? Reviewscorecardtab_module_scss_1.default.mDCardHold : "", " ").concat(decisionErr ? Reviewscorecardtab_module_scss_1.default.mInputErr : ""), onClick: function () { setHodDecision("On Hold"); setDecisionErr(false); setSubmitError(""); } },
                                 React.createElement(lucide_react_1.Activity, { size: 28 }),
                                 React.createElement("span", null, "ON HOLD"))),
-                        decisionErr && (React.createElement("div", { style: { color: "#ef4444", fontSize: "0.75rem", marginBottom: "0.5rem" } }, "\u26A0 Please select a decision above.")),
-                        successMessage && (React.createElement("div", { style: {
-                                background: "#dcfce7",
-                                border: "1px solid #22c55e",
-                                color: "#166534",
-                                padding: "0.6rem 0.8rem",
-                                borderRadius: "0.45rem",
-                                marginBottom: "0.75rem",
-                                fontWeight: 600,
-                            } }, successMessage)),
+                        decisionErr && React.createElement("div", { style: { color: "#ef4444", fontSize: "0.75rem", marginBottom: "0.5rem" } }, "\u26A0 Please select a decision above."),
+                        successMessage && (React.createElement("div", { style: { background: "#dcfce7", border: "1px solid #22c55e", color: "#166534", padding: "0.6rem 0.8rem", borderRadius: "0.45rem", marginBottom: "0.75rem", fontWeight: 600 } }, successMessage)),
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFormGroup, style: { marginTop: 16 } },
                             React.createElement("button", { onClick: handleViewComments, className: Reviewscorecardtab_module_scss_1.default.mActionBtn },
                                 React.createElement(lucide_react_1.FileText, { size: 16 }),
@@ -899,39 +877,27 @@ var CandidateReviewModal = function (_a) {
                                 "Assign Position ID ",
                                 React.createElement("span", { style: { color: "#ef4444" } }, "*"),
                                 posErr && React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mErrText }, " \u2014 Required")),
-                            React.createElement("select", { className: "".concat(Reviewscorecardtab_module_scss_1.default.mSelect, " ").concat(posErr ? Reviewscorecardtab_module_scss_1.default.mInputErr : ""), value: selectedPositionId !== null && selectedPositionId !== void 0 ? selectedPositionId : "", onChange: function (e) {
-                                    var val = Number(e.target.value) || null;
-                                    setSelectedPositionId(val);
-                                    var opt = positionOptions.find(function (o) { return o.key === val; });
-                                    setSelectedPositionText((opt === null || opt === void 0 ? void 0 : opt.text) || "");
-                                    setPosErr(false);
-                                } },
+                            React.createElement("select", { className: "".concat(Reviewscorecardtab_module_scss_1.default.mSelect, " ").concat(posErr ? Reviewscorecardtab_module_scss_1.default.mInputErr : ""), value: selectedPositionId !== null && selectedPositionId !== void 0 ? selectedPositionId : "", onChange: function (e) { var v = Number(e.target.value) || null; setSelectedPositionId(v); var opt = positionOptions.find(function (o) { return o.key === v; }); setSelectedPositionText((opt === null || opt === void 0 ? void 0 : opt.text) || ""); setPosErr(false); } },
                                 React.createElement("option", { value: "" }, "Select a position\u2026"),
-                                positionOptions.map(function (opt) { return (React.createElement("option", { key: opt.key, value: opt.key }, opt.text || "#".concat(opt.key))); })),
-                            positionOptions.length === 0 && (React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.mNoData, style: { marginTop: 6 } }, "No positions available.")))),
+                                positionOptions.map(function (opt) { return React.createElement("option", { key: opt.key, value: opt.key }, opt.text || "#".concat(opt.key)); })),
+                            positionOptions.length === 0 && React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.mNoData, style: { marginTop: 6 } }, "No positions available."))),
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFormGroup },
                             React.createElement("label", { className: "".concat(Reviewscorecardtab_module_scss_1.default.mFormLabel, " ").concat(commentErr ? Reviewscorecardtab_module_scss_1.default.mErrLabel : "") },
                                 feedbackLabel,
                                 " ",
                                 React.createElement("span", { style: { color: "#ef4444" } }, "*"),
                                 commentErr && React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mErrText }, " \u2014 Required")),
-                            React.createElement("textarea", { className: "".concat(Reviewscorecardtab_module_scss_1.default.mTextarea, " ").concat(commentErr ? Reviewscorecardtab_module_scss_1.default.mInputErr : ""), placeholder: "Provide your final decision rationale...", value: decisionComment, onChange: function (e) {
-                                    setDecisionComment(e.target.value);
-                                    if (e.target.value.trim())
-                                        setCommentErr(false);
-                                } })),
+                            React.createElement("textarea", { className: "".concat(Reviewscorecardtab_module_scss_1.default.mTextarea, " ").concat(commentErr ? Reviewscorecardtab_module_scss_1.default.mInputErr : ""), placeholder: "Provide your final decision rationale...", value: decisionComment, onChange: function (e) { setDecisionComment(e.target.value); if (e.target.value.trim())
+                                    setCommentErr(false); } })),
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFormGroup },
                             React.createElement("label", { className: Reviewscorecardtab_module_scss_1.default.mCheckboxRow },
-                                React.createElement("input", { type: "checkbox", checked: confirmed, onChange: function (e) {
-                                        setConfirmed(e.target.checked);
-                                        if (e.target.checked)
-                                            setCheckboxErr(false);
-                                    } }),
+                                React.createElement("input", { type: "checkbox", checked: confirmed, onChange: function (e) { setConfirmed(e.target.checked); if (e.target.checked)
+                                        setCheckboxErr(false); } }),
                                 React.createElement("span", null, "I confirm that the above decision is accurate and in line with the evaluation of the candidate's scorecard details.")),
-                            checkboxErr && (React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mCheckboxErrText }, "\u26A0 You must confirm before submitting."))),
+                            checkboxErr && React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mCheckboxErrText }, "\u26A0 You must confirm before submitting.")),
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFormGroup, style: { marginTop: 20 } },
                             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.reviewerCard },
-                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.reviewerAvatar }, userInitial),
+                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.reviewerAvatar }, userInitial || "H"),
                                 React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.reviewerInfo },
                                     React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.reviewerCol },
                                         React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.reviewerMeta }, "REVIEWER NAME"),
@@ -944,11 +910,9 @@ var CandidateReviewModal = function (_a) {
                         submitError && React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSubmitError }, submitError),
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFooter },
                             React.createElement("button", { onClick: onClose, className: Reviewscorecardtab_module_scss_1.default.mCancelBtn, disabled: submitting }, "CANCEL"),
-                            React.createElement("button", { className: Reviewscorecardtab_module_scss_1.default.mSubmitBtn, onClick: handleDecisionSubmit, disabled: submitting || !hodDecision }, submitting
-                                ? "Submitting…"
-                                : React.createElement(React.Fragment, null,
-                                    React.createElement(lucide_react_1.CheckCircle2, { size: 15, style: { marginRight: 6 } }),
-                                    " SUBMIT ACTION"))))),
+                            React.createElement("button", { className: Reviewscorecardtab_module_scss_1.default.mSubmitBtn, onClick: handleDecisionSubmit, disabled: submitting || !hodDecision }, submitting ? "Submitting…" : React.createElement(React.Fragment, null,
+                                React.createElement(lucide_react_1.CheckCircle2, { size: 15, style: { marginRight: 6 } }),
+                                " SUBMIT ACTION"))))),
                     !canEdit && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mDecisionCard, style: { borderColor: "#e2e8f0", background: "#f8fafc" } },
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mDecisionHeader },
                             React.createElement(lucide_react_1.Eye, { size: 22, color: "#2563eb" }),
@@ -961,28 +925,15 @@ var CandidateReviewModal = function (_a) {
                                 " VIEW COMMENTS")),
                         hodDecision && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFormGroup },
                             React.createElement("label", { className: Reviewscorecardtab_module_scss_1.default.mFormLabel }, "Decision"),
-                            React.createElement("div", { style: {
-                                    padding: "0.5rem 1rem",
-                                    borderRadius: "0.5rem",
+                            React.createElement("div", { style: { padding: "0.5rem 1rem", borderRadius: "0.5rem", fontWeight: 700, fontSize: "0.875rem", display: "inline-block",
                                     background: hodDecision === "Yes" ? "#f0fdf4" : hodDecision === "No" ? "#fef2f2" : "#fffbeb",
-                                    color: hodDecision === "Yes" ? "#16a34a" : hodDecision === "No" ? "#dc2626" : "#d97706",
-                                    fontWeight: 700,
-                                    fontSize: "0.875rem",
-                                    display: "inline-block",
-                                } }, hodDecision === "Yes" ? "✓ SELECTED" : hodDecision === "No" ? "✗ REJECTED" : "⏸ ON HOLD"))),
+                                    color: hodDecision === "Yes" ? "#16a34a" : hodDecision === "No" ? "#dc2626" : "#d97706" } }, hodDecision === "Yes" ? "✓ SELECTED" : hodDecision === "No" ? "✗ REJECTED" : "⏸ ON HOLD"))),
                         selectedPositionText && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFormGroup },
                             React.createElement("label", { className: Reviewscorecardtab_module_scss_1.default.mFormLabel }, "Assigned Position ID"),
                             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mfValue }, selectedPositionText))),
                         decisionComment && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFormGroup },
                             React.createElement("label", { className: Reviewscorecardtab_module_scss_1.default.mFormLabel }, feedbackLabel),
-                            React.createElement("div", { style: {
-                                    background: "#fff",
-                                    border: "1.5px solid #e2e8f0",
-                                    borderRadius: "0.5rem",
-                                    padding: "0.75rem",
-                                    fontSize: "0.875rem",
-                                    color: "#334155",
-                                } }, decisionComment))),
+                            React.createElement("div", { style: { background: "#fff", border: "1.5px solid #e2e8f0", borderRadius: "0.5rem", padding: "0.75rem", fontSize: "0.875rem", color: "#334155" } }, decisionComment))),
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFooter },
                             React.createElement("button", { onClick: onClose, className: Reviewscorecardtab_module_scss_1.default.mCancelBtn }, "CLOSE"))))))),
         React.createElement(framer_motion_1.AnimatePresence, null, showComments && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentsModalOverlay, onClick: function () { return setShowComments(false); } },
@@ -993,37 +944,46 @@ var CandidateReviewModal = function (_a) {
                         " View Justification"),
                     React.createElement("button", { onClick: function () { return setShowComments(false); } },
                         React.createElement(lucide_react_1.X, { size: 20 }))),
-                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentsBody }, loadingComments ? (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentsLoading }, "Loading comments...")) : level1Comments.length === 0 && level2Comments.length === 0 ? (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentsNoData }, "No Comments Found")) : (React.createElement(React.Fragment, null,
-                    level1Comments.map(function (c, i) { return (React.createElement("div", { key: "l1-".concat(i), className: Reviewscorecardtab_module_scss_1.default.mCommentItemL1 },
-                        React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentRole },
-                            "Submitted by ",
-                            c.RoleName || "Unknown",
-                            " (Level 1)"),
-                        c.comments && React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentText },
-                            React.createElement("strong", null, "Feedback Level 1:"),
-                            React.createElement("br", null),
-                            c.comments),
-                        c.OverAllEvaluationFeedback && React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentText },
-                            React.createElement("strong", null, "Overall Feedback Level 1:"),
-                            React.createElement("br", null),
-                            c.OverAllEvaluationFeedback),
-                        c.Date && React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentDate },
-                            "Date: ",
-                            (0, moment_1.default)(c.Date).format("M/D/YYYY, h:mm:ss A")),
-                        c.Name && React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentAuthor }, c.Name))); }),
-                    level2Comments.map(function (c, i) { return (React.createElement("div", { key: "l2-".concat(i), className: Reviewscorecardtab_module_scss_1.default.mCommentItemL2 },
-                        React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentRole },
-                            "Submitted by ",
-                            c.RoleName || "Unknown",
-                            " (Level 2)"),
-                        c.comments && React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentText },
-                            React.createElement("strong", null, "Feedback Level 2:"),
-                            React.createElement("br", null),
-                            c.comments),
-                        c.Date && React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentDate },
-                            "Date: ",
-                            (0, moment_1.default)(c.Date).format("M/D/YYYY, h:mm:ss A")),
-                        c.Name && React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentAuthor }, c.Name))); })))),
+                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentsBody }, loadingComments ? React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentsLoading }, "Loading comments...")
+                    : level1Comments.length === 0 && level2Comments.length === 0 ? React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentsNoData }, "No Comments Found")
+                        : (React.createElement(React.Fragment, null, (function () {
+                            var allComments = tslib_1.__spreadArray(tslib_1.__spreadArray([], level1Comments.map(function (c) { return (tslib_1.__assign(tslib_1.__assign({}, c), { level: "Level 1" })); }), true), level2Comments.map(function (c) { return (tslib_1.__assign(tslib_1.__assign({}, c), { level: "Level 2" })); }), true).sort(function (a, b) {
+                                var d1 = a.Date ? new Date(a.Date).getTime() : 0;
+                                var d2 = b.Date ? new Date(b.Date).getTime() : 0;
+                                return d1 - d2;
+                            });
+                            return allComments.map(function (c, i) { return (React.createElement("div", { key: "comment-".concat(i), className: c.level === "Level 1" ? Reviewscorecardtab_module_scss_1.default.mCommentItemL1 : Reviewscorecardtab_module_scss_1.default.mCommentItemL2 },
+                                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentRole },
+                                    "Submitted by ",
+                                    c.RoleName || c.Name || "Unknown",
+                                    " (",
+                                    c.level,
+                                    ")"),
+                                c.comments && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentText },
+                                    React.createElement("strong", null,
+                                        "Feedback ",
+                                        c.level,
+                                        ":"),
+                                    React.createElement("br", null),
+                                    c.comments)),
+                                c.OverAllEvaluationFeedback && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentText },
+                                    React.createElement("strong", null,
+                                        "Overall Feedback ",
+                                        c.level,
+                                        ":"),
+                                    React.createElement("br", null),
+                                    c.OverAllEvaluationFeedback)),
+                                c.Date && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentDate },
+                                    "Date: ",
+                                    (0, moment_1.default)(c.Date).format("M/D/YYYY, h:mm:ss A"))),
+                                c.Name && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentAuthor },
+                                    c.Name,
+                                    " ",
+                                    c.JobTitleInEnglish ? "- ".concat(c.JobTitleInEnglish) : "",
+                                    " ",
+                                    c.JobTitleInFrench ? "(".concat(c.JobTitleInFrench, ")") : "")),
+                                c.Department && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentAuthor }, c.Department)))); });
+                        })()))),
                 React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentsFooter },
                     React.createElement("button", { onClick: function () { return setShowComments(false); }, className: Reviewscorecardtab_module_scss_1.default.closeBtn }, "CLOSE"))))))));
 };
