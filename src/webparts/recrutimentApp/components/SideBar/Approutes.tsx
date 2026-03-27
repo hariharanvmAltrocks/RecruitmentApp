@@ -15,7 +15,7 @@ const AppRoutes: React.FC<AppRoutesProps> = ({ props, activeMenuId }) => (
     <Route path="/Dashboard" element={<Dashboard {...props} />} />
     <Route path="/RecruitmentTable" element={<RecruitmentTable  />} />
     <Route path="/QuestionCreation" element={<QuestionCreation {...props} />}/>
-    <Route path="/CandidateTable" element={<CandidateTable />}/>
+    <Route path="/CandidateTable" element={<CandidateTable {...props} />}/>
     <Route path="/Evalution" element={<Evalution />} />
   </Routes>
 );

@@ -141,7 +141,8 @@ export type IDptData = {
   DepartmentID: number;
   Nationality: string;
   NumberOfPersonNeeded: string;
-  Dptcode?:string;
+  Dptcode?: string;
+  reviewerComments?: string;
 }
 
 export type IRecruitmentService = {

@@ -31,11 +31,11 @@ var reusehooks_1 = require("../../../Hooks/reusehooks");
 //     actionMode: "upload",
 //   },
 // ];
-var getTabDetails = function (items) {
+var getTabDetails = function (items, roleIDs) {
     var _a;
     return (_a = items === null || items === void 0 ? void 0 : items.map(function (item, index) {
         var _a, _b;
-        return (tslib_1.__assign(tslib_1.__assign({}, item), { Value: "tab".concat(index + 1), MatricID: (0, reusehooks_1.findMatricID)(Number((_b = (_a = item.StatusDetails) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.StatusId), item.TabName) }));
+        return (tslib_1.__assign(tslib_1.__assign({}, item), { Value: "tab".concat(index + 1), MatricID: (0, reusehooks_1.findMatricID)(roleIDs, Number((_b = (_a = item.StatusDetails) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.StatusId), item.TabName) }));
     })) !== null && _a !== void 0 ? _a : [];
 };
 var useTabDetails = function () {
@@ -57,7 +57,7 @@ var useTabDetails = function () {
                     ? (_a = menu.Children) === null || _a === void 0 ? void 0 : _a.find(function (child) { return (child === null || child === void 0 ? void 0 : child.Id) === activeMenuID; })
                     : (_b = menu.TabDetails) === null || _b === void 0 ? void 0 : _b.find(function (tab) { return (tab === null || tab === void 0 ? void 0 : tab.Id) === activeMenuID; });
                 if (match)
-                    acc.push.apply(acc, getTabDetails(match.TabDetails));
+                    acc.push.apply(acc, getTabDetails(match.TabDetails, roleIDs));
                 return acc;
             }, [])) !== null && _a !== void 0 ? _a : [];
             var normalize = function (value) { return value.replace(/\s+/g, "").toLowerCase(); };

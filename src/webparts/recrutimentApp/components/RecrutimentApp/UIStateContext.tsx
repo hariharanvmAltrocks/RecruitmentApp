@@ -5,6 +5,8 @@ interface UIState {
   activeTab: string;
   navigationPath: string;
   MatricID: number;
+  sideNavflag: boolean;
+  currentTabName: string;
 }
 
 interface UIContextType extends UIState {
@@ -12,6 +14,8 @@ interface UIContextType extends UIState {
   setActiveTab: (tab: string) => void;
   setNavigationPath: (path: string) => void;
   setMatricID: (id: number) => void;
+  setSideNavflag: (flag: boolean) => void;
+  setCurrentTabName: (name: string) => void;
 }
 
 const UIContext = createContext<UIContextType | null>(null);
@@ -22,6 +26,8 @@ export const UIProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const [activeTab, setActiveTab] = useState<string>("");
   const [navigationPath, setNavigationPath] = useState<string>("");
   const [MatricID, setMatricID] = useState<number>(0);
+  const [sideNavflag, setSideNavflag] = useState<boolean>(false);
+  const [currentTabName, setCurrentTabName] = useState<string>("");
 
   return (
     <UIContext.Provider
@@ -30,6 +36,10 @@ export const UIProvider: React.FC<{ children: React.ReactNode }> = ({ children }
         activeTab,
         navigationPath,
         MatricID,
+        sideNavflag,
+        currentTabName,
+        setCurrentTabName,
+        setSideNavflag,
         setMatricID,
         setActiveMenuID,
         setActiveTab,

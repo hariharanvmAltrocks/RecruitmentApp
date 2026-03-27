@@ -32,7 +32,7 @@ var RecruitmentTable = function () {
     var navigate = (0, react_router_dom_1.useNavigate)();
     var _e = (0, react_1.useState)(activeTab), activeTabKey = _e[0], setActiveTabKey = _e[1];
     var _f = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey), items = _f.items, tableLoading = _f.loading;
-    var _g = (0, UIStateContext_1.useUIState)(), matricID = _g.MatricID, setMatricID = _g.setMatricID;
+    var _g = (0, UIStateContext_1.useUIState)(), matricID = _g.MatricID, setMatricID = _g.setMatricID, sideNavflag = _g.sideNavflag, setCurrentTabName = _g.setCurrentTabName;
     var _h = (0, RoleContext_1.userInfo)(), roleIDs = _h.roleIDs, ADGroupData = _h.ADGroupData;
     var _j = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _j.drawerOpen, selectedJobId = _j.selectedJobId, advertLanguage = _j.advertLanguage, reviewerComments = _j.reviewerComments, acknowledgementCheckbox = _j.acknowledgementCheckbox, loadingState = _j.loadingState, openDrawer = _j.openDrawer, closeDrawer = _j.closeDrawer, setAdvertLanguage = _j.setAdvertLanguage, setComments = _j.setComments, toggleAcknowledgement = _j.toggleAcknowledgement, setLoadingState = _j.setLoadingState;
     var _k = (0, react_1.useState)([]), selectedIds = _k[0], setSelectedIds = _k[1];
@@ -48,14 +48,16 @@ var RecruitmentTable = function () {
     var _t = (0, useToast_1.useToast)(), toast = _t.toast, closeToast = _t.closeToast, showSuccess = _t.showSuccess, showError = _t.showError;
     var selectedItems = (0, react_1.useMemo)(function () { return items.filter(function (item) { return selectedIds.includes(item.id); }); }, [items, selectedIds]);
     var selectedJobCode = (0, react_1.useMemo)(function () { var _a; return selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.jobCode : ""; }, [selectedItems]);
+    var _u = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _u.members, membersLoading = _u.loading;
     (0, react_1.useEffect)(function () {
         var _a, _b;
-        if (tabs.length > 0 && !ActiveTabName.current) {
-            ActiveTabName.current = (_b = (_a = tabs[0]) === null || _a === void 0 ? void 0 : _a.label) !== null && _b !== void 0 ? _b : "";
-            setMatricID(tabs[0].matricId);
+        if (sideNavflag) {
+            if (tabs.length > 0 && !ActiveTabName.current) {
+                ActiveTabName.current = (_b = (_a = tabs[1]) === null || _a === void 0 ? void 0 : _a.label) !== null && _b !== void 0 ? _b : "";
+                setMatricID(tabs[0].matricId);
+            }
         }
     }, [tabs]);
-    var _u = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _u.members, membersLoading = _u.loading;
     (0, react_1.useEffect)(function () {
         if (!tabs.length) {
             return;
@@ -123,7 +125,8 @@ var RecruitmentTable = function () {
             routeMap = (_a = {},
                 _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation",
                 _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation",
-                _a[ConditionConfig_1.MatricID.ReviewProfile] = "/CandidateTable",
+                _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable",
+                _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable",
                 _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable",
                 _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/CandidateTable",
                 _a);

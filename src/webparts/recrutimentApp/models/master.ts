@@ -194,3 +194,7 @@ export type IUserDetails = {
 export type IJobGrade = {
     GradeLevel : string;
 }
+
+export type IUniqueJobCode = {
+    JobCode : string;
+}

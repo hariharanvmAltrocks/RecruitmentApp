@@ -19,7 +19,8 @@ var BASE_METRICS = (_a = {},
         iconType: "hr",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.AssignRecuritmentHR
     },
     _a[ConditionConfig_1.MatricID.UploadONEM] = {
         label: 'Pending Upload ONEM',
@@ -31,7 +32,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#f1f5f9',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab2"
+        TabValue: "tab2",
+        TabName: ConditionConfig_1.TabName.UploadONEMDoc
     },
     _a[ConditionConfig_1.MatricID.JobAdvert] = {
         label: 'Pending Advert Upload',
@@ -44,9 +46,10 @@ var BASE_METRICS = (_a = {},
         iconType: "onem",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.PreSelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.UploadAdvertisement
     },
-    _a[ConditionConfig_1.MatricID.ReviewProfile] = {
+    _a[ConditionConfig_1.MatricID.ReviewProfileHR] = {
         label: 'Review Profile',
         status: 'PENDING',
         icon: lucide_react_1.Activity,
@@ -56,7 +59,21 @@ var BASE_METRICS = (_a = {},
         statusBg: '#eff6ff',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.PostSelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.ReviewProfile
+    },
+    _a[ConditionConfig_1.MatricID.ReviewProfileLM] = {
+        label: 'Review Profile',
+        status: 'PENDING',
+        icon: lucide_react_1.Activity,
+        color: '#f59e0b',
+        bgColor: '#fffbeb',
+        statusColor: '#3b82f6',
+        statusBg: '#eff6ff',
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab3",
+        TabName: ConditionConfig_1.TabName.ReviewProfile
     },
     _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = {
         label: 'Assign Interview Panel',
@@ -68,7 +85,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#f1f5f9',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.PostSelectionProcess,
-        TabValue: "tab2"
+        TabValue: "tab2",
+        TabName: ConditionConfig_1.TabName.AssignInterviewPanel
     },
     _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = {
         label: 'Pending InterviewQuestion',
@@ -80,7 +98,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#f1f5f9',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.PostSelectionProcess,
-        TabValue: "tab3"
+        TabValue: "tab3",
+        TabName: ConditionConfig_1.TabName.InterviewQuestion
     },
     _a[ConditionConfig_1.MatricID.EvalutionHR] = {
         label: 'Pending Evaluation',
@@ -92,7 +111,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#fee2e2',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.PostSelectionProcess,
-        TabValue: "tab4"
+        TabValue: "tab4",
+        TabName: ConditionConfig_1.TabName.Evaluation
     },
     _a[ConditionConfig_1.MatricID.AdvertReviewLM] = {
         label: 'Pending Advert Review',
@@ -104,7 +124,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#fee2e2',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.Evaluation
     },
     _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = {
         label: 'Pending Create Minimum Criteria Question',
@@ -116,7 +137,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#fee2e2',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab2"
+        TabValue: "tab2",
+        TabName: ConditionConfig_1.TabName.InterviewQuestion
     },
     _a[ConditionConfig_1.MatricID.EvalutionLM] = {
         label: 'Pending Evaluation',
@@ -128,7 +150,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#fee2e2',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab4"
+        TabValue: "tab4",
+        TabName: ConditionConfig_1.TabName.Evaluation
     },
     _a[ConditionConfig_1.MatricID.AdvertReviewHOD] = {
         label: 'Pending Advert Review',
@@ -140,7 +163,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#f1f5f9',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.ReviewJobAdvertisement
     },
     _a[ConditionConfig_1.MatricID.ReviewScoreCard] = {
         label: 'Pending Position ID',
@@ -152,9 +176,10 @@ var BASE_METRICS = (_a = {},
         statusBg: '#f1f5f9',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab2"
+        TabValue: "tab2",
+        TabName: ConditionConfig_1.TabName.ReviewScorecard
     },
-    _a[ConditionConfig_1.MatricID.EvalutionLM] = {
+    _a[ConditionConfig_1.MatricID.EvalutionHOD] = {
         label: 'Pending Evaluation',
         status: 'PENDING',
         icon: lucide_react_1.Activity,
@@ -164,7 +189,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#fee2e2',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab3"
+        TabValue: "tab3",
+        TabName: ConditionConfig_1.TabName.Evaluation
     },
     _a[ConditionConfig_1.MatricID.interviewSchedule] = {
         label: 'Interviews Scheduled',
@@ -176,7 +202,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#eff6ff',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.InterviewQuestion
     },
     _a[ConditionConfig_1.MatricID.EvalutionEXCO] = {
         label: 'Pending Evaluation',
@@ -188,7 +215,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#fee2e2',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.Evaluation
     },
     _a[ConditionConfig_1.MatricID.interviewTracker] = {
         label: 'Interview Tracking',
@@ -200,7 +228,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#fee2e2',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.Evaluation
     },
     _a[ConditionConfig_1.MatricID.OfferRelease] = {
         label: 'Offer Letters Released',
@@ -212,7 +241,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#eff6ff',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.LabourHire
     },
     _a[ConditionConfig_1.MatricID.OfferAccepted] = {
         label: 'Offers Accepted',
@@ -224,7 +254,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#f1f5f9',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.LabourHire
     },
     _a[ConditionConfig_1.MatricID.OfferRejected] = {
         label: 'Offers Rejected',
@@ -236,7 +267,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#f1f5f9',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.LabourHire
     },
     _a[ConditionConfig_1.MatricID.Onbording] = {
         label: 'Candidates Onboarded',
@@ -248,7 +280,8 @@ var BASE_METRICS = (_a = {},
         statusBg: '#fee2e2',
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
-        TabValue: "tab1"
+        TabValue: "tab1",
+        TabName: ConditionConfig_1.TabName.LabourHire
     },
     _a);
 var buildCol = function (id, overrides) {
@@ -276,7 +309,7 @@ var MatricColums = function (roles) {
             case Config_1.RoleID.RecruitmentHR:
                 roleColumns = [
                     buildCol(ConditionConfig_1.MatricID.JobAdvert, { showArrow: true }),
-                    buildCol(ConditionConfig_1.MatricID.ReviewProfile, {
+                    buildCol(ConditionConfig_1.MatricID.ReviewProfileHR, {
                         showArrow: false,
                         externalApi: { workflowStatuses: [Config_1.workflowStatusApi.HRPending] },
                     }),
@@ -297,8 +330,8 @@ var MatricColums = function (roles) {
             case Config_1.RoleID.LineManager:
                 roleColumns = [
                     buildCol(ConditionConfig_1.MatricID.AdvertReviewLM, { showArrow: true }),
-                    buildCol(ConditionConfig_1.MatricID.ReviewProfile, {
-                        showArrow: false,
+                    buildCol(ConditionConfig_1.MatricID.ReviewProfileLM, {
+                        showArrow: true,
                         externalApi: {
                             workflowStatuses: [
                                 Config_1.workflowStatusApi.LineManagerL1Pending,
@@ -429,6 +462,77 @@ exports.MetricQueryConfig = (_b = {},
         ],
         select: DEFAULT_SELECT
     },
+    _b[ConditionConfig_1.MatricID.AdvertReviewHOD] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
+        Filter: [StatusFilter(Config_1.StatusId.PendingReviewAdvertHOD)],
+        select: DEFAULT_SELECT
+    },
+    _b[ConditionConfig_1.MatricID.AdvertReviewLM] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
+        Filter: [StatusFilter(Config_1.StatusId.PendingwithLineManagereviewAdv)],
+        select: DEFAULT_SELECT
+    },
+    _b[ConditionConfig_1.MatricID.ReviewScoreCard] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Filter: [StatusFilter(Config_1.StatusId.PendingwithHODtoAssignPositionID)],
+        select: DEFAULT_SELECT
+    },
+    _b[ConditionConfig_1.MatricID.ReviewProfileHR] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
+        Filter: [StatusFilter(Config_1.StatusId.RecruitmentInProgress)],
+        select: DEFAULT_SELECT
+    },
+    _b[ConditionConfig_1.MatricID.ReviewProfileLM] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
+        Filter: [StatusFilter(Config_1.StatusId.RecruitmentInProgress)],
+        select: DEFAULT_SELECT
+    },
+    _b[ConditionConfig_1.MatricID.AssignInterviewPanel] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
+        Filter: [
+            StatusFilter(Config_1.StatusId.RecruitmentInProgress)
+        ],
+        select: DEFAULT_SELECT
+    },
+    _b[ConditionConfig_1.MatricID.ReviewScoreCard] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Filter: [StatusFilter(Config_1.StatusId.PendingwithHODtoAssignPositionID)],
+        select: DEFAULT_SELECT
+    },
+    _b[ConditionConfig_1.MatricID.InterviewQuestionHR] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
+        Filter: [StatusFilter(Config_1.StatusId.PendingInterviewquestion)],
+        select: DEFAULT_SELECT
+    },
+    _b[ConditionConfig_1.MatricID.InterviewQuestionLM] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
+        Filter: [StatusFilter([
+                Config_1.StatusId.PendingInterviewquestion,
+                Config_1.StatusId.CareerPortalQuestions
+            ]),
+        ],
+        select: DEFAULT_SELECT
+    },
+    _b[ConditionConfig_1.MatricID.interviewSchedule] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Filter: [
+            StatusFilter([
+                Config_1.StatusId.InterviewScheduled,
+                Config_1.StatusId.InterviewScheduledforLevel2
+            ])
+        ],
+        select: DEFAULT_SELECT
+    },
+    _b[ConditionConfig_1.MatricID.interviewTracker] = {
+        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Filter: [
+            StatusFilter([
+                Config_1.StatusId.InterviewScheduled,
+                Config_1.StatusId.InterviewScheduledforLevel2
+            ])
+        ],
+        select: DEFAULT_SELECT
+    },
     _b[ConditionConfig_1.MatricID.EvalutionHR] = {
         ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
         Filter: [
@@ -483,71 +587,6 @@ exports.MetricQueryConfig = (_b = {},
         Filter: [StatusFilter(Config_1.StatusId.Onboarded)],
         select: DEFAULT_SELECT
     },
-    _b[ConditionConfig_1.MatricID.AdvertReviewHOD] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter(Config_1.StatusId.PendingReviewAdvertHOD)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.AdvertReviewLM] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter(Config_1.StatusId.PendingwithLineManagereviewAdv)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.ReviewScoreCard] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [StatusFilter(Config_1.StatusId.PendingwithHODtoAssignPositionID)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.ReviewProfile] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter(Config_1.StatusId.RecruitmentInProgress)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.AssignInterviewPanel] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [
-            StatusFilter(Config_1.StatusId.RecruitmentInProgress)
-        ],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.ReviewScoreCard] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [StatusFilter(Config_1.StatusId.PendingwithHODtoAssignPositionID)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.InterviewQuestionHR] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter(Config_1.StatusId.PendingInterviewquestion)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.InterviewQuestionLM] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: StatusFilter([
-            Config_1.StatusId.PendingInterviewquestion,
-            Config_1.StatusId.CareerPortalQuestions
-        ]),
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.interviewSchedule] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [
-            StatusFilter([
-                Config_1.StatusId.InterviewScheduled,
-                Config_1.StatusId.InterviewScheduledforLevel2
-            ])
-        ],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.interviewTracker] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [
-            StatusFilter([
-                Config_1.StatusId.InterviewScheduled,
-                Config_1.StatusId.InterviewScheduledforLevel2
-            ])
-        ],
-        select: DEFAULT_SELECT
-    },
     _b);
 var RoleMetricFilters = (_c = {},
     _c[Config_1.RoleID.RecruitmentHRLead] = [
@@ -563,7 +602,7 @@ var RoleMetricFilters = (_c = {},
     ],
     _c[Config_1.RoleID.RecruitmentHR] = [
         ConditionConfig_1.MatricID.JobAdvert,
-        ConditionConfig_1.MatricID.ReviewProfile,
+        ConditionConfig_1.MatricID.ReviewProfileHR,
         ConditionConfig_1.MatricID.AssignInterviewPanel,
         ConditionConfig_1.MatricID.InterviewQuestionHR,
         ConditionConfig_1.MatricID.EvalutionHR,
@@ -575,7 +614,7 @@ var RoleMetricFilters = (_c = {},
     _c[Config_1.RoleID.LineManager] = [
         ConditionConfig_1.MatricID.AdvertReviewLM,
         ConditionConfig_1.MatricID.EvalutionLM,
-        ConditionConfig_1.MatricID.ReviewProfile,
+        ConditionConfig_1.MatricID.ReviewProfileLM,
         ConditionConfig_1.MatricID.InterviewQuestionLM,
         ConditionConfig_1.MatricID.OfferRelease,
         ConditionConfig_1.MatricID.OfferAccepted,
@@ -586,7 +625,6 @@ var RoleMetricFilters = (_c = {},
         ConditionConfig_1.MatricID.AdvertReviewHOD,
         ConditionConfig_1.MatricID.ReviewScoreCard,
         ConditionConfig_1.MatricID.EvalutionHOD,
-        ConditionConfig_1.MatricID.ReviewProfile,
         ConditionConfig_1.MatricID.OfferRelease,
         ConditionConfig_1.MatricID.OfferAccepted,
         ConditionConfig_1.MatricID.OfferRejected,

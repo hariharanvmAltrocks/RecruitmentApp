@@ -1,3 +1,8 @@
+import moment from "moment";
+import { AttachmentVersion } from "../../models";
+import { IDocFiles } from "../../services/SPService/Ispservice";
+import { AttachmentDetails } from "../Screens/RecruitmentTable/AdvertReviewDrawer/Hooks/getAttachmentDetails";
+
 export const SpiltDateOnly = (date: Date) => {
   const updatedDate = date;
   const year = updatedDate?.getFullYear();
@@ -29,4 +34,31 @@ export const AddCalculateDate = (startDate: Date, daysToAdd: number): Date => {
   }
 
   return validToDate;
+};
+
+export function toAttachment(
+  title: string,
+  docs: IDocFiles[],
+  lang: AttachmentVersion["lang"] = "EN"  
+): AttachmentDetails {
+  return {
+    title,
+    type: "PDF",
+    versions: docs.map((d) => ({
+      lang: "EN",        
+      label: d.name,
+      content: d.content,
+    })),
+  };
+}
+
+
+export const ConvertUtc = (date: Date) => {
+  const startUtc = moment(date)
+    .hour(date.getHours())
+    .minute(date.getMinutes() || 0)
+    .second(0)
+    .utc()
+    .toISOString();
+  return startUtc;
 };

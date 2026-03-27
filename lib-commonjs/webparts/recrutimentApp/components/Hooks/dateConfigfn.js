@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddCalculateDate = exports.SpiltDateOnly = void 0;
+exports.ConvertUtc = exports.AddCalculateDate = exports.SpiltDateOnly = void 0;
+exports.toAttachment = toAttachment;
+var tslib_1 = require("tslib");
+var moment_1 = tslib_1.__importDefault(require("moment"));
 var SpiltDateOnly = function (date) {
     var updatedDate = date;
     var year = updatedDate === null || updatedDate === void 0 ? void 0 : updatedDate.getFullYear();
@@ -26,4 +29,26 @@ var AddCalculateDate = function (startDate, daysToAdd) {
     return validToDate;
 };
 exports.AddCalculateDate = AddCalculateDate;
+function toAttachment(title, docs, lang) {
+    if (lang === void 0) { lang = "EN"; }
+    return {
+        title: title,
+        type: "PDF",
+        versions: docs.map(function (d) { return ({
+            lang: "EN",
+            label: d.name,
+            content: d.content,
+        }); }),
+    };
+}
+var ConvertUtc = function (date) {
+    var startUtc = (0, moment_1.default)(date)
+        .hour(date.getHours())
+        .minute(date.getMinutes() || 0)
+        .second(0)
+        .utc()
+        .toISOString();
+    return startUtc;
+};
+exports.ConvertUtc = ConvertUtc;
 //# sourceMappingURL=dateConfigfn.js.map

@@ -11,6 +11,7 @@
   cursor: pointer;
   transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 160px;
+  max-width: 163px;
   flex: 1;
   box-shadow: $shadow-sm;
   margin-right: 12px;

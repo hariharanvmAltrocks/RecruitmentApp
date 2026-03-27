@@ -1,73 +1,45 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useFetchCandidateDetails = void 0;
+var tslib_1 = require("tslib");
 var react_1 = require("react");
-var mockDetails = {
-    applicantName: "Alyse E",
-    classification: "EXPAT",
-    nationality: "Malian (Mali)",
-    gender: "Female",
-    qualification: "BSc Mining Engineering",
-    miningExp: "8 Years",
-    relatedExp: "5-10 Years",
-    interviewDate: "2026-03-05",
-    interviewLevels: "Level 1",
-    conflicts: "No",
-    disability: "No",
-    panel: ["Michael Lopez", "Amina Kone", "Ravi Sharma"],
-    questionnaires: [
-        {
-            id: "q1",
-            question: "What are the three main financial statements, and how are they connected?",
-            rating: "Excellent",
-            score: 3,
-            maxScore: 3
-        },
-        {
-            id: "q2",
-            question: "How would you evaluate a company's financial health using financial ratios?",
-            rating: "Excellent",
-            score: 3,
-            maxScore: 3
-        }
-    ],
-    scores: [
-        { label: "Requirements", score: 5, maxScore: 5 },
-        { label: "Culture", score: 5, maxScore: 5 },
-        { label: "Expat", score: 5, maxScore: 5 },
-        { label: "Other", score: 5, maxScore: 5 }
-    ],
-    recommendation: "Consider for Employment",
-    panelFeedback: "Exceptional candidate with deep technical knowledge and strong leadership potential.",
-    gpa: 5.0,
-    jobCode: "FIN003",
-    jobTitle: "Senior Mining Engineer"
-};
-var useFetchCandidateDetails = function (candidateId) {
+var ServiceExport_1 = require("../../../../services/ServiceExport");
+var cache = new Map();
+var useFetchCandidateDetails = function (candidateId, enabled) {
+    if (enabled === void 0) { enabled = true; }
     var _a = (0, react_1.useState)({
         data: null,
         loading: false,
         error: null
     }), state = _a[0], setState = _a[1];
-    var details = (0, react_1.useMemo)(function () { return mockDetails; }, []);
     (0, react_1.useEffect)(function () {
-        if (!candidateId) {
-            setState({ data: null, loading: false, error: null });
+        if (!candidateId || !enabled)
             return;
-        }
         var isMounted = true;
         setState({ data: null, loading: true, error: null });
-        var timer = setTimeout(function () {
-            if (!isMounted) {
-                return;
-            }
-            setState({ data: details, loading: false, error: null });
-        }, 350);
+        var timer = setTimeout(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+            var response, value;
+            var _a;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!isMounted) {
+                            return [2 /*return*/];
+                        }
+                        return [4 /*yield*/, ServiceExport_1.CandidateTable.fetchCandidateDetails(candidateId)];
+                    case 1:
+                        response = _b.sent();
+                        value = response.data && ((_a = response.data) === null || _a === void 0 ? void 0 : _a.length) > 0 ? response.data[0] : null;
+                        setState({ data: value, loading: false, error: null });
+                        return [2 /*return*/];
+                }
+            });
+        }); }, 350);
         return function () {
             isMounted = false;
             clearTimeout(timer);
         };
-    }, [candidateId, details]);
+    }, [candidateId, enabled]);
     return state;
 };
 exports.useFetchCandidateDetails = useFetchCandidateDetails;

@@ -20,7 +20,7 @@ var Dashboard = function (props) {
     var _b = (0, react_1.useState)(0), activeMetric = _b[0], setActiveMetric = _b[1];
     var navigate = (0, react_router_1.useNavigate)();
     var martics = (0, useDashboardMetrics_1.useDashboardMetrics)();
-    var _c = (0, UIStateContext_1.useUIState)(), setActiveMenuID = _c.setActiveMenuID, setNavigationPath = _c.setNavigationPath, setActiveTab = _c.setActiveTab, navigationPath = _c.navigationPath, setMatricID = _c.setMatricID;
+    var _c = (0, UIStateContext_1.useUIState)(), setActiveMenuID = _c.setActiveMenuID, setNavigationPath = _c.setNavigationPath, setActiveTab = _c.setActiveTab, navigationPath = _c.navigationPath, setMatricID = _c.setMatricID, setCurrentTabName = _c.setCurrentTabName;
     var _d = (0, usetrackerdata_1.useTrackerData)(activeMetric), trackerData = _d.trackerData, trackerLoading = _d.loading;
     var ref = (0, react_1.useRef)(0);
     (0, react_1.useEffect)(function () {
@@ -30,6 +30,7 @@ var Dashboard = function (props) {
             ref.current = martics.metrics[0].menuId;
             // setActiveMenuID(martics.metrics[0].menuId);
             setActiveTab(martics.metrics[0].TabValue);
+            setCurrentTabName(martics.metrics[0].TabName);
             setMatricID(martics.metrics[0].id);
         }
     }, [martics.metrics]);
@@ -40,6 +41,7 @@ var Dashboard = function (props) {
         // setActiveMenuID(data.menuId);
         ref.current = data.menuId;
         setActiveTab(data.TabValue);
+        setCurrentTabName(data.TabName);
         setMatricID(data.id);
     };
     var onTrackerChange = function (row) {

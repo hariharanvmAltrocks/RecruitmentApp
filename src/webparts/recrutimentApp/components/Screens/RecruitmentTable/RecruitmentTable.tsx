@@ -38,7 +38,7 @@ export const RecruitmentTable: React.FC = () => {
   const navigate = useNavigate();
   const [activeTabKey, setActiveTabKey] = useState<RecruitmentTabKey>(activeTab as RecruitmentTabKey);
   const { items, loading: tableLoading } = useRecruitmentDetails(activeTabKey);
-  const { MatricID: matricID, setMatricID } = useUIState();
+  const { MatricID: matricID, setMatricID, sideNavflag, setCurrentTabName } = useUIState();
   const { roleIDs, ADGroupData } = userInfo();
   const {
     drawerOpen,
@@ -67,7 +67,7 @@ export const RecruitmentTable: React.FC = () => {
   const ActiveTabName = useRef<string>(tabs[0]?.label)
 
   const Submitted = useRef<boolean>(false);
-  const { toast, closeToast, showSuccess,showError} = useToast();
+  const { toast, closeToast, showSuccess, showError } = useToast();
 
   const selectedItems: RecruitmentItem[] = useMemo(
     () => items.filter((item) => selectedIds.includes(item.id)),
@@ -78,14 +78,19 @@ export const RecruitmentTable: React.FC = () => {
     () => selectedItems.length === 1 ? selectedItems[0]?.jobCode : ""
     , [selectedItems]);
 
-    useEffect(() => {
-  if (tabs.length > 0 && !ActiveTabName.current) {
-    ActiveTabName.current = tabs[0]?.label ?? "";
-      setMatricID(tabs[0].matricId);
-  }
-}, [tabs]);
-
   const { members, loading: membersLoading } = useAssignMembers(selectedNationality);
+
+  useEffect(() => {
+    if (sideNavflag) {
+      if (tabs.length > 0 && !ActiveTabName.current) {
+        ActiveTabName.current = tabs[1]?.label ?? "";
+        setMatricID(tabs[0].matricId);
+      }
+    }
+
+  }, [tabs]);
+
+
 
   useEffect(() => {
     if (!tabs.length) {
@@ -131,8 +136,8 @@ export const RecruitmentTable: React.FC = () => {
     return items.slice(start, start + pageSize);
   }, [currentPage, items, pageSize]);
 
-  console.log(tabs,"TABSS");
-  
+  console.log(tabs, "TABSS");
+
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
@@ -153,62 +158,63 @@ export const RecruitmentTable: React.FC = () => {
     });
   }, [paginatedItems, selectedIds]);
 
- const handleAction = useCallback(
-  async (item: RecruitmentItem) => {
-    const { ItemID, jobCode, statusId, requestType, nationality } = item;
-    if (matricID === MatricID.EvalutionHR) {
-      // const data: IEvaluValidate = {
-      //   ID: ItemID,
-      //   currentEmailID: ADGroupData.EmailId[0],
-      //   statusId,
-      // };
+  const handleAction = useCallback(
+    async (item: RecruitmentItem) => {
+      const { ItemID, jobCode, statusId, requestType, nationality } = item;
+      if (matricID === MatricID.EvalutionHR) {
+        // const data: IEvaluValidate = {
+        //   ID: ItemID,
+        //   currentEmailID: ADGroupData.EmailId[0],
+        //   statusId,
+        // };
 
-      // const res = await DashboardServices.EvalutionValidation(data);
+        // const res = await DashboardServices.EvalutionValidation(data);
 
-      // if (!res.data) {
-      //   showError("Already Submitted");
-      //   return;
-      // }
+        // if (!res.data) {
+        //   showError("Already Submitted");
+        //   return;
+        // }
 
-      navigate("/Evalution");
-      return;
-    }
+        navigate("/Evalution");
+        return;
+      }
 
-    const routeMap: Record<number, string> = {
-      [MatricID.InterviewQuestionHR]: "/QuestionCreation",
-      [MatricID.InterviewQuestionLM]: "/QuestionCreation",
-      [MatricID.ReviewProfile]: "/CandidateTable",
-      [MatricID.AssignInterviewPanel]: "/CandidateTable",
-      [MatricID.ReviewScoreCard]: "/CandidateTable",
-    };
+      const routeMap: Record<number, string> = {
+        [MatricID.InterviewQuestionHR]: "/QuestionCreation",
+        [MatricID.InterviewQuestionLM]: "/QuestionCreation",
+        [MatricID.ReviewProfileHR]: "/CandidateTable",
+        [MatricID.ReviewProfileLM]: "/CandidateTable",
+        [MatricID.AssignInterviewPanel]: "/CandidateTable",
+        [MatricID.ReviewScoreCard]: "/CandidateTable",
+      };
 
-    const route = routeMap[matricID];
+      const route = routeMap[matricID];
 
-    if (route) {
-      navigate(route,{
-        state: {
-          ID: item.ItemID,
-        }
-      });
-    }
-    openDrawer(ItemID);
-    setIsopenDrawer(true);
-    setSelectedType(requestType);
-    setSelectedNationality(nationality);
-  },
-  [matricID, activeTabs?.actionMode, openDrawer, navigate]
-);
+      if (route) {
+        navigate(route, {
+          state: {
+            ID: item.ItemID,
+          }
+        });
+      }
+      openDrawer(ItemID);
+      setIsopenDrawer(true);
+      setSelectedType(requestType);
+      setSelectedNationality(nationality);
+    },
+    [matricID, activeTabs?.actionMode, openDrawer, navigate]
+  );
 
   const handleOpenPopup = useCallback(() => {
     setIsPopupOpen(true);
   }, []);
 
-    const handleClosePopup = useCallback(() => {
+  const handleClosePopup = useCallback(() => {
     setIsPopupOpen(false);
   }, []);
 
   const handleConfirmAssignment = useCallback(async (payload: AssignmentPayload) => {
-        Submitted.current = true
+    Submitted.current = true
     try {
       const isHRLead = roleIDs.includes(RoleID.RecruitmentHRLead);
 
@@ -217,27 +223,27 @@ export const RecruitmentTable: React.FC = () => {
         : null;
 
       if (isHRLead) {
-           const vacancyDetailResults = await Promise.all(
-        payload.vacancies.map((vacancy) => {
-          const filter = [{
-            FilterName: "ID",
-            FilterOperator: "eq",
-            FilterValue: vacancy.ItemID,
-          }];
-          return RecruitmentServices.GetNPAEPVRRDetails(filter, "and", vacancy.requestType)
-            .then((res) => ({
-              vacancy,
-              jobDetail: res.data?.[0] ?? null,
-            }));
-        })
-      );
+        const vacancyDetailResults = await Promise.all(
+          payload.vacancies.map((vacancy) => {
+            const filter = [{
+              FilterName: "ID",
+              FilterOperator: "eq",
+              FilterValue: vacancy.ItemID,
+            }];
+            return RecruitmentServices.GetNPAEPVRRDetails(filter, "and", vacancy.requestType)
+              .then((res) => ({
+                vacancy,
+                jobDetail: res.data?.[0] ?? null,
+              }));
+          })
+        );
 
-      const unresolved = vacancyDetailResults.filter((r) => !r.jobDetail);
-      if (unresolved.length) {
-        console.warn("Unresolved job details:", unresolved);
-        // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
-        return;
-      }
+        const unresolved = vacancyDetailResults.filter((r) => !r.jobDetail);
+        if (unresolved.length) {
+          console.warn("Unresolved job details:", unresolved);
+          // showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
+          return;
+        }
         const batchPayloads: PostRecuritmentData[] = vacancyDetailResults.map(
           ({ vacancy, jobDetail }) => ({
             Data: {
@@ -283,15 +289,16 @@ export const RecruitmentTable: React.FC = () => {
 
         const batchResponse = await RecruitmentServices.InsertRecruitmentDptBatch(batchPayloads);
 
-      if (batchResponse.status === ResponeStatus.SUCCESS) {
-  setIsPopupOpen(false);      
-  setSelectedIds([]);
-  setSelectedMemberId(0);
-  showSuccess("Assign HR Successfully");  
-   navigate("/RecruitmentTable");
-} else {
-  showError("Something went wrong. Please try again.");
-}}
+        if (batchResponse.status === ResponeStatus.SUCCESS) {
+          setIsPopupOpen(false);
+          setSelectedIds([]);
+          setSelectedMemberId(0);
+          showSuccess("Assign HR Successfully");
+          navigate("/RecruitmentTable");
+        } else {
+          showError("Something went wrong. Please try again.");
+        }
+      }
       setIsPopupOpen(false);
       setSelectedIds([]);
       setSelectedMemberId(0);
@@ -310,10 +317,10 @@ export const RecruitmentTable: React.FC = () => {
 
 
   const columns = useRecruitmentColumns({
-  role: matricID === MatricID.EvalutionHR ? "evaluation" : "default",
-  actionMode: activeTabs?.actionMode ?? "View",
-  onAction: handleAction,
-});
+    role: matricID === MatricID.EvalutionHR ? "evaluation" : "default",
+    actionMode: activeTabs?.actionMode ?? "View",
+    onAction: handleAction,
+  });
 
   return (
     <section className="recruitment-table">
@@ -335,17 +342,17 @@ export const RecruitmentTable: React.FC = () => {
       </div>
 
       <div className="recruitment-table__table-card">
-       <div className="submission-header">
-  <h2 className="submission-header__title">{ActiveTabName.current }</h2>
+        <div className="submission-header">
+          <h2 className="submission-header__title">{ActiveTabName.current}</h2>
 
-  <button 
-    onClick={() => navigate("/Dashboard")}
-    className="submission-header__button"
-  >
-    <RotateCcw size={14} />
-    Back to Dashboard
-  </button>
-</div>
+          <button
+            onClick={() => navigate("/Dashboard")}
+            className="submission-header__button"
+          >
+            <RotateCcw size={14} />
+            Back to Dashboard
+          </button>
+        </div>
 
         <DataTable
           columns={columns}
@@ -438,18 +445,18 @@ export const RecruitmentTable: React.FC = () => {
           setLoadingState={setLoadingState} />
       )}
 
-     {toast.open && (
-  <SuccessToast
-    show={toast.open}
-    type={toast.type}
-    title={toast.title}
-    message={toast.message}
-    autoDismiss={toast.autoDismiss}
-    autoDismissDuration={toast.autoDismissDuration}
-    onClose={closeToast}
-    // onAction={toast.buttonAction}
-  />
-)}
+      {toast.open && (
+        <SuccessToast
+          show={toast.open}
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          autoDismiss={toast.autoDismiss}
+          autoDismissDuration={toast.autoDismissDuration}
+          onClose={closeToast}
+        // onAction={toast.buttonAction}
+        />
+      )}
     </section>
   );
 };
