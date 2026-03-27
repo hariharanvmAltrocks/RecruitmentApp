@@ -1,4 +1,4 @@
-import * as  moment from "moment";
+import moment from "moment";
 import { EvalQueryConfig, InterviewLevels, WorkflowAction } from "../config/EvaluationConfig";
 import {
   TooltipEntry, ScoreSheetResult, EvaluationCandidate,
@@ -890,7 +890,8 @@ export const evaluationService = {
         Listname: ListNames.HRMSCandidateScoreCard,
         Select:   "InterviewPanelID/ID, Feedback, OverAllEvaluationFeedback, Role/RoleTitle, InterviewPersonName/Title, Author/Title, Author/EMail, Created, QuestionJson, RecruitmentID/ID",
         Expand:   "InterviewPanelID, Role, InterviewPersonName, Author, RecruitmentID",
-        FilterCondition: [
+        FilterCondition: "and",
+        Filter: [
           {
             FilterKey: "InterviewPanelID/CandidateID/ID",
             Operator:  "eq",

@@ -4,7 +4,7 @@ var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var framer_motion_1 = require("framer-motion");
 var lucide_react_1 = require("lucide-react");
-var moment = tslib_1.__importStar(require("moment"));
+var moment_1 = tslib_1.__importDefault(require("moment"));
 var Reviewscorecardtab_module_scss_1 = tslib_1.__importDefault(require("../Reviewscorecardtab.module.scss"));
 var CommentsModal = function (_a) {
     var open = _a.open, loading = _a.loading, level1 = _a.level1, level2 = _a.level2, onClose = _a.onClose;
@@ -44,7 +44,7 @@ var CommentsModal = function (_a) {
                     c.OverAllEvaluationFeedback)),
                 c.Date && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentDate },
                     "Date: ",
-                    moment(c.Date).format("M/D/YYYY, h:mm:ss A"))),
+                    (0, moment_1.default)(c.Date).format("M/D/YYYY, h:mm:ss A"))),
                 c.Name && (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentAuthor },
                     c.Name,
                     c.JobTitleInEnglish ? " \u2014 ".concat(c.JobTitleInEnglish) : "",

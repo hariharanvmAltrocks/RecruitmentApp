@@ -2,7 +2,7 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, FileText } from "lucide-react";
-import * as moment from "moment";
+import  moment from "moment";
 import styles from "../Reviewscorecardtab.module.scss";
 import { CommentEntry } from "../types";
 

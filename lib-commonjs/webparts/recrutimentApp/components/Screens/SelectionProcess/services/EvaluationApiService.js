@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EvaluationServiceHelper = exports.evaluationService = void 0;
 var tslib_1 = require("tslib");
-var moment = tslib_1.__importStar(require("moment"));
+var moment_1 = tslib_1.__importDefault(require("moment"));
 var EvaluationConfig_1 = require("../config/EvaluationConfig");
 var Config_1 = require("../../../../utilities/Config");
 var spservice_1 = tslib_1.__importDefault(require("../../../../services/SPService/spservice"));
@@ -1113,7 +1113,8 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSCandidateScoreCard,
                                 Select: "InterviewPanelID/ID, Feedback, OverAllEvaluationFeedback, Role/RoleTitle, InterviewPersonName/Title, Author/Title, Author/EMail, Created, QuestionJson, RecruitmentID/ID",
                                 Expand: "InterviewPanelID, Role, InterviewPersonName, Author, RecruitmentID",
-                                FilterCondition: [
+                                FilterCondition: "and",
+                                Filter: [
                                     {
                                         FilterKey: "InterviewPanelID/CandidateID/ID",
                                         Operator: "eq",
@@ -1487,7 +1488,7 @@ exports.EvaluationServiceHelper = {
         var _a, _b, _c, _d, _e;
         var rawDate = (candidate === null || candidate === void 0 ? void 0 : candidate.InterviewDateLevel2) || (candidate === null || candidate === void 0 ? void 0 : candidate.InterviewDate) || "";
         var formattedLevel = level === EvaluationConfig_1.InterviewLevels.Level2 ? EvaluationConfig_1.InterviewLevels.Levels2 : level;
-        var interviewDateTime = rawDate ? moment(rawDate).format("DD/MM/YYYY") : "";
+        var interviewDateTime = rawDate ? (0, moment_1.default)(rawDate).format("DD/MM/YYYY") : "";
         var fName = candidate.FristName || "";
         var lName = candidate.LastName || "";
         return {
