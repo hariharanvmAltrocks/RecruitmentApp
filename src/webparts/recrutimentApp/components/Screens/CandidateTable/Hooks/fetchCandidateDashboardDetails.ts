@@ -1,81 +1,207 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { FilterItem, GetProfileByFilter } from "../../../../models/Icareerportal";
+import { CandidateTable, masterService } from "../../../../services/ServiceExport";
+import { useUIState } from "../../../RecrutimentApp/UIStateContext";
+import { MatricID } from "../../../../utilities/ConditionConfig";
+import { userInfo } from "../../../../utilities/hooks/RoleContext";
+import {
+  ApplicationStatusId,
+  RoleID,
+  workflowStatusApi,
+} from "../../../../utilities/Config";
 
-export interface CandidateDashboardItem {
-  id: string;
-  applicantName: string;
-  jobCode: string;
-  jobTitle: string;
-  businessUnitCode: string;
-  positionRequest: string;
-  nationality: string;
-  statusLabel: string;
-  statusTone: "warning" | "success" | "danger";
+export type CandidateDashboardItem = {
+  SNO?: number | string;
+  CandidateID: string;
+  ApplicantName: string;
+  PositionTitle: string;
+  JobCode: string;
+  Status: string;
+  workflowStatusId: string;
+  createdOn: Date | undefined;
+  applicationStatusId: string;
+  applicationStatus: string;
+  TotalItems?: number;
+  createdBy?: string;
+  tblProfilesKcsas?: any[];
+};
+
+export interface PaginationState {
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
 }
 
 interface CandidateDashboardState {
   data: CandidateDashboardItem[];
   loading: boolean;
   error: string | null;
+  pagination: PaginationState;
 }
 
-const mockCandidates: CandidateDashboardItem[] = [
-  {
-    id: "c1",
-    applicantName: "Alyse E",
-    jobCode: "SEN-100",
-    jobTitle: "Senior Mining Engineer",
-    businessUnitCode: "MIN-01",
-    positionRequest: "Level 1",
-    nationality: "Malian (Mali)",
-    statusLabel: "Pending with LM to select the candidate",
-    statusTone: "warning"
-  },
-  {
-    id: "c2",
-    applicantName: "John Smith",
-    jobCode: "SEN-100",
-    jobTitle: "Senior Mining Engineer",
-    businessUnitCode: "MIN-01",
-    positionRequest: "Level 1",
-    nationality: "British",
-    statusLabel: "Pending with LM to select the candidate",
-    statusTone: "warning"
-  },
-  {
-    id: "c3",
-    applicantName: "Sarah Johnson",
-    jobCode: "SEN-100",
-    jobTitle: "Senior Mining Engineer",
-    businessUnitCode: "MIN-01",
-    positionRequest: "Level 1",
-    nationality: "Canadian",
-    statusLabel: "Reviewed - Ready",
-    statusTone: "success"
-  }
-];
+interface UseCandidateDashboardOptions {
+  jobId: number;
+  initialPageSize: number;
+  enable: boolean;
+}
 
-export const useFetchCandidateDashboardDetails = (): CandidateDashboardState => {
+interface UseCandidateDashboardReturn extends CandidateDashboardState {
+  fetchPage: (page: number, pageSize?: number) => void;
+  setPageSize: (size: number) => void;
+  refresh: () => void;
+}
+
+
+function resolveWorkflowStatusIds(
+  roleIDs: number[],
+  matricId: number
+): string[] {
+  if (roleIDs.includes(RoleID.RecruitmentHR)) {
+    if (matricId === MatricID.ReviewProfileHR) {
+      return [workflowStatusApi.HRPending];
+    }
+    if (matricId === MatricID.AssignInterviewPanel) {
+      return [workflowStatusApi.PendingRecruitmentHRscheduleInterview];
+    }
+  }
+
+  if (roleIDs.includes(RoleID.LineManager)) {
+    if (matricId === MatricID.ReviewProfileLM) {
+      return [
+        workflowStatusApi.LineManagerL1Pending,
+        workflowStatusApi.LineManagerL2Pending,
+        workflowStatusApi.LineManagerLevel1OnHold,
+        workflowStatusApi.LineManagerLevel2OnHold,
+        workflowStatusApi.LineManagerLevel1Rejected,
+        workflowStatusApi.LineManagerLevel2Rejected,
+        workflowStatusApi.CandidateRejectedIPanel,
+        ApplicationStatusId.ApplicationSuspended,
+      ];
+    }
+  }
+
+  return [workflowStatusApi.HRPending];
+}
+
+
+export const useFetchCandidateDashboardDetails = ({
+  jobId,
+  initialPageSize,
+  enable = true
+}: UseCandidateDashboardOptions): UseCandidateDashboardReturn => {
+  const { MatricID: matricId } = useUIState();
+  const { roleIDs } = userInfo();
+
   const [state, setState] = useState<CandidateDashboardState>({
     data: [],
-    loading: true,
-    error: null
+    loading: false,
+    error: null,
+    pagination: {
+      currentPage: 1,
+      pageSize: initialPageSize,
+      totalItems: 0,
+    },
   });
 
-  useEffect(() => {
-    let isMounted = true;
+  const pageSizeRef = useRef<number>(initialPageSize);
+  const abortRef = useRef<AbortController | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const timer = setTimeout(() => {
-      if (!isMounted) {
-        return;
-      }
-      setState({ data: mockCandidates, loading: false, error: null });
-    }, 450);
+
+  const fetchPage = useCallback(
+    async (page: number, pageSize?: number) => {
+      if (!jobId) return;
+
+      const resolvedPageSize = pageSize ?? pageSizeRef.current;
+      pageSizeRef.current = resolvedPageSize;
+
+      abortRef.current?.abort();
+      abortRef.current = new AbortController();
+
+      if (timerRef.current) clearTimeout(timerRef.current);
+
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+        error: null,
+      }));
+
+      timerRef.current = setTimeout(async () => {
+        try {
+          const jobCodeRes = await masterService.GetJobUniqueDataValue(jobId);
+          const jobCode: string = jobCodeRes?.data?.JobCode ?? "";
+
+          const workflowStausId = resolveWorkflowStatusIds(roleIDs, matricId);
+
+          const pagination: GetProfileByFilter = {
+            filterValue: "",
+            sortBy: "",
+            sortOrder: 0,
+            pageSize: resolvedPageSize,
+            currentPage: page - 1,
+            totalItems: 0,
+          };
+
+          const filter: FilterItem = {
+            jobCode,
+            workflowStausId,
+            pagination,
+          };
+
+          const res = await CandidateTable.getCandidateDetailsInJobCode(
+            filter
+          );
+
+          const items: CandidateDashboardItem[] = res?.data ?? [];
+          const totalItems: number = res?.data && res?.data.length > 0 ? res?.data[0]?.TotalItems ?? items.length : 0;
+
+          setState({
+            data: items,
+            loading: false,
+            error: null,
+            pagination: {
+              currentPage: page,
+              pageSize: resolvedPageSize,
+              totalItems,
+            },
+          });
+        } catch (err: any) {
+          if (err?.name === "AbortError") return;
+
+          console.error("CandidateDashboard: fetch failed", err);
+          setState((prev) => ({
+            ...prev,
+            loading: false,
+            error: "Failed to load candidates. Please try again.",
+          }));
+        }
+      }, 300);
+    },
+    [jobId, matricId, roleIDs, enable]
+  );
+
+
+  const setPageSize = useCallback(
+    (size: number) => {
+      fetchPage(1, size);
+    },
+    [fetchPage]
+  );
+
+
+  const refresh = useCallback(() => {
+    fetchPage(state.pagination.currentPage, pageSizeRef.current);
+  }, [fetchPage, state.pagination.currentPage]);
+
+
+  useEffect(() => {
+    fetchPage(1, initialPageSize);
 
     return () => {
-      isMounted = false;
-      clearTimeout(timer);
+      abortRef.current?.abort();
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, []);
+  }, [jobId]);
 
-  return state;
+  return { ...state, fetchPage, setPageSize, refresh };
 };

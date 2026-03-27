@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.QuestionService = exports.RecruitmentServices = exports.CareerPotalServices = exports.CommonServices = exports.DashboardServices = exports.menuService = exports.masterService = void 0;
+exports.MeetingSchedules = exports.CandidateTable = exports.QuestionService = exports.RecruitmentServices = exports.CareerPotalServices = exports.CommonServices = exports.DashboardServices = exports.menuService = exports.masterService = void 0;
 var tslib_1 = require("tslib");
+var CandidateService_1 = tslib_1.__importDefault(require("./CandidateTable/CandidateService"));
 var CareerPortalService_1 = tslib_1.__importDefault(require("./CareerPortal/CareerPortalService"));
 var CommanService_1 = tslib_1.__importDefault(require("./CommanAPi/CommanService"));
 var DashboardService_1 = tslib_1.__importDefault(require("./Dashboard/DashboardService"));
 var MasterService_1 = tslib_1.__importDefault(require("./MasterService/MasterService"));
+var MeetingSchedule_1 = tslib_1.__importDefault(require("./MeetingSchedule/MeetingSchedule"));
 var menuService_1 = tslib_1.__importDefault(require("./MenuService/menuService"));
 var QuestionCreateService_1 = tslib_1.__importDefault(require("./QuestionCreation/QuestionCreateService"));
 var RecruitmentService_1 = tslib_1.__importDefault(require("./RecruitmentTable/RecruitmentService"));
@@ -16,4 +18,6 @@ exports.CommonServices = new CommanService_1.default();
 exports.CareerPotalServices = new CareerPortalService_1.default();
 exports.RecruitmentServices = new RecruitmentService_1.default();
 exports.QuestionService = new QuestionCreateService_1.default();
+exports.CandidateTable = new CandidateService_1.default();
+exports.MeetingSchedules = new MeetingSchedule_1.default();
 //# sourceMappingURL=ServiceExport.js.map

@@ -31,18 +31,25 @@ var useUrgentTasks = function () {
                 case 1:
                     res = _a.sent();
                     data = res.data || [];
-                    UrgentTask = data.map(function (item) {
+                    UrgentTask = data
+                        .map(function (item) {
                         var modified = item.ModifiedDate ? new Date(item.ModifiedDate) : new Date();
                         var today = new Date();
                         var diffDays = Math.floor((today.getTime() - modified.getTime()) / (1000 * 60 * 60 * 24));
-                        var status = diffDays >= 3 ? "OVERDUE ".concat(diffDays, "D") : "PENDING";
-                        var type = diffDays >= 3 ? "error" : "warning";
-                        return {
+                        return { item: item, diffDays: diffDays };
+                    })
+                        .filter(function (_a) {
+                        var diffDays = _a.diffDays;
+                        return diffDays >= 3;
+                    })
+                        .map(function (_a) {
+                        var item = _a.item, diffDays = _a.diffDays;
+                        return ({
                             title: item.JobTitleEnglish,
                             subtitle: item.Status,
-                            overdue: status,
-                            type: type
-                        };
+                            overdue: "OVERDUE ".concat(diffDays, "D"),
+                            type: "error"
+                        });
                     });
                     if (res.status === ApiConfig_1.ResponeStatus.SUCCESS) {
                         setUrgentTasks(UrgentTask);

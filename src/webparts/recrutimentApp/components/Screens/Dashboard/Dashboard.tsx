@@ -24,20 +24,21 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
   const navigate = useNavigate();
   const martics = useDashboardMetrics();
-  const { setActiveMenuID, setNavigationPath, setActiveTab, navigationPath, setMatricID } = useUIState();
+  const { setActiveMenuID, setNavigationPath, setActiveTab, navigationPath, setMatricID, setCurrentTabName } = useUIState();
 
   const { trackerData, loading: trackerLoading } = useTrackerData(activeMetric);
 
-   const ref = useRef(0);
+  const ref = useRef(0);
 
   useEffect(() => {
     if (martics.metrics.length > 0 && !activeMetric) {
       setActiveMetric(martics.metrics[0].id);
-       setNavigationPath(martics.metrics[0].path);
-       ref.current = martics.metrics[0].menuId
-    // setActiveMenuID(martics.metrics[0].menuId);
-     setActiveTab(martics.metrics[0].TabValue);
-     setMatricID(martics.metrics[0].id);
+      setNavigationPath(martics.metrics[0].path);
+      ref.current = martics.metrics[0].menuId
+      // setActiveMenuID(martics.metrics[0].menuId);
+      setActiveTab(martics.metrics[0].TabValue);
+      setCurrentTabName(martics.metrics[0].TabName);
+      setMatricID(martics.metrics[0].id);
     }
   }, [martics.metrics]);
 
@@ -47,14 +48,15 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     setActiveMetric(data.id);
     setNavigationPath(data.path);
     // setActiveMenuID(data.menuId);
-     ref.current = data.menuId
+    ref.current = data.menuId
     setActiveTab(data.TabValue);
+    setCurrentTabName(data.TabName);
     setMatricID(data.id);
   };
 
-    const onTrackerChange = (row: DashboardData) => {
-      setActiveMenuID(ref.current)
-      navigate(navigationPath);
+  const onTrackerChange = (row: DashboardData) => {
+    setActiveMenuID(ref.current)
+    navigate(navigationPath);
   };
 
   const selectedMetric = martics.metrics.find(m => m.id === activeMetric) ?? martics.metrics[0];

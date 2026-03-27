@@ -38,7 +38,7 @@ var DashboardService = /** @class */ (function () {
                                 ? ((_c = externalCountMap_1.get(String(config.id))) !== null && _c !== void 0 ? _c : 0) + spCount
                                 : spCount;
                             return tslib_1.__assign(tslib_1.__assign({}, config), { value: value, showArrow: config.showArrow || hasExternalCount });
-                        });
+                        }).sort(function (a, b) { return Number(b.showArrow) - Number(a.showArrow); });
                         return [2 /*return*/, { data: metrics, status: 200, message: "Dashboard counts fetched successfully" }];
                     case 3:
                         error_1 = _a.sent();

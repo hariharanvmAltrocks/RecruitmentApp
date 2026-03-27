@@ -60,7 +60,7 @@ var AdvertReviewDrawer = function (_a) {
         };
     });
     var formData = {
-        ID: (_d = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.RecordID) !== null && _d !== void 0 ? _d : 0,
+        ID: (_d = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ID) !== null && _d !== void 0 ? _d : 0,
         JobCodeId: (_e = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId) !== null && _e !== void 0 ? _e : 0,
         JobCode: (_f = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCode) !== null && _f !== void 0 ? _f : "",
         JobTitleEnglish: (_g = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobTitleEnglish) !== null && _g !== void 0 ? _g : "",
@@ -68,7 +68,8 @@ var AdvertReviewDrawer = function (_a) {
         DepartmentID: (_j = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DepartmentId) !== null && _j !== void 0 ? _j : 0,
         Nationality: (_k = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.Nationality) !== null && _k !== void 0 ? _k : "",
         NumberOfPersonNeeded: (_l = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.NumberOfPersonNeeded) !== null && _l !== void 0 ? _l : "",
-        Dptcode: (_m = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DeptCode) !== null && _m !== void 0 ? _m : ""
+        Dptcode: (_m = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DeptCode) !== null && _m !== void 0 ? _m : "",
+        reviewerComments: reviewerComments
     };
     var updateMainRecord = (0, useUpdateMainRecord_1.useUpdateMainRecord)(formData, roleID).updateMainRecord;
     var handleHRLeadProcess = (0, useHRLeadProcess_1.useHRLeadProcess)(formData, Config_1.RoleID.RecruitmentHRLead, document, BGVData.checkboxBGVOption).handleHRLeadProcess;
@@ -138,6 +139,8 @@ var AdvertReviewDrawer = function (_a) {
                     _a.sent();
                     _a.label = 7;
                 case 7:
+                    showSuccess("Record Updated Successfully");
+                    navigate("/RecruitmentTable");
                     setIsSubmitting(false);
                     return [2 /*return*/];
             }
@@ -208,17 +211,14 @@ var AdvertReviewDrawer = function (_a) {
                             { key: "BGVVerification", text: "Please Choose the BGV Verification", valid: optionValid }
                         ] }),
                     react_1.default.createElement("div", { className: "advert-review-drawer__footer" },
-                        react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__history", title: "View History" },
-                            react_1.default.createElement(lucide_react_1.History, { size: 18 })),
+                        react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__history", title: "View History" }),
                         react_1.default.createElement("div", { className: "advert-review-drawer__footer-actions" },
                             react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button", onClick: handleClose }, "Cancel"),
-                            react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button advert-review-drawer__button--primary ".concat(canApprove ? "" : "is-disabled").trim(), disabled: isLoading, onClick: handleApprove },
-                                react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 16 }),
-                                isSubmitting ? (react_1.default.createElement(react_1.default.Fragment, null,
-                                    react_1.default.createElement(lucide_react_1.Loader2, { size: 16, className: "modal-popup__spinner" }),
-                                    "Sending...")) : (react_1.default.createElement(react_1.default.Fragment, null,
-                                    react_1.default.createElement(lucide_react_1.Send, { size: 16, style: { marginRight: 8 } }),
-                                    "Submit")))))))))))));
+                            react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button advert-review-drawer__button--primary ".concat(canApprove ? "" : "is-disabled").trim(), disabled: isLoading, onClick: handleApprove }, isSubmitting ? (react_1.default.createElement(react_1.default.Fragment, null,
+                                react_1.default.createElement(lucide_react_1.Loader2, { size: 16, className: "modal-popup__spinner" }),
+                                "Sending...")) : (react_1.default.createElement(react_1.default.Fragment, null,
+                                react_1.default.createElement(lucide_react_1.Send, { size: 16, style: { marginRight: 8 } }),
+                                "Submit")))))))))))));
 };
 exports.AdvertReviewDrawer = AdvertReviewDrawer;
 //# sourceMappingURL=AdvertReviewDrawer.js.map

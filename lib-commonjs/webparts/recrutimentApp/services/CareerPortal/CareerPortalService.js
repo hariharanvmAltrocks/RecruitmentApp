@@ -350,11 +350,11 @@ var CareerPortalService = /** @class */ (function () {
                                             return [4 /*yield*/, ServiceExport_1.CommonServices.GetDocumentinUrl((_j = (_h = FamilyLinkPath[0]) === null || _h === void 0 ? void 0 : _h.document) === null || _j === void 0 ? void 0 : _j.filePath)];
                                         case 4:
                                             FamilyDocument = _109.sent();
-                                            return [4 /*yield*/, ServiceExport_1.CareerPotalServices.GetAllMaster(ConditionConfig_1.CategoryID.ProofofIdentity)];
+                                            return [4 /*yield*/, ServiceExport_1.masterService.GetAllMaster(ConditionConfig_1.CategoryID.ProofofIdentity)];
                                         case 5:
                                             ProofIdentity = _109.sent();
                                             totalExperienceYears = (0, reusehooks_1.calculateTotalExperienceYears)((_k = op === null || op === void 0 ? void 0 : op.profile) === null || _k === void 0 ? void 0 : _k.profileDetailExperiences);
-                                            return [4 /*yield*/, ServiceExport_1.CareerPotalServices.GetCountryMaster()];
+                                            return [4 /*yield*/, ServiceExport_1.masterService.GetCountryMaster()];
                                         case 6:
                                             CountryCode = _109.sent();
                                             profileExperiance = Array.isArray((_l = op === null || op === void 0 ? void 0 : op.profile) === null || _l === void 0 ? void 0 : _l.profileDetailExperiences) && op.profile.profileDetailExperiences.length > 0
@@ -470,7 +470,7 @@ var CareerPortalService = /** @class */ (function () {
                                                 Agencies: AgenName,
                                                 CandidateResume: CandidateCV.data,
                                                 RoleProfile: RoleProfileDoc,
-                                                Advertisement: AdvertismentDocPromises,
+                                                // Advertisement: AdvertismentDocPromises,
                                                 Comments: CommentsData,
                                                 workflowStatusId: op === null || op === void 0 ? void 0 : op.workflowStatusId,
                                                 hrComments: op === null || op === void 0 ? void 0 : op.hrComments,
@@ -513,7 +513,8 @@ var CareerPortalService = /** @class */ (function () {
                                                 businesslinkscompany: ((_105 = op === null || op === void 0 ? void 0 : op.profile) === null || _105 === void 0 ? void 0 : _105.businessLinkCompany) === "CD03" ? (_106 = op === null || op === void 0 ? void 0 : op.profile) === null || _106 === void 0 ? void 0 : _106.whichCompany : (_108 = (_107 = op === null || op === void 0 ? void 0 : op.profile) === null || _107 === void 0 ? void 0 : _107.businessLinkCompanyDetail) === null || _108 === void 0 ? void 0 : _108.displayText,
                                                 PreviousEmployerDetails: PreviousEmployer,
                                                 LanguageKnown: candidateLanguages,
-                                                PPEDetails: PPEData
+                                                PPEDetails: PPEData,
+                                                OverallAtttachment: []
                                             };
                                             GetProfileByJobCodeData_1.push(GetProfileDahboard);
                                             return [2 /*return*/];
@@ -734,44 +735,36 @@ var CareerPortalService = /** @class */ (function () {
             });
         });
     };
-    CareerPortalService.prototype.GetAllMaster = function (id) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, GetAllMasterData, error_12;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, CareerPortalAPI_1.postAdveDetails.getMastersByCategory(id)];
-                    case 1:
-                        response = _a.sent();
-                        GetAllMasterData = response.data.data.map(function (item) { return ({
-                            id: item.id,
-                            value: item.value,
-                            displayText: item.displayText,
-                            displayTextFr: item.displayText_fr,
-                        }); });
-                        // console.log(GetAllMasterData, "GetAllMasterData");
-                        return [2 /*return*/, {
-                                data: GetAllMasterData,
-                                status: response.status,
-                                message: "Get Candidate details",
-                            }];
-                    case 2:
-                        error_12 = _a.sent();
-                        console.error("Error Get Candidate details:", error_12);
-                        return [2 /*return*/, {
-                                data: [],
-                                status: 500,
-                                message: "Error Get Candidate details",
-                            }];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
+    // async GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>> {
+    //     try {
+    //         const response = await postAdveDetails.getMastersByCategory(id);
+    //         const GetAllMasterData: GetAllMaster[] = response.data.data.map((item: any) => ({
+    //             id: item.id,
+    //             value: item.value,
+    //             displayText: item.displayText,
+    //             displayTextFr: item.displayText_fr,
+    //         }));
+    //         // console.log(GetAllMasterData, "GetAllMasterData");
+    //         return {
+    //             data: GetAllMasterData,
+    //             status: response.status,
+    //             message: "Get Candidate details",
+    //         };
+    //     } catch (error) {
+    //         console.error(
+    //             "Error Get Candidate details:",
+    //             error
+    //         );
+    //         return {
+    //             data: [],
+    //             status: 500,
+    //             message: "Error Get Candidate details",
+    //         };
+    //     }
+    // }
     CareerPortalService.prototype.getQuestionnaire = function (jobCode) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, GetQuestionnaire, error_13;
+            var response, GetQuestionnaire, error_12;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -799,8 +792,8 @@ var CareerPortalService = /** @class */ (function () {
                                 message: "Get Candidate details",
                             }];
                     case 2:
-                        error_13 = _a.sent();
-                        console.error("Error Get Candidate details:", error_13);
+                        error_12 = _a.sent();
+                        console.error("Error Get Candidate details:", error_12);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -813,7 +806,7 @@ var CareerPortalService = /** @class */ (function () {
     };
     CareerPortalService.prototype.RescheduledInterview = function (obj, ListName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var error_14;
+            var error_13;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -831,8 +824,8 @@ var CareerPortalService = /** @class */ (function () {
                                 message: "Data Submitted successfully",
                             }];
                     case 2:
-                        error_14 = _a.sent();
-                        console.error(error_14);
+                        error_13 = _a.sent();
+                        console.error(error_13);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 400,
@@ -845,7 +838,7 @@ var CareerPortalService = /** @class */ (function () {
     };
     CareerPortalService.prototype.GetQuestionaireByScope = function (GetExistingQuestion) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, GetQuestionnaire, error_15;
+            var response, GetQuestionnaire, error_14;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -906,8 +899,8 @@ var CareerPortalService = /** @class */ (function () {
                                 message: "Get Candidate details",
                             }];
                     case 2:
-                        error_15 = _a.sent();
-                        console.error("Error Get Candidate details:", error_15);
+                        error_14 = _a.sent();
+                        console.error("Error Get Candidate details:", error_14);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -918,44 +911,35 @@ var CareerPortalService = /** @class */ (function () {
             });
         });
     };
-    CareerPortalService.prototype.GetCountryMaster = function () {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, GetAllMasterData, error_16;
-            var _a, _b;
-            return tslib_1.__generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _c.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, CareerPortalAPI_1.GetStateByCountryApi.GetCountryApi()];
-                    case 1:
-                        response = _c.sent();
-                        GetAllMasterData = (_b = (_a = response.data) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.map(function (item) { return ({
-                            id: item.isdcode,
-                            code: item.countryCode,
-                            text: item.countryName,
-                        }); });
-                        // console.log(GetAllMasterData, "GetCountryMaster");
-                        return [2 /*return*/, {
-                                data: GetAllMasterData,
-                                status: response.status,
-                                message: "Get Candidate details",
-                            }];
-                    case 2:
-                        error_16 = _c.sent();
-                        console.error("Error Get Candidate details:", error_16);
-                        return [2 /*return*/, {
-                                data: [],
-                                status: 500,
-                                message: "Error Get Candidate details",
-                            }];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
+    // async GetCountryMaster(): Promise<ApiResponse<GetMasterByCountry[] | null>> {
+    //     try {
+    //         const response = await GetStateByCountryApi.GetCountryApi();
+    //         const GetAllMasterData: GetMasterByCountry[] = response.data?.data?.map((item: any) => ({
+    //             id: item.isdcode,
+    //             code: item.countryCode,
+    //             text: item.countryName,
+    //         }));
+    //         // console.log(GetAllMasterData, "GetCountryMaster");
+    //         return {
+    //             data: GetAllMasterData,
+    //             status: response.status,
+    //             message: "Get Candidate details",
+    //         };
+    //     } catch (error) {
+    //         console.error(
+    //             "Error Get Candidate details:",
+    //             error
+    //         );
+    //         return {
+    //             data: [],
+    //             status: 500,
+    //             message: "Error Get Candidate details",
+    //         };
+    //     }
+    // }
     CareerPortalService.prototype.GetStateByCountry = function (code) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, GetAllMasterData, error_17;
+            var response, GetAllMasterData, error_15;
             var _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
@@ -976,8 +960,8 @@ var CareerPortalService = /** @class */ (function () {
                                 message: "Get Candidate details",
                             }];
                     case 2:
-                        error_17 = _c.sent();
-                        console.error("Error Get Candidate details:", error_17);
+                        error_15 = _c.sent();
+                        console.error("Error Get Candidate details:", error_15);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -990,7 +974,7 @@ var CareerPortalService = /** @class */ (function () {
     };
     CareerPortalService.prototype.GetCitiesByState = function (code) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, GetAllMasterData, error_18;
+            var response, GetAllMasterData, error_16;
             var _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
@@ -1011,8 +995,8 @@ var CareerPortalService = /** @class */ (function () {
                                 message: "Get Candidate details",
                             }];
                     case 2:
-                        error_18 = _c.sent();
-                        console.error("Error Get Candidate details:", error_18);
+                        error_16 = _c.sent();
+                        console.error("Error Get Candidate details:", error_16);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -1025,7 +1009,7 @@ var CareerPortalService = /** @class */ (function () {
     };
     CareerPortalService.prototype.UpsertProfile = function (data, Document, jobCode) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, UpsertProfile, UpsertData_1, CandidateCV, FamilyLink, BusinessLink, JobAppiledData, profileCurrentPosition, profileAttachment, error_19;
+            var response, UpsertProfile, UpsertData_1, CandidateCV, FamilyLink, BusinessLink, JobAppiledData, profileCurrentPosition, profileAttachment, error_17;
             var _a, _b, _c;
             return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
@@ -1158,8 +1142,8 @@ var CareerPortalService = /** @class */ (function () {
                             message: response.data.message,
                         }];
                     case 11:
-                        error_19 = _d.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_19);
+                        error_17 = _d.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_17);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -1172,7 +1156,7 @@ var CareerPortalService = /** @class */ (function () {
     };
     CareerPortalService.prototype.UpsertDocumentUpload = function (DocumentDetails) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var formData, response, error_20;
+            var formData, response, error_18;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1194,8 +1178,8 @@ var CareerPortalService = /** @class */ (function () {
                                 message: response.data.message,
                             }];
                     case 2:
-                        error_20 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_20);
+                        error_18 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_18);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -1208,7 +1192,7 @@ var CareerPortalService = /** @class */ (function () {
     };
     CareerPortalService.prototype.CheckMyCandidateAppliedJobs = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var CheckCandidate, response, error_21;
+            var CheckCandidate, response, error_19;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1226,8 +1210,8 @@ var CareerPortalService = /** @class */ (function () {
                                 message: response.data.message,
                             }];
                     case 2:
-                        error_21 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_21);
+                        error_19 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_19);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -1240,7 +1224,7 @@ var CareerPortalService = /** @class */ (function () {
     };
     CareerPortalService.prototype.GetCandiateForJobs = function (JobCode, FilterValue) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GetProfileByJobCodeData_2, error_22;
+            var GetProfileByJobCodeData_2, error_20;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1275,8 +1259,8 @@ var CareerPortalService = /** @class */ (function () {
                                 message: "Get Candidate details",
                             }];
                     case 2:
-                        error_22 = _a.sent();
-                        console.error("Error Get Candidate details:", error_22);
+                        error_20 = _a.sent();
+                        console.error("Error Get Candidate details:", error_20);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -1289,7 +1273,7 @@ var CareerPortalService = /** @class */ (function () {
     };
     CareerPortalService.prototype.GetJobRequestData = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var Response_2, error_23;
+            var Response_2, error_21;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1303,8 +1287,8 @@ var CareerPortalService = /** @class */ (function () {
                                 message: Response_2.data.message,
                             }];
                     case 2:
-                        error_23 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_23);
+                        error_21 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_21);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -1317,7 +1301,7 @@ var CareerPortalService = /** @class */ (function () {
     };
     CareerPortalService.prototype.GetQuestionByJobCode = function (jobCode) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, getQueAnswers, GetQuestionnaire, error_24;
+            var response, getQueAnswers, GetQuestionnaire, error_22;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1368,8 +1352,8 @@ var CareerPortalService = /** @class */ (function () {
                                 message: "Get Candidate details",
                             }];
                     case 2:
-                        error_24 = _a.sent();
-                        console.error("Error Get Candidate details:", error_24);
+                        error_22 = _a.sent();
+                        console.error("Error Get Candidate details:", error_22);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -1382,7 +1366,7 @@ var CareerPortalService = /** @class */ (function () {
     };
     CareerPortalService.prototype.GetUpsertCOI = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var Response_3, error_25;
+            var Response_3, error_23;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1394,6 +1378,62 @@ var CareerPortalService = /** @class */ (function () {
                                 data: Response_3.data,
                                 status: Response_3.status,
                                 message: Response_3.data.message,
+                            }];
+                    case 2:
+                        error_23 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_23);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error inserting data into AdvertisementDetails",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CareerPortalService.prototype.SendEmailNotification = function (data) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var Response_4, error_24;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, CareerPortalAPI_1.EmailService.emailnotification(data)];
+                    case 1:
+                        Response_4 = _a.sent();
+                        return [2 /*return*/, {
+                                data: Response_4.data,
+                                status: Response_4.status,
+                                message: Response_4.data.message,
+                            }];
+                    case 2:
+                        error_24 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_24);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error inserting data into AdvertisementDetails",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CareerPortalService.prototype.GetJobAppliedCount = function (data) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var response, error_25;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, CareerPortalAPI_1.getProfileData.GetJobAppliedCount(data)];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                data: response.data,
+                                status: response.status,
+                                message: response.data.message,
                             }];
                     case 2:
                         error_25 = _a.sent();
@@ -1408,65 +1448,9 @@ var CareerPortalService = /** @class */ (function () {
             });
         });
     };
-    CareerPortalService.prototype.SendEmailNotification = function (data) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var Response_4, error_26;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, CareerPortalAPI_1.EmailService.emailnotification(data)];
-                    case 1:
-                        Response_4 = _a.sent();
-                        return [2 /*return*/, {
-                                data: Response_4.data,
-                                status: Response_4.status,
-                                message: Response_4.data.message,
-                            }];
-                    case 2:
-                        error_26 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_26);
-                        return [2 /*return*/, {
-                                data: [],
-                                status: 500,
-                                message: "Error inserting data into AdvertisementDetails",
-                            }];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    CareerPortalService.prototype.GetJobAppliedCount = function (data) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, error_27;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, CareerPortalAPI_1.getProfileData.GetJobAppliedCount(data)];
-                    case 1:
-                        response = _a.sent();
-                        return [2 /*return*/, {
-                                data: response.data,
-                                status: response.status,
-                                message: response.data.message,
-                            }];
-                    case 2:
-                        error_27 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_27);
-                        return [2 /*return*/, {
-                                data: [],
-                                status: 500,
-                                message: "Error inserting data into AdvertisementDetails",
-                            }];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
     CareerPortalService.prototype.GetCOIProfileOption = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GetItem, error_28;
+            var GetItem, error_26;
             var _this = this;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
@@ -1537,8 +1521,8 @@ var CareerPortalService = /** @class */ (function () {
                                 message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
                             }];
                     case 3:
-                        error_28 = _a.sent();
-                        console.error("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error_28);
+                        error_26 = _a.sent();
+                        console.error("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error_26);
                         return [2 /*return*/, {
                                 data: GetItem,
                                 status: 500,

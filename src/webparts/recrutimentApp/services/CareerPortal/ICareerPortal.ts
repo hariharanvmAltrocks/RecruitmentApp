@@ -68,6 +68,7 @@ export type CandidateDetails = {
     NationalityCode?: string;
     LanguageKnown?: string;
 }
+
 export type RescheduledCandidate = {
     ID: number
     InterviewDate: Date | undefined,
@@ -151,12 +152,12 @@ export type Icareerportal = {
     UpsertAgenciesJobs(data: profileXagent): Promise<ApiResponse<any | null>>;
     UpsertMaster(data: UpsertMasters[]): Promise<ApiResponse<any | null>>;
     UpsertQuestions(data: UpsertQuestions[]): Promise<ApiResponse<any | null>>;
-    GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>>;
+    // GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>>;
     getQuestionnaire(JobCode: string): Promise<ApiResponse<QuestionItem[] | null>>;
     RescheduledInterview(obj: RescheduledCandidate, ListName: string): Promise<ApiResponse<null>>;
     GetQuestionaireByScope(GetExistingQuestion: getQuestionById): Promise<ApiResponse<ViewQuestion[] | null>>;
     InsertInterviewPanel(InterviewPanel: any[], CandidateId: number): Promise<ApiResponse<any | null>>;
-    GetCountryMaster(): Promise<ApiResponse<GetMasterByCountry[] | null>>;
+    // GetCountryMaster(): Promise<ApiResponse<GetMasterByCountry[] | null>>;
     GetStateByCountry(code: string): Promise<ApiResponse<GetMasterByCountry[] | null>>;
     GetCitiesByState(code: string): Promise<ApiResponse<GetMasterByCountry[] | null>>;
     UpsertProfile(data: UpsertProfile, Document: UpsertDocument, jobCode: string): Promise<ApiResponse<any | null>>;

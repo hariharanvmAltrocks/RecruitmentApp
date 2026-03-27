@@ -39,20 +39,20 @@ export const useSignatureDetails = () => {
 
     setLoading(true);
     const timer = setTimeout(async () => {
-      const Filter =[
+      const Filter = [
         { FilterKey: "EmailId", Operator: "eq", FilterValue: emailId }
       ]
       const response = await masterService.GetUserDetails(Filter, "and");
-      if(response.status === 200 && response.data){
+      if (response.status === 200 && response.data) {
         const data = response.data;
-        const mappedData : SignatureDetails = {
-          reviewerName: data.FirstName + " " + data.MiddleName+ " "+ data.LastName,
-          reviewerInitial: data.LastName.charAt(0).toUpperCase(),
+        const mappedData: SignatureDetails = {
+          reviewerName: data.FirstName + " " + data.MiddleName + " " + data.LastName,
+          reviewerInitial: (data.LastName || "").charAt(0).toUpperCase(),
           jobTitleEN: data.JopTitleEnglish || "",
           jobTitleFR: data.JopTitleFrench || "",
         }
-        setData(mappedData) 
-      setLoading(false);
+        setData(mappedData)
+        setLoading(false);
       }
     }, 550);
 

@@ -37,7 +37,7 @@ function getcountryCode(Code, refMobile) {
         return null;
     return "".concat(country.id, "-").concat(mobileNumber);
 }
-var findMatricID = function (statusID, TabName) {
+var findMatricID = function (roleIDs, statusID, TabName) {
     switch (statusID) {
         case Config_1.StatusId.ReadyforRecruitmentProcess:
             return ConditionConfig_1.MatricID.AssignHr;
@@ -58,7 +58,12 @@ var findMatricID = function (statusID, TabName) {
             return ConditionConfig_1.MatricID.EvalutionHR;
         case Config_1.StatusId.RecruitmentInProgress:
             if (TabName === ConditionConfig_1.TabNames.ReviewProfile) {
-                return ConditionConfig_1.MatricID.ReviewProfile;
+                if (roleIDs.includes(Config_1.RoleID.RecruitmentHR)) {
+                    return ConditionConfig_1.MatricID.ReviewProfileHR;
+                }
+                else if (roleIDs.includes(Config_1.RoleID.LineManager)) {
+                    return ConditionConfig_1.MatricID.ReviewProfileLM;
+                }
             }
             else if (TabName === ConditionConfig_1.TabNames.AssignInterviewPanel) {
                 return ConditionConfig_1.MatricID.AssignInterviewPanel;

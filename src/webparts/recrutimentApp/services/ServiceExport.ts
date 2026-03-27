@@ -1,3 +1,5 @@
+import CandidateService from "./CandidateTable/CandidateService";
+import { ICandidateService } from "./CandidateTable/ICandidateService";
 import CareerPortalService from "./CareerPortal/CareerPortalService";
 import { Icareerportal } from "./CareerPortal/ICareerPortal";
 import CommonService from "./CommanAPi/CommanService";
@@ -6,6 +8,8 @@ import DashboardService from "./Dashboard/DashboardService";
 import { IDashboard } from "./Dashboard/IDashboard";
 import { IMasterService } from "./MasterService/IMasterService";
 import MasterService from "./MasterService/MasterService";
+import { IMeetingShedule } from "./MeetingSchedule/Imeetingschedule";
+import MeetingSchedule from "./MeetingSchedule/MeetingSchedule";
 import { IMenuService } from "./MenuService/IMenu";
 import MenuService from "./MenuService/menuService";
 import { IQuestionCreation } from "./QuestionCreation/IQuestionCreation";
@@ -20,3 +24,7 @@ export const CommonServices: ICommonService = new CommonService();
 export const CareerPotalServices: Icareerportal = new CareerPortalService();
 export const RecruitmentServices: IRecruitmentService = new RecruitmentService(); 
 export const QuestionService: IQuestionCreation = new QuestionCreateService();
+
+export const CandidateTable: ICandidateService = new CandidateService();
+
+export const MeetingSchedules: IMeetingShedule = new MeetingSchedule();

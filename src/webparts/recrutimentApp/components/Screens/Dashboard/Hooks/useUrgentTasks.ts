@@ -32,24 +32,24 @@ export const useUrgentTasks = () => {
             const res = await DashboardServices.GetRecruitmentDetails(Filter, "and");
             const data = res.data || [];
 
-            const UrgentTask = data.map((item) => {
-                const modified = item.ModifiedDate ? new Date(item.ModifiedDate) : new Date();
-                const today = new Date();
+            const UrgentTask = data
+                .map((item) => {
+                    const modified = item.ModifiedDate ? new Date(item.ModifiedDate) : new Date();
+                    const today = new Date();
 
-                const diffDays = Math.floor(
-                    (today.getTime() - modified.getTime()) / (1000 * 60 * 60 * 24)
-                );
+                    const diffDays = Math.floor(
+                        (today.getTime() - modified.getTime()) / (1000 * 60 * 60 * 24)
+                    );
 
-                const status = diffDays >= 3 ? `OVERDUE ${diffDays}D` : "PENDING";
-                const type: "error" | "warning" =
-                    diffDays >= 3 ? "error" : "warning";
-                return {
+                    return { item, diffDays };
+                })
+                .filter(({ diffDays }) => diffDays >= 3)
+                .map(({ item, diffDays }) => ({
                     title: item.JobTitleEnglish,
                     subtitle: item.Status,
-                    overdue: status,
-                    type: type
-                }
-            })
+                    overdue: `OVERDUE ${diffDays}D`,
+                    type: "error" as const
+                }));
             if (res.status === ResponeStatus.SUCCESS) {
                 setUrgentTasks(UrgentTask)
             }

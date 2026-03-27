@@ -9,16 +9,20 @@ require("./matricard.scss");
 var MetricCard = function (_a) {
     var metric = _a.metric, active = _a.active, onClick = _a.onClick;
     var getStatusClass = function (status) {
-        var s = status.toUpperCase();
-        if (s === 'ACTIVE')
-            return 'status-active';
-        if (s === 'CRITICAL')
-            return 'status-critical';
-        if (s === 'SUCCESS')
-            return 'status-success';
-        if (s === 'LOST')
-            return 'status-lost';
-        return 'status-default';
+        var _a;
+        var s = (_a = status === null || status === void 0 ? void 0 : status.toUpperCase()) !== null && _a !== void 0 ? _a : "";
+        switch (s) {
+            case "ACTIVE":
+                return "status-active";
+            case "CRITICAL":
+                return "status-critical";
+            case "SUCCESS":
+                return "status-success";
+            case "LOST":
+                return "status-lost";
+            default:
+                return "status-default";
+        }
     };
     return (react_1.default.createElement(framer_motion_1.motion.div, { whileHover: { y: -2 }, onClick: onClick, className: (0, cn_1.cn)("metric-card", active ? "metric-card--active" : "") },
         react_1.default.createElement("div", { className: "metric-card__header" },

@@ -16,6 +16,7 @@ const MOCK_QUESTION_BANK: Question[] = [
       { id: "o1", textEn: "Yes", textFr: "Oui", isCorrect: true },
       { id: "o2", textEn: "No", textFr: "Non", isCorrect: false },
     ],
+    fromBank: false
   },
   {
     id: "b2",
@@ -28,6 +29,7 @@ const MOCK_QUESTION_BANK: Question[] = [
       { id: "o5", textEn: "AutoCAD", textFr: "AutoCAD", isCorrect: false },
       { id: "o6", textEn: "Vulcan", textFr: "Vulcan", isCorrect: true },
     ],
+    fromBank: false
   },
   {
     id: "b3",
@@ -38,6 +40,7 @@ const MOCK_QUESTION_BANK: Question[] = [
       { id: "o7", textEn: "Yes", textFr: "Oui", isCorrect: true },
       { id: "o8", textEn: "No", textFr: "Non", isCorrect: false },
     ],
+    fromBank: false
   },
   {
     id: "b4",
@@ -48,6 +51,7 @@ const MOCK_QUESTION_BANK: Question[] = [
       { id: "o9", textEn: "Yes", textFr: "Oui", isCorrect: true },
       { id: "o10", textEn: "No", textFr: "Non", isCorrect: false },
     ],
+    fromBank: false
   },
   {
     id: "b5",
@@ -60,6 +64,7 @@ const MOCK_QUESTION_BANK: Question[] = [
       { id: "o13", textEn: "First Aid", textFr: "Premiers secours", isCorrect: false },
       { id: "o14", textEn: "Fire Safety", textFr: "Sécurité incendie", isCorrect: false },
     ],
+    fromBank: false
   },
 ];
 
@@ -76,53 +81,55 @@ export const useFetchQuestionBank = (discipline: string, statusId: number, enabl
   const {roleIDs} = userInfo();
 
   useEffect(() => {
-    const timer = setTimeout(async () => {
-        if (!enable || !discipline || !statusId) return;
-        let categoryId = statusId === StatusId.CareerPortalQuestions ? "C1" : "C2"
-       const obj: getQuestionById = {
-          discipline: String(discipline),
-          category: String(categoryId),
-          createdBy: roleIDs.includes(RoleID.LineManager)
-            ? QuestionCreatedBy.LM
-            : QuestionCreatedBy.HR,
-        };
-        const res = await QuestionService.GetQuestionaireByScope(obj);
-    
-    let questionbank = res.data?.map((item) => {
-      let option = item.options?.map((item) => {
+  const timer = setTimeout(async () => {
+    if (!enable || !discipline || !statusId) return;
+
+    const categoryId = statusId === StatusId.CareerPortalQuestions ? "C1" : "C2";
+    const obj: getQuestionById = {
+      discipline: String(discipline),
+      category: String(categoryId),
+      createdBy: roleIDs.includes(RoleID.LineManager)
+        ? QuestionCreatedBy.LM
+        : QuestionCreatedBy.HR,
+    };
+
+    try {
+      const res = await QuestionService.GetQuestionaireByScope(obj);
+
+      const questionbank: Question[] = (res.data ?? []).map((item) => {
+        const options = (item.options ?? []).map((opt) => ({
+          id: String(opt.key),
+          textEn: opt.text,
+          textFr: opt.textFr ?? "" ,
+          isCorrect: opt.isCorrect ?? false,
+        }));
+        console.log(item.Type,"Typeee");
+        
         return {
-          id: item.key,
-          textEn: item.text,
-          textFr: item.textFr,
-          isCorrect: item.isCorrect
-        }
-      })
-      let answer = option?.filter((item) => item.isCorrect)
-      return{
-        id: item.id,
-        type: item.Type,
-        questionEn: item.question,
-        questionFr: item.questionFr,
-        options: option,
-        scopeId: item.scope,
-        questionTypeId: item.questionType,
-        isQualifier: item.Disqualification,
-        answers: answer,
-        createdBy: item.createdBy
-      }
-    })
+          id: item.id,
+          type: "single" ,
+          questionEn: item.question,
+          questionFr: item.questionFr ?? "",
+          options,
+          answers: options.filter((opt) => opt.isCorrect),
+          scopeId: item.scope ?? "",
+          questionTypeId: item.questionType ?? "",
+          isQualifier: item.Disqualification ?? false,
+          createdBy: item.createdBy ?? "",
+          fromBank: true,
+        };
+      });
 
-      try {
-        setQuestionBank(MOCK_QUESTION_BANK);
-        setLoading(false);    
-      } catch {
-        setError("Failed to load question bank.");
-        setLoading(false);
-      }
-    }, 800);
+      setQuestionBank(questionbank);
+    } catch {
+      setError("Failed to load question bank.");
+    } finally {
+      setLoading(false);
+    }
+  }, 800);
 
-    return () => clearTimeout(timer);
-  }, [enable]);
+  return () => clearTimeout(timer);
+}, [enable]);
 
   return { questionBank, loading, error ,};
 };

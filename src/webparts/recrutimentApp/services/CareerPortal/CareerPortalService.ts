@@ -9,7 +9,7 @@ import { DocumentLibraray, ListNames, workflowStatusApi } from "../../utilities/
 import { DataSyncToRecruitmentResponse } from "../Dashboard/IDashboard";
 import { IDocFiles } from "../SPService/Ispservice";
 import SPServices from "../SPService/spservice";
-import { CareerPotalServices, CommonServices } from "../ServiceExport";
+import { CareerPotalServices, CommonServices, masterService } from "../ServiceExport";
 import { RoleProfileMaster } from "../../models/IDocument";
 import { agentCode, CategoryID, DataType, quesContentId, RoleName } from "../../utilities/ConditionConfig";
 import { calculateTotalExperienceYears, getcountryCode } from "../../components/Hooks/reusehooks";
@@ -268,14 +268,14 @@ export default class CareerPortalService implements Icareerportal {
                     FamilyLinkPath[0]?.document?.filePath
                 );
 
-                const ProofIdentity = await CareerPotalServices.GetAllMaster(
+                const ProofIdentity = await masterService.GetAllMaster(
                     CategoryID.ProofofIdentity
                 );
                 const totalExperienceYears = calculateTotalExperienceYears(
                     op?.profile?.profileDetailExperiences
                 );
 
-                const CountryCode = await CareerPotalServices.GetCountryMaster();
+                const CountryCode = await masterService.GetCountryMaster();
 
 
 
@@ -409,7 +409,7 @@ export default class CareerPortalService implements Icareerportal {
                     Agencies: AgenName,
                     CandidateResume: CandidateCV.data,
                     RoleProfile: RoleProfileDoc,
-                    Advertisement: AdvertismentDocPromises,
+                    // Advertisement: AdvertismentDocPromises,
                     Comments: CommentsData,
                     workflowStatusId: op?.workflowStatusId,
                     hrComments: op?.hrComments,
@@ -457,7 +457,8 @@ export default class CareerPortalService implements Icareerportal {
                     PreviousEmployerDetails: PreviousEmployer,
                     LanguageKnown: candidateLanguages,
 
-                    PPEDetails: PPEData
+                    PPEDetails: PPEData,
+                    OverallAtttachment: []
                 };
 
                 GetProfileByJobCodeData.push(GetProfileDahboard);
@@ -645,36 +646,36 @@ export default class CareerPortalService implements Icareerportal {
         }
     }
 
-    async GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>> {
-        try {
-            const response = await postAdveDetails.getMastersByCategory(id);
-            const GetAllMasterData: GetAllMaster[] = response.data.data.map((item: any) => ({
-                id: item.id,
-                value: item.value,
-                displayText: item.displayText,
-                displayTextFr: item.displayText_fr,
-            }));
+    // async GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>> {
+    //     try {
+    //         const response = await postAdveDetails.getMastersByCategory(id);
+    //         const GetAllMasterData: GetAllMaster[] = response.data.data.map((item: any) => ({
+    //             id: item.id,
+    //             value: item.value,
+    //             displayText: item.displayText,
+    //             displayTextFr: item.displayText_fr,
+    //         }));
 
-            // console.log(GetAllMasterData, "GetAllMasterData");
+    //         // console.log(GetAllMasterData, "GetAllMasterData");
 
-            return {
-                data: GetAllMasterData,
-                status: response.status,
-                message: "Get Candidate details",
-            };
+    //         return {
+    //             data: GetAllMasterData,
+    //             status: response.status,
+    //             message: "Get Candidate details",
+    //         };
 
-        } catch (error) {
-            console.error(
-                "Error Get Candidate details:",
-                error
-            );
-            return {
-                data: [],
-                status: 500,
-                message: "Error Get Candidate details",
-            };
-        }
-    }
+    //     } catch (error) {
+    //         console.error(
+    //             "Error Get Candidate details:",
+    //             error
+    //         );
+    //         return {
+    //             data: [],
+    //             status: 500,
+    //             message: "Error Get Candidate details",
+    //         };
+    //     }
+    // }
 
     async getQuestionnaire(jobCode: string): Promise<ApiResponse<QuestionItem[] | null>> {
         try {
@@ -808,35 +809,35 @@ export default class CareerPortalService implements Icareerportal {
         }
     }
 
-    async GetCountryMaster(): Promise<ApiResponse<GetMasterByCountry[] | null>> {
-        try {
-            const response = await GetStateByCountryApi.GetCountryApi();
-            const GetAllMasterData: GetMasterByCountry[] = response.data?.data?.map((item: any) => ({
-                id: item.isdcode,
-                code: item.countryCode,
-                text: item.countryName,
-            }));
+    // async GetCountryMaster(): Promise<ApiResponse<GetMasterByCountry[] | null>> {
+    //     try {
+    //         const response = await GetStateByCountryApi.GetCountryApi();
+    //         const GetAllMasterData: GetMasterByCountry[] = response.data?.data?.map((item: any) => ({
+    //             id: item.isdcode,
+    //             code: item.countryCode,
+    //             text: item.countryName,
+    //         }));
 
-            // console.log(GetAllMasterData, "GetCountryMaster");
+    //         // console.log(GetAllMasterData, "GetCountryMaster");
 
-            return {
-                data: GetAllMasterData,
-                status: response.status,
-                message: "Get Candidate details",
-            };
+    //         return {
+    //             data: GetAllMasterData,
+    //             status: response.status,
+    //             message: "Get Candidate details",
+    //         };
 
-        } catch (error) {
-            console.error(
-                "Error Get Candidate details:",
-                error
-            );
-            return {
-                data: [],
-                status: 500,
-                message: "Error Get Candidate details",
-            };
-        }
-    }
+    //     } catch (error) {
+    //         console.error(
+    //             "Error Get Candidate details:",
+    //             error
+    //         );
+    //         return {
+    //             data: [],
+    //             status: 500,
+    //             message: "Error Get Candidate details",
+    //         };
+    //     }
+    // }
 
     async GetStateByCountry(code: string): Promise<ApiResponse<GetMasterByCountry[] | null>> {
         try {

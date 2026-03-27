@@ -10,11 +10,17 @@ var UIProvider = function (_a) {
     var _c = (0, react_1.useState)(""), activeTab = _c[0], setActiveTab = _c[1];
     var _d = (0, react_1.useState)(""), navigationPath = _d[0], setNavigationPath = _d[1];
     var _e = (0, react_1.useState)(0), MatricID = _e[0], setMatricID = _e[1];
+    var _f = (0, react_1.useState)(false), sideNavflag = _f[0], setSideNavflag = _f[1];
+    var _g = (0, react_1.useState)(""), currentTabName = _g[0], setCurrentTabName = _g[1];
     return (react_1.default.createElement(UIContext.Provider, { value: {
             activeMenuID: activeMenuID,
             activeTab: activeTab,
             navigationPath: navigationPath,
             MatricID: MatricID,
+            sideNavflag: sideNavflag,
+            currentTabName: currentTabName,
+            setCurrentTabName: setCurrentTabName,
+            setSideNavflag: setSideNavflag,
             setMatricID: setMatricID,
             setActiveMenuID: setActiveMenuID,
             setActiveTab: setActiveTab,

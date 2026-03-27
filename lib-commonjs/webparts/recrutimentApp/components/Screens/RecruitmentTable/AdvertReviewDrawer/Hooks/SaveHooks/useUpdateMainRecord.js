@@ -13,23 +13,22 @@ var useUpdateMainRecord = function (form, currentRoleID) {
             args_1[_i] = arguments[_i];
         }
         return tslib_1.__awaiter(void 0, tslib_1.__spreadArray([], args_1, true), void 0, function (extraData) {
-            var formState, payload, tasks;
+            var payload, tasks;
             if (extraData === void 0) { extraData = {}; }
             return tslib_1.__generator(this, function (_a) {
-                formState = form.formState;
                 payload = tslib_1.__assign({ ActionId: Config_1.WorkflowAction.Approved, ItemCreated: "Yes" }, extraData);
                 tasks = [
                     spservice_1.default.SPUpdateItem({
                         Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
                         RequestJSON: payload,
-                        ID: formState.ID,
+                        ID: form === null || form === void 0 ? void 0 : form.ID,
                     }),
                 ];
-                if (formState.Comments) {
+                if (form === null || form === void 0 ? void 0 : form.reviewerComments) {
                     tasks.push(ServiceExport_1.RecruitmentServices.PostCommentsData({
                         RoleId: currentRoleID,
-                        RecruitmentIDId: formState.ID,
-                        Comments: formState.Comments,
+                        RecruitmentIDId: form === null || form === void 0 ? void 0 : form.ID,
+                        Comments: form === null || form === void 0 ? void 0 : form.reviewerComments,
                     }));
                 }
                 return [2 /*return*/, Promise.all(tasks)];

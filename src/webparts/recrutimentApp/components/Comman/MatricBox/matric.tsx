@@ -12,14 +12,22 @@ interface MetricCardProps {
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({ metric, active, onClick }) => {
-   const getStatusClass = (status: string) => {
-    const s = status.toUpperCase();
-    if (s === 'ACTIVE') return 'status-active';
-    if (s === 'CRITICAL') return 'status-critical';
-    if (s === 'SUCCESS') return 'status-success';
-    if (s === 'LOST') return 'status-lost';
-    return 'status-default'; 
-  };
+   const getStatusClass = (status?: string) => {
+  const s = status?.toUpperCase() ?? "";
+
+  switch (s) {
+    case "ACTIVE":
+      return "status-active";
+    case "CRITICAL":
+      return "status-critical";
+    case "SUCCESS":
+      return "status-success";
+    case "LOST":
+      return "status-lost";
+    default:
+      return "status-default";
+  }
+};
   return(
     <motion.div
       whileHover={{ y: -2 }}

@@ -5,6 +5,7 @@ var react_1 = tslib_1.__importStar(require("react"));
 var react_router_dom_1 = require("react-router-dom");
 var lucide_react_1 = require("lucide-react");
 var SideNavigation_module_scss_1 = tslib_1.__importDefault(require("./SideNavigation.module.scss"));
+var UIStateContext_1 = require("../RecrutimentApp/UIStateContext");
 var SidebarItem = function (_a) {
     var _b;
     var item = _a.item, activeMenuID = _a.activeMenuID, onSelectCallback = _a.onSelectCallback, isExpanded = _a.isExpanded, onToggleExpand = _a.onToggleExpand;
@@ -34,6 +35,7 @@ var SidebarItem = function (_a) {
 var SideNavigation = function (_a) {
     var menuData = _a.menuData, activeMenuID = _a.activeMenuID, setactiveMenuID = _a.setactiveMenuID, _b = _a.isCollapsed, isCollapsed = _b === void 0 ? false : _b;
     var navigate = (0, react_router_dom_1.useNavigate)();
+    var setSideNavflag = (0, UIStateContext_1.useUIState)().setSideNavflag;
     var _c = (0, react_1.useState)([]), expandedMenus = _c[0], setExpandedMenus = _c[1];
     // Sort and format the raw menu data
     var sortedMenu = tslib_1.__spreadArray([], menuData, true).sort(function (a, b) { return a.Id - b.Id; });
@@ -65,6 +67,7 @@ var SideNavigation = function (_a) {
     };
     var handleSelect = function (id, path) {
         setactiveMenuID(id);
+        setSideNavflag(true);
         navigate(path);
     };
     console.log(sortedMenu, "sortedMenu");

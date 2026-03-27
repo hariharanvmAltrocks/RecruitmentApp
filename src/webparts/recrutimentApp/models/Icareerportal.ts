@@ -1,3 +1,4 @@
+import { AttachmentDetails } from "../components/Screens/RecruitmentTable/AdvertReviewDrawer/Hooks/getAttachmentDetails";
 import { IDocFiles } from "../services/SPService/Ispservice";
 import { AutoCompleteItem } from "./fieldmodels";
 
@@ -128,7 +129,7 @@ export type CandidateProfile = {
     Agencies: string;
     CandidateResume: IDocFiles[];
     RoleProfile: IDocFiles[];
-    Advertisement: IDocFiles[];
+    OverallAtttachment: AttachmentDetails[];
     Comments: CommentsData[];
     workflowStatusId: string;
     hrComments: string;

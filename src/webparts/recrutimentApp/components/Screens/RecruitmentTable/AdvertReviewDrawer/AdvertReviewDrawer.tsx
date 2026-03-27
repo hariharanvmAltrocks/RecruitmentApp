@@ -61,10 +61,10 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   onToggleAcknowledgement,
   setLoadingState,
 }) => {
- const { toast, closeToast, showSuccess,showError,showWarning, showConfirm} = useToast();
+  const { toast, closeToast, showSuccess, showError, showWarning, showConfirm } = useToast();
   const { MatricID: metricId } = useUIState();
   const { roleIDs } = userInfo();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const { data: positionDetails, loading: positionLoading } = usePositionDetails(selectedJobId, selectedType);
   const { data: signatureDetails, loading: signatureLoading } = useSignatureDetails();
 
@@ -84,28 +84,29 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   const uploadValid = uploadDocument.length > 0;
   const checkboxValid = acknowledgementCheckbox;
   const canApprove = commentValid && uploadValid && checkboxValid;
- const roleID = roleIDs.includes(RoleID.LineManager,RoleID.HOD)? RoleID.LineManager : roleIDs[0]
- const document : IDocFiles[] = uploadDocument.map((item)=> {
-  return {
-     name: item.name,
-  content: item.fileContent,
-  type: "New"
+  const roleID = roleIDs.includes(RoleID.LineManager, RoleID.HOD) ? RoleID.LineManager : roleIDs[0]
+  const document: IDocFiles[] = uploadDocument.map((item) => {
+    return {
+      name: item.name,
+      content: item.fileContent,
+      type: "New"
+    }
+  })
+  const formData: IDptData = {
+    ID: positionDetails?.ID ?? 0,
+    JobCodeId: positionDetails?.JobCodeId ?? 0,
+    JobCode: positionDetails?.JobCode ?? "",
+    JobTitleEnglish: positionDetails?.JobTitleEnglish ?? "",
+    JobTitleFrench: positionDetails?.JobTitleFrench ?? "",
+    DepartmentID: positionDetails?.DepartmentId ?? 0,
+    Nationality: positionDetails?.Nationality ?? "",
+    NumberOfPersonNeeded: positionDetails?.NumberOfPersonNeeded ?? "",
+    Dptcode: positionDetails?.DeptCode ?? "",
+    reviewerComments: reviewerComments
   }
- })
- const formData:IDptData ={
-  ID: positionDetails?.RecordID ?? 0,
-  JobCodeId: positionDetails?.JobCodeId ?? 0,
-  JobCode: positionDetails?.JobCode ?? "",
-  JobTitleEnglish: positionDetails?.JobTitleEnglish ?? "",
-  JobTitleFrench: positionDetails?.JobTitleFrench ?? "",
-  DepartmentID: positionDetails?.DepartmentId ?? 0,
-  Nationality: positionDetails?.Nationality ?? "",
-  NumberOfPersonNeeded: positionDetails?.NumberOfPersonNeeded ?? "",
-  Dptcode:positionDetails?.DeptCode ?? ""
- }
-  const { updateMainRecord }    = useUpdateMainRecord(formData, roleID);
-const { handleHRLeadProcess } = useHRLeadProcess(formData, RoleID.RecruitmentHRLead,document,BGVData.checkboxBGVOption);
-const { handleHRProcess }     = useHRProcess(formData, RoleID.RecruitmentHR,document);
+  const { updateMainRecord } = useUpdateMainRecord(formData, roleID);
+  const { handleHRLeadProcess } = useHRLeadProcess(formData, RoleID.RecruitmentHRLead, document, BGVData.checkboxBGVOption);
+  const { handleHRProcess } = useHRProcess(formData, RoleID.RecruitmentHR, document);
 
 
   const mandatoryValid =
@@ -149,55 +150,57 @@ const { handleHRProcess }     = useHRProcess(formData, RoleID.RecruitmentHR,docu
 
   const handleApprove = useCallback(async () => {
     setShowValidation(true);
-     if (isSubmitting) {
+    if (isSubmitting) {
       return;
     }
     if (!canApprove && !bgvValid) {
       return;
     }
-      setIsSubmitting(true);
+    setIsSubmitting(true);
     const finalize = (msg: string) => {
       showSuccess(msg);
-       navigate("/RecruitmentTable");
+      navigate("/RecruitmentTable");
     }
-    if(roleIDs.includes(RoleID.RecruitmentHRLead)){
-       if(metricId === MatricID.UploadONEM){
-         await handleHRLeadProcess(finalize);
-       }
-     }else if(roleIDs.includes(RoleID.RecruitmentHR)){
+    if (roleIDs.includes(RoleID.RecruitmentHRLead)) {
+      if (metricId === MatricID.UploadONEM) {
+        await handleHRLeadProcess(finalize);
+      }
+    } else if (roleIDs.includes(RoleID.RecruitmentHR)) {
       await handleHRProcess(finalize);
 
-     } else if (roleIDs.includes(RoleID.HOD,RoleID.LineManager)){
-        await updateMainRecord();
-     }
-       setIsSubmitting(false);
-     
+    } else if (roleIDs.includes(RoleID.HOD, RoleID.LineManager)) {
+      await updateMainRecord();
+    }
+    showSuccess("Record Updated Successfully")
+    navigate("/RecruitmentTable")
+    setIsSubmitting(false);
+
   }, [canApprove, bgvValid]);
 
-    let mappedData: PositionDetails | null = null;
-    if (positionDetails) {
-      mappedData = {
-        jobId: positionDetails.RecordID,
-        jobTitle: positionDetails.JobTitleEnglish,
-        jobCode: positionDetails.JobCode,
-        department: positionDetails.Department,
-        buCode: positionDetails.BusinessUnitCode,
-        buName:  "sadasdasdasd",//data.BusinessUnitName,
-        subDepartment: positionDetails.SubDepartment,
-        section: positionDetails.Section,
-        deptCode: positionDetails.DepartmentCode,
-        // reportsTo: data.ReportsTo,
-        areaOfWork: positionDetails.AreaofWork,
-        nationality: positionDetails.Nationality,
-        patersonGrade: positionDetails.PatersonGrade,
-        drcGrade: positionDetails.DRCGrade,
-        employmentCategory: positionDetails.EmploymentCategory,
-        contractType: positionDetails.TypeOfContract,
-        numberOfPersons: Number(positionDetails.NumberOfPersonNeeded),
-        dateRequired: String(positionDetails.DateRequried),
-        JobCodeID: positionDetails.JobCodeId,
-      };
-    }
+  let mappedData: PositionDetails | null = null;
+  if (positionDetails) {
+    mappedData = {
+      jobId: positionDetails.RecordID,
+      jobTitle: positionDetails.JobTitleEnglish,
+      jobCode: positionDetails.JobCode,
+      department: positionDetails.Department,
+      buCode: positionDetails.BusinessUnitCode,
+      buName: "sadasdasdasd",//data.BusinessUnitName,
+      subDepartment: positionDetails.SubDepartment,
+      section: positionDetails.Section,
+      deptCode: positionDetails.DepartmentCode,
+      // reportsTo: data.ReportsTo,
+      areaOfWork: positionDetails.AreaofWork,
+      nationality: positionDetails.Nationality,
+      patersonGrade: positionDetails.PatersonGrade,
+      drcGrade: positionDetails.DRCGrade,
+      employmentCategory: positionDetails.EmploymentCategory,
+      contractType: positionDetails.TypeOfContract,
+      numberOfPersons: Number(positionDetails.NumberOfPersonNeeded),
+      dateRequired: String(positionDetails.DateRequried),
+      JobCodeID: positionDetails.JobCodeId,
+    };
+  }
 
   return (
     <AnimatePresence>
@@ -311,7 +314,7 @@ const { handleHRProcess }     = useHRProcess(formData, RoleID.RecruitmentHR,docu
 
                   <div className="advert-review-drawer__footer">
                     <button type="button" className="advert-review-drawer__history" title="View History">
-                      <History size={18} />
+                      {/* <History size={18} /> */}
                     </button>
                     <div className="advert-review-drawer__footer-actions">
                       <button type="button" className="advert-review-drawer__button" onClick={handleClose}>
@@ -323,18 +326,18 @@ const { handleHRProcess }     = useHRProcess(formData, RoleID.RecruitmentHR,docu
                         disabled={isLoading}
                         onClick={handleApprove}
                       >
-                        <CheckCircle2 size={16} />
-                         {isSubmitting ? (
-              <>
-                <Loader2 size={16} className="modal-popup__spinner" />
-                Sending...
-              </>
-            ) : (
-              <>
-                <Send size={16} style={{ marginRight: 8 }} />
-                Submit  
-              </>
-            )}
+                        {/* <CheckCircle2 size={16} /> */}
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 size={16} className="modal-popup__spinner" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Send size={16} style={{ marginRight: 8 }} />
+                            Submit
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>

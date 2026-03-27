@@ -9,7 +9,6 @@ import { getProfileData } from "../AxiosService/CareerPortalAPI";
 import { ExternalApiCountItem, ExternalApiParams, Metric, MetricConfig } from "../../models/IDashboard";
 import { MatricColums } from "../../components/Screens/Dashboard/metricColumns.config";
 import { InterviewLevel, Nationality } from "../../utilities/ConditionConfig";
-import { FilterItem, GetProfileByJobCode } from "../../models/Icareerportal";
 import { CommonServices, masterService } from "../ServiceExport";
 
 export default class DashboardService implements IDashboard {
@@ -53,7 +52,8 @@ export default class DashboardService implements IDashboard {
                     value,
                     showArrow: config.showArrow || hasExternalCount,
                 };
-            });
+            }).sort((a, b) => Number(b.showArrow) - Number(a.showArrow));
+
 
             return { data: metrics, status: 200, message: "Dashboard counts fetched successfully" };
 

@@ -16,10 +16,11 @@ export interface MetricConfig {
     externalApi?: {
         workflowStatuses: string[];
     };
-     iconType?: string;
-     path: string;
-     menuId: number;
-     TabValue: string;
+    iconType?: string;
+    path: string;
+    menuId: number;
+    TabValue: string;
+    TabName: string;
 }
 
 export interface Metric extends MetricConfig {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { RecruitmentTabKey, TabItem } from "../RecruitmentTable.types";
-import {  TableMode } from "../RecruitmentTable.types";
+import { TableMode } from "../RecruitmentTable.types";
 import { useMenuData } from "../../../../utilities/hooks/MenuDataContext";
 import { TabDetails } from "../../../../models/master";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
@@ -40,17 +40,17 @@ export interface UseTabDetailsResult {
 // ];
 
 
-const getTabDetails = (items: any[] | undefined): TabDetails[] =>
+const getTabDetails = (items: any[] | undefined, roleIDs: number[]): TabDetails[] =>
   items?.map((item: any, index: number) => ({
     ...item,
     Value: `tab${index + 1}`,
-    MatricID: findMatricID(Number(item.StatusDetails?.[0]?.StatusId),item.TabName) 
+    MatricID: findMatricID(roleIDs, Number(item.StatusDetails?.[0]?.StatusId), item.TabName)
   })) ?? [];
 
 export const useTabDetails = (): UseTabDetailsResult => {
   const { menuData } = useMenuData();
   const { activeMenuID } = useUIState();
-    const { roleIDs } = useRoleContext();
+  const { roleIDs } = useRoleContext();
   const [tabs, setTabs] = useState<TabItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -58,7 +58,7 @@ export const useTabDetails = (): UseTabDetailsResult => {
     let isMounted = true;
     setLoading(true);
 
-    const timer = setTimeout(() => {         
+    const timer = setTimeout(() => {
       if (!isMounted) return;
 
       const selectedTabDetails = menuData?.reduce(
@@ -67,7 +67,7 @@ export const useTabDetails = (): UseTabDetailsResult => {
             ? menu.Children?.find((child: any) => child?.Id === activeMenuID)
             : menu.TabDetails?.find((tab: any) => tab?.Id === activeMenuID);
 
-          if (match) acc.push(...getTabDetails(match.TabDetails));
+          if (match) acc.push(...getTabDetails(match.TabDetails, roleIDs));
           return acc;
         },
         [],
@@ -95,18 +95,18 @@ export const useTabDetails = (): UseTabDetailsResult => {
         actionMode: (Array.isArray(tab.StatusDetails[0]?.Action)
           ? tab.StatusDetails[0]?.Action[0]
           : tab.StatusDetails[0]?.Action) as import("../RecruitmentTable.types").TableActionMode,
-          matricId: tab.MatricID,
+        matricId: tab.MatricID,
       }));
 
       setTabs(mappedTabs);
       setLoading(false);
-    }, 0);                                     
+    }, 0);
 
-    return () => {                            
+    return () => {
       isMounted = false;
       clearTimeout(timer);
     };
-  }, [activeMenuID, menuData]);              
+  }, [activeMenuID, menuData]);
 
   return { tabs, loading };
 };

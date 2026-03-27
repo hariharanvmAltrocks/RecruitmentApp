@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import styles from "./SideNavigation.module.scss";
+import { useUIState } from '../RecrutimentApp/UIStateContext';
 
 type MenuItem = {
   Id: number;
@@ -100,6 +101,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
   isCollapsed = false
 }) => {
   const navigate = useNavigate();
+  const {setSideNavflag} = useUIState();
   const [expandedMenus, setExpandedMenus] = useState<number[]>([]);
 
   // Sort and format the raw menu data
@@ -135,6 +137,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
 
   const handleSelect = (id: number, path: string) => {
     setactiveMenuID(id);
+    setSideNavflag(true);
     navigate(path);
   };
 console.log(sortedMenu,"sortedMenu");
