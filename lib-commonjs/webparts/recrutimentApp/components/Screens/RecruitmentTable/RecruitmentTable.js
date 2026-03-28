@@ -117,6 +117,7 @@ var RecruitmentTable = function () {
                 _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/CandidateTable",
                 _a[ConditionConfig_1.MatricID.EvalutionHR] = "/Evalution",
                 _a[ConditionConfig_1.MatricID.EvalutionLM] = "/Evalution",
+                _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard",
                 _a);
             route = routeMap[matricID];
             if (route) {

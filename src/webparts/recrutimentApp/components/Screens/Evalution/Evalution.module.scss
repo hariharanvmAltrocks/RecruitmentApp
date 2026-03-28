@@ -1,20 +1,11 @@
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+// Evalution.module.scss
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: #cbd5e1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+// ── Loading ───────────────────────────────────────────────────────────────────
 
 .loadingPage {
   display: flex;
@@ -36,14 +27,15 @@
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
+
 .loadingText {
   font-size: 14px;
   color: #64748b;
 }
+
+// ── Alert ─────────────────────────────────────────────────────────────────────
 
 .alert {
   display: flex;
@@ -62,9 +54,8 @@
   cursor: pointer;
   font-size: 16px;
   opacity: 0.6;
-}
-.alertClose:hover {
-  opacity: 1;
+
+  &:hover { opacity: 1; }
 }
 
 .alertError {
@@ -101,10 +92,11 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+
+  &:hover { background: #fef2f2; }
 }
-.retryBtn:hover {
-  background: #fef2f2;
-}
+
+// ── Root ──────────────────────────────────────────────────────────────────────
 
 .root {
   background: transparent;
@@ -112,6 +104,8 @@
   box-sizing: border-box;
   height: 100%;
 }
+
+// ── Main layout ───────────────────────────────────────────────────────────────
 
 .layout {
   display: flex;
@@ -122,6 +116,8 @@
   margin: 0;
 }
 
+// ── Right panel ───────────────────────────────────────────────────────────────
+
 .rightPanel {
   flex: 1;
   overflow-y: auto;
@@ -130,6 +126,8 @@
   flex-direction: column;
   background: #fff;
 }
+
+// ── Footer ────────────────────────────────────────────────────────────────────
 
 .footer {
   display: flex;
@@ -150,14 +148,9 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-}
-.cancelBtn:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-}
-.cancelBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+
+  &:hover  { background: #f8fafc; border-color: #cbd5e1; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
 .submitBtn {
@@ -173,14 +166,12 @@
   display: flex;
   align-items: center;
   gap: 8px;
+
+  &:hover    { background: #3b82f6; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
-.submitBtn:hover {
-  background: #3b82f6;
-}
-.submitBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+
+// ── Scorecard margin ──────────────────────────────────────────────────────────
 
 .scorecardMargin {
   margin-top: 24px;
