@@ -4,64 +4,133 @@ import styles from './InterviewQuestion.module.scss';
 
 interface InterviewQuestionListProps {
   questions: InterviewQuestion[];
-  answers: Record<string, Answer>;
-  onAnswerChange: (questionId: string, patch: Partial<Answer>) => void;
+  answers: Record<number, Answer>;
+  ratingErrors?: Record<number, boolean>;
+  onAnswerChange: (questionId: number, patch: Partial<Answer>) => void;
 }
 
-const ratingScale = [1, 2, 3, 4, 5];
+const ScoreRating = [
+  { key: 1, text: 'Not Acceptable' },
+  { key: 2, text: 'Acceptable' },
+  { key: 3, text: 'Excellent' },
+];
 
-export default function InterviewQuestionList({ questions, answers, onAnswerChange }: InterviewQuestionListProps): JSX.Element {
+function cleanHTML(text: string = ''): string {
+  return text
+    .replace(/<p>/gi, '')
+    .replace(/<\/p>/gi, '')
+    .replace(/<br\s*\/?>/gi, '')
+    .trim();
+}
+
+export default function InterviewQuestionList({
+  questions,
+  answers,
+  ratingErrors,
+  onAnswerChange,
+}: InterviewQuestionListProps): JSX.Element {
+  if (!questions.length) return <></>;
+
   return (
-    <section className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-      <div className="flex items-start justify-between mb-6">
+    <section>
+      {/* Section header */}
+      <div className={styles.sectionTitle}>
+        <div className={styles.sectionAccentOrange} />
         <div>
-          <h3 className="text-sm font-bold text-slate-800">Interview Questions</h3>
-          <p className="text-xs text-slate-500">Rate each response and capture remarks</p>
+          <h2 className={styles.sectionH2}>INTERVIEW QUESTIONNAIRES</h2>
+          <p className={styles.sectionSub}>Technical &amp; Behavioral Assessment</p>
         </div>
-        <div className="text-[10px] text-slate-400 uppercase tracking-widest">1-5 Scale</div>
+        <div className={styles.ratingGuide}>
+          <span className={styles.ratingGuideLabel}>RATING GUIDE:</span>
+          <span className={`${styles.dot} ${styles.dotGreen}`} />
+          <span className={styles.guideItem}>3 - <b>Excellent</b></span>
+          <span className={`${styles.dot} ${styles.dotBlue}`} />
+          <span className={styles.guideItem}>2 - <b>Acceptable</b></span>
+          <span className={`${styles.dot} ${styles.dotRed}`} />
+          <span className={styles.guideItem}>1 - <b>Not Acceptable</b></span>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-5">
-        {questions.map((question, index) => {
-          const answer = answers[question.id];
-          return (
-            <div key={question.id} className={`rounded-2xl border border-slate-100 p-5 bg-slate-50 ${styles.questionCard}`}>
-              <div className="flex items-start gap-3">
-                <div className="h-8 w-8 rounded-lg bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
-                  {index + 1}
+      {questions.map((question, idx) => {
+        const answer = answers[question.id];
+        const questionHasError = answer?.rating === null || answer?.rating === undefined;
+        const showError = ratingErrors?.[question.id] || (questionHasError && Object.keys(ratingErrors || {}).length > 0);
+
+        return (
+          <div
+            key={question.id}
+            className={[styles.qCard, showError ? styles.qCardError : ''].filter(Boolean).join(' ')}
+          >
+            {/* Question text */}
+            <div className={styles.qTop}>
+              <span className={styles.qBadge}>Q{idx + 1}</span>
+              <p
+                className={styles.qText}
+                dangerouslySetInnerHTML={{ __html: cleanHTML(question.text) }}
+              />
+            </div>
+          {/* 
+            {showError && (
+              <div className={styles.errorBox}>
+                Please select a rating before submitting.
+              </div>
+            )} */}
+
+            {/* Expected response guide */}
+            {question.expectedResponse && (
+              <div className={styles.guideBox}>
+                <div className={styles.guideBoxHeader}>
+                  <span className={styles.guideCheck}>✅</span>
+                  <span className={styles.guideBoxLabel}>EXPECTED RESPONSE GUIDE</span>
+                  <span className={styles.guideBoxIcon}>📋</span>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-slate-800">{question.text}</p>
+                <p
+                  className={styles.guideBoxText}
+                  dangerouslySetInnerHTML={{ __html: cleanHTML(question.expectedResponse) }}
+                />
+              </div>
+            )}
 
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {ratingScale.map((rating) => (
+            {/* Rating + score */}
+            <div className={styles.qBottom}>
+              <div>
+                <p className={styles.panelRatingLabel}>
+                  PANEL RATING <span className={styles.req}>*</span>
+                </p>
+                <div className={styles.ratingBtnRow}>
+                  {ScoreRating.map(({ key, text }) => {
+                    const active = answer?.rating === key;
+                    const btnClass = [
+                      styles.ratingBtn,
+                      active && key === 3 ? styles.ratingExcellent     : '',
+                      active && key === 2 ? styles.ratingAcceptable    : '',
+                      active && key === 1 ? styles.ratingNotAcceptable : '',
+                    ].filter(Boolean).join(' ');
+
+                    return (
                       <button
-                        key={rating}
-                        type="button"
-                        onClick={() => onAnswerChange(question.id, { rating })}
-                        className={
-                          rating === answer?.rating
-                            ? 'px-3 py-1.5 rounded-lg bg-white text-blue-600 text-xs font-bold shadow-sm border border-blue-200'
-                            : 'px-3 py-1.5 rounded-lg bg-white text-slate-400 text-xs font-bold border border-slate-200 hover:border-blue-200 hover:text-blue-500 transition-colors'
-                        }
+                        key={key}
+                        className={btnClass}
+                        onClick={() => onAnswerChange(question.id, { rating: key })}
                       >
-                        {rating}
+                        {text}
                       </button>
-                    ))}
-                  </div>
-
-                  <textarea
-                    value={answer?.remarks ?? ''}
-                    onChange={(event) => onAnswerChange(question.id, { remarks: event.target.value })}
-                    placeholder="Add interviewer remarks"
-                    className="mt-4 w-full min-h-[90px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200"
-                  />
+                    );
+                  })}
                 </div>
               </div>
+
+              <div className={styles.scoreDisplay}>
+                <span className={styles.scoreLabel}>SCORE</span>
+                <span className={styles.scoreNum}>
+                  {answer?.rating ?? 0}
+                  <span className={styles.scoreMax}>/3</span>
+                </span>
+              </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </section>
   );
 }

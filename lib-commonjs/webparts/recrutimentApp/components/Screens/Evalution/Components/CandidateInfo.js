@@ -5,24 +5,46 @@ var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var CandidateInfo_module_scss_1 = tslib_1.__importDefault(require("./CandidateInfo.module.scss"));
 function CandidateInfo(_a) {
-    var candidate = _a.candidate;
-    return (React.createElement("aside", { className: "bg-white border border-slate-200 rounded-2xl p-5 shadow-sm ".concat(CandidateInfo_module_scss_1.default.card) },
-        React.createElement("div", { className: "flex items-center justify-between mb-4" },
-            React.createElement("div", null,
-                React.createElement("h3", { className: "text-sm font-bold text-slate-800" }, "Candidate Info"),
-                React.createElement("p", { className: "text-xs text-slate-500" }, "Personal and recruitment details")),
-            React.createElement("span", { className: "text-[10px] font-semibold uppercase tracking-widest text-blue-600" }, "Profile")),
-        React.createElement("div", { className: "flex flex-col gap-4" },
-            React.createElement(InfoRow, { label: "Name", value: candidate === null || candidate === void 0 ? void 0 : candidate.applicantName }),
-            React.createElement(InfoRow, { label: "Job Title", value: candidate === null || candidate === void 0 ? void 0 : candidate.jobTitle }),
-            React.createElement(InfoRow, { label: "Grade", value: candidate === null || candidate === void 0 ? void 0 : candidate.grade }),
-            React.createElement(InfoRow, { label: "Nationality", value: candidate === null || candidate === void 0 ? void 0 : candidate.nationality }),
-            React.createElement(InfoRow, { label: "Interview Date", value: candidate === null || candidate === void 0 ? void 0 : candidate.interviewDate }))));
+    var _b, _c;
+    var candidate = _a.candidate, onRefresh = _a.onRefresh;
+    return (React.createElement("aside", { className: CandidateInfo_module_scss_1.default.leftPanel },
+        React.createElement("div", { className: CandidateInfo_module_scss_1.default.leftHeader },
+            React.createElement("div", { className: CandidateInfo_module_scss_1.default.leftAccent }),
+            React.createElement("span", { className: CandidateInfo_module_scss_1.default.leftTitle }, "CANDIDATE INFO"),
+            onRefresh && (React.createElement("button", { className: CandidateInfo_module_scss_1.default.refreshBtn, title: "Refresh", onClick: onRefresh },
+                React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+                    React.createElement("path", { d: "M23 4v6h-6" }),
+                    React.createElement("path", { d: "M1 20v-6h6" }),
+                    React.createElement("path", { d: "M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" }))))),
+        React.createElement("div", { style: { paddingTop: 8 } },
+            React.createElement(InfoField, { icon: "\uD83D\uDC64", label: "APPLICANT NAME", value: candidate === null || candidate === void 0 ? void 0 : candidate.applicantName }),
+            React.createElement(InfoField, { icon: "\uD83C\uDF10", label: "NATIONALITY", value: candidate === null || candidate === void 0 ? void 0 : candidate.nationality }),
+            React.createElement(InfoField, { icon: "\uD83D\uDC64", label: "GENDER", value: candidate === null || candidate === void 0 ? void 0 : candidate.gender }),
+            React.createElement(InfoField, { icon: "\uD83D\uDCC4", label: "QUALIFICATION", value: candidate === null || candidate === void 0 ? void 0 : candidate.qualification }),
+            React.createElement("div", { className: CandidateInfo_module_scss_1.default.twoCol },
+                React.createElement(InfoField, { icon: "\uD83D\uDCC8", label: "MINING EXP.", value: candidate === null || candidate === void 0 ? void 0 : candidate.miningExp }),
+                React.createElement(InfoField, { icon: "\uD83D\uDCC8", label: "RELATED EXP.", value: candidate === null || candidate === void 0 ? void 0 : candidate.relevantExp })),
+            React.createElement("div", { className: CandidateInfo_module_scss_1.default.twoCol },
+                React.createElement(InfoField, { icon: "\uD83D\uDCC5", label: "INTERVIEW DATE", value: candidate === null || candidate === void 0 ? void 0 : candidate.interviewDate }),
+                React.createElement(InfoField, { icon: "\uD83D\uDD32", label: "LEVEL", value: candidate === null || candidate === void 0 ? void 0 : candidate.interviewLevel })),
+            React.createElement("div", { className: CandidateInfo_module_scss_1.default.twoCol },
+                React.createElement(InfoField, { icon: "\uD83D\uDCC8", label: "GRADE", value: candidate === null || candidate === void 0 ? void 0 : candidate.grade }),
+                React.createElement(InfoField, { icon: "\u26A0\uFE0F", label: "CONFLICTS", value: candidate === null || candidate === void 0 ? void 0 : candidate.conflictsOfInterest })),
+            React.createElement(InfoField, { icon: "\u267F", label: "DISABILITY", value: candidate === null || candidate === void 0 ? void 0 : candidate.disability }),
+            ((_c = (_b = candidate === null || candidate === void 0 ? void 0 : candidate.panelMembers) === null || _b === void 0 ? void 0 : _b.length) !== null && _c !== void 0 ? _c : 0) > 0 && (React.createElement("div", { className: CandidateInfo_module_scss_1.default.panelSection },
+                React.createElement("div", { className: CandidateInfo_module_scss_1.default.panelHeader },
+                    React.createElement("span", { className: CandidateInfo_module_scss_1.default.panelHeaderIcon }, "\uD83D\uDC65"),
+                    React.createElement("span", { className: CandidateInfo_module_scss_1.default.panelHeaderLabel }, "INTERVIEW PANEL")),
+                candidate.panelMembers.map(function (name, i) { return (React.createElement("div", { key: i, className: CandidateInfo_module_scss_1.default.panelRow },
+                    React.createElement("span", { className: CandidateInfo_module_scss_1.default.panelBadge }, i + 1),
+                    React.createElement("span", { className: CandidateInfo_module_scss_1.default.panelName }, name))); }))))));
 }
-function InfoRow(_a) {
-    var label = _a.label, value = _a.value;
-    return (React.createElement("div", { className: "flex flex-col gap-1" },
-        React.createElement("span", { className: "text-[10px] font-semibold uppercase tracking-widest text-slate-400" }, label),
-        React.createElement("div", { className: "rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-sm text-slate-700 font-semibold" }, value || '�')));
+function InfoField(_a) {
+    var icon = _a.icon, label = _a.label, value = _a.value;
+    return (React.createElement("div", { className: CandidateInfo_module_scss_1.default.leftFieldWrapper },
+        React.createElement("div", { className: CandidateInfo_module_scss_1.default.leftFieldLabelRow },
+            icon && React.createElement("span", { className: CandidateInfo_module_scss_1.default.leftFieldIcon }, icon),
+            React.createElement("span", { className: CandidateInfo_module_scss_1.default.leftFieldLabel }, label)),
+        React.createElement("div", { className: CandidateInfo_module_scss_1.default.leftFieldValueBox }, value || '')));
 }
 //# sourceMappingURL=CandidateInfo.js.map
