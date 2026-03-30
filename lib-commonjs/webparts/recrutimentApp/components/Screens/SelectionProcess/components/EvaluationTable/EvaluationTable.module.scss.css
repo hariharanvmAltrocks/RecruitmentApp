@@ -1,0 +1,409 @@
+@charset "UTF-8";
+/* EvaluationTable.module.scss */
+/* All 26 class names used in EvaluationTable.tsx — fully flat, no nested selectors */
+/* ── Wrapper ─────────────────────────────────────────────────────────────── */
+.wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  color: #1e293b;
+}
+
+.table thead tr {
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.table thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.table thead th:hover {
+  color: #1e293b;
+}
+
+.table tbody td {
+  padding: 14px 16px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* ── Sort icon ───────────────────────────────────────────────────────────── */
+.sortIcon {
+  margin-left: 4px;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+/* ── Body rows ───────────────────────────────────────────────────────────── */
+.row {
+  transition: background 0.15s;
+}
+
+.row:hover {
+  background: #f8fafc;
+}
+
+/* ── Skeleton rows ───────────────────────────────────────────────────────── */
+.skRow td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.shimmer {
+  display: inline-block;
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmerMove 1.4s infinite;
+}
+
+@keyframes shimmerMove {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+/* ── Cell variants ───────────────────────────────────────────────────────── */
+.nameCell {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.posCell {
+  color: #475569;
+}
+
+/* ── Grade cell ──────────────────────────────────────────────────────────── */
+.grade {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gradeLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #3b82f6;
+  background: #eff6ff;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+/* ── Status cell ─────────────────────────────────────────────────────────── */
+.statusWrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  position: relative;
+  cursor: default;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3b82f6;
+  flex-shrink: 0;
+}
+
+/* ── Tooltip ─────────────────────────────────────────────────────────────── */
+.tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 50;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 10px 14px;
+  min-width: 220px;
+  white-space: nowrap;
+}
+
+.tooltipRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 5px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.tooltipRow:last-child {
+  border-bottom: none;
+}
+
+.tooltipName {
+  font-size: 12px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+/* ── Status badges ───────────────────────────────────────────────────────── */
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.completed {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.pending {
+  background: #fefce8;
+  color: #ca8a04;
+}
+
+/* ── Action cell ─────────────────────────────────────────────────────────── */
+.actionCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.evaluateBtn {
+  background: #2563eb;
+  color: #fff;
+  border: 1px solid #2563eb;
+  border-radius: 0.5rem;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.evaluateBtn:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.evaluateBtn:disabled,
+.loading {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* ── Pagination ──────────────────────────────────────────────────────────── */
+.paginationBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #f1f5f9;
+  background: #f8fafc;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.paginationInfo {
+  font-size: 0.875rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.paginationInfo strong {
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.showEntries {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.showEntries select {
+  border: 1px solid #cbd5e1;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1e293b;
+  background: white;
+  cursor: pointer;
+  outline: none;
+}
+
+.showEntries select:focus {
+  border-color: #2563eb;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.pageBtn {
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #475569;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pageBtn:hover:not(:disabled) {
+  border-color: #2563eb;
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.pageBtn.disabled,
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #f8fafc;
+}
+
+.activePage {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: white;
+  font-weight: 700;
+}
+
+.ellipsis {
+  color: #64748b;
+  font-size: 12px;
+  padding: 5px 4px;
+}
+
+.pageNumbers {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.pageControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pageNumbers {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 0;
+}
+
+.pageNumberBtn {
+  min-width: 32px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pageNumberBtn:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+
+.activePage {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.pageBtn.activePage {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+.pageNumberBtn.activePage {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+.ellipsis {
+  color: #64748b;
+  font-size: 12px;
+  padding: 5px 4px;
+}
+
+.pageBtn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  background: #fff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pageBtn:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #eff6ff;
+}
+
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+  background: #fff;
+}

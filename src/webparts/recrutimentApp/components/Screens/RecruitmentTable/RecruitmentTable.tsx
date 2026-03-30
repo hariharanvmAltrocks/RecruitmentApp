@@ -161,7 +161,7 @@ export const RecruitmentTable: React.FC = () => {
   const handleAction = useCallback(
     async (item: RecruitmentItem) => {
       const { ItemID, jobCode, statusId, requestType, nationality } = item;
-      if (matricID === MatricID.EvalutionHR) {
+      // if (matricID === MatricID.EvalutionHR) {
         // const data: IEvaluValidate = {
         //   ID: ItemID,
         //   currentEmailID: ADGroupData.EmailId[0],
@@ -175,9 +175,9 @@ export const RecruitmentTable: React.FC = () => {
         //   return;
         // }
 
-        navigate("/Evalution");
-        return;
-      }
+        // navigate("/Evalution");
+      //   return;
+      // }
 
       const routeMap: Record<number, string> = {
         [MatricID.InterviewQuestionHR]: "/QuestionCreation",
@@ -186,6 +186,9 @@ export const RecruitmentTable: React.FC = () => {
         [MatricID.ReviewProfileLM]: "/CandidateTable",
         [MatricID.AssignInterviewPanel]: "/CandidateTable",
         [MatricID.ReviewScoreCard]: "/CandidateTable",
+        [MatricID.EvalutionHR]: "/Evalution",
+        [MatricID.EvalutionLM]: "/Evalution",
+        [MatricID.ReviewScoreCard]: "/ReviewScoreCard",
       };
 
       const route = routeMap[matricID];

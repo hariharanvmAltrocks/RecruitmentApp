@@ -225,7 +225,7 @@ var ShowCandidateDetailsPopup = function (_a) {
                                 react_1.default.createElement("span", { className: "w-1 h-1 bg-[#E4E8F1] rounded-full" }),
                                 react_1.default.createElement("span", { className: "text-[13px] font-medium" }, (data === null || data === void 0 ? void 0 : data.JobTitle) || '---')))),
                     react_1.default.createElement("div", { className: "flex items-center" },
-                        react_1.default.createElement("button", { className: "p-2.5 text-[#3F62ED] bg-[#F0F4FF] border border-white \n             hover:bg-[#E0E8FF] hover:border-[#E0E8FF] \n             rounded-full transition-colors flex-shrink-0", type: "button", onClick: onClose, "aria-label": "Close" },
+                        react_1.default.createElement("button", { className: "p-2.5 text-[#3F62ED] bg-[#F0F4FF] border border-white \r\n             hover:bg-[#E0E8FF] hover:border-[#E0E8FF] \r\n             rounded-full transition-colors flex-shrink-0", type: "button", onClick: onClose, "aria-label": "Close" },
                             react_1.default.createElement(lucide_react_1.X, { size: 20, strokeWidth: 2.5 })))),
                 react_1.default.createElement("div", { className: "flex flex-1 overflow-hidden relative bg-white" },
                     react_1.default.createElement("aside", { className: "w-[280px] flex-shrink-0 bg-white border-r border-[#E4E8F1] overflow-y-auto overflow-x-hidden p-6 scrollbar-thin scrollbar-thumb-gray-200" },

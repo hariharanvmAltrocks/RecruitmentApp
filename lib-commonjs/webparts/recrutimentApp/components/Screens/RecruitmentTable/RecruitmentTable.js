@@ -108,20 +108,6 @@ var RecruitmentTable = function () {
         var _a;
         return tslib_1.__generator(this, function (_b) {
             ItemID = item.ItemID, jobCode = item.jobCode, statusId = item.statusId, requestType = item.requestType, nationality = item.nationality;
-            if (matricID === ConditionConfig_1.MatricID.EvalutionHR) {
-                // const data: IEvaluValidate = {
-                //   ID: ItemID,
-                //   currentEmailID: ADGroupData.EmailId[0],
-                //   statusId,
-                // };
-                // const res = await DashboardServices.EvalutionValidation(data);
-                // if (!res.data) {
-                //   showError("Already Submitted");
-                //   return;
-                // }
-                navigate("/Evalution");
-                return [2 /*return*/];
-            }
             routeMap = (_a = {},
                 _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation",
                 _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation",
@@ -129,6 +115,9 @@ var RecruitmentTable = function () {
                 _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable",
                 _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable",
                 _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/CandidateTable",
+                _a[ConditionConfig_1.MatricID.EvalutionHR] = "/Evalution",
+                _a[ConditionConfig_1.MatricID.EvalutionLM] = "/Evalution",
+                _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard",
                 _a);
             route = routeMap[matricID];
             if (route) {

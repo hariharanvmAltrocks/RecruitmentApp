@@ -704,9 +704,9 @@ var MasterService = /** @class */ (function () {
                                 Orderby: "ID",
                                 Orderbydecorasc: true,
                             }).then(function (data) {
-                                GridResult_2 = {
+                                GridResult_2 = data && data.length > 0 ? {
                                     JobCode: data[0].JobUniqueKey
-                                };
+                                } : { JobCode: "" };
                             })];
                     case 1:
                         portalItems = _a.sent();

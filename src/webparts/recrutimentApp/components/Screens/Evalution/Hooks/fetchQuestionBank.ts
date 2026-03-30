@@ -1,73 +1,68 @@
 import * as React from 'react';
 import type { InterviewQuestion } from '../State/CommonStateManagement';
+import QuestionnaireApi from '../../SelectionProcess/services/QuestionnaireApi/QuestionnaireApi';
+
 
 export interface IQuestionBankService {
-  getQuestions: () => Promise<InterviewQuestion[]>;
+  getQuestions: (jobCode: string) => Promise<InterviewQuestion[]>;
 }
 
-const mockQuestions: InterviewQuestion[] = [
-  {
-    id: 'q-1',
-    text: 'What are the three main financial statements, and how are they connected?'
-  },
-  {
-    id: 'q-2',
-    text: "How would you evaluate a company's financial health using financial ratios?"
-  },
-  {
-    id: 'q-3',
-    text: 'Tell us about a time you had to communicate complex data to a non-technical team.'
-  }
-];
+const questionnaireApi = new QuestionnaireApi();
 
+// Default service — fetches real questions by jobCode from the portal API
 const defaultService: IQuestionBankService = {
-  getQuestions: async () => {
-    await wait(300);
-    return mockQuestions;
-  }
+  getQuestions: async (jobCode: string) => {
+    console.log('[fetchQuestionBank] getQuestions start', jobCode);
+    const response = await questionnaireApi.getQuestionnaire(jobCode);
+
+    if (!response.data || response.data.length === 0) {
+      console.log('[fetchQuestionBank] getQuestions empty');
+      return [];
+    }
+
+    return response.data.map((item) => ({
+      id:               item.id,
+      text:             item.question,
+      expectedResponse: item.answer || '',
+    }));
+  },
 };
 
-export function useQuestionBank(service: IQuestionBankService = defaultService) {
-  const [data, setData] = React.useState<InterviewQuestion[]>([]);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [error, setError] = React.useState<string | null>(null);
-  const [refreshKey, setRefreshKey] = React.useState<number>(0);
+export function useQuestionBank(jobCode: string, service: IQuestionBankService = defaultService) {
+  console.log('[useQuestionBank] jobCode', jobCode);
+  const [data,       setData]       = React.useState<InterviewQuestion[]>([]);
+  const [loading,    setLoading]    = React.useState<boolean>(true);
+  const [error,      setError]      = React.useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = React.useState(0);
 
   React.useEffect(() => {
+    if (!jobCode) {
+      setLoading(false);
+      return;
+    }
+
     let isMounted = true;
 
     const load = async () => {
       setLoading(true);
       setError(null);
       try {
-        const result = await service.getQuestions();
-        if (isMounted) {
-          setData(result);
-        }
+        const result = await service.getQuestions(jobCode);
+        if (isMounted) setData(result);
       } catch (err) {
-        if (isMounted) {
+        console.error('[useQuestionBank] getQuestions error', err);
+        if (isMounted)
           setError(err instanceof Error ? err.message : 'Unable to load interview questions.');
-        }
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        if (isMounted) setLoading(false);
       }
     };
 
     load();
-    return () => {
-      isMounted = false;
-    };
-  }, [service, refreshKey]);
+    return () => { isMounted = false; };
+  }, [jobCode, service, refreshKey]);
 
-  const reload = React.useCallback(() => {
-    setRefreshKey((prev) => prev + 1);
-  }, []);
+  const reload = React.useCallback(() => setRefreshKey((k) => k + 1), []);
 
   return { data, loading, error, reload };
-}
-
-function wait(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
