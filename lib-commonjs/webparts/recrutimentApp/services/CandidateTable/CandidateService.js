@@ -86,29 +86,29 @@ var CandidateService = /** @class */ (function () {
                         GetProfileByJobCodeData_1 = [];
                         return [4 /*yield*/, CareerPortalAPI_1.getProfileData.getCandidateProfile(CandidateID).then(function (res) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var op, CandidateCV, BusinessLinkPath, BusinessDocument, FamilyLinkPath, FamilyDocument, ProofIdentity, totalExperienceYears, CountryCode, profileExperiance, dob, today, age, monthDiff, dayDiff, getOptAnswers, profileXAgent, AgenName, IdentityID, familyDetails, emergencyContacts, employeeReferenceDetail, companyDetails, PPEData, PPEMaster, ppeMap_1, JobCode, willingRelocated, code, PreviousEmployer, candidateLanguages, _a, years, months, formattedExperience, ContactNumber, OverallAttachment, GetProfileDahboard;
-                                var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31, _32, _33, _34, _35, _36, _37, _38, _39, _40, _41, _42, _43, _44, _45, _46, _47, _48, _49, _50, _51, _52, _53, _54, _55, _56, _57, _58, _59, _60, _61, _62, _63, _64, _65, _66, _67, _68, _69, _70, _71, _72, _73, _74, _75, _76, _77, _78, _79, _80, _81, _82, _83, _84, _85, _86, _87, _88, _89, _90, _91, _92, _93, _94, _95, _96, _97, _98, _99, _100;
-                                return tslib_1.__generator(this, function (_101) {
-                                    switch (_101.label) {
+                                var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31, _32, _33, _34, _35, _36, _37, _38, _39, _40, _41, _42, _43, _44, _45, _46, _47, _48, _49, _50, _51, _52, _53, _54, _55, _56, _57, _58, _59, _60, _61, _62, _63, _64, _65, _66, _67, _68, _69, _70, _71, _72, _73, _74, _75, _76, _77, _78, _79, _80, _81, _82, _83, _84, _85, _86, _87, _88, _89, _90, _91, _92, _93, _94, _95, _96, _97, _98, _99, _100, _101, _102, _103, _104, _105, _106, _107, _108, _109;
+                                return tslib_1.__generator(this, function (_110) {
+                                    switch (_110.label) {
                                         case 0:
                                             op = res.data.data;
                                             return [4 /*yield*/, ServiceExport_1.CommonServices.GetDocumentinUrl((_b = op === null || op === void 0 ? void 0 : op.document) === null || _b === void 0 ? void 0 : _b.filePath)];
                                         case 1:
-                                            CandidateCV = _101.sent();
+                                            CandidateCV = _110.sent();
                                             BusinessLinkPath = (_c = op === null || op === void 0 ? void 0 : op.profile) === null || _c === void 0 ? void 0 : _c.profileDetailAttachments.filter(function (item) { return item.attachmentTypeCoe === "PA01"; });
                                             return [4 /*yield*/, ServiceExport_1.CommonServices.GetDocumentinUrl((_e = (_d = BusinessLinkPath[0]) === null || _d === void 0 ? void 0 : _d.document) === null || _e === void 0 ? void 0 : _e.filePath)];
                                         case 2:
-                                            BusinessDocument = _101.sent();
+                                            BusinessDocument = _110.sent();
                                             FamilyLinkPath = (_f = op === null || op === void 0 ? void 0 : op.profile) === null || _f === void 0 ? void 0 : _f.profileDetailAttachments.filter(function (item) { return item.attachmentTypeCoe === "PA02"; });
                                             return [4 /*yield*/, ServiceExport_1.CommonServices.GetDocumentinUrl((_h = (_g = FamilyLinkPath[0]) === null || _g === void 0 ? void 0 : _g.document) === null || _h === void 0 ? void 0 : _h.filePath)];
                                         case 3:
-                                            FamilyDocument = _101.sent();
+                                            FamilyDocument = _110.sent();
                                             return [4 /*yield*/, ServiceExport_1.masterService.GetAllMaster(ConditionConfig_1.CategoryID.ProofofIdentity)];
                                         case 4:
-                                            ProofIdentity = _101.sent();
+                                            ProofIdentity = _110.sent();
                                             totalExperienceYears = (0, reusehooks_1.calculateTotalExperienceYears)((_j = op === null || op === void 0 ? void 0 : op.profile) === null || _j === void 0 ? void 0 : _j.profileDetailExperiences);
                                             return [4 /*yield*/, ServiceExport_1.masterService.GetCountryMaster()];
                                         case 5:
-                                            CountryCode = _101.sent();
+                                            CountryCode = _110.sent();
                                             profileExperiance = Array.isArray((_k = op === null || op === void 0 ? void 0 : op.profile) === null || _k === void 0 ? void 0 : _k.profileDetailExperiences) && op.profile.profileDetailExperiences.length > 0
                                                 ? op.profile.profileDetailExperiences[op.profile.profileDetailExperiences.length - 1]
                                                 : undefined;
@@ -171,7 +171,7 @@ var CandidateService = /** @class */ (function () {
                                             if (!(op === null || op === void 0 ? void 0 : op.tblJobProfilePpeRequests)) return [3 /*break*/, 7];
                                             return [4 /*yield*/, CareerPortalAPI_1.PPEMasterTable.getPPEMaster()];
                                         case 6:
-                                            PPEMaster = _101.sent();
+                                            PPEMaster = _110.sent();
                                             ppeMap_1 = new Map(PPEMaster.data.data.map(function (ppe) { return [ppe.id, ppe]; }));
                                             PPEData = op.tblJobProfilePpeRequests.map(function (item) {
                                                 var _a, _b, _c;
@@ -182,7 +182,7 @@ var CandidateService = /** @class */ (function () {
                                                     PPESize: (_c = size === null || size === void 0 ? void 0 : size.sizeText) !== null && _c !== void 0 ? _c : "",
                                                 };
                                             });
-                                            _101.label = 7;
+                                            _110.label = 7;
                                         case 7:
                                             JobCode = (_11 = op === null || op === void 0 ? void 0 : op.jobCode) === null || _11 === void 0 ? void 0 : _11.split('-')[0];
                                             willingRelocated = getOptAnswers.filter(function (item) { var _a; return ((_a = item.question) === null || _a === void 0 ? void 0 : _a.quesContentId) === ConditionConfig_1.quesContentId.WillingRelocate; });
@@ -234,40 +234,40 @@ var CandidateService = /** @class */ (function () {
                                                 JobVaildFromDate: (_48 = op === null || op === void 0 ? void 0 : op.jobDetail) === null || _48 === void 0 ? void 0 : _48.validFrom,
                                                 JobVaildToDate: (_49 = op === null || op === void 0 ? void 0 : op.jobDetail) === null || _49 === void 0 ? void 0 : _49.validTo,
                                                 CandidateResumeLink: (_50 = op === null || op === void 0 ? void 0 : op.document) === null || _50 === void 0 ? void 0 : _50.filePath,
-                                                ConflictsOfInterest: "Yes", //op?.profile?.profileXOptAnswers[0]?.answerContent?.contentEn,
-                                                disability: "Yes", //op?.profile?.profileDetailDisclosure?.hasDisability === 1 ? "Yes" : "No",
-                                                disabilityReason: "akjsgsdjhgfsjdkfgksagkjsgkasgfsdgjkasgkgkasdfgsdjkweuiryweirywierywieryewiryewiuryewiryewiryewiryiewryiweryiweuryeiwryiewryiyiuytyitjjxhsgfjsdgfjhbmnvbxmvb", //op?.profile?.profileDetailDisclosure?.disabilityDetails,
-                                                identityValue: (_51 = op === null || op === void 0 ? void 0 : op.profile) === null || _51 === void 0 ? void 0 : _51.identityValue,
+                                                ConflictsOfInterest: (_53 = (_52 = (_51 = op === null || op === void 0 ? void 0 : op.profile) === null || _51 === void 0 ? void 0 : _51.profileXOptAnswers[0]) === null || _52 === void 0 ? void 0 : _52.answerContent) === null || _53 === void 0 ? void 0 : _53.contentEn,
+                                                disability: ((_55 = (_54 = op === null || op === void 0 ? void 0 : op.profile) === null || _54 === void 0 ? void 0 : _54.profileDetailDisclosure) === null || _55 === void 0 ? void 0 : _55.hasDisability) === 1 ? "Yes" : "No",
+                                                disabilityReason: (_57 = (_56 = op === null || op === void 0 ? void 0 : op.profile) === null || _56 === void 0 ? void 0 : _56.profileDetailDisclosure) === null || _57 === void 0 ? void 0 : _57.disabilityDetails,
+                                                identityValue: (_58 = op === null || op === void 0 ? void 0 : op.profile) === null || _58 === void 0 ? void 0 : _58.identityValue,
                                                 identityType: (IdentityID && IdentityID.length > 0) ? IdentityID[0].displayText : "Passport",
-                                                NumberOftax: (_53 = (_52 = op === null || op === void 0 ? void 0 : op.profile) === null || _52 === void 0 ? void 0 : _52.taxDependents) !== null && _53 !== void 0 ? _53 : "",
+                                                NumberOftax: (_60 = (_59 = op === null || op === void 0 ? void 0 : op.profile) === null || _59 === void 0 ? void 0 : _59.taxDependents) !== null && _60 !== void 0 ? _60 : "",
                                                 CurrentEmployer: profileExperiance === null || profileExperiance === void 0 ? void 0 : profileExperiance.company,
                                                 CurrentPosition: profileExperiance === null || profileExperiance === void 0 ? void 0 : profileExperiance.title,
-                                                WillingToRelocate: (_55 = (_54 = willingRelocated[0]) === null || _54 === void 0 ? void 0 : _54.answerContent) === null || _55 === void 0 ? void 0 : _55.contentEn,
-                                                previouslyworkedMine: ((_57 = (_56 = op === null || op === void 0 ? void 0 : op.profile) === null || _56 === void 0 ? void 0 : _56.profileDetailEmploymentHistory) === null || _57 === void 0 ? void 0 : _57.hasIvanhoeZijinExperienceId) === "1" ? "Yes" : ((_59 = (_58 = op === null || op === void 0 ? void 0 : op.profile) === null || _58 === void 0 ? void 0 : _58.profileDetailEmploymentHistory) === null || _59 === void 0 ? void 0 : _59.hasIvanhoeZijinExperienceId) === undefined ? undefined : "No",
-                                                familylinks: ((_60 = op === null || op === void 0 ? void 0 : op.profile) === null || _60 === void 0 ? void 0 : _60.hasEmployeeRelation) === "1" ? "Yes" : "No",
-                                                businesslinks: ((_61 = op === null || op === void 0 ? void 0 : op.profile) === null || _61 === void 0 ? void 0 : _61.hasBusinessLinks) === "1" ? "Yes" : "No",
+                                                WillingToRelocate: (_62 = (_61 = willingRelocated[0]) === null || _61 === void 0 ? void 0 : _61.answerContent) === null || _62 === void 0 ? void 0 : _62.contentEn,
+                                                previouslyworkedMine: ((_64 = (_63 = op === null || op === void 0 ? void 0 : op.profile) === null || _63 === void 0 ? void 0 : _63.profileDetailEmploymentHistory) === null || _64 === void 0 ? void 0 : _64.hasIvanhoeZijinExperienceId) === "1" ? "Yes" : ((_66 = (_65 = op === null || op === void 0 ? void 0 : op.profile) === null || _65 === void 0 ? void 0 : _65.profileDetailEmploymentHistory) === null || _66 === void 0 ? void 0 : _66.hasIvanhoeZijinExperienceId) === undefined ? undefined : "No",
+                                                familylinks: ((_67 = op === null || op === void 0 ? void 0 : op.profile) === null || _67 === void 0 ? void 0 : _67.hasEmployeeRelation) === "1" ? "Yes" : "No",
+                                                businesslinks: ((_68 = op === null || op === void 0 ? void 0 : op.profile) === null || _68 === void 0 ? void 0 : _68.hasBusinessLinks) === "1" ? "Yes" : "No",
                                                 familyDocuments: FamilyDocument.data,
                                                 businessDocuments: BusinessDocument.data,
                                                 Age: String(age),
-                                                CountryofOrgin: (_64 = (_63 = (_62 = op === null || op === void 0 ? void 0 : op.profile) === null || _62 === void 0 ? void 0 : _62.nationality) === null || _63 === void 0 ? void 0 : _63.displayText) !== null && _64 !== void 0 ? _64 : "",
-                                                Citizenship: (_67 = (_66 = (_65 = op === null || op === void 0 ? void 0 : op.profile) === null || _65 === void 0 ? void 0 : _65.nationality) === null || _66 === void 0 ? void 0 : _66.displayText) !== null && _67 !== void 0 ? _67 : "",
-                                                FamilyLink: (_69 = (_68 = FamilyLinkPath[0]) === null || _68 === void 0 ? void 0 : _68.document) === null || _69 === void 0 ? void 0 : _69.filePath,
-                                                BusinessLink: (_71 = (_70 = BusinessLinkPath[0]) === null || _70 === void 0 ? void 0 : _70.document) === null || _71 === void 0 ? void 0 : _71.filePath,
+                                                CountryofOrgin: (_71 = (_70 = (_69 = op === null || op === void 0 ? void 0 : op.profile) === null || _69 === void 0 ? void 0 : _69.nationality) === null || _70 === void 0 ? void 0 : _70.displayText) !== null && _71 !== void 0 ? _71 : "",
+                                                Citizenship: (_74 = (_73 = (_72 = op === null || op === void 0 ? void 0 : op.profile) === null || _72 === void 0 ? void 0 : _72.nationality) === null || _73 === void 0 ? void 0 : _73.displayText) !== null && _74 !== void 0 ? _74 : "",
+                                                FamilyLink: (_76 = (_75 = FamilyLinkPath[0]) === null || _75 === void 0 ? void 0 : _75.document) === null || _76 === void 0 ? void 0 : _76.filePath,
+                                                BusinessLink: (_78 = (_77 = BusinessLinkPath[0]) === null || _77 === void 0 ? void 0 : _77.document) === null || _78 === void 0 ? void 0 : _78.filePath,
                                                 GPA: 0,
-                                                COIAppreve: (_74 = (_73 = (_72 = op === null || op === void 0 ? void 0 : op.profile) === null || _72 === void 0 ? void 0 : _72.profileDetailCoi) === null || _73 === void 0 ? void 0 : _73.approver) !== null && _74 !== void 0 ? _74 : "",
-                                                COIComments: (_77 = (_76 = (_75 = op === null || op === void 0 ? void 0 : op.profile) === null || _75 === void 0 ? void 0 : _75.profileDetailCoi) === null || _76 === void 0 ? void 0 : _76.comments) !== null && _77 !== void 0 ? _77 : "",
-                                                COIReason: "dasgjdgasjhgdsadgjasdgasjdgsadgaskjaskdjasdkjhsakdhaskdhkasdhksahdkjsahdkjashdkjashdkjasdhkjashdksadhsajkdhaskjdhjkasdhkjsadhkjasdhkjashdjksahdkjsahdkjsahdkjashdjksahdjksahdskjadhksajdhsakjdhsajkdhjksadhjksadhjksahdaskjhdsakjdkjsahdkjsahdjkashdjdgsajdgasj", //op?.profile?.coiReason ?? "",
-                                                countryOfResidency: (_80 = (_79 = (_78 = op === null || op === void 0 ? void 0 : op.profile) === null || _78 === void 0 ? void 0 : _78.countryOfResidencyDetail) === null || _79 === void 0 ? void 0 : _79.countryName) !== null && _80 !== void 0 ? _80 : "",
-                                                residentStatus: ((_81 = op === null || op === void 0 ? void 0 : op.profile) === null || _81 === void 0 ? void 0 : _81.residentStatus) === "Y" ? "Yes" : ((_82 = op === null || op === void 0 ? void 0 : op.profile) === null || _82 === void 0 ? void 0 : _82.residentStatus) === "N" ? "No" : "",
-                                                maritalStatus: (_85 = (_84 = (_83 = op === null || op === void 0 ? void 0 : op.profile) === null || _83 === void 0 ? void 0 : _83.maritalStatusDetail) === null || _84 === void 0 ? void 0 : _84.displayText) !== null && _85 !== void 0 ? _85 : "",
-                                                childrenDetails: ((_86 = op === null || op === void 0 ? void 0 : op.profile) === null || _86 === void 0 ? void 0 : _86.nationalityId) === "N0" ? familyDetails : emergencyContacts,
+                                                COIAppreve: (_81 = (_80 = (_79 = op === null || op === void 0 ? void 0 : op.profile) === null || _79 === void 0 ? void 0 : _79.profileDetailCoi) === null || _80 === void 0 ? void 0 : _80.approver) !== null && _81 !== void 0 ? _81 : "",
+                                                COIComments: (_84 = (_83 = (_82 = op === null || op === void 0 ? void 0 : op.profile) === null || _82 === void 0 ? void 0 : _82.profileDetailCoi) === null || _83 === void 0 ? void 0 : _83.comments) !== null && _84 !== void 0 ? _84 : "",
+                                                COIReason: (_86 = (_85 = op === null || op === void 0 ? void 0 : op.profile) === null || _85 === void 0 ? void 0 : _85.coiReason) !== null && _86 !== void 0 ? _86 : "",
+                                                countryOfResidency: (_89 = (_88 = (_87 = op === null || op === void 0 ? void 0 : op.profile) === null || _87 === void 0 ? void 0 : _87.countryOfResidencyDetail) === null || _88 === void 0 ? void 0 : _88.countryName) !== null && _89 !== void 0 ? _89 : "",
+                                                residentStatus: ((_90 = op === null || op === void 0 ? void 0 : op.profile) === null || _90 === void 0 ? void 0 : _90.residentStatus) === "Y" ? "Yes" : ((_91 = op === null || op === void 0 ? void 0 : op.profile) === null || _91 === void 0 ? void 0 : _91.residentStatus) === "N" ? "No" : "",
+                                                maritalStatus: (_94 = (_93 = (_92 = op === null || op === void 0 ? void 0 : op.profile) === null || _92 === void 0 ? void 0 : _92.maritalStatusDetail) === null || _93 === void 0 ? void 0 : _93.displayText) !== null && _94 !== void 0 ? _94 : "",
+                                                childrenDetails: ((_95 = op === null || op === void 0 ? void 0 : op.profile) === null || _95 === void 0 ? void 0 : _95.nationalityId) === "N0" ? familyDetails : emergencyContacts,
                                                 employeeReferenceDetails: employeeReferenceDetail,
-                                                maritalStatusId: (_88 = (_87 = op === null || op === void 0 ? void 0 : op.profile) === null || _87 === void 0 ? void 0 : _87.maritalStatus) !== null && _88 !== void 0 ? _88 : "",
-                                                joiningDate: (_89 = op === null || op === void 0 ? void 0 : op.startDate) !== null && _89 !== void 0 ? _89 : "",
-                                                noticePeriod: (_90 = op === null || op === void 0 ? void 0 : op.noticePeriodDays) !== null && _90 !== void 0 ? _90 : "",
-                                                hasIvanhoeZijinExperience: ((_92 = (_91 = op === null || op === void 0 ? void 0 : op.profile) === null || _91 === void 0 ? void 0 : _91.profileDetailEmploymentHistory) === null || _92 === void 0 ? void 0 : _92.hasIvanhoeZijinExperienceId) === "3" ? "No" : (_96 = (_95 = (_94 = (_93 = op === null || op === void 0 ? void 0 : op.profile) === null || _93 === void 0 ? void 0 : _93.profileDetailEmploymentHistory) === null || _94 === void 0 ? void 0 : _94.hasIvanhoeZijinExperience) === null || _95 === void 0 ? void 0 : _95.displayText) !== null && _96 !== void 0 ? _96 : "",
+                                                maritalStatusId: (_97 = (_96 = op === null || op === void 0 ? void 0 : op.profile) === null || _96 === void 0 ? void 0 : _96.maritalStatus) !== null && _97 !== void 0 ? _97 : "",
+                                                joiningDate: (_98 = op === null || op === void 0 ? void 0 : op.startDate) !== null && _98 !== void 0 ? _98 : "",
+                                                noticePeriod: (_99 = op === null || op === void 0 ? void 0 : op.noticePeriodDays) !== null && _99 !== void 0 ? _99 : "",
+                                                hasIvanhoeZijinExperience: ((_101 = (_100 = op === null || op === void 0 ? void 0 : op.profile) === null || _100 === void 0 ? void 0 : _100.profileDetailEmploymentHistory) === null || _101 === void 0 ? void 0 : _101.hasIvanhoeZijinExperienceId) === "3" ? "No" : (_105 = (_104 = (_103 = (_102 = op === null || op === void 0 ? void 0 : op.profile) === null || _102 === void 0 ? void 0 : _102.profileDetailEmploymentHistory) === null || _103 === void 0 ? void 0 : _103.hasIvanhoeZijinExperience) === null || _104 === void 0 ? void 0 : _104.displayText) !== null && _105 !== void 0 ? _105 : "",
                                                 companyDetails: companyDetails,
-                                                businesslinkscompany: ((_97 = op === null || op === void 0 ? void 0 : op.profile) === null || _97 === void 0 ? void 0 : _97.businessLinkCompany) === "CD03" ? (_98 = op === null || op === void 0 ? void 0 : op.profile) === null || _98 === void 0 ? void 0 : _98.whichCompany : (_100 = (_99 = op === null || op === void 0 ? void 0 : op.profile) === null || _99 === void 0 ? void 0 : _99.businessLinkCompanyDetail) === null || _100 === void 0 ? void 0 : _100.displayText,
+                                                businesslinkscompany: ((_106 = op === null || op === void 0 ? void 0 : op.profile) === null || _106 === void 0 ? void 0 : _106.businessLinkCompany) === "CD03" ? (_107 = op === null || op === void 0 ? void 0 : op.profile) === null || _107 === void 0 ? void 0 : _107.whichCompany : (_109 = (_108 = op === null || op === void 0 ? void 0 : op.profile) === null || _108 === void 0 ? void 0 : _108.businessLinkCompanyDetail) === null || _109 === void 0 ? void 0 : _109.displayText,
                                                 PreviousEmployerDetails: PreviousEmployer,
                                                 LanguageKnown: candidateLanguages,
                                                 PPEDetails: PPEData,
@@ -303,7 +303,7 @@ var CandidateService = /** @class */ (function () {
     };
     CandidateService.prototype.fetchInterviewPanelDetails = function (_a) {
         return tslib_1.__awaiter(this, arguments, void 0, function (_b) {
-            var empty, jdeQuery, userRoleQuery, batchRes, jdeItems, userRoles, jdeItem, panelRoleEntry, adGroupOptions, _c, existingLevel1, existingLevel2, levels, existingPanelFilter, existingPanelQuery, panelBatch, existingPanelItems, resolvedExistingPanel, nameTasks, assignHRId, nameResults, nameMap, basePanelLevel1, basePanelLevel2, adOptions, level1Panel, level2Panel, result, error_3;
+            var empty, jdeQuery, userRoleQuery, batchRes, jdeItems, userRoles, jdeItem, panelRoleEntry, adGroupOptions, _c, existingLevel1, existingLevel2, levels, existingPanelFilter, existingPanelQuery, panelBatch, existingPanelItems, resolvedExistingPanel, nameTasks, assignHRId, nameResults, nameMap, basePanelLevel1, basePanelLevel2, adOptions, level1Panel, level2Panel, panelMember, panelMember2, result, error_3;
             var _this = this;
             var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
             var BUCodeID = _b.BUCodeID, assignHREmail = _b.assignHREmail, candidateID = _b.candidateID, statusID = _b.statusID;
@@ -518,19 +518,20 @@ var CandidateService = /** @class */ (function () {
                             : [];
                         level1Panel = [];
                         level2Panel = [];
-                        // const allOptions = dedupe([...basePanelLevel1, ...basePanelLevel2, ...adOptions]);
-                        if (basePanelLevel1.length < 2) {
+                        panelMember = (0, ICandidateService_1.dedupe)(basePanelLevel1);
+                        if (panelMember.length === 3) {
+                            level1Panel = (0, ICandidateService_1.dedupe)(basePanelLevel1);
+                        }
+                        else {
                             basePanelLevel1.push.apply(basePanelLevel1, adOptions);
                             level1Panel = (0, ICandidateService_1.dedupe)(basePanelLevel1);
                         }
-                        else {
-                            level1Panel = (0, ICandidateService_1.dedupe)(basePanelLevel1);
-                        }
-                        if (basePanelLevel2.length < 2) {
-                            basePanelLevel2.push.apply(basePanelLevel2, adOptions);
+                        panelMember2 = (0, ICandidateService_1.dedupe)(basePanelLevel2);
+                        if (panelMember2.length === 3) {
                             level2Panel = (0, ICandidateService_1.dedupe)(basePanelLevel2);
                         }
                         else {
+                            basePanelLevel2.push.apply(basePanelLevel2, adOptions);
                             level2Panel = (0, ICandidateService_1.dedupe)(basePanelLevel2);
                         }
                         result = {

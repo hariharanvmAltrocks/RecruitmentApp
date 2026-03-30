@@ -462,8 +462,8 @@
   cursor: pointer;
 }
 .advert-review-drawer__checkbox {
-  width: 22px;
-  height: 22px;
+  width: 29px;
+  height: 23px;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
   display: inline-flex;
@@ -535,7 +535,7 @@
   background: rgba(248, 250, 252, 0.6);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: end;
 }
 .advert-review-drawer__history {
   width: 40px;
@@ -743,7 +743,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: stretch;
+  max-width: "180px";
 }
 .advert-review-drawer__attachment-label--link:hover {
   color: #2563eb;
@@ -824,4 +824,41 @@
 .modal-popup__spinner {
   margin-right: 8px;
   animation: modal-popup-spin 0.9s linear infinite;
+}
+
+.upload-document__dropzone--error {
+  border: 1.5px dashed #e53e3e !important;
+  background-color: rgba(229, 62, 62, 0.05);
+}
+
+.upload-document__error-text {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #e53e3e;
+}
+
+.advert-review-drawer__textarea--error {
+  border: 1.5px solid #e53e3e !important;
+  background-color: rgba(229, 62, 62, 0.05);
+  border-radius: 8px;
+}
+.advert-review-drawer__textarea--error:focus {
+  outline: none;
+  border-color: #e53e3e !important;
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15);
+}
+
+.advert-review-drawer__acknowledge--error {
+  border: 1.5px solid #e53e3e !important;
+  border-radius: 8px;
+  background-color: rgba(229, 62, 62, 0.05);
+  padding: 8px 10px;
+}
+
+.advert-review-drawer__field-error {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #e53e3e;
 }

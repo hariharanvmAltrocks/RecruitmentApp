@@ -112,7 +112,7 @@ export const StatusId = {
   PendingwithHODtoselectthecandidate: 121,
   Selected: 122,
   InterviewQustionHRLM: 39,
-  InterviewScheduled: 40,
+
   Completed: 13,
   ReadyforRecruitmentProcess: 155,
   PendingInterviewquestion: 124,
@@ -197,7 +197,10 @@ export const StatusId = {
   FailedmedicalscreeningUnfit: 156,
   offerdecline: 27,
   onboardingInProcess: 46,
-  Onboarded: 157
+  Onboarded: 157,
+
+  InterviewScheduled: 40,
+  InterviewInProcess: 39
 };
 
 export const workflowStatusApi = {
@@ -280,6 +283,25 @@ export const WorkflowAction = {
 };
 
 export const ExternalUserType = {
-    Agent: "Agent",
-    LabourHire: "Labour Hire",
+  Agent: "Agent",
+  LabourHire: "Labour Hire",
+}
+
+export const PendingCandidateAlertMsg = (pendingcount: number): string => {
+  return `
+          <div style="text-align: center;">
+            <h3>⚠️ Pending Candidate Review.</h3>
+            <p>There is ${pendingcount} pending candidate currently on hold</p>
+            <p>Please review the candidate and take the necessary action to proceed with interview scheduling.</p>
+          </div>`
+}
+
+export const JobAdvertAlertMsg = (Dateformat: any): string => {
+  return `
+              <div style="text-align: center;">
+                <h3>⚠️ Action cannot be performed.</h3>
+                <p>This job advert is still active and open for recruitment.</p>
+                <p><strong>Expiry Date:</strong> ${Dateformat}</p>
+                <p>Please try again after it expires.</p>
+              </div>`
 }

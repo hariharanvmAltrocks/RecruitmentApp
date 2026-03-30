@@ -5,20 +5,24 @@ import './Header.scss';
 import { findBreadcrumbPath } from '../menuUtils';
 import { useTheme } from '../../../theme/ThemeContext';
 import * as strings from 'RecrutimentAppWebPartStrings';
+import { userInfo } from '../../../utilities/hooks/RoleContext';
 
 interface HeaderProps {
-  user: any;
   menuData: any[];
   onToggleSidebar: () => void;
   onLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, menuData, onToggleSidebar, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({ menuData, onToggleSidebar, onLogout }) => {
   const { pathname } = useLocation();
   const theme = useTheme();
+  const { ADGroupData, } = userInfo();
+  console.log(ADGroupData, "ADGroupData");
+
 
   const breadcrumbs = useMemo(() => findBreadcrumbPath(menuData, pathname), [menuData, pathname]);
 
+  const UserName = ADGroupData.userDetails[0]?.FirstName + " " + ADGroupData.userDetails[0]?.MiddleName + " " + ADGroupData.userDetails[0]?.LastName;
   return (
     <header className="header" style={{ background: theme.headerColor }}>
       <div className="header-container">
@@ -30,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ user, menuData, onToggleSidebar, onLogo
 
           <div className="breadcrumb-section">
             <h1 className="page-title">
-              {strings.AppTitle }
+              {strings.AppTitle}
             </h1>
 
             <nav className="breadcrumbs">
@@ -61,13 +65,13 @@ const Header: React.FC<HeaderProps> = ({ user, menuData, onToggleSidebar, onLogo
 
           <div className="user-profile">
             <div className="user-info">
-              <p className="user-name">{user || "Jackson"}</p>
-              <p className="user-role">{user?.role || "HOD - Mining"}</p>
+              <p className="user-name">{UserName}</p>
+              <p className="user-role">{ADGroupData.userDetails[0]?.DepartmentName}</p>
             </div>
 
             <div className="avatar-wrapper">
               <div className="avatar">
-                {user?.name?.charAt(0) || "J"}
+                {ADGroupData.userDetails?.[0]?.LastName?.[0] || "S"}
               </div>
 
               <button onClick={onLogout} className="logout-btn">

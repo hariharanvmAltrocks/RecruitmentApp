@@ -1,13 +1,18 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import "./tracker.scss";
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { DataTable, DataTableColumn } from "../DataTable/DataTable";
+
+export interface TrackerItem {
+  [key: string]: any;
+}
 
 interface Props {
-  rows: any[];
+  rows: TrackerItem[];
   selectedMetric: any;
   activeMetric: number;
-  onRowClick?: (row: any) => void;
+  onRowClick?: (row: TrackerItem) => void;
 }
 
 const Tracker: React.FC<Props> = ({
@@ -16,18 +21,11 @@ const Tracker: React.FC<Props> = ({
   activeMetric,
   onRowClick,
 }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // 🔹 Exclude unwanted columns (optional)
-  const excludeColumns = ["ID"];
-
-  // 🔹 Generate dynamic columns
-  const columns = useMemo(() => {
-    if (!rows || rows.length === 0) return [];
-
-    return Object.keys(rows[0]).filter(
-      (key) => !excludeColumns.includes(key)
-    );
-  }, [rows]);
+  const excludeColumns = useMemo(() => ["ID"], []);
 
   // 🔹 Format header (camelCase → Proper Text)
   const formatHeader = (key: string) => {
@@ -50,8 +48,89 @@ const Tracker: React.FC<Props> = ({
       return JSON.stringify(value);
     }
 
-    return value;
+    return String(value);
   };
+
+  // 🔹 Generate dynamic columns
+  const columns: DataTableColumn<TrackerItem>[] = useMemo(() => {
+    if (!rows || rows.length === 0) return [];
+
+    const dynamicKeys = Object.keys(rows[0]).filter(
+      (key) => !excludeColumns.includes(key)
+    );
+
+    const generatedCols: DataTableColumn<TrackerItem>[] = dynamicKeys.map(
+      (key) => ({
+        id: key,
+        header: formatHeader(key),
+        accessor: key as keyof TrackerItem,
+        render: (item) => {
+          const value = item[key];
+          const formattedValue = renderCell(value);
+
+          if (key === "JobCode" && item.JobCode) {
+            return <span className="candidate-table__code">{formattedValue}</span>
+          }
+
+          if (key === "JobTitle" && item.JobTitle) {
+            return <span className="data-table__job-title">{formattedValue}</span>
+          }
+
+          if (key === "ApplicantName" && item.ApplicantName) {
+            return <span className="candidate-table__code">{formattedValue}</span>
+          }
+
+          if (key === "PositionTitle" && item.PositionTitle) {
+            return <span className="data-table__job-title">{formattedValue}</span>
+          }
+
+          if (key === "InterviewDate" && item.InterviewDate) {
+            return <span className="candidate-table__code">{formattedValue}</span>
+          }
+
+          if (key === "PositionID" && item.PositionID) {
+            return <span className="candidate-table__code">{formattedValue}</span>
+          }
+
+          if (key === "Status" || key === "status") {
+            return <span className="status-badge">{formattedValue}</span>;
+          }
+
+          return <>{formattedValue}</>;
+        },
+      })
+    );
+
+
+    if (selectedMetric?.showArrow) {
+      generatedCols.push({
+        id: "actionArrow",
+        header: "",
+        align: "right",
+        width: 50,
+        render: () => (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              height: "100%",
+            }}
+          >
+            <motion.div
+              whileHover={{ x: 5, color: "#3F62ED" }}
+              transition={{ duration: 0.2 }}
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <ChevronRight size={16} />
+            </motion.div>
+          </div>
+        ),
+      });
+    }
+
+    return generatedCols;
+  }, [rows, excludeColumns, selectedMetric?.showArrow]);
 
   return (
     <motion.div
@@ -79,51 +158,18 @@ const Tracker: React.FC<Props> = ({
 
       {/* 🔹 Table */}
       <div className="tracker__table-wrapper">
-        <table className="tracker__table">
-          
-          {/* 🔹 Dynamic Header */}
-          <thead>
-            <tr>
-              {columns.map((col) => (
-                <th key={col}>{formatHeader(col)}</th>
-              ))}
-              {selectedMetric?.showArrow && <th />}
-            </tr>
-          </thead>
-
-          {/* 🔹 Dynamic Body */}
-          <tbody>
-            {rows.length === 0 ? (
-              <tr>
-                <td colSpan={columns.length + 1} className="no-data">
-                  No data available
-                </td>
-              </tr>
-            ) : (
-              rows.map((row, index) => (
-                <tr
-                  key={index}
-                  onClick={() => onRowClick?.(row)}
-                  style={{ cursor: onRowClick ? "pointer" : "default" }}
-                >
-                  {columns.map((col) => (
-                    <td  key={col}>
-                      <span className= {col ==="Status" ? "status-badge" : ""}>
-                      {renderCell(row[col])}
-                      </span>
-                    </td>
-                  ))}
-
-                  {selectedMetric?.showArrow && (
-                    <td className="arrow">
-                      <ChevronRight size={16} />
-                    </td>
-                  )}
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+        <DataTable<TrackerItem>
+          columns={columns}
+          data={rows}
+          loading={false}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          totalCount={rows.length}
+          emptyMessage="No data available"
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setPageSize}
+          onRowClick={onRowClick}
+        />
       </div>
     </motion.div>
   );

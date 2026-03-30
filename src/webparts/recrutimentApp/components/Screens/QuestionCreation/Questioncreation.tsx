@@ -16,6 +16,9 @@ import { CareerPortalPreparedSet } from "./Component/Careerportalpreparedset";
 import { InterviewComposer } from "./Component/Interviewcomposer";
 import { InterviewPreparedSet } from "./Component/Interviewpreparedset";
 import { InterviewQuestionBank } from "./Component/Interviewquestionbank";
+import { ModalPopup } from "../../Comman/ModalPopup/ModalPopup";
+import { useModalPopup } from "../../Comman/ModalPopup/useModalPopup";
+import { RecuritmentHRMsg } from "../../../utilities/ConditionConfig";
 
 
 const DEFAULT_NEW_QUESTION = (): Partial<Question> => ({
@@ -46,7 +49,7 @@ const QuestionCreation: React.FC = (props: any) => {
     !positionLoading
   );
 
-  const { toast, closeToast, showSuccess, showError } = useToast();
+  const { modalState, showModal, closeModal } = useModalPopup();
   const navigate = useNavigate();
   const { saving, save } = useSaveQuestions();
 
@@ -73,7 +76,7 @@ const QuestionCreation: React.FC = (props: any) => {
 
     const question: Question = {
       id: Date.now(),
-      type:  mode === "interview" ?  "interview" : newQuestion.type ??  "single",
+      type: mode === "interview" ? "interview" : newQuestion.type ?? "single",
       questionEn: newQuestion.questionEn ?? "",
       questionFr: newQuestion.questionFr ?? "",
       answerEn: newQuestion.answerEn ?? "",
@@ -91,8 +94,17 @@ const QuestionCreation: React.FC = (props: any) => {
   };
 
   const handleSave = async () => {
-    if (preparedQuestions.length === 0) {
-      showError("Please add at least one question before saving.");
+    const minQuestions = 5;
+    const remaining = minQuestions - preparedQuestions.length;
+
+    if (preparedQuestions.length < minQuestions) {
+      showModal({
+        type: "error",
+        title: "Minimum Requirement",
+        message: `Please add at least ${minQuestions} questions. You need ${remaining} more.`,
+        confirmLabel: "Ok",
+        onConfirm: closeModal,
+      });
       return;
     }
 
@@ -105,10 +117,26 @@ const QuestionCreation: React.FC = (props: any) => {
     });
 
     if (success) {
-      showSuccess("Questions saved successfully");
-      navigate("/RecruitmentTable");
+      showModal({
+        type: "success",
+        title: "Submitted Successfully",
+        message: mode === "careerPortal" ? RecuritmentHRMsg.CareerportalSuccessMsg : RecuritmentHRMsg.InterviewQuestionSuccessMsg,
+        confirmLabel: "Go to Dashboard",
+        onConfirm: () => {
+          closeModal();
+          navigate("/RecruitmentTable");
+        },
+      });
     } else {
-      showError("Failed to save questions. Please try again.");
+      showModal({
+        type: "error",
+        title: "Error",
+        message: "Failed to save questions. Please try again.",
+        confirmLabel: "Ok",
+        onConfirm: () => {
+          closeModal();
+        },
+      });
     }
   };
 
@@ -124,118 +152,109 @@ const QuestionCreation: React.FC = (props: any) => {
   };
 
   return (
-    <motion.div
-      className="qc"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
-    >
-      {/* ── Header ── */}
-      <div className="qc__header">
-        <div className="qc__header-left">
-          <button className="qc__back-btn" onClick={onBack} title="Go back">
-            <ChevronLeft size={20} />
-          </button>
-          <div className="qc__job-info">
-            <div className="qc__job-top">
-              <span className="qc__job-code">{job.jobCode}</span>
-              <h2 className="qc__job-title">{job.jobTitle}</h2>
+    <>
+      <motion.div
+        className="qc"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+      >
+        {/* ── Header ── */}
+        <div className="qc__header">
+          <div className="qc__header-left">
+            <button className="qc__back-btn" onClick={onBack} title="Go back">
+              <ChevronLeft size={20} />
+            </button>
+            <div className="qc__job-info">
+              <div className="qc__job-top">
+                <span className="qc__job-code">{job.jobCode}</span>
+                <h2 className="qc__job-title">{job.jobTitle}</h2>
+              </div>
+              <div className="qc__job-meta">
+                <span className="qc__job-meta-item">
+                  <Globe size={10} /> {job.buCode ?? "N/A"}
+                </span>
+                <span className="qc__job-meta-dot" />
+                <span className="qc__job-meta-item">
+                  <Users size={10} /> {job.nationality ?? "N/A"}
+                </span>
+              </div>
             </div>
-            <div className="qc__job-meta">
-              <span className="qc__job-meta-item">
-                <Globe size={10} /> {job.buCode ?? "N/A"}
+          </div>
+
+          <div className="qc__header-right">
+            <div className="qc__criteria-count">
+              <span className="qc__criteria-label">
+                {mode === "careerPortal" ? "Prepared Criteria" : "Interview Set"}
               </span>
-              <span className="qc__job-meta-dot" />
-              <span className="qc__job-meta-item">
-                <Users size={10} /> {job.nationality ?? "N/A"}
+              <span className="qc__criteria-value">
+                {preparedQuestions.length}
+                <span className="qc__criteria-unit"> Questions</span>
               </span>
             </div>
+            <button className="qc__save-btn" onClick={handleSave} disabled={saving}>
+              <Save size={15} />
+              {saving ? "Saving..." : "Finalize & Save"}
+            </button>
           </div>
         </div>
 
-        <div className="qc__header-right">
-          <div className="qc__criteria-count">
-            <span className="qc__criteria-label">
-              {mode === "careerPortal" ? "Prepared Criteria" : "Interview Set"}
-            </span>
-            <span className="qc__criteria-value">
-              {preparedQuestions.length}
-              <span className="qc__criteria-unit"> Questions</span>
-            </span>
-          </div>
-          <button className="qc__save-btn" onClick={handleSave} disabled={saving}>
-            <Save size={15} />
-            {saving ? "Saving..." : "Finalize & Save"}
-          </button>
+        <div className="qc__grid">
+          {mode === "careerPortal" ? (
+            <>
+              <div className="qc__col qc__col--left">
+                <CareerPortalQuestionBank
+                  questionBank={questionBank}
+                  loading={loading}
+                  preparedQuestionIds={preparedIds}
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                  onAddFromBank={handleAddFromBank}
+                />
+              </div>
+
+              <div className="qc__col qc__col--right">
+                <CareerPortalComposer
+                  newQuestion={newQuestion}
+                  onChange={setNewQuestion}
+                  onAdd={handleAddNew}
+                  onClear={() => setNewQuestion(DEFAULT_NEW_QUESTION())}
+                />
+                <CareerPortalPreparedSet
+                  questions={preparedQuestions}
+                  onRemove={handleRemovePrepared}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="qc__col qc__col--left">
+                <InterviewQuestionBank
+                  questionBank={questionBank}
+                  loading={loading}
+                  preparedQuestionIds={preparedIds}
+                  onAddFromBank={handleAddFromBank}
+                />
+              </div>
+
+              <div className="qc__col qc__col--right">
+                <InterviewComposer
+                  newQuestion={newQuestion}
+                  onChange={setNewQuestion}
+                  onAdd={handleAddNew}
+                  onClear={() => setNewQuestion(DEFAULT_NEW_QUESTION())}
+                />
+                <InterviewPreparedSet
+                  questions={preparedQuestions}
+                  onRemove={handleRemovePrepared}
+                />
+              </div>
+            </>
+          )}
         </div>
-      </div>
-
-      <div className="qc__grid">
-        {mode === "careerPortal" ? (
-          <>
-            <div className="qc__col qc__col--left">
-              <CareerPortalQuestionBank
-                questionBank={questionBank}
-                loading={loading}
-                preparedQuestionIds={preparedIds}
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                onAddFromBank={handleAddFromBank}
-              />
-            </div>
-
-            <div className="qc__col qc__col--right">
-              <CareerPortalComposer
-                newQuestion={newQuestion}
-                onChange={setNewQuestion}
-                onAdd={handleAddNew}
-                onClear={() => setNewQuestion(DEFAULT_NEW_QUESTION())}
-              />
-              <CareerPortalPreparedSet
-                questions={preparedQuestions}
-                onRemove={handleRemovePrepared}
-              />
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="qc__col qc__col--left">
-              <InterviewQuestionBank
-                questionBank={questionBank}
-                loading={loading}
-                preparedQuestionIds={preparedIds}
-                onAddFromBank={handleAddFromBank}
-              />
-            </div>
-
-            <div className="qc__col qc__col--right">
-              <InterviewComposer
-                newQuestion={newQuestion}
-                onChange={setNewQuestion}
-                onAdd={handleAddNew}
-                onClear={() => setNewQuestion(DEFAULT_NEW_QUESTION())}
-              />
-              <InterviewPreparedSet
-                questions={preparedQuestions}
-                onRemove={handleRemovePrepared}
-              />
-            </div>
-          </>
-        )}
-      </div>
-
-      {toast.open && (
-        <SuccessToast
-          show={toast.open}
-          type={toast.type}
-          title={toast.title}
-          message={toast.message}
-          autoDismiss={toast.autoDismiss}
-          autoDismissDuration={toast.autoDismissDuration}
-          onClose={closeToast}
-        />
-      )}
-    </motion.div>
+      </motion.div>
+      <ModalPopup {...modalState} onClose={closeModal} />
+    </>
   );
 };
 

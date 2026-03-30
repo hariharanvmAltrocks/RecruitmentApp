@@ -7,6 +7,7 @@ var MenuDataContext_1 = require("../../../../utilities/hooks/MenuDataContext");
 var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
 var Config_1 = require("../../../../utilities/Config");
+var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var reusehooks_1 = require("../../../Hooks/reusehooks");
 // const mockTabs: TabItem[] = [
 //   {
@@ -75,7 +76,7 @@ var useTabDetails = function () {
                     key: tab.Value,
                     label: tab.TabName,
                     description: tab.TabName,
-                    tableMode: ((HRLead && tab.Value === "tab1") || (HR && tab.Value === "tab2"))
+                    tableMode: ((HRLead && tab.Value === "tab1") || (tab.TabName != ConditionConfig_1.TabName.AssignInterviewPanel && HR && tab.Value === "tab2"))
                         ? "checkbox"
                         : "normal",
                     actionMode: (Array.isArray((_a = tab.StatusDetails[0]) === null || _a === void 0 ? void 0 : _a.Action)

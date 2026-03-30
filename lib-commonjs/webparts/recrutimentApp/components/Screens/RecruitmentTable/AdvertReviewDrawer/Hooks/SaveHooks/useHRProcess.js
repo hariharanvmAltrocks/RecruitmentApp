@@ -7,6 +7,7 @@ var useUpdateMainRecord_1 = require("./useUpdateMainRecord");
 var ServiceExport_1 = require("../../../../../../services/ServiceExport");
 var Config_1 = require("../../../../../../utilities/Config");
 var ApiConfig_1 = require("../../../../../../utilities/ApiConfig");
+var ConditionConfig_1 = require("../../../../../../utilities/ConditionConfig");
 var serialize = function (arr, mapFn) {
     return arr && arr.length > 0 ? JSON.stringify(arr.map(mapFn)) : "[]";
 };
@@ -19,7 +20,7 @@ var useHRProcess = function (form, currentRoleID, docs) {
                 case 0:
                     filterConditions = [
                         {
-                            FilterKey: "JobCode",
+                            FilterKey: "JobCodeId",
                             Operator: "eq",
                             FilterValue: form.JobCodeId,
                         },
@@ -43,7 +44,7 @@ var useHRProcess = function (form, currentRoleID, docs) {
                     //       ? RecuritmentHRMsg.AdvertisementSubmitMsg
                     //       : RecuritmentHRMsg.AdvertisementReveiwMsg
                     //   );
-                    finalize("Advertisment Successfully Added");
+                    finalize(ConditionConfig_1.RecuritmentHRMsg.AdvertisementSubmitMsg);
                     return [2 /*return*/];
             }
         });

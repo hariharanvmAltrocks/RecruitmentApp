@@ -12,38 +12,39 @@ import { ICommonService, LanguageFiles } from "./Icommanservice";
 export default class CommonService implements ICommonService {
 
     uploadAttachmentToLibrary = async (
-    PositionCode: string,
-    AttachFile: IDocFiles[],
-    Listname: string
-  ): Promise<ApiResponse<any>> => {
-    try {
-      if (AttachFile.length > 0) {
-        await SPServices.addDocLibFiles({
-          FilePath: Listname,
-          FolderNames: [`${PositionCode.toString()}`],
-          Datas: AttachFile,
-        });
-        return {
-          data: "Successfully Replaced Document",
-          status: 200,
-          message: "Attachment replaced successfully",
-        };
-      }
+        PositionCode: string,
+        AttachFile: IDocFiles[],
+        Listname: string
+    ): Promise<ApiResponse<any>> => {
+        try {
+            let response: any;
+            if (AttachFile.length > 0) {
+                response = await SPServices.addDocLibFiles({
+                    FilePath: Listname,
+                    FolderNames: [`${PositionCode.toString()}`],
+                    Datas: AttachFile,
+                });
+                return {
+                    data: response,
+                    status: 200,
+                    message: "Attachment replaced successfully",
+                };
+            }
 
-      return {
-        data: null,
-        status: 400,
-        message: "No attachments provided",
-      };
-    } catch (error) {
-      console.error("Error during file replacement process:", error);
-      return {
-        data: null,
-        status: 500,
-        message: `Error during file replacement: ${error}`,
-      };
-    }
-  };
+            return {
+                data: null,
+                status: 400,
+                message: "No attachments provided",
+            };
+        } catch (error) {
+            console.error("Error during file replacement process:", error);
+            return {
+                data: null,
+                status: 500,
+                message: `Error during file replacement: ${error}`,
+            };
+        }
+    };
 
     uploadRoleProfileMaster = async (
         PositionCode: string,
@@ -398,30 +399,30 @@ export default class CommonService implements ICommonService {
         }
     };
 
-     async PostCommanDataInsert(
-    obj: any,
-    ListName: string
-  ): Promise<ApiResponse<any>> {
-    try {
-      const response = await SPServices.SPAddItem({
-        Listname: ListName,
-        RequestJSON: obj,
-      });
+    async PostCommanDataInsert(
+        obj: any,
+        ListName: string
+    ): Promise<ApiResponse<any>> {
+        try {
+            const response = await SPServices.SPAddItem({
+                Listname: ListName,
+                RequestJSON: obj,
+            });
 
-      return {
-        data: response.data,
-        status: 200,
-        message: "Data Submitted successfully",
-      };
-    } catch (error) {
-      console.error("Error posting user data:", error);
-      return {
-        data: null,
-        status: 400,
-        message: "Error On Posting Data",
-      };
+            return {
+                data: response.data,
+                status: 200,
+                message: "Data Submitted successfully",
+            };
+        } catch (error) {
+            console.error("Error posting user data:", error);
+            return {
+                data: null,
+                status: 400,
+                message: "Error On Posting Data",
+            };
+        }
     }
-  }
 }
 
 async function getUserGuidByEmail(email: string) {

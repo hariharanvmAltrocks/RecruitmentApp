@@ -76,103 +76,103 @@
   display: flex;
   justify-content: center;
 
-  
-.assignment-bar {
-  position: sticky;
-  bottom: 16px;
-  margin-top: 24px;
-  background: #0f172a;
-  color: $white;
-  border-radius: 16px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
 
-  &__left {
+  .assignment-bar {
+    position: sticky;
+    bottom: 16px;
+    margin-top: 24px;
+    background: #0f172a;
+    color: $white;
+    border-radius: 16px;
+    padding: 14px 18px;
     display: flex;
     align-items: center;
-    gap: 12px;
-  }
+    justify-content: space-between;
+    gap: 16px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
 
-  &__icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
-    background: rgba(37, 99, 235, 0.25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    &__left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-  &__count {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #cbd5f5;
+    &__icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: rgba(37, 99, 235, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-    strong {
-      font-size: 20px;
+    &__count {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #cbd5f5;
+
+      strong {
+        font-size: 20px;
+        color: $white;
+        letter-spacing: 0;
+      }
+
+      span {
+        font-size: 10px;
+      }
+    }
+
+    &__controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    &__select {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: $white;
-      letter-spacing: 0;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      min-width: 200px;
     }
 
-    span {
-      font-size: 10px;
-    }
-  }
-
-  &__controls {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  &__select {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: $white;
-    padding: 8px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    min-width: 200px;
-  }
-
-  &__select option {
-    color: $white;
-    background-color: $text-primary;
-  }
-
-  &__button {
-    background: $primary-color;
-    color: $white;
-    border: none;
-    border-radius: 999px;
-    padding: 10px 18px;
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: transform $transition-base;
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    &__select option {
+      color: $white;
+      background-color: $text-primary;
     }
 
-    &:hover:not(:disabled) {
-      transform: translateY(-1px);
+    &__button {
+      background: $primary-color;
+      color: $white;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform $transition-base;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      &:hover:not(:disabled) {
+        transform: translateY(-1px);
+      }
     }
   }
-}
 }
 
 .submission-header {
@@ -188,23 +188,71 @@
     color: #1e293b;
   }
 
-  &__button {
+  &__actions {
     display: flex;
     align-items: center;
+    gap: 10px;
+  }
+
+  &__button,
+  &__refresh-btn {
+    display: inline-flex;
+    align-items: center;
     gap: 0.5rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
     color: #64748b;
     font-weight: 700;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    cursor: pointer;
     transition: color 0.2s ease;
-    border: 0px;
-    background-color: white;
+    white-space: nowrap;
+    line-height: 1;
+
+    svg {
+      flex-shrink: 0;
+    }
 
     &:hover {
       color: #2563eb;
     }
   }
+
+  &__refresh-btn {
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+
+      &:hover {
+        color: #64748b; // prevent hover colour change when disabled
+      }
+    }
+
+    svg.spin {
+      animation: refresh-spin 0.8s linear infinite;
+    }
+  }
 }
 
+@keyframes refresh-spin {
+  from {
+    transform: rotate(0deg);
+  }
 
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes refresh-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

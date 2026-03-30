@@ -77,3 +77,11 @@ export const findMatricID = (roleIDs: number[], statusID: number, TabName: strin
       return 0;
   }
 };
+
+export const truncateText = (text: string, maxLength: number) => {
+  if (!text) return "S";
+  if (text.length <= maxLength) return text;
+
+  const trimmed = text.slice(0, maxLength);
+  return trimmed.slice(0, trimmed.lastIndexOf(" ")) + ".....";
+};

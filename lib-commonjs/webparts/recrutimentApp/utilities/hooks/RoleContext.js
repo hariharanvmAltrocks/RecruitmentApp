@@ -133,7 +133,8 @@ function buildADGroupData(resolvedRoles, userName) {
         userRole: resolvedRoles.map(function (r) { return r.RoleTitle; }),
         ADGroupIDs: resolvedRoles.map(function (r) { return r.ADGroupID; }),
         RoleDetails: resolvedRoles,
-        EmailId: resolvedRoles.map(function (r) { return r.EmailId; })
+        EmailId: resolvedRoles.map(function (r) { return r.EmailId; }),
+        userDetails: resolvedRoles.map(function (r) { return r.userDetails; })
     };
 }
 var NoRoleScreen = function () { return (React.createElement("div", { className: "flex min-h-screen relative bg-gray-100" },
@@ -191,7 +192,7 @@ var RoleProvider = function (_a) {
                                 console.error("[RoleProvider] API URL init failed:", err);
                             }),
                             (function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-                                var _a, displayName, email, allRoles, resolved, resolvedRoles;
+                                var _a, displayName, email, allRoles, resolved, Filter, userDetails, resolvedRoles;
                                 return tslib_1.__generator(this, function (_b) {
                                     switch (_b.label) {
                                         case 0: return [4 /*yield*/, fetchCurrentUser()];
@@ -204,11 +205,18 @@ var RoleProvider = function (_a) {
                                             return [4 /*yield*/, checkUserRoles(allRoles)];
                                         case 3:
                                             resolved = _b.sent();
+                                            Filter = [
+                                                { FilterKey: "EmailId", Operator: "eq", FilterValue: email }
+                                            ];
+                                            return [4 /*yield*/, ServiceExport_1.masterService.GetUserDetails(Filter, "and")];
+                                        case 4:
+                                            userDetails = _b.sent();
                                             resolvedRoles = resolved === null || resolved === void 0 ? void 0 : resolved.map(function (res) { return ({
                                                 ID: res.ID,
                                                 RoleTitle: res.RoleTitle,
                                                 ADGroupID: res.ADGroupID,
-                                                EmailId: email
+                                                EmailId: email,
+                                                userDetails: userDetails.data
                                             }); });
                                             dispatch({ type: "SET_RESOLVED_ROLES", roles: resolvedRoles && resolvedRoles.length > 0 ? resolvedRoles : [] });
                                             return [2 /*return*/];

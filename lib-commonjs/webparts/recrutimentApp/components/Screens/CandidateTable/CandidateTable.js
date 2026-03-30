@@ -14,6 +14,9 @@ require("./CandidateTable.scss");
 var getPositionDetails_1 = require("../RecruitmentTable/AdvertReviewDrawer/Hooks/getPositionDetails");
 var Config_1 = require("../../../utilities/Config");
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
+var useModalPopup_1 = require("../../Comman/ModalPopup/useModalPopup");
+var moment_1 = tslib_1.__importDefault(require("moment"));
+var ModalPopup_1 = require("../../Comman/ModalPopup/ModalPopup");
 var panelVariants = {
     hidden: { x: "100%" },
     visible: { x: 0, transition: { type: "spring", damping: 25, stiffness: 200 } },
@@ -28,48 +31,105 @@ var CandidateTable = function (props) {
     var _b = (0, react_1.useState)(null), activeCandidateId = _b[0], setActiveCandidateId = _b[1];
     var _c = (0, react_1.useState)(null), paneldata = _c[0], setPanelData = _c[1];
     var _d = (0, getPositionDetails_1.usePositionDetails)(props.ID, ""), positionDetails = _d.data, positionLoading = _d.loading;
+    var positionDetailsRef = (0, react_1.useRef)(positionDetails);
+    (0, react_1.useEffect)(function () {
+        positionDetailsRef.current = positionDetails;
+    }, [positionDetails]);
     var jobId = (_a = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId) !== null && _a !== void 0 ? _a : 0;
     var _e = (0, fetchCandidateDashboardDetails_1.useFetchCandidateDashboardDetails)({ jobId: jobId, initialPageSize: 10, enable: !positionLoading }), data = _e.data, loading = _e.loading, error = _e.error, pagination = _e.pagination, fetchPage = _e.fetchPage, setPageSize = _e.setPageSize;
+    var onHoldRef = (0, react_1.useRef)(data);
+    (0, react_1.useEffect)(function () {
+        onHoldRef.current = data;
+    }, [data]);
     var headerMeta = (0, react_1.useMemo)(function () {
         if (!data.length)
             return { code: "—", title: "—" };
         return { code: data[0].JobCode, title: data[0].PositionTitle };
     }, [data]);
+    var _f = (0, useModalPopup_1.useModalPopup)(), modalState = _f.modalState, showModal = _f.showModal, closeModal = _f.closeModal;
     var handleClose = (0, react_1.useCallback)(function () { return navigate("/RecruitmentTable"); }, [navigate]);
     var handlePageChange = (0, react_1.useCallback)(function (page) { return fetchPage(page); }, [fetchPage]);
     var handlePageSizeChange = (0, react_1.useCallback)(function (size) { return setPageSize(size); }, [setPageSize]);
-    console.log("positionDetails:", positionDetails);
-    console.log("positionLoading:", positionLoading);
-    var BUCodeID = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.BusinessUnitCodeId;
-    var AssignHR = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignedHR;
     var handleAction = (0, react_1.useCallback)(function (item) {
-        var _a;
+        var _a, _b, _c;
+        if (!positionDetailsRef.current)
+            return;
+        var BUCodeID = (_a = positionDetailsRef.current) === null || _a === void 0 ? void 0 : _a.BusinessUnitCodeId;
+        var AssignHR = (_b = positionDetailsRef.current) === null || _b === void 0 ? void 0 : _b.AssignEMail;
+        var _d = positionDetailsRef.current, JobPostingEndDate = _d.JobPostingEndDate, JobPostingFirstExtensionEndDate = _d.JobPostingFirstExtensionEndDate, JobPostingSecondExtensionEndDate = _d.JobPostingSecondExtensionEndDate;
+        var getLatestDate = function () {
+            return (JobPostingSecondExtensionEndDate ||
+                JobPostingFirstExtensionEndDate ||
+                JobPostingEndDate);
+        };
+        var latestDate = getLatestDate();
+        var isJobExpired = false;
+        if (latestDate) {
+            var today = new Date();
+            today.setDate(today.getDate() + 1);
+            var compareDate = new Date(latestDate);
+            compareDate.setHours(0, 0, 0, 0);
+            isJobExpired = today <= compareDate;
+        }
+        var pendingCount = onHoldRef.current.filter(function (d) {
+            return d.workflowStatusId === Config_1.workflowStatusApi.LineManagerLevel1OnHold ||
+                d.workflowStatusId === Config_1.workflowStatusApi.LineManagerLevel2OnHold;
+        }).length;
+        if (item.workflowStatusId === Config_1.workflowStatusApi.LineManagerL2Pending) {
+            if (pendingCount > 0) {
+                showModal({
+                    type: "error",
+                    title: "Pending Candidate Alert",
+                    message: (0, Config_1.PendingCandidateAlertMsg)(pendingCount),
+                    confirmLabel: "OK",
+                    onConfirm: closeModal,
+                });
+                return;
+            }
+            var formattedDate = (0, moment_1.default)(latestDate).format("DD/MM/YYYY");
+            if (isJobExpired) {
+                showModal({
+                    type: "error",
+                    title: "Job Expired",
+                    message: (0, Config_1.JobAdvertAlertMsg)(formattedDate),
+                    confirmLabel: "OK",
+                    onConfirm: closeModal,
+                });
+                return;
+            }
+        }
         setActiveCandidateId(item.CandidateID);
-        var Action;
-        if (item.workflowStatusId === Config_1.workflowStatusApi.HRPending ||
-            item.workflowStatusId === Config_1.workflowStatusApi.LineManagerL1Pending ||
-            item.workflowStatusId === Config_1.workflowStatusApi.LineManagerL2Pending) {
-            Action = ConditionConfig_1.ActionID.Review;
-        }
-        else if (item.workflowStatusId === Config_1.workflowStatusApi.LineManagerLevel1OnHold ||
-            item.workflowStatusId === Config_1.workflowStatusApi.LineManagerLevel2OnHold) {
-            Action = ConditionConfig_1.ActionID.onHold;
-        }
-        else if (item.workflowStatusId === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
-            Number(item.workflowStatusId) === Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
-            Action = ConditionConfig_1.ActionID.schedule;
-        }
-        else {
-            Action = ConditionConfig_1.ActionID.View;
-        }
+        var getAction = function (status) {
+            var reviewStatuses = [
+                Config_1.workflowStatusApi.HRPending,
+                Config_1.workflowStatusApi.LineManagerL1Pending,
+                Config_1.workflowStatusApi.LineManagerL2Pending,
+            ];
+            var holdStatuses = [
+                Config_1.workflowStatusApi.LineManagerLevel1OnHold,
+                Config_1.workflowStatusApi.LineManagerLevel2OnHold,
+            ];
+            var scheduleStatuses = [
+                Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+                Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+            ];
+            if (reviewStatuses.includes(item.workflowStatusId))
+                return ConditionConfig_1.ActionID.Review;
+            if (holdStatuses.includes(item.workflowStatusId))
+                return ConditionConfig_1.ActionID.onHold;
+            if (scheduleStatuses.includes(Number(item.workflowStatusId)))
+                return ConditionConfig_1.ActionID.schedule;
+            return ConditionConfig_1.ActionID.View;
+        };
+        var actionID = getAction(item.workflowStatusId);
         setPanelData({
             bucodeId: BUCodeID !== null && BUCodeID !== void 0 ? BUCodeID : 0,
             candidateId: item.CandidateID,
             assignHR: AssignHR !== null && AssignHR !== void 0 ? AssignHR : "",
-            statusId: (_a = item.workflowStatusId) !== null && _a !== void 0 ? _a : item.statusID,
-            actionID: Action
+            statusId: (_c = item.workflowStatusId) !== null && _c !== void 0 ? _c : item.statusID,
+            actionID: actionID,
         });
-    }, [positionDetails]);
+    }, [data]);
     var getActionConfig = function (item) {
         if (item.workflowStatusId === Config_1.workflowStatusApi.HRPending ||
             item.workflowStatusId === Config_1.workflowStatusApi.LineManagerL1Pending ||
@@ -164,11 +224,9 @@ var CandidateTable = function (props) {
                         react_1.default.createElement("div", { className: "candidate-table__card" },
                             react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: data, loading: loading !== null && loading !== void 0 ? loading : positionLoading, 
                                 // error={error ?? undefined}
-                                pageSize: pagination.pageSize, currentPage: pagination.currentPage, totalCount: pagination.totalItems, onPageChange: handlePageChange, onPageSizeChange: handlePageSizeChange, pageSizeOptions: [5, 10, 20, 50], emptyMessage: "No candidates found for this job." }),
-                            react_1.default.createElement("div", { className: "candidate-table__footer" },
-                                react_1.default.createElement("button", { type: "button", className: "candidate-table__footer-btn candidate-table__footer-btn--ghost", onClick: handleClose }, "Cancel"),
-                                react_1.default.createElement("button", { type: "button", className: "candidate-table__footer-btn candidate-table__footer-btn--primary" }, "Submit Review"))))))),
-        react_1.default.createElement(framer_motion_1.AnimatePresence, null, activeCandidateId && (react_1.default.createElement(ShowCandidateDetailsPopup_1.ShowCandidateDetailsPopup, { isOpen: true, candidateId: activeCandidateId, onClose: function () { return setActiveCandidateId(null); }, panelParams: paneldata !== null && paneldata !== void 0 ? paneldata : null, positionDetails: positionDetails !== null && positionDetails !== void 0 ? positionDetails : null })))));
+                                pageSize: pagination.pageSize, currentPage: pagination.currentPage, totalCount: pagination.totalItems, onPageChange: handlePageChange, onPageSizeChange: handlePageSizeChange, pageSizeOptions: [5, 10, 20, 50], emptyMessage: "No candidates found for this job." })))))),
+        react_1.default.createElement(framer_motion_1.AnimatePresence, null, activeCandidateId && (react_1.default.createElement(ShowCandidateDetailsPopup_1.ShowCandidateDetailsPopup, { isOpen: true, candidateId: activeCandidateId, onClose: function () { return setActiveCandidateId(null); }, panelParams: paneldata !== null && paneldata !== void 0 ? paneldata : null, positionDetails: positionDetails !== null && positionDetails !== void 0 ? positionDetails : null }))),
+        react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))));
 };
 exports.CandidateTable = CandidateTable;
 function resolveStatusTone(status) {

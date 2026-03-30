@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findMatricID = void 0;
+exports.truncateText = exports.findMatricID = void 0;
 exports.calculateTotalExperienceYears = calculateTotalExperienceYears;
 exports.getcountryCode = getcountryCode;
 var ConditionConfig_1 = require("../../utilities/ConditionConfig");
@@ -79,4 +79,13 @@ var findMatricID = function (roleIDs, statusID, TabName) {
     }
 };
 exports.findMatricID = findMatricID;
+var truncateText = function (text, maxLength) {
+    if (!text)
+        return "S";
+    if (text.length <= maxLength)
+        return text;
+    var trimmed = text.slice(0, maxLength);
+    return trimmed.slice(0, trimmed.lastIndexOf(" ")) + ".....";
+};
+exports.truncateText = truncateText;
 //# sourceMappingURL=reusehooks.js.map

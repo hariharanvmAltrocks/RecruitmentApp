@@ -120,7 +120,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                       rows={trackerData}
                       selectedMetric={selectedMetric}
                       activeMetric={activeMetric}
-                      onRowClick={(row) => onTrackerChange(row)}
+                      onRowClick={(row: any) => onTrackerChange(row)}
                     />
                   </div>
 

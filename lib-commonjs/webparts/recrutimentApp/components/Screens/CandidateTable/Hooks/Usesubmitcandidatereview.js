@@ -9,13 +9,13 @@ var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var ApiConfig_1 = require("../../../../utilities/ApiConfig");
 var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
-var useSubmitCandidateReview = function (showError) {
+var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
+var useSubmitCandidateReview = function (onClose) {
     var matricID = (0, UIStateContext_1.useUIState)().MatricID;
     var roleIDs = (0, RoleContext_1.userInfo)().roleIDs;
     var _a = (0, react_1.useState)(false), submitting = _a[0], setSubmitting = _a[1];
-    var _b = (0, react_1.useState)(null), submitError = _b[0], setSubmitError = _b[1];
-    var _c = (0, react_1.useState)(false), submitSuccess = _c[0], setSubmitSuccess = _c[1];
     var abortRef = (0, react_1.useRef)(null);
+    var _b = (0, useModalPopup_1.useModalPopup)(), modalState = _b.modalState, showModal = _b.showModal, closeModal = _b.closeModal;
     var splitDateOnly = function (date) {
         var year = date.getFullYear();
         var month = String(date.getMonth() + 1).padStart(2, "0");
@@ -267,7 +267,20 @@ var useSubmitCandidateReview = function (showError) {
         var _a, candidateData, emailNot, popupMessage, StatusId, interviewLevel1, interviewLevel2, uploadRes, res;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, buildWorkflowData(payload, COIButtonAction)];
+                case 0:
+                    if (payload.COIFlag) {
+                        showModal({
+                            type: "confirmation",
+                            title: "Conflict Of Interest",
+                            message: "This is the COI profile. Are you sure you're ready to proceed?",
+                            confirmLabel: "Yes",
+                            cancelLabel: "No",
+                            onConfirm: function () {
+                                closeModal();
+                            },
+                        });
+                    }
+                    return [4 /*yield*/, buildWorkflowData(payload, COIButtonAction)];
                 case 1:
                     _a = _b.sent(), candidateData = _a.candidateData, emailNot = _a.emailNot, popupMessage = _a.popupMessage;
                     StatusId = payload.StatusId, interviewLevel1 = payload.interviewLevel1, interviewLevel2 = payload.interviewLevel2;
@@ -285,7 +298,16 @@ var useSubmitCandidateReview = function (showError) {
                 case 2:
                     uploadRes = _b.sent();
                     if (uploadRes.status !== ApiConfig_1.ResponeStatus.SUCCESS) {
-                        showError(ConditionConfig_1.RecuritmentHRMsg.APIErrorMsg);
+                        showModal({
+                            type: "success",
+                            title: "Submitted Successfully",
+                            message: popupMessage,
+                            confirmLabel: "Go to Candidate Table",
+                            onConfirm: function () {
+                                closeModal();
+                                onClose();
+                            },
+                        });
                         return [2 /*return*/];
                     }
                     _b.label = 3;
@@ -301,10 +323,28 @@ var useSubmitCandidateReview = function (showError) {
                     _b.sent();
                     _b.label = 6;
                 case 6:
-                    showError(popupMessage);
+                    showModal({
+                        type: "success",
+                        title: "Submitted Successfully",
+                        message: popupMessage,
+                        confirmLabel: "Go to Candidate Table",
+                        onConfirm: function () {
+                            closeModal();
+                            onClose();
+                        },
+                    });
                     return [3 /*break*/, 8];
                 case 7:
-                    showError(ConditionConfig_1.RecuritmentHRMsg.APIErrorMsg);
+                    showModal({
+                        type: "error",
+                        title: "Error",
+                        message: ConditionConfig_1.RecuritmentHRMsg.APIErrorMsg,
+                        confirmLabel: "Go to Candidate Table",
+                        onConfirm: function () {
+                            closeModal();
+                            onClose();
+                        },
+                    });
                     _b.label = 8;
                 case 8: return [2 /*return*/];
             }
@@ -325,17 +365,15 @@ var useSubmitCandidateReview = function (showError) {
                         (_a = abortRef.current) === null || _a === void 0 ? void 0 : _a.abort();
                         abortRef.current = new AbortController();
                         setSubmitting(true);
-                        setSubmitError(null);
-                        setSubmitSuccess(false);
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 4, 5, 6]);
-                        return [4 /*yield*/, scheduleMeeting(payload)];
-                    case 2:
-                        _b.sent();
                         scheduleResponse = payload.StatusId === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview
                             ? { status: 201 }
                             : { status: 201 };
+                        return [4 /*yield*/, scheduleMeeting(payload)];
+                    case 2:
+                        _b.sent();
                         if ((scheduleResponse === null || scheduleResponse === void 0 ? void 0 : scheduleResponse.status) !== 201)
                             return [2 /*return*/];
                         // const isReschedulePath =
@@ -355,14 +393,12 @@ var useSubmitCandidateReview = function (showError) {
                         //   return;
                         // }
                         _b.sent();
-                        setSubmitSuccess(true);
                         return [3 /*break*/, 6];
                     case 4:
                         err_1 = _b.sent();
                         if ((err_1 === null || err_1 === void 0 ? void 0 : err_1.name) === "AbortError")
                             return [2 /*return*/];
                         console.error("Submit failed:", err_1);
-                        setSubmitError("Failed to submit. Please try again.");
                         return [3 /*break*/, 6];
                     case 5:
                         setSubmitting(false);
@@ -372,11 +408,7 @@ var useSubmitCandidateReview = function (showError) {
             });
         });
     }, [scheduleMeeting, handleWorkflowProcess]);
-    var reset = (0, react_1.useCallback)(function () {
-        setSubmitError(null);
-        setSubmitSuccess(false);
-    }, []);
-    return { submitting: submitting, submitError: submitError, submitSuccess: submitSuccess, submit: submit, reset: reset };
+    return { submitting: submitting, submit: submit, modalState: modalState, closeModal: closeModal };
 };
 exports.useSubmitCandidateReview = useSubmitCandidateReview;
 //# sourceMappingURL=Usesubmitcandidatereview.js.map

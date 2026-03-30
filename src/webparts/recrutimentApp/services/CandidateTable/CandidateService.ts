@@ -257,9 +257,9 @@ export default class CandidateService implements ICandidateService {
                     JobVaildFromDate: op?.jobDetail?.validFrom,
                     JobVaildToDate: op?.jobDetail?.validTo,
                     CandidateResumeLink: op?.document?.filePath,
-                    ConflictsOfInterest: "Yes",  //op?.profile?.profileXOptAnswers[0]?.answerContent?.contentEn,
-                    disability: "Yes", //op?.profile?.profileDetailDisclosure?.hasDisability === 1 ? "Yes" : "No",
-                    disabilityReason: "akjsgsdjhgfsjdkfgksagkjsgkasgfsdgjkasgkgkasdfgsdjkweuiryweirywierywieryewiryewiuryewiryewiryewiryiewryiweryiweuryeiwryiewryiyiuytyitjjxhsgfjsdgfjhbmnvbxmvb",  //op?.profile?.profileDetailDisclosure?.disabilityDetails,
+                    ConflictsOfInterest: op?.profile?.profileXOptAnswers[0]?.answerContent?.contentEn,
+                    disability: op?.profile?.profileDetailDisclosure?.hasDisability === 1 ? "Yes" : "No",
+                    disabilityReason: op?.profile?.profileDetailDisclosure?.disabilityDetails,
                     identityValue: op?.profile?.identityValue,
                     identityType: (IdentityID && IdentityID.length > 0) ? IdentityID[0].displayText : "Passport",
 
@@ -282,7 +282,7 @@ export default class CandidateService implements ICandidateService {
 
                     COIAppreve: op?.profile?.profileDetailCoi?.approver ?? "",
                     COIComments: op?.profile?.profileDetailCoi?.comments ?? "",
-                    COIReason: "dasgjdgasjhgdsadgjasdgasjdgsadgaskjaskdjasdkjhsakdhaskdhkasdhksahdkjsahdkjashdkjashdkjasdhkjashdksadhsajkdhaskjdhjkasdhkjsadhkjasdhkjashdjksahdkjsahdkjsahdkjashdjksahdjksahdskjadhksajdhsakjdhsajkdhjksadhjksadhjksahdaskjhdsakjdkjsahdkjsahdjkashdjdgsajdgasj",//op?.profile?.coiReason ?? "",
+                    COIReason: op?.profile?.coiReason ?? "",
 
                     countryOfResidency: op?.profile?.countryOfResidencyDetail?.countryName ?? "",
                     residentStatus: op?.profile?.residentStatus === "Y" ? "Yes" : op?.profile?.residentStatus === "N" ? "No" : "",
@@ -529,17 +529,18 @@ export default class CandidateService implements ICandidateService {
             let level2Panel: PanelEntry[] = [];
 
             // const allOptions = dedupe([...basePanelLevel1, ...basePanelLevel2, ...adOptions]);
-
-            if (basePanelLevel1.length < 2) {
+            let panelMember = dedupe(basePanelLevel1)
+            if (panelMember.length === 3) {
+                level1Panel = dedupe(basePanelLevel1)
+            } else {
                 basePanelLevel1.push(...adOptions)
                 level1Panel = dedupe(basePanelLevel1)
-            } else {
-                level1Panel = dedupe(basePanelLevel1)
             }
-            if (basePanelLevel2.length < 2) {
-                basePanelLevel2.push(...adOptions)
+            let panelMember2 = dedupe(basePanelLevel2)
+            if (panelMember2.length === 3) {
                 level2Panel = dedupe(basePanelLevel2)
             } else {
+                basePanelLevel2.push(...adOptions)
                 level2Panel = dedupe(basePanelLevel2)
             }
 

@@ -5,6 +5,7 @@ var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 require("../RecruitmentTable.scss");
+var reusehooks_1 = require("../../../Hooks/reusehooks");
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return (react_1.default.createElement("div", { className: "advert-review-drawer__skeleton", style: { width: width, height: height } }));
@@ -69,28 +70,30 @@ var RequiredAttachments = function (_a) {
                     react_1.default.createElement("div", { className: "advert-review-drawer__attachment-tag" }, "Recruitment"))),
             react_1.default.createElement("div", { className: "advert-review-drawer__attachment-body" }, doc.versions.map(function (version, idx) {
                 var fileUrl = getVersionUrl(version);
-                return (react_1.default.createElement("div", { key: "".concat(version.lang, "-").concat(idx), className: "advert-review-drawer__attachment-version" },
-                    react_1.default.createElement("div", { className: "advert-review-drawer__attachment-lang advert-review-drawer__attachment-lang--".concat(version.lang.toLowerCase()) }, version.lang),
-                    react_1.default.createElement("div", { className: "advert-review-drawer__attachment-info" },
-                        react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__attachment-label advert-review-drawer__attachment-label--link", onClick: function () { return fileUrl && openViewer({
+                return (react_1.default.createElement("div", { key: "".concat(version.lang, "-").concat(idx), className: "advert-review-drawer__attachment-version", onClick: function () { return fileUrl && openViewer({
+                        url: fileUrl,
+                        title: doc.title,
+                        label: version.label,
+                        lang: version.lang,
+                    }); }, onKeyDown: function (event) {
+                        if (!fileUrl) {
+                            return;
+                        }
+                        if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            openViewer({
                                 url: fileUrl,
                                 title: doc.title,
                                 label: version.label,
                                 lang: version.lang,
-                            }); }, onKeyDown: function (event) {
-                                if (!fileUrl) {
-                                    return;
-                                }
-                                if (event.key === "Enter" || event.key === " ") {
-                                    event.preventDefault();
-                                    openViewer({
-                                        url: fileUrl,
-                                        title: doc.title,
-                                        label: version.label,
-                                        lang: version.lang,
-                                    });
-                                }
-                            }, disabled: !fileUrl, "aria-label": "Open ".concat(doc.title, " (").concat(version.lang, ")") }, version.label)),
+                            });
+                        }
+                    } },
+                    react_1.default.createElement("div", { className: "advert-review-drawer__attachment-lang advert-review-drawer__attachment-lang--".concat(version.lang.toLowerCase()) }, version.lang),
+                    react_1.default.createElement("div", { className: "advert-review-drawer__attachment-info" },
+                        react_1.default.createElement("span", { className: "advert-review-drawer__attachment-label advert-review-drawer__attachment-label--link", 
+                            // onClick={() => fileUrl && window.open(fileUrl, "_blank")}
+                            role: "button", "aria-disabled": !fileUrl, style: { cursor: fileUrl ? "pointer" : "not-allowed", opacity: fileUrl ? 1 : 0.5 } }, (0, reusehooks_1.truncateText)(version.label, 20))),
                     react_1.default.createElement(lucide_react_1.Download, { size: 12 })));
             })))); });
     }, [attachments, openViewer]);
@@ -117,7 +120,7 @@ var RequiredAttachments = function (_a) {
                             " \uFFFD ",
                             viewerFile.lang)),
                     react_1.default.createElement("div", { className: "attachment-viewer__actions" },
-                        react_1.default.createElement("a", { className: "attachment-viewer__button", href: viewerFile.url, target: "_blank", rel: "noopener noreferrer" },
+                        react_1.default.createElement("a", { className: "attachment-viewer__button", href: viewerFile.url, download: true },
                             react_1.default.createElement(lucide_react_1.Download, { size: 14 }),
                             "Download"),
                         react_1.default.createElement("button", { type: "button", className: "attachment-viewer__button attachment-viewer__button--ghost", onClick: closeViewer },

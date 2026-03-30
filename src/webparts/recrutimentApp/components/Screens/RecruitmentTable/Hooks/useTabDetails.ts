@@ -6,7 +6,7 @@ import { TabDetails } from "../../../../models/master";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
 import { useRoleContext } from "../../../../utilities/hooks/RoleContext";
 import { RoleID, StatusId } from "../../../../utilities/Config";
-import { MatricID } from "../../../../utilities/ConditionConfig";
+import { MatricID, TabName } from "../../../../utilities/ConditionConfig";
 import { findMatricID } from "../../../Hooks/reusehooks";
 
 export interface UseTabDetailsResult {
@@ -89,7 +89,7 @@ export const useTabDetails = (): UseTabDetailsResult => {
         key: tab.Value as RecruitmentTabKey,
         label: tab.TabName,
         description: tab.TabName,
-        tableMode: ((HRLead && tab.Value === "tab1") || (HR && tab.Value === "tab2"))
+        tableMode: ((HRLead && tab.Value === "tab1") || (tab.TabName != TabName.AssignInterviewPanel && HR && tab.Value === "tab2"))
           ? ("checkbox" as TableMode)
           : ("normal" as TableMode),
         actionMode: (Array.isArray(tab.StatusDetails[0]?.Action)
