@@ -14,16 +14,7 @@ export default function CandidateInfo({ candidate, onRefresh }: CandidateInfoPro
       <div className={styles.leftHeader}>
         <div className={styles.leftAccent} />
         <span className={styles.leftTitle}>CANDIDATE INFO</span>
-        {onRefresh && (
-          <button className={styles.refreshBtn} title="Refresh" onClick={onRefresh}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M23 4v6h-6" />
-              <path d="M1 20v-6h6" />
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-            </svg>
-          </button>
-        )}
+        {/* Refresh button removed */}
       </div>
 
       <div style={{ paddingTop: 8 }}>
@@ -39,13 +30,18 @@ export default function CandidateInfo({ candidate, onRefresh }: CandidateInfoPro
 
         <div className={styles.twoCol}>
           <InfoField icon="📅" label="INTERVIEW DATE" value={candidate?.interviewDate} />
-          <InfoField icon="🔲" label="LEVEL"          value={candidate?.interviewLevel} />
+          {candidate?.interviewLevel && (
+            <InfoField icon="🔲" label="LEVEL" value={candidate?.interviewLevel} />
+          )}
         </div>
 
-        <div className={styles.twoCol}>
-          <InfoField icon="📈" label="GRADE"     value={candidate?.grade} />
-          <InfoField icon="⚠️" label="CONFLICTS" value={candidate?.conflictsOfInterest} />
-        </div>
+        {/* Only show grade if it has a value */}
+        {candidate?.grade && (
+          <div className={styles.twoCol}>
+            <InfoField icon="📈" label="GRADE" value={candidate?.grade} />
+            <InfoField icon="⚠️" label="CONFLICTS" value={candidate?.conflictsOfInterest} />
+          </div>
+        )}
 
         <InfoField icon="♿" label="DISABILITY" value={candidate?.disability} />
 

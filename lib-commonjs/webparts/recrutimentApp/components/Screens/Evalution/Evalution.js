@@ -210,7 +210,7 @@ function EvalutionContent(_a) {
             React.createElement("span", null, "We could not load all evaluation data. Please try again."),
             React.createElement("button", { className: Evalution_module_scss_1.default.retryBtn, onClick: handleRetry }, "Retry"))),
         React.createElement("div", { className: Evalution_module_scss_1.default.layout },
-            React.createElement(CandidateInfo_1.default, { candidate: candidate, onRefresh: reloadCandidate }),
+            React.createElement(CandidateInfo_1.default, { candidate: candidate }),
             React.createElement("main", { className: Evalution_module_scss_1.default.rightPanel },
                 React.createElement(InterviewQuestion_1.default, { questions: questions, answers: answers, ratingErrors: ratingErrors, onAnswerChange: handleAnswerChange }),
                 React.createElement("div", { className: questions.length > 0 ? Evalution_module_scss_1.default.scorecardMargin : '' },
@@ -218,7 +218,7 @@ function EvalutionContent(_a) {
                             setFeedbackError(false); }, acknowledged: acknowledged, ackError: ackError, onAcknowledgedChange: function (b) { setAcknowledged(b); if (b)
                             setAckError(false); }, candidate: candidate })),
                 React.createElement("div", { className: Evalution_module_scss_1.default.footer },
-                    React.createElement("button", { className: Evalution_module_scss_1.default.cancelBtn, onClick: function () { }, disabled: submitting }, "Cancel"),
+                    React.createElement("button", { className: Evalution_module_scss_1.default.cancelBtn, onClick: handleCancel, disabled: submitting }, "Cancel"),
                     React.createElement("button", { className: Evalution_module_scss_1.default.submitBtn, onClick: handleSubmit, disabled: submitting || !acknowledged }, submitting ? 'Submitting…' : '+ Submit Evaluation'))))));
 }
 //# sourceMappingURL=Evalution.js.map

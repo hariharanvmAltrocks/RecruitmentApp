@@ -244,7 +244,7 @@ function EvalutionContent({
       )}
 
       <div className={styles.layout}>
-        <CandidateInfo candidate={candidate} onRefresh={reloadCandidate} />
+        <CandidateInfo candidate={candidate} />
 
         <main className={styles.rightPanel}>
           <InterviewQuestionList
@@ -273,7 +273,7 @@ function EvalutionContent({
           </div>
 
           <div className={styles.footer}>
-            <button className={styles.cancelBtn} onClick={() => {}} disabled={submitting}>Cancel</button>
+            <button className={styles.cancelBtn} onClick={handleCancel} disabled={submitting}>Cancel</button>
             <button
               className={styles.submitBtn}
               onClick={handleSubmit}
