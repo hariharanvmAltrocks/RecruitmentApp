@@ -1,36 +1,37 @@
 import * as React from 'react';
-import type { Answer, ScoreSummary } from '../State/CommonStateManagement';
+import type { Answer } from '../State/CommonStateManagement';
 
 export interface ScoreCardData {
-  answers: Record<string, Answer>;
-  summary?: ScoreSummary;
+  answers: Record<number, Answer>;
 }
 
 export interface IScoreCardService {
-  getScoreCard: (candidateId?: string) => Promise<ScoreCardData>;
+  getScoreCard: (candidateId: number) => Promise<ScoreCardData>;
 }
 
-const mockScoreCard: ScoreCardData = {
-  answers: {
-    'q-1': { questionId: 'q-1', rating: 4, remarks: 'Clear understanding of statements.' },
-    'q-2': { questionId: 'q-2', rating: 3, remarks: 'Covered liquidity and leverage.' }
-  }
-};
-
+// Default service — scorecard is a fresh submission each time (no pre-fill from API).
+// If you need to pre-populate from a saved draft, replace this implementation.
 const defaultService: IScoreCardService = {
-  getScoreCard: async () => {
-    await wait(300);
-    return mockScoreCard;
-  }
+  getScoreCard: async (_candidateId: number): Promise<ScoreCardData> => {
+    return { answers: {} };
+  },
 };
 
-export function useScoreCard(candidateId?: string, service: IScoreCardService = defaultService) {
-  const [data, setData] = React.useState<ScoreCardData | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [error, setError] = React.useState<string | null>(null);
-  const [refreshKey, setRefreshKey] = React.useState<number>(0);
+export function useScoreCard(
+  candidateId: number,
+  service: IScoreCardService = defaultService
+) {
+  const [data,       setData]       = React.useState<ScoreCardData | null>(null);
+  const [loading,    setLoading]    = React.useState<boolean>(true);
+  const [error,      setError]      = React.useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = React.useState(0);
 
   React.useEffect(() => {
+    if (!candidateId) {
+      setLoading(false);
+      return;
+    }
+
     let isMounted = true;
 
     const load = async () => {
@@ -38,33 +39,20 @@ export function useScoreCard(candidateId?: string, service: IScoreCardService = 
       setError(null);
       try {
         const result = await service.getScoreCard(candidateId);
-        if (isMounted) {
-          setData(result);
-        }
+        if (isMounted) setData(result);
       } catch (err) {
-        if (isMounted) {
+        if (isMounted)
           setError(err instanceof Error ? err.message : 'Unable to load scorecard.');
-        }
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        if (isMounted) setLoading(false);
       }
     };
 
     load();
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, [candidateId, service, refreshKey]);
 
-  const reload = React.useCallback(() => {
-    setRefreshKey((prev) => prev + 1);
-  }, []);
+  const reload = React.useCallback(() => setRefreshKey((k) => k + 1), []);
 
   return { data, loading, error, reload };
-}
-
-function wait(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }

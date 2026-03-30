@@ -1,58 +1,46 @@
+import { evaluationService } from '../../SelectionProcess/services/EvaluationApiService';
 import type { EvaluationPayload } from '../State/CommonStateManagement';
 
-export interface SubmitResult {
-  success: boolean;
-  message: string;
-}
-
-export interface IEvaluationSubmitService {
-  submitEvaluation: (payload: EvaluationPayload) => Promise<void>;
-}
-
-const defaultService: IEvaluationSubmitService = {
-  submitEvaluation: async () => {
-    await wait(300);
-  }
-};
 
 export async function handleSubmitEvaluation(
   payload: EvaluationPayload,
-  service: IEvaluationSubmitService = defaultService
-): Promise<SubmitResult> {
-  const validation = validatePayload(payload);
-  if (!validation.isValid) {
-    return { success: false, message: validation.message };
-  }
+  roleId: number
+): Promise<{ success: boolean; message: string }> {
+  console.log('[handleSubmitEvaluation] start', { payload, roleId });
+  const { candidate, answers, scorecard, recommendation, overallFeedback } = payload;
 
-  try {
-    await service.submitEvaluation(payload);
-    return { success: true, message: 'Evaluation submitted successfully.' };
-  } catch (error) {
+  if (!candidate.currentUserPanelId) {
     return {
       success: false,
-      message: error instanceof Error ? error.message : 'Unable to submit evaluation.'
+      message: 'Could not identify your panel entry. Please contact HR.',
     };
   }
-}
 
-function validatePayload(payload: EvaluationPayload): { isValid: boolean; message: string } {
-  if (!payload.candidate) {
-    return { isValid: false, message: 'Candidate information is missing.' };
-  }
+  const spPayload = {
+    RecruitmentIDId: candidate.recruitmentId,
+    Qualifications:  scorecard.Qualifications,
+    Experience:      scorecard.Experience,
+    Knowledge:       scorecard.Knowledge,
+    EnergyLevel:     scorecard.EnergyLevel,
+    JobRequirements: scorecard.JobRequirements,
+    CultureFit:      scorecard.CultureFit,
+    ExpatLocal:      scorecard.ExpatLocal,
+    OtherCriteria:   scorecard.OtherCriteria,
+    Recommendation:
+      recommendation === 'consider' ? 'Consider for Employment' : 'Do Not Consider',
+    OverallFeedback: overallFeedback,
+    QuestionScores: JSON.stringify(
+      Object.values(answers).map((a) => ({ id: a.questionId, rating: a.rating }))
+    ),
+  };
 
-  const answers = Object.values(payload.answers);
-  if (answers.length === 0) {
-    return { isValid: false, message: 'Please answer all interview questions.' };
-  }
-
-  const missingRating = answers.some((answer) => answer.rating === null);
-  if (missingRating) {
-    return { isValid: false, message: 'Please provide ratings for all questions.' };
-  }
-
-  return { isValid: true, message: '' };
-}
-
-function wait(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  console.log('[handleSubmitEvaluation] payload-ready', {spPayload});
+  const result = await evaluationService.submitScorecard(
+    spPayload,
+    candidate.currentUserPanelId,
+    roleId,
+    candidate.currentUserGuid || ''
+  );
+  console.log('[handleSubmitEvaluation] result', result);
+  return result;
 }

@@ -3,34 +3,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useCandidateDetails = useCandidateDetails;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
-var mockCandidate = {
-    id: 'cand-001',
-    applicantName: 'Aissatou Diallo',
-    jobTitle: 'Senior Financial Analyst',
-    grade: 'G7',
-    nationality: 'Malian',
-    interviewDate: '2026-03-20'
-};
-var defaultService = {
-    getCandidateDetails: function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        return tslib_1.__generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, wait(300)];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/, mockCandidate];
-            }
-        });
-    }); }
-};
-function useCandidateDetails(candidateId, service) {
+var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
+var Evaluationformservice_1 = require("../Evaluationservice/Evaluationformservice");
+function useCandidateDetails(_a) {
     var _this = this;
-    if (service === void 0) { service = defaultService; }
-    var _a = React.useState(null), data = _a[0], setData = _a[1];
-    var _b = React.useState(true), loading = _b[0], setLoading = _b[1];
-    var _c = React.useState(null), error = _c[0], setError = _c[1];
-    var _d = React.useState(0), refreshKey = _d[0], setRefreshKey = _d[1];
+    var _b, _c;
+    var candidateId = _a.candidateId, interviewLevel = _a.interviewLevel, grade = _a.grade;
+    var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
+    var currentUserEmail = (_c = (_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _b === void 0 ? void 0 : _b[0]) !== null && _c !== void 0 ? _c : '';
+    var _d = React.useState(null), candidate = _d[0], setCandidate = _d[1];
+    var _e = React.useState([]), questions = _e[0], setQuestions = _e[1];
+    var _f = React.useState(true), loading = _f[0], setLoading = _f[1];
+    var _g = React.useState(null), error = _g[0], setError = _g[1];
+    var _h = React.useState(0), refreshKey = _h[0], setRefreshKey = _h[1];
     React.useEffect(function () {
+        console.log('[useCandidateDetails] fetch start', { candidateId: candidateId, currentUserEmail: currentUserEmail, interviewLevel: interviewLevel, grade: grade });
+        if (!candidateId || !currentUserEmail) {
+            setLoading(false);
+            return;
+        }
         var isMounted = true;
         var load = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var result, err_1;
@@ -42,39 +33,64 @@ function useCandidateDetails(candidateId, service) {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, service.getCandidateDetails(candidateId)];
+                        return [4 /*yield*/, (0, Evaluationformservice_1.getEvaluationFormData)(candidateId, currentUserEmail)];
                     case 2:
                         result = _a.sent();
-                        if (isMounted) {
-                            setData(result);
+                        if (!isMounted)
+                            return [2 /*return*/];
+                        if (!result.success) {
+                            setError('Failed to load candidate data. Please retry.');
+                            return [2 /*return*/];
                         }
+                        setCandidate({
+                            id: result.candidateId,
+                            applicantName: result.applicantName,
+                            jobTitle: result.positionTitle,
+                            grade: grade || result.grade,
+                            nationality: result.nationality,
+                            gender: result.gender,
+                            qualification: result.qualification,
+                            miningExp: result.miningExp,
+                            relevantExp: result.relevantExp,
+                            interviewDate: result.interviewDate,
+                            interviewLevel: interviewLevel || result.interviewLevel,
+                            disability: result.disability,
+                            conflictsOfInterest: result.conflictsOfInterest,
+                            panelMembers: result.panelMembers,
+                            reviewerName: result.reviewerName,
+                            jobTitleEn: result.jobTitleEn,
+                            jobTitleFr: result.jobTitleFr,
+                            currentUserPanelId: result.currentUserPanelId,
+                            currentUserGuid: result.currentUserGuid,
+                            recruitmentId: result.recruitmentId,
+                            jobCodeID: result.jobCodeId,
+                            currentRoleIDs: (ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.roleIDs) || [4],
+                        });
+                        setQuestions(result.questions.map(function (q) { return ({
+                            id: q.id,
+                            text: q.question,
+                            expectedResponse: q.answer,
+                        }); }));
+                        console.log('[useCandidateDetails] fetch success', { candidateId: candidateId, candidate: result, questions: result.questions.length, currentRoleIDs: ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.roleIDs });
                         return [3 /*break*/, 5];
                     case 3:
                         err_1 = _a.sent();
-                        if (isMounted) {
+                        console.error('[useCandidateDetails] fetch error', err_1);
+                        if (isMounted)
                             setError(err_1 instanceof Error ? err_1.message : 'Unable to load candidate details.');
-                        }
                         return [3 /*break*/, 5];
                     case 4:
-                        if (isMounted) {
+                        if (isMounted)
                             setLoading(false);
-                        }
                         return [7 /*endfinally*/];
                     case 5: return [2 /*return*/];
                 }
             });
         }); };
         load();
-        return function () {
-            isMounted = false;
-        };
-    }, [candidateId, service, refreshKey]);
-    var reload = React.useCallback(function () {
-        setRefreshKey(function (prev) { return prev + 1; });
-    }, []);
-    return { data: data, loading: loading, error: error, reload: reload };
-}
-function wait(ms) {
-    return new Promise(function (resolve) { return setTimeout(resolve, ms); });
+        return function () { isMounted = false; };
+    }, [candidateId, currentUserEmail, grade, interviewLevel, refreshKey]);
+    var reload = React.useCallback(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
+    return { candidate: candidate, questions: questions, loading: loading, error: error, reload: reload };
 }
 //# sourceMappingURL=fetchCandidateDetails.js.map

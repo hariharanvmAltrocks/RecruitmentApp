@@ -211,6 +211,9 @@ export const RecruitmentTable: React.FC = () => {
         [MatricID.ReviewProfileLM]: "/CandidateTable",
         [MatricID.AssignInterviewPanel]: "/CandidateTable",
         [MatricID.ReviewScoreCard]: "/CandidateTable",
+        [MatricID.EvalutionHR]: "/Evalution",
+        [MatricID.EvalutionLM]: "/Evalution",
+        [MatricID.ReviewScoreCard]: "/ReviewScoreCard",
       };
 
       const route = routeMap[matricID];

@@ -205,7 +205,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           <SkeletonBlock height="72px" />
         ) : (
           <p className="advert-review-drawer__description">
-            {advertContent?.description || "—"}
+            {advertContent?.description || ""}
           </p>
         )}
       </section>

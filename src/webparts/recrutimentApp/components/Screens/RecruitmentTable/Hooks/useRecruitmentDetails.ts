@@ -69,6 +69,7 @@ export const useRecruitmentDetails = (
 
   const { MatricID: matricID } = useUIState();
 
+
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
