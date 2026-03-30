@@ -1,119 +1,106 @@
-import React, { createContext, useContext, useReducer } from 'react';
-import ReviewScoreCardServices, { ReviewScoreCardResult, SubmitScorecardParams } from '../ReviewScoreCardServies/ReviewScoreCardServices';
+import * as React from 'react';
+import { useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+import { useRoleContext } from '../../../../utilities/hooks/RoleContext';
+import { ReviewScoreCardProvider, useReviewScoreCardContext } from './ReviewScoreCardProvider';
+import CandidateDrawer from '../Components/CandidateDrawer';
+import CandidateReviewModal from '../Components/CandidateReviewModal';
 
-interface ReviewScoreCardState {
-    loading: boolean;
-    data: ReviewScoreCardResult | null;
-    error: string | null;
-    submitting: boolean;
-    submitResult: { success: boolean; message: string } | null;
-    submitError: string | null;
-}
-
-interface ReviewScoreCardContextType {
-    state: ReviewScoreCardState;
-    loadReviewScoreCardData: (candidateId: number, currentUserEmail: string) => Promise<void>;
-    submitScorecard: (payload: SubmitScorecardParams) => Promise<void>;
-    handleSubmit: (params: SubmitScorecardParams, onSuccess?: () => void) => Promise<void>;
-    clearError: () => void;
-}
-
-const initialState: ReviewScoreCardState = {
-    loading: false,
-    data: null,
-    error: null,
-    submitting: false,
-    submitResult: null,
-    submitError: null,
-};
-
-type ReviewScoreCardAction =
-    | { type: 'LOADING' }
-    | { type: 'LOAD_SUCCESS'; payload: ReviewScoreCardResult }
-    | { type: 'LOAD_ERROR'; payload: string }
-    | { type: 'SUBMITTING' }
-    | { type: 'SUBMIT_SUCCESS'; payload: { success: boolean; message: string } }
-    | { type: 'SUBMIT_ERROR'; payload: string }
-    | { type: 'CLEAR_ERROR' };
-
-const reviewScoreCardReducer = (state: ReviewScoreCardState, action: ReviewScoreCardAction): ReviewScoreCardState => {
-    switch (action.type) {
-        case 'LOADING':
-            return { ...state, loading: true, error: null };
-        case 'LOAD_SUCCESS':
-            return { ...state, loading: false, data: action.payload, error: null };
-        case 'LOAD_ERROR':
-            return { ...state, loading: false, error: action.payload };
-        case 'SUBMITTING':
-            return { ...state, submitting: true, submitError: null };
-        case 'SUBMIT_SUCCESS':
-            return { ...state, submitting: false, submitResult: action.payload, submitError: null };
-        case 'SUBMIT_ERROR':
-            return { ...state, submitting: false, submitError: action.payload };
-        case 'CLEAR_ERROR':
-            return { ...state, error: null, submitError: null };
-        default:
-            return state;
-    }
-};
-
-const ReviewScoreCardContext = createContext<ReviewScoreCardContextType | undefined>(undefined);
-
-export const ReviewScoreCardProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
-    const [state, dispatch] = useReducer(reviewScoreCardReducer, initialState);
-
-    const loadReviewScoreCardData = async (candidateId: number, currentUserEmail: string) => {
-        dispatch({ type: 'LOADING' });
-        try {
-            const data = await ReviewScoreCardServices.getReviewScoreCardData(candidateId, currentUserEmail);
-            dispatch({ type: 'LOAD_SUCCESS', payload: data });
-        } catch (error) {
-            dispatch({ type: 'LOAD_ERROR', payload: (error as Error).message });
-        }
-    };
-
-    const submitScorecard = async (payload: SubmitScorecardParams) => {
-        dispatch({ type: 'SUBMITTING' });
-        try {
-            const result = await ReviewScoreCardServices.submitScorecard(payload);
-            dispatch({ type: 'SUBMIT_SUCCESS', payload: result });
-        } catch (error) {
-            dispatch({ type: 'SUBMIT_ERROR', payload: (error as Error).message });
-        }
-    };
-
-    const handleSubmit = async (params: SubmitScorecardParams, onSuccess?: () => void) => {
-        dispatch({ type: 'SUBMITTING' });
-        try {
-            const result = await ReviewScoreCardServices.submitScorecard(params);
-            dispatch({ type: 'SUBMIT_SUCCESS', payload: result });
-            if (onSuccess) onSuccess();
-        } catch (error) {
-            dispatch({ type: 'SUBMIT_ERROR', payload: (error as Error).message });
-        }
-    };
-
-    const clearError = () => {
-        dispatch({ type: 'CLEAR_ERROR' });
-    };
+const ReviewScoreCardContent: React.FC = () => {
+    const { ADGroupData } = useRoleContext();
+    const currentRoleId = ADGroupData?.roleIDs?.[0] || 0;
+    const hook = useReviewScoreCardContext();
 
     return (
-        <ReviewScoreCardContext.Provider value={{
-            state,
-            loadReviewScoreCardData,
-            submitScorecard,
-            handleSubmit,
-            clearError
-        }}>
-            {children}
-        </ReviewScoreCardContext.Provider>
+        <div>
+            <CandidateDrawer
+                candidates={hook.paginatedCandidates}
+                loading={hook.candidatesLoading}
+                onClose={() => {}}
+                onReview={hook.openReview}
+                recruitmentId={hook.recruitmentId}
+            />
+
+            <AnimatePresence>
+                {hook.reviewingCandidate && (
+                    <CandidateReviewModal
+                        candidate={hook.reviewingCandidate}
+                        reviewData={hook.reviewData}
+                        reviewLoading={hook.reviewLoading}
+                        job={null}
+                        scoreData={hook.scoreData}
+                        scoreLoading={hook.scoreLoading}
+                        showComments={hook.showComments}
+                        level1Comments={hook.level1Comments}
+                        level2Comments={hook.level2Comments}
+                        commentsLoading={hook.commentsLoading}
+                        onViewComments={hook.openComments}
+                        onCloseComments={() => hook.setShowComments(false)}
+                        hodDecision={hook.hodDecision}
+                        decisionComment={hook.decisionComment}
+                        confirmed={hook.confirmed}
+                        selectedPositionId={hook.selectedPositionId}
+                        selectedPositionText={hook.selectedPositionText}
+                        positionOptions={hook.positionOptions}
+                        submitting={hook.submitting}
+                        submitError={hook.submitError}
+                        successMessage={hook.successMessage}
+                        errors={hook.errors}
+                        shouldShowPositionId={hook.shouldShowPositionId}
+                        onDecisionChange={hook.setHodDecision}
+                        onCommentChange={hook.setDecisionComment}
+                        onConfirmChange={hook.setConfirmed}
+                        onPositionChange={(id, text) => {
+                            hook.setSelectedPositionId(id);
+                            hook.setSelectedPositionText(text);
+                            hook.setErrors({ ...hook.errors, position: false });
+                        }}
+                        onSubmit={hook.submitDecision}
+                        onClose={hook.closeReview}
+                        currentRoleId={currentRoleId}
+                        isLevel2Status={hook.isLevel2(hook.reviewingCandidate.statusId)}
+                    />
+                )}
+            </AnimatePresence>
+        </div>
     );
 };
 
-export const useReviewScoreCard = (): ReviewScoreCardContextType => {
-    const context = useContext(ReviewScoreCardContext);
-    if (context === undefined) {
-        throw new Error('useReviewScoreCard must be used within a ReviewScoreCardProvider');
+const ReviewScoreCard: React.FC<any> = (props) => {
+    const location = useLocation();
+
+    // ID comes from location.state (navigated via navigate('/ReviewScoreCard', { state: { ID: 636 } }))
+    // OR from props directly
+    const locState = location.state as any;
+    const recruitmentId = Number(
+        locState?.ID ||
+        locState?.recruitmentId ||
+        locState?.RecruitmentID ||
+        props?.ID ||
+        props?.recruitmentId ||
+        props?.RecruitmentID ||
+        0
+    );
+
+    console.log('[ReviewScoreCard] recruitmentId resolved:', recruitmentId, 'from state:', locState, 'props:', props);
+
+    const { ADGroupData } = useRoleContext();
+    const currentUserEmail = ADGroupData?.EmailId?.[0] || '';
+
+    if (!recruitmentId) {
+        return (
+            <div style={{ padding: 32, textAlign: 'center', color: '#b00020', fontSize: '1rem' }}>
+                <strong>Recruitment ID is missing.</strong><br />
+                Please open this page via the Review Score Card action button on the job row.
+            </div>
+        );
     }
-    return context;
+
+    return (
+        <ReviewScoreCardProvider recruitmentId={recruitmentId} currentUserEmail={currentUserEmail}>
+            <ReviewScoreCardContent />
+        </ReviewScoreCardProvider>
+    );
 };
+
+export default ReviewScoreCard;

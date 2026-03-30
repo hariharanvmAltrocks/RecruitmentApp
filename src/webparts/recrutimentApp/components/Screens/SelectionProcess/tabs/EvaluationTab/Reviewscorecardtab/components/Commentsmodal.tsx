@@ -14,10 +14,10 @@ interface Props {
   onClose:  () => void;
 }
 
-const CommentsModal: React.FC<Props> = ({ open, loading, level1, level2, onClose }) => {
+const CommentsModal: React.FC<Props> = ({ open, loading, level1 = [], level2 = [], onClose }) => {
   const allComments = React.useMemo(() => [
-    ...level1.map(c => ({ ...c, _level: "Level 1" })),
-    ...level2.map(c => ({ ...c, _level: "Level 2" })),
+    ...(level1 || []).map(c => ({ ...c, _level: "Level 1" })),
+    ...(level2 || []).map(c => ({ ...c, _level: "Level 2" })),
   ].sort((a, b) => {
     const d1 = a.Date ? new Date(a.Date).getTime() : 0;
     const d2 = b.Date ? new Date(b.Date).getTime() : 0;
@@ -35,7 +35,7 @@ const CommentsModal: React.FC<Props> = ({ open, loading, level1, level2, onClose
           >
             <div className={styles.mCommentsHeader}>
               <h3><FileText size={20} color="#2563eb" /> View Justification</h3>
-              <button onClick={onClose}><X size={20} /></button>
+              <button onClick={onClose} aria-label="Close comments modal"><X size={20} /></button>
             </div>
 
             <div className={styles.mCommentsBody}>

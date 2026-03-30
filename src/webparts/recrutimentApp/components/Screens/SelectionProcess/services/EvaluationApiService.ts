@@ -669,7 +669,6 @@ export const evaluationService = {
       const filter: any[] = candidateFilter && candidateFilter.length
         ? [...candidateFilter]
         : [
-            { FilterKey: "RecruitmentIDId", Operator: "eq", FilterValue: recruitmentID },
             { FilterKey: "ItemCreated",     Operator: "eq", FilterValue: "No" },
             { FilterKey: "JobCodeId",       Operator: "eq", FilterValue: jobCodeID },
             {
@@ -687,6 +686,9 @@ export const evaluationService = {
         Filter:          filter,
         Topcount:        1000,
       });
+
+      // Filter by recruitmentID after fetching
+      const filteredRes = res.filter(item => item.RecruitmentID?.ID === recruitmentID || item.RecruitmentIDId === recruitmentID);
 
       // Prefer explicit candidate job grade; fallback to recruitment-level Paterson grade.
       const { grade: defaultGrade } = await this.getGradeAndLevel(recruitmentID);

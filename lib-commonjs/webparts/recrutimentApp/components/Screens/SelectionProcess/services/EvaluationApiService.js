@@ -812,7 +812,7 @@ exports.evaluationService = {
     },
     fetchScorecardCandidates: function (recruitmentID_1, jobCodeID_1) {
         return tslib_1.__awaiter(this, arguments, void 0, function (recruitmentID, jobCodeID, currentUserEmail, candidateFilter) {
-            var filter, res, defaultGrade_1, enrichedWithGPA, e_9;
+            var filter, res, filteredRes, defaultGrade_1, enrichedWithGPA, e_9;
             var _this = this;
             if (currentUserEmail === void 0) { currentUserEmail = ""; }
             if (candidateFilter === void 0) { candidateFilter = []; }
@@ -822,7 +822,6 @@ exports.evaluationService = {
                         _a.trys.push([0, 4, , 5]);
                         filter = candidateFilter && candidateFilter.length
                             ? tslib_1.__spreadArray([], candidateFilter, true) : [
-                            { FilterKey: "RecruitmentIDId", Operator: "eq", FilterValue: recruitmentID },
                             { FilterKey: "ItemCreated", Operator: "eq", FilterValue: "No" },
                             { FilterKey: "JobCodeId", Operator: "eq", FilterValue: jobCodeID },
                             {
@@ -841,6 +840,7 @@ exports.evaluationService = {
                             })];
                     case 1:
                         res = _a.sent();
+                        filteredRes = res.filter(function (item) { var _a; return ((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.ID) === recruitmentID || item.RecruitmentIDId === recruitmentID; });
                         return [4 /*yield*/, this.getGradeAndLevel(recruitmentID)];
                     case 2:
                         defaultGrade_1 = (_a.sent()).grade;

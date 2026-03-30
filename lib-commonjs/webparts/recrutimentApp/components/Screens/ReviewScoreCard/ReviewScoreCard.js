@@ -1,39 +1,49 @@
 "use strict";
+// ReviewScoreCard.tsx
+// Main entry point. Route passes recruitmentId via props or router state.
+// Renders:
+//   1. CandidateDrawer  — always visible, shows candidates for recruitmentId
+//   2. CandidateReviewModal — opens when a candidate is clicked (pencil/eye)
+//
+// All state lives in ReviewScoreCardProvider (via useReviewScorecard hook).
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
-var react_1 = tslib_1.__importStar(require("react"));
-var ReviewScorecardState_1 = require("./State/ReviewScorecardState");
+var react_1 = tslib_1.__importDefault(require("react"));
+var react_router_dom_1 = require("react-router-dom");
+var framer_motion_1 = require("framer-motion");
+var ReviewScoreCardProvider_1 = require("./State/ReviewScoreCardProvider");
 var CandidateDrawer_1 = tslib_1.__importDefault(require("./Components/CandidateDrawer"));
-var QuestionnaireTab_1 = tslib_1.__importDefault(require("./Components/QuestionnaireTab"));
-var ScorecardDetails_1 = tslib_1.__importDefault(require("./Components/ScorecardDetails"));
-var HODDecisionPanel_1 = tslib_1.__importDefault(require("./Components/HODDecisionPanel"));
-var ReviewScorecard_module_scss_1 = tslib_1.__importDefault(require("./ReviewScorecard.module.scss"));
+var CandidateReviewModal_1 = tslib_1.__importDefault(require("./Components/CandidateReviewModal"));
 var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
-var ReviewScoreCardContent = function (_a) {
-    var _b, _c;
-    var candidateId = _a.candidateId, isOpen = _a.isOpen, onClose = _a.onClose;
-    var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
-    var currentUserEmail = (_c = (_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _b === void 0 ? void 0 : _b[0]) !== null && _c !== void 0 ? _c : '';
-    console.log('ReviewScoreCard props:', { candidateId: candidateId, isOpen: isOpen });
-    var _d = (0, ReviewScorecardState_1.useReviewScoreCard)(), state = _d.state, loadReviewScoreCardData = _d.loadReviewScoreCardData;
-    console.log('ReviewScoreCard state:', state);
-    (0, react_1.useEffect)(function () {
-        if (isOpen && candidateId && currentUserEmail) {
-            console.log('Loading review scorecard data for:', candidateId, currentUserEmail);
-            loadReviewScoreCardData(candidateId, currentUserEmail);
-        }
-    }, [isOpen, candidateId, currentUserEmail, loadReviewScoreCardData]);
-    if (!isOpen)
-        return null;
-    return (react_1.default.createElement(CandidateDrawer_1.default, { isOpen: isOpen, onClose: onClose, candidateData: state.data, loading: state.loading, error: state.error }, state.data && (react_1.default.createElement("div", { className: ReviewScorecard_module_scss_1.default.tabsContainer },
-        react_1.default.createElement(QuestionnaireTab_1.default, { questions: state.data.questions }),
-        react_1.default.createElement(ScorecardDetails_1.default, { scorecard: state.data.scorecard, level2Scorecard: state.data.level2Scorecard, interviewLevel: state.data.interviewLevel }),
-        react_1.default.createElement(HODDecisionPanel_1.default, { hodDecision: state.data.hodDecision })))));
+// ── Inner content (has access to context) ─────────────────────────────────────
+var ReviewScoreCardContent = function () {
+    var _a;
+    var ADGroupData = (0, RoleContext_1.useRoleContext)().ADGroupData;
+    var currentRoleId = ((_a = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.roleIDs) === null || _a === void 0 ? void 0 : _a[0]) || 0;
+    var hook = (0, ReviewScoreCardProvider_1.useReviewScoreCardContext)();
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement(framer_motion_1.AnimatePresence, null, hook.drawerOpen && (react_1.default.createElement(CandidateDrawer_1.default, { candidates: hook.paginatedCandidates, loading: hook.candidatesLoading, onClose: function () { }, onReview: hook.openReview, recruitmentId: hook.recruitmentId }))),
+        react_1.default.createElement(framer_motion_1.AnimatePresence, null, hook.reviewingCandidate && (react_1.default.createElement(CandidateReviewModal_1.default, { candidate: hook.reviewingCandidate, reviewData: hook.reviewData, reviewLoading: hook.reviewLoading, scoreData: hook.scoreData, scoreLoading: hook.scoreLoading, showComments: hook.showComments, level1Comments: hook.level1Comments, level2Comments: hook.level2Comments, commentsLoading: hook.commentsLoading, onViewComments: hook.openComments, onCloseComments: function () { return hook.setShowComments(false); }, hodDecision: hook.hodDecision, decisionComment: hook.decisionComment, confirmed: hook.confirmed, selectedPositionId: hook.selectedPositionId, selectedPositionText: hook.selectedPositionText, positionOptions: hook.positionOptions, submitting: hook.submitting, submitError: hook.submitError, successMessage: hook.successMessage, errors: hook.errors, shouldShowPositionId: hook.shouldShowPositionId, onDecisionChange: hook.setHodDecision, onCommentChange: hook.setDecisionComment, onConfirmChange: hook.setConfirmed, onPositionChange: function (id, text) {
+                hook.setSelectedPositionId(id);
+                hook.setSelectedPositionText(text);
+                hook.setErrors(tslib_1.__assign(tslib_1.__assign({}, hook.errors), { position: false }));
+            }, onSubmit: hook.submitDecision, onClose: hook.closeReview, currentRoleId: currentRoleId, isLevel2Status: hook.isLevel2(hook.reviewingCandidate.statusId) })))));
 };
-var ReviewScoreCard = function (props) {
-    console.log('ReviewScoreCard component rendered with props:', props);
-    return (react_1.default.createElement(ReviewScorecardState_1.ReviewScoreCardProvider, null,
-        react_1.default.createElement(ReviewScoreCardContent, tslib_1.__assign({}, props))));
+// ── Public export with Provider wrapper ───────────────────────────────────────
+var ReviewScoreCard = function (_a) {
+    var _b, _c, _d;
+    var recruitmentId = _a.recruitmentId;
+    var location = (0, react_router_dom_1.useLocation)();
+    var routeState = location.state;
+    var effectiveRecruitmentId = Number((_c = (_b = recruitmentId !== null && recruitmentId !== void 0 ? recruitmentId : routeState === null || routeState === void 0 ? void 0 : routeState.recruitmentId) !== null && _b !== void 0 ? _b : routeState === null || routeState === void 0 ? void 0 : routeState.ID) !== null && _c !== void 0 ? _c : 0);
+    console.log('[ReviewScoreCard] recruitmentId:', effectiveRecruitmentId, 'routeState:', routeState);
+    var ADGroupData = (0, RoleContext_1.useRoleContext)().ADGroupData;
+    var currentUserEmail = ((_d = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _d === void 0 ? void 0 : _d[0]) || '';
+    if (!effectiveRecruitmentId) {
+        return (react_1.default.createElement("div", { style: { padding: 24, textAlign: 'center', color: '#dc2626', fontSize: '0.9rem' } }, "Recruitment ID is missing. Please open Review Score Card via the recruitment row action or provide a valid ID in route state."));
+    }
+    return (react_1.default.createElement(ReviewScoreCardProvider_1.ReviewScoreCardProvider, { recruitmentId: effectiveRecruitmentId, currentUserEmail: currentUserEmail },
+        react_1.default.createElement(ReviewScoreCardContent, null)));
 };
 exports.default = ReviewScoreCard;
 //# sourceMappingURL=ReviewScoreCard.js.map

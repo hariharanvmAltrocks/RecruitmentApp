@@ -13,6 +13,8 @@ interface AppRoutesProps {
 }
 
 const AppRoutes: React.FC<AppRoutesProps> = ({ props, activeMenuId }) => (
+  console.log('Rendering AppRoutes with activeMenuId:', activeMenuId),
+  console.log('Props passed to AppRoutes:', props),
   <Routes>
     <Route path="/Dashboard" element={<Dashboard {...props} />} />
     <Route path="/RecruitmentTable" element={<RecruitmentTable  />} />
@@ -20,7 +22,7 @@ const AppRoutes: React.FC<AppRoutesProps> = ({ props, activeMenuId }) => (
     <Route path="/CandidateTable" element={<CandidateTable {...props} />}/>
     <Route path="/Evalution" element={<Evalution {...props} />} />
     <Route path="/ReviewScoreCard" element={<ReviewScoreCard {...props} />} />
-    {/* <Route path="/RecurimentProcess" element={<RecruitmentProcess {...props} />} /> */}
+    <Route path="/RecurimentProcess" element={<RecruitmentProcess {...props} />} />
   </Routes>
 );
 

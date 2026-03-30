@@ -8,6 +8,7 @@ import SPServices from "../SPService/spservice";
 import { IMasterService } from "./IMasterService";
 
 export default class MasterService implements IMasterService {
+    [x: string]: any;
 
   async userRole(): Promise<UserRoleResponseDetails> {
     try {
@@ -680,10 +681,10 @@ export default class MasterService implements IMasterService {
                    Orderby: "ID",
                    Orderbydecorasc: true,
         }).then((data: any) => {
-          GridResult = {
+          GridResult = data && data.length > 0 ? {
             JobCode : data[0].JobUniqueKey 
-          } 
-           });
+          } : { JobCode: "" };
+        });
       
       }
       return {

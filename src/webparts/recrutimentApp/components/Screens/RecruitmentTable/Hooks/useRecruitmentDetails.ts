@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { EvalutionItem, RecruitmentItem, RecruitmentTabKey } from "../RecruitmentTable.types";
+import {
+  EvalutionItem,
+  RecruitmentItem,
+  RecruitmentTabKey,
+} from "../RecruitmentTable.types";
 import { DashboardServices } from "../../../../services/ServiceExport";
 import { ListNames } from "../../../../utilities/Config";
 import { MetricQueryConfig } from "../../Dashboard/metricColumns.config";
@@ -85,13 +89,14 @@ interface UseRecruitmentDetailsResult {
 //   },
 // ];
 
-export const useRecruitmentDetails = (activeTabKey: RecruitmentTabKey): UseRecruitmentDetailsResult => {
+export const useRecruitmentDetails = (
+  activeTabKey: RecruitmentTabKey,
+): UseRecruitmentDetailsResult => {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const { MatricID: matricID } = useUIState();
 
-  
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
@@ -100,60 +105,134 @@ export const useRecruitmentDetails = (activeTabKey: RecruitmentTabKey): UseRecru
       if (!isMounted) {
         return;
       }
-        const Filter = MetricQueryConfig[matricID];
-        const condition = "and";
-                  let response: any;
-                 
-        if(matricID != 0){
-const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
+      const Filter = MetricQueryConfig[matricID];
+      const condition = "and";
+      let response: any;
+      const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
 
-                  switch (filterObj.ListName) {
-                      case ListNames.HRMSNewPositionRequest:
-                          response = await DashboardServices.GetNPAEPVRRDetails(filterObj.Filter, condition);
-                          break;
-                      case ListNames.HRMSRecruitmentDptDetails:
-                        //  if(matricID === Ma)
-                          response = await DashboardServices.GetRecruitmentDetails(filterObj.Filter[0], condition);
-                          break;
-                      case ListNames.HRMSRecruitmentCandidatePersonalDetails:
-                          response = await DashboardServices.GetCandidateDetails(filterObj.Filter[0], condition);
-                          break;
-                      case ListNames.HRMSSelectedCandidateDetailsByHOD:
-                          response = await DashboardServices.GetSelectedCandidate(filterObj.Filter[0], condition);
-                          break;
-                  }
-        }else {
-          response = await DashboardServices.GetRecruitmentDetails([], condition);
+      if (matricID != 0) {
+        switch (filterObj.ListName) {
+          case ListNames.HRMSNewPositionRequest:
+            response = await DashboardServices.GetNPAEPVRRDetails(
+              filterObj.Filter,
+              condition,
+            );
+            break;
+          case ListNames.HRMSRecruitmentDptDetails:
+            //  if(matricID === Ma)
+            response = await DashboardServices.GetRecruitmentDetails(
+              filterObj.Filter[0],
+              condition,
+            );
+            break;
+          case ListNames.HRMSRecruitmentCandidatePersonalDetails:
+            response = await DashboardServices.GetCandidateDetails(
+              filterObj.Filter[0],
+              condition,
+            );
+            break;
+          case ListNames.HRMSSelectedCandidateDetailsByHOD:
+            response = await DashboardServices.GetSelectedCandidate(
+              filterObj.Filter[0],
+              condition,
+            );
+            break;
         }
-         let mappedItems: any[]
-        if(matricID === MatricID.EvalutionHR){
-          mappedItems  = response?.data?.map((item: any) => ({
-               id: item.RecordID,
-                    ItemID: item.ID,
-                   applicantName: item.ApplicantName,
-                        title: item.PositionTitle,
-                        nationlity: item.Nationality,
-                        interviewDate: item.InterviewDate,
-                        interviewLevels: item.interviewLevels,
-                        grade: item.JobGrade,
-                        status: item.Status,
-                        statusId: item.StatusId
-                  })) ?? [];
-        }else {
-             mappedItems = response?.data?.map((item: any) => ({
-                    id: item.RecordID,
-                    ItemID: item.ID,
-                    jobCode: item.JobCode,
-                    title: item.JobTitleEnglish ?? "",
-                    department: item.Department,
-                    count: item.NumberOfPersonNeeded,
-                    requestType: item.Type,
-                    nationality: item.Nationality,
-                    status: item.Status,
-                     statusId: item.StatusId
-                  })) ?? [];
-           
+      } else {
+        response = await DashboardServices.GetRecruitmentDetails([], condition);
+      }
+      let mappedItems: any[];
+    if (matricID === MatricID.EvalutionHR || matricID === MatricID.EvalutionHOD || matricID === MatricID.EvalutionLM) {
+
+        mappedItems = response?.data?.map((item: any) => ({
+
+          id: item.RecordID,
+
+          ItemID: item.ID,
+
+          applicantName: item.ApplicantName,
+
+          title: item.PositionTitle,
+
+          nationlity: item.Nationality,
+
+          interviewDate: item.InterviewDate,
+
+          interviewLevels: item.interviewLevels,
+
+          grade: item.JobGrade,
+
+          status: item.Status,
+
+          statusId: item.StatusId,
+
+          jobCodeID: item.JobCodeId,
+
+        })) ?? [];
+
+      } else {
+
+        if (filterObj.ListName === ListNames.HRMSRecruitmentCandidatePersonalDetails) {
+
+          mappedItems = response?.data?.map((item: any) => ({
+
+            id: item.DeptDetails[0]?.RecordID,
+
+            ItemID: item.DeptDetails[0]?.ID,
+
+            jobCode: item?.DeptDetails[0]?.JobCode,
+
+            title: item?.DeptDetails[0]?.JobTitleEnglish ?? "",
+
+            department: item?.DeptDetails[0]?.Department,
+
+            count: item.DeptDetails[0]?.NumberOfPersonNeeded,
+
+            requestType: item.DeptDetails[0]?.Type,
+
+            nationality: item.DeptDetails[0]?.Nationality,
+
+            status: item.DeptDetails[0]?.Status,
+
+            statusId: item.DeptDetails[0]?.StatusId,
+
+            jobCodeID: item.DeptDetails[0]?.JobCodeId,
+
+          })) ?? [];
+
+        } else {  
+
+
+
+          mappedItems = response?.data?.map((item: any) => ({
+
+            id: item?.RecordID,
+
+            ItemID: item?.ID,
+
+            jobCode: item?.JobCode,
+
+            title: item?.JobTitleEnglish ?? "",
+
+            department: item?.Department,
+
+            count: item.NumberOfPersonNeeded,
+
+            requestType: item.Type,
+
+            nationality: item.Nationality,
+
+            status: item.Status,
+
+            statusId: item.StatusId,
+
+            jobCodeID: item.JobCodeId,
+
+          })) ?? [];
+
         }
+
+      }
       setItems(mappedItems);
       setLoading(false);
     }, 1100);
