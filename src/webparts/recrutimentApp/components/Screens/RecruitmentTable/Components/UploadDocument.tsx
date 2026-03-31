@@ -17,6 +17,7 @@ export interface UploadDocumentProps {
   required?: boolean;
   onChange?: (files: UploadedFile[]) => void;
   hasError?: boolean;
+  disabled?: boolean;
 }
 
 const DEFAULT_ACCEPTED = ".pdf,.doc,.docx,.xls,.xlsx";
@@ -52,6 +53,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
   required = false,
   onChange,
   hasError = false,
+  disabled = false
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -216,6 +218,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
         accept={acceptedFormats}
         multiple={multiple}
         onChange={handleInputChange}
+        disabled={disabled}
       />
 
       {/* ── Format / size errors ── */}

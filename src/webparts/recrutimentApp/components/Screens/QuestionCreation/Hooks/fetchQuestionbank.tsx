@@ -48,6 +48,8 @@ export const useFetchQuestionBank = (discipline: string, statusId: number, enabl
             type: "single",
             questionEn: item.question,
             questionFr: item.questionFr ?? "",
+            answerEn: item.expectedAnswer ?? "",
+            answerFr: item.expectedAnswerFr ?? "",
             options,
             answers: options.filter((opt) => opt.isCorrect),
             scopeId: item.scope ?? "",

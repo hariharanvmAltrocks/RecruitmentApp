@@ -9,7 +9,6 @@ var react_router_dom_1 = require("react-router-dom");
 var fetchCandidateDashboardDetails_1 = require("./Hooks/fetchCandidateDashboardDetails");
 var ShowCandidateDetailsPopup_1 = require("./Components/ShowCandidateDetailsPopup");
 var DataTable_1 = require("../../Comman/DataTable/DataTable");
-require("../RecruitmentTable/AdvertReviewDrawer/AdvertReviewDrawer.scss");
 require("./CandidateTable.scss");
 var getPositionDetails_1 = require("../RecruitmentTable/AdvertReviewDrawer/Hooks/getPositionDetails");
 var Config_1 = require("../../../utilities/Config");
@@ -35,18 +34,27 @@ var CandidateTable = function (props) {
     (0, react_1.useEffect)(function () {
         positionDetailsRef.current = positionDetails;
     }, [positionDetails]);
+    var _e = (0, react_1.useState)(false), isRefreshing = _e[0], setIsRefreshing = _e[1];
     var jobId = (_a = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId) !== null && _a !== void 0 ? _a : 0;
-    var _e = (0, fetchCandidateDashboardDetails_1.useFetchCandidateDashboardDetails)({ jobId: jobId, initialPageSize: 10, enable: !positionLoading }), data = _e.data, loading = _e.loading, error = _e.error, pagination = _e.pagination, fetchPage = _e.fetchPage, setPageSize = _e.setPageSize;
+    var _f = (0, fetchCandidateDashboardDetails_1.useFetchCandidateDashboardDetails)({ jobId: jobId, initialPageSize: 10, enable: !positionLoading }), data = _f.data, loading = _f.loading, error = _f.error, pagination = _f.pagination, fetchPage = _f.fetchPage, setPageSize = _f.setPageSize, refresh = _f.refresh;
+    var handleRefresh = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        return tslib_1.__generator(this, function (_a) {
+            setIsRefreshing(true);
+            refresh();
+            setTimeout(function () { return setIsRefreshing(false); }, 600);
+            return [2 /*return*/];
+        });
+    }); }, [refresh]);
     var onHoldRef = (0, react_1.useRef)(data);
     (0, react_1.useEffect)(function () {
         onHoldRef.current = data;
     }, [data]);
     var headerMeta = (0, react_1.useMemo)(function () {
-        if (!data.length)
+        if (!positionDetails)
             return { code: "—", title: "—" };
-        return { code: data[0].JobCode, title: data[0].PositionTitle };
-    }, [data]);
-    var _f = (0, useModalPopup_1.useModalPopup)(), modalState = _f.modalState, showModal = _f.showModal, closeModal = _f.closeModal;
+        return { code: positionDetails.JobCode, title: positionDetails.JobTitleEnglish };
+    }, [positionDetails]);
+    var _g = (0, useModalPopup_1.useModalPopup)(), modalState = _g.modalState, showModal = _g.showModal, closeModal = _g.closeModal;
     var handleClose = (0, react_1.useCallback)(function () { return navigate("/RecruitmentTable"); }, [navigate]);
     var handlePageChange = (0, react_1.useCallback)(function (page) { return fetchPage(page); }, [fetchPage]);
     var handlePageSizeChange = (0, react_1.useCallback)(function (size) { return setPageSize(size); }, [setPageSize]);
@@ -204,28 +212,31 @@ var CandidateTable = function (props) {
         }
     ]; }, []);
     return (react_1.default.createElement(framer_motion_1.AnimatePresence, null,
-        react_1.default.createElement("div", { className: "advert-review-drawer" },
-            react_1.default.createElement(framer_motion_1.motion.div, { className: "advert-review-drawer__backdrop", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, onClick: handleClose }),
-            react_1.default.createElement(framer_motion_1.motion.div, { className: "advert-review-drawer__panel", variants: panelVariants, initial: "hidden", animate: "visible", exit: "exit" },
-                react_1.default.createElement("div", { className: "advert-review-drawer__header" },
-                    react_1.default.createElement("div", { className: "advert-review-drawer__header-left" },
-                        react_1.default.createElement("div", { className: "advert-review-drawer__header-icon" },
+        react_1.default.createElement("div", { className: "candidate-table" },
+            react_1.default.createElement(framer_motion_1.motion.div, { className: "candidate-table__backdrop", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, onClick: handleClose }),
+            react_1.default.createElement(framer_motion_1.motion.div, { className: "candidate-table__panel", variants: panelVariants, initial: "hidden", animate: "visible", exit: "exit" },
+                react_1.default.createElement("div", { className: "candidate-table__header" },
+                    react_1.default.createElement("div", { className: "candidate-table__header-left" },
+                        react_1.default.createElement("div", { className: "candidate-table__header-icon" },
                             react_1.default.createElement(lucide_react_1.Users, { size: 20 })),
                         react_1.default.createElement("div", null,
-                            react_1.default.createElement("h2", { className: "advert-review-drawer__title" }, "Review Candidate Profiles"),
-                            react_1.default.createElement("div", { className: "advert-review-drawer__meta" },
-                                react_1.default.createElement("span", { className: "advert-review-drawer__badge" }, headerMeta.code),
-                                react_1.default.createElement("span", { className: "advert-review-drawer__dot" }),
-                                react_1.default.createElement("span", { className: "advert-review-drawer__meta-text" }, headerMeta.title)))),
-                    react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__close", onClick: handleClose },
-                        react_1.default.createElement(lucide_react_1.X, { size: 18 }))),
-                react_1.default.createElement("div", { className: "advert-review-drawer__content" },
-                    react_1.default.createElement("div", { className: "candidate-table" },
-                        react_1.default.createElement("div", { className: "candidate-table__card" },
-                            react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: data, loading: loading !== null && loading !== void 0 ? loading : positionLoading, 
-                                // error={error ?? undefined}
-                                pageSize: pagination.pageSize, currentPage: pagination.currentPage, totalCount: pagination.totalItems, onPageChange: handlePageChange, onPageSizeChange: handlePageSizeChange, pageSizeOptions: [5, 10, 20, 50], emptyMessage: "No candidates found for this job." })))))),
-        react_1.default.createElement(framer_motion_1.AnimatePresence, null, activeCandidateId && (react_1.default.createElement(ShowCandidateDetailsPopup_1.ShowCandidateDetailsPopup, { isOpen: true, candidateId: activeCandidateId, onClose: function () { return setActiveCandidateId(null); }, panelParams: paneldata !== null && paneldata !== void 0 ? paneldata : null, positionDetails: positionDetails !== null && positionDetails !== void 0 ? positionDetails : null }))),
+                            react_1.default.createElement("h2", { className: "candidate-table__title" }, "Review Candidate Profiles"),
+                            react_1.default.createElement("div", { className: "candidate-table__meta" },
+                                react_1.default.createElement("span", { className: "candidate-table__badge" }, headerMeta.code),
+                                react_1.default.createElement("span", { className: "candidate-table__dot" }),
+                                react_1.default.createElement("span", { className: "candidate-table__meta-text" }, headerMeta.title)))),
+                    react_1.default.createElement("div", { className: "candidate-table__header-right" },
+                        react_1.default.createElement("button", { type: "button", className: "candidate-table__refresh", onClick: handleRefresh, disabled: isRefreshing },
+                            react_1.default.createElement(lucide_react_1.RefreshCw, { size: 14, className: isRefreshing ? "spin" : "" }),
+                            "Refresh"),
+                        react_1.default.createElement("button", { type: "button", className: "candidate-table__close", onClick: handleClose },
+                            react_1.default.createElement(lucide_react_1.X, { size: 18 })))),
+                react_1.default.createElement("div", { className: "candidate-table__content" },
+                    react_1.default.createElement("div", { className: "candidate-table__card" },
+                        react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: data, loading: loading !== null && loading !== void 0 ? loading : positionLoading, 
+                            // error={error ?? undefined}
+                            pageSize: pagination.pageSize, currentPage: pagination.currentPage, totalCount: pagination.totalItems, onPageChange: handlePageChange, onPageSizeChange: handlePageSizeChange, pageSizeOptions: [5, 10, 20, 50], emptyMessage: "No candidates found for this job." }))))),
+        react_1.default.createElement(framer_motion_1.AnimatePresence, null, activeCandidateId && (react_1.default.createElement(ShowCandidateDetailsPopup_1.ShowCandidateDetailsPopup, { isOpen: true, candidateId: activeCandidateId, onClose: function () { return setActiveCandidateId(null); }, panelParams: paneldata !== null && paneldata !== void 0 ? paneldata : null, positionDetails: positionDetails !== null && positionDetails !== void 0 ? positionDetails : null, handleRefresh: handleRefresh }))),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))));
 };
 exports.CandidateTable = CandidateTable;

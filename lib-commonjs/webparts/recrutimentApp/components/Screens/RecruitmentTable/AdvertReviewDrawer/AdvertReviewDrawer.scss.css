@@ -555,7 +555,7 @@
 }
 .advert-review-drawer__button {
   border: none;
-  background: transparent;
+  background: rgba(65, 55, 55, 0.1882352941);
   font-size: 13px;
   font-weight: 700;
   color: #64748b;

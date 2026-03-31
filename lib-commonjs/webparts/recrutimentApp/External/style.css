@@ -66,28 +66,36 @@
 .ControlZone {
   max-width: 100% !important;
 } */
-/* #workbenchCommandBar {
+#workbenchCommandBar {
   display: none !important;
-} */
+}
+
+:global(#workbenchPageContent),
+:global(body),
+:global(*) {
+  font-family: var(--fontFamily, "Inter", "Segoe UI", sans-serif) !important;
+}
+
 /* @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap'); */
-/* 
-:root {
+/* :root {
   --app-font-family: "Inter", "Segoe UI", sans-serif;
-} */
-:global {
-  .ms-Fabric,
-  [class*=RecrutimentAppWrapper] {
+}  */
+/* :global {
+  .ms-Fabric, 
+   [class*="RecrutimentAppWrapper"] { 
+     font-family: var(--app-font-family) !important;
+   }
+
+ div, span, p, h1, h2, h3, h4, h5, h6, a, button, input {
     font-family: var(--app-font-family) !important;
-  }
-  div, span, p, h1, h2, h3, h4, h5, h6, a, button, input {
-    font-family: var(--app-font-family) !important;
-  }
-  #workbenchPageContent,
+ }
+
+  #workbenchPageContent, 
   .CanvasComponent,
   .ControlZone {
     max-width: 100% !important;
   }
-  /* #workbenchCommandBar {
-  display: none !important;
-  } */
-}
+   #workbenchCommandBar {
+   display: none !important;
+   } 
+} */

@@ -85,11 +85,21 @@ var QuestionCreation = function (props) {
                 case 0:
                     minQuestions = 5;
                     remaining = minQuestions - preparedQuestions.length;
-                    if (preparedQuestions.length < minQuestions) {
+                    if (mode === "careerPortal" && preparedQuestions.length < minQuestions) {
                         showModal({
                             type: "error",
                             title: "Minimum Requirement",
                             message: "Please add at least ".concat(minQuestions, " questions. You need ").concat(remaining, " more."),
+                            confirmLabel: "Ok",
+                            onConfirm: closeModal,
+                        });
+                        return [2 /*return*/];
+                    }
+                    else if (mode === "interview" && preparedQuestions.length < 1) {
+                        showModal({
+                            type: "error",
+                            title: "Minimum Requirement",
+                            message: "Please add at least ".concat(1, " questions."),
                             confirmLabel: "Ok",
                             onConfirm: closeModal,
                         });

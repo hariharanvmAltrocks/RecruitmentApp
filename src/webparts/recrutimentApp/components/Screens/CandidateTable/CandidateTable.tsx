@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Users, X, Eye, PauseCircle, Calendar, CheckCircle } from "lucide-react";
+import { Users, X, Eye, PauseCircle, Calendar, CheckCircle, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   CandidateDashboardItem,
@@ -8,7 +8,6 @@ import {
 } from "./Hooks/fetchCandidateDashboardDetails";
 import { panelvalues, ShowCandidateDetailsPopup } from "./Components/ShowCandidateDetailsPopup";
 import { DataTable, DataTableColumn } from "../../Comman/DataTable/DataTable";
-import "../RecruitmentTable/AdvertReviewDrawer/AdvertReviewDrawer.scss";
 import "./CandidateTable.scss";
 import { usePositionDetails } from "../RecruitmentTable/AdvertReviewDrawer/Hooks/getPositionDetails";
 import { JobAdvertAlertMsg, PendingCandidateAlertMsg, StatusId, workflowStatusApi } from "../../../utilities/Config";
@@ -39,6 +38,9 @@ export const CandidateTable: React.FC = (props: any) => {
   useEffect(() => {
     positionDetailsRef.current = positionDetails;
   }, [positionDetails]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+
 
   const jobId = positionDetails?.JobCodeId ?? 0;
   const {
@@ -48,16 +50,25 @@ export const CandidateTable: React.FC = (props: any) => {
     pagination,
     fetchPage,
     setPageSize,
+    refresh
   } = useFetchCandidateDashboardDetails({ jobId, initialPageSize: 10, enable: !positionLoading });
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    refresh();
+    setTimeout(() => setIsRefreshing(false), 600);
+  }, [refresh]);
+
   const onHoldRef = useRef(data);
+
   useEffect(() => {
     onHoldRef.current = data;
   }, [data]);
 
   const headerMeta = useMemo(() => {
-    if (!data.length) return { code: "—", title: "—" };
-    return { code: data[0].JobCode, title: data[0].PositionTitle };
-  }, [data]);
+    if (!positionDetails) return { code: "—", title: "—" };
+    return { code: positionDetails.JobCode, title: positionDetails.JobTitleEnglish };
+  }, [positionDetails]);
 
   const { modalState, showModal, closeModal } = useModalPopup();
 
@@ -293,9 +304,9 @@ export const CandidateTable: React.FC = (props: any) => {
 
   return (
     <AnimatePresence>
-      <div className="advert-review-drawer">
+      <div className="candidate-table">
         <motion.div
-          className="advert-review-drawer__backdrop"
+          className="candidate-table__backdrop"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -303,74 +314,72 @@ export const CandidateTable: React.FC = (props: any) => {
         />
 
         <motion.div
-          className="advert-review-drawer__panel"
+          className="candidate-table__panel"
           variants={panelVariants}
           initial="hidden"
           animate="visible"
           exit="exit"
         >
-          <div className="advert-review-drawer__header">
-            <div className="advert-review-drawer__header-left">
-              <div className="advert-review-drawer__header-icon">
+          <div className="candidate-table__header">
+            <div className="candidate-table__header-left">
+              <div className="candidate-table__header-icon">
                 <Users size={20} />
               </div>
               <div>
-                <h2 className="advert-review-drawer__title">
+                <h2 className="candidate-table__title">
                   Review Candidate Profiles
                 </h2>
-                <div className="advert-review-drawer__meta">
-                  <span className="advert-review-drawer__badge">
+                <div className="candidate-table__meta">
+                  <span className="candidate-table__badge">
                     {headerMeta.code}
                   </span>
-                  <span className="advert-review-drawer__dot" />
-                  <span className="advert-review-drawer__meta-text">
+                  <span className="candidate-table__dot" />
+                  <span className="candidate-table__meta-text">
                     {headerMeta.title}
                   </span>
                 </div>
               </div>
             </div>
-            <button
-              type="button"
-              className="advert-review-drawer__close"
-              onClick={handleClose}
-            >
-              <X size={18} />
-            </button>
+
+            <div className="candidate-table__header-right">
+              <button
+                type="button"
+                className="candidate-table__refresh"
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+              >
+                <RefreshCw
+                  size={14}
+                  className={isRefreshing ? "spin" : ""}
+                />
+                Refresh
+              </button>
+
+              <button
+                type="button"
+                className="candidate-table__close"
+                onClick={handleClose}
+              >
+                <X size={18} />
+              </button>
+            </div>
           </div>
 
-          <div className="advert-review-drawer__content">
-            <div className="candidate-table">
-              <div className="candidate-table__card">
-                <DataTable<CandidateDashboardItem>
-                  columns={columns}
-                  data={data}
-                  loading={loading ?? positionLoading}
-                  // error={error ?? undefined}
-                  pageSize={pagination.pageSize}
-                  currentPage={pagination.currentPage}
-                  totalCount={pagination.totalItems}
-                  onPageChange={handlePageChange}
-                  onPageSizeChange={handlePageSizeChange}
-                  pageSizeOptions={[5, 10, 20, 50]}
-                  emptyMessage="No candidates found for this job."
-                />
-
-                {/* <div className="candidate-table__footer">
-                  <button
-                    type="button"
-                    className="candidate-table__footer-btn candidate-table__footer-btn--ghost"
-                    onClick={handleClose}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className="candidate-table__footer-btn candidate-table__footer-btn--primary"
-                  >
-                    Submit Review
-                  </button>
-                </div> */}
-              </div>
+          <div className="candidate-table__content">
+            <div className="candidate-table__card">
+              <DataTable<CandidateDashboardItem>
+                columns={columns}
+                data={data}
+                loading={loading ?? positionLoading}
+                // error={error ?? undefined}
+                pageSize={pagination.pageSize}
+                currentPage={pagination.currentPage}
+                totalCount={pagination.totalItems}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+                pageSizeOptions={[5, 10, 20, 50]}
+                emptyMessage="No candidates found for this job."
+              />
             </div>
           </div>
         </motion.div>
@@ -383,6 +392,7 @@ export const CandidateTable: React.FC = (props: any) => {
             onClose={() => setActiveCandidateId(null)}
             panelParams={paneldata ?? null}
             positionDetails={positionDetails ?? null}
+            handleRefresh={handleRefresh}
           />
         )}
       </AnimatePresence>

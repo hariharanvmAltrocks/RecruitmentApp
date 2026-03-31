@@ -5,6 +5,8 @@ import { ListNames } from "../../../../utilities/Config";
 import { MetricQueryConfig } from "../../Dashboard/metricColumns.config";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
 import { MatricID } from "../../../../utilities/ConditionConfig";
+import { userInfo } from "../../../../utilities/hooks/RoleContext";
+import { fetchByMetricId } from "../../../Hooks/reusehooks";
 
 interface UseRecruitmentDetailsResult {
   items: RecruitmentItem[];
@@ -58,15 +60,15 @@ const mapRecruitmentItem = (item: any): RecruitmentItem => ({
   jobCodeID: item?.JobCodeId,
 });
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export const useRecruitmentDetails = (
   activeTabKey: RecruitmentTabKey,
   refreshKey: number = 0
 ): UseRecruitmentDetailsResult => {
-  const [items, setItems] = useState<RecruitmentItem[]>([]);
+  const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
+  
+ const { ADGroupData } = userInfo();
   const { MatricID: matricID } = useUIState();
 
 
@@ -76,30 +78,10 @@ export const useRecruitmentDetails = (
 
     const timer = setTimeout(async () => {
       try {
-        const Filter = MetricQueryConfig[matricID];
-        const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
-        const condition = "and";
-
-        let response: any;
-
-        if (matricID !== 0) {
-          switch (filterObj.ListName) {
-            case ListNames.HRMSNewPositionRequest:
-              response = await DashboardServices.GetNPAEPVRRDetails(filterObj.Filter, condition);
-              break;
-            case ListNames.HRMSRecruitmentDptDetails:
-              response = await DashboardServices.GetRecruitmentDetails(filterObj.Filter[0], condition);
-              break;
-            case ListNames.HRMSRecruitmentCandidatePersonalDetails:
-              response = await DashboardServices.GetCandidateDetails(filterObj.Filter[0], condition);
-              break;
-            case ListNames.HRMSSelectedCandidateDetailsByHOD:
-              response = await DashboardServices.GetSelectedCandidate(filterObj.Filter[0], condition);
-              break;
-          }
-        } else {
-          response = await DashboardServices.GetRecruitmentDetails([], condition);
-        }
+        const data = await fetchByMetricId(
+          matricID,
+          ADGroupData.EmailId[0]
+        );
 
         if (cancelled) return;
 
@@ -108,16 +90,20 @@ export const useRecruitmentDetails = (
           matricID === MatricID.EvalutionHOD ||
           matricID === MatricID.EvalutionLM;
 
-        const mappedItems: RecruitmentItem[] = (response?.data ?? []).map(
-          isEvaluation
-            ? mapEvaluationItem
-            : filterObj.ListName === ListNames.HRMSRecruitmentCandidatePersonalDetails
-              ? mapCandidateItem
-              : mapRecruitmentItem
-        );
+        const mappedItems: any[] = data.map((item: any) => {
+          if (isEvaluation) return mapEvaluationItem(item);
+
+          if (item.__listName === ListNames.HRMSRecruitmentCandidatePersonalDetails) {
+            return mapCandidateItem(item);
+          }
+
+          return mapRecruitmentItem(item);
+        });
 
         setItems(mappedItems);
-      } catch {
+
+      } catch (error) {
+        console.error(error);
         if (!cancelled) setItems([]);
       } finally {
         if (!cancelled) setLoading(false);
@@ -128,7 +114,7 @@ export const useRecruitmentDetails = (
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [matricID, refreshKey]); // ← refreshKey triggers re-fetch on Refresh button click
+  }, [matricID, refreshKey]);
 
   return { items, loading };
 };

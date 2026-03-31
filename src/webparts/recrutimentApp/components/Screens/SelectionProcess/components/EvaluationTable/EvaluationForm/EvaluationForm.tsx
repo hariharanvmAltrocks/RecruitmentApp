@@ -34,6 +34,22 @@ export interface EvaluationFormProps {
   currentRoleIDs: number[];
 }
 
+const LeftField: React.FC<{
+  icon?: string;
+  label: string;
+  value: string;
+}> = ({ icon, label, value }) => (
+  <div className={styles.leftFieldWrapper}>
+    <div className={styles.leftFieldLabelRow}>
+      {icon && <span className={styles.leftFieldIcon}>{icon}</span>}
+      <span className={styles.leftFieldLabel}>{label}</span>
+    </div>
+    <div className={styles.leftFieldValueBox}>
+      {value || ""}
+    </div>
+  </div>
+);
+
 const EvaluationForm: React.FC<EvaluationFormProps> = ({
   candidateId,
   recruitmentId,
@@ -75,7 +91,7 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({
   const [ackError,        setAckError]        = React.useState(false);
 
   React.useEffect(() => {
-    (async () => {
+    void (async () => {
       setLoading(true);
       const result = await evaluationService.getEvaluationFormData(
         candidateId, recruitmentId, currentUserEmail
@@ -523,20 +539,6 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({
     </div>
   );
 };
-const LeftField: React.FC<{
-  icon?: string;
-  label: string;
-  value: string;
-}> = ({ icon, label, value }) => (
-  <div className={styles.leftFieldWrapper}>
-    <div className={styles.leftFieldLabelRow}>
-      {icon && <span className={styles.leftFieldIcon}>{icon}</span>}
-      <span className={styles.leftFieldLabel}>{label}</span>
-    </div>
-    <div className={styles.leftFieldValueBox}>
-      {value || ""}
-    </div>
-  </div>
-);
+
 
 export default EvaluationForm;

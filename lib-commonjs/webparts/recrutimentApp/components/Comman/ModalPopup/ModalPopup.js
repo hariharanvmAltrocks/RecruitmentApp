@@ -14,7 +14,7 @@ var iconMap = {
     confirmation: { Icon: lucide_react_1.HelpCircle, className: "confirmation-icon" },
 };
 var ModalPopup = function (_a) {
-    var open = _a.open, _b = _a.type, type = _b === void 0 ? "info" : _b, title = _a.title, message = _a.message, onConfirm = _a.onConfirm, onClose = _a.onClose, _c = _a.confirmLabel, confirmLabel = _c === void 0 ? "OK" : _c, _d = _a.cancelLabel, cancelLabel = _d === void 0 ? "Cancel" : _d, _e = _a.isLoading, isLoading = _e === void 0 ? false : _e, _f = _a.closeOnOutsideClick, closeOnOutsideClick = _f === void 0 ? true : _f, _g = _a.autoClose, autoClose = _g === void 0 ? false : _g, _h = _a.autoCloseDuration, autoCloseDuration = _h === void 0 ? 11113000 : _h;
+    var open = _a.open, _b = _a.type, type = _b === void 0 ? "info" : _b, title = _a.title, message = _a.message, onConfirm = _a.onConfirm, onCancel = _a.onCancel, onClose = _a.onClose, _c = _a.confirmLabel, confirmLabel = _c === void 0 ? "OK" : _c, _d = _a.cancelLabel, cancelLabel = _d === void 0 ? "Cancel" : _d, _e = _a.isLoading, isLoading = _e === void 0 ? false : _e, _f = _a.closeOnOutsideClick, closeOnOutsideClick = _f === void 0 ? true : _f, _g = _a.autoClose, autoClose = _g === void 0 ? false : _g, _h = _a.autoCloseDuration, autoCloseDuration = _h === void 0 ? 11113000 : _h;
     var _j = iconMap[type], Icon = _j.Icon, className = _j.className;
     (0, react_1.useEffect)(function () {
         if (open && autoClose && type === "success") {
@@ -45,7 +45,7 @@ var ModalPopup = function (_a) {
     }, [open, handleKeyDown]);
     var handleOutsideClick = function (e) {
         if (closeOnOutsideClick && e.target === e.currentTarget) {
-            onClose();
+            // onClose();
         }
     };
     return (react_1.default.createElement(framer_motion_1.AnimatePresence, null, open && (react_1.default.createElement(framer_motion_1.motion.div, { className: "modal-popup__overlay", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 }, onClick: handleOutsideClick, role: "dialog", "aria-modal": "true" },
@@ -58,7 +58,7 @@ var ModalPopup = function (_a) {
                 react_1.default.createElement("h2", { className: "modal-popup__title" }, title),
                 react_1.default.createElement("p", { className: "modal-popup__message", dangerouslySetInnerHTML: { __html: message } })),
             react_1.default.createElement("div", { className: "modal-popup__actions" },
-                cancelLabel && type === "confirmation" && (react_1.default.createElement("button", { className: "modal-popup__btn modal-popup__btn--secondary", onClick: onClose, disabled: isLoading }, cancelLabel)),
+                cancelLabel && type === "confirmation" && (react_1.default.createElement("button", { className: "modal-popup__btn modal-popup__btn--secondary", onClick: onCancel, disabled: isLoading }, cancelLabel)),
                 react_1.default.createElement("button", { className: "modal-popup__btn modal-popup__btn--".concat(type), onClick: onConfirm !== null && onConfirm !== void 0 ? onConfirm : onClose, disabled: isLoading }, isLoading ? (react_1.default.createElement(lucide_react_1.Loader2, { className: "modal-popup__spinner", size: 18 })) : (confirmLabel))))))));
 };
 exports.ModalPopup = ModalPopup;

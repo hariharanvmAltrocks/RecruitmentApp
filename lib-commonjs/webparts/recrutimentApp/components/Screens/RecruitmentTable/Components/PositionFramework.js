@@ -5,6 +5,7 @@ var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importDefault(require("react"));
 var lucide_react_1 = require("lucide-react");
 require("../RecruitmentTable.scss");
+var moment_1 = tslib_1.__importDefault(require("moment"));
 var InfoField = function (_a) {
     var label = _a.label, value = _a.value, Icon = _a.icon;
     return (react_1.default.createElement("div", { className: "advert-review-drawer__info-field" },
@@ -35,7 +36,6 @@ var PositionFramework = function (_a) {
                 "Organizational Alignment"),
             react_1.default.createElement("div", { className: "advert-review-drawer__grid" },
                 react_1.default.createElement(InfoField, { label: "BU Code", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.buCode, icon: lucide_react_1.FileText }),
-                react_1.default.createElement(InfoField, { label: "BU Name", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.buName, icon: lucide_react_1.LayoutDashboard }),
                 react_1.default.createElement(InfoField, { label: "Department", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.department, icon: lucide_react_1.Users }),
                 react_1.default.createElement(InfoField, { label: "Sub Department", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.subDepartment, icon: lucide_react_1.ChevronRight }),
                 react_1.default.createElement(InfoField, { label: "Section", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.section, icon: lucide_react_1.ChevronRight }),
@@ -53,7 +53,7 @@ var PositionFramework = function (_a) {
                 react_1.default.createElement(InfoField, { label: "Employment Category", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.employmentCategory, icon: lucide_react_1.UserCheck }),
                 react_1.default.createElement(InfoField, { label: "Type of Contract", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.contractType, icon: lucide_react_1.FileCheck }),
                 react_1.default.createElement(InfoField, { label: "No of Person(s)", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.numberOfPersons, icon: lucide_react_1.Users }),
-                react_1.default.createElement(InfoField, { label: "Date Required", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.dateRequired, icon: lucide_react_1.Calendar }))))));
+                react_1.default.createElement(InfoField, { label: "Date Required", value: (0, moment_1.default)(positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.dateRequired).format("DD-MM-YYYY"), icon: lucide_react_1.Calendar }))))));
 };
 exports.PositionFramework = PositionFramework;
 //# sourceMappingURL=PositionFramework.js.map

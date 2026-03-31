@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Download, FileText, Paperclip, X } from "lucide-react";
 import "../RecruitmentTable.scss";
 import { AttachmentDetails } from "../AdvertReviewDrawer/Hooks/getAttachmentDetails";
-import { truncateText } from "../../../Hooks/reusehooks";
+import { buildOfficeViewerUrl, buildWopiUrl, isPdfUrl, isSharePointUrl, truncateText } from "../../../Hooks/reusehooks";
 
 export interface RequiredAttachmentsProps {
   attachments: AttachmentDetails[];
@@ -20,23 +20,7 @@ const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({ width = 
   <div className="advert-review-drawer__skeleton" style={{ width, height }} />
 );
 
-const isSharePointUrl = (url: string) => /\.sharepoint\.com\//i.test(url);
 
-const isPdfUrl = (url: string) => {
-  const clean = url.split("?")[0].toLowerCase();
-  return clean.endsWith(".pdf");
-};
-
-const buildWopiUrl = (url: string) => {
-  try {
-    const parsed = new URL(url);
-    return `${parsed.origin}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(url)}&action=embedview`;
-  } catch {
-    return url;
-  }
-};
-
-const buildOfficeViewerUrl = (url: string) => `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
 
 const getViewerUrl = (url: string) => {
   if (isSharePointUrl(url)) {

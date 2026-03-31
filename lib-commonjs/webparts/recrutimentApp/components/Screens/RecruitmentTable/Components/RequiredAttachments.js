@@ -10,29 +10,14 @@ var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return (react_1.default.createElement("div", { className: "advert-review-drawer__skeleton", style: { width: width, height: height } }));
 };
-var isSharePointUrl = function (url) { return /\.sharepoint\.com\//i.test(url); };
-var isPdfUrl = function (url) {
-    var clean = url.split("?")[0].toLowerCase();
-    return clean.endsWith(".pdf");
-};
-var buildWopiUrl = function (url) {
-    try {
-        var parsed = new URL(url);
-        return "".concat(parsed.origin, "/_layouts/15/WopiFrame.aspx?sourcedoc=").concat(encodeURIComponent(url), "&action=embedview");
-    }
-    catch (_a) {
-        return url;
-    }
-};
-var buildOfficeViewerUrl = function (url) { return "https://view.officeapps.live.com/op/embed.aspx?src=".concat(encodeURIComponent(url)); };
 var getViewerUrl = function (url) {
-    if (isSharePointUrl(url)) {
-        return buildWopiUrl(url);
+    if ((0, reusehooks_1.isSharePointUrl)(url)) {
+        return (0, reusehooks_1.buildWopiUrl)(url);
     }
-    if (isPdfUrl(url)) {
+    if ((0, reusehooks_1.isPdfUrl)(url)) {
         return url;
     }
-    return buildOfficeViewerUrl(url);
+    return (0, reusehooks_1.buildOfficeViewerUrl)(url);
 };
 var getVersionUrl = function (version) { return version.fileUrl || version.content || ""; };
 var RequiredAttachments = function (_a) {

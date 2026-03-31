@@ -9,7 +9,9 @@ var EvaluationApiService_1 = require("../services/EvaluationApiService");
 var Config_1 = require("../../../../utilities/Config");
 var isSkeleton = function (r) { return "__skeleton" in r; };
 exports.isSkeleton = isSkeleton;
-var makeSkeletons = function () { return Array.from({ length: 5 }, function (_, i) { return ({ __skeleton: true, id: i }); }); };
+var makeSkeletons = function () {
+    return Array.from({ length: 5 }, function (_, i) { return ({ __skeleton: true, id: i }); });
+};
 function useEvaluationData(currentUserEmail, employeeList) {
     var _this = this;
     var _a = (0, react_1.useState)(makeSkeletons()), rows = _a[0], setRows = _a[1];
@@ -46,7 +48,9 @@ function useEvaluationData(currentUserEmail, employeeList) {
                         setRows([]);
                         return [2 /*return*/];
                     }
-                    candidateIDs = Array.from(new Set(panels.map(function (p) { var _a, _b, _c; return (_c = (_b = (_a = p.CandidateID) === null || _a === void 0 ? void 0 : _a.ID) !== null && _b !== void 0 ? _b : p.CandidateId) !== null && _c !== void 0 ? _c : p.CandidateIDId; }).filter(Boolean)));
+                    candidateIDs = Array.from(new Set(panels
+                        .map(function (p) { var _a, _b, _c; return (_c = (_b = (_a = p.CandidateID) === null || _a === void 0 ? void 0 : _a.ID) !== null && _b !== void 0 ? _b : p.CandidateId) !== null && _c !== void 0 ? _c : p.CandidateIDId; })
+                        .filter(Boolean)));
                     console.log(" STEP 4: Extracted Candidate IDs from Panels:", candidateIDs);
                     if (!candidateIDs.length) {
                         setRows([]);
@@ -89,11 +93,13 @@ function useEvaluationData(currentUserEmail, employeeList) {
                                 return false;
                             var cStatusId = Number(c.statusId);
                             console.log("   -> Found matching panel for Candidate ".concat(c.id, ". Panel Level: ").concat(item.InterviewLevel));
-                            if (cStatusId === Config_1.StatusId.InterviewScheduled && item.InterviewLevel === EvaluationConfig_1.InterviewLevels.Level1) {
+                            if (cStatusId === Config_1.StatusId.InterviewScheduled &&
+                                item.InterviewLevel === EvaluationConfig_1.InterviewLevels.Level1) {
                                 console.log("  MATCH: Status is InterviewScheduled & Level is 1");
                                 return true;
                             }
-                            if (cStatusId === Config_1.StatusId.InterviewScheduledforLevel2 && item.InterviewLevel === EvaluationConfig_1.InterviewLevels.Level2) {
+                            if (cStatusId === Config_1.StatusId.InterviewScheduledforLevel2 &&
+                                item.InterviewLevel === EvaluationConfig_1.InterviewLevels.Level2) {
                                 console.log("   MATCH: Status is InterviewScheduledforLevel2 & Level is 2");
                                 return true;
                             }
@@ -106,7 +112,7 @@ function useEvaluationData(currentUserEmail, employeeList) {
                             console.log("    Candidate ".concat(c.id, " FAILED the filter."));
                         return !!matchingPanel;
                     });
-                    console.log("\ STEP 7: FINAL Filtered Rows applied to UI:", finalRows);
+                    console.log("STEP 7: FINAL Filtered Rows applied to UI:", finalRows);
                     setRows(finalRows);
                     return [2 /*return*/];
             }
@@ -117,7 +123,9 @@ function useEvaluationData(currentUserEmail, employeeList) {
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    level = statusId === Config_1.StatusId.InterviewScheduled ? EvaluationConfig_1.InterviewLevels.Level1 : EvaluationConfig_1.InterviewLevels.Level2;
+                    level = statusId === Config_1.StatusId.InterviewScheduled
+                        ? EvaluationConfig_1.InterviewLevels.Level1
+                        : EvaluationConfig_1.InterviewLevels.Level2;
                     return [4 /*yield*/, EvaluationApiService_1.evaluationService.getTooltipData(candidateID, level)];
                 case 1:
                     data = _a.sent();

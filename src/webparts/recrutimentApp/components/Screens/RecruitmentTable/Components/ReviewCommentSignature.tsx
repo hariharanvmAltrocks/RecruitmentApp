@@ -12,6 +12,7 @@ export interface ReviewCommentSignatureProps {
   onToggleAcknowledgement: () => void;
   commentError?: boolean;
   checkboxError?: boolean;
+  disabled?: boolean;
 }
 
 const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
@@ -33,6 +34,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
   onToggleAcknowledgement,
   commentError = false,
   checkboxError = false,
+  disabled = false
 }) => (
   <section className="advert-review-drawer__section advert-review-drawer__section--comments">
     <h3 className="advert-review-drawer__section-title">
@@ -52,7 +54,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
       value={reviewerComments}
       onChange={(e) => onCommentsChange(e.target.value)}
       rows={4}
-      disabled={isLoading}
+      disabled={disabled}
     />
     {commentError && (
       <span className="advert-review-drawer__field-error">
@@ -82,6 +84,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
             type="checkbox"
             checked={acknowledgementCheckbox}
             onChange={onToggleAcknowledgement}
+            disabled={disabled}
           />
           <CheckCircle2 size={12} />
         </span>

@@ -19,6 +19,7 @@ export interface ModalProps {
   title: string;
   message: string;
   onConfirm?: () => void;
+  onCancel?: () => void;
   onClose: () => void;
   confirmLabel?: string;
   cancelLabel?: string;
@@ -42,6 +43,7 @@ export const ModalPopup: React.FC<ModalProps> = ({
   title,
   message,
   onConfirm,
+  onCancel,
   onClose,
   confirmLabel = "OK",
   cancelLabel = "Cancel",
@@ -87,7 +89,7 @@ export const ModalPopup: React.FC<ModalProps> = ({
 
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (closeOnOutsideClick && e.target === e.currentTarget) {
-      onClose();
+      // onClose();
     }
   };
 
@@ -138,7 +140,7 @@ export const ModalPopup: React.FC<ModalProps> = ({
               {cancelLabel && type === "confirmation" && (
                 <button
                   className="modal-popup__btn modal-popup__btn--secondary"
-                  onClick={onClose}
+                  onClick={onCancel}
                   disabled={isLoading}
                 >
                   {cancelLabel}

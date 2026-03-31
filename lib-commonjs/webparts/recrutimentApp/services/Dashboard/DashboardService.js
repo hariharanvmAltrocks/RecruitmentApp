@@ -77,9 +77,9 @@ var DashboardService = /** @class */ (function () {
                         jobCodeIdToUniqueKey = new Map(portalItems.map(function (item) { return [item.JobCodeId, item.JobUniqueKey]; }));
                         return [4 /*yield*/, Promise.all(externalMetrics.map(function (metric) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var jobCodeIds, jobUniqueKeys, params, response, total, _a;
-                                var _b, _c;
-                                return tslib_1.__generator(this, function (_d) {
-                                    switch (_d.label) {
+                                var _b, _c, _d, _e, _f, _g, _h;
+                                return tslib_1.__generator(this, function (_j) {
+                                    switch (_j.label) {
                                         case 0:
                                             jobCodeIds = ((_b = spCounts[metric.id]) !== null && _b !== void 0 ? _b : [])
                                                 .map(function (item) { return item.JobCodeId; })
@@ -92,20 +92,22 @@ var DashboardService = /** @class */ (function () {
                                                 return [2 /*return*/];
                                             }
                                             params = {
-                                                jobCode: jobUniqueKeys,
-                                                workflowStausId: metric.externalApi.workflowStatuses,
+                                                jobCodes: jobUniqueKeys,
+                                                workflowStatus: metric.externalApi.workflowStatuses,
                                             };
-                                            _d.label = 1;
+                                            _j.label = 1;
                                         case 1:
-                                            _d.trys.push([1, 3, , 4]);
+                                            _j.trys.push([1, 3, , 4]);
                                             return [4 /*yield*/, CareerPortalAPI_1.getProfileData.GetJobAppliedCount(params)];
                                         case 2:
-                                            response = _d.sent();
-                                            total = ((_c = response === null || response === void 0 ? void 0 : response.data) !== null && _c !== void 0 ? _c : []).reduce(function (sum, item) { var _a; return sum + ((_a = item.count) !== null && _a !== void 0 ? _a : 0); }, 0);
+                                            response = _j.sent();
+                                            total = Array.isArray((_c = response === null || response === void 0 ? void 0 : response.data) === null || _c === void 0 ? void 0 : _c.data)
+                                                ? (_e = (_d = response === null || response === void 0 ? void 0 : response.data) === null || _d === void 0 ? void 0 : _d.data) === null || _e === void 0 ? void 0 : _e.reduce(function (sum, item) { var _a; return sum + ((_a = item.count) !== null && _a !== void 0 ? _a : 0); }, 0)
+                                                : (_h = (_g = (_f = response === null || response === void 0 ? void 0 : response.data) === null || _f === void 0 ? void 0 : _f.data) === null || _g === void 0 ? void 0 : _g.count) !== null && _h !== void 0 ? _h : 0;
                                             result.set(String(metric.id), total);
                                             return [3 /*break*/, 4];
                                         case 3:
-                                            _a = _d.sent();
+                                            _a = _j.sent();
                                             result.set(String(metric.id), 0);
                                             return [3 /*break*/, 4];
                                         case 4: return [2 /*return*/];
@@ -362,7 +364,7 @@ var DashboardService = /** @class */ (function () {
                                         case 4: return [2 /*return*/, {
                                                 ID: item.ID,
                                                 RecordID: index + 1,
-                                                ApplicantName: "".concat(item.FirstName || "", " ").concat(item.MiddleName || "", " ").concat(item.LastName || "").trim(),
+                                                ApplicantName: "".concat(item.FristName || "", " ").concat(item.MiddleName || "", " ").concat(item.LastName || "").trim(),
                                                 PositionTitle: item === null || item === void 0 ? void 0 : item.PositionTitle,
                                                 JobGrade: item === null || item === void 0 ? void 0 : item.JobGrade,
                                                 Nationality: item === null || item === void 0 ? void 0 : item.Nationality,

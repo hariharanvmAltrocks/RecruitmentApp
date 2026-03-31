@@ -44,7 +44,7 @@ function transformToUpsertPayload(payload, userId) {
                                 scopeId: (_a = payload.DptCode) !== null && _a !== void 0 ? _a : "",
                                 categoryId: categoryID !== null && categoryID !== void 0 ? categoryID : "",
                                 questionTypeId: questionType,
-                                isQualifier: 0,
+                                isQualifier: 1,
                                 isAnswerValidate: 0,
                                 sequence: index + 1,
                                 jobCode: (_b = jobCodeKey.data.JobCode) !== null && _b !== void 0 ? _b : "",

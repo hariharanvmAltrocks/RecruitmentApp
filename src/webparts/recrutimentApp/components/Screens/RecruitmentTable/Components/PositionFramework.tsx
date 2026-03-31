@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import "../RecruitmentTable.scss"
 import { PositionDetails } from "../AdvertReviewDrawer/Hooks/getPositionDetails";
+import moment from "moment";
 
 
 
@@ -69,7 +70,7 @@ export const PositionFramework: React.FC<PositionFrameworkProps> = ({ positionDe
         </h4>
         <div className="advert-review-drawer__grid">
           <InfoField label="BU Code" value={positionDetails?.buCode} icon={FileText} />
-          <InfoField label="BU Name" value={positionDetails?.buName} icon={LayoutDashboard} />
+          {/* <InfoField label="BU Name" value={positionDetails?.buName} icon={LayoutDashboard} /> */}
           <InfoField label="Department" value={positionDetails?.department} icon={Users} />
           <InfoField label="Sub Department" value={positionDetails?.subDepartment} icon={ChevronRight} />
           <InfoField label="Section" value={positionDetails?.section} icon={ChevronRight} />
@@ -91,7 +92,7 @@ export const PositionFramework: React.FC<PositionFrameworkProps> = ({ positionDe
           <InfoField label="Employment Category" value={positionDetails?.employmentCategory} icon={UserCheck} />
           <InfoField label="Type of Contract" value={positionDetails?.contractType} icon={FileCheck} />
           <InfoField label="No of Person(s)" value={positionDetails?.numberOfPersons} icon={Users} />
-          <InfoField label="Date Required" value={positionDetails?.dateRequired} icon={Calendar} />
+          <InfoField label="Date Required" value={moment(positionDetails?.dateRequired).format("DD-MM-YYYY")} icon={Calendar} />
         </div>
       </div>
     )}

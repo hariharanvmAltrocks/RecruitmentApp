@@ -872,7 +872,7 @@ var RecruitmentService = /** @class */ (function () {
                         };
                         onemdocPath = "";
                         if (!(onemDocs && (onemDocs === null || onemDocs === void 0 ? void 0 : onemDocs.length) > 0)) return [3 /*break*/, 5];
-                        return [4 /*yield*/, ServiceExport_1.CommonServices.uploadAttachmentToLibrary(RecuritmentDetails.JobCode, onemDocs || [], "ONAMSignedStampDocuments")];
+                        return [4 /*yield*/, ServiceExport_1.CommonServices.uploadAttachmentToLibrary(RecuritmentDetails.JobCode, onemDocs || [], Config_1.DocumentLibraray.ONAMSignedStampDocuments)];
                     case 4:
                         onamdocpathfile = _f.sent();
                         onemdocPath = String(onamdocpathfile.data[0].content);

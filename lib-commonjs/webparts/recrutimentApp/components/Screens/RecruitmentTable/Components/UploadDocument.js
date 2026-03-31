@@ -31,12 +31,12 @@ var isAcceptedFile = function (file, accepted) {
     });
 };
 var UploadDocument = function (_a) {
-    var _b = _a.multiple, multiple = _b === void 0 ? false : _b, _c = _a.acceptedFormats, acceptedFormats = _c === void 0 ? DEFAULT_ACCEPTED : _c, _d = _a.maxFileSizeMB, maxFileSizeMB = _d === void 0 ? DEFAULT_MAX_MB : _d, _e = _a.label, label = _e === void 0 ? "Upload documents" : _e, _f = _a.required, required = _f === void 0 ? false : _f, onChange = _a.onChange, _g = _a.hasError, hasError = _g === void 0 ? false : _g;
+    var _b = _a.multiple, multiple = _b === void 0 ? false : _b, _c = _a.acceptedFormats, acceptedFormats = _c === void 0 ? DEFAULT_ACCEPTED : _c, _d = _a.maxFileSizeMB, maxFileSizeMB = _d === void 0 ? DEFAULT_MAX_MB : _d, _e = _a.label, label = _e === void 0 ? "Upload documents" : _e, _f = _a.required, required = _f === void 0 ? false : _f, onChange = _a.onChange, _g = _a.hasError, hasError = _g === void 0 ? false : _g, _h = _a.disabled, disabled = _h === void 0 ? false : _h;
     var inputRef = (0, react_1.useRef)(null);
-    var _h = (0, react_1.useState)([]), files = _h[0], setFiles = _h[1];
-    var _j = (0, react_1.useState)([]), errors = _j[0], setErrors = _j[1];
-    var _k = (0, react_1.useState)(false), isDragging = _k[0], setIsDragging = _k[1];
-    var _l = (0, react_1.useState)(false), touched = _l[0], setTouched = _l[1];
+    var _j = (0, react_1.useState)([]), files = _j[0], setFiles = _j[1];
+    var _k = (0, react_1.useState)([]), errors = _k[0], setErrors = _k[1];
+    var _l = (0, react_1.useState)(false), isDragging = _l[0], setIsDragging = _l[1];
+    var _m = (0, react_1.useState)(false), touched = _m[0], setTouched = _m[1];
     var acceptedList = (0, react_1.useMemo)(function () { return parseAcceptedFormats(acceptedFormats); }, [acceptedFormats]);
     var maxBytes = (0, react_1.useMemo)(function () { return maxFileSizeMB * 1024 * 1024; }, [maxFileSizeMB]);
     (0, react_1.useEffect)(function () { return function () {
@@ -168,7 +168,7 @@ var UploadDocument = function (_a) {
             react_1.default.createElement("div", { className: "upload-document__formats" },
                 "Accepted: ",
                 acceptedFormats)),
-        react_1.default.createElement("input", { ref: inputRef, type: "file", className: "upload-document__input", accept: acceptedFormats, multiple: multiple, onChange: handleInputChange }),
+        react_1.default.createElement("input", { ref: inputRef, type: "file", className: "upload-document__input", accept: acceptedFormats, multiple: multiple, onChange: handleInputChange, disabled: disabled }),
         (errors.length > 0 || requiredError) && (react_1.default.createElement("div", { className: "upload-document__errors" },
             requiredError && (react_1.default.createElement("div", { className: "upload-document__error" }, requiredError)),
             errors.map(function (err, idx) { return (react_1.default.createElement("div", { key: "".concat(err, "-").concat(idx), className: "upload-document__error" }, err)); }))),

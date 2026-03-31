@@ -1,5 +1,5 @@
 "use strict";
-var _a, _b, _c;
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.priorityValues = exports.totalPriority = exports.getRoleBasedFilters = exports.MetricQueryConfig = exports.MatricColums = void 0;
 var tslib_1 = require("tslib");
@@ -9,279 +9,279 @@ var ApiConfig_1 = require("../../../utilities/ApiConfig");
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
 var BASE_METRICS = (_a = {},
     _a[ConditionConfig_1.MatricID.AssignHr] = {
-        label: 'Pending HR Assignment',
-        status: 'ACTIVE',
+        label: "Pending HR Assignment",
+        status: "ACTIVE",
         icon: lucide_react_1.UserCheck,
-        color: '#f97316',
-        bgColor: '#fff7ed',
-        statusColor: '#3b82f6',
-        statusBg: '#eff6ff',
+        color: "#f97316",
+        bgColor: "#fff7ed",
+        statusColor: "#3b82f6",
+        statusBg: "#eff6ff",
         iconType: "hr",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.AssignRecuritmentHR
+        TabName: ConditionConfig_1.TabName.AssignRecuritmentHR,
     },
     _a[ConditionConfig_1.MatricID.UploadONEM] = {
-        label: 'Pending Upload ONEM',
-        status: 'PENDING',
+        label: "Pending Upload ONEM",
+        status: "PENDING",
         icon: lucide_react_1.Activity,
-        color: '#f59e0b',
-        bgColor: '#fffbeb',
-        statusColor: '#64748b',
-        statusBg: '#f1f5f9',
+        color: "#f59e0b",
+        bgColor: "#fffbeb",
+        statusColor: "#64748b",
+        statusBg: "#f1f5f9",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab2",
-        TabName: ConditionConfig_1.TabName.UploadONEMDoc
+        TabName: ConditionConfig_1.TabName.UploadONEMDoc,
     },
     _a[ConditionConfig_1.MatricID.JobAdvert] = {
-        label: 'Pending Advert Upload',
-        status: 'ACTIVE',
+        label: "Pending Advert Upload",
+        status: "ACTIVE",
         icon: lucide_react_1.UserCheck,
-        color: '#ea580c',
-        bgColor: '#ffedd5',
-        statusColor: '#64748b',
-        statusBg: '#f1f5f9',
+        color: "#ea580c",
+        bgColor: "#ffedd5",
+        statusColor: "#64748b",
+        statusBg: "#f1f5f9",
         iconType: "onem",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.PreSelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.UploadAdvertisement
+        TabName: ConditionConfig_1.TabName.UploadAdvertisement,
     },
     _a[ConditionConfig_1.MatricID.ReviewProfileHR] = {
-        label: 'Review Profile',
-        status: 'PENDING',
+        label: "Review Profile",
+        status: "PENDING",
         icon: lucide_react_1.Activity,
-        color: '#f59e0b',
-        bgColor: '#fffbeb',
-        statusColor: '#3b82f6', // Active badge is blue
-        statusBg: '#eff6ff',
+        color: "#f59e0b",
+        bgColor: "#fffbeb",
+        statusColor: "#3b82f6", // Active badge is blue
+        statusBg: "#eff6ff",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.PostSelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.ReviewProfile
+        TabName: ConditionConfig_1.TabName.ReviewProfile,
     },
     _a[ConditionConfig_1.MatricID.ReviewProfileLM] = {
-        label: 'Review Profile',
-        status: 'PENDING',
+        label: "Review Profile",
+        status: "PENDING",
         icon: lucide_react_1.Activity,
-        color: '#f59e0b',
-        bgColor: '#fffbeb',
-        statusColor: '#3b82f6',
-        statusBg: '#eff6ff',
+        color: "#f59e0b",
+        bgColor: "#fffbeb",
+        statusColor: "#3b82f6",
+        statusBg: "#eff6ff",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab3",
-        TabName: ConditionConfig_1.TabName.ReviewProfile
+        TabName: ConditionConfig_1.TabName.ReviewProfile,
     },
     _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = {
-        label: 'Assign Interview Panel',
-        status: 'PENDING',
+        label: "Assign Interview Panel",
+        status: "PENDING",
         icon: lucide_react_1.Activity,
-        color: '#fbbf24',
-        bgColor: '#fefce8',
-        statusColor: '#64748b',
-        statusBg: '#f1f5f9',
+        color: "#fbbf24",
+        bgColor: "#fefce8",
+        statusColor: "#64748b",
+        statusBg: "#f1f5f9",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.PostSelectionProcess,
         TabValue: "tab2",
-        TabName: ConditionConfig_1.TabName.AssignInterviewPanel
+        TabName: ConditionConfig_1.TabName.AssignInterviewPanel,
     },
     _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = {
-        label: 'Pending InterviewQuestion',
-        status: 'CRITICAL',
+        label: "Pending InterviewQuestion",
+        status: "CRITICAL",
         icon: lucide_react_1.ClipboardList,
-        color: '#ef4444',
-        bgColor: '#fef2f2',
-        statusColor: '#64748b',
-        statusBg: '#f1f5f9',
+        color: "#ef4444",
+        bgColor: "#fef2f2",
+        statusColor: "#64748b",
+        statusBg: "#f1f5f9",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.PostSelectionProcess,
         TabValue: "tab3",
-        TabName: ConditionConfig_1.TabName.InterviewQuestion
+        TabName: ConditionConfig_1.TabName.InterviewQuestion,
     },
     _a[ConditionConfig_1.MatricID.EvalutionHR] = {
-        label: 'Pending Evaluation',
-        status: 'PENDING',
+        label: "Pending Evaluation",
+        status: "PENDING",
         icon: lucide_react_1.Activity,
-        color: '#d97706',
-        bgColor: '#fef3c7',
-        statusColor: '#ef4444',
-        statusBg: '#fee2e2',
+        color: "#d97706",
+        bgColor: "#fef3c7",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.PostSelectionProcess,
         TabValue: "tab4",
-        TabName: ConditionConfig_1.TabName.Evaluation
+        TabName: ConditionConfig_1.TabName.Evaluation,
     },
     _a[ConditionConfig_1.MatricID.AdvertReviewLM] = {
-        label: 'Pending Advert Review',
-        status: 'ACTIVE',
+        label: "Pending Advert Review",
+        status: "ACTIVE",
         icon: lucide_react_1.UserCheck,
-        color: '#fb923c',
-        bgColor: '#fff7ed',
-        statusColor: '#ef4444',
-        statusBg: '#fee2e2',
+        color: "#fb923c",
+        bgColor: "#fff7ed",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.Evaluation
+        TabName: ConditionConfig_1.TabName.Evaluation,
     },
     _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = {
-        label: 'Pending Create Minimum Criteria Question',
-        status: 'PENDING',
+        label: "Pending Create Minimum Criteria Question",
+        status: "PENDING",
         icon: lucide_react_1.Activity,
-        color: '#10b981',
-        bgColor: '#ecfdf5',
-        statusColor: '#ef4444',
-        statusBg: '#fee2e2',
+        color: "#10b981",
+        bgColor: "#ecfdf5",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab2",
-        TabName: ConditionConfig_1.TabName.InterviewQuestion
+        TabName: ConditionConfig_1.TabName.InterviewQuestion,
     },
     _a[ConditionConfig_1.MatricID.EvalutionLM] = {
-        label: 'Pending Evaluation',
-        status: 'PENDING',
+        label: "Pending Evaluation",
+        status: "PENDING",
         icon: lucide_react_1.Activity,
-        color: '#d97706',
-        bgColor: '#fef3c7',
-        statusColor: '#ef4444',
-        statusBg: '#fee2e2',
+        color: "#d97706",
+        bgColor: "#fef3c7",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab4",
-        TabName: ConditionConfig_1.TabName.Evaluation
+        TabName: ConditionConfig_1.TabName.Evaluation,
     },
     _a[ConditionConfig_1.MatricID.AdvertReviewHOD] = {
-        label: 'Pending Advert Review',
-        status: 'ACTIVE',
+        label: "Pending Advert Review",
+        status: "ACTIVE",
         icon: lucide_react_1.UserCheck,
-        color: '#fdba74',
-        bgColor: '#fff7ed',
-        statusColor: '#64748b',
-        statusBg: '#f1f5f9',
+        color: "#fdba74",
+        bgColor: "#fff7ed",
+        statusColor: "#64748b",
+        statusBg: "#f1f5f9",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.ReviewJobAdvertisement
+        TabName: ConditionConfig_1.TabName.ReviewJobAdvertisement,
     },
     _a[ConditionConfig_1.MatricID.ReviewScoreCard] = {
-        label: 'Pending Position ID',
-        status: 'CRITICAL',
+        label: "Pending Position ID",
+        status: "CRITICAL",
         icon: lucide_react_1.ClipboardList,
-        color: '#ef4444',
-        bgColor: '#fef2f2',
-        statusColor: '#64748b',
-        statusBg: '#f1f5f9',
+        color: "#ef4444",
+        bgColor: "#fef2f2",
+        statusColor: "#64748b",
+        statusBg: "#f1f5f9",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab2",
-        TabName: ConditionConfig_1.TabName.ReviewScorecard
+        TabName: ConditionConfig_1.TabName.ReviewScorecard,
     },
     _a[ConditionConfig_1.MatricID.EvalutionHOD] = {
-        label: 'Pending Evaluation',
-        status: 'PENDING',
+        label: "Pending Evaluation",
+        status: "PENDING",
         icon: lucide_react_1.Activity,
-        color: '#d97706',
-        bgColor: '#fef3c7',
-        statusColor: '#ef4444',
-        statusBg: '#fee2e2',
+        color: "#d97706",
+        bgColor: "#fef3c7",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab3",
-        TabName: ConditionConfig_1.TabName.Evaluation
+        TabName: ConditionConfig_1.TabName.Evaluation,
     },
     _a[ConditionConfig_1.MatricID.interviewSchedule] = {
-        label: 'Interviews Scheduled',
-        status: 'SCHEDULED',
+        label: "Interviews Scheduled",
+        status: "SCHEDULED",
         icon: lucide_react_1.Calendar,
-        color: '#3b82f6',
-        bgColor: '#eff6ff',
-        statusColor: '#3b82f6',
-        statusBg: '#eff6ff',
+        color: "#3b82f6",
+        bgColor: "#eff6ff",
+        statusColor: "#3b82f6",
+        statusBg: "#eff6ff",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.InterviewQuestion
+        TabName: ConditionConfig_1.TabName.InterviewQuestion,
     },
     _a[ConditionConfig_1.MatricID.EvalutionEXCO] = {
-        label: 'Pending Evaluation',
-        status: 'PENDING',
+        label: "Pending Evaluation",
+        status: "PENDING",
         icon: lucide_react_1.Activity,
-        color: '#d97706',
-        bgColor: '#fef3c7',
-        statusColor: '#ef4444',
-        statusBg: '#fee2e2',
+        color: "#d97706",
+        bgColor: "#fef3c7",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.Evaluation
+        TabName: ConditionConfig_1.TabName.Evaluation,
     },
     _a[ConditionConfig_1.MatricID.interviewTracker] = {
-        label: 'Interview Tracking',
-        status: 'ON-GOING',
+        label: "Interview Tracking",
+        status: "ON-GOING",
         icon: lucide_react_1.Activity,
-        color: '#10b981',
-        bgColor: '#ecfdf5',
-        statusColor: '#ef4444',
-        statusBg: '#fee2e2',
+        color: "#10b981",
+        bgColor: "#ecfdf5",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.Evaluation
+        TabName: ConditionConfig_1.TabName.Evaluation,
     },
     _a[ConditionConfig_1.MatricID.OfferRelease] = {
-        label: 'Offer Letters Released',
-        status: 'OUTBOUND',
+        label: "Offer Letters Released",
+        status: "OUTBOUND",
         icon: lucide_react_1.FileText,
-        color: '#6366f1',
-        bgColor: '#eef2ff',
-        statusColor: '#3b82f6', // Active badge is blue
-        statusBg: '#eff6ff',
+        color: "#6366f1",
+        bgColor: "#eef2ff",
+        statusColor: "#3b82f6", // Active badge is blue
+        statusBg: "#eff6ff",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.LabourHire
+        TabName: ConditionConfig_1.TabName.LabourHire,
     },
     _a[ConditionConfig_1.MatricID.OfferAccepted] = {
-        label: 'Offers Accepted',
-        status: 'SUCCESS',
+        label: "Offers Accepted",
+        status: "SUCCESS",
         icon: lucide_react_1.CheckCircle2,
-        color: '#22c55e',
-        bgColor: '#f0fdf4',
-        statusColor: '#64748b',
-        statusBg: '#f1f5f9',
+        color: "#22c55e",
+        bgColor: "#f0fdf4",
+        statusColor: "#64748b",
+        statusBg: "#f1f5f9",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.LabourHire
+        TabName: ConditionConfig_1.TabName.LabourHire,
     },
     _a[ConditionConfig_1.MatricID.OfferRejected] = {
-        label: 'Offers Rejected',
-        status: 'LOST',
+        label: "Offers Rejected",
+        status: "LOST",
         icon: lucide_react_1.XCircle,
-        color: '#f43f5e',
-        bgColor: '#fff1f2',
-        statusColor: '#64748b',
-        statusBg: '#f1f5f9',
+        color: "#f43f5e",
+        bgColor: "#fff1f2",
+        statusColor: "#64748b",
+        statusBg: "#f1f5f9",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.LabourHire
+        TabName: ConditionConfig_1.TabName.LabourHire,
     },
     _a[ConditionConfig_1.MatricID.Onbording] = {
-        label: 'Candidates Onboarded',
-        status: 'WELCOME',
+        label: "Candidates Onboarded",
+        status: "WELCOME",
         icon: lucide_react_1.UserPlus,
-        color: '#2563eb',
-        bgColor: '#eff6ff',
-        statusColor: '#ef4444',
-        statusBg: '#fee2e2',
+        color: "#2563eb",
+        bgColor: "#eff6ff",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
         path: "/RecruitmentTable",
         menuId: ConditionConfig_1.menuID.SelectionProcess,
         TabValue: "tab1",
-        TabName: ConditionConfig_1.TabName.LabourHire
+        TabName: ConditionConfig_1.TabName.LabourHire,
     },
     _a);
 var buildCol = function (id, overrides) {
@@ -315,7 +315,11 @@ var MatricColums = function (roles) {
                     }),
                     buildCol(ConditionConfig_1.MatricID.AssignInterviewPanel, {
                         showArrow: false,
-                        externalApi: { workflowStatuses: [Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview] },
+                        externalApi: {
+                            workflowStatuses: [
+                                Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+                            ],
+                        },
                     }),
                     buildCol(ConditionConfig_1.MatricID.EvalutionHR, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.InterviewQuestionHR, { showArrow: true }),
@@ -379,8 +383,7 @@ var MatricColums = function (roles) {
             default:
                 roleColumns = [];
         }
-        if (roles.includes(Config_1.RoleID.LineManager) &&
-            roles.includes(Config_1.RoleID.HOD)) {
+        if (roles.includes(Config_1.RoleID.LineManager) && roles.includes(Config_1.RoleID.HOD)) {
             roleColumns = roleColumns.filter(function (col) { return col.id !== ConditionConfig_1.MatricID.AdvertReviewHOD; });
         }
         columns.push.apply(columns, roleColumns);
@@ -396,24 +399,12 @@ var MatricColums = function (roles) {
 };
 exports.MatricColums = MatricColums;
 var DEFAULT_SELECT = ["Id", "JobCodeId"];
-var StatusFilter = function (status) { return [
-    {
-        FilterKey: "StatusId",
-        Operator: Array.isArray(status) ? "in" : "eq",
-        FilterValue: status
-    },
-    {
-        FilterKey: "ItemCreated",
-        Operator: "eq",
-        FilterValue: ApiConfig_1.Choices.No
-    }
-]; };
 var DataSyncFilter = [
     {
         FilterKey: "IsDataSyncToRecruitment",
         Operator: "eq",
-        FilterValue: ApiConfig_1.Choices.Yes
-    }
+        FilterValue: ApiConfig_1.Choices.Yes,
+    },
     // {
     //     FilterKey: "ItemCreated",
     //     Operator: "eq",
@@ -425,171 +416,104 @@ var DataSyncFilter = [
     //     FilterValue: StatusId.ReadyforRecruitmentProcess
     // }
 ];
-exports.MetricQueryConfig = (_b = {},
-    _b[ConditionConfig_1.MatricID.AssignHr] = [
+var StatusFilter = function (status, columnName, emailId) {
+    var filters = [
         {
-            ListName: Config_1.ListNames.HRMSNewPositionRequest,
-            Filter: tslib_1.__spreadArray([
-                StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess)
-            ], DataSyncFilter, true),
-            select: ["Id"]
+            FilterKey: "ItemCreated",
+            Operator: "eq",
+            FilterValue: ApiConfig_1.Choices.No,
         },
-        // {
-        //     ListName: ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails,
-        //     Filter: [
-        //         StatusFilter(StatusId.ReadyforRecruitmentProcess),
-        //         ...DataSyncFilter
-        //     ],
-        //     select: ["Id"]
-        // },
-        {
-            ListName: Config_1.ListNames.HRMSVacancyReplacementRequest,
-            Filter: tslib_1.__spreadArray([
-                StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess)
-            ], DataSyncFilter, true),
-            select: ["Id"]
-        }
-    ],
-    _b[ConditionConfig_1.MatricID.UploadONEM] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter(Config_1.StatusId.PendingUploadONEM)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.JobAdvert] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [
-            StatusFilter(Config_1.StatusId.PendingUploadAdvert)
+    ];
+    if (status) {
+        filters.push({
+            FilterKey: "StatusId",
+            Operator: Array.isArray(status) ? "in" : "eq",
+            FilterValue: status,
+        });
+    }
+    if (columnName && emailId) {
+        filters.push({
+            FilterKey: columnName,
+            Operator: "eq",
+            FilterValue: emailId,
+        });
+    }
+    return filters;
+};
+var createQuery = function (ListName, Filter, select) { return ({
+    ListName: ListName,
+    Filter: Filter !== null && Filter !== void 0 ? Filter : [],
+    select: select !== null && select !== void 0 ? select : DEFAULT_SELECT,
+}); };
+var MetricQueryConfig = function (EmailId) {
+    var _a;
+    return (_a = {},
+        // ✅ Assign HR
+        _a[ConditionConfig_1.MatricID.AssignHr] = [
+            createQuery(Config_1.ListNames.HRMSNewPositionRequest, tslib_1.__spreadArray(tslib_1.__spreadArray([], StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess), true), DataSyncFilter, true), ["Id"]),
+            createQuery(Config_1.ListNames.HRMSVacancyReplacementRequest, tslib_1.__spreadArray(tslib_1.__spreadArray([], StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess), true), DataSyncFilter, true), ["Id"]),
         ],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.AdvertReviewHOD] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter(Config_1.StatusId.PendingReviewAdvertHOD)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.AdvertReviewLM] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter(Config_1.StatusId.PendingwithLineManagereviewAdv)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.ReviewScoreCard] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [StatusFilter(Config_1.StatusId.PendingwithHODtoAssignPositionID)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.ReviewProfileHR] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter(Config_1.StatusId.RecruitmentInProgress)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.ReviewProfileLM] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter(Config_1.StatusId.RecruitmentInProgress)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.AssignInterviewPanel] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [
-            StatusFilter(Config_1.StatusId.RecruitmentInProgress)
-        ],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.ReviewScoreCard] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [StatusFilter(Config_1.StatusId.PendingwithHODtoAssignPositionID)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.InterviewQuestionHR] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter(Config_1.StatusId.PendingInterviewquestion)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.InterviewQuestionLM] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
-        Filter: [StatusFilter([
-                Config_1.StatusId.PendingInterviewquestion,
-                Config_1.StatusId.CareerPortalQuestions
-            ]),
-        ],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.interviewSchedule] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [
-            StatusFilter([
-                Config_1.StatusId.InterviewScheduled,
-                Config_1.StatusId.InterviewScheduledforLevel2
-            ])
-        ],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.interviewTracker] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [
-            StatusFilter([
-                Config_1.StatusId.InterviewScheduled,
-                Config_1.StatusId.InterviewScheduledforLevel2
-            ])
-        ],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.EvalutionHR] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [
-            StatusFilter([
-                Config_1.StatusId.InterviewScheduled,
-                Config_1.StatusId.InterviewScheduledforLevel2
-            ])
-        ],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.EvalutionLM] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [
-            StatusFilter(Config_1.StatusId.InterviewScheduled)
-        ],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.EvalutionHOD] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [
-            StatusFilter([
-                Config_1.StatusId.InterviewScheduled,
-                Config_1.StatusId.InterviewScheduledforLevel2
-            ])
-        ],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.EvalutionEXCO] = {
-        ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-        Filter: [
-            StatusFilter(Config_1.StatusId.InterviewScheduledforLevel2)
-        ],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.OfferRelease] = {
-        ListName: Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
-        Filter: [StatusFilter(Config_1.StatusId.PendingCandidateOfferLetterUpload)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.OfferAccepted] = {
-        ListName: Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
-        Filter: [StatusFilter(Config_1.StatusId.PendingHROfferReview)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.OfferRejected] = {
-        ListName: Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
-        Filter: [StatusFilter(Config_1.StatusId.offerdecline)],
-        select: DEFAULT_SELECT
-    },
-    _b[ConditionConfig_1.MatricID.Onbording] = {
-        ListName: Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
-        Filter: [StatusFilter(Config_1.StatusId.Onboarded)],
-        select: DEFAULT_SELECT
-    },
-    _b);
-var RoleMetricFilters = (_c = {},
-    _c[Config_1.RoleID.RecruitmentHRLead] = [
+        // ✅ Upload ONEM
+        _a[ConditionConfig_1.MatricID.UploadONEM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.PendingUploadONEM)),
+        // ✅ Job Advert
+        _a[ConditionConfig_1.MatricID.JobAdvert] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.PendingUploadAdvert, "AssignedHR", EmailId)),
+        // ✅ Advert Review HOD
+        _a[ConditionConfig_1.MatricID.AdvertReviewHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.PendingReviewAdvertHOD, "HOD", EmailId)),
+        // ✅ Advert Review LM
+        _a[ConditionConfig_1.MatricID.AdvertReviewLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.PendingwithLineManagereviewAdv, "LineManager", EmailId)),
+        // ✅ Review Score Card (FIXED - only one)
+        _a[ConditionConfig_1.MatricID.ReviewScoreCard] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter(Config_1.StatusId.PendingwithHODtoAssignPositionID)),
+        // ✅ Review Profile HR
+        _a[ConditionConfig_1.MatricID.ReviewProfileHR] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.RecruitmentInProgress, "AssignedHR", EmailId)),
+        // ✅ Review Profile LM
+        _a[ConditionConfig_1.MatricID.ReviewProfileLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.RecruitmentInProgress, "LineManager", EmailId)),
+        // ✅ Assign Interview Panel
+        _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.RecruitmentInProgress, "AssignedHR", EmailId)),
+        // ✅ Interview Question HR
+        _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.PendingInterviewquestion, "AssignedHR", EmailId)),
+        // ✅ Interview Question LM (FIXED)
+        _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter([Config_1.StatusId.PendingInterviewquestion, Config_1.StatusId.CareerPortalQuestions], "LineManager", EmailId)),
+        // ✅ Interview Schedule
+        _a[ConditionConfig_1.MatricID.interviewSchedule] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter([
+            Config_1.StatusId.InterviewScheduled,
+            Config_1.StatusId.InterviewScheduledforLevel2,
+        ])),
+        // ✅ Interview Tracker
+        _a[ConditionConfig_1.MatricID.interviewTracker] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter([
+            Config_1.StatusId.InterviewScheduled,
+            Config_1.StatusId.InterviewScheduledforLevel2,
+        ])),
+        // ✅ Evaluation HR
+        _a[ConditionConfig_1.MatricID.EvalutionHR] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter([
+            Config_1.StatusId.InterviewScheduled,
+            Config_1.StatusId.InterviewScheduledforLevel2,
+        ])),
+        // ✅ Evaluation LM
+        _a[ConditionConfig_1.MatricID.EvalutionLM] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter(Config_1.StatusId.InterviewScheduled)),
+        // ✅ Evaluation HOD
+        _a[ConditionConfig_1.MatricID.EvalutionHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter([
+            Config_1.StatusId.InterviewScheduled,
+            Config_1.StatusId.InterviewScheduledforLevel2,
+        ])),
+        // ✅ Evaluation EXCO
+        _a[ConditionConfig_1.MatricID.EvalutionEXCO] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter(Config_1.StatusId.InterviewScheduledforLevel2)),
+        // ✅ Offer Release
+        _a[ConditionConfig_1.MatricID.OfferRelease] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter(Config_1.StatusId.PendingCandidateOfferLetterUpload)),
+        // ✅ Offer Accepted
+        _a[ConditionConfig_1.MatricID.OfferAccepted] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter(Config_1.StatusId.PendingHROfferReview)),
+        // ✅ Offer Rejected
+        _a[ConditionConfig_1.MatricID.OfferRejected] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter(Config_1.StatusId.offerdecline)),
+        // ✅ Onboarding
+        _a[ConditionConfig_1.MatricID.Onbording] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter(Config_1.StatusId.Onboarded)),
+        //MySubmission
+        _a[ConditionConfig_1.MatricID.MySubmission] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails),
+        //Assign Agencies
+        _a[ConditionConfig_1.MatricID.AssignAgencies] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.RecruitmentInProgress)),
+        _a);
+};
+exports.MetricQueryConfig = MetricQueryConfig;
+var RoleMetricFilters = (_b = {},
+    _b[Config_1.RoleID.RecruitmentHRLead] = [
         ConditionConfig_1.MatricID.AssignHr,
         ConditionConfig_1.MatricID.UploadONEM,
         ConditionConfig_1.MatricID.ReviewScoreCard,
@@ -598,9 +522,9 @@ var RoleMetricFilters = (_c = {},
         ConditionConfig_1.MatricID.OfferRelease,
         ConditionConfig_1.MatricID.OfferAccepted,
         ConditionConfig_1.MatricID.OfferRejected,
-        ConditionConfig_1.MatricID.Onbording
+        ConditionConfig_1.MatricID.Onbording,
     ],
-    _c[Config_1.RoleID.RecruitmentHR] = [
+    _b[Config_1.RoleID.RecruitmentHR] = [
         ConditionConfig_1.MatricID.JobAdvert,
         ConditionConfig_1.MatricID.ReviewProfileHR,
         ConditionConfig_1.MatricID.AssignInterviewPanel,
@@ -609,9 +533,9 @@ var RoleMetricFilters = (_c = {},
         ConditionConfig_1.MatricID.OfferRelease,
         ConditionConfig_1.MatricID.OfferAccepted,
         ConditionConfig_1.MatricID.OfferRejected,
-        ConditionConfig_1.MatricID.Onbording
+        ConditionConfig_1.MatricID.Onbording,
     ],
-    _c[Config_1.RoleID.LineManager] = [
+    _b[Config_1.RoleID.LineManager] = [
         ConditionConfig_1.MatricID.AdvertReviewLM,
         ConditionConfig_1.MatricID.EvalutionLM,
         ConditionConfig_1.MatricID.ReviewProfileLM,
@@ -619,34 +543,37 @@ var RoleMetricFilters = (_c = {},
         ConditionConfig_1.MatricID.OfferRelease,
         ConditionConfig_1.MatricID.OfferAccepted,
         ConditionConfig_1.MatricID.OfferRejected,
-        ConditionConfig_1.MatricID.Onbording
+        ConditionConfig_1.MatricID.Onbording,
     ],
-    _c[Config_1.RoleID.HOD] = [
+    _b[Config_1.RoleID.HOD] = [
         ConditionConfig_1.MatricID.AdvertReviewHOD,
         ConditionConfig_1.MatricID.ReviewScoreCard,
         ConditionConfig_1.MatricID.EvalutionHOD,
         ConditionConfig_1.MatricID.OfferRelease,
         ConditionConfig_1.MatricID.OfferAccepted,
         ConditionConfig_1.MatricID.OfferRejected,
-        ConditionConfig_1.MatricID.Onbording
+        ConditionConfig_1.MatricID.Onbording,
     ],
-    _c[Config_1.RoleID.RecruitmentAppExternalAgency] = [
+    _b[Config_1.RoleID.RecruitmentAppExternalAgency] = [
         ConditionConfig_1.MatricID.EvalutionEXCO,
         ConditionConfig_1.MatricID.OfferRelease,
         ConditionConfig_1.MatricID.OfferAccepted,
         ConditionConfig_1.MatricID.OfferRejected,
-        ConditionConfig_1.MatricID.Onbording
+        ConditionConfig_1.MatricID.Onbording,
     ],
-    _c);
-var getRoleBasedFilters = function (roles) {
+    _b);
+var getRoleBasedFilters = function (roles, EmailId) {
     var metricSet = new Set();
     roles.forEach(function (role) {
         var metrics = RoleMetricFilters[role] || [];
         metrics.forEach(function (metric) { return metricSet.add(metric); });
     });
+    var configMap = (0, exports.MetricQueryConfig)(EmailId);
     var result = [];
-    Array.from(metricSet).forEach(function (metricId) {
-        var config = exports.MetricQueryConfig[metricId];
+    metricSet.forEach(function (metricId) {
+        var config = configMap[metricId];
+        if (!config)
+            return;
         if (Array.isArray(config)) {
             config.forEach(function (cfg) {
                 result.push(tslib_1.__assign({ StateValue: metricId }, cfg));
@@ -656,12 +583,9 @@ var getRoleBasedFilters = function (roles) {
             result.push(tslib_1.__assign({ StateValue: metricId }, config));
         }
     });
-    var hasBothRoles = roles.includes(Config_1.RoleID.LineManager) &&
-        roles.includes(Config_1.RoleID.HOD);
-    if (hasBothRoles) {
+    if (roles.includes(Config_1.RoleID.LineManager) && roles.includes(Config_1.RoleID.HOD)) {
         result = result.filter(function (item) { return item.StateValue !== ConditionConfig_1.MatricID.AdvertReviewHOD; });
     }
-    console.log(result, "Result");
     return result;
 };
 exports.getRoleBasedFilters = getRoleBasedFilters;
@@ -680,7 +604,7 @@ var priorityValues = function (matrixs) {
         value: m.value,
         percent: total > 0 ? Math.round((m.value / total) * 100) : 0,
         color: m.color,
-        iconType: 'hr'
+        iconType: "hr",
     }); });
 };
 exports.priorityValues = priorityValues;

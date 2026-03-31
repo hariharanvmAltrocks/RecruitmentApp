@@ -107,7 +107,7 @@ var useAssignMembers = function (Nationality) {
                 }
             });
         }); };
-        loadHRMembers();
+        void loadHRMembers();
         return function () {
             isMounted = false;
         };

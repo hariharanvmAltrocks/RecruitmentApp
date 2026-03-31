@@ -26,7 +26,6 @@ import { useNavigate } from "react-router-dom";
 import { ModalPopup } from "../../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface AdvertReviewDrawerProps {
   drawerOpen: boolean;
@@ -45,7 +44,6 @@ export interface AdvertReviewDrawerProps {
   refreshKey: () => void;
 }
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
 
 const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
   width = "100%",
@@ -54,9 +52,6 @@ const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
   <div className="advert-review-drawer__skeleton" style={{ width, height }} />
 );
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Build IDocFiles array from uploaded files */
 const toDocFiles = (files: UploadedFile[]): IDocFiles[] =>
   files.map((item) => ({
     name: item.name,
@@ -64,7 +59,6 @@ const toDocFiles = (files: UploadedFile[]): IDocFiles[] =>
     type: "New",
   }));
 
-/** Map raw position API response → PositionDetails shape */
 const toPositionDetails = (p: NonNullable<ReturnType<typeof usePositionDetails>["data"]>): PositionDetails => ({
   jobId: p.RecordID,
   jobTitle: p.JobTitleEnglish,
@@ -86,7 +80,6 @@ const toPositionDetails = (p: NonNullable<ReturnType<typeof usePositionDetails>[
   JobCodeID: p.JobCodeId,
 });
 
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   drawerOpen,
@@ -109,7 +102,6 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   const navigate = useNavigate();
   const { modalState, showModal, closeModal } = useModalPopup();
 
-  // ─── Data hooks ─────────────────────────────────────────────────────────────
   const { data: positionDetails, loading: positionLoading } =
     usePositionDetails(selectedJobId, selectedType);
   const { data: signatureDetails, loading: signatureLoading } =
@@ -130,23 +122,17 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
 
   const isLoading = positionLoading || advertLoading || attachmentLoading || signatureLoading;
 
-  // ─── Local state (only what must cause re-renders) ───────────────────────
   const [uploadDocument, setUploadDocument] = useState<UploadedFile[]>([]);
 
-  // useRef — these only gate logic/styling, they don't need to re-render the tree
   const showValidationRef = useRef(false);
   const isSubmittingRef = useRef(false);
 
-  // ─── Sync loading state to parent ───────────────────────────────────────
   useEffect(() => {
     if (loadingState !== isLoading) {
       setLoadingState(isLoading);
     }
   }, [isLoading, loadingState, setLoadingState]);
 
-  // ─── Derived / memoized values ───────────────────────────────────────────
-
-  /** Role used for update calls — LM takes priority over HOD */
   const roleID = useMemo(
     () =>
       roleIDs.includes(RoleID.LineManager) || roleIDs.includes(RoleID.HOD)
@@ -155,10 +141,6 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     [roleIDs]
   );
 
-  /**
-   * formData is memoized so hooks that receive it only re-run
-   * when positionDetails actually changes, not on every render.
-   */
   const formData: IDptData = useMemo(
     () => ({
       ID: positionDetails?.ID ?? 0,
@@ -170,25 +152,20 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
       Nationality: positionDetails?.Nationality ?? "",
       NumberOfPersonNeeded: positionDetails?.NumberOfPersonNeeded ?? "",
       Dptcode: positionDetails?.DeptCode ?? "",
-      reviewerComments,   // keep in sync with live prop
+      reviewerComments,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [positionDetails, reviewerComments]
   );
 
-  /** Doc files memoized — only rebuilds when upload list changes */
   const docFiles: IDocFiles[] = useMemo(
     () => toDocFiles(uploadDocument),
     [uploadDocument]
   );
 
-  /** Mapped position details for PositionFramework */
   const mappedData: PositionDetails | null = useMemo(
     () => (positionDetails ? toPositionDetails(positionDetails) : null),
     [positionDetails]
   );
-
-  /** Advert content switches on language toggle */
   const advertContent = useMemo(
     () =>
       advertDetails
@@ -199,7 +176,6 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     [advertDetails, advertLanguage]
   );
 
-  /** Header meta for title / badge / department */
   const headerMeta = useMemo(
     () => ({
       title: positionDetails?.JobTitleEnglish ?? "",
@@ -208,8 +184,6 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     }),
     [positionDetails]
   );
-
-  // ─── Validation flags ────────────────────────────────────────────────────
 
   const commentValid = reviewerComments.trim().length > 0;
   const uploadValid = uploadDocument.length > 0;
@@ -221,10 +195,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
 
   const bgvValid = optionValid;
 
-  /**
-   * Validation rules per role — memoized so canApprove doesn't
-   * recalculate unless role IDs or field values change.
-   */
+
   const canApprove = useMemo(() => {
     const rules: { roles: number[]; validate: () => boolean }[] = [
       {
@@ -283,8 +254,6 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   );
 
   const handleApprove = useCallback(async () => {
-    // Gate: mark validation visible (ref — no re-render needed here
-    // because error classes are recalculated on next natural render)
     showValidationRef.current = true;
 
     if (!canApprove) {
@@ -299,7 +268,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
       return;
     }
 
-    if (isSubmittingRef.current) return; // prevent double-submit
+    if (isSubmittingRef.current) return;
     isSubmittingRef.current = true;
 
     try {
@@ -329,7 +298,9 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
         onConfirm: closeModal,
       });
     } finally {
-      isSubmittingRef.current = false;
+      if (isSubmittingRef.current) {
+  isSubmittingRef.current = false;
+}
     }
   }, [
     canApprove,
@@ -343,7 +314,6 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     closeModal,
   ]);
 
-  // ─── Error flags (driven by ref — evaluated at render time) ──────────────
 
   const sv = showValidationRef.current;
   const uploadError = sv && !uploadValid;
@@ -351,7 +321,6 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   const checkboxError = sv && !checkboxValid;
   const bgvError = sv && !optionValid;
 
-  // ─── Render ──────────────────────────────────────────────────────────────
 
   const showUploadONEMSection =
     [MatricID.UploadONEM, MatricID.JobAdvert].includes(metricId);
@@ -422,7 +391,6 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                 </button>
               </div>
 
-              {/* ── Content ── */}
               <div className="advert-review-drawer__content">
                 <PositionFramework
                   positionDetails={mappedData}
@@ -451,6 +419,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                     required
                     onChange={setUploadDocument}
                     hasError={uploadError}
+                    disabled={isSubmittingRef.current}
                   />
                 )}
 
@@ -461,6 +430,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                       VerificationChecks={BGVData.checkboxBGVOption}
                       onToggleOption={handleBvgToggle}
                       hasError={bgvError}
+                      disabled={isSubmittingRef.current}
                     />
                   </div>
                 )}
@@ -476,6 +446,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                       onToggleAcknowledgement={onToggleAcknowledgement}
                       commentError={commentError}
                       checkboxError={checkboxError}
+                      disabled={isSubmittingRef.current}
                     />
 
                     <div className="advert-review-drawer__footer">
@@ -490,8 +461,8 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
 
                         <button
                           type="button"
-                          className="advert-review-drawer__button advert-review-drawer__button--primary"
-                          disabled={isLoading || isSubmittingRef.current}
+                          className={!canApprove ? "advert-review-drawer__button advert-review-drawer__button--primary__is-disabled" : "advert-review-drawer__button advert-review-drawer__button--primary"}
+                          disabled={!canApprove || isSubmittingRef.current}
                           onClick={handleApprove}
                         >
                           {isSubmittingRef.current ? (

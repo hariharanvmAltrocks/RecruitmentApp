@@ -56,7 +56,7 @@ async function transformToUpsertPayload(
 
       questionTypeId: questionType,
 
-      isQualifier: 0,
+      isQualifier: 1,
       isAnswerValidate: 0,
 
       sequence: index + 1,

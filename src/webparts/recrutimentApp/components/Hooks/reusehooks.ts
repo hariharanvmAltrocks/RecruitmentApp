@@ -1,5 +1,58 @@
+import { DashboardServices } from "../../services/ServiceExport";
 import { MatricID, TabNames } from "../../utilities/ConditionConfig";
-import { RoleID, StatusId } from "../../utilities/Config";
+import { ListNames, RoleID, StatusId } from "../../utilities/Config";
+import { MetricQueryConfig } from "../Screens/Dashboard/metricColumns.config";
+
+export const fetchByMetricId = async (
+  matricID: number,
+  EmailId: string,
+  condition?: any,
+) => {
+  const configMap = MetricQueryConfig(EmailId);
+  const config = configMap[matricID];
+
+  if (!config) return [];
+
+  const configs = Array.isArray(config) ? config : [config];
+
+  const serviceCall = async (listName: string, filter: any[]) => {
+    switch (listName) {
+      case ListNames.HRMSNewPositionRequest:
+        return DashboardServices.GetNPAEPVRRDetails(filter, condition);
+
+      case ListNames.HRMSRecruitmentDptDetails:
+        return DashboardServices.GetRecruitmentDetails(filter, condition);
+
+      case ListNames.HRMSRecruitmentCandidatePersonalDetails:
+        return DashboardServices.GetCandidateDetails(filter, condition);
+
+      case ListNames.HRMSSelectedCandidateDetailsByHOD:
+        return DashboardServices.GetSelectedCandidate(filter, condition);
+
+      default:
+        return null;
+    }
+  };
+
+  const responses = await Promise.all(
+    configs.map((cfg) => serviceCall(cfg.ListName, cfg.Filter)),
+  );
+
+  let result: any[] = [];
+
+  responses.forEach((res, index) => {
+    if (res?.data) {
+      result.push(
+        ...res.data.map((item: any) => ({
+          ...item,
+          __listName: configs[index].ListName,
+        })),
+      );
+    }
+  });
+
+  return result;
+};
 
 export function calculateTotalExperienceYears(experiences: any[]) {
   let totalMonths = 0;
@@ -40,41 +93,63 @@ export function getcountryCode(Code: any[], refMobile: string) {
   return `${country.id}-${mobileNumber}`;
 }
 
-export const findMatricID = (roleIDs: number[], statusID: number, TabName: string): number => {
+export const findMatricID = (
+  roleIDs: number[],
+  statusID: number,
+  TabName: string,
+): number => {
   switch (statusID) {
     case StatusId.ReadyforRecruitmentProcess:
       return MatricID.AssignHr;
+
     case StatusId.PendingUploadONEM:
       return MatricID.UploadONEM;
+
     case StatusId.PendingUploadAdvert:
       return MatricID.JobAdvert;
+
     case StatusId.PendingReviewAdvertHOD:
       return MatricID.AdvertReviewHOD;
+
     case StatusId.PendingwithLineManagereviewAdv:
       return MatricID.AdvertReviewLM;
+
     case StatusId.PendingInterviewquestion:
       return MatricID.InterviewQuestionHR;
+
     case StatusId.CareerPortalQuestions:
       return MatricID.InterviewQuestionLM;
+
     case StatusId.InterviewScheduled:
     case StatusId.InterviewScheduledforLevel2:
       return MatricID.EvalutionHR;
+
     case StatusId.RecruitmentInProgress:
       if (TabName === TabNames.ReviewProfile) {
         if (roleIDs.includes(RoleID.RecruitmentHR)) {
           return MatricID.ReviewProfileHR;
-        } else if (roleIDs.includes(RoleID.LineManager)) {
+        }
+        if (roleIDs.includes(RoleID.LineManager)) {
           return MatricID.ReviewProfileLM;
         }
-      } else if (TabName === TabNames.AssignInterviewPanel) {
-        return MatricID.AssignInterviewPanel;
-      } else if (TabName === TabNames.ReviewScorecard) {
-        return MatricID.ReviewScoreCard;
-      } else {
         return 0;
       }
-    default:
+
+      if (TabName === TabNames.AssignInterviewPanel) {
+        return MatricID.AssignInterviewPanel;
+      }
+
+      if (TabName === TabNames.ReviewScorecard) {
+        return MatricID.ReviewScoreCard;
+      }
+
+      if (TabName === TabNames.AssignAgencies) {
+        return MatricID.AssignAgencies;
+      }
+
       return 0;
+    default:
+      return MatricID.MySubmission;
   }
 };
 
@@ -85,3 +160,23 @@ export const truncateText = (text: string, maxLength: number) => {
   const trimmed = text.slice(0, maxLength);
   return trimmed.slice(0, trimmed.lastIndexOf(" ")) + ".....";
 };
+
+export const isSharePointUrl = (url: string) =>
+  /\.sharepoint\.com\//i.test(url);
+
+export const isPdfUrl = (url: string) => {
+  const clean = url.split("?")[0].toLowerCase();
+  return clean.endsWith(".pdf");
+};
+
+export const buildWopiUrl = (url: string) => {
+  try {
+    const parsed = new URL(url);
+    return `${parsed.origin}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(url)}&action=embedview`;
+  } catch {
+    return url;
+  }
+};
+
+export const buildOfficeViewerUrl = (url: string) =>
+  `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;

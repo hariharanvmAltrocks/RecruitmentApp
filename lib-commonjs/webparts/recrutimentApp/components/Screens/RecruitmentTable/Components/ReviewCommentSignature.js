@@ -11,7 +11,7 @@ var SkeletonBlock = function (_a) {
 };
 var ReviewCommentSignature = function (_a) {
     var _b;
-    var reviewerComments = _a.reviewerComments, acknowledgementCheckbox = _a.acknowledgementCheckbox, signatureDetails = _a.signatureDetails, isLoading = _a.isLoading, onCommentsChange = _a.onCommentsChange, onToggleAcknowledgement = _a.onToggleAcknowledgement, _c = _a.commentError, commentError = _c === void 0 ? false : _c, _d = _a.checkboxError, checkboxError = _d === void 0 ? false : _d;
+    var reviewerComments = _a.reviewerComments, acknowledgementCheckbox = _a.acknowledgementCheckbox, signatureDetails = _a.signatureDetails, isLoading = _a.isLoading, onCommentsChange = _a.onCommentsChange, onToggleAcknowledgement = _a.onToggleAcknowledgement, _c = _a.commentError, commentError = _c === void 0 ? false : _c, _d = _a.checkboxError, checkboxError = _d === void 0 ? false : _d, _e = _a.disabled, disabled = _e === void 0 ? false : _e;
     return (react_1.default.createElement("section", { className: "advert-review-drawer__section advert-review-drawer__section--comments" },
         react_1.default.createElement("h3", { className: "advert-review-drawer__section-title" },
             react_1.default.createElement(lucide_react_1.MessageSquare, { size: 12 }),
@@ -21,7 +21,7 @@ var ReviewCommentSignature = function (_a) {
                 commentError ? "advert-review-drawer__textarea--error" : "",
             ]
                 .filter(Boolean)
-                .join(" "), placeholder: "Add your feedback or notes here...", value: reviewerComments, onChange: function (e) { return onCommentsChange(e.target.value); }, rows: 4, disabled: isLoading }),
+                .join(" "), placeholder: "Add your feedback or notes here...", value: reviewerComments, onChange: function (e) { return onCommentsChange(e.target.value); }, rows: 4, disabled: disabled }),
         commentError && (react_1.default.createElement("span", { className: "advert-review-drawer__field-error" }, "Reviewer comment is required.")),
         react_1.default.createElement("div", { className: "advert-review-drawer__signature" },
             react_1.default.createElement("label", { className: [
@@ -36,7 +36,7 @@ var ReviewCommentSignature = function (_a) {
                     ]
                         .filter(Boolean)
                         .join(" ") },
-                    react_1.default.createElement("input", { type: "checkbox", checked: acknowledgementCheckbox, onChange: onToggleAcknowledgement }),
+                    react_1.default.createElement("input", { type: "checkbox", checked: acknowledgementCheckbox, onChange: onToggleAcknowledgement, disabled: disabled }),
                     react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 12 })),
                 react_1.default.createElement("span", null, "I hereby acknowledge that I have reviewed the job advertisement details and attachments, and I confirm that the information is accurate and ready for publication.")),
             checkboxError && (react_1.default.createElement("span", { className: "advert-review-drawer__field-error" }, "Please acknowledge before approving.")),

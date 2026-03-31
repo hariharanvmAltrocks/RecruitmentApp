@@ -37,7 +37,7 @@ var useFetchQuestionBank = function (discipline, statusId, enable) {
                     case 2:
                         res = _c.sent();
                         questionbank = ((_b = res.data) !== null && _b !== void 0 ? _b : []).map(function (item) {
-                            var _a, _b, _c, _d, _e, _f;
+                            var _a, _b, _c, _d, _e, _f, _g, _h;
                             var options = ((_a = item.options) !== null && _a !== void 0 ? _a : []).map(function (opt) {
                                 var _a, _b;
                                 return ({
@@ -53,12 +53,14 @@ var useFetchQuestionBank = function (discipline, statusId, enable) {
                                 type: "single",
                                 questionEn: item.question,
                                 questionFr: (_b = item.questionFr) !== null && _b !== void 0 ? _b : "",
+                                answerEn: (_c = item.expectedAnswer) !== null && _c !== void 0 ? _c : "",
+                                answerFr: (_d = item.expectedAnswerFr) !== null && _d !== void 0 ? _d : "",
                                 options: options,
                                 answers: options.filter(function (opt) { return opt.isCorrect; }),
-                                scopeId: (_c = item.scope) !== null && _c !== void 0 ? _c : "",
-                                questionTypeId: (_d = item.questionType) !== null && _d !== void 0 ? _d : "",
-                                isQualifier: (_e = item.Disqualification) !== null && _e !== void 0 ? _e : false,
-                                createdBy: (_f = item.createdBy) !== null && _f !== void 0 ? _f : "",
+                                scopeId: (_e = item.scope) !== null && _e !== void 0 ? _e : "",
+                                questionTypeId: (_f = item.questionType) !== null && _f !== void 0 ? _f : "",
+                                isQualifier: (_g = item.Disqualification) !== null && _g !== void 0 ? _g : false,
+                                createdBy: (_h = item.createdBy) !== null && _h !== void 0 ? _h : "",
                                 fromBank: true,
                             };
                         });

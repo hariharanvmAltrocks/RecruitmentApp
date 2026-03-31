@@ -13,6 +13,7 @@ import { useTabDetails } from "./Hooks/useTabDetails";
 import { AdvertReviewDrawer } from "./AdvertReviewDrawer/AdvertReviewDrawer";
 import { useStateFromManage } from "./AdvertReviewDrawer/StateManage/useStateFromManage";
 import {
+  EvalutionItem,
   HrMember,
   RecruitmentItem,
   RecruitmentTabKey,
@@ -28,6 +29,10 @@ import { ModalPopup } from "../../Comman/ModalPopup/ModalPopup";
 import { useConfirmAssignment } from "./Hooks/Useconfirmassignment";
 import { useModalPopup } from "../../Comman/ModalPopup/useModalPopup";
 import Tabs from "../../Comman/Tabs/Tabs";
+import { IEvaluValidate } from "../../../services/Dashboard/IDashboard";
+import { userInfo } from "../../../utilities/hooks/RoleContext";
+import { DashboardServices } from "../../../services/ServiceExport";
+import moment from "moment";
 
 const AssignHRPopup = React.lazy(() =>
   import("./Components/AssignHRPopup/AssignHRPopup").then((module) => ({
@@ -39,6 +44,8 @@ export const RecruitmentTable: React.FC = () => {
   const { tabs, loading: tabsLoading } = useTabDetails();
   const { activeTab } = useUIState();
   const navigate = useNavigate();
+
+  const { ADGroupData } = userInfo();
 
   const [activeTabKey, setActiveTabKey] = useState<RecruitmentTabKey>(
     activeTab as RecruitmentTabKey
@@ -195,37 +202,81 @@ export const RecruitmentTable: React.FC = () => {
     );
   }, [paginatedItems, selectedIds]);
 
+
+  // const isEvalutionItem = (
+  //   item: RecruitmentItem | EvalutionItem
+  // ): item is EvalutionItem => {
+  //   return matricID === MatricID.EvalutionHR || matricID === MatricID.EvalutionLM || matricID === MatricID.EvalutionHOD || matricID === MatricID.EvalutionEXCO;
+  // };
+  const processingRef = useRef(false);
+
   const handleAction = useCallback(
     async (item: RecruitmentItem) => {
-      const { ItemID, requestType } = item;
+      if (processingRef.current) return;
+      processingRef.current = true;
 
-      if (matricID === MatricID.EvalutionHR) {
-        navigate("/Evalution");
-        return;
+      try {
+        const { ItemID, statusId } = item;
+
+        const isEvaluationFlow =
+          matricID === MatricID.EvalutionHR ||
+          matricID === MatricID.EvalutionLM ||
+          matricID === MatricID.EvalutionHOD ||
+          matricID === MatricID.EvalutionEXCO;
+
+        if (isEvaluationFlow) {
+          // const data: IEvaluValidate = {
+          //   ID: ItemID,
+          //   currentEmailID: ADGroupData.EmailId[0],
+          //   statusId,
+          // };
+
+          // const res = await DashboardServices.EvalutionValidation(data);
+          // if (!res.data) {
+          //   showModal({
+          //     type: "warning",
+          //     title: "Already Submitted",
+          //     message: "You have already submitted the evaluation.",
+          //     confirmLabel: "OK",
+          //     onConfirm: closeModal,
+          //   });
+          //   return; // processingRef resets in finally ✅
+          // }
+        }
+
+        const evalutionIDs = [
+          MatricID.EvalutionHR,
+          MatricID.EvalutionLM,
+          MatricID.EvalutionHOD,
+          MatricID.EvalutionEXCO,
+        ];
+
+        const routeMap: Record<number, string> = {
+          [MatricID.InterviewQuestionHR]: "/QuestionCreation",
+          [MatricID.InterviewQuestionLM]: "/QuestionCreation",
+          [MatricID.ReviewProfileHR]: "/CandidateTable",
+          [MatricID.ReviewProfileLM]: "/CandidateTable",
+          [MatricID.AssignInterviewPanel]: "/CandidateTable",
+          [MatricID.ReviewScoreCard]: "/ReviewScoreCard",
+          ...Object.fromEntries(evalutionIDs.map((id) => [id, "/Evalution"])),
+        };
+
+        const route = routeMap[matricID];
+        if (route) {
+          navigate(route, { state: { ID: ItemID } });
+          return;
+        }
+
+        drawerMeta.current = { isOpen: true, selectedType: item.requestType };
+        openDrawer(ItemID);
+
+      } finally {
+        // ✅ ALWAYS resets, no matter which return path was taken
+        processingRef.current = false;
       }
-
-      const routeMap: Record<number, string> = {
-        [MatricID.InterviewQuestionHR]: "/QuestionCreation",
-        [MatricID.InterviewQuestionLM]: "/QuestionCreation",
-        [MatricID.ReviewProfileHR]: "/CandidateTable",
-        [MatricID.ReviewProfileLM]: "/CandidateTable",
-        [MatricID.AssignInterviewPanel]: "/CandidateTable",
-        [MatricID.ReviewScoreCard]: "/CandidateTable",
-        [MatricID.EvalutionHR]: "/Evalution",
-        [MatricID.EvalutionLM]: "/Evalution",
-        [MatricID.ReviewScoreCard]: "/ReviewScoreCard",
-      };
-
-      const route = routeMap[matricID];
-      if (route) {
-        navigate(route, { state: { ID: ItemID } });
-        return;
-      }
-
-      drawerMeta.current = { isOpen: true, selectedType: requestType };
-      openDrawer(ItemID);
     },
-    [matricID, navigate, openDrawer]
+    // ✅ Complete dependency array
+    [matricID, navigate, openDrawer, showModal, closeModal, ADGroupData.EmailId]
   );
 
   const showAssignmentBar =

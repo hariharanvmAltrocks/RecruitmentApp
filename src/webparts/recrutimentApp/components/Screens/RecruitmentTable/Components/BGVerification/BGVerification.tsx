@@ -27,6 +27,7 @@ export type VerificationCardProps = {
   VerificationChecks: CheckboxGroupOption[];
   onToggleOption: (id: string) => void;
   hasError?: boolean;
+  disabled?: boolean;
 };
 
 const BGVerification = ({
@@ -34,6 +35,7 @@ const BGVerification = ({
   VerificationChecks,
   onToggleOption,
   hasError = false,
+  disabled = false
 }: VerificationCardProps) => {
   const optionalChecks: VerifiedCheck[] = VerificationChecks.map((check) => ({
     id: String(check.id),
@@ -102,6 +104,7 @@ const BGVerification = ({
                   checked={item.checked}
                   onChange={() => onToggleOption(item.id)}
                   aria-label={item.label}
+                  disabled={disabled}
                 />
                 <span className="vc-checkbox-wrap">
                   <span className="vc-custom-checkbox" aria-hidden="true" />

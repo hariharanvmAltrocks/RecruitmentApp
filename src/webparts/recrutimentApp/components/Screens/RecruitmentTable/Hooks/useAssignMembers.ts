@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { HrMember } from "../RecruitmentTable.types";
 import { CommonServices } from "../../../../services/ServiceExport";
-import { ExternalUserType, ListNames, RoleID } from "../../../../utilities/Config";
+import {
+  ExternalUserType,
+  ListNames,
+  RoleID,
+} from "../../../../utilities/Config";
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
 
 interface UseAssignMembersResult {
@@ -11,7 +15,7 @@ interface UseAssignMembersResult {
 }
 
 export const useAssignMembers = (
-  Nationality: string | null
+  Nationality: string | null,
 ): UseAssignMembersResult => {
   const [members, setMembers] = useState<HrMember[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -39,7 +43,7 @@ export const useAssignMembers = (
 
       const { data: filteredAgents } = await CommonServices.GetMasterData(
         ListNames.HRMSExternalAgents,
-        Filter
+        Filter,
       );
 
       const mappedMembers: HrMember[] =
@@ -47,10 +51,8 @@ export const useAssignMembers = (
           id: item.Id,
           name: item.AgentName,
           role: "Agency",
-          initials: item.AgentName
-            ?.split(" ")[0]
-            ?.slice(0, 2)
-            ?.toUpperCase() || "",
+          initials:
+            item.AgentName?.split(" ")[0]?.slice(0, 2)?.toUpperCase() || "",
         })) ?? [];
 
       setMembers(mappedMembers);
@@ -71,28 +73,25 @@ export const useAssignMembers = (
 
       try {
         const { data: userRoles } = await CommonServices.GetMasterData(
-          ListNames.HRMSRecruitmentUserRole
+          ListNames.HRMSRecruitmentUserRole,
         );
 
         const recruitmentHRRole = userRoles?.find(
-          (item: any) => item.ID === RoleID.RecruitmentHR
+          (item: any) => item.ID === RoleID.RecruitmentHR,
         );
 
         if (recruitmentHRRole?.ADGroupID) {
-          const { status, data } =
-            await CommonServices.GetADgruopsEmailIDs(
-              recruitmentHRRole.ADGroupID
-            );
+          const { status, data } = await CommonServices.GetADgruopsEmailIDs(
+            recruitmentHRRole.ADGroupID,
+          );
 
           if (status === 200 && data && isMounted) {
             const mappedMembers: HrMember[] = data.map((item: any) => ({
               id: item.key,
               name: item.text,
               role: "Recruitment HR",
-              initials: item.text
-                ?.split(" ")[0]
-                ?.slice(0, 2)
-                ?.toUpperCase() || "",
+              initials:
+                item.text?.split(" ")[0]?.slice(0, 2)?.toUpperCase() || "",
             }));
 
             setMembers(mappedMembers);
@@ -108,7 +107,7 @@ export const useAssignMembers = (
       }
     };
 
-    loadHRMembers();
+    void loadHRMembers();
 
     return () => {
       isMounted = false;

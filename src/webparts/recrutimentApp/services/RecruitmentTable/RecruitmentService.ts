@@ -972,7 +972,7 @@ export default class RecruitmentService implements IRecruitmentService {
         const onamdocpathfile = await CommonServices.uploadAttachmentToLibrary(
           RecuritmentDetails.JobCode,
           onemDocs || [],
-          "ONAMSignedStampDocuments"
+          DocumentLibraray.ONAMSignedStampDocuments
         )
         onemdocPath = String(onamdocpathfile.data[0].content);
       }

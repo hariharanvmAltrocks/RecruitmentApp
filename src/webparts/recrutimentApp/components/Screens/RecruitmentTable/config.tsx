@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Eye, Upload } from "lucide-react";
 import { DataTableColumn } from "../../Comman/DataTable/DataTable";
 import { EvalutionItem, RecruitmentItem } from "./RecruitmentTable.types";
@@ -20,6 +20,11 @@ export const useRecruitmentColumns = ({
   onAction,
 }: UseRecruitmentColumnsOptions): DataTableColumn<RecruitmentItem>[] => {
 
+  const onActionRef = useRef(onAction);
+  useEffect(() => {
+    onActionRef.current = onAction;
+  }, [onAction]);
+
   const actionColumn: DataTableColumn<RecruitmentItem> = useMemo(
     () => ({
       id: "actions",
@@ -29,7 +34,7 @@ export const useRecruitmentColumns = ({
       render: (item) => (
         <button
           className="data-table__action-btn"
-          onClick={() => onAction(item)}
+          onClick={() => onActionRef.current(item)}
           type="button"
           aria-label={actionMode === "Upload" ? "Upload document" : "View vacancy"}
         >
@@ -38,10 +43,9 @@ export const useRecruitmentColumns = ({
         </button>
       ),
     }),
-    [actionMode, onAction]
+    [actionMode]
   );
 
-  // ── Role: default ─────────────────────────────────────────────────────────
   const defaultColumns: DataTableColumn<RecruitmentItem>[] = useMemo(
     () => [
       {
@@ -101,7 +105,7 @@ export const useRecruitmentColumns = ({
         header: "Applicant Name",
         accessor: "applicantName",
         cellClassName: "data-table__cell--muted",
-         hideOnMobile: true,
+        hideOnMobile: true,
       },
       {
         id: "title",
@@ -148,7 +152,7 @@ export const useRecruitmentColumns = ({
   );
 
   const columnMap: Record<ColumnRole, DataTableColumn<any>[]> = {
-    default:    defaultColumns,
+    default: defaultColumns,
     evaluation: evaluationColumns,
   };
 

@@ -1,10 +1,54 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.truncateText = exports.findMatricID = void 0;
+exports.buildOfficeViewerUrl = exports.buildWopiUrl = exports.isPdfUrl = exports.isSharePointUrl = exports.truncateText = exports.findMatricID = exports.fetchByMetricId = void 0;
 exports.calculateTotalExperienceYears = calculateTotalExperienceYears;
 exports.getcountryCode = getcountryCode;
+var tslib_1 = require("tslib");
+var ServiceExport_1 = require("../../services/ServiceExport");
 var ConditionConfig_1 = require("../../utilities/ConditionConfig");
 var Config_1 = require("../../utilities/Config");
+var metricColumns_config_1 = require("../Screens/Dashboard/metricColumns.config");
+var fetchByMetricId = function (matricID, EmailId, condition) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+    var configMap, config, configs, serviceCall, responses, result;
+    return tslib_1.__generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                configMap = (0, metricColumns_config_1.MetricQueryConfig)(EmailId);
+                config = configMap[matricID];
+                if (!config)
+                    return [2 /*return*/, []];
+                configs = Array.isArray(config) ? config : [config];
+                serviceCall = function (listName, filter) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+                    return tslib_1.__generator(this, function (_a) {
+                        switch (listName) {
+                            case Config_1.ListNames.HRMSNewPositionRequest:
+                                return [2 /*return*/, ServiceExport_1.DashboardServices.GetNPAEPVRRDetails(filter, condition)];
+                            case Config_1.ListNames.HRMSRecruitmentDptDetails:
+                                return [2 /*return*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filter, condition)];
+                            case Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails:
+                                return [2 /*return*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filter, condition)];
+                            case Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD:
+                                return [2 /*return*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(filter, condition)];
+                            default:
+                                return [2 /*return*/, null];
+                        }
+                        return [2 /*return*/];
+                    });
+                }); };
+                return [4 /*yield*/, Promise.all(configs.map(function (cfg) { return serviceCall(cfg.ListName, cfg.Filter); }))];
+            case 1:
+                responses = _a.sent();
+                result = [];
+                responses.forEach(function (res, index) {
+                    if (res === null || res === void 0 ? void 0 : res.data) {
+                        result.push.apply(result, res.data.map(function (item) { return (tslib_1.__assign(tslib_1.__assign({}, item), { __listName: configs[index].ListName })); }));
+                    }
+                });
+                return [2 /*return*/, result];
+        }
+    });
+}); };
+exports.fetchByMetricId = fetchByMetricId;
 function calculateTotalExperienceYears(experiences) {
     var totalMonths = 0;
     experiences.forEach(function (exp) {
@@ -61,21 +105,23 @@ var findMatricID = function (roleIDs, statusID, TabName) {
                 if (roleIDs.includes(Config_1.RoleID.RecruitmentHR)) {
                     return ConditionConfig_1.MatricID.ReviewProfileHR;
                 }
-                else if (roleIDs.includes(Config_1.RoleID.LineManager)) {
+                if (roleIDs.includes(Config_1.RoleID.LineManager)) {
                     return ConditionConfig_1.MatricID.ReviewProfileLM;
                 }
-            }
-            else if (TabName === ConditionConfig_1.TabNames.AssignInterviewPanel) {
-                return ConditionConfig_1.MatricID.AssignInterviewPanel;
-            }
-            else if (TabName === ConditionConfig_1.TabNames.ReviewScorecard) {
-                return ConditionConfig_1.MatricID.ReviewScoreCard;
-            }
-            else {
                 return 0;
             }
-        default:
+            if (TabName === ConditionConfig_1.TabNames.AssignInterviewPanel) {
+                return ConditionConfig_1.MatricID.AssignInterviewPanel;
+            }
+            if (TabName === ConditionConfig_1.TabNames.ReviewScorecard) {
+                return ConditionConfig_1.MatricID.ReviewScoreCard;
+            }
+            if (TabName === ConditionConfig_1.TabNames.AssignAgencies) {
+                return ConditionConfig_1.MatricID.AssignAgencies;
+            }
             return 0;
+        default:
+            return ConditionConfig_1.MatricID.MySubmission;
     }
 };
 exports.findMatricID = findMatricID;
@@ -88,4 +134,27 @@ var truncateText = function (text, maxLength) {
     return trimmed.slice(0, trimmed.lastIndexOf(" ")) + ".....";
 };
 exports.truncateText = truncateText;
+var isSharePointUrl = function (url) {
+    return /\.sharepoint\.com\//i.test(url);
+};
+exports.isSharePointUrl = isSharePointUrl;
+var isPdfUrl = function (url) {
+    var clean = url.split("?")[0].toLowerCase();
+    return clean.endsWith(".pdf");
+};
+exports.isPdfUrl = isPdfUrl;
+var buildWopiUrl = function (url) {
+    try {
+        var parsed = new URL(url);
+        return "".concat(parsed.origin, "/_layouts/15/WopiFrame.aspx?sourcedoc=").concat(encodeURIComponent(url), "&action=embedview");
+    }
+    catch (_a) {
+        return url;
+    }
+};
+exports.buildWopiUrl = buildWopiUrl;
+var buildOfficeViewerUrl = function (url) {
+    return "https://view.officeapps.live.com/op/embed.aspx?src=".concat(encodeURIComponent(url));
+};
+exports.buildOfficeViewerUrl = buildOfficeViewerUrl;
 //# sourceMappingURL=reusehooks.js.map

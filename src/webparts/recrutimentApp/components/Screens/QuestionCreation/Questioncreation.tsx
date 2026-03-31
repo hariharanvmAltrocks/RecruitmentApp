@@ -97,11 +97,20 @@ const QuestionCreation: React.FC = (props: any) => {
     const minQuestions = 5;
     const remaining = minQuestions - preparedQuestions.length;
 
-    if (preparedQuestions.length < minQuestions) {
+    if (mode === "careerPortal" && preparedQuestions.length < minQuestions) {
       showModal({
         type: "error",
         title: "Minimum Requirement",
         message: `Please add at least ${minQuestions} questions. You need ${remaining} more.`,
+        confirmLabel: "Ok",
+        onConfirm: closeModal,
+      });
+      return;
+    } else if (mode === "interview" && preparedQuestions.length < 1) {
+      showModal({
+        type: "error",
+        title: "Minimum Requirement",
+        message: `Please add at least ${1} questions.`,
         confirmLabel: "Ok",
         onConfirm: closeModal,
       });

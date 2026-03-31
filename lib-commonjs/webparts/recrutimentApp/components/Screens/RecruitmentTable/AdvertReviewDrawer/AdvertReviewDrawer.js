@@ -26,13 +26,10 @@ var useHRProcess_1 = require("./Hooks/SaveHooks/useHRProcess");
 var react_router_dom_1 = require("react-router-dom");
 var ModalPopup_1 = require("../../../Comman/ModalPopup/ModalPopup");
 var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return (react_1.default.createElement("div", { className: "advert-review-drawer__skeleton", style: { width: width, height: height } }));
 };
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-/** Build IDocFiles array from uploaded files */
 var toDocFiles = function (files) {
     return files.map(function (item) { return ({
         name: item.name,
@@ -40,7 +37,6 @@ var toDocFiles = function (files) {
         type: "New",
     }); });
 };
-/** Map raw position API response → PositionDetails shape */
 var toPositionDetails = function (p) { return ({
     jobId: p.RecordID,
     jobTitle: p.JobTitleEnglish,
@@ -61,7 +57,6 @@ var toPositionDetails = function (p) { return ({
     dateRequired: String(p.DateRequried),
     JobCodeID: p.JobCodeId,
 }); };
-// ─── Component ────────────────────────────────────────────────────────────────
 var AdvertReviewDrawer = function (_a) {
     var _b, _c, _d;
     var drawerOpen = _a.drawerOpen, selectedJobId = _a.selectedJobId, selectedJobCode = _a.selectedJobCode, selectedType = _a.selectedType, advertLanguage = _a.advertLanguage, reviewerComments = _a.reviewerComments, acknowledgementCheckbox = _a.acknowledgementCheckbox, loadingState = _a.loadingState, onClose = _a.onClose, onLanguageChange = _a.onLanguageChange, onCommentsChange = _a.onCommentsChange, onToggleAcknowledgement = _a.onToggleAcknowledgement, setLoadingState = _a.setLoadingState, refreshKey = _a.refreshKey;
@@ -69,7 +64,6 @@ var AdvertReviewDrawer = function (_a) {
     var roleIDs = (0, RoleContext_1.userInfo)().roleIDs;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var _e = (0, useModalPopup_1.useModalPopup)(), modalState = _e.modalState, showModal = _e.showModal, closeModal = _e.closeModal;
-    // ─── Data hooks ─────────────────────────────────────────────────────────────
     var _f = (0, getPositionDetails_1.usePositionDetails)(selectedJobId, selectedType), positionDetails = _f.data, positionLoading = _f.loading;
     var _g = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _g.data, signatureLoading = _g.loading;
     var jobCodeId = (_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId) !== null && _b !== void 0 ? _b : 0;
@@ -77,28 +71,19 @@ var AdvertReviewDrawer = function (_a) {
     var _h = (0, getAdvertismentDetails_1.useAdvertismentDetails)(jobCodeId, { enabled: !!jobCodeId }), advertDetails = _h.data, BGVData = _h.BGVValue, handleBvgToggle = _h.handleBvgToggle, advertLoading = _h.loading;
     var _j = (0, getAttachmentDetails_1.useAttachmentDetails)(jobCode, { enabled: !!jobCode }), attachments = _j.data, attachmentLoading = _j.loading;
     var isLoading = positionLoading || advertLoading || attachmentLoading || signatureLoading;
-    // ─── Local state (only what must cause re-renders) ───────────────────────
     var _k = (0, react_1.useState)([]), uploadDocument = _k[0], setUploadDocument = _k[1];
-    // useRef — these only gate logic/styling, they don't need to re-render the tree
     var showValidationRef = (0, react_1.useRef)(false);
     var isSubmittingRef = (0, react_1.useRef)(false);
-    // ─── Sync loading state to parent ───────────────────────────────────────
     (0, react_1.useEffect)(function () {
         if (loadingState !== isLoading) {
             setLoadingState(isLoading);
         }
     }, [isLoading, loadingState, setLoadingState]);
-    // ─── Derived / memoized values ───────────────────────────────────────────
-    /** Role used for update calls — LM takes priority over HOD */
     var roleID = (0, react_1.useMemo)(function () {
         return roleIDs.includes(Config_1.RoleID.LineManager) || roleIDs.includes(Config_1.RoleID.HOD)
             ? Config_1.RoleID.LineManager
             : roleIDs[0];
     }, [roleIDs]);
-    /**
-     * formData is memoized so hooks that receive it only re-run
-     * when positionDetails actually changes, not on every render.
-     */
     var formData = (0, react_1.useMemo)(function () {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         return ({
@@ -113,14 +98,9 @@ var AdvertReviewDrawer = function (_a) {
             Dptcode: (_j = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DeptCode) !== null && _j !== void 0 ? _j : "",
             reviewerComments: reviewerComments,
         });
-    }, 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [positionDetails, reviewerComments]);
-    /** Doc files memoized — only rebuilds when upload list changes */
+    }, [positionDetails, reviewerComments]);
     var docFiles = (0, react_1.useMemo)(function () { return toDocFiles(uploadDocument); }, [uploadDocument]);
-    /** Mapped position details for PositionFramework */
     var mappedData = (0, react_1.useMemo)(function () { return (positionDetails ? toPositionDetails(positionDetails) : null); }, [positionDetails]);
-    /** Advert content switches on language toggle */
     var advertContent = (0, react_1.useMemo)(function () {
         return advertDetails
             ? advertLanguage === "EN"
@@ -128,7 +108,6 @@ var AdvertReviewDrawer = function (_a) {
                 : advertDetails.french
             : null;
     }, [advertDetails, advertLanguage]);
-    /** Header meta for title / badge / department */
     var headerMeta = (0, react_1.useMemo)(function () {
         var _a, _b, _c;
         return ({
@@ -137,17 +116,12 @@ var AdvertReviewDrawer = function (_a) {
             department: (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.Department) !== null && _c !== void 0 ? _c : "",
         });
     }, [positionDetails]);
-    // ─── Validation flags ────────────────────────────────────────────────────
     var commentValid = reviewerComments.trim().length > 0;
     var uploadValid = uploadDocument.length > 0;
     var checkboxValid = acknowledgementCheckbox;
     var optionValid = Array.isArray(BGVData === null || BGVData === void 0 ? void 0 : BGVData.checkboxBGVOption) &&
         BGVData.checkboxBGVOption.some(function (o) { return o.checked; });
     var bgvValid = optionValid;
-    /**
-     * Validation rules per role — memoized so canApprove doesn't
-     * recalculate unless role IDs or field values change.
-     */
     var canApprove = (0, react_1.useMemo)(function () {
         var rules = [
             {
@@ -196,8 +170,6 @@ var AdvertReviewDrawer = function (_a) {
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    // Gate: mark validation visible (ref — no re-render needed here
-                    // because error classes are recalculated on next natural render)
                     showValidationRef.current = true;
                     if (!canApprove) {
                         showModal({
@@ -210,7 +182,7 @@ var AdvertReviewDrawer = function (_a) {
                         return [2 /*return*/];
                     }
                     if (isSubmittingRef.current)
-                        return [2 /*return*/]; // prevent double-submit
+                        return [2 /*return*/];
                     isSubmittingRef.current = true;
                     _a.label = 1;
                 case 1:
@@ -254,7 +226,9 @@ var AdvertReviewDrawer = function (_a) {
                     });
                     return [3 /*break*/, 11];
                 case 10:
-                    isSubmittingRef.current = false;
+                    if (isSubmittingRef.current) {
+                        isSubmittingRef.current = false;
+                    }
                     return [7 /*endfinally*/];
                 case 11: return [2 /*return*/];
             }
@@ -270,13 +244,11 @@ var AdvertReviewDrawer = function (_a) {
         showModal,
         closeModal,
     ]);
-    // ─── Error flags (driven by ref — evaluated at render time) ──────────────
     var sv = showValidationRef.current;
     var uploadError = sv && !uploadValid;
     var commentError = sv && !commentValid;
     var checkboxError = sv && !checkboxValid;
     var bgvError = sv && !optionValid;
-    // ─── Render ──────────────────────────────────────────────────────────────
     var showUploadONEMSection = [ConditionConfig_1.MatricID.UploadONEM, ConditionConfig_1.MatricID.JobAdvert].includes(metricId);
     var showBGVSection = metricId === ConditionConfig_1.MatricID.UploadONEM &&
         (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.Nationality) === ConditionConfig_1.Nationality.Expatriate;
@@ -309,15 +281,15 @@ var AdvertReviewDrawer = function (_a) {
                     react_1.default.createElement(RequiredAttachments_1.RequiredAttachments, { attachments: attachments, isLoading: isLoading }),
                     showUploadONEMSection && (react_1.default.createElement(UploadDocument_1.UploadDocument, { multiple: false, acceptedFormats: ".pdf", label: metricId === ConditionConfig_1.MatricID.UploadONEM
                             ? "ONEM Signed and Stamped Document (Only PDF)"
-                            : "Draft ONEM AdvertDoc French (Only PDF)", required: true, onChange: setUploadDocument, hasError: uploadError })),
+                            : "Draft ONEM AdvertDoc French (Only PDF)", required: true, onChange: setUploadDocument, hasError: uploadError, disabled: isSubmittingRef.current })),
                     showBGVSection && (react_1.default.createElement("div", { style: { marginTop: "20px" } },
-                        react_1.default.createElement(BGVerification_1.default, { mandatoryChecks: BGVData.mantoryChecks, VerificationChecks: BGVData.checkboxBGVOption, onToggleOption: handleBvgToggle, hasError: bgvError }))),
+                        react_1.default.createElement(BGVerification_1.default, { mandatoryChecks: BGVData.mantoryChecks, VerificationChecks: BGVData.checkboxBGVOption, onToggleOption: handleBvgToggle, hasError: bgvError, disabled: isSubmittingRef.current }))),
                     showReviewFooter && (react_1.default.createElement(react_1.default.Fragment, null,
-                        react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, commentError: commentError, checkboxError: checkboxError }),
+                        react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, commentError: commentError, checkboxError: checkboxError, disabled: isSubmittingRef.current }),
                         react_1.default.createElement("div", { className: "advert-review-drawer__footer" },
                             react_1.default.createElement("div", { className: "advert-review-drawer__footer-actions" },
                                 react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button", onClick: onClose }, "Cancel"),
-                                react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button advert-review-drawer__button--primary", disabled: isLoading || isSubmittingRef.current, onClick: handleApprove }, isSubmittingRef.current ? (react_1.default.createElement(react_1.default.Fragment, null,
+                                react_1.default.createElement("button", { type: "button", className: !canApprove ? "advert-review-drawer__button advert-review-drawer__button--primary__is-disabled" : "advert-review-drawer__button advert-review-drawer__button--primary", disabled: !canApprove || isSubmittingRef.current, onClick: handleApprove }, isSubmittingRef.current ? (react_1.default.createElement(react_1.default.Fragment, null,
                                     react_1.default.createElement(lucide_react_1.Loader2, { size: 16, className: "modal-popup__spinner" }),
                                     "Sending...")) : (react_1.default.createElement(react_1.default.Fragment, null,
                                     react_1.default.createElement(lucide_react_1.Send, { size: 16, style: { marginRight: 8 } }),

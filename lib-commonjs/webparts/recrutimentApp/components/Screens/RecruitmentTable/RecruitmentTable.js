@@ -19,6 +19,7 @@ var ModalPopup_1 = require("../../Comman/ModalPopup/ModalPopup");
 var Useconfirmassignment_1 = require("./Hooks/Useconfirmassignment");
 var useModalPopup_1 = require("../../Comman/ModalPopup/useModalPopup");
 var Tabs_1 = tslib_1.__importDefault(require("../../Comman/Tabs/Tabs"));
+var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
 var AssignHRPopup = react_1.default.lazy(function () {
     return Promise.resolve().then(function () { return tslib_1.__importStar(require("./Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
         default: module.AssignHRPopup,
@@ -29,6 +30,7 @@ var RecruitmentTable = function () {
     var _b = (0, useTabDetails_1.useTabDetails)(), tabs = _b.tabs, tabsLoading = _b.loading;
     var activeTab = (0, UIStateContext_1.useUIState)().activeTab;
     var navigate = (0, react_router_dom_1.useNavigate)();
+    var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
     var _c = (0, react_1.useState)(activeTab), activeTabKey = _c[0], setActiveTabKey = _c[1];
     var _d = (0, react_1.useState)(0), refreshKey = _d[0], setRefreshKey = _d[1];
     var handleRefresh = (0, react_1.useCallback)(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
@@ -112,36 +114,67 @@ var RecruitmentTable = function () {
                 : Array.from(new Set(tslib_1.__spreadArray(tslib_1.__spreadArray([], prev, true), pageIds, true)));
         });
     }, [paginatedItems, selectedIds]);
+    // const isEvalutionItem = (
+    //   item: RecruitmentItem | EvalutionItem
+    // ): item is EvalutionItem => {
+    //   return matricID === MatricID.EvalutionHR || matricID === MatricID.EvalutionLM || matricID === MatricID.EvalutionHOD || matricID === MatricID.EvalutionEXCO;
+    // };
+    var processingRef = (0, react_1.useRef)(false);
     var handleAction = (0, react_1.useCallback)(function (item) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var ItemID, requestType, routeMap, route;
+        var ItemID, statusId, isEvaluationFlow, evalutionIDs, routeMap, route;
         var _a;
         return tslib_1.__generator(this, function (_b) {
-            ItemID = item.ItemID, requestType = item.requestType;
-            if (matricID === ConditionConfig_1.MatricID.EvalutionHR) {
-                navigate("/Evalution");
+            if (processingRef.current)
                 return [2 /*return*/];
+            processingRef.current = true;
+            try {
+                ItemID = item.ItemID, statusId = item.statusId;
+                isEvaluationFlow = matricID === ConditionConfig_1.MatricID.EvalutionHR ||
+                    matricID === ConditionConfig_1.MatricID.EvalutionLM ||
+                    matricID === ConditionConfig_1.MatricID.EvalutionHOD ||
+                    matricID === ConditionConfig_1.MatricID.EvalutionEXCO;
+                if (isEvaluationFlow) {
+                    // const data: IEvaluValidate = {
+                    //   ID: ItemID,
+                    //   currentEmailID: ADGroupData.EmailId[0],
+                    //   statusId,
+                    // };
+                    // const res = await DashboardServices.EvalutionValidation(data);
+                    // if (!res.data) {
+                    //   showModal({
+                    //     type: "warning",
+                    //     title: "Already Submitted",
+                    //     message: "You have already submitted the evaluation.",
+                    //     confirmLabel: "OK",
+                    //     onConfirm: closeModal,
+                    //   });
+                    //   return; // processingRef resets in finally ✅
+                    // }
+                }
+                evalutionIDs = [
+                    ConditionConfig_1.MatricID.EvalutionHR,
+                    ConditionConfig_1.MatricID.EvalutionLM,
+                    ConditionConfig_1.MatricID.EvalutionHOD,
+                    ConditionConfig_1.MatricID.EvalutionEXCO,
+                ];
+                routeMap = tslib_1.__assign((_a = {}, _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _a), Object.fromEntries(evalutionIDs.map(function (id) { return [id, "/Evalution"]; })));
+                route = routeMap[matricID];
+                if (route) {
+                    navigate(route, { state: { ID: ItemID } });
+                    return [2 /*return*/];
+                }
+                drawerMeta.current = { isOpen: true, selectedType: item.requestType };
+                openDrawer(ItemID);
             }
-            routeMap = (_a = {},
-                _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation",
-                _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation",
-                _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable",
-                _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable",
-                _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable",
-                _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/CandidateTable",
-                _a[ConditionConfig_1.MatricID.EvalutionHR] = "/Evalution",
-                _a[ConditionConfig_1.MatricID.EvalutionLM] = "/Evalution",
-                _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard",
-                _a);
-            route = routeMap[matricID];
-            if (route) {
-                navigate(route, { state: { ID: ItemID } });
-                return [2 /*return*/];
+            finally {
+                // ✅ ALWAYS resets, no matter which return path was taken
+                processingRef.current = false;
             }
-            drawerMeta.current = { isOpen: true, selectedType: requestType };
-            openDrawer(ItemID);
             return [2 /*return*/];
         });
-    }); }, [matricID, navigate, openDrawer]);
+    }); }, 
+    // ✅ Complete dependency array
+    [matricID, navigate, openDrawer, showModal, closeModal, ADGroupData.EmailId]);
     var showAssignmentBar = (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.tableMode) === "checkbox" && selectedIds.length > 0;
     var columns = (0, config_1.useRecruitmentColumns)({
         role: matricID === ConditionConfig_1.MatricID.EvalutionHR ? "evaluation" : "default",
