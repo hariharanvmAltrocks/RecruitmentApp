@@ -4,23 +4,11 @@ exports.EvaluationProvider = EvaluationProvider;
 exports.useEvaluationState = useEvaluationState;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
-// ── Initial values ────────────────────────────────────────────────────────────
 var initialScorecard = {
-    Qualifications: null,
-    Experience: null,
-    Knowledge: null,
-    EnergyLevel: null,
-    JobRequirements: null,
-    CultureFit: null,
-    ExpatLocal: null,
-    OtherCriteria: null,
+    Qualifications: null, Experience: null, Knowledge: null, EnergyLevel: null,
+    JobRequirements: null, CultureFit: null, ExpatLocal: null, OtherCriteria: null,
 };
-var initialSummary = {
-    total: 0,
-    average: 0,
-    status: 'Pending',
-};
-// ── Context ───────────────────────────────────────────────────────────────────
+var initialSummary = { total: 0, average: 0, status: 'Pending' };
 var EvaluationContext = React.createContext(undefined);
 function EvaluationProvider(_a) {
     var children = _a.children;
@@ -29,18 +17,15 @@ function EvaluationProvider(_a) {
     var _d = React.useState(initialScorecard), scorecard = _d[0], setScorecard = _d[1];
     var _e = React.useState(null), recommendation = _e[0], setRecommendation = _e[1];
     var _f = React.useState(''), overallFeedback = _f[0], setOverallFeedback = _f[1];
-    var _g = React.useState(false), acknowledged = _g[0], setAcknowledged = _g[1];
-    var _h = React.useState(initialSummary), scoreSummary = _h[0], setScoreSummary = _h[1];
+    var _g = React.useState(''), evaluationFeedback = _g[0], setEvaluationFeedback = _g[1];
+    var _h = React.useState(false), acknowledged = _h[0], setAcknowledged = _h[1];
+    var _j = React.useState(initialSummary), scoreSummary = _j[0], setScoreSummary = _j[1];
     var initializeAnswers = React.useCallback(function (questions, existingAnswers) {
         var prepared = {};
         questions.forEach(function (q) {
             var _a, _b;
             var existing = existingAnswers === null || existingAnswers === void 0 ? void 0 : existingAnswers[q.id];
-            prepared[q.id] = {
-                questionId: q.id,
-                rating: (_a = existing === null || existing === void 0 ? void 0 : existing.rating) !== null && _a !== void 0 ? _a : null,
-                remarks: (_b = existing === null || existing === void 0 ? void 0 : existing.remarks) !== null && _b !== void 0 ? _b : '',
-            };
+            prepared[q.id] = { questionId: q.id, rating: (_a = existing === null || existing === void 0 ? void 0 : existing.rating) !== null && _a !== void 0 ? _a : null, remarks: (_b = existing === null || existing === void 0 ? void 0 : existing.remarks) !== null && _b !== void 0 ? _b : '' };
         });
         setAnswers(prepared);
     }, []);
@@ -67,25 +52,19 @@ function EvaluationProvider(_a) {
         setScorecard(initialScorecard);
         setRecommendation(null);
         setOverallFeedback('');
+        setEvaluationFeedback('');
         setAcknowledged(false);
         setScoreSummary(initialSummary);
     }, []);
-    // Auto-compute score summary from question answers
     React.useEffect(function () {
-        var ratings = Object.values(answers)
-            .map(function (a) { return a.rating; })
-            .filter(function (r) { return r !== null; });
+        var ratings = Object.values(answers).map(function (a) { return a.rating; }).filter(function (r) { return r !== null; });
         if (ratings.length === 0) {
             setScoreSummary(initialSummary);
             return;
         }
         var total = ratings.reduce(function (s, r) { return s + r; }, 0);
         var average = parseFloat((total / ratings.length).toFixed(2));
-        var status = 'Fail';
-        if (average >= 4)
-            status = 'Pass';
-        else if (average >= 3)
-            status = 'Borderline';
+        var status = average >= 4 ? 'Pass' : average >= 3 ? 'Borderline' : 'Fail';
         setScoreSummary({ total: total, average: average, status: status });
     }, [answers]);
     var value = React.useMemo(function () { return ({
@@ -100,13 +79,15 @@ function EvaluationProvider(_a) {
         setRecommendation: setRecommendation,
         overallFeedback: overallFeedback,
         setOverallFeedback: setOverallFeedback,
+        evaluationFeedback: evaluationFeedback,
+        setEvaluationFeedback: setEvaluationFeedback,
         acknowledged: acknowledged,
         setAcknowledged: setAcknowledged,
         scoreSummary: scoreSummary,
         resetState: resetState,
     }); }, [
         selectedCandidate, answers, scorecard, recommendation,
-        overallFeedback, acknowledged, scoreSummary,
+        overallFeedback, evaluationFeedback, acknowledged, scoreSummary,
         initializeAnswers, updateAnswer, updateScorecard, resetState,
     ]);
     return React.createElement(EvaluationContext.Provider, { value: value }, children);

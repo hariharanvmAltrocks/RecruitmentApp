@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { userInfo } from '../../../../utilities/hooks/RoleContext';
 import type { Candidate, InterviewQuestion } from '../State/CommonStateManagement';
@@ -11,11 +10,11 @@ export interface UseCandidateDetailsParams {
 }
 
 export interface CandidateDetailsHookResult {
-  candidate:  Candidate | null;
-  questions:  InterviewQuestion[];
-  loading:    boolean;
-  error:      string | null;
-  reload:     () => void;
+  candidate: Candidate | null;
+  questions: InterviewQuestion[];
+  loading:   boolean;
+  error:     string | null;
+  reload:    () => void;
 }
 
 export function useCandidateDetails({
@@ -33,12 +32,7 @@ export function useCandidateDetails({
   const [refreshKey, setRefreshKey] = React.useState(0);
 
   React.useEffect(() => {
-    console.log('[useCandidateDetails] fetch start', { candidateId, currentUserEmail, interviewLevel, grade });
-    if (!candidateId || !currentUserEmail) {
-      setLoading(false);
-      return;
-    }
-
+    if (!candidateId || !currentUserEmail) { setLoading(false); return; }
     let isMounted = true;
 
     const load = async () => {
@@ -46,16 +40,17 @@ export function useCandidateDetails({
       setError(null);
       try {
         const result: EvaluationFormResult = await getEvaluationFormData(
-          candidateId,
-          currentUserEmail
+          candidateId, currentUserEmail
         );
 
         if (!isMounted) return;
-
         if (!result.success) {
           setError('Failed to load candidate data. Please retry.');
           return;
         }
+
+        // jobRequestId stored on _jobRequestId by service
+        const jobRequestId = (result as any)._jobRequestId ?? '';
 
         setCandidate({
           id:                  result.candidateId,
@@ -63,6 +58,7 @@ export function useCandidateDetails({
           jobTitle:            result.positionTitle,
           grade:               grade          || result.grade,
           nationality:         result.nationality,
+          nationalityCode:     result.nationalityCode,
           gender:              result.gender,
           qualification:       result.qualification,
           miningExp:           result.miningExp,
@@ -79,19 +75,24 @@ export function useCandidateDetails({
           currentUserGuid:     result.currentUserGuid,
           recruitmentId:       result.recruitmentId,
           jobCodeID:           result.jobCodeId,
+          jobRequestId,                                    // ← for portal API
           currentRoleIDs:      ADGroupData?.roleIDs || [4],
         });
 
-        setQuestions(
-          result.questions.map((q) => ({
-            id:               q.id,
-            text:             q.question,
-            expectedResponse: q.answer,
-          }))
-        );
-        console.log('[useCandidateDetails] fetch success', { candidateId, candidate: result, questions: result.questions.length, currentRoleIDs: ADGroupData?.roleIDs });
+        setQuestions(result.questions.map((q) => ({
+          id:               q.id,
+          text:             q.question,
+          expectedResponse: q.answer,
+        })));
+
+        console.log('[useCandidateDetails] SUCCESS —', {
+          candidateId,
+          currentUserPanelId: result.currentUserPanelId,
+          questionsCount:     result.questions.length,
+          jobRequestId,
+        });
       } catch (err) {
-        console.error('[useCandidateDetails] fetch error', err);
+        console.error('[useCandidateDetails] error:', err);
         if (isMounted)
           setError(err instanceof Error ? err.message : 'Unable to load candidate details.');
       } finally {

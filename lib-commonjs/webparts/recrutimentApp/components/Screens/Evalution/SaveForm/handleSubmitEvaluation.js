@@ -11,6 +11,11 @@ function handleSubmitEvaluation(payload, roleId) {
                 case 0:
                     console.log('[handleSubmitEvaluation] start', { payload: payload, roleId: roleId });
                     candidate = payload.candidate, answers = payload.answers, scorecard = payload.scorecard, recommendation = payload.recommendation, overallFeedback = payload.overallFeedback;
+                    console.log('[handleSubmitEvaluation] candidate details', {
+                        currentUserPanelId: candidate.currentUserPanelId,
+                        currentUserGuid: candidate.currentUserGuid,
+                        recruitmentId: candidate.recruitmentId,
+                    });
                     if (!candidate.currentUserPanelId) {
                         return [2 /*return*/, {
                                 success: false,

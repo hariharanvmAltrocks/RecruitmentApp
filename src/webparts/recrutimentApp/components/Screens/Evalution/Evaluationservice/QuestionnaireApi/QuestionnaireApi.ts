@@ -1,4 +1,6 @@
 import { ApiResponse } from "../../../../../models/apimodels";
+import { WorkflowJson } from "../../../../../models/Icareerportal";
+import { getProfileData } from "../../../../../services/AxiosService/CareerPortalAPI";
 import { IQuestionnaireApi, QuestionItem } from "./IQuestionnaireApi";
 import { QuestionnaireService } from "./QuestionnaireService";
 
@@ -37,4 +39,29 @@ export default class QuestionnaireApi implements IQuestionnaireApi {
       };
     }
   }
+
+   async UpdateCandidateStatus(data: WorkflowJson): Promise<ApiResponse<any | null>> {
+    try {
+
+      const Response = await getProfileData.UpdateCandidateStatus(data);
+      return {
+        data: Response.data,
+        status: Response.status,
+        message: Response.data.message,
+      };
+
+    } catch (error) {
+      console.error(
+        "Error inserting data into AdvertisementDetails:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+
 }
+

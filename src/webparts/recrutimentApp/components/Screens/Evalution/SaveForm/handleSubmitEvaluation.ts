@@ -9,6 +9,12 @@ export async function handleSubmitEvaluation(
   console.log('[handleSubmitEvaluation] start', { payload, roleId });
   const { candidate, answers, scorecard, recommendation, overallFeedback } = payload;
 
+  console.log('[handleSubmitEvaluation] candidate details', {
+    currentUserPanelId: candidate.currentUserPanelId,
+    currentUserGuid: candidate.currentUserGuid,
+    recruitmentId: candidate.recruitmentId,
+  });
+
   if (!candidate.currentUserPanelId) {
     return {
       success: false,
