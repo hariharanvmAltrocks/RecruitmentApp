@@ -25,6 +25,10 @@ exports.MatricID = {
     ReviewProfileLM: 21,
     MySubmission: 22,
     AssignAgencies: 23,
+    BackgroundCheck: 24,
+    LabourHire: 25,
+    Kcsa: 26,
+    ReviewScoredHOD: 27
 };
 exports.RoleName = {
     LineManager: "Line Manager",
@@ -83,7 +87,7 @@ exports.menuID = {
     PreSelectionProcess: 30,
     PostSelectionProcess: 31,
     ReviewProfile: 32,
-    RecrutimentTable: 28,
+    RecruitmentProcess: 28,
 };
 exports.Nationality = {
     Nationals: "Nationals (Congolese)",

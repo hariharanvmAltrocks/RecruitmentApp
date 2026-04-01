@@ -8,8 +8,14 @@ export const fetchByMetricId = async (
   EmailId: string,
   condition?: any,
 ) => {
+  
+  let updatedMetricId = matricID;
+
+  if (matricID === MatricID.ReviewScoreCard) {
+    updatedMetricId = MatricID.ReviewScoredHOD; 
+  }
   const configMap = MetricQueryConfig(EmailId);
-  const config = configMap[matricID];
+  const config = configMap[updatedMetricId];
 
   if (!config) return [];
 

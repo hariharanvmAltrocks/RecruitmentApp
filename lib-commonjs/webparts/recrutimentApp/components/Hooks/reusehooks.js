@@ -9,12 +9,16 @@ var ConditionConfig_1 = require("../../utilities/ConditionConfig");
 var Config_1 = require("../../utilities/Config");
 var metricColumns_config_1 = require("../Screens/Dashboard/metricColumns.config");
 var fetchByMetricId = function (matricID, EmailId, condition) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-    var configMap, config, configs, serviceCall, responses, result;
+    var updatedMetricId, configMap, config, configs, serviceCall, responses, result;
     return tslib_1.__generator(this, function (_a) {
         switch (_a.label) {
             case 0:
+                updatedMetricId = matricID;
+                if (matricID === ConditionConfig_1.MatricID.ReviewScoreCard) {
+                    updatedMetricId = ConditionConfig_1.MatricID.ReviewScoredHOD;
+                }
                 configMap = (0, metricColumns_config_1.MetricQueryConfig)(EmailId);
-                config = configMap[matricID];
+                config = configMap[updatedMetricId];
                 if (!config)
                     return [2 /*return*/, []];
                 configs = Array.isArray(config) ? config : [config];

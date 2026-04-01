@@ -133,6 +133,45 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     TabValue: "tab4",
     TabName: TabName.Evaluation,
   },
+  [MatricID.BackgroundCheck]: {
+    label: "Pending Background Verification",
+    status: "PENDING",
+    icon: Activity,
+    color: "#d97706",
+    bgColor: "#fef3c7",
+    statusColor: "#ef4444",
+    statusBg: "#fee2e2",
+    path: "/RecruitmentTable",
+    menuId: menuID.RecruitmentProcess,
+    TabValue: "tab1",
+    TabName: TabName.BackgroundVerification,
+  },
+  [MatricID.LabourHire]: {
+    label: "Pending LabourHire",
+    status: "PENDING",
+    icon: Activity,
+    color: "#d97706",
+    bgColor: "#fef3c7",
+    statusColor: "#ef4444",
+    statusBg: "#fee2e2",
+    path: "/RecruitmentTable",
+    menuId: menuID.RecruitmentProcess,
+    TabValue: "tab2",
+    TabName: TabName.LabourHire,
+  },
+  [MatricID.Kcsa]: {
+    label: "Pending Evaluation",
+    status: "PENDING",
+    icon: Activity,
+    color: "#d97706",
+    bgColor: "#fef3c7",
+    statusColor: "#ef4444",
+    statusBg: "#fee2e2",
+    path: "/RecruitmentTable",
+    menuId: menuID.RecruitmentProcess,
+    TabValue: "tab3",
+    TabName: TabName.OfferLetterKSCA,
+  },
 
   [MatricID.AdvertReviewLM]: {
     label: "Pending Advert Review",
@@ -363,6 +402,10 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
           }),
           buildCol(MatricID.EvalutionHR, { showArrow: true }),
           buildCol(MatricID.InterviewQuestionHR, { showArrow: true }),
+          buildCol(MatricID.BackgroundCheck, { showArrow: true }),
+          buildCol(MatricID.LabourHire, { showArrow: true }),
+          buildCol(MatricID.Kcsa, { showArrow: true }),
+
           buildCol(MatricID.interviewSchedule, { showArrow: false }),
           buildCol(MatricID.interviewTracker, { showArrow: false }),
           buildCol(MatricID.OfferRelease, { showArrow: false }),
@@ -683,6 +726,64 @@ export const MetricQueryConfig = (
     ListNames.HRMSRecruitmentDptDetails,
     StatusFilter(StatusId.RecruitmentInProgress),
   ),
+
+  //Background Check
+  [MatricID.BackgroundCheck]: createQuery(
+    ListNames.HRMSSelectedCandidateDetailsByHOD,
+    StatusFilter([
+      StatusId.PendingHRBGVInitiation,
+      StatusId.PendingHRReviewBGCheck,
+      StatusId.PendingDOTAficaVerification,
+    ]),
+  ),
+
+  //LabourHire
+  [MatricID.LabourHire]: createQuery(
+    ListNames.HRMSSelectedCandidateDetailsByHOD,
+    StatusFilter([
+      StatusId.PendingLabourHireOfferRelease,
+      StatusId.PendingHROfferReview,
+      StatusId.PendingLabourhireWPPayment,
+      StatusId.PendingFinancePaymentReview,
+      StatusId.PendingLHWorkPermitProcess,
+      StatusId.PendingHRReviewOfferuploadEmploymentInit,
+      StatusId.PendingHREmploymentContractInit,
+      StatusId.PendingLHECRelease,
+      StatusId.PendingHREmploymentContractReview
+    ], "AssignedHR"),
+  ),
+
+  //KCSA
+  [MatricID.Kcsa]: createQuery(
+    ListNames.HRMSSelectedCandidateDetailsByHOD,
+    StatusFilter([
+      StatusId.PendingHRReviewOfferWorkPermitInit,
+      StatusId.PendingHRReviewWorkpermitDocs,
+      StatusId.WorkPermitAcknowledgedContractUploaded,
+      StatusId.PendingHREmploymentContractVerification,
+      StatusId.PendingHRReviewOfferanduploadEmployementContract,
+      StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
+    ], "AssignedHR"),
+  ),
+
+  [MatricID.Kcsa]: createQuery(
+    ListNames.HRMSSelectedCandidateDetailsByHOD,
+    StatusFilter([
+      StatusId.PendingHRReviewOfferWorkPermitInit,
+      StatusId.PendingHRReviewWorkpermitDocs,
+      StatusId.WorkPermitAcknowledgedContractUploaded,
+      StatusId.PendingHREmploymentContractVerification,
+      StatusId.PendingHRReviewOfferanduploadEmployementContract,
+      StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
+    ], "AssignedHR"),
+  ),
+
+  //Reviewscordcard HOD
+  [MatricID.ReviewScoredHOD]:  createQuery(
+    ListNames.HRMSRecruitmentDptDetails,
+    StatusFilter(StatusId.RecruitmentInProgress, "HOD", EmailId),
+  ),
+
 });
 
 const RoleMetricFilters: Record<number, number[]> = {
@@ -704,6 +805,9 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.AssignInterviewPanel,
     MatricID.InterviewQuestionHR,
     MatricID.EvalutionHR,
+    MatricID.BackgroundCheck,
+    MatricID.LabourHire,
+    MatricID.Kcsa,
     MatricID.OfferRelease,
     MatricID.OfferAccepted,
     MatricID.OfferRejected,
