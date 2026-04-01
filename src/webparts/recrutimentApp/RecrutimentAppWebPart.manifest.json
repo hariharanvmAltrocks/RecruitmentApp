@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "8cdd0eee-7d80-45b6-a648-17a29794887a",
+  "id": "eb670c64-455e-4c41-aebb-a976f933c470",
   "alias": "RecruitmentAppWebPart",
   "componentType": "WebPart",
 
