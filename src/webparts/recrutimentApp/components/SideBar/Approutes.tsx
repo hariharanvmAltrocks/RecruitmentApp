@@ -7,6 +7,7 @@ import { CandidateTable } from '../Screens/CandidateTable/CandidateTable';
 import { Evalution } from '../Screens/Evalution/Evalution';
 import RecruitmentProcess from '../Screens/SelectionProcess/RecruitmentProcess';
 import ReviewScoreCard from '../Screens/ReviewScoreCard/ReviewScoreCard';
+import { OfferTable } from '../Screens/OfferRelease/OfferTable';
 interface AppRoutesProps {
   props: any
   activeMenuId?: number;
@@ -23,6 +24,7 @@ const AppRoutes: React.FC<AppRoutesProps> = ({ props, activeMenuId }) => (
     <Route path="/Evalution" element={<Evalution {...props} />} />
     <Route path="/ReviewScoreCard" element={<ReviewScoreCard {...props} />} />
     <Route path="/RecurimentProcess" element={<RecruitmentProcess {...props} />} />
+    <Route path='/OfferTable'element={<OfferTable {...props} />} />
   </Routes>
 );
 

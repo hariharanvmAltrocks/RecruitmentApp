@@ -25,7 +25,7 @@ var mapCandidateItem = function (item) {
     var _a, _b;
     var dept = (_a = item.DeptDetails) === null || _a === void 0 ? void 0 : _a[0];
     return {
-        id: dept === null || dept === void 0 ? void 0 : dept.RecordID,
+        id: dept === null || dept === void 0 ? void 0 : dept.ID,
         ItemID: dept === null || dept === void 0 ? void 0 : dept.ID,
         jobCode: dept === null || dept === void 0 ? void 0 : dept.JobCode,
         title: (_b = dept === null || dept === void 0 ? void 0 : dept.JobTitleEnglish) !== null && _b !== void 0 ? _b : "",
@@ -36,6 +36,28 @@ var mapCandidateItem = function (item) {
         status: dept === null || dept === void 0 ? void 0 : dept.Status,
         statusId: dept === null || dept === void 0 ? void 0 : dept.StatusId,
         jobCodeID: dept === null || dept === void 0 ? void 0 : dept.JobCodeId,
+    };
+};
+var mapSelectedCandidate = function (item) {
+    var _a;
+    var dept = item.DeptDetails;
+    var candi = item === null || item === void 0 ? void 0 : item.candiDetails;
+    return {
+        id: item === null || item === void 0 ? void 0 : item.RecordID,
+        ItemID: item === null || item === void 0 ? void 0 : item.ItemID,
+        applicantName: candi === null || candi === void 0 ? void 0 : candi.ApplicantName,
+        title: (_a = item === null || item === void 0 ? void 0 : item.PositionTitle) !== null && _a !== void 0 ? _a : "",
+        nationality: item === null || item === void 0 ? void 0 : item.Nationality,
+        status: item === null || item === void 0 ? void 0 : item.Status,
+        statusId: item === null || item === void 0 ? void 0 : item.StatusId,
+        positionId: item === null || item === void 0 ? void 0 : item.PositionID,
+        jobCode: dept === null || dept === void 0 ? void 0 : dept.JobCode,
+        department: dept === null || dept === void 0 ? void 0 : dept.Department,
+        jobCodeID: dept === null || dept === void 0 ? void 0 : dept.JobCodeId,
+        buCode: dept === null || dept === void 0 ? void 0 : dept.BusinessUnitCode,
+        CandidateID: candi === null || candi === void 0 ? void 0 : candi.ID,
+        jobrequestID: candi === null || candi === void 0 ? void 0 : candi.jobrequestID,
+        RecID: dept === null || dept === void 0 ? void 0 : dept.ID,
     };
 };
 var mapRecruitmentItem = function (item) {
@@ -80,8 +102,12 @@ var useRecruitmentDetails = function (activeTabKey, refreshKey) {
                         mappedItems = data.map(function (item) {
                             if (isEvaluation_1)
                                 return mapEvaluationItem(item);
-                            if (item.__listName === Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails) {
+                            if (item.__listName ===
+                                Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails) {
                                 return mapCandidateItem(item);
+                            }
+                            if (item.__listName === Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD) {
+                                return mapSelectedCandidate(item);
                             }
                             return mapRecruitmentItem(item);
                         });

@@ -660,7 +660,8 @@ var MasterService = /** @class */ (function () {
                                     },
                                 ],
                             }).then(function (data) {
-                                GridResult_1 = data[0].Levels;
+                                var _a, _b;
+                                GridResult_1 = (_b = (_a = data[0]) === null || _a === void 0 ? void 0 : _a.Levels) !== null && _b !== void 0 ? _b : "";
                             })];
                     case 1:
                         _a.sent();

@@ -12,6 +12,8 @@ import { IMeetingShedule } from "./MeetingSchedule/Imeetingschedule";
 import MeetingSchedule from "./MeetingSchedule/MeetingSchedule";
 import { IMenuService } from "./MenuService/IMenu";
 import MenuService from "./MenuService/menuService";
+import { IOfferService } from "./OfferRelease/IOfferService";
+import OfferService from "./OfferRelease/OfferService";
 import { IQuestionCreation } from "./QuestionCreation/IQuestionCreation";
 import QuestionCreateService from "./QuestionCreation/QuestionCreateService";
 import { IRecruitmentService } from "./RecruitmentTable/IRecruitmentService";
@@ -22,9 +24,11 @@ export const menuService: IMenuService = new MenuService();
 export const DashboardServices: IDashboard = new DashboardService();
 export const CommonServices: ICommonService = new CommonService();
 export const CareerPotalServices: Icareerportal = new CareerPortalService();
-export const RecruitmentServices: IRecruitmentService = new RecruitmentService(); 
+export const RecruitmentServices: IRecruitmentService =
+  new RecruitmentService();
 export const QuestionService: IQuestionCreation = new QuestionCreateService();
 
 export const CandidateTable: ICandidateService = new CandidateService();
 
 export const MeetingSchedules: IMeetingShedule = new MeetingSchedule();
+export const OfferServices: IOfferService = new OfferService();

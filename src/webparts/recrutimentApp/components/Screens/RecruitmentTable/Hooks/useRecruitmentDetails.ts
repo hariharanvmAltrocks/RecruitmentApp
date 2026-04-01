@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { EvalutionItem, RecruitmentItem, RecruitmentTabKey } from "../RecruitmentTable.types";
+import {
+  EvalutionItem,
+  ISelectedCandidate,
+  RecruitmentItem,
+  RecruitmentTabKey,
+} from "../RecruitmentTable.types";
 import { DashboardServices } from "../../../../services/ServiceExport";
 import { ListNames } from "../../../../utilities/Config";
 import { MetricQueryConfig } from "../../Dashboard/metricColumns.config";
@@ -9,11 +14,10 @@ import { userInfo } from "../../../../utilities/hooks/RoleContext";
 import { fetchByMetricId } from "../../../Hooks/reusehooks";
 
 interface UseRecruitmentDetailsResult {
-  items: RecruitmentItem[];
+  items: any[];
   loading: boolean;
   error?: string;
 }
-
 
 const mapEvaluationItem = (item: any): EvalutionItem => ({
   id: item.RecordID,
@@ -32,7 +36,7 @@ const mapEvaluationItem = (item: any): EvalutionItem => ({
 const mapCandidateItem = (item: any): RecruitmentItem => {
   const dept = item.DeptDetails?.[0];
   return {
-    id: dept?.RecordID,
+    id: dept?.ID,
     ItemID: dept?.ID,
     jobCode: dept?.JobCode,
     title: dept?.JobTitleEnglish ?? "",
@@ -43,6 +47,32 @@ const mapCandidateItem = (item: any): RecruitmentItem => {
     status: dept?.Status,
     statusId: dept?.StatusId,
     jobCodeID: dept?.JobCodeId,
+  };
+};
+
+const mapSelectedCandidate = (item: any): ISelectedCandidate => {
+  const dept = item.DeptDetails;
+  const candi = item?.candiDetails;
+  return {
+    id: item?.RecordID,
+    ItemID: item?.ItemID,
+    applicantName: candi?.ApplicantName,
+    title: item?.PositionTitle ?? "",
+    nationality: item?.Nationality,
+    status: item?.Status,
+    statusId: item?.StatusId,
+    positionId: item?.PositionID,
+
+    jobCode: dept?.JobCode,
+    department: dept?.Department,
+
+    jobCodeID: dept?.JobCodeId,
+    buCode: dept?.BusinessUnitCode,
+
+    CandidateID: candi?.ID,
+    jobrequestID: candi?.jobrequestID,
+
+    RecID: dept?.ID,
   };
 };
 
@@ -60,17 +90,15 @@ const mapRecruitmentItem = (item: any): RecruitmentItem => ({
   jobCodeID: item?.JobCodeId,
 });
 
-
 export const useRecruitmentDetails = (
   activeTabKey: RecruitmentTabKey,
-  refreshKey: number = 0
+  refreshKey: number = 0,
 ): UseRecruitmentDetailsResult => {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  
- const { ADGroupData } = userInfo();
-  const { MatricID: matricID } = useUIState();
 
+  const { ADGroupData } = userInfo();
+  const { MatricID: matricID } = useUIState();
 
   useEffect(() => {
     let cancelled = false;
@@ -78,10 +106,7 @@ export const useRecruitmentDetails = (
 
     const timer = setTimeout(async () => {
       try {
-        const data = await fetchByMetricId(
-          matricID,
-          ADGroupData.EmailId[0]
-        );
+        const data = await fetchByMetricId(matricID, ADGroupData.EmailId[0]);
 
         if (cancelled) return;
 
@@ -93,15 +118,21 @@ export const useRecruitmentDetails = (
         const mappedItems: any[] = data.map((item: any) => {
           if (isEvaluation) return mapEvaluationItem(item);
 
-          if (item.__listName === ListNames.HRMSRecruitmentCandidatePersonalDetails) {
+          if (
+            item.__listName ===
+            ListNames.HRMSRecruitmentCandidatePersonalDetails
+          ) {
             return mapCandidateItem(item);
+          }
+
+          if (item.__listName === ListNames.HRMSSelectedCandidateDetailsByHOD) {
+            return mapSelectedCandidate(item);
           }
 
           return mapRecruitmentItem(item);
         });
 
         setItems(mappedItems);
-
       } catch (error) {
         console.error(error);
         if (!cancelled) setItems([]);
