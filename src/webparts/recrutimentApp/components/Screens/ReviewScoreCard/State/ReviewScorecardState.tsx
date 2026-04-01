@@ -87,15 +87,6 @@ const ReviewScoreCard: React.FC<any> = (props) => {
     const { ADGroupData } = useRoleContext();
     const currentUserEmail = ADGroupData?.EmailId?.[0] || '';
 
-    if (!recruitmentId) {
-        return (
-            <div style={{ padding: 32, textAlign: 'center', color: '#b00020', fontSize: '1rem' }}>
-                <strong>Recruitment ID is missing.</strong><br />
-                Please open this page via the Review Score Card action button on the job row.
-            </div>
-        );
-    }
-
     return (
         <ReviewScoreCardProvider recruitmentId={recruitmentId} currentUserEmail={currentUserEmail}>
             <ReviewScoreCardContent />

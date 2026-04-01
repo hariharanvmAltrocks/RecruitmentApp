@@ -97,30 +97,23 @@ const ReviewScoreCard: React.FC<ReviewScoreCardProps> = ({ recruitmentId }) => {
     recruitmentId?: number;
     ID?:            number;
     candidateId?:   number;
+    department?:    string;
   } | undefined;
 
   const effectiveRecruitmentId = Number(
     recruitmentId ?? routeState?.recruitmentId ?? routeState?.ID ?? 0
   );
+  const departmentFromRoute = routeState?.department || '';
 
   console.log('[ReviewScoreCard] recruitmentId:', effectiveRecruitmentId, 'routeState:', routeState);
 
   const { ADGroupData } = useRoleContext();
   const currentUserEmail = ADGroupData?.EmailId?.[0] || '';
-
-  if (!effectiveRecruitmentId) {
-    return (
-      <div style={{ padding: 24, textAlign: 'center', color: '#dc2626', fontSize: '0.9rem' }}>
-        Recruitment ID is missing. Please open Review Score Card via the recruitment row action
-        or provide a valid ID in route state.
-      </div>
-    );
-  }
-
   return (
     <ReviewScoreCardProvider
       recruitmentId={effectiveRecruitmentId}
       currentUserEmail={currentUserEmail}
+      department={departmentFromRoute}
     >
       <ReviewScoreCardContent />
     </ReviewScoreCardProvider>

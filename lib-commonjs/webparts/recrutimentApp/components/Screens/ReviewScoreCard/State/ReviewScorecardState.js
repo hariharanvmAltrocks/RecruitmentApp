@@ -37,12 +37,6 @@ var ReviewScoreCard = function (props) {
     console.log('[ReviewScoreCard] recruitmentId resolved:', recruitmentId, 'from state:', locState, 'props:', props);
     var ADGroupData = (0, RoleContext_1.useRoleContext)().ADGroupData;
     var currentUserEmail = ((_a = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _a === void 0 ? void 0 : _a[0]) || '';
-    if (!recruitmentId) {
-        return (React.createElement("div", { style: { padding: 32, textAlign: 'center', color: '#b00020', fontSize: '1rem' } },
-            React.createElement("strong", null, "Recruitment ID is missing."),
-            React.createElement("br", null),
-            "Please open this page via the Review Score Card action button on the job row."));
-    }
     return (React.createElement(ReviewScoreCardProvider_1.ReviewScoreCardProvider, { recruitmentId: recruitmentId, currentUserEmail: currentUserEmail },
         React.createElement(ReviewScoreCardContent, null)));
 };

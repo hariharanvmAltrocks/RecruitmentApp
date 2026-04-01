@@ -36,13 +36,11 @@ var ReviewScoreCard = function (_a) {
     var location = (0, react_router_dom_1.useLocation)();
     var routeState = location.state;
     var effectiveRecruitmentId = Number((_c = (_b = recruitmentId !== null && recruitmentId !== void 0 ? recruitmentId : routeState === null || routeState === void 0 ? void 0 : routeState.recruitmentId) !== null && _b !== void 0 ? _b : routeState === null || routeState === void 0 ? void 0 : routeState.ID) !== null && _c !== void 0 ? _c : 0);
+    var departmentFromRoute = (routeState === null || routeState === void 0 ? void 0 : routeState.department) || '';
     console.log('[ReviewScoreCard] recruitmentId:', effectiveRecruitmentId, 'routeState:', routeState);
     var ADGroupData = (0, RoleContext_1.useRoleContext)().ADGroupData;
     var currentUserEmail = ((_d = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _d === void 0 ? void 0 : _d[0]) || '';
-    if (!effectiveRecruitmentId) {
-        return (react_1.default.createElement("div", { style: { padding: 24, textAlign: 'center', color: '#dc2626', fontSize: '0.9rem' } }, "Recruitment ID is missing. Please open Review Score Card via the recruitment row action or provide a valid ID in route state."));
-    }
-    return (react_1.default.createElement(ReviewScoreCardProvider_1.ReviewScoreCardProvider, { recruitmentId: effectiveRecruitmentId, currentUserEmail: currentUserEmail },
+    return (react_1.default.createElement(ReviewScoreCardProvider_1.ReviewScoreCardProvider, { recruitmentId: effectiveRecruitmentId, currentUserEmail: currentUserEmail, department: departmentFromRoute },
         react_1.default.createElement(ReviewScoreCardContent, null)));
 };
 exports.default = ReviewScoreCard;

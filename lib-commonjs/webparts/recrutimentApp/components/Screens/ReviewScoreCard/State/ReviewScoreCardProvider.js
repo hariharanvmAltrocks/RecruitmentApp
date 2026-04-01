@@ -16,8 +16,8 @@ var useReviewScoreCardContext = function () {
 };
 exports.useReviewScoreCardContext = useReviewScoreCardContext;
 var ReviewScoreCardProvider = function (_a) {
-    var recruitmentId = _a.recruitmentId, currentUserEmail = _a.currentUserEmail, children = _a.children;
-    var hook = (0, useReviewScorecard_1.useReviewScorecard)(recruitmentId, currentUserEmail);
+    var recruitmentId = _a.recruitmentId, currentUserEmail = _a.currentUserEmail, department = _a.department, children = _a.children;
+    var hook = (0, useReviewScorecard_1.useReviewScorecard)(recruitmentId, currentUserEmail, department);
     var value = {
         recruitmentId: recruitmentId,
         candidates: hook.candidates,

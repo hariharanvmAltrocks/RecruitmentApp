@@ -215,3 +215,12 @@
     transform: rotate(360deg);
   }
 }
+.tableScroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+.tableScroll::-webkit-scrollbar {
+  height: 8px;
+}

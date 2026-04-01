@@ -8,6 +8,10 @@ import { Zap, CheckCircle2, Activity, Eye, FileText, X } from "lucide-react";
 import styles from "../ReviewScorecard.module.scss";
 import { HODDecision, PositionOption } from "../State/types";
 
+// StatusId constants (inlined to avoid import issues)
+// PendingwithHODtoAssignPositionID = 130, InterviewScheduledforLevel2 = 129
+const _FEEDBACK_LEVEL2_STATUS_IDS = [130, 129];
+
 interface Props {
   canEdit:              boolean;
   isLevel2Status:       boolean;
@@ -46,7 +50,14 @@ const HODDecisionPanel: React.FC<Props> = ({
   onDecisionChange, onCommentChange, onConfirmChange, onPositionChange,
   onViewComments, onSubmit, onClose,
 }) => {
-  const feedbackLabel = isLevel2Status ? "Feedback — Level 2" : "Feedback — Level 1";
+  // feedbackLabel — mirrors old code HodViewScorecard.tsx lines 1394-1400 EXACTLY:
+  //   StatusId.PendingwithHODtoAssignPositionID (130) → "Feedback — Level 2"
+  //   StatusId.InterviewScheduledforLevel2      (129) → "Feedback — Level 2"
+  //   ALL others (127, 121, 123, 165, 166...)   → "Feedback — Level 1"
+  // 127 (PendingwithHODtoselectthecandidateLevel2) is HOD selection → Level 1 label
+  const feedbackLabel = _FEEDBACK_LEVEL2_STATUS_IDS.includes(statusId)
+    ? "Feedback — Level 2"
+    : "Feedback — Level 1";
 
   // ── VIEW-ONLY MODE ──────────────────────────────────────────────────────────
   if (!canEdit) {

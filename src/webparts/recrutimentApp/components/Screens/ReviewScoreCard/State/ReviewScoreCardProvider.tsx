@@ -12,6 +12,7 @@ type ErrorsType = { decision: boolean; comment: boolean; checkbox: boolean; posi
 interface ReviewScoreCardProviderProps {
   recruitmentId:    number;
   currentUserEmail: string;
+  department?:      string;
   children:         React.ReactNode;
 }
 
@@ -77,9 +78,9 @@ export const useReviewScoreCardContext = (): ReviewScoreCardContextType => {
 };
 
 export const ReviewScoreCardProvider: React.FC<ReviewScoreCardProviderProps> = ({
-  recruitmentId, currentUserEmail, children,
+  recruitmentId, currentUserEmail, department, children,
 }) => {
-  const hook = useReviewScorecard(recruitmentId, currentUserEmail);
+  const hook = useReviewScorecard(recruitmentId, currentUserEmail, department);
 
   const value: ReviewScoreCardContextType = {
     recruitmentId,

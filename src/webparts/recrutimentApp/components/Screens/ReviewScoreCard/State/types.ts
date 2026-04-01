@@ -65,6 +65,7 @@ export interface CandidateReviewData {
   reviewerName:  string;
   jobTitleEn:    string;
   jobTitleFr:    string;
+  level2Scorecard?: any;
 }
 
 export interface SubmitParams {
